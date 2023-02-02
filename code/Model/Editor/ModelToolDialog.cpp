@@ -336,7 +336,15 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 void ModelToolDialog::destroy()
 {
+	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_texturePreview);
 	safeClose(m_renderView);
+
+	m_textureDebug.clear();
+
+	m_resourceManager = nullptr;
+	m_renderSystem = nullptr;
+
 	ui::Dialog::destroy();
 }
 
