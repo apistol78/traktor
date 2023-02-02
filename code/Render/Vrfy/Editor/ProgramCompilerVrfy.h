@@ -31,15 +31,14 @@ class T_DLLCLASS ProgramCompilerVrfy : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
-	ProgramCompilerVrfy(IProgramCompiler* compiler);
+	explicit ProgramCompilerVrfy(IProgramCompiler* compiler);
 
 	virtual const wchar_t* getRendererSignature() const override final;
 
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
-		const std::wstring& name,
-		Stats* outStats
+		const std::wstring& name
 	) const override final;
 
 	virtual bool generate(

@@ -106,8 +106,7 @@ const wchar_t* ProgramCompilerDx11::getRendererSignature() const
 Ref< ProgramResource > ProgramCompilerDx11::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
-	const std::wstring& name,
-	Stats* outStats
+	const std::wstring& name
 ) const
 {
 	if (!s_D3DCompile2 || !s_D3DReflect)
@@ -602,16 +601,6 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	resource->m_d3dDepthStencilDesc = hlslProgram.getD3DDepthStencilDesc();
 	resource->m_d3dBlendDesc = hlslProgram.getD3DBlendDesc();
 	resource->m_stencilReference = hlslProgram.getStencilReference();
-
-	// Estimate cost from number of bytes in each shader.
-	if (outStats)
-	{
-		outStats->vertexCost = d3dVertexShader->GetBufferSize();
-		outStats->pixelCost = d3dPixelShader->GetBufferSize();
-		outStats->vertexSize = d3dVertexShader->GetBufferSize();
-		outStats->pixelSize = d3dPixelShader->GetBufferSize();
-	}
-
 	return resource;
 }
 

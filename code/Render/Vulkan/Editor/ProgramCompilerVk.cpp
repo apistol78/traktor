@@ -246,8 +246,7 @@ const wchar_t* ProgramCompilerVk::getRendererSignature() const
 Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
-	const std::wstring& name,
-	Stats* outStats
+	const std::wstring& name
 ) const
 {
 	RefArray< VertexOutput > vertexOutputs;
@@ -770,8 +769,7 @@ bool ProgramCompilerVk::generate(
 		Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
 			shaderGraph,
 			settings,
-			name,
-			nullptr
+			name
 		));
 		if (!programResource)
 			return false;
