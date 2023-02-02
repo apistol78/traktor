@@ -340,6 +340,12 @@ Element* Element::getChildElementByName(const std::wstring& name) const
 	return nullptr;
 }
 
+std::wstring Element::getChildElementValue(const std::wstring& name, const std::wstring& defaultValue) const
+{
+	const Element* child = getChildElementByName(name);
+	return (child != nullptr) ? child->getValue() : defaultValue;
+}
+
 Ref< Element > Element::clone() const
 {
 	Ref< Element > elm = new Element(m_name);

@@ -86,6 +86,8 @@ public:
 
 	Element* getChildElementByName(const std::wstring& name) const;
 
+	std::wstring getChildElementValue(const std::wstring& name, const std::wstring& defaultValue) const;
+
 	Ref< Element > clone() const;
 
 protected:
