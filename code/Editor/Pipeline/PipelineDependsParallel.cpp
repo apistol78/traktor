@@ -548,7 +548,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
 		{
 			if (parentDependency)
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->outputPath << L"\")." << Endl;
+				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->information() << L"\")." << Endl;
 			else
 				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
 			m_result = false;

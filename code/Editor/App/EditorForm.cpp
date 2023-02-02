@@ -1353,38 +1353,34 @@ ui::TabPage* EditorForm::getActiveTabPage() const
 void EditorForm::findEditorFactory(const TypeInfo& assetType, Ref< IEditorPageFactory >& outEditorPageFactory, Ref< IObjectEditorFactory >& outObjectEditorFactory) const
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< IEditorPageFactory > editorPageFactory;
-	Ref< IObjectEditorFactory > objectEditorFactory;
 
-	for (auto i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
+	for (auto editorPageFactory : m_editorPageFactories)
 	{
-		const TypeInfoSet typeSet = (*i)->getEditableTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		for (auto type : editorPageFactory->getEditableTypes())
 		{
-			if (is_type_of(**j, assetType))
+			if (is_type_of(*type, assetType))
 			{
-				const uint32_t classDifference = type_difference(**j, assetType);
+				const uint32_t classDifference = type_difference(*type, assetType);
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
-					outEditorPageFactory = *i;
+					outEditorPageFactory = editorPageFactory;
 				}
 			}
 		}
 	}
 
-	for (auto i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
+	for (auto objectEditorFactory : m_objectEditorFactories)
 	{
-		const TypeInfoSet typeSet = (*i)->getEditableTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		for (auto type : objectEditorFactory->getEditableTypes())
 		{
-			if (is_type_of(**j, assetType))
+			if (is_type_of(*type, assetType))
 			{
-				const uint32_t classDifference = type_difference(**j, assetType);
+				const uint32_t classDifference = type_difference(*type, assetType);
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
-					outObjectEditorFactory = *i;
+					outObjectEditorFactory = objectEditorFactory;
 				}
 			}
 		}
@@ -1422,7 +1418,7 @@ bool EditorForm::openWorkspace()
 		return false;
 	}
 
-	bool result = openWorkspace(path);
+	const bool result = openWorkspace(path);
 
 	fileDialog.destroy();
 
@@ -1712,13 +1708,12 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBuild);
 
-	bool verbose = m_mergedSettings->getProperty< bool >(L"Pipeline.Verbose", false);
-
 	Timer timerBuild;
 
 	m_buildProgress->setProgress(0);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
+	const bool verbose = m_mergedSettings->getProperty< bool >(L"Pipeline.Verbose", false);
 	const std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
 
 	// Create pipeline factory.

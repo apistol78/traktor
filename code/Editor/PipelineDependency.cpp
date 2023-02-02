@@ -22,6 +22,14 @@ namespace traktor::editor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineDependency", 0, PipelineDependency, ISerializable)
 
+std::wstring PipelineDependency::information() const
+{
+	if (sourceInstanceGuid.isNotNull())
+		return sourceInstanceGuid.format();
+	else
+		return outputPath;
+}
+
 void PipelineDependency::dump(OutputStream& os) const
 {
 	uint32_t i = 0;
