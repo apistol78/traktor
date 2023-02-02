@@ -25,13 +25,15 @@ namespace traktor
 
 class Library;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class ResourceTracker;
 
 /*! Verification render system.
- * \ingroup Render
+ * \ingroup Vrfy
  *
  * This render system is only a wrapper around
  * a "real" render system implementation.
@@ -95,6 +97,4 @@ private:
 	Ref< ResourceTracker > m_resourceTracker;
 };
 
-	}
 }
-

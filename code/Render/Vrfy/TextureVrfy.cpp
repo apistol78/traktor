@@ -11,10 +11,8 @@
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/TextureVrfy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureVrfy", TextureVrfy, ITexture)
 
@@ -69,5 +67,4 @@ ITexture* TextureVrfy::resolve()
 	return this;
 }
 
-	}
 }

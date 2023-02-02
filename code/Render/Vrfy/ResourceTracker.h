@@ -11,11 +11,12 @@
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
+/*!
+ * \ingroup Vrfy
+ */
 class ResourceTracker : public Object
 {
 public:
@@ -34,5 +35,4 @@ private:
 	SmallMap< const Object*, Data > m_data;
 };
 
-	}
 }

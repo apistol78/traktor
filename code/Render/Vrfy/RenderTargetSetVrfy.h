@@ -11,10 +11,8 @@
 #include "Render/IRenderTargetSet.h"
 #include "Render/Types.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ResourceTracker;
 class TextureVrfy;
@@ -63,6 +61,4 @@ private:
 	mutable Ref< TextureVrfy > m_depthTexture;
 };
 
-	}
 }
-

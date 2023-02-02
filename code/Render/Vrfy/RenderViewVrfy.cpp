@@ -21,10 +21,8 @@
 #include "Render/Vrfy/RenderViewVrfy.h"
 #include "Render/Vrfy/TextureVrfy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewVrfy", RenderViewVrfy, IRenderView)
 
@@ -426,5 +424,4 @@ void RenderViewVrfy::getStatistics(RenderViewStatistics& outStatistics) const
 	m_renderView->getStatistics(outStatistics);
 }
 
-	}
 }
