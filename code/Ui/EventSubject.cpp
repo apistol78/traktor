@@ -37,16 +37,14 @@ void EventSubject::raiseEvent(Event* event)
 		auto eventHandlers = i->second;
 		for (int32_t j = (int32_t)eventHandlers.handlers.size() - 1; j >= 0; --j)
 		{
-			const auto& eventHandler = eventHandlers.handlers[j];
-			for (EventHandlers::const_iterator j = eventHandler.begin(); j != eventHandler.end(); ++j)
+			for (Ref< IEventHandler > eventHandler : eventHandlers.handlers[j])
 			{
-				Ref< IEventHandler > eventHandler = *j;
-				if (eventHandler)
-				{
-					eventHandler->notify(event);
-					if (event->consumed())
-						break;
-				}
+				if (!eventHandler)
+					continue;
+
+				eventHandler->notify(event);
+				if (event->consumed())
+					break;
 			}
 		}
 	}
