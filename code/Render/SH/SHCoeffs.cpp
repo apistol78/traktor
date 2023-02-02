@@ -12,16 +12,14 @@
 #include "Render/SH/SHCoeffs.h"
 #include "Render/SH/SHMatrix.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 #include "Render/SH/SH.inl"
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHCoeffs", 0, SHCoeffs, ISerializable)
 
@@ -105,5 +103,4 @@ void SHCoeffs::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Vector4 >(L"data", m_data);
 }
 
-	}
 }

@@ -18,16 +18,14 @@
 #include "Render/SH/SHFunction.h"
 #include "Render/SH/SHMatrix.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 #include "Render/SH/SH.inl"
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SHEngine", SHEngine, Object)
 
@@ -147,5 +145,4 @@ void SHEngine::generateCoefficientsJob(SHFunction* function, uint32_t start, uin
 	}
 }
 
-	}
 }

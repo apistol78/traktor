@@ -8,12 +8,10 @@
  */
 #include "Render/SH/SHUtilities.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 float delta(int i, int j)
 {
@@ -101,7 +99,7 @@ float W(const SHMatrix& M, int l, int m, int n)
 	return P(M, l, 1, m - 1, n) - P(M, l, -1, -m + 1, n);
 }
 
-		}
+	}
 
 SHMatrix generateRotationSHMatrix(const Matrix44& matrix, int order)
 {
@@ -125,9 +123,9 @@ SHMatrix generateRotationSHMatrix(const Matrix44& matrix, int order)
 		{
 			for (int n = -l; n <= l; ++n)
 			{
-				float uu = u(l, m, n);
-				float vv = v(l, m, n);
-				float ww = w(l, m, n);
+				const float uu = u(l, m, n);
+				const float vv = v(l, m, n);
+				const float ww = w(l, m, n);
 
 				float r = 0.0f;
 
@@ -146,5 +144,4 @@ SHMatrix generateRotationSHMatrix(const Matrix44& matrix, int order)
 	return M;
 }
 
-	}
 }
