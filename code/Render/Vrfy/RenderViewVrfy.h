@@ -16,21 +16,23 @@ namespace traktor
 
 class Thread;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderTargetSet;
 
 /*! Verification render view.
- * \ingroup Render
+ * \ingroup Vrfy
  */
 class RenderViewVrfy : public IRenderView
 {
@@ -121,5 +123,4 @@ private:
 	mutable SmallSet< int32_t > m_queriesPending;
 };
 
-	}
 }

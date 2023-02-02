@@ -21,10 +21,8 @@
 #include "Render/Vrfy/ResourceTracker.h"
 #include "Render/Vrfy/TextureVrfy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemVrfy", 0, RenderSystemVrfy, IRenderSystem)
 
@@ -320,5 +318,4 @@ void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) cons
 	m_renderSystem->getStatistics(outStatistics);
 }
 
-	}
 }

@@ -12,13 +12,14 @@
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ResourceTracker;
 
+/*!
+ * \ingroup Vrfy
+ */
 class ProgramVrfy : public IProgram
 {
 	T_RTTI_CLASS;
@@ -72,6 +73,4 @@ private:
 	SmallMap< handle_t, Ref< ITexture > > m_boundTextures;
 };
 
-	}
 }
-

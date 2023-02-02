@@ -11,10 +11,8 @@
 #include "Core/Ref.h"
 #include "Render/ITexture.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ResourceTracker;
 
@@ -48,5 +46,4 @@ private:
 	int32_t m_locked;
 };
 
-	}
 }

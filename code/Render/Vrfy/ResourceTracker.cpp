@@ -11,10 +11,8 @@
 #include "Core/Misc/String.h"
 #include "Render/Vrfy/ResourceTracker.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 void ResourceTracker::add(const Object* resource)
 {
@@ -48,5 +46,4 @@ void ResourceTracker::alive()
 	}
 }
 
-	}
 }

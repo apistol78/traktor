@@ -6,8 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_render_ProgramResourceVrfy_H
-#define traktor_render_ProgramResourceVrfy_H
+#pragma once
 
 #include <string>
 #include "Core/Ref.h"
@@ -21,13 +20,11 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
-/*! \brief
- * \ingroup Render
+/*!
+ * \ingroup Vrfy
  */
 class T_DLLCLASS ProgramResourceVrfy : public ProgramResource
 {
@@ -46,8 +43,4 @@ private:
 	std::wstring m_computeShader;
 };
 
-	}
 }
-
-#endif	// traktor_render_ProgramResourceVrfy_H
-

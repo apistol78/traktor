@@ -16,16 +16,14 @@
 
 #define T_VRFY_CHECK_UNTOUCHED 0
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 constexpr int32_t c_guardBytes = 16;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
@@ -122,5 +120,4 @@ void BufferVrfy::verifyUntouched() const
 #endif
 }
 
-	}
 }

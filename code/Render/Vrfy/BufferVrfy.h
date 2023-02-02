@@ -11,10 +11,8 @@
 #include "Core/Ref.h"
 #include "Render/Buffer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ResourceTracker;
 
@@ -51,6 +49,4 @@ protected:
 	void verifyUntouched() const;
 };
 
-	}
 }
-

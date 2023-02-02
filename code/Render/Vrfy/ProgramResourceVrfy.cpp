@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Vrfy/ProgramResourceVrfy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVrfy", 0, ProgramResourceVrfy, ProgramResource)
 
@@ -27,5 +25,4 @@ void ProgramResourceVrfy::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"computeShader", m_computeShader);
 }
 
-	}
 }
