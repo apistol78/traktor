@@ -478,7 +478,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 					s_techniqueShadow,
 					sharedParams,
 					shadowRenderView,
-					IWorldRenderPass::PfNone
+					IWorldRenderPass::None
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
@@ -606,7 +606,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 					s_techniqueShadow,
 					sharedParams,
 					shadowRenderView,
-					IWorldRenderPass::PfNone
+					IWorldRenderPass::None
 				);
 
 				T_ASSERT(!renderContext->havePendingDraws());
@@ -846,7 +846,7 @@ void WorldRendererDeferred::setupVisualPass(
 				s_techniqueIrradianceWrite,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::PfNone
+				IWorldRenderPass::None
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
@@ -874,7 +874,7 @@ void WorldRendererDeferred::setupVisualPass(
 				s_techniqueDeferredColor,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::PfLast
+				IWorldRenderPass::Last
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());

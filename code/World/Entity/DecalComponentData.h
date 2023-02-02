@@ -29,7 +29,7 @@ class Shader;
 namespace traktor::world
 {
 
-/*! Decal entity data.
+/*! Decal component data.
  * \ingroup World
  */
 class T_DLLCLASS DecalComponentData : public IEntityComponentData

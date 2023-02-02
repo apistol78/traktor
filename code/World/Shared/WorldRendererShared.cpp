@@ -540,7 +540,7 @@ render::handle_t WorldRendererShared::setupGBufferPass(
 				s_techniqueForwardGBufferWrite,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::PfFirst
+				IWorldRenderPass::First
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());
@@ -625,7 +625,7 @@ render::handle_t WorldRendererShared::setupVelocityPass(
 				s_techniqueVelocityWrite,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::PfNone
+				IWorldRenderPass::None
 			);
 
 			for (auto gathered : m_gathered)

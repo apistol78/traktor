@@ -35,7 +35,7 @@ render::handle_t WorldRenderPassSimple::getTechnique() const
 
 uint32_t WorldRenderPassSimple::getPassFlags() const
 {
-	return PfFirst;
+	return IWorldRenderPass::First;
 }
 
 render::Shader::Permutation WorldRenderPassSimple::getPermutation(const render::Shader* shader) const

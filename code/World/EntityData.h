@@ -41,16 +41,22 @@ class T_DLLCLASS EntityData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	/*! Set unique id of entity data. */
 	void setId(const Guid& id);
 
+	/*! Get unique id of entity data. */
 	const Guid& getId() const;
 
+	/*! Set name of entity data. */
 	void setName(const std::wstring& name);
 
+	/*! Get name of entity data. */
 	const std::wstring& getName() const;
 
+	/*! Set transform of entity data. */
 	virtual void setTransform(const Transform& transform);
 
+	/*! Get transform of entity data. */
 	virtual const Transform& getTransform() const;
 
 	/*! Set component.

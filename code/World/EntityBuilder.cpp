@@ -65,7 +65,7 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 			{
 				if (is_type_of(**j, entityDataType))
 				{
-					uint32_t classDifference = type_difference(**j, entityDataType);
+					const uint32_t classDifference = type_difference(**j, entityDataType);
 					if (classDifference < minClassDifference)
 					{
 						minClassDifference = classDifference;
@@ -116,7 +116,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 			{
 				if (is_type_of(**j, entityEventDataType))
 				{
-					uint32_t classDifference = type_difference(**j, entityEventDataType);
+					const uint32_t classDifference = type_difference(**j, entityEventDataType);
 					if (classDifference < minClassDifference)
 					{
 						minClassDifference = classDifference;
@@ -167,7 +167,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 			{
 				if (is_type_of(**j, entityComponentDataType))
 				{
-					uint32_t classDifference = type_difference(**j, entityComponentDataType);
+					const uint32_t classDifference = type_difference(**j, entityComponentDataType);
 					if (classDifference < minClassDifference)
 					{
 						minClassDifference = classDifference;
