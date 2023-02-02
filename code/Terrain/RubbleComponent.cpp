@@ -109,7 +109,7 @@ void RubbleComponent::build(
 		return;
 
 	// Update clusters at first pass from eye pow.
-	const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::PfFirst) != 0);
+	const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
 
 	const Matrix44 view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
