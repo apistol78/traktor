@@ -211,7 +211,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	T_ANONYMOUS_VAR(UnwindStack)(m_luaState);
 
 	const TypeInfo& exportType = runtimeClass->getExportType();
-	int32_t classRegistryIndex = int32_t(m_classRegistry.size());
+	const int32_t classRegistryIndex = int32_t(m_classRegistry.size());
 
 	RegisteredClass& rc = m_classRegistry.push_back();
 	rc.runtimeClass = runtimeClass;
@@ -222,7 +222,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pushstring(m_luaState, wstombs(exportType.getName()).c_str());
 	if (exportType.getSuper())
 	{
-		int32_t superClassId = int32_t(exportType.getSuper()->getTag()) - 1;
+		const int32_t superClassId = int32_t(exportType.getSuper()->getTag()) - 1;
 		if (superClassId >= 0)
 		{
 			const RegisteredClass& superClass = m_classRegistry[superClassId];
@@ -268,7 +268,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	// Add static methods.
-	uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
+	const uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
 	for (uint32_t i = 0; i < staticMethodCount; ++i)
 	{
 		std::string methodName = runtimeClass->getStaticMethodName(i);
@@ -279,7 +279,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	}
 
 	// Add methods.
-	uint32_t methodCount = runtimeClass->getMethodCount();
+	const uint32_t methodCount = runtimeClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
 		std::string methodName = runtimeClass->getMethodName(i);
@@ -291,10 +291,10 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	// Add properties.
 	T_FATAL_ASSERT (lua_istable(m_luaState, - 1));
-	uint32_t propertyCount = runtimeClass->getPropertiesCount();
+	const uint32_t propertyCount = runtimeClass->getPropertiesCount();
 	for (uint32_t i = 0; i < propertyCount; ++i)
 	{
-		std::string propertyName = runtimeClass->getPropertyName(i);
+		const std::string propertyName = runtimeClass->getPropertyName(i);
 
 		lua_getfield(m_luaState, -1, "__setters");
 		T_FATAL_ASSERT(lua_istable(m_luaState, - 1));
@@ -444,7 +444,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(bool strict)
 
 	// Create local environment table and add to registry.
 	lua_newtable(m_luaState);
-	int32_t environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+	const int32_t environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
 
 	// Create table with __index as global environment.
@@ -612,7 +612,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
-	int32_t type = lua_type(m_luaState, index);
+	const int32_t type = lua_type(m_luaState, index);
 	if (type == LUA_TNUMBER)
 	{
 #if defined(T_LUA_5_2)
@@ -651,14 +651,14 @@ Any ScriptManagerLua::toAny(int32_t index)
 
 		// Box LUA object into C++ container.
 		lua_pushvalue(m_luaState, index);
-		int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		const int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		return Any::fromObject(new ScriptObjectLua(this, m_lockContext, m_luaState, tableRef));
 	}
 	else if (type == LUA_TFUNCTION)
 	{
 		// Box LUA function into C++ container.
 		lua_pushvalue(m_luaState, index);
-		int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		const int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		return Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState, functionRef));
 	}
 
@@ -671,8 +671,8 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 
 	for (int32_t i = 0; i < count; ++i)
 	{
-		int32_t index = base + i;
-		int32_t type = lua_type(m_luaState, index);
+		const int32_t index = base + i;
+		const int32_t type = lua_type(m_luaState, index);
 
 		if (type == LUA_TNUMBER)
 		{
@@ -716,14 +716,14 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 
 			// Box LUA object into C++ container.
 			lua_pushvalue(m_luaState, index);
-			int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+			const int32_t tableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 			outAnys[i] = Any::fromObject(new ScriptObjectLua(this, m_lockContext, m_luaState, tableRef));
 		}
 		else if (type == LUA_TFUNCTION)
 		{
 			// Box LUA function into C++ container.
 			lua_pushvalue(m_luaState, index);
-			int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+			const int32_t functionRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 			outAnys[i] = Any::fromObject(new ScriptDelegateLua(m_lockContext, m_luaState, functionRef));
 		}
 	}
@@ -749,7 +749,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 	int32_t count = 10;
 	while (count > 0)
 	{
-		size_t memoryUseBefore = m_totalMemoryUse;
+		const size_t memoryUseBefore = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 
 		if (m_totalMemoryUse < memoryUseBefore)
@@ -787,10 +787,10 @@ void ScriptManagerLua::collectGarbagePartial()
 
 #else
 
-	float dT = std::min< float >(float(s_timer.getDeltaTime()), 0.1f);
+	const float dT = std::min< float >((float)s_timer.getDeltaTime(), 0.1f);
 	m_collectTargetSteps += dT * m_collectStepFrequency;
 
-	int32_t targetSteps = int32_t(m_collectTargetSteps);
+	const int32_t targetSteps = int32_t(m_collectTargetSteps);
 	if (m_collectSteps < targetSteps)
 	{
 #if defined(T_SCRIPT_LUA_USE_MT_LOCK)
@@ -821,7 +821,7 @@ void ScriptManagerLua::collectGarbagePartial()
 	if (m_totalMemoryUse > m_lastMemoryUse)
 	{
 		// Calculate amount of garbage produced per second.
-		float garbageProduced = (m_totalMemoryUse - m_lastMemoryUse) / dT;
+		const float garbageProduced = (m_totalMemoryUse - m_lastMemoryUse) / dT;
 
 		// Determine collector frequency from amount of garbage per second.
 		m_collectStepFrequency = std::max< float >(
@@ -882,13 +882,13 @@ int ScriptManagerLua::classGc(lua_State* luaState)
 
 int ScriptManagerLua::classNew(lua_State* luaState)
 {
-	int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
+	const int32_t classId = (int32_t)lua_tointeger(luaState, lua_upvalueindex(2));
 	const RegisteredClass& rc =	ms_instance->m_classRegistry[classId];
 
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 
 	Any argv[8];
 	ms_instance->toAny(2, top - 1, argv);
@@ -941,7 +941,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 2)
 		return 0;
 
@@ -964,7 +964,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
+		const Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -984,7 +984,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
 
@@ -1003,7 +1003,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
+		const Any returnValue = runtimeDispatch->invoke(object, top - 1, argv);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1024,7 +1024,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(1)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 0)
 		return 0;
 
@@ -1035,7 +1035,7 @@ int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(0, top, argv);
+		const Any returnValue = runtimeDispatch->invoke(0, top, argv);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1068,7 +1068,7 @@ int ScriptManagerLua::classSetProperty(lua_State* luaState)
 	try
 #endif
 	{
-		Any value = ms_instance->toAny(2);
+		const Any value = ms_instance->toAny(2);
 		runtimeDispatch->invoke(object, 1, &value);
 	}
 #if T_VERIFY_USING_EXCEPTIONS
@@ -1096,16 +1096,15 @@ int ScriptManagerLua::classGetProperty(lua_State* luaState)
 		return 0;
 	}
 
-	Any value = runtimeDispatch->invoke(object, 0, 0);
+	const Any value = runtimeDispatch->invoke(object, 0, 0);
 	ms_instance->pushAny(value);
-
 	return 1;
 }
 
 int ScriptManagerLua::classEqual(lua_State* luaState)
 {
-	Any object0 = ms_instance->toAny(1);
-	Any object1 = ms_instance->toAny(2);
+	const Any object0 = ms_instance->toAny(1);
+	const Any object1 = ms_instance->toAny(2);
 
 	if (object0.isObject() && object1.isObject())
 	{
@@ -1124,7 +1123,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
 
@@ -1152,7 +1151,7 @@ int ScriptManagerLua::classAdd(lua_State* luaState)
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1175,7 +1174,7 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
 
@@ -1186,13 +1185,13 @@ int ScriptManagerLua::classSubtract(lua_State* luaState)
 		return 0;
 	}
 
-	Any arg = ms_instance->toAny(2);
+	const Any arg = ms_instance->toAny(2);
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1215,7 +1214,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
 
@@ -1243,7 +1242,7 @@ int ScriptManagerLua::classMultiply(lua_State* luaState)
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
@@ -1266,7 +1265,7 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 	const IRuntimeDispatch* runtimeDispatch = reinterpret_cast< const IRuntimeDispatch* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT(runtimeDispatch);
 
-	int32_t top = lua_gettop(luaState);
+	const int32_t top = lua_gettop(luaState);
 	if (top < 1)
 		return 0;
 
@@ -1277,13 +1276,13 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 		return 0;
 	}
 
-	Any arg = ms_instance->toAny(2);
+	const Any arg = ms_instance->toAny(2);
 
 #if T_VERIFY_USING_EXCEPTIONS
 	try
 #endif
 	{
-		Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
+		const Any returnValue = runtimeDispatch->invoke(object, 1, &arg);
 		ms_instance->pushAny(returnValue);
 		return 1;
 	}
