@@ -336,7 +336,10 @@ bool ProgramVk::validateGraphics(
 			pool->free(m_uniformBuffers[i].range);
 
 		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
+		{
+			log::error << L"Out of uniform buffer pool memory!" << Endl;
 			return false;
+		}
 
 		std::memcpy(
 			m_uniformBuffers[i].range.ptr,
@@ -606,11 +609,22 @@ bool ProgramVk::validateDescriptorSet()
 	}
 
 	// Get already created descriptor set for bound resources.
-	auto it = m_descriptorSets.find(key);
-	if (it != m_descriptorSets.end())
+	//auto it = m_descriptorSets.find(key);
+	//if (it != m_descriptorSets.end())
+	//{
+	//	m_descriptorSet = it->second;
+	//	return true;
+	//}
+	for (const auto& k : m_descriptorSets)
 	{
-		m_descriptorSet = it->second;
-		return true;
+		if (k.first.size() == key.size())
+		{
+			if (memcmp(k.first.c_ptr(), key.c_ptr(), sizeof(intptr_t) * key.size()) == 0)
+			{
+				m_descriptorSet = k.second;
+				return true;
+			}
+		}
 	}
 
 	// No such descriptor set found, need to create another set.
@@ -621,7 +635,11 @@ bool ProgramVk::validateDescriptorSet()
 	dsai.descriptorSetCount = 1;
 	dsai.pSetLayouts = &m_descriptorSetLayout;
 	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &dsai, &m_descriptorSet) != VK_SUCCESS)
+	{
+		log::error << L"Unable to allocate Vulkan descriptor set!" << Endl;
+		m_descriptorSets.insert(key, 0);
 		return false;
+	}
 
 	StaticVector< VkDescriptorBufferInfo, 16 > bufferInfos;
 	StaticVector< VkDescriptorImageInfo, 32 + 32 > imageInfos;
