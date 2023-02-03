@@ -94,9 +94,12 @@ private:
 	Color4ub m_foreground;
 	Color4ub m_background;
 	int32_t m_thickness;
-	bool m_underline;
+	Font m_font;
+	mutable bool m_fontDirty;
 
 	void setSourceColor(const Color4ub& color);
+
+	bool realizeFont() const;
 };
 
 	}

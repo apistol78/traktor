@@ -805,14 +805,14 @@ protected:
 		if (!m_data.visible || !m_data.mapped)
 			return;
 
-		Size sz = m_rect.getSize();
+		const Size sz = m_rect.getSize();
 		if (sz.cx <= 0 || sz.cy <= 0)
 			return;
 
 		if (m_cairo != nullptr)
 		{
-			int32_t cw = cairo_xlib_surface_get_width(m_surface);
-			int32_t ch = cairo_xlib_surface_get_height(m_surface);
+			const int32_t cw = cairo_xlib_surface_get_width(m_surface);
+			const int32_t ch = cairo_xlib_surface_get_height(m_surface);
 			if (cw != sz.cx || ch != sz.cy)
 				cairo_xlib_surface_set_size(m_surface, sz.cx, sz.cy);
 
