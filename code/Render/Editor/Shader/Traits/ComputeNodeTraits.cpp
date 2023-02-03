@@ -34,7 +34,7 @@ bool ComputeNodeTraits::isInputTypeValid(
 ) const
 {
 	if (inputPin->getName() == L"Storage")
-		return isPinTypeStructBuffer(pinType) || isPinTypeTexture(pinType);
+		return isPinTypeStructBuffer(pinType) || isPinTypeTexture(pinType) || isPinTypeImage(pinType);
 	else
 		return isPinTypeScalar(pinType);
 }

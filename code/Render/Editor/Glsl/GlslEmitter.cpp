@@ -217,11 +217,11 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 {
 	cx.enterCompute();
 
-	GlslVariable* offset = cx.emitInput(node, L"Offset");
+	const GlslVariable* offset = cx.emitInput(node, L"Offset");
 	if (!offset)
 		return false;
 
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	const GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
 
@@ -302,8 +302,8 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	// Emit input and reference branches.
-	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	Ref< GlslVariable > ref = cx.emitInput(node, L"Reference");
+	const GlslVariable* in = cx.emitInput(node, L"Input");
+	const GlslVariable* ref = cx.emitInput(node, L"Reference");
 	if (!in || !ref)
 		return false;
 
@@ -317,14 +317,14 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	for (auto outputPin : outputPins)
 		cx.emit(outputPin->getNode());
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Void);
+	GlslVariable* out = cx.emitOutput(node, L"Output", GlslType::Void);
 
 	// Emit true branch.
 	{
 		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
-		Ref< GlslVariable > ct = cx.emitInput(node, L"CaseTrue");
+		const GlslVariable* ct = cx.emitInput(node, L"CaseTrue");
 		if (!ct)
 			return false;
 
@@ -340,7 +340,7 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 		auto& fs = cx.getShader().pushOutputStream(GlslShader::BtBody, T_FILE_LINE_W);
 		cx.getShader().pushScope();
 
-		Ref< GlslVariable > cf = cx.emitInput(node, L"CaseFalse");
+		const GlslVariable* cf = cx.emitInput(node, L"CaseFalse");
 		if (!cf)
 			return false;
 
@@ -416,11 +416,11 @@ bool emitCos(GlslContext& cx, Cos* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
+	const GlslVariable* theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
 		return false;
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
+	const GlslVariable* out = cx.emitOutput(node, L"Output", GlslType::Float);
 
 	comment(f, node);
 	assign(f, out) << L"cos(" << theta->getName() << L");" << Endl;

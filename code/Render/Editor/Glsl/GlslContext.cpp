@@ -115,7 +115,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 		return nullptr;
 
 	// Check if node's output already has been emitted.
-	Ref< GlslVariable > variable = m_currentShader->getVariable(sourcePin);
+	GlslVariable* variable = m_currentShader->getVariable(sourcePin);
 	if (variable)
 		return variable;
 
@@ -126,7 +126,7 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 		sourcePin
 	));
 
-	bool result = m_emitter.emit(*this, node);
+	const bool result = m_emitter.emit(*this, node);
 	if (result)
 	{
 		variable = m_currentShader->getVariable(sourcePin);
