@@ -17,10 +17,8 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.HostEnumerator", HostEnumerator, Object)
 
@@ -135,5 +133,4 @@ bool HostEnumerator::Host::operator < (const Host& h) const
 	return description < h.description;
 }
 
-	}
 }

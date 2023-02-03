@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class T_DLLCLASS FeatureEditorFactory : public editor::IObjectEditorFactory
 {
@@ -39,6 +37,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
-	}
 }
-

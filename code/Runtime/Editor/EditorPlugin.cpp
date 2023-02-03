@@ -70,12 +70,10 @@
 #include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 {
@@ -126,7 +124,7 @@ Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initially
 	return menuItem;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.EditorPlugin", EditorPlugin, editor::IEditorPlugin)
 
@@ -910,5 +908,4 @@ void EditorPlugin::threadTargetActions()
 	}
 }
 
-	}
 }

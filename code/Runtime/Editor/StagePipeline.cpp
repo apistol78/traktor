@@ -19,12 +19,10 @@
 #include "Runtime/Engine/VideoLayerData.h"
 #include "Runtime/Engine/WorldLayerData.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, const StageData* stageData)
 {
@@ -83,7 +81,7 @@ Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, c
 	return stageDataOut;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.StagePipeline", 10, StagePipeline, editor::DefaultPipeline)
 
@@ -180,5 +178,4 @@ bool StagePipeline::buildOutput(
 	return true;
 }
 
-	}
 }

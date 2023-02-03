@@ -11,18 +11,14 @@
 #include "Runtime/Editor/FeatureEditor.h"
 #include "Runtime/Editor/FeatureEditorFactory.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.FeatureEditorFactory", 0, FeatureEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet FeatureEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Feature >();
-	return typeSet;
+	return makeTypeInfoSet< Feature >();
 }
 
 bool FeatureEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -44,5 +40,4 @@ Ref< ISerializable > FeatureEditorFactory::cloneAsset(const ISerializable* asset
 	return DeepClone(asset).create();
 }
 
-	}
 }

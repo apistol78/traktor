@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS StagePipeline : public editor::DefaultPipeline
@@ -54,6 +52,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

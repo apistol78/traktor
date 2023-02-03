@@ -28,8 +28,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace runtime
-	{
+}
+
+namespace traktor::runtime
+{
 
 /*! Target feature description.
  * \ingroup Runtime
@@ -93,6 +95,4 @@ private:
 	std::list< Guid > m_dependencies;
 };
 
-	}
 }
-

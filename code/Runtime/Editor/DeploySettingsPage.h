@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Deployment editor settings page.
  * \ingroup Runtime
@@ -51,6 +49,4 @@ private:
 	Ref< ui::Edit > m_editAndroidApiLevel;
 };
 
-	}
 }
-

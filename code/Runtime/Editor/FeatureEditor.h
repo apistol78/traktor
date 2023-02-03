@@ -16,31 +16,33 @@ namespace traktor
 
 class PropertyStringSet;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Edit;
 class EditList;
 class ListBox;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class FeatureEditor : public editor::IObjectEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	FeatureEditor(editor::IEditor* editor);
+	explicit FeatureEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -73,6 +75,4 @@ private:
 	void selectKey(const std::wstring& key);
 };
 
-	}
 }
-

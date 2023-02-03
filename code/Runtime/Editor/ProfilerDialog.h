@@ -13,20 +13,18 @@
 #include "Runtime/Editor/TargetConnection.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class BuildChartControl;
 class GridView;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Visual profiler dialog.
  * \ingroup Runtime
@@ -38,7 +36,7 @@ class ProfilerDialog
 	T_RTTI_CLASS;
 
 public:
-	ProfilerDialog(TargetConnection* connection);
+	explicit ProfilerDialog(TargetConnection* connection);
 
 	bool create(ui::Widget* parent);
 
@@ -69,6 +67,4 @@ private:
 	void eventClose(ui::CloseEvent* event);
 };
 
-	}
 }
-

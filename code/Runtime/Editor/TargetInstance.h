@@ -15,24 +15,22 @@
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class TcpSocket;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class Platform;
 class Target;
 class TargetConfiguration;
 class TargetConnection;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 enum TargetState
@@ -45,7 +43,7 @@ enum TargetState
 	TsPending
 };
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetInstance : public Object
@@ -53,7 +51,7 @@ class TargetInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const std::wstring& platformName, const Platform* platform);
+	explicit TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const std::wstring& platformName, const Platform* platform);
 
 	void destroy();
 
@@ -107,6 +105,4 @@ private:
 	RefArray< TargetConnection > m_connections;
 };
 
-	}
 }
-

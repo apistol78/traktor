@@ -12,10 +12,8 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Target", 1, Target, ISerializable)
 
@@ -69,5 +67,4 @@ void Target::serialize(ISerializer& s)
 	s >> MemberRefArray< TargetConfiguration>(L"configurations", m_configurations);
 }
 
-	}
 }

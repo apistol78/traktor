@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.DeployTool", 0, DeployTool, ISerializable)
 
@@ -33,5 +31,4 @@ void DeployTool::serialize(ISerializer& s)
 	s >> MemberStlMap< std::wstring, std::wstring >(L"environment", m_environment);
 }
 
-	}
 }

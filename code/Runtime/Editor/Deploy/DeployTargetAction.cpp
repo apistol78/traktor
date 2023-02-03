@@ -32,12 +32,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 struct FeaturePriorityPred
 {
@@ -65,7 +63,7 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return L"";
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.DeployTargetAction", DeployTargetAction, ITargetAction)
 
@@ -307,5 +305,4 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	return exitCode == 0;
 }
 
-	}
 }

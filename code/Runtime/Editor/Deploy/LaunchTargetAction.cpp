@@ -30,12 +30,10 @@
 #include "Core/System/ResolveEnv.h"
 #include "Database/Database.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 struct FeaturePriorityPred
 {
@@ -63,7 +61,7 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return L"";
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.LaunchTargetAction", LaunchTargetAction, ITargetAction)
 
@@ -279,5 +277,4 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	return true;
 }
 
-	}
 }

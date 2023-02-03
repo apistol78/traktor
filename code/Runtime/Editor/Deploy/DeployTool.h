@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Deployment tool description.
  * \ingroup Runtime
@@ -44,6 +42,4 @@ private:
 	std::map< std::wstring, std::wstring > m_environment;
 };
 
-	}
 }
-

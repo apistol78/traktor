@@ -23,10 +23,8 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.DeploySettingsPage", 0, DeploySettingsPage, editor::ISettingsPage)
 
@@ -131,35 +129,34 @@ void DeploySettingsPage::destroy()
 
 bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
-	bool inheritCache = m_checkInheritCache->isChecked();
+	const bool inheritCache = m_checkInheritCache->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.InheritCache", inheritCache);
 
-	bool hidePipeline = m_checkHidePipeline->isChecked();
+	const bool hidePipeline = m_checkHidePipeline->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.PipelineHidden", hidePipeline);
 
-	bool useDebugBinaries = m_checkUseDebugBinaries->isChecked();
+	const bool useDebugBinaries = m_checkUseDebugBinaries->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.UseDebugBinaries", useDebugBinaries);
 
-	bool staticallyLinked = m_checkStaticallyLinked->isChecked();
+	const bool staticallyLinked = m_checkStaticallyLinked->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.StaticallyLinked", staticallyLinked);
 
-	bool autoBuildRunningTargets = m_checkAutoBuildRunningTargets->isChecked();
+	const bool autoBuildRunningTargets = m_checkAutoBuildRunningTargets->isChecked();
 	settings->setProperty< PropertyBoolean >(L"Runtime.AutoBuildRunningTargets", autoBuildRunningTargets);
 
-	std::wstring androidHome = m_editAndroidHome->getText();
+	const std::wstring androidHome = m_editAndroidHome->getText();
 	settings->setProperty< PropertyString >(L"Runtime.AndroidHome", androidHome);
 
-	std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
+	const std::wstring androidNdkRoot = m_editAndroidNdkRoot->getText();
 	settings->setProperty< PropertyString >(L"Runtime.AndroidNdkRoot", androidNdkRoot);
 
-	std::wstring androidToolchain = m_editAndroidToolchain->getText();
+	const std::wstring androidToolchain = m_editAndroidToolchain->getText();
 	settings->setProperty< PropertyString >(L"Runtime.AndroidToolchain", androidToolchain);
 
-	std::wstring androidApiLevel = m_editAndroidApiLevel->getText();
+	const std::wstring androidApiLevel = m_editAndroidApiLevel->getText();
 	settings->setProperty< PropertyString >(L"Runtime.AndroidApiLevel", androidApiLevel);
 
 	return true;
 }
 
-	}
 }

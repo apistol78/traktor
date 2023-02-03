@@ -11,10 +11,8 @@
 #include "Runtime/Editor/GameEntityWizardDialog.h"
 #include "Runtime/Editor/GameEntityWizardTool.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.GameEntityWizardTool", 0, GameEntityWizardTool, editor::IWizardTool)
 
@@ -40,5 +38,4 @@ bool GameEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	return true;
 }
 
-	}
 }

@@ -31,10 +31,8 @@
 #include "Ui/Panel.h"
 #include "Ui/Splitter.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.FeatureEditor", FeatureEditor, editor::IObjectEditor)
 
@@ -334,5 +332,4 @@ void FeatureEditor::selectKey(const std::wstring& key)
 		m_listValues->setEnable(false);
 }
 
-	}
 }

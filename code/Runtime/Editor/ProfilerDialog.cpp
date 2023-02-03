@@ -22,12 +22,10 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const Color4ub c_threadColors[] =
 {
@@ -47,7 +45,7 @@ Ref< ui::GridRow > createPerformanceRow(const std::wstring& name, const std::wst
 	return row;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ProfilerDialog", ProfilerDialog, ui::Dialog)
 
@@ -239,5 +237,4 @@ void ProfilerDialog::eventClose(ui::CloseEvent* event)
 	destroy();
 }
 
-	}
 }

@@ -11,17 +11,10 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Platform", 3, Platform, ISerializable)
-
-Platform::Platform()
-:	m_iconIndex(0)
-{
-}
 
 int32_t Platform::getIconIndex() const
 {
@@ -58,5 +51,4 @@ void Platform::serialize(ISerializer& s)
 		s >> MemberComposite< DeployTool >(L"deployToolLinux", m_deployToolLinux);
 }
 
-	}
 }

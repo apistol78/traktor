@@ -14,24 +14,22 @@
 #include "Editor/IObjectEditor.h"
 #include "Ui/Events/AllEvents.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Bitmap;
 class Container;
@@ -43,17 +41,17 @@ class Image;
 class ListBox;
 class MiniButton;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class Feature;
 class Platform;
 class Target;
 class TargetConfiguration;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetEditor : public editor::IObjectEditor
@@ -61,7 +59,7 @@ class TargetEditor : public editor::IObjectEditor
 	T_RTTI_CLASS;
 
 public:
-	TargetEditor(editor::IEditor* editor);
+	explicit TargetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -144,6 +142,4 @@ private:
 	void eventButtonRemoveFeatureClick(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-

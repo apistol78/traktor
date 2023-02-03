@@ -46,10 +46,8 @@
 #include "World/EntityData.h"
 #include "World/Entity/ScriptComponentData.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.GameEntityWizardDialog", GameEntityWizardDialog, ui::ConfigDialog)
 
@@ -649,5 +647,4 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 	}
 }
 
-	}
 }

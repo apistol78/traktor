@@ -18,10 +18,8 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetConnection", TargetConnection, Object)
 
@@ -162,5 +160,4 @@ void TargetConnection::setProfilerEventsCallback(IProfilerEventsCallback* profil
 		m_profilerEventsCallback->receivedProfilerDictionary(m_dictionary);
 }
 
-	}
 }

@@ -19,10 +19,8 @@
 // Resources
 #include "Resources/Error.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ErrorDialog", ErrorDialog, ui::Dialog)
 
@@ -94,5 +92,4 @@ void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)
 	endModal(ui::DialogResult::Ok);
 }
 
-	}
 }

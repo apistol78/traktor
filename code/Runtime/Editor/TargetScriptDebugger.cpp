@@ -18,16 +18,14 @@
 #include "Core/Log/Log.h"
 #include "Net/BidirectionalObjectTransport.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_timeout = 30000;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetScriptDebugger", TargetScriptDebugger, script::IScriptDebugger)
 
@@ -212,5 +210,4 @@ void TargetScriptDebugger::removeListener(IListener* listener)
 	m_listeners.remove(listener);
 }
 
-	}
 }

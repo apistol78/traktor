@@ -11,17 +11,15 @@
 #include "Core/Ref.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class LogList;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class ErrorDialog : public ui::Dialog
 {
@@ -42,5 +40,4 @@ private:
 	void eventButtonClickQuit(ui::ButtonClickEvent* event);
 };
 
-	}
 }

@@ -46,10 +46,8 @@
 // Resources
 #include "Resources/NoIcon.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetEditor", TargetEditor, editor::IObjectEditor)
 
@@ -712,5 +710,4 @@ bool TargetEditor::EditFeature::operator < (const EditFeature& ef) const
 	return compareIgnoreCase(feature->getDescription(), ef.feature->getDescription()) < 0;
 }
 
-	}
 }

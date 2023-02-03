@@ -10,40 +10,38 @@
 
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Group;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class CheckBox;
 class DropDown;
 class Edit;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class GameEntityWizardDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS;
 
 public:
-	GameEntityWizardDialog(editor::IEditor* editor, db::Group* group);
+	explicit GameEntityWizardDialog(editor::IEditor* editor, db::Group* group);
 
 	bool create(ui::Widget* parent);
 
@@ -84,6 +82,4 @@ private:
 	void eventDialogClick(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-

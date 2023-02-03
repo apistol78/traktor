@@ -6,10 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/TargetConnection.h"
-#include "Runtime/Editor/TargetInstance.h"
-#include "Runtime/Editor/TargetManager.h"
-#include "Runtime/Target/TargetID.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -18,12 +14,14 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketSet.h"
+#include "Runtime/Editor/TargetConnection.h"
+#include "Runtime/Editor/TargetInstance.h"
+#include "Runtime/Editor/TargetManager.h"
+#include "Runtime/Target/TargetID.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetManager", TargetManager, Object)
 
@@ -169,5 +167,4 @@ bool TargetManager::update()
 	return needUpdate;
 }
 
-	}
 }

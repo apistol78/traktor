@@ -25,15 +25,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class Target;
 class TargetConfiguration;
@@ -46,7 +48,7 @@ class T_DLLCLASS BuildTargetAction : public ITargetAction
 	T_RTTI_CLASS;
 
 public:
-	BuildTargetAction(
+	explicit BuildTargetAction(
 		db::Database* database,
 		const PropertyGroup* globalSettings,
 		const PropertyGroup* defaultPipelineSettings,
@@ -70,6 +72,4 @@ private:
 	bool m_force;
 };
 
-	}
 }
-
