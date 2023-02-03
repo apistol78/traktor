@@ -27,7 +27,7 @@ CanvasX11::CanvasX11(cairo_t* cr)
 ,	m_foreground(255, 255, 255, 255)
 ,	m_background(255, 255, 255, 255)
 ,	m_thickness(1)
-,	m_underline(false)
+,	m_fontDirty(false)
 {
 	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
@@ -50,17 +50,11 @@ void CanvasX11::setBackground(const Color4ub& background)
 
 void CanvasX11::setFont(const Font& font)
 {
-	cairo_select_font_face(
-		m_cr,
-		wstombs(font.getFace()).c_str(),
-		CAIRO_FONT_SLANT_NORMAL,
-		font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
-	);
-	cairo_set_font_size(
-		m_cr,
-		dpi96(font.getSize())
-	);
-	m_underline = font.isUnderline();
+	if (font != m_font)
+	{
+		m_font = font;	
+		m_fontDirty = true;
+	}
 }
 
 const IFontMetric* CanvasX11::getFontMetric() const
@@ -287,6 +281,9 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 
 void CanvasX11::drawText(const Point& at, const std::wstring& text)
 {
+	if (!realizeFont())
+		return;
+
 	cairo_font_extents_t x;
 	cairo_font_extents(m_cr, &x);
 
@@ -295,7 +292,7 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 
 	cairo_show_text(m_cr, wstombs(text).c_str());
 
-	if (m_underline)
+	if (m_font.isUnderline())
 	{
 		cairo_text_extents_t tx;
 		cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
@@ -319,39 +316,62 @@ void* CanvasX11::getSystemHandle()
 
 void CanvasX11::getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const
 {
-	cairo_font_extents_t x;
-	cairo_font_extents(m_cr, &x);
-	outAscent = (int32_t)x.ascent;
-	outDescent = (int32_t)x.descent;
+	if (realizeFont())
+	{
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cr, &x);
+		outAscent = (int32_t)x.ascent;
+		outDescent = (int32_t)x.descent;
+	}
+	else
+	{
+		outAscent =
+		outDescent = 0;
+	}
 }
 
 int32_t CanvasX11::getAdvance(wchar_t ch, wchar_t next) const
 {
-	uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
-	int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
-	if (nuc <= 0)
+	if (realizeFont())
+	{
+		uint8_t uc[IEncoding::MaxEncodingSize + 1] = { 0 };
+		int32_t nuc = Utf8Encoding().translate(&ch, 1, uc);
+		if (nuc <= 0)
+			return 0;
+
+		cairo_text_extents_t tx;
+		cairo_text_extents(m_cr, (const char*)uc, &tx);
+
+		return (int32_t)tx.x_advance;
+	}
+	else
 		return 0;
-
-	cairo_text_extents_t tx;
-	cairo_text_extents(m_cr, (const char*)uc, &tx);
-
-	return (int32_t)tx.x_advance;
 }
 
 int32_t CanvasX11::getLineSpacing() const
 {
-	cairo_font_extents_t x;
-	cairo_font_extents(m_cr, &x);
-	return (int32_t)x.height;
+	if (realizeFont())
+	{
+		cairo_font_extents_t x;
+		cairo_font_extents(m_cr, &x);
+		return (int32_t)x.height;
+	}
+	else
+		return 0;
 }
 
 Size CanvasX11::getExtent(const std::wstring& text) const
 {
-	cairo_font_extents_t fx;
-	cairo_text_extents_t tx;
-	cairo_font_extents(m_cr, &fx);
-	cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
-	return Size(tx.width, fx.height);
+	if (realizeFont())
+	{
+		cairo_font_extents_t fx;
+		cairo_text_extents_t tx;
+		cairo_font_extents(m_cr, &fx);
+		cairo_text_extents(m_cr, wstombs(text).c_str(), &tx);
+		return Size(tx.width, fx.height);
+	}
+	else
+		return Size(0, 0);
 }
 
 void CanvasX11::setSourceColor(const Color4ub& color)
@@ -361,6 +381,26 @@ void CanvasX11::setSourceColor(const Color4ub& color)
 		cairo_set_source_rgba(m_cr, color.e[0] / 255.0, color.e[1] / 255.0, color.e[2] / 255.0, color.e[3] / 255.0);
 		m_currentSourceColor = color;
 	}
+}
+
+bool CanvasX11::realizeFont() const
+{
+	if (!m_fontDirty)
+		return true;
+
+	cairo_select_font_face(
+		m_cr,
+		wstombs(m_font.getFace()).c_str(),
+		CAIRO_FONT_SLANT_NORMAL,
+		m_font.isBold() ? CAIRO_FONT_WEIGHT_BOLD : CAIRO_FONT_WEIGHT_NORMAL
+	);
+	cairo_set_font_size(
+		m_cr,
+		dpi96(m_font.getSize())
+	);
+
+	m_fontDirty = false;
+	return true;
 }
 
 	}
