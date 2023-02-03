@@ -30,12 +30,10 @@
 #include "Net/Discovery/NetworkService.h"
 #include "Remote/Server/Server.h"
 
-namespace traktor
+namespace traktor::remote
 {
-    namespace remote
+    namespace
     {
-        namespace
-        {
 
 const uint8_t c_msgDeploy = 1;
 const uint8_t c_msgLaunchProcess = 2;
@@ -45,15 +43,9 @@ const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
 
-        }
+       }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.remote.Server", Server, Object)
-
-Server::Server()
-:	m_listenPort(0)
-,	m_verbose(false)
-{
-}
 
 bool Server::create(const std::wstring& scratchPath, const std::wstring& keyword, int32_t listenPort, bool verbose)
 {
@@ -398,5 +390,4 @@ void Server::processClient(net::TcpSocket* clientSocket)
 	clientSocket = nullptr;
 }
 
-    }
 }

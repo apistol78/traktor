@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::remote
 {
-	namespace remote
-	{
 
 class T_DLLCLASS ServerClassFactory : public IRuntimeClassFactory
 {
@@ -31,6 +29,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

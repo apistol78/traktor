@@ -18,10 +18,8 @@
 #include "Remote/Server/Server.h"
 #include "Remote/Server/Editor/RemoteEditorPlugin.h"
 
-namespace traktor
+namespace traktor::remote
 {
-	namespace remote
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.RemoteEditorPlugin", RemoteEditorPlugin, editor::IEditorPlugin)
 
@@ -91,5 +89,4 @@ void RemoteEditorPlugin::threadServer()
 		m_server->update();
 }
 
-	}
 }

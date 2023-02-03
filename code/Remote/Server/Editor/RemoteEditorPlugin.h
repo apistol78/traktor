@@ -16,15 +16,17 @@ namespace traktor
 
 class Thread;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace remote
-	{
+namespace traktor::remote
+{
 
 class Server;
 
@@ -36,7 +38,7 @@ class RemoteEditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	RemoteEditorPlugin(editor::IEditor* editor);
+	explicit RemoteEditorPlugin(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
@@ -58,5 +60,4 @@ private:
     void threadServer();
 };
 
-	}
 }
