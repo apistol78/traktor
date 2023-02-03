@@ -9,20 +9,18 @@
 #include "Physics/Bullet/JointConstraint.h"
 #include "Physics/Bullet/JointBullet.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 JointConstraint::JointConstraint(btRigidBody& rbA)
 :	btTypedConstraint(POINT2POINT_CONSTRAINT_TYPE, rbA)
-,	m_jointSolver(0)
+,	m_jointSolver(nullptr)
 {
 }
 
 JointConstraint::JointConstraint(btRigidBody& rbA, btRigidBody& rbB)
 :	btTypedConstraint(POINT2POINT_CONSTRAINT_TYPE, rbA, rbB)
-,	m_jointSolver(0)
+,	m_jointSolver(nullptr)
 {
 }
 
@@ -60,5 +58,4 @@ btScalar JointConstraint::getParam(int num, int axis) const
 	return btScalar(0.0f);
 }
 
-	}
 }

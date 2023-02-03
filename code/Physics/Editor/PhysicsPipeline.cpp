@@ -80,6 +80,8 @@ bool PhysicsPipeline::buildDependencies(
 	}
 	else if (auto characterData = dynamic_type_cast< const CharacterComponentData* >(sourceAsset))
 	{
+		for (auto id : characterData->getCollisionGroup())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : characterData->getTraceInclude())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : characterData->getTraceIgnore())

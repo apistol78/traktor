@@ -14,10 +14,8 @@
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/Types.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*!
  * \ingroup Bullet
@@ -93,6 +91,4 @@ protected:
 	Ref< BodyBullet > m_body2;
 };
 
-	}
 }
-

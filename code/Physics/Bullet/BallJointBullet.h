@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*!
  * \ingroup Bullet
@@ -32,13 +30,11 @@ class T_DLLCLASS BallJointBullet : public JointBullet< BallJoint, btPoint2PointC
 	T_RTTI_CLASS;
 
 public:
-	BallJointBullet(IWorldCallback* callback, btPoint2PointConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
+	explicit BallJointBullet(IWorldCallback* callback, btPoint2PointConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
 	virtual void setAnchor(const Vector4& anchor) override final;
 
 	virtual Vector4 getAnchor() const override final;
 };
 
-	}
 }
-

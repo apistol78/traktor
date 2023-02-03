@@ -11,10 +11,8 @@
 #include "Core/Config.h"
 #include <BulletDynamics/ConstraintSolver/btTypedConstraint.h>
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 struct JointSolver;
 
@@ -24,9 +22,9 @@ struct JointSolver;
 class JointConstraint : public btTypedConstraint
 {
 public:
-	JointConstraint(btRigidBody& rbA);
+	explicit JointConstraint(btRigidBody& rbA);
 
-	JointConstraint(btRigidBody& rbA, btRigidBody& rbB);
+	explicit JointConstraint(btRigidBody& rbA, btRigidBody& rbB);
 
 	void setJointSolver(JointSolver* jointSolver);
 
@@ -46,6 +44,4 @@ private:
 	JointSolver* m_jointSolver;
 };
 
-	}
 }
-

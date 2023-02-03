@@ -9,10 +9,8 @@
 #include "Physics/Bullet/DofJointBullet.h"
 #include "Physics/Bullet/Conversion.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.DofJointBullet", DofJointBullet, DofJoint)
 
@@ -21,5 +19,4 @@ DofJointBullet::DofJointBullet(IWorldCallback* callback, btGeneric6DofConstraint
 {
 }
 
-	}
 }

@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class Body;
 class ConeTwistJointDesc;
@@ -37,9 +35,9 @@ class T_DLLCLASS ConeTwistJointBullet : public JointBullet< ConeTwistJoint, Join
 	T_RTTI_CLASS;
 
 public:
-	ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, const ConeTwistJointDesc* desc);
+	explicit ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, const ConeTwistJointDesc* desc);
 
-	ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, BodyBullet* body2, const ConeTwistJointDesc* desc);
+	explicit ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, BodyBullet* body2, const ConeTwistJointDesc* desc);
 
 	virtual void prepare() override final;
 
@@ -68,6 +66,4 @@ private:
 	Vector4 m_twistImpulseAxis;
 };
 
-	}
 }
-

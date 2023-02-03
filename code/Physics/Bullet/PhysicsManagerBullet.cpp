@@ -46,12 +46,10 @@
 #include "Physics/Bullet/PhysicsManagerBullet.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 void* traktorAlloc(size_t size)
 {
@@ -221,7 +219,7 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(convexResult.m_hitCollisionObject) == m_queryFilter.ignoreClusterId)
 			return 1.0f;
 
-		uint32_t group = getCollisionGroup(convexResult.m_hitCollisionObject);
+		const uint32_t group = getCollisionGroup(convexResult.m_hitCollisionObject);
 
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
@@ -282,7 +280,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
 
-		uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
+		const uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
 
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return m_closestHitFraction;
@@ -343,7 +341,7 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 		if (m_queryFilter.ignoreClusterId != 0 && getClusterId(rayResult.m_collisionObject) == m_queryFilter.ignoreClusterId)
 			return m_closestHitFraction;
 
-		uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
+		const uint32_t group = getCollisionGroup(rayResult.m_collisionObject);
 
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return m_closestHitFraction;
@@ -395,7 +393,7 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 		if (m_queryFilter.ignoreClusterId != 0 && bodyBullet->getClusterId() == m_queryFilter.ignoreClusterId)
 			return 1.0f;
 
-		uint32_t group = bodyBullet->getCollisionGroup();
+		const uint32_t group = bodyBullet->getCollisionGroup();
 
 		if ((group & m_queryFilter.includeGroup) == 0 || (group & m_queryFilter.ignoreGroup) != 0)
 			return 1.0f;
@@ -538,14 +536,14 @@ void deleteShape(btCollisionShape* shape)
 	else if (shape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
 	{
 		btCompoundShape* compoundShape = static_cast< btCompoundShape* >(shape);
-		int numChildShapes = compoundShape->getNumChildShapes();
+		const int numChildShapes = compoundShape->getNumChildShapes();
 		for (int i = 0; i < numChildShapes; ++i)
 			deleteShape(compoundShape->getChildShape(i));
 	}
 	delete shape;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", 0, PhysicsManagerBullet, PhysicsManager)
 
@@ -654,15 +652,15 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const CapsuleShapeDesc* capsuleShape = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 	{
-		float radius = capsuleShape->getRadius();
-		float length = capsuleShape->getLength() - radius * 2.0f;
+		const float radius = capsuleShape->getRadius();
+		const float length = capsuleShape->getLength() - radius * 2.0f;
 		T_ASSERT(length >= 0.0f);
 		shape = new btCapsuleShapeZ(radius, length);
 	}
 	else if (const CylinderShapeDesc* cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 	{
-		float radius = cylinderShape->getRadius();
-		float length = cylinderShape->getLength();
+		const float radius = cylinderShape->getRadius();
+		const float length = cylinderShape->getLength();
 		shape = new btCylinderShapeZ(btVector3(radius, radius, length / 2.0f));
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
@@ -808,7 +806,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
-		float mass = dynamicDesc->getMass();
+		const float mass = dynamicDesc->getMass();
 
 		// Calculate inertia from shape.
 		btVector3 localInertia(0.0f, 0.0f, 0.0f);
@@ -914,8 +912,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		if (b1 && b2)
 		{
-			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
-			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
+			const Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
+			const Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
 			btVector3 anchorIn2 = toBtVector3(bb2->getBodyTransform().inverse() * anchor);
@@ -933,8 +931,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		}
 		else
 		{
-			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
-			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
+			const Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
+			const Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
 			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
@@ -956,9 +954,9 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		if (b1 && b2)
 		{
-			Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
-			Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
-			Vector4 anchorIn2 = bb2->getBodyTransform().inverse() * anchor;
+			const Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
+			const Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
+			const Vector4 anchorIn2 = bb2->getBodyTransform().inverse() * anchor;
 
 			pointConstraint = new btPoint2PointConstraint(
 				*b1,
@@ -969,8 +967,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		}
 		else
 		{
-			Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
-			Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
+			const Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
+			const Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
 
 			pointConstraint = new btPoint2PointConstraint(
 				*b1,
@@ -1022,8 +1020,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		if (b1 && b2)
 		{
-			Transform Tbody1Inv = body1->getCenterTransform().inverse();
-			Transform Tbody2Inv = body2->getCenterTransform().inverse();
+			const Transform Tbody1Inv = body1->getCenterTransform().inverse();
+			const Transform Tbody2Inv = body2->getCenterTransform().inverse();
 
 			dofConstraint = new btGeneric6DofConstraint(
 				*b1,
@@ -1035,7 +1033,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		}
 		else
 		{
-			Transform Tbody1Inv = body1->getCenterTransform().inverse();
+			const Transform Tbody1Inv = body1->getCenterTransform().inverse();
 
 			dofConstraint = new btGeneric6DofConstraint(
 				*b1,
@@ -1060,8 +1058,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		if (b1 && b2)
 		{
-			Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
-			Vector4 axis = transform * hingeDesc->getAxis().xyz0().normalized();
+			const Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
+			const Vector4 axis = transform * hingeDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
 			btVector3 anchorIn2 = toBtVector3(bb2->getBodyTransform().inverse() * anchor);
@@ -1079,8 +1077,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		}
 		else
 		{
-			Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
-			Vector4 axis = transform * hingeDesc->getAxis().xyz0();
+			const Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
+			const Vector4 axis = transform * hingeDesc->getAxis().xyz0();
 
 			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
 			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
@@ -1113,9 +1111,9 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		if (b1 && b2)
 		{
-			Vector4 anchor = transform * hinge2Desc->getAnchor().xyz1();
-			Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0().normalized();
-			Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0().normalized();
+			const Vector4 anchor = transform * hinge2Desc->getAnchor().xyz1();
+			const Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0().normalized();
+			const Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0().normalized();
 
 			btVector3 _anchor = toBtVector3(anchor);
 			btVector3 _axis1 = toBtVector3(axis1);
@@ -1287,7 +1285,7 @@ RefArray< Body > PhysicsManagerBullet::getBodies() const
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
 {
-	int manifoldCount = m_dispatcher->getNumManifolds();
+	const int manifoldCount = m_dispatcher->getNumManifolds();
 
 	outCollidingPairs.reserve(manifoldCount);
 	for (int i = 0; i < manifoldCount; ++i)
@@ -1296,7 +1294,7 @@ uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& o
 		T_ASSERT(manifold);
 
 		bool validContact = false;
-		int contacts = manifold->getNumContacts();
+		const int contacts = manifold->getNumContacts();
 		for (int j = 0; j < contacts; ++j)
 		{
 			const btManifoldPoint& pt = manifold->getContactPoint(j);
@@ -1416,8 +1414,8 @@ bool PhysicsManagerBullet::queryShadowRay(
 {
 	++m_queryCount;
 
-	btVector3 from = toBtVector3(at);
-	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
+	const btVector3 from = toBtVector3(at);
+	const btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
 
 	ClosestRayExcludeResultCallback callback(queryFilter, queryTypes, from, to);
 	m_dynamicsWorld->rayTest(from, to, callback);
@@ -1439,22 +1437,22 @@ uint32_t PhysicsManagerBullet::querySphere(
 
 	outBodies.resize(0);
 
-	btVector3 center = toBtVector3(at);
-	btVector3 radii = btVector3(radius, radius, radius);
+	const btVector3 center = toBtVector3(at);
+	const btVector3 radii = btVector3(radius, radius, radius);
 
-	btVector3 aabbMin = center - radii;
-	btVector3 aabbMax = center + radii;
+	const btVector3 aabbMin = center - radii;
+	const btVector3 aabbMax = center + radii;
 
 	QuerySphereCallback callback;
 	m_broadphase->aabbTest(aabbMin, aabbMax, callback);
 	for (auto body : callback.bodies)
 	{
-		uint32_t group = body->getCollisionGroup();
+		const uint32_t group = body->getCollisionGroup();
 
 		if ((group & queryFilter.includeGroup) == 0 || (group & queryFilter.ignoreGroup) != 0)
 			continue;
 
-		bool st = body->isStatic();
+		const bool st = body->isStatic();
 		if ((queryTypes & QtStatic) == 0 && st)
 			continue;
 		if ((queryTypes & QtDynamic) == 0 && !st)
@@ -1466,8 +1464,8 @@ uint32_t PhysicsManagerBullet::querySphere(
 		btVector3 aabbMin, aabbMax;
 		rigidBody->getAabb(aabbMin, aabbMax);
 
-		float bodyRadius = (aabbMax - aabbMin).length() * 0.5f;
-		Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
+		const float bodyRadius = (aabbMax - aabbMin).length() * 0.5f;
+		const Vector4 bodyCenter = fromBtVector3((aabbMin + aabbMax) * 0.5f, 1.0f);
 
 		if ((bodyCenter - at).length() - radius - bodyRadius <= 0.0f)
 			outBodies.push_back(body);
@@ -1487,7 +1485,7 @@ bool PhysicsManagerBullet::querySweep(
 {
 	++m_queryCount;
 
-	btSphereShape sphereShape(radius);
+	const btSphereShape sphereShape(radius);
 	btTransform from, to;
 
 	from.setIdentity();
@@ -1594,7 +1592,7 @@ void PhysicsManagerBullet::querySweep(
 {
 	++m_queryCount;
 
-	btSphereShape sphereShape(radius);
+	const btSphereShape sphereShape(radius);
 	btTransform from, to;
 
 	from.setIdentity();
@@ -1642,7 +1640,7 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 			continue;
 
 		const btTransform& colT = col->getWorldTransform();
-		btTransform colTinv = colT.inverse();
+		const btTransform colTinv = colT.inverse();
 
 		QueryTrianglesCallback trianglesCallback(colT, outTriangles);
 
@@ -1650,7 +1648,7 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 		{
 			btCompoundShape* compound = static_cast< btCompoundShape* >(shape);
 
-			int numChilds = compound->getNumChildShapes();
+			const int numChilds = compound->getNumChildShapes();
 			for (int j = 0; j < numChilds; ++j)
 			{
 				btCollisionShape* childShape = compound->getChildShape(j);
@@ -1658,9 +1656,9 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 
 				if (childShape->isConcave())
 				{
-					btVector3 localCenter = colTinv * toBtVector3(center);
-					btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
-					btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
+					const btVector3 localCenter = colTinv * toBtVector3(center);
+					const btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
+					const btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
 
 					btConcaveShape* concave = static_cast< btConcaveShape* >(childShape);
 					concave->processAllTriangles(&trianglesCallback, aabbMin, aabbMax);
@@ -1669,9 +1667,9 @@ void PhysicsManagerBullet::queryTriangles(const Vector4& center, float radius, A
 		}
 		else if (shape->isConcave())
 		{
-			btVector3 localCenter = colTinv * toBtVector3(center);
-			btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
-			btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
+			const btVector3 localCenter = colTinv * toBtVector3(center);
+			const btVector3 aabbMin = localCenter - btVector3(radius, radius, radius);
+			const btVector3 aabbMax = localCenter + btVector3(radius, radius, radius);
 
 			btConcaveShape* concave = static_cast< btConcaveShape* >(shape);
 			concave->processAllTriangles(&trianglesCallback, aabbMin, aabbMax);
@@ -1738,7 +1736,7 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 	T_FATAL_ASSERT(rigidBody->getNumConstraintRefs() == 0);
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
-	bool removed = m_bodies.remove(body);
+	const bool removed = m_bodies.remove(body);
 	T_FATAL_ASSERT(removed);
 
 	delete rigidBody->getMotionState();
@@ -1752,7 +1750,7 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 
 	m_dynamicsWorld->removeConstraint(constraint);
 
-	bool removed = m_joints.remove(joint);
+	const bool removed = m_joints.remove(joint);
 	T_FATAL_ASSERT(removed);
 
 	delete constraint;
@@ -1762,24 +1760,24 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 {
 	T_ASSERT(ms_this);
 
-	btCollisionObject* colObj0 = static_cast< btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
-	btCollisionObject* colObj1 = static_cast< btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);
+	const btCollisionObject* colObj0 = static_cast< const btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
+	const btCollisionObject* colObj1 = static_cast< const btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);
 
-	BodyBullet* body1 = colObj0 ? static_cast< BodyBullet* >(colObj0->getUserPointer()) : nullptr;
-	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : nullptr;
+	const BodyBullet* body1 = colObj0 ? static_cast< const BodyBullet* >(colObj0->getUserPointer()) : nullptr;
+	const BodyBullet* body2 = colObj1 ? static_cast< const BodyBullet* >(colObj1->getUserPointer()) : nullptr;
 	if (body1 && body2)
 	{
 		// Filter on cluster id.
-		uint32_t clusterId1 = body1->getClusterId();
+		const uint32_t clusterId1 = body1->getClusterId();
 		if (clusterId1 != ~0U && clusterId1 == body2->getClusterId())
 			return;
 
 		// Filter collision on collision group and mask.
-		uint32_t group1 = body1->getCollisionGroup();
-		uint32_t mask1 = body1->getCollisionMask();
+		const uint32_t group1 = body1->getCollisionGroup();
+		const uint32_t mask1 = body1->getCollisionMask();
 
-		uint32_t group2 = body2->getCollisionGroup();
-		uint32_t mask2 = body2->getCollisionMask();
+		const uint32_t group2 = body2->getCollisionGroup();
+		const uint32_t mask2 = body2->getCollisionMask();
 
 		if ((group1 & mask2) == 0 || (group2 & mask1) == 0)
 			return;
@@ -1788,5 +1786,4 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	btCollisionDispatcher::defaultNearCallback(collisionPair, dispatcher, dispatchInfo);
 }
 
-	}
 }

@@ -29,10 +29,8 @@ class btDiscreteDynamicsWorld;
 struct btBroadphasePair;
 struct btDispatcherInfo;
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class BodyBullet;
 class Joint;
@@ -174,6 +172,4 @@ private:
 	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) override final;
 };
 
-	}
 }
-

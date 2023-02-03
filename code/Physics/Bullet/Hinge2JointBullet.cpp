@@ -9,10 +9,8 @@
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/Hinge2JointBullet.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Hinge2JointBullet", Hinge2JointBullet, Hinge2Joint)
 
@@ -42,5 +40,4 @@ void Hinge2JointBullet::getAnchors(Vector4& outAnchor1, Vector4& outAnchor2) con
 {
 }
 
-	}
 }
