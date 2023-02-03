@@ -24,15 +24,17 @@ namespace traktor
 
 class Color4ub;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 /*! Bitmap.
  * \ingroup UI
@@ -111,6 +113,4 @@ private:
 	ISystemBitmap* m_bitmap;
 };
 
-	}
 }
-

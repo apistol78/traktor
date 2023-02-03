@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class ChildEvent;
 class IBitmap;
@@ -60,6 +58,4 @@ private:
 	void eventChild(ChildEvent* event);
 };
 
-	}
 }
-

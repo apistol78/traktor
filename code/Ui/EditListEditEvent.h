@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 
@@ -48,6 +46,4 @@ private:
 	std::wstring m_text;
 };
 
-	}
 }
-

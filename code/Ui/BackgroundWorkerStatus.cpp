@@ -9,20 +9,11 @@
 #include "Core/Thread/Acquire.h"
 #include "Ui/BackgroundWorkerStatus.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
-
-BackgroundWorkerStatus::BackgroundWorkerStatus()
-:	m_steps(0)
-,	m_step(-1)
-{
-}
 
 BackgroundWorkerStatus::BackgroundWorkerStatus(int32_t steps)
 :	m_steps(steps)
-,	m_step(-1)
 {
 }
 
@@ -53,5 +44,4 @@ bool BackgroundWorkerStatus::read(int32_t& outStep, std::wstring& outStatus)
 	return true;
 }
 
-	}
 }

@@ -14,12 +14,10 @@
 #include "Ui/Layout.h"
 #include "Ui/Itf/IDialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 		
 template< typename WidgetType >
 WidgetType* getAncestorOf(Widget* widget)
@@ -36,7 +34,7 @@ WidgetType* getAncestorOf(Widget* widget)
 		return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dialog", Dialog, Container)
 
@@ -118,5 +116,4 @@ void Dialog::eventChild(ChildEvent* event)
 	static_cast< IDialog* >(m_widget)->setMinSize(result);
 }
 
-	}
 }

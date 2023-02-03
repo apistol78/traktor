@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Flood layout.
  * \ingroup UI
@@ -47,6 +45,4 @@ private:
 	Ref< Widget > getFirstVisibleChild(Widget* widget);
 };
 
-	}
 }
-

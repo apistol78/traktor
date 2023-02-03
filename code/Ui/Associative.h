@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Associate container.
  * \ingroup UI
@@ -61,6 +59,4 @@ private:
 	Impl* m_impl = nullptr;
 };
 
-	}
 }
-

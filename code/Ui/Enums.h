@@ -10,10 +10,8 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! \ingroup UI */
 //@{
@@ -243,6 +241,4 @@ enum VirtualKey
 
 //@}
 
-	}
 }
-

@@ -13,10 +13,8 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Itf/IContainer.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Container", Container, Widget)
 
@@ -133,5 +131,4 @@ void Container::eventPaint(PaintEvent* event)
 	canvas.fillRect(event->getUpdateRect());
 }
 
-	}
 }

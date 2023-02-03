@@ -9,10 +9,8 @@
 #include "Ui/AspectLayout.h"
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AspectLayout", AspectLayout, Layout)
 
@@ -68,5 +66,4 @@ void AspectLayout::update(Widget* widget)
 	}
 }
 
-	}
 }

@@ -9,10 +9,8 @@
 #include "Ui/FlowLayout.h"
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FlowLayout", FlowLayout, Layout)
 
@@ -89,5 +87,4 @@ bool FlowLayout::calculateRects(Widget* widget, const Size& bounds, std::vector<
 	return true;
 }
 
-	}
 }

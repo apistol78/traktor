@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Layout;
 class SizeEvent;
@@ -65,6 +63,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

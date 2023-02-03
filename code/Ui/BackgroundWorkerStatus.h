@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Background worker status report.
  * \ingroup UI
@@ -31,9 +29,9 @@ namespace traktor
 class T_DLLCLASS BackgroundWorkerStatus : public RefCountImpl< BackgroundWorkerDialog::IWorkerStatus >
 {
 public:
-	BackgroundWorkerStatus();
+	BackgroundWorkerStatus() = default;
 
-	BackgroundWorkerStatus(int32_t steps);
+	explicit BackgroundWorkerStatus(int32_t steps);
 
 	void setSteps(int32_t steps);
 
@@ -43,11 +41,9 @@ public:
 
 private:
 	Semaphore m_lock;
-	int32_t m_steps;
-	int32_t m_step;
+	int32_t m_steps = 0;
+	int32_t m_step = -1;
 	std::wstring m_status;
 };
 
-	}
 }
-

@@ -13,12 +13,10 @@
 #include "Ui/Clipboard.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const struct { const wchar_t* name; VirtualKey vkey; } c_keyTranslateTable[] =
 {
@@ -50,7 +48,7 @@ const struct { const wchar_t* name; VirtualKey vkey; } c_keyTranslateTable[] =
 	{ L"Space", VkSpace }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Application", Application, EventSubject)
 
@@ -169,5 +167,4 @@ std::wstring Application::translateVirtualKey(VirtualKey virtualKey) const
 	return L"";
 }
 
-	}
 }

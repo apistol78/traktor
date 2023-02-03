@@ -14,12 +14,10 @@
 #include "Ui/EditValidator.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 bool isWord(wchar_t ch)
 {
@@ -29,7 +27,7 @@ bool isWord(wchar_t ch)
 		(ch >= L'A' && ch <= L'Z');
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edit", Edit, Widget)
 
@@ -572,8 +570,7 @@ void Edit::eventPaint(PaintEvent* event)
 	if (m_caret >= text.length())
 		caretX = x;
 
-	bool caretVisible = hasFocus() && !m_readOnly && m_caretBlink;
-
+	const bool caretVisible = hasFocus() && !m_readOnly && m_caretBlink;
 	if (caretVisible)
 	{
 		canvas.setForeground(ss->getColor(this, L"color"));
@@ -592,5 +589,4 @@ void Edit::eventTimer(TimerEvent* event)
 	update();
 }
 
-	}
 }

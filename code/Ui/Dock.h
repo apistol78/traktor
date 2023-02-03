@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class DockPane;
 class Image;
@@ -73,6 +71,4 @@ private:
 	void eventHintButtonUp(MouseButtonUpEvent* event);
 };
 
-	}
 }
-

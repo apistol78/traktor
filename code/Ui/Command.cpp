@@ -8,10 +8,8 @@
  */
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Command", Command, Object)
 
@@ -104,5 +102,4 @@ bool Command::operator == (const std::wstring& name) const
 	return (m_flags & CfName) == CfName && m_name == name;
 }
 
-	}
 }

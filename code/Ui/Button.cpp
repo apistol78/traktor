@@ -12,18 +12,10 @@
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Button", Button, Widget)
-
-Button::Button()
-:	m_pushed(false)
-,	m_hover(false)
-{
-}
 
 bool Button::create(Widget* parent, const std::wstring& text, int style)
 {
@@ -84,7 +76,7 @@ void Button::eventButtonUp(MouseButtonUpEvent* event)
 	if (!m_pushed || !isEnable())
 		return;
 
-	bool pushed = m_pushed;
+	const bool pushed = m_pushed;
 	m_pushed = false;
 	update();
 
@@ -97,11 +89,11 @@ void Button::eventButtonUp(MouseButtonUpEvent* event)
 
 void Button::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
-	const StyleSheet* ss = getStyleSheet();
 
-	bool hover = isEnable() && m_hover;
+	const bool hover = isEnable() && m_hover;
 
 	if (m_pushed)
 		canvas.setBackground(ss->getColor(this, L"background-color-pushed"));
@@ -125,5 +117,4 @@ void Button::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

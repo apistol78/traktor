@@ -16,10 +16,8 @@
 #include "Resources/Unchecked.h"
 #include "Resources/Checked.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CheckBox", CheckBox, Widget)
 
@@ -127,5 +125,4 @@ void CheckBox::eventButtonUp(MouseButtonUpEvent* event)
 	}
 }
 
-	}
 }

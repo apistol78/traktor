@@ -12,10 +12,8 @@
 #include "Ui/ComboBox.h"
 #include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ComboBox", ComboBox, Widget)
 
@@ -84,5 +82,4 @@ void ComboBox::eventSize(SizeEvent* event)
 	m_listBox->setRect(Rect(Point(0, 16), Size(sz.cx, sz.cy - 16)));
 }
 
-	}
 }

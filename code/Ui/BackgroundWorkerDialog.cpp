@@ -15,10 +15,8 @@
 #include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/ProgressBar.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.BackgroundWorkerDialog", BackgroundWorkerDialog, Dialog)
 
@@ -144,5 +142,4 @@ void BackgroundWorkerDialog::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

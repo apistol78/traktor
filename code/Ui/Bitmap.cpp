@@ -20,12 +20,10 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Itf/ISystemBitmap.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct ImageEntry
@@ -43,7 +41,7 @@ struct ImageHeader
 };
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Bitmap", Bitmap, IBitmap)
 
@@ -269,5 +267,4 @@ Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstri
 	return bitmap;
 }
 
-	}
 }

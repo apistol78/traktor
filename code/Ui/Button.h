@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Button
  * \ingroup UI
@@ -37,8 +35,6 @@ public:
 		WsToggle = (WsUser << 1)
 	};
 
-	Button();
-
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
 
 	virtual void setText(const std::wstring& text) override;
@@ -49,8 +45,8 @@ public:
 
 private:
 	Size m_preferedSize;
-	bool m_pushed;
-	bool m_hover;
+	bool m_pushed = false;
+	bool m_hover = false;
 
 	void eventMouseTrack(MouseTrackEvent* event);
 
@@ -61,6 +57,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

@@ -24,16 +24,14 @@
 #include "Resources/DockRight.h"
 #include "Resources/DockTop.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int c_hintSize = 32 + 29 + 32;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Dock", Dock, Widget)
 
@@ -396,5 +394,4 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 	update();
 }
 
-	}
 }

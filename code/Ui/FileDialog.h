@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Container;
 class Edit;
@@ -69,5 +67,4 @@ private:
 	void updateFiles();
 };
 
-	}
 }

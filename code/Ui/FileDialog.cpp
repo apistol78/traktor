@@ -30,10 +30,8 @@
 #include "Ui/GridView/GridView.h"
 #include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FileDialog", FileDialog, ConfigDialog)
 
@@ -300,5 +298,4 @@ void FileDialog::updateFiles()
 	m_gridFiles->update();
 }
 
-	}
 }

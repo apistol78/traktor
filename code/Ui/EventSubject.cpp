@@ -10,10 +10,8 @@
 #include "Ui/Event.h"
 #include "Ui/EventSubject.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EventSubject", EventSubject, Object)
 
@@ -101,5 +99,4 @@ void EventSubject::disableEventHandlers(const TypeInfo& eventType)
 	eventHandlers.disableCounter++;
 }
 
-	}
 }

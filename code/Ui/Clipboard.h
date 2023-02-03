@@ -26,15 +26,17 @@ namespace traktor
 
 class ISerializable;
 
-	namespace drawing
-	{
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class IClipboard;
 
@@ -70,6 +72,4 @@ private:
 	IClipboard* m_clipboard;
 };
 
-	}
 }
-
