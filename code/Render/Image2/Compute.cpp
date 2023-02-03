@@ -90,7 +90,7 @@ void Compute::build(
 	for (const auto& source : m_sources)
 	{
 		auto texture = context.findTexture(renderGraph, source.textureId);
-		pp->setTextureParameter(source.parameter, texture);
+		pp->setImageViewParameter(source.parameter, texture);
 	}
 
 	pp->endParameters(renderContext);
