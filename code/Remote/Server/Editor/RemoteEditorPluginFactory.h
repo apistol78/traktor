@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::remote
 {
-	namespace remote
-	{
 
 /*! Remote server editor plugin factory.
  * \ingroup Remote
@@ -36,6 +34,4 @@ public:
 	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const override final;
 };
 
-	}
 }
-

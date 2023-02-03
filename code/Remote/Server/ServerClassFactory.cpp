@@ -11,10 +11,8 @@
 #include "Remote/Server/Server.h"
 #include "Remote/Server/ServerClassFactory.h"
 
-namespace traktor
+namespace traktor::remote
 {
-	namespace remote
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.remote.ServerClassFactory", 0, ServerClassFactory, IRuntimeClassFactory)
 
@@ -30,5 +28,4 @@ void ServerClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classServer);
 }
 
-	}
 }

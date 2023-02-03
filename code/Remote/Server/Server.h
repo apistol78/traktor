@@ -21,54 +21,49 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-    namespace net
-    {
 
 class DiscoveryManager;
 class TcpSocket;
 
-    }
+}
 
-    namespace remote
-    {
+namespace traktor::remote
+{
 
 class T_DLLCLASS Server : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-	Server();
+	bool create(const std::wstring& scratchPath, const std::wstring& keyword, int32_t listenPort, bool verbose);
 
-    bool create(const std::wstring& scratchPath, const std::wstring& keyword, int32_t listenPort, bool verbose);
+	void destroy();
 
-    void destroy();
+	bool update();
 
-    bool update();
+	int32_t getListenPort() const { return m_listenPort; }
 
-    int32_t getListenPort() const { return m_listenPort; }
-
-    const std::wstring& getScratchPath() const { return m_scratchPath; }
+	const std::wstring& getScratchPath() const { return m_scratchPath; }
 
 private:
-    Ref< net::TcpSocket > m_serverSocket;
-    Ref< net::DiscoveryManager > m_discoveryManager;
-	int32_t m_listenPort;
-    std::wstring m_hostName;
-    std::wstring m_scratchPath;
-    std::wstring m_keyword;
-    std::map< std::wstring, uint32_t > m_fileHashes;
-    bool m_verbose;
+	Ref< net::TcpSocket > m_serverSocket;
+	Ref< net::DiscoveryManager > m_discoveryManager;
+	int32_t m_listenPort = 0;
+	std::wstring m_hostName;
+	std::wstring m_scratchPath;
+	std::wstring m_keyword;
+	std::map< std::wstring, uint32_t > m_fileHashes;
+	bool m_verbose = false;
 
-    uint8_t handleDeploy(net::TcpSocket* clientSocket);
+	uint8_t handleDeploy(net::TcpSocket* clientSocket);
 
-    uint8_t handleLaunchProcess(net::TcpSocket* clientSocket);
+	uint8_t handleLaunchProcess(net::TcpSocket* clientSocket);
 
-    uint8_t handleFetch(net::TcpSocket* clientSocket);
+	uint8_t handleFetch(net::TcpSocket* clientSocket);
 
-    void processClient(net::TcpSocket* clientSocket);
+	void processClient(net::TcpSocket* clientSocket);
 };
 
-    }
 }

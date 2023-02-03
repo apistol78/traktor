@@ -53,11 +53,11 @@ int32_t parseHost(std::wstring& host)
 int launch(const CommandLine& cmdLine)
 {
 	std::wstring host = cmdLine.getString(1);
-	std::wstring application = cmdLine.getString(2);
-	bool wait = cmdLine.hasOption('w', L"wait");
-	bool base = cmdLine.hasOption('t', L"target-base");
-	bool verbose = cmdLine.hasOption('v', L"verbose");
-	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+	const std::wstring application = cmdLine.getString(2);
+	const bool wait = cmdLine.hasOption('w', L"wait");
+	const bool base = cmdLine.hasOption('t', L"target-base");
+	const bool verbose = cmdLine.hasOption('v', L"verbose");
+	const Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
 
 	if (!targetBase.isRelative())
 	{
@@ -260,10 +260,10 @@ bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, con
 int deploy(const CommandLine& cmdLine)
 {
 	std::wstring host = cmdLine.getString(1);
-	bool recursive = cmdLine.hasOption('r', L"recursive");
-	bool base = cmdLine.hasOption('t', L"target-base");
-	bool verbose = cmdLine.hasOption('v', L"verbose");
-	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+	const bool recursive = cmdLine.hasOption('r', L"recursive");
+	const bool base = cmdLine.hasOption('t', L"target-base");
+	const bool verbose = cmdLine.hasOption('v', L"verbose");
+	const Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
 
 	if (!targetBase.isRelative())
 	{
@@ -287,7 +287,7 @@ int deploy(const CommandLine& cmdLine)
 	int32_t deployedFileCount = 0;
 	for (int i = 2; i < cmdLine.getCount(); ++i)
 	{
-		Path sourcePath = cmdLine.getString(i);
+		const Path sourcePath = cmdLine.getString(i);
 		if (!deployFiles(addr, sourcePath, targetBase, recursive, verbose, deployedFileCount))
 		{
 			ret = 3;
@@ -365,9 +365,9 @@ bool fetchFile(const net::SocketAddressIPv4& addr, const Path& fileName, const P
 int fetch(const CommandLine& cmdLine)
 {
 	std::wstring host = cmdLine.getString(1);
-	bool base = cmdLine.hasOption('t', L"target-base");
-	bool verbose = cmdLine.hasOption('v', L"verbose");
-	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+	const bool base = cmdLine.hasOption('t', L"target-base");
+	const bool verbose = cmdLine.hasOption('v', L"verbose");
+	const Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
 
 	if (!targetBase.isRelative())
 	{
@@ -390,7 +390,7 @@ int fetch(const CommandLine& cmdLine)
 	int32_t ret = 0;
 	for (int i = 2; i < cmdLine.getCount(); ++i)
 	{
-		Path fileName = cmdLine.getString(i);
+		const Path fileName = cmdLine.getString(i);
 		if (!fetchFile(addr, fileName, targetBase, verbose))
 		{
 			ret = 3;
@@ -427,7 +427,7 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
-	bool verbose = cmdLine.hasOption('v', L"verbose");
+	const bool verbose = cmdLine.hasOption('v', L"verbose");
 
 	if (verbose)
 		log::info << L"Traktor.Remote.Client.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;

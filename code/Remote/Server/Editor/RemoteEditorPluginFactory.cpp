@@ -9,10 +9,8 @@
 #include "Remote/Server/Editor/RemoteEditorPlugin.h"
 #include "Remote/Server/Editor/RemoteEditorPluginFactory.h"
 
-namespace traktor
+namespace traktor::remote
 {
-	namespace remote
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.remote.RemoteEditorPluginFactory", 0, RemoteEditorPluginFactory, editor::IEditorPluginFactory)
 
@@ -25,5 +23,4 @@ Ref< editor::IEditorPlugin > RemoteEditorPluginFactory::createEditorPlugin(edito
 	return new RemoteEditorPlugin(editor);
 }
 
-	}
 }
