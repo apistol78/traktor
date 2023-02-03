@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Deployment platform descriptor.
  * \ingroup Runtime
@@ -32,8 +30,6 @@ class T_DLLCLASS Platform : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Platform();
-
 	int32_t getIconIndex() const;
 
 	const DeployTool& getDeployTool() const;
@@ -41,12 +37,10 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_iconIndex;
+	int32_t m_iconIndex = 0;
 	DeployTool m_deployToolWin64;
 	DeployTool m_deployToolOsX;
 	DeployTool m_deployToolLinux;
 };
 
-	}
 }
-

@@ -12,19 +12,17 @@
 #include "Core/Ref.h"
 #include "Script/IScriptProfiler.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class BidirectionalObjectTransport;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetScriptProfiler : public script::IScriptProfiler
@@ -32,7 +30,7 @@ class TargetScriptProfiler : public script::IScriptProfiler
 	T_RTTI_CLASS;
 
 public:
-	TargetScriptProfiler(net::BidirectionalObjectTransport* transport);
+	explicit TargetScriptProfiler(net::BidirectionalObjectTransport* transport);
 
 	virtual void addListener(IListener* listener) override final;
 
@@ -45,6 +43,4 @@ private:
 	std::list< IListener* > m_listeners;
 };
 
-	}
 }
-

@@ -13,16 +13,10 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetConfiguration", 3, TargetConfiguration, ISerializable)
-
-TargetConfiguration::TargetConfiguration()
-{
-}
 
 void TargetConfiguration::setName(const std::wstring& name)
 {
@@ -141,5 +135,4 @@ void TargetConfiguration::serialize(ISerializer& s)
 	s >> Member< Guid >(L"defaultInput", m_defaultInput);
 }
 
-	}
 }

@@ -17,10 +17,8 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.runtime.Feature", 8, Feature, ISerializable)
 
@@ -65,7 +63,7 @@ Feature::Platform* Feature::getPlatform(const Guid& id)
 		if (i->platform == id)
 			return &(*i);
 	}
-	return 0;
+	return nullptr;
 }
 
 const Feature::Platform* Feature::getPlatform(const Guid& id) const
@@ -75,7 +73,7 @@ const Feature::Platform* Feature::getPlatform(const Guid& id) const
 		if (i->platform == id)
 			return &(*i);
 	}
-	return 0;
+	return nullptr;
 }
 
 void Feature::serialize(ISerializer& s)
@@ -104,5 +102,4 @@ void Feature::Platform::serialize(ISerializer& s)
 	s >> MemberRef< PropertyGroup >(L"deploy", deploy);
 }
 
-	}
 }

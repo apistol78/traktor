@@ -10,10 +10,8 @@
 
 #include "Editor/IEditorTool.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 #if defined(_WIN32)
 
@@ -33,5 +31,4 @@ public:
 
 #endif
 
-	}
 }

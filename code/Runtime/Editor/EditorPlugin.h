@@ -20,17 +20,15 @@
 #include "Editor/IEditorPlugin.h"
 #include "Ui/Event.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class DiscoveryManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class TimerEvent;
@@ -39,10 +37,10 @@ class ToolBarButtonClickEvent;
 class ToolBarDropDown;
 class ToolBarDropMenu;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class HostEnumerator;
 class Target;
@@ -64,7 +62,7 @@ class EditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	EditorPlugin(editor::IEditor* editor);
+	explicit EditorPlugin(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
@@ -168,6 +166,4 @@ private:
 	void threadTargetActions();
 };
 
-	}
 }
-

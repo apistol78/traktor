@@ -11,28 +11,26 @@
 #include "Core/RefArray.h"
 #include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptDebuggerSessions;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetManager : public Object
@@ -40,7 +38,7 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(editor::IEditor *editor);
+	explicit TargetManager(editor::IEditor *editor);
 
 	bool create();
 
@@ -63,6 +61,4 @@ private:
 	uint16_t m_port;
 };
 
-	}
 }
-

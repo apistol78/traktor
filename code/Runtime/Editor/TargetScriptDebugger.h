@@ -11,19 +11,17 @@
 #include <list>
 #include "Script/IScriptDebugger.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class BidirectionalObjectTransport;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetScriptDebugger : public script::IScriptDebugger
@@ -31,7 +29,7 @@ class TargetScriptDebugger : public script::IScriptDebugger
 	T_RTTI_CLASS;
 
 public:
-	TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
+	explicit TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
 
 	void update();
 
@@ -69,6 +67,4 @@ private:
 	void notifyListeners();
 };
 
-	}
 }
-

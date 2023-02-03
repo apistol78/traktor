@@ -20,12 +20,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS TargetConfiguration : public ISerializable
@@ -33,8 +31,6 @@ class T_DLLCLASS TargetConfiguration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TargetConfiguration();
-
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -84,6 +80,4 @@ private:
 	Guid m_onlineConfig;
 };
 
-	}
 }
-

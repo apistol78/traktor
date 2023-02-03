@@ -9,10 +9,8 @@
 #include "Runtime/Editor/TargetScriptProfiler.h"
 #include "Net/BidirectionalObjectTransport.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetScriptProfiler", TargetScriptProfiler, script::IScriptProfiler)
 
@@ -37,5 +35,4 @@ void TargetScriptProfiler::notifyListeners(const Guid& scriptId, const std::wstr
 		listener->callMeasured(scriptId, function, callCount, inclusiveDuration, exclusiveDuration);
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Runtime/Editor/TargetEditorFactory.h"
 #include "Runtime/Editor/Deploy/Target.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetEditorFactory", 0, TargetEditorFactory, editor::IObjectEditorFactory)
 
@@ -42,5 +40,4 @@ Ref< ISerializable > TargetEditorFactory::cloneAsset(const ISerializable* asset)
 	return DeepClone(asset).create();
 }
 
-	}
 }

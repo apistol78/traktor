@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 /*! Abstract target action class.
  * \ingroup Runtime
@@ -39,6 +37,4 @@ public:
 	virtual bool execute(IProgressListener* progressListener) = 0;
 };
 
-	}
 }
-

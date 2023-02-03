@@ -10,10 +10,8 @@
 
 #include "Editor/IEditorTool.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class LaunchBlenderTool : public editor::IEditorTool
 {
@@ -29,5 +27,4 @@ public:
 	virtual bool launch(ui::Widget* parent, editor::IEditor* runtime, const PropertyGroup* param) override final;
 };
 
-	}
 }

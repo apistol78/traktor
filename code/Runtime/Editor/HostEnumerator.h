@@ -19,15 +19,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class DiscoveryManager;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 /*! Enumerator of hosts able to communicate with editor.
  * \ingroup Runtime
@@ -37,7 +39,7 @@ class HostEnumerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager);
+	explicit HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager);
 
 	int32_t count() const;
 
@@ -71,6 +73,4 @@ private:
 	mutable std::vector< Host > m_pending;
 };
 
-	}
 }
-

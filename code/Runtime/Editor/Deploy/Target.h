@@ -20,14 +20,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetConfiguration;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class T_DLLCLASS Target : public ISerializable
@@ -59,6 +57,4 @@ private:
 	RefArray< TargetConfiguration > m_configurations;
 };
 
-	}
 }
-

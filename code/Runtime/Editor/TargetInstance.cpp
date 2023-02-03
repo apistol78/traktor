@@ -14,12 +14,10 @@
 #include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 std::wstring mangleName(std::wstring name)
 {
@@ -30,7 +28,7 @@ std::wstring mangleName(std::wstring name)
 	return name;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetInstance", TargetInstance, Object)
 
@@ -157,5 +155,4 @@ std::wstring TargetInstance::getDatabaseName() const
 	return mangleName(m_name) + L"|" + mangleName(m_targetConfiguration->getName());
 }
 
-	}
 }

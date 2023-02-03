@@ -24,15 +24,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class Target;
 class TargetConfiguration;
@@ -45,7 +47,7 @@ class T_DLLCLASS LaunchTargetAction : public ITargetAction
 	T_RTTI_CLASS;
 
 public:
-	LaunchTargetAction(
+	explicit LaunchTargetAction(
 		db::Database* database,
 		const PropertyGroup* globalSettings,
 		const std::wstring& targetName,
@@ -67,6 +69,4 @@ private:
 	std::wstring m_outputPath;
 };
 
-	}
 }
-

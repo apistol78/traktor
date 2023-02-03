@@ -10,10 +10,8 @@
 #include "Runtime/Editor/LaunchBlenderTool.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.LaunchBlenderTool", 0, LaunchBlenderTool, IEditorTool)
 
@@ -52,5 +50,4 @@ bool LaunchBlenderTool::launch(ui::Widget* parent, editor::IEditor* runtime, con
 		OS::EfMute) != nullptr;
 }
 
-	}
 }

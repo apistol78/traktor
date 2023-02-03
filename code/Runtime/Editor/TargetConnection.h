@@ -18,27 +18,29 @@ namespace traktor
 
 class ILogTarget;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class BidirectionalObjectTransport;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptDebuggerSessions;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class TargetScriptDebugger;
 class TargetScriptProfiler;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetConnection : public Object
@@ -55,7 +57,7 @@ public:
 		virtual void receivedPerfSets() = 0;
 	};
 
-	TargetConnection(
+	explicit TargetConnection(
 		const std::wstring& name,
 		net::BidirectionalObjectTransport* transport,
 		ILogTarget* targetLog,
@@ -96,6 +98,4 @@ private:
 	Semaphore m_lock;
 };
 
-	}
 }
-

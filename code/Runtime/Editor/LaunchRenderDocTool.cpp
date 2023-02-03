@@ -10,10 +10,8 @@
 #include "Runtime/Editor/LaunchRenderDocTool.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 #if defined(_WIN32)
 
@@ -52,5 +50,4 @@ bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, c
 
 #endif
 
-	}
 }

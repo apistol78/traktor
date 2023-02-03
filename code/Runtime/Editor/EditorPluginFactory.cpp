@@ -6,14 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/ISerializable.h"
 #include "Runtime/Editor/EditorPluginFactory.h"
 #include "Runtime/Editor/EditorPlugin.h"
-#include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.EditorPluginFactory", 0, EditorPluginFactory, editor::IEditorPluginFactory)
 
@@ -27,5 +25,4 @@ Ref< editor::IEditorPlugin > EditorPluginFactory::createEditorPlugin(editor::IEd
 	return new EditorPlugin(editor);
 }
 
-	}
 }
