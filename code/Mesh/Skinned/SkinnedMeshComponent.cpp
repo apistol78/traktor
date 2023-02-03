@@ -92,16 +92,15 @@ void SkinnedMeshComponent::setJointTransforms(const AlignedVector< Matrix44 >& j
 	render::Buffer* jointTransforms = m_jointTransforms[m_count];
 	SkinnedMesh::JointData* jointData = (SkinnedMesh::JointData*)jointTransforms->lock();
 
-	uint32_t size = (uint32_t)jointTransforms_.size();
+	const uint32_t size = (uint32_t)jointTransforms_.size();
 	for (uint32_t i = 0; i < size; ++i)
 	{
-		Transform joint(jointTransforms_[i]);
+		const Transform joint(jointTransforms_[i]);
 		joint.translation().xyz1().storeAligned(jointData[i].translation);
 		joint.rotation().e.storeAligned(jointData[i].rotation);
 	}
 
 	jointTransforms->unlock();
-
 	m_count = 1 - m_count;
 }
 
