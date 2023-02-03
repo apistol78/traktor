@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 /*!
  * \ingroup Bullet
@@ -32,9 +30,7 @@ class T_DLLCLASS DofJointBullet : public JointBullet< DofJoint, btGeneric6DofCon
 	T_RTTI_CLASS;
 
 public:
-	DofJointBullet(IWorldCallback* callback, btGeneric6DofConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
+	explicit DofJointBullet(IWorldCallback* callback, btGeneric6DofConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 };
 
-	}
 }
-

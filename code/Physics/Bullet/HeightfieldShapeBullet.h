@@ -12,17 +12,15 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 /*!
  * \ingroup Bullet
@@ -30,7 +28,7 @@ class Heightfield;
 class HeightfieldShapeBullet : public btConcaveShape
 {
 public:
-	HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield);
+	explicit HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield);
 
 	virtual ~HeightfieldShapeBullet();
 
@@ -52,6 +50,4 @@ private:
 	bool m_haveCuts;
 };
 
-	}
 }
-

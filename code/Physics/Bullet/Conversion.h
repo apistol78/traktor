@@ -16,10 +16,8 @@
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Transform.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 #if !defined(T_CONVERT_ASSERT)
 #	define T_CONVERT_ASSERT T_ASSERT
@@ -81,13 +79,11 @@ inline Transform fromBtTransform(const btTransform& transform)
 /*! Convert to Bullet transform. */
 inline btTransform toBtTransform(const Transform& transform)
 {
-	btQuaternion basis = toBtQuaternion(transform.rotation());
-	btVector3 origin = toBtVector3(transform.translation());
+	const btQuaternion basis = toBtQuaternion(transform.rotation());
+	const btVector3 origin = toBtVector3(transform.translation());
 	return btTransform(basis, origin);
 }
 
 //@}
 
-	}
 }
-

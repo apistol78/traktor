@@ -12,10 +12,8 @@ class btRigidBody;
 class btCollisionShape;
 class btTypedConstraint;
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class BodyBullet;
 class Joint;
@@ -40,6 +38,4 @@ struct IWorldCallback
 	virtual void destroyConstraint(Joint* joint, btTypedConstraint* constraint) = 0;
 };
 
-	}
 }
-

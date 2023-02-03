@@ -26,10 +26,8 @@ class btTypedConstraint;
 class btDynamicsWorld;
 class btRigidBody;
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 struct IWorldCallback;
 class Mesh;
@@ -42,7 +40,7 @@ class T_DLLCLASS BodyBullet : public Body
 	T_RTTI_CLASS;
 
 public:
-	BodyBullet(
+	explicit BodyBullet(
 		const wchar_t* const tag,
 		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
@@ -149,6 +147,4 @@ private:
 	bool m_enable;
 };
 
-	}
 }
-

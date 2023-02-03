@@ -9,10 +9,8 @@
 #include "Physics/Bullet/AxisJointBullet.h"
 #include "Physics/Bullet/Conversion.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.AxisJointBullet", AxisJointBullet, AxisJoint)
 
@@ -26,5 +24,4 @@ Vector4 AxisJointBullet::getAxis() const
 	return fromBtVector3(m_constraint->getAFrame().getBasis().getColumn(2), 0.0f);
 }
 
-	}
 }

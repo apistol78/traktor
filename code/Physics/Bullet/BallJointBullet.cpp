@@ -9,10 +9,8 @@
 #include "Physics/Bullet/BallJointBullet.h"
 #include "Physics/Bullet/Conversion.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BallJointBullet", BallJointBullet, BallJoint)
 
@@ -23,19 +21,18 @@ BallJointBullet::BallJointBullet(IWorldCallback* callback, btPoint2PointConstrai
 
 void BallJointBullet::setAnchor(const Vector4& anchor)
 {
-	btVector3 pivotInWorld = toBtVector3(anchor);
-	btVector3 pivotInA = m_constraint->getRigidBodyA().getWorldTransform().inverse() * pivotInWorld;
+	const btVector3 pivotInWorld = toBtVector3(anchor);
+	const btVector3 pivotInA = m_constraint->getRigidBodyA().getWorldTransform().inverse() * pivotInWorld;
+	const btVector3 pivotInB = m_constraint->getRigidBodyB().getWorldTransform().inverse() * pivotInWorld;
 	m_constraint->setPivotA(pivotInA);
-	btVector3 pivotInB = m_constraint->getRigidBodyB().getWorldTransform().inverse() * pivotInWorld;
 	m_constraint->setPivotB(pivotInB);
 }
 
 Vector4 BallJointBullet::getAnchor() const
 {
 	const btVector3& pivotInA = m_constraint->getPivotInA();
-	btVector3 pivotInWorld = m_constraint->getRigidBodyA().getWorldTransform() * pivotInA;
+	const btVector3 pivotInWorld = m_constraint->getRigidBodyA().getWorldTransform() * pivotInA;
 	return fromBtVector3(pivotInWorld, 1.0f);
 }
 
-	}
 }

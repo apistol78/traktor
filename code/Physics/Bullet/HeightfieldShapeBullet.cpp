@@ -14,12 +14,10 @@
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maximumStep = 32;
 
@@ -33,7 +31,7 @@ float quantizeMax(float v)
 	return ceilf(v);
 }
 
-		}
+	}
 
 HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< hf::Heightfield >& heightfield)
 :	m_heightfield(heightfield)
@@ -73,15 +71,15 @@ void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, b
 {
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
-	btVector3 localAabbMin = toBtVector3(-worldExtent * Scalar(0.5f));
-	btVector3 localAabbMax = toBtVector3(worldExtent * Scalar(0.5f));
+	const btVector3 localAabbMin = toBtVector3(-worldExtent * 0.5_simd);
+	const btVector3 localAabbMax = toBtVector3(worldExtent * 0.5_simd);
 
-	btVector3 halfExtents = (localAabbMax - localAabbMin) * btScalar(0.5);
+	const btVector3 halfExtents = (localAabbMax - localAabbMin) * btScalar(0.5);
 
-	btMatrix3x3 basisAbs = t.getBasis().absolute();
-	btVector3 center = t.getOrigin();
+	const btMatrix3x3 basisAbs = t.getBasis().absolute();
+	const btVector3 center = t.getOrigin();
 
-	btVector3 extent = btVector3(
+	const btVector3 extent = btVector3(
 		basisAbs[0].dot(halfExtents) + getMargin(),
 		basisAbs[1].dot(halfExtents) + getMargin(),
 		basisAbs[2].dot(halfExtents) + getMargin()
@@ -98,10 +96,10 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	float mnz = quantizeMin(aabbMin.z());
 	float mxz = quantizeMax(aabbMax.z());
 
-	int32_t imnx = int32_t(mnx);
-	int32_t imxx = int32_t(mxx);
-	int32_t imnz = int32_t(mnz);
-	int32_t imxz = int32_t(mxz);
+	const int32_t imnx = int32_t(mnx);
+	const int32_t imxx = int32_t(mxx);
+	const int32_t imnz = int32_t(mnz);
+	const int32_t imxz = int32_t(mxz);
 
 	if (imnx >= imxx || imnz >= imxz)
 		return;
@@ -112,8 +110,8 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	cx = min(cx, c_maximumStep);
 	cz = min(cz, c_maximumStep);
 
-	float cxf = float(cx);
-	float czf = float(cz);
+	const float cxf = float(cx);
+	const float czf = float(cz);
 
 	mnx = float(imnx);
 	mxx = mnx + cxf;
@@ -132,7 +130,7 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 		for (int32_t v = imnz; v < imxz; v += cz)
 		{
-			bool c[] =
+			const bool c[] =
 			{
 				cp0,
 				cp1,
@@ -143,7 +141,7 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 			cp0 = c[3];
 			cp1 = c[2];
 
-			float h[] =
+			const float h[] =
 			{
 				hp0,
 				hp1,
@@ -189,5 +187,4 @@ const char*	HeightfieldShapeBullet::getName() const
 	return "HEIGHTFIELD";
 }
 
-	}
 }

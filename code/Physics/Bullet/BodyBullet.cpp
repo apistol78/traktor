@@ -17,12 +17,10 @@
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/Types.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 inline Vector4 convert(const BodyBullet* body, const Vector4& v, bool localSpace)
 {
@@ -33,7 +31,7 @@ inline Vector4 convert(const BodyBullet* body, const Vector4& v, bool localSpace
 	return localSpace ? body->getTransform() * v : v;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyBullet", BodyBullet, Body)
 
@@ -81,7 +79,7 @@ void BodyBullet::setTransform(const Transform& transform)
 	if (!m_body)
 		return;
 
-	btTransform bt = toBtTransform(transform * Transform(m_centerOfGravity));
+	const btTransform bt = toBtTransform(transform * Transform(m_centerOfGravity));
 	m_body->setWorldTransform(bt);
 
 	// Update motion state's transform as well in case if kinematic body.
@@ -193,11 +191,10 @@ void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localS
 	if (!m_body)
 		return;
 
-	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
-
-	Vector4 at_ = convert(this, at0, localSpace);
-	Vector4 force_ = convert(this, force, localSpace);
-	Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
+	const Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+	const Vector4 at_ = convert(this, at0, localSpace);
+	const Vector4 force_ = convert(this, force, localSpace);
+	const Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
 
 	m_body->applyForce(
 		toBtVector3(force_),
@@ -209,7 +206,7 @@ void BodyBullet::addTorque(const Vector4& torque, bool localSpace)
 {
 	if (m_body)
 	{
-		Vector4 torque_ = convert(this, torque, localSpace);
+		const Vector4 torque_ = convert(this, torque, localSpace);
 		m_body->applyTorque(toBtVector3(torque_));
 	}
 }
@@ -218,7 +215,7 @@ void BodyBullet::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
 	if (m_body)
 	{
-		Vector4 linearImpulse_ = convert(this, linearImpulse, localSpace);
+		const Vector4 linearImpulse_ = convert(this, linearImpulse, localSpace);
 		m_body->applyCentralImpulse(toBtVector3(linearImpulse_));
 	}
 }
@@ -227,7 +224,7 @@ void BodyBullet::addAngularImpulse(const Vector4& angularImpulse, bool localSpac
 {
 	if (m_body)
 	{
-		Vector4 angularImpulse_ = convert(this, angularImpulse, localSpace);
+		const Vector4 angularImpulse_ = convert(this, angularImpulse, localSpace);
 		m_body->applyTorqueImpulse(toBtVector3(angularImpulse_));
 	}
 }
@@ -236,10 +233,10 @@ void BodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool loca
 {
 	if (m_body)
 	{
-		Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
-		Vector4 at_ = convert(this, at0, localSpace);
-		Vector4 impulse_ = convert(this, impulse, localSpace);
-		Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
+		const Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+		const Vector4 at_ = convert(this, at0, localSpace);
+		const Vector4 impulse_ = convert(this, impulse, localSpace);
+		const Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
 
 		m_body->applyImpulse(
 			toBtVector3(impulse_),
@@ -275,7 +272,7 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 	if (!m_body)
 		return Vector4::zero();
 
-	Transform Tb = fromBtTransform(m_body->getWorldTransform());
+	const Transform Tb = fromBtTransform(m_body->getWorldTransform());
 
 	btVector3 relPos;
 	if (localSpace)
@@ -353,12 +350,11 @@ void BodyBullet::getFrictionAndRestitution(int32_t index, float& outFriction, fl
 		const auto& materials = m_mesh->getMaterials();
 		if (index >= 0 && index < (int32_t)triangles.size())
 		{
-			uint32_t midx = triangles[index].material;
+			const uint32_t midx = triangles[index].material;
 			outFriction = materials[midx].friction;
 			outRestitution = materials[midx].restitution;
 		}
 	}
 }
 
-	}
 }

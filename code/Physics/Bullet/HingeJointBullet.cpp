@@ -9,10 +9,8 @@
 #include "Physics/Bullet/HingeJointBullet.h"
 #include "Physics/Bullet/Conversion.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.HingeJointBullet", HingeJointBullet, HingeJoint)
 
@@ -49,5 +47,4 @@ void HingeJointBullet::setMotor(float targetVelocity, float maxImpulse)
 		m_constraint->enableMotor(false);
 }
 
-	}
 }

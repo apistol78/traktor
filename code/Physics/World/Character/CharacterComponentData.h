@@ -59,6 +59,8 @@ public:
 
 	Ref< ShapeDesc > getShapeDesc(float epsilon) const;
 
+	const std::set< resource::Id< CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
+
 	const std::set< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
 
 	const std::set< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
@@ -88,6 +90,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	std::set< resource::Id< CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
 	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
 	float m_radius = 1.0f;
