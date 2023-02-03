@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Ui/HierarchicalState.h"
 
 namespace traktor
@@ -65,7 +65,7 @@ Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state
 void HierarchicalState::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"scrollPosition", m_scrollPosition);
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		std::wstring,
 		std::pair< bool, bool >,
 		Member< std::wstring >,
