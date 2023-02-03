@@ -9,10 +9,8 @@
 #include "Ui/CenterLayout.h"
 #include "Ui/Widget.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CenterLayout", CenterLayout, Layout)
 
@@ -54,5 +52,4 @@ void CenterLayout::update(Widget* widget)
 	}
 }
 
-	}
 }

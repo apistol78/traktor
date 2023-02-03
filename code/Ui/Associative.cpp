@@ -10,10 +10,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Associative.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Associative::Impl
 {
@@ -80,5 +78,4 @@ void Associative::copyData(const Associative* source)
 	m_impl->copyData(source);
 }
 
-	}
 }

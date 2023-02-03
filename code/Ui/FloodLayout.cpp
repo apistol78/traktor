@@ -10,10 +10,8 @@
 #include "Ui/Widget.h"
 #include "Ui/Rect.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FloodLayout", FloodLayout, Layout)
 
@@ -57,5 +55,4 @@ Ref< Widget > FloodLayout::getFirstVisibleChild(Widget* widget)
 	return nullptr;
 }
 
-	}
 }

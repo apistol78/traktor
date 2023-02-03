@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Flow layout.
  * \ingroup UI
@@ -49,6 +47,4 @@ private:
 	bool calculateRects(Widget* widget, const Size& bounds, std::vector< WidgetRect >& outRects) const;
 };
 
-	}
 }
-

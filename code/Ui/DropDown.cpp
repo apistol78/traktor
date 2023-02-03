@@ -15,10 +15,8 @@
 #include "Ui/MenuItem.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
@@ -336,5 +334,4 @@ void DropDown::eventPaint(PaintEvent* event)
 	}
 }
 
-	}
 }

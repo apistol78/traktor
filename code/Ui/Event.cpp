@@ -10,10 +10,8 @@
 #include "Ui/Event.h"
 #include "Ui/Itf/IEventLoop.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Event", Event, Object)
 
@@ -47,5 +45,4 @@ bool Event::consumed() const
 	return m_consumed;
 }
 
-	}
 }

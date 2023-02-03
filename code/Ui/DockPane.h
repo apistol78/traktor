@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Canvas;
 class Form;
@@ -101,6 +99,4 @@ private:
 	void eventFocus(FocusEvent* event);
 };
 
-	}
 }
-

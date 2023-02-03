@@ -16,12 +16,10 @@
 #include "Resources/DockClose.h"
 #include "Resources/DockGripper.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int c_splitterDim = 6;
 const int c_gripperDim = 21;
@@ -55,7 +53,7 @@ int calculateRealSplit(const Rect& rc, int split, bool vertical)
 	return realSplit;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DockPane", DockPane, Object)
 
@@ -595,5 +593,4 @@ void DockPane::eventFocus(FocusEvent* event)
 	}
 }
 
-	}
 }

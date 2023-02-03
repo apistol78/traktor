@@ -6,8 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_ui_EditList_H
-#define traktor_ui_EditList_H
+#pragma once
 
 #include "Ui/Edit.h"
 #include "Ui/ListBox/ListBox.h"
@@ -20,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class T_DLLCLASS EditList : public traktor::ui::ListBox
 {
@@ -51,7 +48,4 @@ private:
 	void eventEditFocus(FocusEvent* event);
 };
 
-	}
 }
-
-#endif	// EditList_H

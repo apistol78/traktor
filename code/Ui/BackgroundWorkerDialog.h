@@ -23,8 +23,10 @@ namespace traktor
 
 class IWaitable;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Button;
 class Static;
@@ -69,6 +71,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

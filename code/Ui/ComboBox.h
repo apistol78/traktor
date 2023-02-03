@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Button;
 class Edit;
@@ -62,6 +60,4 @@ private:
 	void eventSize(SizeEvent* event);
 };
 
-	}
 }
-

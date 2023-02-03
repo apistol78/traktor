@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Drop down control.
  * \ingroup UI
@@ -115,6 +113,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

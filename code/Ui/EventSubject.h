@@ -24,10 +24,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Event;
 class EventHandler;
@@ -193,5 +191,4 @@ private:
 	SmallMap< const TypeInfo*, HandlerEntry > m_eventHandlers;
 };
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Character set text edit validator.
  * \ingroup UI
@@ -42,6 +40,4 @@ private:
 	std::set< wchar_t > m_set;
 };
 
-	}
 }
-

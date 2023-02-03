@@ -8,10 +8,8 @@
  */
 #include "Ui/EditListEditEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EditListEditEvent", EditListEditEvent, ContentChangeEvent)
 
@@ -38,5 +36,4 @@ const std::wstring& EditListEditEvent::getText() const
 	return m_text;
 }
 
-	}
 }

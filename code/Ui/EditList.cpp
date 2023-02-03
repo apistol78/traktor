@@ -10,10 +10,8 @@
 #include "Ui/EditList.h"
 #include "Ui/EditListEditEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EditList", EditList, ListBox)
 
@@ -132,5 +130,4 @@ void EditList::eventEditFocus(FocusEvent* event)
 	}
 }
 
-	}
 }

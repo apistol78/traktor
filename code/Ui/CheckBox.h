@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! CheckBox
  * \ingroup UI
@@ -56,6 +54,4 @@ private:
 	void eventButtonUp(MouseButtonUpEvent* event);
 };
 
-	}
 }
-

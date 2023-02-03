@@ -10,10 +10,8 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Itf/IClipboard.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Clipboard", Clipboard, Object)
 
@@ -74,5 +72,4 @@ Ref< const drawing::Image > Clipboard::getImage() const
 	return m_clipboard->getImage();
 }
 
-	}
 }

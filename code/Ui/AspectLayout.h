@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Aspect layout.
  * \ingroup UI
@@ -41,6 +39,4 @@ private:
 	float m_ratio;
 };
 
-	}
 }
-

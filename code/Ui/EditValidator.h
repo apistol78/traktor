@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Text edit validator.
  * \ingroup UI
@@ -42,6 +40,4 @@ public:
 	virtual Result validate(const std::wstring& text) const = 0;
 };
 
-	}
 }
-

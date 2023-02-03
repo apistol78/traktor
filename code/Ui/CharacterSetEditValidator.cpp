@@ -8,10 +8,8 @@
  */
 #include "Ui/CharacterSetEditValidator.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CharacterSetEditValidator", CharacterSetEditValidator, EditValidator)
 
@@ -36,5 +34,4 @@ EditValidator::Result CharacterSetEditValidator::validate(const std::wstring& te
 	return VrOk;
 }
 
-	}
 }

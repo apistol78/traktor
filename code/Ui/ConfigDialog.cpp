@@ -11,10 +11,8 @@
 #include "Ui/Button.h"
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ConfigDialog", ConfigDialog, Dialog)
 
@@ -127,5 +125,4 @@ void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
 	}
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Canvas", Canvas, Object)
 
@@ -241,5 +239,4 @@ void Canvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Al
 	m_canvas->drawText(at, text);
 }
 
-	}
 }

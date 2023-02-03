@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 
@@ -57,6 +55,4 @@ private:
 	bool m_consumed;
 };
 
-	}
 }
-

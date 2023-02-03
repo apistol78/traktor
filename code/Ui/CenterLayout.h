@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Center layout.
  * \ingroup UI
@@ -48,6 +46,4 @@ private:
 	uint32_t m_centerAxis;
 };
 
-	}
 }
-

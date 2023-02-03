@@ -31,8 +31,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Clipboard;
 class StyleSheet;
@@ -153,6 +155,4 @@ inline int32_t invdpi96(int32_t measure)
 
 //@}
 
-	}
 }
-
