@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -57,7 +57,7 @@ public:
 
 private:
 	int32_t m_scrollPosition = 0;
-	std::map< std::wstring, std::pair< bool, bool > > m_states;
+	SmallMap< std::wstring, std::pair< bool, bool > > m_states;
 };
 
 	}

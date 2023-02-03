@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <map>
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Ui/Associative.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ namespace traktor
 class Associative::Impl
 {
 public:
-	std::map< std::wstring, Ref< Object > > m_data;
+	SmallMap< std::wstring, Ref< Object > > m_data;
 
 	void setData(const std::wstring& key, Object* data)
 	{

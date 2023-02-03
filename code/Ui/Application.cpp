@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Ui/Application.h"
@@ -79,18 +80,8 @@ bool Application::initialize(IWidgetFactory* widgetFactory, const StyleSheet* st
 
 void Application::finalize()
 {
-	if (m_clipboard)
-	{
-		m_clipboard->destroy();
-		m_clipboard = nullptr;
-	}
-
-	if (m_eventLoop)
-	{
-		m_eventLoop->destroy();
-		m_eventLoop = nullptr;
-	}
-
+	safeDestroy(m_clipboard);
+	safeDestroy(m_eventLoop);
 	m_widgetFactory = nullptr;
 	m_eventLoop = nullptr;
 }
@@ -154,7 +145,7 @@ VirtualKey Application::translateVirtualKey(const std::wstring& keyName) const
 			return c_keyTranslateTable[i].vkey;
 	}
 
-	wchar_t ch = keyName[0];
+	const wchar_t ch = keyName[0];
 	if ((ch >= '0' && ch <= '9') || (ch >= 'A' && ch <= 'Z'))
 		return (VirtualKey)ch;
 
@@ -171,7 +162,7 @@ std::wstring Application::translateVirtualKey(VirtualKey virtualKey) const
 
 	if ((virtualKey >= Vk0 && virtualKey <= Vk9) || (virtualKey >= VkA && virtualKey <= VkZ))
 	{
-		wchar_t tmp[] = { wchar_t(virtualKey), L'\0' };
+		const wchar_t tmp[] = { wchar_t(virtualKey), L'\0' };
 		return tmp;
 	}
 
