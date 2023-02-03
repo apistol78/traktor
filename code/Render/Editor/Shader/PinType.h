@@ -61,6 +61,14 @@ inline bool isPinTypeStructBuffer(PinType pinType)
 	return pinType == PinType::StructBuffer;
 }
 
+/*! Return true if type is an image.
+ * \ingroup Render
+ */
+inline bool isPinTypeImage(PinType pinType)
+{
+	return pinType >= PinType::Image2D && pinType <= PinType::ImageCube;
+}
+
 /*! Return true if type is a state.
  * \ingroup Render
  */
