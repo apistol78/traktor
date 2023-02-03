@@ -14,7 +14,7 @@ namespace traktor::render
 	namespace
 	{
 
-BoxedAllocator< RenderPass, 128 > s_allocRenderPass;
+BoxedAllocator< RenderPass, 256 > s_allocRenderPass;
 
 	}
 
@@ -23,7 +23,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderPass", RenderPass, Object)
 RenderPass::RenderPass(const std::wstring& name)
 :   m_name(name)
 {
-	m_output.resourceId = ~0;
 }
 
 void RenderPass::setName(const std::wstring& name)

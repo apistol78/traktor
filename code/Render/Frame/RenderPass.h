@@ -46,7 +46,7 @@ public:
 
 	struct Output
 	{
-		handle_t resourceId = 0;	//!< Resource name.
+		handle_t resourceId = ~0;	//!< Resource name.
 		Clear clear;				//!< Target clear value and mask (only applicable to render target resources).
 		uint32_t load = 0;
 		uint32_t store = 0;
