@@ -115,11 +115,6 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			drawing::PremultiplyAlphaFilter preAlphaFilter;
 			imageOutput->apply(&preAlphaFilter);
 		}
-		if (output.m_encodeAsRGBM)
-		{
-			const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
-			imageOutput->apply(&encodeRGBM);
-		}
 		if (output.m_generateNormalMap)
 		{
 			drawing::NormalMapFilter filter(output.m_scaleDepth);

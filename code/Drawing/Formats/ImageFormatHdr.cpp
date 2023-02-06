@@ -211,6 +211,10 @@ Ref< Image > ImageFormatHdr::read(IStream* stream)
 		return nullptr;
 
 	Ref< Image > image = new Image(PixelFormat::getRGBAF32(), w, h);
+	
+	Ref< ImageInfo > imageInfo = new ImageInfo();
+	imageInfo->setGamma(1.0f);
+	image->setImageInfo(imageInfo);
 
 	AutoArrayPtr< RGBE > scan(new RGBE[w]);
 	if (!scan.c_ptr())
