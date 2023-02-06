@@ -72,7 +72,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 {
 	Ref< ITexture > texture;
 
-	Ref< TextureResource > resource = instance->getObject< TextureResource >();
+	Ref< const TextureResource > resource = instance->getObject< TextureResource >();
 	if (!resource)
 		return nullptr;
 

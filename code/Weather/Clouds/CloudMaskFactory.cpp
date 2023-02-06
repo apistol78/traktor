@@ -37,13 +37,13 @@ bool CloudMaskFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< CloudMaskResource > resource = instance->getObject< CloudMaskResource >();
+	Ref< const CloudMaskResource > resource = instance->getObject< CloudMaskResource >();
 	if (!resource)
-		return 0;
+		return nullptr;
 
 	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
-		return 0;
+		return nullptr;
 
 	int32_t size = resource->getSize();
 

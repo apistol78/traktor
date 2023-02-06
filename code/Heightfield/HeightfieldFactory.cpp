@@ -35,7 +35,7 @@ bool HeightfieldFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< HeightfieldResource > resource = instance->getObject< HeightfieldResource >();
+	Ref< const HeightfieldResource > resource = instance->getObject< HeightfieldResource >();
 	if (!resource)
 		return nullptr;
 

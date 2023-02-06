@@ -38,7 +38,7 @@ bool ImageGraphFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > ImageGraphFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< ImageGraphData > imageGraphData = instance->getObject< ImageGraphData >();
+	Ref< const ImageGraphData > imageGraphData = instance->getObject< ImageGraphData >();
     if (imageGraphData)
         return imageGraphData->createInstance(resourceManager, m_renderSystem);
     else

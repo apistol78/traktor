@@ -38,7 +38,7 @@ bool SceneFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< SceneResource > sceneResource = instance->getObject< SceneResource >();
+	Ref< const SceneResource > sceneResource = instance->getObject< SceneResource >();
 	if (sceneResource)
 		return sceneResource->createScene(m_entityBuilder);
 	else

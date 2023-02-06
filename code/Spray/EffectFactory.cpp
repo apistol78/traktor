@@ -48,7 +48,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 {
 	if (is_type_a< Effect >(productType))
 	{
-		Ref< EffectData > effectData = instance->getObject< EffectData >();
+		Ref< const EffectData > effectData = instance->getObject< EffectData >();
 		if (effectData)
 			return effectData->createEffect(resourceManager, m_entityBuilder);
 		else

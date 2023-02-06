@@ -45,7 +45,7 @@ bool MeshFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< MeshResource > resource = instance->getObject< MeshResource >();
+	Ref< const MeshResource > resource = instance->getObject< MeshResource >();
 	if (!resource)
 	{
 		log::error << L"Mesh factory failed; unable to get mesh resource." << Endl;
