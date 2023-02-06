@@ -10,10 +10,8 @@
 
 #include "Database/Provider/IProviderBus.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class RemoteConnection;
 
@@ -25,7 +23,7 @@ class RemoteBus : public IProviderBus
 	T_RTTI_CLASS;
 
 public:
-	RemoteBus(RemoteConnection* connection, uint32_t handle);
+	explicit RemoteBus(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteBus();
 
@@ -38,6 +36,4 @@ private:
 	uint32_t m_handle;
 };
 
-	}
 }
-

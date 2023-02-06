@@ -10,16 +10,14 @@
 #include "Core/Thread/Acquire.h"
 #include "Database/Remote/Client/RemoteConnection.h"
 #include "Net/BidirectionalObjectTransport.h"
-#include "Net/TcpSocket.h"
+#include "Net/Socket.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteConnection", RemoteConnection, Object)
 
-RemoteConnection::RemoteConnection(net::TcpSocket* socket)
+RemoteConnection::RemoteConnection(net::Socket* socket)
 :	m_socket(socket)
 {
 	m_transport = new net::BidirectionalObjectTransport(m_socket);
@@ -62,5 +60,4 @@ Ref< IMessage > RemoteConnection::sendMessage(const IMessage& message)
 	return reply;
 }
 
-	}
 }

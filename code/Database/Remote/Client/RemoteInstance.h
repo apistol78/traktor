@@ -11,10 +11,8 @@
 #include "Database/Provider/IProviderInstance.h"
 #include "Net/SocketAddressIPv4.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class RemoteConnection;
 
@@ -26,7 +24,7 @@ class RemoteInstance : public IProviderInstance
 	T_RTTI_CLASS;
 
 public:
-	RemoteInstance(RemoteConnection* connection, uint32_t handle);
+	explicit RemoteInstance(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteInstance();
 
@@ -71,6 +69,4 @@ private:
 	uint32_t m_handle;
 };
 
-	}
 }
-

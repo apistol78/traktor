@@ -21,10 +21,8 @@
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/MsgHandleArrayResult.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteGroup", RemoteGroup, IProviderGroup)
 
@@ -42,31 +40,31 @@ RemoteGroup::~RemoteGroup()
 
 std::wstring RemoteGroup::getName() const
 {
-	Ref< MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetGroupName(m_handle));
+	Ref< const MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetGroupName(m_handle));
 	return result ? result->get() : L"";
 }
 
 bool RemoteGroup::rename(const std::wstring& name)
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRenameGroup(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRenameGroup(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 bool RemoteGroup::remove()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveGroup(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveGroup(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 Ref< IProviderGroup > RemoteGroup::createGroup(const std::wstring& groupName)
 {
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateGroup(m_handle, groupName));
+	Ref< const MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateGroup(m_handle, groupName));
 	return result ? new RemoteGroup(m_connection, result->get()) : nullptr;
 }
 
 Ref< IProviderInstance > RemoteGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateInstance(m_handle, instanceName, instanceGuid));
+	Ref< const MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateInstance(m_handle, instanceName, instanceGuid));
 	return result ? new RemoteInstance(m_connection, result->get()) : nullptr;
 }
 
@@ -85,5 +83,4 @@ bool RemoteGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArr
 	return true;
 }
 
-	}
 }

@@ -14,10 +14,8 @@
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/DbmGetEventResult.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteBus", RemoteBus, IProviderBus)
 
@@ -55,5 +53,4 @@ bool RemoteBus::getEvent(uint64_t& inoutSqnr, Ref< const IEvent >& outEvent, boo
 	return true;
 }
 
-	}
 }

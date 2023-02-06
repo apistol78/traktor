@@ -10,10 +10,8 @@
 
 #include "Database/Provider/IProviderGroup.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class RemoteConnection;
 
@@ -25,7 +23,7 @@ class RemoteGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	RemoteGroup(RemoteConnection* connection, uint32_t handle);
+	explicit RemoteGroup(RemoteConnection* connection, uint32_t handle);
 
 	virtual ~RemoteGroup();
 
@@ -46,6 +44,4 @@ private:
 	uint32_t m_handle;
 };
 
-	}
 }
-
