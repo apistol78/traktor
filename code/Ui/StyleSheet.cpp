@@ -164,7 +164,7 @@ std::wstring StyleSheet::getValue(const std::wstring& name) const
 		if (e == std::string::npos)
 			break;
 
-		std::wstring name = value.substr(s + 2, e - s - 2);
+		const std::wstring name = value.substr(s + 2, e - s - 2);
 		if (!(tmp = getValueRaw(name)).empty())
 			value = value.substr(0, s) + tmp + value.substr(e + 1);
 

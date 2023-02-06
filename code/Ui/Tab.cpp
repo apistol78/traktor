@@ -21,12 +21,6 @@ namespace traktor
 {
 	namespace ui
 	{
-		namespace
-		{
-
-const int32_t c_tabHeight = 21;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tab", Tab, Widget)
 
@@ -60,7 +54,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
-
+	m_tabHeight = getFont().getPixelSize() + dpi96(9);
 	return true;
 }
 
@@ -131,9 +125,9 @@ TabPage* Tab::getPage(int32_t index) const
 TabPage* Tab::getPageAt(const Point& position) const
 {
 	const auto rc = getInnerRect();
-	if (!m_bottom && position.y >= rc.top + dpi96(c_tabHeight))
+	if (!m_bottom && position.y >= rc.top + m_tabHeight)
 		return nullptr;
-	else if (m_bottom && position.y <= rc.bottom - dpi96(c_tabHeight))
+	else if (m_bottom && position.y <= rc.bottom - m_tabHeight)
 		return nullptr;
 
 	for (const auto& ps : m_pages)
@@ -279,11 +273,11 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + dpi96(c_tabHeight);
+		y1 = inner.top + m_tabHeight;
 	}
 	else
 	{
-		y0 = inner.bottom - dpi96(c_tabHeight);
+		y0 = inner.bottom - m_tabHeight;
 		y1 = inner.bottom;
 	}
 
@@ -307,11 +301,11 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + dpi96(c_tabHeight);
+		y1 = inner.top + m_tabHeight;
 	}
 	else
 	{
-		y0 = inner.bottom - dpi96(c_tabHeight);
+		y0 = inner.bottom - m_tabHeight;
 		y1 = inner.bottom;
 	}
 
@@ -372,9 +366,9 @@ void Tab::eventSize(SizeEvent* event)
 {
 	m_innerRect = Widget::getInnerRect();
 	if (!m_bottom)
-		m_innerRect.top += dpi96(c_tabHeight);
+		m_innerRect.top += m_tabHeight;
 	else
-		m_innerRect.bottom -= dpi96(c_tabHeight);
+		m_innerRect.bottom -= m_tabHeight;
 
 	if (m_drawBorder)
 		m_innerRect = m_innerRect.inflate(-1, -1);
@@ -398,11 +392,11 @@ void Tab::eventPaint(PaintEvent* event)
 	if (!m_bottom)
 	{
 		y0 = rcInner.top;
-		y1 = rcInner.top + dpi96(c_tabHeight);
+		y1 = rcInner.top + m_tabHeight;
 	}
 	else
 	{
-		y0 = rcInner.bottom - dpi96(c_tabHeight);
+		y0 = rcInner.bottom - m_tabHeight;
 		y1 = rcInner.bottom;
 	}
 
@@ -420,17 +414,16 @@ void Tab::eventPaint(PaintEvent* event)
 		{
 			const TabPage* page = ps.page;
 			const std::wstring text = page->getText();
-
-			Size sizText = canvas.getFontMetric().getExtent(text);
+			const Size sizText = canvas.getFontMetric().getExtent(text);
 
 			int32_t tabWidthNoMargin = sizText.cx;
 			if (m_closeButton)
 			{
-				Size closeSize = m_bitmapClose->getSize();
+				const Size closeSize = m_bitmapClose->getSize();
 				tabWidthNoMargin += closeSize.cx + dpi96(4);
 			}
 
-			int32_t tabWidth = tabWidthNoMargin + dpi96(4 * 2);
+			const int32_t tabWidth = tabWidthNoMargin + dpi96(4 * 2);
 
 			// Save right separator position in vector.
 			ps.right = left + tabWidth;
@@ -468,7 +461,7 @@ void Tab::eventPaint(PaintEvent* event)
 				// Draw close button.
 				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
-					Size closeSize = m_bitmapClose->getSize();
+					const Size closeSize = m_bitmapClose->getSize();
 					canvas.drawBitmap(
 						Point(rcTab.right - closeSize.cx - dpi96(4), rcTab.getCenter().y - closeSize.cy / 2 + dpi96(1)),
 						Point(0, 0),
@@ -479,7 +472,7 @@ void Tab::eventPaint(PaintEvent* event)
 				}
 
 				// Draw text.
-				Rect rcTabText(
+				const Rect rcTabText(
 					left + dpi96(4),
 					rcTab.top,
 					left + dpi96(4) + sizText.cx,
@@ -503,11 +496,11 @@ void Tab::eventPaint(PaintEvent* event)
 	else
 	{
 		// No tab pages, fill solid background.
-		Rect rcTabItem(
+		const Rect rcTabItem(
 			rcInner.left,
-			m_bottom ? rcInner.top : rcInner.top + dpi96(c_tabHeight),
+			m_bottom ? rcInner.top : rcInner.top + m_tabHeight,
 			rcInner.right,
-			m_bottom ? rcInner.bottom - dpi96(c_tabHeight) : rcInner.bottom
+			m_bottom ? rcInner.bottom - m_tabHeight : rcInner.bottom
 		);
 		canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
 		canvas.fillRect(rcTabItem);

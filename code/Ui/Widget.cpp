@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
@@ -56,11 +57,19 @@ bool Widget::create(Widget* parent, int style)
 	link(parent);
 
 	const StyleSheet* ss = getStyleSheet();
-	std::wstring fontName = ss->getValue(L"font-name");
+
+	// Replace system default font from style sheet.
+	const std::wstring fontName = ss->getValue(L"font-name");
 	if (!fontName.empty())
 	{
-		int32_t fontSize = getFont().getSize();
-		setFont(Font(fontName, fontSize));
+		const int32_t defaultSize = getFont().getSize();
+		Font font(fontName, defaultSize);
+
+		const std::wstring fontSize = ss->getValue(L"font-size");
+		if (!fontSize.empty())
+			font.setSize(parseString< int32_t >(fontSize, defaultSize));
+
+		setFont(font);
 	}
 
 	return true;
@@ -373,13 +382,9 @@ const StyleSheet* Widget::getStyleSheet() const
 		return m_styleSheet;
 
 	if (m_parent)
-	{
-		auto styleSheet = m_parent->getStyleSheet();
-		if (styleSheet)
-			return styleSheet;
-	}
-
-	return Application::getInstance()->getStyleSheet();
+		return m_parent->getStyleSheet();
+	else
+		return Application::getInstance()->getStyleSheet();
 }
 
 bool Widget::acceptLayout() const
