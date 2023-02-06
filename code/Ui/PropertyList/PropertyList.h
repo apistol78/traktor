@@ -112,8 +112,9 @@ private:
 	Ref< ScrollBar > m_scrollBar;
 	RefArray< PropertyItem > m_propertyItems;
 	Ref< PropertyItem > m_mousePropertyItem;
-	int m_separator;
-	int m_mode;
+	int32_t m_propertyItemHeight;
+	int32_t m_separator;
+	int32_t m_mode;
 	bool m_columnHeader;
 	std::wstring m_columnNames[2];
 	SmallMap< std::wstring, Ref< IBitmap > > m_bitmaps;
