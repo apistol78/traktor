@@ -47,6 +47,11 @@ Ref< Image > ImageFormatExr::read(IStream* stream)
 		width,
 		height
 	);
+
+	Ref< ImageInfo > imageInfo = new ImageInfo();
+	imageInfo->setGamma(1.0f);
+	image->setImageInfo(imageInfo);
+
 	std::memcpy(image->getData(), rgba, width * height * (4 * sizeof(float)));
 	std::free(rgba);
 	return image;

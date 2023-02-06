@@ -133,8 +133,8 @@ void TextureAssetEditorPage::updatePreview()
 		ss << L", " << pf.getBlueBits() << L" blue";
 		ss << L", " << pf.getAlphaBits() << L" alpha";
 
-		const auto& imf = image->getImageInfo();
-		ss << L", gamma " << imf->getGamma() << L" ";
+		const auto* imf = image->getImageInfo();
+		ss << L", gamma " << (imf ? imf->getGamma() : 2.2f) << L" ";
 
 		m_statusBar->setText(0, ss.str());
 	}
