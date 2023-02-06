@@ -66,7 +66,7 @@ Ref< Object > ScriptFactory::create(resource::IResourceManager* resourceManager,
 	}
 	else if (is_type_a< ScriptChunk >(productType))
 	{
-		Ref< ScriptResource > scriptResource = instance->getObject< ScriptResource >();
+		Ref< const ScriptResource > scriptResource = instance->getObject< ScriptResource >();
 		if (!scriptResource)
 		{
 			log::error << L"Unable to create script class; incorrect instance type." << Endl;

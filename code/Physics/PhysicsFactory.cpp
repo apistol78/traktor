@@ -42,7 +42,7 @@ Ref< Object > PhysicsFactory::create(resource::IResourceManager* resourceManager
 {
 	if (is_type_a< Mesh >(productType))
 	{
-		Ref< MeshResource > resource = instance->getObject< MeshResource >();
+		Ref< const MeshResource > resource = instance->getObject< MeshResource >();
 		if (!resource)
 			return nullptr;
 

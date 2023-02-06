@@ -83,7 +83,7 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		if (!m_renderSystem)
 			return nullptr;
 
-		Ref< IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
+		Ref< const IrradianceGridResource > resource = instance->getObject< IrradianceGridResource >();
 		if (!resource)
 			return nullptr;
 

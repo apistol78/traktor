@@ -33,7 +33,7 @@ bool SoundFactory::isCacheable(const TypeInfo& productType) const
 
 Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
-	Ref< ISoundResource > resource = instance->getObject< ISoundResource >();
+	Ref< const ISoundResource > resource = instance->getObject< ISoundResource >();
 	if (resource)
 		return resource->createSound(resourceManager, instance);
 	else

@@ -39,7 +39,7 @@ Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager
 {
 	Ref< NavMesh > outputNavMesh = new NavMesh();
 
-	Ref< NavMeshResource > resource = instance->getObject< NavMeshResource >();
+	Ref< const NavMeshResource > resource = instance->getObject< NavMeshResource >();
 	if (!resource)
 		return nullptr;
 
