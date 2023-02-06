@@ -33,10 +33,8 @@
 #include "Database/Remote/Messages/DbmWriteObjectResult.h"
 #include "Net/Stream/RemoteStream.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteInstance", RemoteInstance, IProviderInstance)
 
@@ -54,49 +52,49 @@ RemoteInstance::~RemoteInstance()
 
 std::wstring RemoteInstance::getPrimaryTypeName() const
 {
-	Ref< MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetInstancePrimaryType(m_handle));
+	Ref< const MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetInstancePrimaryType(m_handle));
 	return result ? result->get() : L"";
 }
 
 bool RemoteInstance::openTransaction()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpenTransaction(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpenTransaction(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 bool RemoteInstance::commitTransaction()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmCommitTransaction(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmCommitTransaction(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 bool RemoteInstance::closeTransaction()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmCloseTransaction(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmCloseTransaction(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 std::wstring RemoteInstance::getName() const
 {
-	Ref< MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetInstanceName(m_handle));
+	Ref< const MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetInstanceName(m_handle));
 	return result ? result->get() : L"";
 }
 
 bool RemoteInstance::setName(const std::wstring& name)
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmSetInstanceName(m_handle, name));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmSetInstanceName(m_handle, name));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 Guid RemoteInstance::getGuid() const
 {
-	Ref< MsgGuidResult > result = m_connection->sendMessage< MsgGuidResult >(DbmGetInstanceGuid(m_handle));
+	Ref< const MsgGuidResult > result = m_connection->sendMessage< MsgGuidResult >(DbmGetInstanceGuid(m_handle));
 	return result ? result->get() : Guid();
 }
 
 bool RemoteInstance::setGuid(const Guid& guid)
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmSetInstanceGuid(m_handle, guid));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmSetInstanceGuid(m_handle, guid));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
@@ -112,13 +110,13 @@ uint32_t RemoteInstance::getFlags() const
 
 bool RemoteInstance::remove()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveInstance(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveInstance(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) const
 {
-	Ref< DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
+	Ref< const DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
 	if (!result)
 		return nullptr;
 
@@ -131,7 +129,7 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 
 Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
-	Ref< DbmWriteObjectResult > result = m_connection->sendMessage< DbmWriteObjectResult >(DbmWriteObject(m_handle, primaryTypeName));
+	Ref< const DbmWriteObjectResult > result = m_connection->sendMessage< DbmWriteObjectResult >(DbmWriteObject(m_handle, primaryTypeName));
 	if (!result)
 		return nullptr;
 
@@ -144,7 +142,7 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 
 uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
 {
-	Ref< MsgStringArrayResult > result = m_connection->sendMessage< MsgStringArrayResult >(DbmGetDataNames(m_handle));
+	Ref< const MsgStringArrayResult > result = m_connection->sendMessage< MsgStringArrayResult >(DbmGetDataNames(m_handle));
 	if (!result)
 		return 0;
 
@@ -159,13 +157,13 @@ bool RemoteInstance::getDataLastWriteTime(const std::wstring& dataName, DateTime
 
 bool RemoteInstance::removeAllData()
 {
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveAllData(m_handle));
+	Ref< const MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveAllData(m_handle));
 	return result ? result->getStatus() == StSuccess : false;
 }
 
 Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 {
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
+	Ref< const MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
 	if (!result)
 		return nullptr;
 
@@ -174,12 +172,11 @@ Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 
 Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 {
-	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
+	Ref< const MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
 	if (!result)
 		return nullptr;
 
 	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
 }
 
-	}
 }

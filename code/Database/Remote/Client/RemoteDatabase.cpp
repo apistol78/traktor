@@ -24,10 +24,8 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.RemoteDatabase", 0, RemoteDatabase, IProviderDatabase)
 
@@ -80,7 +78,6 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 	}
 
 	m_connection->setStreamServerAddr(net::SocketAddressIPv4(host, result->get()));
-
 	return true;
 }
 
@@ -130,5 +127,4 @@ IProviderGroup* RemoteDatabase::getRootGroup()
 	return m_rootGroup;
 }
 
-	}
 }

@@ -13,18 +13,16 @@
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Net/SocketAddressIPv4.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class BidirectionalObjectTransport;
-class TcpSocket;
+class Socket;
 
-	}
+}
 
-	namespace db
-	{
+namespace traktor::db
+{
 
 /*! Database connection.
  * \ingroup Database
@@ -34,7 +32,7 @@ class RemoteConnection : public Object
 	T_RTTI_CLASS;
 
 public:
-	RemoteConnection(net::TcpSocket* socket);
+	explicit RemoteConnection(net::Socket* socket);
 
 	void destroy();
 
@@ -50,7 +48,7 @@ public:
 	}
 
 private:
-	Ref< net::TcpSocket > m_socket;
+	Ref< net::Socket > m_socket;
 	net::SocketAddressIPv4 m_streamServerAddr;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Semaphore m_transportLock;
@@ -58,6 +56,4 @@ private:
 	Ref< IMessage > sendMessage(const IMessage& message);
 };
 
-	}
 }
-
