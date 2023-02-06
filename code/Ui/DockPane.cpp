@@ -22,8 +22,6 @@ namespace traktor::ui
 	{
 
 const int c_splitterDim = 6;
-const int c_gripperDim = 21;
-const int c_minimumSplit = c_gripperDim + 64;
 
 template < typename EventType >
 void addEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventHandler)
@@ -41,14 +39,15 @@ void removeEventHandlers(Widget* widget, ui::EventSubject::IEventHandler* eventH
 		removeEventHandlers< EventType >(child, eventHandler);
 }
 
-int calculateRealSplit(const Rect& rc, int split, bool vertical)
+int32_t calculateRealSplit(int32_t gripperDim, const Rect& rc, int32_t split, bool vertical)
 {
-	const int dim = vertical ? rc.getHeight() : rc.getWidth();
-	int realSplit = split >= 0 ? split : dim + split;
-	if (realSplit <= c_minimumSplit)
-		realSplit = c_minimumSplit;
-	if (realSplit >= dim - c_minimumSplit)
-		realSplit = dim - c_minimumSplit;
+	const int32_t minimumSplit = gripperDim + dpi96(64);
+	const int32_t dim = vertical ? rc.getHeight() : rc.getWidth();
+	int32_t realSplit = split >= 0 ? split : dim + split;
+	if (realSplit <= minimumSplit)
+		realSplit = minimumSplit;
+	if (realSplit >= dim - minimumSplit)
+		realSplit = dim - minimumSplit;
 	realSplit += vertical ? rc.top : rc.left;
 	return realSplit;
 }
@@ -72,6 +71,8 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 	T_FATAL_ASSERT (m_bitmapGripper);
 
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
+
+	m_gripperDim = owner->getFont().getPixelSize() + dpi96(9);
 }
 
 DockPane::~DockPane()
@@ -319,7 +320,7 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 	{
 		Rect widgetRect = rect;
 		if (m_detachable)
-			widgetRect.top += dpi96(c_gripperDim);
+			widgetRect.top += m_gripperDim;
 		if (m_widget)
 			outWidgetRects.push_back(WidgetRect(m_widget, widgetRect));
 	}
@@ -333,13 +334,13 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 			Rect childRects[2] = { rect, rect };
 			if (m_vertical)
 			{
-				const int split = calculateRealSplit(rect, m_split, true);
+				const int32_t split = calculateRealSplit(m_gripperDim, rect, m_split, true);
 				childRects[0].bottom = split - c_splitterDim / 2;
 				childRects[1].top = split + c_splitterDim / 2;
 			}
 			else
 			{
-				const int split = calculateRealSplit(rect, m_split, false);
+				const int32_t split = calculateRealSplit(m_gripperDim, rect, m_split, false);
 				childRects[0].right = split - c_splitterDim / 2;
 				childRects[1].left = split + c_splitterDim / 2;
 			}
@@ -368,7 +369,7 @@ void DockPane::draw(Canvas& canvas)
 		Rect splitterRect = m_rect;
 		if (m_vertical)
 		{
-			const int split = calculateRealSplit(m_rect, m_split, true);
+			const int32_t split = calculateRealSplit(m_gripperDim, m_rect, m_split, true);
 			splitterRect.left += 2;
 			splitterRect.right -= 2;
 			splitterRect.top = split - c_splitterDim / 2;
@@ -378,7 +379,7 @@ void DockPane::draw(Canvas& canvas)
 		}
 		else
 		{
-			const int split = calculateRealSplit(m_rect, m_split, false);
+			const int32_t split = calculateRealSplit(m_gripperDim, m_rect, m_split, false);
 			splitterRect.left = split - 1;
 			splitterRect.right = split + 1;
 			splitterRect.top += 2;
@@ -393,7 +394,7 @@ void DockPane::draw(Canvas& canvas)
 		const FontMetric fm = m_widget->getFontMetric();
 
 		Rect captionRect = m_rect;
-		captionRect.bottom = captionRect.top + dpi96(c_gripperDim);
+		captionRect.bottom = captionRect.top + m_gripperDim;
 
 		if (m_focus)
 		{
@@ -524,7 +525,7 @@ bool DockPane::hitGripper(const Point& position) const
 	if (isSplitter() || (m_widget && !m_widget->isVisible(false)))
 		return false;
 
-	return position.y >= m_rect.top && position.y <= m_rect.top + dpi96(c_gripperDim);
+	return position.y >= m_rect.top && position.y <= m_rect.top + m_gripperDim;
 }
 
 bool DockPane::hitGripperClose(const Point& position) const
@@ -549,12 +550,12 @@ bool DockPane::hitSplitter(const Point& position) const
 	if (m_vertical)
 	{
 		pos = position.y;
-		split = calculateRealSplit(m_rect, m_split, true);
+		split = calculateRealSplit(m_gripperDim, m_rect, m_split, true);
 	}
 	else
 	{
 		pos = position.x;
-		split = calculateRealSplit(m_rect, m_split, false);
+		split = calculateRealSplit(m_gripperDim, m_rect, m_split, false);
 	}
 
 	return pos >= split - c_splitterDim / 2 && pos <= split + c_splitterDim / 2;

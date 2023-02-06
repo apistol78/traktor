@@ -34,18 +34,18 @@ ToolBarDropMenu::ToolBarDropMenu(int32_t width, const std::wstring& text, bool a
 
 int32_t ToolBarDropMenu::add(MenuItem* item)
 {
-	int32_t index = int32_t(m_items.size() - 1);
+	const int32_t index = (int32_t)(m_items.size() - 1);
 	m_items.push_back(item);
 	return index;
 }
 
 bool ToolBarDropMenu::remove(int32_t index)
 {
-	if (index >= int32_t(m_items.size()))
+	if (index >= (int32_t)m_items.size())
 		return false;
 
-	RefArray< MenuItem >::iterator i = m_items.begin() + index;
-	m_items.erase(i);
+	auto it = m_items.begin() + index;
+	m_items.erase(it);
 
 	return true;
 }
@@ -57,12 +57,12 @@ void ToolBarDropMenu::removeAll()
 
 int32_t ToolBarDropMenu::count() const
 {
-	return int32_t(m_items.size());
+	return (int32_t)m_items.size();
 }
 
 MenuItem* ToolBarDropMenu::get(int32_t index) const
 {
-	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index] : 0;
+	return (index >= 0 && index < (int32_t)m_items.size()) ? m_items[index] : nullptr;
 }
 
 bool ToolBarDropMenu::getToolTip(std::wstring& outToolTip) const
@@ -73,13 +73,11 @@ bool ToolBarDropMenu::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
+	const Size sz = toolBar->getFontMetric().getExtent(m_text);
 	if (m_width > 0)
-		return Size(m_width, imageHeight + dpi96(4));
+		return Size(m_width, std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
 	else
-	{
-		Size sz = toolBar->getFontMetric().getExtent(m_text);
-		return Size(sz.cx + dpi96(32), imageHeight + dpi96(4));
-	}
+		return Size(sz.cx + dpi96(32), std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
 }
 
 void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
@@ -87,7 +85,7 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	int32_t sep = dpi96(14);
+	const int32_t sep = dpi96(14);
 
 	Rect rcText;
 	if (m_arrow)
@@ -110,7 +108,7 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 
 	if (m_arrow)
 	{
-		Rect rcButton(
+		const Rect rcButton(
 			at.x + size.cx - sep,
 			at.y + 1,
 			at.x + size.cx - 1,
@@ -127,8 +125,8 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 			canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom);
 		}
 
-		Point center = rcButton.getCenter();
-		Point pnts[] =
+		const Point center = rcButton.getCenter();
+		const Point pnts[] =
 		{
 			ui::Point(center.x - dpi96(3), center.y - dpi96(1)),
 			ui::Point(center.x + dpi96(2), center.y - dpi96(1)),

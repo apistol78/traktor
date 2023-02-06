@@ -88,7 +88,8 @@ private:
 	bool m_detachable;
 	Ref< DockPane > m_child[2];
 	bool m_vertical;
-	int m_split;
+	int32_t m_split;
+	int32_t m_gripperDim;
 	Rect m_rect;
 	bool m_focus;
 

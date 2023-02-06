@@ -31,18 +31,18 @@ ToolBarMenu::ToolBarMenu(const std::wstring& text, const std::wstring& toolTip)
 
 int32_t ToolBarMenu::add(MenuItem* item)
 {
-	int32_t index = int32_t(m_items.size() - 1);
+	const int32_t index = (int32_t)(m_items.size() - 1);
 	m_items.push_back(item);
 	return index;
 }
 
 bool ToolBarMenu::remove(int32_t index)
 {
-	if (index >= int32_t(m_items.size()))
+	if (index >= (int32_t)m_items.size())
 		return false;
 
-	RefArray< MenuItem >::iterator i = m_items.begin() + index;
-	m_items.erase(i);
+	auto it = m_items.begin() + index;
+	m_items.erase(it);
 
 	return true;
 }
@@ -59,7 +59,7 @@ int32_t ToolBarMenu::count() const
 
 MenuItem* ToolBarMenu::get(int32_t index) const
 {
-	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index] : 0;
+	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index] : nullptr;
 }
 
 bool ToolBarMenu::getToolTip(std::wstring& outToolTip) const
@@ -70,8 +70,8 @@ bool ToolBarMenu::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	Size sz = toolBar->getFontMetric().getExtent(m_text);
-	return Size(sz.cx + dpi96(16), imageHeight + dpi96(4));
+	const Size sz = toolBar->getFontMetric().getExtent(m_text);
+	return Size(sz.cx + dpi96(16), std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
 }
 
 void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
@@ -79,7 +79,7 @@ void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitm
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	Rect rcText(
+	const Rect rcText(
 		at.x + 2,
 		at.y + 2,
 		at.x + size.cx - 2,
