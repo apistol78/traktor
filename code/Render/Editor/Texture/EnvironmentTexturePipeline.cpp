@@ -18,6 +18,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Instance.h"
 #include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
@@ -198,45 +199,61 @@ bool EnvironmentTexturePipeline::buildOutput(
 				mipSize
 			);
 
-			for (int32_t y = 0; y < mipSize; ++y)
+			const int32_t blockSize = min(mipSize, 16);
+
+			AlignedVector< Job::task_t > tasks;
+			tasks.reserve((mipSize / blockSize) * (mipSize / blockSize));
+
+			for (int32_t by = 0; by < mipSize; by += blockSize)
 			{
-				for (int32_t x = 0; x < mipSize; ++x)
+				for (int32_t bx = 0; bx < mipSize; bx += blockSize)
 				{
-					const Vector4 direction = cubeMap->getDirection(side, x << i, y << i);
-					
-					Vector4 u, v;
-					orthogonalFrame(direction, u, v);
-					const Matrix44 M(u, v, direction, Vector4::zero());
-
-					Color4f color(0.0f, 0.0f, 0.0f);
-					Scalar weight(0.0f);
-
-					for (int32_t i = 0; i < samples; ++i)
+					tasks.push_back([=]()
 					{
-						const Vector2 rnd = Quasirandom::hammersley(i, samples);
+						for (int32_t y = by; y < by + blockSize; ++y)
+						{
+							for (int32_t x = bx; x < bx + blockSize; ++x)
+							{
+								const Vector4 direction = cubeMap->getDirection(side, x << i, y << i);
 
-						const float a = roughness * roughness;
-						const float phi = TWO_PI * rnd.x;
-						const float cosTheta = std::sqrt((1.0f - rnd.y) / (1.0f + (a * a - 1.0f) * rnd.y));
-						const float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
+								Vector4 u, v;
+								orthogonalFrame(direction, u, v);
+								const Matrix44 M(u, v, direction, Vector4::zero());
 
-						const Vector4 H(
-							std::cos(phi) * sinTheta,
-							std::sin(phi) * sinTheta,
-							cosTheta
-						);
+								Color4f color(0.0f, 0.0f, 0.0f);
+								Scalar weight(0.0f);
 
-						const Vector4 Hw = (M * H).normalized();
-						const Vector4 L = Hw * (2.0_simd * dot3(direction, Hw)) - direction;
+								for (int32_t i = 0; i < samples; ++i)
+								{
+									const Vector2 rnd = Quasirandom::hammersley(i, samples);
 
-						color += min(cubeMap->get(L.normalized()), Color4f(10.0f, 10.0f, 10.0f, 0.0f));
-						weight += max(dot3(direction, L), 0.0_simd);
-					}
+									const float a = roughness * roughness;
+									const float phi = TWO_PI * rnd.x;
+									const float cosTheta = std::sqrt((1.0f - rnd.y) / (1.0f + (a * a - 1.0f) * rnd.y));
+									const float sinTheta = std::sqrt(1.0f - cosTheta * cosTheta);
 
-					color /= weight;
-					mipImages[i]->setPixelUnsafe(x, y, color.rgb1());
+									const Vector4 H(
+										std::cos(phi) * sinTheta,
+										std::sin(phi) * sinTheta,
+										cosTheta
+									);
+
+									const Vector4 Hw = (M * H).normalized();
+									const Vector4 L = Hw * (2.0_simd * dot3(direction, Hw)) - direction;
+
+									color += min(cubeMap->get(L.normalized()), Color4f(10.0f, 10.0f, 10.0f, 0.0f));
+									weight += max(dot3(direction, L), 0.0_simd);
+								}
+
+								color /= weight;
+								mipImages[i]->setPixelUnsafe(x, y, color.rgb1());
+							}
+						}
+					});
 				}
 			}
+
+			JobManager::getInstance().fork(tasks.c_ptr(), tasks.size());
 		}
 
 		Ref< ICompressor > compressor;
