@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Input/Binding/CombinedInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.CombinedInputSourceData", 0, CombinedInputSourceData, IInputSourceData)
 
@@ -72,5 +70,4 @@ void CombinedInputSourceData::serialize(ISerializer& s)
 	s >> MemberEnum< CombinedInputSource::CombineMode >(L"mode", m_mode, c_CombineMode_Keys);
 }
 
-	}
 }

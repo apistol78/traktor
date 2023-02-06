@@ -18,15 +18,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputMappingSourceData;
 class InputMappingStateData;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InputMappingResource : public ISerializable
@@ -34,9 +32,9 @@ class T_DLLCLASS InputMappingResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	InputMappingResource();
+	InputMappingResource() = default;
 
-	InputMappingResource(InputMappingSourceData* sourceData, InputMappingStateData* stateData);
+	explicit InputMappingResource(InputMappingSourceData* sourceData, InputMappingStateData* stateData);
 
 	InputMappingSourceData* getSourceData() const { return m_sourceData; }
 
@@ -49,6 +47,4 @@ private:
 	Ref< InputMappingStateData > m_stateData;
 };
 
-	}
 }
-

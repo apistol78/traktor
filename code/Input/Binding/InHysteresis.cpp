@@ -14,12 +14,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InHysteresisInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -27,7 +25,7 @@ struct InHysteresisInstance : public RefCountImpl< IInputNode::Instance >
 	float currentValue;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InHysteresis", 0, InHysteresis, IInputNode)
 
@@ -65,7 +63,7 @@ float InHysteresis::evaluate(
 {
 	InHysteresisInstance* ihi = static_cast< InHysteresisInstance* >(instance);
 
-	float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
+	const float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
 
 	if (V > m_limit[1])
 		ihi->currentValue = m_output[1];
@@ -82,5 +80,4 @@ void InHysteresis::serialize(ISerializer& s)
 	s >> MemberStaticArray< float, 2 >(L"output", m_output);
 }
 
-	}
 }

@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InClamp : public IInputNode
@@ -33,7 +31,7 @@ class T_DLLCLASS InClamp : public IInputNode
 public:
 	InClamp();
 
-	InClamp(IInputNode* source, float limitMin, float limitMax);
+	explicit InClamp(IInputNode* source, float limitMin, float limitMax);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -53,6 +51,4 @@ private:
 	float m_limit[2];
 };
 
-	}
 }
-

@@ -12,10 +12,8 @@
 #include "Input/Binding/ControlInputSource.h"
 #include "Input/Binding/ControlInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ControlInputSource", ControlInputSource, IInputSource)
 
@@ -36,22 +34,22 @@ void ControlInputSource::prepare(float T, float dT)
 
 float ControlInputSource::read(float T, float dT)
 {
-	InputCategory category = m_data->getCategory();
-	int32_t index = m_data->getIndex();
+	const InputCategory category = m_data->getCategory();
+	const int32_t index = m_data->getIndex();
 
 	InputSystem* inputSystem = m_deviceControlManager->getInputSystem();
 	T_ASSERT(inputSystem);
 
 	if (index < 0)
 	{
-		int32_t deviceCount = inputSystem->getDeviceCount(category, false);
+		const int32_t deviceCount = inputSystem->getDeviceCount(category, false);
 		if (m_data->getControlQuery() == ControlInputSourceData::CqMatchingDevice)
 			return deviceCount > 0 ? 1.0f : 0.0f;
 		else
 		{
 			for (int32_t i = 0; i < deviceCount; ++i)
 			{
-				IInputDevice* inputDevice = inputSystem->getDevice(category, i, false);
+				const IInputDevice* inputDevice = inputSystem->getDevice(category, i, false);
 				T_ASSERT(inputDevice);
 
 				if (inputDevice->isConnected())
@@ -62,7 +60,7 @@ float ControlInputSource::read(float T, float dT)
 	}
 	else
 	{
-		IInputDevice* inputDevice = inputSystem->getDevice(category, index, false);
+		const IInputDevice* inputDevice = inputSystem->getDevice(category, index, false);
 		if (!inputDevice)
 			return 0.0f;
 
@@ -75,5 +73,4 @@ float ControlInputSource::read(float T, float dT)
 	return 0.0f;
 }
 
-	}
 }

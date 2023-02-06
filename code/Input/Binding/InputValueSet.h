@@ -20,12 +20,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InputValueSet : public Object
@@ -41,6 +39,4 @@ private:
 	SmallMap< handle_t, float > m_valueMap;
 };
 
-	}
 }
-

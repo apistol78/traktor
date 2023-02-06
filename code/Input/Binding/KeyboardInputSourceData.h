@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Input/InputTypes.h"
 #include "Input/Binding/IInputSourceData.h"
 
@@ -20,12 +20,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS KeyboardInputSourceData : public IInputSourceData
@@ -35,16 +33,14 @@ class T_DLLCLASS KeyboardInputSourceData : public IInputSourceData
 public:
 	void addControlType(InputDefaultControlType controlType);
 
-	const std::vector< InputDefaultControlType >& getControlTypes() const;
+	const AlignedVector< InputDefaultControlType >& getControlTypes() const;
 
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::vector< InputDefaultControlType > m_controlTypes;
+	AlignedVector< InputDefaultControlType > m_controlTypes;
 };
 
-	}
 }
-

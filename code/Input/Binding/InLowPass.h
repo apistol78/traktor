@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InLowPass : public IInputNode
@@ -31,9 +29,9 @@ class T_DLLCLASS InLowPass : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InLowPass();
+	InLowPass() = default;
 
-	InLowPass(IInputNode* source, IInputNode* coeff);
+	explicit InLowPass(IInputNode* source, IInputNode* coeff);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -53,6 +51,4 @@ private:
 	Ref< IInputNode > m_coeff;
 };
 
-	}
 }
-

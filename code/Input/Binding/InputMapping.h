@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class DeviceControlManager;
 class IInputSource;
@@ -56,8 +54,6 @@ class T_DLLCLASS InputMapping : public Object
 	T_RTTI_CLASS;
 
 public:
-	InputMapping();
-
 	bool create(
 		InputSystem* inputSystem,
 		const InputMappingSourceData* sourceData,
@@ -141,10 +137,8 @@ private:
 	SmallMap< handle_t, Ref< IInputSource > > m_sources;
 	SmallMap< handle_t, Ref< InputState > > m_states;
 	InputValueSet m_valueSet;
-	float m_idleTimer;
-	float m_T;
+	float m_idleTimer = 0.0f;
+	float m_T = 0.0f;
 };
 
-	}
 }
-

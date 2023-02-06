@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class KeyboardInputSourceData;
 class CombinedInputSourceData;
@@ -32,7 +30,7 @@ class IInputDevice;
 class IInputSourceData;
 class InputSystem;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InputSourceFabricator : public Object
@@ -40,7 +38,7 @@ class T_DLLCLASS InputSourceFabricator : public Object
 	T_RTTI_CLASS;
 
 public:
-	InputSourceFabricator(InputSystem* inputSystem, InputCategory category, bool analogue);
+	explicit InputSourceFabricator(InputSystem* inputSystem, InputCategory category, bool analogue);
 
 	Ref< IInputSourceData > update();
 
@@ -59,6 +57,4 @@ private:
 	std::list< DeviceState > m_deviceStates;
 };
 
-	}
 }
-

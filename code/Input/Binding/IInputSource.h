@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputSystem;
 class InputValueSet;
@@ -53,6 +51,4 @@ public:
 	virtual float read(float T, float dT) = 0;
 };
 
-	}
 }
-

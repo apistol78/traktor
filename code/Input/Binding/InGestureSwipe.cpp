@@ -16,12 +16,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const float c_sampleThreshold = 2.0f;
 const float c_deviateThreshold = 20.0f;
@@ -34,7 +32,7 @@ struct InGestureSwipeInstance : public RefCountImpl< IInputNode::Instance >
 	CircularVector< Vector2, 128 > points;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGestureSwipe", 0, InGestureSwipe, IInputNode)
 
@@ -74,7 +72,7 @@ float InGestureSwipe::evaluate(
 {
 	InGestureSwipeInstance* swipeInstance = static_cast< InGestureSwipeInstance* >(instance);
 
-	float V = m_sourceActive->evaluate(swipeInstance->sourceActiveInstance, valueSet, T, dT);
+	const float V = m_sourceActive->evaluate(swipeInstance->sourceActiveInstance, valueSet, T, dT);
 	if (!asBoolean(V))
 	{
 		bool result = false;
@@ -87,8 +85,8 @@ float InGestureSwipe::evaluate(
 			if (points.size() >= 3)
 			{
 				// Determine swipe direction from first and last point.
-				Vector2 dir = (points.back() - points.front()).normalized();
-				Vector2 adir(abs(dir.x), abs(dir.y));
+				const Vector2 dir = (points.back() - points.front()).normalized();
+				const Vector2 adir(abs(dir.x), abs(dir.y));
 
 				switch (m_direction)
 				{
@@ -125,7 +123,7 @@ float InGestureSwipe::evaluate(
 					// Ensure no point deviate too much from direction.
 					for (uint32_t i = 0; i < points.size(); ++i)
 					{
-						float k = abs(dot(dir.perpendicular(), points[i] - mid));
+						const float k = abs(dot(dir.perpendicular(), points[i] - mid));
 						result &= bool(k <= c_deviateThreshold);
 					}
 				}
@@ -138,13 +136,13 @@ float InGestureSwipe::evaluate(
 	}
 
 	// Swipe is active; sample positions.
-	float X = m_sourceX->evaluate(swipeInstance->sourceXInstance, valueSet, T, dT);
-	float Y = m_sourceY->evaluate(swipeInstance->sourceYInstance, valueSet, T, dT);
+	const float X = m_sourceX->evaluate(swipeInstance->sourceXInstance, valueSet, T, dT);
+	const float Y = m_sourceY->evaluate(swipeInstance->sourceYInstance, valueSet, T, dT);
 
 	if (!swipeInstance->points.empty())
 	{
 		// Ensure distance from last sample.
-		Vector2 delta = Vector2(X, Y) - swipeInstance->points.back();
+		const Vector2 delta = Vector2(X, Y) - swipeInstance->points.back();
 		if (delta.length() >= c_sampleThreshold)
 			swipeInstance->points.push_back(Vector2(X, Y));
 	}
@@ -171,5 +169,4 @@ void InGestureSwipe::serialize(ISerializer& s)
 	s >> MemberEnum< SwipeDirection >(L"direction", m_direction, c_SwipeDirection_Keys);
 }
 
-	}
 }

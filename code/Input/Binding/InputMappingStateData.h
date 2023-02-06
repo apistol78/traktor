@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputStateData;
 
@@ -47,6 +45,4 @@ private:
 	SmallMap< std::wstring, Ref< InputStateData > > m_stateData;
 };
 
-	}
 }
-

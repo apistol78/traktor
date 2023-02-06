@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InRemapAxis : public IInputNode
@@ -33,7 +31,7 @@ class T_DLLCLASS InRemapAxis : public IInputNode
 public:
 	InRemapAxis();
 
-	InRemapAxis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMid, float outputMax);
+	explicit InRemapAxis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMid, float outputMax);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -54,6 +52,4 @@ private:
 	float m_output[3];
 };
 
-	}
 }
-

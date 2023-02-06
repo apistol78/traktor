@@ -11,10 +11,8 @@
 #include "Input/Binding/DeviceControl.h"
 #include "Input/Binding/DeviceControlManager.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.DeviceControlManager", DeviceControlManager, Object)
 
@@ -30,9 +28,8 @@ int32_t DeviceControlManager::getDeviceControlCount(InputCategory category)
 
 Ref< DeviceControl > DeviceControlManager::getDeviceControl(InputCategory category, InputDefaultControlType controlType, bool analogue, int32_t index)
 {
-	for (RefArray< DeviceControl >::iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (auto deviceControl : m_deviceControls)
 	{
-		DeviceControl* deviceControl = *i;
 		if (
 			deviceControl->m_category == category &&
 			deviceControl->m_controlType == controlType &&
@@ -65,10 +62,8 @@ Ref< DeviceControl > DeviceControlManager::getDeviceControl(InputCategory catego
 
 void DeviceControlManager::update()
 {
-	for (RefArray< DeviceControl >::iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (auto deviceControl : m_deviceControls)
 	{
-		DeviceControl* deviceControl = *i;
-
 		if (!deviceControl->m_device)
 		{
 			deviceControl->m_device = m_inputSystem->getDevice(deviceControl->m_category, deviceControl->m_index, true);
@@ -78,7 +73,7 @@ void DeviceControlManager::update()
 				if (deviceControl->m_device->getDefaultControl(deviceControl->m_controlType, deviceControl->m_analogue, control))
 					deviceControl->m_control = control;
 				else
-					deviceControl->m_device = 0;
+					deviceControl->m_device = nullptr;
 			}
 		}
 
@@ -111,5 +106,4 @@ void DeviceControlManager::update()
 	}
 }
 
-	}
 }

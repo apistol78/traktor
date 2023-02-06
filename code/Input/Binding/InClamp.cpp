@@ -14,19 +14,17 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InClampInstance : public RefCountImpl< IInputNode::Instance >
 {
 	Ref< IInputNode::Instance > sourceInstance;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InClamp", 0, InClamp, IInputNode)
 
@@ -59,8 +57,7 @@ float InClamp::evaluate(
 {
 	InClampInstance* ihi = static_cast< InClampInstance* >(instance);
 
-	float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
-
+	const float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
 	if (V > m_limit[1])
 		return m_limit[1];
 	if (V < m_limit[0])
@@ -75,5 +72,4 @@ void InClamp::serialize(ISerializer& s)
 	s >> MemberStaticArray< float, 2 >(L"limit", m_limit);
 }
 
-	}
 }

@@ -11,17 +11,10 @@
 #include "Input/Binding/InConst.h"
 #include "Input/Binding/InputValueSet.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InConst", 0, InConst, IInputNode)
-
-InConst::InConst()
-:	m_value(0.0f)
-{
-}
 
 InConst::InConst(float value)
 :	m_value(value)
@@ -48,5 +41,4 @@ void InConst::serialize(ISerializer& s)
 	s >> Member< float >(L"value", m_value);
 }
 
-	}
 }

@@ -18,18 +18,10 @@
 #include "Input/Binding/InputState.h"
 #include "Input/Binding/InputStateData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputMapping", InputMapping, Object)
-
-InputMapping::InputMapping()
-:	m_idleTimer(0.0f)
-,	m_T(0.0f)
-{
-}
 
 bool InputMapping::create(
 	InputSystem* inputSystem,
@@ -87,7 +79,7 @@ void InputMapping::update(float dT, bool inputEnable)
 		// Update value set with state's current values.
 		for (auto& it : m_states)
 		{
-			float value = it.second->getValue();
+			const float value = it.second->getValue();
 			m_valueSet.set(it.first, value);
 		}
 
@@ -98,10 +90,10 @@ void InputMapping::update(float dT, bool inputEnable)
 		// Input value set by updating all sources.
 		for (auto& it : m_sources)
 		{
-			float value = it.second->read(m_T, dT);
+			const float value = it.second->read(m_T, dT);
 
 			// Reset idle timer when value change.
-			float currentValue = m_valueSet.get(it.first);
+			const float currentValue = m_valueSet.get(it.first);
 			if (std::abs(currentValue - value) > FUZZY_EPSILON)
 				m_idleTimer = 0.0f;
 
@@ -214,5 +206,4 @@ float InputMapping::getIdleDuration() const
 	return m_idleTimer;
 }
 
-	}
 }

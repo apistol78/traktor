@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Constant value input.
  * \ingroup Input
@@ -32,7 +30,7 @@ class T_DLLCLASS ConstantInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	ConstantInputSource(float value);
+	explicit ConstantInputSource(float value);
 
 	virtual std::wstring getDescription() const override final;
 
@@ -44,6 +42,4 @@ private:
 	float m_value;
 };
 
-	}
 }
-

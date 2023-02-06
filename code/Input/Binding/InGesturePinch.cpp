@@ -16,12 +16,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const float c_sampleThreshold = 2.0f;
 const float c_deviateThreshold = 100.0f;
@@ -37,7 +35,7 @@ struct InGesturePinchInstance : public RefCountImpl< IInputNode::Instance >
 	CircularVector< Vector2, 128 > points2;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGesturePinch", 1, InGesturePinch, IInputNode)
 
@@ -81,7 +79,7 @@ float InGesturePinch::evaluate(
 {
 	InGesturePinchInstance* pinchInstance = static_cast< InGesturePinchInstance* >(instance);
 
-	float V = m_sourceActive->evaluate(pinchInstance->sourceActiveInstance, valueSet, T, dT);
+	const float V = m_sourceActive->evaluate(pinchInstance->sourceActiveInstance, valueSet, T, dT);
 	if (!asBoolean(V))
 	{
 		float sign = 0.0f;
@@ -96,16 +94,15 @@ float InGesturePinch::evaluate(
 			if (points1.size() >= 3 && points2.size() >= 3)
 			{
 				// Determine pinch direction from first and last point.
-				Vector2 dir1 = (points1.back() - points1.front()).normalized();
-				Vector2 dir2 = (points2.back() - points2.front()).normalized();
-
+				const Vector2 dir1 = (points1.back() - points1.front()).normalized();
+				const Vector2 dir2 = (points2.back() - points2.front()).normalized();
 				bool result = bool(dot(dir1, dir2) < 0.0f);
 
 				// If a direction is specified then we must check both directions major axis is correct.
 				if (result && m_direction != PdAny)
 				{
-					Vector2 adir1(abs(dir1.x), abs(dir1.y));
-					Vector2 adir2(abs(dir2.x), abs(dir2.y));
+					const Vector2 adir1(abs(dir1.x), abs(dir1.y));
+					const Vector2 adir2(abs(dir2.x), abs(dir2.y));
 
 					switch (m_direction)
 					{
@@ -142,21 +139,20 @@ float InGesturePinch::evaluate(
 					// Ensure no point deviate too much from direction.
 					for (uint32_t i = 0; i < points1.size(); ++i)
 					{
-						float k = abs(dot(dir1.perpendicular(), points1[i] - mid1));
+						const float k = abs(dot(dir1.perpendicular(), points1[i] - mid1));
 						result &= bool(k <= c_deviateThreshold);
 					}
 					for (uint32_t i = 0; i < points2.size(); ++i)
 					{
-						float k = abs(dot(dir2.perpendicular(), points2[i] - mid2));
+						const float k = abs(dot(dir2.perpendicular(), points2[i] - mid2));
 						result &= bool(k <= c_deviateThreshold);
 					}
 
 					if (result)
 					{
-						Vector2 mid = (mid1 + mid2) / 2.0f;
-
-						float k1 = dot(mid - mid1, dir1);
-						float k2 = dot(mid - mid2, dir2);
+						const Vector2 mid = (mid1 + mid2) / 2.0f;
+						const float k1 = dot(mid - mid1, dir1);
+						const float k2 = dot(mid - mid2, dir2);
 
 						if (k1 > 0.0f && k2 > 0.0f)
 							sign = -1.0f;
@@ -174,26 +170,26 @@ float InGesturePinch::evaluate(
 	}
 
 	// Pinch is active; sample positions.
-	float X1 = m_sourceX1->evaluate(pinchInstance->sourceX1Instance, valueSet, T, dT);
-	float Y1 = m_sourceY1->evaluate(pinchInstance->sourceY1Instance, valueSet, T, dT);
+	const float X1 = m_sourceX1->evaluate(pinchInstance->sourceX1Instance, valueSet, T, dT);
+	const float Y1 = m_sourceY1->evaluate(pinchInstance->sourceY1Instance, valueSet, T, dT);
 
 	if (!pinchInstance->points1.empty())
 	{
 		// Ensure distance from last sample.
-		Vector2 delta = Vector2(X1, Y1) - pinchInstance->points1.back();
+		const Vector2 delta = Vector2(X1, Y1) - pinchInstance->points1.back();
 		if (delta.length() >= c_sampleThreshold)
 			pinchInstance->points1.push_back(Vector2(X1, Y1));
 	}
 	else
 		pinchInstance->points1.push_back(Vector2(X1, Y1));
 
-	float X2 = m_sourceX2->evaluate(pinchInstance->sourceX2Instance, valueSet, T, dT);
-	float Y2 = m_sourceY2->evaluate(pinchInstance->sourceY2Instance, valueSet, T, dT);
+	const float X2 = m_sourceX2->evaluate(pinchInstance->sourceX2Instance, valueSet, T, dT);
+	const float Y2 = m_sourceY2->evaluate(pinchInstance->sourceY2Instance, valueSet, T, dT);
 
 	if (!pinchInstance->points2.empty())
 	{
 		// Ensure distance from last sample.
-		Vector2 delta = Vector2(X2, Y2) - pinchInstance->points2.back();
+		const Vector2 delta = Vector2(X2, Y2) - pinchInstance->points2.back();
 		if (delta.length() >= c_sampleThreshold)
 			pinchInstance->points2.push_back(Vector2(X2, Y2));
 	}
@@ -223,5 +219,4 @@ void InGesturePinch::serialize(ISerializer& s)
 		s >> MemberEnum< PinchDirection >(L"direction", m_direction, c_PinchDirection_Keys);
 }
 
-	}
 }

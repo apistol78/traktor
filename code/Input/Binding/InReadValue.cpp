@@ -11,25 +11,19 @@
 #include "Input/Binding/InReadValue.h"
 #include "Input/Binding/InputValueSet.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InReadValueInstance : public RefCountImpl< IInputNode::Instance >
 {
 	handle_t valueId;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InReadValue", 0, InReadValue, IInputNode)
-
-InReadValue::InReadValue()
-{
-}
 
 InReadValue::InReadValue(const std::wstring& valueId)
 :	m_valueId(valueId)
@@ -59,5 +53,4 @@ void InReadValue::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"valueId", m_valueId);
 }
 
-	}
 }

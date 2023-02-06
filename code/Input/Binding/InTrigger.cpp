@@ -16,12 +16,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InTriggerInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -30,7 +28,7 @@ struct InTriggerInstance : public RefCountImpl< IInputNode::Instance >
 	float pulseEnd;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InTrigger", 0, InTrigger, IInputNode)
 
@@ -65,8 +63,8 @@ float InTrigger::evaluate(
 {
 	InTriggerInstance* iti = static_cast< InTriggerInstance* >(instance);
 
-	float V = m_source->evaluate(iti->sourceInstance, valueSet, T, dT);
-	float dV = V - iti->previousValue;
+	const float V = m_source->evaluate(iti->sourceInstance, valueSet, T, dT);
+	const float dV = V - iti->previousValue;
 
 	iti->previousValue = V;
 
@@ -100,5 +98,4 @@ void InTrigger::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", m_duration);
 }
 
-	}
 }

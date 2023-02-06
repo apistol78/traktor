@@ -19,15 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class DeviceControlManager;
 class IInputSource;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS IInputSourceData : public ISerializable
@@ -38,6 +36,4 @@ public:
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const = 0;
 };
 
-	}
 }
-

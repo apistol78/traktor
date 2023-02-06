@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InPulse : public IInputNode
@@ -31,9 +29,9 @@ class T_DLLCLASS InPulse : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InPulse();
+	InPulse() = default;
 
-	InPulse(IInputNode* source, float delay, float interval);
+	explicit InPulse(IInputNode* source, float delay, float interval);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -50,10 +48,8 @@ private:
 	friend class InPulseTraits;
 
 	Ref< IInputNode > m_source;
-	float m_delay;
-	float m_interval;
+	float m_delay = 0.0f;
+	float m_interval = 0.0f;
 };
 
-	}
 }
-

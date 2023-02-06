@@ -12,10 +12,8 @@
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMappingSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingSourceData", 0, InputMappingSourceData, ISerializable)
 
@@ -29,7 +27,7 @@ void InputMappingSourceData::setSourceData(const std::wstring& id, IInputSourceD
 
 IInputSourceData* InputMappingSourceData::getSourceData(const std::wstring& id)
 {
-	auto it = m_sourceData.find(id);
+	const auto it = m_sourceData.find(id);
 	return it != m_sourceData.end() ? it->second : nullptr;
 }
 
@@ -48,5 +46,4 @@ void InputMappingSourceData::serialize(ISerializer& s)
 	>(L"sourceData", m_sourceData);
 }
 
-	}
 }

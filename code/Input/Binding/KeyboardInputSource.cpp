@@ -16,12 +16,10 @@
 #include "Input/Binding/KeyboardInputSource.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 class KeyboardRegistry
 {
@@ -39,8 +37,8 @@ public:
 
 	void remove(KeyboardInputSource* source)
 	{
-		std::list< KeyboardInputSource* >::iterator i = std::find(m_sources.begin(), m_sources.end(), source);
-		m_sources.erase(i);
+		auto it = std::find(m_sources.begin(), m_sources.end(), source);
+		m_sources.erase(it);
 	}
 
 	const std::list< KeyboardInputSource* >& get() const
@@ -52,22 +50,22 @@ private:
 	std::list< KeyboardInputSource* > m_sources;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardInputSource", KeyboardInputSource, IInputSource)
 
 KeyboardInputSource::KeyboardInputSource(
-	const std::vector< InputDefaultControlType >& controlTypes,
+	const AlignedVector< InputDefaultControlType >& controlTypes,
 	DeviceControlManager* deviceControlManager
 )
 :	m_deviceControlManager(deviceControlManager)
 ,	m_deviceCount(0)
 ,	m_state(false)
 {
-	for (std::vector< InputDefaultControlType >::const_iterator i = controlTypes.begin(); i != controlTypes.end(); ++i)
+	for (auto controlType : controlTypes)
 	{
 		Key key;
-		key.controlType = *i;
+		key.controlType = controlType;
 		key.state = false;
 		m_keys.push_back(key);
 	}
@@ -82,12 +80,12 @@ KeyboardInputSource::~KeyboardInputSource()
 std::wstring KeyboardInputSource::getDescription() const
 {
 	StringOutputStream ss;
-	for (std::vector< Key >::const_iterator i = m_keys.begin(); i != m_keys.end(); ++i)
+	for (auto i = m_keys.begin(); i != m_keys.end(); ++i)
 	{
 		if (i != m_keys.begin())
 			ss << L" + ";
 
-		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
+		for (auto j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
 		{
 			std::wstring controlName = (*j)->getControlName();
 			if (!controlName.empty())
@@ -103,10 +101,10 @@ std::wstring KeyboardInputSource::getDescription() const
 void KeyboardInputSource::prepare(float T, float dT)
 {
 	// Check if number of connected keyboard devices has changed since last preparation.
-	int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(CtKeyboard);
+	const int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(CtKeyboard);
 	if (deviceCount != m_deviceCount)
 	{
-		for (std::vector< Key >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
+		for (auto i = m_keys.begin(); i != m_keys.end(); ++i)
 		{
 			i->deviceControls.resize(deviceCount);
 			for (int32_t j = 0; j < deviceCount; ++j)
@@ -124,10 +122,10 @@ void KeyboardInputSource::prepare(float T, float dT)
 
 	// Update our local state; ie state without looking at other keyboard sources.
 	m_state = true;
-	for (std::vector< Key >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
+	for (auto i = m_keys.begin(); i != m_keys.end(); ++i)
 	{
 		i->state = false;
-		for (RefArray< DeviceControl >::const_iterator j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
+		for (auto j = i->deviceControls.begin(); j != i->deviceControls.end(); ++j)
 			i->state |= asBoolean(j->getCurrentValue());
 		m_state &= i->state;
 	}
@@ -149,12 +147,12 @@ float KeyboardInputSource::read(float T, float dT)
 		if ((*i)->m_keys.size() <= m_keys.size())
 			continue;
 
-		bool otherActive = asBoolean((*i)->read(T, dT));
+		const bool otherActive = asBoolean((*i)->read(T, dT));
 		if (!otherActive)
 			continue;
 
 		bool match = true;
-		for (std::vector< Key >::iterator j = m_keys.begin(); j != m_keys.end(); ++j)
+		for (auto j = m_keys.begin(); j != m_keys.end(); ++j)
 		{
 			if (std::find((*i)->m_keys.begin(), (*i)->m_keys.end(), *j) == (*i)->m_keys.end())
 			{
@@ -180,5 +178,4 @@ bool KeyboardInputSource::Key::operator == (const Key& rh) const
 	return controlType == rh.controlType;
 }
 
-	}
 }

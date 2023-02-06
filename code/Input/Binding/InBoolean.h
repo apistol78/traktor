@@ -19,12 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InBoolean : public IInputNode
@@ -42,7 +40,7 @@ public:
 
 	InBoolean();
 
-	InBoolean(
+	explicit InBoolean(
 		IInputNode* source1,
 		IInputNode* source2,
 		Operator op
@@ -66,6 +64,4 @@ private:
 	Operator m_op;
 };
 
-	}
 }
-

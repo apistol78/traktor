@@ -8,10 +8,8 @@
  */
 #include "Input/Binding/EnumKeys.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 const MemberEnum< InputCategory >::Key g_InputCategory_Keys[] =
 {
@@ -218,5 +216,4 @@ const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[
 	{ 0 }
 };
 
-	}
 }
