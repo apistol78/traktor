@@ -24,6 +24,7 @@
 #include "Core/System/OS.h"
 #include "Core/System/ResolveEnv.h"
 #include "Core/System/Win32/ProcessWin32.h"
+#include "Core/System/Win32/ProcessShellWin32.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
 
 namespace traktor
@@ -296,16 +297,12 @@ Ref< IProcess > OS::execute(
 	uint32_t flags
 ) const
 {
-	TCHAR cmd[32768], cwd[MAX_PATH];
-	HANDLE hStdInRead = 0, hStdInWrite = 0;
-	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
-	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
 	AutoArrayPtr< char > environment;
 	std::wstring executable;
 	std::wstring arguments;
 
 	// Resolve entire command line.
-	std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
+	const std::wstring resolvedCommandLine = resolveEnv(commandLine, env);
 
 	// Extract executable file from command line.
 	if (resolvedCommandLine.empty())
@@ -313,7 +310,7 @@ Ref< IProcess > OS::execute(
 
 	if (resolvedCommandLine[0] == L'\"')
 	{
-		size_t i = resolvedCommandLine.find(L'\"', 1);
+		const size_t i = resolvedCommandLine.find(L'\"', 1);
 		if (i == resolvedCommandLine.npos)
 			return nullptr;
 
@@ -322,7 +319,7 @@ Ref< IProcess > OS::execute(
 	}
 	else
 	{
-		size_t i = resolvedCommandLine.find(L' ');
+		const size_t i = resolvedCommandLine.find(L' ');
 		if (i != resolvedCommandLine.npos)
 		{
 			executable = resolvedCommandLine.substr(0, i);
@@ -332,8 +329,8 @@ Ref< IProcess > OS::execute(
 			executable = resolvedCommandLine;
 	}
 
-	Path executablePath = executable;
-	Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
+	const Path executablePath = executable;
+	const Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 
 	// Create environment variables.
 	if (env)
@@ -361,107 +358,145 @@ Ref< IProcess > OS::execute(
 		T_ASSERT(size_t(p - environment.ptr()) == size);
 	}
 
-	StringOutputStream ss;
-	if (executablePath.getPathName().find(' ') != std::wstring::npos)
-		ss << L"\"" << executablePath.getPathName() << L"\"";
-	else
-		ss << executablePath.getPathName();
-
-	if (!arguments.empty())
-		ss << L" " << arguments;
-
-	_tcscpy_s(cmd, wstots(ss.str()).c_str());
-	_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
-
-	if ((flags & EfRedirectStdIO) != 0)
+	if ((flags & EfElevated) != 0)
 	{
-		// Create IO objects.
-		SECURITY_DESCRIPTOR sd;
-		InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
-		SetSecurityDescriptorDacl(&sd, true, NULL, false);
+		TCHAR cmd[32768], parameters[32768], cwd[MAX_PATH];
 
-		SECURITY_ATTRIBUTES sa;
-		std::memset(&sa, 0, sizeof(sa));
-		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
-		sa.lpSecurityDescriptor = &sd;
-		sa.bInheritHandle = TRUE;
+		StringOutputStream ss;
+		if (executablePath.getPathName().find(' ') != std::wstring::npos)
+			ss << L"\"" << executablePath.getPathName() << L"\"";
+		else
+			ss << executablePath.getPathName();
 
-		CreatePipe(
-			&hStdInRead,
-			&hStdInWrite,
-			&sa,
-			0
-		);
-		SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0);
+		_tcscpy_s(cmd, wstots(ss.str()).c_str());
+		_tcscpy_s(parameters, wstots(arguments).c_str());
+		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
 
-		CreatePipe(
-			&hStdOutRead,
-			&hStdOutWrite,
-			&sa,
-			0
-		);
-		SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
+		SHELLEXECUTEINFO shExInfo = { 0 };
+		shExInfo.cbSize = sizeof(shExInfo);
+		shExInfo.fMask = SEE_MASK_NOCLOSEPROCESS;
+		shExInfo.hwnd = 0;
+		shExInfo.lpVerb = _T("runas");
+		shExInfo.lpFile = cmd;
+		shExInfo.lpParameters = parameters;
+		shExInfo.lpDirectory = cwd;
+		shExInfo.nShow = SW_SHOW;
+		shExInfo.hInstApp = 0;
 
-		CreatePipe(
-			&hStdErrRead,
-			&hStdErrWrite,
-			&sa,
-			0
-		);
-		SetHandleInformation(hStdErrRead, HANDLE_FLAG_INHERIT, 0);
-	}
+		if (!ShellExecuteEx(&shExInfo))
+			return nullptr;
 
-	STARTUPINFO si;
-	std::memset(&si, 0, sizeof(si));
-	si.cb = sizeof(STARTUPINFO);
-	si.dwFlags = ((flags & EfRedirectStdIO) != 0) ? STARTF_USESTDHANDLES : 0;
-	si.hStdInput = hStdInRead;
-	si.hStdOutput = hStdOutWrite;
-	si.hStdError = hStdErrWrite;
-
-	PROCESS_INFORMATION pi;
-	std::memset(&pi, 0, sizeof(pi));
-
-	DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
-
-	if ((flags & EfMute) != 0)
-	{
-		dwCreationFlags = CREATE_NO_WINDOW;
-		if ((flags & EfDetach) != 0)
-			dwCreationFlags |= DETACHED_PROCESS;
+		return new ProcessShellWin32(shExInfo.hProcess);
 	}
 	else
-		dwCreationFlags = CREATE_NEW_CONSOLE;
-
-	BOOL result = CreateProcess(
-		NULL,
-		cmd,
-		NULL,
-		NULL,
-		TRUE,
-		dwCreationFlags,
-		environment.ptr(),
-		(cwd[0] != L'\0' ? cwd : NULL),
-		&si,
-		&pi
-	);
-	if (result == FALSE)
 	{
-		T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
-		return nullptr;
-	}
+		HANDLE hStdInRead = 0, hStdInWrite = 0;
+		HANDLE hStdOutRead = 0, hStdOutWrite = 0;
+		HANDLE hStdErrRead = 0, hStdErrWrite = 0;
+		TCHAR cmd[32768], cwd[MAX_PATH];
 
-	return new ProcessWin32(
-		pi.hProcess,
-		pi.dwProcessId,
-		pi.hThread,
-		hStdInRead,
-		hStdInWrite,
-		hStdOutRead,
-		hStdOutWrite,
-		hStdErrRead,
-		hStdErrWrite
-	);
+		StringOutputStream ss;
+		if (executablePath.getPathName().find(' ') != std::wstring::npos)
+			ss << L"\"" << executablePath.getPathName() << L"\"";
+		else
+			ss << executablePath.getPathName();
+
+		if (!arguments.empty())
+			ss << L" " << arguments;
+
+		_tcscpy_s(cmd, wstots(ss.str()).c_str());
+		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
+
+		if ((flags & EfRedirectStdIO) != 0)
+		{
+			// Create IO objects.
+			SECURITY_DESCRIPTOR sd;
+			InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+			SetSecurityDescriptorDacl(&sd, true, NULL, false);
+
+			SECURITY_ATTRIBUTES sa;
+			std::memset(&sa, 0, sizeof(sa));
+			sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+			sa.lpSecurityDescriptor = &sd;
+			sa.bInheritHandle = TRUE;
+
+			CreatePipe(
+				&hStdInRead,
+				&hStdInWrite,
+				&sa,
+				0
+			);
+			SetHandleInformation(hStdInWrite, HANDLE_FLAG_INHERIT, 0);
+
+			CreatePipe(
+				&hStdOutRead,
+				&hStdOutWrite,
+				&sa,
+				0
+			);
+			SetHandleInformation(hStdOutRead, HANDLE_FLAG_INHERIT, 0);
+
+			CreatePipe(
+				&hStdErrRead,
+				&hStdErrWrite,
+				&sa,
+				0
+			);
+			SetHandleInformation(hStdErrRead, HANDLE_FLAG_INHERIT, 0);
+		}
+
+		STARTUPINFO si;
+		std::memset(&si, 0, sizeof(si));
+		si.cb = sizeof(STARTUPINFO);
+		si.dwFlags = ((flags & EfRedirectStdIO) != 0) ? STARTF_USESTDHANDLES : 0;
+		si.hStdInput = hStdInRead;
+		si.hStdOutput = hStdOutWrite;
+		si.hStdError = hStdErrWrite;
+
+		PROCESS_INFORMATION pi;
+		std::memset(&pi, 0, sizeof(pi));
+
+		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
+
+		if ((flags & EfMute) != 0)
+		{
+			dwCreationFlags = CREATE_NO_WINDOW;
+			if ((flags & EfDetach) != 0)
+				dwCreationFlags |= DETACHED_PROCESS;
+		}
+		else
+			dwCreationFlags = CREATE_NEW_CONSOLE;
+
+		BOOL result = CreateProcess(
+			NULL,
+			cmd,
+			NULL,
+			NULL,
+			TRUE,
+			dwCreationFlags,
+			environment.ptr(),
+			(cwd[0] != L'\0' ? cwd : NULL),
+			&si,
+			&pi
+		);
+		if (result == FALSE)
+		{
+			T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
+			return nullptr;
+		}
+
+		return new ProcessWin32(
+			pi.hProcess,
+			pi.dwProcessId,
+			pi.hThread,
+			hStdInRead,
+			hStdInWrite,
+			hStdOutRead,
+			hStdOutWrite,
+			hStdErrRead,
+			hStdErrWrite
+		);
+	}
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
