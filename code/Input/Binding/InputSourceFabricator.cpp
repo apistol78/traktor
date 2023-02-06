@@ -14,16 +14,14 @@
 #include "Input/Binding/KeyboardInputSourceData.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const float c_valueThreshold = 0.5f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputSourceFabricator", InputSourceFabricator, Object)
 
@@ -31,7 +29,7 @@ InputSourceFabricator::InputSourceFabricator(InputSystem* inputSystem, InputCate
 :	m_category(category)
 ,	m_analogue(analogue)
 {
-	int32_t deviceCount = inputSystem->getDeviceCount(m_category, true);
+	const int32_t deviceCount = inputSystem->getDeviceCount(m_category, true);
 	for (int32_t i = 0; i < deviceCount; ++i)
 	{
 		Ref< IInputDevice > device = inputSystem->getDevice(m_category, i, true);
@@ -80,7 +78,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 			if (i->device->getControlRange(control, min, max))
 				threshold = (max - min) * 0.1f;
 
-			float dV = value - i->values[controlType];
+			const float dV = value - i->values[controlType];
 			if (std::abs(dV) > threshold)
 			{
 				if (!first)
@@ -155,5 +153,4 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 	return m_outputData;
 }
 
-	}
 }

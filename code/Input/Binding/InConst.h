@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InConst : public IInputNode
@@ -31,9 +29,9 @@ class T_DLLCLASS InConst : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InConst();
+	InConst() = default;
 
-	InConst(float value);
+	explicit InConst(float value);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -49,9 +47,7 @@ public:
 private:
 	friend class InConstTraits;
 
-	float m_value;
+	float m_value = 0.0f;
 };
 
-	}
 }
-

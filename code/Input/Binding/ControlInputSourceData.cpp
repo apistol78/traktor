@@ -13,10 +13,8 @@
 #include "Input/Binding/ControlInputSource.h"
 #include "Input/Binding/ControlInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.ControlInputSourceData", 2, ControlInputSourceData, IInputSourceData)
 
@@ -112,5 +110,4 @@ void ControlInputSourceData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"index", m_index);
 }
 
-	}
 }

@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class DeviceControl;
 class DeviceControlManager;
 class IInputDevice;
 class InputSystem;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS KeyboardInputSource : public IInputSource
@@ -37,8 +35,8 @@ class T_DLLCLASS KeyboardInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	KeyboardInputSource(
-		const std::vector< InputDefaultControlType >& controlTypes,
+	explicit KeyboardInputSource(
+		const AlignedVector< InputDefaultControlType >& controlTypes,
 		DeviceControlManager* deviceControlManager
 	);
 
@@ -62,10 +60,8 @@ private:
 
 	Ref< DeviceControlManager > m_deviceControlManager;
 	int32_t m_deviceCount;
-	std::vector< Key > m_keys;
+	AlignedVector< Key > m_keys;
 	bool m_state;
 };
 
-	}
 }
-

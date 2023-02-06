@@ -12,19 +12,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputState", InputState, ISerializable)
-
-InputState::InputState()
-:	m_active(false)
-,	m_previousValue(0.0f)
-,	m_currentValue(0.0f)
-{
-}
 
 bool InputState::create(const InputStateData* data)
 {
@@ -82,5 +73,4 @@ bool InputState::hasChanged() const
 	return m_active && (isPressed() || isReleased());
 }
 
-	}
 }

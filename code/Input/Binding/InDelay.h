@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InDelay : public IInputNode
@@ -31,9 +29,9 @@ class T_DLLCLASS InDelay : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InDelay();
+	InDelay() = default;
 
-	InDelay(IInputNode* source, float delay);
+	explicit InDelay(IInputNode* source, float delay);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -50,9 +48,7 @@ private:
 	friend class InDelayTraits;
 
 	Ref< IInputNode > m_source;
-	float m_delay;
+	float m_delay = 0.0f;
 };
 
-	}
 }
-

@@ -12,10 +12,8 @@
 #include "Core/RefArray.h"
 #include "Input/InputTypes.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class DeviceControl;
 class InputSystem;
@@ -28,7 +26,7 @@ class DeviceControlManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	DeviceControlManager(InputSystem* inputSystem);
+	explicit DeviceControlManager(InputSystem* inputSystem);
 
 	int32_t getDeviceControlCount(InputCategory category);
 
@@ -43,6 +41,4 @@ private:
 	RefArray< DeviceControl > m_deviceControls;
 };
 
-	}
 }
-

@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InGestureSwipe : public IInputNode
@@ -41,7 +39,7 @@ public:
 
 	InGestureSwipe();
 
-	InGestureSwipe(
+	explicit InGestureSwipe(
 		IInputNode* sourceActive,
 		IInputNode* sourceX,
 		IInputNode* sourceY,
@@ -68,6 +66,4 @@ private:
 	SwipeDirection m_direction;
 };
 
-	}
 }
-

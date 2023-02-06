@@ -12,10 +12,8 @@
 #include "Core/Ref.h"
 #include "Input/InputTypes.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class IInputDevice;
 
@@ -62,6 +60,4 @@ private:
 	float m_currentValue;
 };
 
-	}
 }
-

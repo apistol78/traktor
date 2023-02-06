@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Input/Binding/IInputNode.h"
 
 // import/export mechanism.
@@ -19,12 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InCombine : public IInputNode
@@ -65,10 +63,8 @@ private:
 		CoDiv
 	};
 
-	std::vector< Entry > m_entries;
+	AlignedVector< Entry > m_entries;
 	CombineOperator m_operator;
 };
 
-	}
 }
-

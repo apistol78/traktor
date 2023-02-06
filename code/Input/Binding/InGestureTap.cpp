@@ -15,12 +15,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const float c_deviateThreshold = 2.0f;
 
@@ -36,13 +34,9 @@ struct InGestureTapInstance : public RefCountImpl< IInputNode::Instance >
 	bool valid;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InGestureTap", 0, InGestureTap, IInputNode)
-
-InGestureTap::InGestureTap()
-{
-}
 
 Ref< IInputNode::Instance > InGestureTap::createInstance() const
 {
@@ -70,10 +64,10 @@ float InGestureTap::evaluate(
 {
 	InGestureTapInstance* swipeInstance = static_cast< InGestureTapInstance* >(instance);
 
-	float V = m_sourceActive->evaluate(swipeInstance->sourceActiveInstance, valueSet, T, dT);
+	const float V = m_sourceActive->evaluate(swipeInstance->sourceActiveInstance, valueSet, T, dT);
 	if (!asBoolean(V))
 	{
-		bool result = swipeInstance->valid;
+		const bool result = swipeInstance->valid;
 
 		swipeInstance->valid = false;
 		swipeInstance->haveFirst = false;
@@ -82,10 +76,9 @@ float InGestureTap::evaluate(
 	}
 
 	// Swipe is active; sample positions.
-	float X = m_sourceX->evaluate(swipeInstance->sourceXInstance, valueSet, T, dT);
-	float Y = m_sourceY->evaluate(swipeInstance->sourceYInstance, valueSet, T, dT);
-
-	Vector2 p(X, Y);
+	const float X = m_sourceX->evaluate(swipeInstance->sourceXInstance, valueSet, T, dT);
+	const float Y = m_sourceY->evaluate(swipeInstance->sourceYInstance, valueSet, T, dT);
+	const Vector2 p(X, Y);
 
 	if (!swipeInstance->haveFirst)
 	{
@@ -115,5 +108,4 @@ void InGestureTap::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"fixedY", m_fixedY);
 }
 
-	}
 }

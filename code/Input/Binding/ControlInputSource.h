@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class DeviceControlManager;
 class ControlInputSourceData;
@@ -35,7 +33,7 @@ class T_DLLCLASS ControlInputSource : public IInputSource
 	T_RTTI_CLASS;
 
 public:
-	ControlInputSource(const ControlInputSourceData* data, DeviceControlManager* deviceControlManager);
+	explicit ControlInputSource(const ControlInputSourceData* data, DeviceControlManager* deviceControlManager);
 
 	virtual std::wstring getDescription() const override final;
 
@@ -48,6 +46,4 @@ private:
 	Ref< DeviceControlManager > m_deviceControlManager;
 };
 
-	}
 }
-

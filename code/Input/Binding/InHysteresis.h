@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InHysteresis : public IInputNode
@@ -33,7 +31,7 @@ class T_DLLCLASS InHysteresis : public IInputNode
 public:
 	InHysteresis();
 
-	InHysteresis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMax);
+	explicit InHysteresis(IInputNode* source, float limitMin, float limitMax, float outputMin, float outputMax);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -54,6 +52,4 @@ private:
 	float m_output[2];
 };
 
-	}
 }
-

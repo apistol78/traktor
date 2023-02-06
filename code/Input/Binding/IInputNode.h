@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputValueSet;
 
@@ -50,6 +48,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

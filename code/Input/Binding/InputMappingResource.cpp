@@ -12,16 +12,10 @@
 #include "Input/Binding/InputMappingSourceData.h"
 #include "Input/Binding/InputMappingStateData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingResource", 0, InputMappingResource, ISerializable)
-
-InputMappingResource::InputMappingResource()
-{
-}
 
 InputMappingResource::InputMappingResource(InputMappingSourceData* sourceData, InputMappingStateData* stateData)
 :	m_sourceData(sourceData)
@@ -35,5 +29,4 @@ void InputMappingResource::serialize(ISerializer& s)
 	s >> MemberRef< InputMappingStateData >(L"stateData", m_stateData);
 }
 
-	}
 }

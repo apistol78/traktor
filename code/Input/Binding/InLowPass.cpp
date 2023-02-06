@@ -13,12 +13,10 @@
 #include "Input/Binding/InLowPass.h"
 #include "Input/Binding/InputValueSet.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InLowPassInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -27,13 +25,9 @@ struct InLowPassInstance : public RefCountImpl< IInputNode::Instance >
 	float filteredValue;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InLowPass", 0, InLowPass, IInputNode)
-
-InLowPass::InLowPass()
-{
-}
 
 InLowPass::InLowPass(IInputNode* source, IInputNode* coeff)
 :	m_source(source)
@@ -58,8 +52,8 @@ float InLowPass::evaluate(
 ) const
 {
 	InLowPassInstance* lpi = static_cast< InLowPassInstance* >(instance);
-	float V = m_source->evaluate(lpi->sourceInstance, valueSet, T, dT);
-	float k = m_coeff->evaluate(lpi->coeffInstance, valueSet, T, dT);
+	const float V = m_source->evaluate(lpi->sourceInstance, valueSet, T, dT);
+	const float k = m_coeff->evaluate(lpi->coeffInstance, valueSet, T, dT);
 	lpi->filteredValue = V * k + lpi->filteredValue * (1.0f - k);
 	return lpi->filteredValue;
 }
@@ -70,5 +64,4 @@ void InLowPass::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"coeff", m_coeff);
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Constant value input.
  * \ingroup Input
@@ -31,18 +29,16 @@ class T_DLLCLASS ConstantInputSourceData : public IInputSourceData
 	T_RTTI_CLASS;
 
 public:
-	ConstantInputSourceData();
+	ConstantInputSourceData() = default;
 
-	ConstantInputSourceData(float value);
+	explicit ConstantInputSourceData(float value);
 
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_value;
+	float m_value = 0.0f;
 };
 
-	}
 }
-

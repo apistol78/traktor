@@ -14,19 +14,17 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InRemapAxisInstance : public RefCountImpl< IInputNode::Instance >
 {
 	Ref< IInputNode::Instance > sourceInstance;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InRemapAxis", 0, InRemapAxis, IInputNode)
 
@@ -65,8 +63,7 @@ float InRemapAxis::evaluate(
 {
 	InRemapAxisInstance* ihi = static_cast< InRemapAxisInstance* >(instance);
 
-	float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
-
+	const float V = m_source->evaluate(ihi->sourceInstance, valueSet, T, dT);
 	if (V < m_limit[0])
 		return m_output[0];
 	if (V > m_limit[1])
@@ -82,5 +79,4 @@ void InRemapAxis::serialize(ISerializer& s)
 	s >> MemberStaticArray< float, 3 >(L"output", m_output);
 }
 
-	}
 }

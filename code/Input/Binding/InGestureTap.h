@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InGestureTap : public IInputNode
@@ -31,8 +29,6 @@ class T_DLLCLASS InGestureTap : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InGestureTap();
-
 	virtual Ref< Instance > createInstance() const override final;
 
 	virtual float evaluate(
@@ -54,6 +50,4 @@ private:
 	Ref< IInputNode > m_fixedY;
 };
 
-	}
 }
-

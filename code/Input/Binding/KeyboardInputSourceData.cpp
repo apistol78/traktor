@@ -8,18 +8,16 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Input/Binding/EnumKeys.h"
 #include "Input/Binding/KeyboardInputSource.h"
 #include "Input/Binding/KeyboardInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 class MemberInputDefaultControlType : public MemberEnum< InputDefaultControlType >
 {
@@ -30,7 +28,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.KeyboardInputSourceData", 0, KeyboardInputSourceData, IInputSourceData)
 
@@ -39,7 +37,7 @@ void KeyboardInputSourceData::addControlType(InputDefaultControlType controlType
 	m_controlTypes.push_back(controlType);
 }
 
-const std::vector< InputDefaultControlType >& KeyboardInputSourceData::getControlTypes() const
+const AlignedVector< InputDefaultControlType >& KeyboardInputSourceData::getControlTypes() const
 {
 	return m_controlTypes;
 }
@@ -51,8 +49,7 @@ Ref< IInputSource > KeyboardInputSourceData::createInstance(DeviceControlManager
 
 void KeyboardInputSourceData::serialize(ISerializer& s)
 {
-	s >> MemberStlVector< InputDefaultControlType, MemberInputDefaultControlType >(L"controlTypes", m_controlTypes);
+	s >> MemberAlignedVector< InputDefaultControlType, MemberInputDefaultControlType >(L"controlTypes", m_controlTypes);
 }
 
-	}
 }

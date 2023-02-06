@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Generic input source.
  * \ingroup Input
@@ -34,14 +32,14 @@ class T_DLLCLASS GenericInputSourceData : public IInputSourceData
 public:
 	GenericInputSourceData();
 
-	GenericInputSourceData(
+	explicit GenericInputSourceData(
 		InputCategory category,
 		InputDefaultControlType controlType,
 		bool analogue,
 		bool normalize
 	);
 
-	GenericInputSourceData(
+	explicit GenericInputSourceData(
 		InputCategory category,
 		int32_t index,
 		InputDefaultControlType controlType,
@@ -81,6 +79,4 @@ private:
 	int32_t m_index;
 };
 
-	}
 }
-

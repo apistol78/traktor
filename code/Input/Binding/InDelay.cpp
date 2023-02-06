@@ -15,12 +15,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InDelayInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -29,14 +27,9 @@ struct InDelayInstance : public RefCountImpl< IInputNode::Instance >
 	float issueTime;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InDelay", 0, InDelay, IInputNode)
-
-InDelay::InDelay()
-:	m_delay(0.0f)
-{
-}
 
 InDelay::InDelay(IInputNode* source, float delay)
 :	m_source(source)
@@ -62,8 +55,8 @@ float InDelay::evaluate(
 {
 	InDelayInstance* ipi = static_cast< InDelayInstance* >(instance);
 
-	float V = m_source->evaluate(ipi->sourceInstance, valueSet, T, dT);
-	float dV = V - ipi->previousValue;
+	const float V = m_source->evaluate(ipi->sourceInstance, valueSet, T, dT);
+	const float dV = V - ipi->previousValue;
 
 	ipi->previousValue = V;
 
@@ -73,7 +66,7 @@ float InDelay::evaluate(
 	if (dV > FUZZY_EPSILON)
 		ipi->issueTime = T;
 
-	float T0 = T - ipi->issueTime - m_delay;
+	const float T0 = T - ipi->issueTime - m_delay;
 	return asFloat(T0 > 0.0f);
 }
 
@@ -83,5 +76,4 @@ void InDelay::serialize(ISerializer& s)
 	s >> Member< float >(L"delay", m_delay);
 }
 
-	}
 }

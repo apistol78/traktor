@@ -15,12 +15,10 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InThresholdInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -28,14 +26,9 @@ struct InThresholdInstance : public RefCountImpl< IInputNode::Instance >
 	float issueTime;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InThreshold", 0, InThreshold, IInputNode)
-
-InThreshold::InThreshold()
-:	m_duration(0.0f)
-{
-}
 
 InThreshold::InThreshold(IInputNode* source, float duration)
 :	m_source(source)
@@ -60,7 +53,7 @@ float InThreshold::evaluate(
 {
 	InThresholdInstance* ipi = static_cast< InThresholdInstance* >(instance);
 
-	float V = m_source->evaluate(ipi->sourceInstance, valueSet, T, dT);
+	const float V = m_source->evaluate(ipi->sourceInstance, valueSet, T, dT);
 
 	if (!asBoolean(V))
 	{
@@ -71,7 +64,7 @@ float InThreshold::evaluate(
 	if (ipi->issueTime < 0.0f)
 		ipi->issueTime = T;
 
-	float timeSinceIssue = T - ipi->issueTime;
+	const float timeSinceIssue = T - ipi->issueTime;
 	if (timeSinceIssue >= m_duration)
 		return V;
 	else
@@ -84,5 +77,4 @@ void InThreshold::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", m_duration);
 }
 
-	}
 }

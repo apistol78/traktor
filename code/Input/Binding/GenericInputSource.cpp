@@ -16,10 +16,8 @@
 #include "Input/Binding/GenericInputSource.h"
 #include "Input/Binding/GenericInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.GenericInputSource", GenericInputSource, IInputSource)
 
@@ -34,9 +32,9 @@ GenericInputSource::GenericInputSource(const GenericInputSourceData* data, Devic
 std::wstring GenericInputSource::getDescription() const
 {
 	// Use name of control as description; use first valid name as it should be the same on all our devices.
-	for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+	for (auto deviceControl : m_deviceControls)
 	{
-		std::wstring controlName = i->getControlName();
+		const std::wstring controlName = deviceControl->getControlName();
 		if (!controlName.empty())
 			return controlName;
 	}
@@ -51,16 +49,16 @@ void GenericInputSource::prepare(float T, float dT)
 
 float GenericInputSource::read(float T, float dT)
 {
-	InputCategory category = m_data->getCategory();
-	InputDefaultControlType controlType = m_data->getControlType();
-	bool analogue = m_data->isAnalogue();
-	int32_t index = m_data->getIndex();
+	const InputCategory category = m_data->getCategory();
+	const InputDefaultControlType controlType = m_data->getControlType();
+	const bool analogue = m_data->isAnalogue();
+	const int32_t index = m_data->getIndex();
 
 	// Abort early as no device should have this control.
 	if (controlType == DtInvalid)
 		return 0.0f;
 
-	int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(category);
+	const int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(category);
 
 	// Find all matching devices.
 	if (deviceCount != m_matchingDeviceCount)
@@ -91,18 +89,18 @@ float GenericInputSource::read(float T, float dT)
 	if (!m_deviceControls.empty())
 	{
 		// Return first found modified value.
-		for (RefArray< DeviceControl >::const_iterator i = m_deviceControls.begin(); i != m_deviceControls.end(); ++i)
+		for (auto deviceControl : m_deviceControls)
 		{
-			float previousValue = (*i)->getPreviousValue();
-			float currentValue = (*i)->getCurrentValue();
+			const float previousValue = deviceControl->getPreviousValue();
+			float currentValue = deviceControl->getCurrentValue();
 
 			if (abs< float >(currentValue - previousValue) > FUZZY_EPSILON)
 			{
 				// Normalize input value if desired.
 				if (m_data->normalize())
 				{
-					float rangeMin = (*i)->getRangeMin();
-					float rangeMax = (*i)->getRangeMax();
+					const float rangeMin = deviceControl->getRangeMin();
+					const float rangeMax = deviceControl->getRangeMax();
 					if (abs(rangeMax - rangeMin) > FUZZY_EPSILON)
 						currentValue = (currentValue - rangeMin) / (rangeMax - rangeMin);
 				}
@@ -120,5 +118,4 @@ float GenericInputSource::read(float T, float dT)
 	return m_lastValue;
 }
 
-	}
 }

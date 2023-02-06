@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InTrigger : public IInputNode
@@ -39,7 +37,7 @@ public:
 
 	InTrigger();
 
-	InTrigger(IInputNode* source, Flank flank, float duration);
+	explicit InTrigger(IInputNode* source, Flank flank, float duration);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -60,6 +58,4 @@ private:
 	float m_duration;
 };
 
-	}
 }
-

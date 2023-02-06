@@ -8,10 +8,8 @@
  */
 #include "Input/Binding/InputValueSet.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputValueSet", InputValueSet, Object)
 
@@ -22,9 +20,8 @@ void InputValueSet::set(handle_t valueId, float value)
 
 float InputValueSet::get(handle_t valueId) const
 {
-	SmallMap< handle_t, float >::const_iterator i = m_valueMap.find(valueId);
-	return i != m_valueMap.end() ? i->second : 0.0f;
+	const auto it = m_valueMap.find(valueId);
+	return it != m_valueMap.end() ? it->second : 0.0f;
 }
 
-	}
 }

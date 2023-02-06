@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InGesturePinch : public IInputNode
@@ -40,7 +38,7 @@ public:
 
 	InGesturePinch();
 
-	InGesturePinch(
+	explicit InGesturePinch(
 		IInputNode* sourceActive,
 		IInputNode* sourceX1,
 		IInputNode* sourceY1,
@@ -70,6 +68,4 @@ private:
 	PinchDirection m_direction;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Input/Binding/CombinedInputSource.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.CombinedInputSource", CombinedInputSource, IInputSource)
 
@@ -93,5 +91,4 @@ float CombinedInputSource::read(float T, float dT)
 	return asFloat(value);
 }
 
-	}
 }

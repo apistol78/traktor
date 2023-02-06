@@ -15,12 +15,10 @@
 #include "Input/Binding/InEnvelope.h"
 #include "Input/Binding/InputValueSet.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InEnvelopeInstance : public RefCountImpl< IInputNode::Instance >
 {
@@ -28,7 +26,7 @@ struct InEnvelopeInstance : public RefCountImpl< IInputNode::Instance >
 	Envelope< float, HermiteEvaluator< float > > envelope;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InEnvelope", 0, InEnvelope, IInputNode)
 
@@ -61,7 +59,7 @@ float InEnvelope::evaluate(
 ) const
 {
 	InEnvelopeInstance* iei = static_cast< InEnvelopeInstance* >(instance);
-	float V = m_source->evaluate(iei->sourceInstance, valueSet, T, dT);
+	const float V = m_source->evaluate(iei->sourceInstance, valueSet, T, dT);
 	return iei->envelope(V);
 }
 
@@ -73,5 +71,4 @@ void InEnvelope::serialize(ISerializer& s)
 	s >> Member< float >(L"width", m_width);
 }
 
-	}
 }

@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InThreshold : public IInputNode
@@ -31,9 +29,9 @@ class T_DLLCLASS InThreshold : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InThreshold();
+	InThreshold() = default;
 
-	InThreshold(IInputNode* source, float duration);
+	explicit InThreshold(IInputNode* source, float duration);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -50,9 +48,7 @@ private:
 	friend class InThresholdTraits;
 
 	Ref< IInputNode > m_source;
-	float m_duration;
+	float m_duration = 0.0f;
 };
 
-	}
 }
-

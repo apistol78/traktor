@@ -13,10 +13,8 @@
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputStateData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingStateData", 0, InputMappingStateData, ISerializable)
 
@@ -43,5 +41,4 @@ void InputMappingStateData::serialize(ISerializer& s)
 	>(L"stateData", m_stateData);
 }
 
-	}
 }

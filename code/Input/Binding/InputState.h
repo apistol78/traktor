@@ -19,15 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputStateData;
 class InputValueSet;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InputState : public Object
@@ -35,8 +33,6 @@ class T_DLLCLASS InputState : public Object
 	T_RTTI_CLASS;
 
 public:
-	InputState();
-
 	bool create(const InputStateData* data);
 
 	void update(const InputValueSet& valueSet, float T, float dT);
@@ -60,11 +56,9 @@ public:
 private:
 	Ref< const InputStateData > m_data;
 	Ref< IInputNode::Instance > m_instance;
-	bool m_active;
-	float m_previousValue;
-	float m_currentValue;
+	bool m_active = false;
+	float m_previousValue = 0.0f;
+	float m_currentValue = 0.0f;
 };
 
-	}
 }
-

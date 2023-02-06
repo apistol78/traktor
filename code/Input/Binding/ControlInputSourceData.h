@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Control input source.
  *
@@ -45,12 +43,12 @@ public:
 
 	ControlInputSourceData();
 
-	ControlInputSourceData(
+	explicit ControlInputSourceData(
 		InputCategory category,
 		ControlQuery controlQuery
 	);
 
-	ControlInputSourceData(
+	explicit ControlInputSourceData(
 		InputCategory category,
 		ControlQuery controlQuery,
 		int32_t index
@@ -78,6 +76,4 @@ private:
 	int32_t m_index;
 };
 
-	}
 }
-

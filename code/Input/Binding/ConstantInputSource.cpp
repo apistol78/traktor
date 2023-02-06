@@ -9,10 +9,8 @@
 #include "Core/Misc/String.h"
 #include "Input/Binding/ConstantInputSource.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ConstantInputSource", ConstantInputSource, IInputSource)
 
@@ -35,5 +33,4 @@ float ConstantInputSource::read(float T, float dT)
 	return m_value;
 }
 
-	}
 }

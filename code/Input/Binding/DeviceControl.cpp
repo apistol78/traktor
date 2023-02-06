@@ -9,10 +9,8 @@
 #include "Input/IInputDevice.h"
 #include "Input/Binding/DeviceControl.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring DeviceControl::getControlName() const
 {
@@ -80,5 +78,4 @@ DeviceControl::DeviceControl()
 {
 }
 
-	}
 }

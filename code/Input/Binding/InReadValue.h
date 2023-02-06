@@ -19,12 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InReadValue : public IInputNode
@@ -32,9 +30,9 @@ class T_DLLCLASS InReadValue : public IInputNode
 	T_RTTI_CLASS;
 
 public:
-	InReadValue();
+	InReadValue() = default;
 
-	InReadValue(const std::wstring& valueId);
+	explicit InReadValue(const std::wstring& valueId);
 
 	virtual Ref< Instance > createInstance() const override final;
 
@@ -53,6 +51,4 @@ private:
 	std::wstring m_valueId;
 };
 
-	}
 }
-

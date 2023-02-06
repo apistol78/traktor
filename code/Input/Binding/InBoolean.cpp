@@ -13,19 +13,17 @@
 #include "Input/Binding/InputValueSet.h"
 #include "Input/Binding/ValueDigital.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct InBooleanInstance : public RefCountImpl< IInputNode::Instance >
 {
 	RefArray< IInputNode::Instance > sourceInstance;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InBoolean", 0, InBoolean, IInputNode)
 
@@ -49,8 +47,8 @@ InBoolean::InBoolean(
 Ref< IInputNode::Instance > InBoolean::createInstance() const
 {
 	Ref< InBooleanInstance > instance = new InBooleanInstance();
-	for (RefArray< IInputNode >::const_iterator i = m_source.begin(); i != m_source.end(); ++i)
-		instance->sourceInstance.push_back((*i)->createInstance());
+	for (auto source : m_source)
+		instance->sourceInstance.push_back(source->createInstance());
 	return instance;
 }
 
@@ -66,7 +64,7 @@ float InBoolean::evaluate(
 	bool result = false;
 	for (uint32_t i = 0; i < uint32_t(m_source.size()); ++i)
 	{
-		bool value = asBoolean(m_source[i]->evaluate(ibi->sourceInstance[i], valueSet, T, dT));
+		const bool value = asBoolean(m_source[i]->evaluate(ibi->sourceInstance[i], valueSet, T, dT));
 
 		switch (m_op)
 		{
@@ -106,5 +104,4 @@ void InBoolean::serialize(ISerializer& s)
 	s >> MemberEnum< Operator >(L"op", m_op, c_Operator_Keys);
 }
 
-	}
 }

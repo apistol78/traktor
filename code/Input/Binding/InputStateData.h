@@ -18,14 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class IInputNode;
 
-/*! \brief
+/*!
  * \ingroup Input
  */
 class T_DLLCLASS InputStateData : public ISerializable
@@ -33,9 +31,9 @@ class T_DLLCLASS InputStateData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	InputStateData();
+	InputStateData() = default;
 
-	InputStateData(IInputNode* source);
+	explicit InputStateData(IInputNode* source);
 
 	void setSource(IInputNode* source);
 
@@ -47,6 +45,4 @@ private:
 	Ref< IInputNode > m_source;
 };
 
-	}
 }
-

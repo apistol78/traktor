@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Boolean combination of multiple input sources.
  * \ingroup Input
@@ -35,9 +33,9 @@ class T_DLLCLASS CombinedInputSourceData : public IInputSourceData
 public:
 	CombinedInputSourceData();
 
-	CombinedInputSourceData(CombinedInputSource::CombineMode mode);
+	explicit CombinedInputSourceData(CombinedInputSource::CombineMode mode);
 
-	CombinedInputSourceData(const RefArray< IInputSourceData >& sources, CombinedInputSource::CombineMode mode);
+	explicit CombinedInputSourceData(const RefArray< IInputSourceData >& sources, CombinedInputSource::CombineMode mode);
 
 	void addSource(IInputSourceData* source);
 
@@ -52,6 +50,4 @@ private:
 	CombinedInputSource::CombineMode m_mode;
 };
 
-	}
 }
-
