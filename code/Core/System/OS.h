@@ -41,9 +41,10 @@ public:
 	enum ExecuteFlags : uint32_t
 	{
 		EfNone = 0,
-		EfRedirectStdIO = (1 << 0),	//< Redirect standard I/O.
-		EfMute = (1 << 1),			//< Mute I/O of child process, still get redirected.
-		EfDetach = (1 << 2)			//< Detach process, not child of calling process.
+		EfRedirectStdIO = (1 << 0),	//<! Redirect standard I/O.
+		EfMute = (1 << 1),			//<! Mute I/O of child process, still get redirected.
+		EfDetach = (1 << 2),		//<! Detach process, not child of calling process.
+		EfElevated = (1 << 3)		//<! Run elevated process.
 	};
 
 	static OS& getInstance();

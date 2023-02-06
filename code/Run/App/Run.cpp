@@ -98,6 +98,11 @@ int32_t Run_execute_3(Run* self, const std::wstring& command, const Any& saveOut
 	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env);
 }
 
+int32_t Run_execute_4(Run* self, const std::wstring& command, const Any& saveOutputAs, const Environment* env, bool elevated)
+{
+	return self->execute(command, saveOutputAs.isString() ? saveOutputAs.getWideString() : L"(null)", env, elevated);
+}
+
 Any Run_getProperty_1(Run* self, const std::wstring& fileName, const std::wstring& propertyName, const Any& defaultValue)
 {
 	return self->getProperty(fileName, std::wstring(), propertyName, defaultValue);
@@ -136,13 +141,13 @@ Run::Run(
 
 void Run::cd(const std::wstring& path)
 {
-	Path tmp = Path(m_cwd.back()) + Path(path);
+	const Path tmp = Path(m_cwd.back()) + Path(path);
 	m_cwd.back() = tmp.getPathNameOS();
 }
 
 void Run::pushd(const std::wstring& path)
 {
-	Path tmp = Path(m_cwd.back()) + Path(path);
+	const Path tmp = Path(m_cwd.back()) + Path(path);
 	m_cwd.push_back(tmp.getPathNameOS());
 }
 
@@ -155,24 +160,25 @@ void Run::popd()
 
 std::wstring Run::cwd() const
 {
-	return m_cwd.back();
+	const Path workingDirectory = FileSystem::getInstance().getAbsolutePath(m_cwd.back());
+	return workingDirectory.getPathNameOS();
 }
 
 int32_t Run::run(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
 {
-	Path executable = OS::getInstance().getExecutable();
+	const Path executable = OS::getInstance().getExecutable();
 	return execute(L"\"" + executable.getPathName() + L"\" " + command, saveOutputAs, env);
 }
 
-int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env)
+int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutputAs, const Environment* env, bool elevated)
 {
-	Path workingDirectory = FileSystem::getInstance().getAbsolutePath(cwd());
+	const Path workingDirectory = FileSystem::getInstance().getAbsolutePath(cwd());
 
 	Ref< IProcess > process = OS::getInstance().execute(
 		command,
 		workingDirectory,
 		env,
-		OS::EfMute // OS::EfRedirectStdIO | OS::EfMute
+		OS::EfMute | (elevated ? OS::EfElevated : 0)
 	);
 	if (!process)
 		return -1;
@@ -257,13 +263,13 @@ int32_t Run::exitCode() const
 
 bool Run::exist(const std::wstring& path)
 {
-	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 	return FileSystem::getInstance().exist(sourcePath);
 }
 
 bool Run::rm(const std::wstring& path)
 {
-	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 
 	RefArray< File > sourceFiles;
 	FileSystem::getInstance().find(sourcePath, sourceFiles);
@@ -278,7 +284,7 @@ bool Run::rm(const std::wstring& path)
 
 bool Run::copy(const std::wstring& source, const std::wstring& target)
 {
-	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
+	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
 	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
 	RefArray< File > sourceFiles;
@@ -299,7 +305,7 @@ bool Run::copy(const std::wstring& source, const std::wstring& target)
 		else
 		{
 			// Source file is a directory; recursively copy directory.
-			std::wstring sourceDirectory = sourceFile->getPath().getFileName();
+			const std::wstring sourceDirectory = sourceFile->getPath().getFileName();
 			if (sourceDirectory != L"." && sourceDirectory != L"..")
 			{
 				if (!FileSystem::getInstance().makeDirectory(target + L"/" + sourceDirectory))
@@ -316,7 +322,7 @@ bool Run::copy(const std::wstring& source, const std::wstring& target)
 
 bool Run::replace(const std::wstring& source, const std::wstring& target)
 {
-	Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
+	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
 	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
 	RefArray< File > sourceFiles;
@@ -337,7 +343,7 @@ bool Run::replace(const std::wstring& source, const std::wstring& target)
 		else
 		{
 			// Source file is a directory; recursively copy directory.
-			std::wstring sourceDirectory = sourceFile->getPath().getFileName();
+			const std::wstring sourceDirectory = sourceFile->getPath().getFileName();
 			if (sourceDirectory != L"." && sourceDirectory != L"..")
 			{
 				if (!FileSystem::getInstance().makeDirectory(target + L"/" + sourceDirectory))
@@ -354,13 +360,13 @@ bool Run::replace(const std::wstring& source, const std::wstring& target)
 
 bool Run::mkdir(const std::wstring& path)
 {
-	Path fullPath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+	const Path fullPath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 	return FileSystem::getInstance().makeAllDirectories(fullPath);
 }
 
 bool Run::rmdir(const std::wstring& path)
 {
-	Path fullPath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
+	const Path fullPath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 	return FileSystem::getInstance().removeDirectory(fullPath);
 }
 
@@ -517,24 +523,24 @@ std::wstring Run::evaluate(const std::wstring& fileName)
 	size_t offset = 0;
 	for (;;)
 	{
-		size_t s = text.find(L"<!--", offset);
+		const size_t s = text.find(L"<!--", offset);
 		if (s == text.npos)
 			break;
 
-		size_t e = text.find(L"--!>", s);
+		const size_t e = text.find(L"--!>", s);
 		if (e == text.npos)
 		{
 			log::error << L"Template syntax error; missing end." << Endl;
 			return L"";
 		}
 
-		int32_t id = o->addSection(text.substr(offset, s - offset));
+		const int32_t id = o->addSection(text.substr(offset, s - offset));
 		ss << L"\toutput:printSection(" << id << L")" << Endl;
 		ss << text.substr(s + 5, e - s - 5) << Endl;
 
 		offset = e + 4;
 	}
-	int32_t id = o->addSection(text.substr(offset));
+	const int32_t id = o->addSection(text.substr(offset));
 	ss << L"\toutput:printSection(" << id << L")" << Endl;
 	ss << L"end" << Endl;
 
@@ -631,6 +637,7 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	classRun->addMethod("execute", &Run_execute_1);
 	classRun->addMethod("execute", &Run_execute_2);
 	classRun->addMethod("execute", &Run_execute_3);
+	classRun->addMethod("execute", &Run_execute_4);
 	classRun->addMethod("stdOut", &Run::stdOut);
 	classRun->addMethod("stdErr", &Run::stdErr);
 	classRun->addMethod("exitCode", &Run::exitCode);

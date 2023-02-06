@@ -12,6 +12,18 @@
 import(traktor)
 import(traktor.run)
 
+local function platform_select(default, windows)
+	if os.identifier == "windows" then return windows end
+	return default
+end
+
+-- External tools
+local GIT = platform_select("git", "git")
+local WGET = platform_select("wget", "$(TRAKTOR_HOME)/bin/win64/wget")
+local TAR = platform_select("tar", "tar")
+local UNZIP = platform_select("unzip", "$(TRAKTOR_HOME)/bin/win64/unzip")
+
+-- Packages
 local PACKAGES =
 {
 	-- Antigrain
@@ -52,7 +64,7 @@ local PACKAGES =
 		os = "linux",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute("tar -xzf embree-3.13.4.x86_64.linux.tar.gz")
+			run:execute(TAR .. " -xzf embree-3.13.4.x86_64.linux.tar.gz")
 		end,
 		license = "Apache 2.0"
 	},
@@ -62,7 +74,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("unzip -qq embree-3.13.4.x64.vc14.windows.zip")
+			run:execute(UNZIP .. " -qq embree-3.13.4.x64.vc14.windows.zip")
 		end,
 		license = "Apache 2.0"
 	},
@@ -72,7 +84,7 @@ local PACKAGES =
 		os = "macos",
 		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.macosx.zip",
 		patch = function()
-			run:execute("unzip embree-3.13.4.x86_64.macosx.zip")
+			run:execute(UNZIP .. "embree-3.13.4.x86_64.macosx.zip")
 		end,
 		license = "Apache 2.0"
 	},
@@ -84,7 +96,7 @@ local PACKAGES =
 		os = "linux",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute("tar -xzf oidn-1.4.3.x86_64.linux.tar.gz")
+			run:execute(TAR .. " -xzf oidn-1.4.3.x86_64.linux.tar.gz")
 		end,
 		license = "Apache 2.0"
 	},
@@ -94,7 +106,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x64.vc14.windows.zip",
 		patch = function()
-			run:execute("unzip -qq oidn-1.4.3.x64.vc14.windows.zip")
+			run:execute(UNZIP .. " -qq oidn-1.4.3.x64.vc14.windows.zip")
 		end,
 		license = "Apache 2.0"
 	},
@@ -104,7 +116,7 @@ local PACKAGES =
 		os = "macos",
 		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v1.4.3/oidn-1.4.3.x86_64.macos.tar.gz",
 		patch = function()
-			run:execute("tar -xzf oidn-1.4.3.x86_64.macos.tar.gz")
+			run:execute(TAR .. " -xzf oidn-1.4.3.x86_64.macos.tar.gz")
 		end,
 		license = "Apache 2.0"
 	},
@@ -157,7 +169,7 @@ local PACKAGES =
 		name = "lua",
 		url = "http://www.lua.org/ftp/lua-5.4.4.tar.gz",
 		patch = function()
-			run:execute("tar -xzf lua-5.4.4.tar.gz")
+			run:execute(TAR .. " -xzf lua-5.4.4.tar.gz")
 		end,
 		license = "MIT"
 	},
@@ -175,7 +187,7 @@ local PACKAGES =
 		name = "sqlite",
 		url = "https://www.sqlite.org/2022/sqlite-amalgamation-3390200.zip",
 		patch = function()
-			run:execute("unzip -qq sqlite-amalgamation-3390200.zip")
+			run:execute(UNZIP .. " -qq sqlite-amalgamation-3390200.zip")
 		end,
 		license = "PD"
 	},
@@ -211,7 +223,7 @@ local PACKAGES =
 		name = "jpeg",
 		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
 		patch = function()
-			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
+			run:execute(TAR .. " -xzf jpegsrc.v9e.tar.gz")
 			run:pushd("jpeg-9e")
 			run:execute("sh ./configure")
 			run:popd()
@@ -224,7 +236,7 @@ local PACKAGES =
 		name = "jpeg",
 		url = "http://www.ijg.org/files/jpegsrc.v9e.tar.gz",
 		patch = function()
-			run:execute("tar -xzf jpegsrc.v9e.tar.gz")
+			run:execute(TAR .. " -xzf jpegsrc.v9e.tar.gz")
 			run:pushd("jpeg-9e")
 			run:copy("jconfig.vc", "jconfig.h")
 			run:popd()
@@ -257,7 +269,7 @@ local PACKAGES =
 				"install.sh",
 				{
 					"#/bin/sh",
-					"tar -xzf fbx202001_fbxsdk_linux.tar.gz",
+					TAR .. " -xzf fbx202001_fbxsdk_linux.tar.gz",
 					"yes yes | ./fbx202001_fbxsdk_linux " .. cwd,
 				}
 			)
@@ -270,6 +282,14 @@ local PACKAGES =
 		os = "windows",
 		name = "fbx",
 		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_vs2017_win.exe",
+		patch = function()
+			run:execute(
+				"fbx202001_fbxsdk_vs2017_win.exe /D=" .. run.cwd .. "/2020.0.1",
+				nil,
+				nil,
+				true
+			)
+		end,
 		license = "AUTODESK"
 	},
 
@@ -286,7 +306,7 @@ local PACKAGES =
 		name = "liblzf",
 		url = "http://dist.schmorp.de/liblzf/liblzf-3.6.tar.gz",
 		patch = function()
-			run:execute("tar -xzf liblzf-3.6.tar.gz")
+			run:execute(TAR .. " -xzf liblzf-3.6.tar.gz")
 		end,
 		license = "LZF"
 	},
@@ -337,7 +357,7 @@ local PACKAGES =
 				"install.sh",
 				{
 					"#/bin/sh",
-					"tar -xzf p4api.tgz",
+					TAR .. " -xzf p4api.tgz",
 					"mv p4api-* p4api"
 				}
 			)
@@ -352,18 +372,23 @@ local PACKAGES =
 		os = "linux",
 		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/linux/vulkansdk-linux-x86_64-1.3.216.0.tar.gz",
 		patch = function()
-			run:execute("tar -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
+			run:execute(TAR .. " -xzf vulkansdk-linux-x86_64-1.3.216.0.tar.gz")
 		end
 	},
 	{
 		type = "GET",
 		name = "vulkan-windows",
 		os = "windows",
-		url = "https://sdk.lunarg.com/sdk/download/1.3.216.0/windows/VulkanSDK-1.3.216.0-Installer.exe",
---		patch = function()
---			local p = run.pwd .. "/VulkanSDK-1.3.216.0"
---			run:execute("VulkanSDK-1.3.216.0-Installer.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install")
---		end
+		url = "https://sdk.lunarg.com/sdk/download/1.3.239.0/windows/VulkanSDK-1.3.239.0-Installer.exe",
+		patch = function()
+			local p = run.cwd .. "/VulkanSDK-1.3.239.0"
+			run:execute(
+				"VulkanSDK-1.3.239.0-Installer.exe --root " .. p .. " --accept-licenses --default-answer --confirm-command install com.lunarg.vulkan.vma",
+				nil,
+				nil,
+				true
+			)
+		end
 	},
 
 	--[[
@@ -373,7 +398,7 @@ local PACKAGES =
 		name = "steamworks",
 		url = "https://partner.steamgames.com/downloads/steamworks_sdk.zip",
 		patch = function()
-			run:execute("unzip steamworks_sdk.zip")
+			run:execute(UNZIP .. "steamworks_sdk.zip")
 		end
 	},
 	]]
@@ -385,7 +410,7 @@ local PACKAGES =
 		os = "linux",
 		url = "https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip",
 		patch = function()
-			run:execute("unzip commandlinetools-linux-8512546_latest.zip")
+			run:execute(UNZIP .. "commandlinetools-linux-8512546_latest.zip")
 			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
 			write_file(
 				"install.sh",
@@ -406,7 +431,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://fastbuild.org/downloads/v1.07/FASTBuild-Windows-x64-v1.07.zip",
 		patch = function()
-			run:execute("unzip -qq FASTBuild-Windows-x64-v1.07.zip")
+			run:execute(UNZIP .. " -qq FASTBuild-Windows-x64-v1.07.zip")
 		end
 	},
 
@@ -417,7 +442,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip",
 		patch = function()
-			run:execute("unzip -qq ninja-win.zip")
+			run:execute(UNZIP .. " -qq ninja-win.zip")
 		end		
 	},
 
@@ -428,7 +453,7 @@ local PACKAGES =
 		os = "windows",
 		url = "http://download.qt.io/official_releases/jom/jom.zip",
 		patch = function()
-			run:execute("unzip -qq jom.zip")
+			run:execute(UNZIP .. " -qq jom.zip")
 		end		
 	},
 
@@ -454,7 +479,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip",
 		patch = function()
-			run:execute("unzip -qq wix311-binaries.zip")
+			run:execute(UNZIP .. " -qq wix311-binaries.zip")
 		end
 	},
 
@@ -465,7 +490,7 @@ local PACKAGES =
 		os = "windows",
 		url = "https://renderdoc.org/stable/1.24/RenderDoc_1.24_64.zip",
 		patch = function()
-			run:execute("unzip -qq RenderDoc_1.24_64.zip")
+			run:execute(UNZIP .. " -qq RenderDoc_1.24_64.zip")
 		end
 	},
 }
@@ -528,11 +553,14 @@ function update(pkg)
 		return true
 	end
 
+	local gitEnable < const > = true
+	local getEnable < const > = true
+
 	stdout:printLn("")
 	stdout:printLn("===============================================================================")
 	stdout:printLn("")
 
-	if pkg.type == "GIT" then
+	if pkg.type == "GIT" and gitEnable then
 
 		local name = pkg.url:match(".+/(.*).git")
 		if name == nil then
@@ -544,8 +572,8 @@ function update(pkg)
 		if run:exist(name) then
 			stdout:printLn("Updating " .. pkg.url)
 			run:pushd(name)
-			result = result and (run:execute("git pull --rebase --autostash") == 0)
-			result = result and (run:execute("git submodule update") == 0)
+			result = result and (run:execute(GIT .. " pull --rebase --autostash") == 0)
+			result = result and (run:execute(GIT .. " submodule update") == 0)
 			run:popd()
 			if result and pkg.post_update ~= nil then
 				stdout:printLn("Running post update...")
@@ -555,7 +583,7 @@ function update(pkg)
 			end			
 		else
 			stdout:printLn("Cloning " .. pkg.url)
-			result = (run:execute("git clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
+			result = (run:execute(GIT .. " clone --depth 1 --recurse-submodules " .. pkg.url) == 0)
 			if result and pkg.post_clone ~= nil then
 				stdout:printLn("Running post clone...")
 				run:pushd(name)
@@ -577,14 +605,14 @@ function update(pkg)
 		end
 
 		run:pushd(name)
-		result = (run:execute("git log -1 --format=format:\"Current hash: %H\"") == 0)
+		result = (run:execute(GIT .. " log -1 --format=format:\"Current hash: %H\"") == 0)
 		run:popd()
 		if not result then
 			stderr:printLn("GIT current hash failed!")
 			return false
 		end
 
-	elseif pkg.type == "GET" then
+	elseif pkg.type == "GET" and getEnable then
 
 		if run:exist(pkg.name) then
 			stdout:printLn("Path \"" .. pkg.name .. "\" already exist; assuming up to date.")
@@ -601,11 +629,12 @@ function update(pkg)
 
 		run:mkdir(pkg.name)
 		run:pushd(pkg.name)
-		local result = run:execute("wget " .. pkg.url)
+		local result = run:execute(WGET .. " " .. pkg.url)
 		run:popd()
 
 		if result ~= 0 then
 			stderr:printLn("GET failed \"" .. pkg.url .. "\", error code " .. result)
+			run:rmdir(pkg.name)
 			return false
 		end
 
