@@ -627,7 +627,7 @@ bool ProgramCompilerVk::generate(
 	std::wstring& outComputeShader
 ) const
 {
-	std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+	const std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
@@ -735,6 +735,7 @@ bool ProgramCompilerVk::generate(
 		GlslRequirements requirements = cx.requirements();
 
 		// Vertex
+		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
 			StringOutputStream vss;
 			vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements);
@@ -745,6 +746,7 @@ bool ProgramCompilerVk::generate(
 		}
 
 		// Pixel
+		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
 			StringOutputStream fss;
 			fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements);
@@ -755,6 +757,7 @@ bool ProgramCompilerVk::generate(
 		}
 
 		// Compute
+		if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
 		{
 			StringOutputStream css;
 			css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements);

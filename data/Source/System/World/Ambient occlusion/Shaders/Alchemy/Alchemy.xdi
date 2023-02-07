@@ -1119,9 +1119,14 @@ Edge
 			</outputPins>
 			<script>
 			<![CDATA[
-uint x = uint(gl_FragCoord.x);
-uint y = uint(gl_FragCoord.y);
-$Output = (30u * x ^ y + 10u * x * y);
+const vec2 co = vec2(gl_FragCoord.xy);
+highp float a = 12.9898;
+highp float b = 78.233;
+highp float c = 43758.5453;
+highp float dt = dot(co.xy, vec2(a, b));
+highp float sn = mod(dt, 3.14);
+$Output = fract(sin(sn) * c) * 2 * 3.14;
+
 			]]>
 			</script>
 		</item>

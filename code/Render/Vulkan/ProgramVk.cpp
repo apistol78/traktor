@@ -282,9 +282,9 @@ bool ProgramVk::create(
 	for (const auto& resourceImage : resource->m_images)
 	{
 #if !defined(_DEBUG)
-		m_textures.push_back({ resourceImage.binding });
+		m_images.push_back({ resourceImage.binding });
 #else
-		m_textures.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
+		m_images.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
 #endif
 	}
 
@@ -701,7 +701,7 @@ bool ProgramVk::validateDescriptorSet()
 		if (is_a< TextureVk >(resolved))
 		{
 			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfo.imageLayout = static_cast< TextureVk* >(resolved)->getImage().getVkImageLayout(0, 0); // \fixme Assuming all mips have same layout at this point.
 		}
 		else if (is_a< RenderTargetVk >(resolved))
 		{
@@ -714,7 +714,7 @@ bool ProgramVk::validateDescriptorSet()
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		}
 
-		T_ASSERT (imageInfo.imageView != 0);
+		T_ASSERT(imageInfo.imageView != 0);
 
 		auto& write = writes.push_back();
 		write = {};
@@ -726,6 +726,36 @@ bool ProgramVk::validateDescriptorSet()
 		write.pImageInfo = &imageInfo;
 		write.dstArrayElement = 0;
 		write.dstBinding = texture.binding;
+	}
+
+	// Add image bindings.
+	for (const auto& image : m_images)
+	{
+		T_ASSERT(image.texture);
+		auto resolved = image.texture->resolve();
+		T_ASSERT(resolved);
+
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = 0;
+
+		if (is_a< TextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		}
+
+		T_ASSERT(imageInfo.imageView != 0);
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_descriptorSet;
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = 0;
+		write.dstBinding = image.binding;
 	}
 
 	// Add sbuffer bindings.

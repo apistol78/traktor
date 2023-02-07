@@ -44,7 +44,10 @@ bool ConstantNodeTraits::isInputTypeValid(
 	const PinType pinType
 ) const
 {
-	return false;
+	if (is_a< TextureSize >(node))
+		return isPinTypeTexture(pinType);
+	else
+		return false;
 }
 
 PinType ConstantNodeTraits::getOutputPinType(

@@ -162,7 +162,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	ai.pApplicationName = "Traktor";
 	ai.pEngineName = "Traktor";
 	ai.engineVersion = 1;
-	ai.apiVersion = VK_MAKE_VERSION(1, 0, 0);
+	ai.apiVersion = VK_MAKE_VERSION(1, 1, 0);
 
 	VkInstanceCreateInfo ii = {};
 	ii.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

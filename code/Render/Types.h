@@ -477,6 +477,7 @@ struct SimpleTextureCreateDesc
 	TextureFormat format = TfInvalid;
 	bool sRGB = false;
 	bool immutable = false;
+	bool shaderStorage = false;
 	TextureInitialData initialData[16];
 };
 
@@ -488,6 +489,7 @@ struct CubeTextureCreateDesc
 	TextureFormat format = TfInvalid;
 	bool sRGB = false;
 	bool immutable = false;
+	bool shaderStorage = false;
 	TextureInitialData initialData[16 * 6];
 };
 
@@ -501,6 +503,7 @@ struct VolumeTextureCreateDesc
 	TextureFormat format = TfInvalid;
 	bool sRGB = false;
 	bool immutable = false;
+	bool shaderStorage = false;
 	TextureInitialData initialData[16];
 };
 
