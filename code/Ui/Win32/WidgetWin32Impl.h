@@ -544,6 +544,8 @@ protected:
 		m_hWnd.registerMessageHandler(WM_CHAR,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventChar));
 		m_hWnd.registerMessageHandler(WM_KEYDOWN,       new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
 		m_hWnd.registerMessageHandler(WM_KEYUP,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
+		m_hWnd.registerMessageHandler(WM_SYSKEYDOWN,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyDown));
+		m_hWnd.registerMessageHandler(WM_SYSKEYUP,      new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventKeyUp));
 		m_hWnd.registerMessageHandler(WM_MOVE,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventMove));
 		m_hWnd.registerMessageHandler(WM_SIZE,          new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventSize));
 		m_hWnd.registerMessageHandler(WM_LBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));

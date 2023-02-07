@@ -13,10 +13,8 @@
 #include "Ui/SyntaxRichEdit/SyntaxLanguage.h"
 #include "Ui/SyntaxRichEdit/SyntaxRichEdit.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SyntaxRichEdit", SyntaxRichEdit, RichEdit)
 
@@ -95,8 +93,8 @@ void SyntaxRichEdit::setErrorHighlight(int32_t line)
 	updateLanguage(0, getLineCount() - 1);
 	if (line >= 0)
 	{
-		int32_t offset = getLineOffset(line);
-		int32_t length = getLineLength(line);
+		const int32_t offset = getLineOffset(line);
+		const int32_t length = getLineLength(line);
 		setAttributes(offset, length, m_attributeError[0], m_attributeError[1]);
 	}
 }
@@ -106,12 +104,12 @@ void SyntaxRichEdit::getOutline(std::list< SyntaxOutline >& outOutline) const
 	if (!m_language)
 		return;
 
-	int32_t fromLine = 0;
-	int32_t toLine = getLineCount();
+	const int32_t fromLine = 0;
+	const int32_t toLine = getLineCount();
 
 	for (int32_t line = fromLine; line < toLine; ++line)
 	{
-		std::wstring text = getLine(line);
+		const std::wstring text = getLine(line);
 		m_language->outline(line, text, outOutline);
 	}
 }
@@ -127,7 +125,7 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 
 	for (int32_t line = fromLine; line <= toLine; ++line)
 	{
-		std::wstring text = getLine(line);
+		const std::wstring text = getLine(line);
 		for (int32_t i = 0; i < int32_t(text.length()); )
 		{
 			SyntaxLanguage::State state = SyntaxLanguage::StInvalid;
@@ -265,10 +263,9 @@ void SyntaxRichEdit::setText(const std::wstring& text)
 
 void SyntaxRichEdit::eventChange(ContentChangeEvent* event)
 {
-	int32_t caretOffset = getCaretOffset();
-	int32_t caretLine = getLineFromOffset(caretOffset);
+	const int32_t caretOffset = getCaretOffset();
+	const int32_t caretLine = getLineFromOffset(caretOffset);
 	updateLanguage(caretLine, caretLine);
 }
 
-	}
 }
