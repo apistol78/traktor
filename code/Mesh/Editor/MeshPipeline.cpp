@@ -138,7 +138,7 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 
 bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& outputPath, const Guid& outputGuid, model::Material::Map& map, bool normalMap)
 {
-	if (map.image == nullptr)
+	if (map.image == nullptr || map.texture.isNotNull())
 		return true;
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
