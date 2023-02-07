@@ -229,12 +229,12 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 			m_shaderGraph->removeEdge(edge);
 	}
 
-	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_container = new ui::Container();
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
-	m_toolBar->create(container);
+	m_toolBar->create(m_container);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 18);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -287,12 +287,12 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
-	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, true, ui::dpi96(-350), false);
+	m_scriptSplitter = new ui::Splitter();
+	m_scriptSplitter->create(m_container, true, ui::dpi96(-350), false);
 
 	// Create shader graph editor control.
 	m_editorGraph = new ui::GraphControl();
-	m_editorGraph->create(splitter);
+	m_editorGraph->create(m_scriptSplitter);
 	m_editorGraph->setText(L"SHADER");
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::MouseDoubleClickEvent >(this, &ShaderGraphEditorPage::eventDoubleClick);
@@ -304,14 +304,14 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	// Create script editor control.
 	m_scriptEditor = new ui::SyntaxRichEdit();
-	m_scriptEditor->create(splitter, L"", ui::WsDoubleBuffer);
+	m_scriptEditor->create(m_scriptSplitter, L"", ui::WsDoubleBuffer);
 	m_scriptEditor->setLanguage(new ui::SyntaxLanguageGlsl());
 	m_scriptEditor->hide();
 	m_scriptEditor->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventScriptChange);
 
 	// Load default script editor font from settings.
-	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_scriptEditor->setFont(ui::Font(font, fontSize));
 
 	// Create properties view.
@@ -982,7 +982,10 @@ void ShaderGraphEditorPage::editScript(Script* script)
 {
 	if ((m_script = script) != nullptr)
 	{
-		wchar_t sc = m_scriptEditor->addSpecialCharacter(new EntryCharacter(m_script));
+		const ui::Size szInner = m_container->getInnerRect().getSize();
+		m_scriptSplitter->setOrientation(szInner.cx >= szInner.cy);
+
+		const wchar_t sc = m_scriptEditor->addSpecialCharacter(new EntryCharacter(m_script));
 
 		std::wstring text = m_script->getScript();
 		text = replaceAll(text, L"ENTRY", std::wstring(1, sc));
