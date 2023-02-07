@@ -51,6 +51,10 @@ bool TextureVk::create(
 		return false;
 	}
 
+	uint32_t usageFlags = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	if (desc.shaderStorage)
+		usageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+
 	// Create image.
 	m_textureImage = new Image(m_context);
 	if (!m_textureImage->createSimple(
@@ -58,7 +62,7 @@ bool TextureVk::create(
 		desc.height,
 		desc.mipCount,
 		vkTextureFormats[desc.format],
-		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+		usageFlags
 	))
 	{
 		m_textureImage = nullptr;
@@ -129,7 +133,15 @@ bool TextureVk::create(
 	}
 
 	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 1);
+	m_textureImage->changeLayout(
+		commandBuffer,
+		desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		0,
+		desc.mipCount,
+		0,
+		1
+	);
 
 	// Submit command buffer to perform transfer of stage to texture.
 	commandBuffer->submitAndWait();
@@ -156,6 +168,10 @@ bool TextureVk::create(
 		return false;
 	}
 
+	uint32_t usageFlags = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	if (desc.shaderStorage)
+		usageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+
 	// Create image.
 	m_textureImage = new Image(m_context);
 	if (!m_textureImage->createCube(
@@ -163,7 +179,7 @@ bool TextureVk::create(
 		desc.side,
 		desc.mipCount,
 		vkTextureFormats[desc.format],
-		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+		usageFlags
 	))
 	{
 		m_textureImage = nullptr;
@@ -239,7 +255,15 @@ bool TextureVk::create(
 	}
 
 	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, desc.mipCount, 0, 6);
+	m_textureImage->changeLayout(
+		commandBuffer,
+		desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		0,
+		desc.mipCount,
+		0,
+		6
+	);
 
 	commandBuffer->submitAndWait();
 
@@ -265,6 +289,10 @@ bool TextureVk::create(
 		return false;
 	}
 
+	uint32_t usageFlags = VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+	if (desc.shaderStorage)
+		usageFlags |= VK_IMAGE_USAGE_STORAGE_BIT;
+
 	// Create image.
 	m_textureImage = new Image(m_context);
 	if (!m_textureImage->createVolume(
@@ -273,7 +301,7 @@ bool TextureVk::create(
 		desc.depth,
 		desc.mipCount,
 		vkTextureFormats[desc.format],
-		VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT
+		usageFlags
 	))
 	{
 		m_textureImage = nullptr;
@@ -338,7 +366,15 @@ bool TextureVk::create(
 	}
 
 	// Change layout of texture to optimal sampling.
-	m_textureImage->changeLayout(commandBuffer, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1);
+	m_textureImage->changeLayout(
+		commandBuffer,
+		desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_IMAGE_ASPECT_COLOR_BIT,
+		0,
+		1,
+		0,
+		1
+	);
 
 	commandBuffer->submitAndWait();
 

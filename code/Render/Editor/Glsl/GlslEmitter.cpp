@@ -101,17 +101,21 @@ std::wstring expandScalar(float v, GlslType type)
 
 OutputStream& assign(OutputStream& f, const GlslVariable* out)
 {
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
+	return f;
+}
+
+OutputStream& assignMutable(OutputStream& f, const GlslVariable* out)
+{
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
 	return f;
 }
 
 OutputStream& comment(OutputStream& f, const Node* node)
 {
-	if (!node->getComment().empty())
-	{
-		std::wstring comment = node->getComment();
+	const std::wstring& comment = node->getComment();
+	if (!comment.empty())
 		f << L"// " << comment << Endl;
-	}
 	return f;
 }
 
@@ -886,9 +890,9 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	// initialize it.
 	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
-		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+		assignMutable(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
+		assignMutable(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"int " << N->getName() << L";" << Endl;
@@ -1020,9 +1024,9 @@ bool emitIterate2(GlslContext& cx, Iterate2* node)
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		if (out[i] && initial[i])
-			assign(f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
+			assignMutable(f, out[i]) << initial[i]->cast(out[i]->getType()) << L";" << Endl;
 		else if (out[i])
-			assign(f, out[i]) << expandScalar(0.0f, out[i]->getType()) << L";" << Endl;
+			assignMutable(f, out[i]) << expandScalar(0.0f, out[i]->getType()) << L";" << Endl;
 	}
 
 	// Write outer for-loop statement.
@@ -1133,9 +1137,9 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	// initialize it.
 	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
-		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+		assignMutable(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
+		assignMutable(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"for (int " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
@@ -1679,7 +1683,7 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"_Data[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
+	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
 
 	return true;
 }
@@ -1768,16 +1772,16 @@ bool emitRepeat(GlslContext& cx, Repeat* node)
 
 	cx.getShader().popScope();
 
-	std::wstring inner = fs.str();
+	const std::wstring inner = fs.str();
 	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
 	Ref< GlslVariable > initial = cx.emitInput(node, L"Initial");
 	if (initial)
-		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+		assignMutable(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
+		assignMutable(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"for (int " << N->getName() << L" = 0;; ++" << N->getName() << L")" << Endl;
@@ -2162,7 +2166,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 {
 	Ref< GlslVariable > out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
-		node->getParameterName(),
+		node->getParameterName() + L"_Data",
 		GlslType::StructBuffer
 	);
 
@@ -2268,7 +2272,7 @@ bool emitSum(GlslContext& cx, Sum* node)
 	// As we now know the type of output variable we can safely
 	// initialize it.
 	comment(f, node);
-	assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
+	assignMutable(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"int " << N->getName() << L";" << Endl;
@@ -2486,7 +2490,7 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	for (int32_t i = 0; i < width; ++i)
 	{
 		outs[i]->setType(outputTypes[i]);
-		assign(f, outs[i]) << expandScalar(0.0f, outputTypes[i]) << L";" << Endl;
+		assignMutable(f, outs[i]) << expandScalar(0.0f, outputTypes[i]) << L";" << Endl;
 	}
 
 	comment(f, node);
@@ -2592,17 +2596,17 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 	{
 	case GlslType::Texture2D:
 		out = cx.emitOutput(node, L"Output", GlslType::Float2);
-		f << L"vec2 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec2 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	case GlslType::Texture3D:
 		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	case GlslType::TextureCube:
 		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
 		break;
 
 	default:

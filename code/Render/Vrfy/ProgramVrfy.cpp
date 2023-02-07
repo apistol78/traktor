@@ -184,7 +184,23 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
-	m_program->setImageViewParameter(handle, imageView);
+
+	if (!m_program)
+		return;
+
+	if (imageView)
+	{
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(imageView->resolve()))
+		{
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to set destroyed texture as shader parameter.");
+		}
+		else
+			T_FATAL_ERROR;
+	}
+	else
+		m_program->setImageViewParameter(handle, nullptr);
+
+	m_boundImages[handle] = imageView;
 }
 
 void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
@@ -231,6 +247,18 @@ void ProgramVrfy::verify()
 		{
 			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
 			m_program->setTextureParameter(i->first, textureVrfy->getTexture());
+		}
+	}
+
+	for (auto i = m_boundImages.begin(); i != m_boundImages.end(); ++i)
+	{
+		if (!i->second)
+			continue;
+
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(i->second->resolve()))
+		{
+			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
+			m_program->setImageViewParameter(i->first, textureVrfy->getTexture());
 		}
 	}
 }

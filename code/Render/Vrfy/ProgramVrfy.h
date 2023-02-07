@@ -71,6 +71,7 @@ private:
 	std::wstring m_tag;
 	SmallMap< handle_t, Parameter > m_shadow;
 	SmallMap< handle_t, Ref< ITexture > > m_boundTextures;
+	SmallMap< handle_t, Ref< ITexture > > m_boundImages;
 };
 
 }
