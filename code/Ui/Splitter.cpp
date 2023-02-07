@@ -42,7 +42,7 @@ Splitter::Splitter()
 {
 }
 
-bool Splitter::create(Widget* parent, bool vertical, int position, bool relative, int border)
+bool Splitter::create(Widget* parent, bool vertical, int32_t position, bool relative, int32_t border)
 {
 	if (!Widget::create(parent))
 		return false;
@@ -237,7 +237,13 @@ void Splitter::update(const Rect* rc, bool immediate)
 	Widget::update(rc, immediate);
 }
 
-void Splitter::setPosition(int position)
+void Splitter::setOrientation(bool vertical)
+{
+	m_vertical = vertical;
+	update();
+}
+
+void Splitter::setPosition(int32_t position)
 {
 	if (position >= 0)
 	{
@@ -246,7 +252,7 @@ void Splitter::setPosition(int position)
 	}
 }
 
-int Splitter::getPosition() const
+int32_t Splitter::getPosition() const
 {
 	return m_position;
 }
