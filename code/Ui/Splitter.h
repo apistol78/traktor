@@ -41,7 +41,7 @@ public:
 	 * \param relative If position is scaled relatively when Splitter is resized.
 	 * \param border Clamping border, distance from extents in pixels.
 	 */
-	bool create(Widget* parent, bool vertical = true, int position = 100, bool relative = false, int border = 16);
+	bool create(Widget* parent, bool vertical = true, int32_t position = 100, bool relative = false, int32_t border = 16);
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 
@@ -51,9 +51,11 @@ public:
 
 	virtual Size getMaximumSize() const override;
 
-	void setPosition(int position);
+	void setOrientation(bool vertical);
 
-	int getPosition() const;
+	void setPosition(int32_t position);
+
+	int32_t getPosition() const;
 
 	Ref< Widget > getLeftWidget() const;
 
@@ -61,10 +63,10 @@ public:
 
 private:
 	bool m_vertical;
-	int m_position;
+	int32_t m_position;
 	bool m_negative;
 	bool m_relative;
-	int m_border;
+	int32_t m_border;
 	bool m_drag;
 
 	int getAbsolutePosition() const;
