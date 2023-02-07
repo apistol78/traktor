@@ -85,7 +85,7 @@ void ShaderViewer::destroy()
 	if (m_reflectJob)
 	{
 		m_reflectJob->wait();
-		m_reflectJob = 0;
+		m_reflectJob = nullptr;
 	}
 	ui::Container::destroy();
 }
@@ -159,7 +159,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 1, ui::Command(L"Shader.Editor.Preview.Copy")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderViewer::eventToolBarClick);
 
-	std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
+	const std::wstring programCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"ShaderPipeline.ProgramCompiler");
 	int32_t compilerIndex = 0;
 	for (const auto programCompilerType : type_of< IProgramCompiler >().findAllOf(false))
 	{
@@ -204,8 +204,8 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEditCompute->create(tabPageCompute, L"", ui::WsDoubleBuffer);
 	m_shaderEditCompute->setLanguage(new ui::SyntaxLanguageGlsl());
 
-	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 	m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 	m_shaderEditCompute->setFont(ui::Font(font, fontSize));
@@ -225,8 +225,8 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.SettingsChanged")
 	{
-		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+		const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+		const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 		m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 		m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 		m_shaderEditVertex->update();
@@ -254,8 +254,8 @@ void ShaderViewer::updateCombinations()
 	m_dropCombinations->removeAll();
 
 	// Create checkboxes for combination in selected technique.
-	std::wstring techniqueName = m_dropTechniques->getSelectedItem();
-	std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
+	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
+	const std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
 	if (i != m_techniques.end())
 	{
 		for (const auto& parameter : i->second.parameters)
@@ -275,9 +275,9 @@ void ShaderViewer::updateShaders()
 	for (auto index : selectedCombinations)
 		value |= 1 << index;
 
-	int32_t vertexOffset = m_shaderEditVertex->getScrollLine();
-	int32_t pixelOffset = m_shaderEditPixel->getScrollLine();
-	int32_t computeOffset = m_shaderEditCompute->getScrollLine();
+	const int32_t vertexOffset = m_shaderEditVertex->getScrollLine();
+	const int32_t pixelOffset = m_shaderEditPixel->getScrollLine();
+	const int32_t computeOffset = m_shaderEditCompute->getScrollLine();
 
 	m_shaderEditVertex->setText(L"");
 	m_shaderEditPixel->setText(L"");
@@ -311,11 +311,11 @@ void ShaderViewer::updateShaders()
 
 void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
-	auto activeTabPage = m_tab->getActivePage();
+	const auto activeTabPage = m_tab->getActivePage();
 	T_ASSERT(activeTabPage != nullptr);
 
-	auto edit = mandatory_non_null_type_cast< ui::SyntaxRichEdit* >(activeTabPage->getFirstChild());
-	std::wstring shader = edit->getText();
+	const auto edit = mandatory_non_null_type_cast< ui::SyntaxRichEdit* >(activeTabPage->getFirstChild());
+	const std::wstring shader = edit->getText();
 
 	if (event->getCommand() == L"Shader.Editor.Preview.Save")
 	{
