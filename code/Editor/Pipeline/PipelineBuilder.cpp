@@ -141,12 +141,12 @@ PipelineBuilder::PipelineBuilder(
 ,	m_cacheMiss(0)
 ,	m_cacheVoid(0)
 {
-	// Create data access memento cache.
-	m_dataAccessCache = new DataAccessCache(m_profiler, cache);
-
 	// If no cache is provided then use a non-persistent, in-memory, cache.
 	if (!m_cache)
 		m_cache = new MemoryPipelineCache();
+
+	// Create data access memento cache.
+	m_dataAccessCache = new DataAccessCache(m_profiler, m_cache);
 }
 
 bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool rebuild)
