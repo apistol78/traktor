@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class SyntaxLanguage;
 
@@ -68,6 +66,4 @@ private:
 	void eventChange(ContentChangeEvent* event);
 };
 
-	}
 }
-

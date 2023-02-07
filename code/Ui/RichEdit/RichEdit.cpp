@@ -1083,6 +1083,10 @@ bool RichEdit::findNextLine(int32_t currentLine, const std::wstring& needle, boo
 
 void RichEdit::eventKeyDown(KeyDownEvent* event)
 {
+	const bool shift = ((event->getKeyState() & KsShift) != 0);
+	const bool ctrl = ((event->getKeyState() & KsControl) != 0);
+	const bool alt = ((event->getKeyState() & KsMenu) != 0);
+
 	int32_t caret = m_caret;
 	bool caretMovement = false;
 	bool manualScrolled = false;
@@ -1094,9 +1098,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkUp:
-		if ((event->getKeyState() & KsControl) == 0)
+		if (!ctrl && !alt)	// Move caret up.
 		{
-			// Move caret up.
 			for (uint32_t i = 1; i < m_lines.size(); ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
@@ -1109,9 +1112,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			}
 			caretMovement = true;
 		}
-		else
+		else if (ctrl && !alt)	// Scroll up.
 		{
-			// Scroll up.
 			if (m_scrollBarV->isVisible(false))
 			{
 				const int32_t position = m_scrollBarV->getPosition();
@@ -1121,12 +1123,44 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 				manualScrolled = true;
 			}
 		}
+		else if (!ctrl && alt)	// Move line up.
+		{
+			for (uint32_t i = 1; i < m_lines.size(); ++i)
+			{
+				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+				{
+					const Line ln0 = m_lines[i - 1];
+					const Line ln1 = m_lines[i];
+
+					std::vector< Character > tx0;
+					for (int32_t i = ln0.start; i <= ln0.stop; ++i)
+						tx0.push_back(m_text[i]);
+
+					std::vector< Character > tx1;
+					for (int32_t i = ln1.start; i <= ln1.stop; ++i)
+						tx1.push_back(m_text[i]);
+
+					const int32_t s = ln0.start + (ln1.stop - ln1.start) + 1;
+
+					for (int32_t i = 0; i <= ln1.stop - ln1.start; ++i)
+						m_text[ln0.start + i] = tx1[i];
+					for (int32_t i = 0; i <= ln0.stop - ln0.start; ++i)
+						m_text[s + i] = tx0[i];
+
+					m_caret = m_lines[i - 1].start + (m_caret - m_lines[i].start);
+
+					m_lines[i - 1].stop = s - 1;
+					m_lines[i].start = s;
+					break;
+				}
+			}
+			caretMovement = true;
+		}
 		break;
 
 	case VkDown:
-		if ((event->getKeyState() & KsControl) == 0)
+		if (!ctrl && !alt)	// Move caret down.
 		{
-			// Move caret down.
 			for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
@@ -1139,9 +1173,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 			}
 			caretMovement = true;
 		}
-		else
+		else if (ctrl && !alt)	// Scroll down.
 		{
-			// Scroll down.
 			if (m_scrollBarV->isVisible(false))
 			{
 				const int32_t position = m_scrollBarV->getPosition();
@@ -1151,16 +1184,51 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 				manualScrolled = true;
 			}
 		}
+		else if (!ctrl && alt)	// Move line down.
+		{
+			if (!m_lines.empty())
+			{
+				for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
+				{
+					if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
+					{
+						const Line ln0 = m_lines[i];
+						const Line ln1 = m_lines[i + 1];
+
+						std::vector< Character > tx0;
+						for (int32_t i = ln0.start; i <= ln0.stop; ++i)
+							tx0.push_back(m_text[i]);
+
+						std::vector< Character > tx1;
+						for (int32_t i = ln1.start; i <= ln1.stop; ++i)
+							tx1.push_back(m_text[i]);
+
+						const int32_t s = ln0.start + (ln1.stop - ln1.start) + 1;
+
+						for (int32_t i = 0; i <= ln1.stop - ln1.start; ++i)
+							m_text[ln0.start + i] = tx1[i];
+						for (int32_t i = 0; i <= ln0.stop - ln0.start; ++i)
+							m_text[s + i] = tx0[i];
+
+						m_caret = s + (m_caret - m_lines[i].start);
+
+						m_lines[i].stop = s - 1;
+						m_lines[i + 1].start = s;
+						break;
+					}
+				}
+				caretMovement = true;
+			}
+		}
 		break;
 
 	case VkLeft:
-		// Move caret left.
-		if ((event->getKeyState() & KsControl) == 0)
+		if (!ctrl && !alt)	// Move caret left.
 		{
 			if (m_caret > 0)
 				--m_caret;
 		}
-		else
+		else if (ctrl && !alt)	// Move caret left to next word.
 		{
 			if (m_caret > 0)
 				--m_caret;
@@ -1176,13 +1244,12 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 		break;
 
 	case VkRight:
-		// Move caret right.
-		if ((event->getKeyState() & KsControl) == 0)
+		if (!ctrl && !alt)	// Move caret right.
 		{
 			if (m_caret < int32_t(m_text.size()) - 1)
 				++m_caret;
 		}
-		else
+		else if (ctrl && !alt)	// Move caret right to previous word.
 		{
 			while (m_caret < int32_t(m_text.size()) - 1)
 			{
@@ -1196,7 +1263,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 	case VkHome:
 		{
-			if ((event->getKeyState() & KsControl) == 0)
+			if (!ctrl && !alt)
 			{
 				for (const auto& line : m_lines)
 				{
@@ -1216,7 +1283,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 	case VkEnd:
 		{
-			if ((event->getKeyState() & KsControl) == 0)
+			if (!ctrl && !alt)
 			{
 				for (const auto& line : m_lines)
 				{
@@ -1304,7 +1371,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	}
 
 	// If caret moved while holding "shift" key then expand selection range.
-	if (caretMovement && (event->getKeyState() & KsShift) != 0)
+	if (caretMovement && shift)
 	{
 		if (m_selectionStart < 0)
 		{
