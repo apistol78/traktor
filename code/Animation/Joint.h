@@ -78,13 +78,13 @@ public:
 	 *
 	 * \param radius New joint radius.
 	 */
-	void setRadius(float radius) { m_radius = radius; }
+	void setRadius(const Scalar& radius) { m_radius = radius; }
 
 	/*! Get joint radius.
 	 *
 	 * \return Joint radius.
 	 */
-	const float getRadius() const { return m_radius; }
+	const Scalar& getRadius() const { return m_radius; }
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -92,7 +92,7 @@ private:
 	int32_t m_parent;
 	std::wstring m_name;
 	Transform m_transform;
-	float m_radius;
+	Scalar m_radius;
 };
 
 }

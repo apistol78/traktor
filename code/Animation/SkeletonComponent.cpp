@@ -16,7 +16,7 @@
 #include "Core/Thread/JobManager.h"
 #include "World/Entity.h"
 
-#define T_USE_UPDATE_JOBS
+//#define T_USE_UPDATE_JOBS
 
 namespace traktor::animation
 {
@@ -72,8 +72,8 @@ Aabb3 SkeletonComponent::getBoundingBox() const
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
-			const float radius = joint->getRadius();
-			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), Scalar(radius));
+			const Scalar radius = joint->getRadius();
+			boundingBox.contain(m_poseTransforms[i].translation().xyz1(), radius);
 		}
 	}
 
@@ -125,8 +125,6 @@ bool SkeletonComponent::getJointTransform(render::handle_t jointName, Transform&
 	uint32_t index;
 	if (!m_skeleton->findJoint(jointName, index))
 		return false;
-
-	synchronize();
 
 	if (index >= m_jointTransforms.size())
 		return false;

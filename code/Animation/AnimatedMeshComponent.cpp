@@ -59,6 +59,8 @@ void AnimatedMeshComponent::destroy()
 	safeDestroy(m_jointBuffers[1]);
 	safeDestroy(m_jointBuffers[0]);
 
+	m_mesh.clear();
+
 	mesh::MeshComponent::destroy();
 }
 
