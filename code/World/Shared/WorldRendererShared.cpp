@@ -378,8 +378,9 @@ void WorldRendererShared::setupTileDataPass(
 		uint32_t lightOffset = 0;
 		for (int32_t z = 0; z < ClusterDimZ; ++z)
 		{
-			const Scalar snz = vnz * power(vfz / vnz, Scalar(z) / Scalar(ClusterDimZ));
-			const Scalar sfz = vnz * power(vfz / vnz, Scalar(z + 1) / Scalar(ClusterDimZ));
+			const float fz = (float)z;
+			const Scalar snz = vnz * power(vfz / vnz, Scalar(fz) / Scalar(ClusterDimZ));
+			const Scalar sfz = vnz * power(vfz / vnz, Scalar(fz + 1.0f) / Scalar(ClusterDimZ));
 
 			// Gather all lights intersecting slice.
 			sliceLights.clear();

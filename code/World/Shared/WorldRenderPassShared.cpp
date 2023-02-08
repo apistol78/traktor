@@ -23,16 +23,12 @@ WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
-	uint32_t passFlags,
-	bool irradianceEnable,
-	bool shadowEnable
+	uint32_t passFlags
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
-,	m_irradianceEnable(irradianceEnable)
-,	m_shadowEnable(shadowEnable)
 {
 }
 
@@ -40,12 +36,14 @@ WorldRenderPassShared::WorldRenderPassShared(
 	render::handle_t technique,
 	render::ProgramParameters* sharedParams,
 	const WorldRenderView& worldRenderView,
-	uint32_t passFlags
+	uint32_t passFlags,
+	const std::initializer_list< TechniqueFlag >& techniqueFlags
 )
 :	m_technique(technique)
 ,	m_sharedParams(sharedParams)
 ,	m_worldRenderView(worldRenderView)
 ,	m_passFlags(passFlags)
+,	m_techniqueFlags(techniqueFlags)
 {
 }
 
@@ -62,8 +60,8 @@ uint32_t WorldRenderPassShared::getPassFlags() const
 render::Shader::Permutation WorldRenderPassShared::getPermutation(const render::Shader* shader) const
 {
 	render::Shader::Permutation perm(m_technique);
-	shader->setCombination(s_handleIrradianceEnable, m_irradianceEnable, perm);
-	shader->setCombination(s_handleShadowEnable, m_shadowEnable, perm);
+	for (const auto& tf : m_techniqueFlags)
+		shader->setCombination(tf.handle, tf.enable, perm);
 	return perm;
 }
 
