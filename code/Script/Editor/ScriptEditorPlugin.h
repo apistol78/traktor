@@ -52,6 +52,8 @@ public:
 
 	virtual void handleWorkspaceClosed() override final;
 
+	virtual void handleEditorClosed() override final;
+
 	/*! IScriptDebuggerSessions::IListener */
 	// \{
 

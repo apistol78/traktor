@@ -2277,6 +2277,10 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 		}
 	}
 
+	// Notify all plugins about editor been closed.
+	for (auto editorPluginSite : m_editorPluginSites)
+		editorPluginSite->handleEditorClosed();
+
 	m_dock->update();
 	update();
 	return true;

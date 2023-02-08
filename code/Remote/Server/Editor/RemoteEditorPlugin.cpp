@@ -83,6 +83,10 @@ void RemoteEditorPlugin::handleWorkspaceClosed()
 {
 }
 
+void RemoteEditorPlugin::handleEditorClosed()
+{
+}
+
 void RemoteEditorPlugin::threadServer()
 {
 	while(!m_threadServer->stopped())

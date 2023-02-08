@@ -76,6 +76,8 @@ public:
 
 	virtual void handleWorkspaceClosed() override final;
 
+	virtual void handleEditorClosed() override final;
+
 private:
 	struct EditTarget
 	{

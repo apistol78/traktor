@@ -89,6 +89,12 @@ void ScriptEditorPlugin::handleWorkspaceClosed()
 		scriptDebuggerSessions->removeListener(this);
 }
 
+void ScriptEditorPlugin::handleEditorClosed()
+{
+	if (m_scriptManager)
+		m_scriptManager->collectGarbage(true);
+}
+
 void ScriptEditorPlugin::notifyBeginSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
 	bool autoOpenDebugger = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebugger", false);

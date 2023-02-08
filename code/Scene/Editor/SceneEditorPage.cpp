@@ -679,6 +679,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 					if (m_context->getControllerEditor())
 						m_context->getControllerEditor()->entityRemoved(selectedEntity);
+
+					selectedEntity->destroyEntity();
 				}
 			}
 		}
@@ -746,16 +748,20 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			if (parentGroup && parentGroup->isGroup())
 			{
 				parentGroup->removeChild(selectedEntity);
-				removedCount++;
 
 				if (m_context->getControllerEditor())
 					m_context->getControllerEditor()->entityRemoved(selectedEntity);
+
+				selectedEntity->destroyEntity();
+				removedCount++;
 			}
 			else if (selectedEntity->isLayer())
 			{
 				RefArray< world::LayerEntityData > layers = m_context->getSceneAsset()->getLayers();
-				layers.remove(checked_type_cast< world::LayerEntityData*, false >(selectedEntity->getEntityData()));
+				layers.remove(mandatory_non_null_type_cast< world::LayerEntityData* >(selectedEntity->getEntityData()));
 				m_context->getSceneAsset()->setLayers(layers);
+
+				selectedEntity->destroyEntity();
 				removedCount++;
 			}
 		}

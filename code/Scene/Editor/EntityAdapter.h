@@ -71,6 +71,8 @@ public:
 		uint32_t hash
 	);
 
+	void destroyEntity();
+
 	/*! \name Accessors */
 	//@{
 

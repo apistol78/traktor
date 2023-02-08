@@ -84,5 +84,9 @@ void TracerEditorPlugin::handleWorkspaceClosed()
 	BakePipelineOperator::setTracerProcessor(nullptr);
 }
 
+void TracerEditorPlugin::handleEditorClosed()
+{
+}
+
     }
 }

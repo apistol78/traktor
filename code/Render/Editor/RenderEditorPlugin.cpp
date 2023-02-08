@@ -105,6 +105,10 @@ void RenderEditorPlugin::handleWorkspaceClosed()
 	safeDestroy(m_tracker);
 }
 
+void RenderEditorPlugin::handleEditorClosed()
+{
+}
+
 bool RenderEditorPlugin::createRenderSystem()
 {
 	auto settings = m_editor->getSettings();

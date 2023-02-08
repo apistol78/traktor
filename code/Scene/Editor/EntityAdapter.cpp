@@ -8,6 +8,7 @@
  */
 #include <algorithm>
 #include "Core/Math/Const.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IComponentEditor.h"
 #include "Scene/Editor/IComponentEditorFactory.h"
@@ -82,6 +83,11 @@ void EntityAdapter::prepare(
 
 		m_componentEditors.push_back(componentEditor);
 	}
+}
+
+void EntityAdapter::destroyEntity()
+{
+	safeDestroy(m_entity);
 }
 
 world::EntityData* EntityAdapter::getEntityData() const
@@ -429,8 +435,8 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 {
 	AlignedVector< SnapPoint > snapPoints;
 
-	Transform transform = getTransform();
-	Aabb3 boundingBox = m_entity->getBoundingBox();
+	const Transform transform = getTransform();
+	const Aabb3 boundingBox = m_entity->getBoundingBox();
 	if (!boundingBox.empty())
 	{
 		Vector4 extents[8];
@@ -447,7 +453,7 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 				extents[faces[i * 4 + 2]] +
 				extents[faces[i * 4 + 3]];
 
-			faceCenter /= Scalar(4.0f);
+			faceCenter /= 4.0_simd;
 
 			SnapPoint sp;
 			sp.position = transform * faceCenter;
