@@ -17,10 +17,8 @@
 #include <set>
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 struct IWindowListener
 {
@@ -65,6 +63,4 @@ private:
 	static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-	}
 }
-

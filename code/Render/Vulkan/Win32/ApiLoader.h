@@ -128,10 +128,8 @@ extern PFN_vkCmdEndDebugUtilsLabelEXT vkCmdEndDebugUtilsLabelEXT;
 extern PFN_vkGetBufferMemoryRequirements2KHR vkGetBufferMemoryRequirements2KHR;
 extern PFN_vkGetImageMemoryRequirements2KHR vkGetImageMemoryRequirements2KHR;
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 bool initializeVulkanApi();
 
@@ -139,6 +137,4 @@ bool initializeVulkanExtensions(VkInstance instance);
 
 void finalizeVulkanApi();
 
-	}
 }
-

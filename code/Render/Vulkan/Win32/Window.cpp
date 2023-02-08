@@ -9,17 +9,15 @@
 #include <algorithm>
 #include "Render/Vulkan/Win32/Window.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
-const TCHAR* c_className = _T("TraktorRenderSystemDx11");
+const TCHAR* c_className = _T("TraktorRenderSystemVulkan");
 const DWORD c_classIconResource = 10000;
 
-		}
+	}
 
 Window::Window()
 :	m_hWnd(0)
@@ -98,8 +96,8 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	int32_t windowWidth = rcWindow.right - rcWindow.left;
 	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
 
-	int32_t realClientWidth = rcClient.right - rcClient.left;
-	int32_t realClientHeight = rcClient.bottom - rcClient.top;
+	const int32_t realClientWidth = rcClient.right - rcClient.left;
+	const int32_t realClientHeight = rcClient.bottom - rcClient.top;
 
 	if (realClientWidth != width || realClientHeight != height)
 	{
@@ -185,5 +183,4 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return result;
 }
 
-	}
 }
