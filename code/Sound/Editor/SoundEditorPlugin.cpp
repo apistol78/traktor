@@ -88,5 +88,9 @@ void SoundEditorPlugin::handleWorkspaceClosed()
 {
 }
 
+void SoundEditorPlugin::handleEditorClosed()
+{
+}
+
 	}
 }

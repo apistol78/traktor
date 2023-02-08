@@ -367,6 +367,10 @@ void EditorPlugin::handleWorkspaceClosed()
 	m_connectionManager = nullptr;
 }
 
+void EditorPlugin::handleEditorClosed()
+{
+}
+
 void EditorPlugin::updateTargetLists()
 {
 	m_targets.clear();

@@ -45,6 +45,8 @@ public:
 
 	virtual void handleWorkspaceClosed() override final;
 
+	virtual void handleEditorClosed() override final;
+
 private:
 	editor::IEditor* m_editor;
 	Ref< ShaderDependencyTracker > m_tracker;

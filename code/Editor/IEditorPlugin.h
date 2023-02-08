@@ -82,6 +82,10 @@ public:
 	/*! Workspace closed.
 	 */
 	virtual void handleWorkspaceClosed() = 0;
+
+	/*! An editor closed.
+	 */
+	virtual void handleEditorClosed() = 0;
 };
 
 }

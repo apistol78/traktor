@@ -54,6 +54,11 @@ void EditorPluginSite::handleWorkspaceClosed()
 	m_editorPlugin->handleWorkspaceClosed();
 }
 
+void EditorPluginSite::handleEditorClosed()
+{
+	m_editorPlugin->handleEditorClosed();
+}
+
 Ref< PropertiesView > EditorPluginSite::createPropertiesView(ui::Widget* parent)
 {
 	return nullptr;

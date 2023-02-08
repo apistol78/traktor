@@ -30,7 +30,7 @@ class SoundEditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	SoundEditorPlugin(editor::IEditor* editor);
+	explicit SoundEditorPlugin(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
@@ -43,6 +43,8 @@ public:
 	virtual void handleWorkspaceOpened() override final;
 
 	virtual void handleWorkspaceClosed() override final;
+
+	virtual void handleEditorClosed() override final;
 
 private:
 	editor::IEditor* m_editor;
