@@ -42,7 +42,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Ref< Job > add(const Job::task_t& functor) { return m_queue.add(functor); }
+	Job* add(const Job::task_t& functor) { return m_queue.add(functor); }
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/RefArray.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobQueue.h"
 #include "Core/Thread/ThreadManager.h"
@@ -55,11 +56,11 @@ void JobQueue::destroy()
 	m_workerThreads.clear();
 }
 
-Ref< Job > JobQueue::add(const Job::task_t& task)
+Job* JobQueue::add(const Job::task_t& task)
 {
 	Ref< Job > job = new Job(m_jobFinishedEvent, task);
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
 		m_jobQueue.push_back(job);
 		m_pending++;
 	}
@@ -77,7 +78,7 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 	// Create jobs for given functors.
 	if (ntasks > 1)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
+		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
 		jobs.resize(ntasks);
 		for (size_t i = 1; i < ntasks; ++i)
 		{
@@ -134,7 +135,7 @@ void JobQueue::threadWorker()
 
 		// Pop job from queue.
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
+			T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
 			if (!m_jobQueue.empty())
 			{
 				job = m_jobQueue.front();
