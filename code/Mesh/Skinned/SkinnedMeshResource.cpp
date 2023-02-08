@@ -9,9 +9,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberSmallMap.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Render/Mesh/Mesh.h"
@@ -46,10 +46,10 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 	skinnedMesh->m_mesh = mesh;
 
-	for (auto i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (const auto& p : m_parts)
 	{
-		render::handle_t worldTechnique = render::getParameterHandle(i->first);
-		for (const auto& part : i->second)
+		const render::handle_t worldTechnique = render::getParameterHandle(p.first);
+		for (const auto& part : p.second)
 		{
 			SkinnedMesh::Part sp;
 			sp.shaderTechnique = render::getParameterHandle(part.shaderTechnique);
@@ -83,7 +83,7 @@ void SkinnedMeshResource::serialize(ISerializer& s)
 		std::wstring,
 		parts_t,
 		Member< std::wstring >,
-		MemberStlList< Part, MemberComposite< Part > >
+		MemberAlignedVector< Part, MemberComposite< Part > >
 	>(L"parts", m_parts);
 	s >> MemberSmallMap< std::wstring, int32_t >(L"jointMap", m_jointMap);
 }

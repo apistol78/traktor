@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <list>
 #include "Core/Guid.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
 #include "Mesh/MeshResource.h"
 #include "Resource/Id.h"
@@ -57,7 +57,7 @@ public:
 
 private:
 	friend class SkinnedMeshConverter;
-	typedef std::list< Part > parts_t;
+	typedef AlignedVector< Part > parts_t;
 
 	resource::Id< render::Shader > m_shader;
 	SmallMap< std::wstring, parts_t > m_parts;
