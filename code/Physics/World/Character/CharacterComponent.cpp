@@ -58,7 +58,7 @@ void CharacterComponent::setOwner(world::Entity* owner)
 {
 	if ((m_owner = owner) != nullptr)
 	{
-		Transform transform = m_owner->getTransform();
+		const Transform transform = m_owner->getTransform();
 		m_bodyWide->setTransform(transform * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
 		m_bodyWide->setEnable(true);
 	}
@@ -79,7 +79,6 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	const Scalar dT(update.deltaTime);
 	const Vector4 movement = m_velocity * dT;
 	Vector4 position = m_bodyWide->getTransform().translation();
-	QueryResult result;
 
 	// Add user impulses.
 	m_velocity += m_impulse;
@@ -254,10 +253,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 
 			// Don't move entire distance to prevent stability issues.
 			const Scalar c_fudge = 0.01_simd;
-			if (move > c_fudge)
-				move -= c_fudge;
-
-			inoutPosition += motion * move;
+			inoutPosition += motion * ((move > c_fudge) ? move - c_fudge : move);
 
 			// Adjust movement vector.
 			const Scalar k = dot3(-motion, result.normal);
