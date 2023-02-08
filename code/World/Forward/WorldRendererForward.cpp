@@ -789,8 +789,10 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::Last,
-				(bool)(m_irradianceGrid != nullptr),
-				(bool)(shadowAtlasTargetSet != nullptr)
+				{
+					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
+					{ s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr) }
+				}
 			);
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());

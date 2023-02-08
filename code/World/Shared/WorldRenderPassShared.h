@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <initializer_list>
 #include "World/IWorldRenderPass.h"
 
 // import/export mechanism.
@@ -33,22 +34,29 @@ class T_DLLCLASS WorldRenderPassShared : public IWorldRenderPass
 	T_RTTI_CLASS;
 
 public:
+	struct TechniqueFlag
+	{
+		render::handle_t handle;
+		bool enable;
+	};
+
 	WorldRenderPassShared() = delete;
 
-	WorldRenderPassShared(
-		render::handle_t technique,
-		render::ProgramParameters* sharedParams,
-		const WorldRenderView& worldRenderView,
-		uint32_t passFlags,
-		bool irradianceEnable,
-		bool shadowEnable
-	);
-
-	WorldRenderPassShared(
+	explicit WorldRenderPassShared(
 		render::handle_t technique,
 		render::ProgramParameters* sharedParams,
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags
+	);
+
+	explicit WorldRenderPassShared(
+		render::handle_t technique,
+		render::ProgramParameters* sharedParams,
+		const WorldRenderView& worldRenderView,
+		uint32_t passFlags,
+		const std::initializer_list< TechniqueFlag >& techniqueFlags
+		//bool irradianceEnable,
+		//bool shadowEnable
 	);
 
 	virtual render::handle_t getTechnique() const override final;
@@ -65,9 +73,11 @@ private:
 	render::handle_t m_technique;
 	render::ProgramParameters* m_sharedParams;
 	const WorldRenderView& m_worldRenderView;
-	uint32_t m_passFlags = 0;
-	bool m_irradianceEnable = false;
-	bool m_shadowEnable = false;
+	uint32_t m_passFlags;
+	std::initializer_list< TechniqueFlag > m_techniqueFlags;
+
+	//bool m_irradianceEnable = false;
+	//bool m_shadowEnable = false;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
 };

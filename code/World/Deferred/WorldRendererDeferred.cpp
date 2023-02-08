@@ -474,7 +474,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 				sharedParams->endParameters(renderContext);
 
-				WorldRenderPassShared shadowPass(
+				const WorldRenderPassShared shadowPass(
 					s_techniqueShadow,
 					sharedParams,
 					shadowRenderView,
@@ -602,7 +602,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 				sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 				sharedParams->endParameters(renderContext);
 
-				WorldRenderPassShared shadowPass(
+				const WorldRenderPassShared shadowPass(
 					s_techniqueShadow,
 					sharedParams,
 					shadowRenderView,
@@ -842,7 +842,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->endParameters(renderContext);
 
 			// Irradiance
-			WorldRenderPassShared irradiancePass(
+			const WorldRenderPassShared irradiancePass(
 				s_techniqueIrradianceWrite,
 				sharedParams,
 				worldRenderView,
@@ -870,7 +870,7 @@ void WorldRendererDeferred::setupVisualPass(
 				m_screenRenderer->draw(renderContext, m_fogShader, sharedParams);
 
 			// Forward visuals; not included in GBuffer.
-			WorldRenderPassShared deferredColorPass(
+			const WorldRenderPassShared deferredColorPass(
 				s_techniqueDeferredColor,
 				sharedParams,
 				worldRenderView,
