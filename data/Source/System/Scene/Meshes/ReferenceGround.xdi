@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.mesh.MeshAsset" version="20">
-	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Scene/Meshes/ReferenceGround.gltf</fileName>
+	<fileName>c:/private/traktor/data/Assets/System/Scene/Meshes/ReferenceGround.gltf</fileName>
 	<importFilter/>
 	<meshType>MtStatic</meshType>
 	<materialTemplates/>
 	<materialShaders/>
-	<materialTextures>
-		<item>
-			<first>ReferenceGround</first>
-			<second>{C26E8336-B2BD-524C-BA5F-DD83422721D4}</second>
-		</item>
-	</materialTextures>
+	<materialTextures/>
 	<textureSet>{00000000-0000-0000-0000-000000000000}</textureSet>
 	<scaleFactor>1</scaleFactor>
 	<offset>0, 0, 0, 0</offset>
