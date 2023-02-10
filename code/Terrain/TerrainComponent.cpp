@@ -39,7 +39,6 @@ const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
 const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
 const render::Handle c_handleTerrain_CutMap(L"Terrain_CutMap");
-const render::Handle c_handleTerrain_MaterialMap(L"Terrain_MaterialMap");
 const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle c_handleTerrain_Eye(L"Terrain_Eye");
 const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
@@ -345,13 +344,9 @@ void TerrainComponent::build(
 	shader->setCombination(c_handleTerrain_CutEnable, m_terrain->getCutMap(), perm);
 
 	if (m_visualizeMode >= VmSurfaceLod && m_visualizeMode <= VmPatchLod)
-	{
 		shader->setCombination(c_handleTerrain_VisualizeLods, true, perm);
-	}
-	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmMaterialMap)
-	{
+	else if (m_visualizeMode >= VmColorMap && m_visualizeMode <= VmCutMap)
 		shader->setCombination(c_handleTerrain_VisualizeMap, true, perm);
-	}
 
 	render::IProgram* program = shader->getProgram(perm).program;
 	if (!program)
@@ -387,7 +382,6 @@ void TerrainComponent::build(
 	rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
 	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
 	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap());
-	rb->programParams->setTextureParameter(c_handleTerrain_MaterialMap, m_terrain->getMaterialMap());
 	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
@@ -402,8 +396,6 @@ void TerrainComponent::build(
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getSplatMap());
 	else if (m_visualizeMode == VmCutMap)
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getCutMap());
-	else if (m_visualizeMode == VmMaterialMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getMaterialMap());
 
 	worldRenderPass.setProgramParameters(rb->programParams);
 

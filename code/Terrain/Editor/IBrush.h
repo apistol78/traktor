@@ -26,7 +26,7 @@ class IBrush : public Object
 public:
 	enum Mode
 	{
-		MdSplat = 1,
+		MdMaterial = 1,
 		MdColor = 2,
 		MdHeight = 4,
 		MdCut = 8,
@@ -35,21 +35,12 @@ public:
 
 	struct State
 	{
-		int32_t radius;
-		const IFallOff* falloff;
-		float strength;
+		int32_t radius = 0;
+		const IFallOff* falloff = nullptr;
+		float strength = 0.0f;
 		Color4f color;
-		int32_t material;
-		int32_t attribute;
-
-		State()
-		:	radius(0)
-		,	falloff(nullptr)
-		,	strength(0.0f)
-		,	material(0)
-		,	attribute(0)
-		{
-		}
+		int32_t material = 0;
+		int32_t attribute = 0;
 	};
 
 	virtual uint32_t begin(float x, float y, const State& state) = 0;

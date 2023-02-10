@@ -38,11 +38,11 @@
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/ImageFallOff.h"
 #include "Terrain/Editor/AttributeBrush.h"
+#include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SmoothFallOff.h"
-#include "Terrain/Editor/SplatBrush.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Command.h"
@@ -448,29 +448,6 @@ bool TerrainEditModifier::activate()
 		}
 	}
 
-	// Create non-compressed texture for cut data.
-	desc.width = size;
-	desc.height = size;
-	desc.mipCount = 1;
-	desc.format = render::TfR8;
-	desc.sRGB = false;
-	desc.immutable = false;
-
-	m_attributeMap = m_context->getRenderSystem()->createSimpleTexture(desc, T_FILE_LINE_W);
-	if (m_attributeMap)
-	{
-		// Transfer material mask to texture.
-		render::ITexture::Lock nl;
-		if (m_attributeMap->lock(0, 0, nl))
-		{
-			std::memcpy(nl.bits, m_attributeData.c_ptr(), size * size);
-			m_attributeMap->unlock(0, 0);
-		}
-
-		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ITexture >(m_attributeMap);
-	}
-
 	// Create default brush; try set same brush type as before.
 	if (m_brush)
 		setBrush(type_of(m_brush));
@@ -500,7 +477,6 @@ void TerrainEditModifier::deactivate()
 	m_colorMap = nullptr;
 	m_normalMap = nullptr;
 	m_cutMap = nullptr;
-	m_attributeMap = nullptr;
 	m_brush = nullptr;
 	m_fallOff = nullptr;
 	m_fallOffImage = nullptr;
@@ -650,8 +626,8 @@ void TerrainEditModifier::setBrush(const TypeInfo& brushType)
 		m_brush = new ElevateBrush(m_heightfield, m_splatImage);
 	else if (is_type_a< FlattenBrush >(brushType))
 		m_brush = new FlattenBrush(m_heightfield);
-	else if (is_type_a< SplatBrush >(brushType))
-		m_brush = new SplatBrush(m_heightfield, m_splatImage);
+	else if (is_type_a< MaterialBrush >(brushType))
+		m_brush = new MaterialBrush(m_heightfield, m_splatImage);
 	else if (is_type_a< NoiseBrush >(brushType))
 		m_brush = new NoiseBrush(m_heightfield);
 	else if (is_type_a< SmoothBrush >(brushType))
@@ -818,7 +794,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	}
 
 	// Update splats.
-	if ((m_brushMode & IBrush::MdSplat) != 0)
+	if ((m_brushMode & IBrush::MdMaterial) != 0)
 	{
 		// Transfer splats to texture.
 		render::ITexture::Lock cl;
@@ -933,23 +909,10 @@ void TerrainEditModifier::apply(const Vector4& center)
 				m_attributeData[u + v * size] = m_heightfield->getGridAttribute(u, v);
 			}
 		}
-
-		// Transfer cuts to texture.
-		render::ITexture::Lock cl;
-		if (m_attributeMap->lock(0, 0, cl))
-		{
-			const uint8_t* src = static_cast< const uint8_t* >(m_attributeData.c_ptr());
-			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
-
-			for (int32_t y = 0; y < size; ++y)
-				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
-
-			m_attributeMap->unlock(0, 0);
-		}
-
-		// Replace material mask map in resource with our texture.
-		m_terrainComponent->m_terrain->m_materialMap = resource::Proxy< render::ITexture >(m_attributeMap);
 	}
+
+	for (auto terrainLayer : m_terrainLayers)
+		terrainLayer->updatePatches();
 
 	m_applied = true;	
 }
@@ -961,9 +924,6 @@ void TerrainEditModifier::end()
 
 	// Update errors metrics after modifier to prevent popping while drawing.
 	m_terrainComponent->updatePatches(nullptr, true, false);
-
-	// Only update layers's patches once editing ends since we cannot be sure
-	// how expensive this is as it's user configurable.
 	for (auto terrainLayer : m_terrainLayers)
 		terrainLayer->updatePatches();
 
@@ -998,7 +958,7 @@ void TerrainEditModifier::end()
 
 	// Write modifications to splats.
 	if (
-		(m_brushMode & IBrush::MdSplat) != 0 &&
+		(m_brushMode & IBrush::MdMaterial) != 0 &&
 		m_terrainInstance
 	)
 	{

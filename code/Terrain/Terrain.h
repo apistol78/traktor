@@ -100,12 +100,6 @@ public:
 	 */
 	const resource::Proxy< render::ITexture >& getCutMap() const { return m_cutMap; }
 
-	/*! Get terrain material mask map resource.
-	 *
-	 * \return Material mask map resource.
-	 */
-	const resource::Proxy< render::ITexture >& getMaterialMap() const { return m_materialMap; }
-
 	/*! Get terrain shader resource.
 	 *
 	 * \return Terrain shader resource.
@@ -142,7 +136,6 @@ private:
 	resource::Proxy< render::ITexture > m_heightMap;
 	resource::Proxy< render::ITexture > m_splatMap;
 	resource::Proxy< render::ITexture > m_cutMap;
-	resource::Proxy< render::ITexture > m_materialMap;
 	resource::Proxy< render::Shader > m_terrainShader;
 	resource::Proxy< render::Shader > m_surfaceShader;
 	AlignedVector< Patch > m_patches;

@@ -54,7 +54,7 @@ private:
 	Ref< TerrainEditModifier > m_terrainEditModifier;
 	Ref< ui::Widget > m_parent;
 	Ref< ui::ToolBarButton > m_toolToggleEditTerrain;
-	Ref< ui::ToolBarButton > m_toolToggleSplat;
+	Ref< ui::ToolBarButton > m_toolToggleMaterial;
 	Ref< ui::ToolBarButton > m_toolToggleColor;
 	Ref< ui::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::ToolBarButton > m_toolToggleFlatten;

@@ -141,7 +141,6 @@ private:
 	AutoArrayPtr< uint8_t > m_cutData;
 	Ref< render::ITexture > m_cutMap;
 	AutoArrayPtr< uint8_t > m_attributeData;
-	Ref< render::ITexture > m_attributeMap;
 	Ref< IBrush > m_brush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
