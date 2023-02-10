@@ -108,7 +108,33 @@ public:
 	 */
 	const RefArray< JsonMember >& get() const { return m_members; }
 
+	/*!
+	 */
 	virtual bool write(OutputStream& os) const override;
+
+	/*!
+	 */
+	int32_t getMemberInt32(const std::wstring& name, int32_t defaultValue = 0) const
+	{
+		const Any value = getMemberValue(name);
+		return value.isInt32() ? value.getInt32Unsafe() : defaultValue;
+	}
+
+	/*!
+	 */
+	float getMemberFloat(const std::wstring& name, float defaultValue = 0.0f) const
+	{
+		const Any value = getMemberValue(name);
+		return value.isNumeric() ? value.getFloat() : defaultValue;
+	}
+
+	/*!
+	 */
+	std::wstring getMemberString(const std::wstring& name, const std::wstring& defaultValue = L"") const
+	{
+		const Any value = getMemberValue(name);
+		return value.isString() ? value.getWideString() : defaultValue;
+	}
 
 private:
 	RefArray< JsonMember > m_members;

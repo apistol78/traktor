@@ -49,10 +49,10 @@ void SwizzleFilter::apply(Image* image) const
 					out.set(i, in.getBlue());
 					break;
 				case L'0':
-					out.set(i, Scalar(0.0f));
+					out.set(i, 0.0_simd);
 					break;
 				case L'1':
-					out.set(i, Scalar(1.0f));
+					out.set(i, 1.0_simd);
 					break;
 				}
 			}

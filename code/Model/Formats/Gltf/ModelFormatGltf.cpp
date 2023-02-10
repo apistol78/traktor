@@ -12,6 +12,8 @@
 #include "Core/Misc/Base64.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/SwizzleFilter.h"
 #include "Json/JsonDocument.h"
 #include "Json/JsonObject.h"
 #include "Model/Formats/Gltf/ModelFormatGltf.h"
@@ -75,10 +77,10 @@ bool decodeAsIndices(
 {
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
-	int32_t bufferViewIndex = accessor->getMemberValue(L"bufferView").getInt32();
-	int32_t componentType = accessor->getMemberValue(L"componentType").getInt32();
-	std::wstring type = accessor->getMemberValue(L"type").getWideString();
-	int32_t count = accessor->getMemberValue(L"count").getInt32();
+	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
+	const std::wstring type = accessor->getMemberString(L"type", L"");
+	const int32_t count = accessor->getMemberInt32(L"count", 0);
 
 	if (componentType != 5123)	// must be uint16
 		return false;
@@ -90,8 +92,8 @@ bool decodeAsIndices(
 	if (!bufferView)
 		return false;
 
-	int32_t buffer = bufferView->getMemberValue(L"buffer").getInt32();
-	int32_t byteOffset = bufferView->getMemberValue(L"byteOffset").getInt32();
+	const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
 
 	IStream* bufferStream = bufferStreams[buffer];
 	bufferStream->seek(IStream::SeekSet, byteOffset);
@@ -118,10 +120,10 @@ bool decodeAsScalars(
 {
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
-	int32_t bufferViewIndex = accessor->getMemberValue(L"bufferView").getInt32();
-	int32_t componentType = accessor->getMemberValue(L"componentType").getInt32();
-	std::wstring type = accessor->getMemberValue(L"type").getWideString();
-	int32_t count = accessor->getMemberValue(L"count").getInt32();
+	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
+	const std::wstring type = accessor->getMemberString(L"type", L"");
+	const int32_t count = accessor->getMemberInt32(L"count", 0);
 
 	if (componentType != 5126)	// must be float
 		return false;
@@ -133,8 +135,8 @@ bool decodeAsScalars(
 	if (!bufferView)
 		return false;
 
-	int32_t buffer = bufferView->getMemberValue(L"buffer").getInt32();
-	int32_t byteOffset = bufferView->getMemberValue(L"byteOffset").getInt32();
+	const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
 
 	IStream* bufferStream = bufferStreams[buffer];
 	bufferStream->seek(IStream::SeekSet, byteOffset);
@@ -161,10 +163,10 @@ bool decodeAsVectors(
 {
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
-	int32_t bufferViewIndex = accessor->getMemberValue(L"bufferView").getInt32();
-	int32_t componentType = accessor->getMemberValue(L"componentType").getInt32();
-	std::wstring type = accessor->getMemberValue(L"type").getWideString();
-	int32_t count = accessor->getMemberValue(L"count").getInt32();
+	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
+	const std::wstring type = accessor->getMemberString(L"type", L"");
+	const int32_t count = accessor->getMemberInt32(L"count", 0);
 
 	if (componentType != 5126)	// must be float
 		return false;
@@ -185,8 +187,8 @@ bool decodeAsVectors(
 	if (!bufferView)
 		return false;
 
-	int32_t buffer = bufferView->getMemberValue(L"buffer").getInt32();
-	int32_t byteOffset = bufferView->getMemberValue(L"byteOffset").getInt32();
+	const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
 
 	IStream* bufferStream = bufferStreams[buffer];
 	bufferStream->seek(IStream::SeekSet, byteOffset);
@@ -220,6 +222,7 @@ bool ModelFormatGltf::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& filter) const
 {
+	const Path dirPath(filePath.getPathOnly());
 	RefArray< IStream > bufferStreams;
 
 	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
@@ -242,8 +245,6 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto buffers = docobj->getMemberValue(L"buffers").getObject< json::JsonArray >();
 	if (buffers)
 	{
-		const Path dirPath(filePath.getPathOnly());
-
 		bufferStreams.resize(buffers->size());
 		for (uint32_t i = 0; i < buffers->size(); ++i)
 		{
@@ -296,78 +297,183 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			const auto normalTexture = material->getMemberValue(L"normalTexture").getObject< json::JsonObject >();
 			if (normalTexture)
 			{
-				const int32_t index = normalTexture->getMemberValue(L"index").getInt32();
+				const int32_t index = normalTexture->getMemberInt32(L"index", -1);
 				if (!textures || index < 0 || index >= (int32_t)textures->size())
 					return nullptr;
 
 				const auto texture = textures->get(index).getObject< json::JsonObject >();
-				const int32_t source = texture->getMemberValue(L"source").getInt32();
+				const int32_t source = texture->getMemberInt32(L"source", -1);
 				if (!images || source < 0 || source >= (int32_t)images->size())
 					return nullptr;
 
 				const auto image = images->get(source).getObject< json::JsonObject >();
-				const auto uri = image->getMemberValue(L"uri").getWideString();
-				mt.setNormalMap(Material::Map(uri, L"UV0", true));
+				if (!image)
+					return nullptr;
+
+				const std::wstring name = image->getMemberString(L"name");
+				if (name.empty())
+					return nullptr;
+
+				Material::Map normalMap(name, L"UV0", true);
+
+				// Embedded texture.
+				const int32_t bufferViewIndex = image->getMemberInt32(L"bufferView", -1);
+				if (bufferViewIndex >= 0)
+				{
+					auto bufferView = bufferViews->get(bufferViewIndex).getObject< json::JsonObject >();
+					if (!bufferView)
+						return nullptr;
+
+					const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+					const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
+
+					IStream* bufferStream = bufferStreams[buffer];
+					bufferStream->seek(IStream::SeekSet, byteOffset);
+
+					normalMap.image = drawing::Image::load(bufferStream, L"png");
+				}
+
+				const std::wstring uri = image->getMemberString(L"uri");
+				if (!uri.empty() && !normalMap.image)
+				{
+					normalMap.image = drawing::Image::load(dirPath + Path(uri));
+				}
+
+				mt.setNormalMap(normalMap);
 			}
 
+			// Extract maps from PBR material setup.
 			const auto pbrMetallicRoughness = material->getMemberValue(L"pbrMetallicRoughness").getObject< json::JsonObject >();
 			if (pbrMetallicRoughness)
 			{
+				const float metallicFactor = pbrMetallicRoughness->getMemberFloat(L"metallicFactor", 1.0f);
+				const float roughnessFactor = pbrMetallicRoughness->getMemberFloat(L"roughnessFactor", 1.0f);
+
 				const auto baseColorTexture = pbrMetallicRoughness->getMemberValue(L"baseColorTexture").getObject< json::JsonObject >();
 				if (baseColorTexture)
 				{
-					const int32_t index = baseColorTexture->getMemberValue(L"index").getInt32();
+					const int32_t index = baseColorTexture->getMemberInt32(L"index", -1);
 					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
 					const auto texture = textures->get(index).getObject< json::JsonObject >();
-					const int32_t source = texture->getMemberValue(L"source").getInt32();
+					const int32_t source = texture->getMemberInt32(L"source", -1);
 					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
 					const auto image = images->get(source).getObject< json::JsonObject >();
+					if (!image)
+						return nullptr;
 
-					std::wstring name;
-					if (image->getMember(L"uri") != nullptr)
-						name = image->getMemberValue(L"uri").getWideString();
-					else if (image->getMember(L"name") != nullptr)
-						name = image->getMemberValue(L"name").getWideString();
+					const std::wstring name = image->getMemberString(L"name");
 					if (name.empty())
 						return nullptr;
 
-					mt.setDiffuseMap(Material::Map(name, L"UV0", true));
+					Material::Map diffuseMap(name, L"UV0", true);
+
+					// Embedded texture.
+					const int32_t bufferViewIndex = image->getMemberInt32(L"bufferView", -1);
+					if (bufferViewIndex >= 0)
+					{
+						auto bufferView = bufferViews->get(bufferViewIndex).getObject< json::JsonObject >();
+						if (!bufferView)
+							return nullptr;
+
+						const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+						const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
+
+						IStream* bufferStream = bufferStreams[buffer];
+						bufferStream->seek(IStream::SeekSet, byteOffset);
+
+						diffuseMap.image = drawing::Image::load(bufferStream, L"png");
+					}
+
+					const std::wstring uri = image->getMemberString(L"uri");
+					if (!uri.empty() && !diffuseMap.image)
+					{
+						diffuseMap.image = drawing::Image::load(dirPath + Path(uri));
+					}
+
+					mt.setDiffuseMap(diffuseMap);
 				}
 
 				const auto metallicRoughnessTexture = pbrMetallicRoughness->getMemberValue(L"metallicRoughnessTexture").getObject< json::JsonObject >();
 				if (metallicRoughnessTexture)
 				{
-					const int32_t index = metallicRoughnessTexture->getMemberValue(L"index").getInt32();
+					const int32_t index = metallicRoughnessTexture->getMemberInt32(L"index", -1);
 					if (!textures || index < 0 || index >= (int32_t)textures->size())
 						return nullptr;
 
 					const auto texture = textures->get(index).getObject< json::JsonObject >();
-					const int32_t source = texture->getMemberValue(L"source").getInt32();
+					const int32_t source = texture->getMemberInt32(L"source", -1);
 					if (!images || source < 0 || source >= (int32_t)images->size())
 						return nullptr;
 
 					const auto image = images->get(source).getObject< json::JsonObject >();
+					if (!image)
+						return nullptr;
 
-					std::wstring name;
-					if (image->getMember(L"uri") != nullptr)
-						name = image->getMemberValue(L"uri").getWideString();
-					else if (image->getMember(L"name") != nullptr)
-						name = image->getMemberValue(L"name").getWideString();
+					const std::wstring name = image->getMemberString(L"name");
 					if (name.empty())
 						return nullptr;
 
-					mt.setMetalnessMap(Material::Map(name, L"UV0", true));
-					mt.setRoughnessMap(Material::Map(name, L"UV0", true));
+					Material::Map metallicMap(name + L"_M", L"UV0", true);
+					Material::Map roughnessMap(name + L"_R", L"UV0", true);
+
+					// Embedded texture.
+					Ref< drawing::Image > metallicRoughness;
+
+					const int32_t bufferViewIndex = image->getMemberInt32(L"bufferView", -1);
+					if (bufferViewIndex >= 0)
+					{
+						auto bufferView = bufferViews->get(bufferViewIndex).getObject< json::JsonObject >();
+						if (!bufferView)
+							return nullptr;
+
+						const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
+						const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
+
+						IStream* bufferStream = bufferStreams[buffer];
+						bufferStream->seek(IStream::SeekSet, byteOffset);
+
+						metallicRoughness = drawing::Image::load(bufferStream, L"png");
+					}
+
+					const std::wstring uri = image->getMemberString(L"uri");
+					if (!uri.empty() && !roughnessMap.image)
+					{
+						metallicRoughness = drawing::Image::load(dirPath + Path(uri));
+					}
+
+					if (metallicRoughness)
+					{
+						if (metallicFactor > 0.0f && roughnessFactor > 0.0f)
+						{
+							metallicMap.image = metallicRoughness->clone();
+							metallicMap.image->apply(&drawing::SwizzleFilter(L"BBBB"));
+							metallicMap.image->convert(drawing::PixelFormat::getR8());
+
+							roughnessMap.image = metallicRoughness->clone();
+							roughnessMap.image->apply(&drawing::SwizzleFilter(L"GGGG"));
+							roughnessMap.image->convert(drawing::PixelFormat::getR8());
+						}
+						else
+						{
+							roughnessMap.image = metallicRoughness->clone();
+							roughnessMap.image->apply(&drawing::SwizzleFilter(L"RRRR"));
+							roughnessMap.image->convert(drawing::PixelFormat::getR8());
+						}
+						metallicRoughness = nullptr;
+					}
+
+					if (metallicFactor > 0.0f)
+						mt.setMetalnessMap(metallicMap);
+
+					if (roughnessFactor > 0.0f)
+						mt.setRoughnessMap(roughnessMap);
 				}
 
-				const float metallicFactor = pbrMetallicRoughness->getMember(L"metallicFactor") != nullptr ? pbrMetallicRoughness->getMemberValue(L"metallicFactor").getFloat() : 1.0f;
 				mt.setMetalness(metallicFactor);
-
-				const float roughnessFactor = pbrMetallicRoughness->getMemberValue(L"roughnessFactor").getFloat();
 				mt.setRoughness(roughnessFactor);
 
 				const auto baseColorFactor = pbrMetallicRoughness->getMemberValue(L"baseColorFactor").getObject< json::JsonArray >();
@@ -458,7 +564,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			if (node->getMember(L"mesh") == nullptr)
 				continue;
 
-			const int32_t meshIndex = node->getMemberValue(L"mesh").getInt32();
+			const int32_t meshIndex = node->getMemberInt32(L"mesh", -1);
 			if (meshIndex < 0 || meshIndex >= (int32_t)meshes->size())
 				continue;
 
@@ -478,18 +584,18 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				if (!prim)
 					return nullptr;
 
-				const int32_t material = prim->getMemberValue(L"material").getInt32();
-				const int32_t indices = prim->getMemberValue(L"indices").getInt32();
+				const int32_t material = prim->getMemberInt32(L"material", 0);
+				const int32_t indices = prim->getMemberInt32(L"indices", 0);
 
 				const auto attributes = prim->getMemberValue(L"attributes").getObject< json::JsonObject >();
 				if (!attributes)
 					return nullptr;
 
-				const int32_t position = attributes->getMemberValue(L"POSITION").getInt32();
-				const int32_t normal = attributes->getMemberValue(L"NORMAL").getInt32();
-				const int32_t texCoord0 = attributes->getMemberValue(L"TEXCOORD_0").getInt32();
-				const int32_t joints0 = attributes->getMemberValue(L"JOINTS_0").getInt32();
-				const int32_t weights0 = attributes->getMemberValue(L"WEIGHTS_0").getInt32();
+				const int32_t position = attributes->getMemberInt32(L"POSITION", 0);
+				const int32_t normal = attributes->getMemberInt32(L"NORMAL", 0);
+				const int32_t texCoord0 = attributes->getMemberInt32(L"TEXCOORD_0", 0);
+				const int32_t joints0 = attributes->getMemberInt32(L"JOINTS_0", 0);
+				const int32_t weights0 = attributes->getMemberInt32(L"WEIGHTS_0", 0);
 
 				AlignedVector< int32_t > dataIndices;
 				AlignedVector< Vector4 > dataPositions;
