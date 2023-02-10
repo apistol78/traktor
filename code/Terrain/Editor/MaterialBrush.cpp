@@ -11,17 +11,13 @@
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
 #include "Heightfield/Heightfield.h"
-#include "Terrain/Editor/SplatBrush.h"
+#include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
-#include "Core/Log/Log.h"
-
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_others[4][3] =
 {
@@ -31,11 +27,11 @@ const int32_t c_others[4][3] =
 	{ 0, 1, 2 }
 };
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SplatBrush", SplatBrush, IBrush)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialBrush", MaterialBrush, IBrush)
 
-SplatBrush::SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage)
+MaterialBrush::MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage)
 :	m_heightfield(heightfield)
 ,	m_splatImage(splatImage)
 ,	m_radius(0)
@@ -45,17 +41,17 @@ SplatBrush::SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, dr
 {
 }
 
-uint32_t SplatBrush::begin(float x, float y, const State& state)
+uint32_t MaterialBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
 	m_strength = abs(state.strength) / 10.0f;
 	m_material = state.material;
 	m_inverse = (bool)(state.strength < 0.0f);
-	return MdSplat;
+	return MdMaterial;
 }
 
-void SplatBrush::apply(float x, float y)
+void MaterialBrush::apply(float x, float y)
 {
 	float T_MATH_ALIGN16 weights[4];
 	Color4f targetColor;
@@ -113,9 +109,8 @@ void SplatBrush::apply(float x, float y)
 	}
 }
 
-void SplatBrush::end(float x, float y)
+void MaterialBrush::end(float x, float y)
 {
 }
 
-	}
 }

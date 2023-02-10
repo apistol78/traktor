@@ -17,9 +17,9 @@
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/AttributeBrush.h"
+#include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SmoothBrush.h"
-#include "Terrain/Editor/SplatBrush.h"
 #include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Application.h"
@@ -59,7 +59,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	int32_t image = toolBar->addImage(new ui::StyleBitmap(L"Terrain.Terrain"), 17);
 
 	m_toolToggleEditTerrain = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSplat = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SPLAT_BRUSH"), image + 16, ui::Command(L"Terrain.Editor.SplatBrush"), ui::ToolBarButton::BsDefaultToggle);
+	m_toolToggleMaterial = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), image + 16, ui::Command(L"Terrain.Editor.MaterialBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleColor = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.ColorBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::ToolBarButton::BsDefaultToggle);
@@ -115,7 +115,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolVisualize->add(L"Height Map");
 	m_toolVisualize->add(L"Splat Map");
 	m_toolVisualize->add(L"Cut Map");
-	m_toolVisualize->add(L"Attribute Map");
 	m_toolVisualize->select(0);
 
 	m_toolToggleElevate->setToggled(true);
@@ -127,7 +126,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolToggleEditTerrain);
-	toolBar->addItem(m_toolGroup->addItem(m_toolToggleSplat));
+	toolBar->addItem(m_toolGroup->addItem(m_toolToggleMaterial));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleColor));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleElevate));
 	toolBar->addItem(m_toolGroup->addItem(m_toolToggleFlatten));
@@ -173,8 +172,8 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	{
 		ui::ToolBarButton* toolSelected = nullptr;
 
-		if (command == L"Terrain.Editor.SplatBrush")
-			toolSelected = m_toolToggleSplat;
+		if (command == L"Terrain.Editor.MaterialBrush")
+			toolSelected = m_toolToggleMaterial;
 		else if (command == L"Terrain.Editor.ColorBrush")
 			toolSelected = m_toolToggleColor;
 		else if (command == L"Terrain.Editor.ElevateBrush")
@@ -192,7 +191,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 
 		if (toolSelected)
 		{
-			m_toolToggleSplat->setToggled(m_toolToggleSplat == toolSelected);
+			m_toolToggleMaterial->setToggled(m_toolToggleMaterial == toolSelected);
 			m_toolToggleColor->setToggled(m_toolToggleColor == toolSelected);
 			m_toolToggleElevate->setToggled(m_toolToggleElevate == toolSelected);
 			m_toolToggleFlatten->setToggled(m_toolToggleFlatten == toolSelected);
@@ -277,8 +276,8 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 
 void TerrainEditorPlugin::updateModifierState()
 {
-	if (m_toolToggleSplat->isToggled())
-		m_terrainEditModifier->setBrush(type_of< SplatBrush >());
+	if (m_toolToggleMaterial->isToggled())
+		m_terrainEditModifier->setBrush(type_of< MaterialBrush >());
 	else if (m_toolToggleColor->isToggled())
 		m_terrainEditModifier->setBrush(type_of< ColorBrush >());
 	else if (m_toolToggleElevate->isToggled())

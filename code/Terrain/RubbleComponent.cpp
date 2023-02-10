@@ -310,6 +310,9 @@ void RubbleComponent::updatePatches()
 			}
 		}
 	}
+
+	// Move last eye position, forces rescatter of visible clusters.
+	m_eye = Vector4::zero();
 }
 
 }

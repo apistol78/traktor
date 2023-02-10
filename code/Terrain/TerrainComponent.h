@@ -82,8 +82,7 @@ public:
 		VmNormalMap = 4,
 		VmHeightMap = 5,
 		VmSplatMap = 6,
-		VmCutMap = 7,
-		VmMaterialMap = 8
+		VmCutMap = 7
 	};
 
 	struct Patch

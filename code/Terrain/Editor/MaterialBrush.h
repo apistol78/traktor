@@ -12,31 +12,35 @@
 #include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace hf
-	{
+namespace traktor::hf
+{
 
 class Heightfield;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
-class SplatBrush : public IBrush
+/*! Material brush.
+ * \ingroup Terrain
+ * 
+ * Paint splat map to mix between different
+ * materials.
+ */
+class MaterialBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	SplatBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
+	explicit MaterialBrush(const resource::Proxy< hf::Heightfield >& heightfield, drawing::Image* splatImage);
 
 	virtual uint32_t begin(float x, float y, const State& state) override final;
 
@@ -54,6 +58,5 @@ private:
 	bool m_inverse;
 };
 
-	}
 }
 

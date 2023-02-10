@@ -47,7 +47,6 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classTerrain->addProperty("heightMap", &Terrain::getHeightMap);
 	classTerrain->addProperty("splatMap", &Terrain::getSplatMap);
 	classTerrain->addProperty("cutMap", &Terrain::getCutMap);
-	classTerrain->addProperty("materialMap", &Terrain::getMaterialMap);
 	registrar->registerClass(classTerrain);
 
 	auto classTerrainComponent = new AutoRuntimeClass< TerrainComponent >();

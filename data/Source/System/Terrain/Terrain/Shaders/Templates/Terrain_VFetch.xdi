@@ -1070,9 +1070,76 @@ const vec3 f = step($B, vec3(0.5f));
 const vec3 t = 1.0f - 2.0f * (1.0f - $A) * (1.0f - $B);
 const vec3 b = 2.0f * $A * $B;
 $Output = vec4(mix(t, b, f), 0.0f);
-
 			]]>
 			</script>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{921A32F1-E7B3-E04C-A243-F637F6027577}</id>
+			<comment/>
+			<position>
+				<first>-528</first>
+				<second>968</second>
+			</position>
+			<name>L_TexCoord</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{CCD9F28B-C8F6-A74D-8D3F-D0EFC8D62B45}</id>
+			<comment/>
+			<position>
+				<first>-77</first>
+				<second>958</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{AD62E0D7-94BD-2C4F-AA03-F712360FC844}</id>
+			<comment/>
+			<position>
+				<first>90</first>
+				<second>968</second>
+			</position>
+			<name>L_Cut</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{035A3B01-E2A7-2348-8E0B-00BCAB907CC9}</id>
+			<comment/>
+			<position>
+				<first>-574</first>
+				<second>926</second>
+			</position>
+			<parameterName>Terrain_CutMap</parameterName>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
+			<id>{98E65832-339A-774B-BFED-8ACC57520561}</id>
+			<comment/>
+			<position>
+				<first>-358</first>
+				<second>925</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{AC111C0C-7361-B945-9086-55316955BDF2}</id>
+			<comment/>
+			<position>
+				<first>2438</first>
+				<second>-98</second>
+			</position>
+			<name>L_Cut</name>
+			<global>false</global>
 		</item>
 	</nodes>
 	<edges>
@@ -1434,16 +1501,6 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1898,6 +1955,66 @@ $Output = vec4(mix(t, b, f), 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[87]"/>
 				<id>{4F792F72-F9F9-A945-8CAE-8F4EEEE77624}</id>
 			</source>
@@ -1908,12 +2025,12 @@ $Output = vec4(mix(t, b, f), 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+				<node ref="/object/nodes/item[93]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{A7C58665-DE2C-1B4B-90BA-E27FCE2CA687}</id>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
 			</destination>
 		</item>
 	</edges>
