@@ -52,8 +52,6 @@ private:
 
 	void handleCommand(const Command& command);
 
-	void eventTimer(TimerEvent*);
-
 	void eventClose(CloseEvent*);
 
 	void eventMenuClick(ToolBarButtonClickEvent* event);

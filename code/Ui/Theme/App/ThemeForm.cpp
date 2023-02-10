@@ -152,7 +152,6 @@ bool ThemeForm::create()
 	if (!Form::create(L"Theme Editor", dpi96(1000), dpi96(800), Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	addEventHandler< ui::TimerEvent >(this, &ThemeForm::eventTimer);
 	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
 
 	m_menuBar = new ToolBar();
@@ -436,10 +435,6 @@ void ThemeForm::handleCommand(const Command& command)
 			updateTitle();
 		}	
 	}
-}
-
-void ThemeForm::eventTimer(TimerEvent*)
-{
 }
 
 void ThemeForm::eventClose(CloseEvent*)
