@@ -449,18 +449,21 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					{
 						if (metallicFactor > 0.0f && roughnessFactor > 0.0f)
 						{
+							const drawing::SwizzleFilter b(L"BBBB");
 							metallicMap.image = metallicRoughness->clone();
-							metallicMap.image->apply(&drawing::SwizzleFilter(L"BBBB"));
+							metallicMap.image->apply(&b);
 							metallicMap.image->convert(drawing::PixelFormat::getR8());
 
+							const drawing::SwizzleFilter g(L"GGGG");
 							roughnessMap.image = metallicRoughness->clone();
-							roughnessMap.image->apply(&drawing::SwizzleFilter(L"GGGG"));
+							roughnessMap.image->apply(&g);
 							roughnessMap.image->convert(drawing::PixelFormat::getR8());
 						}
 						else
 						{
+							const drawing::SwizzleFilter r(L"RRRR");
 							roughnessMap.image = metallicRoughness->clone();
-							roughnessMap.image->apply(&drawing::SwizzleFilter(L"RRRR"));
+							roughnessMap.image->apply(&r);
 							roughnessMap.image->convert(drawing::PixelFormat::getR8());
 						}
 						metallicRoughness = nullptr;
