@@ -90,10 +90,6 @@
 					<name>T_Color</name>
 				</item>
 				<item>
-					<id>{8FFBFC6B-2B32-8D4A-A4EB-0BB18EA60079}</id>
-					<name>T_Position</name>
-				</item>
-				<item>
 					<id>{AE5867C5-3287-CD46-848D-7AF03E4617CF}</id>
 					<name>T_TexCoord0</name>
 				</item>

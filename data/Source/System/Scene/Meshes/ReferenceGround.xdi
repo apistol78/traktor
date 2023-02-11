@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.mesh.MeshAsset" version="20">
-	<fileName>c:/private/traktor/data/Assets/System/Scene/Meshes/ReferenceGround.gltf</fileName>
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Scene/Meshes/ReferenceGround.gltf</fileName>
 	<importFilter/>
 	<meshType>MtStatic</meshType>
 	<materialTemplates/>
