@@ -272,7 +272,11 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 
 void PerspectiveRenderControl::update()
 {
+#if defined(_WIN32)
 	m_renderWidget->update(nullptr, true);
+#else
+	m_renderWidget->update(nullptr, false);
+#endif
 }
 
 bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
