@@ -74,6 +74,9 @@ const char* c_deviceExtensions[] =
 	"VK_KHR_16bit_storage",
 	"VK_KHR_8bit_storage",
 	"VK_KHR_shader_float16_int8",
+#if !defined(__ANDROID__)
+	"VK_EXT_shader_subgroup_ballot",
+#endif
 	"VK_EXT_memory_budget"
 };
 #endif

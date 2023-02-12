@@ -298,6 +298,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Vertex shader.
 		const char* vst = vertexShaderText.c_str();
 		vertexShader = new glslang::TShader(EShLangVertex);
+		vertexShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
 		vertexShader->setStrings(&vst, 1);
 		vertexShader->setEntryPoint("main");
 		const bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
@@ -313,6 +314,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Fragment shader.
 		const char* fst = fragmentShaderText.c_str();
 		fragmentShader = new glslang::TShader(EShLangFragment);
+		fragmentShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
 		fragmentShader->setStrings(&fst, 1);
 		fragmentShader->setEntryPoint("main");
 		const bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
@@ -346,6 +348,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
+		computeShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
 		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
