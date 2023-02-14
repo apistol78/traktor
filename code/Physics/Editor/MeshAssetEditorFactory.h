@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS MeshAssetEditorFactory : public editor::IObjectEditorFactory
 {
@@ -39,6 +37,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
-	}
 }
-

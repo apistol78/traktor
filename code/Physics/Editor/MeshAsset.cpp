@@ -13,10 +13,8 @@
 #include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 4, MeshAsset, editor::Asset)
 
@@ -37,5 +35,4 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> MemberStlMap< std::wstring, Guid >(L"materials", m_materials, AttributeType(type_of< Material >()));
 }
 
-	}
 }

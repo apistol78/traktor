@@ -10,10 +10,8 @@
 #include "Physics/Editor/BallJointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BallJointRenderer", 0, BallJointRenderer, IPhysicsJointRenderer)
 
@@ -31,9 +29,8 @@ void BallJointRenderer::draw(
 ) const
 {
 	const BallJointDesc* ballJointDesc = mandatory_non_null_type_cast< const BallJointDesc* >(jointDesc);
-	Vector4 jointAnchorW = jointTransform[1] * ballJointDesc->getAnchor().xyz1();
+	const Vector4 jointAnchorW = jointTransform[1] * ballJointDesc->getAnchor().xyz1();
 	primitiveRenderer->drawSolidPoint(jointAnchorW, 4.0f, Color4ub(255, 255, 255));
 }
 
-	}
 }

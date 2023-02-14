@@ -14,10 +14,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEditorProfile", 0, PhysicsEditorProfile, scene::ISceneEditorProfile)
 
@@ -99,5 +97,4 @@ Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

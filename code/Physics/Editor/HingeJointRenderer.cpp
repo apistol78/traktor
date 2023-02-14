@@ -10,10 +10,8 @@
 #include "Physics/Editor/HingeJointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointRenderer", 0, HingeJointRenderer, IPhysicsJointRenderer)
 
@@ -35,8 +33,8 @@ void HingeJointRenderer::draw(
 
 	primitiveRenderer->pushWorld(jointTransform[1].toMatrix44());
 
-	Vector4 jointAnchor = hingeJointDesc->getAnchor().xyz1();
-	Vector4 jointAxis = hingeJointDesc->getAxis().xyz0();
+	const Vector4 jointAnchor = hingeJointDesc->getAnchor().xyz1();
+	const Vector4 jointAxis = hingeJointDesc->getAxis().xyz0();
 
 	primitiveRenderer->drawLine(
 		jointAnchor - jointAxis * c_axisLength,
@@ -47,5 +45,4 @@ void HingeJointRenderer::draw(
 	primitiveRenderer->popWorld();
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Physics/Editor/ConeTwistJointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ConeTwistJointRenderer", 0, ConeTwistJointRenderer, IPhysicsJointRenderer)
 
@@ -97,5 +95,4 @@ void ConeTwistJointRenderer::draw(
 	//);
 }
 
-	}
 }

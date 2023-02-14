@@ -11,25 +11,23 @@
 #include "Physics/Editor/PhysicsRenderer.h"
 #include "Scene/Editor/IComponentEditor.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class EntityAdapter;
 class SceneEditorContext;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IEntityComponentData;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class PhysicsComponentEditor : public scene::IComponentEditor
 {
@@ -47,6 +45,4 @@ private:
 	PhysicsRenderer m_physicsRenderer;
 };
 
-	}
 }
-

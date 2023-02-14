@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS PhysicsPipeline : public editor::IPipeline
 {
@@ -66,6 +64,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

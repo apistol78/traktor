@@ -25,22 +25,24 @@ namespace traktor
 
 class Transform;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class IPhysicsJointRenderer;
 class IPhysicsShapeRenderer;
@@ -74,6 +76,4 @@ private:
 	SmallMap< const TypeInfo*, Ref< IPhysicsShapeRenderer > > m_shapeRenderers;
 };
 
-	}
 }
-

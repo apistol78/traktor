@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS MeshPipeline : public editor::IPipeline
 {
@@ -70,6 +68,4 @@ private:
 	std::wstring m_modelCachePath;
 };
 
-	}
 }
-

@@ -14,10 +14,8 @@
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsComponentEditorFactory", PhysicsComponentEditorFactory, scene::IComponentEditorFactory)
 
@@ -48,5 +46,4 @@ Ref< scene::IComponentEditor > PhysicsComponentEditorFactory::createComponentEdi
 	return new PhysicsComponentEditor(context, entityAdapter, componentData);
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 
 #include "Physics/Editor/IPhysicsShapeRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class BoxShapeRenderer : public IPhysicsShapeRenderer
 {
@@ -30,6 +28,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-
