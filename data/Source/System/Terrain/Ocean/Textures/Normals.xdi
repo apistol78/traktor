@@ -30,5 +30,5 @@
 	<sharpenRadius>5</sharpenRadius>
 	<sharpenStrength>1</sharpenStrength>
 	<noiseStrength>0</noiseStrength>
-	<systemTexture>false</systemTexture>
+	<systemTexture>true</systemTexture>
 </object>

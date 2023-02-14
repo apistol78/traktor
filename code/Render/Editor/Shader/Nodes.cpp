@@ -2107,9 +2107,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Renderer", 0, Renderer, Immutabl
 
 const ImmutableNode::InputPinDesc c_Renderer_i[] =
 {
-	{ L"DX11", L"{638D0AA5-A02C-4A52-96E3-126E59AE55C7}", true },
 	{ L"Vulkan", L"{26C3B4A1-CBBC-4F07-85D2-D493F40C212A}", true },
-	{ L"GCM", L"{97661A23-03C3-44E9-99B7-D964DBE76F35}", true },
 	{ L"Other", L"{37801E29-B776-42E5-A71E-C44FBDD19992}", false },
 	{ 0 }
 };
