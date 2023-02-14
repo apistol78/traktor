@@ -38,6 +38,7 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/VolumeComponentData.h"
 
 namespace traktor::ai
 {
@@ -165,6 +166,7 @@ bool NavMeshPipeline::buildOutput(
 	);
 
 	AlignedVector< NavMeshSourceModel > navModels;
+	Aabb3 navMaximumBounds;
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
 
@@ -195,6 +197,13 @@ bool NavMeshPipeline::buildOutput(
 			oceanClip = true;
 		}			
 
+		// Check for explicit volume bounds.
+		if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
+		{
+			if (entityData->getName() == L"NavMesh" && !volumeComponentData->getVolumes().empty())
+				navMaximumBounds = volumeComponentData->getVolumes().front();
+		}
+
 		if (model)
 		{
 			model::Triangulate().apply(*model);
@@ -219,6 +228,10 @@ bool NavMeshPipeline::buildOutput(
 		navModelsAabb.contain(navModel->getBoundingBox().transform(navModels[i].transform));
 		navModelsTriangleCount += navModel->getPolygonCount();
 	}
+
+	// Override bounds if explicitly given.
+	if (!navMaximumBounds.empty())
+		navModelsAabb = navMaximumBounds;
 
 	if (navModelsTriangleCount == 0)
 	{
