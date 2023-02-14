@@ -61,7 +61,7 @@ Context::Context(
 	Ref< IStream > file = FileSystem::getInstance().open(ss.str(), File::FmRead);
 	if (file)
 	{
-	 	uint32_t size = (uint32_t)file->available();
+	 	const uint32_t size = (uint32_t)file->available();
 		buffer.resize(size);
 	 	file->read(buffer.ptr(), size);
 	 	file->close();
