@@ -183,7 +183,8 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_listBoxAvailFeatures->create(containerAvailFeatures, ui::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerManageFeatures = new ui::Container();
-	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, 0));
+	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, f));
+	containerManageFeatures->setVerticalAlign(ui::AnCenter);
 
 	Ref< ui::Button > buttonAddFeature = new ui::Button();
 	buttonAddFeature->create(containerManageFeatures, L">");

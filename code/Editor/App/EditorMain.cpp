@@ -104,17 +104,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	std::wstring home;
 	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
 	{
-		Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
-#if !defined(_WIN32)
-		home = cwd.getPathNameNoExtension();
-#else
-		home = cwd.getPathName();
-#endif
-		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", home);
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
 	}
 
 	// Ensure temporary folder exist.
-	std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
+	const std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
 	FileSystem::getInstance().makeAllDirectories(writableFolder);
 
 	// Save log file.
@@ -129,11 +124,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		std::vector< int32_t > logIds;
 		for (auto log : logs)
 		{
-			std::wstring logName = log->getPath().getFileNameNoExtension();
-			size_t p = logName.find(L'_');
+			const std::wstring logName = log->getPath().getFileNameNoExtension();
+			const size_t p = logName.find(L'_');
 			if (p != logName.npos)
 			{
-				int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
+				const int32_t id = parseString< int32_t >(logName.substr(p + 1), -1);
 				if (id != -1)
 					logIds.push_back(id);
 			}
