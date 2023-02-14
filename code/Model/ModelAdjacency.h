@@ -40,7 +40,7 @@ public:
 		ByTexCoord
 	};
 
-	typedef StaticVector< uint32_t, 8 > share_vector_t;
+	typedef StaticVector< uint32_t, 16 > share_vector_t;
 
 	explicit ModelAdjacency(const Model* model, Mode mode, uint32_t channel = 0);
 

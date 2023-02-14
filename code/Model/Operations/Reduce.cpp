@@ -26,8 +26,8 @@ namespace traktor
 
 Scalar tetrahedronVolume(const Vector4& A, const Vector4& B, const Vector4& C, const Vector4& u)
 {
-	Scalar area = cross(A - B, C - B).length() / Scalar(2.0f);
-	return abs(Scalar(1.0f / 3.0f) * area * Plane(A, B, C).distance(u));
+	const Scalar area = cross(A - B, C - B).length() / 2.0_simd;
+	return abs((1.0_simd / 3.0_simd) * area * Plane(A, B, C).distance(u));
 }
 
 Vector4 triangleNormal(const Model& model, uint32_t triangleId)
@@ -90,8 +90,8 @@ Vector4 triangleTipPoint(const Model& model, const ModelAdjacency& adjacency, ui
 	if (polygon.getVertexCount() < 3)
 		return Vector4::zero();
 
-	Vector4 normal = triangleNormal(model, triangleId);
-	Vector4 midPoint = triangleMidPoint(model, triangleId);
+	const Vector4 normal = triangleNormal(model, triangleId);
+	const Vector4 midPoint = triangleMidPoint(model, triangleId);
 
 	ModelAdjacency::share_vector_t sharedEdges;
 	Vector4 tipPoint = Vector4::zero();
@@ -204,7 +204,7 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	if (polygon.getVertexCount() < 3)
 		return 0.0f;
 
-	Vector4 tipPoint = triangleTipPoint(model, adjacency, triangleId);
+	const Vector4 tipPoint = triangleTipPoint(model, adjacency, triangleId);
 
 	uint32_t positionIds[3];
 	for (uint32_t i = 0; i < 3; ++i)
@@ -250,9 +250,9 @@ float triangleVolumeError(const Model& model, const ModelAdjacency& adjacency, u
 	if (neighborTriangleIds.size() < 3)
 		return std::numeric_limits< float >::max();
 
-	for (AlignedVector< std::pair< uint32_t, uint32_t > >::const_iterator i = neighborTriangleIds.begin(); i != neighborTriangleIds.end(); ++i)
+	for (const auto& neighborTriangleId : neighborTriangleIds)
 	{
-		const Polygon& sharedTriangle = model.getPolygon(i->first);
+		const Polygon& sharedTriangle = model.getPolygon(neighborTriangleId.first);
 		error += tetrahedronVolume(
 			model.getVertexPosition(sharedTriangle.getVertex(0)),
 			model.getVertexPosition(sharedTriangle.getVertex(1)),
@@ -276,20 +276,22 @@ Reduce::Reduce(float target)
 bool Reduce::apply(Model& model) const
 {
 	ModelAdjacency::share_vector_t sharedEdges;
+	AlignedVector< uint32_t > edgeNeighborTriangleIds;
+	AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
 
 	// Model must be triangulated.
 	Triangulate().apply(model);
 
-	ModelAdjacency adjacency(&model, ModelAdjacency::Mode::ByPosition);
+	Ref< ModelAdjacency > adjacency = new ModelAdjacency(&model, ModelAdjacency::Mode::ByPosition);
 	AlignedVector< Polygon >& polygons = model.getPolygons();
 
 	// Calculate triangle errors.
 	AlignedVector< float > errors(polygons.size());
 	for (uint32_t i = 0; i < polygons.size(); ++i)
-		errors[i] = triangleVolumeError(model, adjacency, i);
+		errors[i] = triangleVolumeError(model, *adjacency, i);
 
 	// Iterate and discard triangles until target is meet.
-	int32_t targetPolygonCount = int32_t(model.getPolygonCount() * m_target + 0.5f);
+	const int32_t targetPolygonCount = int32_t(model.getPolygonCount() * m_target + 0.5f);
 	int32_t currentPolygonCount = model.getPolygonCount();
 	while (currentPolygonCount > targetPolygonCount)
 	{
@@ -313,57 +315,57 @@ bool Reduce::apply(Model& model) const
 		const Polygon& minErrorTriangle = model.getPolygon(minErrorTriangleId);
 
 		// Calculate join point and add to model.
-		Vector4 tipPoint = triangleTipPoint(model, adjacency, minErrorTriangleId);
-		Vector4 midPoint = triangleMidPoint(model, minErrorTriangleId);
-		Vector4 joinPoint = lerp(tipPoint, midPoint, Scalar(0.6f)).xyz1();
-		Vector2 joinTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
+		const Vector4 tipPoint = triangleTipPoint(model, *adjacency, minErrorTriangleId);
+		const Vector4 midPoint = triangleMidPoint(model, minErrorTriangleId);
+		const Vector4 joinPoint = lerp(tipPoint, midPoint, Scalar(0.6f)).xyz1();
+		const Vector2 joinTexCoord = triangleMidTexCoord(model, minErrorTriangleId);
 
 		// All triangles which share a single vertex with the triangle is updated.
-		AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
+		singleNeighborTriangleIds.resize(0);
 		triangleSingleVertexNeighbors(model, minErrorTriangleId, singleNeighborTriangleIds);
 
 		// Discard first-order adjacent triangles which share edges with triangle.
 		for (uint32_t i = 0; i < 3; ++i)
 		{
-			adjacency.getSharedEdges(minErrorTriangleId, i, sharedEdges);
+			adjacency->getSharedEdges(minErrorTriangleId, i, sharedEdges);
 			if (sharedEdges.size() != 1)
 				continue;
 
-			uint32_t sharedTriangleId = adjacency.getPolygon(sharedEdges[0]);
+			const uint32_t sharedTriangleId = adjacency->getPolygon(sharedEdges[0]);
 
 			polygons[sharedTriangleId].clearVertices();
 			errors[sharedTriangleId] = std::numeric_limits< float >::max();
-			adjacency.remove(sharedTriangleId);
+			adjacency->remove(sharedTriangleId);
 			--currentPolygonCount;
 		}
 
 		// Discard triangle.
 		polygons[minErrorTriangleId].clearVertices();
 		errors[minErrorTriangleId] = std::numeric_limits< float >::max();
-		adjacency.remove(minErrorTriangleId);
+		adjacency->remove(minErrorTriangleId);
 		--currentPolygonCount;
 
 		// Update neighbor triangles.
-		for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator i = singleNeighborTriangleIds.begin(); i != singleNeighborTriangleIds.end(); ++i)
+		for (const auto& singleNeighborTriangleId : singleNeighborTriangleIds)
 		{
-			Vertex vertex = model.getVertex(i->second);
+			Vertex vertex = model.getVertex(singleNeighborTriangleId.second);
 			vertex.setPosition(model.addUniquePosition(joinPoint));
 			vertex.setTexCoord(0, model.addUniqueTexCoord(joinTexCoord));
-			model.setVertex(i->second, vertex);
+			model.setVertex(singleNeighborTriangleId.second, vertex);
 
-			adjacency.update(i->first);
+			adjacency->update(singleNeighborTriangleId.first);
 
-			errors[i->first] = triangleVolumeError(model, adjacency, i->first);
+			errors[singleNeighborTriangleId.first] = triangleVolumeError(model, *adjacency, singleNeighborTriangleId.first);
 
-			AlignedVector< uint32_t > edgeNeighborTriangleIds;
-			triangleEdgeNeighbors(model, adjacency, i->first, edgeNeighborTriangleIds);
-			for (AlignedVector< uint32_t >::iterator j = edgeNeighborTriangleIds.begin(); j != edgeNeighborTriangleIds.end(); ++j)
-				errors[*j] = triangleVolumeError(model, adjacency, *j);
+			edgeNeighborTriangleIds.resize(0);
+			triangleEdgeNeighbors(model, *adjacency, singleNeighborTriangleId.first, edgeNeighborTriangleIds);
+			for (const auto edgeNeighborTriangleId : edgeNeighborTriangleIds)
+				errors[edgeNeighborTriangleId] = triangleVolumeError(model, *adjacency, edgeNeighborTriangleId);
 
-			AlignedVector< std::pair< uint32_t, uint32_t > > singleNeighborTriangleIds;
-			triangleSingleVertexNeighbors(model, i->first, singleNeighborTriangleIds);
-			for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator j = singleNeighborTriangleIds.begin(); j != singleNeighborTriangleIds.end(); ++j)
-				errors[j->first] = triangleVolumeError(model, adjacency, j->first);
+			singleNeighborTriangleIds.resize(0);
+			triangleSingleVertexNeighbors(model, singleNeighborTriangleId.first, singleNeighborTriangleIds);
+			for (const auto& singleNeighborTriangleId : singleNeighborTriangleIds)
+				errors[singleNeighborTriangleId.first] = triangleVolumeError(model, *adjacency, singleNeighborTriangleId.first);
 		}
 	}
 

@@ -29,7 +29,10 @@ ModelAdjacency::ModelAdjacency(const Model* model, const AlignedVector< uint32_t
 ,	m_channel(channel)
 {
 	for (auto polygon : polygons)
+	{
+		T_ASSERT(polygon < m_model->getPolygonCount());
 		add(polygon);
+	}
 }
 
 void ModelAdjacency::add(uint32_t polygon)
@@ -37,17 +40,18 @@ void ModelAdjacency::add(uint32_t polygon)
 	const auto& polygonVertices = m_model->getPolygon(polygon).getVertices();
 	for (uint32_t i = 0; i < polygonVertices.size(); ++i)
 	{
-		Edge e;
+		T_ASSERT(polygon < m_model->getPolygonCount());
+
+		Edge& e = m_edges.push_back();
 		e.polygon = polygon;
 		e.index = i;
-		m_edges.push_back(e);
 
-		const uint32_t edge = uint32_t(m_edges.size()) - 1;
+		const uint32_t edge = (uint32_t)(m_edges.size() - 1);
 
 		uint32_t leftIndex0, leftIndex1;
 		getEdgeIndices(edge, leftIndex0, leftIndex1);
 
-		for (uint32_t j = 0; j < (uint32_t)m_edges.size(); ++j)
+		for (uint32_t j = 0; j < edge; ++j)
 		{
 			if (edge == j)
 				continue;
@@ -77,16 +81,16 @@ void ModelAdjacency::remove(uint32_t polygon)
 		for (size_t j = 0; j < m_edges.size(); ++j)
 		{
 			share_vector_t& edgeShare = m_edges[j].share;
-			for (size_t k = 0; k < edgeShare.size(); )
+
+			auto it = std::remove_if(edgeShare.begin(), edgeShare.end(), [=](uint32_t id){
+				return id == i;
+			});
+			edgeShare.erase(it, edgeShare.end());
+
+			for (auto& id : edgeShare)
 			{
-				if (edgeShare[k] == i)
-					edgeShare.erase(edgeShare.begin() + k);
-				else
-				{
-					if (edgeShare[k] > i)
-						edgeShare[k]--;
-					++k;
-				}
+				if (id > i)
+					id--;
 			}
 		}
 
@@ -96,6 +100,7 @@ void ModelAdjacency::remove(uint32_t polygon)
 
 void ModelAdjacency::update(uint32_t polygon)
 {
+	T_ASSERT(polygon < m_model->getPolygonCount());
 	remove(polygon);
 	add(polygon);
 }
@@ -241,8 +246,8 @@ void ModelAdjacency::getEdgeIndices(uint32_t edge, uint32_t& outIndex0, uint32_t
 		outIndex1 = c_InvalidIndex;
 	}
 
-	uint32_t vertexId0 = polygonVertices[e.index];
-	uint32_t vertexId1 = polygonVertices[(e.index + 1) % polygonVertices.size()];
+	const uint32_t vertexId0 = polygonVertices[e.index];
+	const uint32_t vertexId1 = polygonVertices[(e.index + 1) % polygonVertices.size()];
 
 	switch (m_mode)
 	{
