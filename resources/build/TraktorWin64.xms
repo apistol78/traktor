@@ -13921,7 +13921,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Dx11</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Dx11</sourcePath>
 			<configurations>
@@ -20145,7 +20145,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Dx11.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Dx11/Editor</sourcePath>
 			<configurations>

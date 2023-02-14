@@ -220,8 +220,8 @@
 			<id>{E36C6DAB-5E3F-DD40-8ED7-5C92B7F9B3F5}</id>
 			<comment/>
 			<position>
-				<first>-35</first>
-				<second>434</second>
+				<first>-218</first>
+				<second>411</second>
 			</position>
 			<parameterName>Spray_PointsOffset</parameterName>
 			<type>Scalar</type>
@@ -298,6 +298,14 @@
 				<second>579</second>
 			</position>
 			<name>Age</name>
+		</item>
+		<item type="traktor.render.Truncate" version="traktor.render.Node:1">
+			<id>{375FCDED-25F0-2541-B47E-4A75958F8D7B}</id>
+			<comment/>
+			<position>
+				<first>3</first>
+				<second>408</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -473,16 +481,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -639,6 +637,26 @@
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{58E01BB0-182E-4FF2-8629-A1EA043A57F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{7E002805-FA4B-4EEE-9D3B-6FA3AB0B2DAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 	</edges>

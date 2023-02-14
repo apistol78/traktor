@@ -223,8 +223,8 @@
 			<id>{1323FC13-3948-6D4B-8D8A-605A8972B286}</id>
 			<comment/>
 			<position>
-				<first>-260</first>
-				<second>-292</second>
+				<first>27</first>
+				<second>-141</second>
 			</position>
 			<parameterName>Spark_ClipBounds</parameterName>
 			<type>Vector</type>
@@ -234,63 +234,10 @@
 			<id>{1B62804B-E968-A048-AE44-69BB3DA16BBD}</id>
 			<comment/>
 			<position>
-				<first>976</first>
-				<second>-138</second>
+				<first>554</first>
+				<second>-74</second>
 			</position>
 			<name>Clip</name>
-		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{C2207602-FA10-404D-AB88-22493AE59E6D}</id>
-			<comment/>
-			<position>
-				<first>291</first>
-				<second>-210</second>
-			</position>
-			<name>ClipBounds_Dx11</name>
-			<technique/>
-			<inputPins>
-				<item>
-					<id>{28738737-CE7D-4B88-9693-3EDCEEAD945F}</id>
-					<name>Bounds</name>
-				</item>
-				<item>
-					<id>{60F1061E-4CAC-413F-A028-1C305D3FFEB8}</id>
-					<name>Position</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{C5DE10AA-1BCD-4C8E-ACF9-E8D7C963DE6D}</id>
-					<name>Inside</name>
-					<type>Scalar</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-ENTRY
-{
-	float2 s = step(Bounds.xy, Position.xy) - step(Bounds.zw, Position.xy);
-	Inside = s.x * s.y;
-}
-			]]>
-			</script>
-		</item>
-		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
-			<id>{B571C090-663C-5C4D-8D54-560CE6A9FEAA}</id>
-			<comment/>
-			<position>
-				<first>670</first>
-				<second>-190</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{75F7EA6B-F82C-6E46-B541-26E56A530174}</id>
-			<comment/>
-			<position>
-				<first>502</first>
-				<second>-20</second>
-			</position>
-			<value>1</value>
 		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{8ACC84B8-20E5-9441-B65D-4574BA43DB2F}</id>
@@ -559,61 +506,11 @@ $Inside = s.x * s.y;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{C5DE10AA-1BCD-4C8E-ACF9-E8D7C963DE6D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{638D0AA5-A02C-4A52-96E3-126E59AE55C7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{28738737-CE7D-4B88-9693-3EDCEEAD945F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{C7F0969C-A9E9-4C5A-B110-78095B267380}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[26]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{37801E29-B776-42E5-A71E-C44FBDD19992}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
-				<id>{60F1061E-4CAC-413F-A028-1C305D3FFEB8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
 				<id>{C793514C-1A2A-46F0-921E-56C5C12C450F}</id>
 			</destination>
 		</item>
@@ -623,18 +520,18 @@ $Inside = s.x * s.y;
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<id>{35A3136B-18F7-4AA1-98AA-A02FCF9F3684}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<id>{08814B8D-B3DD-4FEC-B241-3A1F0403E235}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{26C3B4A1-CBBC-4F07-85D2-D493F40C212A}</id>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

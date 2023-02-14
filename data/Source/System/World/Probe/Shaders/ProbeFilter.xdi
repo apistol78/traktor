@@ -336,8 +336,8 @@
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
-				<first>-794</first>
-				<second>-1279</second>
+				<first>-373</first>
+				<second>-1369</second>
 			</position>
 			<name>Hammersley</name>
 			<technique/>
@@ -419,8 +419,8 @@ $Output = vec4(
 			<id>{C2B5F92C-EC62-0D49-BABE-4E538484BBFF}</id>
 			<comment/>
 			<position>
-				<first>-1046</first>
-				<second>-1227</second>
+				<first>-625</first>
+				<second>-1317</second>
 			</position>
 			<name>L_SampleCount</name>
 			<global>false</global>
@@ -429,8 +429,8 @@ $Output = vec4(
 			<id>{316570D8-F0A0-B240-9AC2-68051FB7E0B7}</id>
 			<comment/>
 			<position>
-				<first>-994</first>
-				<second>-1283</second>
+				<first>-573</first>
+				<second>-1373</second>
 			</position>
 			<name>L_N</name>
 			<global>false</global>
@@ -439,8 +439,8 @@ $Output = vec4(
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
-				<first>-513</first>
-				<second>-1248</second>
+				<first>-92</first>
+				<second>-1338</second>
 			</position>
 			<name>ImportanceSampleGGX</name>
 			<technique/>
@@ -495,8 +495,8 @@ $Output = vec4(normalize(sampleVec), 0);
 			<id>{1E65A182-EE59-0D4C-9052-0994EAC9123F}</id>
 			<comment/>
 			<position>
-				<first>-773</first>
-				<second>-1193</second>
+				<first>-352</first>
+				<second>-1283</second>
 			</position>
 			<name>L_Normal</name>
 			<global>false</global>
@@ -505,8 +505,8 @@ $Output = vec4(normalize(sampleVec), 0);
 			<id>{A0043244-66C5-BB47-87A6-6771E27A124B}</id>
 			<comment/>
 			<position>
-				<first>-834</first>
-				<second>-1147</second>
+				<first>-413</first>
+				<second>-1237</second>
 			</position>
 			<parameterName>World_ProbeRoughness</parameterName>
 			<type>Scalar</type>
@@ -696,173 +696,6 @@ V
 				<second>-1955</second>
 			</position>
 			<swizzle>xyz</swizzle>
-		</item>
-		<item type="traktor.render.Renderer" version="traktor.render.Node:1">
-			<id>{74BC9EFC-C49F-FA4C-B32A-F960D446812C}</id>
-			<comment/>
-			<position>
-				<first>-53</first>
-				<second>-1360</second>
-			</position>
-		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{2C0AE523-9A96-DB42-A629-7B5A87CC57A9}</id>
-			<comment/>
-			<position>
-				<first>-292</first>
-				<second>-1183</second>
-			</position>
-			<value>0, 0, 0, 0</value>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{241491A1-9749-184F-8D9E-9E6B4B0A69BF}</id>
-			<comment/>
-			<position>
-				<first>-836</first>
-				<second>-1381</second>
-			</position>
-			<parameterName>World_ProbeRoughness</parameterName>
-			<type>Scalar</type>
-			<frequency>Draw</frequency>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{A95CC8E9-8919-DF4B-91B4-88F41E6C96BF}</id>
-			<comment/>
-			<position>
-				<first>-770</first>
-				<second>-1420</second>
-			</position>
-			<name>L_Normal</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{A465DC81-5DC4-B440-A970-BF9FF29BA697}</id>
-			<comment/>
-			<position>
-				<first>-991</first>
-				<second>-1510</second>
-			</position>
-			<name>L_N</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{61FFF252-9660-704A-8779-F441AA739027}</id>
-			<comment/>
-			<position>
-				<first>-1043</first>
-				<second>-1454</second>
-			</position>
-			<name>L_SampleCount</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{C40E3CAF-E9D7-AA49-BAA2-E9674921BBED}</id>
-			<comment/>
-			<position>
-				<first>-791</first>
-				<second>-1506</second>
-			</position>
-			<name>Hammersley</name>
-			<technique/>
-			<inputPins>
-				<item>
-					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
-					<name>I</name>
-				</item>
-				<item>
-					<id>{C96B0779-348E-4F56-8D35-4CAA65CA8C36}</id>
-					<name>N</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{3368C175-F2D7-864D-AD50-44CBB83A3EE8}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-float RadicalInverse_VdC(uint bits) 
-{
-    bits = (bits << 16u) | (bits >> 16u);
-    bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
-    bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
-    bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
-    bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
-    return float(bits) * 2.3283064365386963e-10; // / 0x100000000
-}
-
-ENTRY
-{
-	Output = float4(
-		float(I) / float(N),
-		RadicalInverse_VdC(uint(I)),
-		0.0f,
-		0.0f
-	);
-}
-			]]>
-			</script>
-		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{20A0B7BE-ACB5-9C4B-A412-BAF9436B71AA}</id>
-			<comment/>
-			<position>
-				<first>-510</first>
-				<second>-1475</second>
-			</position>
-			<name>ImportanceSampleGGX</name>
-			<technique/>
-			<inputPins>
-				<item>
-					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
-					<name>Xi</name>
-				</item>
-				<item>
-					<id>{121C4E17-4647-4B3F-95A0-F79EA2F1B146}</id>
-					<name>N</name>
-				</item>
-				<item>
-					<id>{AC15A342-DBF6-4DE1-A223-00F39E5550D0}</id>
-					<name>Roughness</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
-					<name>Output</name>
-					<type>Vector</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-const float PI = 3.14159265359;
-
-ENTRY
-{
-    float a = Roughness * Roughness;
-	
-    float phi = 2.0 * PI * Xi.x;
-    float cosTheta = sqrt((1.0f - Xi.y) / (1.0f + (a * a - 1.0f) * Xi.y));
-    float sinTheta = sqrt(1.0f - cosTheta * cosTheta);
-	
-    // from spherical coordinates to cartesian coordinates
-    float3 H;
-    H.x = cos(phi) * sinTheta;
-    H.y = sin(phi) * sinTheta;
-    H.z = cosTheta;
-	
-    // from tangent-space vector to world-space sample vector
-    float3 up        = abs(N.z) < 0.999 ? float3(0.0f, 0.0f, 1.0f) : float3(1.0f, 0.0f, 0.0f);
-    float3 tangent   = normalize(cross(up, N));
-    float3 bitangent = cross(N, tangent);
-	
-    float3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
-    Output = float4(normalize(sampleVec), 0.0f);
-}
-			]]>
-			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -1438,102 +1271,22 @@ ENTRY
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{26C3B4A1-CBBC-4F07-85D2-D493F40C212A}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{C7F0969C-A9E9-4C5A-B110-78095B267380}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[58]"/>
-				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{37801E29-B776-42E5-A71E-C44FBDD19992}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[62]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{C96B0779-348E-4F56-8D35-4CAA65CA8C36}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[61]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[60]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{121C4E17-4647-4B3F-95A0-F79EA2F1B146}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{3368C175-F2D7-864D-AD50-44CBB83A3EE8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[59]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{AC15A342-DBF6-4DE1-A223-00F39E5550D0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{638D0AA5-A02C-4A52-96E3-126E59AE55C7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[38]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
 				<id>{A42E0B4F-8CEF-478B-9765-818D375876CA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{04809C4F-9F7A-F745-B7B6-F043AD6E753E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

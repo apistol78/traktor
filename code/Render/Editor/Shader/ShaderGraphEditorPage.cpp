@@ -273,9 +273,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
 	m_toolRenderer = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
-	m_toolRenderer->add(L"DX11");
 	m_toolRenderer->add(L"Vulkan");
-	m_toolRenderer->add(L"GCM");
 	m_toolBar->addItem(m_toolRenderer);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.RendererPermutation")));
 
@@ -897,7 +895,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		std::wstring platformSignature = m_toolPlatform->getSelectedItem();
+		const std::wstring platformSignature = m_toolPlatform->getSelectedItem();
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getPlatformPermutation(platformSignature);
 		T_ASSERT(m_shaderGraph);
 
@@ -909,7 +907,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
+		const std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getRendererPermutation(rendererSignature);
 		T_ASSERT(m_shaderGraph);
 
@@ -921,7 +919,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		std::wstring technique = m_toolTechniques->getSelectedItem();
+		const std::wstring technique = m_toolTechniques->getSelectedItem();
 		m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid()).generate(technique);
 		T_ASSERT(m_shaderGraph);
 
