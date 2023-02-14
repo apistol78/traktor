@@ -10,9 +10,9 @@
 
 #include <initializer_list>
 #include <iterator>
-#include <type_traits>
 #include <utility>
 #include "Core/Config.h"
+#include "Core/Containers/VectorConstructor.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
@@ -20,75 +20,13 @@
 namespace traktor
 {
 
-/*! Construct/destruct items policy.
- * \ingroup Core
- *
- * Default policy when constructing or destroying
- * items in the AlignedVector container.
- */
-template < typename ItemType, bool pod >
-struct AlignedVectorConstructorBase
-{
-};
-
-template < typename ItemType >
-struct AlignedVectorConstructorBase < ItemType, false >
-{
-	static void construct(ItemType& uninitialized)
-	{
-		new (&uninitialized) ItemType();
-	}
-
-	static void construct(ItemType& uninitialized, const ItemType& source)
-	{
-		new (&uninitialized) ItemType(source);
-	}
-
-	static void destroy(ItemType& item)
-	{
-		item.~ItemType();
-	}
-
-	static void move(ItemType& uninitialized, ItemType& source)
-	{
-		new (&uninitialized) ItemType(std::move(source));
-	}
-};
-
-template < typename ItemType >
-struct AlignedVectorConstructorBase < ItemType, true >
-{
-	static void construct(ItemType& uninitialized)
-	{
-	}
-
-	static void construct(ItemType& uninitialized, const ItemType& source)
-	{
-		uninitialized = source;
-	}
-
-	static void destroy(ItemType& item)
-	{
-	}
-
-	static void move(ItemType& uninitialized, ItemType& source)
-	{
-		uninitialized = std::move(source);
-	}
-};
-
-template < typename ItemType >
-struct AlignedVectorConstructor : public AlignedVectorConstructorBase< ItemType, std::is_pod< ItemType >::value >
-{
-};
-
 /*! Vector container which strict item alignment.
  * \ingroup Core
  *
  * This container is designed to be a drop-in replacement
  * for STL vector.
  */
-template < typename ItemType, typename Constructor = AlignedVectorConstructor< ItemType > >
+template < typename ItemType, typename Constructor = VectorConstructor< ItemType > >
 class AlignedVector
 {
 	enum
@@ -918,7 +856,8 @@ public:
 	 */
 	iterator erase(const iterator& where)
 	{
-		size_t offset = size_t(where.m_ptr - m_data);
+		T_ASSERT(m_size > 0);
+		const size_t offset = size_t(where.m_ptr - m_data);
 
 		for (size_t i = offset; i < m_size - 1; ++i)
 			move(i, i + 1);
@@ -939,8 +878,9 @@ public:
 	{
 		T_ASSERT(where.m_ptr <= last.m_ptr);
 
-		size_t offset = size_t(where.m_ptr - m_data);
-		size_t count = size_t(last.m_ptr - where.m_ptr);
+		const size_t offset = size_t(where.m_ptr - m_data);
+		const size_t count = size_t(last.m_ptr - where.m_ptr);
+		T_ASSERT(count <= m_size);
 
 		if (count > 0)
 		{
@@ -964,8 +904,8 @@ public:
 	 */
 	iterator insert(const iterator& where, const ItemType& item)
 	{
-		size_t size = m_size;
-		size_t offset = size_t(where.m_ptr - m_data);
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - m_data);
 
 		grow(1);
 
@@ -995,9 +935,9 @@ public:
 		auto fptr = &(*from);
 		auto tptr = &(*to);
 
-		size_t size = m_size;
-		size_t offset = size_t(where.m_ptr - m_data);
-		size_t count = size_t(tptr - fptr);
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - m_data);
+		const size_t count = size_t(tptr - fptr);
 
 		grow(count);
 
@@ -1006,7 +946,7 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		int32_t mv = (int32_t)(size - offset);
+		const int32_t mv = (int32_t)(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);
@@ -1030,9 +970,9 @@ public:
 	 */
 	iterator insert(const iterator& where, const ItemType* from, const ItemType* to)
 	{
-		size_t size = m_size;
-		size_t offset = size_t(where.m_ptr - m_data);
-		size_t count = size_t(to - from);
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - m_data);
+		const size_t count = size_t(to - from);
 
 		grow(count);
 
@@ -1041,7 +981,7 @@ public:
 			Constructor::construct(m_data[i + size]);
 
 		// Move items to make room for items to be inserted.
-		int32_t mv = (int32_t)(size - offset);
+		const int32_t mv = (int32_t)(size - offset);
 		for (int32_t i = mv - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);

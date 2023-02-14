@@ -10,6 +10,7 @@
 
 #include <iterator>
 #include "Core/Config.h"
+#include "Core/Containers/VectorConstructor.h"
 
 namespace traktor
 {
@@ -17,7 +18,7 @@ namespace traktor
 /*! Static vector container.
  * \ingroup Core
  */
-template < typename ItemType, size_t Capacity_ >
+template < typename ItemType, size_t Capacity_, typename Constructor = VectorConstructor< ItemType > >
 class StaticVector
 {
 public:
@@ -272,6 +273,7 @@ public:
 	explicit StaticVector(size_t size)
 	:	m_size(size)
 	{
+		T_ASSERT(m_size < Capacity);
 	}
 
 	explicit StaticVector(size_t size, const_reference init)
@@ -303,9 +305,17 @@ public:
 	 */
 	void resize(size_t size, const_reference init = value_type())
 	{
-		for (size_t i = m_size; i < size; ++i)
-			m_items[i] = init;
-
+		T_ASSERT(size < Capacity);
+		if (size > m_size)
+		{
+			for (size_t i = m_size; i < size; ++i)
+				Constructor::construct(m_items[i], init);
+		}
+		else if (size < m_size)
+		{
+			for (size_t i = size; i < m_size; ++i)
+				Constructor::destroy(m_items[i]);
+		}
 		m_size = size;
 	}
 
@@ -352,7 +362,7 @@ public:
 		T_ASSERT(size < Capacity);
 		m_size = size;
 		for (size_t i = 0; i < m_size; ++i)
-			m_items[i] = value;
+			Constructor::construct(m_items[i], value);
 	}
 
 	/*! Push value onto vector.
@@ -362,7 +372,9 @@ public:
 	ItemType& push_back()
 	{
 		T_ASSERT(m_size < Capacity);
-		return m_items[m_size++];
+		m_size++;
+		Constructor::construct(m_items[m_size - 1]);
+		return m_items[m_size - 1];
 	}
 
 	/*! Push value onto vector.
@@ -372,13 +384,14 @@ public:
 	void push_back(const ItemType& item)
 	{
 		T_ASSERT(m_size < Capacity);
-		m_items[m_size++] = item;
+		Constructor::construct(m_items[m_size++], item);
 	}
 
 	/*! Pop value from vector. */
 	void pop_back()
 	{
 		T_ASSERT(m_size > 0);
+		Constructor::destroy(m_items[m_size - 1]);
 		--m_size;
 	}
 
@@ -466,16 +479,97 @@ public:
 	 */
 	iterator insert(const iterator& where, const ItemType& item)
 	{
-		size_t size = m_size;
-		size_t offset = size_t(where.m_ptr - &m_items[0]);
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - &m_items[0]);
 
 		m_size++;
+		T_ASSERT(m_size <= Capacity);
 
-		// Move items to make room for item to be inserted.
+		// Initialize grown item.
+		Constructor::construct(m_items[size]);
+
+		// Move items to make space for new item.
 		for (size_t i = size; i > offset; --i)
-			m_items[i] = m_items[i - 1];
+			move(i, i - 1);
 
-		m_items[offset] = item;
+		// Copy insert item into location.
+		Constructor::construct(m_items[offset], item);
+
+		return iterator(&m_items[offset]);
+	}
+
+	/*! Insert elements into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param from Iterator at first insert element.
+	 * \param to Iterator at last insert element.
+	 * \return Iterator at new element.
+	 */
+	template< typename IteratorType >
+	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
+	{
+		auto fptr = &(*from);
+		auto tptr = &(*to);
+
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - m_items);
+		const size_t count = size_t(tptr - fptr);
+
+		m_size += count;
+		T_ASSERT(m_size <= Capacity);
+
+		// Initialize grown items.
+		for (size_t i = 0; i < count; ++i)
+			Constructor::construct(m_items[i + size]);
+
+		// Move items to make room for items to be inserted.
+		const int32_t mv = (int32_t)(size - offset);
+		for (int32_t i = mv - 1; i >= 0; --i)
+		{
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
+			move(i + offset + count, i + offset);
+		}
+
+		// Copy insert items into location.
+		for (size_t i = 0; i < count; ++i)
+			Constructor::construct(m_items[i + offset], fptr[i]);
+
+		return iterator(&m_items[offset]);
+	}
+
+	/*! Insert elements into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param from Iterator at first insert element.
+	 * \param to Iterator at last insert element.
+	 * \return Iterator at new element.
+	 */
+	iterator insert(const iterator& where, const ItemType* from, const ItemType* to)
+	{
+		const size_t size = m_size;
+		const size_t offset = size_t(where.m_ptr - m_items);
+		const size_t count = size_t(to - from);
+
+		m_size += count;
+		T_ASSERT(m_size <= Capacity);
+
+		// Initialize grown items.
+		for (size_t i = 0; i < count; ++i)
+			Constructor::construct(m_items[i + size]);
+
+		// Move items to make room for items to be inserted.
+		const int32_t mv = (int32_t)(size - offset);
+		for (int32_t i = mv - 1; i >= 0; --i)
+		{
+			T_ASSERT(i + offset < size);
+			T_ASSERT(i + offset + count < m_size);
+			move(i + offset + count, i + offset);
+		}
+
+		// Copy insert items into location.
+		for (size_t i = 0; i < count; ++i)
+			Constructor::construct(m_items[i + offset], from[i]);
 
 		return iterator(&m_items[offset]);
 	}
@@ -487,12 +581,43 @@ public:
 	 */
 	iterator erase(const iterator& where)
 	{
-		size_t offset = size_t(where.m_ptr - m_items);
+		T_ASSERT(m_size > 0);
+		const size_t offset = size_t(where.m_ptr - m_items);
 
 		for (size_t i = offset; i < m_size - 1; ++i)
-			m_items[i] = m_items[i + 1];
+			move(i, i + 1);
 
-		--m_size;
+		Constructor::destroy(m_items[m_size - 1]);
+		m_size--;
+
+		return iterator(&m_items[offset]);
+	}
+
+	/*! Erase range of elements.
+	 *
+	 * \param where Iterator at element.
+	 * \param last Iterator to last element.
+	 * \return New iterator at next element.
+	 */
+	iterator erase(const iterator& where, const iterator& last)
+	{
+		T_ASSERT(where.m_ptr <= last.m_ptr);
+
+		const size_t offset = size_t(where.m_ptr - m_items);
+		const size_t count = size_t(last.m_ptr - where.m_ptr);
+		T_ASSERT(count <= m_size);
+
+		if (count > 0)
+		{
+			for (size_t i = offset; i < m_size - count; ++i)
+				move(i, i + count);
+
+			for (size_t i = m_size - count; i < m_size; ++i)
+				Constructor::destroy(m_items[i]);
+
+			m_size -= count;
+		}
+
 		return iterator(&m_items[offset]);
 	}
 
@@ -530,9 +655,8 @@ public:
 	 */
 	StaticVector& operator = (const StaticVector& src)
 	{
-		for (size_t i = 0; i < src.m_size; ++i)
-			m_items[i] = src.m_items[i];
-		m_size = src.m_size;
+		resize(0);
+		insert(begin(), src.begin(), src.end());
 		return *this;
 	}
 
@@ -562,6 +686,11 @@ public:
 private:
 	size_t m_size = 0;
 	ItemType m_items[Capacity];
+
+	void move(size_t target, size_t source)
+	{
+		Constructor::move(m_items[target], m_items[source]);
+	}
 };
 
 }
