@@ -326,17 +326,17 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	// Build definitions.
 	for (auto configuration : project->getConfigurations())
 	{
-		std::wstring name = configuration->getName();
+		const std::wstring name = configuration->getName();
 
 		os << L"<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
 
-		int32_t format = int32_t(configuration->getTargetFormat());
+		const int32_t format = int32_t(configuration->getTargetFormat());
 
-		const RefArray< SolutionBuilderMsvcVCXDefinition >& buildDefinitions = (configuration->getTargetProfile() == Configuration::TpDebug) ? m_buildDefinitionsDebug[format] : m_buildDefinitionsRelease[format];
-		for (RefArray< SolutionBuilderMsvcVCXDefinition >::const_iterator j = buildDefinitions.begin(); j != buildDefinitions.end(); ++j)
+		const auto& buildDefinitions = (configuration->getTargetProfile() == Configuration::TpDebug) ? m_buildDefinitionsDebug[format] : m_buildDefinitionsRelease[format];
+		for (auto buildDefinition : buildDefinitions)
 		{
-			(*j)->generate(
+			buildDefinition->generate(
 				context,
 				solution,
 				project,
@@ -345,22 +345,23 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 			);
 		}
 
-		const RefArray< AggregationItem >& aggregationItems = configuration->getAggregationItems();
+		const auto& aggregationItems = configuration->getAggregationItems();
 		if (!aggregationItems.empty())
 		{
 			os << L"<PostBuildEvent>" << Endl;
 			os << IncreaseIndent;
 			os << L"<Command>";
-			int32_t indent = os.getIndent();
+
+			const int32_t indent = os.getIndent();
 			os.setIndent(0);
 
-			Path aggregateOutputPath = FileSystem::getInstance().getAbsolutePath(solution->getAggregateOutputPath());
+			const Path aggregateOutputPath = FileSystem::getInstance().getAbsolutePath(solution->getAggregateOutputPath());
 
 			os << L"@pushd \"$(SolutionDir)" << name << L"\"" << Endl;
 			for (auto aggregationItem : aggregationItems)
 			{
-				Path sourceFile = Path(aggregationItem->getSourceFile());
-				Path targetPath = aggregateOutputPath + Path(aggregationItem->getTargetPath());
+				const Path sourceFile = Path(aggregationItem->getSourceFile());
+				const Path targetPath = aggregateOutputPath + Path(aggregationItem->getTargetPath());
 				os << L"@xcopy /D /F /R /Y /I \"" << sourceFile.getPathName() << L"\" \"" << targetPath.getPathName() << L"\\\"" << Endl;
 			}
 			os << L"@popd" << Endl;
@@ -377,32 +378,31 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 	// Collect all files.
 	std::vector< std::pair< std::wstring, Path > > files;
-	const RefArray< ProjectItem >& items = project->getItems();
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : project->getItems())
 	{
-		if (!collectFiles(project, *i, L"", files))
+		if (!collectFiles(project, item, L"", files))
 			return false;
 	}
 
 	// Create item groups.
-	for (RefArray< SolutionBuilderMsvcVCXBuildTool >::const_iterator i = m_buildTools.begin(); i != m_buildTools.end(); ++i)
+	for (auto buildTool : m_buildTools)
 	{
 		os << L"<ItemGroup>" << Endl;
 		os << IncreaseIndent;
 
-		for (std::vector< std::pair< std::wstring, Path > >::const_iterator j = files.begin(); j != files.end(); ++j)
+		for (const auto& file : files)
 		{
 			Path itemPath;
 			FileSystem::getInstance().getRelativePath(
-				FileSystem::getInstance().getAbsolutePath(j->second),
+				FileSystem::getInstance().getAbsolutePath(file.second),
 				FileSystem::getInstance().getAbsolutePath(projectPath),
 				itemPath
 			);
-			(*i)->generateProject(
+			buildTool->generateProject(
 				context,
 				solution,
 				project,
-				j->first,
+				file.first,
 				itemPath,
 				os
 			);
@@ -515,32 +515,31 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 
 	// Collect all files.
 	std::vector< std::pair< std::wstring, Path > > files;
-	const RefArray< ProjectItem >& items = project->getItems();
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (auto item : project->getItems())
 	{
-		if (!collectFiles(project, *i, L"", files))
+		if (!collectFiles(project, item, L"", files))
 			return false;
 	}
 
 	// Create item groups.
-	for (RefArray< SolutionBuilderMsvcVCXBuildTool >::const_iterator i = m_buildTools.begin(); i != m_buildTools.end(); ++i)
+	for (auto buildTool : m_buildTools)
 	{
 		os << L"<ItemGroup>" << Endl;
 		os << IncreaseIndent;
 
-		for (std::vector< std::pair< std::wstring, Path > >::const_iterator j = files.begin(); j != files.end(); ++j)
+		for (const auto& file : files)
 		{
 			Path itemPath;
 			FileSystem::getInstance().getRelativePath(
-				FileSystem::getInstance().getAbsolutePath(j->second),
+				FileSystem::getInstance().getAbsolutePath(file.second),
 				FileSystem::getInstance().getAbsolutePath(projectPath),
 				itemPath
 			);
-			(*i)->generateFilter(
+			buildTool->generateFilter(
 				context,
 				solution,
 				project,
-				j->first,
+				file.first,
 				itemPath,
 				os
 			);
@@ -554,20 +553,20 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 	Guid filterGuid(L"{4708E59F-6655-4B59-A318-ECFC32369845}");
 
 	std::set< std::wstring > filters;
-	for (std::vector< std::pair< std::wstring, Path > >::const_iterator i = files.begin(); i != files.end(); ++i)
+	for (const auto& file : files)
 	{
-		if (i->first != L"")
-			filters.insert(i->first);
+		if (file.first != L"")
+			filters.insert(file.first);
 	}
 
 	if (!filters.empty())
 	{
-		for (std::set< std::wstring >::const_iterator i = filters.begin(); i != filters.end(); ++i)
+		for (const auto& filter : filters)
 		{
 			os << L"<ItemGroup>" << Endl;
 			os << IncreaseIndent;
 
-			os << L"<Filter Include=\"" << *i << L"\">" << Endl;
+			os << L"<Filter Include=\"" << filter << L"\">" << Endl;
 			os << L"<UniqueIdentifier>" << filterGuid.format() << L"</UniqueIdentifier>" << Endl;
 			os << L"</Filter>" << Endl;
 
@@ -630,35 +629,34 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 	os << L"<Project ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">" << Endl;
 	os << IncreaseIndent;
 
-	const RefArray< Configuration >& configurations = project->getConfigurations();
-	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (auto configuration : project->getConfigurations())
 	{
-		os << L"<PropertyGroup Condition=\"'$(Configuration)'=='" << (*i)->getName() << L"'\">" << Endl;
+		os << L"<PropertyGroup Condition=\"'$(Configuration)'=='" << configuration->getName() << L"'\">" << Endl;
 		os << IncreaseIndent;
 
 		os << L"<DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>" << Endl;
 
-		if (!(*i)->getDebugEnvironment().empty())
+		if (!configuration->getDebugEnvironment().empty())
 		{
-			os << L"<LocalDebuggerEnvironment>" << (*i)->getDebugEnvironment() << L"</LocalDebuggerEnvironment>" << Endl;
+			os << L"<LocalDebuggerEnvironment>" << configuration->getDebugEnvironment() << L"</LocalDebuggerEnvironment>" << Endl;
 			needed = true;
 		}
 
-		if (!(*i)->getDebugExecutable().empty())
+		if (!configuration->getDebugExecutable().empty())
 		{
-			os << L"<LocalDebuggerCommand>" << (*i)->getDebugExecutable() << L"</LocalDebuggerCommand>" << Endl;
+			os << L"<LocalDebuggerCommand>" << configuration->getDebugExecutable() << L"</LocalDebuggerCommand>" << Endl;
 			needed = true;
 		}
 
-		if (!(*i)->getDebugWorkingDirectory().empty())
+		if (!configuration->getDebugWorkingDirectory().empty())
 		{
-			os << L"<LocalDebuggerWorkingDirectory>" << (*i)->getDebugWorkingDirectory() << L"</LocalDebuggerWorkingDirectory>" << Endl;
+			os << L"<LocalDebuggerWorkingDirectory>" << configuration->getDebugWorkingDirectory() << L"</LocalDebuggerWorkingDirectory>" << Endl;
 			needed = true;
 		}
 
-		if (!(*i)->getDebugArguments().empty())
+		if (!configuration->getDebugArguments().empty())
 		{
-			os << L"<LocalDebuggerCommandArguments>" << (*i)->getDebugArguments() << L"</LocalDebuggerCommandArguments>" << Endl;
+			os << L"<LocalDebuggerCommandArguments>" << configuration->getDebugArguments() << L"</LocalDebuggerCommandArguments>" << Endl;
 			needed = true;
 		}
 
@@ -697,11 +695,10 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 		else
 			childFilterPath = filter->getName();
 
-		const RefArray< ProjectItem >& items = item->getItems();
-		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		for (auto it : item->getItems())
 			collectFiles(
 				project,
-				*i,
+				it,
 				childFilterPath,
 				outFiles
 			);
@@ -712,8 +709,8 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 	{
 		std::set< Path > systemFiles;
 		file->getSystemFiles(project->getSourcePath(), systemFiles);
-		for (std::set< Path >::iterator i = systemFiles.begin(); i != systemFiles.end(); ++i)
-			outFiles.push_back(std::make_pair(filterPath, *i));
+		for (const auto& systemFile : systemFiles)
+			outFiles.push_back(std::make_pair(filterPath, systemFile));
 	}
 
 	return true;
@@ -726,21 +723,20 @@ void SolutionBuilderMsvcVCXProj::findDefinitions(
 	const RefArray< ProjectItem >& items
 ) const
 {
-	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
-
-	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	const Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
+	for (auto item : items)
 	{
-		if (const sb::File* file = dynamic_type_cast< const sb::File* >(*i))
+		if (auto file = dynamic_type_cast< const sb::File* >(item))
 		{
 			std::set< Path > systemFiles;
 			file->getSystemFiles(project->getSourcePath(), systemFiles);
-			for (std::set< Path >::iterator j = systemFiles.begin(); j != systemFiles.end(); ++j)
+			for (const auto& systemFile : systemFiles)
 			{
-				if (compareIgnoreCase(j->getExtension(), L"def") == 0)
+				if (compareIgnoreCase(systemFile.getExtension(), L"def") == 0)
 				{
 					Path relativePath;
 					FileSystem::getInstance().getRelativePath(
-						*j,
+						systemFile,
 						rootPath,
 						relativePath
 					);
@@ -748,7 +744,7 @@ void SolutionBuilderMsvcVCXProj::findDefinitions(
 				}
 			}
 		}
-		findDefinitions(context, solution, project, (*i)->getItems());
+		findDefinitions(context, solution, project, item->getItems());
 	}
 }
 
