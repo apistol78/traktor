@@ -270,15 +270,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				switch (texture->getUniformType())
 				{
 				case GlslType::Texture2D:
-					ss << L"layout(binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+					ss << L"layout (binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
 					break;
 
 				case GlslType::Texture3D:
-					ss << L"layout(binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
+					ss << L"layout (binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					ss << L"layout(binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
+					ss << L"layout (binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
 					break;
 
 				default:
@@ -297,9 +297,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
 				if (sampler->getState().compare == CfNone)
-					ss << L"layout(binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
 				else
-					ss << L"layout(binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
 			}
 		}
 		ss << Endl;
@@ -311,7 +311,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-				ss << L"layout(binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+				ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
 		}
 		ss << Endl;
 	}
@@ -353,6 +353,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	const std::wstring inputText = getOutputStream(BtInput).str();
 	if (!inputText.empty())
 	{
+		ss << L"// Inputs" << Endl;
 		ss << inputText;
 		ss << Endl;
 	}
@@ -360,6 +361,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	const std::wstring outputText = getOutputStream(BtOutput).str();
 	if (!outputText.empty())
 	{
+		ss << L"// Outputs" << Endl;
 		ss << outputText;
 		ss << Endl;
 	}
