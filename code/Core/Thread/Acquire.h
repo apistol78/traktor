@@ -61,7 +61,7 @@ public:
 
 	T_FORCE_INLINE ~Release< T >()
 	{
-		bool result = m_lock.wait();
+		const bool result = m_lock.wait();
 		T_FATAL_ASSERT(result == true);
 	}
 
