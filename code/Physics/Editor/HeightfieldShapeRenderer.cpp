@@ -12,10 +12,8 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldShapeRenderer", 0, HeightfieldShapeRenderer, IPhysicsShapeRenderer)
 
@@ -37,10 +35,9 @@ void HeightfieldShapeRenderer::draw(
 	if (resourceManager->bind(heightfieldShapeDesc->getHeightfield(), heightfield))
 	{
 		const Vector4& extent = heightfield->getWorldExtent();
-		Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
+		const Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 		primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(0, 255, 255, 180));
 	}
 }
 
-	}
 }

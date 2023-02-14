@@ -21,10 +21,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsComponentEditor", PhysicsComponentEditor, scene::IComponentEditor)
 
@@ -68,11 +66,10 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 					if (wheel->contact)
 						primitiveRenderer->drawSolidPoint(body1Transform[1].inverse() * wheel->contactPosition, 8.0f, Color4ub(255, 255, 0, 255));
 
-					Vector4 anchorL = wheel->data->getAnchor().xyz1();
-					Vector4 axisL = wheel->data->getAxis().xyz0().normalized();
-					Scalar suspLen = Scalar(wheel->suspensionLength);
-
-					Vector4 position = anchorL + axisL * -suspLen;
+					const Vector4 anchorL = wheel->data->getAnchor().xyz1();
+					const Vector4 axisL = wheel->data->getAxis().xyz0().normalized();
+					const Scalar suspLen = Scalar(wheel->suspensionLength);
+					const Vector4 position = anchorL + axisL * -suspLen;
 
 					primitiveRenderer->drawWireCylinder(
 						translate(position) * rotateY(deg2rad(90.0f)),
@@ -89,10 +86,10 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 				if (!wheel)
 					continue;
 
-				Vector4 anchorL = wheel->getAnchor().xyz1();
-				Vector4 axisL = wheel->getAxis().xyz0().normalized();
-				Scalar suspMin = Scalar(wheel->getSuspensionLength().min);
-				Scalar suspMax = Scalar(wheel->getSuspensionLength().max);
+				const Vector4 anchorL = wheel->getAnchor().xyz1();
+				const Vector4 axisL = wheel->getAxis().xyz0().normalized();
+				const Scalar suspMin = Scalar(wheel->getSuspensionLength().min);
+				const Scalar suspMax = Scalar(wheel->getSuspensionLength().max);
 
 				primitiveRenderer->drawSolidPoint(anchorL, 8.0f, Color4ub(255, 0, 0, 255));
 				primitiveRenderer->drawSolidPoint(anchorL - axisL * suspMin, 8.0f, Color4ub(255, 0, 0, 255));
@@ -155,5 +152,4 @@ void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 	}
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Physics/Editor/MeshAssetEditor.h"
 #include "Physics/Editor/MeshAssetEditorFactory.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshAssetEditorFactory", 0, MeshAssetEditorFactory, editor::IObjectEditorFactory)
 
@@ -42,5 +40,4 @@ Ref< ISerializable > MeshAssetEditorFactory::cloneAsset(const ISerializable* ass
 	return DeepClone(asset).create();
 }
 
-	}
 }

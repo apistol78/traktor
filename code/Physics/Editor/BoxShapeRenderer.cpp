@@ -10,10 +10,8 @@
 #include "Physics/Editor/BoxShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BoxShapeRenderer", 0, BoxShapeRenderer, IPhysicsShapeRenderer)
 
@@ -31,8 +29,7 @@ void BoxShapeRenderer::draw(
 {
 	const BoxShapeDesc* boxShapeDesc = checked_type_cast< const BoxShapeDesc*, false >(shapeDesc);
 	const Vector4 margin(Scalar(boxShapeDesc->getMargin()));
-
-	Aabb3 boundingBox(-boxShapeDesc->getExtent() - margin, boxShapeDesc->getExtent() + margin);
+	const Aabb3 boundingBox(-boxShapeDesc->getExtent() - margin, boxShapeDesc->getExtent() + margin);
 
 	primitiveRenderer->pushWorld((body1Transform[1] * shapeDesc->getLocalTransform()).toMatrix44());
 
@@ -42,5 +39,4 @@ void BoxShapeRenderer::draw(
 	primitiveRenderer->popWorld();
 }
 
-	}
 }

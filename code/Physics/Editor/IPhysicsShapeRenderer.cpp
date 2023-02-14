@@ -8,12 +8,9 @@
  */
 #include "Physics/Editor/IPhysicsShapeRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.IPhysicsShapeRenderer", IPhysicsShapeRenderer, Object)
 
-	}
 }

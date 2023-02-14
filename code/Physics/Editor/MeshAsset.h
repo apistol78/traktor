@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS MeshAsset : public editor::Asset
 {
@@ -57,6 +55,4 @@ private:
 	std::map< std::wstring, Guid > m_materials;	//!< References to Material instances.
 };
 
-	}
 }
-

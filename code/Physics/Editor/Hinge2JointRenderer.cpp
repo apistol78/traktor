@@ -10,10 +10,8 @@
 #include "Physics/Editor/Hinge2JointRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.Hinge2JointRenderer", 0, Hinge2JointRenderer, IPhysicsJointRenderer)
 
@@ -51,5 +49,4 @@ void Hinge2JointRenderer::draw(
 	//);
 }
 
-	}
 }

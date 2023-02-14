@@ -23,22 +23,24 @@ namespace traktor
 
 class Transform;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class ShapeDesc;
 
@@ -57,6 +59,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-

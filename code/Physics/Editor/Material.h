@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS Material : public ISerializable
 {
@@ -43,6 +41,4 @@ private:
 	float m_restitution = 0.0f;
 };
 
-	}
 }
-

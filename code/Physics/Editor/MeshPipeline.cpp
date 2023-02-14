@@ -31,10 +31,8 @@
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/Editor/MeshPipeline.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 11, MeshPipeline, editor::IPipeline)
 
@@ -174,7 +172,7 @@ bool MeshPipeline::buildOutput(
 			log::warning << L"Material \"" << it.first << L"\" do not exist in source model." << Endl;
 			continue;
 		}
-		uint32_t index = std::distance(materials.begin(), it2);
+		const uint32_t index = std::distance(materials.begin(), it2);
 
 		auto materialDef = pipelineBuilder->getObjectReadOnly< Material >(it.second);
 		if (!materialDef)
@@ -201,8 +199,8 @@ bool MeshPipeline::buildOutput(
 
 		meshShapeTriangles.push_back(shapeTriangle);
 
-		Vector4 e1 = positions[shapeTriangle.indices[2]] - positions[shapeTriangle.indices[1]];
-		Vector4 e2 = positions[shapeTriangle.indices[0]] - positions[shapeTriangle.indices[1]];
+		const Vector4 e1 = positions[shapeTriangle.indices[2]] - positions[shapeTriangle.indices[1]];
+		const Vector4 e2 = positions[shapeTriangle.indices[0]] - positions[shapeTriangle.indices[1]];
 
 		normals.push_back(cross(e2, e1).normalized());
 	}
@@ -245,24 +243,24 @@ bool MeshPipeline::buildOutput(
 
 		// Improve center of gravity by weighting in volumes of each hull face tetrahedron.
 		Vector4 Voffset = Vector4::zero();
-		float Vtotal = 0.0f;
+		Scalar Vtotal = 0.0_simd;
 		for (AlignedVector< Mesh::Triangle >::const_iterator i = meshHullTriangles.begin(); i != meshHullTriangles.end(); ++i)
 		{
 			const Vector4 a = positions[i->indices[0]];
 			const Vector4 b = positions[i->indices[1]];
 			const Vector4 c = positions[i->indices[2]];
 
-			float V = abs(dot3(a, cross(b, c))) / 6.0f;
-			Vector4 C = (a + b + c) / Scalar(4.0f);
+			const Scalar V = abs(dot3(a, cross(b, c))) / 6.0_simd;
+			const Vector4 C = (a + b + c) / 4.0_simd;
 
-			Voffset += C * Scalar(V);
+			Voffset += C * V;
 			Vtotal += V;
 		}
 
 		for (auto& position : positions)
-			position -= Voffset / Scalar(Vtotal);
+			position -= Voffset / Vtotal;
 
-		centerOfGravity += Voffset / Scalar(Vtotal);
+		centerOfGravity += Voffset / Vtotal;
 		log::debug << L"Hull volume " << Vtotal << L" unit^3." << Endl;
 	}
 
@@ -334,5 +332,4 @@ Ref< ISerializable > MeshPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

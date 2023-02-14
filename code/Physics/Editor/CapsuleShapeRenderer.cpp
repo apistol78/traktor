@@ -10,10 +10,8 @@
 #include "Physics/Editor/CapsuleShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CapsuleShapeRenderer", 0, CapsuleShapeRenderer, IPhysicsShapeRenderer)
 
@@ -38,5 +36,4 @@ void CapsuleShapeRenderer::draw(
 	);
 }
 
-	}
 }

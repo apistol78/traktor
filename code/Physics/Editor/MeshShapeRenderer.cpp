@@ -12,12 +12,10 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Resource/IResourceManager.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
+	namespace
 	{
-		namespace
-		{
 
 const Color4ub c_faceColors[] =
 {
@@ -26,7 +24,7 @@ const Color4ub c_faceColors[] =
 	Color4ub(255, 255, 128, 128)
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshShapeRenderer", 0, MeshShapeRenderer, IPhysicsShapeRenderer)
 
@@ -102,5 +100,4 @@ void MeshShapeRenderer::draw(
 	}
 }
 
-	}
 }

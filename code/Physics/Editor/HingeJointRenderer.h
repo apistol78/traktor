@@ -10,10 +10,8 @@
 
 #include "Physics/Editor/IPhysicsJointRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class HingeJointRenderer : public IPhysicsJointRenderer
 {
@@ -31,6 +29,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

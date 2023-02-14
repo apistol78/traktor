@@ -20,14 +20,11 @@
 #include "Editor/IEditor.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
-
+#include "Model/Model.h"
+#include "Model/ModelCache.h"
 #include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/Editor/MeshAssetEditor.h"
-
-#include "Model/Model.h"
-#include "Model/ModelCache.h"
-
 #include "Ui/Application.h"
 #include "Ui/Button.h"
 #include "Ui/CheckBox.h"
@@ -49,10 +46,8 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshAssetEditor", MeshAssetEditor, editor::IObjectEditor)
 
@@ -317,7 +312,7 @@ void MeshAssetEditor::eventBrowseClick(ui::ButtonClickEvent* event)
 
 void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	Ref< PropertyGroup > params = new PropertyGroup();
 	params->setProperty< PropertyString >(L"fileName", assetPath + L"/" + m_editFileName->getText());
@@ -328,8 +323,8 @@ void MeshAssetEditor::eventPreviewModelClick(ui::ButtonClickEvent* event)
 
 void MeshAssetEditor::eventEditModelClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	Path path = FileSystem::getInstance().getAbsolutePath(Path(assetPath + L"/" + m_editFileName->getText()));
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const Path path = FileSystem::getInstance().getAbsolutePath(Path(assetPath + L"/" + m_editFileName->getText()));
 	OS::getInstance().openFile(path.getPathName());
 }
 
@@ -348,9 +343,9 @@ void MeshAssetEditor::eventMaterialListDoubleClick(ui::MouseDoubleClickEvent* ev
 	if (!selectedItem)
 		return;
 
-	ui::Point mousePosition = event->getPosition();
+	const ui::Point mousePosition = event->getPosition();
 
-	int32_t column = m_materialList->getColumnIndex(mousePosition.x);
+	const int32_t column = m_materialList->getColumnIndex(mousePosition.x);
 	if (column == 1)
 	{
 		Ref< db::Instance > materialInstance = selectedItem->getData< db::Instance >(L"MATERIAL");
@@ -361,5 +356,4 @@ void MeshAssetEditor::eventMaterialListDoubleClick(ui::MouseDoubleClickEvent* ev
 	}
 }
 
-	}
 }

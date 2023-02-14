@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 class T_DLLCLASS PhysicsEditorProfile : public scene::ISceneEditorProfile
 {
@@ -80,6 +78,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

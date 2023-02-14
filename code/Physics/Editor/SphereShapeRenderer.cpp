@@ -10,10 +10,8 @@
 #include "Physics/Editor/SphereShapeRenderer.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.SphereShapeRenderer", 0, SphereShapeRenderer, IPhysicsShapeRenderer)
 
@@ -37,5 +35,4 @@ void SphereShapeRenderer::draw(
 	);
 }
 
-	}
 }

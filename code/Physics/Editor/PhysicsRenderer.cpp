@@ -12,10 +12,8 @@
 #include "Physics/Editor/IPhysicsShapeRenderer.h"
 #include "Physics/Editor/PhysicsRenderer.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsRenderer", PhysicsRenderer, Object)
 
@@ -69,5 +67,4 @@ void PhysicsRenderer::draw(
 		);
 }
 
-	}
 }

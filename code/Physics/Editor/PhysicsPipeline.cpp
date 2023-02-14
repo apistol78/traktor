@@ -18,10 +18,8 @@
 #include "Editor/IPipelineDepends.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace physics
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsPipeline", 2, PhysicsPipeline, editor::IPipeline)
 
@@ -127,5 +125,4 @@ Ref< ISerializable > PhysicsPipeline::buildProduct(
 	return DeepClone(sourceAsset).create();
 }
 
-	}
 }

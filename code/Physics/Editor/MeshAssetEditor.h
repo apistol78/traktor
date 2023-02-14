@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class CheckBox;
@@ -40,17 +38,17 @@ class Slider;
 class Static;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 class Model;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class MeshAsset;
 
@@ -115,6 +113,4 @@ private:
 	void eventMaterialListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
-	}
 }
-

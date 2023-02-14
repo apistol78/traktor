@@ -23,15 +23,17 @@ namespace traktor
 
 class Transform;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace physics
-	{
+namespace traktor::physics
+{
 
 class JointDesc;
 
@@ -51,6 +53,4 @@ public:
 	) const = 0;
 };
 
-	}
 }
-
