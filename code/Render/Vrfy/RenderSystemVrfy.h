@@ -89,6 +89,8 @@ public:
 
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const override final;
 
+	virtual void* getInternalHandle() const override final;
+
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	bool m_useRenderDoc = false;

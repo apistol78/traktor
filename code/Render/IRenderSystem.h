@@ -160,6 +160,8 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const = 0;
 
 	//@}
+
+	virtual void* getInternalHandle() const = 0;
 };
 
 }
