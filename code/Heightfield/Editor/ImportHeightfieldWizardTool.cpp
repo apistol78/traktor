@@ -91,7 +91,7 @@ uint32_t ImportHeightfieldWizardTool::getFlags() const
 
 bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
-	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	// Select source heightfield.
 	ui::FileDialog fileDialog;
@@ -115,7 +115,17 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	}
 
 	Ref< drawing::Image > image;
-	if ((image = readRawTerrain(file)) == 0)
+
+	// First try reading heightfield as an image.
+	image = drawing::Image::load(file, fileName.getExtension());
+	if (image)
+		image->convert(drawing::PixelFormat::getR16());
+
+	// Last we try as a raw image.
+	if (!image)
+		image = readRawTerrain(file);
+
+	if (!image)
 	{
 		log::error << L"Failed to import heightfiled; unable to parse file \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
