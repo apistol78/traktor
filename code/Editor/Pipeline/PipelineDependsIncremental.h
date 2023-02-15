@@ -42,7 +42,7 @@ public:
 		PipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache,
-		const PipelineDependencySet* excludeDependencySet = nullptr,
+		const std::function< bool(const Guid&) >& excludeDependencyFilter = nullptr,
 		uint32_t recursionDepth = ~0U
 	);
 
@@ -89,7 +89,7 @@ private:
 	Ref< PipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineInstanceCache > m_instanceCache;
-	Ref< const PipelineDependencySet > m_excludeDependencySet;
+	std::function< bool(const Guid&) > m_excludeDependencyFilter;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
 	Ref< PipelineDependency > m_currentDependency;

@@ -434,6 +434,17 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 {
 	PipelineDependencySet dependencySet;
 
+	// Exclude filtering; already added dependencies and built ad-hocs should be excluded from further ad-hoc builds.
+	auto dependencyFilter = [&](const Guid& id) -> bool {
+		if (m_dependencySet->get(id) != PipelineDependencySet::DiInvalid)
+			return false;
+
+		if (m_adHocBuilds.find(id) != m_adHocBuilds.end())
+			return false;
+
+		return true;
+	};
+
 	// Scan dependencies of source asset; exclude dependencies already in work set.
 	m_profiler->begin(type_of< PipelineDependsIncremental >());
 	PipelineDependsIncremental pipelineDepends(
@@ -443,7 +454,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		&dependencySet,
 		m_pipelineDb,
 		m_instanceCache,
-		m_dependencySet
+		dependencyFilter
 	);
 	pipelineDepends.addDependency(
 		sourceAsset,
@@ -467,6 +478,9 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 	{
 		const PipelineDependency* dependency = dependencySet.get(i);
 		if ((dependency->flags & PdfBuild) == 0)
+			continue;
+
+		if (m_adHocBuilds.find(dependency->outputGuid) != m_adHocBuilds.end())
 			continue;
 
 		// Calculate hash entry.
@@ -574,6 +588,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		// when caching is enabled then synthesized built instances should be included in parent build as well.
 		m_builtInstances.swap(previousBuiltInstances);
 		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
+
+		m_adHocBuilds.insert(dependency->outputGuid);
 
 		log::info << DecreaseIndent;
 		if (m_verbose)

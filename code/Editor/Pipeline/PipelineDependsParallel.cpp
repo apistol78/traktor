@@ -542,17 +542,12 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
 	if (!sourceAssetInstance)
 	{
-		// \hack
-		// In case output database already contain an instance with given ID we assume it has
-		// been synthesized.
-		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
-		{
-			if (parentDependency)
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->information() << L"\")." << Endl;
-			else
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
-			m_result = false;
-		}
+		if (parentDependency)
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (parent \"" << parentDependency->information() << L"\")." << Endl;
+		else
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+
+		m_result = false;
 		return;
 	}
 

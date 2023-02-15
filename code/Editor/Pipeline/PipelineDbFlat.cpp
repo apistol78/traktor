@@ -146,11 +146,14 @@ void PipelineDbFlat::close()
 
 void PipelineDbFlat::beginTransaction()
 {
+	T_FATAL_ASSERT(!m_transaction);
 	T_FATAL_ASSERT(m_changes == 0);
+	m_transaction = true;
 }
 
 void PipelineDbFlat::endTransaction()
 {
+	T_FATAL_ASSERT(m_transaction);
 	if (m_changes > 0)
 	{
 		Ref< IStream > f = FileSystem::getInstance().open(m_file, File::FmWrite);
@@ -184,14 +187,19 @@ void PipelineDbFlat::endTransaction()
 		else
 			log::error << L"Unable to flush pipeline db; failed to write latest changes." << Endl;
 	}
+	m_transaction = false;
 }
 
 void PipelineDbFlat::setDependency(const Guid& guid, const PipelineDependencyHash& hash)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+	T_FATAL_ASSERT(m_transaction);
 	m_dependencies[guid] = hash;
 	if (++m_changes >= c_flushAfterChanges)
+	{
 		endTransaction();
+		beginTransaction();
+	}
 }
 
 bool PipelineDbFlat::getDependency(const Guid& guid, PipelineDependencyHash& outHash) const
@@ -207,9 +215,13 @@ bool PipelineDbFlat::getDependency(const Guid& guid, PipelineDependencyHash& out
 void PipelineDbFlat::setFile(const Path& path, const PipelineFileHash& file)
 {
 	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+	T_FATAL_ASSERT(m_transaction);
 	m_files[path.getPathName()] = file;
 	if (++m_changes >= c_flushAfterChanges)
+	{
 		endTransaction();
+		beginTransaction();
+	}
 }
 
 bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile) const
@@ -226,13 +238,20 @@ bool PipelineDbFlat::getFile(const Path& path, PipelineFileHash& outFile) const
 
 uint32_t PipelineDbFlat::getDependencyCount() const
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 	return (uint32_t)m_dependencies.size();
 }
 
 bool PipelineDbFlat::getDependencyByIndex(uint32_t index, Guid& outGuid, PipelineDependencyHash& outHash) const
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
+
+	if (index >= m_dependencies.size())
+		return false;
+
 	auto it = m_dependencies.begin();
 	std::advance(it, index);
+
 	outGuid = it->first;
 	outHash = it->second;
 	return true;
@@ -240,13 +259,20 @@ bool PipelineDbFlat::getDependencyByIndex(uint32_t index, Guid& outGuid, Pipelin
 
 uint32_t PipelineDbFlat::getFileCount() const
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 	return (uint32_t)m_files.size();
 }
 
 bool PipelineDbFlat::getFileByIndex(uint32_t index, Path& outPath, PipelineFileHash& outFile) const
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
+
+	if (index >= m_dependencies.size())
+		return false;
+
 	auto it = m_files.begin();
 	std::advance(it, index);
+
 	outPath = it->first;
 	outFile = it->second;
 	return true;

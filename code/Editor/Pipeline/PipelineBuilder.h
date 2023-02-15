@@ -10,6 +10,7 @@
 
 #include <list>
 #include <map>
+#include <set>
 #include "Core/Io/Path.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/PipelineTypes.h"
@@ -117,6 +118,7 @@ private:
 	const PipelineDependencySet* m_dependencySet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
+	std::set< Guid > m_adHocBuilds;
 	RefArray< db::Instance > m_builtInstances;
 	AlignedVector< CacheKey > m_builtAdHocKeys;
 	int32_t m_adHocDepth;

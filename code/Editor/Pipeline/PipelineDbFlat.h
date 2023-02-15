@@ -59,6 +59,7 @@ private:
 	SmallMap< Guid, PipelineDependencyHash > m_dependencies;
 	SmallMap< std::wstring, PipelineFileHash > m_files;
 	uint32_t m_changes = 0;
+	bool m_transaction = false;
 };
 
 }
