@@ -730,7 +730,7 @@ void WorldRendererForward::setupVisualPass(
 			sharedParams->beginParameters(wc.getRenderContext());
 			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
 			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
-			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[0], m_slicePositions[1], m_slicePositions[2], m_slicePositions[3]));
+			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
