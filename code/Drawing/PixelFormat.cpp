@@ -184,6 +184,23 @@ void pack_fp(void* T_RESTRICT p, float v, uint32_t nbits)
 
 #endif
 
+bool isPacked32(const PixelFormat& pf)
+{
+	if (pf.isPalettized())
+		return false;
+	if (pf.isFloatPoint())
+		return false;
+	if (pf.getRedBits() > 8)
+		return false;
+	if (pf.getGreenBits() > 8)
+		return false;
+	if (pf.getBlueBits() > 8)
+		return false;
+	if (pf.getAlphaBits() > 8)
+		return false;
+	return true;
+}
+
 	}
 
 PixelFormat::PixelFormat()
@@ -400,8 +417,8 @@ void PixelFormat::convert(
 	uint32_t i;
 	float clr[4];
 
-	bool isSourcePacked32 = !isPalettized() && !isFloatPoint() && getColorBits() <= 32;
-	bool isDestinationPacked32 = !dstFormat.isPalettized() && !dstFormat.isFloatPoint() && dstFormat.getColorBits() <= 32;
+	const bool isSourcePacked32 = isPacked32(*this);
+	const bool isDestinationPacked32 = isPacked32(dstFormat);
 
 	// Quick path 1; if source and destination are <=32 bit formats.
 	if (isSourcePacked32 && isDestinationPacked32)
