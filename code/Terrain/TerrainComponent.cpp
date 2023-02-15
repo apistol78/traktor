@@ -43,11 +43,11 @@ const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle c_handleTerrain_Eye(L"Terrain_Eye");
 const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
-const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex");
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
+const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -62,6 +62,12 @@ struct CullPatch
 };
 
 typedef std::pair< float, const TerrainComponent::Patch* > cull_patch_t;
+
+struct DrawData
+{
+	float patchOrigin[4];
+	float surfaceOffset[4];
+};
 
 	}
 
@@ -385,6 +391,7 @@ void TerrainComponent::build(
 	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
+	rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
 
 	if (m_visualizeMode == VmColorMap)
 		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getColorMap());
@@ -403,44 +410,68 @@ void TerrainComponent::build(
 
 	renderContext->enqueue(rb);
 
-	// Render visible patches.
-	for (const auto& visiblePatch : m_visiblePatches)
+	// Update indirect draw buffers; do this only once per frame
+	// since all draws are the same for other passes.
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
-		const Patch& patch = m_patches[visiblePatch.patchId];
-		const Vector4& patchOrigin = visiblePatch.patchOrigin;
+		auto draw = (render::IndexedIndirectDraw*)m_drawBuffer->lock();
+		auto data = (DrawData*)m_dataBuffer->lock();
 
-		auto rb = renderContext->alloc< render::SimpleRenderBlock >(L"Terrain patch");
-		rb->distance = visiblePatch.distance;
+		for (const auto& visiblePatch : m_visiblePatches)
+		{
+			const Patch& patch = m_patches[visiblePatch.patchId];
+			const Vector4& patchOrigin = visiblePatch.patchOrigin;
+
+			const auto& p = m_primitives[patch.lastPatchLod];
+
+			const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
+			const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
+			const uint32_t vertexCount = p.count * c_primitiveMul[(int32_t)p.type] + c_primitiveAdd[(int32_t)p.type];
+
+			draw->indexCount = vertexCount;
+			draw->instanceCount = 1;
+			draw->firstIndex = p.offset;
+			draw->vertexOffset = 0;
+			draw->firstInstance = 0;
+			draw++;
+
+			patchOrigin.storeUnaligned(data->patchOrigin);
+			if (!snapshot)
+				patch.surfaceOffset.storeUnaligned(data->surfaceOffset);
+			else
+			{
+				const Vector4 snapshotOffset(
+					patchOrigin.x() / worldExtent.x() + 0.5f,
+					patchOrigin.z() / worldExtent.z() + 0.5f,
+					patchExtent.x() / worldExtent.x(),
+					patchExtent.z() / worldExtent.z()
+				);
+				snapshotOffset.storeUnaligned(data->surfaceOffset);
+			}
+
+			data++;
+		}
+
+		m_drawBuffer->unlock();
+		m_dataBuffer->unlock();
+	}
+
+	// Render all patches using indirect draw.
+	{
+		auto rb = renderContext->alloc< render::IndirectRenderBlock >(L"Terrain patches");
+		rb->distance = 0.0f;
 		rb->program = program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
 		rb->indexBuffer = m_indexBuffer->getBufferView();
 		rb->indexType = render::IndexType::UInt32;
 		rb->vertexBuffer = m_vertexBuffer->getBufferView();
 		rb->vertexLayout = m_vertexLayout;
-		rb->primitives = m_primitives[patch.lastPatchLod];
+		rb->primitive = render::PrimitiveType::Triangles;
+		rb->drawBuffer = m_drawBuffer->getBufferView();
+		rb->drawCount = m_visiblePatches.size();
 
 		rb->programParams->beginParameters(renderContext);
-
-		rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
-		rb->programParams->setVectorParameter(c_handleTerrain_PatchOrigin, patchOrigin);
-
-		if (!snapshot)
-			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, patch.surfaceOffset);
-		else
-		{
-			rb->programParams->setVectorParameter(c_handleTerrain_SurfaceOffset, Vector4(
-				patchOrigin.x() / worldExtent.x() + 0.5f,
-				patchOrigin.z() / worldExtent.z() + 0.5f,
-				patchExtent.x() / worldExtent.x(),
-				patchExtent.z() / worldExtent.z()
-			));
-		}
-
-		if (m_visualizeMode == VmSurfaceLod)
-			rb->programParams->setFloatParameter(c_handleTerrain_DebugPatchIndex, patch.lastSurfaceLod);
-		else if (m_visualizeMode == VmPatchLod)
-			rb->programParams->setFloatParameter(c_handleTerrain_DebugPatchIndex, patch.lastPatchLod);
-
+		rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
 		rb->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RpOpaque, rb);
@@ -454,6 +485,10 @@ void TerrainComponent::setVisualizeMode(VisualizeMode visualizeMode)
 
 void TerrainComponent::destroy()
 {
+	safeDestroy(m_indexBuffer);
+	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_drawBuffer);
+	safeDestroy(m_dataBuffer);
 }
 
 void TerrainComponent::setOwner(world::Entity* owner)
@@ -742,6 +777,25 @@ bool TerrainComponent::createPatches()
 		index[i] = indices[i];
 
 	m_indexBuffer->unlock();
+
+	m_drawBuffer = m_renderSystem->createBuffer(
+		render::BuIndirect,
+		(uint32_t)m_patches.size(),
+		sizeof(render::IndexedIndirectDraw),
+		true
+	);
+	if (!m_drawBuffer)
+		return false;
+
+	m_dataBuffer = m_renderSystem->createBuffer(
+		render::BuStructured,
+		(uint32_t)m_patches.size(),
+		sizeof(DrawData),
+		true
+	);
+	if (!m_dataBuffer)
+		return false;
+
 	return true;
 }
 

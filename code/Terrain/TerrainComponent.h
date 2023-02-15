@@ -159,6 +159,8 @@ private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
+	Ref< render::Buffer > m_drawBuffer;
+	Ref< render::Buffer > m_dataBuffer;
 	render::Primitives m_primitives[LodCount];
 	float m_patchLodDistance;
 	float m_patchLodBias;
