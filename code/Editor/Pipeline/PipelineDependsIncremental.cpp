@@ -36,7 +36,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb,
 	IPipelineInstanceCache* instanceCache,
-	const PipelineDependencySet* excludeDependencySet,
+	const std::function< bool(const Guid&) >& excludeDependencyFilter,
 	uint32_t recursionDepth
 )
 :	m_pipelineFactory(pipelineFactory)
@@ -45,7 +45,7 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 ,	m_instanceCache(instanceCache)
-,	m_excludeDependencySet(excludeDependencySet)
+,	m_excludeDependencyFilter(excludeDependencyFilter)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
 ,	m_result(true)
@@ -90,7 +90,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 		return;
 
 	// Check if dependency should be excluded.
-	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(outputGuid) != PipelineDependencySet::DiInvalid)
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencyFilter != nullptr && m_excludeDependencyFilter(outputGuid) == false)
 		return;
 
 	// Don't add dependency multiple times.
@@ -126,7 +126,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 		return;
 
 	// Check if dependency should be excluded.
-	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(sourceAssetInstance->getGuid()) != PipelineDependencySet::DiInvalid)
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencyFilter != nullptr && m_excludeDependencyFilter(sourceAssetInstance->getGuid()) == false)
 		return;
 
 	// Don't add dependency multiple times.
@@ -171,11 +171,11 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 		return;
 
 	// Check if dependency should be excluded.
-	if ((flags & PdfForceAdd) == 0 && m_excludeDependencySet != nullptr && m_excludeDependencySet->get(sourceAssetGuid) != PipelineDependencySet::DiInvalid)
+	if ((flags & PdfForceAdd) == 0 && m_excludeDependencyFilter != nullptr && m_excludeDependencyFilter(sourceAssetGuid) == false)
 		return;
 
 	// Don't add dependency multiple times.
-	uint32_t dependencyIndex = m_dependencySet->get(sourceAssetGuid);
+	const uint32_t dependencyIndex = m_dependencySet->get(sourceAssetGuid);
 	if (dependencyIndex != PipelineDependencySet::DiInvalid)
 	{
 		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
@@ -192,17 +192,12 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
 	if (!sourceAssetInstance)
 	{
-		// \hack
-		// In case output database already contain an instance with given ID we assume it has
-		// been synthesized.
-		if (m_outputDatabase->getInstance(sourceAssetGuid) == nullptr)
-		{
-			if (m_currentDependency)
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->information() << L"\")." << Endl;
-			else
-				log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
-			m_result = false;
-		}
+		if (m_currentDependency)
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->information() << L"\")." << Endl;
+		else
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance." << Endl;
+
+		m_result = false;
 		return;
 	}
 
