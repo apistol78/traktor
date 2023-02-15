@@ -290,6 +290,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 #if !defined(__ANDROID__) && !defined(__RPI__)
     VkPhysicalDeviceFeatures features = {};
 	features.sampleRateShading = VK_TRUE;
+	features.multiDrawIndirect = VK_TRUE;
     features.shaderClipDistance = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;
@@ -630,6 +631,11 @@ void RenderSystemVk::purge()
 void RenderSystemVk::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	outStatistics = m_statistics;
+}
+
+void* RenderSystemVk::getInternalHandle() const
+{
+	return (*((void **)(m_instance)));
 }
 
 }

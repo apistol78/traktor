@@ -53,8 +53,8 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 		else
 			m_libRenderDoc = nullptr;
 
-		//if (m_apiRenderDoc)
-		//	m_apiRenderDoc->MaskOverlayBits(eRENDERDOC_Overlay_None, 0);
+		if (m_apiRenderDoc)
+			m_apiRenderDoc->SetCaptureTitle("Traktor");
 	}
 #endif
 
@@ -119,6 +119,12 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return nullptr;
+
+	if (m_apiRenderDoc)
+		m_apiRenderDoc->SetActiveWindow(
+			m_renderSystem->getInternalHandle(),
+			desc.syswin.hWnd
+		);
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
@@ -316,6 +322,11 @@ void RenderSystemVrfy::purge()
 void RenderSystemVrfy::getStatistics(RenderSystemStatistics& outStatistics) const
 {
 	m_renderSystem->getStatistics(outStatistics);
+}
+
+void* RenderSystemVrfy::getInternalHandle() const
+{
+	return m_renderSystem->getInternalHandle();
 }
 
 }
