@@ -1634,14 +1634,15 @@
 const vec4 sp = $SlicePositions;
 const float vz = $Input.z;
 
-if (vz >= sp.w)
+if (vz >= sp.z)
 	$Output = 3;
-else if (vz >= sp.z)
-	$Output = 2;
 else if (vz >= sp.y)
+	$Output = 2;
+else if (vz >= sp.x)
 	$Output = 1;
 else
 	$Output = 0;
+
 			]]>
 			</script>
 		</item>

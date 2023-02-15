@@ -67,10 +67,10 @@ void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 			return;
 
 		const Vector4 slicePositions(
-			wrf->m_slicePositions[0],
 			wrf->m_slicePositions[1],
 			wrf->m_slicePositions[2],
-			wrf->m_slicePositions[3]
+			wrf->m_slicePositions[3],
+			wrf->m_slicePositions[4]
 		);
 
 		auto pp = renderContext->alloc< render::ProgramParameters >();
