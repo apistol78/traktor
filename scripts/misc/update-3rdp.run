@@ -488,9 +488,9 @@ local PACKAGES =
 		type = "GET",
 		name = "renderdoc",
 		os = "windows",
-		url = "https://renderdoc.org/stable/1.25/RenderDoc_1.25_64.zip",
+		url = "https://renderdoc.org/stable/1.24/RenderDoc_1.24_64.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq RenderDoc_1.25_64.zip")
+			run:execute(UNZIP .. " -qq RenderDoc_1.24_64.zip")
 		end
 	},
 }
