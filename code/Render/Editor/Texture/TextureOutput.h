@@ -31,7 +31,7 @@ public:
 	bool m_generateNormalMap = false;
 	float m_scaleDepth = 0.0f;
 	bool m_generateMips = true;
-	bool m_keepZeroAlpha = true;
+	bool m_keepZeroAlpha = false;
 	TextureType m_textureType = Tt2D;
 	bool m_hasAlpha = false;
 	bool m_generateAlpha = false;
