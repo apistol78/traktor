@@ -120,11 +120,13 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (!renderView)
 		return nullptr;
 
+#if defined(_WIN32) && !defined(_DEBUG)
 	if (m_apiRenderDoc)
 		m_apiRenderDoc->SetActiveWindow(
 			m_renderSystem->getInternalHandle(),
 			desc.syswin.hWnd
 		);
+#endif
 
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
