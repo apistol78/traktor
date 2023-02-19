@@ -269,7 +269,7 @@ int main(int argc, const char** argv)
 			return 0;
 		}
 
-		Path fileName = cmdLine.getString(0);
+		const Path fileName = cmdLine.getString(0);
 
 		Ref< traktor::IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 		if (!file)
@@ -289,7 +289,7 @@ int main(int argc, const char** argv)
 
 		safeClose(file);
 
-		std::wstring text = ss.str();
+		const std::wstring text = ss.str();
 
 		g_scriptCompiler = new script::ScriptCompilerLua();
 		g_scriptManager = new script::ScriptManagerLua();
@@ -297,8 +297,8 @@ int main(int argc, const char** argv)
 		run::Run::registerRuntimeClasses(g_scriptManager);
 		net::Network::initialize();
 
-		bool explicitRun = cmdLine.hasOption(L"as-run");
-		bool explicitTemplate = cmdLine.hasOption(L"as-template");
+		const bool explicitRun = cmdLine.hasOption(L"as-run");
+		const bool explicitTemplate = cmdLine.hasOption(L"as-template");
 
 		if ((explicitRun && !explicitTemplate) || compareIgnoreCase(fileName.getExtension(), L"run") == 0)
 			result = run::executeRun(text, fileName, cmdLine);
@@ -306,6 +306,8 @@ int main(int argc, const char** argv)
 			result = run::executeTemplate(text, fileName, cmdLine);
 		else
 			log::error << L"Unknown file type \"" << fileName.getExtension() << L"\"; must be either \"run\" or \"template\"." << Endl;
+
+		g_scriptCompiler = nullptr;
 
 		net::Network::finalize();
 		safeDestroy(g_scriptManager);

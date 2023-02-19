@@ -11,14 +11,15 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/AnsiEncoding.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/MD5.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/MD5.h"
-#include "Core/Log/Log.h"
+#include "Core/System/ResolveEnv.h"
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
@@ -638,25 +639,25 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 
 		if (!configuration->getDebugEnvironment().empty())
 		{
-			os << L"<LocalDebuggerEnvironment>" << configuration->getDebugEnvironment() << L"</LocalDebuggerEnvironment>" << Endl;
+			os << L"<LocalDebuggerEnvironment>" << resolveEnv(configuration->getDebugEnvironment(), nullptr) << L"</LocalDebuggerEnvironment>" << Endl;
 			needed = true;
 		}
 
 		if (!configuration->getDebugExecutable().empty())
 		{
-			os << L"<LocalDebuggerCommand>" << configuration->getDebugExecutable() << L"</LocalDebuggerCommand>" << Endl;
+			os << L"<LocalDebuggerCommand>" << resolveEnv(configuration->getDebugExecutable(), nullptr) << L"</LocalDebuggerCommand>" << Endl;
 			needed = true;
 		}
 
 		if (!configuration->getDebugWorkingDirectory().empty())
 		{
-			os << L"<LocalDebuggerWorkingDirectory>" << configuration->getDebugWorkingDirectory() << L"</LocalDebuggerWorkingDirectory>" << Endl;
+			os << L"<LocalDebuggerWorkingDirectory>" << resolveEnv(configuration->getDebugWorkingDirectory(), nullptr) << L"</LocalDebuggerWorkingDirectory>" << Endl;
 			needed = true;
 		}
 
 		if (!configuration->getDebugArguments().empty())
 		{
-			os << L"<LocalDebuggerCommandArguments>" << configuration->getDebugArguments() << L"</LocalDebuggerCommandArguments>" << Endl;
+			os << L"<LocalDebuggerCommandArguments>" << resolveEnv(configuration->getDebugArguments(), nullptr) << L"</LocalDebuggerCommandArguments>" << Endl;
 			needed = true;
 		}
 

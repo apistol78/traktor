@@ -17,35 +17,38 @@ std::wstring resolveEnv(const std::wstring& s, const Environment* env)
 {
 	std::wstring tmp = s;
 	std::wstring val;
+	size_t ofs = 0;
 
 	for (;;)
 	{
-		size_t s = tmp.find(L"$(");
+		const size_t s = tmp.find(L"$(", ofs);
 		if (s == std::string::npos)
 			break;
 
-		size_t e = tmp.find(L")", s + 2);
+		const size_t e = tmp.find(L")", s + 2);
 		if (e == std::string::npos)
 			break;
 
-		std::wstring name = tmp.substr(s + 2, e - s - 2);
+		const std::wstring name = tmp.substr(s + 2, e - s - 2);
 
-		if (env)
+		if (env && env->has(name))
 		{
-			if (env->has(name))
-			{
-				tmp = tmp.substr(0, s) + replaceAll(env->get(name), L'\\', L'/') + tmp.substr(e + 1);
-				continue;
-			}
+			const std::wstring sub = replaceAll(env->get(name), L'\\', L'/');
+			tmp = tmp.substr(0, s) + sub + tmp.substr(e + 1);
+			ofs = s + sub.length();
 		}
-
-		if (OS::getInstance().getEnvironment(name, val))
+		else if (OS::getInstance().getEnvironment(name, val))
 		{
-			tmp = tmp.substr(0, s) + replaceAll(val, L'\\', L'/') + tmp.substr(e + 1);
-			continue;
+			const std::wstring sub = replaceAll(val, L'\\', L'/');
+			tmp = tmp.substr(0, s) + sub + tmp.substr(e + 1);
+			ofs = s + sub.length();
 		}
-
-		tmp = tmp.substr(0, s) + tmp.substr(e + 1);
+		else
+		{
+			const std::wstring sub =  L"$(" + name + L")";
+			tmp = tmp.substr(0, s) + sub + tmp.substr(e + 1);
+			ofs = s + sub.length();
+		}
 	}
 
 	return tmp;
