@@ -11,6 +11,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/System/ResolveEnv.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 
@@ -36,9 +37,9 @@ bool SolutionBuilderMsvcVCXCustomBuildTool::generateProject(
 	os << L"<" << m_name << L" Include=\"" << fileName.getPathName() << L"\">" << Endl;
 	os << IncreaseIndent;
 
-	os << L"<Command>" << context.format(m_command) << L"</Command>" << Endl;
+	os << L"<Command>" << resolveEnv(context.format(m_command), nullptr) << L"</Command>" << Endl;
 	os << L"<Message>" << context.format(m_message) << L"</Message>" << Endl;
-	os << L"<Outputs>" << context.format(m_outputs) << L"</Outputs>" << Endl;
+	os << L"<Outputs>" << resolveEnv(context.format(m_outputs), nullptr) << L"</Outputs>" << Endl;
 
 	os << DecreaseIndent;
 	os << L"</" << m_name << L">" << Endl;

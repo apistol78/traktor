@@ -8,12 +8,13 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Core/System/ResolveEnv.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 #include "SolutionBuilder/File.h"
@@ -54,7 +55,7 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 
 	for (std::set< std::wstring >::const_iterator i = libraryPaths.begin(); i != libraryPaths.end(); ++i)
 	{
-		std::wstring libraryPath = context.getProjectRelativePath(*i, m_resolvePaths);
+		const std::wstring libraryPath = context.getProjectRelativePath(*i, m_resolvePaths);
 		sslp << libraryPath << L";";
 	}
 
@@ -92,8 +93,11 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	os << L"<" << m_name << L">" << Endl;
 	os << IncreaseIndent;
 
-	for (std::vector< Option >::const_iterator i = m_options.begin(); i != m_options.end(); ++i)
-		os << L"<" << i->name << L">" << context.format(i->value) << L"</" << i->name << L">" << Endl;
+	for (const auto& option : m_options)
+	{
+		const std::wstring value = context.format(option.value);
+		os << L"<" << option.name << L">" << resolveEnv(value, nullptr) << L"</" << option.name << L">" << Endl;
+	}
 
 	os << DecreaseIndent;
 	os << L"</" << m_name << L">" << Endl;

@@ -41,12 +41,12 @@ std::wstring GeneratorContext::format(const std::wstring& option) const
 	{
 		final += option.substr(s, n - s);
 
-		size_t e = option.find(L")", n + 2);
+		const size_t e = option.find(L")", n + 2);
 		if (e == std::wstring::npos)
 			break;
 
-		std::wstring key = option.substr(n + 2, e - n - 2);
-		auto it = m_values.find(key);
+		const std::wstring key = option.substr(n + 2, e - n - 2);
+		const auto it = m_values.find(key);
 		if (it != m_values.end())
 			final += it->second;
 		else
