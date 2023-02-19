@@ -88,6 +88,10 @@ void NumericPropertyItem::setLimit(double limitMin, double limitMax)
 void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_editor);
+
+	const float limitMin = (m_representation == RpPercent) ? m_limitMin * 100.0f : m_limitMin;
+	const float limitMax = (m_representation == RpPercent) ? m_limitMax * 100.0f : m_limitMax;
+
 	m_editor = new Edit();
 	m_editor->create(
 		parent,
@@ -95,8 +99,8 @@ void NumericPropertyItem::createInPlaceControls(PropertyList* parent)
 		WsWantAllInput,
 		m_hex ? nullptr : new NumericEditValidator(
 			m_floatPoint,
-			m_limitMin,
-			m_limitMax
+			limitMin,
+			limitMax
 		)
 	);
 	m_editor->setVisible(false);
