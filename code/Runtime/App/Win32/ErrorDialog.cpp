@@ -26,12 +26,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ErrorDialog", ErrorDialog, ui::Dialog)
 
 bool ErrorDialog::create()
 {
+	const int32_t f = ui::dpi96(4);
+
 	if (!ui::Dialog::create(
 		nullptr,
 		L"Error",
 		ui::dpi96(700),
 		ui::dpi96(450),
-		ui::Dialog::WsDefaultResizable,
+		ui::Dialog::WsDefaultResizable | ui::Dialog::WsCenterDesktop,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))
 		return false;
@@ -40,10 +42,10 @@ bool ErrorDialog::create()
 	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"image"), ui::Image::WsTransparent);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 4, 4));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", f, f));
 
 	Ref< ui::Container > containerText = new ui::Container();
-	containerText->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
+	containerText->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
 
 	Ref< ui::Static > staticText = new ui::Static();
 	staticText->create(containerText, L"Unfortunately there has been an error");
@@ -52,7 +54,7 @@ bool ErrorDialog::create()
 	m_listLog->create(containerText, ui::WsNone, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
-	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 4));
+	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, f));
 
 	Ref< ui::Static > staticDummy = new ui::Static();
 	staticDummy->create(containerButtons, L"");
@@ -60,11 +62,6 @@ bool ErrorDialog::create()
 	Ref< ui::Button > buttonCopy = new ui::Button();
 	buttonCopy->create(containerButtons, L"Copy to clipboard");
 	buttonCopy->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickCopy);
-
-	Ref< ui::Button > buttonUpload = new ui::Button();
-	buttonUpload->create(containerButtons, L"Upload crash dump");
-	buttonUpload->addEventHandler< ui::ButtonClickEvent >(this, &ErrorDialog::eventButtonClickUpload);
-	buttonUpload->setEnable(false);
 
 	Ref< ui::Button > buttonQuit = new ui::Button();
 	buttonQuit->create(containerButtons, L"Quit");
@@ -81,10 +78,6 @@ void ErrorDialog::addErrorString(const std::wstring& errorString)
 void ErrorDialog::eventButtonClickCopy(ui::ButtonClickEvent* event)
 {
 	m_listLog->copyLog();
-}
-
-void ErrorDialog::eventButtonClickUpload(ui::ButtonClickEvent* event)
-{
 }
 
 void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)

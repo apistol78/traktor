@@ -35,8 +35,6 @@ private:
 
 	void eventButtonClickCopy(ui::ButtonClickEvent* event);
 
-	void eventButtonClickUpload(ui::ButtonClickEvent* event);
-
 	void eventButtonClickQuit(ui::ButtonClickEvent* event);
 };
 
