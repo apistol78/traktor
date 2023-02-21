@@ -23,14 +23,6 @@ namespace traktor::mesh
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 
-struct SortRenderInstance
-{
-	bool operator () (const InstanceMesh::RenderInstance& d1, const InstanceMesh::RenderInstance& d2) const
-	{
-		return d1.distance < d2.distance;
-	}
-};
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
@@ -70,7 +62,9 @@ void InstanceMesh::build(
 		return;
 
 	// Sort instances by ascending distance; note we're sorting caller's vector.
-	std::sort(instanceWorld.begin(), instanceWorld.end(), SortRenderInstance());
+	std::sort(instanceWorld.begin(), instanceWorld.end(), [](const InstanceMesh::RenderInstance& d1, const InstanceMesh::RenderInstance& d2) {
+		return d1.distance < d2.distance;
+	});
 
 	const auto& meshParts = m_renderMesh->getParts();
 
@@ -105,7 +99,7 @@ void InstanceMesh::build(
 
 		for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 		{
-			uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
+			const uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 			for (uint32_t j = 0; j < batchCount; ++j)
 			{
@@ -176,7 +170,7 @@ void InstanceMesh::build(
 
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
 			{
-				uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
+				const uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
 
 				for (uint32_t j = 0; j < batchCount; ++j)
 				{
