@@ -10,6 +10,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
@@ -48,14 +49,14 @@ const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
 const Guid c_guidTerrainShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
-const Guid c_guidTerrainShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
+const Guid c_guidTerrainShaderTemplate(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
 
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
+	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
 	:	m_pipelineBuilder(pipelineBuilder)
 	,	m_surfaceShaderImpl(surfaceShaderImpl)
 	{
@@ -84,11 +85,11 @@ Guid combineGuids(const Guid& g1, const Guid& g2)
 
 void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* heightfield, std::vector< TerrainResource::Patch >& outPatches)
 {
-	uint32_t patchDim = terrainAsset->getPatchDim();
-	uint32_t detailSkip = terrainAsset->getDetailSkip();
+	const uint32_t patchDim = terrainAsset->getPatchDim();
+	const uint32_t detailSkip = terrainAsset->getDetailSkip();
 
-	uint32_t heightfieldSize = heightfield->getSize();
-	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+	const uint32_t heightfieldSize = heightfield->getSize();
+	const uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
 
 	outPatches.resize(patchCount * patchCount);
 
@@ -131,7 +132,7 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
-	pipelineDepends->addDependency(c_guidTerrainShaderTemplate_VFetch, editor::PdfUse);
+	pipelineDepends->addDependency(c_guidTerrainShaderTemplate, editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidSurfaceShaderPlaceholder, editor::PdfUse);
@@ -212,8 +213,7 @@ bool TerrainPipeline::buildOutput(
 		return false;
 	}
 
-	sourceData->close();
-	sourceData = nullptr;
+	safeClose(sourceData);
 
 	// Check if heightfield have cuts.
 	uint32_t cutsCount = 0;
@@ -221,7 +221,7 @@ bool TerrainPipeline::buildOutput(
 	const uint8_t* cuts = heightfield->getCuts();
 	if (cuts)
 	{
-		int32_t size = heightfield->getSize();
+		const int32_t size = heightfield->getSize();
 		for (int32_t i = 0; i < size * size / 8; ++i)
 		{
 			if (cuts[i] != 0xff)
@@ -230,13 +230,13 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	// Generate uids.
+	const Guid splatMapGuid = combineGuids(c_guidSplatMapSeed, outputGuid);
+	const Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
+	const Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
+	const Guid cutMapGuid = (cutsCount >= c_cutsCountThreshold) ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
+	const Guid terrainShaderGuid = combineGuids(c_guidTerrainShaderSeed, outputGuid);
+	const Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
 	Guid colorMapGuid;
-	Guid splatMapGuid = combineGuids(c_guidSplatMapSeed, outputGuid);
-	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
-	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
-	Guid cutMapGuid = (cutsCount >= c_cutsCountThreshold) ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
-	Guid terrainShaderGuid = combineGuids(c_guidTerrainShaderSeed, outputGuid);
-	Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
 
 	// Create color texture.
 	Ref< IStream > file = sourceInstance->readData(L"Color");
@@ -325,7 +325,7 @@ bool TerrainPipeline::buildOutput(
 	Ref< render::ShaderGraph > surfaceShaderImpl = DeepClone(assetSurfaceShader).create< render::ShaderGraph >();
 
 	// Read shader templates.
-	Ref< const render::ShaderGraph > terrainShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainShaderTemplate_VFetch);
+	Ref< const render::ShaderGraph > terrainShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainShaderTemplate);
 	if (!terrainShaderTemplate)
 	{
 		log::error << L"Terrain pipeline failed; unable to get terrain template shader-" << Endl;
@@ -357,7 +357,7 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	// Build shaders.
-	std::wstring shaderPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format();
+	const std::wstring shaderPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format();
 
 	if (!pipelineBuilder->buildAdHocOutput(
 		terrainShader,

@@ -35,6 +35,7 @@ const render::Handle c_handleTerrain_PatchOrigin(L"Terrain_PatchOrigin");
 const render::Handle c_handleTerrain_PatchExtent(L"Terrain_PatchExtent");
 const render::Handle c_handleTerrain_TextureOffset(L"Terrain_TextureOffset");
 
+const bool c_enableVirtualTexture = false;
 const uint32_t c_maxUpdatePerFrame = 4;
 const int32_t c_margin = 2;
 
@@ -72,36 +73,39 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
-	m_alloc = TerrainSurfaceAlloc(size);
-
-	const int32_t mipCount = (int32_t)log2(size) + 1;
-
-	// Create virtual terrain albedo and roughness texture.
+	if (c_enableVirtualTexture)
 	{
-		render::SimpleTextureCreateDesc desc = {};
-		desc.width = size;
-		desc.height = size;
-		desc.mipCount = 1; //mipCount;
-		desc.format = render::TfR8G8B8A8;
-		desc.sRGB = false;
-		desc.immutable = false;
-		m_virtualAlbedo = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
-		if (!m_virtualAlbedo)
-			return false;
-	}
+		m_alloc = TerrainSurfaceAlloc(size);
 
-	// Create virtual terrain normals texture.
-	{
-		render::SimpleTextureCreateDesc desc = {};
-		desc.width = size;
-		desc.height = size;
-		desc.mipCount = 1; //mipCount;
-		desc.format = render::TfR11G11B10F;
-		desc.sRGB = false;
-		desc.immutable = false;
-		m_virtualNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
-		if (!m_virtualNormals)
-			return false;
+		const int32_t mipCount = (int32_t)log2(size) + 1;
+
+		// Create virtual terrain albedo and roughness texture.
+		{
+			render::SimpleTextureCreateDesc desc = {};
+			desc.width = size;
+			desc.height = size;
+			desc.mipCount = 1; //mipCount;
+			desc.format = render::TfR8G8B8A8;
+			desc.sRGB = false;
+			desc.immutable = false;
+			m_virtualAlbedo = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
+			if (!m_virtualAlbedo)
+				return false;
+		}
+
+		// Create virtual terrain normals texture.
+		{
+			render::SimpleTextureCreateDesc desc = {};
+			desc.width = size;
+			desc.height = size;
+			desc.mipCount = 1; //mipCount;
+			desc.format = render::TfR11G11B10F;
+			desc.sRGB = false;
+			desc.immutable = false;
+			m_virtualNormals = renderSystem->createSimpleTexture(desc, T_FILE_LINE_W);
+			if (!m_virtualNormals)
+				return false;
+		}
 	}
 
 	// Create base texture, a low resolution copy
@@ -231,6 +235,9 @@ void TerrainSurfaceCache::setupPatch(
 	Vector4& outTextureOffset
 )
 {
+	if (!c_enableVirtualTexture)
+		return;
+
 	const int32_t virtualMipCount = 1; // (int32_t)log2(m_alloc.getVirtualSize()) + 1;
 
 	// If the cache is already valid we just reuse it.

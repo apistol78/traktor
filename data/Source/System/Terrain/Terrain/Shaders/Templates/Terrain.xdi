@@ -148,8 +148,8 @@
 			<id>{680F9D53-7F14-9D4D-9578-B08395BEDE19}</id>
 			<comment/>
 			<position>
-				<first>-799</first>
-				<second>273</second>
+				<first>-786</first>
+				<second>234</second>
 			</position>
 			<parameterName>Terrain_PatchExtent</parameterName>
 			<type>Vector</type>
@@ -277,16 +277,16 @@ Generated texture from surface cache.
 			<id>{180FE1F2-614A-514D-8E2F-ED363C0245BA}</id>
 			<comment/>
 			<position>
-				<first>-361</first>
-				<second>-655</second>
+				<first>-152</first>
+				<second>-677</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{19A79279-80E8-E141-A954-9E18A85AA347}</id>
 			<comment/>
 			<position>
-				<first>-924</first>
-				<second>-913</second>
+				<first>-1084</first>
+				<second>-975</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -308,16 +308,16 @@ Generated texture from surface cache.
 			<id>{9638EE19-69BE-CF49-8606-546B48AAC882}</id>
 			<comment/>
 			<position>
-				<first>-1035</first>
-				<second>-915</second>
+				<first>-1195</first>
+				<second>-977</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{62A562A9-FB71-EB42-80E7-98A5AF9F5287}</id>
 			<comment/>
 			<position>
-				<first>-572</first>
-				<second>-588</second>
+				<first>-356</first>
+				<second>-632</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -404,8 +404,8 @@ Generated texture from surface cache.
 			<id>{3BC1FCD1-BF39-F94C-8059-9BF410BC09B7}</id>
 			<comment/>
 			<position>
-				<first>-502</first>
-				<second>407</second>
+				<first>-417</first>
+				<second>408</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -424,8 +424,8 @@ Generated texture from surface cache.
 			<id>{A5E7AB75-6888-7F42-AF6D-DCFD110BED13}</id>
 			<comment/>
 			<position>
-				<first>-1217</first>
-				<second>-928</second>
+				<first>-1377</first>
+				<second>-990</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -616,8 +616,8 @@ Generated texture from surface cache.
 			<id>{B547F714-60D5-2342-8C0E-90D80676B9D8}</id>
 			<comment/>
 			<position>
-				<first>-17</first>
-				<second>-187</second>
+				<first>218</first>
+				<second>-378</second>
 			</position>
 			<name>L_SurfaceAlbedo</name>
 			<global>false</global>
@@ -636,28 +636,18 @@ Generated texture from surface cache.
 			<id>{437C2A4C-5C5F-AA41-A372-380D3B91A86C}</id>
 			<comment/>
 			<position>
-				<first>-1069</first>
-				<second>-756</second>
+				<first>-882</first>
+				<second>-706</second>
 			</position>
 			<name>L_SurfaceNormal</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{0B44B4EE-D060-3F40-AD61-CC15B2A7411E}</id>
-			<comment/>
-			<position>
-				<first>-1385</first>
-				<second>-505</second>
-			</position>
-			<name>L_GeometryNormal</name>
 			<global>false</global>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{466847D9-69C1-FB40-92A9-B8A368FEFA2F}</id>
 			<comment/>
 			<position>
-				<first>-1129</first>
-				<second>-603</second>
+				<first>-1162</first>
+				<second>-618</second>
 			</position>
 			<name>L_GeometryNormal</name>
 			<global>false</global>
@@ -666,8 +656,8 @@ Generated texture from surface cache.
 			<id>{6999ECE0-9BC3-C34C-80CA-6926A9C98E1B}</id>
 			<comment/>
 			<position>
-				<first>-1513</first>
-				<second>-718</second>
+				<first>-1594</first>
+				<second>-632</second>
 			</position>
 			<name>L_GeometryNormal</name>
 			<global>false</global>
@@ -676,25 +666,25 @@ Generated texture from surface cache.
 			<id>{F4E8C19B-608A-C94E-99E7-1CFE5377B638}</id>
 			<comment/>
 			<position>
-				<first>-1164</first>
-				<second>-563</second>
+				<first>-1354</first>
+				<second>-589</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{90C83707-E8E2-DF47-8EBE-0D283FCB2261}</id>
 			<comment/>
 			<position>
-				<first>-1527</first>
-				<second>-650</second>
+				<first>-1588</first>
+				<second>-676</second>
 			</position>
-			<value>0, 0, -1, 0</value>
+			<value>0, 0, 1, 0</value>
 		</item>
 		<item type="traktor.render.Cross" version="traktor.render.Node:1">
 			<id>{361FF238-FCE7-6448-B796-763EA66E308A}</id>
 			<comment/>
 			<position>
-				<first>-1284</first>
-				<second>-707</second>
+				<first>-1357</first>
+				<second>-676</second>
 			</position>
 		</item>
 		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
@@ -704,15 +694,6 @@ Generated texture from surface cache.
 				<first>-896</first>
 				<second>-652</second>
 			</position>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{EE89F491-7BA1-E74F-B541-56CAC25E3DC1}</id>
-			<comment/>
-			<position>
-				<first>-851</first>
-				<second>-717</second>
-			</position>
-			<swizzle>xzy</swizzle>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{EFCE9FC4-5E73-3C4E-B763-5AEA373E2191}</id>
@@ -726,8 +707,8 @@ Generated texture from surface cache.
 			<id>{45CCF349-0706-E644-BA9F-EEF898C9A018}</id>
 			<comment/>
 			<position>
-				<first>-459</first>
-				<second>-884</second>
+				<first>-775</first>
+				<second>-970</second>
 			</position>
 			<name>L_GeometryNormal</name>
 			<global>false</global>
@@ -736,8 +717,8 @@ Generated texture from surface cache.
 			<id>{732D0940-5786-D74C-A231-6968FE7A5A01}</id>
 			<comment/>
 			<position>
-				<first>21</first>
-				<second>-8</second>
+				<first>218</first>
+				<second>-332</second>
 			</position>
 			<name>L_SurfaceNormal</name>
 			<global>false</global>
@@ -746,8 +727,8 @@ Generated texture from surface cache.
 			<id>{36D3D25E-A79B-9D4C-B978-174DC2DAFD43}</id>
 			<comment/>
 			<position>
-				<first>-76</first>
-				<second>-666</second>
+				<first>133</first>
+				<second>-688</second>
 			</position>
 			<name>L_ViewNormal</name>
 			<global>false</global>
@@ -874,14 +855,6 @@ Generated texture from surface cache.
 				<second>-103</second>
 			</position>
 		</item>
-		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
-			<id>{B1E1B85A-17AC-0B4D-B0FA-FF81FC1699A0}</id>
-			<comment/>
-			<position>
-				<first>-662</first>
-				<second>-930</second>
-			</position>
-		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{599DDC9A-2830-2D44-9E6D-CA252DA9BB43}</id>
 			<comment/>
@@ -895,8 +868,8 @@ Generated texture from surface cache.
 			<id>{C72A149C-D8E5-0344-9A87-676FCD57F888}</id>
 			<comment/>
 			<position>
-				<first>-21</first>
-				<second>-121</second>
+				<first>218</first>
+				<second>-286</second>
 			</position>
 			<name>L_SurfaceRoughness</name>
 			<global>false</global>
@@ -936,7 +909,7 @@ Generated texture from surface cache.
 				<first>2415</first>
 				<second>-64</second>
 			</position>
-			<value>1</value>
+			<value>0</value>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C58E36CC-A50B-9D4E-A11B-252F9BE17A99}</id>
@@ -1190,8 +1163,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{EA2C3FFC-EDA8-7B43-9BD9-E521EB0804F8}</id>
 			<comment/>
 			<position>
-				<first>-762</first>
-				<second>231</second>
+				<first>-756</first>
+				<second>274</second>
 			</position>
 			<name>L_PatchOrigin</name>
 			<global>false</global>
@@ -1243,6 +1216,135 @@ $Output = gl_DrawID;
 			<position>
 				<first>-1316</first>
 				<second>410</second>
+			</position>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{A197918C-97BC-3D4A-9887-06D09EE60755}</id>
+			<comment/>
+			<position>
+				<first>-462</first>
+				<second>-395</second>
+			</position>
+			<fragmentGuid>{23790224-9E2A-4C43-9C3B-F659BE962E10}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
+					<name>T_Height</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
+					<name>T_Normal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
+					<name>T_PatchTexCoord</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
+					<name>T_WorldTexCoord</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
+					<name>T_Color</name>
+				</item>
+				<item>
+					<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
+					<name>T_Normal</name>
+				</item>
+				<item>
+					<id>{C20462C0-7BDF-4542-A9AE-B885F31015EE}</id>
+					<name>T_Roughness</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{36818852-0923-0C4A-B030-1A368797EFEE}</id>
+			<comment/>
+			<position>
+				<first>-678</first>
+				<second>-433</second>
+			</position>
+			<name>L_Height</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{3529083A-FB00-D741-B0B8-2D79F9D5A07B}</id>
+			<comment/>
+			<position>
+				<first>-742</first>
+				<second>-391</second>
+			</position>
+			<name>L_GeometryNormal</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{C5E8F8E1-7C3C-5E4A-9D29-8C1FC1A54419}</id>
+			<comment/>
+			<position>
+				<first>-726</first>
+				<second>-349</second>
+			</position>
+			<name>L_DebugTexCoord</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{790CB226-6F3C-5147-A252-754C24C03AC5}</id>
+			<comment/>
+			<position>
+				<first>-15</first>
+				<second>-385</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{9AA654B8-1936-BE47-970A-70C4901FC6B2}</id>
+			<comment/>
+			<position>
+				<first>-15</first>
+				<second>-348</second>
+			</position>
+			<swizzle>xzy</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{31E91700-E76F-BB44-8EC3-FB31202E8285}</id>
+			<comment/>
+			<position>
+				<first>-15</first>
+				<second>-311</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{F3EACC5B-AEB4-2346-A342-8EA7728B0D76}</id>
+			<comment/>
+			<position>
+				<first>-694</first>
+				<second>-307</second>
+			</position>
+			<name>L_TexCoord</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{750D3BDC-3D4C-5743-B1AC-589A77EC189B}</id>
+			<comment/>
+			<position>
+				<first>-543</first>
+				<second>397</second>
+			</position>
+		</item>
+		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
+			<id>{A550A9D4-6122-614B-A8D9-AA31FE164B72}</id>
+			<comment/>
+			<position>
+				<first>-376</first>
+				<second>-709</second>
 			</position>
 		</item>
 	</nodes>
@@ -1509,16 +1611,6 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1599,62 +1691,42 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[55]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{585541AA-7E7B-44C5-B872-328289FB4854}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<id>{6A074E66-11A2-4867-A53C-8165AE05CB3B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[55]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1663,7 +1735,7 @@ $Output = gl_DrawID;
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<id>{0E1DD1C2-A1C5-C141-B1AC-2F8D5E94D74B}</id>
 			</destination>
 		</item>
@@ -1673,57 +1745,17 @@ $Output = gl_DrawID;
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[53]"/>
-				<id>{38F0F19A-E863-4D0D-9AA1-72392DF1A076}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[53]"/>
-				<id>{FBA4F44A-9C8C-4AC5-9A2C-1E2D9D410187}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[53]"/>
-				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{38F0F19A-E863-4D0D-9AA1-72392DF1A076}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{FBA4F44A-9C8C-4AC5-9A2C-1E2D9D410187}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<id>{FFE19E4E-24A8-47A4-AE80-307495E31066}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
@@ -1733,13 +1765,13 @@ $Output = gl_DrawID;
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
@@ -1749,21 +1781,21 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[66]"/>
+				<node ref="/object/nodes/item[64]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
@@ -1783,38 +1815,18 @@ $Output = gl_DrawID;
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[65]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[68]"/>
+				<node ref="/object/nodes/item[66]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[67]"/>
+				<node ref="/object/nodes/item[65]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1823,58 +1835,48 @@ $Output = gl_DrawID;
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[70]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
-				<id>{831220B5-72C3-C442-9900-CC1E3BFE0386}</id>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[60]"/>
-				<id>{75EEF50B-9372-D44C-86B7-DC6E234B36AE}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[58]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<node ref="/object/nodes/item[69]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1883,43 +1885,13 @@ $Output = gl_DrawID;
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[72]"/>
+				<node ref="/object/nodes/item[71]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[72]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[73]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[75]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -1929,7 +1901,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[76]"/>
+				<node ref="/object/nodes/item[73]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
@@ -1939,7 +1911,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[77]"/>
+				<node ref="/object/nodes/item[74]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
@@ -1949,17 +1921,17 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[78]"/>
+				<node ref="/object/nodes/item[75]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[80]"/>
+				<node ref="/object/nodes/item[77]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -1969,41 +1941,41 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[81]"/>
+				<node ref="/object/nodes/item[78]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[82]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[79]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[83]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[84]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{51E30CE0-3C94-4668-AC3A-2CE903530D64}</id>
 			</destination>
 		</item>
@@ -2013,7 +1985,7 @@ $Output = gl_DrawID;
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{52A043E1-22B9-C742-A1A6-8341D043284F}</id>
 			</destination>
 		</item>
@@ -2029,41 +2001,41 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[89]"/>
+				<node ref="/object/nodes/item[86]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[90]"/>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[90]"/>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[87]"/>
+				<node ref="/object/nodes/item[84]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[87]"/>
+				<node ref="/object/nodes/item[84]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[88]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[86]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[90]"/>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
@@ -2079,7 +2051,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[85]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{4F792F72-F9F9-A945-8CAE-8F4EEEE77624}</id>
 			</source>
 			<destination>
@@ -2089,7 +2061,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[91]"/>
+				<node ref="/object/nodes/item[88]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2099,27 +2071,27 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[92]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[92]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[94]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[97]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2129,7 +2101,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[98]"/>
+				<node ref="/object/nodes/item[95]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2139,7 +2111,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[99]"/>
+				<node ref="/object/nodes/item[96]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2149,7 +2121,7 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[99]"/>
+				<node ref="/object/nodes/item[96]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
@@ -2159,62 +2131,262 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[94]"/>
+				<node ref="/object/nodes/item[91]"/>
 				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[101]"/>
+				<node ref="/object/nodes/item[98]"/>
 				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[101]"/>
+				<node ref="/object/nodes/item[98]"/>
 				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[96]"/>
+				<node ref="/object/nodes/item[93]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[93]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[102]"/>
+				<node ref="/object/nodes/item[99]"/>
 				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[102]"/>
+				<node ref="/object/nodes/item[99]"/>
 				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[95]"/>
+				<node ref="/object/nodes/item[92]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[97]"/>
+				<id>{F390BEB8-B32D-504B-BA67-EE3062ABDDC7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[91]"/>
+				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[97]"/>
+				<id>{F390BEB8-B32D-504B-BA67-EE3062ABDDC7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[90]"/>
+				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[101]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[102]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[103]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[104]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[100]"/>
-				<id>{F390BEB8-B32D-504B-BA67-EE3062ABDDC7}</id>
+				<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[94]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+				<node ref="/object/nodes/item[104]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[100]"/>
-				<id>{F390BEB8-B32D-504B-BA67-EE3062ABDDC7}</id>
+				<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[93]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+				<node ref="/object/nodes/item[105]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[100]"/>
+				<id>{C20462C0-7BDF-4542-A9AE-B885F31015EE}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[106]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[107]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[100]"/>
+				<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{D9A0E443-C5DA-B742-9179-9B9EEC290E1B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[108]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[108]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{831220B5-72C3-C442-9900-CC1E3BFE0386}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[105]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[109]"/>
+				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[109]"/>
+				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{04ABEE84-0049-4827-A742-D44EB2D15560}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{FBA4F44A-9C8C-4AC5-9A2C-1E2D9D410187}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{38F0F19A-E863-4D0D-9AA1-72392DF1A076}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{FBA4F44A-9C8C-4AC5-9A2C-1E2D9D410187}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{38F0F19A-E863-4D0D-9AA1-72392DF1A076}</id>
 			</destination>
 		</item>
 	</edges>

@@ -682,7 +682,7 @@ Dynamic surface normal
 				<first>931</first>
 				<second>1599</second>
 			</position>
-			<color>0.172549, 0.172549, 0.34902, 1</color>
+			<color>0.243137, 0.243137, 0.286275, 1</color>
 			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">

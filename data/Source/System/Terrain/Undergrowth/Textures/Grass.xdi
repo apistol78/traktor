@@ -25,7 +25,7 @@
 	<scaleNormalMap>0</scaleNormalMap>
 	<linearGamma>true</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
-	<preserveAlphaCoverage>true</preserveAlphaCoverage>
+	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.3</alphaCoverageReference>
 	<sharpenRadius>5</sharpenRadius>
 	<sharpenStrength>1</sharpenStrength>

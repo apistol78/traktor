@@ -216,8 +216,8 @@ void UndergrowthComponent::build(
 			{
 				const Vector2 ruv = Quasirandom::hammersley(j - cluster.from, cluster.to - cluster.from, random);
 
-				const float dx = (ruv.x * 2.0f - 1.0f) * m_clusterSize;
-				const float dz = (ruv.y * 2.0f - 1.0f) * m_clusterSize;
+				const float dx = (ruv.x * 2.2f - 1.1f) * m_clusterSize;
+				const float dz = (ruv.y * 2.2f - 1.1f) * m_clusterSize;
 
 				const float px = cluster.center.x() + dx;
 				const float pz = cluster.center.z() + dz;
@@ -245,6 +245,16 @@ void UndergrowthComponent::build(
 		return;
 
 	render::RenderContext* renderContext = context.getRenderContext();
+
+	render::ProgramParameters* extraParameters = renderContext->alloc< render::ProgramParameters >();
+	extraParameters->beginParameters(renderContext);
+	extraParameters->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
+	extraParameters->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+	extraParameters->setTextureParameter(s_handleTerrain_SurfaceAlbedo, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
+	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
+	extraParameters->setVectorParameter(s_handleUndergrowth_Eye, eye);
+	extraParameters->setFloatParameter(s_handleUndergrowth_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
+	extraParameters->endParameters(renderContext);
 
 	Vector4 instanceData1[c_maxInstanceCount];
 	Vector4 instanceData2[c_maxInstanceCount];
@@ -284,13 +294,11 @@ void UndergrowthComponent::build(
 			renderBlock->instanceCount = batch;
 
 			renderBlock->programParams->beginParameters(renderContext);
+
+			if (extraParameters)
+				renderBlock->programParams->attachParameters(extraParameters);
+
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
-			renderBlock->programParams->setTextureParameter(s_handleTerrain_Normals, terrain->getNormalMap());
-			renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
-			renderBlock->programParams->setTextureParameter(s_handleTerrain_SurfaceAlbedo, terrainComponent->getSurfaceCache(worldRenderView.getIndex())->getBaseTexture());
-			renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
-			renderBlock->programParams->setVectorParameter(s_handleUndergrowth_Eye, eye);
-			renderBlock->programParams->setFloatParameter(s_handleUndergrowth_MaxDistance, m_layerData.m_spreadDistance + m_clusterSize);
 			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances1, instanceData1, count);
 			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances2, instanceData2, count);
 			renderBlock->programParams->endParameters(renderContext);

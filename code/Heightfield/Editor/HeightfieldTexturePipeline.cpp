@@ -204,17 +204,18 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 	else if (asset->m_output == HeightfieldTextureAsset::OtNormals)
 	{
+		// Create normal map from heightfield; we're storing in XZY since
+		// we assume B to be "primary" axis when compressing.
 		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8G8B8(), size, size);
 		for (int32_t v = 0; v < size; ++v)
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				Vector4 normal = heightfield->normalAt((float)u, (float)v);
-				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				const Vector4 normal = heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 				outputMap->setPixelUnsafe(u, v, Color4f(
 					normal.x(),
-					normal.y(),
-					normal.z()
+					normal.z(),
+					normal.y()
 				));
 			}
 		}

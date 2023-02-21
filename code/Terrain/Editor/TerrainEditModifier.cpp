@@ -376,8 +376,8 @@ bool TerrainEditModifier::activate()
 
 			uint8_t* ptr = &m_normalData[(u + v * size) * 4];
 			ptr[0] = nx;
-			ptr[1] = ny;
-			ptr[2] = nz;
+			ptr[1] = nz;
+			ptr[2] = ny;
 			ptr[3] = 0;
 		}
 	}
@@ -848,8 +848,8 @@ void TerrainEditModifier::apply(const Vector4& center)
 				const uint8_t nz = uint8_t(normal.z() * 255);
 				uint8_t* ptr = &m_normalData[(u + v * size) * 4];
 				ptr[0] = nx;
-				ptr[1] = ny;
-				ptr[2] = nz;
+				ptr[1] = nz;
+				ptr[2] = ny;
 				ptr[3] = 0;
 			}
 		}
