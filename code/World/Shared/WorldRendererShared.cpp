@@ -330,7 +330,7 @@ void WorldRendererShared::setupTileDataPass(
 		{
 			if (light)
 			{
-				Vector4 lightPosition = light->getTransform().translation().xyz1();
+				const Vector4 lightPosition = light->getTransform().translation().xyz1();
 				lightPositions.push_back(worldRenderView.getView() * lightPosition);
 			}
 			else
