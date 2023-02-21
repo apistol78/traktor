@@ -25,7 +25,8 @@ ScriptObjectLua::ScriptObjectLua(ScriptManagerLua* scriptManager, ScriptContextL
 
 ScriptObjectLua::~ScriptObjectLua()
 {
-	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
+	if (m_luaState)
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_tableRef);
 }
 
 Ref< const IRuntimeClass > ScriptObjectLua::getRuntimeClass() const
