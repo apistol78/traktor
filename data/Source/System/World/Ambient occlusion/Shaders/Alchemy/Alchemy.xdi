@@ -144,7 +144,7 @@ Normal in view space.
 				<first>-129</first>
 				<second>-1239</second>
 			</position>
-			<value>1</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{CE3F65A1-DE6C-9C42-B898-4A0B0E4F0661}</id>
@@ -447,10 +447,10 @@ Heaveside
 			]]>
 			</comment>
 			<position>
-				<first>-162</first>
+				<first>-161</first>
 				<second>-1144</second>
 			</position>
-			<value>-0.0025</value>
+			<value>-0.01</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{5EBCD85E-AA7A-F542-931D-AB015ED301CE}</id>
@@ -699,10 +699,10 @@ Heaveside
 			]]>
 			</comment>
 			<position>
-				<first>-133</first>
+				<first>-135</first>
 				<second>-1183</second>
 			</position>
-			<value>1.3</value>
+			<value>0.85</value>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{E1369009-8C7B-0149-A2E7-98A906A409B7}</id>
@@ -1126,7 +1126,6 @@ highp float c = 43758.5453;
 highp float dt = dot(co.xy, vec2(a, b));
 highp float sn = mod(dt, 3.14);
 $Output = fract(sin(sn) * c) * 2 * 3.14;
-
 			]]>
 			</script>
 		</item>
