@@ -682,7 +682,7 @@ Dynamic surface normal
 				<first>920</first>
 				<second>1497</second>
 			</position>
-			<color>0.65098, 0.705882, 1, 0.25098</color>
+			<color>0, 0, 0.270588, 1</color>
 			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -746,8 +746,8 @@ Dynamic surface normal
 			<id>{3A13650E-6975-1148-AE37-120CC16EE012}</id>
 			<comment/>
 			<position>
-				<first>979</first>
-				<second>1768</second>
+				<first>980</first>
+				<second>1725</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -755,8 +755,8 @@ Dynamic surface normal
 			<id>{CA8070C4-B20A-2444-B4E1-514B062D7722}</id>
 			<comment/>
 			<position>
-				<first>980</first>
-				<second>1816</second>
+				<first>978</first>
+				<second>1784</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -764,8 +764,8 @@ Dynamic surface normal
 			<id>{B41E1984-42CC-DC4D-AFFA-3D93A21967A0}</id>
 			<comment/>
 			<position>
-				<first>988</first>
-				<second>1625</second>
+				<first>977</first>
+				<second>1593</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -773,10 +773,10 @@ Dynamic surface normal
 			<id>{9EE2F01F-2A52-E24E-B0A9-F3D7AE2E0C1F}</id>
 			<comment/>
 			<position>
-				<first>980</first>
-				<second>1723</second>
+				<first>978</first>
+				<second>1679</second>
 			</position>
-			<value>0.1</value>
+			<value>0.45</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C1439711-F197-B847-819D-44565E902E93}</id>
@@ -873,27 +873,28 @@ Dynamic surface normal
 			<id>{1F5DEF16-86C3-5C41-A90D-2E67A01659F8}</id>
 			<comment/>
 			<position>
-				<first>987</first>
-				<second>1674</second>
+				<first>981</first>
+				<second>1634</second>
 			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
-			<id>{87B0C5D1-582C-344D-BCF3-C4835DCB7025}</id>
-			<comment/>
-			<position>
-				<first>1092</first>
-				<second>1165</second>
-			</position>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{27C38B1D-0A57-4749-85D9-8E1CF3C1FEE2}</id>
 			<comment/>
 			<position>
-				<first>962</first>
-				<second>1560</second>
+				<first>963</first>
+				<second>1556</second>
 			</position>
 			<value>0.35</value>
+		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{FFA06EFE-5A61-554D-AE13-5E79481F9A08}</id>
+			<comment/>
+			<position>
+				<first>1101</first>
+				<second>630</second>
+			</position>
+			<value>0, 1, 0, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1249,16 +1250,6 @@ Dynamic surface normal
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
-				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[28]"/>
 				<id>{14D695D1-A8C4-1B49-8191-374D7B4D2DB6}</id>
 			</source>
@@ -1583,18 +1574,18 @@ Dynamic surface normal
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[76]"/>
-				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
-				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1609,12 +1600,12 @@ Dynamic surface normal
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[77]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<node ref="/object/nodes/item[37]"/>
+				<id>{8591EE56-8A3E-41CF-8E98-8F8DB26AABDC}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
 			</destination>
 		</item>
 	</edges>
