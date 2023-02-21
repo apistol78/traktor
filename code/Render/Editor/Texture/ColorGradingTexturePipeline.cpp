@@ -60,15 +60,15 @@ bool ColorGradingTexturePipeline::buildOutput(
 	for (int32_t r = 0; r < 64; ++r)
 	{
 		const float fr = float(r) / 63.0f;
-		const float gr = std::pow(fr, asset->getGamma());
+		const float gr = std::pow(fr, asset->getRedGamma());
 		for (int32_t g = 0; g < 64; ++g)
 		{
 			const float fg = float(g) / 63.0f;
-			const float gg = std::pow(fg, asset->getGamma());
+			const float gg = std::pow(fg, asset->getGreenGamma());
 			for (int32_t b = 0; b < 64; ++b)
 			{
 				const float fb = float(b) / 63.0f;
-				const float gb = std::pow(fb, asset->getGamma());
+				const float gb = std::pow(fb, asset->getBlueGamma());
 				image->setPixel(r + b * 64, g, Color4f(gr, gg, gb, 0.0f));
 			}
 		}
