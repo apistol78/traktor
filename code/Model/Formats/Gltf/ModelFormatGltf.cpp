@@ -205,6 +205,18 @@ bool decodeAsVectors(
 	return true;
 }
 
+std::wstring getImageName(const json::JsonObject* image)
+{
+	std::wstring name;
+	
+	if (!(name = image->getMemberString(L"name")).empty())
+		return name;
+	if (!(name = image->getMemberString(L"uri")).empty())
+		return name;
+
+	return L"";
+}
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatGltf", 0, ModelFormatGltf, ModelFormat)
@@ -365,7 +377,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					if (!image)
 						return nullptr;
 
-					const std::wstring name = image->getMemberString(L"name");
+					const std::wstring name = getImageName(image);
 					if (name.empty())
 						return nullptr;
 
@@ -413,7 +425,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					if (!image)
 						return nullptr;
 
-					const std::wstring name = image->getMemberString(L"name");
+					const std::wstring name = getImageName(image);
 					if (name.empty())
 						return nullptr;
 
