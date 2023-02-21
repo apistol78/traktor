@@ -163,7 +163,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(diffuseTexture);
 			mm.setDiffuseMap(Material::Map(
-				getTextureName(diffuseTexture),
+				getTextureName(diffuseTexture) + L"_D",
 				uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer()),
 				true,
 				Guid(),
@@ -176,7 +176,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > specularImage = getEmbeddedTexture(specularTexture);
 			mm.setSpecularMap(Material::Map(
-				getTextureName(specularTexture),
+				getTextureName(specularTexture) + L"_S",
 				uvChannel(outModel, specularTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -189,7 +189,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > shininessImage = getEmbeddedTexture(shininessTexture);
 			mm.setRoughnessMap(Material::Map(
-				getTextureName(shininessTexture),
+				getTextureName(shininessTexture) + L"_Sh",
 				uvChannel(outModel, shininessTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -202,7 +202,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > reflectionFactorImage = getEmbeddedTexture(reflectionFactorTexture);
 			mm.setMetalnessMap(Material::Map(
-				getTextureName(reflectionFactorTexture),
+				getTextureName(reflectionFactorTexture) + L"_Rf",
 				uvChannel(outModel, reflectionFactorTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -215,7 +215,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > normalImage = getEmbeddedTexture(normalTexture);
 			mm.setNormalMap(Material::Map(
-				getTextureName(normalTexture),
+				getTextureName(normalTexture) + L"_N",
 				uvChannel(outModel, normalTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -228,7 +228,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(transparencyTexture);
 			mm.setTransparencyMap(Material::Map(
-				getTextureName(transparencyTexture),
+				getTextureName(transparencyTexture) + L"_T",
 				uvChannel(outModel, transparencyTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -242,7 +242,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > transparencyFactorImage = getEmbeddedTexture(transparencyFactorTexture);
 			mm.setTransparencyMap(Material::Map(
-				getTextureName(transparencyFactorTexture),
+				getTextureName(transparencyFactorTexture) + L"_Tf",
 				uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -256,7 +256,7 @@ bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > emissiveImage = getEmbeddedTexture(emissiveTexture);
 			mm.setEmissiveMap(Material::Map(
-				getTextureName(emissiveTexture),
+				getTextureName(emissiveTexture) + L"_E",
 				uvChannel(outModel, emissiveTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
