@@ -578,8 +578,8 @@ Dynamic surface normal
 			<id>{2AD804BC-3754-4843-B1F1-74D1F7BAD4F3}</id>
 			<comment/>
 			<position>
-				<first>1237</first>
-				<second>1538</second>
+				<first>1260</first>
+				<second>1623</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -679,20 +679,20 @@ Dynamic surface normal
 			<id>{10DFEA9E-C352-974D-BE5E-868590BFC911}</id>
 			<comment/>
 			<position>
-				<first>920</first>
-				<second>1497</second>
+				<first>931</first>
+				<second>1599</second>
 			</position>
-			<color>0, 0, 0.270588, 1</color>
+			<color>0.172549, 0.172549, 0.34902, 1</color>
 			<linear>false</linear>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{EA5423F3-6D60-2845-B0CF-4237E4C8449C}</id>
 			<comment/>
 			<position>
-				<first>370</first>
-				<second>1652</second>
+				<first>223</first>
+				<second>1634</second>
 			</position>
-			<value>0.5</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{1A76E35A-2653-3C46-8F20-3027C6C08E0E}</id>
@@ -746,8 +746,8 @@ Dynamic surface normal
 			<id>{3A13650E-6975-1148-AE37-120CC16EE012}</id>
 			<comment/>
 			<position>
-				<first>980</first>
-				<second>1725</second>
+				<first>999</first>
+				<second>1834</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -755,8 +755,8 @@ Dynamic surface normal
 			<id>{CA8070C4-B20A-2444-B4E1-514B062D7722}</id>
 			<comment/>
 			<position>
-				<first>978</first>
-				<second>1784</second>
+				<first>1001</first>
+				<second>1869</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -764,8 +764,8 @@ Dynamic surface normal
 			<id>{B41E1984-42CC-DC4D-AFFA-3D93A21967A0}</id>
 			<comment/>
 			<position>
-				<first>977</first>
-				<second>1593</second>
+				<first>1000</first>
+				<second>1678</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -773,10 +773,10 @@ Dynamic surface normal
 			<id>{9EE2F01F-2A52-E24E-B0A9-F3D7AE2E0C1F}</id>
 			<comment/>
 			<position>
-				<first>978</first>
-				<second>1679</second>
+				<first>1008</first>
+				<second>1758</second>
 			</position>
-			<value>0.45</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C1439711-F197-B847-819D-44565E902E93}</id>
@@ -826,8 +826,8 @@ Dynamic surface normal
 			<id>{ED5B3C11-CE72-8F40-8A62-EB0823C3469E}</id>
 			<comment/>
 			<position>
-				<first>477</first>
-				<second>1242</second>
+				<first>640</first>
+				<second>1589</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -836,8 +836,8 @@ Dynamic surface normal
 			<id>{A0D9DA06-5C57-1849-B98C-678F09ABB98F}</id>
 			<comment/>
 			<position>
-				<first>596</first>
-				<second>1609</second>
+				<first>449</first>
+				<second>1591</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
@@ -854,8 +854,8 @@ Dynamic surface normal
 			<id>{289F7E9C-D57D-714E-846B-46152985B1C7}</id>
 			<comment/>
 			<position>
-				<first>379</first>
-				<second>1609</second>
+				<first>232</first>
+				<second>1591</second>
 			</position>
 			<name>L_DepthFactor</name>
 			<global>false</global>
@@ -864,28 +864,19 @@ Dynamic surface normal
 			<id>{DB99F067-ABFD-E740-8B86-3CC22A203F1E}</id>
 			<comment/>
 			<position>
-				<first>376</first>
-				<second>1696</second>
+				<first>229</first>
+				<second>1678</second>
 			</position>
-			<value>0.5</value>
+			<value>0.15</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{1F5DEF16-86C3-5C41-A90D-2E67A01659F8}</id>
 			<comment/>
 			<position>
-				<first>981</first>
-				<second>1634</second>
+				<first>1006</first>
+				<second>1720</second>
 			</position>
 			<value>1</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{27C38B1D-0A57-4749-85D9-8E1CF3C1FEE2}</id>
-			<comment/>
-			<position>
-				<first>963</first>
-				<second>1556</second>
-			</position>
-			<value>0.35</value>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{FFA06EFE-5A61-554D-AE13-5E79481F9A08}</id>
@@ -895,6 +886,32 @@ Dynamic surface normal
 				<second>630</second>
 			</position>
 			<value>0, 1, 0, 0</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{07EE1195-099B-3540-A206-347627A0126C}</id>
+			<comment/>
+			<position>
+				<first>1004</first>
+				<second>1794</second>
+			</position>
+			<value>0.45</value>
+		</item>
+		<item type="traktor.render.Max" version="traktor.render.Node:1">
+			<id>{F92109EA-963D-284D-B7C5-C1346F6D5FE7}</id>
+			<comment/>
+			<position>
+				<first>536</first>
+				<second>1335</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{8B045CB9-1179-DD49-8570-04A259D64FE4}</id>
+			<comment/>
+			<position>
+				<first>337</first>
+				<second>1428</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1510,26 +1527,6 @@ Dynamic surface normal
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[73]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1560,32 +1557,12 @@ Dynamic surface normal
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[75]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{808AEF33-7F7B-E047-9A92-183A7D4CE152}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[60]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[59]"/>
 				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1606,6 +1583,76 @@ Dynamic surface normal
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
 				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[75]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{808AEF33-7F7B-E047-9A92-183A7D4CE152}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[77]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{074F482A-002F-364B-A805-0723F0D7CDD7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[69]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{1CD3B29D-693D-4635-B49F-EF53300CAA8A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{D833DB7F-13CB-42D8-8135-48F35EB1288B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[72]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[78]"/>
+				<id>{EF189922-9B95-4572-B8C9-E5BE23606F9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[71]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
 			</destination>
 		</item>
 	</edges>
