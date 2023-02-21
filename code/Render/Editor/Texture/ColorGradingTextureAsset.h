@@ -26,12 +26,18 @@ class T_DLLCLASS ColorGradingTextureAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	float getGamma() const { return m_gamma; }
+	float getRedGamma() const { return m_redGamma; }
+
+	float getGreenGamma() const { return m_greenGamma; }
+
+	float getBlueGamma() const { return m_blueGamma; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_gamma = 1.0f;
+	float m_redGamma = 1.0f;
+	float m_greenGamma = 1.0f;
+	float m_blueGamma = 1.0f;
 };
 
 }

@@ -14,11 +14,24 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ColorGradingTextureAsset", 0, ColorGradingTextureAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ColorGradingTextureAsset", 1, ColorGradingTextureAsset, ISerializable)
 
 void ColorGradingTextureAsset::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"gamma", m_gamma, AttributeRange(0.0f));
+	if (s.getVersion< ColorGradingTextureAsset >() >= 1)
+	{
+		s >> Member< float >(L"redGamma", m_redGamma, AttributeRange(0.0f));
+		s >> Member< float >(L"greenGamma", m_greenGamma, AttributeRange(0.0f));
+		s >> Member< float >(L"blueGamma", m_blueGamma, AttributeRange(0.0f));
+	}
+	else
+	{
+		float gamma;
+		s >> Member< float >(L"gamma", gamma, AttributeRange(0.0f));
+		m_redGamma = gamma;
+		m_greenGamma = gamma;
+		m_blueGamma = gamma;
+	}
 }
 
 }
