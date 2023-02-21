@@ -24,6 +24,11 @@ ScriptComponent::ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz, 
 {
 }
 
+ScriptComponent::~ScriptComponent()
+{
+	destroy();
+}
+
 void ScriptComponent::destroy()
 {
 	m_owner = nullptr;

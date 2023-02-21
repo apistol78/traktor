@@ -41,6 +41,8 @@ class T_DLLCLASS ScriptComponent : public IEntityComponent
 public:
 	explicit ScriptComponent(const resource::Proxy< IRuntimeClass >& clazz, const PropertyGroup* properties);
 
+	virtual ~ScriptComponent();
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
