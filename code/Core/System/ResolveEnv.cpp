@@ -35,13 +35,13 @@ std::wstring resolveEnv(const std::wstring& s, const Environment* env)
 		{
 			const std::wstring sub = replaceAll(env->get(name), L'\\', L'/');
 			tmp = tmp.substr(0, s) + sub + tmp.substr(e + 1);
-			ofs = s + sub.length();
+			ofs = s;
 		}
 		else if (OS::getInstance().getEnvironment(name, val))
 		{
 			const std::wstring sub = replaceAll(val, L'\\', L'/');
 			tmp = tmp.substr(0, s) + sub + tmp.substr(e + 1);
-			ofs = s + sub.length();
+			ofs = s;
 		}
 		else
 		{
