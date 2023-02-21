@@ -117,16 +117,17 @@ void RubbleComponent::build(
 
 	if (updateClusters)
 	{
-		Frustum viewFrustum = worldRenderView.getViewFrustum();
-		viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
-
 		if (
 			(eye - m_eye).length() >= m_clusterSize / 2.0f ||
 			dot3(fwd, m_fwd) < cos(deg2rad(2.0f))
 		)
 		{
+			Frustum viewFrustum = worldRenderView.getViewFrustum();
+			viewFrustum.setFarZ(Scalar(m_data.m_spreadDistance + m_clusterSize));
+
 			m_eye = eye;
 			m_fwd = fwd;
+
 			for (auto& cluster : m_clusters)
 			{
 				cluster.distance = (cluster.center - eye).length();
@@ -156,7 +157,7 @@ void RubbleComponent::build(
 					// Get ground normal.
 					float gx, gz;
 					heightfield->worldToGrid(px, pz, gx, gz);
-					Vector4 normal = heightfield->normalAt(gx, gz);
+					const Vector4 normal = heightfield->normalAt(gx, gz);
 
 					// Calculate rotation.
 					const float rx = (random.nextFloat() * 2.0f - 1.0f) * randomTilt;
