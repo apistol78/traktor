@@ -28,7 +28,7 @@ public:
 	T_FORCE_INLINE Acquire< T >(T& lock)
 	:	m_lock(lock)
 	{
-		bool result = m_lock.wait();
+		const bool result = m_lock.wait();
 		T_FATAL_ASSERT(result == true);
 	}
 
