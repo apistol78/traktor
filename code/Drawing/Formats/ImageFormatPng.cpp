@@ -128,7 +128,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 		if (bit_depth == 8)
 			pixelFormat = PixelFormat::getA8R8G8B8();
 		else if (bit_depth == 16)
-			pixelFormat = PixelFormat::getA16R16G16B16();
+			pixelFormat = PixelFormat::getA16R16G16B16().endianSwapped();
 		break;
 
 	default:
