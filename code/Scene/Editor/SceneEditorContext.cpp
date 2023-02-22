@@ -485,6 +485,11 @@ void SceneEditorContext::buildEntities()
 		m_entityAdapterMap.insert(entityAdapter->getEntity(), entityAdapter);
 	}
 
+	// Re-activate current modifier to ensure it's working
+	// on valid entities.
+	if (m_modifier)
+		m_modifier->activate();
+
 	m_entityCount = (uint32_t)entityAdapters.size();
 	raisePostBuild();
 	++m_buildCount;

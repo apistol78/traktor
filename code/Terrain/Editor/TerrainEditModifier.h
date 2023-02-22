@@ -66,7 +66,7 @@ class TerrainEditModifier : public scene::IModifier
 	T_RTTI_CLASS;
 
 public:
-	TerrainEditModifier(scene::SceneEditorContext* context);
+	explicit TerrainEditModifier(scene::SceneEditorContext* context);
 
 	virtual bool activate() override final;
 
@@ -123,6 +123,7 @@ public:
 
 private:
 	scene::SceneEditorContext* m_context;
+	Ref< scene::EntityAdapter > m_terrainAdapter;
 	Ref< TerrainComponent > m_terrainComponent;
 	Ref< TerrainComponentData > m_terrainComponentData;
 	RefArray< TerrainLayerComponent > m_terrainLayers;
