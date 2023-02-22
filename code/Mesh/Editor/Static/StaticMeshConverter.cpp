@@ -141,7 +141,7 @@ bool StaticMeshConverter::convert(
 			}
 		}
 
-		range.offsetLast = uint32_t(index - indexFirst) / indexSize;
+		range.offsetLast = (uint32_t)(index - indexFirst) / indexSize;
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
@@ -185,7 +185,7 @@ bool StaticMeshConverter::convert(
 		{
 			StaticMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
-			part.meshPart = uint32_t(meshParts.size());
+			part.meshPart = (uint32_t)meshParts.size();
 
 			for (uint32_t k = 0; k < (uint32_t)meshParts.size(); ++k)
 			{

@@ -68,24 +68,21 @@ bool InstanceMeshConverter::convert(
 	const model::Model* model = models[0];
 	T_FATAL_ASSERT(model != nullptr);
 
-	if (model->getVertexCount() >= 65536)
-	{
-		log::error << L"Too many vertices in model, instance meshes doesn't support 32-bit indices." << Endl;
-		return false;
-	}
-
 	// Create render mesh.
 	const uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT(vertexSize > 0);
 
+	const bool useLargeIndices = (bool)(model->getVertexCount() >= 65536);
+	const uint32_t indexSize = useLargeIndices ? sizeof(uint32_t) : sizeof(uint16_t);
+
 	// Create render mesh.
 	const uint32_t vertexBufferSize = (uint32_t)(model->getVertices().size() * vertexSize);
-	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * sizeof(uint16_t));
+	const uint32_t indexBufferSize = (uint32_t)(model->getPolygons().size() * 3 * indexSize);
 
 	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
-		render::IndexType::UInt16,
+		useLargeIndices ? render::IndexType::UInt32 : render::IndexType::UInt16,
 		indexBufferSize
 	);
 
@@ -117,14 +114,14 @@ bool InstanceMeshConverter::convert(
 	// Create index buffer.
 	std::map< std::wstring, AlignedVector< IndexRange > > techniqueRanges;
 
-	uint16_t* index = (uint16_t*)renderMesh->getIndexBuffer()->lock();
-	uint16_t* indexFirst = index;
+	uint8_t* index = (uint8_t*)renderMesh->getIndexBuffer()->lock();
+	uint8_t* indexFirst = index;
 
 	for (const auto& mt : materialTechniqueMap)
 	{
 		IndexRange range;
 
-		range.offsetFirst = (uint32_t)(index - indexFirst);
+		range.offsetFirst = (uint32_t)(index - indexFirst) / indexSize;
 		range.offsetLast = 0;
 		range.minIndex = std::numeric_limits< int32_t >::max();
 		range.maxIndex = -std::numeric_limits< int32_t >::max();
@@ -138,13 +135,19 @@ bool InstanceMeshConverter::convert(
 
 			for (int32_t k = 0; k < 3; ++k)
 			{
-				*index++ = (uint16_t)polygon.getVertex(k);
+				if (useLargeIndices)
+					*(uint32_t*)index = polygon.getVertex(k);
+				else
+					*(uint16_t*)index = polygon.getVertex(k);
+
 				range.minIndex = std::min< int32_t >(range.minIndex, polygon.getVertex(k));
 				range.maxIndex = std::max< int32_t >(range.maxIndex, polygon.getVertex(k));
+
+				index += indexSize;
 			}
 		}
 
-		range.offsetLast = (uint32_t)(index - indexFirst);
+		range.offsetLast = (uint32_t)(index - indexFirst) / indexSize;
 		if (range.offsetLast <= range.offsetFirst)
 			continue;
 
@@ -170,7 +173,7 @@ bool InstanceMeshConverter::convert(
 		{
 			InstanceMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
-			part.meshPart = uint32_t(meshParts.size());
+			part.meshPart = (uint32_t)meshParts.size();
 
 			for (uint32_t k = 0; k < (uint32_t)meshParts.size(); ++k)
 			{
