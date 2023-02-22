@@ -15,6 +15,7 @@
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/SphereMapFilter.h"
+#include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Render/Editor/Texture/TextureControl.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -88,6 +89,13 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		// Create output image.
 		Ref< drawing::Image > imageOutput = image->clone();
 
+		// Discard alpha.
+		if (output.m_ignoreAlpha)
+		{
+			const drawing::SwizzleFilter swizzleFilter(L"RGB1");
+			imageOutput->apply(&swizzleFilter);
+		}
+
 		// Convert image into linear space to ensure all filters are applied in linear space.
 		if (sRGB && !output.m_linearGamma)
 		{
@@ -97,32 +105,32 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 
 		if (output.m_flipX || output.m_flipY)
 		{
-			drawing::MirrorFilter mirrorFilter(output.m_flipX, output.m_flipY);
+			const drawing::MirrorFilter mirrorFilter(output.m_flipX, output.m_flipY);
 			imageOutput->apply(&mirrorFilter);
 		}
 		if (output.m_generateSphereMap)
 		{
-			drawing::SphereMapFilter sphereMapFilter;
+			const drawing::SphereMapFilter sphereMapFilter;
 			imageOutput->apply(&sphereMapFilter);
 		}
 		if (output.m_noiseStrength > 0.0f)
 		{
-			drawing::NoiseFilter noiseFilter(output.m_noiseStrength);
+			const drawing::NoiseFilter noiseFilter(output.m_noiseStrength);
 			imageOutput->apply(&noiseFilter);
 		}
 		if (output.m_premultiplyAlpha)
 		{
-			drawing::PremultiplyAlphaFilter preAlphaFilter;
+			const drawing::PremultiplyAlphaFilter preAlphaFilter;
 			imageOutput->apply(&preAlphaFilter);
 		}
 		if (output.m_generateNormalMap)
 		{
-			drawing::NormalMapFilter filter(output.m_scaleDepth);
+			const drawing::NormalMapFilter filter(output.m_scaleDepth);
 			imageOutput->apply(&filter);
 		}
 		if (output.m_inverseNormalMapX || output.m_inverseNormalMapY)
 		{
-			drawing::TransformFilter transformFilter(
+			const drawing::TransformFilter transformFilter(
 				Color4f(
 					output.m_inverseNormalMapX ? -1.0f : 1.0f,
 					output.m_inverseNormalMapY ? -1.0f : 1.0f,
@@ -144,6 +152,7 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 			imageOutput->apply(&gammaFilter);
 		}
+
 		m_imageOutput = new ui::Bitmap(imageOutput);
 	}
 	else
