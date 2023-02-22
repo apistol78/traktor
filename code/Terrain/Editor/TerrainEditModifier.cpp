@@ -187,8 +187,9 @@ bool TerrainEditModifier::activate()
 		return false;
 	}
 
-	m_terrainComponent = entityAdapters[0]->getComponent< TerrainComponent >();
-	m_terrainComponentData = entityAdapters[0]->getComponentData< TerrainComponentData >();
+	m_terrainAdapter = entityAdapters[0];
+	m_terrainComponent = m_terrainAdapter->getComponent< TerrainComponent >();
+	m_terrainComponentData = m_terrainAdapter->getComponentData< TerrainComponentData >();
 
 	// Ensure we've both component and it's data.
 	if (!m_terrainComponent || !m_terrainComponentData)
@@ -465,8 +466,10 @@ bool TerrainEditModifier::activate()
 
 void TerrainEditModifier::deactivate()
 {
+	m_terrainAdapter = nullptr;
 	m_terrainComponent = nullptr;
 	m_terrainComponentData = nullptr;
+	m_terrainLayers.resize(0);
 	m_terrainInstance = nullptr;
 	m_heightfieldInstance = nullptr;
 	m_heightfieldAsset = nullptr;
