@@ -44,11 +44,13 @@ private:
 
 	resource::Id< mesh::InstanceMesh > m_lod0mesh;
 	resource::Id< mesh::InstanceMesh > m_lod1mesh;
+	resource::Id< mesh::InstanceMesh > m_lod2mesh;
 
 	uint8_t m_attribute = 0;
 	float m_density = 0.1f;
 	float m_lod0distance = 50.0f;
-	float m_lod1distance = 200.0f;
+	float m_lod1distance = 100.0f;
+	float m_lod2distance = 200.0f;
 	float m_upness = 0.8f;		//!< Upness of tree, 0 means follow normal of terrain and 1 means completely straight up.
 	float m_randomScale = 0.2f;
 	float m_randomTilt = deg2rad(4.0f);

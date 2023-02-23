@@ -73,9 +73,11 @@ private:
 	ForestComponentData m_data;
 	resource::Proxy< mesh::InstanceMesh > m_lod0mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;
+	resource::Proxy< mesh::InstanceMesh > m_lod2mesh;
 	AlignedVector< Tree > m_trees;
 	AlignedVector< uint32_t > m_lod0indices;
 	AlignedVector< uint32_t > m_lod1indices;
+	AlignedVector< uint32_t > m_lod2indices;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 

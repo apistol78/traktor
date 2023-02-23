@@ -46,6 +46,7 @@ bool TerrainEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(forestComponentData->m_lod0mesh, editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(forestComponentData->m_lod1mesh, editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(forestComponentData->m_lod2mesh, editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
 	{
