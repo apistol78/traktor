@@ -50,6 +50,8 @@ bool ForestComponent::create(
 		return false;
 	if (!resourceManager->bind(layerData.m_lod1mesh, m_lod1mesh))
 		return false;
+	if (!resourceManager->bind(layerData.m_lod2mesh, m_lod2mesh))
+		return false;
 
 	m_data = layerData;
 	return true;
@@ -104,6 +106,7 @@ void ForestComponent::build(
 
 		m_lod0indices.resize(0);
 		m_lod1indices.resize(0);
+		m_lod2indices.resize(0);
 
 		for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 		{
@@ -120,6 +123,10 @@ void ForestComponent::build(
 			{
 				m_lod1indices.push_back(i);
 			}
+			else if (distance < m_data.m_lod2distance)
+			{
+				m_lod2indices.push_back(i);
+			}
 		}
 	}
 
@@ -134,6 +141,27 @@ void ForestComponent::build(
 	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);
+
+	for (uint32_t i = 0; i < m_lod2indices.size(); )
+	{
+		const uint32_t batch = std::min< uint32_t >(m_lod2indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+
+		m_instanceData.resize(batch);
+		for (int32_t j = 0; j < batch; ++j, ++i)
+		{
+			m_trees[m_lod2indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
+			m_trees[m_lod2indices[i]].position.storeAligned(m_instanceData[j].data.translation);
+			m_instanceData[j].data.scale = m_trees[m_lod2indices[i]].scale;
+			m_instanceData[j].distance = 0.0f;
+		}
+
+		m_lod2mesh->build(
+			renderContext,
+			worldRenderPass,
+			m_instanceData,
+			extraParameters
+		);
+	}
 
 	for (uint32_t i = 0; i < m_lod1indices.size(); )
 	{

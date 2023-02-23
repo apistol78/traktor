@@ -17,12 +17,15 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 2, ForestComponentData, TerrainLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.ForestComponentData", 3, ForestComponentData, TerrainLayerComponentData)
 
 void ForestComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< mesh::InstanceMesh >(L"lod0mesh", m_lod0mesh);
 	s >> resource::Member< mesh::InstanceMesh >(L"lod1mesh", m_lod1mesh);
+
+	if (s.getVersion< ForestComponentData >() >= 3)
+		s >> resource::Member< mesh::InstanceMesh >(L"lod2mesh", m_lod2mesh);
 
 	if (s.getVersion< ForestComponentData >() >= 2)
 		s >> Member< uint8_t >(L"attribute", m_attribute);
@@ -32,6 +35,10 @@ void ForestComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"density", m_density, AttributeRange(0.0f));
 	s >> Member< float >(L"lod0distance", m_lod0distance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"lod1distance", m_lod1distance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+
+	if (s.getVersion< ForestComponentData >() >= 3)
+		s >> Member< float >(L"lod2distance", m_lod2distance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+
 	s >> Member< float >(L"upness", m_upness, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	s >> Member< float >(L"randomScale", m_randomScale, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	s >> Member< float >(L"randomTilt", m_randomTilt, AttributeRange(0.0f, HALF_PI) | AttributeUnit(UnitType::Radians));
