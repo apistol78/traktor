@@ -72,7 +72,7 @@ bool decodeAsIndices(
 	json::JsonArray* accessors,
 	json::JsonArray* bufferViews,
 	const RefArray< IStream >& bufferStreams,
-	AlignedVector< int32_t >& outData
+	AlignedVector< uint32_t >& outData
 )
 {
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
@@ -82,7 +82,7 @@ bool decodeAsIndices(
 	const std::wstring type = accessor->getMemberString(L"type", L"");
 	const int32_t count = accessor->getMemberInt32(L"count", 0);
 
-	if (componentType != 5123)	// must be uint16
+	if (componentType != 5123 && componentType != 5125)
 		return false;
 
 	if (type != L"SCALAR")
@@ -101,10 +101,20 @@ bool decodeAsIndices(
 	outData.resize(count);
 	for (int32_t i = 0; i < count; ++i)
 	{
-		uint16_t v;
-		if (bufferStream->read(&v, sizeof(v)) != sizeof(v))
-			return false;
-		outData[i] = int32_t(v);
+		if (componentType == 5123)
+		{
+			uint16_t v;
+			if (bufferStream->read(&v, sizeof(v)) != sizeof(v))
+				return false;
+			outData[i] = (uint32_t)v;
+		}
+		else // 5125
+		{
+			uint32_t v;
+			if (bufferStream->read(&v, sizeof(v)) != sizeof(v))
+				return false;
+			outData[i] = (uint32_t)v;
+		}
 	}
 
 	return true;
@@ -265,7 +275,6 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				return nullptr;
 
 			const std::wstring uri = buffer->getMemberValue(L"uri").getWideString();
-
 			if (startsWith(uri, L"data:application/octet-stream;base64,"))
 			{
 				AlignedVector< uint8_t > data = Base64().decode(uri.substr(37));
@@ -601,6 +610,11 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 
 				const int32_t material = prim->getMemberInt32(L"material", 0);
 				const int32_t indices = prim->getMemberInt32(L"indices", 0);
+				const int32_t mode = prim->getMemberInt32(L"mode", 0);
+
+				// Must be triangles.
+				if (mode != 4)
+					return nullptr;
 
 				const auto attributes = prim->getMemberValue(L"attributes").getObject< json::JsonObject >();
 				if (!attributes)
@@ -612,7 +626,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				const int32_t joints0 = attributes->getMemberInt32(L"JOINTS_0", 0);
 				const int32_t weights0 = attributes->getMemberInt32(L"WEIGHTS_0", 0);
 
-				AlignedVector< int32_t > dataIndices;
+				AlignedVector< uint32_t > dataIndices;
 				AlignedVector< Vector4 > dataPositions;
 				AlignedVector< Vector4 > dataNormals;
 				AlignedVector< Vector4 > dataTexCoord0s;
