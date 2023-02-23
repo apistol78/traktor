@@ -119,7 +119,7 @@ private:
 
 Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initiallyChecked)
 {
-	Ref< ui::MenuItem > menuItem = new ui::MenuItem(text, true, 0);
+	Ref< ui::MenuItem > menuItem = new ui::MenuItem(text, true, nullptr);
 	menuItem->setChecked(initiallyChecked);
 	return menuItem;
 }
@@ -249,7 +249,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 	if (command == L"Editor.AutoBuild")
 	{
 		// Check if we should auto-build for running targets.
-		bool autoBuild = m_editor->getSettings()->getProperty< bool >(L"Runtime.AutoBuildRunningTargets", true);
+		const bool autoBuild = m_editor->getSettings()->getProperty< bool >(L"Runtime.AutoBuildRunningTargets", true);
 		if (!autoBuild)
 			return false;
 
@@ -260,7 +260,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				continue;
 
 			// Resolve absolute output path.
-			std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+			const std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 
 			// Set target's state to pending as actions can be queued up to be performed much later.
 			targetInstance->setState(TsPending);
@@ -462,9 +462,9 @@ void EditorPlugin::updateTargetManagers()
 	{
 		for (auto targetInstance : m_targetInstances)
 		{
-			std::wstring remoteId = targetInstance->getDatabaseName();
-			std::wstring databasePath = targetInstance->getOutputPath() + L"/db";
-			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+			const std::wstring remoteId = targetInstance->getDatabaseName();
+			const std::wstring databasePath = targetInstance->getOutputPath() + L"/db";
+			const std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}
 	}
@@ -507,7 +507,7 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemVrfy");
 	}
 
-	int32_t language = m_toolLanguage->getSelected();
+	const int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)
 		tweakSettings->setProperty< PropertyString >(L"Online.OverrideLanguageCode", c_languageCodes[language - 1].code);
 
@@ -517,11 +517,11 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 void EditorPlugin::launch(TargetInstance* targetInstance)
 {
 	// Get selected target host.
-	int32_t id = targetInstance->getDeployHostId();
+	const int32_t id = targetInstance->getDeployHostId();
 	if (id < 0)
 		return;
 
-	std::wstring host = m_hostEnumerator->getHost(id);
+	const std::wstring host = m_hostEnumerator->getHost(id);
 
 	// Get our network host.
 	std::wstring editorHost = L"localhost";
@@ -532,7 +532,7 @@ void EditorPlugin::launch(TargetInstance* targetInstance)
 		log::warning << L"Unable to determine editor host address; target might not be able to connect to editor database." << Endl;
 
 	// Resolve absolute output path.
-	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+	const std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
@@ -612,7 +612,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 	TargetInstance* targetInstance = event->getInstance();
 
 	// Resolve absolute output path.
-	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+	const std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
@@ -659,7 +659,7 @@ void EditorPlugin::eventTargetListBuild(TargetBuildEvent* event)
 void EditorPlugin::eventTargetListShowProfiler(TargetCaptureEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
-	int32_t connectionId = event->getConnectionIndex();
+	const int32_t connectionId = event->getConnectionIndex();
 
 	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
@@ -678,11 +678,11 @@ void EditorPlugin::eventTargetListMigrate(TargetMigrateEvent* event)
 	TargetInstance* targetInstance = event->getInstance();
 
 	// Get selected target host.
-	int32_t id = targetInstance->getDeployHostId();
+	const int32_t id = targetInstance->getDeployHostId();
 	if (id < 0)
 		return;
 
-	std::wstring host = m_hostEnumerator->getHost(id);
+	const std::wstring host = m_hostEnumerator->getHost(id);
 
 	// Get our network host.
 	std::wstring editorHost = L"localhost";
@@ -763,7 +763,7 @@ void EditorPlugin::eventTargetListPlay(TargetPlayEvent* event)
 void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
-	int32_t connectionId = event->getConnectionIndex();
+	const int32_t connectionId = event->getConnectionIndex();
 
 	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
@@ -781,7 +781,7 @@ void EditorPlugin::eventTargetListStop(TargetStopEvent* event)
 void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 {
 	TargetInstance* targetInstance = event->getInstance();
-	int32_t connectionId = event->getConnectionIndex();
+	const int32_t connectionId = event->getConnectionIndex();
 
 	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
@@ -797,7 +797,7 @@ void EditorPlugin::eventTargetListCommand(TargetCommandEvent* event)
 
 void EditorPlugin::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
-	int32_t selectedTargetIndex = m_toolTargets->getSelected();
+	const int32_t selectedTargetIndex = m_toolTargets->getSelected();
 	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))
 		return;
 
@@ -831,12 +831,13 @@ void EditorPlugin::eventTimer(ui::TimerEvent* event)
 
 void EditorPlugin::threadHostEnumerator()
 {
+	std::vector< std::wstring > localDeployPlatforms;
 	while (!m_threadHostEnumerator->stopped())
 	{
 		m_hostEnumerator->update();
 
 		// Find first local host.
-		std::vector< std::wstring > localDeployPlatforms;
+		localDeployPlatforms.resize(0);
 		int32_t localDeployHostId = -1;
 		for (int32_t i = 0; i < m_hostEnumerator->count(); ++i)
 		{
@@ -855,7 +856,7 @@ void EditorPlugin::threadHostEnumerator()
 			{
 				if (targetInstance->getDeployHostId() < 0)
 				{
-					std::wstring platformName = targetInstance->getPlatformName();
+					const std::wstring platformName = targetInstance->getPlatformName();
 					if (m_hostEnumerator->supportPlatform(localDeployHostId, platformName))
 					{
 						targetInstance->setDeployHostId(localDeployHostId);
