@@ -215,11 +215,14 @@ bool MeshPipeline::buildDependencies(
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	T_ASSERT(asset);
 
+	// Add dependency to texture pipeline since we ad-hoc build embedded textures.
+	pipelineDepends->addDependency< render::TextureOutput >();
+
 	if (!asset->getFileName().empty())
 		pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 
 	// Determine vertex shader guid.
-	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
+	const Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
 	if (!vertexShaderGuid.isValid())
 	{
 		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
@@ -233,23 +236,20 @@ bool MeshPipeline::buildDependencies(
 	// Add dependencies to material templates.
 	if (m_enableCustomTemplates)
 	{
-		const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
-		for (std::map< std::wstring, Guid >::const_iterator i = materialTemplates.begin(); i != materialTemplates.end(); ++i)
-			pipelineDepends->addDependency(i->second, editor::PdfUse);
+		for (const auto& it : asset->getMaterialTemplates())
+			pipelineDepends->addDependency(it.second, editor::PdfUse);
 	}
 
 	// Add dependencies to "fixed" material shaders.
 	if (m_enableCustomShaders)
 	{
-		const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
-		for (std::map< std::wstring, Guid >::const_iterator i = materialShaders.begin(); i != materialShaders.end(); ++i)
-			pipelineDepends->addDependency(i->second, editor::PdfUse);
+		for (const auto& it : asset->getMaterialShaders())
+			pipelineDepends->addDependency(it.second, editor::PdfUse);
 	}
 
 	// Add dependencies to material textures.
-	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
-	for (std::map< std::wstring, Guid >::const_iterator i = materialTextures.begin(); i != materialTextures.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
+	for (const auto& it : asset->getMaterialTextures())
+		pipelineDepends->addDependency(it.second, editor::PdfBuild | editor::PdfResource);
 
 	pipelineDepends->addDependency(asset->getTextureSet(), editor::PdfBuild);
 
