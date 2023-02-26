@@ -117,7 +117,7 @@ public:
 	int32_t getMemberInt32(const std::wstring& name, int32_t defaultValue = 0) const
 	{
 		const Any value = getMemberValue(name);
-		return value.isInt32() ? value.getInt32Unsafe() : defaultValue;
+		return value.isNumeric() ? value.getInt32() : defaultValue;
 	}
 
 	/*!
