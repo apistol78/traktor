@@ -610,9 +610,9 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 
 				const int32_t material = prim->getMemberInt32(L"material", 0);
 				const int32_t indices = prim->getMemberInt32(L"indices", 0);
-				const int32_t mode = prim->getMemberInt32(L"mode", 0);
+				const int32_t mode = prim->getMemberInt32(L"mode", 4);
 
-				// Must be triangles.
+				// Must be triangles; which is the default if no mode is given.
 				if (mode != 4)
 					return nullptr;
 
