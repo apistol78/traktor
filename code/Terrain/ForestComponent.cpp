@@ -12,6 +12,7 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
+#include "Mesh/MeshCulling.h"
 #include "Render/ITexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
@@ -29,6 +30,8 @@ namespace traktor::terrain
 {
 	namespace
 	{
+
+const render::Handle s_techniqueShadowWrite(L"World_ShadowWrite");
 
 const render::Handle s_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
@@ -99,32 +102,59 @@ void ForestComponent::build(
 	const Matrix44 view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
 
-	if (updateClusters)
+	// \fixme Only shadows have a completely different culling set; indices sets for different views.
+	//if (updateClusters)
 	{
 		// Brute force test.
-		const Frustum viewFrustum = worldRenderView.getViewFrustum();
-
 		m_lod0indices.resize(0);
 		m_lod1indices.resize(0);
 		m_lod2indices.resize(0);
 
-		for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
+		if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
 		{
-			const auto& tree = m_trees[i];
-			const Scalar distance = (tree.position - eye).length();
-			if (distance < m_data.m_lod0distance)
+			const Frustum& cullFrustum = worldRenderView.getCullFrustum();
+			for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 			{
-				if (viewFrustum.inside(view * tree.position))
+				const auto& tree = m_trees[i];
+
+				float distance = 0.0f;
+				if (!mesh::isMeshVisible(
+					m_lod0mesh->getBoundingBox(),
+					cullFrustum,
+					view * translate(tree.position),
+					worldRenderView.getProjection(),
+					0.0f,
+					distance
+				))
+					continue;
+
+				if (distance < m_data.m_lod0distance)
 					m_lod0indices.push_back(i);
-				else
+				else if (distance < m_data.m_lod1distance)
 					m_lod1indices.push_back(i);
+				else if (distance < m_data.m_lod2distance)
+					m_lod2indices.push_back(i);
 			}
-			else if (distance < m_data.m_lod1distance)
+		}
+		else
+		{
+			// Only render lowest lod into shadow map.
+			const Frustum& cullFrustum = worldRenderView.getCullFrustum();
+			for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 			{
-				m_lod1indices.push_back(i);
-			}
-			else if (distance < m_data.m_lod2distance)
-			{
+				const auto& tree = m_trees[i];
+
+				float distance = 0.0f;
+				if (!mesh::isMeshVisible(
+					m_lod0mesh->getBoundingBox(),
+					cullFrustum,
+					view * translate(tree.position),
+					worldRenderView.getProjection(),
+					0.0f,
+					distance
+				))
+					continue;
+
 				m_lod2indices.push_back(i);
 			}
 		}
