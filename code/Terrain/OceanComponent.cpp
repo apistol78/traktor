@@ -254,7 +254,7 @@ void OceanComponent::build(
 		const auto& terrain = terrainComponent->getTerrain();
 
 		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
-		const Vector4 worldOrigin = -worldExtent * Scalar(0.5f);
+		const Vector4 worldOrigin = -worldExtent * 0.5_simd;
 
 		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
