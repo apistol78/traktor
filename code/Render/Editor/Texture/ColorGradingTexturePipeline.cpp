@@ -7,6 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Math/Envelope.h"
+#include "Core/Math/Float.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Editor/IPipelineBuilder.h"
@@ -56,20 +58,49 @@ bool ColorGradingTexturePipeline::buildOutput(
 {
 	const ColorGradingTextureAsset* asset = checked_type_cast< const ColorGradingTextureAsset*, false >(sourceAsset);
 
+	const Envelope< float > redEnvelope(asset->m_redCurve);
+	const Envelope< float > greenEnvelope(asset->m_greenCurve);
+	const Envelope< float > blueEnvelope(asset->m_blueCurve);
+
+	const float brightness = asset->m_brightness;
+	const float contrast = asset->m_contrast;
+	const float saturation = asset->m_saturation;
+
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getRGBAF32(), 64 * 64, 64);
 	for (int32_t r = 0; r < 64; ++r)
 	{
 		const float fr = float(r) / 63.0f;
-		const float gr = std::pow(fr, asset->getRedGamma());
+		
+		float gr = redEnvelope(fr);
+		gr = clamp(contrast * (gr - 0.5f) + 0.5f + brightness, 0.0f, 1.0f);
+
 		for (int32_t g = 0; g < 64; ++g)
 		{
 			const float fg = float(g) / 63.0f;
-			const float gg = std::pow(fg, asset->getGreenGamma());
+
+			float gg = greenEnvelope(fg);
+			gg = clamp(contrast * (gg - 0.5f) + 0.5f + brightness, 0.0f, 1.0f);
+
 			for (int32_t b = 0; b < 64; ++b)
 			{
 				const float fb = float(b) / 63.0f;
-				const float gb = std::pow(fb, asset->getBlueGamma());
-				image->setPixel(r + b * 64, g, Color4f(gr, gg, gb, 0.0f));
+
+				float gb = blueEnvelope(fb);
+				gb = clamp(contrast * (gb - 0.5f) + 0.5f + brightness, 0.0f, 1.0f);
+
+				const float intensity = (gr + gg + gb) / 3.0f;
+				const float or = clamp(lerp(intensity, gr, saturation), 0.0f, 1.0f);
+				const float og = clamp(lerp(intensity, gg, saturation), 0.0f, 1.0f);
+				const float ob = clamp(lerp(intensity, gb, saturation), 0.0f, 1.0f);
+
+				image->setPixel(r + b * 64, g,
+					Color4f(
+						or,
+						og,
+						ob,
+						0.0f
+					)
+				);
 			}
 		}
 	}

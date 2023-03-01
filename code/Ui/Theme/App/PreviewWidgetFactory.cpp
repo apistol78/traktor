@@ -26,6 +26,9 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
+#include "Ui/Envelope/DefaultEnvelopeEvaluator.h"
+#include "Ui/Envelope/EnvelopeControl.h"
+#include "Ui/Envelope/EnvelopeKey.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/GraphControl.h"
@@ -412,7 +415,16 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		return sequencerControl;
 	}
+	else if (typeName == L"traktor.ui.EnvelopeControl")
+	{
+		Ref< EnvelopeControl > envelopeControl = new EnvelopeControl();
+		envelopeControl->setStyleSheet(styleSheet);
+		envelopeControl->create(parent, new DefaultEnvelopeEvaluator< HermiteEvaluator >());
+		envelopeControl->insertKey(new EnvelopeKey(0.0f, 0.0f));
+		envelopeControl->insertKey(new EnvelopeKey(1.0f, 1.0f));
 
+		return envelopeControl;
+	}
 	else
 		return nullptr;
 }

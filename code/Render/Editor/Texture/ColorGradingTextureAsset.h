@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -26,18 +27,21 @@ class T_DLLCLASS ColorGradingTextureAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	float getRedGamma() const { return m_redGamma; }
-
-	float getGreenGamma() const { return m_greenGamma; }
-
-	float getBlueGamma() const { return m_blueGamma; }
+	ColorGradingTextureAsset();
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_redGamma = 1.0f;
-	float m_greenGamma = 1.0f;
-	float m_blueGamma = 1.0f;
+	friend class ColorGradingAssetEditor;
+	friend class ColorGradingTexturePipeline;
+
+	AlignedVector< std::pair< float, float > > m_redCurve;
+	AlignedVector< std::pair< float, float > > m_greenCurve;
+	AlignedVector< std::pair< float, float > > m_blueCurve;
+
+	float m_brightness = 0.0f;
+	float m_contrast = 1.0f;
+	float m_saturation = 1.0f;
 };
 
 }

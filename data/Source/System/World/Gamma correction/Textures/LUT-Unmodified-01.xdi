@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ColorGradingTextureAsset" version="1">
-	<redGamma>0.65</redGamma>
-	<greenGamma>0.75</greenGamma>
-	<blueGamma>1.4</blueGamma>
+<object type="traktor.render.ColorGradingTextureAsset" version="3">
+	<redCurve>
+		<item>
+			<first>0</first>
+			<second>0</second>
+		</item>
+		<item>
+			<first>1</first>
+			<second>1</second>
+		</item>
+	</redCurve>
+	<greenCurve>
+		<item>
+			<first>0</first>
+			<second>0</second>
+		</item>
+		<item>
+			<first>1</first>
+			<second>1</second>
+		</item>
+	</greenCurve>
+	<blueCurve>
+		<item>
+			<first>0</first>
+			<second>0</second>
+		</item>
+		<item>
+			<first>1</first>
+			<second>1</second>
+		</item>
+	</blueCurve>
+	<brightness>0</brightness>
+	<contrast>1</contrast>
+	<saturation>1</saturation>
 </object>

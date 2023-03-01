@@ -9,29 +9,33 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Editor/Texture/ColorGradingTextureAsset.h"
 
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ColorGradingTextureAsset", 1, ColorGradingTextureAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ColorGradingTextureAsset", 3, ColorGradingTextureAsset, ISerializable)
+
+ColorGradingTextureAsset::ColorGradingTextureAsset()
+{
+	m_redCurve.  push_back({ 0.0f, 0.0f }); m_redCurve.  push_back({ 1.0f, 1.0f });
+	m_greenCurve.push_back({ 0.0f, 0.0f }); m_greenCurve.push_back({ 1.0f, 1.0f });
+	m_blueCurve. push_back({ 0.0f, 0.0f }); m_blueCurve. push_back({ 1.0f, 1.0f });
+}
 
 void ColorGradingTextureAsset::serialize(ISerializer& s)
 {
-	if (s.getVersion< ColorGradingTextureAsset >() >= 1)
-	{
-		s >> Member< float >(L"redGamma", m_redGamma, AttributeRange(0.0f));
-		s >> Member< float >(L"greenGamma", m_greenGamma, AttributeRange(0.0f));
-		s >> Member< float >(L"blueGamma", m_blueGamma, AttributeRange(0.0f));
-	}
-	else
-	{
-		float gamma;
-		s >> Member< float >(L"gamma", gamma, AttributeRange(0.0f));
-		m_redGamma = gamma;
-		m_greenGamma = gamma;
-		m_blueGamma = gamma;
-	}
+	T_FATAL_ASSERT (s.getVersion< ColorGradingTextureAsset >() >= 3);
+
+	s >> MemberAlignedVector< std::pair< float, float >, MemberStlPair< float, float > >(L"redCurve", m_redCurve);
+	s >> MemberAlignedVector< std::pair< float, float >, MemberStlPair< float, float > >(L"greenCurve", m_greenCurve);
+	s >> MemberAlignedVector< std::pair< float, float >, MemberStlPair< float, float > >(L"blueCurve", m_blueCurve);
+
+	s >> Member< float >(L"brightness", m_brightness);
+	s >> Member< float >(L"contrast", m_contrast);
+	s >> Member< float >(L"saturation", m_saturation);
 }
 
 }
