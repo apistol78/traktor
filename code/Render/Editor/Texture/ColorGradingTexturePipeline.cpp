@@ -89,15 +89,15 @@ bool ColorGradingTexturePipeline::buildOutput(
 				gb = clamp(contrast * (gb - 0.5f) + 0.5f + brightness, 0.0f, 1.0f);
 
 				const float intensity = (gr + gg + gb) / 3.0f;
-				const float or = clamp(lerp(intensity, gr, saturation), 0.0f, 1.0f);
-				const float og = clamp(lerp(intensity, gg, saturation), 0.0f, 1.0f);
-				const float ob = clamp(lerp(intensity, gb, saturation), 0.0f, 1.0f);
+				const float outr = clamp(lerp(intensity, gr, saturation), 0.0f, 1.0f);
+				const float outg = clamp(lerp(intensity, gg, saturation), 0.0f, 1.0f);
+				const float outb = clamp(lerp(intensity, gb, saturation), 0.0f, 1.0f);
 
 				image->setPixel(r + b * 64, g,
 					Color4f(
-						or,
-						og,
-						ob,
+						outr,
+						outg,
+						outb,
 						0.0f
 					)
 				);
