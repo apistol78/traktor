@@ -8,6 +8,7 @@
  */
 #include "Core/Math/Const.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
@@ -96,6 +97,41 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			imageOutput->apply(&swizzleFilter);
 		}
 
+		// Generate alpha, maximum of color channels.
+		if (output.m_generateAlpha)
+		{
+			Color4f tmp;
+			for (int32_t y = 0; y < imageOutput->getHeight(); ++y)
+			{
+				for (int32_t x = 0; x < imageOutput->getWidth(); ++x)
+				{
+					imageOutput->getPixelUnsafe(x, y, tmp);
+
+					Scalar alpha = 0.0_simd;
+					alpha = max(alpha, tmp.getRed());
+					alpha = max(alpha, tmp.getGreen());
+					alpha = max(alpha, tmp.getBlue());
+					tmp.setAlpha(alpha);
+
+					imageOutput->setPixelUnsafe(x, y, tmp);
+				}
+			}
+		}
+
+		// Invert alpha channel.
+		if (output.m_invertAlpha)
+		{
+			const drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+			imageOutput->apply(&invertAlphaFilter);
+		}
+
+		// Dilate image from alpha channel.
+		if (output.m_dilateImage)
+		{
+			const drawing::DilateFilter dilateFilter(8);
+			imageOutput->apply(&dilateFilter);
+		}
+
 		// Convert image into linear space to ensure all filters are applied in linear space.
 		if (sRGB && !output.m_linearGamma)
 		{
@@ -151,6 +187,20 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		{
 			const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 			imageOutput->apply(&gammaFilter);
+		}
+
+		for (int32_t y = 0; y < imageOutput->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < imageOutput->getWidth(); ++x)
+			{
+				Color4f clr;
+				imageOutput->getPixelUnsafe(x, y, clr);
+
+				Color4f ptrn = (((x / 16) ^ (y / 16)) & 1) ? Color4f(1.0f, 1.0f, 1.0f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f);
+
+				clr = clr * clr.getAlpha() + ptrn * (1.0_simd - clr.getAlpha());
+				imageOutput->setPixelUnsafe(x, y, clr);
+			}
 		}
 
 		m_imageOutput = new ui::Bitmap(imageOutput);

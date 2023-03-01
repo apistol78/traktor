@@ -15,7 +15,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 17, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 18, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -94,6 +94,9 @@ void TextureOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 7)
 		s >> Member< bool >(L"premultiplyAlpha", m_premultiplyAlpha);
+
+	if (s.getVersion() >= 18)
+		s >> Member< bool >(L"dilateImage", m_dilateImage);
 
 	s >> Member< bool >(L"scaleImage", m_scaleImage);
 	s >> Member< int32_t >(L"scaleWidth", m_scaleWidth, AttributeRange(0));

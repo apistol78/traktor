@@ -30,6 +30,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ChainFilter.h"
+#include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
@@ -456,8 +457,15 @@ bool TextureOutputPipeline::buildOutput(
 	// Invert alpha channel.
 	if (textureOutput->m_invertAlpha)
 	{
-		drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+		const drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
 		image->apply(&invertAlphaFilter);
+	}
+
+	// Dilate image from alpha channel.
+	if (textureOutput->m_dilateImage)
+	{
+		const drawing::DilateFilter dilateFilter(8);
+		image->apply(&dilateFilter);
 	}
 
 	// Generate sphere map from cube map.

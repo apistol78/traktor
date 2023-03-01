@@ -13,7 +13,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 17, TextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 18, TextureAsset, editor::Asset)
 
 void TextureAsset::serialize(ISerializer& s)
 {

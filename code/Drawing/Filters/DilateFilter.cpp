@@ -22,6 +22,10 @@ DilateFilter::DilateFilter(int32_t iterations)
 
 void DilateFilter::apply(Image* image) const
 {
+	// Keep copy of image so we can restore alpha channel later.
+	Ref< Image > original = image->clone();
+
+	// Dilate pixels.
 	Color4f tmp;
 	for (int32_t i = 0; i < m_iterations; ++i)
 	{
@@ -79,6 +83,22 @@ void DilateFilter::apply(Image* image) const
 			// No pixels was dilated; entire image fully occupied thus no need to
 			// iterate further.
 			break;
+		}
+	}
+
+	// Restore alpha channel.
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			Color4f oc;
+			original->getPixelUnsafe(x, y, oc);
+
+			Color4f ic;
+			image->getPixelUnsafe(x, y, ic);
+
+			ic.setAlpha(oc.getAlpha());
+			image->setPixelUnsafe(x, y, ic);
 		}
 	}
 }
