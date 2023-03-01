@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Aabb3.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Resource/Proxy.h"
 #include "Terrain/ForestComponentData.h"
@@ -75,10 +75,12 @@ private:
 	resource::Proxy< mesh::InstanceMesh > m_lod1mesh;
 	resource::Proxy< mesh::InstanceMesh > m_lod2mesh;
 	AlignedVector< Tree > m_trees;
-	AlignedVector< uint32_t > m_lod0indices;
-	AlignedVector< uint32_t > m_lod1indices;
-	AlignedVector< uint32_t > m_lod2indices;
+	AlignedVector< uint32_t > m_lod0Indices;
+	AlignedVector< uint32_t > m_lod1Indices;
+	AlignedVector< uint32_t > m_lod2Indices;
+	AlignedVector< uint32_t > m_lodShadowIndices;
 	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
+	Aabb3 m_boundingBox;
 };
 
 }
