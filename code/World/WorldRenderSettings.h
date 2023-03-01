@@ -25,6 +25,7 @@ namespace traktor::render
 {
 
 class ImageGraph;
+class ITexture;
 
 }
 
@@ -86,6 +87,7 @@ public:
 	Color4f fogColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	resource::Id< IrradianceGrid > irradianceGrid;
 	resource::Id< render::ImageGraph > imageProcess[(int)Quality::Last];
+	resource::Id< render::ITexture > colorGrading;
 
 	virtual void serialize(ISerializer& s) override final;
 };

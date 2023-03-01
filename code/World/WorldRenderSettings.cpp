@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 36, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 37, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -185,6 +185,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageGraph >, sizeof_array(imageProcess), resource::Member< render::ImageGraph > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);
+
+	if (s.getVersion() >= 37)
+		s >> resource::Member< render::ITexture >(L"colorGrading", colorGrading);
 }
 
 void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)

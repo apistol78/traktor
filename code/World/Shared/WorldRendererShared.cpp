@@ -242,6 +242,16 @@ bool WorldRendererShared::create(
 		}
 	}
 
+	// Create color grading texture.
+	if (m_settings.colorGrading.isValid())
+	{
+		if (!resourceManager->bind(m_settings.colorGrading, m_colorGrading))
+		{
+			log::error << L"Unable to create color grading texture." << Endl;
+			return false;
+		}
+	}
+
 	m_imageGraphContext = new render::ImageGraphContext();
 	
 	// Create screen renderer.
@@ -849,6 +859,7 @@ void WorldRendererShared::setupProcessPass(
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	m_imageGraphContext->associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	m_imageGraphContext->associateTexture(s_handleInputColorGrading, m_colorGrading);
 
 	// Expose gamma and exposure.
 	m_imageGraphContext->setFloatParameter(s_handleGamma, m_gamma);

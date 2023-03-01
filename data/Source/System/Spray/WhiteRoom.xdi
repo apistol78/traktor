@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="9">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="36">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="37">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>EmFixed</exposureMode>
@@ -78,6 +78,7 @@
 			<high>{00000000-0000-0000-0000-000000000000}</high>
 			<ultra>{00000000-0000-0000-0000-000000000000}</ultra>
 		</imageProcess>
+		<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
 	</worldRenderSettings>
 	<layers>
 		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
