@@ -21,7 +21,7 @@ namespace traktor::render
 class MemberRenderState : public MemberComplex
 {
 public:
-	MemberRenderState(const wchar_t* const name, RenderState& ref)
+	explicit MemberRenderState(const wchar_t* const name, RenderState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -62,7 +62,7 @@ private:
 class MemberSamplerState : public MemberComplex
 {
 public:
-	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
+	explicit MemberSamplerState(const wchar_t* const name, SamplerState& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{

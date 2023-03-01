@@ -592,6 +592,13 @@ struct Primitives
 		minIndex = minIndex_;
 		maxIndex = maxIndex_;
 	}
+
+	inline uint32_t getVertexCount() const
+	{
+		const static uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
+		const static uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
+		return count * c_primitiveMul[(int32_t)type] + c_primitiveAdd[(int32_t)type];
+	}
 };
 
 /*! Copy region. */

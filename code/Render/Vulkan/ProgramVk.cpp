@@ -118,9 +118,7 @@ bool ProgramVk::create(
 {
 	VkShaderStageFlags stageFlags;
 
-#if defined(_DEBUG)
 	m_tag = tag;
-#endif
 	m_renderState = resource->m_renderState;
 	m_shaderHash = resource->m_shaderHash;
 
@@ -337,7 +335,7 @@ bool ProgramVk::validateGraphics(
 
 		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
 		{
-			log::error << L"Out of uniform buffer pool memory!" << Endl;
+			log::error << L"Out of uniform buffer pool memory (" << m_tag << L")!" << Endl;
 			return false;
 		}
 
@@ -605,7 +603,7 @@ bool ProgramVk::validateDescriptorSet()
 	{
 		if (!sbuffer.bufferView)
 			return false;
-		key.push_back((intptr_t)sbuffer.bufferView);
+		key.push_back((intptr_t)sbuffer.bufferView->getVkBuffer());
 	}
 
 	// Get already created descriptor set for bound resources.
@@ -636,7 +634,7 @@ bool ProgramVk::validateDescriptorSet()
 	dsai.pSetLayouts = &m_descriptorSetLayout;
 	if (vkAllocateDescriptorSets(m_context->getLogicalDevice(), &dsai, &m_descriptorSet) != VK_SUCCESS)
 	{
-		log::error << L"Unable to allocate Vulkan descriptor set!" << Endl;
+		log::error << L"Unable to allocate Vulkan descriptor set (" << m_tag << L")!" << Endl;
 		m_descriptorSets.insert(key, 0);
 		return false;
 	}

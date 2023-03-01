@@ -357,10 +357,6 @@ bool RenderViewVk::reset(const RenderViewDefaultDesc& desc)
 
 bool RenderViewVk::reset(int32_t width, int32_t height)
 {
-	log::debug << L"Vulkan; Render view reset:" << Endl;
-	log::debug << L"\twidth " << width << Endl;
-	log::debug << L"\theight " << height << Endl;
-
 	vkDeviceWaitIdle(m_context->getLogicalDevice());
 
 	// Ensure any pending cleanups are performed before closing render view.
@@ -961,10 +957,6 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	if (!p->validateGraphics(frame.graphicsCommandBuffer, targetSize))
 		return;
 
-	const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
-	const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
-	const uint32_t vertexCount = primitives.count * c_primitiveMul[(int32_t)primitives.type] + c_primitiveAdd[(int32_t)primitives.type];
-
 	if (frame.boundVertexBuffer != *vbv)
 	{
 		const VkBuffer buffer = vbv->getVkBuffer();
@@ -991,7 +983,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 
 		vkCmdDrawIndexed(
 			*frame.graphicsCommandBuffer,
-			vertexCount,	// index count
+			primitives.getVertexCount(),	// index count
 			instanceCount,	// instance count
 			primitives.offset,	// first index
 			0,	// vertex offset
@@ -1002,7 +994,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	{
 		vkCmdDraw(
 			*frame.graphicsCommandBuffer,
-			vertexCount,   // vertex count
+			primitives.getVertexCount(),   // vertex count
 			instanceCount,   // instance count
 			primitives.offset,   // first vertex
 			0 // first instance
