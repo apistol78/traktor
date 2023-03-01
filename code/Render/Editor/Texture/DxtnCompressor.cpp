@@ -20,6 +20,8 @@
 #include <cstring>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Drawing/Image.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 
@@ -28,7 +30,7 @@ namespace traktor::render
 	namespace
 	{
 
-struct CompressTextureTask
+struct CompressTextureTask : public RefCountImpl< IRefCount >
 {
 	const drawing::Image* image = nullptr;
 	TextureFormat textureFormat = TfInvalid;
@@ -143,18 +145,37 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DxtnCompressor", DxtnCompressor, ICompre
 
 bool DxtnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
+	RefArray< CompressTextureTask > tasks;
+	RefArray< Job > jobs;
+
 	const int32_t mipCount = (int32_t)mipImages.size();
 	for (int32_t i = 0; i < mipCount; ++i)
 	{
-		CompressTextureTask task;
-		task.image = mipImages[i];
-		task.textureFormat = textureFormat;
-		task.needAlpha = needAlpha;
-		task.compressionQuality = compressionQuality;
-		task.execute();
-		if (writer.write(task.output.c_ptr(), (int64_t)task.output.size(), 1) != task.output.size())
+		Ref< CompressTextureTask > task = new CompressTextureTask();
+		task->image = mipImages[i];
+		task->textureFormat = textureFormat;
+		task->needAlpha = needAlpha;
+		task->compressionQuality = compressionQuality;
+
+		jobs.push_back(
+			JobManager::getInstance().add([=](){ task->execute(); })
+		);
+
+		tasks.push_back(task);
+	}
+
+	for (size_t i = 0; i < jobs.size(); ++i)
+	{
+		jobs[i]->wait();
+		jobs[i] = nullptr;
+	}
+
+	for (auto task : tasks)
+	{
+		if (writer.write(task->output.c_ptr(), (int64_t)task->output.size(), 1) != task->output.size())
 			return false;
 	}
+
 	return true;
 }
 
