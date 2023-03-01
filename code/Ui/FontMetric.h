@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IFontMetric;
 
@@ -59,5 +57,4 @@ private:
 	const IFontMetric* m_metric;
 };
 
-	}
 }

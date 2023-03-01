@@ -9,10 +9,8 @@
 #include "Ui/FontMetric.h"
 #include "Ui/Itf/IFontMetric.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FontMetric", FontMetric, Object)
 
@@ -69,5 +67,4 @@ Size FontMetric::getExtent(const std::wstring& text) const
 	return m_metric->getExtent(text);
 }
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Persistent hierarchical view state.
  * \ingroup UI
@@ -60,6 +58,4 @@ private:
 	SmallMap< std::wstring, std::pair< bool, bool > > m_states;
 };
 
-	}
 }
-

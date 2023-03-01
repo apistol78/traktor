@@ -9,10 +9,8 @@
 #include "Ui/NumericEditValidator.h"
 #include "Core/Misc/String.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.NumericEditValidator", NumericEditValidator, EditValidator)
 
@@ -123,5 +121,4 @@ EditValidator::Result NumericEditValidator::validate(const std::wstring& text) c
 	return result;
 }
 
-	}
 }

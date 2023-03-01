@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Horizontal or vertical splitter with multiple split panes.
  * \ingroup UI
@@ -65,5 +63,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }

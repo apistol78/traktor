@@ -12,10 +12,8 @@
 #include "Ui/Form.h"
 #include "Ui/Itf/IForm.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Form", Form, Container)
 
@@ -97,5 +95,4 @@ bool Form::acceptLayout() const
 	return false;
 }
 
-	}
 }

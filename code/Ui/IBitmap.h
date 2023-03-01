@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ISystemBitmap;
 
@@ -51,6 +49,4 @@ public:
 	virtual ISystemBitmap* getSystemBitmap() const = 0;
 };
 
-	}
 }
-

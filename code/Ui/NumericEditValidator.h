@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Numeric text edit validator.
  * \ingroup UI
@@ -51,6 +49,4 @@ private:
 	int m_decimals;
 };
 
-	}
 }
-

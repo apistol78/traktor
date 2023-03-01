@@ -16,10 +16,8 @@
 #include "Ui/ScrollBar.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuShell", MenuShell, Widget)
 
@@ -75,7 +73,6 @@ void MenuShell::add(MenuItem* item)
 MenuItem* MenuShell::getItem(const Point& at) const
 {
 	const Rect rcInner = getInnerRect();
-
 	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
 
@@ -99,7 +96,6 @@ MenuItem* MenuShell::getItem(const Point& at) const
 bool MenuShell::getItemRect(const MenuItem* item, Rect& outItemRect) const
 {
 	const Rect rcInner = getInnerRect();
-
 	int32_t itemWidth = rcInner.getWidth() - 2;
 	Point itemTopLeft(1, 1);
 
@@ -266,7 +262,7 @@ void MenuShell::eventPaint(PaintEvent* e)
 
 	for (auto item : m_items)
 	{
-		Size itemSize(itemWidth, item->getSize(this).cy);
+		const Size itemSize(itemWidth, item->getSize(this).cy);
 		item->paint(this, canvas, Rect(itemTopLeft, itemSize), bool(item == m_trackItem));
 		itemTopLeft.y += itemSize.cy;
 	}
@@ -296,5 +292,4 @@ void MenuShell::eventScroll(ScrollEvent* e)
 	update(nullptr, false);
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class MenuItem;
 class ScrollBar;
@@ -66,10 +64,6 @@ private:
 
 	void eventGlobalButtonUp(MouseButtonUpEvent* event);
 
-	// void eventButtonDown(MouseButtonDownEvent* event);
-
-	// void eventButtonUp(MouseButtonUpEvent* event);
-
 	void eventPaint(PaintEvent* e);
 
 	void eventSize(SizeEvent* e);
@@ -77,6 +71,4 @@ private:
 	void eventScroll(ScrollEvent* e);
 };
 
-	}
 }
-

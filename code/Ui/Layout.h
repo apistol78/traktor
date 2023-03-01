@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
@@ -45,6 +43,4 @@ public:
 	virtual void update(Widget* widget) = 0;
 };
 
-	}
 }
-

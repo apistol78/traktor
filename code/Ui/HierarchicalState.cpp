@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Ui/HierarchicalState.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 0, HierarchicalState, ISerializable)
 
@@ -73,5 +71,4 @@ void HierarchicalState::serialize(ISerializer& s)
 	>(L"states", m_states);
 }
 
-	}
 }

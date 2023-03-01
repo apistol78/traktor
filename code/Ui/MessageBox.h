@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 // Remove MS definition.
 #if defined(MessageBox)
@@ -43,6 +41,4 @@ public:
 	static DialogResult show(const std::wstring& message, const std::wstring& caption, int style);
 };
 
-	}
 }
-
