@@ -31,8 +31,10 @@ Ref< IStream > MemoryPipelineCache::get(const Guid& guid, const PipelineDependen
 	auto it = m_committed.find(guid);
 	if (it == m_committed.end())
 		return nullptr;
+	if (it->second.hash != hash)
+		return nullptr;
 
-	return new ChunkMemoryStream(it->second, true, false);
+	return new ChunkMemoryStream(it->second.memory, true, false);
 }
 
 Ref< IStream > MemoryPipelineCache::put(const Guid& guid, const PipelineDependencyHash& hash)
@@ -45,7 +47,7 @@ Ref< IStream > MemoryPipelineCache::put(const Guid& guid, const PipelineDependen
 
 	Ref< ChunkMemory > cm = new ChunkMemory();
 	Ref< ChunkMemoryStream > cms = new ChunkMemoryStream(cm, false, true);
-	m_pending.insert(std::make_pair(guid, cm));
+	m_pending.insert(std::make_pair(guid, Chunk{ hash, cm }));
 	return cms;
 }
 

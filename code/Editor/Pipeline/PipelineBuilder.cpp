@@ -337,7 +337,7 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 				w.dependency
 			);
 
-		BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
+		const BuildResult result = performBuild(dependencySet, w.dependency, w.buildParams, w.reason);
 		if (result == BuildResult::Succeeded || result == BuildResult::SucceededWithWarnings)
 			m_succeeded++;
 		else
@@ -417,10 +417,7 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	if (!product)
 		return nullptr;
 
-	BuiltCacheEntry bce;
-	bce.sourceAsset = sourceAsset;
-	bce.product = product;
-	m_builtCache[sourceHash].push_back(bce);
+	m_builtCache[sourceHash].push_back({ sourceAsset, product });
 	return product;
 }
 
@@ -497,9 +494,16 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 		T_ASSERT(pipeline);
 
-		// Add hash of build params to source data hash.
-		if (index == i && buildParams != nullptr && is_a< ISerializable >(buildParams))
-			dependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
+		// Add hash of build params to source data hash, if
+		// source data hash cannot be calculated we cannot permit caching of product.
+		bool cachePermitted = true;
+		if (index == i && buildParams != nullptr)
+		{
+			if (is_a< ISerializable >(buildParams))
+				dependencyHash.sourceDataHash += DeepHash(static_cast< const ISerializable* >(buildParams)).get();
+			else
+				cachePermitted = false;
+		}
 
 		// Build output instances; keep an array of written instances as we
 		// need them to update the cache for this specific build.
@@ -509,7 +513,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
 		// Get output instances from memory cache.
-		if (m_cache && pipeline->shouldCache())
+		if (m_cache && pipeline->shouldCache() && cachePermitted)
 		{
 			if (getInstancesFromCache(
 				m_cache,
@@ -566,7 +570,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		m_profiler->end(*dependency->pipelineType);
 		m_adHocDepth--;
 
-		if (result && m_cache && pipeline->shouldCache())
+		if (result && m_cache && pipeline->shouldCache() && cachePermitted)
 		{
 			putInstancesInCache(
 				m_cache,
@@ -612,10 +616,8 @@ uint32_t PipelineBuilder::calculateInclusiveHash(const ISerializable* sourceAsse
 	pipelineDepends.addDependency(sourceAsset);
 	pipelineDepends.waitUntilFinished();
 
-	// Calculate hash of source.
+	// Calculate hash of source and append hashes of all it's dependencies.
 	uint32_t hash = DeepHash(sourceAsset).get();
-
-	// Append hashes of all dependencies.
 	for (uint32_t i = 0; i < dependencySet.size(); ++i)
 	{
 		const PipelineDependency* dependency = dependencySet.get(i);
@@ -809,7 +811,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	// differently where each ad-hoc output is cached individually and referenced from
 	// this output cache.
 	m_profiler->begin(*dependency->pipelineType);
-	bool result = pipeline->buildOutput(
+	const bool result = pipeline->buildOutput(
 		this,
 		dependencySet,
 		dependency,
@@ -825,7 +827,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 	if (result)
 		m_succeededBuilt++;
 
-	double buildTime = timer.getElapsedTime();
+	const double buildTime = timer.getElapsedTime();
 
 	log::info.setLocalTarget(infoTarget.getTarget());
 	log::warning.setLocalTarget(warningTarget.getTarget());
