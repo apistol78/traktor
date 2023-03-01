@@ -142,10 +142,7 @@ private:
 		const BufferViewVk* bufferView = nullptr;
 	};
 
-#if defined(_DEBUG)
 	std::wstring m_tag;
-#endif
-
 	Context* m_context = nullptr;
 	uint32_t& m_instances;
 	RenderState m_renderState;

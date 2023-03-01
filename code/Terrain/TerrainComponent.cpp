@@ -424,11 +424,7 @@ void TerrainComponent::build(
 
 			const auto& p = m_primitives[patch.lastPatchLod];
 
-			const uint32_t c_primitiveMul[] = { 1, 0, 2, 1, 3 };
-			const uint32_t c_primitiveAdd[] = { 0, 0, 0, 2, 0 };
-			const uint32_t vertexCount = p.count * c_primitiveMul[(int32_t)p.type] + c_primitiveAdd[(int32_t)p.type];
-
-			draw->indexCount = vertexCount;
+			draw->indexCount = p.getVertexCount();
 			draw->instanceCount = 1;
 			draw->firstIndex = p.offset;
 			draw->vertexOffset = 0;
