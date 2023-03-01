@@ -11,10 +11,8 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/MultiSplitter.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MultiSplitter", MultiSplitter, Widget)
 
@@ -120,7 +118,7 @@ void MultiSplitter::eventChild(ChildEvent* event)
 	m_splitters.resize(splitterCount);
 	for (int32_t i = 0; i < splitterCount; ++i)
 	{
-		float f = (i + 1) * (1.0f / childCount);
+		const float f = (i + 1) * (1.0f / childCount);
 		m_splitters[i] = f;
 	}
 }
@@ -153,5 +151,4 @@ void MultiSplitter::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

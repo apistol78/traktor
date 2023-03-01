@@ -14,21 +14,19 @@
 #include "Ui/Widget.h"
 #include "Ui/Itf/INotificationIcon.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.NotificationIcon", NotificationIcon, EventSubject)
 
 NotificationIcon::NotificationIcon()
-:	m_ni(0)
+:	m_ni(nullptr)
 {
 }
 
 NotificationIcon::~NotificationIcon()
 {
-	T_ASSERT_M (!m_ni, L"NotificationIcon not destroyed");
+	T_ASSERT_M(!m_ni, L"NotificationIcon not destroyed");
 }
 
 bool NotificationIcon::create(const std::wstring& text, IBitmap* image)
@@ -59,5 +57,4 @@ void NotificationIcon::setImage(IBitmap* image)
 	m_ni->setImage(image->getSystemBitmap());
 }
 
-	}
 }

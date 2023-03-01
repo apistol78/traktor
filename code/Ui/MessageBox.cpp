@@ -14,10 +14,8 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MessageBox", MessageBox, ConfigDialog)
 
@@ -86,5 +84,4 @@ DialogResult MessageBox::show(const std::wstring& message, const std::wstring& c
 	return show(nullptr, message, caption, style);
 }
 
-	}
 }

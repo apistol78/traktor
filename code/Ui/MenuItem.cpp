@@ -19,17 +19,15 @@
 #include "Resources/Unchecked.h"
 #include "Resources/Checked.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_itemMarginX = 12;
-const int32_t c_itemMarginY = 8;
+const int32_t c_itemMarginY = 6;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuItem", MenuItem, Object)
 
@@ -189,28 +187,27 @@ Ref< MenuItem > MenuItem::get(int index)
 
 Size MenuItem::getSize(const Widget* shell) const
 {
-	if (m_text != L"-")
-	{
+	//if (m_text != L"-")
+	//{
 		int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
 		int32_t ch = shell->getFontMetric().getHeight();
 
 		if (m_checkBox)
 		{
-			Size sz = m_imageUnchecked->getSize();
+			const Size sz = m_imageUnchecked->getSize();
 			cw += dpi96(c_itemMarginX) + sz.cx;
 			ch = std::max< int32_t >(ch, sz.cy);
 		}
 
 		return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
-	}
-	else
-		return Size(0, 1 + dpi96(c_itemMarginY) * 2);
+	//}
+	//else
+	//	return Size(0, 1 + dpi96(c_itemMarginY) * 2);
 }
 
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const
 {
 	const StyleSheet* ss = shell->getStyleSheet();
-
 	const Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
 
 	canvas.setBackground(ss->getColor(this, tracking ? L"background-color-hover" : L"background-color"));
@@ -241,5 +238,4 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 	}
 }
 
-	}
 }

@@ -11,10 +11,8 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/MiniButton.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MiniButton", MiniButton, Widget)
 
@@ -140,5 +138,4 @@ void MiniButton::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

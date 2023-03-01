@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 class IBitmap;
@@ -52,6 +50,4 @@ private:
 	INotificationIcon* m_ni;
 };
 
-	}
 }
-

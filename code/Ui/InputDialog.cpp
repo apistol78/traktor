@@ -14,10 +14,8 @@
 #include "Ui/InputDialog.h"
 #include "Ui/MiniButton.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InputDialog", InputDialog, ConfigDialog)
 
@@ -126,5 +124,4 @@ DialogResult InputDialog::showModal()
 	return result;
 }
 
-	}
 }

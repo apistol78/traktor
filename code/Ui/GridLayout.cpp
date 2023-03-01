@@ -6,14 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ui/GridLayout.h"
 #include "Ui/Container.h"
+#include "Ui/GridLayout.h"
 #include "Ui/Rect.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridLayout", GridLayout, Layout)
 
@@ -60,5 +58,4 @@ void GridLayout::update(Widget* widget)
 	widget->setChildRects(&widgetRects[0], (uint32_t)widgetRects.size());
 }
 
-	}
 }

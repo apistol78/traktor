@@ -16,10 +16,8 @@
 #include "Ui/ToolForm.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Menu", Menu, Object)
 
@@ -91,7 +89,6 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 		if (rcForm.bottom > it->bottom)
 			rcForm = rcForm.offset(0, -(rcForm.bottom - it->bottom));
 	}
-	form->setRect(rcForm);
 
 	// Show form.
 	form->setRect(rcForm);
@@ -164,5 +161,4 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 	return selectedItem;
 }
 
-	}
 }

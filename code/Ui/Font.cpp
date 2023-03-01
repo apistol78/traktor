@@ -10,10 +10,8 @@
 #include "Ui/Application.h"
 #include "Ui/Font.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Font", Font, Object)
 
@@ -134,5 +132,4 @@ bool Font::operator < (const Font& r) const
 	return false;
 }
 
-	}
 }

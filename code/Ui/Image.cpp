@@ -11,10 +11,8 @@
 #include "Ui/Image.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Image", Image, Widget)
 
@@ -30,7 +28,6 @@ bool Image::create(Widget* parent, IBitmap* image, int style)
 	m_nearest = bool((style & WsNearestFilter) == WsNearestFilter);
 
 	addEventHandler< PaintEvent >(this, &Image::eventPaint);
-
 	return true;
 }
 
@@ -168,5 +165,4 @@ void Image::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }
