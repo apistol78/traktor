@@ -27,7 +27,7 @@ struct LinearEvaluator
 		const key_value_t& cp0 = keys[hint];
 		const key_value_t& cp1 = keys[hint + 1];
 		const float b = (T - cp0.first) / (cp1.first - cp0.first);
-		return cp0 * (1.0f - b) + cp1 * b;
+		return cp0.second * (1.0f - b) + cp1.second * b;
 	}
 };
 
@@ -41,8 +41,6 @@ struct HermiteEvaluator
 
 	static KeyType evaluate(const AlignedVector< key_value_t >& keys, float T, int hint)
 	{
-		const float c_stiffness = 0.5f;
-
 		const key_value_t& cp0 = keys[hint];
 		const key_value_t& cp1 = keys[hint + 1];
 
@@ -51,18 +49,33 @@ struct HermiteEvaluator
 		if (T == cp1.first)
 			return cp1.second;
 
-		const key_value_t& cpp = keys[(hint > 0) ? hint - 1 : 0];
-		const key_value_t& cpn = keys[(hint < int(keys.size() - 2)) ? hint + 2 : keys.size() - 1];
+		key_value_t cpp, cpn;
+		if (hint > 0)
+			cpp = keys[hint - 1];
+		else
+		{
+			cpp.first = -1.0f;
+			cpp.second = cp0.second - (cp1.second - cp0.second);
+		}
+		if (hint < (int)(keys.size() - 2))
+			cpn = keys[hint + 2];
+		else
+		{
+			cpn.first = 2.0f;
+			cpn.second = cp1.second + (cp1.second - cp0.second);
+		}
 
 		const float t = (T - cp0.first) / (cp1.first - cp0.first);
 		const float t2 = t * t;
 		const float t3 = t2 * t;
 
-		const float h2 = 3.0f * t2 - t3 - t3;
-		const float h1 = 1.0f - h2;
+		const float h1 = 2.0f * t3 - 3.0f * t2 + 1.0f;
+		const float h2 = -2.0f * t3 + 3.0f * t2;
+		const float h3 = t3 - 2.0f * t2 + t;
 		const float h4 = t3 - t2;
-		const float h3 = h4 - t2 + t;
 
+		// Catmull-Rom splines.
+		const float c_stiffness = 0.5f;
 		const KeyType T0 = c_stiffness * (cp1.second - cpp.second);
 		const KeyType T1 = c_stiffness * (cpn.second - cp0.second);
 
@@ -78,6 +91,13 @@ class Envelope
 {
 public:
 	typedef std::pair< float, KeyType > key_value_t;
+
+	Envelope() = default;
+
+	explicit Envelope(const AlignedVector< key_value_t >& keys)
+	:	m_keys(keys)
+	{
+	}
 
 	void removeAllKeys()
 	{

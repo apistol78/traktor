@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Envelope key.
  * \ingroup UI
@@ -31,7 +29,7 @@ class T_DLLCLASS EnvelopeKey : public Object
 	T_RTTI_CLASS;
 
 public:
-	EnvelopeKey(float T, float value, bool fixedT = false, bool fixedValue = false);
+	explicit EnvelopeKey(float T, float value, bool fixedT = false, bool fixedValue = false);
 
 	void setT(float T) { m_T = T; }
 
@@ -52,6 +50,4 @@ private:
 	bool m_fixedValue;
 };
 
-	}
 }
-

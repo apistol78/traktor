@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.db.LocalInstanceMeta" version="2">
+	<guid>{91D6A5D3-B7AF-8A40-9D69-B84ACE412CB3}</guid>
+	<primaryType>traktor.render.ColorGradingTextureAsset</primaryType>
+	<blobs/>
+</object>
