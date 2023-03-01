@@ -24,6 +24,7 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 
 bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
 {
+	outDependencies.insert(Guid(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}"));
 	return true;
 }
 
