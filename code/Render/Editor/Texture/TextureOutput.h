@@ -38,6 +38,7 @@ public:
 	bool m_ignoreAlpha = false;
 	bool m_invertAlpha = false;
 	bool m_premultiplyAlpha = false;
+	bool m_dilateImage = false;
 	bool m_scaleImage = false;
 	int32_t m_scaleWidth = 0;
 	int32_t m_scaleHeight = 0;
