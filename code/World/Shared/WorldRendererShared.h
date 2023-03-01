@@ -119,6 +119,7 @@ protected:
 	resource::Proxy< render::ImageGraph > m_visual;
 	resource::Proxy< render::ImageGraph > m_gammaCorrection;
 	resource::Proxy< render::ImageGraph > m_screenReflections;
+	resource::Proxy< render::ITexture > m_colorGrading;
 
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::ScreenRenderer > m_screenRenderer;
