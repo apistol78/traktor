@@ -80,6 +80,7 @@
 #include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
 #include "Editor/Pipeline/File/FilePipelineCache.h"
+#include "Editor/Pipeline/Memory/MemoryPipelineCache.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
@@ -1488,7 +1489,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		m_pipelineCache = new editor::AvalanchePipelineCache();
 		if (!m_pipelineCache->create(m_mergedSettings))
 		{
-			traktor::log::warning << L"Unable to create pipeline avalanche cache; cache disabled." << Endl;
+			traktor::log::warning << L"Unable to create pipeline avalanche cache." << Endl;
 			m_pipelineCache = nullptr;
 		}
 	}
@@ -1497,7 +1498,18 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		m_pipelineCache = new editor::FilePipelineCache();
 		if (!m_pipelineCache->create(m_mergedSettings))
 		{
-			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled." << Endl;
+			traktor::log::warning << L"Unable to create pipeline file cache." << Endl;
+			m_pipelineCache = nullptr;
+		}
+	}
+
+	// Create an in-memory cache if no pipeline cache was created.
+	if (!m_pipelineCache)
+	{
+		m_pipelineCache = new MemoryPipelineCache();
+		if (!m_pipelineCache->create(m_mergedSettings))
+		{
+			traktor::log::warning << L"Unable to create memory pipeline file cache; cache disabled." << Endl;
 			m_pipelineCache = nullptr;
 		}
 	}
