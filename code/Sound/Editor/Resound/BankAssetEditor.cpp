@@ -57,7 +57,6 @@
 #include "Ui/Panel.h"
 #include "Ui/Splitter.h"
 #include "Ui/Envelope/DefaultEnvelopeEvaluator.h"
-#include "Ui/Envelope/EnvelopeControl.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"

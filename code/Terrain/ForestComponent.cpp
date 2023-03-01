@@ -56,6 +56,11 @@ bool ForestComponent::create(
 	if (!resourceManager->bind(layerData.m_lod2mesh, m_lod2mesh))
 		return false;
 
+	// Create a union of all lod's bounding boxes for culling.
+	m_boundingBox = m_lod0mesh->getBoundingBox();
+	m_boundingBox.contain(m_lod1mesh->getBoundingBox());
+	m_boundingBox.contain(m_lod2mesh->getBoundingBox());
+
 	m_data = layerData;
 	return true;
 }
@@ -96,30 +101,26 @@ void ForestComponent::build(
 
 	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
 
-	// Update clusters at first pass from eye pow.
-	const bool updateClusters = bool((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
-
-	const Matrix44 view = worldRenderView.getView();
+	const Frustum& cullFrustum = worldRenderView.getCullFrustum();
+	const Matrix44& view = worldRenderView.getView();
 	const Vector4 eye = view.inverse().translation();
 
-	// \fixme Only shadows have a completely different culling set; indices sets for different views.
-	//if (updateClusters)
+	if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
 	{
-		// Brute force test.
-		m_lod0indices.resize(0);
-		m_lod1indices.resize(0);
-		m_lod2indices.resize(0);
-
-		if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
+		const bool updateClusters = (bool)((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0);
+		if (updateClusters)
 		{
-			const Frustum& cullFrustum = worldRenderView.getCullFrustum();
+			m_lod0Indices.resize(0);
+			m_lod1Indices.resize(0);
+			m_lod2Indices.resize(0);
+
 			for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 			{
 				const auto& tree = m_trees[i];
 
 				float distance = 0.0f;
 				if (!mesh::isMeshVisible(
-					m_lod0mesh->getBoundingBox(),
+					m_boundingBox,
 					cullFrustum,
 					view * translate(tree.position),
 					worldRenderView.getProjection(),
@@ -129,34 +130,34 @@ void ForestComponent::build(
 					continue;
 
 				if (distance < m_data.m_lod0distance)
-					m_lod0indices.push_back(i);
+					m_lod0Indices.push_back(i);
 				else if (distance < m_data.m_lod1distance)
-					m_lod1indices.push_back(i);
+					m_lod1Indices.push_back(i);
 				else if (distance < m_data.m_lod2distance)
-					m_lod2indices.push_back(i);
+					m_lod2Indices.push_back(i);
 			}
 		}
-		else
+	}
+	else
+	{
+		m_lodShadowIndices.resize(0);
+
+		for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
 		{
-			// Only render lowest lod into shadow map.
-			const Frustum& cullFrustum = worldRenderView.getCullFrustum();
-			for (uint32_t i = 0; i < (uint32_t)m_trees.size(); ++i)
-			{
-				const auto& tree = m_trees[i];
+			const auto& tree = m_trees[i];
 
-				float distance = 0.0f;
-				if (!mesh::isMeshVisible(
-					m_lod0mesh->getBoundingBox(),
-					cullFrustum,
-					view * translate(tree.position),
-					worldRenderView.getProjection(),
-					0.0f,
-					distance
-				))
-					continue;
+			float distance = 0.0f;
+			if (!mesh::isMeshVisible(
+				m_boundingBox,
+				cullFrustum,
+				view * translate(tree.position),
+				worldRenderView.getProjection(),
+				0.0f,
+				distance
+			))
+				continue;
 
-				m_lod2indices.push_back(i);
-			}
+			m_lodShadowIndices.push_back(i);
 		}
 	}
 
@@ -172,67 +173,93 @@ void ForestComponent::build(
 	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);
 
-	for (uint32_t i = 0; i < m_lod2indices.size(); )
+	if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
 	{
-		const uint32_t batch = std::min< uint32_t >(m_lod2indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
-
-		m_instanceData.resize(batch);
-		for (int32_t j = 0; j < batch; ++j, ++i)
+		for (uint32_t i = 0; i < m_lod2Indices.size(); )
 		{
-			m_trees[m_lod2indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
-			m_trees[m_lod2indices[i]].position.storeAligned(m_instanceData[j].data.translation);
-			m_instanceData[j].data.scale = m_trees[m_lod2indices[i]].scale;
-			m_instanceData[j].distance = 0.0f;
+			const uint32_t batch = std::min< uint32_t >(m_lod2Indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+
+			m_instanceData.resize(batch);
+			for (int32_t j = 0; j < batch; ++j, ++i)
+			{
+				m_trees[m_lod2Indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
+				m_trees[m_lod2Indices[i]].position.storeAligned(m_instanceData[j].data.translation);
+				m_instanceData[j].data.scale = m_trees[m_lod2Indices[i]].scale;
+				m_instanceData[j].distance = 0.0f;
+			}
+
+			m_lod2mesh->build(
+				renderContext,
+				worldRenderPass,
+				m_instanceData,
+				extraParameters
+			);
 		}
 
-		m_lod2mesh->build(
-			renderContext,
-			worldRenderPass,
-			m_instanceData,
-			extraParameters
-		);
+		for (uint32_t i = 0; i < m_lod1Indices.size(); )
+		{
+			const uint32_t batch = std::min< uint32_t >(m_lod1Indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+
+			m_instanceData.resize(batch);
+			for (int32_t j = 0; j < batch; ++j, ++i)
+			{
+				m_trees[m_lod1Indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
+				m_trees[m_lod1Indices[i]].position.storeAligned(m_instanceData[j].data.translation);
+				m_instanceData[j].data.scale = m_trees[m_lod1Indices[i]].scale;
+				m_instanceData[j].distance = 0.0f;
+			}
+
+			m_lod1mesh->build(
+				renderContext,
+				worldRenderPass,
+				m_instanceData,
+				extraParameters
+			);
+		}
+
+		for (uint32_t i = 0; i < m_lod0Indices.size(); )
+		{
+			const uint32_t batch = std::min< uint32_t >(m_lod0Indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+
+			m_instanceData.resize(batch);
+			for (int32_t j = 0; j < batch; ++j, ++i)
+			{
+				m_trees[m_lod0Indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
+				m_trees[m_lod0Indices[i]].position.storeAligned(m_instanceData[j].data.translation);
+				m_instanceData[j].data.scale = m_trees[m_lod0Indices[i]].scale;
+				m_instanceData[j].distance = 0.0f;
+			}
+
+			m_lod0mesh->build(
+				renderContext,
+				worldRenderPass,
+				m_instanceData,
+				extraParameters
+			);
+		}
 	}
-
-	for (uint32_t i = 0; i < m_lod1indices.size(); )
+	else
 	{
-		const uint32_t batch = std::min< uint32_t >(m_lod1indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
-
-		m_instanceData.resize(batch);
-		for (int32_t j = 0; j < batch; ++j, ++i)
+		for (uint32_t i = 0; i < m_lodShadowIndices.size(); )
 		{
-			m_trees[m_lod1indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
-			m_trees[m_lod1indices[i]].position.storeAligned(m_instanceData[j].data.translation);
-			m_instanceData[j].data.scale = m_trees[m_lod1indices[i]].scale;
-			m_instanceData[j].distance = 0.0f;
+			const uint32_t batch = std::min< uint32_t >(m_lodShadowIndices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
+
+			m_instanceData.resize(batch);
+			for (int32_t j = 0; j < batch; ++j, ++i)
+			{
+				m_trees[m_lodShadowIndices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
+				m_trees[m_lodShadowIndices[i]].position.storeAligned(m_instanceData[j].data.translation);
+				m_instanceData[j].data.scale = m_trees[m_lodShadowIndices[i]].scale;
+				m_instanceData[j].distance = 0.0f;
+			}
+
+			m_lod2mesh->build(
+				renderContext,
+				worldRenderPass,
+				m_instanceData,
+				extraParameters
+			);
 		}
-
-		m_lod1mesh->build(
-			renderContext,
-			worldRenderPass,
-			m_instanceData,
-			extraParameters
-		);
-	}
-
-	for (uint32_t i = 0; i < m_lod0indices.size(); )
-	{
-		const uint32_t batch = std::min< uint32_t >(m_lod0indices.size() - i, mesh::InstanceMesh::MaxInstanceCount);
-
-		m_instanceData.resize(batch);
-		for (int32_t j = 0; j < batch; ++j, ++i)
-		{
-			m_trees[m_lod0indices[i]].rotation.e.storeAligned(m_instanceData[j].data.rotation);
-			m_trees[m_lod0indices[i]].position.storeAligned(m_instanceData[j].data.translation);
-			m_instanceData[j].data.scale = m_trees[m_lod0indices[i]].scale;
-			m_instanceData[j].distance = 0.0f;
-		}
-
-		m_lod0mesh->build(
-			renderContext,
-			worldRenderPass,
-			m_instanceData,
-			extraParameters
-		);
 	}
 }
 
