@@ -3,7 +3,7 @@
 	<redCurve>
 		<item>
 			<first>0</first>
-			<second>0.058537</second>
+			<second>0.045977</second>
 		</item>
 		<item>
 			<first>0.172897</first>
@@ -25,19 +25,19 @@
 	<greenCurve>
 		<item>
 			<first>0</first>
-			<second>0.048781</second>
+			<second>0.042146</second>
 		</item>
 		<item>
-			<first>0.126168</first>
-			<second>0.263415</second>
+			<first>0.138095</first>
+			<second>0.229885</second>
 		</item>
 		<item>
 			<first>0.425234</first>
 			<second>0.497561</second>
 		</item>
 		<item>
-			<first>0.736585</first>
-			<second>0.691542</second>
+			<first>0.738095</first>
+			<second>0.708812</second>
 		</item>
 		<item>
 			<first>1</first>
@@ -50,23 +50,23 @@
 			<second>0.022222</second>
 		</item>
 		<item>
-			<first>0.14486</first>
-			<second>0.084444</second>
+			<first>0.180952</first>
+			<second>0.137931</second>
 		</item>
 		<item>
 			<first>0.453271</first>
 			<second>0.42439</second>
 		</item>
 		<item>
-			<first>0.752336</first>
-			<second>0.678049</second>
+			<first>0.752381</first>
+			<second>0.708812</second>
 		</item>
 		<item>
 			<first>1</first>
-			<second>0.858537</second>
+			<second>0.908046</second>
 		</item>
 	</blueCurve>
-	<brightness>0.24</brightness>
-	<contrast>1.64</contrast>
-	<saturation>0.92</saturation>
+	<brightness>0.22</brightness>
+	<contrast>1.69</contrast>
+	<saturation>0.83</saturation>
 </object>
