@@ -136,12 +136,12 @@ bool IrradianceGridPipeline::buildOutput(
 		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
 		for (int32_t i = 0; i < 1000; ++i)
 		{
-			Vector2 uv = Quasirandom::hammersley(i, 1000);
-			Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			Scalar w = dot3(direction, unit);
+			const Vector2 uv = Quasirandom::hammersley(i, 1000);
+			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+			const Scalar w = dot3(direction, unit);
 			cl += cubeMap->get(direction) * w;
 		}
-		return (cl * intensity * 2.0_simd) / Scalar(1000.0f);
+		return (cl * intensity * 2.0_simd) / 1000.0_simd;
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
