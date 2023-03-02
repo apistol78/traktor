@@ -400,7 +400,10 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 			pool->free(m_uniformBuffers[i].range);
 
 		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
+		{
+			log::error << L"Out of uniform buffer pool memory (" << m_tag << L")!" << Endl;
 			return false;
+		}
 
 		std::memcpy(
 			m_uniformBuffers[i].range.ptr,
