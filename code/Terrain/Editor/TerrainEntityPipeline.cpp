@@ -50,6 +50,7 @@ bool TerrainEntityPipeline::buildDependencies(
 	}
 	else if (const OceanComponentData* oceanComponentData = dynamic_type_cast< const OceanComponentData* >(sourceAsset))
 	{
+		pipelineDepends->addDependency(oceanComponentData->getShaderWave(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(oceanComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(oceanComponentData->getReflectionTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(oceanComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);

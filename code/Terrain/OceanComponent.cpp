@@ -18,6 +18,7 @@
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanComponent.h"
 #include "Terrain/OceanComponentData.h"
@@ -26,6 +27,7 @@
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
+#include "World/WorldSetupContext.h"
 
 namespace traktor::terrain
 {
@@ -38,13 +40,11 @@ const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleOcean_HaveTerrain(L"Ocean_HaveTerrain");
 const render::Handle s_handleOcean_Eye(L"Ocean_Eye");
 const render::Handle s_handleOcean_ShallowTint(L"Ocean_ShallowTint");
-const render::Handle s_handleOcean_ReflectionTint(L"Ocean_ReflectionTint");
-const render::Handle s_handleOcean_ShadowTint(L"Ocean_ShadowTint");
 const render::Handle s_handleOcean_DeepColor(L"Ocean_DeepColor");
 const render::Handle s_handleOcean_Opacity(L"Ocean_Opacity");
-const render::Handle s_handleOcean_WavesA(L"Ocean_WavesA");
-const render::Handle s_handleOcean_WavesB(L"Ocean_WavesB");
 const render::Handle s_handleOcean_ReflectionTexture(L"Ocean_ReflectionTexture");
+const render::Handle s_handleOcean_WaveTexture(L"Ocean_WaveTexture");
+const render::Handle s_handleWorld_Time(L"World_Time");
 
 #pragma pack(1)
 struct OceanVertex
@@ -69,6 +69,16 @@ OceanComponent::~OceanComponent()
 
 bool OceanComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data)
 {
+	render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 256;
+	stcd.height = 256;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR32F;
+	stcd.shaderStorage = true;
+	m_waveTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+	if (!m_waveTexture)
+		return false;
+
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(OceanVertex, edge)));
@@ -138,6 +148,8 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	m_primitives.setIndexed(render::PrimitiveType::Triangles, 0, c_gridCells * 2, 0, c_gridSize * c_gridSize - 1);
 
+	if (!resourceManager->bind(data.m_shaderWave, m_shaderWave))
+		return false;
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
@@ -148,21 +160,9 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	}
 
 	m_shallowTint = data.m_shallowTint;
-	m_reflectionTint = data.m_reflectionTint;
-	m_shadowTint = data.m_shadowTint;
 	m_deepColor = data.m_deepColor;
 	m_opacity = data.m_opacity;
 	m_elevation = data.m_elevation;
-	m_maxAmplitude = 0.0f;
-
-	for (int32_t i = 0; i < sizeof_array(m_wavesA); ++i)
-	{
-		const float dx = std::cos(data.m_waves[i].direction);
-		const float dz = std::sin(data.m_waves[i].direction);
-		m_wavesA[i] = Vector4(dx, dz, data.m_waves[i].rate, 0.0f);
-		m_wavesB[i] = Vector4(data.m_waves[i].amplitude, data.m_waves[i].frequency, data.m_waves[i].phase, data.m_waves[i].pinch);
-		m_maxAmplitude += std::abs(data.m_waves[i].amplitude);
-	}
 
 	return true;
 }
@@ -171,6 +171,7 @@ void OceanComponent::destroy()
 {
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
+	safeDestroy(m_waveTexture);
 	m_shader.clear();
 }
 
@@ -190,6 +191,30 @@ Aabb3 OceanComponent::getBoundingBox() const
 
 void OceanComponent::update(const world::UpdateParams& update)
 {
+}
+
+void OceanComponent::setup(
+	const world::WorldSetupContext& context,
+	const world::WorldRenderView& worldRenderView
+)
+{
+	Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
+	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Ocean Wave");
+		renderBlock->program = m_shaderWave->getProgram().program;
+		renderBlock->workSize[0] = 256;
+		renderBlock->workSize[1] = 256;
+		renderBlock->workSize[2] = 1;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+		renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTexture);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->enqueue(renderBlock);
+	});
+	context.getRenderGraph().addPass(rp);
 }
 
 void OceanComponent::build(
@@ -212,16 +237,12 @@ void OceanComponent::build(
 		haveTerrain = (terrain && terrain->getHeightfield() && terrain->getHeightMap());
 	}
 
-	Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
-
+	const Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
 	const Matrix44& view = worldRenderView.getView();
 	const Matrix44 viewInv = view.inverse();
-
-	// Get eye position in world space; cull entire ocean if beneath surface.
 	const Vector4 eye = viewInv.translation().xyz1();
-	if (eye.y() < transform.translation().y() - m_maxAmplitude)
-		return;
 
+	// Render ocean geometry.
 	auto perm = worldRenderPass.getPermutation(m_shader);
 	m_shader->setCombination(s_handleOcean_HaveTerrain, haveTerrain, perm);
 	auto sp = m_shader->getProgram(perm);
@@ -239,15 +260,12 @@ void OceanComponent::build(
 
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_ReflectionTint, m_reflectionTint);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_ShadowTint, m_shadowTint);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
-	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
-	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesA, m_wavesA, sizeof_array(m_wavesA));
-	renderBlock->programParams->setVectorArrayParameter(s_handleOcean_WavesB, m_wavesB, sizeof_array(m_wavesB));
 	renderBlock->programParams->setTextureParameter(s_handleOcean_ReflectionTexture, m_reflectionTexture);
+	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture, m_waveTexture);
 
 	if (haveTerrain)
 	{
@@ -256,9 +274,9 @@ void OceanComponent::build(
 		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
 		const Vector4 worldOrigin = -worldExtent * 0.5_simd;
 
-		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
+		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
 	}
 
 	worldRenderPass.setProgramParameters(

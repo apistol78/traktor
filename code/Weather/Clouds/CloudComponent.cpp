@@ -468,7 +468,6 @@ void CloudComponent::buildCluster(
 			Vector4 haloColor = colorAsVector4(m_particleData.getHaloColor());
 
 			ImpostorUpdateRenderBlock* impostorRenderBlock = renderContext->alloc< ImpostorUpdateRenderBlock >();
-			impostorRenderBlock->distance = -std::numeric_limits< float >::max();
 			impostorRenderBlock->impostorTargetSet = m_impostorTargets[slice];
 			impostorRenderBlock->impostorClearColor = Color4f(haloColor);
 			impostorRenderBlock->particlePassCount = 0;
