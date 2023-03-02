@@ -46,6 +46,7 @@ namespace traktor::world
 
 class IWorldRenderPass;
 class WorldRenderView;
+class WorldSetupContext;
 
 }
 
@@ -79,6 +80,11 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void setup(
+		const world::WorldSetupContext& context,
+		const world::WorldRenderView& worldRenderView
+	);
+
 	void build(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView& worldRenderView,
@@ -90,14 +96,6 @@ public:
 
 	const Color4f& getShallowTint() const { return m_shallowTint; }
 
-	void setReflectionTint(const Color4f& reflectionTint) { m_reflectionTint = reflectionTint; }
-
-	const Color4f& getReflectionTint() const { return m_reflectionTint; }
-
-	void setShadowTint(const Color4f& shadowTint) { m_shadowTint = shadowTint; }
-
-	const Color4f& getShadowTint() const { return m_shadowTint; }
-
 	void setDeepColor(const Color4f& deepColor) { m_deepColor = deepColor; }
 
 	const Color4f& getDeepColor() const { return m_deepColor; }
@@ -106,26 +104,21 @@ public:
 
 	float getOpacity() const { return m_opacity; }
 
-	float getMaxAmplitude() const { return m_maxAmplitude; }
-
 private:
 	world::Entity* m_owner = nullptr;
+	resource::Proxy< Terrain > m_terrain;
+	resource::Proxy< render::Shader > m_shaderWave;	//!< Compute shader to generate wave maps.
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_reflectionTexture;
-	resource::Proxy< Terrain > m_terrain;
+	Ref< render::ITexture > m_waveTexture;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
 	render::Primitives m_primitives;
 	Color4f m_shallowTint;
-	Color4f m_reflectionTint;
-	Color4f m_shadowTint;
 	Color4f m_deepColor;
 	float m_opacity = 0.5f;
 	float m_elevation = 0.0f;
-	float m_maxAmplitude = 1.0f;
-	Vector4 m_wavesA[4];
-	Vector4 m_wavesB[4];
 };
 
 }

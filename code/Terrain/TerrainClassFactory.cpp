@@ -28,11 +28,8 @@ void TerrainClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classOceanComponent = new AutoRuntimeClass< OceanComponent >();
 	classOceanComponent->addProperty("shallowTint", &OceanComponent::setShallowTint, &OceanComponent::getShallowTint);
-	classOceanComponent->addProperty("reflectionTint", &OceanComponent::setReflectionTint, &OceanComponent::getReflectionTint);
-	classOceanComponent->addProperty("shadowTint", &OceanComponent::setShadowTint, &OceanComponent::getShadowTint);
 	classOceanComponent->addProperty("deepColor", &OceanComponent::setDeepColor, &OceanComponent::getDeepColor);
 	classOceanComponent->addProperty("opacity", &OceanComponent::setOpacity, &OceanComponent::getOpacity);
-	classOceanComponent->addProperty("maxAmplitude", &OceanComponent::getMaxAmplitude);
 	registrar->registerClass(classOceanComponent);
 
 	auto classRiverComponent = new AutoRuntimeClass< RiverComponent >();
