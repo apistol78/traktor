@@ -25,12 +25,10 @@
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 enum Modes
 {
@@ -86,7 +84,7 @@ Rect operator / (const Rect& rc, float scale)
 	return rc * (1.0f / scale);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphControl", GraphControl, Widget)
 
@@ -149,8 +147,14 @@ Node* GraphControl::createNode(const std::wstring& title, const std::wstring& in
 void GraphControl::removeNode(Node* node)
 {
 	T_FATAL_ASSERT(node->m_owner == this);
+	
 	node->m_owner = nullptr;
 	m_nodes.remove(node);
+
+	auto it = std::remove_if(m_dependencyHints.begin(), m_dependencyHints.end(), [=](const std::pair< const Node*, const Node* >& v) {
+		return v.first == node || v.second == node;
+	});
+	m_dependencyHints.erase(it, m_dependencyHints.end());
 }
 
 void GraphControl::removeAllNodes()
@@ -160,6 +164,7 @@ void GraphControl::removeAllNodes()
 
 	m_nodes.resize(0);
 	m_edges.resize(0);
+	m_dependencyHints.resize(0);
 }
 
 RefArray< Node >& GraphControl::getNodes()
@@ -295,6 +300,30 @@ Pin* GraphControl::getPinAt(const Point& p) const
 			return pin;
 	}
 	return nullptr;
+}
+
+void GraphControl::addDependencyHint(const Node* fromNode, const Node* toNode)
+{
+	if (fromNode == toNode)
+		return;
+	if (std::find_if(m_dependencyHints.begin(), m_dependencyHints.end(), [&](const std::pair< const Node*, const Node* >& v) {
+		return v.first == fromNode && v.second == toNode;
+	}) == m_dependencyHints.end())
+		m_dependencyHints.push_back({ fromNode, toNode });
+}
+
+void GraphControl::removeDependencyHint(const Node* fromNode, const Node* toNode)
+{
+	auto it = std::find_if(m_dependencyHints.begin(), m_dependencyHints.end(), [&](const std::pair< const Node*, const Node* >& v) {
+		return v.first == fromNode && v.second == toNode;
+	});
+	if (it != m_dependencyHints.end())
+		m_dependencyHints.erase(it);
+}
+
+void GraphControl::removeAllDependencyHints()
+{
+	m_dependencyHints.resize(0);
 }
 
 void GraphControl::setPaintSettings(const PaintSettings* paintSettings)
@@ -996,6 +1025,15 @@ void GraphControl::eventPaint(PaintEvent* event)
 		m_scale
 	);
 
+	// Draw dependency hints.
+	for (const auto& hint : m_dependencyHints)
+	{
+		const Rect rcFrom = hint.first->calculateRect().offset(m_offset);
+		const Rect rcTo = hint.second->calculateRect().offset(m_offset);
+		graphCanvas.setForeground(Color4ub(100, 200, 100, 80));
+		graphCanvas.drawLine(rcFrom.getCenter(), rcTo.getCenter(), 4);
+	}
+
 	// Draw edges.
 	for (auto edge : m_edges)
 	{
@@ -1052,5 +1090,4 @@ void GraphControl::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

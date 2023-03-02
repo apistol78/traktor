@@ -417,6 +417,11 @@ void Tab::eventPaint(PaintEvent* event)
 			const Size sizText = canvas.getFontMetric().getExtent(text);
 
 			int32_t tabWidthNoMargin = sizText.cx;
+			if (m_bitmapImages != nullptr && page->getImageIndex() >= 0)
+			{
+				const Size bitmapSize = m_bitmapImages->getSize();
+				tabWidthNoMargin += bitmapSize.cy;
+			}
 			if (m_closeButton)
 			{
 				const Size closeSize = m_bitmapClose->getSize();
@@ -458,6 +463,21 @@ void Tab::eventPaint(PaintEvent* event)
 					canvas.fillRect(rcTab);
 				}
 
+				// Draw icon, offset text if icon is visible.
+				int32_t textOffset = 0;
+				if (m_bitmapImages != nullptr && page->getImageIndex() >= 0)
+				{
+					const Size bitmapSize = m_bitmapImages->getSize();
+					canvas.drawBitmap(
+						Point(left + dpi96(4), rcTab.getCenter().y - bitmapSize.cy / 2 + dpi96(1)),
+						Point(page->getImageIndex() * bitmapSize.cy, 0),
+						Size(bitmapSize.cy, bitmapSize.cy),
+						m_bitmapImages,
+						BlendMode::Alpha
+					);
+					textOffset += bitmapSize.cy;
+				}
+
 				// Draw close button.
 				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
@@ -473,9 +493,9 @@ void Tab::eventPaint(PaintEvent* event)
 
 				// Draw text.
 				const Rect rcTabText(
-					left + dpi96(4),
+					left + textOffset + dpi96(4),
 					rcTab.top,
-					left + dpi96(4) + sizText.cx,
+					left + textOffset + dpi96(4) + sizText.cx,
 					rcTab.bottom
 				);
 				if (isEnable())
@@ -566,4 +586,3 @@ bool Tab::PageState::operator == (const Tab::PageState& rh) const
 
 	}
 }
-

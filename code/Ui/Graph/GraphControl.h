@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edge;
 class IBitmap;
@@ -125,6 +123,17 @@ public:
 
 	Pin* getPinAt(const Point& p) const;
 
+	/*! Add a dependency hint between two nodes.
+	 * 
+	 * \param fromNode Dependency from node.
+	 * \param toNode Dependency to node.
+	 */
+	void addDependencyHint(const Node* fromNode, const Node* toNode);
+
+	void removeDependencyHint(const Node* fromNode, const Node* toNode);
+
+	void removeAllDependencyHints();
+
 	void setPaintSettings(const PaintSettings* paintSettings);
 
 	const PaintSettings* getPaintSettings() const;
@@ -165,6 +174,7 @@ private:
 	std::vector< Point > m_nodePositions;
 	std::vector< bool > m_nodeSelectionStates;
 	std::vector< bool > m_edgeSelectionStates;
+	std::vector< std::pair< const Node*, const Node* > > m_dependencyHints;
 	const Pin* m_hotPin;
 
 	void beginSelectModification();
@@ -184,6 +194,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-
