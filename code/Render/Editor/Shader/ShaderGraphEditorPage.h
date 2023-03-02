@@ -128,6 +128,8 @@ private:
 
 	void updateExternalNode(External* external);
 
+	void updateVariableHints();
+
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
