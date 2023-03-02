@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Open database.
  * \ingroup Database
@@ -32,7 +30,7 @@ class T_DLLCLASS DbmOpen : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmOpen(const std::wstring& name = L"");
+	explicit DbmOpen(const std::wstring& name = L"");
 
 	const std::wstring& getName() const { return m_name; }
 
@@ -42,6 +40,4 @@ private:
 	std::wstring m_name;
 };
 
-	}
 }
-

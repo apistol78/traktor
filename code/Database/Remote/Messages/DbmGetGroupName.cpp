@@ -6,14 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Database/Remote/Messages/DbmGetGroupName.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Database/Remote/Messages/DbmGetGroupName.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetGroupName", 0, DbmGetGroupName, IMessage)
 
@@ -27,5 +25,4 @@ void DbmGetGroupName::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
-	}
 }

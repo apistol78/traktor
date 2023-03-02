@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Create group.
  * \ingroup Database
@@ -32,7 +30,7 @@ class T_DLLCLASS DbmCreateGroup : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmCreateGroup(uint32_t handle = 0, const std::wstring& name = L"");
+	explicit DbmCreateGroup(uint32_t handle = 0, const std::wstring& name = L"");
 
 	uint32_t getHandle() const { return m_handle; }
 
@@ -45,6 +43,4 @@ private:
 	std::wstring m_name;
 };
 
-	}
 }
-

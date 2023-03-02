@@ -12,18 +12,10 @@
 #include "Database/IEvent.h"
 #include "Database/Remote/Messages/DbmGetEventResult.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetEventResult", 0, DbmGetEventResult, IMessage)
-
-DbmGetEventResult::DbmGetEventResult()
-:	m_sqnr(0)
-,	m_remote(false)
-{
-}
 
 DbmGetEventResult::DbmGetEventResult(uint64_t sqnr, const IEvent* event, bool remote)
 :	m_sqnr(sqnr)
@@ -39,5 +31,4 @@ void DbmGetEventResult::serialize(ISerializer& s)
 	s >> Member< bool >(L"remote", m_remote);
 }
 
-	}
 }

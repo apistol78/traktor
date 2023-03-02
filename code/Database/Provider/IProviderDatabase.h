@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class ConnectionString;
 class IProviderBus;
@@ -66,6 +64,4 @@ public:
 	virtual IProviderGroup* getRootGroup() = 0;
 };
 
-	}
 }
-

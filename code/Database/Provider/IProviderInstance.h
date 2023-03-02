@@ -28,8 +28,10 @@ namespace traktor
 class ISerializable;
 class IStream;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 /*! Provider instance interface.
  * \ingroup Database
@@ -176,6 +178,4 @@ public:
 	virtual Ref< IStream > writeData(const std::wstring& dataName) = 0;
 };
 
-	}
 }
-

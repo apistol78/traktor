@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstanceName", 0, DbmGetInstanceName, IMessage)
 
@@ -27,5 +25,4 @@ void DbmGetInstanceName::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
-	}
 }
