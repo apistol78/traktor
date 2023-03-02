@@ -10,10 +10,12 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+#if defined(max)
+#	undef max
+#endif
+
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Size
  * \ingroup UI
@@ -24,29 +26,29 @@ public:
 	int32_t cx;
 	int32_t cy;
 
-	inline Size();
+	T_FORCE_INLINE Size();
 
-	inline Size(int32_t x, int32_t y);
+	T_FORCE_INLINE Size(int32_t x, int32_t y);
 
-	inline Size(const Size& size);
+	T_FORCE_INLINE Size(const Size& size);
 
-	inline Size operator - () const;
+	T_FORCE_INLINE Size operator - () const;
 
-	inline Size operator + (const Size& r) const;
+	T_FORCE_INLINE Size operator + (const Size& r) const;
 
-	inline Size& operator += (const Size& r);
+	T_FORCE_INLINE Size& operator += (const Size& r);
 
-	inline Size operator - (const Size& r) const;
+	T_FORCE_INLINE Size operator - (const Size& r) const;
 
-	inline Size& operator -= (const Size& r);
+	T_FORCE_INLINE Size& operator -= (const Size& r);
 
-	inline bool operator == (const Size& r) const;
+	T_FORCE_INLINE bool operator == (const Size& r) const;
 
-	inline bool operator != (const Size& r) const;
+	T_FORCE_INLINE bool operator != (const Size& r) const;
+
+	T_FORCE_INLINE static Size max() { return Size(65535, 65535); }
 };
 
-	}
 }
 
 #include "Ui/Size.inl"
-

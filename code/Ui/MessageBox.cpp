@@ -33,7 +33,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 		dpi96(200),
 		dpi96(100),
 		dialogStyle,
-		new TableLayout(haveIcon ? L"*,*" : L"*", L"*", dpi96(16), dpi96(16))
+		new TableLayout(haveIcon ? L"*,*" : L"*", L"100%", dpi96(16), dpi96(16))
 	))
 		return false;
 

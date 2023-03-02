@@ -576,10 +576,6 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		// Seems weird but Windows send Nth character in alphabet when holding down CTRL.
-		if (wParam < L'A' && GetAsyncKeyState(VK_CONTROL))
-			wParam = L'A' - 1 + wParam;
-
 		KeyEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), wchar_t(wParam));
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
