@@ -1505,6 +1505,34 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 		external->createOutputPin(outputPort->getId(), outputPort->getName());
 }
 
+void ShaderGraphEditorPage::updateVariableHints()
+{
+	m_editorGraph->removeAllDependencyHints();
+
+	RefArray< ui::Node > variableNodes;
+	RefArray< ui::Node > selectedVariableNodes;
+	for (auto editorNode : m_editorGraph->getNodes())
+	{
+		if (editorNode->getData< Variable >(L"SHADERNODE") != nullptr)
+		{
+			variableNodes.push_back(editorNode);
+			if (editorNode->isSelected())
+				selectedVariableNodes.push_back(editorNode);
+		}
+	}
+
+	for (auto selectVariableNode : selectedVariableNodes)
+	{
+		for (auto variableNode : variableNodes)
+		{
+			if (variableNode->getInfo() == selectVariableNode->getInfo())
+				m_editorGraph->addDependencyHint(variableNode, selectVariableNode);
+		}
+	}
+
+	m_editorGraph->update();
+}
+
 void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 {
 	const ui::Command& command = event->getCommand();
@@ -1574,6 +1602,8 @@ void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 	}
 	else
 		m_propertiesView->setPropertyObject(nullptr);
+
+	updateVariableHints();
 }
 
 void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
