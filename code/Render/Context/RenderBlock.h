@@ -40,7 +40,6 @@ public:
 #if defined(_DEBUG)
 	std::wstring name;
 #endif
-	float distance = 0.0f;
 
 	virtual ~RenderBlock() {}
 

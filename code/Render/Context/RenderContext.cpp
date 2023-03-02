@@ -86,6 +86,11 @@ void RenderContext::enqueue(RenderBlock* renderBlock)
 	m_renderQueue.push_back(renderBlock);
 }
 
+void RenderContext::compute(ComputeRenderBlock* renderBlock)
+{
+	m_computeQueue.push_back(renderBlock);
+}
+
 void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 {
 	if (type == RpSetup)
@@ -153,8 +158,12 @@ void RenderContext::merge(uint32_t priorities)
 
 void RenderContext::render(IRenderView* renderView) const
 {
-	const size_t size = m_renderQueue.size();
-	for (size_t i = 0; i < size; ++i)
+	const size_t csize = m_computeQueue.size();
+	for (size_t i = 0; i < csize; ++i)
+		m_computeQueue[i]->render(renderView);
+
+	const size_t rsize = m_renderQueue.size();
+	for (size_t i = 0; i < rsize; ++i)
 		m_renderQueue[i]->render(renderView);
 }
 
@@ -163,13 +172,8 @@ void RenderContext::flush()
 	// Reset queues and heap.
 	for (int32_t i = 0; i < sizeof_array(m_priorityQueue); ++i)
 	{
-#if defined(_DEBUG)
-		if (!m_priorityQueue[i].empty())
-		{
-			const wchar_t* c_queueNames[] = { L"Setup", L"Opaque", L"Post-Opaque", L"Alpha-Blend", L"Post-Alpha-Blend", L"Overlay" };
-			log::debug << L"Still " << (int32_t)m_priorityQueue[i].size() << L" non-merged render blocks in priority queue \"" << c_queueNames[i] << L"\", discarded." << Endl;
-		}
-#endif
+		T_ASSERT(m_priorityQueue[i].empty());
+
 		// As blocks are allocated from a fixed pool we need to manually call destructors.
 		for (auto renderBlock : m_priorityQueue[i])
 			renderBlock->~DrawableRenderBlock();
@@ -178,9 +182,12 @@ void RenderContext::flush()
 	}
 
 	// As blocks are allocated from a fixed pool we need to manually call destructors.
+	for (auto renderBlock : m_computeQueue)
+		renderBlock->~ComputeRenderBlock();
 	for (auto renderBlock : m_renderQueue)
 		renderBlock->~RenderBlock();
 
+	m_computeQueue.resize(0);
 	m_renderQueue.resize(0);
 
 	m_heapPtr = m_heap.ptr();

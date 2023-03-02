@@ -72,6 +72,9 @@ public:
 	/*! Enqueue a render block in context. */
 	void enqueue(RenderBlock* renderBlock);
 
+	/*! Add compute render block to context. */
+	void compute(ComputeRenderBlock* renderBlock);
+
 	/*! Add render block to sorting queue. */
 	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
 
@@ -94,6 +97,7 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
+	AlignedVector< ComputeRenderBlock* > m_computeQueue;
 	AlignedVector< RenderBlock* > m_renderQueue;
 	AlignedVector< DrawableRenderBlock* > m_priorityQueue[6];
 };
