@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class IEvent;
 
@@ -34,9 +32,9 @@ class T_DLLCLASS DbmGetEventResult : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmGetEventResult();
+	DbmGetEventResult() = default;
 
-	DbmGetEventResult(uint64_t sqnr, const IEvent* event, bool remote);
+	explicit DbmGetEventResult(uint64_t sqnr, const IEvent* event, bool remote);
 
 	uint64_t getSequenceNumber() const { return m_sqnr; }
 
@@ -47,11 +45,9 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	uint64_t m_sqnr;
+	uint64_t m_sqnr = 0;
 	Ref< const IEvent > m_event;
-	bool m_remote;
+	bool m_remote = false;
 };
 
-	}
 }
-

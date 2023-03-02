@@ -6,14 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Database/Remote/Messages/DbmOpen.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Database/Remote/Messages/DbmOpen.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmOpen", 0, DbmOpen, IMessage)
 
@@ -27,5 +25,4 @@ void DbmOpen::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", m_name);
 }
 
-	}
 }

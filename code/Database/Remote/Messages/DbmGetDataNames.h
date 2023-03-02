@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Get instance data names.
  * \ingroup Database
@@ -31,7 +29,7 @@ class T_DLLCLASS DbmGetDataNames : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmGetDataNames(uint32_t handle = 0);
+	explicit DbmGetDataNames(uint32_t handle = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
@@ -41,6 +39,4 @@ private:
 	uint32_t m_handle;
 };
 
-	}
 }
-

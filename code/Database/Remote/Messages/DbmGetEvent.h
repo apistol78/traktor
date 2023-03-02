@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Get event from bus.
  * \ingroup Database
@@ -31,7 +29,7 @@ class T_DLLCLASS DbmGetEvent : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmGetEvent(uint32_t handle = 0, uint64_t sqnr = 0);
+	explicit DbmGetEvent(uint32_t handle = 0, uint64_t sqnr = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
@@ -44,6 +42,4 @@ private:
 	uint64_t m_sqnr;
 };
 
-	}
 }
-
