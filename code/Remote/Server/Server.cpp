@@ -272,14 +272,14 @@ uint8_t Server::handleLaunchProcess(net::TcpSocket* clientSocket)
 
 	Path path(m_scratchPath + L"/" + user + L"/" + pathName);
 	Ref< IProcess > process = OS::getInstance().execute(
-		L"\"" + path.getPathName() + L"\" " + arguments,
+		L"\"" + path.getPathNameOS() + L"\" " + arguments,
 		m_scratchPath + L"/" + user,
 		nullptr,
 		OS::EfNone
 	);
 	if (!process)
 	{
-		log::error << L"Unable to launch process \"" << pathName << L"\"." << Endl;
+		log::error << L"Unable to launch process \"" << path.getPathNameOS() << L"\"." << Endl;
 		writer << uint8_t(c_errLaunchFailed);
 		return c_errLaunchFailed;
 	}
