@@ -32,7 +32,7 @@ namespace traktor::render
 const resource::Id< Shader > c_idPrimitiveShader(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));
 const resource::Id< ITexture > c_idFontTexture(Guid(L"{123602E4-BC6F-874D-92E8-A20852D140A3}"));
 
-const int c_bufferCount = 16 * 1024;
+const int c_bufferCount = 64 * 1024;
 
 static const Handle s_handleProjection(L"Projection");
 static const Handle s_handleDepthTest(L"DepthTest");
