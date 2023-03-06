@@ -304,9 +304,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Update settings in all entity editors.
 		if (command == L"Editor.SettingsChanged")
 		{
-			RefArray< EntityAdapter > entities;
-			m_context->getEntities(entities, SceneEditorContext::GfDescendants);
-			for (auto entity : entities)
+			for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			{
 				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)
@@ -316,9 +314,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Propagate command to selected entity editors if render control has focus.
 		else if (!result && containFocus())
 		{
-			RefArray< EntityAdapter > entities;
-			m_context->getEntities(entities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-			for (auto entity : entities)
+			for (auto entity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			{
 				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)

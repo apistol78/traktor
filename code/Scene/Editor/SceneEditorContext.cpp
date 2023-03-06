@@ -450,8 +450,7 @@ void SceneEditorContext::buildEntities()
 		Ref< ISceneController > controller;
 		if (m_sceneAsset->getControllerData())
 		{
-			RefArray< EntityAdapter > entityAdapters;
-			getEntities(entityAdapters);
+			RefArray< EntityAdapter > entityAdapters = getEntities();
 
 			SmallMap< Guid, Ref< world::Entity > > entityProducts;
 			for (auto entityAdapter : entityAdapters)
@@ -474,9 +473,7 @@ void SceneEditorContext::buildEntities()
 		m_scene = nullptr;
 
 	// Create map from entity to adapter.
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
+	RefArray< EntityAdapter > entityAdapters = getEntities();
 	m_entityAdapterMap.clear();
 	for (auto entityAdapter : entityAdapters)
 	{
@@ -502,11 +499,8 @@ void SceneEditorContext::buildController()
 	Ref< ISceneController > controller;
 	if (m_sceneAsset->getControllerData())
 	{
-		RefArray< EntityAdapter > entityAdapters;
-		getEntities(entityAdapters);
-
 		SmallMap< Guid, Ref< world::Entity > > entityProducts;
-		for (auto entityAdapter : entityAdapters)
+		for (auto entityAdapter : getEntities())
 			entityProducts.insert(std::make_pair(
 				entityAdapter->getId(),
 				entityAdapter->getEntity()
@@ -534,23 +528,19 @@ void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
 
 void SceneEditorContext::selectAllEntities(bool select)
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
-	for (auto entityAdapter : entityAdapters)
+	for (auto entityAdapter : getEntities())
 		selectEntity(entityAdapter, select);
 }
 
-uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
+RefArray< EntityAdapter > SceneEditorContext::getEntities(uint32_t flags) const
 {
 	typedef std::pair< RefArray< EntityAdapter >::const_iterator, RefArray< EntityAdapter >::const_iterator > range_t;
 
-	outEntityAdapters.resize(0);
-
 	if (m_layerEntityAdapters.empty())
-		return 0;
+		return RefArray< EntityAdapter >();
 
-	outEntityAdapters.reserve(4096);
+	RefArray< EntityAdapter > entityAdapters;
+	entityAdapters.reserve(4096);
 
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_layerEntityAdapters.begin(), m_layerEntityAdapters.end()));
@@ -579,7 +569,7 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 				include &= !entityAdapter->isChildOfExternal();
 
 			if (include)
-				outEntityAdapters.push_back(entityAdapter);
+				entityAdapters.push_back(entityAdapter);
 
 			if (flags & GfDescendants)
 			{
@@ -592,7 +582,7 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 			stack.pop();
 	}
 
-	return uint32_t(outEntityAdapters.size());
+	return std::move(entityAdapters);
 }
 
 uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
@@ -657,19 +647,16 @@ uint32_t SceneEditorContext::findAdaptersOfType(const TypeInfo& entityType, RefA
 
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
-	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_entityAdapterMap.find(entity);
-	return i != m_entityAdapterMap.end() ? i->second : nullptr;
+	auto it = m_entityAdapterMap.find(entity);
+	return it != m_entityAdapterMap.end() ? it->second : nullptr;
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable, bool throughSelected) const
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
 	EntityAdapter* minEntityAdapter = nullptr;
 	Scalar minDistance(1e8f);
 
-	for (auto entityAdapter : entityAdapters)
+	for (auto entityAdapter : getEntities())
 	{
 		// Must be public, unlocked, visible and no child of external.
 		if (
@@ -709,10 +696,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
-	for (auto entityAdapter : entityAdapters)
+	for (auto entityAdapter : getEntities())
 	{
 		// Must be public, unlocked, visible and no child of external.
 		if (
@@ -735,14 +719,12 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 		if (entityEditor->queryFrustum(worldFrustum))
 			outEntityAdapters.push_back(entityAdapter);
 	}
-
 	return (uint32_t)outEntityAdapters.size();
 }
 
 void SceneEditorContext::cloneSelected()
 {
-	RefArray< EntityAdapter > selectedEntityAdapters;
-	getEntities(selectedEntityAdapters, GfDescendants | GfSelectedOnly);
+	RefArray< EntityAdapter > selectedEntityAdapters = getEntities(GfDescendants | GfSelectedOnly);
 	if (selectedEntityAdapters.empty())
 		return;
 

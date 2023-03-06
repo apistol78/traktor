@@ -17,18 +17,16 @@
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_guideThickness(0.015f);
 const Scalar c_guideScale(0.15f);
 const Scalar c_guideMinRadius(1.0f);
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RotateModifier", RotateModifier, IModifier)
 
@@ -55,20 +53,29 @@ void RotateModifier::deactivate()
 
 void RotateModifier::selectionChanged()
 {
-	m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseTransforms.clear();
+
 	m_center = Vector4::zero();
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform();
+		const Transform T = entityAdapter->getTransform();
 		m_baseTransforms.push_back(T);
 		m_center += T.translation();
 	}
 	if (!m_entityAdapters.empty())
 		m_center /= Scalar(float(m_entityAdapters.size()));
 	m_center = m_center.xyz1();
+
+	if (m_baseTransforms.size() == 1)
+		m_baseTransforms.front().rotation().toEulerAngles(m_baseHead, m_basePitch, m_baseBank);
+	else
+	{
+		m_baseHead = 0.0f;
+		m_basePitch = 0.0f;
+		m_baseBank = 0.0f;
+	}
 
 	m_axisEnable = 0;
 }
@@ -83,13 +90,13 @@ bool RotateModifier::cursorMoved(
 	if (m_entityAdapters.empty())
 		return false;
 
-	Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
-	Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
-	Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
+	const Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
+	const Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
+	const Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
 
-	Vector4 eye = transformChain.getView().inverse().translation();
-	Scalar distance = (m_center - eye).xyz0().length();
-	Scalar radius = Scalar((distance / 6.0_simd) * m_context->getGuideSize());
+	const Vector4 eye = transformChain.getView().inverse().translation();
+	const Scalar distance = (m_center - eye).xyz0().length();
+	const Scalar radius = (distance / 6.0_simd) * Scalar(m_context->getGuideSize());
 
 	m_axisEnable = 0;
 
@@ -97,10 +104,10 @@ bool RotateModifier::cursorMoved(
 	tc.pushWorld(translate(m_center) * mh);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		Vector2 s, e;
 		tc.objectToScreen(Vector4(c1, 0.0f, s1, 1.0f), s);
@@ -117,10 +124,10 @@ bool RotateModifier::cursorMoved(
 	tc.pushWorld(translate(m_center) * mh * mp);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		Vector2 s, e;
 		tc.objectToScreen(Vector4(0.0f, c1, s1, 1.0f), s);
@@ -137,10 +144,10 @@ bool RotateModifier::cursorMoved(
 	tc.pushWorld(translate(m_center) * mh * mp * mb);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		Vector2 s, e;
 		tc.objectToScreen(Vector4(c1, s1, 0.0f, 1.0f), s);
@@ -185,25 +192,25 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 
 	if (m_entityAdapters.size() == 1)
 	{
-		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
+		const Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
-		Transform T = m_entityAdapters.front()->getTransform();
-		Transform Tn(T.translation(), Q);
+		const Transform T = m_entityAdapters.front()->getTransform();
+		const Transform Tn(T.translation(), Q);
 
 		m_entityAdapters.front()->setTransform(Tn);
 	}
 	else
 	{
-		Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
+		const Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
 
-		Transform Tc(m_center.xyz1());
-		Transform Tci(-m_center.xyz1());
+		const Transform Tc(m_center.xyz1());
+		const Transform Tci(-m_center.xyz1());
 
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
-			Transform T0 = Tci * m_baseTransforms[i];
-			Transform T1 = Transform(Q) * T0;
-			Transform T2 = Tc * T1;
+			const Transform T0 = Tci * m_baseTransforms[i];
+			const Transform T1 = Transform(Q) * T0;
+			const Transform T2 = Tc * T1;
 			m_entityAdapters[i]->setTransform(T2);
 		}
 	}
@@ -266,25 +273,25 @@ void RotateModifier::apply(
 				bank = std::floor(bank / snapAngle + 0.5f) * snapAngle;
 		}
 
-		Quaternion Q = Quaternion::fromEulerAngles(head, pitch, bank);
+		const Quaternion Q = Quaternion::fromEulerAngles(head, pitch, bank);
 
-		Transform T = m_baseTransforms.front();
-		Transform Tn(T.translation(), Q);
+		const Transform T = m_baseTransforms.front();
+		const Transform Tn(T.translation(), Q);
 
 		m_entityAdapters.front()->setTransform(Tn);
 	}
 	else
 	{
-		Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
+		const Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
 
-		Transform Tc(m_center.xyz1());
-		Transform Tci(-m_center.xyz1());
+		const Transform Tc(m_center.xyz1());
+		const Transform Tci(-m_center.xyz1());
 
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
-			Transform T0 = Tci * m_baseTransforms[i];
-			Transform T1 = Transform(Q) * T0;
-			Transform T2 = Tc * T1;
+			const Transform T0 = Tci * m_baseTransforms[i];
+			const Transform T1 = Transform(Q) * T0;
+			const Transform T2 = Tc * T1;
 			m_entityAdapters[i]->setTransform(T2);
 		}
 	}
@@ -295,7 +302,7 @@ void RotateModifier::end(const TransformChain& transformChain)
 	m_baseTransforms.clear();
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform();
+		const Transform T = entityAdapter->getTransform();
 		m_baseTransforms.push_back(T);
 	}
 
@@ -318,13 +325,13 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	Vector4 eye = primitiveRenderer->getView().inverse().translation();
-	Scalar distance = (m_center - eye).xyz0().length();
-	Scalar radius = Scalar((distance / 6.0_simd) * m_context->getGuideSize());
+	const Vector4 eye = primitiveRenderer->getView().inverse().translation();
+	const Scalar distance = (m_center - eye).xyz0().length();
+	const Scalar radius = (distance / 6.0_simd) * Scalar(m_context->getGuideSize());
 
-	Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
-	Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
-	Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
+	const Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
+	const Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
+	const Matrix44 mb = rotateZ(m_baseBank + m_deltaBank);
 
 	primitiveRenderer->pushDepthState(false, false, false);
 
@@ -332,10 +339,10 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->pushWorld(translate(m_center) * mh);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		primitiveRenderer->drawLine(
 			Vector4(c1, 0.0f, s1, 1.0f),
@@ -356,10 +363,10 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->pushWorld(translate(m_center) * mh * mp);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, c1, s1, 1.0f),
@@ -380,10 +387,10 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->pushWorld(translate(m_center) * mh * mp * mb);
 	for (int i = 0; i < 64; ++i)
 	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float s1 = std::sin(2.0f * PI * i / 64.0f) * radius;
+		const float c1 = std::cos(2.0f * PI * i / 64.0f) * radius;
+		const float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * radius;
+		const float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * radius;
 
 		primitiveRenderer->drawLine(
 			Vector4(c1, s1, 0.0f, 1.0f),
@@ -403,5 +410,4 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popDepthState();
 }
 
-	}
 }

@@ -674,9 +674,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			// Draw guides.
 			if (m_guideEnable)
 			{
-				RefArray< EntityAdapter > entityAdapters;
-				m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-				for (auto entityAdapter : entityAdapters)
+				for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfDefault))
 					entityAdapter->drawGuides(m_primitiveRenderer);
 
 				// Draw controller guides.

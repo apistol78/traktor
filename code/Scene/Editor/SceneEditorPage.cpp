@@ -484,9 +484,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	// Frame entity in view.
 	if (auto entityData = dynamic_type_cast< world::EntityData* >(m_context->getDocument()->getObject(0)))
 	{
-		RefArray< EntityAdapter > entityAdapters;
-		m_context->getEntities(entityAdapters);
-		for (auto entityAdapter : entityAdapters)
+		for (auto entityAdapter : m_context->getEntities())
 		{
 			if (entityAdapter->getEntityData() == entityData)
 				m_context->moveToEntityAdapter(entityAdapter);
@@ -659,8 +657,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		if (!m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		if (selectedEntities.empty())
 			return false;
 
 		m_context->getDocument()->push();
@@ -698,8 +696,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Paste")
 	{
 		// Get parent group under which we will place the new entity.
-		RefArray< EntityAdapter > selectedEntities;
-		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		if (selectedEntities.size() != 1)
 			return false;
 
 		Ref< EntityAdapter > parentEntity = selectedEntities[0]->getParentGroup();
@@ -735,8 +733,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		if (!m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		if (selectedEntities.empty())
 			return false;
 
 		m_context->getDocument()->push();
@@ -848,8 +846,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->setGuideSize(1.0f);
 	else if (command == L"Scene.Editor.FindInDatabase")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		if (selectedEntities.size() != 1)
 			return false;
 
 		Guid externalGuid;
@@ -862,60 +860,42 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.LockEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			selectedEntity->setLocked(true);
 
 		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.UnlockEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			selectedEntity->setLocked(false);
 
 		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.UnlockAllEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			selectedEntity->setLocked(false);
 
 		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.ShowEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			selectedEntity->setVisible(true);
 
 		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.ShowAllEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			selectedEntity->setVisible(true);
 
 		createInstanceGrid();
 	}
 	else if (command == L"Scene.Editor.HideEntities")
 	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-		for (auto selectedEntity : selectedEntities)
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			selectedEntity->setVisible(false);
 
 		createInstanceGrid();
@@ -927,9 +907,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			SmallMap< Guid, Guid > renamedMap;
 
 			// Create new IDs for each entity.
-			RefArray< EntityAdapter > entities;
-			m_context->getEntities(entities, SceneEditorContext::GfDescendants);
-			for (auto entity : entities)
+			for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			{
 				Guid newEntityId = Guid::create();
 				if (entity->getEntityData()->getId().isNotNull())
@@ -969,11 +947,8 @@ void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 	m_context->getResourceManager()->reload(eventId, false);
 
 	// Check if guid is used as an external reference.
-	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters);
-
 	bool externalModified = false;
-	for (auto entityAdapter : entityAdapters)
+	for (auto entityAdapter : m_context->getEntities())
 	{
 		Guid externalGuid;
 		if (entityAdapter->getExternalGuid(externalGuid))
@@ -1183,9 +1158,7 @@ void SceneEditorPage::updateInstanceGrid()
 
 void SceneEditorPage::updatePropertyObject()
 {
-	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
-
+	RefArray< EntityAdapter > entityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
 	if (entityAdapters.size() == 1)
 	{
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
@@ -1210,8 +1183,8 @@ void SceneEditorPage::updateStatusBar()
 	m_statusBar->setText(2, str(L"%d entities", m_context->getEntityCount()));
 	m_statusBar->setText(3, str(L"%.1f (%.1f)", m_context->getTime(), m_context->getTimeScale()));
 
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() == 1)
 		m_statusBar->setText(4, selectedEntities[0]->getPath()/* + L" " + selectedEntities[0]->getEntityData()->getId().format()*/);
 	else
 		m_statusBar->setText(4, L"");
@@ -1222,8 +1195,8 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	Ref< EntityAdapter > parentGroupAdapter;
 
 	// Get selected entity, must be a single item.
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() == 1)
 		parentGroupAdapter = selectedEntities[0]->getParentGroup();
 
 	// Ensure add is valid.
@@ -1266,8 +1239,8 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 
 bool SceneEditorPage::addComponent()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() != 1)
 		return false;
 
 	auto entityData = selectedEntities[0]->getEntityData();
@@ -1288,8 +1261,8 @@ bool SceneEditorPage::addComponent()
 
 bool SceneEditorPage::createExternal()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() != 1)
 		return false;
 
 	Ref< db::Group > group = m_editor->browseGroup();
@@ -1333,8 +1306,8 @@ bool SceneEditorPage::createExternal()
 
 bool SceneEditorPage::resolveExternal()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants | SceneEditorContext::GfExternalOnly) != 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants | SceneEditorContext::GfExternalOnly);
+	if (selectedEntities.size() != 1)
 		return false;
 
 	auto externalAdapter = selectedEntities.front();
@@ -1370,8 +1343,8 @@ bool SceneEditorPage::resolveExternal()
 
 bool SceneEditorPage::moveToEntity()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() == 1)
 		m_context->moveToEntityAdapter(selectedEntities[0]);
 	else
 		m_context->moveToEntityAdapter(nullptr);
@@ -1380,8 +1353,8 @@ bool SceneEditorPage::moveToEntity()
 
 bool SceneEditorPage::moveUp()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() != 1)
 		return false;
 
 	EntityAdapter* moving = selectedEntities.back();
@@ -1405,8 +1378,8 @@ bool SceneEditorPage::moveUp()
 
 bool SceneEditorPage::moveDown()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	if (selectedEntities.size() != 1)
 		return false;
 
 	EntityAdapter* moving = selectedEntities.back();
@@ -1484,8 +1457,7 @@ void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	{
 		const ui::MenuItem* selectedItem;
 
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 		if (selectedEntities.size() == 1)
 		{
 			if (selectedEntities[0]->isExternal())
@@ -1637,7 +1609,7 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 	v.push_back(event->getDuration());
 
 	double total = 0.0;
-	for (size_t i = 0; i < v.size(); ++i)
+	for (uint32_t i = 0; i < v.size(); ++i)
 		total += v[i];
 	total /= (double)v.size();
 
