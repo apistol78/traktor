@@ -154,7 +154,7 @@ local function deployStatic(args)
 
 	-- Deploy executable into remote folder.
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" $(DEPLOY_EXECUTABLE).exe", nil)
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	if run.exitCode ~= 0 then return run.exitCode end
 
 	-- Get shared paths.
 	local paths = nil
@@ -211,13 +211,15 @@ local function deployShared(args)
 			local qf = Path(p):concat(Path(f))
 			if FileSystem.getInstance():exist(qf) then
 				deployFiles = deployFiles .. " " .. f
+			else
+				stdout:printLn("Missing file \"" .. f .. "\"")
 			end
 		end
 		if deployFiles ~= "" then
 			run:pushd(p)
 			run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" " .. deployFiles, nil)
 			run:popd()
-			if run:exitCode() ~= 0 then return run:exitCode() end
+			if run.exitCode ~= 0 then return run.exitCode end
 		end
 	end
 
@@ -231,7 +233,9 @@ function deploy(args)
 	-- Deploy application configuration to target.
 	stdout:printLn("Deploying resources to target host...")
 	run:execute(tools.remote .. " deploy $(DEPLOY_TARGET_HOST) -t=\"$(DEPLOY_PROJECT_NAME)\" Application.config", nil)
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	if run.exitCode ~= 0 then
+		return run.exitCode
+	end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
 	local staticLink = (os:getEnvironment("DEPLOY_STATIC_LINK") ~= "")
@@ -341,7 +345,7 @@ function migrate(args)
 
 	-- Build content database.
 	run:execute(tools.migrate .. " -p -s=Migrate")
-	if run:exitCode() ~= 0 then return run:exitCode() end
+	if run.exitCode ~= 0 then return run.exitCode end
 
 	-- Continue with either statically linked product or as a bunch of dynamic libraries.
 	local staticLink = (os:getEnvironment("DEPLOY_STATIC_LINK") ~= "")
