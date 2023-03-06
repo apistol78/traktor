@@ -45,8 +45,7 @@ void PrimitiveEditModifier::deactivate()
 
 void PrimitiveEditModifier::selectionChanged()
 {
-    m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
+	m_entityAdapters = m_context->getEntities(scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
 }
 
 bool PrimitiveEditModifier::cursorMoved(

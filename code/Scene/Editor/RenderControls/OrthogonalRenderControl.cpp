@@ -661,10 +661,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		// Draw guides.
 		if (m_guideEnable)
 		{
-			RefArray< EntityAdapter > entityAdapters;
-			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-				(*i)->drawGuides(m_primitiveRenderer);
+			for (auto entityAdapter : m_context->getEntities(SceneEditorContext::GfDefault))
+				entityAdapter->drawGuides(m_primitiveRenderer);
 
 			// Draw controller guides.
 			Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();

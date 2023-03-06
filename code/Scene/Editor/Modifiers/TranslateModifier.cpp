@@ -17,19 +17,17 @@
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_guideThickness(0.02f);
 const Scalar c_guideScale(0.15f);
 const Scalar c_guideMinLength(1.0f);
 const float c_infinite = 1e4f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.TranslateModifier", TranslateModifier, IModifier)
 
@@ -51,13 +49,12 @@ void TranslateModifier::deactivate()
 
 void TranslateModifier::selectionChanged()
 {
-	m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseTranslations.clear();
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform();
+		const Transform T = entityAdapter->getTransform();
 		m_baseTranslations.push_back(T.translation());
 	}
 
@@ -83,20 +80,20 @@ bool TranslateModifier::cursorMoved(
 	if (m_entityAdapters.empty())
 		return false;
 
-	Vector4 eye = transformChain.getView().inverse().translation();
-	Scalar distance = (m_center - eye).xyz0().length();
+	const Vector4 eye = transformChain.getView().inverse().translation();
+	const Scalar distance = (m_center - eye).xyz0().length();
 
-	float axisLength = (distance / 4.0f) * m_context->getGuideSize();
-	float arrowLength = axisLength / 8.0f;
-	float squareLength = axisLength / 3.0f;
+	const float axisLength = (distance / 4.0f) * m_context->getGuideSize();
+	const float arrowLength = axisLength / 8.0f;
+	const float squareLength = axisLength / 3.0f;
 
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(m_center));
 
-	Vector4 viewDirection = m_center - eye;
-	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
-	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
-	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
+	const Vector4 viewDirection = m_center - eye;
+	const float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
+	const float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
+	const float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
 
 	Vector2 center, axis0[3], axis1[3], square[6];
 	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
@@ -165,7 +162,7 @@ hit:;
 	// Check each line.
 	if (m_axisHot == 0)
 	{
-		float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
+		const float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
 		if (Line2(axis0[0], axis1[0]).classify(cursorPosition, guideThickness))
 			m_axisHot |= 1;
 		if (Line2(axis0[1], axis1[1]).classify(cursorPosition, guideThickness))
@@ -203,7 +200,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		else
 			return false;
 
-		Vector4 delta(
+		const Vector4 delta(
 			(m_axisHot & 1) ? offset : 0.0f,
 			(m_axisHot & 2) ? offset : 0.0f,
 			(m_axisHot & 4) ? offset : 0.0f,
@@ -212,7 +209,7 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 
 		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 		{
-			Transform T = m_entityAdapters[i]->getTransform0();
+			const Transform T = m_entityAdapters[i]->getTransform0();
 			m_entityAdapters[i]->setTransform(Transform(
 				snap(m_baseTranslations[i] + delta, m_axisHot, false),
 				T.rotation()
@@ -247,7 +244,7 @@ void TranslateModifier::apply(
 	bool snapOverrideEnable
 )
 {
-	Vector4 cp = transformChain.worldToClip(m_center);
+	const Vector4 cp = transformChain.worldToClip(m_center);
 
 	Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
 	if (!(m_axisEnable & 1))
@@ -268,7 +265,7 @@ void TranslateModifier::apply(
 
 	for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 	{
-		Transform T = m_entityAdapters[i]->getTransform();
+		const Transform T = m_entityAdapters[i]->getTransform();
 		m_entityAdapters[i]->setTransform(Transform(
 			//m_baseTranslations[i] + baseDelta,	<< Snap in object space
 			snap(m_baseTranslations[i] + baseDelta, m_axisEnable, snapOverrideEnable),	//< Snap in world space.
@@ -290,12 +287,12 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	Vector4 eye = primitiveRenderer->getView().inverse().translation();
-	Scalar distance = (m_center - eye).xyz0().length();
+	const Vector4 eye = primitiveRenderer->getView().inverse().translation();
+	const Scalar distance = (m_center - eye).xyz0().length();
 
-	float axisLength = (distance / 4.0f) * m_context->getGuideSize();
-	float arrowLength = axisLength / 8.0f;
-	float squareLength = axisLength / 3.0f;
+	const float axisLength = (distance / 4.0f) * m_context->getGuideSize();
+	const float arrowLength = axisLength / 8.0f;
+	const float squareLength = axisLength / 3.0f;
 
 	primitiveRenderer->pushWorld(translate(m_center));
 
@@ -349,10 +346,10 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Color4ub(0, 0, 255, 255)
 	);
 
-	Vector4 viewDirection = m_center - primitiveRenderer->getView().inverse().translation();
-	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
-	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
-	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
+	const Vector4 viewDirection = m_center - primitiveRenderer->getView().inverse().translation();
+	const float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
+	const float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
+	const float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
 
 	// Guide fill squares.
 	// XY
@@ -445,7 +442,7 @@ Vector4 TranslateModifier::snap(const Vector4& position, uint32_t axisEnable, bo
 {
 	if (m_context->getSnapMode() == SceneEditorContext::SmGrid && !snapOverrideEnable)
 	{
-		float spacing = m_context->getSnapSpacing();
+		const float spacing = m_context->getSnapSpacing();
 		if (spacing > 0.0f)
 		{
 			return Vector4(
@@ -459,5 +456,4 @@ Vector4 TranslateModifier::snap(const Vector4& position, uint32_t axisEnable, bo
 	return position;
 }
 
-	}
 }

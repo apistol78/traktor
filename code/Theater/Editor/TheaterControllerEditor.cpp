@@ -378,9 +378,7 @@ void TheaterControllerEditor::updateView()
 
 	if (selected >= 0)
 	{
-		RefArray< scene::EntityAdapter > entities;
-		m_context->getEntities(entities);
-
+		RefArray< scene::EntityAdapter > entities = m_context->getEntities();
 		for (auto track : acts[selected]->getTracks())
 		{
 			auto it = std::find_if(entities.begin(), entities.end(), [&](scene::EntityAdapter* entity) {
@@ -423,8 +421,7 @@ void TheaterControllerEditor::captureEntities()
 		return;
 	}
 
-	RefArray< scene::EntityAdapter > selectedEntities;
-	m_context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
+	RefArray< scene::EntityAdapter > selectedEntities = m_context->getEntities(scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
 	if (selectedEntities.empty())
 	{
 		log::warning << L"Unable to capture entities; no entities selected." << Endl;
@@ -534,8 +531,7 @@ void TheaterControllerEditor::setLookAtEntity()
 	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
 	TheaterControllerData* controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
-	RefArray< scene::EntityAdapter > selectedEntities;
-	m_context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
+	RefArray< scene::EntityAdapter > selectedEntities = m_context->getEntities(scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
 	if (selectedEntities.size() > 1)
 		return;
 

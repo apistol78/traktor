@@ -255,8 +255,8 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::TreeViewItemActiv
 
 void EntityDependencyInvestigator::eventContextSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< EntityAdapter > selectedEntityAdapters;
-	if (m_context->getEntities(selectedEntityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly) == 1)
+	RefArray< EntityAdapter > selectedEntityAdapters = m_context->getEntities(SceneEditorContext::GfDescendants | SceneEditorContext::GfSelectedOnly);
+	if (selectedEntityAdapters.size() == 1)
 		setEntityAdapter(selectedEntityAdapters[0]);
 	else
 		setEntityAdapter(nullptr);

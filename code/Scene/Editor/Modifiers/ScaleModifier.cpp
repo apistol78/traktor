@@ -17,19 +17,17 @@
 #include "Ui/Application.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_guideThickness(0.02f);
 const Scalar c_guideScale(0.15f);
 const Scalar c_guideMinLength(1.0f);
 const float c_infinite = 1e4f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScaleModifier", ScaleModifier, IModifier)
 
@@ -51,15 +49,14 @@ void ScaleModifier::deactivate()
 
 void ScaleModifier::selectionChanged()
 {
-	m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_entityAdapters = m_context->getEntities(SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseScale.clear();
 	m_center = Vector4::zero();
 
 	for (auto entityAdapter : m_entityAdapters)
 	{
-		Transform T = entityAdapter->getTransform0();
+		const Transform T = entityAdapter->getTransform0();
 		m_baseScale.push_back(Vector4::one()); // T.scale());
 		m_center += T.translation();
 	}
@@ -81,17 +78,17 @@ bool ScaleModifier::cursorMoved(
 	if (m_entityAdapters.empty())
 		return false;
 
-	float axisLength = m_context->getGuideSize();
-	float arrowLength = axisLength / 8.0f;
-	float squareLength = axisLength / 3.0f;
+	const float axisLength = m_context->getGuideSize();
+	const float arrowLength = axisLength / 8.0f;
+	const float squareLength = axisLength / 3.0f;
 
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(m_center));
 
-	Vector4 viewDirection = m_center - tc.getView().inverse().translation();
-	float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
-	float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
-	float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
+	const Vector4 viewDirection = m_center - tc.getView().inverse().translation();
+	const float sx = viewDirection.x() < 0.0f ? 1.0f : -1.0f;
+	const float sy = viewDirection.y() < 0.0f ? 1.0f : -1.0f;
+	const float sz = viewDirection.z() < 0.0f ? 1.0f : -1.0f;
 
 	Vector2 center, axis0[3], axis1[3];
 	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
@@ -106,7 +103,7 @@ bool ScaleModifier::cursorMoved(
 
 	m_axisHot = 0;
 
-	float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
+	const float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
 	if (Line2(axis0[0], axis1[0]).classify(cursorPosition, guideThickness))
 		m_axisHot |= 1;
 	if (Line2(axis0[1], axis1[1]).classify(cursorPosition, guideThickness))
@@ -175,7 +172,7 @@ void ScaleModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	float axisLength = m_context->getGuideSize();
+	const float axisLength = m_context->getGuideSize();
 
 	primitiveRenderer->pushWorld(translate(m_center));
 	primitiveRenderer->pushDepthState(false, false, false);
@@ -221,5 +218,4 @@ void ScaleModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popWorld();
 }
 
-	}
 }

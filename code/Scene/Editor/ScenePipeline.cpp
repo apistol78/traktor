@@ -171,6 +171,8 @@ bool ScenePipeline::buildDependencies(
 			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)
 				pipelineDepends->addDependency(wrs->imageProcess[i], editor::PdfBuild);
 		}
+
+		pipelineDepends->addDependency(wrs->colorGrading, editor::PdfBuild | editor::PdfResource);
 	}
 
 	return true;

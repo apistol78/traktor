@@ -12,10 +12,8 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Scene/Editor/IModifier.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class EntityAdapter;
 
@@ -91,6 +89,4 @@ private:
 	Vector4 snap(const Vector4& position, uint32_t axisEnable, bool snapOverrideEnable) const;
 };
 
-	}
 }
-
