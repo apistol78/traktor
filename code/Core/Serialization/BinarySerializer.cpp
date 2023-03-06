@@ -219,7 +219,7 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
 			return false;
 
-		Utf8Encoding utf8enc;
+		const Utf8Encoding utf8enc;
 		for (uint32_t i = 0; i < u8len; )
 		{
 			wchar_t ch;
@@ -250,7 +250,7 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 {
 	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
 
-	uint32_t length = uint32_t(str.length());
+	const uint32_t length = (uint32_t)str.length();
 	if (length > 0)
 	{
 		uint8_t* buf = (uint8_t*)alloca(length * 6);
@@ -262,7 +262,7 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 		uint8_t* u8str = (uint8_t*)buf;
 		uint32_t u8len;
 
-		Utf8Encoding utf8enc;
+		const Utf8Encoding utf8enc;
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
 		T_FATAL_ASSERT (u8len <= length * 6);
 
@@ -302,10 +302,8 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::string& outS
 bool read_string(const Ref< IStream >& stream, std::string& outString)
 {
 	uint32_t u8len;
-
 	if (!read_primitive< uint32_t >(stream, u8len))
 		return false;
-
 	return read_string(stream, u8len, outString);
 }
 
@@ -313,19 +311,17 @@ bool write_string(const Ref< IStream >& stream, const std::string& str)
 {
 	T_ASSERT(str.length() <= std::numeric_limits< uint16_t >::max());
 
-	uint32_t length = uint32_t(str.length());
+	const uint32_t length = (uint32_t)str.length();
 	if (length > 0)
 	{
 		if (!write_primitive< uint32_t >(stream, length))
 			return false;
-
 		return write_block(stream, str.c_str(), length, sizeof(uint8_t));
 	}
 	else
 	{
 		if (!write_primitive< uint32_t >(stream, 0))
 			return false;
-
 		return true;
 	}
 }
@@ -604,17 +600,10 @@ void BinarySerializer::operator >> (const Member< Vector4 >& m)
 void BinarySerializer::operator >> (const Member< Matrix33 >& m)
 {
 	T_CHECK_STATUS;
-
 	if (m_direction == Direction::Read)
-	{
-		for (int i = 0; i < 3 * 3; ++i)
-			read_primitive< float >(m_stream, m->m[i]);
-	}
+		read_primitives< float >(m_stream, m->m, 3 * 3);
 	else
-	{
-		for (int i = 0; i < 3 * 3; ++i)
-			write_primitive< float >(m_stream, m->m[i]);
-	}
+		write_primitives< float >(m_stream, m->m, 3 * 3);
 }
 
 void BinarySerializer::operator >> (const Member< Matrix44 >& m)
@@ -804,15 +793,15 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 			else
 			{
 				const TypeInfo& type = type_of(object);
-				int32_t version = type.getVersion();
-				uint64_t hash = m_nextCacheId++;
+				const int32_t version = type.getVersion();
+				const uint64_t hash = m_nextCacheId++;
 
 				if (!write_primitive< bool >(m_stream, false))
 					return;
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return;
 
-				auto it = m_typeWriteCache.find(&type);
+				const auto it = m_typeWriteCache.find(&type);
 				if (it != m_typeWriteCache.end())
 					write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 				else
@@ -840,7 +829,7 @@ void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				{
 					if (ti->getVersion() > 0)
 					{
-						auto it = m_typeWriteCache.find(ti);
+						const auto it = m_typeWriteCache.find(ti);
 						if (it != m_typeWriteCache.end())
 							write_primitive< uint32_t >(m_stream, 0x80000000 | it->second);
 						else
