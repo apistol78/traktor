@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class CheckBox;
@@ -41,17 +39,17 @@ class Slider;
 class Static;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 class Model;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class MeshAsset;
 
@@ -60,7 +58,7 @@ class T_DLLCLASS MeshAssetEditor : public editor::IObjectEditor
 	T_RTTI_CLASS;
 
 public:
-	MeshAssetEditor(editor::IEditor* editor);
+	explicit MeshAssetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -121,6 +119,8 @@ private:
 
 	void removeMaterialTexture();
 
+	void extractMaterialTexture();
+
 	void eventMeshTypeChange(ui::SelectionChangeEvent* event);
 
 	void eventLodStepsChange(ui::ContentChangeEvent* event);
@@ -142,6 +142,4 @@ private:
 	void eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
-	}
 }
-

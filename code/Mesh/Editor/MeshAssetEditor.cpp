@@ -57,12 +57,10 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 bool haveVertexColors(const model::Model& model)
 {
@@ -74,7 +72,7 @@ bool haveVertexColors(const model::Model& model)
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetEditor", MeshAssetEditor, editor::IObjectEditor)
 
@@ -247,6 +245,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	materialTextureTools->addItem(new ui::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_CREATE_TEXTURE"), ui::Command(L"MeshAssetEditor.CreateTexture")));
 	materialTextureTools->addItem(new ui::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_TEXTURE"), ui::Command(L"MeshAssetEditor.BrowseTexture")));
 	materialTextureTools->addItem(new ui::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_TEXTURE"), ui::Command(L"MeshAssetEditor.RemoveTexture")));
+	materialTextureTools->addItem(new ui::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_EXTRACT_TEXTURE"), ui::Command(L"MeshAssetEditor.ExtractTexture")));
 	materialTextureTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &MeshAssetEditor::eventMaterialTextureToolClick);
 
 	m_materialTextureList = new ui::GridView();
@@ -471,16 +470,16 @@ void MeshAssetEditor::updateMaterialList()
 		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
 		for (const auto& material : materials)
 		{
-			struct { std::wstring name; bool embedded; } modelTextures[] =
+			struct { std::wstring name; drawing::Image* embedded; } modelTextures[] =
 			{
-				{ material.getDiffuseMap().name,		material.getDiffuseMap().image != nullptr },
-				{ material.getSpecularMap().name,		material.getSpecularMap().image != nullptr },
-				{ material.getRoughnessMap().name,		material.getRoughnessMap().image != nullptr },
-				{ material.getMetalnessMap().name,		material.getMetalnessMap().image != nullptr },
-				{ material.getTransparencyMap().name,	material.getTransparencyMap().image != nullptr },
-				{ material.getEmissiveMap().name,		material.getEmissiveMap().image != nullptr },
-				{ material.getReflectiveMap().name,		material.getReflectiveMap().image != nullptr },
-				{ material.getNormalMap().name,			material.getNormalMap().image != nullptr }
+				{ material.getDiffuseMap().name,		material.getDiffuseMap().image },
+				{ material.getSpecularMap().name,		material.getSpecularMap().image },
+				{ material.getRoughnessMap().name,		material.getRoughnessMap().image },
+				{ material.getMetalnessMap().name,		material.getMetalnessMap().image },
+				{ material.getTransparencyMap().name,	material.getTransparencyMap().image },
+				{ material.getEmissiveMap().name,		material.getEmissiveMap().image },
+				{ material.getReflectiveMap().name,		material.getReflectiveMap().image },
+				{ material.getNormalMap().name,			material.getNormalMap().image }
 			};
 
 			for (uint32_t j = 0; j < sizeof_array(modelTextures); ++j)
@@ -491,7 +490,9 @@ void MeshAssetEditor::updateMaterialList()
 				textureNames.insert(modelTextures[j].name);
 
 				Ref< db::Instance > materialTextureInstance;
-				std::wstring materialTexture = modelTextures[j].embedded ? i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") : i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
+				std::wstring materialTexture = (modelTextures[j].embedded != nullptr) ?
+					i18n::Text(L"MESHASSET_EDITOR_TEXTURE_EMBEDDED") :
+					i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED");
 
 				auto it = materialTextures.find(modelTextures[j].name);
 				if (it != materialTextures.end())
@@ -525,6 +526,7 @@ void MeshAssetEditor::updateMaterialList()
 				textureItem->add(new ui::GridItem(ss.str().substr(3)));
 
 				textureItem->setData(L"INSTANCE", materialTextureInstance);
+				textureItem->setData(L"EMBEDDED_IMAGE", modelTextures[j].embedded);
 				m_materialTextureList->addRow(textureItem);
 			}
 		}
@@ -740,6 +742,27 @@ void MeshAssetEditor::removeMaterialTexture()
 	m_materialTextureList->requestUpdate();
 }
 
+void MeshAssetEditor::extractMaterialTexture()
+{
+	Ref< ui::GridRow > selectedItem = m_materialTextureList->getSelectedRow();
+	if (!selectedItem)
+		return;
+
+	const drawing::Image* embeddedImage = selectedItem->getData< const drawing::Image >(L"EMBEDDED_IMAGE");
+	if (!embeddedImage)
+		return;
+
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(m_materialTextureList, type_name(this), i18n::Text(L"MESHASSET_EDITOR_SAVE_EMBEDDED_IMAGE"), L"All files (*.*);*.*", L"", true))
+		return;
+
+	Path path;
+	if (fileDialog.showModal(path) == ui::DialogResult::Ok)
+		embeddedImage->save(path);
+	
+	fileDialog.destroy();
+}
+
 void MeshAssetEditor::eventMeshTypeChange(ui::SelectionChangeEvent* event)
 {
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
@@ -856,6 +879,8 @@ void MeshAssetEditor::eventMaterialTextureToolClick(ui::ToolBarButtonClickEvent*
 		browseMaterialTexture();
 	else if (command == L"MeshAssetEditor.RemoveTexture")
 		removeMaterialTexture();
+	else if (command == L"MeshAssetEditor.ExtractTexture")
+		extractMaterialTexture();
 }
 
 void MeshAssetEditor::eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEvent* event)
@@ -877,5 +902,4 @@ void MeshAssetEditor::eventMaterialTextureListDoubleClick(ui::MouseDoubleClickEv
 	}
 }
 
-	}
 }
