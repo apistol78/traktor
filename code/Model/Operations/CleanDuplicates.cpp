@@ -7,13 +7,29 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Math/Const.h"
+#include "Core/Misc/Murmur3.h"
 #include "Model/Model.h"
 #include "Model/Operations/CleanDuplicates.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
+
+uint32_t polygonHash(const Polygon& p)
+{
+	Murmur3 hash;
+	hash.begin();
+	hash.feed(p.getMaterial());
+	hash.feed(p.getNormal());
+	hash.feed(p.getSmoothGroup());
+	for (const auto vertex : p.getVertices())
+		hash.feed(vertex);
+	hash.end();
+	return hash.get();
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDuplicates", CleanDuplicates, IModelOperation)
 
@@ -24,6 +40,7 @@ CleanDuplicates::CleanDuplicates(float positionDistance)
 
 bool CleanDuplicates::apply(Model& model) const
 {
+	SmallSet< uint32_t > addedPolygonHashes;
 	Model cleaned;
 	uint32_t id;
 
@@ -90,12 +107,13 @@ bool CleanDuplicates::apply(Model& model) const
 			cleanedPolygon.addVertex(cleaned.addUniqueVertex(cleanedVertex));
 		}
 
-		cleaned.addUniquePolygon(cleanedPolygon);
+		const uint32_t hash = polygonHash(cleanedPolygon);
+		if (addedPolygonHashes.insert(hash))
+			cleaned.addPolygon(cleanedPolygon);
 	}
 
 	model = cleaned;
 	return true;
 }
 
-	}
 }
