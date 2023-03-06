@@ -61,6 +61,9 @@ void NavMeshComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 			i += npv;
 		}
 
+		primitiveRenderer->popDepthState();
+		primitiveRenderer->pushDepthState(false, false, false);
+
 		for (uint32_t i = 0; i < navMesh->m_navMeshPolygons.size(); )
 		{
 			const uint16_t npv = nmp[i++];
