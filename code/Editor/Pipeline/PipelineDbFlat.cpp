@@ -141,7 +141,8 @@ bool PipelineDbFlat::open(const std::wstring& connectionString)
 
 void PipelineDbFlat::close()
 {
-	endTransaction();
+	if (m_transaction)
+		endTransaction();
 }
 
 void PipelineDbFlat::beginTransaction()
@@ -153,6 +154,7 @@ void PipelineDbFlat::beginTransaction()
 
 void PipelineDbFlat::endTransaction()
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 	T_FATAL_ASSERT(m_transaction);
 	if (m_changes > 0)
 	{
