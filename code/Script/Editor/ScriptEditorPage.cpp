@@ -179,8 +179,8 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_edit->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptEditorPage::eventScriptButtonDown);
 	m_edit->addEventHandler< ui::MouseButtonUpEvent >(this, &ScriptEditorPage::eventScriptButtonUp);
 
-	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
 	m_edit->setFont(ui::Font(font, fontSize));
 
 	if (m_script)
