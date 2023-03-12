@@ -10,10 +10,8 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Panel.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Panel", Panel, Container)
 
@@ -111,5 +109,4 @@ void Panel::eventFocus(FocusEvent* event)
 	update();
 }
 
-	}
 }

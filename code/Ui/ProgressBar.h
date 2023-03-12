@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Progress bar.
  * \ingroup UI
@@ -56,6 +54,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

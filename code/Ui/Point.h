@@ -10,10 +10,8 @@
 
 #include "Ui/Size.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! 2D point.
  * \ingroup UI
@@ -45,8 +43,6 @@ public:
 	inline bool operator != (const Point& p) const;
 };
 
-	}
 }
 
 #include "Ui/Point.inl"
-

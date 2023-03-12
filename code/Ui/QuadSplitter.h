@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Quadruple splitter.
  * \ingroup UI
@@ -79,6 +77,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

@@ -8,10 +8,8 @@
  */
 #include "Ui/Point.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 inline Point::Point()
 :	x(0)
@@ -68,5 +66,4 @@ inline bool Point::operator != (const Point& p) const
 	return bool(x != p.x || y != p.y);
 }
 
-	}
 }

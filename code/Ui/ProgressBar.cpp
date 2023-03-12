@@ -7,13 +7,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Ui/Application.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/ProgressBar.h"
+#include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ProgressBar", ProgressBar, Widget)
 
@@ -122,5 +120,4 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }
