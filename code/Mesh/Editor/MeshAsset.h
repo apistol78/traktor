@@ -109,6 +109,12 @@ public:
 	/*! Check if model should be centered around origo. */
 	bool getCenter() const { return m_center; }
 
+	/*! */
+	void setGrounded(bool grounded) { m_grounded = grounded; }
+
+	/*! */
+	bool getGrounded() const { return m_grounded; }
+
 	/*! Set number of manual lod steps. */
 	void setLodSteps(int32_t lodSteps) { m_lodSteps = lodSteps; }
 
@@ -144,6 +150,7 @@ private:
 	Vector4 m_offset = Vector4::zero();
 	bool m_renormalize = false;
 	bool m_center = false;
+	bool m_grounded = false;
 	int32_t m_lodSteps = 8;
 	float m_lodMaxDistance = 100.0f;
 	float m_lodCullDistance = 200.0f;

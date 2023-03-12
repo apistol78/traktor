@@ -172,6 +172,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkCenter->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_CENTER")))
 		return false;
 
+	m_checkGrounded = new ui::CheckBox();
+	if (!m_checkGrounded->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_GROUNDED")))
+		return false;
+
 	Ref< ui::Container > containerRight = new ui::Container();
 	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, 4));
 
@@ -276,6 +280,7 @@ void MeshAssetEditor::apply()
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
 	m_asset->setCenter(m_checkCenter->isChecked());
+	m_asset->setGrounded(m_checkGrounded->isChecked());
 	m_asset->setLodSteps(m_sliderLodSteps->getValue());
 	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
 	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
@@ -355,6 +360,7 @@ void MeshAssetEditor::updateFile()
 	m_dropMeshType->select(m_asset->getMeshType());
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
 	m_checkCenter->setChecked(m_asset->getCenter());
+	m_checkGrounded->setChecked(m_asset->getGrounded());
 
 	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
 

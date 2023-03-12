@@ -85,6 +85,7 @@ private:
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkRenormalize;
 	Ref< ui::CheckBox > m_checkCenter;
+	Ref< ui::CheckBox > m_checkGrounded;
 	Ref< ui::Static > m_staticLodSteps;
 	Ref< ui::Slider > m_sliderLodSteps;
 	Ref< ui::Edit > m_editLodMaxDistance;
