@@ -266,6 +266,11 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_renderViewDesc.displayMode.width);
 		settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_renderViewDesc.displayMode.height);
 	}
+	else
+	{
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", m_renderViewDesc.displayMode.width);
+		settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", m_renderViewDesc.displayMode.height);
+	}
 
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
