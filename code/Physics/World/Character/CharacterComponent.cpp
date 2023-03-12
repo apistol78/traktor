@@ -47,6 +47,11 @@ CharacterComponent::CharacterComponent(
 {
 }
 
+CharacterComponent::~CharacterComponent()
+{
+	destroy();
+}
+
 void CharacterComponent::destroy()
 {
 	safeDestroy(m_bodyWide);
@@ -93,7 +98,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	if (m_impulse.length() < FUZZY_EPSILON)
 	{
 		if (currentVelocity > FUZZY_EPSILON)
-			m_velocity -= ((m_velocity * c_101) / currentVelocity) * Scalar(m_data->getVelocityDamping()) * dT;
+			m_velocity -= ((m_velocity * c_101) / currentVelocity) * Scalar(m_data->getVelocityDamping()); // * dT;
 		else
 			m_velocity *= c_010;
 	}
@@ -249,7 +254,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			result
 		))
 		{
-			Scalar move = Scalar(motionLength * result.fraction);
+			const Scalar move = Scalar(motionLength * result.fraction);
 
 			// Don't move entire distance to prevent stability issues.
 			const Scalar c_fudge = 0.01_simd;

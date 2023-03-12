@@ -41,6 +41,8 @@ public:
 		uint32_t traceIgnore
 	);
 
+	virtual ~CharacterComponent();
+
 	virtual void destroy() override final;
 
 	virtual void setOwner(world::Entity* owner) override final;
