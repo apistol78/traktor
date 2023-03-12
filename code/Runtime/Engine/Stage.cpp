@@ -202,13 +202,13 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 
 	if (!m_pendingStage)
 	{
-		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime() * m_fadeRate);
+		m_fade = max(0.0f, m_fade - clamp(info.getFrameDeltaTime(), 0.0f, 1.0f / 30.0f) * m_fadeRate);
 		updateValid = true;
 	}
 	else
 	{
 		// Next stage ready, fade out.
-		m_fade += info.getSimulationDeltaTime() * m_fadeRate;
+		m_fade += clamp(info.getFrameDeltaTime(), 0.0f, 1.0f / 30.0f) * m_fadeRate;
 		if (m_fade > 1.0f)
 		{
 			// Fade out finished; enter next stage.
