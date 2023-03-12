@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 20, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 21, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -67,6 +67,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 13)
 		s >> Member< bool >(L"center", m_center);
+
+	if (s.getVersion() >= 21)
+		s >> Member< bool >(L"grounded", m_grounded);
 
 	if (s.getVersion() >= 2 && s.getVersion() < 14)
 	{

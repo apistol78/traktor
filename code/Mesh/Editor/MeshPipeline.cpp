@@ -428,6 +428,12 @@ bool MeshPipeline::buildOutput(
 			model::Transform(translate(-boundingBox.getCenter())).apply(*model);
 		}
 
+		if (asset->getGrounded())
+		{
+			const Aabb3 boundingBox = model->getBoundingBox();
+			model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
+		}
+
 		const AlignedVector< model::Material >& modelMaterials = model->getMaterials();
 		if (model->getMaterials().empty())
 		{

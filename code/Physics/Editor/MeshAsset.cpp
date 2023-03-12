@@ -16,20 +16,29 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 4, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 5, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
 	editor::Asset::serialize(s);
 
-	if (s.getVersion() >= 4)
+	if (s.getVersion< MeshAsset >() >= 4)
 		s >> Member< std::wstring >(L"importFilter", m_importFilter);
 
-	if (s.getVersion() >= 1)
+	if (s.getVersion< MeshAsset >() >= 1)
 		s >> Member< bool >(L"calculateConvexHull", m_calculateConvexHull);
 
-	if (s.getVersion() >= 2)
+	if (s.getVersion< MeshAsset >() >= 2)
 		s >> Member< float >(L"margin", m_margin);
+
+	if (s.getVersion< MeshAsset >() >= 5)
+		s >> Member< float >(L"scaleFactor", m_scaleFactor);
+
+	if (s.getVersion< MeshAsset >() >= 5)
+		s >> Member< bool >(L"center", m_center);
+
+	if (s.getVersion< MeshAsset >() >= 5)
+		s >> Member< bool >(L"grounded", m_grounded);
 
 	if (s.getVersion< MeshAsset >() >= 3)
 		s >> MemberStlMap< std::wstring, Guid >(L"materials", m_materials, AttributeType(type_of< Material >()));

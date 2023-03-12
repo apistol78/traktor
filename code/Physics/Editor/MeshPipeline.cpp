@@ -24,6 +24,7 @@
 #include "Model/Operations/CleanDegenerate.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Model/Operations/ScaleAlongNormal.h"
+#include "Model/Operations/Transform.h"
 #include "Model/Operations/Triangulate.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshResource.h"
@@ -34,7 +35,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 11, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 12, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -125,6 +126,22 @@ bool MeshPipeline::buildOutput(
 	model->clear(model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::CleanDuplicates(0.01f).apply(*model);
 
+	model::Transform(
+		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
+	).apply(*model);
+
+	if (meshAsset->getCenter())
+	{
+		const Aabb3 boundingBox = model->getBoundingBox();
+		model::Transform(translate(-boundingBox.getCenter())).apply(*model);
+	}
+
+	if (meshAsset->getGrounded())
+	{
+		const Aabb3 boundingBox = model->getBoundingBox();
+		model::Transform(translate(Vector4(0.0f, -boundingBox.mn.y(), 0.0f))).apply(*model);
+	}
+
 	// Shrink model by margin; need to calculate normals from positions only
 	// as we don't want smooth groups or anything else mess with the normals.
 	if (abs(meshAsset->m_margin) > FUZZY_EPSILON)
@@ -141,7 +158,7 @@ bool MeshPipeline::buildOutput(
 	model::CleanDuplicates(0.01f).apply(*model);
 
 	// Calculate bounding box; used for center of gravity estimation.
-	Aabb3 boundingBox = model->getBoundingBox();
+	const Aabb3 boundingBox = model->getBoundingBox();
 	Vector4 centerOfGravity = boundingBox.getCenter().xyz0();
 
 	// Create physics mesh.

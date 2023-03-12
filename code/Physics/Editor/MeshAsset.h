@@ -42,6 +42,24 @@ public:
 
 	float getMargin() const { return m_margin; }
 
+	/*! Set scale factor. */
+	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
+
+	/*! Get scale factor. */
+	float getScaleFactor() const { return m_scaleFactor; }
+
+	/*! Set if model should be centered around origo before converted. */
+	void setCenter(bool center) { m_center = center; }
+
+	/*! Check if model should be centered around origo. */
+	bool getCenter() const { return m_center; }
+
+	/*! */
+	void setGrounded(bool grounded) { m_grounded = grounded; }
+
+	/*! */
+	bool getGrounded() const { return m_grounded; }
+
 	void setMaterials(const std::map< std::wstring, Guid >& materials) { m_materials = materials; }
 
 	const std::map< std::wstring, Guid >& getMaterials() const { return m_materials; }
@@ -52,6 +70,9 @@ private:
 	std::wstring m_importFilter;
 	bool m_calculateConvexHull = true;
 	float m_margin = 0.04f;
+	float m_scaleFactor = 1.0f;
+	bool m_center = false;
+	bool m_grounded = false;
 	std::map< std::wstring, Guid > m_materials;	//!< References to Material instances.
 };
 
