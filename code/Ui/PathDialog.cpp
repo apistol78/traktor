@@ -12,17 +12,10 @@
 #include "Ui/Widget.h"
 #include "Ui/Itf/IPathDialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PathDialog", PathDialog, EventSubject)
-
-PathDialog::PathDialog()
-:	m_pathDialog(nullptr)
-{
-}
 
 PathDialog::~PathDialog()
 {
@@ -59,5 +52,4 @@ DialogResult PathDialog::showModal(Path& outPath)
 	return m_pathDialog->showModal(outPath);
 }
 
-	}
 }

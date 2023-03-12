@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IPathDialog;
 class Widget;
@@ -35,8 +33,6 @@ class T_DLLCLASS PathDialog : public EventSubject
 	T_RTTI_CLASS;
 
 public:
-	PathDialog();
-
 	virtual ~PathDialog();
 
 	bool create(Widget* parent, const std::wstring& title);
@@ -46,9 +42,7 @@ public:
 	DialogResult showModal(Path& outPath);
 
 private:
-	IPathDialog* m_pathDialog;
+	IPathDialog* m_pathDialog = nullptr;
 };
 
-	}
 }
-

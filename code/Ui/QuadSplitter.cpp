@@ -10,13 +10,11 @@
 #include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
-#include "Ui/StyleSheet.h"
 #include "Ui/QuadSplitter.h"
+#include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.QuadSplitter", QuadSplitter, Widget)
 
@@ -366,5 +364,4 @@ void QuadSplitter::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

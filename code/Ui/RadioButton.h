@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Radio button.
  * \ingroup UI
@@ -38,6 +36,4 @@ public:
 	bool isChecked() const;
 };
 
-	}
 }
-
