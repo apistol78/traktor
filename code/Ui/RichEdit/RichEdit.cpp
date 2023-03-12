@@ -1090,6 +1090,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 	int32_t caret = m_caret;
 	bool caretMovement = false;
 	bool manualScrolled = false;
+	bool contentChanged = false;
 
 	switch (event->getVirtualKey())
 	{
@@ -1155,6 +1156,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 				}
 			}
 			caretMovement = true;
+			contentChanged = true;
 		}
 		break;
 
@@ -1218,6 +1220,7 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 					}
 				}
 				caretMovement = true;
+				contentChanged = true;
 			}
 		}
 		break;
@@ -1408,6 +1411,12 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 		CaretEvent caretEvent(this);
 		raiseEvent(&caretEvent);
+	}
+
+	if (contentChanged)
+	{
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
 	}
 
 	updateScrollBars();
