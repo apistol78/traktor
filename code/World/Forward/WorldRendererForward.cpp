@@ -42,12 +42,10 @@
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 const render::Handle s_handleVisualTargetSet[] =
 {
@@ -55,7 +53,7 @@ const render::Handle s_handleVisualTargetSet[] =
 	render::Handle(L"World_VisualTargetSet_Odd")
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, WorldRendererShared)
 
@@ -810,5 +808,4 @@ void WorldRendererForward::setupVisualPass(
 	renderGraph.addPass(rp);
 }
 
-	}
 }
