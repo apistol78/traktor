@@ -52,19 +52,27 @@ public:
 		{
 			if (!m_namespaceItems[qname[i]])
 				m_namespaceItems[qname[i]] = m_treeClasses->createItem(
-					(i > 0) ? m_namespaceItems[qname[i - 1]] : 0,
+					(i > 0) ? m_namespaceItems[qname[i - 1]] : nullptr,
 					qname[i],
 					0
 				);
 		}
 
 		if (runtimeClass->getExportType().getSuper())
-			ss << qname.back() << L" : " << runtimeClass->getExportType().getSuper()->getName();
+		{
+			std::vector< std::wstring > qnameSuper;
+			Split< std::wstring >::any(
+				runtimeClass->getExportType().getSuper()->getName(),
+				L".",
+				qnameSuper
+			);
+			ss << qname.back() << L" : " << qnameSuper.back();
+		}
 		else
 			ss << qname.back();
 
 		Ref< ui::TreeViewItem > classItem = m_treeClasses->createItem(
-			(qname.size() >= 2) ? m_namespaceItems[qname[qname.size() - 2]] : 0,
+			(qname.size() >= 2) ? m_namespaceItems[qname[qname.size() - 2]] : nullptr,
 			ss.str(),
 			0
 		);
