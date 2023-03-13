@@ -38,6 +38,7 @@
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "Weather/Clouds/CloudRenderer.h"
+#include "Weather/Fog/VolumetricFogRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 
@@ -115,6 +116,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new weather::CloudRenderer(primitiveRenderer));
 	outEntityRenderers.push_back(new weather::PrecipitationRenderer());
 	outEntityRenderers.push_back(new weather::SkyRenderer());
+	outEntityRenderers.push_back(new weather::VolumetricFogRenderer());
 }
 
 void DefaultEditorProfile::createControllerEditorFactories(

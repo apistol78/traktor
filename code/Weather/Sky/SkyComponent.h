@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
@@ -33,7 +34,6 @@ namespace traktor::render
 
 class Buffer;
 class RenderContext;
-class ITexture;
 class IVertexLayout;
 
 }
@@ -75,6 +75,8 @@ public:
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass
 	);
+
+	render::ITexture* getTexture() const { return m_texture; }
 
 private:
 	Ref< const render::IVertexLayout > m_vertexLayout;

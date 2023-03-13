@@ -9,6 +9,8 @@
 #include "Weather/WeatherFactory.h"
 #include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Clouds/CloudComponentData.h"
+#include "Weather/Fog/VolumetricFogComponent.h"
+#include "Weather/Fog/VolumetricFogComponentData.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationComponentData.h"
 #include "Weather/Sky/SkyComponent.h"
@@ -40,7 +42,8 @@ const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 	return makeTypeInfoSet<
 		CloudComponentData,
 		PrecipitationComponentData,
-		SkyComponentData
+		SkyComponentData,
+		VolumetricFogComponentData
 	>();
 }
 
@@ -62,6 +65,8 @@ Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world
 		return precipitationComponentData->createComponent(m_resourceManager);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (const VolumetricFogComponentData* volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(&entityComponentData))
+		return volumetricFogComponentData->createComponent(m_resourceManager, m_renderSystem);
 	else
 		return nullptr;
 }
