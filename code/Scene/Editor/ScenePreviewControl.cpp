@@ -466,9 +466,9 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 	{
 		Ref< Scene > scene = m_context->getScene();
 
-		float deltaTime = (float)m_timer.getDeltaTime();
-		float scaledTime = m_context->getTime();
-		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+		const float deltaTime = (float)m_timer.getDeltaTime();
+		const float scaledTime = m_context->getTime();
+		const float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 
 		// Update scene controller editor.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
@@ -544,7 +544,8 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 {
-	m_context->raiseRedraw(nullptr);
+	if (m_context->isPlaying())
+		m_context->raiseRedraw(nullptr);
 }
 
 }

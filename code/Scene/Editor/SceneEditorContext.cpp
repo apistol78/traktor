@@ -168,6 +168,7 @@ void SceneEditorContext::setModifier(IModifier* modifier)
 	}
 
 	raiseModifierChanged();
+	raiseRedraw(nullptr);
 }
 
 IModifier* SceneEditorContext::getModifier() const

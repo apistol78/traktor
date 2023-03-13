@@ -101,6 +101,7 @@ bool ScaleModifier::cursorMoved(
 
 	tc.popWorld();
 
+	const uint32_t lastAxisHot = m_axisHot;
 	m_axisHot = 0;
 
 	const float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
@@ -111,7 +112,7 @@ bool ScaleModifier::cursorMoved(
 	if (Line2(axis0[2], axis1[2]).classify(cursorPosition, guideThickness))
 		m_axisHot |= 4;
 
-	return m_axisHot != 0;
+	return m_axisHot != lastAxisHot;
 }
 
 bool ScaleModifier::handleCommand(const ui::Command& command)

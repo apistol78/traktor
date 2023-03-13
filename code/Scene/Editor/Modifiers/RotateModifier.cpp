@@ -98,6 +98,7 @@ bool RotateModifier::cursorMoved(
 	const Scalar distance = (m_center - eye).xyz0().length();
 	const Scalar radius = (distance / 6.0_simd) * Scalar(m_context->getGuideSize());
 
+	const uint32_t lastAxisEnable = m_axisEnable;
 	m_axisEnable = 0;
 
 	TransformChain tc = transformChain;
@@ -161,7 +162,7 @@ bool RotateModifier::cursorMoved(
 	}
 	tc.popWorld();
 
-	return m_axisEnable != 0;
+	return m_axisEnable != lastAxisEnable;
 }
 
 bool RotateModifier::handleCommand(const ui::Command& command)
