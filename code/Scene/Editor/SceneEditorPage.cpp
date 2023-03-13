@@ -1056,6 +1056,7 @@ void SceneEditorPage::createControllerEditor()
 void SceneEditorPage::updateScene()
 {
 	m_context->buildEntities();
+	m_context->raiseRedraw(nullptr);
 }
 
 Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)

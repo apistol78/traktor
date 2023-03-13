@@ -112,6 +112,7 @@ bool TranslateModifier::cursorMoved(
 
 	tc.popWorld();
 
+	const uint32_t lastAxisHot = m_axisHot;
 	m_axisHot = 0;
 
 	// Check drag circles.
@@ -171,7 +172,7 @@ hit:;
 			m_axisHot |= 4;
 	}
 
-	return m_axisHot != 0;
+	return m_axisHot != lastAxisHot;
 }
 
 bool TranslateModifier::handleCommand(const ui::Command& command)

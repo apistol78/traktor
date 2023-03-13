@@ -499,6 +499,8 @@ bool TerrainEditModifier::cursorMoved(
 	if (!m_terrainComponent || !m_heightfield)
 		return false;
 
+	const Vector4 lastCenter = m_center;
+
 	Scalar distance;
 	if (m_heightfield->queryRay(
 		worldRayOrigin,
@@ -509,7 +511,7 @@ bool TerrainEditModifier::cursorMoved(
 	else
 		m_center = Vector4::zero();
 
-	return true;
+	return m_center != lastCenter;
 }
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)

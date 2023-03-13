@@ -210,19 +210,21 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 
 void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseMoveEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	ui::Point mousePosition = event->getPosition();
+	const ui::Point mousePosition = event->getPosition();
 
-	Vector4 mouseDelta(
+	const Vector4 mouseDelta(
 		float(m_mousePosition.x - mousePosition.x),
 		float(m_mousePosition.y - mousePosition.y),
 		0.0f,
 		0.0f
 	);
 
-	ui::Rect innerRect = renderWidget->getInnerRect();
-	Vector2 screenPosition(2.0f * float(mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(mousePosition.y) / innerRect.getHeight());
-	Vector4 clipDelta = mouseDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
-	Vector4 viewDelta = transformChain.clipToView(clipDelta);
+	const ui::Rect innerRect = renderWidget->getInnerRect();
+	const Vector2 screenPosition(2.0f * float(mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(mousePosition.y) / innerRect.getHeight());
+	const Vector4 clipDelta = mouseDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
+	const Vector4 viewDelta = transformChain.clipToView(clipDelta);
+
+	bool needRedraw = false;
 
 	if (m_modify == MtModifier)
 	{
@@ -277,6 +279,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			viewDelta,
 			snapOverrideEnable
 		);
+
+		needRedraw = true;
 	}
 	else if (m_modify == MtCamera)
 	{
@@ -288,12 +292,14 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			renderControl->moveCamera(ISceneRenderControl::McmMoveXY, mouseDelta, viewDelta);
 
 		context->raiseCameraMoved();
+		needRedraw = true;
 	}
 	else if (m_modify == MtSelection)
 	{
 		renderControl->showSelectionRectangle(
 			ui::Rect(m_mousePosition0, mousePosition).getUnified()
 		);
+		needRedraw = true;
 	}
 	else
 	{
@@ -308,7 +314,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 				worldRayDirection
 			);
 
-			modifier->cursorMoved(
+			needRedraw = modifier->cursorMoved(
 				transformChain,
 				screenPosition,
 				worldRayOrigin,
@@ -317,7 +323,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 		}
 	}
 
-	context->raiseRedraw(renderControl);
+	if (needRedraw)
+		context->raiseRedraw(renderControl);
 
 	m_mousePosition = mousePosition;
 }
