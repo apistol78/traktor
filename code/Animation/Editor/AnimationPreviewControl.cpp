@@ -39,6 +39,7 @@
 #include "Ui/Application.h"
 #include "Ui/Itf/IWidget.h"
 #include "Weather/WeatherFactory.h"
+#include "Weather/Fog/VolumetricFogRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
@@ -243,6 +244,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
+	worldEntityRenderers->add(new weather::VolumetricFogRenderer());
 	worldEntityRenderers->add(new world::EntityRenderer());
 	worldEntityRenderers->add(new world::GroupRenderer());
 	worldEntityRenderers->add(new world::LightRenderer());

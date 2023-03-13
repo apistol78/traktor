@@ -5646,6 +5646,16 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Fog</name>
+											<items>
+												<item type="File" version="1">
+													<fileName>Fog/*.*</fileName>
+													<excludeFilter/>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="3">
