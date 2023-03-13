@@ -27,9 +27,14 @@ class T_DLLCLASS GlslImage : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslImage(const std::wstring& name, uint8_t stages);
+	explicit GlslImage(const std::wstring& name, uint8_t stages, GlslType uniformType);
+
+	GlslType getUniformType() const { return m_uniformType; }
 
 	virtual int32_t getOrdinal() const override final;
+
+private:
+	GlslType m_uniformType;
 };
 
 }

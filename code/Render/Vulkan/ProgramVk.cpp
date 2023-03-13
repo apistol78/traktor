@@ -167,17 +167,14 @@ bool ProgramVk::create(
 	}
 
 	// Append sampler bindings.
-	if (stageFlags != VK_SHADER_STAGE_COMPUTE_BIT)
+	for (const auto& sampler : resource->m_samplers)
 	{
-		for (const auto& sampler : resource->m_samplers)
-		{
-			auto& lb = dslb.push_back();
-			lb = {};
-			lb.binding = sampler.binding;
-			lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-			lb.descriptorCount = 1;
-			lb.stageFlags = getShaderStageFlags(sampler.stages);
-		}
+		auto& lb = dslb.push_back();
+		lb = {};
+		lb.binding = sampler.binding;
+		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
+		lb.descriptorCount = 1;
+		lb.stageFlags = getShaderStageFlags(sampler.stages);
 	}
 
 	// Append texture bindings.
