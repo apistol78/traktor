@@ -311,7 +311,25 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		for (auto resource : layout.get(stageMask))
 		{
 			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-				ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+			{
+				switch (image->getUniformType())
+				{
+				case GlslType::Image2D:
+					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+					break;
+
+				case GlslType::Image3D:
+					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image3D " << image->getName() << L";" << Endl;
+					break;
+
+				case GlslType::ImageCube:
+					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
+					break;
+
+				default:
+					break;
+				}
+			}
 		}
 		ss << Endl;
 	}

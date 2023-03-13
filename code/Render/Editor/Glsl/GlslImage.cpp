@@ -14,8 +14,9 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslImage", GlslImage, GlslResource)
 
-GlslImage::GlslImage(const std::wstring& name, uint8_t stages)
+GlslImage::GlslImage(const std::wstring& name, uint8_t stages, GlslType uniformType)
 :	GlslResource(name, stages)
+,	m_uniformType(uniformType)
 {
 }
 

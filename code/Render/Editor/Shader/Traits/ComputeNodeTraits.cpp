@@ -60,9 +60,9 @@ PinType ComputeNodeTraits::getInputPinType(
 	if (inputPin->getName() == L"Enable")
 		return PinType::Scalar1;
 	else if (inputPin->getName() == L"Storage")
-		return PinType::Texture2D;
+		return PinType::Any;
 	else if (inputPin->getName() == L"Offset")
-		return PinType::Scalar2;
+		return (inputPinTypes[1] == PinType::Texture2D || inputPinTypes[1] == PinType::Image2D) ? PinType::Scalar2 : PinType::Scalar3;
 	else
 		return PinType::Scalar4;
 }

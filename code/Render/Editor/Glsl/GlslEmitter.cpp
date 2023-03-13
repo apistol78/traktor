@@ -235,7 +235,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 
 	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
 	{
-		if (storageUniformNode->getParameterType() != ParameterType::Image2D)
+		if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
 			return false;
 
 		// Check if image needs to be defined.
@@ -250,16 +250,19 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		else
 		{
 			// Image do not exist; add new image resource.
-			cx.getLayout().add(new GlslImage(storageUniformNode->getParameterName(), GlslResource::BsCompute));
+			cx.getLayout().add(new GlslImage(storageUniformNode->getParameterName(), GlslResource::BsCompute, glsl_from_parameter_type(storageUniformNode->getParameterType())));
 		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-		f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+		if (storageUniformNode->getParameterType() == ParameterType::Image2D)
+			f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->cast(GlslType::Integer2) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+		else
+			f << L"imageStore(" << storageUniformNode->getParameterName() << L", " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
 
 		// Define parameter in context.
 		cx.addParameter(
 			storageUniformNode->getParameterName(),
-			ParameterType::Texture2D,
+			storageUniformNode->getParameterType(),
 			1,
 			UpdateFrequency::Draw
 		);
@@ -1971,6 +1974,21 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		}
 	}
 
+	if (cx.inCompute())
+	{
+		switch (texture->getType())
+		{
+		case GlslType::Texture2D:
+			assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", 0.0);" << Endl;
+			break;
+
+		case GlslType::Texture3D:
+		case GlslType::TextureCube:
+		default:
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -2730,7 +2748,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		else
 		{
 			// Image do not exist; add new image resource.
-			cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx)));
+			cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx), out->getType()));
 		}
 	}
 
