@@ -26,109 +26,109 @@ void BlendFunction::evaluate(const Color4f& in, Color4f& out) const
 
 	switch (m_sourceFactor)
 	{
-	case BfOne:
+	case One:
 		src = in;
 		break;
 
-	case BfZero:
+	case Zero:
 		src = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 		break;
 
-	case BfSourceColor:
+	case SourceColor:
 		src = in * in;
 		break;
 
-	case BfOneMinusSourceColor:
+	case OneMinusSourceColor:
 		src = in * (Color4f(1.0f, 1.0f, 1.0f, 1.0f) - in);
 		break;
 
-	case BfDestinationColor:
+	case DestinationColor:
 		src = in * out;
 		break;
 
-	case BfOneMinusDestinationColor:
+	case OneMinusDestinationColor:
 		src = in * (Color4f(1.0f, 1.0f, 1.0f, 1.0f) - out);
 		break;
 
-	case BfSourceAlpha:
+	case SourceAlpha:
 		src = in * in.getAlpha();
 		break;
 
-	case BfOneMinusSourceAlpha:
+	case OneMinusSourceAlpha:
 		src = in * (Scalar(1.0f) - in.getAlpha());
 		break;
 
-	case BfDestinationAlpha:
+	case DestinationAlpha:
 		src = in * out.getAlpha();
 		break;
 
-	case BfOneMinusDestinationAlpha:
+	case OneMinusDestinationAlpha:
 		src = in * (Scalar(1.0f) - out.getAlpha());
 		break;
 	}
 
 	switch (m_destinationFactor)
 	{
-	case BfOne:
+	case One:
 		dst = out;
 		break;
 
-	case BfZero:
+	case Zero:
 		dst = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 		break;
 
-	case BfSourceColor:
+	case SourceColor:
 		dst = out * in;
 		break;
 
-	case BfOneMinusSourceColor:
+	case OneMinusSourceColor:
 		dst = out * (Color4f(1.0f, 1.0f, 1.0f, 1.0f) - in);
 		break;
 
-	case BfDestinationColor:
+	case DestinationColor:
 		dst = out * out;
 		break;
 
-	case BfOneMinusDestinationColor:
+	case OneMinusDestinationColor:
 		dst = out * (Color4f(1.0f, 1.0f, 1.0f, 1.0f) - out);
 		break;
 
-	case BfSourceAlpha:
+	case SourceAlpha:
 		dst = out * in.getAlpha();
 		break;
 
-	case BfOneMinusSourceAlpha:
+	case OneMinusSourceAlpha:
 		dst = out * (Scalar(1.0f) - in.getAlpha());
 		break;
 
-	case BfDestinationAlpha:
+	case DestinationAlpha:
 		dst = out * out.getAlpha();
 		break;
 
-	case BfOneMinusDestinationAlpha:
+	case OneMinusDestinationAlpha:
 		dst = out * (Scalar(1.0f) - out.getAlpha());
 		break;
 	}
 
 	switch (m_operation)
 	{
-	case BoAdd:
+	case Add:
 		out = src + dst;
 		break;
 
-	case BoSubtract:
+	case Subtract:
 		out = src - dst;
 		break;
 
-	case BoReverseSubtract:
+	case ReverseSubtract:
 		out = dst - src;
 		break;
 
-	case BoMin:
+	case Min:
 		out = Color4f(min((Vector4)src, (Vector4)dst));
 		break;
 
-	case BoMax:
+	case Max:
 		out = Color4f(max((Vector4)src, (Vector4)dst));
 		break;
 	}

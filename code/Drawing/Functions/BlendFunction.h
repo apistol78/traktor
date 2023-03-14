@@ -31,25 +31,25 @@ class T_DLLCLASS BlendFunction : public ITransferFunction
 public:
 	enum Factor
 	{
-		BfOne,
-		BfZero,
-		BfSourceColor,
-		BfOneMinusSourceColor,
-		BfDestinationColor,
-		BfOneMinusDestinationColor,
-		BfSourceAlpha,
-		BfOneMinusSourceAlpha,
-		BfDestinationAlpha,
-		BfOneMinusDestinationAlpha
+		One,
+		Zero,
+		SourceColor,
+		OneMinusSourceColor,
+		DestinationColor,
+		OneMinusDestinationColor,
+		SourceAlpha,
+		OneMinusSourceAlpha,
+		DestinationAlpha,
+		OneMinusDestinationAlpha
 	};
 
 	enum Operation
 	{
-		BoAdd,
-		BoSubtract,
-		BoReverseSubtract,
-		BoMin,
-		BoMax
+		Add,
+		Subtract,
+		ReverseSubtract,
+		Min,
+		Max
 	};
 
 	explicit BlendFunction(Factor sourceFactor, Factor destinationFactor, Operation operation);
