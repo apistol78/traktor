@@ -422,21 +422,21 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classTransformFilter);
 
 	auto classBlendFunction = new AutoRuntimeClass< BlendFunction >();
-	classBlendFunction->addConstant("BfOne", Any::fromInt32(BlendFunction::BfOne));
-	classBlendFunction->addConstant("BfZero", Any::fromInt32(BlendFunction::BfZero));
-	classBlendFunction->addConstant("BfSourceColor", Any::fromInt32(BlendFunction::BfSourceColor));
-	classBlendFunction->addConstant("BfOneMinusSourceColor", Any::fromInt32(BlendFunction::BfOneMinusSourceColor));
-	classBlendFunction->addConstant("BfDestinationColor", Any::fromInt32(BlendFunction::BfDestinationColor));
-	classBlendFunction->addConstant("BfOneMinusDestinationColor", Any::fromInt32(BlendFunction::BfOneMinusDestinationColor));
-	classBlendFunction->addConstant("BfSourceAlpha", Any::fromInt32(BlendFunction::BfSourceAlpha));
-	classBlendFunction->addConstant("BfOneMinusSourceAlpha", Any::fromInt32(BlendFunction::BfOneMinusSourceAlpha));
-	classBlendFunction->addConstant("BfDestinationAlpha", Any::fromInt32(BlendFunction::BfDestinationAlpha));
-	classBlendFunction->addConstant("BfOneMinusDestinationAlpha", Any::fromInt32(BlendFunction::BfOneMinusDestinationAlpha));
-	classBlendFunction->addConstant("BoAdd", Any::fromInt32(BlendFunction::BoAdd));
-	classBlendFunction->addConstant("BoSubtract", Any::fromInt32(BlendFunction::BoSubtract));
-	classBlendFunction->addConstant("BoReverseSubtract", Any::fromInt32(BlendFunction::BoReverseSubtract));
-	classBlendFunction->addConstant("BoMin", Any::fromInt32(BlendFunction::BoMin));
-	classBlendFunction->addConstant("BoMax", Any::fromInt32(BlendFunction::BoMax));
+	classBlendFunction->addConstant("One", Any::fromInt32(BlendFunction::One));
+	classBlendFunction->addConstant("Zero", Any::fromInt32(BlendFunction::Zero));
+	classBlendFunction->addConstant("SourceColor", Any::fromInt32(BlendFunction::SourceColor));
+	classBlendFunction->addConstant("OneMinusSourceColor", Any::fromInt32(BlendFunction::OneMinusSourceColor));
+	classBlendFunction->addConstant("DestinationColor", Any::fromInt32(BlendFunction::DestinationColor));
+	classBlendFunction->addConstant("OneMinusDestinationColor", Any::fromInt32(BlendFunction::OneMinusDestinationColor));
+	classBlendFunction->addConstant("SourceAlpha", Any::fromInt32(BlendFunction::SourceAlpha));
+	classBlendFunction->addConstant("OneMinusSourceAlpha", Any::fromInt32(BlendFunction::OneMinusSourceAlpha));
+	classBlendFunction->addConstant("DestinationAlpha", Any::fromInt32(BlendFunction::DestinationAlpha));
+	classBlendFunction->addConstant("OneMinusDestinationAlpha", Any::fromInt32(BlendFunction::OneMinusDestinationAlpha));
+	classBlendFunction->addConstant("Add", Any::fromInt32(BlendFunction::Add));
+	classBlendFunction->addConstant("Subtract", Any::fromInt32(BlendFunction::Subtract));
+	classBlendFunction->addConstant("ReverseSubtract", Any::fromInt32(BlendFunction::ReverseSubtract));
+	classBlendFunction->addConstant("Min", Any::fromInt32(BlendFunction::Min));
+	classBlendFunction->addConstant("Max", Any::fromInt32(BlendFunction::Max));
 	classBlendFunction->addConstructor< int32_t, int32_t, int32_t >(&BlendFunction_constructor);
 	registrar->registerClass(classBlendFunction);
 
