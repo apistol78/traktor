@@ -125,6 +125,8 @@ bool ProgramVk::create(
 	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
 	{
+		T_FATAL_ASSERT(resource->m_computeShader.empty());
+
 		if ((m_vertexShaderModule = shaderModuleCache->get(resource->m_vertexShader, resource->m_vertexShaderHash)) == 0)
 			return false;
 		if ((m_fragmentShaderModule = shaderModuleCache->get(resource->m_fragmentShader, resource->m_fragmentShaderHash)) == 0)
