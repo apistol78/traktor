@@ -8,6 +8,7 @@
  */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
+#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Weather/Fog/VolumetricFogComponent.h"
@@ -24,19 +25,26 @@ namespace traktor::weather
 	{
 
 const render::Handle s_handleWeather_FogVolume(L"Weather_FogVolume");
+const render::Handle s_handleWeather_FogVolumeTexture(L"Weather_FogVolumeTexture");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
 
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
-VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader)
+VolumetricFogComponent::VolumetricFogComponent(
+	const resource::Proxy< render::Shader >& shader
+)
 :	m_shader(shader)
 {
 }
 
 bool VolumetricFogComponent::create(render::IRenderSystem* renderSystem)
 {
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(renderSystem))
+		return false;
+
 	render::VolumeTextureCreateDesc vtcd;
 	vtcd.width = 128;
 	vtcd.height = 128;
@@ -55,6 +63,7 @@ bool VolumetricFogComponent::create(render::IRenderSystem* renderSystem)
 void VolumetricFogComponent::destroy()
 {
 	safeDestroy(m_fogVolumeTexture);
+	safeDestroy(m_screenRenderer);
 }
 
 void VolumetricFogComponent::setOwner(world::Entity* owner)
@@ -84,8 +93,14 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 	if (!sky)
 		return;
 
+	const render::Shader::Permutation perm(render::getParameterHandle(L"InjectSky"));
+	auto injectSkyProgram = m_shader->getProgram(perm);
+	if (!injectSkyProgram)
+		return;
+
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
 	const Matrix44 projectionInv = worldRenderView.getProjection().inverse();
+	const Matrix44 viewInv = worldRenderView.getView().inverse();
 
 	auto& renderGraph = context.getRenderGraph();
 
@@ -103,7 +118,7 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 
 				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject sky");
 
-				renderBlock->program = m_shader->getProgram().program;
+				renderBlock->program = injectSkyProgram.program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->workSize[0] = 128;
 				renderBlock->workSize[1] = 128;
@@ -121,6 +136,7 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 				renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"Weather_SliceFarZ"), sliceFarZ);
 
 				renderBlock->programParams->setMatrixParameter(render::getParameterHandle(L"Weather_ProjectionInv"), projectionInv);
+				renderBlock->programParams->setMatrixParameter(render::getParameterHandle(L"Weather_ViewInv"), viewInv);
 
 				renderBlock->programParams->endParameters(renderContext);
 
@@ -133,7 +149,16 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 
 void VolumetricFogComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
+	auto perm = worldRenderPass.getPermutation(m_shader);
 
+	auto renderContext = context.getRenderContext();
+
+	auto pp = renderContext->alloc< render::ProgramParameters >();
+	pp->beginParameters(renderContext);
+	pp->setTextureParameter(s_handleWeather_FogVolumeTexture, m_fogVolumeTexture);
+	pp->endParameters(renderContext);
+
+	m_screenRenderer->draw(renderContext, m_shader, perm, pp);
 }
 
 }

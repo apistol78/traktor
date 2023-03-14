@@ -25,6 +25,7 @@ namespace traktor::render
 
 class IRenderSystem;
 class ITexture;
+class ScreenRenderer;
 class Shader;
 
 }
@@ -70,6 +71,7 @@ public:
 private:
 	world::Entity* m_owner = nullptr;
 	resource::Proxy< render::Shader > m_shader;
+	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::ITexture > m_fogVolumeTexture;
 };
 
