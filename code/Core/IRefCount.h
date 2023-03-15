@@ -53,7 +53,7 @@ public:
 		// Do not copy reference count.
 	}
 
-	RefCountImpl(RefCountImpl&& object)
+	RefCountImpl(RefCountImpl&& object) noexcept
 	:	m_refCount(0)
 	{
 		// Do not move reference count.

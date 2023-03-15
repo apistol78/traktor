@@ -8,10 +8,8 @@
  */
 #include "Svg/Style.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Style", Style, Object)
 
@@ -163,5 +161,4 @@ bool Style::operator == (const Style& other) const
 	return true;
 }
 
-	}
 }

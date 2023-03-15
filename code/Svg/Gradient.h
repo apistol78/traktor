@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 /*! SVG gradient description.
  * \ingroup SVG
@@ -58,6 +56,4 @@ private:
 	AlignedVector< Stop > m_stops;
 };
 
-	}
 }
-

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 /*! SVG class binding factory.
  * \ingroup SVG
@@ -34,6 +32,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

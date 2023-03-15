@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 class IShapeVisitor;
 class Style;
@@ -66,5 +64,4 @@ private:
 	RefArray< Shape > m_children;
 };
 
-	}
 }

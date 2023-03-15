@@ -25,12 +25,10 @@
 #include "Svg/Style.h"
 #include "Xml/Document.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
+	namespace
 	{
-		namespace
-		{
 
 class BoxedSubPath : public Object
 {
@@ -42,7 +40,7 @@ public:
 	{
 	}
 
-	int32_t getType() const { return m_subPath.type; }
+	int32_t getType() const { return (int32_t)m_subPath.type; }
 
 	bool getClosed() const { return m_subPath.closed; }
 
@@ -122,7 +120,7 @@ void Shape_visit(Shape* self, IRuntimeDelegate* enter, IRuntimeDelegate* leave)
 	self->visit(&visitor);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.svg.ClassFactory", 0, ClassFactory, IRuntimeClassFactory)
 
@@ -167,10 +165,10 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPath);
 
 	auto classBoxedSubPath = new AutoRuntimeClass< BoxedSubPath >();
-	classBoxedSubPath->addConstant("Undefined", Any::fromInt32(SptUndefined));
-	classBoxedSubPath->addConstant("Linear", Any::fromInt32(SptLinear));
-	classBoxedSubPath->addConstant("Quadric", Any::fromInt32(SptQuadric));
-	classBoxedSubPath->addConstant("Cubic", Any::fromInt32(SptCubic));
+	classBoxedSubPath->addConstant("Undefined", Any::fromInt32((int32_t)SubPathType::Undefined));
+	classBoxedSubPath->addConstant("Linear", Any::fromInt32((int32_t)SubPathType::Linear));
+	classBoxedSubPath->addConstant("Quadric", Any::fromInt32((int32_t)SubPathType::Quadric));
+	classBoxedSubPath->addConstant("Cubic", Any::fromInt32((int32_t)SubPathType::Cubic));
 	classBoxedSubPath->addProperty("type", &BoxedSubPath::getType);
 	classBoxedSubPath->addProperty("closed", &BoxedSubPath::getClosed);
 	classBoxedSubPath->addProperty("origin", &BoxedSubPath::getOrigin);
@@ -204,5 +202,4 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classStyle);
 }
 
-	}
 }

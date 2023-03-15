@@ -8,10 +8,8 @@
  */
 #include "Svg/TextShape.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.TextShape", TextShape, Shape)
 
@@ -31,5 +29,4 @@ const std::wstring& TextShape::getText() const
 	return m_text;
 }
 
-	}
 }

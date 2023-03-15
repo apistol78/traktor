@@ -8,10 +8,8 @@
  */
 #include "Svg/ImageShape.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.ImageShape", ImageShape, Shape)
 
@@ -37,5 +35,4 @@ const drawing::Image* ImageShape::getImage() const
 	return m_image;
 }
 
-	}
 }

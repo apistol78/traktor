@@ -21,20 +21,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 /*! Type of sub path.
  * \ingroup Spark
  */
-enum SubPathType
+enum class SubPathType
 {
-	SptUndefined = 0,
-	SptLinear = 1,
-	SptQuadric = 2,
-	SptCubic = 3
+	Undefined,
+	Linear,
+	Quadric,
+	Cubic
 };
 
 /*! Sub path.
@@ -48,7 +46,7 @@ struct SubPath
 	AlignedVector< Vector2 > points;
 
 	SubPath()
-	:	type(SptUndefined)
+	:	type(SubPathType::Undefined)
 	,	closed(false)
 	,	origin(0.0f, 0.0f)
 	{
@@ -105,6 +103,4 @@ private:
 	SubPath* m_current;
 };
 
-	}
 }
-

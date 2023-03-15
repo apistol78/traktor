@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 /*! SVG path shape.
  * \ingroup SVG
@@ -40,5 +38,4 @@ private:
 	Path m_path;
 };
 
-	}
 }

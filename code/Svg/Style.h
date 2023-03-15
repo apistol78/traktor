@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 class Gradient;
 
@@ -93,6 +91,4 @@ private:
 	float m_fontSize;
 };
 
-	}
 }
-

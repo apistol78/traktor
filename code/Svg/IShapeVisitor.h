@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 class Shape;
 
@@ -38,5 +36,4 @@ public:
 	virtual void leave(Shape* shape) = 0;
 };
 
-	}
 }
