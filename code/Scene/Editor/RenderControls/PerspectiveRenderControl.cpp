@@ -605,7 +605,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 
 				// Draw frame.
 				const float c_arrowLength = 0.4f;
-				const float c_frameSize = 0.2f;
+				const float c_frameSize = 0.12f;
+				const float c_margin = 0.01f;
 
 				const float w = 2.0f * float(sz.cx) / sz.cy;
 				const float h = 2.0f;
@@ -613,7 +614,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 				m_primitiveRenderer->setProjection(orthoLh(-w / 2.0f, -h / 2.0f, w / 2.0f, h / 2.0f, -1.0f, 1.0f));
 				m_primitiveRenderer->pushWorld(Matrix44::identity());
 				m_primitiveRenderer->pushView(
-					translate(w / 2.0f - c_frameSize, h / 2.0f - c_frameSize, 0.0f) *
+					translate(w / 2.0f - (c_frameSize + c_margin), h / 2.0f - (c_frameSize + c_margin), 0.0f) *
 					scale(c_frameSize, c_frameSize, c_frameSize)
 				);
 
@@ -634,29 +635,28 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
 					Color4ub(255, 0, 0, 255)
 				);
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 255, 0, 255)
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4::origo(),
+					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
+					Color4ub(0, 0, 255, 255)
+				);
+
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisX() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + view.axisX(),
 					0.8f,
 					Color4ub(255, 0, 0, 255)
 				);
-
-				m_primitiveRenderer->drawLine(
-					Vector4::origo(),
-					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 255, 0, 255)
-				);
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisY() * Scalar(1.0f - c_arrowLength),
 					Vector4::origo() + view.axisY(),
 					0.8f,
 					Color4ub(0, 255, 0, 255)
-				);
-
-				m_primitiveRenderer->drawLine(
-					Vector4::origo(),
-					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
-					Color4ub(0, 0, 255, 255)
 				);
 				m_primitiveRenderer->drawArrowHead(
 					Vector4::origo() + view.axisZ() * Scalar(1.0f - c_arrowLength),
