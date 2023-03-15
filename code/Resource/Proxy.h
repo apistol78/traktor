@@ -32,7 +32,7 @@ public:
 	{
 	}
 
-	Proxy< ResourceType >(Proxy< ResourceType >&& rs)
+	Proxy< ResourceType >(Proxy< ResourceType >&& rs) noexcept
 	{
 		m_handle = std::move(rs.m_handle);
 	}

@@ -77,7 +77,7 @@ public:
 		return *this;
 	}
 
-	RefCountImpl& operator = (RefCountImpl&&)
+	RefCountImpl& operator = (RefCountImpl&&) noexcept
 	{
 		// Do not move reference count.
 		return *this;
