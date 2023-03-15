@@ -144,13 +144,13 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	{
 		if (sharedDepthStencilTargetSet)
 		{
-			int32_t sharedWidth = sharedDepthStencilTargetSet->getWidth();
-			int32_t sharedHeight = sharedDepthStencilTargetSet->getHeight();
+			const int32_t sharedWidth = sharedDepthStencilTargetSet->getWidth();
+			const int32_t sharedHeight = sharedDepthStencilTargetSet->getHeight();
 			T_FATAL_ASSERT(sharedWidth == rtscd.width);
 			T_FATAL_ASSERT(sharedHeight == rtscd.height);
 		}
 
-		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, T_FILE_LINE_W);
+		Ref< IRenderTargetSet > rts = m_renderSystem->createRenderTargetSet(rtscd, sharedDepthStencilTargetSet, name);
 		if (rts)
 		{
 			rts->setDebugName(name);
