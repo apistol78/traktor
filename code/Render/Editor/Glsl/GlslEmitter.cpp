@@ -1976,22 +1976,45 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.inCompute())
 	{
-		switch (texture->getType())
+		if (samplerState.compare == CfNone)
 		{
-		case GlslType::Texture2D:
-			assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
-			break;
+			switch (texture->getType())
+			{
+			case GlslType::Texture2D:
+				assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
 
-		case GlslType::Texture3D:
-			assign(f, out) << L"textureLod(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
-			break;
+			case GlslType::Texture3D:
+				assign(f, out) << L"textureLod(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
 
-		case GlslType::TextureCube:
-			assign(f, out) << L"textureLod(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
-			break;
+			case GlslType::TextureCube:
+				assign(f, out) << L"textureLod(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
 
-		default:
-			return false;
+			default:
+				return false;
+			}
+		}
+		else	// Compare
+		{
+			switch (texture->getType())
+			{
+			case GlslType::Texture2D:
+				assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
+
+			case GlslType::Texture3D:
+				assign(f, out) << L"textureLod(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
+
+			case GlslType::TextureCube:
+				assign(f, out) << L"textureLod(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				break;
+
+			default:
+				return false;
+			}
 		}
 	}
 
