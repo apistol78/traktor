@@ -64,13 +64,13 @@ public:
 	struct ShadowSettings
 	{
 		ShadowProjection projection = SpUniform;
-		float farZ = 0.0f;
+		float farZ = 100.0f;
 		int32_t resolution = 1024;
-		float bias = 0.0f;
-		float biasCoeff = 1.0f;
-		int32_t cascadingSlices = 1;
-		float cascadingLambda = 0.0f;
-		bool quantizeProjection = false;
+		float bias = 0.01f;
+		float biasCoeff = 0.8f;
+		int32_t cascadingSlices = 4;
+		float cascadingLambda = 1.0f;
+		bool quantizeProjection = true;
 		int32_t maskDenominator = 1;
 		resource::Id< render::ImageGraph > maskProject;
 
