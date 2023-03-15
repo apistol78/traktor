@@ -488,8 +488,6 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	
 				for (auto entityRenderer : m_entityRenderers->get())
 					entityRenderer->build(wc, shadowRenderView, shadowPass);
-
-				renderContext->merge(render::RpAll);
 			}
 		}
 	);
@@ -616,8 +614,6 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	
 				for (auto entityRenderer : m_entityRenderers->get())
 					entityRenderer->build(wc, shadowRenderView, shadowPass);
-
-				renderContext->merge(render::RpAll);
 
 				// Write transposed matrix to shaders as shaders have row-major order.
 				Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
@@ -857,7 +853,8 @@ void WorldRendererDeferred::setupVisualPass(
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, irradiancePass);
 
-			renderContext->merge(render::RpAll);
+			// Do a manual merge so irradiance is written always.
+			renderContext->mergeDraw(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
 			render::Shader::Permutation perm;
@@ -884,8 +881,6 @@ void WorldRendererDeferred::setupVisualPass(
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, deferredColorPass);
-
-			renderContext->merge(render::RpAll);
 		}
 	);
 

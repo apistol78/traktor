@@ -518,8 +518,6 @@ void WorldRendererForward::setupLightPass(
 	
 						for (auto entityRenderer : m_entityRenderers->get())
 							entityRenderer->build(wc, shadowRenderView, shadowPass);
-
-						renderContext->merge(render::RpAll);
 					}
 				);
 			}
@@ -634,8 +632,6 @@ void WorldRendererForward::setupLightPass(
 	
 					for (auto entityRenderer : m_entityRenderers->get())
 						entityRenderer->build(wc, shadowRenderView, shadowPass);
-
-					renderContext->merge(render::RpAll);
 				}
 			);
 		}
@@ -800,8 +796,6 @@ void WorldRendererForward::setupVisualPass(
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, defaultPass);
-
-			wc.getRenderContext()->merge(render::RpAll);
 		}
 	);
 

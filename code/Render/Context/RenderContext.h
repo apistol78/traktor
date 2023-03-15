@@ -78,14 +78,20 @@ public:
 	/*! Add render block to sorting queue. */
 	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
 
+	/*! Merge compute blocks into render queue. */
+	void mergeCompute();
+
 	/*! Merge sorting queues into render queue. */
-	void merge(uint32_t priorities);
+	void mergeDraw(uint32_t priorities);
 
 	/*! Render blocks queued in render queue. */
 	void render(IRenderView* renderView) const;
 
 	/*! Flush blocks. */
 	void flush();
+
+	/*! Check if any computes are pending for merge. */
+	bool havePendingComputes() const;
 
 	/*! Check if any draws is pending for merge. */
 	bool havePendingDraws() const;

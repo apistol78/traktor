@@ -10,19 +10,27 @@
 
 #include "Render/Types.h"
 
+ // import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_WORLD_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor::world
 {
 
 // Techniques
-extern const render::Handle s_techniqueDeferredColor;
-extern const render::Handle s_techniqueDeferredGBufferWrite;
-extern const render::Handle s_techniqueForwardColor;
-extern const render::Handle s_techniqueForwardGBufferWrite;
-extern const render::Handle s_techniqueSimpleColor;
-extern const render::Handle s_techniqueReflectionWrite;
-extern const render::Handle s_techniqueIrradianceWrite;
-extern const render::Handle s_techniqueVelocityWrite;
-extern const render::Handle s_techniqueShadow;
+extern const render::Handle T_DLLCLASS s_techniqueDeferredColor;
+extern const render::Handle T_DLLCLASS s_techniqueDeferredGBufferWrite;
+extern const render::Handle T_DLLCLASS s_techniqueForwardColor;
+extern const render::Handle T_DLLCLASS s_techniqueForwardGBufferWrite;
+extern const render::Handle T_DLLCLASS s_techniqueSimpleColor;
+extern const render::Handle T_DLLCLASS s_techniqueReflectionWrite;
+extern const render::Handle T_DLLCLASS s_techniqueIrradianceWrite;
+extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
+extern const render::Handle T_DLLCLASS s_techniqueShadow;
 
 // Shader parameters.
 extern const render::Handle s_handleColorMap;

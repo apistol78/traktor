@@ -130,8 +130,6 @@ void WorldRendererSimple::setup(
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, defaultPass);
-
-			renderContext->merge(render::RpAll);
 		}
 	);
 	renderGraph.addPass(rp);
