@@ -307,6 +307,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						{
 							auto te = renderContext->alloc< EndPassRenderBlock >();
 							renderContext->enqueue(te);
+							renderContext->mergeCompute();
 						}
 
 						// Begin pass if resource is a target.
@@ -343,6 +344,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						{
 							auto te = renderContext->alloc< EndPassRenderBlock >();
 							renderContext->enqueue(te);
+							renderContext->mergeCompute();
 						}
 
 						auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
@@ -360,6 +362,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			{
 				auto te = renderContext->alloc< EndPassRenderBlock >();
 				renderContext->enqueue(te);
+				renderContext->mergeCompute();
 				currentOutputTargetSetId = ~0U;
 			}
 
@@ -377,7 +380,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			for (const auto& build : pass->getBuilds())
 			{
 				build(*this, renderContext);
-				T_FATAL_ASSERT(!renderContext->havePendingDraws());
+
+				// Merge all pending draws after each build step.
+				renderContext->mergeDraw(render::RpAll);
 			}
 			T_PROFILER_END();
 
@@ -417,6 +422,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		renderContext->enqueue(te);
 	}
 
+	// Always merge any lingering compute jobs left at the end of frame.
+	renderContext->mergeCompute();
+
+	T_FATAL_ASSERT(!renderContext->havePendingComputes());
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 #if !defined(__ANDROID__) && !defined(__IOS__)

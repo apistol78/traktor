@@ -107,7 +107,13 @@ void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 		m_priorityQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::merge(uint32_t priorities)
+void RenderContext::mergeCompute()
+{
+	m_renderQueue.insert(m_renderQueue.end(), m_computeQueue.begin(), m_computeQueue.end());
+	m_computeQueue.resize(0);
+}
+
+void RenderContext::mergeDraw(uint32_t priorities)
 {
 	// Merge setup blocks unsorted.
 	if (priorities & RpSetup)
@@ -191,6 +197,11 @@ void RenderContext::flush()
 	m_renderQueue.resize(0);
 
 	m_heapPtr = m_heap.ptr();
+}
+
+bool RenderContext::havePendingComputes() const
+{
+	return !m_computeQueue.empty();
 }
 
 bool RenderContext::havePendingDraws() const

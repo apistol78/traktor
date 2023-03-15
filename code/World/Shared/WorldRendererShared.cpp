@@ -561,8 +561,6 @@ render::handle_t WorldRendererShared::setupGBufferPass(
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, gbufferPass);
-
-			renderContext->merge(render::RpAll);		
 		}
 	);
 
@@ -644,8 +642,6 @@ render::handle_t WorldRendererShared::setupVelocityPass(
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, velocityPass);
-
-			renderContext->merge(render::RpAll);
 		}
 	);
 
@@ -803,8 +799,6 @@ render::handle_t WorldRendererShared::setupReflectionsPass(
 	
 	// 		for (auto entityRenderer : m_entityRenderers->get())
 	// 			entityRenderer->build(wc, worldRenderView, reflectionsPass);
-
-	// 		renderContext->merge(render::RpAll);
 	// 	}
 	// );
 	

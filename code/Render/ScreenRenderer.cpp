@@ -110,8 +110,18 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	if (!shader)
 		return;
 
-	IProgram* program = shader->getProgram().program;
-	draw(renderContext, program, programParams);
+	auto program = shader->getProgram();
+	if (!program)
+		return;
+
+	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
+	rb->program = program.program;
+	rb->programParams = programParams;
+	rb->indexBuffer = nullptr;
+	rb->vertexBuffer = m_vertexBuffer->getBufferView();
+	rb->vertexLayout = m_vertexLayout;
+	rb->primitives = m_primitives;
+	renderContext->draw(program.priority, rb);
 }
 
 void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams)
@@ -119,9 +129,18 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 	if (!shader)
 		return;
 
-	IProgram* program = shader->getProgram(permutation).program;
-	if (program)
-		draw(renderContext, program, programParams);
+	auto program = shader->getProgram(permutation);
+	if (!program)
+		return;
+
+	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
+	rb->program = program.program;
+	rb->programParams = programParams;
+	rb->indexBuffer = nullptr;
+	rb->vertexBuffer = m_vertexBuffer->getBufferView();
+	rb->vertexLayout = m_vertexLayout;
+	rb->primitives = m_primitives;
+	renderContext->draw(program.priority, rb);
 }
 
 }
