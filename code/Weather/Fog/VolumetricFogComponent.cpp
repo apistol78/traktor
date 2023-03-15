@@ -16,6 +16,7 @@
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
@@ -27,6 +28,7 @@ namespace traktor::weather
 const render::Handle s_handleWeather_FogVolume(L"Weather_FogVolume");
 const render::Handle s_handleWeather_FogVolumeTexture(L"Weather_FogVolumeTexture");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
+const render::Handle s_handleWeather_MagicCoeffs(L"Weather_MagicCoeffs");
 
 	}
 
@@ -86,6 +88,12 @@ void VolumetricFogComponent::update(const world::UpdateParams& update)
 
 void VolumetricFogComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
 {
+}
+
+void VolumetricFogComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+{
+	auto renderContext = context.getRenderContext();
+
 	if (!m_owner)
 		return;
 
@@ -100,65 +108,49 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
 	const Matrix44 projectionInv = worldRenderView.getProjection().inverse();
-	const Matrix44 viewInv = worldRenderView.getView().inverse();
 
-	auto& renderGraph = context.getRenderGraph();
+	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
+	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Volumetric fog");
-	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-		{
-			for (int32_t slice = 0; slice < 128; ++slice)
-			{
-				const float nf = (float)slice / 128.0f;
-				const float ff = (float)(slice + 1) / 128.0f;
+	// Update the volume.
+	if (worldRenderPass.getTechnique() == world::s_techniqueForwardColor)
+	{
+		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject sky");
 
-				const float sliceNearZ = (viewFrustum.getFarZ() - viewFrustum.getNearZ()) * nf + viewFrustum.getNearZ();
-				const float sliceFarZ = (viewFrustum.getFarZ() - viewFrustum.getNearZ()) * ff + viewFrustum.getNearZ();
+		renderBlock->program = injectSkyProgram.program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->workSize[0] = 128;
+		renderBlock->workSize[1] = 128;
+		renderBlock->workSize[2] = 128;
 
-				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject sky");
+		renderBlock->programParams->beginParameters(renderContext);
 
-				renderBlock->program = injectSkyProgram.program;
-				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->workSize[0] = 128;
-				renderBlock->workSize[1] = 128;
-				renderBlock->workSize[2] = 1;
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-				renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setImageViewParameter(s_handleWeather_FogVolume, m_fogVolumeTexture);
+		renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, sky->getTexture());
+		renderBlock->programParams->setVectorParameter(s_handleWeather_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), viewFrustum.getFarZ()));
+		renderBlock->programParams->setMatrixParameter(render::getParameterHandle(L"Weather_ProjectionInverse"), projectionInv);
 
-				//worldRenderPass.setProgramParameters(renderBlock->programParams);
+		renderBlock->programParams->endParameters(renderContext);
 
-				renderBlock->programParams->setImageViewParameter(s_handleWeather_FogVolume, m_fogVolumeTexture);
-				renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, sky->getTexture());
+		renderContext->compute(renderBlock);
+	}
 
-				renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"Weather_Slice"), (float)slice);
-				renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"Weather_SliceNearZ"), sliceNearZ);
-				renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"Weather_SliceFarZ"), sliceFarZ);
+	// Render the volume.
+	{
+		auto perm = worldRenderPass.getPermutation(m_shader);
 
-				renderBlock->programParams->setMatrixParameter(render::getParameterHandle(L"Weather_ProjectionInv"), projectionInv);
-				renderBlock->programParams->setMatrixParameter(render::getParameterHandle(L"Weather_ViewInv"), viewInv);
+		auto programParams = renderContext->alloc< render::ProgramParameters >();
+		programParams->beginParameters(renderContext);
 
-				renderBlock->programParams->endParameters(renderContext);
+		worldRenderPass.setProgramParameters(programParams);
 
-				renderContext->compute(renderBlock);
-			}
-		}
-	);
-	renderGraph.addPass(rp);
-}
+		programParams->setTextureParameter(s_handleWeather_FogVolumeTexture, m_fogVolumeTexture);
+		programParams->endParameters(renderContext);
 
-void VolumetricFogComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
-{
-	auto perm = worldRenderPass.getPermutation(m_shader);
-
-	auto renderContext = context.getRenderContext();
-
-	auto pp = renderContext->alloc< render::ProgramParameters >();
-	pp->beginParameters(renderContext);
-	pp->setTextureParameter(s_handleWeather_FogVolumeTexture, m_fogVolumeTexture);
-	pp->endParameters(renderContext);
-
-	m_screenRenderer->draw(renderContext, m_shader, perm, pp);
+		m_screenRenderer->draw(renderContext, m_shader, perm, programParams);
+	}
 }
 
 }
