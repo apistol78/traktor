@@ -2,5 +2,7 @@
 /3rdp-restricted
 /build
 /bin/latest
+/bin/git
+/data/Temp
+/data/Output
 /.vs
-
