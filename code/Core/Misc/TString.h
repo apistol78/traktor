@@ -65,7 +65,11 @@ std::wstring mbstows(const std::string& mbs)
 #if !defined(__ANDROID__) && !defined(__LINUX__) && !defined(__RPI__)
 	if (!mbs.empty())
 	{
+#	if defined(_WIN32)
+		wchar_t* buf = (wchar_t*)_malloca((mbs.length() + 1) * sizeof(wchar_t));
+#	else
 		wchar_t* buf = (wchar_t*)alloca((mbs.length() + 1) * sizeof(wchar_t));
+#	endif
 		if (buf)
 		{
 			std::mbstowcs(buf, mbs.c_str(), mbs.length());
@@ -84,7 +88,11 @@ std::string wstombs(const std::wstring& ws)
 #if !defined(__ANDROID__) && !defined(__LINUX__) && !defined(__RPI__)
 	if (!ws.empty())
 	{
+#	if defined(_WIN32)
+		char* buf = (char*)_malloca((ws.length() + 1) * sizeof(char));
+#	else
 		char* buf = (char*)alloca((ws.length() + 1) * sizeof(char));
+#	endif
 		if (buf)
 		{
 			std::wcstombs(buf, ws.c_str(), ws.length());
