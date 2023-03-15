@@ -101,8 +101,9 @@ void VolumetricFogComponent::build(const world::WorldBuildContext& context, cons
 	if (!sky)
 		return;
 
-	const render::Shader::Permutation perm(render::getParameterHandle(L"InjectSky"));
-	auto injectSkyProgram = m_shader->getProgram(perm);
+	auto permutation = worldRenderPass.getPermutation(m_shader);
+	permutation.technique = render::getParameterHandle(L"InjectSky");
+	auto injectSkyProgram = m_shader->getProgram(permutation);
 	if (!injectSkyProgram)
 		return;
 
