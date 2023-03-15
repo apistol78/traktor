@@ -22,18 +22,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::xml
 {
-	namespace xml
-	{
 
 class Document;
 class Element;
 
-	}
+}
 
-	namespace svg
-	{
+namespace traktor::svg
+{
 
 class Shape;
 class Style;
@@ -83,6 +81,4 @@ private:
 	float parseAttr(xml::Element* elm, const std::wstring& attrName, float defValue = 0.0f) const;
 };
 
-	}
 }
-

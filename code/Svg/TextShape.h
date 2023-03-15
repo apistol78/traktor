@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 /*! SVG text shape.
  * \ingroup SVG
@@ -43,5 +41,4 @@ private:
 	std::wstring m_text;
 };
 
-	}
 }

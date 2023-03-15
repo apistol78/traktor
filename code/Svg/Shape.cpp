@@ -9,10 +9,8 @@
 #include "Svg/IShapeVisitor.h"
 #include "Svg/Shape.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Shape", Shape, Object)
 
@@ -76,5 +74,4 @@ void Shape::visit(IShapeVisitor* shapeVisitor)
 	shapeVisitor->leave(this);
 }
 
-	}
 }

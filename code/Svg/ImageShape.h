@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-    namespace drawing
-    {
 
 class Image;
 
-    }
+}
 
-	namespace svg
-	{
+namespace traktor::svg
+{
 
 /*! SVG image shape.
  * \ingroup SVG
@@ -42,15 +40,14 @@ public:
 
 	const Vector2& getPosition() const;
 
-    const Vector2& getSize() const;
+	const Vector2& getSize() const;
 
-    const drawing::Image* getImage() const;
+	const drawing::Image* getImage() const;
 
 private:
 	Vector2 m_position;
-    Vector2 m_size;
-    Ref< const drawing::Image > m_image;
+	Vector2 m_size;
+	Ref< const drawing::Image > m_image;
 };
 
-	}
 }

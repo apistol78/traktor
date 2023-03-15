@@ -8,10 +8,8 @@
  */
 #include "Svg/Document.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Document", Document, Shape)
 
@@ -40,5 +38,4 @@ const Vector2& Document::getSize() const
 	return m_size;
 }
 
-	}
 }

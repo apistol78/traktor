@@ -8,10 +8,8 @@
  */
 #include "Svg/Path.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Path", Path, Object)
 
@@ -34,9 +32,9 @@ void Path::moveTo(float x, float y, bool relative)
 
 void Path::lineTo(float x, float y, bool relative)
 {
-	if (!m_current || m_current->type != SptLinear)
+	if (!m_current || m_current->type != SubPathType::Linear)
 	{
-		m_subPaths.push_back(SubPath(SptLinear, m_origin));
+		m_subPaths.push_back(SubPath(SubPathType::Linear, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -50,9 +48,9 @@ void Path::lineTo(float x, float y, bool relative)
 
 void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
 {
-	if (!m_current || m_current->type != SptQuadric)
+	if (!m_current || m_current->type != SubPathType::Quadric)
 	{
-		m_subPaths.push_back(SubPath(SptQuadric, m_origin));
+		m_subPaths.push_back(SubPath(SubPathType::Quadric, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -77,9 +75,9 @@ void Path::quadricTo(float x, float y, bool relative)
 
 void Path::cubicTo(float x1, float y1, float x2, float y2, float x, float y, bool relative)
 {
-	if (!m_current || m_current->type != SptCubic)
+	if (!m_current || m_current->type != SubPathType::Cubic)
 	{
-		m_subPaths.push_back(SubPath(SptCubic, m_origin));
+		m_subPaths.push_back(SubPath(SubPathType::Cubic, m_origin));
 		m_current = &m_subPaths.back();
 		m_current->points.push_back(m_cursor);
 	}
@@ -153,5 +151,4 @@ float Path::getAbsoluteY(float y) const
 	return y + m_cursor.y;
 }
 
-	}
 }

@@ -137,7 +137,7 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 					const size_t ln = pnts.size();
 					switch (sp.type)
 					{
-					case svg::SptLinear:
+					case svg::SubPathType::Linear:
 						{
 							log::info << L"linear " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
@@ -146,7 +146,7 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 						}
 						break;
 
-					case svg::SptQuadric:
+					case svg::SubPathType::Quadric:
 						{
 							log::info << L"quadric " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
@@ -159,7 +159,7 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 						}
 						break;
 
-					case svg::SptCubic:
+					case svg::SubPathType::Cubic:
 						{
 							log::info << L"cubic " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);

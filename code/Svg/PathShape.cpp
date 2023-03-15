@@ -8,10 +8,8 @@
  */
 #include "Svg/PathShape.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.PathShape", PathShape, Shape)
 
@@ -25,5 +23,4 @@ const Path& PathShape::getPath() const
 	return m_path;
 }
 
-	}
 }

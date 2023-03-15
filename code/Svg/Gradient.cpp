@@ -8,10 +8,8 @@
  */
 #include "Svg/Gradient.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Gradient", Gradient, Object)
 
@@ -35,5 +33,4 @@ const AlignedVector< Gradient::Stop >& Gradient::getStops() const
 	return m_stops;
 }
 
-	}
 }

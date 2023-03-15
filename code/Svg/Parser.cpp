@@ -28,12 +28,10 @@
 #include "Xml/Document.h"
 #include "Xml/Element.h"
 
-namespace traktor
+namespace traktor::svg
 {
-	namespace svg
+	namespace
 	{
-		namespace
-		{
 
 const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
 {
@@ -134,7 +132,7 @@ float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 	return number;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Parser", Parser, Object)
 
@@ -850,5 +848,4 @@ float Parser::parseAttr(xml::Element* elm, const std::wstring& attrName, float d
 	return defValue;
 }
 
-	}
 }
