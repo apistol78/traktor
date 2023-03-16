@@ -133,6 +133,13 @@ const wchar_t* c_parameterTypeNames[] =
 	L"Image Cube"
 };
 
+const wchar_t* c_uniformFrequencyNames[] =
+{
+	L"Once",
+	L"Frame",
+	L"Draw"
+};
+
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
@@ -361,8 +368,9 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_uniformsGrid = new ui::GridView();
 	m_uniformsGrid->create(tabPageUniforms, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_uniformsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), ui::dpi96(140), false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), ui::dpi96(190), false));
 	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_TYPE"), ui::dpi96(80), false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_FREQUENCY"), ui::dpi96(80), false));
 	m_uniformsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
 
 	tab->addPage(tabPageUniforms);
@@ -1232,6 +1240,7 @@ void ShaderGraphEditorPage::updateGraph()
 			row->setData(L"SHADERNODE", uniformNode);
 			row->add(new ui::GridItem(uniformNode->getParameterName()));
 			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]));
+			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
 			m_uniformsGrid->addRow(row);
 		}
 		else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
@@ -1240,6 +1249,7 @@ void ShaderGraphEditorPage::updateGraph()
 			row->setData(L"SHADERNODE", indexedUniformNode);
 			row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
 			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
+			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
 			m_uniformsGrid->addRow(row);
 		}
 	}
