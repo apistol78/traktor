@@ -61,6 +61,8 @@ public:
 
 private:
 	resource::Id< render::Shader > m_shader;
+	float m_maxDistance = 100.0f;
+	int32_t m_sliceCount = 128;
 };
 
 }

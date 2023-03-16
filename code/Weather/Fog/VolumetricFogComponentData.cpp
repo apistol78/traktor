@@ -23,7 +23,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.VolumetricFogComponentData", 0, VolumetricFogComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.VolumetricFogComponentData", 1, VolumetricFogComponentData, world::IEntityComponentData)
 
 VolumetricFogComponentData::VolumetricFogComponentData()
 :	m_shader(c_defaultShader)
@@ -36,7 +36,7 @@ Ref< VolumetricFogComponent > VolumetricFogComponentData::createComponent(resour
 	if (!resourceManager->bind(m_shader, shader))
 		return nullptr;
 
-	Ref< VolumetricFogComponent > component = new VolumetricFogComponent(shader);
+	Ref< VolumetricFogComponent > component = new VolumetricFogComponent(shader, m_maxDistance, m_sliceCount);
 	if (component->create(renderSystem))
 		return component;
 	else
@@ -55,6 +55,12 @@ void VolumetricFogComponentData::setTransform(const world::EntityData* owner, co
 void VolumetricFogComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+
+	if (s.getVersion< VolumetricFogComponentData >() >= 1)
+	{
+		s >> Member< float >(L"maxDistance", m_maxDistance);
+		s >> Member< int32_t >(L"sliceCount", m_sliceCount);
+	}
 }
 
 }

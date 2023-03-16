@@ -50,7 +50,7 @@ class T_DLLCLASS VolumetricFogComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader);
+	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount);
 
 	bool create(render::IRenderSystem* renderSystem);
 
@@ -73,6 +73,8 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::ITexture > m_fogVolumeTexture;
+	float m_maxDistance;
+	int32_t m_sliceCount;
 };
 
 }
