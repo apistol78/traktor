@@ -45,6 +45,12 @@ class T_DLLCLASS IModifier : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct CursorMovedResult
+	{
+		bool hot;
+		bool redraw;
+	};
+
 	/*! \name Notifications */
 	//\{
 
@@ -54,7 +60,7 @@ public:
 
 	virtual void selectionChanged() = 0;
 
-	virtual bool cursorMoved(
+	virtual CursorMovedResult cursorMoved(
 		const TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,

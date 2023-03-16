@@ -70,7 +70,7 @@ void TranslateModifier::selectionChanged()
 	}
 }
 
-bool TranslateModifier::cursorMoved(
+IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
@@ -78,7 +78,7 @@ bool TranslateModifier::cursorMoved(
 )
 {
 	if (m_entityAdapters.empty())
-		return false;
+		return { false, false };
 
 	const Vector4 eye = transformChain.getView().inverse().translation();
 	const Scalar distance = (m_center - eye).xyz0().length();
@@ -172,7 +172,7 @@ hit:;
 			m_axisHot |= 4;
 	}
 
-	return m_axisHot != lastAxisHot;
+	return { m_axisHot != 0, m_axisHot != lastAxisHot };
 }
 
 bool TranslateModifier::handleCommand(const ui::Command& command)

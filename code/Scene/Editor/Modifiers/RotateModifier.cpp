@@ -80,7 +80,7 @@ void RotateModifier::selectionChanged()
 	m_axisEnable = 0;
 }
 
-bool RotateModifier::cursorMoved(
+IModifier::CursorMovedResult RotateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
@@ -88,7 +88,7 @@ bool RotateModifier::cursorMoved(
 )
 {
 	if (m_entityAdapters.empty())
-		return false;
+		return { false, false };
 
 	const Matrix44 mh = rotateY(m_baseHead + m_deltaHead);
 	const Matrix44 mp = rotateX(m_basePitch + m_deltaPitch);
@@ -162,7 +162,7 @@ bool RotateModifier::cursorMoved(
 	}
 	tc.popWorld();
 
-	return m_axisEnable != lastAxisEnable;
+	return { m_axisEnable != 0, m_axisEnable != lastAxisEnable };
 }
 
 bool RotateModifier::handleCommand(const ui::Command& command)

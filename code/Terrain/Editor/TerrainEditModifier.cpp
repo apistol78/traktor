@@ -489,7 +489,7 @@ void TerrainEditModifier::selectionChanged()
 {
 }
 
-bool TerrainEditModifier::cursorMoved(
+scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 	const scene::TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
@@ -497,9 +497,10 @@ bool TerrainEditModifier::cursorMoved(
 )
 {
 	if (!m_terrainComponent || !m_heightfield)
-		return false;
+		return { false, false };
 
 	const Vector4 lastCenter = m_center;
+	bool hot = false;
 
 	Scalar distance;
 	if (m_heightfield->queryRay(
@@ -507,11 +508,14 @@ bool TerrainEditModifier::cursorMoved(
 		worldRayDirection,
 		distance
 	))
+	{
 		m_center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+		hot = true;
+	}
 	else
 		m_center = Vector4::zero();
 
-	return m_center != lastCenter;
+	return { hot, m_center != lastCenter };
 }
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)

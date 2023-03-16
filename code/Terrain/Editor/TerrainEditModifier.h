@@ -74,7 +74,7 @@ public:
 
 	virtual void selectionChanged() override final;
 
-	virtual bool cursorMoved(
+	virtual CursorMovedResult cursorMoved(
 		const scene::TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,

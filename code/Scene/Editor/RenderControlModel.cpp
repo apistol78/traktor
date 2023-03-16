@@ -91,7 +91,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 				screenPosition,
 				worldRayOrigin,
 				worldRayDirection
-			);
+			).hot;
 		}
 
 		// Handle entity picking if enabled.
@@ -319,7 +319,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 				screenPosition,
 				worldRayOrigin,
 				worldRayDirection
-			);
+			).redraw;
 		}
 	}
 

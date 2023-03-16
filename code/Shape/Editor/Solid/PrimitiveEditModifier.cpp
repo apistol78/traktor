@@ -48,14 +48,14 @@ void PrimitiveEditModifier::selectionChanged()
 	m_entityAdapters = m_context->getEntities(scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
 }
 
-bool PrimitiveEditModifier::cursorMoved(
+scene::IModifier::CursorMovedResult PrimitiveEditModifier::cursorMoved(
     const scene::TransformChain& transformChain,
     const Vector2& cursorPosition,
     const Vector4& worldRayOrigin,
     const Vector4& worldRayDirection
 )
 {
-    return true;
+    return { true, true };
 }
 
 bool PrimitiveEditModifier::handleCommand(const ui::Command& command)
