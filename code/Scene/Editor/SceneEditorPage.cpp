@@ -1056,7 +1056,7 @@ void SceneEditorPage::createControllerEditor()
 void SceneEditorPage::updateScene()
 {
 	m_context->buildEntities();
-	m_context->raiseRedraw(nullptr);
+	m_context->enqueueRedraw(nullptr);
 }
 
 Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityAdapter)
@@ -1441,8 +1441,9 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 		m_context->selectEntity(entityAdapter);
 	}
 
-	// Raise context select event.
+	// Raise context select event and the ensure scene is redrawn.
 	m_context->raiseSelect();
+	m_context->enqueueRedraw(nullptr);
 }
 
 void SceneEditorPage::eventInstanceExpand(ui::GridRowStateChangeEvent* event)

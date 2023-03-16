@@ -324,7 +324,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	}
 
 	if (needRedraw)
-		context->raiseRedraw(renderControl);
+		context->enqueueRedraw(renderControl);
 
 	m_mousePosition = mousePosition;
 }

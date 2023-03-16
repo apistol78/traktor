@@ -49,6 +49,12 @@
 
 namespace traktor::scene
 {
+	namespace
+	{
+
+const int32_t c_autoRedrawFrames = 10;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
 
@@ -80,6 +86,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_playing(false)
 ,	m_timeScale(1.0f)
 ,	m_time(0.0f)
+,	m_redrawUntilStop(60)
 ,	m_buildCount(0)
 ,	m_entityCount(0)
 {
@@ -168,7 +175,7 @@ void SceneEditorContext::setModifier(IModifier* modifier)
 	}
 
 	raiseModifierChanged();
-	raiseRedraw(nullptr);
+	enqueueRedraw(nullptr);
 }
 
 IModifier* SceneEditorContext::getModifier() const
@@ -271,6 +278,8 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 
 void SceneEditorContext::setPlaying(bool playing)
 {
+	if (!playing && m_playing)
+		m_redrawUntilStop = c_autoRedrawFrames;
 	m_playing = playing;
 }
 
@@ -297,6 +306,19 @@ void SceneEditorContext::setTime(float time)
 float SceneEditorContext::getTime() const
 {
 	return m_time;
+}
+
+void SceneEditorContext::enqueueRedraw(ISceneRenderControl* renderControl)
+{
+	m_redrawUntilStop = c_autoRedrawFrames;
+}
+
+void SceneEditorContext::processAutoRedraw()
+{
+	if (isPlaying())
+		raiseRedraw(nullptr);
+	else if (m_redrawUntilStop-- > 0)
+		raiseRedraw(nullptr);
 }
 
 void SceneEditorContext::setDrawGuide(const std::wstring& guideId, bool shouldDraw)

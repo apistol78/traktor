@@ -544,8 +544,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 
 void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
 {
-	if (m_context->isPlaying())
-		m_context->raiseRedraw(nullptr);
+	m_context->processAutoRedraw();
 }
 
 }
