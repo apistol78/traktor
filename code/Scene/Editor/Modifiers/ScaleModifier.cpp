@@ -68,7 +68,7 @@ void ScaleModifier::selectionChanged()
 	m_deltaScale = Vector4::zero();
 }
 
-bool ScaleModifier::cursorMoved(
+IModifier::CursorMovedResult ScaleModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
@@ -76,7 +76,7 @@ bool ScaleModifier::cursorMoved(
 )
 {
 	if (m_entityAdapters.empty())
-		return false;
+		return { false, false };
 
 	const float axisLength = m_context->getGuideSize();
 	const float arrowLength = axisLength / 8.0f;
@@ -112,7 +112,7 @@ bool ScaleModifier::cursorMoved(
 	if (Line2(axis0[2], axis1[2]).classify(cursorPosition, guideThickness))
 		m_axisHot |= 4;
 
-	return m_axisHot != lastAxisHot;
+	return { m_axisHot != 0, m_axisHot != lastAxisHot };
 }
 
 bool ScaleModifier::handleCommand(const ui::Command& command)

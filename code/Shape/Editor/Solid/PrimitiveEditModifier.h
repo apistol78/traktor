@@ -32,7 +32,7 @@ class PrimitiveEditModifier : public scene::IModifier
 	T_RTTI_CLASS;
 
 public:
-	PrimitiveEditModifier(scene::SceneEditorContext* context);
+	explicit PrimitiveEditModifier(scene::SceneEditorContext* context);
 
 	virtual bool activate() override final;
 
@@ -40,7 +40,7 @@ public:
 
 	virtual void selectionChanged() override final;
 
-	virtual bool cursorMoved(
+	virtual CursorMovedResult cursorMoved(
 		const scene::TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,
