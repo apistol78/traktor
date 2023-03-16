@@ -92,6 +92,9 @@ void VolumetricFogComponent::setup(const world::WorldSetupContext& context, cons
 
 void VolumetricFogComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
+	if (worldRenderView.getSnapshot())
+		return;
+
 	auto renderContext = context.getRenderContext();
 
 	if (!m_owner)
