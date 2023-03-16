@@ -121,7 +121,7 @@ public:
 		SmNeighbour
 	};
 
-	SceneEditorContext(
+	explicit SceneEditorContext(
 		editor::IEditor* editor,
 		editor::IDocument* document,
 		db::Database* resourceDb,
@@ -204,6 +204,10 @@ public:
 	void setTime(float time);
 
 	float getTime() const;
+
+	void enqueueRedraw(ISceneRenderControl* renderControl);
+
+	void processAutoRedraw();
 
 	//@}
 
@@ -341,6 +345,7 @@ private:
 	bool m_playing;
 	float m_timeScale;
 	float m_time;
+	int32_t m_redrawUntilStop;
 	uint32_t m_buildCount;
 	uint32_t m_entityCount;
 	Ref< Camera > m_cameras[4];

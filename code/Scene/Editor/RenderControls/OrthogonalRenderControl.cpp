@@ -479,7 +479,7 @@ void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 		m_magnification = c_minMagnification;
 
 	m_context->raiseCameraMoved();
-	m_context->raiseRedraw(this);
+	m_context->enqueueRedraw(this);
 }
 
 void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
