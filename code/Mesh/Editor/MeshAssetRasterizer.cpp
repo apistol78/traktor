@@ -157,11 +157,11 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		for (size_t i = 0; i < 3; ++i)
 		{
 			if (polygonVertices[i] >= vertices.size())
-				goto _skip;
+				return false;
 
 			const model::Vertex& vertex = vertices[polygonVertices[i]];
 			if (vertex.getPosition() == model::c_InvalidIndex || vertex.getNormal() == model::c_InvalidIndex)
-				goto _skip;
+				return false;
 
 			const Vector4& position = positions[vertex.getPosition()];
 			const Vector4& normal = normals[vertex.getNormal()];
@@ -243,8 +243,6 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 				}
 			});
 		}
-
-_skip:;
 	}
 
 	return true;
