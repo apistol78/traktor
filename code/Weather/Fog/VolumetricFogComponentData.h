@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -63,6 +64,7 @@ private:
 	resource::Id< render::Shader > m_shader;
 	float m_maxDistance = 100.0f;
 	int32_t m_sliceCount = 128;
+	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 };
 
 }

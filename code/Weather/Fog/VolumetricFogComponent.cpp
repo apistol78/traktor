@@ -28,15 +28,17 @@ const render::Handle s_handleWeather_FogVolume(L"Weather_FogVolume");
 const render::Handle s_handleWeather_FogVolumeTexture(L"Weather_FogVolumeTexture");
 const render::Handle s_handleWeather_MagicCoeffs(L"Weather_MagicCoeffs");
 const render::Handle s_handleWeather_SliceCount(L"Weather_SliceCount");
+const render::Handle s_handleWeather_MediumColor(L"Weather_MediumColor");
 
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
-VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount)
+VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor)
 :	m_shader(shader)
 ,	m_maxDistance(maxDistance)
 ,	m_sliceCount(sliceCount)
+,	m_mediumColor(mediumColor)
 {
 }
 
@@ -128,8 +130,8 @@ void VolumetricFogComponent::build(const world::WorldBuildContext& context, cons
 
 		renderBlock->programParams->setImageViewParameter(s_handleWeather_FogVolume, m_fogVolumeTexture);
 		renderBlock->programParams->setVectorParameter(s_handleWeather_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
+		renderBlock->programParams->setVectorParameter(s_handleWeather_MediumColor, m_mediumColor);
 		renderBlock->programParams->setFloatParameter(s_handleWeather_SliceCount, (float)m_sliceCount);
-
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);

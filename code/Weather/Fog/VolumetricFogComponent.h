@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/Math/Color4f.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityComponent.h"
 
@@ -50,7 +51,7 @@ class T_DLLCLASS VolumetricFogComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount);
+	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor);
 
 	bool create(render::IRenderSystem* renderSystem);
 
@@ -75,6 +76,7 @@ private:
 	Ref< render::ITexture > m_fogVolumeTexture;
 	float m_maxDistance;
 	int32_t m_sliceCount;
+	Color4f m_mediumColor;
 };
 
 }
