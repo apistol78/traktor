@@ -21,7 +21,7 @@ namespace traktor::render
 template < typename Type >
 inline void align(uint8_t*& ptr)
 {
-	size_t alignment = alignOf< Type >();
+	const size_t alignment = alignOf< Type >();
 	ptr = (uint8_t*)((size_t(ptr) + (alignment - 1)) & ~(alignment - 1));
 }
 
@@ -226,8 +226,8 @@ void ProgramParameters::fixup(IProgram* program) const
 	T_ASSERT(program);
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
-		handle_t handle = read< handle_t >(parameter);
-		int8_t type = read< int8_t >(parameter);
+		const handle_t handle = read< handle_t >(parameter);
+		const int8_t type = read< int8_t >(parameter);
 		switch (type)
 		{
 		case PmtFloat:
