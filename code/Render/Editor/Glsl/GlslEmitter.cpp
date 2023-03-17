@@ -1686,7 +1686,35 @@ bool emitReadStruct(GlslContext& cx, ReadStruct* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", glsl_from_data_type(type));
 
 	comment(f, node);
-	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
+	f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << node->getName() << L");" << Endl;
+
+	return true;
+}
+
+bool emitReadStruct2(GlslContext& cx, ReadStruct2* node)
+{
+	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	if (node->getOutputPinCount() <= 0)
+		return false;
+
+	Ref< GlslVariable > strct = cx.emitInput(node, L"Struct");
+	if (!strct || strct->getType() != GlslType::StructBuffer)
+		return false;
+
+	Ref< GlslVariable > index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
+	const Struct* sn = mandatory_non_null_type_cast< const Struct* >(strct->getNode());
+	for (int32_t i = 0; i < node->getOutputPinCount(); ++i)
+	{
+		const OutputPin* outputPin = node->getOutputPin(i);
+		const DataType type = sn->getElementType(outputPin->getName());
+		Ref< GlslVariable > out = cx.emitOutput(node, outputPin->getName(), glsl_from_data_type(type));
+		comment(f, node);
+		f << L"const " << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << glsl_type_name(out->getType()) << L"(" << strct->getName() << L"[" << index->cast(GlslType::Integer) << L"]." << outputPin->getName() << L");" << Endl;
+	}
 
 	return true;
 }
@@ -3059,6 +3087,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< ReadStruct >()] = new EmitterCast< ReadStruct >(emitReadStruct);
+	m_emitters[&type_of< ReadStruct2 >()] = new EmitterCast< ReadStruct2 >(emitReadStruct2);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Repeat >()] = new EmitterCast< Repeat >(emitRepeat);

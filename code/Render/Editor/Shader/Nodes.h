@@ -806,6 +806,34 @@ private:
 	std::wstring m_name;
 };
 
+/*! Read [indexed] element from struct buffer. */
+class T_DLLCLASS ReadStruct2 : public Node
+{
+	T_RTTI_CLASS;
+
+public:
+	ReadStruct2();
+
+	virtual ~ReadStruct2();
+
+	virtual int getInputPinCount() const override final;
+
+	virtual const InputPin* getInputPin(int index) const override final;
+
+	virtual int getOutputPinCount() const override final;
+
+	virtual const OutputPin* getOutputPin(int index) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	AlignedVector< std::wstring > m_names;
+	AlignedVector< InputPin* > m_inputPins;
+	AlignedVector< OutputPin* > m_outputPins;
+
+	void updatePins();
+};
+
 /*! Reciprocal square root. */
 class T_DLLCLASS RecipSqrt : public ImmutableNode
 {

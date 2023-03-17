@@ -2083,6 +2083,74 @@ void ReadStruct::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ReadStruct2", 0, ReadStruct2, Node)
+
+ReadStruct2::ReadStruct2()
+{
+	updatePins();
+}
+
+ReadStruct2::~ReadStruct2()
+{
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
+}
+
+int ReadStruct2::getInputPinCount() const
+{
+	return (int)m_inputPins.size();
+}
+
+const InputPin* ReadStruct2::getInputPin(int index) const
+{
+	return m_inputPins[index];
+}
+
+int ReadStruct2::getOutputPinCount() const
+{
+	return (int)m_outputPins.size();
+}
+
+const OutputPin* ReadStruct2::getOutputPin(int index) const
+{
+	return m_outputPins[index];
+}
+
+void ReadStruct2::serialize(ISerializer& s)
+{
+	Node::serialize(s);
+
+	s >> MemberAlignedVector< std::wstring >(L"names", m_names);
+
+	if (s.getDirection() == ISerializer::Direction::Read)
+		updatePins();
+}
+
+void ReadStruct2::updatePins()
+{
+	Guid id(L"{0FF6511C-0293-41A8-830E-81978BD01F7F}");
+
+	for (auto& inputPin : m_inputPins)
+		delete inputPin;
+	for (auto& outputPin : m_outputPins)
+		delete outputPin;
+
+	m_inputPins.resize(2);
+	m_inputPins[0] = new InputPin(this, id, L"Struct", false); id.permutate();
+	m_inputPins[1] = new InputPin(this, id, L"Index", false); id.permutate();
+
+	m_outputPins.resize(m_names.size());
+	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
+	{
+		m_outputPins[i] = new OutputPin(this, id, m_names[i]);
+		id.permutate();
+	}
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RecipSqrt", 0, RecipSqrt, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_RecipSqrt_i[] =
