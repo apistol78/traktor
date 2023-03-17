@@ -10,16 +10,54 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/StructNodeTraits.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
+
+PinType pinTypeFromDataType(DataType dataType)
+{
+	switch (dataType)
+	{
+	case DtFloat1:
+	case DtInteger1:
+		return PinType::Scalar1;
+
+	case DtFloat2:
+	case DtShort2:
+	case DtShort2N:
+	case DtHalf2:
+	case DtInteger2:
+		return PinType::Scalar2;
+
+	case DtFloat3:
+	case DtInteger3:
+		return PinType::Scalar3;
+
+	case DtFloat4:
+	case DtByte4:
+	case DtByte4N:
+	case DtShort4:
+	case DtShort4N:
+	case DtHalf4:
+	case DtInteger4:
+		return PinType::Scalar4;
+
+	default:
+		return PinType::Void;
+	}
+}
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.StructNodeTraits", 0, StructNodeTraits, INodeTraits)
 
 TypeInfoSet StructNodeTraits::getNodeTypes() const
 {
-	return makeTypeInfoSet< ReadStruct >();
+	return makeTypeInfoSet<
+		ReadStruct,
+		ReadStruct2
+	>();
 }
 
 bool StructNodeTraits::isRoot(const ShaderGraph* shaderGraph, const Node* node) const
@@ -47,9 +85,7 @@ PinType StructNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	const ReadStruct* readStruct =  mandatory_non_null_type_cast< const ReadStruct* >(node);
-
-	const OutputPin* strctOutputPin = shaderGraph->findSourcePin(readStruct->findInputPin(L"Struct"));
+	const OutputPin* strctOutputPin = shaderGraph->findSourcePin(node->findInputPin(L"Struct"));
 	if (!strctOutputPin)
 		return PinType::Void;
 
@@ -57,36 +93,18 @@ PinType StructNodeTraits::getOutputPinType(
 	if (!strct)
 		return PinType::Void;
 
-	auto elementName = readStruct->getName();
-	auto elementType = strct->getElementType(elementName);
-
-	switch (elementType)
+	if (const ReadStruct* readStruct = dynamic_type_cast< const ReadStruct * >(node))
 	{
-	case DtFloat1:
-	case DtInteger1:
-		return PinType::Scalar1;
-
-	case DtFloat2:
-	case DtShort2:
-	case DtShort2N:
-	case DtHalf2:
-	case DtInteger2:
-		return PinType::Scalar2;
-
-	case DtFloat3:
-	case DtInteger3:
-		return PinType::Scalar3;
-
-	case DtFloat4:
-	case DtByte4:
-	case DtByte4N:
-	case DtShort4:
-	case DtShort4N:
-	case DtHalf4:
-	case DtInteger4:
-		return PinType::Scalar4;
+		auto elementName = readStruct->getName();
+		auto elementType = strct->getElementType(elementName);
+		return pinTypeFromDataType(elementType);
 	}
-
+	else if (const ReadStruct2* readStruct2 = dynamic_type_cast< const ReadStruct2* >(node))
+	{
+		auto elementName = outputPin->getName();
+		auto elementType = strct->getElementType(elementName);
+		return pinTypeFromDataType(elementType);
+	}
 	return PinType::Void;
 }
 
@@ -149,5 +167,4 @@ PinOrder StructNodeTraits::evaluateOrder(
 	return PinOrder::NonLinear;
 }
 
-	}
 }

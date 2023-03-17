@@ -74,6 +74,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< PixelOutput >(), L"SHADERGRAPH_VALUE", L"Pixel shader output" },
 	{ type_of< PixelState >(), L"SHADERGRAPH_VALUE", L"Pixel shader output state" },
 	{ type_of< ReadStruct >(), L"SHADERGRAPH_VALUE", L"Read struct element" },
+	{ type_of< ReadStruct2 >(), L"SHADERGRAPH_VALUE", L"Read struct element(s)" },
 	{ type_of< RecipSqrt >(), L"SHADERGRAPH_ALGEBRA", L"Reciprocal square root" },
 	{ type_of< Reflect >(), L"SHADERGRAPH_ALGEBRA", L"Calculate reflected vector from a input direction and an axis" },
 	{ type_of< Renderer >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of renderer" },
