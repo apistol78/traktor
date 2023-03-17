@@ -776,11 +776,13 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_context->selectAllEntities(true);
 		m_context->raiseSelect();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Editor.Unselect")
 	{
 		m_context->selectAllEntities(false);
 		m_context->raiseSelect();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.AddComponent")
 		result = addComponent();

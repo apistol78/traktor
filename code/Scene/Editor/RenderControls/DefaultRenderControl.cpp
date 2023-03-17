@@ -600,6 +600,8 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 			(world::Quality)getChecked(m_menuAA)->getCommand().getId()
 		);
 	}
+
+	m_context->enqueueRedraw(this);
 }
 
 	}
