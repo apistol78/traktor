@@ -80,7 +80,7 @@ public:
 
 	float getFlickerFilter() const { return m_flickerFilter; }
 
-	float getFlickerCoeff() const { return m_flickerCoeff; }
+	Scalar getFlickerCoeff() const { return Scalar(m_flickerCoeff); }
 
 private:
 	Entity* m_owner;

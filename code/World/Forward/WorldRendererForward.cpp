@@ -348,7 +348,7 @@ void WorldRendererForward::setupLightPass(
 				const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 				lightTransform.translation().xyz1().storeUnaligned(lsd->position);
 				lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
-				light->getColor().storeUnaligned(lsd->color);
+				(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
 
 				Vector4::zero().storeUnaligned(lsd->viewToLight0);
 				Vector4::zero().storeUnaligned(lsd->viewToLight1);
@@ -373,7 +373,7 @@ void WorldRendererForward::setupLightPass(
 			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
 			lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
-			light->getColor().storeUnaligned(lsd->color);
+			(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
 
 			Vector4::zero().storeUnaligned(lsd->viewToLight0);
 			Vector4::zero().storeUnaligned(lsd->viewToLight1);
