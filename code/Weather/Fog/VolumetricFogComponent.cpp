@@ -141,7 +141,7 @@ void VolumetricFogComponent::build(const world::WorldBuildContext& context, cons
 	{
 		auto perm = worldRenderPass.getPermutation(m_shader);
 
-		auto programParams = renderContext->alloc< render::ProgramParameters >(L"Volumetric fog, render volume");
+		auto programParams = renderContext->alloc< render::ProgramParameters >();
 		programParams->beginParameters(renderContext);
 
 		worldRenderPass.setProgramParameters(programParams);
