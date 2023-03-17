@@ -473,15 +473,12 @@ void SceneEditorContext::buildEntities()
 		Ref< ISceneController > controller;
 		if (m_sceneAsset->getControllerData())
 		{
-			RefArray< EntityAdapter > entityAdapters = getEntities();
-
 			SmallMap< Guid, Ref< world::Entity > > entityProducts;
-			for (auto entityAdapter : entityAdapters)
+			for (auto entityAdapter : getEntities())
 				entityProducts.insert(std::make_pair(
 					entityAdapter->getId(),
 					entityAdapter->getEntity()
 				));
-
 			controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
 		}
 
@@ -496,7 +493,7 @@ void SceneEditorContext::buildEntities()
 		m_scene = nullptr;
 
 	// Create map from entity to adapter.
-	RefArray< EntityAdapter > entityAdapters = getEntities();
+	const RefArray< EntityAdapter > entityAdapters = getEntities();
 	m_entityAdapterMap.clear();
 	for (auto entityAdapter : entityAdapters)
 	{
@@ -747,7 +744,7 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 
 void SceneEditorContext::cloneSelected()
 {
-	RefArray< EntityAdapter > selectedEntityAdapters = getEntities(GfDescendants | GfSelectedOnly);
+	const RefArray< EntityAdapter > selectedEntityAdapters = getEntities(GfDescendants | GfSelectedOnly);
 	if (selectedEntityAdapters.empty())
 		return;
 

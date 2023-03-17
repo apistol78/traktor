@@ -33,7 +33,7 @@ namespace traktor
 
 int32_t wrap(int32_t v, int32_t l)
 {
-	int32_t c = v % l;
+	const int32_t c = v % l;
 	return (c < 0) ? c + l : c;
 }
 
@@ -44,10 +44,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshAssetRasterizer", MeshAssetRasterizer,
 
 bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsset* asset, drawing::Image* outImage) const
 {
-	std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	std::wstring modelCachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+	const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring modelCachePath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
 	Ref< model::Model > model = model::ModelCache(modelCachePath).get(fileName, asset->getImportFilter());
 	if (!model)
@@ -97,7 +97,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 			if (!textureAsset)
 				continue;
 
-			Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 			Ref< drawing::Image > image = images[filePath];
 			if (image == nullptr)
 			{
@@ -157,11 +157,11 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		for (size_t i = 0; i < 3; ++i)
 		{
 			if (polygonVertices[i] >= vertices.size())
-				return false;
+				goto _skip;
 
 			const model::Vertex& vertex = vertices[polygonVertices[i]];
 			if (vertex.getPosition() == model::c_InvalidIndex || vertex.getNormal() == model::c_InvalidIndex)
-				return false;
+				goto _skip;
 
 			const Vector4& position = positions[vertex.getPosition()];
 			const Vector4& normal = normals[vertex.getNormal()];
@@ -184,46 +184,67 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		}
 
 		// Discard too large triangles, to prevent broken meshes to halt editor.
-		float bw = std::max< float >({ sp[0].x, sp[1].x, sp[2].x }) - std::min< float >({ sp[0].x, sp[1].x, sp[2].x });
-		float bh = std::max< float >({ sp[0].y, sp[1].y, sp[2].y }) - std::min< float >({ sp[0].y, sp[1].y, sp[2].y });
-		if (bw > hw || bh > hh)
+		const float bw = std::max< float >({ sp[0].x, sp[1].x, sp[2].x }) - std::min< float >({ sp[0].x, sp[1].x, sp[2].x });
+		const float bh = std::max< float >({ sp[0].y, sp[1].y, sp[2].y }) - std::min< float >({ sp[0].y, sp[1].y, sp[2].y });
+		if (bw > 2.0f * hw || bh > 2.0f * hh)
 			continue;
 
 		const auto& polygonMaterial = materials[polygon.getMaterial()];
-		
-		triangle(sp[0], sp[1], sp[2], [&](int32_t x, int32_t y, float alpha, float beta, float gamma) {
-			if (x < 0 || x >= outImage->getWidth() || y < 0 || y >= outImage->getHeight())
-				return;
+		const drawing::Image* texture = polygonMaterial.getDiffuseMap().image;
+		if (texture != nullptr)
+		{
+			const int32_t tw = texture->getWidth();
+			const int32_t th = texture->getHeight();
 
-			const int32_t offset = x + y * outImage->getWidth();
+			triangle(sp[0], sp[1], sp[2], [&, tw, th](int32_t x, int32_t y, float alpha, float beta, float gamma) {
+				if (x < 0 || x >= outImage->getWidth() || y < 0 || y >= outImage->getHeight())
+					return;
 
-			const float z = cp[0].z() * Scalar(alpha) + cp[1].z() * Scalar(beta) + cp[2].z() * Scalar(gamma);
-			if (z < zbuffer[offset])
-			{
-				Color4f color = polygonMaterial.getColor();
+				const int32_t offset = x + y * outImage->getWidth();
 
-				drawing::Image* texture = polygonMaterial.getDiffuseMap().image;
-				if (texture != nullptr)
+				const float z = cp[0].z() * Scalar(alpha) + cp[1].z() * Scalar(beta) + cp[2].z() * Scalar(gamma);
+				if (z < zbuffer[offset])
 				{
-					const int32_t tw = texture->getWidth();
-					const int32_t th = texture->getHeight();
-
+					Color4f color;
 					Vector2 tc = uv[0] * alpha + uv[1] * beta + uv[2] * gamma;
 
-					int32_t tu = wrap((int32_t)(tc.x * tw), tw);
-					int32_t tv = wrap((int32_t)(tc.y * th), th);
+					const int32_t tu = wrap((int32_t)(tc.x * tw), tw);
+					const int32_t tv = wrap((int32_t)(tc.y * th), th);
 
 					tc *= Vector2(tw, th);
 					texture->getPixel(tu, tv, color);
+
+					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
+					const Scalar d = -n.z();
+
+					outImage->setPixelUnsafe(x, y, (color * d).rgb1());
+					zbuffer[offset] = z;
 				}
+				});
+		}
+		else
+		{
+			triangle(sp[0], sp[1], sp[2], [&](int32_t x, int32_t y, float alpha, float beta, float gamma) {
+				if (x < 0 || x >= outImage->getWidth() || y < 0 || y >= outImage->getHeight())
+					return;
 
-				Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
-				Scalar d = -n.z();
+				const int32_t offset = x + y * outImage->getWidth();
 
-				outImage->setPixelUnsafe(x, y, (color * d).rgb1());
-				zbuffer[offset] = z;
-			}
-		});
+				const float z = cp[0].z() * Scalar(alpha) + cp[1].z() * Scalar(beta) + cp[2].z() * Scalar(gamma);
+				if (z < zbuffer[offset])
+				{
+					const Color4f& color = polygonMaterial.getColor();
+
+					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
+					const Scalar d = -n.z();
+
+					outImage->setPixelUnsafe(x, y, (color * d).rgb1());
+					zbuffer[offset] = z;
+				}
+			});
+		}
+
+_skip:;
 	}
 
 	return true;

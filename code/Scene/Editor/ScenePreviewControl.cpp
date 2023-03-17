@@ -306,7 +306,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		{
 			for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
 			{
-				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
+				const Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)
 					entityEditor->handleCommand(command);
 			}
@@ -316,7 +316,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		{
 			for (auto entity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
 			{
-				Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
+				const Ref< IEntityEditor > entityEditor = entity->getEntityEditor();
 				if (entityEditor)
 				{
 					result = entityEditor->handleCommand(command);
