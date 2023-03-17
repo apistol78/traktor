@@ -848,7 +848,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->setGuideSize(1.0f);
 	else if (command == L"Scene.Editor.FindInDatabase")
 	{
-		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 		if (selectedEntities.size() != 1)
 			return false;
 
