@@ -10,6 +10,7 @@
 
 #include <string>
 #include "Core/Guid.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
@@ -814,8 +815,6 @@ class T_DLLCLASS ReadStruct2 : public Node
 public:
 	ReadStruct2();
 
-	virtual ~ReadStruct2();
-
 	virtual int getInputPinCount() const override final;
 
 	virtual const InputPin* getInputPin(int index) const override final;
@@ -828,8 +827,8 @@ public:
 
 private:
 	AlignedVector< std::wstring > m_names;
-	AlignedVector< InputPin* > m_inputPins;
-	AlignedVector< OutputPin* > m_outputPins;
+	StaticVector< InputPin, 2 > m_inputPins;
+	StaticVector< OutputPin, 32 > m_outputPins;
 
 	void updatePins();
 };
@@ -1029,8 +1028,6 @@ public:
 
 	Switch();
 
-	virtual ~Switch();
-
 	void setBranch(Branch branch);
 
 	Branch getBranch() const;
@@ -1055,8 +1052,8 @@ private:
 	Branch m_branch;
 	int32_t m_width;
 	AlignedVector< int32_t > m_cases;
-	AlignedVector< InputPin* > m_inputPins;
-	AlignedVector< OutputPin* > m_outputPins;
+	StaticVector< InputPin, 32 > m_inputPins;
+	StaticVector< OutputPin, 32 > m_outputPins;
 
 	void updatePins();
 };

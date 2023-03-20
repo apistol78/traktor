@@ -400,11 +400,8 @@ void GraphEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 	{
 		m_document->push();
 
-		RefArray< ui::Node > selectedNodes;
-		m_graph->getSelectedNodes(selectedNodes);
-
-		RefArray< ui::Edge > selectedEdges;
-		m_graph->getConnectedEdges(selectedNodes, false, selectedEdges);
+		const RefArray< ui::Node > selectedNodes = m_graph->getSelectedNodes();
+		const RefArray< ui::Edge > selectedEdges = m_graph->getConnectedEdges(selectedNodes, false);
 
 		for (auto editorEdge : selectedEdges)
 		{

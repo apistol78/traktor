@@ -214,61 +214,61 @@ const RefArray< Edge >& GraphControl::getEdges() const
 	return m_edges;
 }
 
-int GraphControl::getSelectedNodes(RefArray< Node >& out) const
+RefArray< Node > GraphControl::getSelectedNodes() const
 {
-	out.resize(0);
+	RefArray< Node > out;
 	for (auto node : m_nodes)
 	{
 		if (node->isSelected())
 			out.push_back(node);
 	}
-	return (int)out.size();
+	return std::move(out);
 }
 
-int GraphControl::getSelectedEdges(RefArray< Edge >& out) const
+RefArray< Edge > GraphControl::getSelectedEdges() const
 {
-	out.resize(0);
+	RefArray< Edge > out;
 	for (auto edge : m_edges)
 	{
 		if (edge->isSelected())
 			out.push_back(edge);
 	}
-	return (int)out.size();
+	return std::move(out);
 }
 
-int GraphControl::getConnectedEdges(const Pin* pin, RefArray< Edge >& outEdges) const
+RefArray< Edge > GraphControl::getConnectedEdges(const Pin* pin) const
 {
-	outEdges.resize(0);
+	RefArray< Edge > edges;
 	for (auto edge : m_edges)
 	{
 		if (edge->getSourcePin() == pin || edge->getDestinationPin() == pin)
-			outEdges.push_back(edge);
+			edges.push_back(edge);
 	}
-	return (int)outEdges.size();
+	return std::move(edges);
 }
 
-int GraphControl::getConnectedEdges(const Node* node, RefArray< Edge >& outEdges) const
+RefArray< Edge > GraphControl::getConnectedEdges(const Node* node) const
 {
-	outEdges.resize(0);
+	RefArray< Edge > edges;
 	for (auto edge : m_edges)
 	{
 		if (edge->getSourcePin()->getNode() == node || edge->getDestinationPin()->getNode() == node)
-			outEdges.push_back(edge);
+			edges.push_back(edge);
 	}
-	return (int)outEdges.size();
+	return std::move(edges);
 }
 
-int GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusive, RefArray< Edge >& outEdges) const
+RefArray< Edge > GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusive) const
 {
-	outEdges.resize(0);
+	RefArray< Edge > edges;
 	for (auto edge : m_edges)
 	{
 		const bool n1 = bool(std::find(nodes.begin(), nodes.end(), edge->getSourcePin()->getNode()) != nodes.end());
 		const bool n2 = bool(std::find(nodes.begin(), nodes.end(), edge->getDestinationPin()->getNode()) != nodes.end());
 		if ((inclusive && (n1 && n2)) || (!inclusive && (n1 || n2)))
-			outEdges.push_back(edge);
+			edges.push_back(edge);
 	}
-	return (int)outEdges.size();
+	return std::move(edges);
 }
 
 Node* GraphControl::getNodeAt(const Point& p) const
@@ -352,7 +352,7 @@ void GraphControl::center(bool selectedOnly)
 	if (!selectedOnly)
 		nodes = m_nodes;
 	else
-		getSelectedNodes(nodes);
+		nodes = getSelectedNodes();
 	if (nodes.empty())
 		return;
 
@@ -379,8 +379,7 @@ void GraphControl::center(bool selectedOnly)
 
 void GraphControl::alignNodes(Alignment align)
 {
-	RefArray< Node > nodes;
-	getSelectedNodes(nodes);
+	RefArray< Node > nodes = getSelectedNodes();
 
 	Rect bounds(
 		std::numeric_limits< int32_t >::max(),
@@ -432,8 +431,7 @@ void GraphControl::alignNodes(Alignment align)
 
 void GraphControl::evenSpace(EvenSpace space)
 {
-	RefArray< Node > nodes;
-	getSelectedNodes(nodes);
+	RefArray< Node > nodes = getSelectedNodes();
 
 	if (nodes.size() <= 1)
 		return;

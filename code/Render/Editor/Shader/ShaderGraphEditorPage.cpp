@@ -529,7 +529,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 
 bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 {
-	RefArray< ui::Node > selectedNodes;
+	const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
 
 	if (m_shaderViewer->handleCommand(command))
 		return true;
@@ -546,11 +546,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			else
 				m_scriptEditor->cut();
 		}
-		else if (m_editorGraph->containFocus() && m_editorGraph->getSelectedNodes(selectedNodes) > 0)
+		else if (m_editorGraph->containFocus() && !selectedNodes.empty())
 		{
 			// Also copy edges which are affected by selected nodes.
-			RefArray< ui::Edge > selectedEdges;
-			m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
+			RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
 
 			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 
@@ -591,8 +590,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				m_document->push();
 
 				// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
-				selectedEdges.resize(0);
-				m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
+				selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, false);
 
 				for (auto selectedEdge : selectedEdges)
 				{
@@ -671,16 +669,15 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< ui::Node > nodes;
-		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+		if (nodes.empty())
 			return false;
 
 		// Save undo state.
 		m_document->push();
 
 		// Remove edges first which are connected to selected nodes.
-		RefArray< ui::Edge > edges;
-		m_editorGraph->getConnectedEdges(nodes, false, edges);
+		const RefArray< ui::Edge > edges = m_editorGraph->getConnectedEdges(nodes, false);
 
 		for (auto edge : edges)
 		{
@@ -802,8 +799,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.UpdateFragments")
 	{
-		RefArray< ui::Node > selectedNodes;
-		m_editorGraph->getSelectedNodes(selectedNodes);
+		const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
 
 		// Get selected external nodes; ie fragments.
 		RefArray< External > selectedExternals;
@@ -951,8 +947,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.FindInDatabase")
 	{
-		RefArray< ui::Node > nodes;
-		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+		if (nodes.empty())
 			return false;
 
 		for (auto node : nodes)
@@ -1178,7 +1174,7 @@ void ShaderGraphEditorPage::updateGraph()
 	std::map< std::wstring, VariableInfo > variables;
 
 	// Extract techniques.
-	m_toolTechniques->removeAll();
+	m_toolTechniques->removeAll();	
 	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
 		m_toolTechniques->add(technique);
 
@@ -1312,7 +1308,7 @@ void ShaderGraphEditorPage::updateGraph()
 			editorEdge->setThickness(2);
 
 			StringOutputStream ss;
-			Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
+			const Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
 			switch (value.getType())
 			{
 			default:
@@ -1595,15 +1591,14 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void ShaderGraphEditorPage::eventDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	RefArray< ui::Node > nodes;
-	if (m_editorGraph->getSelectedNodes(nodes) == 0)
+	if (m_editorGraph->getSelectedNodes().empty())
 		editScript(nullptr);
 }
 
 void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 {
-	RefArray< ui::Node > nodes;
-	if (m_editorGraph->getSelectedNodes(nodes) == 1)
+	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+	if (nodes.size() == 1)
 	{
 		Ref< Node > shaderNode = nodes[0]->getData< Node >(L"SHADERNODE");
 		T_ASSERT(shaderNode);
@@ -1697,8 +1692,7 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	{
 		m_shaderGraph->removeEdge(shaderEdge);
 
-		RefArray< ui::Edge > editorEdges;
-		m_editorGraph->getConnectedEdges(editorDestinationPin, editorEdges);
+		RefArray< ui::Edge > editorEdges = m_editorGraph->getConnectedEdges(editorDestinationPin);
 		if (editorEdges.size() > 0)
 			m_editorGraph->removeEdge(editorEdges.front());
 	}

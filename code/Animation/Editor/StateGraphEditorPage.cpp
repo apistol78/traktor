@@ -305,15 +305,14 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< ui::Node > nodes;
-		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+		if (nodes.empty())
 			return false;
 
 		m_document->push();
 
 		// First remove transitions which are connected to selected states.
-		RefArray< ui::Edge > edges;
-		m_editorGraph->getConnectedEdges(nodes, false, edges);
+		RefArray< ui::Edge > edges = m_editorGraph->getConnectedEdges(nodes, false);
 
 		for (auto edge : edges)
 		{
@@ -380,8 +379,8 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"StateGraph.Editor.SetRoot")
 	{
-		RefArray< ui::Node > selectedNodes;
-		if (m_editorGraph->getSelectedNodes(selectedNodes) == 1)
+		const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
+		if (selectedNodes.size() == 1)
 		{
 			Ref< StateNode > state = selectedNodes.front()->getData< StateNode >(L"STATE");
 			T_ASSERT(state);
@@ -603,10 +602,10 @@ void StateGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::Node > nodes;
-	RefArray< ui::Edge > edges;
+	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+	const RefArray< ui::Edge > edges = m_editorGraph->getSelectedEdges();
 
-	if (m_editorGraph->getSelectedNodes(nodes) == 1)
+	if (nodes.size() == 1)
 	{
 		StateNode* state = nodes[0]->getData< StateNode >(L"STATE");
 		T_ASSERT(state);
@@ -619,7 +618,7 @@ void StateGraphEditorPage::eventSelect(ui::SelectionChangeEvent* event)
 		m_propertiesView->setPropertyObject(state);
 		m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(stateGraph), nullptr));
 	}
-	else if (m_editorGraph->getSelectedEdges(edges) == 1)
+	else if (edges.size() == 1)
 	{
 		Transition* transition = edges[0]->getData< Transition >(L"TRANSITION");
 		T_ASSERT(transition);

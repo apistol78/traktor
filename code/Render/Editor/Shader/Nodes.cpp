@@ -2090,14 +2090,6 @@ ReadStruct2::ReadStruct2()
 	updatePins();
 }
 
-ReadStruct2::~ReadStruct2()
-{
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
-}
-
 int ReadStruct2::getInputPinCount() const
 {
 	return (int)m_inputPins.size();
@@ -2105,7 +2097,7 @@ int ReadStruct2::getInputPinCount() const
 
 const InputPin* ReadStruct2::getInputPin(int index) const
 {
-	return m_inputPins[index];
+	return &m_inputPins[index];
 }
 
 int ReadStruct2::getOutputPinCount() const
@@ -2115,7 +2107,7 @@ int ReadStruct2::getOutputPinCount() const
 
 const OutputPin* ReadStruct2::getOutputPin(int index) const
 {
-	return m_outputPins[index];
+	return &m_outputPins[index];
 }
 
 void ReadStruct2::serialize(ISerializer& s)
@@ -2132,19 +2124,14 @@ void ReadStruct2::updatePins()
 {
 	Guid id(L"{0FF6511C-0293-41A8-830E-81978BD01F7F}");
 
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
-
 	m_inputPins.resize(2);
-	m_inputPins[0] = new InputPin(this, id, L"Struct", false); id.permutate();
-	m_inputPins[1] = new InputPin(this, id, L"Index", false); id.permutate();
+	m_inputPins[0] = InputPin(this, id, L"Struct", false); id.permutate();
+	m_inputPins[1] = InputPin(this, id, L"Index", false); id.permutate();
 
 	m_outputPins.resize(m_names.size());
 	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
 	{
-		m_outputPins[i] = new OutputPin(this, id, m_names[i]);
+		m_outputPins[i] = OutputPin(this, id, m_names[i]);
 		id.permutate();
 	}
 }
@@ -2640,14 +2627,6 @@ Switch::Switch()
 	updatePins();
 }
 
-Switch::~Switch()
-{
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
-}
-
 void Switch::setBranch(Branch branch)
 {
 	m_branch = branch;
@@ -2680,7 +2659,7 @@ int Switch::getInputPinCount() const
 
 const InputPin* Switch::getInputPin(int index) const
 {
-	return m_inputPins[index];
+	return &m_inputPins[index];
 }
 
 int Switch::getOutputPinCount() const
@@ -2690,7 +2669,7 @@ int Switch::getOutputPinCount() const
 
 const OutputPin* Switch::getOutputPin(int index) const
 {
-	return m_outputPins[index];
+	return &m_outputPins[index];
 }
 
 void Switch::serialize(ISerializer& s)
@@ -2721,13 +2700,8 @@ void Switch::updatePins()
 {
 	Guid id(L"{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}");
 
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
-
 	m_inputPins.resize(1 + (1 + m_cases.size()) * m_width);
-	m_inputPins[0] = new InputPin(this, id, L"Select", false);
+	m_inputPins[0] = InputPin(this, id, L"Select", false);
 	id.permutate();
 	for (int32_t c = 0; c < m_width; ++c)
 	{
@@ -2735,7 +2709,7 @@ void Switch::updatePins()
 		ss << L"Default";
 		if (m_width > 1)
 			ss << L" (" << c << L")";
-		m_inputPins[1 + c] = new InputPin(this, id, ss.str(), false);
+		m_inputPins[1 + c] = InputPin(this, id, ss.str(), false);
 		id.permutate();
 	}
 	for (uint32_t i = 0; i < (uint32_t)m_cases.size(); ++i)
@@ -2746,7 +2720,7 @@ void Switch::updatePins()
 			ss << L"Case " << m_cases[i];
 			if (m_width > 1)
 				ss << L" (" << c << L")";
-			m_inputPins[1 + (1 + i) * m_width + c] = new InputPin(this, id, ss.str(), false);
+			m_inputPins[1 + (1 + i) * m_width + c] = InputPin(this, id, ss.str(), false);
 			id.permutate();
 		}
 	}
@@ -2758,7 +2732,7 @@ void Switch::updatePins()
 		ss << L"Output";
 		if (m_width > 1)
 			ss << L" (" << c << L")";
-		m_outputPins[c] = new OutputPin(this, id, ss.str());
+		m_outputPins[c] = OutputPin(this, id, ss.str());
 		id.permutate();
 	}
 }
