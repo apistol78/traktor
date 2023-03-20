@@ -26,6 +26,8 @@ public:
 
 	inline Point(const Point& pnt);
 
+	inline Point(const std::pair< int32_t, int32_t >& pr);
+
 	inline Point(int32_t x_, int32_t y_);
 
 	inline Point operator + (const Size& s) const;

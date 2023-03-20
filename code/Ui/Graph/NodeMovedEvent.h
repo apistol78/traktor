@@ -33,7 +33,7 @@ class T_DLLCLASS NodeMovedEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	NodeMovedEvent(EventSubject* sender, Node* node);
+	explicit NodeMovedEvent(EventSubject* sender, Node* node);
 
 	Node* getNode() const;
 

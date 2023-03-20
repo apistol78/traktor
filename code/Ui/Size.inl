@@ -25,6 +25,12 @@ inline Size::Size(int32_t x, int32_t y)
 {
 }
 
+inline Size::Size(const std::pair< int32_t, int32_t >& pr)
+:	cx(pr.first)
+,	cy(pr.second)
+{
+}
+
 inline Size::Size(const Size& size)
 :	cx(size.cx)
 ,	cy(size.cy)

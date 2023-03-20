@@ -430,6 +430,10 @@
 			<second>Read struct</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_READSTRUCT2</first>
+			<second>Read struct 2</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_RECIPSQRT</first>
 			<second>Reciprocal square root</second>
 		</item>

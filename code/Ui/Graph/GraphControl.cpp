@@ -13,15 +13,16 @@
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/GraphCanvas.h"
-#include "Ui/Graph/PaintSettings.h"
-#include "Ui/Graph/Node.h"
-#include "Ui/Graph/NodeActivateEvent.h"
-#include "Ui/Graph/NodeMovedEvent.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/GraphControl.h"
+#include "Ui/Graph/GraphCanvas.h"
+#include "Ui/Graph/Group.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/NodeActivateEvent.h"
+#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
 
@@ -137,6 +138,21 @@ void GraphControl::destroy()
 	Widget::destroy();
 }
 
+void GraphControl::addGroup(Group* group)
+{
+	m_groups.push_back(group);
+}
+
+void GraphControl::removeGroup(Group* group)
+{
+	m_groups.remove(group);
+}
+
+void GraphControl::removeAllGroups()
+{
+	m_groups.resize(0);
+}
+
 Node* GraphControl::createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
 {
 	Ref< Node > node = new Node(this, title, info, position, shape);
@@ -233,7 +249,7 @@ RefArray< Edge > GraphControl::getSelectedEdges() const
 		if (edge->isSelected())
 			out.push_back(edge);
 	}
-	return std::move(out);
+	return out;
 }
 
 RefArray< Edge > GraphControl::getConnectedEdges(const Pin* pin) const
@@ -244,7 +260,7 @@ RefArray< Edge > GraphControl::getConnectedEdges(const Pin* pin) const
 		if (edge->getSourcePin() == pin || edge->getDestinationPin() == pin)
 			edges.push_back(edge);
 	}
-	return std::move(edges);
+	return edges;
 }
 
 RefArray< Edge > GraphControl::getConnectedEdges(const Node* node) const
@@ -255,7 +271,7 @@ RefArray< Edge > GraphControl::getConnectedEdges(const Node* node) const
 		if (edge->getSourcePin()->getNode() == node || edge->getDestinationPin()->getNode() == node)
 			edges.push_back(edge);
 	}
-	return std::move(edges);
+	return edges;
 }
 
 RefArray< Edge > GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusive) const
@@ -268,7 +284,17 @@ RefArray< Edge > GraphControl::getConnectedEdges(const RefArray< Node >& nodes, 
 		if ((inclusive && (n1 && n2)) || (!inclusive && (n1 || n2)))
 			edges.push_back(edge);
 	}
-	return std::move(edges);
+	return edges;
+}
+
+Group* GraphControl::getGroupAt(const Point& p) const
+{
+	for (auto group : m_groups)
+	{
+		if (group->hit(p))
+			return group;
+	}
+	return nullptr;
 }
 
 Node* GraphControl::getNodeAt(const Point& p) const
@@ -519,6 +545,10 @@ Rect GraphControl::getVirtualRect() const
 
 void GraphControl::beginSelectModification()
 {
+	m_groupSelectionStates.resize(m_groups.size());
+	for (size_t i = 0; i < m_groups.size(); ++i)
+		m_groupSelectionStates[i] = m_groups[i]->isSelected();
+
 	m_nodeSelectionStates.resize(m_nodes.size());
 	for (size_t i = 0; i < m_nodes.size(); ++i)
 		m_nodeSelectionStates[i] = m_nodes[i]->isSelected();
@@ -530,8 +560,16 @@ void GraphControl::beginSelectModification()
 
 bool GraphControl::endSelectModification()
 {
+	RefArray< Group > groupSelectChanged;
 	RefArray< Node > nodeSelectChanged;
 	RefArray< Edge > edgeSelectChanged;
+
+	T_ASSERT(m_groupSelectionStates.size() == m_groups.size());
+	for (size_t i = 0; i < m_groups.size(); ++i)
+	{
+		if (m_groups[i]->isSelected() != m_groupSelectionStates[i])
+			groupSelectChanged.push_back(m_groups[i]);
+	}
 
 	T_ASSERT(m_nodeSelectionStates.size() == m_nodes.size());
 	for (size_t i = 0; i < m_nodes.size(); ++i)
@@ -547,7 +585,7 @@ bool GraphControl::endSelectModification()
 			edgeSelectChanged.push_back(m_edges[i]);
 	}
 
-	if (nodeSelectChanged.empty() && edgeSelectChanged.empty())
+	if (groupSelectChanged.empty() && nodeSelectChanged.empty() && edgeSelectChanged.empty())
 		return false;
 
 	SelectEvent selectEvent(this, nodeSelectChanged, edgeSelectChanged);
@@ -559,14 +597,11 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 {
 	setFocus();
 
-	m_selectedEdge = nullptr;
-	m_selectedNode = nullptr;
-
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
 	m_moveOrigin = event->getPosition() / m_scale;
 
-	// Save positions of all nodes so we can issue node moved events later..
+	// Save positions of all nodes so we can issue node moved events later.
 	m_nodePositions.resize(m_nodes.size());
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		m_nodePositions[i] = m_nodes[i]->getPosition();
@@ -579,29 +614,38 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 		return;
 	}
 
-	// Find top-most node or edge which contain mouse cursor.
+	// Find top-most node, edge or group which contain mouse cursor.
+	Ref< Group > selectedGroup;
+	Ref< Edge > selectedEdge;
+	Ref< Node > selectedNode;
 	if (m_edgeSelectable)
-		m_selectedEdge = getEdgeAt(m_cursor - m_offset);
-	if (!m_selectedEdge)
-		m_selectedNode = getNodeAt(m_cursor - m_offset);
+		selectedEdge = getEdgeAt(m_cursor - m_offset);
+	if (!selectedEdge)
+		selectedNode = getNodeAt(m_cursor - m_offset);
+	if (!selectedEdge && !selectedNode)
+		selectedGroup = getGroupAt(m_cursor - m_offset);
 
-	if (m_selectedNode && !m_selectedEdge)
+	if (selectedNode)
 	{
 		beginSelectModification();
 
+		// Unselect all groups.
+		for (auto group : m_groups)
+			group->setSelected(false);
+
 		// Update selection.
-		if (!m_selectedNode->isSelected())
+		if (!selectedNode->isSelected())
 		{
 			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other nodes.
 				for (auto node : m_nodes)
 				{
-					if (node != m_selectedNode)
+					if (node != selectedNode)
 						node->setSelected(false);
 				}
 			}
-			m_selectedNode->setSelected(true);
+			selectedNode->setSelected(true);
 
 			// Update edge selection states.
 			for (auto edge : m_edges)
@@ -617,16 +661,16 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 		endSelectModification();
 
 		// Ensure selected node is last.
-		if (m_selectedNode != m_nodes.back())
+		if (selectedNode != m_nodes.back())
 		{
-			m_nodes.remove(m_selectedNode);
-			m_nodes.push_back(m_selectedNode);
+			m_nodes.remove(selectedNode);
+			m_nodes.push_back(selectedNode);
 		}
 
 		// Check if an output pin was selected.
 		if (event->getButton() == MbtLeft)
 		{
-			Ref< Pin > pin = m_selectedNode->getPinAt(m_cursor - m_offset);
+			Ref< Pin > pin = selectedNode->getPinAt(m_cursor - m_offset);
 			if (pin)
 			{
 				if (pin->getDirection() == Pin::DrOutput)
@@ -688,20 +732,24 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			setCapture();
 		}
 	}
-	else if (!m_selectedNode && m_selectedEdge)
+	else if (selectedEdge)
 	{
 		T_ASSERT(m_edgeSelectable);
 		beginSelectModification();
 
+		// Unselect all groups.
+		for (auto group : m_groups)
+			group->setSelected(false);
+
 		// Update selection.
-		if (!m_selectedEdge->isSelected())
+		if (!selectedEdge->isSelected())
 		{
 			if (!(event->getKeyState() & KsShift))
 			{
 				// Deselect all other edges.
 				for (auto edge : m_edges)
 				{
-					if (edge != m_selectedEdge)
+					if (edge != selectedEdge)
 						edge->setSelected(false);
 				}
 
@@ -709,13 +757,32 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 				for (auto node : m_nodes)
 					node->setSelected(false);
 			}
-			m_selectedEdge->setSelected(true);
+			selectedEdge->setSelected(true);
 		}
 
 		if (endSelectModification())
 			update();
 
 		m_mode = MdNothing;
+	}
+	else if (selectedGroup)
+	{
+		beginSelectModification();
+
+		for (auto node : m_nodes)
+			node->setSelected(false);
+
+		for (auto edge : m_edges)
+			edge->setSelected(false);
+
+		for (auto group : m_groups)
+			group->setSelected(group == selectedGroup);
+
+		if (endSelectModification())
+			update();
+
+		m_mode = MdMoveSelected;
+		setCapture();
 	}
 	else
 	{
@@ -747,6 +814,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 
 	if (m_mode == MdMoveSelected || m_mode == MdMoveGraph)
 	{
+		// Issue event for every node moved.
 		T_ASSERT(m_nodes.size() == m_nodePositions.size());
 		for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		{
@@ -851,6 +919,18 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 	else if (m_mode == MdMoveSelected)
 	{
 		const Size offset = event->getPosition() / m_scale - m_moveOrigin;
+
+		// Move selected groups.
+		for (auto group : m_groups)
+		{
+			if (!group->isSelected())
+				continue;
+
+			const Point position = group->getPosition();
+			group->setPosition(position + offset);
+		}
+
+		// Move selected nodes.
 		for (auto node : m_nodes)
 		{
 			if (!node->isSelected())
@@ -890,13 +970,18 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 
 void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 {
-	if (event->getButton() != MbtLeft || !m_selectedNode)
+	if (event->getButton() != MbtLeft)
 		return;
 
 	m_mode = MdNothing;
 
-	NodeActivateEvent activateEvent(this, m_selectedNode);
-	raiseEvent(&activateEvent);
+	// Issue activate on node only when a single node is selected.
+	RefArray< Node > selectedNodes = getSelectedNodes();
+	if (selectedNodes.size() == 1)
+	{
+		NodeActivateEvent activateEvent(this, selectedNodes.front());
+		raiseEvent(&activateEvent);
+	}
 
 	event->consume();
 }
@@ -1022,6 +1107,10 @@ void GraphControl::eventPaint(PaintEvent* event)
 		m_paintSettings,
 		m_scale
 	);
+
+	// Draw groups.
+	for (auto group : m_groups)
+		group->paint(&graphCanvas, m_offset);
 
 	// Draw dependency hints.
 	for (const auto& hint : m_dependencyHints)

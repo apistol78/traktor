@@ -40,6 +40,7 @@ class Container;
 class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
+class Group;
 class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
@@ -119,6 +120,8 @@ private:
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
 
 	Ref< ui::Node > createEditorNode(Node* shaderNode);
+
+	Ref< ui::Group > createEditorGroup(Group* shaderGroup);
 
 	void createNode(const TypeInfo* nodeType, const ui::Point& at);
 
