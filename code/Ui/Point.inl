@@ -23,6 +23,12 @@ inline Point::Point(const Point& pnt)
 {
 }
 
+inline Point::Point(const std::pair< int32_t, int32_t >& pr)
+:	x(pr.first)
+,	y(pr.second)
+{
+}
+
 inline Point::Point(int32_t x_, int32_t y_)
 :	x(x_)
 ,	y(y_)

@@ -25,6 +25,7 @@ namespace traktor::ui
 {
 
 class Edge;
+class Group;
 class IBitmap;
 class INodeShape;
 class Node;
@@ -63,6 +64,12 @@ public:
 	bool create(ui::Widget* parent, int style = WsDoubleBuffer | WsAccelerated);
 
 	virtual void destroy() override;
+
+	void addGroup(Group* group);
+
+	void removeGroup(Group* group);
+
+	void removeAllGroups();
 
 	Node* createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
 
@@ -114,6 +121,8 @@ public:
 	 */
 	RefArray< Edge > getConnectedEdges(const RefArray< Node >& nodes, bool inclusive) const;
 
+	Group* getGroupAt(const Point& p) const;
+
 	Node* getNodeAt(const Point& p) const;
 
 	Edge* getEdgeAt(const Point& p) const;
@@ -156,6 +165,7 @@ public:
 private:
 	Ref< const PaintSettings > m_paintSettings;
 	Ref< IBitmap > m_imageLabel;
+	RefArray< Group > m_groups;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
 	float m_scale;
@@ -166,9 +176,8 @@ private:
 	int32_t m_mode;
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
-	Ref< Node > m_selectedNode;
-	Ref< Edge > m_selectedEdge;
 	std::vector< Point > m_nodePositions;
+	std::vector< bool > m_groupSelectionStates;
 	std::vector< bool > m_nodeSelectionStates;
 	std::vector< bool > m_edgeSelectionStates;
 	std::vector< std::pair< const Node*, const Node* > > m_dependencyHints;

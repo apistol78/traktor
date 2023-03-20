@@ -24,10 +24,11 @@
 namespace traktor::render
 {
 
-class Node;
 class Edge;
-class OutputPin;
+class Group;
 class InputPin;
+class Node;
+class OutputPin;
 
 /*! Generic node/edge-style graph.
  * \ingroup Render
@@ -67,7 +68,15 @@ public:
 	 */
 	void removeEdge(Edge* edge);
 
-	/*! Remove all nodes and edges from graph. */
+	/*!
+	 */
+	void addGroup(Group* group);
+
+	/*!
+	 */
+	void removeGroup(Group* group);
+
+	/*! Remove all nodes, edges and groups from graph. */
 	void removeAll();
 
 	/*! Get all nodes of a specific type.
@@ -172,9 +181,16 @@ public:
 	 */
 	const RefArray< Edge >& getEdges() const { return m_edges; }
 
+	/*! Get all groups
+	 * 
+	 * \return Array of groups.
+	 */
+	const RefArray< Group >& getGroups() const { return m_groups; }
+
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
+	RefArray< Group > m_groups;
 	SmallMap< const InputPin*, Edge* > m_inputPinToEdge;
 	SmallMap< const OutputPin*, uint32_t > m_outputPinDestinationCount;
 

@@ -10,15 +10,16 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Editor/Edge.h"
+#include "Render/Editor/Graph.h"
+#include "Render/Editor/Group.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
-#include "Render/Editor/Graph.h"
 
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Graph", 0, Graph, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Graph", 1, Graph, ISerializable)
 
 Graph::Graph(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 :	m_nodes(nodes)
@@ -64,10 +65,21 @@ void Graph::removeEdge(Edge* edge)
 	}
 }
 
+void Graph::addGroup(Group* group)
+{
+	m_groups.push_back(group);
+}
+
+void Graph::removeGroup(Group* group)
+{
+	m_groups.remove(group);
+}
+
 void Graph::removeAll()
 {
 	m_edges.resize(0);
 	m_nodes.resize(0);
+	m_groups.resize(0);
 	m_inputPinToEdge.clear();
 	m_outputPinDestinationCount.clear();
 }
@@ -210,6 +222,9 @@ void Graph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
+
+	if (s.getVersion< Graph >() >= 1)
+		s >> MemberRefArray< Group >(L"groups", m_groups);
 
 	if (s.getDirection() == ISerializer::Direction::Read)
 	{

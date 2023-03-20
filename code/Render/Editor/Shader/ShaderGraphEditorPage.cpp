@@ -25,6 +25,7 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Edge.h"
+#include "Render/Editor/Group.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/INodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
@@ -68,13 +69,14 @@
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
 #include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/PaintSettings.h"
-#include "Ui/Graph/Node.h"
-#include "Ui/Graph/NodeActivateEvent.h"
-#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/Group.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/NodeActivateEvent.h"
+#include "Ui/Graph/NodeMovedEvent.h"
+#include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/SelectEvent.h"
 #include "Ui/GridView/GridColumn.h"
@@ -416,6 +418,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	}
 
 	m_menuPopup->add(menuItemCreate);
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.CreateGroup"), i18n::Text(L"SHADERGRAPH_CREATE_GROUP")));
+	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.FindInDatabase"), i18n::Text(L"SHADERGRAPH_FIND_IN_DATABASE")));
 
@@ -438,10 +442,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade();
 	m_nodeFacades[&type_of< Variable >()] = new VariableNodeFacade();
 
-	createEditorNodes(
-		m_shaderGraph->getNodes(),
-		m_shaderGraph->getEdges()
-	);
+	createEditorGraph();
 
 	parent->update();
 	m_editorGraph->center();
@@ -1014,13 +1015,20 @@ void ShaderGraphEditorPage::createEditorGraph()
 
 	editScript(nullptr);
 
-	m_editorGraph->removeAllEdges();
+	m_editorGraph->removeAllGroups();
 	m_editorGraph->removeAllNodes();
+	m_editorGraph->removeAllEdges();
 
 	createEditorNodes(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
+
+	for (auto group : m_shaderGraph->getGroups())
+	{
+		Ref< ui::Group > editorGroup = createEditorGroup(group);
+		m_editorGraph->addGroup(editorGroup);
+	}
 
 	updateGraph();
 
@@ -1113,12 +1121,23 @@ Ref< ui::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 	);
 
 	if (!editorNode)
-		return 0;
+		return nullptr;
 
 	editorNode->setData(L"SHADERNODE", shaderNode);
 	editorNode->setData(L"FACADE", nodeFacade);
 
 	return editorNode;
+}
+
+Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
+{
+	Ref< ui::Group > editorGroup = new ui::Group();
+	editorGroup->setTitle(shaderGroup->getTitle());
+	editorGroup->setPosition(ui::Point(shaderGroup->getPosition()));
+	editorGroup->setSize(ui::Size(shaderGroup->getSize()));
+	editorGroup->setData(L"SHADERGROUP", shaderGroup);
+	return editorGroup;
+
 }
 
 void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point& at)
@@ -1245,7 +1264,7 @@ void ShaderGraphEditorPage::updateGraph()
 			row->setData(L"SHADERNODE", indexedUniformNode);
 			row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
 			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
-			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
+			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]));
 			m_uniformsGrid->addRow(row);
 		}
 	}
@@ -1547,10 +1566,11 @@ void ShaderGraphEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 
 void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
+	const ui::Point position = m_editorGraph->clientToVirtual(event->getPosition());
+
 	if (event->getButton() == ui::MbtLeft)
 	{
 		// Override default graph behaviour and instead create value nodes.
-		ui::Point position = m_editorGraph->clientToVirtual(event->getPosition());
 		if (ui::Application::getInstance()->getEventLoop()->isKeyDown(ui::VkS))
 		{
 			createNode(&type_of< Scalar >(), position);
@@ -1575,14 +1595,29 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 		const ui::Command& command = selected->getCommand();
 
-		if (command == L"ShaderGraph.Editor.Create")	// Create
+		if (command == L"ShaderGraph.Editor.Create")	// Create node
+		{
+			m_document->push();
+			createNode(&c_nodeCategories[command.getId()].type, position);
+		}
+		else if (command == L"ShaderGraph.Editor.CreateGroup")	// Create group
 		{
 			m_document->push();
 
-			createNode(
-				&c_nodeCategories[command.getId()].type,
-				m_editorGraph->clientToVirtual(event->getPosition())
-			);
+			// Add to shader graph.
+			Ref< Group > shaderGroup = new Group();
+			shaderGroup->setPosition({
+				ui::invdpi96(position.x),
+				ui::invdpi96(position.y)
+			});
+			shaderGroup->setSize({ 200, 200 });
+			m_shaderGraph->addGroup(shaderGroup);
+
+			// Create editor group from shader group.
+			Ref< ui::Group > editorGroup = createEditorGroup(shaderGroup);
+			m_editorGraph->addGroup(editorGroup);
+
+			updateGraph();
 		}
 		else
 			handleCommand(command);

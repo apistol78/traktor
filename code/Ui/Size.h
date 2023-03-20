@@ -30,6 +30,8 @@ public:
 
 	T_FORCE_INLINE Size(int32_t x, int32_t y);
 
+	T_FORCE_INLINE Size(const std::pair< int32_t, int32_t >& pr);
+
 	T_FORCE_INLINE Size(const Size& size);
 
 	T_FORCE_INLINE Size operator - () const;
