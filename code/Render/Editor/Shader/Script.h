@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
+#include "Render/Editor/InputPin.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/TypedOutputPin.h"
 
@@ -39,8 +40,6 @@ class T_DLLCLASS Script : public Node
 	T_RTTI_CLASS;
 
 public:
-	virtual ~Script();
-
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -82,8 +81,8 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_technique;
-	AlignedVector< InputPin* > m_inputPins;
-	AlignedVector< TypedOutputPin* > m_outputPins;
+	StaticVector< InputPin, 64 > m_inputPins;
+	StaticVector< TypedOutputPin, 64 > m_outputPins;
 	std::wstring m_script;
 };
 

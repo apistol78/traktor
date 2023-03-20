@@ -88,34 +88,31 @@ public:
 
 	const RefArray< Edge >& getEdges() const;
 
-	int getSelectedNodes(RefArray< Node >& out) const;
+	RefArray< Node > getSelectedNodes() const;
 
-	int getSelectedEdges(RefArray< Edge >& out) const;
+	RefArray< Edge > getSelectedEdges() const;
 
 	/*! Get edges connected to given pin.
 	 *
 	 * \param pin Pin from which we want to find edges.
-	 * \param outEdges Found edges.
-	 * \return Number of edges.
+	 * \return Found edges.
 	 */
-	int getConnectedEdges(const Pin* pin, RefArray< Edge >& outEdges) const;
+	RefArray< Edge > getConnectedEdges(const Pin* pin) const;
 
 	/*! Get edges connected to given node.
 	 *
 	 * \param node Node from which we want to find edges.
-	 * \param outEdges Found edges.
-	 * \return Number of edges.
+	 * \return Found edges.
 	 */
-	int getConnectedEdges(const Node* node, RefArray< Edge >& outEdges) const;
+	RefArray< Edge > getConnectedEdges(const Node* node) const;
 
 	/*! Get edges connected to given nodes.
 	 *
 	 * \param nodes Nodes from which we want to find edges.
 	 * \param inclusive True if both endpoints of an edge must be in nodes array, false if only one must be in the array.
-	 * \param outEdges Found edges.
-	 * \return Number of edges.
+	 * \return Found edges.
 	 */
-	int getConnectedEdges(const RefArray< Node >& nodes, bool inclusive, RefArray< Edge >& outEdges) const;
+	RefArray< Edge > getConnectedEdges(const RefArray< Node >& nodes, bool inclusive) const;
 
 	Node* getNodeAt(const Point& p) const;
 

@@ -135,12 +135,11 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	
 	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
-		 RefArray< ui::Node > selectedNodes;
-		 if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)
+		 const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
+		 if (!selectedNodes.empty())
 		 {
 		 	// Also copy edges which are affected by selected nodes.
-		 	RefArray< ui::Edge > selectedEdges;
-		 	m_editorGraph->getConnectedEdges(selectedNodes, true, selectedEdges);
+		 	RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
 
 		 	Ref< ImageGraphClipboardData > data = new ImageGraphClipboardData();
 
@@ -181,8 +180,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		 		m_document->push();
 
 		 		// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
-		 		selectedEdges.resize(0);
-		 		m_editorGraph->getConnectedEdges(selectedNodes, false, selectedEdges);
+				selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, false);
 
 		 		for (auto selectedEdge : selectedEdges)
 		 		{
@@ -246,16 +244,15 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Delete")
 	{
-		RefArray< ui::Node > nodes;
-		if (m_editorGraph->getSelectedNodes(nodes) <= 0)
+		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+		if (nodes.empty())
 			return false;
 
 		// Save undo state.
 		m_document->push();
 
 		// Remove edges first which are connected to selected nodes.
-		RefArray< ui::Edge > edges;
-		m_editorGraph->getConnectedEdges(nodes, false, edges);
+		const RefArray< ui::Edge > edges = m_editorGraph->getConnectedEdges(nodes, false);
 		for (auto editorEdge : edges)
 		{
 			Ref< Edge > edge = editorEdge->getData< Edge >(L"IMGEDGE");
@@ -552,8 +549,8 @@ void ImageGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void ImageGraphEditorPage::eventSelect(ui::SelectEvent* event)
 {
-	RefArray< ui::Node > nodes;
-	if (m_editorGraph->getSelectedNodes(nodes) == 1)
+	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+	if (nodes.size() == 1)
 	{
 		Node* node = nodes.front()->getData< Node >(L"IMGNODE");
 		if (node)
@@ -626,8 +623,7 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	{
 		m_imageGraph->removeEdge(edge);
 
-		RefArray< ui::Edge > editorEdges;
-		m_editorGraph->getConnectedEdges(editorDestinationPin, editorEdges);
+		RefArray< ui::Edge > editorEdges = m_editorGraph->getConnectedEdges(editorDestinationPin);
 		if (editorEdges.size() >= 1)
 			m_editorGraph->removeEdge(editorEdges.front());
 	}
@@ -657,11 +653,8 @@ void ImageGraphEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* eve
 
 void ImageGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
-	RefArray< ui::Node > nodes;
-	if (
-		m_editorGraph->getSelectedNodes(nodes) == 1 &&
-		m_propertiesNode != nullptr
-	)
+	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+	if (nodes.size() == 1 && m_propertiesNode != nullptr)
 	{
 		Node* node = nodes.front()->getData< Node >(L"IMGNODE");
 		T_FATAL_ASSERT(&type_of(m_propertiesNode) == &type_of(node));

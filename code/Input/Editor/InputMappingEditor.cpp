@@ -452,18 +452,11 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 	else if (selected->getCommand() == L"Editor.Delete")
 	{
 		m_document->push();
-
-		RefArray< ui::Node > selectedNodes;
-		m_graph->getSelectedNodes(selectedNodes);
-
-		for (auto selectedNode : selectedNodes)
+		for (auto selectedNode : m_graph->getSelectedNodes())
 		{
 			for (auto outputPin : selectedNode->getOutputPins())
 			{
-				RefArray< ui::Edge > edges;
-				m_graph->getConnectedEdges(outputPin, edges);
-
-				for (auto edge : edges)
+				for (auto edge : m_graph->getConnectedEdges(outputPin))
 				{
 					ui::Pin* destinationPin = edge->getDestinationPin();
 					ui::Node* destinationNode = destinationPin->getNode();

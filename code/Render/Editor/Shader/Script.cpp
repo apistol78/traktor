@@ -25,7 +25,7 @@ namespace traktor::render
 class MemberInputPin : public MemberComplex
 {
 public:
-	typedef InputPin* value_type;
+	typedef InputPin value_type;
 
 	MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
@@ -38,8 +38,8 @@ public:
 	{
 		if (s.getDirection() == ISerializer::Direction::Write)
 		{
-			Guid id = m_pin->getId();
-			std::wstring name = m_pin->getName();
+			Guid id = m_pin.getId();
+			std::wstring name = m_pin.getName();
 
 			if (s.getVersion() >= 1)
 				s >> Member< Guid >(L"id", id, AttributePrivate());
@@ -80,30 +80,18 @@ public:
 				s >> Member< std::wstring >(L"samplerId", samplerId);
 			}
 
-			if (m_pin)
-			{
-				*m_pin = InputPin(
-					m_node,
-					id,
-					name,
-					false
-				);
-			}
-			else
-			{
-				m_pin = new InputPin(
-					m_node,
-					id,
-					name,
-					false
-				);
-			}
+			m_pin = InputPin(
+				m_node,
+				id,
+				name,
+				false
+			);
 		}
 	}
 
-	static InputPin* createNew(Node* node)
+	static InputPin createNew(Node* node)
 	{
-		return new InputPin(node, Guid::create(), L"Unnamed", false);
+		return InputPin(node, Guid::create(), L"Unnamed", false);
 	}
 
 private:
@@ -114,7 +102,7 @@ private:
 class MemberTypedOutputPin : public MemberComplex
 {
 public:
-	typedef TypedOutputPin* value_type;
+	typedef TypedOutputPin value_type;
 
 	MemberTypedOutputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
@@ -142,9 +130,9 @@ public:
 
 		if (s.getDirection() == ISerializer::Direction::Write)
 		{
-			Guid id = m_pin->getId();
-			std::wstring name = m_pin->getName();
-			ParameterType type = m_pin->getType();
+			Guid id = m_pin.getId();
+			std::wstring name = m_pin.getName();
+			ParameterType type = m_pin.getType();
 
 			s >> Member< Guid >(L"id", id, AttributePrivate());
 			s >> Member< std::wstring >(L"name", name);
@@ -160,30 +148,18 @@ public:
 			s >> Member< std::wstring >(L"name", name);
 			s >> MemberEnum< ParameterType >(L"type", type, c_ParameterType_Keys);
 
-			if (m_pin)
-			{
-				*m_pin = TypedOutputPin(
-					m_node,
-					id,
-					name,
-					type
-				);
-			}
-			else
-			{
-				m_pin = new TypedOutputPin(
-					m_node,
-					id,
-					name,
-					type
-				);
-			}
+			m_pin = TypedOutputPin(
+				m_node,
+				id,
+				name,
+				type
+			);
 		}
 	}
 
-	static TypedOutputPin* createNew(Node* node)
+	static TypedOutputPin createNew(Node* node)
 	{
-		return new TypedOutputPin(node, Guid::create(), L"Unnamed", ParameterType::Scalar);
+		return TypedOutputPin(node, Guid::create(), L"Unnamed", ParameterType::Scalar);
 	}
 
 private:
@@ -196,7 +172,7 @@ class MemberPinArray : public MemberArray
 {
 public:
 	typedef typename PinMember::value_type pin_type;
-	typedef AlignedVector< pin_type > value_type;
+	typedef StaticVector< pin_type, 64 > value_type;
 
 	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, nullptr)
@@ -208,7 +184,6 @@ public:
 
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
-		m_pins.reserve(capacity);
 	}
 
 	virtual size_t size() const override final
@@ -219,7 +194,7 @@ public:
 	virtual void read(ISerializer& s) const override final
 	{
 		if (m_index >= m_pins.size())
-			m_pins.push_back(0);
+			m_pins.push_back(PinMember::createNew(m_node));
 		s >> PinMember(L"item", m_node, m_pins[m_index++]);
 	}
 
@@ -244,14 +219,6 @@ private:
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 4, Script, Node)
-
-Script::~Script()
-{
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
-}
 
 void Script::setName(const std::wstring& name)
 {
@@ -285,60 +252,48 @@ const std::wstring& Script::getScript() const
 
 const InputPin* Script::addInputPin(const Guid& id, const std::wstring& name)
 {
-	InputPin* inputPin = new InputPin(this, id, name, false);
-	m_inputPins.push_back(inputPin);
-	return inputPin;
+	m_inputPins.push_back(InputPin(this, id, name, false));
+	return &m_inputPins.back();
 }
 
 const OutputPin* Script::addOutputPin(const Guid& id, const std::wstring& name, ParameterType type)
 {
-	TypedOutputPin* outputPin = new TypedOutputPin(this, id, name, type);
-	m_outputPins.push_back(outputPin);
-	return outputPin;
+	m_outputPins.push_back(TypedOutputPin(this, id, name, type));
+	return &m_outputPins.back();
 }
 
 void Script::removeInputPin(const std::wstring& name)
 {
-	auto it = std::find_if(m_inputPins.begin(), m_inputPins.end(), [&](InputPin* pin) {
-		return pin->getName() == name;
+	auto it = std::find_if(m_inputPins.begin(), m_inputPins.end(), [&](const InputPin& pin) {
+		return pin.getName() == name;
 	});
 	if (it != m_inputPins.end())
-	{
-		delete *it;
 		m_inputPins.erase(it);
-	}
 }
 
 void Script::removeAllInputPins()
 {
-	for (auto& inputPin : m_inputPins)
-		delete inputPin;
 	m_inputPins.clear();
 }
 
 void Script::removeAllOutputPins()
 {
-	for (auto& outputPin : m_outputPins)
-		delete outputPin;
 	m_outputPins.clear();
 }
 
 void Script::removeOutputPin(const std::wstring& name)
 {
-	auto it = std::find_if(m_outputPins.begin(), m_outputPins.end(), [&](OutputPin* pin) {
-		return pin->getName() == name;
+	auto it = std::find_if(m_outputPins.begin(), m_outputPins.end(), [&](const OutputPin& pin) {
+		return pin.getName() == name;
 	});
 	if (it != m_outputPins.end())
-	{
-		delete *it;
 		m_outputPins.erase(it);
-	}
 }
 
 ParameterType Script::getOutputPinType(int index) const
 {
 	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
-	return m_outputPins[index]->getType();
+	return m_outputPins[index].getType();
 }
 
 std::wstring Script::getInformation() const
@@ -354,7 +309,7 @@ int Script::getInputPinCount() const
 const InputPin* Script::getInputPin(int index) const
 {
 	T_ASSERT(index >= 0 && index < int(m_inputPins.size()));
-	return m_inputPins[index];
+	return &m_inputPins[index];
 }
 
 int Script::getOutputPinCount() const
@@ -365,7 +320,7 @@ int Script::getOutputPinCount() const
 const OutputPin* Script::getOutputPin(int index) const
 {
 	T_ASSERT(index >= 0 && index < int(m_outputPins.size()));
-	return m_outputPins[index];
+	return &m_outputPins[index];
 }
 
 void Script::serialize(ISerializer& s)
