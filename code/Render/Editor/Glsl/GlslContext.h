@@ -73,6 +73,8 @@ public:
 
 	void findCommonOutputs(const AlignedVector< const InputPin* >& inputPins, AlignedVector< const OutputPin* >& outOutputPins) const;
 
+	bool isConnected(const OutputPin* outputPin) const;
+
 	/*! \name Active stage */
 	/*! \{ */
 

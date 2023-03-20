@@ -1710,6 +1710,9 @@ bool emitReadStruct2(GlslContext& cx, ReadStruct2* node)
 	for (int32_t i = 0; i < node->getOutputPinCount(); ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
+		if (!cx.isConnected(outputPin))
+			continue;
+
 		const DataType type = sn->getElementType(outputPin->getName());
 		Ref< GlslVariable > out = cx.emitOutput(node, outputPin->getName(), glsl_from_data_type(type));
 		comment(f, node);
