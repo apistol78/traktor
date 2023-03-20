@@ -445,8 +445,8 @@ Point
 			<id>{AECDF040-E464-A54B-8A5E-DD333DB1A59C}</id>
 			<comment/>
 			<position>
-				<first>762</first>
-				<second>-1277</second>
+				<first>780</first>
+				<second>-1276</second>
 			</position>
 			<parameterName>World_LightSBuffer</parameterName>
 			<elements>
@@ -539,8 +539,8 @@ Point
 			<id>{9F72D91A-C195-EB48-AAE0-6408A8B6EC83}</id>
 			<comment/>
 			<position>
-				<first>1785</first>
-				<second>-1094</second>
+				<first>1784</first>
+				<second>-1013</second>
 			</position>
 			<name>L_ViewToLight</name>
 			<global>false</global>
@@ -549,16 +549,16 @@ Point
 			<id>{39CDFB52-33C1-F748-81DB-2D604661D50E}</id>
 			<comment/>
 			<position>
-				<first>1562</first>
-				<second>-1105</second>
+				<first>1561</first>
+				<second>-1024</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{D9ECD61F-16BB-9247-BB73-6B07C494C012}</id>
 			<comment/>
 			<position>
-				<first>1562</first>
-				<second>-987</second>
+				<first>1561</first>
+				<second>-906</second>
 			</position>
 			<name>L_AtlasTransform</name>
 			<global>false</global>
@@ -908,8 +908,8 @@ Spot
 			<id>{406FB92D-8D53-7645-9FBD-F5164B67B981}</id>
 			<comment/>
 			<position>
-				<first>217</first>
-				<second>-320</second>
+				<first>164</first>
+				<second>-129</second>
 			</position>
 			<name>L_LightIndex</name>
 			<global>false</global>
@@ -918,8 +918,8 @@ Spot
 			<id>{5F38E4FB-1ADF-0A47-8ABD-39D5B6CCA35B}</id>
 			<comment/>
 			<position>
-				<first>-512</first>
-				<second>-247</second>
+				<first>-565</first>
+				<second>-56</second>
 			</position>
 			<name>L_Iteration</name>
 			<global>false</global>
@@ -928,8 +928,8 @@ Spot
 			<id>{C8D01299-5073-F548-AF11-54C914B44F1E}</id>
 			<comment/>
 			<position>
-				<first>-297</first>
-				<second>-54</second>
+				<first>-446</first>
+				<second>-219</second>
 			</position>
 			<name>L_Tile_LightCount</name>
 			<global>false</global>
@@ -1045,8 +1045,8 @@ Spot
 			<id>{6ABCCE9F-BDDC-1746-A211-212A27B1818D}</id>
 			<comment/>
 			<position>
-				<first>-458</first>
-				<second>-317</second>
+				<first>-511</first>
+				<second>-126</second>
 			</position>
 			<parameterName>World_LightIndexSBuffer</parameterName>
 			<elements>
@@ -1060,8 +1060,8 @@ Spot
 			<id>{76E18060-97D0-324F-B93C-E039216A5A3E}</id>
 			<comment/>
 			<position>
-				<first>-146</first>
-				<second>-321</second>
+				<first>-199</first>
+				<second>-130</second>
 			</position>
 			<name>LightIndex</name>
 		</item>
@@ -1069,16 +1069,16 @@ Spot
 			<id>{B703B4A6-40E9-B748-A51B-870A9EF5498B}</id>
 			<comment/>
 			<position>
-				<first>-352</first>
-				<second>-254</second>
+				<first>-405</first>
+				<second>-63</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{1B8A3A59-AB8D-EA46-A398-55F2B3A8872A}</id>
 			<comment/>
 			<position>
-				<first>53</first>
-				<second>-301</second>
+				<first>0</first>
+				<second>-110</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -1086,8 +1086,8 @@ Spot
 			<id>{09E5FCEB-DF24-624E-B871-1ECDFCD7A8B9}</id>
 			<comment/>
 			<position>
-				<first>128</first>
-				<second>-628</second>
+				<first>226</first>
+				<second>-875</second>
 			</position>
 			<name>GetSlice</name>
 			<technique/>
@@ -1128,8 +1128,8 @@ else
 			<id>{4010C3DA-E712-C244-A91D-6D9409CF48A0}</id>
 			<comment/>
 			<position>
-				<first>-79</first>
-				<second>-642</second>
+				<first>19</first>
+				<second>-889</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1138,8 +1138,8 @@ else
 			<id>{59F8AC37-E232-2649-9894-DDD38D8DA3F7}</id>
 			<comment/>
 			<position>
-				<first>250</first>
-				<second>-712</second>
+				<first>348</first>
+				<second>-959</second>
 			</position>
 			<name>L_Type</name>
 			<global>false</global>
@@ -1148,8 +1148,8 @@ else
 			<id>{74CD90C8-5D21-E14C-93F2-D4FEE5E51712}</id>
 			<comment/>
 			<position>
-				<first>423</first>
-				<second>-704</second>
+				<first>521</first>
+				<second>-951</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoEqual</operator>
@@ -1158,8 +1158,8 @@ else
 			<id>{A51FF7EF-BF85-5E4A-BFDE-72B6998E5145}</id>
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>-547</second>
+				<first>316</first>
+				<second>-794</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1167,8 +1167,8 @@ else
 			<id>{54017494-D67C-8040-A074-6453395C7FD3}</id>
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>-669</second>
+				<first>316</first>
+				<second>-916</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -1176,8 +1176,8 @@ else
 			<id>{F80CBDB0-26CF-7E4D-83FF-73C592F23194}</id>
 			<comment/>
 			<position>
-				<first>479</first>
-				<second>-769</second>
+				<first>616</first>
+				<second>-1017</second>
 			</position>
 			<name>L_LightIndex</name>
 			<global>false</global>
@@ -1186,16 +1186,16 @@ else
 			<id>{759112A8-EE39-E64A-9852-EFAE6ED45731}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>-751</second>
+				<first>803</first>
+				<second>-998</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{313F9DDD-9B07-654E-8B73-B5D37AB7083C}</id>
 			<comment/>
 			<position>
-				<first>-111</first>
-				<second>-579</second>
+				<first>-13</first>
+				<second>-826</second>
 			</position>
 			<parameterName>World_SlicePositions</parameterName>
 			<type>Vector</type>
@@ -1285,8 +1285,27 @@ Check max shadow distance
 			<id>{0A72051C-71F6-0644-9A7C-4546DBA4BE58}</id>
 			<comment/>
 			<position>
-				<first>1048</first>
-				<second>-1272</second>
+				<first>1111</first>
+				<second>-1300</second>
+			</position>
+			<names>
+				<item>TypeRangeRadius</item>
+				<item>Position</item>
+				<item>Direction</item>
+				<item>Color</item>
+				<item>ViewToLight0</item>
+				<item>ViewToLight1</item>
+				<item>ViewToLight2</item>
+				<item>ViewToLight3</item>
+				<item>AtlasTransform</item>
+			</names>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{991E2461-984A-1347-B0A7-0067B4932DC0}</id>
+			<comment/>
+			<position>
+				<first>1111</first>
+				<second>-1067</second>
 			</position>
 			<names>
 				<item>TypeRangeRadius</item>
@@ -2344,37 +2363,37 @@ Check max shadow distance
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[113]"/>
-				<id>{0FF6511C-0293-41A8-890E-81978BD01F7F}</id>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[113]"/>
-				<id>{0FF6511C-0293-41A8-8A0E-81978BD01F7F}</id>
+				<node ref="/object/nodes/item[103]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{6A074E66-11A2-4867-A53C-8165AE05CB3B}</id>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[113]"/>
-				<id>{0FF6511C-0293-41A8-8B0E-81978BD01F7F}</id>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-8D0E-81978BD01F7F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[113]"/>
+				<node ref="/object/nodes/item[114]"/>
 				<id>{0FF6511C-0293-41A8-8C0E-81978BD01F7F}</id>
 			</source>
 			<destination>
@@ -2384,12 +2403,32 @@ Check max shadow distance
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[113]"/>
-				<id>{0FF6511C-0293-41A8-8D0E-81978BD01F7F}</id>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-8B0E-81978BD01F7F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-8A0E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{6A074E66-11A2-4867-A53C-8165AE05CB3B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[114]"/>
+				<id>{0FF6511C-0293-41A8-890E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
 			</destination>
 		</item>
 	</edges>

@@ -189,6 +189,11 @@ void GlslContext::findCommonOutputs(const AlignedVector< const InputPin* >& inpu
 	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins);
 }
 
+bool GlslContext::isConnected(const OutputPin* outputPin) const
+{
+	return m_shaderGraph->getDestinationCount(outputPin) > 0;
+}
+
 void GlslContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;
