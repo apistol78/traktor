@@ -135,24 +135,4 @@ private:
 	Ref< PropertyGroup > m_properties;
 };
 
-/*! Convenience wrappers. */
-//@{
-
-inline int32_t getSystemDPI()
-{
-	return Application::getInstance()->getWidgetFactory()->getSystemDPI();
-}
-
-inline int32_t dpi96(int32_t referenceMeasure)
-{
-	return (getSystemDPI() * referenceMeasure) / 96;
-}
-
-inline int32_t invdpi96(int32_t measure)
-{
-	return (measure * 96) / getSystemDPI();
-}
-
-//@}
-
 }

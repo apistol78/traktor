@@ -11,10 +11,8 @@
 #include "Ui/Point.h"
 #include "Ui/Size.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Rectangle
  * \ingroup UI
@@ -79,6 +77,10 @@ public:
 
 	inline bool intersect(const Rect& rc) const;
 
+	inline Rect dpi96() const;
+
+	inline Rect invdpi96() const;
+
 	inline Rect& operator = (const Rect& rc);
 
 	inline bool operator == (const Rect& rc) const;
@@ -86,7 +88,6 @@ public:
 	inline bool operator != (const Rect& rc) const;
 };
 
-	}
 }
 
 #include "Ui/Rect.inl"

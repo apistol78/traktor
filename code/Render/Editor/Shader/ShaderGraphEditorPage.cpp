@@ -1144,10 +1144,7 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 
 	// Add to shader graph.
 	shaderNode->setId(Guid::create());
-	shaderNode->setPosition(std::pair< int, int >(
-		ui::invdpi96(at.x),
-		ui::invdpi96(at.y)
-	));
+	shaderNode->setPosition({ ui::invdpi96(at.x), ui::invdpi96(at.y) });
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
@@ -1162,17 +1159,7 @@ void ShaderGraphEditorPage::refreshGraph()
 	{
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 		INodeFacade* nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
-
-		//if (!shaderNode || !nodeFacade)
-		//	continue;
-
 		nodeFacade->refreshEditorNode(m_editor, m_editorGraph, editorNode, m_shaderGraph, shaderNode);
-
-		//const std::pair< int, int >& position = shaderNode->getPosition();
-		//editorNode->setPosition(ui::Point(
-		//	ui::dpi96(position.first),
-		//	ui::dpi96(position.second)
-		//));
 	}
 
 	// Refresh editor groups.
@@ -1609,10 +1596,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			// Add to shader graph.
 			Ref< Group > shaderGroup = new Group();
-			shaderGroup->setPosition({
-				ui::invdpi96(position.x),
-				ui::invdpi96(position.y)
-			});
+			shaderGroup->setPosition({ ui::invdpi96(position.x), ui::invdpi96(position.y) });
 			shaderGroup->setSize({ 200, 200 });
 			m_shaderGraph->addGroup(shaderGroup);
 
@@ -1662,11 +1646,7 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 	Ref< Group > shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
 	T_ASSERT(shaderGroup);
 
-	ui::Rect rc = editorGroup->calculateRect();
-	rc.left = ui::invdpi96(rc.left);
-	rc.top = ui::invdpi96(rc.top);
-	rc.right = ui::invdpi96(rc.right);
-	rc.bottom = ui::invdpi96(rc.bottom);
+	const ui::Rect rc = editorGroup->calculateRect().invdpi96();
 
 	//if (
 	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second ||
@@ -1688,9 +1668,7 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 	T_ASSERT(shaderNode);
 
-	ui::Point position = editorNode->getPosition();
-	position.x = ui::invdpi96(position.x);
-	position.y = ui::invdpi96(position.y);
+	const ui::Point position = editorNode->getPosition().invdpi96();
 
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{
