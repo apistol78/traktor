@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{2864DA67-F2FE-3941-946B-10A420BECFE6}</id>
@@ -568,8 +568,8 @@ Dynamic surface normal
 			<id>{1A76E35A-2653-3C46-8F20-3027C6C08E0E}</id>
 			<comment/>
 			<position>
-				<first>1217</first>
-				<second>1299</second>
+				<first>1550</first>
+				<second>2125</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -596,8 +596,8 @@ Dynamic surface normal
 			<id>{56A1BB72-9A74-EB48-A8E4-518DCE1EFF4A}</id>
 			<comment/>
 			<position>
-				<first>870</first>
-				<second>1297</second>
+				<first>1203</first>
+				<second>2123</second>
 			</position>
 			<name>L_ViewNormal</name>
 			<global>false</global>
@@ -606,8 +606,8 @@ Dynamic surface normal
 			<id>{7D8A6671-E0D9-B043-845B-DF6FB8602FC3}</id>
 			<comment/>
 			<position>
-				<first>885</first>
-				<second>1348</second>
+				<first>1218</first>
+				<second>2174</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -2066,4 +2066,18 @@ Dynamic surface normal
 			</destination>
 		</item>
 	</edges>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Foam amount</title>
+			<comment/>
+			<position>
+				<first>-251</first>
+				<second>-680</second>
+			</position>
+			<size>
+				<first>2249</first>
+				<second>395</second>
+			</size>
+		</item>
+	</groups>
 </object>
