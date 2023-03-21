@@ -1662,14 +1662,20 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 	Ref< Group > shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
 	T_ASSERT(shaderGroup);
 
-	ui::Point position = editorGroup->getPosition();
-	position.x = ui::invdpi96(position.x);
-	position.y = ui::invdpi96(position.y);
+	ui::Rect rc = editorGroup->calculateRect();
+	rc.left = ui::invdpi96(rc.left);
+	rc.top = ui::invdpi96(rc.top);
+	rc.right = ui::invdpi96(rc.right);
+	rc.bottom = ui::invdpi96(rc.bottom);
 
-	if (position.x != shaderGroup->getPosition().first || position.y != shaderGroup->getPosition().second)
+	//if (
+	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second ||
+	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second
+	//)
 	{
-		m_document->push();
-		shaderGroup->setPosition({ position.x, position.y });
+		//m_document->push();
+		shaderGroup->setPosition({ rc.left, rc.top });
+		shaderGroup->setSize({ rc.getSize().cx, rc.getSize().cy });
 	}
 }
 

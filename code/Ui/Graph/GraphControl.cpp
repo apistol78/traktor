@@ -626,11 +626,11 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	// Save positions of all groups and nodes so we can issue node moved events later.
 	m_groupPositions.resize(m_groups.size());
 	for (uint32_t i = 0; i < m_groups.size(); ++i)
-		m_groupPositions[i] = m_groups[i]->getPosition();
+		m_groupPositions[i] = m_groups[i]->calculateRect();
 
 	m_nodePositions.resize(m_nodes.size());
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
-		m_nodePositions[i] = m_nodes[i]->getPosition();
+		m_nodePositions[i] = m_nodes[i]->calculateRect();
 
 	// If user holds down ALT we should move entire graph.
 	if ((event->getKeyState() & KsMenu) != 0 || event->getButton() == MbtMiddle)
@@ -642,16 +642,29 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 
 	if (event->getButton() == MbtLeft)
 	{
+		const Point hitPosition = m_cursor - m_offset;
+
 		// Find top-most node, edge or group which contain mouse cursor.
 		Ref< Group > selectedGroup;
 		Ref< Edge > selectedEdge;
 		Ref< Node > selectedNode;
 		if (m_edgeSelectable)
-			selectedEdge = getEdgeAt(m_cursor - m_offset);
+			selectedEdge = getEdgeAt(hitPosition);
 		if (!selectedEdge)
-			selectedNode = getNodeAt(m_cursor - m_offset);
+			selectedNode = getNodeAt(hitPosition);
 		if (!selectedEdge && !selectedNode)
-			selectedGroup = getGroupAt(m_cursor - m_offset);
+		{
+			if ((selectedGroup = getGroupAt(hitPosition)) != nullptr)
+			{
+				m_groupAnchor = selectedGroup->hitAnchor(hitPosition);
+				if (m_groupAnchor < 0)
+				{
+					// If not hitting an anchor we must ensure hit on group's title.
+					if (!selectedGroup->hitTitle(hitPosition))
+						selectedGroup = nullptr;
+				}
+			}
+		}
 
 		if (selectedNode)
 		{
@@ -818,7 +831,7 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 			{
 				beginSelectModification();
 
-				// Deselect all groups and nodes, and then start drawing selection marker.
+				// De-select all groups and nodes, and then start drawing selection marker.
 				for (auto group : m_groups)
 					group->setSelected(false);
 				for (auto node : m_nodes)
@@ -844,7 +857,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 		T_ASSERT(m_group.size() == m_groupPositions.size());
 		for (uint32_t i = 0; i < m_groups.size(); ++i)
 		{
-			if (m_groups[i]->getPosition() != m_groupPositions[i])
+			if (m_groups[i]->calculateRect() != m_groupPositions[i])
 			{
 				GroupMovedEvent event(this, m_groups[i]);
 				raiseEvent(&event);
@@ -855,7 +868,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 		T_ASSERT(m_nodes.size() == m_nodePositions.size());
 		for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		{
-			if (m_nodes[i]->getPosition() != m_nodePositions[i])
+			if (m_nodes[i]->calculateRect() != m_nodePositions[i])
 			{
 				NodeMovedEvent event(this, m_nodes[i]);
 				raiseEvent(&event);
@@ -964,8 +977,16 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 			if (!group->isSelected())
 				continue;
 
-			const Point position = group->getPosition();
-			group->setPosition(position + offset);
+			if (m_groupAnchor < 0)
+			{
+				const Point position = group->getPosition();
+				group->setPosition(position + offset);
+			}
+			else
+			{
+				const Point position = group->getAnchorPosition(m_groupAnchor);
+				group->setAnchorPosition(m_groupAnchor, position + offset);
+			}
 		}
 
 		// Move selected nodes.

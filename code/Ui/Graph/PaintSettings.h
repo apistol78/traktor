@@ -34,23 +34,13 @@ public:
 
 	explicit PaintSettings(const ui::Font& font);
 
-	//void setFont(const ui::Font& font);
-
 	const ui::Font& getFont() const;
-
-	//void setFontBold(const ui::Font& fontBold);
 
 	const ui::Font& getFontBold() const;
 
-	//void setFontUnderline(const ui::Font& fontUnderline);
-
 	const ui::Font& getFontUnderline() const;
 
-	//void setFontLabel(const ui::Font& fontLabel);
-
 	const ui::Font& getFontLabel() const;
-
-	//void setFontGroup(const ui::Font& fontGroup);
 
 	const ui::Font& getFontGroup() const;
 
