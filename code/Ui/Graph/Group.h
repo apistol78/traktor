@@ -24,6 +24,8 @@ namespace traktor::ui
 {
 
 class GraphCanvas;
+class GraphControl;
+class IBitmap;
 
 /*!
  * \ingroup UI
@@ -58,10 +60,17 @@ public:
 	void paint(GraphCanvas* canvas, const Size& offset) const;
 
 private:
+	friend class GraphControl;
+
+	GraphControl* m_owner = nullptr;
+	Ref< IBitmap > m_image[2];
+
 	std::wstring m_title;
 	Point m_position;
 	Size m_size;
 	bool m_selected = false;
+
+	explicit Group(GraphControl* owner, const std::wstring& title, const Point& position, const Size& size);
 };
 
 }

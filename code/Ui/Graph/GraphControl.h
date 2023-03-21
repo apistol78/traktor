@@ -12,6 +12,7 @@
 #include "Core/RefArray.h"
 #include "Ui/Point.h"
 #include "Ui/Widget.h"
+#include "Ui/Graph/PaintSettings.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,6 @@ class Group;
 class IBitmap;
 class INodeShape;
 class Node;
-class PaintSettings;
 class Pin;
 
 /*! Graph control.
@@ -65,11 +65,15 @@ public:
 
 	virtual void destroy() override;
 
-	void addGroup(Group* group);
+	Group* createGroup(const std::wstring& title, const Point& position, const Size& size);
 
 	void removeGroup(Group* group);
 
 	void removeAllGroups();
+
+	RefArray< Group >& getGroups();
+
+	const RefArray< Group >& getGroups() const;
 
 	Node* createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
 
@@ -94,6 +98,8 @@ public:
 	RefArray< Edge >& getEdges();
 
 	const RefArray< Edge >& getEdges() const;
+
+	RefArray< Group > getSelectedGroups() const;
 
 	RefArray< Node > getSelectedNodes() const;
 
@@ -140,9 +146,9 @@ public:
 
 	void removeAllDependencyHints();
 
-	void setPaintSettings(const PaintSettings* paintSettings);
+	void setPaintSettings(const PaintSettings& paintSettings);
 
-	const PaintSettings* getPaintSettings() const;
+	const PaintSettings& getPaintSettings() const;
 
 	void setScale(float scale);
 
@@ -163,7 +169,7 @@ public:
 	Rect getVirtualRect() const;
 
 private:
-	Ref< const PaintSettings > m_paintSettings;
+	PaintSettings m_paintSettings;
 	Ref< IBitmap > m_imageLabel;
 	RefArray< Group > m_groups;
 	RefArray< Node > m_nodes;
@@ -176,6 +182,7 @@ private:
 	int32_t m_mode;
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
+	std::vector< Point > m_groupPositions;
 	std::vector< Point > m_nodePositions;
 	std::vector< bool > m_groupSelectionStates;
 	std::vector< bool > m_nodeSelectionStates;

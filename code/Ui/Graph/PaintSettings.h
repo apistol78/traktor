@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Graph visual settings.
  * \ingroup UI
@@ -32,31 +30,36 @@ class T_DLLCLASS PaintSettings : public Object
 	T_RTTI_CLASS;
 
 public:
+	PaintSettings() = default;
+
 	explicit PaintSettings(const ui::Font& font);
 
-	void setFont(const ui::Font& font);
+	//void setFont(const ui::Font& font);
 
 	const ui::Font& getFont() const;
 
-	void setFontBold(const ui::Font& fontBold);
+	//void setFontBold(const ui::Font& fontBold);
 
 	const ui::Font& getFontBold() const;
 
-	void setFontUnderline(const ui::Font& fontUnderline);
+	//void setFontUnderline(const ui::Font& fontUnderline);
 
 	const ui::Font& getFontUnderline() const;
 
-	void setFontLabel(const ui::Font& fontLabel);
+	//void setFontLabel(const ui::Font& fontLabel);
 
 	const ui::Font& getFontLabel() const;
+
+	//void setFontGroup(const ui::Font& fontGroup);
+
+	const ui::Font& getFontGroup() const;
 
 private:
 	ui::Font m_font;
 	ui::Font m_fontBold;
 	ui::Font m_fontUnderline;
 	ui::Font m_fontLabel;
+	ui::Font m_fontGroup;
 };
 
-	}
 }
-

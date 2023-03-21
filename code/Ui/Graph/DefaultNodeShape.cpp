@@ -78,7 +78,7 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 {
 	const Rect rc = node->calculateRect();
 
-	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
 	int32_t top = dpi96(c_marginHeight + c_topMargin + c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -107,7 +107,7 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 
 	const Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
 	int32_t top = dpi96(c_marginHeight) + dpi96(c_topMargin) + dpi96(c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -137,10 +137,10 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	const StyleSheet* ss = graph->getStyleSheet();
-	const PaintSettings* settings = canvas->getPaintSettings();
+	const PaintSettings& settings = canvas->getPaintSettings();
 
 	const Rect rc = node->calculateRect().offset(offset);
-	const int32_t textHeight = settings->getFont().getPixelSize() + dpi96(4);
+	const int32_t textHeight = settings.getFont().getPixelSize() + dpi96(4);
 
 	// Draw node shape.
 	{
@@ -181,9 +181,9 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	if (!title.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color"));
-		canvas->setFont(settings->getFontBold());
+		canvas->setFont(settings.getFontBold());
 		canvas->drawText(Rect(rc.left, top, rc.right, top + textHeight), title, AnCenter, AnCenter);
-		canvas->setFont(settings->getFont());
+		canvas->setFont(settings.getFont());
 		top += textHeight;
 	}
 
@@ -273,7 +273,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		const Size extent = canvas->getTextExtent(label);
 
 		if (pin->isMandatory())
-			canvas->setFont(settings->getFontUnderline());
+			canvas->setFont(settings.getFontUnderline());
 
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
@@ -286,7 +286,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			AnCenter
 		);
 
-		canvas->setFont(settings->getFont());
+		canvas->setFont(settings.getFont());
 	}
 
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
@@ -315,7 +315,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	const int32_t textHeight = graph->getPaintSettings()->getFont().getPixelSize() + dpi96(4);
+	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
 	int32_t height = dpi96(c_marginHeight * 2 + c_topMargin + c_titlePad);
 
 	if (!node->getTitle().empty())
@@ -348,10 +348,10 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 
 	if (!node->getTitle().empty())
 	{
-		graph->setFont(graph->getPaintSettings()->getFontBold());
+		graph->setFont(graph->getPaintSettings().getFontBold());
 		const int32_t titleExtent = getQuantizedTextWidth(graph, node->getTitle());
 		width = std::max(width, titleExtent);
-		graph->setFont(graph->getPaintSettings()->getFont());
+		graph->setFont(graph->getPaintSettings().getFont());
 	}
 	if (!node->getInfo().empty())
 	{

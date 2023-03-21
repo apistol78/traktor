@@ -198,7 +198,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 		return;
 
 	const StyleSheet* ss = graph->getStyleSheet();
-	const PaintSettings* settings = canvas->getPaintSettings();
+	const PaintSettings& settings = canvas->getPaintSettings();
 
 	auto color = ss->getColor(this, m_selected ? L"color-selected" : L"color");
 	canvas->setForeground(color);
@@ -251,7 +251,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	if (imageLabel && !m_text.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-label"));
-		canvas->setFont(settings->getFontLabel());
+		canvas->setFont(settings.getFontLabel());
 
 		const auto sz = imageLabel->getSize();
 		const Size szLabel = canvas->getTextExtent(m_text);

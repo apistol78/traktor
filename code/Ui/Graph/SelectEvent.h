@@ -19,13 +19,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-class Node;
 class Edge;
+class Group;
+class Node;
 
 /*! Node or edge selection event.
  * \ingroup UI
@@ -35,17 +34,18 @@ class T_DLLCLASS SelectEvent : public SelectionChangeEvent
 	T_RTTI_CLASS;
 
 public:
-	SelectEvent(EventSubject* sender, const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+	explicit SelectEvent(EventSubject* sender, const RefArray< Group >& groups, const RefArray< Node >& nodes, const RefArray< Edge >& edges);
+
+	const RefArray< Group >& getGroups() const;
 
 	const RefArray< Node >& getNodes() const;
 
 	const RefArray< Edge >& getEdges() const;
 
 private:
+	RefArray< Group > m_groups;
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
 };
 
-	}
 }
-
