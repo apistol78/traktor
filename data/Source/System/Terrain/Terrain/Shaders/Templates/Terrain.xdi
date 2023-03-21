@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
 			<id>{EAE95A01-9DDB-9F4D-9AED-662D3D8E874D}</id>
@@ -77,8 +77,8 @@
 			<id>{6D44EE25-CFC1-C248-987A-ADD3CDFE6D9B}</id>
 			<comment/>
 			<position>
-				<first>-371</first>
-				<second>606</second>
+				<first>-341</first>
+				<second>704</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -95,8 +95,8 @@
 			<id>{3C0FE29D-2A22-D248-A648-71705268F14B}</id>
 			<comment/>
 			<position>
-				<first>-600</first>
-				<second>607</second>
+				<first>-570</first>
+				<second>705</second>
 			</position>
 			<parameterName>Terrain_Heightfield</parameterName>
 			<type>Texture2D</type>
@@ -190,8 +190,8 @@
 			<id>{E51F843A-7990-2D4C-8085-9AA31A47746D}</id>
 			<comment/>
 			<position>
-				<first>643</first>
-				<second>18</second>
+				<first>653</first>
+				<second>-10</second>
 			</position>
 			<parameterName>Terrain_DebugPatchIndex</parameterName>
 			<type>Vector</type>
@@ -365,8 +365,8 @@ Generated texture from surface cache.
 			<id>{93545739-C9A1-EC4C-B8EC-898A3C8F84AE}</id>
 			<comment/>
 			<position>
-				<first>77</first>
-				<second>649</second>
+				<first>107</first>
+				<second>747</second>
 			</position>
 			<name>L_Height</name>
 			<global>false</global>
@@ -375,8 +375,8 @@ Generated texture from surface cache.
 			<id>{890D9CBA-1470-1448-BCE6-6D3DBC4044D3}</id>
 			<comment/>
 			<position>
-				<first>-90</first>
-				<second>639</second>
+				<first>-60</first>
+				<second>737</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -434,8 +434,8 @@ Generated texture from surface cache.
 			<id>{F811DD09-C98D-3F4F-B6D8-0930E5A4AB81}</id>
 			<comment/>
 			<position>
-				<first>1602</first>
-				<second>-908</second>
+				<first>2610</first>
+				<second>186</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -462,8 +462,8 @@ Generated texture from surface cache.
 			<id>{31430D09-7ADB-554F-8DD8-CB0CD84B8194}</id>
 			<comment/>
 			<position>
-				<first>1380</first>
-				<second>-844</second>
+				<first>2388</first>
+				<second>250</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -472,8 +472,8 @@ Generated texture from surface cache.
 			<id>{010F4795-3CF2-0A48-A9E8-E5EF67131EE2}</id>
 			<comment/>
 			<position>
-				<first>1379</first>
-				<second>-930</second>
+				<first>2387</first>
+				<second>164</second>
 			</position>
 			<name>L_ViewNormal</name>
 			<global>false</global>
@@ -616,8 +616,8 @@ Generated texture from surface cache.
 			<id>{B547F714-60D5-2342-8C0E-90D80676B9D8}</id>
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>-378</second>
+				<first>885</first>
+				<second>-1240</second>
 			</position>
 			<name>L_SurfaceAlbedo</name>
 			<global>false</global>
@@ -626,8 +626,8 @@ Generated texture from surface cache.
 			<id>{E6C4DC02-E757-EB47-906B-1C0644E70028}</id>
 			<comment/>
 			<position>
-				<first>1561</first>
-				<second>43</second>
+				<first>1531</first>
+				<second>15</second>
 			</position>
 			<name>L_SurfaceAlbedo</name>
 			<global>false</global>
@@ -646,7 +646,7 @@ Generated texture from surface cache.
 			<id>{466847D9-69C1-FB40-92A9-B8A368FEFA2F}</id>
 			<comment/>
 			<position>
-				<first>-1162</first>
+				<first>-1179</first>
 				<second>-618</second>
 			</position>
 			<name>L_GeometryNormal</name>
@@ -683,8 +683,8 @@ Generated texture from surface cache.
 			<id>{361FF238-FCE7-6448-B796-763EA66E308A}</id>
 			<comment/>
 			<position>
-				<first>-1357</first>
-				<second>-676</second>
+				<first>-1354</first>
+				<second>-693</second>
 			</position>
 		</item>
 		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
@@ -717,8 +717,8 @@ Generated texture from surface cache.
 			<id>{732D0940-5786-D74C-A231-6968FE7A5A01}</id>
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>-332</second>
+				<first>885</first>
+				<second>-1194</second>
 			</position>
 			<name>L_SurfaceNormal</name>
 			<global>false</global>
@@ -791,17 +791,17 @@ Generated texture from surface cache.
 				<first>-1360</first>
 				<second>-216</second>
 			</position>
-			<name>L_DebugTexCoord</name>
+			<name>L_PatchTexCoord</name>
 			<global>false</global>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{3638A0F9-46AC-F84E-B295-45B00F975E10}</id>
 			<comment/>
 			<position>
-				<first>730</first>
-				<second>-177</second>
+				<first>823</first>
+				<second>-135</second>
 			</position>
-			<name>L_DebugTexCoord</name>
+			<name>L_PatchTexCoord</name>
 			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -816,8 +816,8 @@ Generated texture from surface cache.
 			<id>{C9478F60-77DE-574D-9815-AE921A86F5DA}</id>
 			<comment/>
 			<position>
-				<first>780</first>
-				<second>-57</second>
+				<first>800</first>
+				<second>-82</second>
 			</position>
 			<value>0.25, 1, 0, 0</value>
 		</item>
@@ -825,16 +825,16 @@ Generated texture from surface cache.
 			<id>{D694000C-1AED-A444-ADE2-01465410D473}</id>
 			<comment/>
 			<position>
-				<first>906</first>
-				<second>32</second>
+				<first>916</first>
+				<second>-16</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D2DA13C3-F34F-B046-B1D5-BCF080AB6D69}</id>
 			<comment/>
 			<position>
-				<first>703</first>
-				<second>103</second>
+				<first>715</first>
+				<second>33</second>
 			</position>
 			<value>0.25</value>
 		</item>
@@ -842,8 +842,8 @@ Generated texture from surface cache.
 			<id>{809664E4-8B7C-2D46-A318-B04C525317EA}</id>
 			<comment/>
 			<position>
-				<first>1150</first>
-				<second>-2</second>
+				<first>1133</first>
+				<second>-22</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
@@ -868,8 +868,8 @@ Generated texture from surface cache.
 			<id>{C72A149C-D8E5-0344-9A87-676FCD57F888}</id>
 			<comment/>
 			<position>
-				<first>218</first>
-				<second>-286</second>
+				<first>885</first>
+				<second>-1148</second>
 			</position>
 			<name>L_SurfaceRoughness</name>
 			<global>false</global>
@@ -915,8 +915,8 @@ Generated texture from surface cache.
 			<id>{C58E36CC-A50B-9D4E-A11B-252F9BE17A99}</id>
 			<comment/>
 			<position>
-				<first>-583</first>
-				<second>772</second>
+				<first>-553</first>
+				<second>870</second>
 			</position>
 			<parameterName>Terrain_ColorMap</parameterName>
 			<type>Texture2D</type>
@@ -926,8 +926,8 @@ Generated texture from surface cache.
 			<id>{F80182CB-D7C2-1C4C-9C94-2DFFA45AE72F}</id>
 			<comment/>
 			<position>
-				<first>-352</first>
-				<second>771</second>
+				<first>-322</first>
+				<second>869</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -944,8 +944,8 @@ Generated texture from surface cache.
 			<id>{6E0FCF8A-70F3-8F40-BB5E-85A8708FD6C1}</id>
 			<comment/>
 			<position>
-				<first>-541</first>
-				<second>649</second>
+				<first>-511</first>
+				<second>747</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -954,8 +954,8 @@ Generated texture from surface cache.
 			<id>{C75AB6F1-88B1-FC44-866B-C0712073315A}</id>
 			<comment/>
 			<position>
-				<first>-555</first>
-				<second>817</second>
+				<first>-525</first>
+				<second>915</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -964,8 +964,8 @@ Generated texture from surface cache.
 			<id>{05B643E9-A27D-C349-B189-0ED9FC439D23}</id>
 			<comment/>
 			<position>
-				<first>86</first>
-				<second>831</second>
+				<first>116</first>
+				<second>929</second>
 			</position>
 			<name>L_Color</name>
 			<global>false</global>
@@ -974,8 +974,8 @@ Generated texture from surface cache.
 			<id>{982B2938-A83A-7E41-8B23-3CBF453F6038}</id>
 			<comment/>
 			<position>
-				<first>-81</first>
-				<second>821</second>
+				<first>-51</first>
+				<second>919</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -983,8 +983,8 @@ Generated texture from surface cache.
 			<id>{7FC63ED4-40FA-C640-818F-8C486BA46FF6}</id>
 			<comment/>
 			<position>
-				<first>1605</first>
-				<second>104</second>
+				<first>1575</first>
+				<second>76</second>
 			</position>
 			<name>L_Color</name>
 			<global>false</global>
@@ -993,8 +993,8 @@ Generated texture from surface cache.
 			<id>{2BD768C2-6224-7F4E-84F5-2735B266A95E}</id>
 			<comment/>
 			<position>
-				<first>1782</first>
-				<second>50</second>
+				<first>1752</first>
+				<second>22</second>
 			</position>
 			<name>Overlay</name>
 			<technique/>
@@ -1028,8 +1028,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{921A32F1-E7B3-E04C-A243-F637F6027577}</id>
 			<comment/>
 			<position>
-				<first>-528</first>
-				<second>968</second>
+				<first>-498</first>
+				<second>1066</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -1038,8 +1038,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{CCD9F28B-C8F6-A74D-8D3F-D0EFC8D62B45}</id>
 			<comment/>
 			<position>
-				<first>-77</first>
-				<second>958</second>
+				<first>-47</first>
+				<second>1056</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -1047,8 +1047,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{AD62E0D7-94BD-2C4F-AA03-F712360FC844}</id>
 			<comment/>
 			<position>
-				<first>340</first>
-				<second>999</second>
+				<first>370</first>
+				<second>1097</second>
 			</position>
 			<name>L_Cut</name>
 			<global>false</global>
@@ -1057,8 +1057,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{035A3B01-E2A7-2348-8E0B-00BCAB907CC9}</id>
 			<comment/>
 			<position>
-				<first>-574</first>
-				<second>926</second>
+				<first>-544</first>
+				<second>1024</second>
 			</position>
 			<parameterName>Terrain_CutMap</parameterName>
 			<type>Texture2D</type>
@@ -1068,8 +1068,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{98E65832-339A-774B-BFED-8ACC57520561}</id>
 			<comment/>
 			<position>
-				<first>-358</first>
-				<second>925</second>
+				<first>-328</first>
+				<second>1023</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -1222,8 +1222,8 @@ $Output = gl_DrawID;
 			<id>{A197918C-97BC-3D4A-9887-06D09EE60755}</id>
 			<comment/>
 			<position>
-				<first>-462</first>
-				<second>-395</second>
+				<first>220</first>
+				<second>-1240</second>
 			</position>
 			<fragmentGuid>{23790224-9E2A-4C43-9C3B-F659BE962E10}</fragmentGuid>
 			<inputPins>
@@ -1268,8 +1268,8 @@ $Output = gl_DrawID;
 			<id>{3529083A-FB00-D741-B0B8-2D79F9D5A07B}</id>
 			<comment/>
 			<position>
-				<first>-740</first>
-				<second>-393</second>
+				<first>-58</first>
+				<second>-1238</second>
 			</position>
 			<name>L_GeometryNormal</name>
 			<global>false</global>
@@ -1278,18 +1278,18 @@ $Output = gl_DrawID;
 			<id>{C5E8F8E1-7C3C-5E4A-9D29-8C1FC1A54419}</id>
 			<comment/>
 			<position>
-				<first>-724</first>
-				<second>-351</second>
+				<first>-42</first>
+				<second>-1196</second>
 			</position>
-			<name>L_DebugTexCoord</name>
+			<name>L_PatchTexCoord</name>
 			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{790CB226-6F3C-5147-A252-754C24C03AC5}</id>
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>-385</second>
+				<first>667</first>
+				<second>-1230</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -1297,8 +1297,8 @@ $Output = gl_DrawID;
 			<id>{9AA654B8-1936-BE47-970A-70C4901FC6B2}</id>
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>-348</second>
+				<first>667</first>
+				<second>-1193</second>
 			</position>
 			<swizzle>xzy</swizzle>
 		</item>
@@ -1306,8 +1306,8 @@ $Output = gl_DrawID;
 			<id>{31E91700-E76F-BB44-8EC3-FB31202E8285}</id>
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>-311</second>
+				<first>667</first>
+				<second>-1156</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -1315,8 +1315,8 @@ $Output = gl_DrawID;
 			<id>{F3EACC5B-AEB4-2346-A342-8EA7728B0D76}</id>
 			<comment/>
 			<position>
-				<first>-692</first>
-				<second>-309</second>
+				<first>-10</first>
+				<second>-1154</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -1360,8 +1360,8 @@ $Output = gl_DrawID;
 			<id>{80D4B36D-6350-0A42-A883-CB3CDEE7800A}</id>
 			<comment/>
 			<position>
-				<first>-692</first>
-				<second>-435</second>
+				<first>-10</first>
+				<second>-1280</second>
 			</position>
 			<name>L_Elevation</name>
 			<global>false</global>
@@ -1370,8 +1370,8 @@ $Output = gl_DrawID;
 			<id>{852CDD8E-976D-A94B-9728-D96101E7168B}</id>
 			<comment/>
 			<position>
-				<first>94</first>
-				<second>951</second>
+				<first>124</first>
+				<second>1049</second>
 			</position>
 			<parameterName>Terrain_CutEnable</parameterName>
 		</item>
@@ -1379,8 +1379,8 @@ $Output = gl_DrawID;
 			<id>{C53CB36D-EDDB-C146-921A-D62E58E06B8D}</id>
 			<comment/>
 			<position>
-				<first>-115</first>
-				<second>1016</second>
+				<first>-85</first>
+				<second>1114</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -2467,4 +2467,54 @@ $Output = gl_DrawID;
 			</destination>
 		</item>
 	</edges>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Geometry normal</title>
+			<comment/>
+			<position>
+				<first>-1476</first>
+				<second>-1079</second>
+			</position>
+			<size>
+				<first>904</first>
+				<second>247</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Geometry normal (viewspace)</title>
+			<comment/>
+			<position>
+				<first>-1662</first>
+				<second>-763</second>
+			</position>
+			<size>
+				<first>1955</first>
+				<second>281</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Surface shader</title>
+			<comment/>
+			<position>
+				<first>-261</first>
+				<second>-1371</second>
+			</position>
+			<size>
+				<first>1429</first>
+				<second>356</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Terrain maps</title>
+			<comment/>
+			<position>
+				<first>-704</first>
+				<second>610</second>
+			</position>
+			<size>
+				<first>1265</first>
+				<second>618</second>
+			</size>
+		</item>
+	</groups>
 </object>
