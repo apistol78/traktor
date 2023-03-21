@@ -129,6 +129,8 @@ private:
 
 	void eventFilterKey(ui::KeyUpEvent* event);
 
+	void eventSize(ui::SizeEvent* event);
+
 	void eventTimer(ui::TimerEvent* event);
 
 	void eventInstanceActivate(ui::TreeViewItemActivateEvent* event);
