@@ -20,10 +20,9 @@ class PropertyGroup;
 	{
 
 class Edit;
-class GridRowDoubleClickEvent;
-class GridView;
 class HierarchicalState;
 class Menu;
+class PreviewList;
 class Splitter;
 class ToolBar;
 class ToolBarButton;
@@ -50,6 +49,7 @@ class Instance;
 	namespace editor
 	{
 
+class IBrowsePreview;
 class IEditor;
 class IWizardTool;
 
@@ -95,7 +95,7 @@ private:
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::Splitter > m_splitter;
 	Ref< ui::TreeView > m_treeDatabase;
-	Ref< ui::GridView > m_gridInstances;
+	Ref< ui::PreviewList > m_listInstances;
 	Ref< ui::Menu > m_menuGroup[2];
 	Ref< ui::Menu > m_menuInstance;
 	Ref< ui::Menu > m_menuInstanceAsset;
@@ -104,6 +104,7 @@ private:
 	Ref< PropertyGroup > m_iconsGroup;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
+	RefArray< const IBrowsePreview > m_browsePreview;
 	RefArray< IWizardTool > m_wizardTools;
 	std::set< Guid > m_rootInstances;
 	std::set< Guid > m_favoriteInstances;
@@ -140,7 +141,7 @@ private:
 
 	void eventInstanceDrag(ui::TreeViewDragEvent* event);
 
-	void eventInstanceGridActivate(ui::GridRowDoubleClickEvent* event);
+	void eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event);
 };
 
 	}
