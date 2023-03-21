@@ -70,6 +70,7 @@
 #include "Ui/TabPage.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Group.h"
+#include "Ui/Graph/GroupMovedEvent.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
 #include "Ui/Graph/EdgeDisconnectEvent.h"
@@ -304,6 +305,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEventHandler< ui::MouseButtonDownEvent >(this, &ShaderGraphEditorPage::eventButtonDown);
 	m_editorGraph->addEventHandler< ui::MouseDoubleClickEvent >(this, &ShaderGraphEditorPage::eventDoubleClick);
 	m_editorGraph->addEventHandler< ui::SelectEvent >(this, &ShaderGraphEditorPage::eventSelect);
+	m_editorGraph->addEventHandler< ui::GroupMovedEvent >(this, &ShaderGraphEditorPage::eventGroupMoved);
 	m_editorGraph->addEventHandler< ui::NodeMovedEvent >(this, &ShaderGraphEditorPage::eventNodeMoved);
 	m_editorGraph->addEventHandler< ui::NodeActivateEvent >(this, &ShaderGraphEditorPage::eventNodeDoubleClick);
 	m_editorGraph->addEventHandler< ui::EdgeConnectEvent >(this, &ShaderGraphEditorPage::eventEdgeConnect);
@@ -1025,10 +1027,7 @@ void ShaderGraphEditorPage::createEditorGraph()
 	);
 
 	for (auto group : m_shaderGraph->getGroups())
-	{
-		Ref< ui::Group > editorGroup = createEditorGroup(group);
-		m_editorGraph->addGroup(editorGroup);
-	}
+		createEditorGroup(group);
 
 	updateGraph();
 
@@ -1131,10 +1130,7 @@ Ref< ui::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 
 Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
 {
-	Ref< ui::Group > editorGroup = new ui::Group();
-	editorGroup->setTitle(shaderGroup->getTitle());
-	editorGroup->setPosition(ui::Point(shaderGroup->getPosition()));
-	editorGroup->setSize(ui::Size(shaderGroup->getSize()));
+	Ref< ui::Group > editorGroup = m_editorGraph->createGroup(shaderGroup->getTitle(), shaderGroup->getPosition(), shaderGroup->getSize());
 	editorGroup->setData(L"SHADERGROUP", shaderGroup);
 	return editorGroup;
 
@@ -1167,16 +1163,23 @@ void ShaderGraphEditorPage::refreshGraph()
 		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 		INodeFacade* nodeFacade = editorNode->getData< INodeFacade >(L"FACADE");
 
-		if (!shaderNode || !nodeFacade)
-			continue;
+		//if (!shaderNode || !nodeFacade)
+		//	continue;
 
 		nodeFacade->refreshEditorNode(m_editor, m_editorGraph, editorNode, m_shaderGraph, shaderNode);
 
-		const std::pair< int, int >& position = shaderNode->getPosition();
-		editorNode->setPosition(ui::Point(
-			ui::dpi96(position.first),
-			ui::dpi96(position.second)
-		));
+		//const std::pair< int, int >& position = shaderNode->getPosition();
+		//editorNode->setPosition(ui::Point(
+		//	ui::dpi96(position.first),
+		//	ui::dpi96(position.second)
+		//));
+	}
+
+	// Refresh editor groups.
+	for (auto editorGroup : m_editorGraph->getGroups())
+	{
+		Group* shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
+		editorGroup->setTitle(shaderGroup->getTitle());
 	}
 }
 
@@ -1614,8 +1617,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 			m_shaderGraph->addGroup(shaderGroup);
 
 			// Create editor group from shader group.
-			Ref< ui::Group > editorGroup = createEditorGroup(shaderGroup);
-			m_editorGraph->addGroup(editorGroup);
+			createEditorGroup(shaderGroup);
 
 			updateGraph();
 		}
@@ -1633,17 +1635,42 @@ void ShaderGraphEditorPage::eventDoubleClick(ui::MouseDoubleClickEvent* event)
 void ShaderGraphEditorPage::eventSelect(ui::SelectEvent* event)
 {
 	const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+	const RefArray< ui::Group > groups = m_editorGraph->getSelectedGroups();
+
 	if (nodes.size() == 1)
 	{
-		Ref< Node > shaderNode = nodes[0]->getData< Node >(L"SHADERNODE");
-		T_ASSERT(shaderNode);
-
+		Ref< Node > shaderNode = nodes.front()->getData< Node >(L"SHADERNODE");
 		m_propertiesView->setPropertyObject(shaderNode);
+	}
+	else if (groups.size() == 1)
+	{
+		Ref< Group > shaderGroup = groups.front()->getData< Group >(L"SHADERGROUP");
+		m_propertiesView->setPropertyObject(shaderGroup);
 	}
 	else
 		m_propertiesView->setPropertyObject(nullptr);
 
 	updateVariableHints();
+}
+
+void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
+{
+	Ref< ui::Group > editorGroup = event->getGroup();
+	T_ASSERT(editorGroup);
+
+	// Get shader graph node from editor node.
+	Ref< Group > shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
+	T_ASSERT(shaderGroup);
+
+	ui::Point position = editorGroup->getPosition();
+	position.x = ui::invdpi96(position.x);
+	position.y = ui::invdpi96(position.y);
+
+	if (position.x != shaderGroup->getPosition().first || position.y != shaderGroup->getPosition().second)
+	{
+		m_document->push();
+		shaderGroup->setPosition({ position.x, position.y });
+	}
 }
 
 void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
@@ -1662,17 +1689,8 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{
 		m_document->push();
-
-		// Reflect position into shader graph node.
-		shaderNode->setPosition(std::pair< int, int >(
-			position.x,
-			position.y
-		));
+		shaderNode->setPosition({ position.x, position.y });
 	}
-
-	// Update properties.
-	if (editorNode->isSelected())
-		m_propertiesView->setPropertyObject(shaderNode);
 }
 
 void ShaderGraphEditorPage::eventNodeDoubleClick(ui::NodeActivateEvent* event)

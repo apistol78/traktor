@@ -61,7 +61,7 @@ Rect operator * (const Rect& rc, float scale)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphCanvas", GraphCanvas, Object)
 
-GraphCanvas::GraphCanvas(Canvas* canvas, const PaintSettings* paintSettings, float scale)
+GraphCanvas::GraphCanvas(Canvas* canvas, const PaintSettings& paintSettings, float scale)
 :	m_canvas(canvas)
 ,	m_paintSettings(paintSettings)
 ,	m_scale(scale)

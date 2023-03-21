@@ -79,7 +79,7 @@ Pin* InputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point
 void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	const StyleSheet* ss = graph->getStyleSheet();
-	const PaintSettings* settings = canvas->getPaintSettings();
+	const PaintSettings& settings = canvas->getPaintSettings();
 
 	Rect rc = node->calculateRect().offset(offset);
 
@@ -133,7 +133,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	if (!title.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color"));
-		canvas->setFont(settings->getFontBold());
+		canvas->setFont(settings.getFontBold());
 
 		Size ext = canvas->getTextExtent(title);
 
@@ -149,15 +149,15 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 		left += ext.cx;
 
-		canvas->setFont(settings->getFont());
+		canvas->setFont(settings.getFont());
 	}
 
 	left += ui::dpi96(c_textPad);
 
-	std::wstring info = node->getInfo();
+	const std::wstring info = node->getInfo();
 	if (!info.empty())
 	{
-		Size ext = canvas->getTextExtent(info);
+		const Size ext = canvas->getTextExtent(info);
 
 		canvas->setForeground(ss->getColor(this, L"color-info"));
 		canvas->drawText(
@@ -190,13 +190,13 @@ Size InputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 
 	if (!node->getTitle().empty())
 	{
-		graph->setFont(graph->getPaintSettings()->getFontBold());
+		graph->setFont(graph->getPaintSettings().getFontBold());
 		width += getQuantizedTextWidth(graph, node->getTitle());
 	}
 
 	if (!node->getInfo().empty())
 	{
-		graph->setFont(graph->getPaintSettings()->getFont());
+		graph->setFont(graph->getPaintSettings().getFont());
 		width += dpi96(c_textPad);
 		width += getQuantizedTextWidth(graph, node->getInfo());
 	}

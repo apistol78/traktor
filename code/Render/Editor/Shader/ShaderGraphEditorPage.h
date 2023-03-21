@@ -41,6 +41,7 @@ class EdgeConnectEvent;
 class EdgeDisconnectEvent;
 class GraphControl;
 class Group;
+class GroupMovedEvent;
 class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
@@ -140,6 +141,8 @@ private:
 	void eventDoubleClick(ui::MouseDoubleClickEvent* event);
 
 	void eventSelect(ui::SelectEvent* event);
+
+	void eventGroupMoved(ui::GroupMovedEvent* event);
 
 	void eventNodeMoved(ui::NodeMovedEvent* event);
 

@@ -111,7 +111,7 @@ public:
 private:
 	friend class GraphControl;
 
-	GraphControl* m_owner;
+	GraphControl* m_owner = nullptr;
 	std::wstring m_title;
 	std::wstring m_info;
 	std::wstring m_comment;

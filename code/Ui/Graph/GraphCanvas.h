@@ -33,7 +33,7 @@ class GraphCanvas : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit GraphCanvas(Canvas* canvas, const PaintSettings* paintSettings, float scale);
+	explicit GraphCanvas(Canvas* canvas, const PaintSettings& paintSettings, float scale);
 
 	void setForeground(const Color4ub& foreground);
 
@@ -59,11 +59,11 @@ public:
 
 	Size getTextExtent(const std::wstring& text) const;
 
-	const PaintSettings* getPaintSettings() const { return m_paintSettings; }
+	const PaintSettings& getPaintSettings() const { return m_paintSettings; }
 
 private:
 	Canvas* m_canvas;
-	const PaintSettings* m_paintSettings;
+	const PaintSettings& m_paintSettings;
 	float m_scale;
 	Font m_originalFont;
 	Font m_scaledFont;

@@ -22,6 +22,17 @@ local outputs =
 	},
 
 	{
+		source = "Group.svg",
+		name = "UI_Graph_Group",
+		path = "../runtime/themes/%s/Images/UI/Graph",
+		resources =
+		{
+			{ name = "Group", column = 0, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+			{ name = "GroupSelected", column = 3, row = 0, width = 3, height = 3 }, -- , base = 16*96/45 },
+		}
+	},	
+
+	{
 		source = "Pin.svg",
 		name = "UI_Graph_Pin",
 		path = "../runtime/themes/%s/Images/UI/Graph",
@@ -582,7 +593,7 @@ end
 function main(argv)
 
 	if argv.size < 1 then
-		stdout:printLn("Missing arguments")
+		stdout:printLn("Export [theme] (filter)")
 		return 1
 	end
 

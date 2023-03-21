@@ -8,18 +8,22 @@
  */
 #include "Ui/Graph/SelectEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SelectEvent", SelectEvent, SelectionChangeEvent)
 
-SelectEvent::SelectEvent(EventSubject* sender, const RefArray< Node >& nodes, const RefArray< Edge >& edges)
+SelectEvent::SelectEvent(EventSubject* sender, const RefArray< Group >& groups, const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 :	SelectionChangeEvent(sender)
+,	m_groups(groups)
 ,	m_nodes(nodes)
 ,	m_edges(edges)
 {
+}
+
+const RefArray< Group >& SelectEvent::getGroups() const
+{
+	return m_groups;
 }
 
 const RefArray< Node >& SelectEvent::getNodes() const
@@ -32,5 +36,4 @@ const RefArray< Edge >& SelectEvent::getEdges() const
 	return m_edges;
 }
 
-	}
 }

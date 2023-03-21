@@ -591,6 +591,14 @@
 			<second>$(Images.Path)/Images/UI/Graph/Label.image</second>
 		</item>
 		<item>
+			<first>UI.Graph.Group</first>
+			<second>$(Images.Path)/Images/UI/Graph/Group.image</second>
+		</item>
+		<item>
+			<first>UI.Graph.GroupSelected</first>
+			<second>$(Images.Path)/Images/UI/Graph/GroupSelected.image</second>
+		</item>
+		<item>
 			<first>UI.Graph.Node</first>
 			<second>$(Images.Path)/Images/UI/Graph/Node.image</second>
 		</item>
