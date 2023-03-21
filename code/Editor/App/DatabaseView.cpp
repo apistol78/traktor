@@ -27,6 +27,7 @@
 #include "Database/Traverse.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
+#include "Editor/IBrowsePreview.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IPipelineDepends.h"
@@ -49,11 +50,9 @@
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Splitter.h"
-#include "Ui/GridView/GridColumn.h"
-#include "Ui/GridView/GridItem.h"
-#include "Ui/GridView/GridRow.h"
-#include "Ui/GridView/GridRowDoubleClickEvent.h"
-#include "Ui/GridView/GridView.h"
+#include "Ui/PreviewList/PreviewItem.h"
+#include "Ui/PreviewList/PreviewItems.h"
+#include "Ui/PreviewList/PreviewList.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -377,15 +376,12 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addEventHandler< ui::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
 
-	m_gridInstances = new ui::GridView();
-	if (!m_gridInstances->create(m_splitter, ui::GridView::WsColumnHeader | ui::WsAccelerated))
+	m_listInstances = new ui::PreviewList();
+	if (!m_listInstances->create(m_splitter, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_gridInstances->addColumn(new ui::GridColumn(L"", ui::dpi96(20)));
-	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_NAME"), ui::dpi96(140)));
-	m_gridInstances->addColumn(new ui::GridColumn(i18n::Text(L"DATABASE_INSTANCE_TYPE"), ui::dpi96(140)));
-	m_gridInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
-	m_gridInstances->addEventHandler< ui::GridRowDoubleClickEvent >(this, &DatabaseView::eventInstanceGridActivate);
-	m_gridInstances->setVisible(false);
+	m_listInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
+	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &DatabaseView::eventInstancePreviewActivate);
+	m_listInstances->setVisible(false);
 
 	m_menuGroup[0] = new ui::Menu();
 	m_menuGroup[1] = new ui::Menu();
@@ -465,6 +461,13 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!m_iconsGroup)
 		return false;
 
+	// Create browse preview generators.
+	for (auto typeInfo : type_of< IBrowsePreview >().findAllOf(false))
+	{
+		Ref< const IBrowsePreview > browsePreview = checked_type_cast< const IBrowsePreview*, false >(typeInfo->createInstance());
+		m_browsePreview.push_back(browsePreview);
+	}
+
 	addEventHandler< ui::TimerEvent >(this, &DatabaseView::eventTimer);
 	startTimer(100);
 
@@ -526,13 +529,11 @@ void DatabaseView::setDatabase(db::Database* db)
 void DatabaseView::updateView()
 {
 	const int32_t viewMode = m_toolViewMode->getSelected();
-
 	Ref< ui::HierarchicalState > treeState = m_treeDatabase->captureState();
-	Ref< ui::HierarchicalState > gridState = m_gridInstances->captureState();
 
 	m_treeDatabase->removeAllItems();
-	m_gridInstances->removeAllRows();
-	m_gridInstances->setVisible(false);
+	m_listInstances->setItems(nullptr);
+	m_listInstances->setVisible(false);
 
 	if (m_db)
 	{
@@ -549,7 +550,7 @@ void DatabaseView::updateView()
 			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
 		else if (viewMode == 1)	// Split
 		{
-			m_gridInstances->setVisible(true);
+			m_listInstances->setVisible(true);
 			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
 		}
 
@@ -559,8 +560,6 @@ void DatabaseView::updateView()
 		setEnable(false);
 
 	m_treeDatabase->applyState(treeState);
-	m_gridInstances->applyState(gridState);
-
 	if (viewMode == 2)
 		updateGridInstances();
 
@@ -609,7 +608,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 		group = items.front()->getData< db::Group >(L"GROUP");
 
-		auto selectedItem = m_gridInstances->getSelectedRow();
+		auto selectedItem = m_listInstances->getSelectedItem();
 		if (selectedItem)
 			instance = selectedItem->getData< db::Instance >(L"INSTANCE");
 	}
@@ -1178,7 +1177,7 @@ void DatabaseView::updateGridInstances()
 	if (viewMode != 1)
 		return;
 
-	m_gridInstances->removeAllRows();
+	m_listInstances->setItems(nullptr);
 
 	RefArray< ui::TreeViewItem > items;
 	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
@@ -1189,7 +1188,7 @@ void DatabaseView::updateGridInstances()
 	{
 		db::Group* group = item->getData< db::Group >(L"GROUP");
 		if (group)
-			db::recursiveFindChildInstances(group, db::FindInstanceAll(), childInstances);
+			db::findChildInstances(group, db::FindInstanceAll(), childInstances);
 	}
 	childInstances.sort([](const db::Instance* a, const db::Instance* b) {
 		return compareIgnoreCase(a->getName(), b->getName()) < 0;
@@ -1197,6 +1196,8 @@ void DatabaseView::updateGridInstances()
 
 	const bool showFiltered = m_toolFilterShow->isToggled();
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
+
+	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
 
 	for (auto childInstance : childInstances)
 	{
@@ -1222,16 +1223,30 @@ void DatabaseView::updateGridInstances()
 				iconIndex += 23;
 		}
 
-		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(L""));
-		row->add(new ui::GridItem(childInstance->getName()));
-		row->add(new ui::GridItem(getCategoryText(primaryType)));
-		row->setData(L"GROUP", childInstance->getParent());
-		row->setData(L"INSTANCE", childInstance);
-		m_gridInstances->addRow(row);
+		Ref< ui::PreviewItem > item = new ui::PreviewItem();
+		item->setText(childInstance->getName());
+		item->setData(L"GROUP", childInstance->getParent());
+		item->setData(L"INSTANCE", childInstance);
+		previewItems->add(item);
+
+		// Get thumbnail preview of instance.
+		const TypeInfo* instanceType = childInstance->getPrimaryType();
+		for (auto browsePreview : m_browsePreview)
+		{
+			TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
+			if (previewTypes.find(instanceType) != previewTypes.end())
+			{
+				item->setImage(browsePreview->generate(
+					m_editor,
+					childInstance
+				));
+				break;
+			}
+		}
 	}
 
-	m_gridInstances->update();
+	//m_gridInstances->update();
+	m_listInstances->setItems(previewItems);
 }
 
 void DatabaseView::filterType(db::Instance* instance)
@@ -1454,14 +1469,15 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 			return;
 		selectedItem = items.front();
 	}
-	else if (event->getSender() == m_gridInstances)
+	else if (event->getSender() == m_listInstances)
 	{
-		selectedItem = m_gridInstances->getSelectedRow();
+		if ((selectedItem = m_listInstances->getSelectedItem()) == nullptr)
+			return;
 	}
 	else
 		return;
 
-	T_ASSERT(selectedItem);
+	T_FATAL_ASSERT(selectedItem);
 
 	Ref< db::Group > group = selectedItem->getData< db::Group >(L"GROUP");
 	Ref< db::Instance > instance = selectedItem->getData< db::Instance >(L"INSTANCE");
@@ -1546,13 +1562,17 @@ void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstanceGridActivate(ui::GridRowDoubleClickEvent* event)
+void DatabaseView::eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event)
 {
-	Ref< ui::GridRow > row = event->getRow();
-	Ref< db::Instance > instance = row->getData< db::Instance >(L"INSTANCE");
-	if (instance)
-		m_editor->openEditor(instance);
+	Ref< ui::PreviewItem > item = m_listInstances->getSelectedItem();
+	if (!item)
+		return;
 
+	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
+	if (!instance)
+		return;
+
+	m_editor->openEditor(instance);
 }
 
 	}
