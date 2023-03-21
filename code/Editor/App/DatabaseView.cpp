@@ -353,7 +353,6 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Database.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
-	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_CATEGORY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(
 		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 0)
@@ -548,67 +547,7 @@ void DatabaseView::updateView()
 
 		if (viewMode == 0)	// Hierarchy
 			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
-		else if (viewMode == 1)	// Category
-		{
-			const bool showFiltered = m_toolFilterShow->isToggled();
-			const bool showFavorites = m_toolFavoritesShow->isToggled();
-			const bool showPrivate = false;
-
-			TypeInfoSet instanceTypes;
-			db::recursiveFindChildInstance(m_db->getRootGroup(), CollectInstanceTypes(instanceTypes));
-			for (const auto& instanceType : instanceTypes)
-			{
-				Ref< ui::TreeViewItem > instanceTypeItem = m_treeDatabase->createItem(0, getCategoryText(instanceType), 1);
-				instanceTypeItem->setImage(0, 0, 1);
-
-				RefArray< db::Instance > instances;
-				db::recursiveFindChildInstances(m_db->getRootGroup(), db::FindInstanceByType(*instanceType), instances);
-				for (auto instance : instances)
-				{
-					const TypeInfo* primaryType = instance->getPrimaryType();
-					if (!primaryType)
-						continue;
-
-					if (showFavorites)
-					{
-						if (m_favoriteInstances.find(instance->getGuid()) == m_favoriteInstances.end())
-							continue;
-					}
-
-					if (!showPrivate)
-					{
-						if (isInstanceInPrivate(instance))
-							continue;
-					}
-
-					int32_t iconIndex = getIconIndex(primaryType);
-
-					if (!showFiltered)
-					{
-						if (!m_filter->acceptInstance(instance))
-							continue;
-					}
-					else
-					{
-						if (!m_filter->acceptInstance(instance))
-							iconIndex += 23;
-					}
-
-					Ref< ui::TreeViewItem > instanceItem = m_treeDatabase->createItem(instanceTypeItem, instance->getName(), 1);
-					instanceItem->setImage(0, iconIndex);
-
-					if (m_rootInstances.find(instance->getGuid()) != m_rootInstances.end())
-						instanceItem->setBold(true);
-
-					instanceItem->setData(L"GROUP", instance->getParent());
-					instanceItem->setData(L"INSTANCE", instance);
-				}
-
-				if (!instanceTypeItem->hasChildren())
-					m_treeDatabase->removeItem(instanceTypeItem);
-			}
-		}
-		else if (viewMode == 2)	// Split
+		else if (viewMode == 1)	// Split
 		{
 			m_gridInstances->setVisible(true);
 			buildTreeItemSplit(m_treeDatabase, 0, m_db->getRootGroup());
@@ -662,7 +601,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		group = treeItem->getData< db::Group >(L"GROUP");
 		instance = treeItem->getData< db::Instance >(L"INSTANCE");
 	}
-	else if (viewMode == 2)	// Split
+	else if (viewMode == 1)	// Split
 	{
 		RefArray< ui::TreeViewItem > items;
 		if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) != 1)
@@ -1035,7 +974,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			for (auto& pasteInstance : pasteInstances)
 				pasteInstance.pasteId = Guid::create();
 
-			// Replace all occurances of original identifiers with new identifiers.
+			// Replace all occurrences of original identifiers with new identifiers.
 			for (auto& pasteInstance : pasteInstances)
 			{
 				Ref< Reflection > reflection = Reflection::create(pasteInstance.object);
@@ -1161,7 +1100,6 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 	const bool showFiltered = m_toolFilterShow->isToggled();
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
-	const bool showPrivate = true;
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
@@ -1181,14 +1119,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 				continue;
 		}
 
-		if (!showPrivate)
-		{
-			if (isInstanceInPrivate(childInstance))
-				continue;
-		}
-
 		int32_t iconIndex = getIconIndex(primaryType);
-
 		if (!showFiltered)
 		{
 			if (!m_filter->acceptInstance(childInstance))
@@ -1244,7 +1175,7 @@ void DatabaseView::updateGridInstances()
 {
 	// Grid is only visible in "split" mode.
 	const int32_t viewMode = m_toolViewMode->getSelected();
-	if (viewMode != 2)
+	if (viewMode != 1)
 		return;
 
 	m_gridInstances->removeAllRows();
@@ -1266,7 +1197,6 @@ void DatabaseView::updateGridInstances()
 
 	const bool showFiltered = m_toolFilterShow->isToggled();
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
-	const bool showPrivate = true;
 
 	for (auto childInstance : childInstances)
 	{
@@ -1280,14 +1210,7 @@ void DatabaseView::updateGridInstances()
 				continue;
 		}
 
-		if (!showPrivate)
-		{
-			if (isInstanceInPrivate(childInstance))
-				continue;
-		}
-
 		int32_t iconIndex = getIconIndex(primaryType);
-
 		if (!showFiltered)
 		{
 			if (!m_filter->acceptInstance(childInstance))
