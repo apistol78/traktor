@@ -9,10 +9,8 @@
 #include <algorithm>
 #include "Ui/Rect.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 inline Rect::Rect()
 :	left(0)
@@ -181,6 +179,16 @@ inline bool Rect::intersect(const Rect& rc) const
 	return (left < rc.right) && (top < rc.bottom) && (right > rc.left) && (bottom > rc.top);
 }
 
+inline Rect Rect::dpi96() const
+{
+	return Rect(ui::dpi96(left), ui::dpi96(top), ui::dpi96(right), ui::dpi96(bottom));
+}
+
+inline Rect Rect::invdpi96() const
+{
+	return Rect(ui::invdpi96(left), ui::invdpi96(top), ui::invdpi96(right), ui::invdpi96(bottom));
+}
+
 inline Rect& Rect::operator = (const Rect& rc)
 {
 	left = rc.left;
@@ -204,5 +212,4 @@ inline bool Rect::operator != (const Rect& rc) const
 	return !(*this == rc);
 }
 
-	}
 }

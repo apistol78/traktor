@@ -35,6 +35,16 @@ inline Point::Point(int32_t x_, int32_t y_)
 {
 }
 
+inline Point Point::dpi96() const
+{
+	return Point(ui::dpi96(x), ui::dpi96(y));
+}
+
+inline Point Point::invdpi96() const
+{
+	return Point(ui::invdpi96(x), ui::invdpi96(y));
+}
+
 inline Point Point::operator + (const Size& s) const
 {
 	return Point(x + s.cx, y + s.cy);

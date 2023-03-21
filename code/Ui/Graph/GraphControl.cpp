@@ -1041,8 +1041,6 @@ void GraphControl::eventDoubleClick(MouseDoubleClickEvent* event)
 		NodeActivateEvent activateEvent(this, selectedNodes.front());
 		raiseEvent(&activateEvent);
 	}
-
-	event->consume();
 }
 
 void GraphControl::eventMouseWheel(MouseWheelEvent* event)
