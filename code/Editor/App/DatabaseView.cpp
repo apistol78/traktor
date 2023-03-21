@@ -468,7 +468,9 @@ bool DatabaseView::create(ui::Widget* parent)
 		m_browsePreview.push_back(browsePreview);
 	}
 
+	addEventHandler< ui::SizeEvent >(this, &DatabaseView::eventSize);
 	addEventHandler< ui::TimerEvent >(this, &DatabaseView::eventTimer);
+
 	startTimer(100);
 
 	setEnable(false);
@@ -1411,6 +1413,15 @@ void DatabaseView::eventFilterKey(ui::KeyUpEvent* event)
 {
 	m_filterText = m_editFilter->getText();
 	m_filterCountDown = 5;
+}
+
+void DatabaseView::eventSize(ui::SizeEvent* event)
+{
+	const ui::Size& sz = event->getSize();
+	if (sz.cx >= sz.cy)
+		m_splitter->setOrientation(true);
+	else
+		m_splitter->setOrientation(false);
 }
 
 void DatabaseView::eventTimer(ui::TimerEvent* event)
