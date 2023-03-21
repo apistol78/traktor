@@ -49,9 +49,17 @@ public:
 
 	const Size& getSize() const;
 
+	void setAnchorPosition(int32_t anchor, const Point& position);
+
+	Point getAnchorPosition(int32_t anchor) const;
+
 	Rect calculateRect() const;
 
 	bool hit(const Point& p) const;
+
+	bool hitTitle(const Point& p) const;
+
+	int32_t hitAnchor(const Point& p) const;
 
 	void setSelected(bool selected);
 
@@ -64,7 +72,6 @@ private:
 
 	GraphControl* m_owner = nullptr;
 	Ref< IBitmap > m_image[2];
-
 	std::wstring m_title;
 	Point m_position;
 	Size m_size;

@@ -180,10 +180,11 @@ private:
 	Point m_moveOrigin;
 	Point m_edgeOrigin;
 	int32_t m_mode;
+	int32_t m_groupAnchor;
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
-	std::vector< Point > m_groupPositions;
-	std::vector< Point > m_nodePositions;
+	std::vector< Rect > m_groupPositions;
+	std::vector< Rect > m_nodePositions;
 	std::vector< bool > m_groupSelectionStates;
 	std::vector< bool > m_nodeSelectionStates;
 	std::vector< bool > m_edgeSelectionStates;
