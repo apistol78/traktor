@@ -11,10 +11,8 @@
 #include "Online/Types.h"
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IMatchMakingProvider;
 class PartyResult;
@@ -25,7 +23,7 @@ class TaskCreateParty : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskCreateParty(
+	explicit TaskCreateParty(
 		IMatchMakingProvider* matchMakingProvider,
 		UserCache* userCache,
 		PartyResult* result
@@ -39,6 +37,4 @@ private:
 	Ref< PartyResult > m_result;
 };
 
-	}
 }
-

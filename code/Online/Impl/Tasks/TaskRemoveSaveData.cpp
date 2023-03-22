@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskRemoveSaveData.h"
 #include "Online/Provider/ISaveDataProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskRemoveSaveData", TaskRemoveSaveData, ITask)
 
@@ -38,5 +36,4 @@ void TaskRemoveSaveData::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

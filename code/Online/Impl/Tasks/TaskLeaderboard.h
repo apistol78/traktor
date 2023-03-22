@@ -15,8 +15,10 @@ namespace traktor
 
 class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class ILeaderboardsProvider;
 
@@ -25,7 +27,7 @@ class TaskLeaderboard : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskLeaderboard(
+	explicit TaskLeaderboard(
 		ILeaderboardsProvider* provider,
 		uint64_t handle,
 		int32_t score,
@@ -41,6 +43,4 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
-

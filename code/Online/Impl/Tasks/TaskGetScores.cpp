@@ -13,10 +13,8 @@
 #include "Online/Impl/Tasks/TaskGetScores.h"
 #include "Online/Provider/ILeaderboardsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskGetScores", TaskGetScores, ITask)
 
@@ -65,5 +63,4 @@ void TaskGetScores::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskStatistics.h"
 #include "Online/Provider/IStatisticsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskStatistics", TaskStatistics, ITask)
 
@@ -43,5 +41,4 @@ void TaskStatistics::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

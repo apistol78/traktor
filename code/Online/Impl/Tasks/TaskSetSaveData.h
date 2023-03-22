@@ -16,8 +16,10 @@ namespace traktor
 
 class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class ISaveDataProvider;
 
@@ -26,7 +28,7 @@ class TaskSetSaveData : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskSetSaveData(
+	explicit TaskSetSaveData(
 		ISaveDataProvider* provider,
 		const std::wstring& saveDataId,
 		const SaveDataDesc& saveDataDesc,
@@ -46,6 +48,4 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
-

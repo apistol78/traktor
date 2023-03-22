@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskJoinLobby.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskJoinLobby", TaskJoinLobby, ITask)
 
@@ -39,5 +37,4 @@ void TaskJoinLobby::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

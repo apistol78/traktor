@@ -10,10 +10,8 @@
 
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class ILeaderboardsProvider;
 class ScoreArrayResult;
@@ -24,7 +22,7 @@ class TaskGetScores : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskGetScores(
+	explicit TaskGetScores(
 		ILeaderboardsProvider* leaderboardProvider,
 		UserCache* userCache,
 		uint64_t handle,
@@ -46,6 +44,4 @@ private:
 	Ref< ScoreArrayResult > m_result;
 };
 
-	}
 }
-

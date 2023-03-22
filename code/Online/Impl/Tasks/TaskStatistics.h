@@ -16,8 +16,10 @@ namespace traktor
 
 class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class IStatisticsProvider;
 
@@ -26,7 +28,7 @@ class TaskStatistics : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskStatistics(
+	explicit TaskStatistics(
 		IStatisticsProvider* provider,
 		const std::wstring& statId,
 		int32_t value,
@@ -42,6 +44,4 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
-

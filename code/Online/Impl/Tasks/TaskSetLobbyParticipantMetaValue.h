@@ -16,8 +16,10 @@ namespace traktor
 
 class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class IMatchMakingProvider;
 
@@ -26,7 +28,7 @@ class TaskSetLobbyParticipantMetaValue : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskSetLobbyParticipantMetaValue(
+	explicit TaskSetLobbyParticipantMetaValue(
 		IMatchMakingProvider* provider,
 		uint64_t lobbyHandle,
 		const std::wstring& key,
@@ -44,6 +46,4 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
-

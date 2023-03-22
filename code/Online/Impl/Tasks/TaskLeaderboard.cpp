@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskLeaderboard.h"
 #include "Online/Provider/ILeaderboardsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskLeaderboard", TaskLeaderboard, ITask)
 
@@ -43,5 +41,4 @@ void TaskLeaderboard::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

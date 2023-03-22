@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskEnumSaveData.h"
 #include "Online/Provider/ISaveDataProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskEnumSaveData", TaskEnumSaveData, ITask)
 
@@ -38,5 +36,4 @@ void TaskEnumSaveData::execute(TaskQueue* taskQueue)
 	T_DEBUG(L"Online; Finished enumerating save data");
 }
 
-	}
 }

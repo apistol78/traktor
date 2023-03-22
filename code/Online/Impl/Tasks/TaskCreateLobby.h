@@ -11,10 +11,8 @@
 #include "Online/Types.h"
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IMatchMakingProvider;
 class LobbyResult;
@@ -25,7 +23,7 @@ class TaskCreateLobby : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskCreateLobby(
+	explicit TaskCreateLobby(
 		IMatchMakingProvider* matchMakingProvider,
 		UserCache* userCache,
 		uint32_t maxUsers,
@@ -43,6 +41,4 @@ private:
 	Ref< LobbyResult > m_result;
 };
 
-	}
 }
-

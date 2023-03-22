@@ -13,10 +13,12 @@
 namespace traktor
 {
 
-class Result;
+	class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class IMatchMakingProvider;
 
@@ -25,7 +27,7 @@ class TaskJoinLobby : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskJoinLobby(
+	explicit TaskJoinLobby(
 		IMatchMakingProvider* provider,
 		uint64_t lobbyHandle,
 		Result* result
@@ -39,6 +41,4 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
-

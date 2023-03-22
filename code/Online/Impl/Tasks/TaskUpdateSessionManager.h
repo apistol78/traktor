@@ -11,10 +11,8 @@
 #include "Core/Ref.h"
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class ISessionManagerProvider;
 
@@ -23,7 +21,7 @@ class TaskUpdateSessionManager : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskUpdateSessionManager(ISessionManagerProvider* provider);
+	explicit TaskUpdateSessionManager(ISessionManagerProvider* provider);
 
 	virtual void execute(TaskQueue* taskQueue) override final;
 
@@ -36,6 +34,4 @@ private:
 	bool m_completed;
 };
 
-	}
 }
-

@@ -16,8 +16,10 @@ namespace traktor
 
 class Result;
 
-	namespace online
-	{
+}
+
+namespace traktor::online
+{
 
 class IAchievementsProvider;
 
@@ -26,7 +28,7 @@ class TaskAchievement : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskAchievement(
+	explicit TaskAchievement(
 		IAchievementsProvider* provider,
 		const std::wstring& achievementId,
 		bool reward,
@@ -42,6 +44,5 @@ private:
 	Ref< Result > m_result;
 };
 
-	}
 }
 
