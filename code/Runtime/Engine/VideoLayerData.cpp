@@ -6,14 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/IEnvironment.h"
-#include "Runtime/Engine/VideoLayer.h"
-#include "Runtime/Engine/VideoLayerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/Engine/VideoLayer.h"
+#include "Runtime/Engine/VideoLayerData.h"
 #include "Video/Video.h"
 #include "Video/VideoResource.h"
 
@@ -21,6 +21,11 @@ namespace traktor::runtime
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.VideoLayerData", 0, VideoLayerData, LayerData)
+
+VideoLayerData::VideoLayerData()
+:	LayerData(L"video")
+{
+}
 
 Ref< Layer > VideoLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {

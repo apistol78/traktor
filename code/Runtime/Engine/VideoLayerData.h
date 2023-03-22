@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Runtime/Engine/LayerData.h"
 #include "Core/Math/Aabb2.h"
 #include "Resource/Id.h"
+#include "Runtime/Engine/LayerData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,6 +45,8 @@ class T_DLLCLASS VideoLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
+	VideoLayerData();
+
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const override final;
 
 	virtual void serialize(ISerializer& s) override final;

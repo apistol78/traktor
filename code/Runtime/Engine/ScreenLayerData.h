@@ -38,6 +38,8 @@ class T_DLLCLASS ScreenLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
+	ScreenLayerData();
+
 	virtual Ref< Layer > createInstance(Stage* stage, IEnvironment* environment) const override final;
 
 	virtual void serialize(ISerializer& s) override final;

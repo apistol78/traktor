@@ -42,6 +42,8 @@ public:
 protected:
 	friend class StagePipeline;
 
+	explicit LayerData(const std::wstring& name);
+
 	std::wstring m_name;
 	bool m_permitTransition = true;
 };
