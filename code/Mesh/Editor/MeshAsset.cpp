@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributeNoHash.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
@@ -109,7 +110,7 @@ void MeshAsset::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion() >= 20)
-		s >> Member< float >(L"previewAngle", m_previewAngle);
+		s >> Member< float >(L"previewAngle", m_previewAngle, AttributeNoHash());
 }
 
 	}
