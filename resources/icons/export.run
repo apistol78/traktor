@@ -314,8 +314,8 @@ local outputs =
 		path = "../runtime/themes/%s/Images/UI",
 		resources =
 		{
-			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1 },
-			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 0, row = 0, width = 1, height = 1, base = 20 },
+			{ name = "LayerHidden", column = 1, row = 0, width = 1, height = 1, base = 20 },
 		}
 	},	
 	{
@@ -377,7 +377,7 @@ local outputs =
 			{ name = "BrowseBackground", column = 4, row = 7, width = 1, height = 1 },
 			{ name = "BrowseImageProcess", column = 5, row = 7, width = 1, height = 1 },
 			{ name = "Playback", column = 0, row = 14, width = 6, height = 1 },
-			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1 },
+			{ name = "LayerVisible", column = 6, row = 7, width = 1, height = 1, base = 20 },
 		}
 	},
 	{
