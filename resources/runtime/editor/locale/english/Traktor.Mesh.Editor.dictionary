@@ -201,13 +201,21 @@
 			<first>MESHASSET_EDITOR_TEXTURE_NOT_ASSIGNED</first>
 			<second>[ No texture ]</second>
 		</item>
-    <item>
-      <first>MESHASSET_EDITOR_TEXTURE_EMBEDDED</first>
-      <second>[ Embedded ]</second>
-    </item>
+		<item>
+			<first>MESHASSET_EDITOR_TEXTURE_EMBEDDED</first>
+			<second>[ Embedded ]</second>
+		</item>
 		<item>
 			<first>MESHASSET_EDITOR_TEXTURE_USAGE</first>
 			<second>Usage</second>
+		</item>
+		<item>
+			<first>MESHASSET_EDITOR_GROUNDED</first>
+			<second>Grounded</second>
+		</item>
+		<item>
+			<first>MESHASSET_EDITOR_EXTRACT_TEXTURE</first>
+			<second>Extract texture...</second>
 		</item>
 		<item>
 			<first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
