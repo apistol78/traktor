@@ -60,12 +60,10 @@
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
-		namespace
-		{
 
 const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}");
 
@@ -158,7 +156,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 35, MeshPipeline, editor::IPipeline)
 
@@ -873,5 +871,4 @@ render::IProgramCompiler* MeshPipeline::getProgramCompiler() const
 	return m_programCompiler;
 }
 
-	}
 }

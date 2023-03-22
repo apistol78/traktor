@@ -20,10 +20,8 @@
 #include "Ui/Command.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.MeshEditorProfile", 0, MeshEditorProfile, scene::ISceneEditorProfile)
 
@@ -116,5 +114,4 @@ Ref< world::EntityData > MeshEditorProfile::createEntityData(
 	return entityData;
 }
 
-	}
 }

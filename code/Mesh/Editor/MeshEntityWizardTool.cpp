@@ -17,10 +17,8 @@
 #include "Ui/MessageBox.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityWizardTool", 0, MeshEntityWizardTool, editor::IWizardTool)
 
@@ -70,5 +68,4 @@ bool MeshEntityWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, d
 	return true;
 }
 
-	}
 }

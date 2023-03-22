@@ -6,13 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/Editor/MeshVertexWriter.h"
 #include "Core/Math/Half.h"
+#include "Mesh/Editor/MeshVertexWriter.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const float* data)
 {
@@ -22,7 +20,7 @@ uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexEle
 
 	vertex += i->getOffset();
 
-	uint32_t elementCount = render::getDataElementCount(i->getDataType());
+	const uint32_t elementCount = render::getDataElementCount(i->getDataType());
 	for (uint32_t j = 0; j < elementCount; ++j)
 	{
 		switch (i->getDataType())
@@ -64,15 +62,14 @@ uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexEle
 
 uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector2& data)
 {
-	float d[] = { data.x, data.y, 0.0f, 0.0f };
+	const float d[] = { data.x, data.y, 0.0f, 0.0f };
 	return writeVertexData(vertexElements, vertex, usage, index, d);
 }
 
 uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector4& data)
 {
-	float d[] = { data.x(), data.y(), data.z(), data.w() };
+	const float d[] = { data.x(), data.y(), data.z(), data.w() };
 	return writeVertexData(vertexElements, vertex, usage, index, d);
 }
 
-	}
 }

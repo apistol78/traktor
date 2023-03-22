@@ -10,10 +10,8 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 struct MeshMaterialTechnique
 {
@@ -22,6 +20,4 @@ struct MeshMaterialTechnique
 	uint32_t hash;					//< Shader technique hash.
 };
 
-	}
 }
-

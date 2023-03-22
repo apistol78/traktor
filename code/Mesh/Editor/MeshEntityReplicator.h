@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 class T_DLLCLASS MeshEntityReplicator : public scene::IEntityReplicator
 {
@@ -55,5 +53,4 @@ private:
 	std::wstring m_modelCachePath;
 };
 
-	}
 }

@@ -24,15 +24,17 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace render
-	{
+}
+
+namespace traktor::render
+{
 
 class IProgramCompiler;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class T_DLLCLASS MeshPipeline : public editor::IPipeline
 {
@@ -94,6 +96,4 @@ private:
 	render::IProgramCompiler* getProgramCompiler() const;
 };
 
-	}
 }
-
