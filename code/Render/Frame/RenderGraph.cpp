@@ -72,7 +72,7 @@ void RenderGraph::destroy()
 
 handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
 {
-	handle_t resourceId = m_nextResourceId++;
+	const handle_t resourceId = m_nextResourceId++;
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
@@ -93,7 +93,7 @@ handle_t RenderGraph::addTransientTargetSet(
 	handle_t sizeReferenceTargetSetId
 )
 {
-	handle_t resourceId = m_nextResourceId++;
+	const handle_t resourceId = m_nextResourceId++;
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
@@ -116,7 +116,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	handle_t sizeReferenceTargetSetId
 )
 {
-	handle_t resourceId = m_nextResourceId++;
+	const handle_t resourceId = m_nextResourceId++;
 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
@@ -133,7 +133,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 
 handle_t RenderGraph::addBuffer(const wchar_t* const name, Buffer* buffer)
 {
-	handle_t resourceId = m_nextResourceId++;
+	const handle_t resourceId = m_nextResourceId++;
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
@@ -444,7 +444,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				continue;
 			for (int32_t j = 0; j < (int32_t)order.size(); ++j)
 			{
-				uint32_t index = order[j];
+				const uint32_t index = order[j];
 				const auto pass = m_passes[index];
 				auto pr = renderContext->alloc< ProfileReportRenderBlock >();
 				pr->name = pass->getName();

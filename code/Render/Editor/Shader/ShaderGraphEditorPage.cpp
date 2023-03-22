@@ -493,7 +493,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 
-		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
+		const ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
 		createEditorNode(shaderNode);
@@ -517,7 +517,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 		shaderNode->setId(Guid::create());
 		m_shaderGraph->addNode(shaderNode);
 
-		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
+		const ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		shaderNode->setPosition(std::make_pair(absolutePosition.x, absolutePosition.y));
 
 		createEditorNode(shaderNode);
@@ -1284,7 +1284,7 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Validate shader graph.
 	std::vector< const Node* > errorNodes;
-	bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);
+	const bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);
 
 	// Update validation indication of each node.
 	for (auto editorNode : m_editorGraph->getNodes())
