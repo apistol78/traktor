@@ -194,6 +194,10 @@
 			<second>Create node...</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_CREATE_GROUP</first>
+			<second>Create group</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_DELETE_NODE</first>
 			<second>Delete</second>
 		</item>
