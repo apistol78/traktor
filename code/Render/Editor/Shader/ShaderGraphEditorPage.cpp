@@ -1434,8 +1434,8 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	fragmentGraph->findNodesOf< OutputPort >(fragmentOutputs);
 
 	// Get input-/output pins; these might differ if fragment has been updated.
-	uint32_t externalInputPinCount = external->getInputPinCount();
-	uint32_t externalOutputPinCount = external->getOutputPinCount();
+	const uint32_t externalInputPinCount = external->getInputPinCount();
+	const uint32_t externalOutputPinCount = external->getOutputPinCount();
 
 	std::vector< const InputPin* > externalInputPins(externalInputPinCount);
 	for (uint32_t i = 0; i < externalInputPinCount; ++i)

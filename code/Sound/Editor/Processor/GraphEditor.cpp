@@ -321,7 +321,7 @@ void GraphEditor::updateView()
 			const InputPin* ip = node->getInputPin(i);
 			T_ASSERT(ip != nullptr);
 
-			Ref< ui::Pin > up = un->createInputPin(ip->getName(), !ip->isOptional());
+			Ref< ui::Pin > up = un->createInputPin(ip->getName(), Guid(), !ip->isOptional());
 			up->setData(L"PIN", const_cast< InputPin* >(ip));
 
 			inputPinMap[ip] = up;
@@ -333,7 +333,7 @@ void GraphEditor::updateView()
 			const OutputPin* op = node->getOutputPin(i);
 			T_ASSERT(op != nullptr);
 
-			Ref< ui::Pin > up = un->createOutputPin(op->getName());
+			Ref< ui::Pin > up = un->createOutputPin(op->getName(), Guid());
 			up->setData(L"PIN", const_cast< OutputPin* >(op));
 
 			outputPinMap[op] = up;

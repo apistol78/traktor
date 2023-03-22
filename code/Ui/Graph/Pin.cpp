@@ -9,17 +9,15 @@
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/Pin.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Pin", Pin, Object)
 
-Pin::Pin(Node* node, const std::wstring& name, const std::wstring& label, Direction direction, bool mandatory)
+Pin::Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory)
 :	m_node(node)
 ,	m_name(name)
-,	m_label(label)
+,	m_id(id)
 ,	m_direction(direction)
 ,	m_mandatory(mandatory)
 {
@@ -30,14 +28,19 @@ Node* Pin::getNode() const
 	return m_node;
 }
 
+void Pin::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
 const std::wstring& Pin::getName() const
 {
 	return m_name;
 }
 
-const std::wstring& Pin::getLabel() const
+const Guid& Pin::getId() const
 {
-	return m_label;
+	return m_id;
 }
 
 Pin::Direction Pin::getDirection() const
@@ -55,5 +58,4 @@ Point Pin::getPosition() const
 	return m_node->getPinPosition(this);
 }
 
-	}
 }

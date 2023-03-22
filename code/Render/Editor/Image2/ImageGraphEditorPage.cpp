@@ -445,13 +445,13 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
-		editorNode->createInputPin(inputPin->getName(), false);
+		editorNode->createInputPin(inputPin->getName(), Guid(), false);
 	}
 
 	for (int i = 0; i < node->getOutputPinCount(); ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
-		editorNode->createOutputPin(outputPin->getName());
+		editorNode->createOutputPin(outputPin->getName(), Guid());
 	}
 
 	editorNode->setData(L"IMGNODE", node);

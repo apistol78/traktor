@@ -269,7 +269,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			top + i * textHeight
 		);
 
-		const std::wstring& label = pin->getLabel();
+		const std::wstring& label = pin->getName();
 		const Size extent = canvas->getTextExtent(label);
 
 		if (pin->isMandatory())
@@ -297,7 +297,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			top + i * textHeight
 		);
 
-		const std::wstring& label = pin->getLabel();
+		const std::wstring& label = pin->getName();
 		const Size extent = canvas->getTextExtent(label);
 
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
@@ -335,12 +335,12 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	int32_t maxWidthPins[2] = { 0, 0 };
 	for (auto inputPin : node->getInputPins())
 	{
-		const int32_t labelExtent = getQuantizedTextWidth(graph, inputPin->getLabel());
+		const int32_t labelExtent = getQuantizedTextWidth(graph, inputPin->getName());
 		maxWidthPins[0] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 	for (auto outputPin : node->getOutputPins())
 	{
-		const int32_t labelExtent = getQuantizedTextWidth(graph, outputPin->getLabel());
+		const int32_t labelExtent = getQuantizedTextWidth(graph, outputPin->getName());
 		maxWidthPins[1] = std::max< int32_t >(maxWidthPins[0], labelExtent);
 	}
 

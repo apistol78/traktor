@@ -10,6 +10,7 @@
 
 #include <string>
 #include <map>
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
@@ -23,10 +24,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Node;
 
@@ -46,13 +45,15 @@ public:
 		DrOutput
 	};
 
-	explicit Pin(Node* node, const std::wstring& name, const std::wstring& label, Direction direction, bool mandatory);
+	explicit Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory);
 
 	Node* getNode() const;
 
+	void setName(const std::wstring& name);
+
 	const std::wstring& getName() const;
 
-	const std::wstring& getLabel() const;
+	const Guid& getId() const;
 
 	Direction getDirection() const;
 
@@ -63,10 +64,9 @@ public:
 private:
 	Node* m_node;
 	std::wstring m_name;
-	std::wstring m_label;
+	Guid m_id;
 	Direction m_direction;
 	bool m_mandatory;
 };
 
-	}
 }
