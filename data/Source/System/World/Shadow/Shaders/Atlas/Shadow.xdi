@@ -132,10 +132,10 @@ Light space position
 				<first>2724</first>
 				<second>736</second>
 			</position>
-			<fromX>-3</fromX>
-			<toX>3</toX>
-			<fromY>-3</fromY>
-			<toY>3</toY>
+			<fromX>-1</fromX>
+			<toX>1</toX>
+			<fromY>-1</fromY>
+			<toY>1</toY>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{61CBC4A4-25BA-BB42-9E2A-6A97004D4AB9}</id>
@@ -327,7 +327,7 @@ Light space position
 				<first>3138</first>
 				<second>884</second>
 			</position>
-			<value>49</value>
+			<value>9</value>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{7E3E0539-035D-794A-99EA-ADB1107E6F41}</id>
