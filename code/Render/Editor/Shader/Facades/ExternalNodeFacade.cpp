@@ -93,36 +93,9 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
-
-		StringOutputStream ss;
-		ss << inputPin->getName();
-
-		if (inputPin->isOptional())
-		{
-			const auto& values = externalNode->getValues();
-			const auto it = values.find(inputPin->getName());
-			if (it != values.end())
-				ss << L" (" << it->second << L")";
-			else if (fragmentGraph)
-			{
-				auto it = std::find_if(inputPorts.begin(), inputPorts.end(), [=](InputPort* inputPort) {
-					return inputPort->getName() == inputPin->getName();
-				});
-				if (it != inputPorts.end())
-				{
-					if (it->haveDefaultValue())
-						ss << L" (" << it->getDefaultValue() << L")";
-				}
-				else
-					ss << L" (N/A)";
-			}
-			else
-				ss << L" (N/A)";
-		}
-
 		editorNode->createInputPin(
 			inputPin->getName(),
-			ss.str(),
+			inputPin->getId(),
 			!inputPin->isOptional()
 		);
 	}
@@ -132,7 +105,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
 			outputPin->getName(),
-			outputPin->getName()
+			outputPin->getId()
 		);
 	}
 

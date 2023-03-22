@@ -17,6 +17,7 @@
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
+#include "Ui/Graph/Pin.h"
 
 namespace traktor
 {
@@ -68,6 +69,7 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 		const InputPin* inputPin = scriptNode->getInputPin(j);
 		editorNode->createInputPin(
 			inputPin->getName(),
+			inputPin->getId(),
 			!inputPin->isOptional()
 		);
 	}
@@ -76,7 +78,8 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	{
 		const OutputPin* outputPin = scriptNode->getOutputPin(j);
 		editorNode->createOutputPin(
-			outputPin->getName()
+			outputPin->getName(),
+			outputPin->getId()
 		);
 	}
 
@@ -107,9 +110,30 @@ void ScriptNodeFacade::refreshEditorNode(
 )
 {
 	Script* scriptNode = checked_type_cast< Script*, false >(shaderNode);
+
 	editorNode->setTitle(scriptNode->getName());
 	editorNode->setComment(scriptNode->getComment());
 	editorNode->setInfo(scriptNode->getInformation());
+
+	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = scriptNode->getInputPin(j);
+		ui::Pin* editorInputPin = editorNode->findInputPin(inputPin->getId());
+		if (editorInputPin)
+			editorInputPin->setName(inputPin->getName());
+		else
+			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional());
+	}
+
+	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = scriptNode->getOutputPin(j);
+		ui::Pin* editorOutputPin = editorNode->findOutputPin(outputPin->getId());
+		if (editorOutputPin)
+			editorOutputPin->setName(outputPin->getName());
+		else
+			editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
+	}
 }
 
 void ScriptNodeFacade::setValidationIndicator(

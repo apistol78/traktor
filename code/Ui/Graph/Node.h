@@ -26,8 +26,13 @@
 
 namespace traktor
 {
-	namespace ui
-	{
+
+class Guid;
+
+}
+
+namespace traktor::ui
+{
 
 class GraphCanvas;
 class GraphControl;
@@ -78,9 +83,7 @@ public:
 
 	const INodeShape* getShape() const;
 
-	Pin* createInputPin(const std::wstring& name, bool mandatory);
-
-	Pin* createInputPin(const std::wstring& name, const std::wstring& label, bool mandatory);
+	Pin* createInputPin(const std::wstring& name, const Guid& id, bool mandatory);
 
 	const RefArray< Pin >& getInputPins() const;
 
@@ -88,15 +91,19 @@ public:
 
 	Pin* findInputPin(const std::wstring& name) const;
 
-	Pin* createOutputPin(const std::wstring& name);
+	Pin* findInputPin(const Guid& id) const;
 
-	Pin* createOutputPin(const std::wstring& name, const std::wstring& label);
+	Pin* createOutputPin(const std::wstring& name, const Guid& id);
+
+	Pin* createOutputPin(const std::wstring& name, const std::wstring& label, const Guid& id);
 
 	const RefArray< Pin >& getOutputPins() const;
 
 	Pin* getOutputPin(uint32_t index) const;
 
 	Pin* findOutputPin(const std::wstring& name) const;
+
+	Pin* findOutputPin(const Guid& id) const;
 
 	bool hit(const Point& p) const;
 
@@ -129,6 +136,4 @@ private:
 	void updateSize();
 };
 
-	}
 }
-

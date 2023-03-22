@@ -68,6 +68,7 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 		const InputPin* inputPin = shaderNode->getInputPin(j);
 		editorNode->createInputPin(
 			inputPin->getName(),
+			inputPin->getId(),
 			!inputPin->isOptional()
 		);
 	}
@@ -76,7 +77,8 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 	{
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
-			outputPin->getName()
+			outputPin->getName(),
+			outputPin->getId()
 		);
 	}
 

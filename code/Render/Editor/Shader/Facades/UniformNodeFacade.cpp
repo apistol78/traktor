@@ -57,6 +57,7 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 		const InputPin* inputPin = shaderNode->getInputPin(j);
 		editorNode->createInputPin(
 			inputPin->getName(),
+			inputPin->getId(),
 			!inputPin->isOptional()
 		);
 	}
@@ -65,7 +66,8 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 	{
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->createOutputPin(
-			outputPin->getName()
+			outputPin->getName(),
+			outputPin->getId()
 		);
 	}
 
