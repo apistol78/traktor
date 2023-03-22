@@ -6,17 +6,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Engine/AudioLayer.h"
 #include "Runtime/Engine/AudioLayerData.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 #include "Sound/Sound.h"
 
 namespace traktor::runtime
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.AudioLayerData", 0, AudioLayerData, LayerData)
+
+AudioLayerData::AudioLayerData()
+:	LayerData(L"audio")
+{
+}
 
 Ref< Layer > AudioLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {

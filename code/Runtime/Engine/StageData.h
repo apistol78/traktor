@@ -95,7 +95,7 @@ public:
 private:
 	friend class StagePipeline;
 
-	std::wstring m_name;
+	std::wstring m_name = L"stage";
 	Guid m_inherit;
 	RefArray< LayerData > m_layers;
 	resource::Id< IRuntimeClass > m_class;

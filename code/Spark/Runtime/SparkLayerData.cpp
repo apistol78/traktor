@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/IEnvironment.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Movie.h"
@@ -14,16 +13,16 @@
 #include "Spark/Runtime/SparkLayerData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Runtime/IEnvironment.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkLayerData", 1, SparkLayerData, runtime::LayerData)
 
 SparkLayerData::SparkLayerData()
-:	m_clearBackground(false)
+:	runtime::LayerData(L"spark")
+,	m_clearBackground(false)
 ,	m_enableSound(true)
 {
 }
@@ -87,5 +86,4 @@ void SparkLayerData::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

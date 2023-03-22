@@ -6,18 +6,23 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/IEnvironment.h"
-#include "Runtime/Engine/ScreenLayer.h"
-#include "Runtime/Engine/ScreenLayerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/Engine/ScreenLayer.h"
+#include "Runtime/Engine/ScreenLayerData.h"
 
 namespace traktor::runtime
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScreenLayerData", 0, ScreenLayerData, LayerData)
+
+ScreenLayerData::ScreenLayerData()
+:	LayerData(L"screen")
+{
+}
 
 Ref< Layer > ScreenLayerData::createInstance(Stage* stage, IEnvironment* environment) const
 {
