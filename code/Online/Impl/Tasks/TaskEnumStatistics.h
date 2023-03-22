@@ -11,10 +11,8 @@
 #include <map>
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IStatisticsProvider;
 
@@ -25,7 +23,7 @@ class TaskEnumStatistics : public ITask
 public:
 	typedef void (Object::*sink_method_t)(const std::map< std::wstring, int32_t >&);
 
-	TaskEnumStatistics(
+	explicit TaskEnumStatistics(
 		IStatisticsProvider* provider,
 		Object* sinkObject,
 		sink_method_t sinkMethod
@@ -39,6 +37,4 @@ private:
 	sink_method_t m_sinkMethod;
 };
 
-	}
 }
-

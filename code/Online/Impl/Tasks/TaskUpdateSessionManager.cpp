@@ -9,10 +9,8 @@
 #include "Online/Impl/Tasks/TaskUpdateSessionManager.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskUpdateSessionManager", TaskUpdateSessionManager, ITask)
 
@@ -29,5 +27,4 @@ void TaskUpdateSessionManager::execute(TaskQueue* taskQueue)
 	m_completed = true;
 }
 
-	}
 }

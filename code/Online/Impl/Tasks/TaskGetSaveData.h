@@ -11,10 +11,8 @@
 #include <string>
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class ISaveDataProvider;
 class AttachmentResult;
@@ -24,7 +22,7 @@ class TaskGetSaveData : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskGetSaveData(
+	explicit TaskGetSaveData(
 		ISaveDataProvider* provider,
 		const std::wstring& saveDataId,
 		AttachmentResult* result
@@ -38,6 +36,4 @@ private:
 	Ref< AttachmentResult > m_result;
 };
 
-	}
 }
-

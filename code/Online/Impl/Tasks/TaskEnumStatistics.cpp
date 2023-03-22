@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskEnumStatistics.h"
 #include "Online/Provider/IStatisticsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskEnumStatistics", TaskEnumStatistics, ITask)
 
@@ -38,5 +36,4 @@ void TaskEnumStatistics::execute(TaskQueue* taskQueue)
 	T_DEBUG(L"Online; Finished enumerating statistics");
 }
 
-	}
 }

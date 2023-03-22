@@ -11,10 +11,8 @@
 #include "Online/Impl/Tasks/TaskCreateParty.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskCreateParty", TaskCreateParty, ITask)
 
@@ -49,5 +47,4 @@ void TaskCreateParty::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

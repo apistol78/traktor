@@ -11,10 +11,8 @@
 #include <map>
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IAchievementsProvider;
 
@@ -25,7 +23,7 @@ class TaskEnumAchievements : public ITask
 public:
 	typedef void (Object::*sink_method_t)(const std::map< std::wstring, bool >&);
 
-	TaskEnumAchievements(
+	explicit TaskEnumAchievements(
 		IAchievementsProvider* provider,
 		Object* sinkObject,
 		sink_method_t sinkMethod
@@ -39,6 +37,4 @@ private:
 	sink_method_t m_sinkMethod;
 };
 
-	}
 }
-

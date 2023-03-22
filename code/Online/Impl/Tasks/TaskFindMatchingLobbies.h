@@ -10,10 +10,8 @@
 
 #include "Online/Impl/ITask.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IMatchMakingProvider;
 class LobbyArrayResult;
@@ -25,7 +23,7 @@ class TaskFindMatchingLobbies : public ITask
 	T_RTTI_CLASS;
 
 public:
-	TaskFindMatchingLobbies(
+	explicit TaskFindMatchingLobbies(
 		IMatchMakingProvider* matchMakingProvider,
 		UserCache* userCache,
 		const LobbyFilter* filter,
@@ -41,6 +39,4 @@ private:
 	Ref< LobbyArrayResult > m_result;
 };
 
-	}
 }
-

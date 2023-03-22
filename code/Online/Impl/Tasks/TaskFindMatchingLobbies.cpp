@@ -11,10 +11,8 @@
 #include "Online/Impl/Tasks/TaskFindMatchingLobbies.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskFindMatchingLobbies", TaskFindMatchingLobbies, ITask)
 
@@ -57,5 +55,4 @@ void TaskFindMatchingLobbies::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

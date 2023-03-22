@@ -11,10 +11,8 @@
 #include "Online/Impl/Tasks/TaskCreateLobby.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskCreateLobby", TaskCreateLobby, ITask)
 
@@ -53,5 +51,4 @@ void TaskCreateLobby::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

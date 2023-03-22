@@ -12,10 +12,8 @@
 #include "Online/Impl/ITask.h"
 #include "Online/Provider/ILeaderboardsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class TaskEnumLeaderboards : public ITask
 {
@@ -24,7 +22,7 @@ class TaskEnumLeaderboards : public ITask
 public:
 	typedef void (Object::*sink_method_t)(const std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >&);
 
-	TaskEnumLeaderboards(
+	explicit TaskEnumLeaderboards(
 		ILeaderboardsProvider* provider,
 		Object* sinkObject,
 		sink_method_t sinkMethod
@@ -38,6 +36,4 @@ private:
 	sink_method_t m_sinkMethod;
 };
 
-	}
 }
-

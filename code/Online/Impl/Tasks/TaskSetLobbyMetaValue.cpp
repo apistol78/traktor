@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskSetLobbyMetaValue.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskSetLobbyMetaValue", TaskSetLobbyMetaValue, ITask)
 
@@ -43,5 +41,4 @@ void TaskSetLobbyMetaValue::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

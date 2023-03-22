@@ -9,10 +9,8 @@
 #include "Core/Log/Log.h"
 #include "Online/Impl/Tasks/TaskEnumLeaderboards.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskEnumLeaderboards", TaskEnumLeaderboards, ITask)
 
@@ -37,5 +35,4 @@ void TaskEnumLeaderboards::execute(TaskQueue* taskQueue)
 	T_DEBUG(L"Online; Finished enumerating leaderboards");
 }
 
-	}
 }

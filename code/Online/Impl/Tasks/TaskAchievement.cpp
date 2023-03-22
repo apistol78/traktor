@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskAchievement.h"
 #include "Online/Provider/IAchievementsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskAchievement", TaskAchievement, ITask)
 
@@ -43,5 +41,4 @@ void TaskAchievement::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }

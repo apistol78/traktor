@@ -10,10 +10,8 @@
 #include "Online/Impl/Tasks/TaskSetSaveData.h"
 #include "Online/Provider/ISaveDataProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskSetSaveData", TaskSetSaveData, ITask)
 
@@ -49,5 +47,4 @@ void TaskSetSaveData::execute(TaskQueue* taskQueue)
 		m_result->fail();
 }
 
-	}
 }
