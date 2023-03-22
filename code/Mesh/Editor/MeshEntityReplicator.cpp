@@ -23,10 +23,8 @@
 #include "Render/Editor/Texture/TextureSet.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-    namespace mesh
-    {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEntityReplicator, scene::IEntityReplicator)
 
@@ -123,5 +121,4 @@ void MeshEntityReplicator::transform(
 	entityData->removeComponent(componentData);
 }
 
-    }
 }

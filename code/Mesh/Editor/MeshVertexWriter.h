@@ -13,10 +13,8 @@
 #include "Core/Math/Vector4.h"
 #include "Render/VertexElement.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const float* data);
 
@@ -24,6 +22,4 @@ uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexEle
 
 uint32_t writeVertexData(const AlignedVector< render::VertexElement >& vertexElements, uint8_t* vertex, render::DataUsage usage, uint32_t index, const Vector4& data);
 
-	}
 }
-
