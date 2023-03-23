@@ -17,15 +17,13 @@ extern "C"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 class InflateLzfImpl : public RefCountImpl< IRefCount >
 {
 public:
-	InflateLzfImpl(IStream* stream, uint32_t blockSize)
+	explicit InflateLzfImpl(IStream* stream, uint32_t blockSize)
 	:	m_stream(stream)
 	,	m_compressedBlock(blockSize + blockSize / 16 + 64 + 3)
 	,	m_decompressedBuffer(blockSize)
@@ -49,7 +47,7 @@ public:
 		// Copy from buffer.
 		if (m_decompressedBufferSize > 0)
 		{
-			int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
+			const int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
 
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
@@ -76,7 +74,7 @@ public:
 			uint32_t compressedBlockSize = 0;
 			Reader(m_stream) >> compressedBlockSize;
 
-			bool uncompressedBlock = (compressedBlockSize & 0x80000000UL) != 0;
+			const bool uncompressedBlock = (compressedBlockSize & 0x80000000UL) != 0;
 			compressedBlockSize &= ~0x80000000UL;
 
 			if (!compressedBlockSize)
@@ -96,7 +94,7 @@ public:
 					return -1;
 				}
 
-				uint32_t decompressLength = lzf_decompress(
+				const uint32_t decompressLength = lzf_decompress(
 					&m_compressedBlock[0],
 					compressedBlockSize,
 					ptr,
@@ -137,7 +135,7 @@ public:
 			uint32_t compressedBlockSize = 0;
 			Reader(m_stream) >> compressedBlockSize;
 
-			bool uncompressedBlock = (compressedBlockSize & 0x80000000UL) != 0;
+			const bool uncompressedBlock = (compressedBlockSize & 0x80000000UL) != 0;
 			compressedBlockSize &= ~0x80000000UL;
 
 			if (!compressedBlockSize)
@@ -188,7 +186,7 @@ public:
 				m_decompressedBufferSize = compressedBlockSize;
 			}
 
-			int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
+			const int64_t ncopy = std::min< int64_t >(m_decompressedBufferSize, nbytes);
 
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
@@ -309,5 +307,4 @@ void InflateStreamLzf::flush()
 {
 }
 
-	}
 }

@@ -12,12 +12,8 @@
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/MemoryStream.h"
 
-namespace traktor
+namespace traktor::compress::test
 {
-	namespace compress
-	{
-		namespace test
-		{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.compress.test.CaseLzf", 0, CaseLzf, traktor::test::Case)
 
@@ -66,6 +62,4 @@ void CaseLzf::run()
 	CASE_ASSERT(std::memcmp(source, destination, sizeof_array(source)) == 0);
 }
 
-		}
-	}
 }

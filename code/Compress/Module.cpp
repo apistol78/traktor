@@ -14,10 +14,8 @@
 #	include "Compress/Zip/DeflateStreamZip.h"
 #	include "Compress/Zip/InflateStreamZip.h"
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 extern "C" void __module__Traktor_Compress()
 {
@@ -27,7 +25,6 @@ extern "C" void __module__Traktor_Compress()
 	T_FORCE_LINK_REF(InflateStreamZip);
 }
 
-	}
 }
 
 #endif

@@ -13,12 +13,10 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/SafeDestroy.h"
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
+	namespace
 	{
-		namespace
-		{
 
 voidpf deflateZAlloc(voidpf opaque, uInt items, uInt size)
 {
@@ -30,7 +28,7 @@ void deflateZFree(voidpf opaque, voidpf address)
 	Alloc::free(address);
 }
 
-		}
+	}
 
 class DeflateZipImpl : public RefCountImpl< IRefCount >
 {
@@ -200,5 +198,4 @@ void DeflateStreamZip::flush()
 	m_impl->flush();
 }
 
-	}
 }

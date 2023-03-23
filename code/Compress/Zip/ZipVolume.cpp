@@ -17,12 +17,10 @@
 #include "Core/Misc/TString.h"
 #include "Core/Misc/WildCompare.h"
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct EOCD
@@ -81,7 +79,7 @@ struct LFH
 
 #pragma pack()
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.ZipVolume", ZipVolume, IVolume)
 
@@ -431,5 +429,4 @@ void ZipVolume::dump(int32_t index) const
 	log::info << DecreaseIndent;
 }
 
-	}
 }

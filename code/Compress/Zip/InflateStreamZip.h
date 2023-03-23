@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 class InflateZipImpl;
 
@@ -62,6 +60,4 @@ private:
 	Ref< InflateZipImpl > m_impl;
 };
 
-	}
 }
-
