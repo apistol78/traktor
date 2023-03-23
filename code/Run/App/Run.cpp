@@ -210,31 +210,39 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 	StringOutputStream stdOut;
 	StringOutputStream stdErr;
 	std::wstring str;
-	while (!process->wait(0))
+	for (;;)
 	{
-		auto pipe = process->waitPipeStream(100);
-		if (pipe == process->getPipeStream(IProcess::SpStdOut))
+		Ref< IStream > pipe;
+		IProcess::WaitPipeResult result = process->waitPipeStream(100, pipe);
+		if (result == IProcess::Ready && pipe != nullptr)
 		{
-			PipeReader::Result result;
-			while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
+			if (pipe == process->getPipeStream(IProcess::SpStdOut))
 			{
-				if (fileOutput)
-					(*fileOutput) << str << Endl;
-				else if (!nullOutput)
-					log::info << str << Endl;
-				stdOut << str << Endl;
+				PipeReader::Result result;
+				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
+				{
+					if (fileOutput)
+						(*fileOutput) << str << Endl;
+					else if (!nullOutput)
+						log::info << str << Endl;
+					stdOut << str << Endl;
+				}
+			}
+			else if (pipe == process->getPipeStream(IProcess::SpStdErr))
+			{
+				PipeReader::Result result;
+				while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
+				{
+					if (fileOutput)
+						(*fileOutput) << str << Endl;
+					else if (!nullOutput)
+						log::info << str << Endl;
+					stdErr << str << Endl;
+				}
 			}
 		}
-		else if (pipe == process->getPipeStream(IProcess::SpStdErr))
-		{
-			PipeReader::Result result;
-			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
-			{
-				if (!nullOutput)
-					log::error << str << Endl;
-				stdErr << str << Endl;
-			}
-		}
+		else if (result == IProcess::Terminated)
+			break;
 	}
 
 	safeClose(fileOutput);

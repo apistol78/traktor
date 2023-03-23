@@ -31,7 +31,7 @@ class T_DLLCLASS ProcessWin32 : public IProcess
 	T_RTTI_CLASS;
 
 public:
-	ProcessWin32(
+	explicit ProcessWin32(
 		HANDLE hProcess,
 		DWORD dwProcessId,
 		HANDLE hThread,
@@ -51,7 +51,7 @@ public:
 
 	virtual IStream* getPipeStream(StdPipe pipe) override final;
 
-	virtual IStream* waitPipeStream(int32_t timeout) override final;
+	virtual WaitPipeResult waitPipeStream(int32_t timeout, Ref< IStream >& outPipe) override final;
 
 	virtual bool signal(SignalType signalType) override final;
 

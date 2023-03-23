@@ -42,7 +42,7 @@ PipeReader::Result PipeReader::readLine(std::wstring& outLine)
 	if (!m_stream)
 		return RtEnd;
 
-	int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
+	const int64_t nrecv = m_stream->read(buffer, sizeof(buffer));
 	if (nrecv < 0)
 	{
 		m_stream = nullptr;

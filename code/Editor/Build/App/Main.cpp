@@ -287,28 +287,34 @@ int main(int argc, const char** argv)
 	std::list< std::wstring > errors;
 	std::wstring str;
 
-	while (!process->wait(0))
+	for (;;)
 	{
-		auto pipe = process->waitPipeStream(100);
-		if (pipe == process->getPipeStream(IProcess::SpStdOut))
+		Ref< IStream > pipe;
+		IProcess::WaitPipeResult result = process->waitPipeStream(100, pipe);
+		if (result == IProcess::Ready && pipe != nullptr)
 		{
-			PipeReader::Result result;
-			while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
-				log::info << str << Endl;
-		}
-		else if (pipe == process->getPipeStream(IProcess::SpStdErr))
-		{
-			PipeReader::Result result;
-			while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
+			if (pipe == process->getPipeStream(IProcess::SpStdOut))
 			{
-				str = trim(str);
-				if (!str.empty())
+				PipeReader::Result result;
+				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
+					log::info << str << Endl;
+			}
+			else if (pipe == process->getPipeStream(IProcess::SpStdErr))
+			{
+				PipeReader::Result result;
+				while ((result = stdErrReader.readLine(str)) == PipeReader::RtOk)
 				{
-					log::error << str << Endl;
-					errors.push_back(str);
+					str = trim(str);
+					if (!str.empty())
+					{
+						log::error << str << Endl;
+						errors.push_back(str);
+					}
 				}
 			}
 		}
+		else if (result == IProcess::Terminated)
+			break;
 	}
 
 	if (!errors.empty())

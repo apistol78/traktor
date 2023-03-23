@@ -60,15 +60,13 @@ public:
 
 	virtual int64_t read(void* block, int64_t nbytes)
 	{
+		// Ensure we're not reading more data than available on pipe
+		// since we don't want the read to block.
 		DWORD npending = 0;
 		if (!PeekNamedPipe(m_hPipe, nullptr, 0, nullptr, &npending, nullptr))
-			npending = 0;
-
+			return -1;
 		if (npending == 0)
-		{
-			bool processTerminated = (WaitForSingleObject(m_hProcess, 0) == WAIT_OBJECT_0);
-			return processTerminated ? -1 : 0;
-		}
+			return 0;
 
 		DWORD nread = 0;
 		if (!ReadFile(m_hPipe, block, (DWORD)min(npending, nbytes), &nread, NULL))
@@ -160,26 +158,35 @@ IStream* ProcessWin32::getPipeStream(StdPipe pipe)
 		return nullptr;
 }
 
-IStream* ProcessWin32::waitPipeStream(int32_t timeout)
+IProcess::WaitPipeResult ProcessWin32::waitPipeStream(int32_t timeout, Ref< IStream >& outPipe)
 {
-	HANDLE hs[] = { m_hStdOutRead, m_hStdErrRead, m_hProcess };
+	T_FATAL_ASSERT(timeout >= 0);
+	DWORD npending;
 
-	DWORD result = WaitForMultipleObjects(3, hs, FALSE, timeout);
-	if (result >= WAIT_OBJECT_0 && result < WAIT_OBJECT_0 + 3)
+	for (int32_t i = 0; i < timeout; i += 10)
 	{
-		if (result == WAIT_OBJECT_0)
-			return m_pipeStdOut;
-		else if (result == WAIT_OBJECT_0 + 1)
-			return m_pipeStdErr;
-		else
+		if (PeekNamedPipe(m_hStdOutRead, nullptr, 0, nullptr, &npending, nullptr))
 		{
-			// Process signal, probably terminated.
-			return nullptr;
+			if (npending > 0)
+			{
+				outPipe = m_pipeStdOut;
+				return Ready;
+			}
 		}
+		if (PeekNamedPipe(m_hStdErrRead, nullptr, 0, nullptr, &npending, nullptr))
+		{
+			if (npending > 0)
+			{
+				outPipe = m_pipeStdErr;
+				return Ready;
+			}
+		}
+
+		if (wait(10))
+			return Terminated;
 	}
 
-	// Timeout.
-	return nullptr;
+	return Timeout;
 }
 
 bool ProcessWin32::signal(SignalType signalType)
