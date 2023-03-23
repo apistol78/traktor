@@ -302,8 +302,8 @@ void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
 {
 	Joint& joint = m_joints[jointId];
 
-	Transform Tcurr = joint.getTransform();
-	Transform Tnext(Tcurr.translation(), rotation);
+	const Transform Tcurr = joint.getTransform();
+	const Transform Tnext(Tcurr.translation(), rotation);
 	joint.setTransform(Tnext);
 
 	for (uint32_t i = 0; i < (uint32_t)m_joints.size(); ++i)
@@ -311,7 +311,7 @@ void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
 		Joint& child = m_joints[i];
 		if (child.getParent() == jointId)
 		{
-			Transform Tchild = Tnext.inverse() * Tcurr * child.getTransform();
+			const Transform Tchild = Tnext.inverse() * Tcurr * child.getTransform();
 			child.setTransform(Tchild);
 		}
 	}
@@ -322,24 +322,24 @@ void Model::setJointRotation(uint32_t jointId, const Quaternion& rotation)
 		{
 			Ref< Pose > pose = new Pose(*animation->getKeyFramePose(i));
 
-			Transform TposeCurr = pose->getJointTransform(jointId);
+			const Transform TposeCurr = pose->getJointTransform(jointId);
 
-			Quaternion QrotationDelta = TposeCurr.rotation() * Tcurr.rotation().inverse();
-			Transform TposeNew(
+			const Quaternion QrotationDelta = TposeCurr.rotation() * Tcurr.rotation().inverse();
+			const Transform TposeNew(
 				TposeCurr.translation(),
 				QrotationDelta * rotation
 			);
 
 			pose->setJointTransform(jointId, TposeNew);
 
-			Transform TposeDelta = TposeNew.inverse() * TposeCurr;
+			const Transform TposeDelta = TposeNew.inverse() * TposeCurr;
 			for (uint32_t j = 0; j < (uint32_t)m_joints.size(); ++j)
 			{
 				const Joint& child = m_joints[j];
 				if (child.getParent() == jointId)
 				{
-					Transform tmp0 = pose->getJointTransform(j);
-					Transform tmp1 = TposeNew.inverse() * TposeCurr * tmp0;
+					const Transform tmp0 = pose->getJointTransform(j);
+					const Transform tmp1 = TposeNew.inverse() * TposeCurr * tmp0;
 					pose->setJointTransform(j, tmp1);
 				}
 			}
