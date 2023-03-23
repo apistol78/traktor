@@ -547,7 +547,7 @@ bool Image::save(const Path& fileName) const
 	if (file == nullptr)
 		return false;
 
-	bool result = imageFormat->write(file, this);
+	const bool result = imageFormat->write(file, this);
 	checkData(m_data, m_size);
 
 	file->close();
@@ -563,7 +563,7 @@ bool Image::save(IStream* stream, const std::wstring& extension) const
 	if (imageFormat == nullptr)
 		return false;
 
-	bool result = imageFormat->write(stream, this);
+	const bool result = imageFormat->write(stream, this);
 	checkData(m_data, m_size);
 
 	return result;
