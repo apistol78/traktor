@@ -35,12 +35,9 @@ public:
 		HANDLE hProcess,
 		DWORD dwProcessId,
 		HANDLE hThread,
-		HANDLE hStdInRead,
 		HANDLE hStdInWrite,
 		HANDLE hStdOutRead,
-		HANDLE hStdOutWrite,
-		HANDLE hStdErrRead,
-		HANDLE hStdErrWrite
+		HANDLE hStdErrRead
 	);
 
 	virtual ~ProcessWin32();
@@ -63,12 +60,9 @@ private:
 	HANDLE m_hProcess;
 	DWORD m_dwProcessId;
 	HANDLE m_hThread;
-	HANDLE m_hStdInRead;
 	HANDLE m_hStdInWrite;
 	HANDLE m_hStdOutRead;
-	HANDLE m_hStdOutWrite;
 	HANDLE m_hStdErrRead;
-	HANDLE m_hStdErrWrite;
 	Ref< IStream > m_pipeStdOut;
 	Ref< IStream > m_pipeStdErr;
 };

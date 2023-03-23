@@ -407,7 +407,7 @@ Ref< IProcess > OS::execute(
 		_tcscpy_s(cmd, wstots(ss.str()).c_str());
 		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
 
-		if ((flags & EfRedirectStdIO) != 0)
+		if ((flags & (EfRedirectStdIO | EfMute)) != 0)
 		{
 			// Create IO objects.
 			SECURITY_DESCRIPTOR sd;
@@ -448,7 +448,7 @@ Ref< IProcess > OS::execute(
 		STARTUPINFO si;
 		std::memset(&si, 0, sizeof(si));
 		si.cb = sizeof(STARTUPINFO);
-		si.dwFlags = ((flags & EfRedirectStdIO) != 0) ? STARTF_USESTDHANDLES : 0;
+		si.dwFlags = ((flags & (EfRedirectStdIO | EfMute)) != 0) ? STARTF_USESTDHANDLES : 0;
 		si.hStdInput = hStdInRead;
 		si.hStdOutput = hStdOutWrite;
 		si.hStdError = hStdErrWrite;
@@ -457,7 +457,6 @@ Ref< IProcess > OS::execute(
 		std::memset(&pi, 0, sizeof(pi));
 
 		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
-
 		if ((flags & EfMute) != 0)
 		{
 			dwCreationFlags = CREATE_NO_WINDOW;
@@ -485,16 +484,17 @@ Ref< IProcess > OS::execute(
 			return nullptr;
 		}
 
+		CloseHandle(hStdInRead);
+		CloseHandle(hStdOutWrite);
+		CloseHandle(hStdErrWrite);
+
 		return new ProcessWin32(
 			pi.hProcess,
 			pi.dwProcessId,
 			pi.hThread,
-			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,
-			hStdOutWrite,
-			hStdErrRead,
-			hStdErrWrite
+			hStdErrRead
 		);
 	}
 }
