@@ -18,12 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::compress::test
 {
-	namespace compress
-	{
-		namespace test
-		{
 
 class T_DLLCLASS CaseLzf : public traktor::test::Case
 {
@@ -33,6 +29,4 @@ public:
 	virtual void run() override final;
 };
 
-		}
-	}
 }

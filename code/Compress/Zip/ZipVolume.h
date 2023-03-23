@@ -23,10 +23,12 @@
 namespace traktor
 {
 
-class IStream;
+    class IStream;
 
-    namespace compress
-    {
+}
+
+namespace traktor::compress
+{
 
 class T_DLLCLASS ZipVolume : public IVolume
 {
@@ -93,5 +95,4 @@ private:
     void dump(int32_t index) const;
 };
 
-    }
 }

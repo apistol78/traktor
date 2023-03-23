@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 class InflateLzfImpl;
 
@@ -34,7 +32,7 @@ class T_DLLCLASS InflateStreamLzf : public IStream
 	T_RTTI_CLASS;
 
 public:
-	InflateStreamLzf(IStream* stream, uint32_t blockSize = 64 * 1024);
+	explicit InflateStreamLzf(IStream* stream, uint32_t blockSize = 64 * 1024);
 
 	virtual ~InflateStreamLzf();
 
@@ -62,6 +60,4 @@ private:
 	Ref< InflateLzfImpl > m_impl;
 };
 
-	}
 }
-

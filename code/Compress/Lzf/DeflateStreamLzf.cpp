@@ -18,15 +18,13 @@ extern "C"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 class DeflateLzfImpl : public RefCountImpl< IRefCount >
 {
 public:
-	DeflateLzfImpl(IStream* stream, uint32_t blockSize)
+	explicit DeflateLzfImpl(IStream* stream, uint32_t blockSize)
 	:	m_stream(stream)
 	,	m_uncompressedBuffer(blockSize)
 	,	m_compressedBlock(blockSize - 1)
@@ -50,7 +48,7 @@ public:
 
 		while (nbytes > 0)
 		{
-			int64_t ncopy = std::min< int64_t >(nbytes, int64_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
+			const int64_t ncopy = std::min< int64_t >(nbytes, int64_t(m_uncompressedBuffer.size() - m_uncompressedBufferCount));
 			std::memcpy(&m_uncompressedBuffer[m_uncompressedBufferCount], ptr, ncopy);
 			m_uncompressedBufferCount += ncopy;
 			ptr += ncopy;
@@ -58,7 +56,7 @@ public:
 
 			if (m_uncompressedBufferCount >= (int64_t)m_uncompressedBuffer.size())
 			{
-				uint32_t compressedBlockSize = lzf_compress(
+				const uint32_t compressedBlockSize = lzf_compress(
 					&m_uncompressedBuffer[0],
 					m_uncompressedBufferCount,
 					&m_compressedBlock[0],
@@ -212,5 +210,4 @@ void DeflateStreamLzf::flush()
 	m_impl->flush();
 }
 
-	}
 }

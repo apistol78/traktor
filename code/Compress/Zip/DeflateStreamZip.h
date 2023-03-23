@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::compress
 {
-	namespace compress
-	{
 
 class DeflateZipImpl;
 
@@ -34,7 +32,7 @@ class T_DLLCLASS DeflateStreamZip : public IStream
 	T_RTTI_CLASS;
 
 public:
-	DeflateStreamZip(IStream* stream, uint32_t internalBufferSize = 4096);
+	explicit DeflateStreamZip(IStream* stream, uint32_t internalBufferSize = 4096);
 
 	virtual ~DeflateStreamZip();
 
@@ -62,6 +60,4 @@ private:
 	Ref< DeflateZipImpl > m_impl;
 };
 
-	}
 }
-
