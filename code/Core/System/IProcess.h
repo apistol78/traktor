@@ -60,6 +60,13 @@ public:
 		StCtrlBreak
 	};
 
+	enum WaitPipeResult
+	{
+		Timeout = 0,
+		Ready = 1,
+		Terminated = 2
+	};
+
 	/*! Set process scheduling priority.
 	 *
 	 * \param New process priority.
@@ -75,9 +82,11 @@ public:
 
 	/*! Wait for a pipe stream which is ready to be read.
 	 *
-	 * \return Pipe stream.
+	 * \param timeout Timeout in milliseconds.
+	 * \param outPipe Pipe ready to be read.
+	 * \return Wait result.
 	 */
-	virtual IStream* waitPipeStream(int32_t timeout) = 0;
+	virtual WaitPipeResult waitPipeStream(int32_t timeout, Ref< IStream >& outPipe) = 0;
 
 	/*! Send signal to process.
 	 *

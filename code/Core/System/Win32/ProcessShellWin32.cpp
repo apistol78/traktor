@@ -38,10 +38,9 @@ IStream* ProcessShellWin32::getPipeStream(StdPipe pipe)
 	return nullptr;
 }
 
-IStream* ProcessShellWin32::waitPipeStream(int32_t timeout)
+IProcess::WaitPipeResult ProcessShellWin32::waitPipeStream(int32_t timeout, Ref< IStream >& outPipe)
 {
-	wait(timeout);
-	return nullptr;
+	return wait(timeout) ? Terminated : Timeout;
 }
 
 bool ProcessShellWin32::signal(SignalType signalType)
