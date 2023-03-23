@@ -20,16 +20,16 @@
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseButtonDownEvent.h"
 
-namespace traktor
+#include "Core/Log/Log.h"
+
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int c_valueWidth = 200;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.VectorPropertyItem", VectorPropertyItem, PropertyItem)
 
@@ -70,6 +70,7 @@ void VectorPropertyItem::createInPlaceControls(PropertyList* parent)
 			)
 		);
 		m_editors[i]->setVisible(false);
+		m_editors[i]->addEventHandler< KeyEvent >(this, &VectorPropertyItem::eventEditKey);
 		m_editors[i]->addEventHandler< FocusEvent >(this, &VectorPropertyItem::eventEditFocus);
 	}
 }
@@ -190,6 +191,41 @@ bool VectorPropertyItem::isEditing() const
 	return false;
 }
 
+void VectorPropertyItem::eventEditKey(KeyEvent* event)
+{
+	if (event->getCharacter() == L'\t')
+	{
+		int32_t from = -1;
+
+		// Hide all first so focus handler doesn't mess with us later.
+		for (int32_t i = 0; i < m_dimension; ++i)
+		{
+			if (m_editors[i]->isVisible(false))
+			{
+				m_value[i] = parseString< float >(m_editors[i]->getText());
+				m_editors[i]->setVisible(false);
+				from = i;
+			}
+		}
+
+		if (from >= 0)
+		{
+			int32_t next = ((event->getKeyState() & KsShift) == 0) ? from + 1 : from - 1;
+			if (next >= m_dimension)
+				next = 0;
+			else if (next < 0)
+				next = m_dimension - 1;
+
+			m_editors[next]->setText(toString(m_value[next], 3));
+			m_editors[next]->setVisible(true);
+			m_editors[next]->setFocus();
+			m_editors[next]->selectAll();
+		}
+
+		event->consume();
+	}
+}
+
 void VectorPropertyItem::eventEditFocus(FocusEvent* event)
 {
 	if (event->lostFocus())
@@ -206,5 +242,4 @@ void VectorPropertyItem::eventEditFocus(FocusEvent* event)
 	}
 }
 
-	}
 }
