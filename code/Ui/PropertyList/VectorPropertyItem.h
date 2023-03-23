@@ -65,6 +65,8 @@ private:
 
 	bool isEditing() const;
 
+	void eventEditKey(KeyEvent* event);
+
 	void eventEditFocus(FocusEvent* event);
 };
 
