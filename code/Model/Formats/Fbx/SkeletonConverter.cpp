@@ -70,7 +70,7 @@ bool convertSkeleton(
 	// Find bind pose, if skeleton is animated then we cannot use
 	// global evaluation as it's the first frame of the animation.
 	FbxPose* bindPose = nullptr;
-	int32_t poseCount = scene->GetPoseCount();
+	const int32_t poseCount = scene->GetPoseCount();
     for (int32_t i = 0; i < poseCount; i++)
     {
         FbxPose* pose = scene->GetPose(i);
@@ -81,8 +81,8 @@ bool convertSkeleton(
 		}
 	}
 
-	bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
-		std::wstring jointName = getJointName(node);
+	const bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
+		const std::wstring jointName = getJointName(node);
 
 		// Calculate joint transformation.
 		FbxMatrix nodeTransform;
@@ -110,7 +110,7 @@ bool convertSkeleton(
 
 		const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
-		Matrix44 Mnode = convertMatrix(nodeTransform);
+		const Matrix44 Mnode = convertMatrix(nodeTransform);
 		Matrix44 Mjoint = Mnode * Mrx90;
 
 		const Vector4 S(
@@ -124,11 +124,11 @@ bool convertSkeleton(
 		uint32_t parentId = c_InvalidIndex;
 		if (parent != nullptr)
 		{
-			std::wstring parentJointName = getJointName(parent);
+			const std::wstring parentJointName = getJointName(parent);
 			parentId = outModel.findJointIndex(parentJointName);
 			if (parentId != c_InvalidIndex)
 			{
-				Matrix44 Mparent = outModel.getJointGlobalTransform(parentId).toMatrix44();
+				const Matrix44 Mparent = outModel.getJointGlobalTransform(parentId).toMatrix44();
 				Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
 			}
 			else
@@ -164,16 +164,16 @@ Ref< Pose > convertPose(
 	traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
 		FbxAMatrix nodeTransform = node->EvaluateGlobalTransform(time, FbxNode::eSourcePivot, true, true);
 
-		Matrix44 Mnode = convertMatrix(nodeTransform);
+		const Matrix44 Mnode = convertMatrix(nodeTransform);
 		Matrix44 Mjoint = Mnode * Mrx90;
 
 		std::wstring jointName = mbstows(node->GetName());
 
-		size_t p = jointName.find(L':');
+		const size_t p = jointName.find(L':');
 		if (p != std::wstring::npos)
 			jointName = jointName.substr(p + 1);
 
-		uint32_t jointId = model.findJointIndex(jointName);
+		const uint32_t jointId = model.findJointIndex(jointName);
 		if (jointId == c_InvalidIndex)
 		{
 			log::warning << L"Unable to find joint \"" << jointName << L"\" in skeleton; unable to save pose for joint." << Endl;
@@ -190,8 +190,8 @@ Ref< Pose > convertPose(
 
 		if (parent != nullptr)
 		{
-			std::wstring parentJointName = getJointName(parent);
-			uint32_t parentId = model.findJointIndex(parentJointName);
+			const std::wstring parentJointName = getJointName(parent);
+			const uint32_t parentId = model.findJointIndex(parentJointName);
 			if (parentId != c_InvalidIndex)
 			{
 				Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
