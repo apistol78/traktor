@@ -133,13 +133,13 @@ IStream* ProcessLinux::getPipeStream(StdPipe pipe)
 	}
 }
 
-IStream* ProcessLinux::waitPipeStream(int32_t timeout)
+IProcess::WaitPipeResult ProcessLinux::waitPipeStream(int32_t timeout, Ref< IStream >& outPipe)
 {
 	fd_set readSet = {};
 	int nfd = 0;
 
 	if (m_childStdOut == 0 && m_childStdErr == 0)
-		return nullptr;
+		return Terminated;
 
  	if (m_childStdOut != 0)
 	{
@@ -165,14 +165,21 @@ IStream* ProcessLinux::waitPipeStream(int32_t timeout)
 		rc = ::pselect(nfd + 1, &readSet, nullptr, nullptr, nullptr, &sigmask);
 
 	if (rc <= 0)
-		return nullptr;
+		return wait(0) ? Terminated : Timeout;
 
 	if (FD_ISSET(m_childStdOut, &readSet))
-		return m_streamStdOut;
-	if (FD_ISSET(m_childStdErr, &readSet))
-		return m_streamStdErr;
+	{
+		outPipe = m_streamStdOut;
+		return Ready;
+	}
 
-	return nullptr;
+	if (FD_ISSET(m_childStdErr, &readSet))
+	{
+		outPipe = m_streamStdErr;
+		return Ready;
+	}
+
+	return wait(0) ? Terminated : Timeout;
 }
 
 bool ProcessLinux::signal(SignalType signalType)
