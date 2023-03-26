@@ -26,7 +26,7 @@ public:
 
 	virtual IStream* getPipeStream(StdPipe pipe) override final;
 
-	virtual IStream* waitPipeStream(int32_t timeout) override final;
+	virtual WaitPipeResult waitPipeStream(int32_t timeout, Ref< IStream >& outPipe) override final;
 
 	virtual bool signal(SignalType signalType) override final;
 
