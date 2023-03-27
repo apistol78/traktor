@@ -8,10 +8,15 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor::world
 {
+
+class IEntityRenderer;
+class LightComponent;
+class ProbeComponent;
 
 enum
 {
@@ -59,6 +64,21 @@ struct UpdateParams
 	float totalTime = 0.0f;				/*!< Total time since first update. */
 	float deltaTime = 0.0f;				/*!< Delta time since last update. */
 	float alternateTime = 0.0f;			/*!< Alternative absolute time. */
+};
+
+/*!
+ */
+struct GatherView
+{
+	struct Renderable
+	{
+		IEntityRenderer* renderer;
+		Object* renderable;
+	};	
+
+    AlignedVector< Renderable > renderables;
+	AlignedVector< const LightComponent* > lights;
+	AlignedVector< const ProbeComponent* > probes;
 };
 
 }
