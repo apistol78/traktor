@@ -148,7 +148,7 @@ Matrix33 CharacterInstance::getFullTransform() const
 
 Vector2 CharacterInstance::transformInto(const CharacterInstance* other, const Vector2& pnt) const
 {
-	Vector2 glb = getFullTransform() * pnt;
+	const Vector2 glb = getFullTransform() * pnt;
 	return other->getFullTransform().inverse() * glb;
 }
 

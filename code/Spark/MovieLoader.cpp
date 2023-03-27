@@ -60,7 +60,7 @@ public:
 
 	virtual bool succeeded() override final
 	{
-		return wait() ? (m_movie != 0) : false;
+		return wait() ? (m_movie != nullptr) : false;
 	}
 
 	virtual Ref< Movie > get() override final
@@ -134,7 +134,7 @@ private:
 
 		std::wstring ext = toLower(traktor::Path(m_url).getExtension());
 
-		// Try to load image and embedd into a movie first, if extension
+		// Try to load image and embed into a movie first, if extension
 		// not supported then this fail quickly.
 		Ref< drawing::Image > image = drawing::Image::load(d, ext);
 		if (image)

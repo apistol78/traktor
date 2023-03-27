@@ -123,11 +123,11 @@ void ButtonInstance::eventMouseUp(int x, int y, int button)
 void ButtonInstance::eventMouseMove(int x, int y, int button)
 {
 	// Transform coordinates into local.
-	Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
+	const Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 
 	// Roll over and out event handling.
-	Aabb2 bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+	const Aabb2 bounds = getLocalBounds();
+	const bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{
 		if (inside)

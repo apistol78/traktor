@@ -35,7 +35,7 @@ bool FillStyle::create(const SwfFillStyle* fillStyle)
 	// Create solid white if null descriptor given.
 	if (!fillStyle)
 	{
-		Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
+		const Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
 		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
 		return true;
 	}
@@ -62,7 +62,7 @@ bool FillStyle::create(const SwfFillStyle* fillStyle)
 	}
 	else
 	{
-		Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
+		const Color4f dummy(1.0f, 1.0f, 1.0f, 1.0f);
 		m_colorRecords.push_back(ColorRecord(0.0f, dummy));
 	}
 

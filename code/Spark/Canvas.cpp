@@ -66,7 +66,7 @@ void Canvas::beginGradientFill(FillStyle::GradientType gradientType, const Align
 
 void Canvas::beginBitmapFill(Bitmap* image, const Matrix33& bitmapMatrix, bool repeat)
 {
-	uint16_t bitmapId = m_dictionary.addBitmap(image);
+	const uint16_t bitmapId = m_dictionary.addBitmap(image);
 
 	FillStyle style;
 	style.create(bitmapId, bitmapMatrix, repeat);
@@ -81,7 +81,7 @@ void Canvas::endFill()
 	if (!m_drawing)
 		return;
 
-	uint16_t fillStyle = uint16_t(m_fillStyles.size());
+	const uint16_t fillStyle = uint16_t(m_fillStyles.size());
 
 	Path& p = m_paths.back();
 	p.end(fillStyle, 0, 0);

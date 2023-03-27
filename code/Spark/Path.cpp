@@ -67,10 +67,10 @@ void Path::lineTo(int32_t x, int32_t y, CoordinateMode mode)
 {
 	transform(mode, CmAbsolute, x, y);
 
-	Vector2 p(x, y);
+	const Vector2 p(x, y);
 	if (p != m_cursor)
 	{
-		uint32_t offset = uint32_t(m_points.size());
+		const uint32_t offset = uint32_t(m_points.size());
 		m_points.push_back(m_cursor);
 		m_points.push_back(p);
 
@@ -87,10 +87,10 @@ void Path::quadraticTo(int32_t x1, int32_t y1, int32_t x, int32_t y, CoordinateM
 	transform(mode, CmAbsolute, x1, y1);
 	transform(mode, CmAbsolute, x, y);
 
-	Vector2 p(x, y);
+	const Vector2 p(x, y);
 	if (p != m_cursor)
 	{
-		uint32_t offset = uint32_t(m_points.size());
+		const uint32_t offset = uint32_t(m_points.size());
 		m_points.push_back(m_cursor);
 		m_points.push_back(Vector2(x1, y1));
 		m_points.push_back(p);

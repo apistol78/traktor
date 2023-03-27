@@ -31,28 +31,28 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Dictionary", Dictionary, Object)
 
 uint16_t Dictionary::addFont(Font* font)
 {
-	uint16_t fontId = getMaximumKey(m_fonts) + 1;
+	const uint16_t fontId = getMaximumKey(m_fonts) + 1;
 	m_fonts[fontId] = font;
 	return fontId;
 }
 
 uint16_t Dictionary::addBitmap(Bitmap* bitmap)
 {
-	uint16_t bitmapId = getMaximumKey(m_bitmaps) + 1;
+	const uint16_t bitmapId = getMaximumKey(m_bitmaps) + 1;
 	m_bitmaps[bitmapId] = bitmap;
 	return bitmapId;
 }
 
 uint16_t Dictionary::addSound(Sound* sound)
 {
-	uint16_t soundId = getMaximumKey(m_sounds) + 1;
+	const uint16_t soundId = getMaximumKey(m_sounds) + 1;
 	m_sounds[soundId] = sound;
 	return soundId;
 }
 
 uint16_t Dictionary::addCharacter(Character* character)
 {
-	uint16_t characterId = getMaximumKey(m_characters) + 1;
+	const uint16_t characterId = getMaximumKey(m_characters) + 1;
 	m_characters[characterId] = character;
 	return characterId;
 }
