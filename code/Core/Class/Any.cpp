@@ -96,64 +96,56 @@ Any::~Any()
 
 Any Any::fromBoolean(bool value)
 {
-	Any any;
-	any.m_type = Type::Boolean;
+	Any any(Type::Boolean);
 	any.m_data.m_boolean = value;
 	return any;
 }
 
 Any Any::fromInt32(int32_t value)
 {
-	Any any;
-	any.m_type = Type::Int32;
+	Any any(Type::Int32);
 	any.m_data.m_int32 = value;
 	return any;
 }
 
 Any Any::fromInt64(int64_t value)
 {
-	Any any;
-	any.m_type = Type::Int64;
+	Any any(Type::Int64);
 	any.m_data.m_int64 = value;
 	return any;
 }
 
 Any Any::fromFloat(float value)
 {
-	Any any;
-	any.m_type = Type::Float;
+	Any any(Type::Float);
 	any.m_data.m_float = value;
 	return any;
 }
 
 Any Any::fromString(const char* value)
 {
-	Any any;
-	any.m_type = Type::String;
+	Any any(Type::String);
 	any.m_data.m_string = refStringCreate(value);
 	return any;
 }
 
 Any Any::fromString(const std::string& value)
 {
-	Any any;
-	any.m_type = Type::String;
+	Any any(Type::String);
 	any.m_data.m_string = refStringCreate(value.c_str());
 	return any;
 }
 
 Any Any::fromString(const wchar_t* value)
 {
-	Any any;
-	any.m_type = Type::String;
+	Any any(Type::String);
 	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
 
 Any Any::fromString(const std::wstring& value)
 {
-	Any any;
-	any.m_type = Type::String;
+	Any any(Type::String);
 	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
@@ -161,8 +153,7 @@ Any Any::fromString(const std::wstring& value)
 Any Any::fromObject(ITypedObject* value)
 {
 	T_SAFE_ANONYMOUS_ADDREF(value);
-	Any any;
-	any.m_type = Type::Object;
+	Any any(Type::Object);
 	any.m_data.m_object = value;
 	return any;
 }
