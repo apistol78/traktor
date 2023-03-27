@@ -31,7 +31,7 @@ class T_DLLCLASS BlendMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh, bool screenSpaceCulling);
+	explicit BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh);
 
 	virtual void destroy() override final;
 

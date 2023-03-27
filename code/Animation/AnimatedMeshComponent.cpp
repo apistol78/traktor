@@ -38,10 +38,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponent", AnimatedMeshC
 AnimatedMeshComponent::AnimatedMeshComponent(
 	const Transform& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
-	render::IRenderSystem* renderSystem,
-	bool screenSpaceCulling
+	render::IRenderSystem* renderSystem
 )
-:	mesh::MeshComponent(screenSpaceCulling)
+:	mesh::MeshComponent()
 ,	m_mesh(mesh)
 ,	m_index(0)
 {
@@ -154,7 +153,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;

@@ -32,7 +32,7 @@ class T_DLLCLASS PartitionMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling);
+	explicit PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh);
 
 	virtual void destroy() override final;
 

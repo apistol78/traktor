@@ -24,7 +24,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 2, AnimatedMeshComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshComponentData", 3, AnimatedMeshComponentData, world::IEntityComponentData)
 
 AnimatedMeshComponentData::AnimatedMeshComponentData(
 	const resource::Id< mesh::SkinnedMesh >& mesh
@@ -42,8 +42,7 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 	return new AnimatedMeshComponent(
 		Transform::identity(),
 		mesh,
-		renderSystem,
-		m_screenSpaceCulling
+		renderSystem
 	);
 }
 
@@ -61,7 +60,12 @@ void AnimatedMeshComponentData::serialize(ISerializer& s)
 	T_FATAL_ASSERT(s.getVersion< AnimatedMeshComponentData >() >= 2);
 
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
-	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
+
+	if (s.getVersion< AnimatedMeshComponentData >() < 3)
+	{
+		bool screenSpaceCulling;
+		s >> Member< bool >(L"screenSpaceCulling", screenSpaceCulling);
+	}
 }
 
 }

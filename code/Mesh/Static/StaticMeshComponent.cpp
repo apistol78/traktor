@@ -25,9 +25,8 @@ static const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshComponent", StaticMeshComponent, MeshComponent)
 
-StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+StaticMeshComponent::StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh)
+:	m_mesh(mesh)
 ,	m_lastTransform(Transform::identity())
 {
 }
@@ -71,7 +70,7 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;

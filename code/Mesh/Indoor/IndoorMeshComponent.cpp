@@ -18,9 +18,8 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshComponent", IndoorMeshComponent, MeshComponent)
 
-IndoorMeshComponent::IndoorMeshComponent(const resource::Proxy< IndoorMesh >& mesh, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+IndoorMeshComponent::IndoorMeshComponent(const resource::Proxy< IndoorMesh >& mesh)
+:	m_mesh(mesh)
 {
 }
 
@@ -49,7 +48,7 @@ void IndoorMeshComponent::build(const world::WorldBuildContext& context, const w
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * transform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.0f,
 		distance
 	))
 		return;

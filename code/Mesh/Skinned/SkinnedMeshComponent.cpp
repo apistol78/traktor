@@ -26,9 +26,8 @@ const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshComponent", SkinnedMeshComponent, MeshComponent)
 
-SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+SkinnedMeshComponent::SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem)
+:	m_mesh(mesh)
 ,	m_count(0)
 {
 	const auto& jointMap = m_mesh->getJointMap();
@@ -70,7 +69,7 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * worldTransform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;

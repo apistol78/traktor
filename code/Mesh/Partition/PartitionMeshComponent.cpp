@@ -18,9 +18,8 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMeshComponent", PartitionMeshComponent, MeshComponent)
 
-PartitionMeshComponent::PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+PartitionMeshComponent::PartitionMeshComponent(const resource::Proxy< PartitionMesh >& mesh)
+:	m_mesh(mesh)
 {
 }
 
@@ -49,7 +48,7 @@ void PartitionMeshComponent::build(const world::WorldBuildContext& context, cons
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * transform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;

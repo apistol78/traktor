@@ -30,8 +30,6 @@ class T_DLLCLASS CompositeMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	CompositeMeshComponent();
-
 	virtual void destroy() override final;
 
 	virtual Aabb3 getBoundingBox() const override final;

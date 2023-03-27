@@ -42,7 +42,7 @@ class T_DLLCLASS SkinnedMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem, bool screenSpaceCulling);
+	explicit SkinnedMeshComponent(const resource::Proxy< SkinnedMesh >& mesh, render::IRenderSystem* renderSystem);
 
 	virtual void destroy() override final;
 

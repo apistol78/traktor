@@ -31,7 +31,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshComponentData", 0, MeshComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshComponentData", 1, MeshComponentData, world::IEntityComponentData)
 
 MeshComponentData::MeshComponentData(const resource::Id< IMesh >& mesh)
 :	m_mesh(mesh)
@@ -47,21 +47,21 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 	Ref< MeshComponent > component;
 
 	if (is_a< BlendMesh >(mesh.getResource()))
-		component = new BlendMeshComponent(resource::Proxy< BlendMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new BlendMeshComponent(resource::Proxy< BlendMesh >(mesh.getHandle()));
 	else if (is_a< IndoorMesh >(mesh.getResource()))
-		component = new IndoorMeshComponent(resource::Proxy< IndoorMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new IndoorMeshComponent(resource::Proxy< IndoorMesh >(mesh.getHandle()));
 	else if (is_a< InstanceMesh >(mesh.getResource()))
-		component = new InstanceMeshComponent(resource::Proxy< InstanceMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new InstanceMeshComponent(resource::Proxy< InstanceMesh >(mesh.getHandle()));
 	else if (is_a< AutoLodMesh >(mesh.getResource()))
-		component = new AutoLodMeshComponent(resource::Proxy< AutoLodMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new AutoLodMeshComponent(resource::Proxy< AutoLodMesh >(mesh.getHandle()));
 	else if (is_a< PartitionMesh >(mesh.getResource()))
-		component = new PartitionMeshComponent(resource::Proxy< PartitionMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new PartitionMeshComponent(resource::Proxy< PartitionMesh >(mesh.getHandle()));
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
-		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), renderSystem, m_screenSpaceCulling);
+		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), renderSystem);
 	else if (is_a< StaticMesh >(mesh.getResource()))
-		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()));
 	else if (is_a< StreamMesh >(mesh.getResource()))
-		component = new StreamMeshComponent(resource::Proxy< StreamMesh >(mesh.getHandle()), m_screenSpaceCulling);
+		component = new StreamMeshComponent(resource::Proxy< StreamMesh >(mesh.getHandle()));
 
 	return component;
 }
@@ -78,7 +78,12 @@ void MeshComponentData::setTransform(const world::EntityData* owner, const Trans
 void MeshComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< IMesh >(L"mesh", m_mesh);
-	s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
+
+	if (s.getVersion< MeshComponentData >() < 1)
+	{
+		bool screenSpaceCulling;
+		s >> Member< bool >(L"screenSpaceCulling", screenSpaceCulling);
+	}
 }
 
 }

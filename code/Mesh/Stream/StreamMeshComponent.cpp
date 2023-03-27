@@ -18,9 +18,8 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMeshComponent", StreamMeshComponent, MeshComponent)
 
-StreamMeshComponent::StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+StreamMeshComponent::StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh)
+:	m_mesh(mesh)
 ,	m_frame(0)
 {
 }
@@ -62,7 +61,7 @@ void StreamMeshComponent::build(const world::WorldBuildContext& context, const w
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * transform.toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;

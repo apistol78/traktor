@@ -42,9 +42,7 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	MeshComponent() = delete;
-
-	explicit MeshComponent(bool screenSpaceCulling);
+	explicit MeshComponent();
 
 	virtual void destroy() override;
 
@@ -67,7 +65,6 @@ public:
 protected:
 	world::Entity* m_owner;
 	Ref< const IMeshParameterCallback > m_parameterCallback;
-	bool m_screenSpaceCulling;
 	IntervalTransform m_transform;	//!< Contain interval of update transforms. 
 };
 
