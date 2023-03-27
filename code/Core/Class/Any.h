@@ -36,7 +36,7 @@ class ITypedObject;
 class T_DLLCLASS Any
 {
 public:
-	enum class Type
+	enum class Type : uint8_t
 	{
 		Void,
 		Boolean,
@@ -187,6 +187,11 @@ private:
 
 	Type m_type;
 	Data m_data;
+
+	explicit Any(Type type)
+	:	m_type(type)
+	{
+	}
 };
 
 }
