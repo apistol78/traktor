@@ -67,7 +67,7 @@ void splitSegment(const Segment& s, float f, Segment& outSt, Segment& outSb)
 	}
 	else
 	{
-		Vector2 m = lerp(s.v[0], s.v[1], f);
+		const Vector2 m = lerp(s.v[0], s.v[1], f);
 
 		outSt.curve = false;
 		outSt.v[0] = s.v[0];
@@ -99,8 +99,8 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 {
 	Triangle t;
 
-	float y0 = sl.v[0].y;
-	float y1 = sl.v[1].y;
+	const float y0 = sl.v[0].y;
+	const float y1 = sl.v[1].y;
 	T_ASSERT(y0 < y1);
 
 	bool il = false, ir = false;
@@ -402,15 +402,15 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 
 			if (!j->curve)
 			{
-				float d = j->v[1].y - j->v[0].y;
+				const float d = j->v[1].y - j->v[0].y;
 				if (d <= 0.0f)
 				{
 					++j;
 					continue;
 				}
 
-				float t = (*i - j->v[0].y) / d;
-				float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
+				const float t = (*i - j->v[0].y) / d;
+				const float x = j->v[0].x + (j->v[1].x - j->v[0].x) * t;
 
 				s.v[0] = j->v[0];
 				s.v[1] = Vector2(x, *i);
@@ -454,7 +454,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 				}
 				else
 				{
-					float d = j->v[1].y - j->v[0].y;
+					const float d = j->v[1].y - j->v[0].y;
 					if (d <= 0.0f)
 					{
 						++j;

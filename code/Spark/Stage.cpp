@@ -70,15 +70,15 @@ Vector2 Stage::toStage(const Vector2& pos) const
 	const Movie* movie = m_context->getMovie();
 	T_ASSERT(movie);
 
-	Aabb2 bounds = movie->getFrameBounds();
+	const Aabb2 bounds = movie->getFrameBounds();
 
 	// Normalize screen coordinates into -1 to 1 ranges.
-	float sx = 2.0f * pos.x / m_viewWidth - 1.0f;
-	float sy = 2.0f * pos.y / m_viewHeight - 1.0f;
+	const float sx = 2.0f * pos.x / m_viewWidth - 1.0f;
+	const float sy = 2.0f * pos.y / m_viewHeight - 1.0f;
 
 	// Inverse transform into stage coordinates.
-	float tx = (((sx + 1.0f) / 2.0f - m_frameTransform.x()) / m_frameTransform.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
-	float ty = (((sy + 1.0f) / 2.0f - m_frameTransform.y()) / m_frameTransform.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
+	const float tx = (((sx + 1.0f) / 2.0f - m_frameTransform.x()) / m_frameTransform.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
+	const float ty = (((sy + 1.0f) / 2.0f - m_frameTransform.y()) / m_frameTransform.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
 
 	return Vector2(tx, ty);
 }
@@ -88,24 +88,24 @@ Vector2 Stage::toScreen(const Vector2& pos) const
 	const Movie* movie = m_context->getMovie();
 	T_ASSERT(movie);
 
-	Aabb2 bounds = movie->getFrameBounds();
+	const Aabb2 bounds = movie->getFrameBounds();
 
 	// Normalize stage coordinates into 0 to 1 range.
-	float tx = (pos.x - bounds.mn.x) / (bounds.mx.x - bounds.mn.x);
-	float ty = (pos.y - bounds.mn.y) / (bounds.mx.y - bounds.mn.y);
+	const float tx = (pos.x - bounds.mn.x) / (bounds.mx.x - bounds.mn.x);
+	const float ty = (pos.y - bounds.mn.y) / (bounds.mx.y - bounds.mn.y);
 
-	float vx = tx * m_frameTransform.z() + m_frameTransform.x();
-	float vy = ty * m_frameTransform.w() + m_frameTransform.y();
+	const float vx = tx * m_frameTransform.z() + m_frameTransform.x();
+	const float vy = ty * m_frameTransform.w() + m_frameTransform.y();
 
-	float sx = vx * m_viewWidth;
-	float sy = vy * m_viewHeight;
+	const float sx = vx * m_viewWidth;
+	const float sy = vy * m_viewHeight;
 
 	return Vector2(sx, sy);
 }
 
 void Stage::setAlign(const std::wstring& align_)
 {
-	std::wstring align = toUpper(align_);
+	const std::wstring align = toUpper(align_);
 	if (align.size() >= 2)
 	{
 		if (align == L"TL")
@@ -176,19 +176,19 @@ void Stage::updateViewOffset()
 {
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
 
-	float aspectRatio = float(m_viewWidth) / m_viewHeight;
+	const float aspectRatio = float(m_viewWidth) / m_viewHeight;
 	if (aspectRatio <= FUZZY_EPSILON)
 		return;
 
 	const Movie* movie = m_context->getMovie();
 	T_ASSERT(movie);
 
-	Aabb2 bounds = movie->getFrameBounds();
+	const Aabb2 bounds = movie->getFrameBounds();
 
 	if (m_scaleMode == SmShowAll)
 	{
-		float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
-		float scaleX = frameAspect / aspectRatio;
+		const float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
+		const float scaleX = frameAspect / aspectRatio;
 		if (scaleX <= 1.0f)
 		{
 			float leftX = 0.0f;
@@ -209,7 +209,7 @@ void Stage::updateViewOffset()
 		}
 		else
 		{
-			float scaleY = 1.0f / scaleX;
+			const float scaleY = 1.0f / scaleX;
 
 			float topY = 0.0f;
 			switch (m_alignV)
@@ -230,11 +230,11 @@ void Stage::updateViewOffset()
 	}
 	else if (m_scaleMode == SmNoBorder)
 	{
-		float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
-		float scaleX = frameAspect / aspectRatio;
+		const float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
+		const float scaleX = frameAspect / aspectRatio;
 		if (scaleX <= 1.0f)
 		{
-			float scaleY = 1.0f / scaleX;
+			const float scaleY = 1.0f / scaleX;
 
 			float topY = 0.0f;
 			switch (m_alignV)
@@ -273,14 +273,14 @@ void Stage::updateViewOffset()
 	}
 	else if (m_scaleMode == SmNoScale)
 	{
-		float viewWidth = m_viewWidth * 20.0f;
-		float viewHeight = m_viewHeight * 20.0f;
+		const float viewWidth = m_viewWidth * 20.0f;
+		const float viewHeight = m_viewHeight * 20.0f;
 
-		float boundsWidth = (bounds.mx.x - bounds.mn.x);
-		float boundsHeight = (bounds.mx.y - bounds.mn.y);
+		const float boundsWidth = (bounds.mx.x - bounds.mn.x);
+		const float boundsHeight = (bounds.mx.y - bounds.mn.y);
 
-		float scaleX = boundsWidth / viewWidth;
-		float scaleY = boundsHeight / viewHeight;
+		const float scaleX = boundsWidth / viewWidth;
+		const float scaleY = boundsHeight / viewHeight;
 
 		float leftX = 0.0f, topY = 0.0f;
 		switch (m_alignH)

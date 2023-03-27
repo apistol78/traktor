@@ -124,7 +124,7 @@ Ref< SpriteInstance > Movie::createExternalSpriteInstance(SpriteInstance* contai
 	if (i == m_exports.end())
 		return nullptr;
 
-	uint16_t characterId = i->second;
+	const uint16_t characterId = i->second;
 
 	// Get exported character.
 	SmallMap< uint16_t, Ref< Character > >::const_iterator j = m_characters.find(characterId);

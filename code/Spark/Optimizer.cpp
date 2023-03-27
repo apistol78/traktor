@@ -127,7 +127,7 @@ void MergeQueue::endClip()
 	T_FATAL_ASSERT(!m_maskDepths.empty());
 	T_FATAL_ASSERT(!m_outputFrame.empty());
 
-	int32_t maskDepth = m_maskDepths.top();
+	const int32_t maskDepth = m_maskDepths.top();
 	m_maskDepths.pop();
 
 	Frame::PlaceObject place = m_outputFrame.back()->getPlaceObjects()[maskDepth];

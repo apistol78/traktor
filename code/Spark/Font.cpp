@@ -42,7 +42,7 @@ bool Font::create(const AlignedVector< SwfShape* >& shapeTable)
 		if (!m_shapes[i]->create(shapeTable[i]))
 			return false;
 
-		Aabb2 shapeBounds = m_shapes[i]->getShapeBounds();
+		const Aabb2 shapeBounds = m_shapes[i]->getShapeBounds();
 		m_maxDimension = max(m_maxDimension, shapeBounds.mx - shapeBounds.mn);
 	}
 	m_coordinateType = CtTwips;
@@ -79,7 +79,7 @@ bool Font::create(
 
 	for (const auto& kerning : kerningRecords)
 	{
-		uint32_t codePair = (uint32_t(kerning.code1) << 16) | kerning.code2;
+		const uint32_t codePair = (uint32_t(kerning.code1) << 16) | kerning.code2;
 		m_kerningLookup[codePair] = kerning.adjustment;
 	}
 
@@ -114,7 +114,7 @@ const RefArray< Shape >& Font::getShapes() const
 
 const Shape* Font::getShape(uint16_t index) const
 {
-	return index < m_shapes.size() ? m_shapes[index] : 0;
+	return index < m_shapes.size() ? m_shapes[index] : nullptr;
 }
 
 int16_t Font::getAscent() const
@@ -149,14 +149,14 @@ const Vector2& Font::getMaxDimension() const
 
 int16_t Font::lookupKerning(uint16_t leftCode, uint16_t rightCode) const
 {
-	uint32_t codePair = (uint32_t(leftCode) << 16) | rightCode;
-	SmallMap< uint32_t, int16_t >::const_iterator i = m_kerningLookup.find(codePair);
+	const uint32_t codePair = (uint32_t(leftCode) << 16) | rightCode;
+	const SmallMap< uint32_t, int16_t >::const_iterator i = m_kerningLookup.find(codePair);
 	return i != m_kerningLookup.end() ? i->second : 0;
 }
 
 uint16_t Font::lookupIndex(uint16_t code) const
 {
-	SmallMap< uint16_t, uint16_t >::const_iterator i = m_indexLookup.find(code);
+	const SmallMap< uint16_t, uint16_t >::const_iterator i = m_indexLookup.find(code);
 	return i != m_indexLookup.end() ? i->second : 0;
 }
 

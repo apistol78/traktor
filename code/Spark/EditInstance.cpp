@@ -334,10 +334,10 @@ int32_t EditInstance::getMaxScroll() const
 	{
 		const auto& lines = m_layout->getLines();
 
-		float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
-		float editHeight = m_textBounds.mx.y - m_textBounds.mn.y;
+		const float lineHeight = m_layout->getFontHeight() + m_layout->getLeading();
+		const float editHeight = m_textBounds.mx.y - m_textBounds.mn.y;
 
-		int32_t maxScroll = int32_t(lines.size()) - int32_t(editHeight / lineHeight + 0.5f);
+		const int32_t maxScroll = int32_t(lines.size()) - int32_t(editHeight / lineHeight + 0.5f);
 		return std::max(maxScroll, 0);
 	}
 	else
@@ -415,7 +415,7 @@ void EditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 {
 	if (!m_edit->readOnly())
 	{
-		Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
+		const Vector2 xy = getFullTransform().inverse() * Vector2(float(x), float(y));
 		if (m_textBounds.inside(xy))
 			getContext()->setFocus(this);
 	}

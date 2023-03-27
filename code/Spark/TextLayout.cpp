@@ -149,7 +149,7 @@ void TextLayout::begin()
 	m_width = 0.0f;
 	m_height = 0.0f;
 
-	Line ln = { 0.0f, 0.0f, 0.0f, 0.0f };
+	const Line ln = { 0.0f, 0.0f, 0.0f, 0.0f };
 	m_lines.push_back(ln);
 }
 
@@ -194,7 +194,7 @@ void TextLayout::setAttribute(const Font* font, const Color4f& textColor)
 
 	m_currentAttrib = int32_t(m_attribs.size());
 
-	Attribute attrib = { font, textColor };
+	const Attribute attrib = { font, textColor };
 	m_attribs.push_back(attrib);
 }
 

@@ -121,7 +121,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 		const Frame::PlaceObject& placeObject = i->second;
 		if (placeObject.has(Frame::PfHasMove) || placeObject.has(Frame::PfHasCharacterId))
 		{
-			int32_t depth = placeObject.depth + c_depthOffset;
+			const int32_t depth = placeObject.depth + c_depthOffset;
 			Layer& layer = m_layers[depth];
 
 			if (placeObject.has(Frame::PfHasCharacterId) && placeObject.characterId != layer.id)
@@ -136,7 +136,7 @@ void DisplayList::updateFrame(CharacterInstance* ownerInstance, const Frame* fra
 				if (character)
 				{
 					// Use previous instance transform if we're replacing an instance.
-					Matrix33 transform = layer.instance ? layer.instance->getTransform() : Matrix33::identity();
+					const Matrix33 transform = layer.instance ? layer.instance->getTransform() : Matrix33::identity();
 
 					// Create new instance.
 					layer.id = placeObject.characterId;

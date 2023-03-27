@@ -63,7 +63,7 @@ bool MoviePlayer::create(Movie* movie, int32_t width, int32_t height, ISoundRend
 	m_movie = movie;
 	m_movieInstance = m_movie->createMovieClipInstance(m_characterFactory, m_movieLoader);
 
-	Context* context = m_movieInstance->getContext();
+	const Context* context = m_movieInstance->getContext();
 	m_key = context->getKey();
 	m_mouse = context->getMouse();
 	m_stage = context->getStage();
@@ -204,9 +204,9 @@ void MoviePlayer::execute(ISoundRenderer* soundRenderer)
 						bool inside = false;
 						if (rolledOverSprite->isVisible())
 						{
-							Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
-							Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
-							Vector2 xy = intoCharacter * Vector2(float(event.mouse.x), float(event.mouse.y));
+							const Matrix33 intoCharacter = rolledOverSprite->getFullTransform().inverse();
+							const Aabb2 bounds = rolledOverSprite->getVisibleLocalBounds();
+							const Vector2 xy = intoCharacter * Vector2(float(event.mouse.x), float(event.mouse.y));
 							inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 						}
 						if (!inside)
@@ -295,7 +295,7 @@ void MoviePlayer::postKeyUp(int32_t keyCode)
 
 void MoviePlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
+	const Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseDown;
@@ -307,7 +307,7 @@ void MoviePlayer::postMouseDown(int32_t x, int32_t y, int32_t button)
 
 void MoviePlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
+	const Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseUp;
@@ -319,7 +319,7 @@ void MoviePlayer::postMouseUp(int32_t x, int32_t y, int32_t button)
 
 void MoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 {
-	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
+	const Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseMove;
@@ -331,7 +331,7 @@ void MoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 
 void MoviePlayer::postMouseWheel(int32_t x, int32_t y, int32_t delta)
 {
-	Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
+	const Vector2 xy = m_stage->toStage(Vector2(float(x), float(y)));
 
 	Event evt;
 	evt.eventType = EvtMouseWheel;

@@ -34,7 +34,7 @@ void Mouse::eventMouseMove(int32_t x, int32_t y, int32_t button)
 
 void Mouse::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
 {
-	Any argv = CastAny< int >::set(delta);
+	const Any argv = CastAny< int >::set(delta);
 	m_eventMouseWheel.issue(1, &argv);
 }
 
