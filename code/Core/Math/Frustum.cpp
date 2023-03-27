@@ -11,12 +11,6 @@
 
 namespace traktor
 {
-	namespace
-	{
-
-const static Scalar c_scalarZero(0.0f);
-
-	}
 
 Frustum::Frustum()
 :	planes(6)
@@ -50,10 +44,10 @@ void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 	const float c = sqrtf(a * a + b * b);
 	const float hfov = asinf(a / c);
 
-	planes[0].set(Vector4(cosf(hfov), 0.0f, sinf(hfov)), Scalar(0.0f));
-	planes[1].set(Vector4(-cosf(hfov), 0.0f, sinf(hfov)), Scalar(0.0f));
-	planes[2].set(Vector4(0.0f, cosf(vfov), sinf(vfov)), Scalar(0.0f));
-	planes[3].set(Vector4(0.0f, -cosf(vfov), sinf(vfov)), Scalar(0.0f));
+	planes[0].set(Vector4(cosf(hfov), 0.0f, sinf(hfov)), 0.0_simd);
+	planes[1].set(Vector4(-cosf(hfov), 0.0f, sinf(hfov)), 0.0_simd);
+	planes[2].set(Vector4(0.0f, cosf(vfov), sinf(vfov)), 0.0_simd);
+	planes[3].set(Vector4(0.0f, -cosf(vfov), sinf(vfov)), 0.0_simd);
 	planes[4].set(Vector4(0.0f, 0.0f,  1.0f), Scalar(zn));
 	planes[5].set(Vector4(0.0f, 0.0f, -1.0f), Scalar(-zf));
 
@@ -101,21 +95,20 @@ Frustum::InsideResult Frustum::inside(const Vector4& point) const
 {
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		if (planes[i].distance(point) < c_scalarZero)
+		if (planes[i].distance(point) < 0.0_simd)
 			return IrOutside;
 	}
 	return IrInside;
 }
 
-Frustum::InsideResult Frustum::inside(const Vector4& center_, const Scalar& radius) const
+Frustum::InsideResult Frustum::inside(const Vector4& center, const Scalar& radius) const
 {
-	const Vector4 center = center_.xyz0();
 	const Scalar nradius = -radius;
 	bool partial = false;
 
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		const Scalar distance = dot4(planes[i].normal(), center) - planes[i].distance();
+		const Scalar distance = dot3(planes[i].normal(), center) - planes[i].distance();
 		if (distance < nradius)
 			return IrOutside;
 		if (distance < radius)
@@ -131,11 +124,11 @@ Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		Vector4 n = select(planes[i].normal(), aabb.mn, aabb.mx);
-		if (planes[i].distance(n) < c_scalarZero)	// outside
+		if (planes[i].distance(n) < 0.0_simd)	// outside
 			return IrOutside;
 
 		Vector4 p = select(planes[i].normal(), aabb.mx, aabb.mn);
-		if (planes[i].distance(p) < c_scalarZero)	// intersecting
+		if (planes[i].distance(p) < 0.0_simd)	// intersecting
 			partial |= true;
 	}
 	return partial ? IrPartial : IrInside;
@@ -155,7 +148,7 @@ void Frustum::update()
 	center = corners[0];
 	for (int32_t i = 1; i < 8; ++i)
 		center += corners[i];
-	center /= Scalar(8.0f);
+	center /= 8.0_simd;
 }
 
 }

@@ -48,7 +48,7 @@ inline bool isMeshVisible(
 		return false;
 
 	// Early out of bounding sphere is outside of frustum.
-	const Vector4 center = worldView * meshBoundingBox.getCenter().xyz1();
+	const Vector4 center = worldView * meshBoundingBox.getCenter();
 	const Scalar radius = meshBoundingBox.getExtent().length();
 
 	if (frustum.inside(center, radius) == Frustum::IrOutside)
@@ -80,7 +80,7 @@ inline bool isMeshVisible(
 		for (int i = 0; i < sizeof_array(extents); ++i)
 		{
 			Vector4 p = worldViewProj * extents[i];
-			if (p.w() <= 0.0f)
+			if (p.w() <= 0.0_simd)
 			{
 				// Bounding box clipped to view plane; assume it's visible.
 				outDistance = center.z() + radius;
@@ -96,7 +96,7 @@ inline bool isMeshVisible(
 		}
 
 		// Ensure we're visible.
-		if (mn.x() > 1.0f || mn.y() > 1.0f || mx.x() < -1.0f || mx.y() < -1.0f)
+		if (mn.x() > 1.0_simd || mn.y() > 1.0_simd || mx.x() < -1.0_simd || mx.y() < -1.0_simd)
 			return false;
 
 		// Calculate screen area, cull if it's below threshold.
