@@ -156,6 +156,9 @@ void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 void LogView::eventLogActivate(ui::LogActivateEvent* event)
 {
+	if (m_editor->getSourceDatabase() == nullptr)
+		return;
+
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(event->getSymbolId());
 	if (instance)
 		m_editor->openEditor(instance);
@@ -163,10 +166,12 @@ void LogView::eventLogActivate(ui::LogActivateEvent* event)
 
 bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const
 {
+	if (m_editor->getSourceDatabase() == nullptr)
+		return false;
+
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(symbolId);
 	if (!instance)
 		return false;
-
 	outSymbol = instance->getPath();
 	return true;
 }
