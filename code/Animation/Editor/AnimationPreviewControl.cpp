@@ -228,8 +228,7 @@ void AnimationPreviewControl::updatePreview()
 	Ref< AnimatedMeshComponent > meshComponent = new AnimatedMeshComponent(
 		Transform::identity(),
 		m_mesh,
-		m_renderSystem,
-		false
+		m_renderSystem
 	);
 
 	m_entity = new world::Entity();

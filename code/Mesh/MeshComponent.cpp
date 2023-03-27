@@ -14,9 +14,8 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponent", MeshComponent, world::IEntityComponent)
 
-MeshComponent::MeshComponent(bool screenSpaceCulling)
+MeshComponent::MeshComponent()
 :	m_owner(nullptr)
-,	m_screenSpaceCulling(screenSpaceCulling)
 ,	m_transform(Transform::identity())
 {
 }

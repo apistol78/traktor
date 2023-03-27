@@ -14,11 +14,6 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.CompositeMeshComponent", CompositeMeshComponent, MeshComponent)
 
-CompositeMeshComponent::CompositeMeshComponent()
-:	MeshComponent(false)
-{
-}
-
 void CompositeMeshComponent::destroy()
 {
 	m_meshComponents.clear();

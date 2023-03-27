@@ -55,8 +55,7 @@ public:
 	explicit AnimatedMeshComponent(
 		const Transform& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
-		render::IRenderSystem* renderSystem,
-		bool screenSpaceCulling
+		render::IRenderSystem* renderSystem
 	);
 
 	virtual void destroy() override final;

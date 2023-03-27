@@ -32,7 +32,7 @@ class T_DLLCLASS AutoLodMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh, bool screenSpaceCulling);
+	explicit AutoLodMeshComponent(const resource::Proxy< AutoLodMesh >& mesh);
 
 	virtual void destroy() override final;
 

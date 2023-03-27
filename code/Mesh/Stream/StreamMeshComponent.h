@@ -31,7 +31,7 @@ class T_DLLCLASS StreamMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh, bool screenSpaceCulling);
+	explicit StreamMeshComponent(const resource::Proxy< StreamMesh >& mesh);
 
 	virtual void destroy() override final;
 

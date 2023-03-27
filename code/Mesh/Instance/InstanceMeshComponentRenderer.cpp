@@ -75,7 +75,7 @@ void InstanceMeshComponentRenderer::build(
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * transform.toMatrix44(),
 		worldRenderView.getProjection(),
-		1e-4f,
+		0.001f,
 		distance
 	))
 		return;

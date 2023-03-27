@@ -39,7 +39,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		ui::dpi96(128),
 		ui::dpi96(128)
 	);
-	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));
+	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 0.0f));
 
 	MeshAssetRasterizer().generate(editor, asset, meshThumb);
 

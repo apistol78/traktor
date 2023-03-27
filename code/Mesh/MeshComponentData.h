@@ -73,7 +73,6 @@ public:
 
 private:
 	resource::Id< IMesh > m_mesh;
-	bool m_screenSpaceCulling = false;
 };
 
 }

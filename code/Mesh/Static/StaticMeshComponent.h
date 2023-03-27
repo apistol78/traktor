@@ -32,7 +32,7 @@ class T_DLLCLASS StaticMeshComponent : public MeshComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh, bool screenSpaceCulling);
+	explicit StaticMeshComponent(const resource::Proxy< StaticMesh >& mesh);
 
 	virtual void destroy() override final;
 

@@ -18,9 +18,8 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshComponent", BlendMeshComponent, MeshComponent)
 
-BlendMeshComponent::BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh, bool screenSpaceCulling)
-:	MeshComponent(screenSpaceCulling)
-,	m_mesh(mesh)
+BlendMeshComponent::BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh)
+:	m_mesh(mesh)
 {
 	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
 	m_blendWeights.resize(blendTargetCount, 0.0f);
@@ -49,7 +48,7 @@ void BlendMeshComponent::build(const world::WorldBuildContext& context, const wo
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * m_transform.get().toMatrix44(),
 		worldRenderView.getProjection(),
-		m_screenSpaceCulling ? 0.0001f : 0.0f,
+		0.001f,
 		distance
 	))
 		return;
