@@ -45,50 +45,50 @@ bool DiscoveryManager::create(uint32_t mode)
 	m_multicastSendSocket = new UdpSocket();
 	if (!m_multicastSendSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
-		log::error << L"Discovery setup failed; unable to bind send socket port" << Endl;
+		log::error << L"Discovery setup failed; unable to bind send socket port." << Endl;
 		return false;
 	}
 
 	m_multicastRecvSocket = new MulticastUdpSocket();
 	if (!m_multicastRecvSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
-		log::error << L"Discovery setup failed; unable to bind multicast socket port" << Endl;
+		log::error << L"Discovery setup failed; unable to bind multicast socket port." << Endl;
 		return false;
 	}
 
 	if (!m_multicastRecvSocket->joinGroup(SocketAddressIPv4(c_discoveryMulticastGroup, c_discoveryMulticastPort)))
 	{
-		log::error << L"Discovery setup failed; unable to join multicast group" << Endl;
+		log::error << L"Discovery setup failed; unable to join multicast group." << Endl;
 		return false;
 	}
 
 	if (!m_multicastRecvSocket->setTTL(32))
-		log::warning << L"Unable to set multicast time-to-live option" << Endl;
+		log::warning << L"Unable to set multicast time-to-live option." << Endl;
 
 	// Create direct communication socket.
 	net::SocketAddressIPv4::Interface itf;
 	if (!net::SocketAddressIPv4::getBestInterface(itf))
 	{
-		log::error << L"Discovery setup failed; unable to enumerate interfaces" << Endl;
+		log::error << L"Discovery setup failed; unable to enumerate interfaces." << Endl;
 		return false;
 	}
 
 	m_directSocket = new UdpSocket();
 	if (!m_directSocket->bind(SocketAddressIPv4(itf.addr->getAddr(), 0)))
 	{
-		log::error << L"Discovery setup failed; unable to bind receive socket" << Endl;
+		log::error << L"Discovery setup failed; unable to bind receive socket." << Endl;
 		return false;
 	}
 
 	m_replyToAddress = *dynamic_type_cast< net::SocketAddressIPv4* >(m_directSocket->getLocalAddress());
 	if ((mode & MdVerbose) != 0)
-		log::info << L"Discovery manager: receive address " << m_replyToAddress << Endl;
+		log::info << L"Discovery manager: receive address " << m_replyToAddress << L"." << Endl;
 
 	// Create communication thread.
 	m_threadMulticastListener = ThreadManager::getInstance().create([this](){ threadMulticastListener(); }, L"Discovery listener");
 	if (!m_threadMulticastListener)
 	{
-		log::error << L"Discovery setup failed; unable to create listener thread" << Endl;
+		log::error << L"Discovery setup failed; unable to create listener thread." << Endl;
 		return false;
 	}
 

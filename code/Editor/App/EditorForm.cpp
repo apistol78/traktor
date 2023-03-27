@@ -233,8 +233,6 @@ bool loadSettings(const Path& pathName, Ref< PropertyGroup >& outOriginalSetting
         else
             T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\".");
 	}
-	else
-        log::warning << L"Unable to read global properties \"" << globalFile << L"\"." << Endl;
 
     // Read system properties.
     if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != nullptr)
@@ -3119,7 +3117,7 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 
 	if (!loadSettings(workspacePath, workspaceSettings, 0))
 	{
-		log::error << L"Failed to load workspace; load failed." << Endl;
+		log::error << L"Failed to open workspace \"" << workspacePath.getOriginal() << L"\"; load failed." << Endl;
 		return;
 	}
 	T_FATAL_ASSERT (workspaceSettings != nullptr)
