@@ -38,6 +38,7 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/Shared/Passes/GBufferPass.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor::world
@@ -173,24 +174,24 @@ void WorldRendererDeferred::setup(
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward gather");
 
-		m_lights.resize(0);
-		m_probes.resize(0);
-		m_gathered.resize(0);
+		m_gatheredView.lights.resize(0);
+		m_gatheredView.probes.resize(0);
+		m_gatheredView.renderables.resize(0);
 
 		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
 
 			// Gather lights and probes separately as we need them for shadows and lighting.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
-				m_lights.push_back(lightComponent);
+				m_gatheredView.lights.push_back(lightComponent);
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
-				m_probes.push_back(probeComponent);
+				m_gatheredView.probes.push_back(probeComponent);
 
-			m_gathered.push_back({ entityRenderer, renderable });
+			m_gatheredView.renderables.push_back({ entityRenderer, renderable });
 
 		}).gather(const_cast< Entity* >(rootEntity));
 
-		if (m_lights.size() > c_maxLightCount)
-			m_lights.resize(c_maxLightCount);
+		if (m_gatheredView.lights.size() > c_maxLightCount)
+			m_gatheredView.lights.resize(c_maxLightCount);
 	}
 
 	// // Begun writing light shader data; written both in setup and build.
@@ -224,9 +225,9 @@ void WorldRendererDeferred::setup(
 	int32_t lightCascadeIndex = -1;
 	if (m_shadowsQuality != Quality::Disabled)
 	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
-			const auto light = m_lights[i];
+			const auto light = m_gatheredView.lights[i];
 			if (light->getCastShadow() && light->getLightType() == LightType::Directional)
 			{
 				lightCascadeIndex = i;
@@ -239,9 +240,9 @@ void WorldRendererDeferred::setup(
 	StaticVector< int32_t, 16 > lightAtlasIndices;
 	if (m_shadowsQuality != Quality::Disabled)
 	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
-			const auto light = m_lights[i];
+			const auto light = m_gatheredView.lights[i];
 			if (light->getCastShadow() && light->getLightType() == LightType::Spot)
 				lightAtlasIndices.push_back(i);
 		}
@@ -252,8 +253,8 @@ void WorldRendererDeferred::setup(
 		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
 
-		for (auto gathered : m_gathered)
-			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
+		for (auto r : m_gatheredView.renderables)
+			r.renderer->setup(context, worldRenderView, r.renderable);
 	
 		for (auto entityRenderer : m_entityRenderers->get())
 			entityRenderer->setup(context);
@@ -278,12 +279,13 @@ void WorldRendererDeferred::setup(
 		outputTargetSetId
 	);
 
-	auto gbufferTargetSetId = setupGBufferPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId
-	);
+	// auto gbufferTargetSetId = setupGBufferPass(
+	// 	worldRenderView,
+	// 	rootEntity,
+	// 	renderGraph,
+	// 	outputTargetSetId
+	// );
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
 
 	auto velocityTargetSetId = setupVelocityPass(
 		worldRenderView,
@@ -398,7 +400,7 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 	clear.depth = 1.0f;
 	rp->setOutput(shadowMapCascadeTargetSetId, clear, render::TfNone, render::TfDepth);
 
-	const auto light = m_lights[lightCascadeIndex];
+	const auto light = m_gatheredView.lights[lightCascadeIndex];
 	Transform lightTransform = Transform(view) * light->getTransform();
 	Vector4 lightPosition = lightTransform.translation().xyz1();
 	Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -483,8 +485,8 @@ render::handle_t WorldRendererDeferred::setupCascadeShadowMapPass(
 
 				T_ASSERT(!renderContext->havePendingDraws());
 
-				for (auto gathered : m_gathered)
-					gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+				for (auto r : m_gatheredView.renderables)
+					r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
 				for (auto entityRenderer : m_entityRenderers->get())
 					entityRenderer->build(wc, shadowRenderView, shadowPass);
@@ -523,7 +525,7 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 	int32_t atlasIndex = 0;
 	for (int32_t lightAtlasIndex : lightAtlasIndices)
 	{
-		const auto light = m_lights[lightAtlasIndex];
+		const auto light = m_gatheredView.lights[lightAtlasIndex];
 		Transform lightTransform = Transform(view) * light->getTransform();
 		Vector4 lightPosition = lightTransform.translation().xyz1();
 		Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -609,8 +611,8 @@ render::handle_t WorldRendererDeferred::setupAtlasShadowMapPass(
 
 				T_ASSERT(!renderContext->havePendingDraws());
 
-				for (auto gathered : m_gathered)
-					gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+				for (auto r : m_gatheredView.renderables)
+					r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
 				for (auto entityRenderer : m_entityRenderers->get())
 					entityRenderer->build(wc, shadowRenderView, shadowPass);
@@ -658,7 +660,7 @@ render::handle_t WorldRendererDeferred::setupShadowMaskPass(
 
 	const auto shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
-	const auto light = m_lights[lightCascadeIndex];
+	const auto light = m_gatheredView.lights[lightCascadeIndex];
 
 	Matrix44 view = worldRenderView.getView();
 	Matrix44 viewInverse = view.inverse();
@@ -767,7 +769,7 @@ void WorldRendererDeferred::setupVisualPass(
 	T_PROFILER_SCOPE(L"World setup visual");
 
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-	const int32_t lightCount = (int32_t)m_lights.size();
+	const int32_t lightCount = (int32_t)m_gatheredView.lights.size();
 
 	// Add visual[0] render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -847,8 +849,8 @@ void WorldRendererDeferred::setupVisualPass(
 
 			T_ASSERT(!renderContext->havePendingDraws());
 
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, irradiancePass, gathered.renderable);
+			for (auto r : m_gatheredView.renderables)
+				r.renderer->build(wc, worldRenderView, irradiancePass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, irradiancePass);
@@ -876,8 +878,8 @@ void WorldRendererDeferred::setupVisualPass(
 
 			T_ASSERT(!renderContext->havePendingDraws());
 
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, deferredColorPass, gathered.renderable);
+			for (auto r : m_gatheredView.renderables)
+				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, deferredColorPass);

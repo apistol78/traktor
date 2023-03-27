@@ -812,6 +812,16 @@
 										<excludeFilter/>
 										<items/>
 									</item>
+									<item type="Filter">
+										<name>Passes</name>
+										<items>
+											<item type="File" version="1">
+												<fileName>Shared/Passes/*.*</fileName>
+												<excludeFilter/>
+												<items/>
+											</item>
+										</items>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">

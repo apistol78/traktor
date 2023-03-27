@@ -28,6 +28,7 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/Shared/Passes/GBufferPass.h"
 
 namespace traktor::world
 {
@@ -294,6 +295,9 @@ bool WorldRendererShared::create(
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
 	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
 
+	// Create shared passes.
+	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+
 	return true;
 }
 
@@ -305,6 +309,7 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_screenRenderer);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
+	m_gbufferPass = nullptr;
 }
 
 render::ImageGraphContext* WorldRendererShared::getImageGraphContext() const
@@ -336,7 +341,7 @@ void WorldRendererShared::setupTileDataPass(
 		StaticVector< int32_t, c_maxLightCount > sliceLights;
 
 		// Calculate positions of lights in view space.
-		for (const auto& light : m_lights)
+		for (const auto& light : m_gatheredView.lights)
 		{
 			if (light)
 			{
@@ -394,9 +399,9 @@ void WorldRendererShared::setupTileDataPass(
 
 			// Gather all lights intersecting slice.
 			sliceLights.clear();
-			for (uint32_t i = 0; i < m_lights.size(); ++i)
+			for (uint32_t i = 0; i < m_gatheredView.lights.size(); ++i)
 			{
-				const auto light = m_lights[i];
+				const auto light = m_gatheredView.lights[i];
 				if (light == nullptr)
 					continue;
 
@@ -455,7 +460,7 @@ void WorldRendererShared::setupTileDataPass(
 					for (uint32_t i = 0; i < sliceLights.size(); ++i)
 					{
 						const int32_t lightIndex = sliceLights[i];
-						const auto light = m_lights[lightIndex];
+						const auto light = m_gatheredView.lights[lightIndex];
 						if (light->getLightType() == LightType::Directional)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
@@ -496,76 +501,6 @@ void WorldRendererShared::setupTileDataPass(
 #if defined(T_WORLD_USE_TILE_JOB)
 	});
 #endif
-}
-
-render::handle_t WorldRendererShared::setupGBufferPass(
-	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
-	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId
-) const
-{
-	T_PROFILER_SCOPE(L"WorldRendererShared setupGBufferPass");
-	const float clearZ = m_settings.viewFarZ;
-
-	// Add GBuffer target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 2;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16F;		// Depth (R), Roughness (G)
-	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
-	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
-
-	// Add GBuffer render pass.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
-	
-	render::Clear clear;
-	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.0f);
-	clear.colors[1] = Color4f(0.5f, 0.5f, 0.0f, 0.0f);
-	clear.depth = 1.0f;
-	clear.stencil = 0;
-	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
-
-	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-		{
-			const WorldBuildContext wc(
-				m_entityRenderers,
-				rootEntity,
-				renderContext
-			);
-
-			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
-			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-			sharedParams->endParameters(renderContext);
-
-			const WorldRenderPassShared gbufferPass(
-				s_techniqueForwardGBufferWrite,
-				sharedParams,
-				worldRenderView,
-				IWorldRenderPass::First
-			);
-
-			T_ASSERT(!renderContext->havePendingDraws());
-
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, gbufferPass, gathered.renderable);
-	
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, gbufferPass);
-		}
-	);
-
-	renderGraph.addPass(rp);
-	return gbufferTargetSetId;
 }
 
 render::handle_t WorldRendererShared::setupVelocityPass(
@@ -637,8 +572,8 @@ render::handle_t WorldRendererShared::setupVelocityPass(
 				IWorldRenderPass::None
 			);
 
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, velocityPass, gathered.renderable);
+			for (auto r : m_gatheredView.renderables)
+				r.renderer->build(wc, worldRenderView, velocityPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, velocityPass);

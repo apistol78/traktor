@@ -37,6 +37,7 @@ class ScreenRenderer;
 namespace traktor::world
 {
 
+class GBufferPass;
 class IEntityRenderer;
 class LightComponent;
 class ProbeComponent;
@@ -91,11 +92,11 @@ protected:
 	};
 #pragma pack()
 
-	struct Gather
-	{
-		IEntityRenderer* entityRenderer;
-		Object* renderable;
-	};
+	// struct Gather
+	// {
+	// 	IEntityRenderer* entityRenderer;
+	// 	Object* renderable;
+	// };
 
 	WorldRenderSettings m_settings;
 
@@ -110,6 +111,9 @@ protected:
 	int32_t m_count = 0;
 
     Ref< render::IRenderTargetSet > m_sharedDepthStencil;
+
+	Ref< GBufferPass > m_gbufferPass;
+
     Ref< render::ImageGraphContext > m_imageGraphContext;
     resource::Proxy< render::ImageGraph > m_velocityPrime;
 	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
@@ -132,9 +136,11 @@ protected:
 	Ref< render::Buffer > m_lightIndexSBuffer;
 	Ref< render::Buffer > m_tileSBuffer;
 
-    AlignedVector< Gather > m_gathered;
-	AlignedVector< const LightComponent* > m_lights;
-	AlignedVector< const ProbeComponent* > m_probes;
+	GatherView m_gatheredView;
+
+    // AlignedVector< Gather > m_gathered;
+	// AlignedVector< const LightComponent* > m_lights;
+	// AlignedVector< const ProbeComponent* > m_probes;
 
 #if defined(T_WORLD_USE_TILE_JOB)
 	Ref< Job > m_tileJob;
@@ -147,12 +153,12 @@ protected:
 		render::handle_t outputTargetSetId
 	);
 
-	render::handle_t setupGBufferPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId
-	) const;
+	// render::handle_t setupGBufferPass(
+	// 	const WorldRenderView& worldRenderView,
+	// 	const Entity* rootEntity,
+	// 	render::RenderGraph& renderGraph,
+	// 	render::handle_t outputTargetSetId
+	// ) const;
 
 	render::handle_t setupVelocityPass(
 		const WorldRenderView& worldRenderView,

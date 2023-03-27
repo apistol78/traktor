@@ -40,6 +40,7 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/Shared/Passes/GBufferPass.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor::world
@@ -136,8 +137,8 @@ void WorldRendererForward::setup(
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward gather");
 
-		m_probes.resize(0);
-		m_gathered.resize(0);
+		m_gatheredView.probes.resize(0);
+		m_gatheredView.renderables.resize(0);
 
 		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
 
@@ -148,9 +149,9 @@ void WorldRendererForward::setup(
 					lights.push_back(lightComponent);
 			}
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
-				m_probes.push_back(probeComponent);
+				m_gatheredView.probes.push_back(probeComponent);
 
-			m_gathered.push_back({ entityRenderer, renderable });
+			m_gatheredView.renderables.push_back({ entityRenderer, renderable });
 
 		}).gather(const_cast< Entity* >(rootEntity));
 	}
@@ -159,11 +160,11 @@ void WorldRendererForward::setup(
 	{
 		const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
-		m_lights.resize(4);
-		m_lights[0] = nullptr;
-		m_lights[1] = nullptr;
-		m_lights[2] = nullptr;
-		m_lights[3] = nullptr;
+		m_gatheredView.lights.resize(4);
+		m_gatheredView.lights[0] = nullptr;
+		m_gatheredView.lights[1] = nullptr;
+		m_gatheredView.lights[2] = nullptr;
+		m_gatheredView.lights[3] = nullptr;
 
 		// Find cascade shadow light; must be first.
 		if (shadowsEnable)
@@ -176,7 +177,7 @@ void WorldRendererForward::setup(
 					light->getLightType() == LightType::Directional
 				)
 				{
-					m_lights[0] = light;
+					m_gatheredView.lights[0] = light;
 					break;
 				}
 			}
@@ -186,8 +187,8 @@ void WorldRendererForward::setup(
 		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
 		{
 			auto& light = lights[i];
-			if (light != m_lights[0])
-				m_lights.push_back(light);
+			if (light != m_gatheredView.lights[0])
+				m_gatheredView.lights.push_back(light);
 		}
 	}
 
@@ -196,8 +197,8 @@ void WorldRendererForward::setup(
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
 		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
 
-		for (auto gathered : m_gathered)
-			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
+		for (auto r : m_gatheredView.renderables)
+			r.renderer->setup(context, worldRenderView, r.renderable);
 	
 		for (auto entityRenderer : m_entityRenderers->get())
 			entityRenderer->setup(context);
@@ -222,12 +223,13 @@ void WorldRendererForward::setup(
 		outputTargetSetId
 	);
 
-	auto gbufferTargetSetId = setupGBufferPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId
-	);
+	// auto gbufferTargetSetId = setupGBufferPass(
+	// 	worldRenderView,
+	// 	rootEntity,
+	// 	renderGraph,
+	// 	outputTargetSetId
+	// );
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
 
 	auto velocityTargetSetId = setupVelocityPass(
 		worldRenderView,
@@ -318,9 +320,9 @@ void WorldRendererForward::setupLightPass(
 	StaticVector< int32_t, 32 > lightAtlasIndices;
 	if (shadowsEnable)
 	{
-		for (int32_t i = 0; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
+			const auto& light = m_gatheredView.lights[i];
 			if (
 				light != nullptr &&
 				light->getCastShadow() &&
@@ -333,9 +335,9 @@ void WorldRendererForward::setupLightPass(
 	// Write all lights to sbuffer; without shadow map information.
 	{
 		// First 4 entires are cascading shadow light.
-		if (m_lights[0] != nullptr)
+		if (m_gatheredView.lights[0] != nullptr)
 		{
-			const auto& light = m_lights[0];
+			const auto& light = m_gatheredView.lights[0];
 			auto* lsd = lightShaderData;
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
@@ -360,9 +362,9 @@ void WorldRendererForward::setupLightPass(
 		}
 
 		// Append all other lights.
-		for (int32_t i = 4; i < (int32_t)m_lights.size(); ++i)
+		for (int32_t i = 4; i < (int32_t)m_gatheredView.lights.size(); ++i)
 		{
-			const auto& light = m_lights[i];
+			const auto& light = m_gatheredView.lights[i];
 			auto* lsd = &lightShaderData[i];
 
 			lsd->typeRangeRadius[0] = (float)light->getLightType();
@@ -386,7 +388,7 @@ void WorldRendererForward::setupLightPass(
 	// and update light sbuffer.
 	if (shadowsEnable)
 	{
-		const int32_t cascadingSlices = (m_lights[0] != nullptr) ? shadowSettings.cascadingSlices : 0;
+		const int32_t cascadingSlices = (m_gatheredView.lights[0] != nullptr) ? shadowSettings.cascadingSlices : 0;
 		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
 		const int32_t shmh = shadowSettings.resolution;
 		const int32_t sliceDim = shadowSettings.resolution;
@@ -411,9 +413,9 @@ void WorldRendererForward::setupLightPass(
 		clear.depth = 1.0f;
 		rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfNone, render::TfDepth);
 
-		if (m_lights[0] != nullptr)
+		if (m_gatheredView.lights[0] != nullptr)
 		{
-			const auto& light = m_lights[0];
+			const auto& light = m_gatheredView.lights[0];
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -513,8 +515,8 @@ void WorldRendererForward::setupLightPass(
 
 						T_ASSERT(!renderContext->havePendingDraws());
 
-						for (auto gathered : m_gathered)
-							gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+						for (auto r : m_gatheredView.renderables)
+							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
 						for (auto entityRenderer : m_entityRenderers->get())
 							entityRenderer->build(wc, shadowRenderView, shadowPass);
@@ -525,7 +527,7 @@ void WorldRendererForward::setupLightPass(
 
 		for (int32_t lightAtlasIndex : lightAtlasIndices)
 		{
-			const auto& light = m_lights[lightAtlasIndex];
+			const auto& light = m_gatheredView.lights[lightAtlasIndex];
 			const Transform lightTransform = light->getTransform();
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
@@ -627,8 +629,8 @@ void WorldRendererForward::setupLightPass(
 
 					T_ASSERT(!renderContext->havePendingDraws());
 
-					for (auto gathered : m_gathered)
-						gathered.entityRenderer->build(wc, shadowRenderView, shadowPass, gathered.renderable);
+					for (auto r : m_gatheredView.renderables)
+						r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
 					for (auto entityRenderer : m_entityRenderers->get())
 						entityRenderer->build(wc, shadowRenderView, shadowPass);
@@ -660,7 +662,7 @@ void WorldRendererForward::setupVisualPass(
 
 	// Find first, non-local, probe.
 	Ref< const ProbeComponent > probe;
-	for (auto p : m_probes)
+	for (auto p : m_gatheredView.probes)
 	{
 		if (!p->getLocal() && p->getTexture() != nullptr)
 		{
@@ -791,8 +793,8 @@ void WorldRendererForward::setupVisualPass(
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 
-			for (auto gathered : m_gathered)
-				gathered.entityRenderer->build(wc, worldRenderView, defaultPass, gathered.renderable);
+			for (auto r : m_gatheredView.renderables)
+				r.renderer->build(wc, worldRenderView, defaultPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())
 				entityRenderer->build(wc, worldRenderView, defaultPass);
