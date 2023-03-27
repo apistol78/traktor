@@ -579,11 +579,11 @@ local dpis =
 }
 
 -- -j -i Dark
-local function export(input, x, y, width, height, dpi, output)
+local function export(theme, input, x, y, width, height, dpi, output)
 	--local inkscape = "/snap/bin/inkscape"
 	--local inkscape = "/usr/bin/flatpak run org.inkscape.Inkscape"
 	local inkscape = "\"c:/program files/inkscape/bin/inkscape.exe\""
-	local cmd = inkscape .. " --export-filename=" .. output .. " --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
+	local cmd = inkscape .. " --export-filename=" .. output .. " --export-id=\"Common;" .. theme .. "\" --export-id-only --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
 	--stdout:printLn(cmd)
 	local result = run:execute(cmd, nil)
 	--stdout:printLn("  exitcode " .. result)
@@ -598,6 +598,9 @@ function main(argv)
 	end
 
 	local theme = argv:get(0)
+
+	local themeExportId = theme
+	if theme == "Monokai" then themeExportId = "Dark" end
 	
 	local filter = nil
 	if argv.size >= 2 then filter = argv:get(1) end
@@ -636,7 +639,7 @@ function main(argv)
 
 					-- Faux export DPI to export as 16x16 at baseline (if base isn't set).
 					local xdpi = (96 / 2) * (dpi / 96) * (base / 16)
-					export(source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
+					export(themeExportId, source, o.column * 32, o.row * 32, o.width * 32, o.height * 32, xdpi, dpi .. ".png")
 
 					-- Get file size of output.
 					local f = FileSystem.getInstance():get(Path(dpi .. ".png"))

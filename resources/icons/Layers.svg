@@ -26,10 +26,10 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="5.656854"
-     inkscape:cx="85.206371"
-     inkscape:cy="60.546021"
+     inkscape:cx="73.715885"
+     inkscape:cy="60.899574"
      inkscape:document-units="px"
-     inkscape:current-layer="layer27"
+     inkscape:current-layer="Dark"
      showgrid="true"
      inkscape:snap-global="true"
      inkscape:snap-grids="true"
@@ -972,7 +972,7 @@
   </metadata>
   <g
      inkscape:groupmode="layer"
-     id="layer27"
+     id="Light"
      inkscape:label="Light"
      style="display:inline">
     <g
@@ -1099,9 +1099,9 @@
        inkscape:connector-curvature="0" />
   </g>
   <g
-     style="display:none;opacity:1"
+     style="display:inline;opacity:1"
      inkscape:label="Dark"
-     id="g5948"
+     id="Dark"
      inkscape:groupmode="layer">
     <g
        style="display:inline;opacity:1"
