@@ -85,6 +85,8 @@ public:
 
 	Pin* createInputPin(const std::wstring& name, const Guid& id, bool mandatory);
 
+	bool removeInputPin(Pin* pin);
+
 	const RefArray< Pin >& getInputPins() const;
 
 	Pin* getInputPin(uint32_t index) const;
@@ -95,7 +97,7 @@ public:
 
 	Pin* createOutputPin(const std::wstring& name, const Guid& id);
 
-	Pin* createOutputPin(const std::wstring& name, const std::wstring& label, const Guid& id);
+	bool removeOutputPin(Pin* pin);
 
 	const RefArray< Pin >& getOutputPins() const;
 

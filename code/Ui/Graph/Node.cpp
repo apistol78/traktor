@@ -135,6 +135,17 @@ Pin* Node::createInputPin(const std::wstring& name, const Guid& id, bool mandato
 	return pin;
 }
 
+bool Node::removeInputPin(Pin* pin)
+{
+	if (m_inputPins.remove(pin))
+	{
+		m_size = m_shape->calculateSize(m_owner, this);
+		return true;
+	}
+	else
+		return false;
+}
+
 const RefArray< Pin >& Node::getInputPins() const
 {
 	return m_inputPins;
@@ -172,6 +183,17 @@ Pin* Node::createOutputPin(const std::wstring& name, const Guid& id)
 	m_outputPins.push_back(pin);
 	m_size = m_shape->calculateSize(m_owner, this);
 	return pin;
+}
+
+bool Node::removeOutputPin(Pin* pin)
+{
+	if (m_outputPins.remove(pin))
+	{
+		m_size = m_shape->calculateSize(m_owner, this);
+		return true;
+	}
+	else
+		return false;
 }
 
 const RefArray< Pin >& Node::getOutputPins() const

@@ -184,6 +184,7 @@ public:
 
 	virtual void reserve(size_t size, size_t capacity) const override final
 	{
+		m_pins.resize(size);
 	}
 
 	virtual size_t size() const override final

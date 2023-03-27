@@ -115,6 +115,7 @@ void ScriptNodeFacade::refreshEditorNode(
 	editorNode->setComment(scriptNode->getComment());
 	editorNode->setInfo(scriptNode->getInformation());
 
+	// Add or rename editor pins.
 	for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = scriptNode->getInputPin(j);
@@ -134,6 +135,43 @@ void ScriptNodeFacade::refreshEditorNode(
 		else
 			editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
 	}
+
+	// Remove editors pins.
+	RefArray< ui::Pin > removeEditorInputPins;
+	for (auto editorInputPin : editorNode->getInputPins())
+	{
+		bool valid = false;
+		for (int j = 0; j < scriptNode->getInputPinCount(); ++j)
+		{
+			if (scriptNode->getInputPin(j)->getId() == editorInputPin->getId())
+			{
+				valid = true;
+				break;
+			}
+		}
+		if (!valid)
+			removeEditorInputPins.push_back(editorInputPin);
+	}
+	for (auto editorInputPin : removeEditorInputPins)
+		editorNode->removeInputPin(editorInputPin);
+
+	RefArray< ui::Pin > removeEditorOutputPins;
+	for (auto editorOutputPin : editorNode->getOutputPins())
+	{
+		bool valid = false;
+		for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)
+		{
+			if (scriptNode->getOutputPin(j)->getId() == editorOutputPin->getId())
+			{
+				valid = true;
+				break;
+			}
+		}
+		if (!valid)
+			removeEditorOutputPins.push_back(editorOutputPin);
+	}
+	for (auto editorOutputPin : removeEditorOutputPins)
+		editorNode->removeOutputPin(editorOutputPin);
 }
 
 void ScriptNodeFacade::setValidationIndicator(
