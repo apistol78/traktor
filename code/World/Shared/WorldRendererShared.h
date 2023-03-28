@@ -37,10 +37,14 @@ class ScreenRenderer;
 namespace traktor::world
 {
 
+class AmbientOcclusionPass;
 class GBufferPass;
 class IEntityRenderer;
 class LightComponent;
+class PostProcessPass;
 class ProbeComponent;
+class ReflectionsPass;
+class VelocityPass;
 
 /*! World renderer shared implementation.
  * \ingroup World
@@ -92,38 +96,21 @@ protected:
 	};
 #pragma pack()
 
-	// struct Gather
-	// {
-	// 	IEntityRenderer* entityRenderer;
-	// 	Object* renderable;
-	// };
-
 	WorldRenderSettings m_settings;
 
-	Quality m_toneMapQuality = Quality::Disabled;
-	Quality m_motionBlurQuality = Quality::Disabled;
 	Quality m_shadowsQuality = Quality::Disabled;
-	Quality m_reflectionsQuality = Quality::Disabled;
-	Quality m_ambientOcclusionQuality = Quality::Disabled;
-	Quality m_antiAliasQuality = Quality::Disabled;
 
-	float m_gamma = 1.0f;
 	int32_t m_count = 0;
 
     Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 
 	Ref< GBufferPass > m_gbufferPass;
+	Ref< VelocityPass > m_velocityPass;
+	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
+	Ref< ReflectionsPass > m_reflectionsPass;
+	Ref< PostProcessPass > m_postProcessPass;
 
     Ref< render::ImageGraphContext > m_imageGraphContext;
-    resource::Proxy< render::ImageGraph > m_velocityPrime;
-	resource::Proxy< render::ImageGraph > m_ambientOcclusion;
-	resource::Proxy< render::ImageGraph > m_motionBlur;
-	resource::Proxy< render::ImageGraph > m_toneMap;
-	resource::Proxy< render::ImageGraph > m_antiAlias;
-	resource::Proxy< render::ImageGraph > m_visual;
-	resource::Proxy< render::ImageGraph > m_gammaCorrection;
-	resource::Proxy< render::ImageGraph > m_screenReflections;
-	resource::Proxy< render::ITexture > m_colorGrading;
 
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::ScreenRenderer > m_screenRenderer;
@@ -138,10 +125,6 @@ protected:
 
 	GatherView m_gatheredView;
 
-    // AlignedVector< Gather > m_gathered;
-	// AlignedVector< const LightComponent* > m_lights;
-	// AlignedVector< const ProbeComponent* > m_probes;
-
 #if defined(T_WORLD_USE_TILE_JOB)
 	Ref< Job > m_tileJob;
 #endif
@@ -152,49 +135,6 @@ protected:
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	);
-
-	// render::handle_t setupGBufferPass(
-	// 	const WorldRenderView& worldRenderView,
-	// 	const Entity* rootEntity,
-	// 	render::RenderGraph& renderGraph,
-	// 	render::handle_t outputTargetSetId
-	// ) const;
-
-	render::handle_t setupVelocityPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t gbufferTargetSetId
-	) const;
-
-	render::handle_t setupAmbientOcclusionPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t gbufferTargetSetId
-	) const;
-
-	render::handle_t setupReflectionsPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t visualReadTargetSetId
-	) const;
-
-	void setupProcessPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t velocityTargetSetId,
-		render::handle_t visualWriteTargetSetId,
-		render::handle_t visualReadTargetSetId
-	) const;
 };
 
 }

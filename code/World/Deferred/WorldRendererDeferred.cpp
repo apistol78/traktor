@@ -38,7 +38,11 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/PostProcessPass.h"
+#include "World/Shared/Passes/ReflectionsPass.h"
+#include "World/Shared/Passes/VelocityPass.h"
 #include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor::world
@@ -279,29 +283,9 @@ void WorldRendererDeferred::setup(
 		outputTargetSetId
 	);
 
-	// auto gbufferTargetSetId = setupGBufferPass(
-	// 	worldRenderView,
-	// 	rootEntity,
-	// 	renderGraph,
-	// 	outputTargetSetId
-	// );
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
-
-	auto velocityTargetSetId = setupVelocityPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId,
-		gbufferTargetSetId
-	);
-
-	auto ambientOcclusionTargetSetId = setupAmbientOcclusionPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId,
-		gbufferTargetSetId
-	);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
 
 	auto shadowMapCascadeTargetSetId = (int32_t)0;
 	// setupCascadeShadowMapPass(
@@ -333,14 +317,7 @@ void WorldRendererDeferred::setup(
 		lightCascadeIndex
 	);
 
-	auto reflectionsTargetSetId = setupReflectionsPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId,
-		gbufferTargetSetId,
-		visualReadTargetSetId
-	);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	setupVisualPass(
 		worldRenderView,
@@ -354,16 +331,7 @@ void WorldRendererDeferred::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	setupProcessPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId,
-		gbufferTargetSetId,
-		velocityTargetSetId,
-		visualWriteTargetSetId,
-		visualReadTargetSetId
-	);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	m_count++;
 }

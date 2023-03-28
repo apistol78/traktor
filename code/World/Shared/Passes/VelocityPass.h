@@ -10,18 +10,25 @@
 
 #include "Core/Object.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
 #include "World/WorldRenderSettings.h"
 
 namespace traktor::render
 {
 
+class ImageGraph;
+class ImageGraphContext;
+class IRenderSystem;
 class IRenderTargetSet;
 class RenderGraph;
+class ScreenRenderer;
 
 }
 
 namespace traktor::world
 {
+
+struct WorldCreateDesc;
 
 class Entity;
 class WorldEntityRenderers;
@@ -29,22 +36,26 @@ class WorldRenderView;
 
 /*!
  */
-class GBufferPass : public Object
+class VelocityPass : public Object
 {
     T_RTTI_CLASS;
 
 public:
-    explicit GBufferPass(
+    explicit VelocityPass(
         const WorldRenderSettings& settings,
         WorldEntityRenderers* entityRenderers,
         render::IRenderTargetSet* sharedDepthStencil)
     ;
 
+    bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
+
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        render::ImageGraphContext* imageGraphContext,
 		render::RenderGraph& renderGraph,
+        render::handle_t gbufferTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;
 
@@ -52,6 +63,8 @@ private:
     WorldRenderSettings m_settings;
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::IRenderTargetSet > m_sharedDepthStencil;
+    Ref< render::ScreenRenderer > m_screenRenderer;
+    resource::Proxy< render::ImageGraph > m_velocityPrime;
 };
 
 }
