@@ -234,7 +234,7 @@ uint32_t Model::addTexCoord(const Vector2& texCoord)
 
 uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 {
-	const uint32_t id = m_texCoords.get(texCoord, 1.0f / 2048.0f);
+	const uint32_t id = m_texCoords.get(texCoord);
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 

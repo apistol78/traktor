@@ -64,6 +64,30 @@ public:
 		return index < m_values.size() ? m_values[index] : defaultValue;
 	}
 
+	uint32_t get(const ValueType& v) const
+	{
+		const Vector2 p = PositionAccessor::get(v);
+		const Vector2 pq = p / m_cellSize;
+
+		const int32_t x = (int32_t)pq.x;
+		const int32_t y = (int32_t)pq.y;
+
+		const uint32_t hash = HashFunction::get(x, y);
+
+		const auto it = m_indices.find(hash);
+		if (it == m_indices.end())
+			return InvalidIndex;
+
+		for (auto index : it->second)
+		{
+			const Vector2 pv = PositionAccessor::get(m_values[index]);
+			if ((pv - p).length2() <= 1e-8f)
+				return index;
+		}
+
+		return InvalidIndex;
+	}
+
 	uint32_t get(const ValueType& v, float distance) const
 	{
 		T_ASSERT(distance <= m_cellSize / 2.0f);

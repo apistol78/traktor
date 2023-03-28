@@ -8,15 +8,15 @@
  */
 #pragma once
 
-#include <map>
 #include <fbxsdk.h>
+#include "Core/Containers/SmallMap.h"
 
 namespace traktor::model
 {
 
 class Model;
 
-bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode);
+bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode);
 
 void fixMaterialUvSets(Model& outModel);
 
