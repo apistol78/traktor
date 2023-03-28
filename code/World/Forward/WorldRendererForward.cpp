@@ -42,6 +42,7 @@
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
@@ -75,6 +76,16 @@ bool WorldRendererForward::create(
 	))
 		return false;
 
+	// Lights struct buffer.
+	m_lightSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		LightClusterPass::c_maxLightCount,
+		sizeof(LightShaderData),
+		true
+	);
+	if (!m_lightSBuffer)
+		return false;
+
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	m_shadowAtlasPacker = new Packer(
 		shadowSettings.resolution,
@@ -103,6 +114,7 @@ bool WorldRendererForward::create(
 void WorldRendererForward::destroy()
 {
 	WorldRendererShared::destroy();
+	safeDestroy(m_lightSBuffer);
 	m_irradianceGrid.clear();
 }
 
@@ -135,7 +147,7 @@ void WorldRendererForward::setup(
 	// 	worldRenderView.setProjection(proj);
 	// }
 
-	StaticVector< const LightComponent*, c_maxLightCount > lights;
+	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
 
 	// Gather active renderables for this frame.
 	{
@@ -220,13 +232,7 @@ void WorldRendererForward::setup(
 	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add passes to render graph.
-	setupTileDataPass(
-		worldRenderView,
-		rootEntity,
-		renderGraph,
-		outputTargetSetId
-	);
-
+	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -707,8 +713,8 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer()->getBufferView());
 			}
 
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_tileSBuffer->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightIndexSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
 
 			if (probe)

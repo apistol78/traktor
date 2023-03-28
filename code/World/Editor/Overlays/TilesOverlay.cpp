@@ -16,6 +16,7 @@
 #include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/TilesOverlay.h"
 #include "World/Forward/WorldRendererForward.h"
+#include "World/Shared/Passes/LightClusterPass.h"
 
 namespace traktor::world
 {
@@ -81,7 +82,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		if (!gbufferTargetSet)
 			return;
 
-		render::Buffer* tileSBuffer = worldRendererForward->m_tileSBuffer;
+		render::Buffer* tileSBuffer = worldRendererForward->m_lightClusterPass->getTileSBuffer();
 		if (!tileSBuffer)
 			return;
 
