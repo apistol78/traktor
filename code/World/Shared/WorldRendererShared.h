@@ -13,15 +13,6 @@
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 
-// #define T_WORLD_USE_TILE_JOB
-
-namespace traktor
-{
-
-class Job;
-
-}
-
 namespace traktor::render
 {
 
@@ -40,6 +31,7 @@ namespace traktor::world
 class AmbientOcclusionPass;
 class GBufferPass;
 class IEntityRenderer;
+class LightClusterPass;
 class LightComponent;
 class PostProcessPass;
 class ProbeComponent;
@@ -65,37 +57,6 @@ public:
     virtual render::ImageGraphContext* getImageGraphContext() const override final;
 
 protected:
-	const static int32_t c_maxLightCount = 16;
-
-#pragma pack(1)
-	struct LightShaderData
-	{
-		float typeRangeRadius[4];
-		float position[4];
-		float direction[4];
-		float color[4];
-		float viewToLight0[4];
-		float viewToLight1[4];
-		float viewToLight2[4];
-		float viewToLight3[4];
-		float atlasTransform[4];
-	};
-#pragma pack()
-
-#pragma pack(1)
-	struct LightIndexShaderData
-	{
-		int32_t lightIndex[4];
-	};
-#pragma pack()
-
-#pragma pack(1)
-	struct TileShaderData
-	{
-		int32_t lightOffsetAndCount[4];
-	};
-#pragma pack()
-
 	WorldRenderSettings m_settings;
 
 	Quality m_shadowsQuality = Quality::Disabled;
@@ -104,6 +65,7 @@ protected:
 
     Ref< render::IRenderTargetSet > m_sharedDepthStencil;
 
+	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< VelocityPass > m_velocityPass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
@@ -119,22 +81,7 @@ protected:
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
 
-	Ref< render::Buffer > m_lightSBuffer;
-	Ref< render::Buffer > m_lightIndexSBuffer;
-	Ref< render::Buffer > m_tileSBuffer;
-
 	GatherView m_gatheredView;
-
-#if defined(T_WORLD_USE_TILE_JOB)
-	Ref< Job > m_tileJob;
-#endif
-
-	void setupTileDataPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId
-	);
 };
 
 }
