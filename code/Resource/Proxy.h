@@ -133,7 +133,7 @@ public:
 		return *this;
 	}
 
-	Proxy< ResourceType >& operator = (Proxy< ResourceType >&& rh)
+	Proxy< ResourceType >& operator = (Proxy< ResourceType >&& rh) noexcept
 	{
 		m_handle = std::move(rh.m_handle);
 		return *this;

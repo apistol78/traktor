@@ -28,75 +28,16 @@
 #include "World/Entity/ProbeComponent.h"
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/WorldRenderPassShared.h"
+#include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/PostProcessPass.h"
+#include "World/Shared/Passes/ReflectionsPass.h"
+#include "World/Shared/Passes/VelocityPass.h"
 
 namespace traktor::world
 {
 	namespace
 	{
-
-const resource::Id< render::ImageGraph > c_velocityPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionLow(L"{416745F9-93C7-8D45-AE28-F2823DEE636A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionMedium(L"{5A3B0260-32F9-B343-BBA4-88BD932F917A}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionHigh(L"{45F9CD9F-C700-9942-BB36-443629C88748}");
-const resource::Id< render::ImageGraph > c_ambientOcclusionUltra(L"{302E57C8-711D-094F-A764-75F76553E81B}");
-const resource::Id< render::ImageGraph > c_motionBlurMedium(L"{E813C1A0-D27D-AE4F-9EE4-637529ECCD69}");
-const resource::Id< render::ImageGraph > c_antiAliasLow(L"{71D385F1-8364-C849-927F-5F1249F5DF92}");
-const resource::Id< render::ImageGraph > c_antiAliasMedium(L"{D03B9566-EFA3-7A43-B3AD-F59DB34DEE96}");
-const resource::Id< render::ImageGraph > c_antiAliasHigh(L"{C0316981-FA73-A34E-8135-1F596425688F}");
-const resource::Id< render::ImageGraph > c_antiAliasUltra(L"{88E329C8-A2F3-7443-B73E-4E85C6ECACBE}");
-const resource::Id< render::ImageGraph > c_gammaCorrection(L"{B1E8367D-91DD-D648-A44F-B86492169771}");
-const resource::Id< render::ImageGraph > c_toneMapFixed(L"{1F20DAB5-22EB-B84C-92B0-71E94C1CE261}");
-const resource::Id< render::ImageGraph > c_toneMapAdaptive(L"{BE19DE90-E010-A74D-AA3B-87FAC2A56946}");
-const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
-
-resource::Id< render::ImageGraph > getAmbientOcclusionId(Quality quality)
-{
-	switch (quality)
-	{
-	default:
-	case Quality::Disabled:
-		return resource::Id< render::ImageGraph >();
-	case Quality::Low:
-		return c_ambientOcclusionLow;
-	case Quality::Medium:
-		return c_ambientOcclusionMedium;
-	case Quality::High:
-		return c_ambientOcclusionHigh;
-	case Quality::Ultra:
-		return c_ambientOcclusionUltra;
-	}
-}
-
-resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
-{
-	switch (quality)
-	{
-	default:
-	case Quality::Disabled:
-		return resource::Id< render::ImageGraph >();
-	case Quality::Low:
-		return c_antiAliasLow;
-	case Quality::Medium:
-		return c_antiAliasMedium;
-	case Quality::High:
-		return c_antiAliasHigh;
-	case Quality::Ultra:
-		return c_antiAliasUltra;
-	}
-}
-
-resource::Id< render::ImageGraph > getToneMapId(WorldRenderSettings::ExposureMode exposureMode)
-{
-	switch (exposureMode)
-	{
-	default:
-	case WorldRenderSettings::EmFixed:
-		return c_toneMapFixed;
-	case WorldRenderSettings::EmAdaptive:
-		return c_toneMapAdaptive;
-	}
-}
 
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
@@ -135,15 +76,6 @@ Ref< render::ITexture > createCubeTexture(render::IRenderSystem* renderSystem, u
 	return renderSystem->createCubeTexture(ctcd, T_FILE_LINE_W);
 }
 
-Vector2 jitter(int32_t count)
-{
-	const Vector2 kernelSize(0.5f, 0.5f);
-	return Vector2(
-		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
-		(float)(      count & 1) * kernelSize.y - kernelSize.y / 2.0f
-	);
-}
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRendererShared", WorldRendererShared, IWorldRenderer)
@@ -158,100 +90,8 @@ bool WorldRendererShared::create(
 
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
-	m_toneMapQuality = desc.quality.toneMap;
-	m_motionBlurQuality = desc.quality.motionBlur;
 	m_shadowsQuality = desc.quality.shadows;
-	m_reflectionsQuality = desc.quality.reflections;
-	m_ambientOcclusionQuality = desc.quality.ambientOcclusion;
-	m_antiAliasQuality = desc.quality.antiAlias;
-	m_gamma = desc.gamma;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
-
-	// Create velocity prime processing; priming is also used by TAA.
-	if (
-		m_motionBlurQuality > Quality::Disabled ||
-		m_antiAliasQuality >= Quality::Ultra
-	)
-	{
-		if (!resourceManager->bind(c_velocityPrime, m_velocityPrime))
-		{
-			log::warning << L"Unable to create velocity prime process; disabled." << Endl;
-			m_motionBlurQuality = Quality::Disabled;
-		}
-	}
-
-	// Create ambient occlusion processing.
-	if (m_ambientOcclusionQuality > Quality::Disabled)
-	{
-		resource::Id< render::ImageGraph > ambientOcclusion = getAmbientOcclusionId(m_ambientOcclusionQuality);
-		if (!resourceManager->bind(ambientOcclusion, m_ambientOcclusion))
-			log::warning << L"Unable to create ambient occlusion process; AO disabled." << Endl;
-	}
-
-	// Create motion blur processing.
-	if (m_motionBlurQuality > Quality::Disabled)
-	{
-		resource::Id< render::ImageGraph > motionBlur = c_motionBlurMedium;
-		if (!resourceManager->bind(motionBlur, m_motionBlur))
-			log::warning << L"Unable to create motion blur process; motion blur disabled." << Endl;
-	}
-
-	// Create antialias processing.
-	if (m_antiAliasQuality > Quality::Disabled)
-	{
-		resource::Id< render::ImageGraph > antiAlias = getAntiAliasId(m_antiAliasQuality);
-		if (!resourceManager->bind(antiAlias, m_antiAlias))
-			log::warning << L"Unable to create antialias process; AA disabled." << Endl;
-	}
-
-	// Create "visual" post processing filter.
-	if (desc.quality.imageProcess > Quality::Disabled)
-	{
-		const auto& visualImageGraph = desc.worldRenderSettings->imageProcess[(int32_t)desc.quality.imageProcess];
-		if (!visualImageGraph.isNull())
-		{
-			if (!resourceManager->bind(visualImageGraph, m_visual))
-				log::warning << L"Unable to create visual post processing; post processing disabled." << Endl;
-		}
-	}
-
-	// Create gamma correction processing.
-	if (std::abs(m_gamma - 1.0f) > FUZZY_EPSILON)
-	{
-		if (!resourceManager->bind(c_gammaCorrection, m_gammaCorrection))
-			log::warning << L"Unable to create gamma correction process; gamma correction disabled." << Endl;
-	}
-
-	// Create tone map processing.
-	if (m_toneMapQuality > Quality::Disabled)
-	{
-		resource::Id< render::ImageGraph > toneMap = getToneMapId(m_settings.exposureMode);
-		if (!resourceManager->bind(toneMap, m_toneMap))
-		{
-			log::warning << L"Unable to create tone map process." << Endl;
-			m_toneMapQuality = Quality::Disabled;
-		}		
-	}
-
-	// Create screen reflections processing.
-	if (m_reflectionsQuality >= Quality::Disabled)
-	{
-		if (!resourceManager->bind(c_screenReflections, m_screenReflections))
-		{
-			log::warning << L"Unable to create screen space reflections process." << Endl;
-			m_reflectionsQuality = Quality::Disabled;
-		}
-	}
-
-	// Create color grading texture.
-	if (m_settings.colorGrading.isValid())
-	{
-		if (!resourceManager->bind(m_settings.colorGrading, m_colorGrading))
-		{
-			log::error << L"Unable to create color grading texture." << Endl;
-			return false;
-		}
-	}
 
 	m_imageGraphContext = new render::ImageGraphContext();
 	
@@ -298,6 +138,22 @@ bool WorldRendererShared::create(
 	// Create shared passes.
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
 
+	m_velocityPass = new VelocityPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
+		return false;
+
+	m_ambientOcclusionPass = new AmbientOcclusionPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	if (!m_ambientOcclusionPass->create(resourceManager, renderSystem, desc))
+		return false;
+
+	m_reflectionsPass = new ReflectionsPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	if (!m_reflectionsPass->create(resourceManager, renderSystem, desc))
+		return false;
+
+	m_postProcessPass = new PostProcessPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
+		return false;
+
 	return true;
 }
 
@@ -309,6 +165,10 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_screenRenderer);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
+	m_postProcessPass = nullptr;
+	m_reflectionsPass = nullptr;
+	m_ambientOcclusionPass = nullptr;
+	m_velocityPass = nullptr;
 	m_gbufferPass = nullptr;
 }
 
@@ -501,359 +361,6 @@ void WorldRendererShared::setupTileDataPass(
 #if defined(T_WORLD_USE_TILE_JOB)
 	});
 #endif
-}
-
-render::handle_t WorldRendererShared::setupVelocityPass(
-	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
-	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	render::handle_t gbufferTargetSetId
-) const
-{
-	T_PROFILER_SCOPE(L"WorldRendererForward setupVelocityPass");
-
-	// Add Velocity target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR32G32F;
-	auto velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, m_sharedDepthStencil, outputTargetSetId);
-
-	// Add Velocity render pass.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
-	
-	if (m_velocityPrime)
-	{
-		render::ImageGraphView view;
-
-		view.viewFrustum = worldRenderView.getViewFrustum();
-		view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
-		view.projection = worldRenderView.getProjection();
-		view.deltaTime = worldRenderView.getDeltaTime();
-
-		m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-
-		m_velocityPrime->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			*m_imageGraphContext,
-			view
-		);
-	}
-
-	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
-
-	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-		{
-			const WorldBuildContext wc(
-				m_entityRenderers,
-				rootEntity,
-				renderContext
-			);
-
-			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-			sharedParams->endParameters(renderContext);
-
-			const WorldRenderPassShared velocityPass(
-				s_techniqueVelocityWrite,
-				sharedParams,
-				worldRenderView,
-				IWorldRenderPass::None
-			);
-
-			for (auto r : m_gatheredView.renderables)
-				r.renderer->build(wc, worldRenderView, velocityPass, r.renderable);
-	
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, velocityPass);
-		}
-	);
-
-	renderGraph.addPass(rp);
-	return velocityTargetSetId;
-}
-
-render::handle_t WorldRendererShared::setupAmbientOcclusionPass(
-	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
-	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	render::handle_t gbufferTargetSetId
-) const
-{
-	render::ImageGraphView view;
-
-	if (m_ambientOcclusion == nullptr)
-		return 0;
-
-	T_PROFILER_SCOPE(L"WorldRendererShared setupAmbientOcclusionPass");
-
-	// Add ambient occlusion target set.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, m_sharedDepthStencil, outputTargetSetId);
-
-	// Add ambient occlusion render pass.
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.view = worldRenderView.getView();
-	view.projection = worldRenderView.getProjection();
-
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
-	m_ambientOcclusion->addPasses(
-		m_screenRenderer,
-		renderGraph,
-		rp,
-		*m_imageGraphContext,
-		view
-	);
-
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
-
-	renderGraph.addPass(rp);
-	return ambientOcclusionTargetSetId;
-}
-
-render::handle_t WorldRendererShared::setupReflectionsPass(
-	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
-	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t visualReadTargetSetId
-) const
-{
-	if (m_reflectionsQuality == Quality::Disabled)
-		return 0;
-
-	T_PROFILER_SCOPE(L"WorldRendererShared setupReflectionsPass");
-
-	// Add reflections target.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
-	rgtd.ignoreStencil = true;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-
-	switch (m_reflectionsQuality)
-	{
-	default:
-	case Quality::Low:
-		rgtd.referenceWidthDenom = 2;	// 50%
-		rgtd.referenceHeightDenom = 2;
-		break;
-
-	case Quality::Medium:
-		rgtd.referenceWidthMul = 2;		// 67%
-		rgtd.referenceWidthDenom = 3;
-		rgtd.referenceHeightMul = 2;
-		rgtd.referenceHeightDenom = 3;
-		break;
-
-	case Quality::High:
-		rgtd.referenceWidthMul = 4;		// 80%
-		rgtd.referenceWidthDenom = 5;
-		rgtd.referenceHeightMul = 4;
-		rgtd.referenceHeightDenom = 5;
-		break;
-
-	case Quality::Ultra:
-		rgtd.referenceWidthDenom = 1;	// 100%
-		rgtd.referenceHeightDenom = 1;
-		break;
-	}
-
-	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
-
-	// Add reflections render pass.
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
-
-	rp->addInput(gbufferTargetSetId);
-	rp->addInput(visualReadTargetSetId);
-
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	rp->setOutput(reflectionsTargetSetId, clear, render::TfNone, render::TfColor);
-	
-	// rp->addBuild(
-	// 	[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-	// 	{
-	// 		WorldBuildContext wc(
-	// 			m_entityRenderers,
-	// 			rootEntity,
-	// 			renderContext
-	// 		);
-
-	// 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-
-	// 		auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-	// 		sharedParams->beginParameters(renderContext);
-	// 		sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-	// 		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-	// 		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-	// 		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	// 		sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-	// 		sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-	// 		sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
-	// 		sharedParams->endParameters(renderContext);
-
-	// 		WorldRenderPassShared reflectionsPass(
-	// 			s_techniqueReflectionWrite,
-	// 			sharedParams,
-	// 			worldRenderView,
-	// 			IWorldRenderPass::PfNone
-	// 		);
-
-	// 		T_ASSERT(!renderContext->havePendingDraws());
-
-	// 		for (auto gathered : m_gathered)
-	// 			gathered.entityRenderer->build(wc, worldRenderView, reflectionsPass, gathered.renderable);
-	
-	// 		for (auto entityRenderer : m_entityRenderers->get())
-	// 			entityRenderer->build(wc, worldRenderView, reflectionsPass);
-	// 	}
-	// );
-	
-	 // Render screenspace reflections.
-	render::ImageGraphView view;
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.view = worldRenderView.getView();
-	view.lastView = worldRenderView.getLastView();
-	view.projection = worldRenderView.getProjection();
-	view.deltaTime = worldRenderView.getDeltaTime();
-
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
-
-	m_screenReflections->addPasses(
-		m_screenRenderer,
-		renderGraph,
-		rp,
-		*m_imageGraphContext,
-		view
-	);
-
-	renderGraph.addPass(rp);
-	return reflectionsTargetSetId;
-}
-
-void WorldRendererShared::setupProcessPass(
-	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
-	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId,
-	render::handle_t gbufferTargetSetId,
-	render::handle_t velocityTargetSetId,
-	render::handle_t visualWriteTargetSetId,
-	render::handle_t visualReadTargetSetId
-) const
-{
-	T_PROFILER_SCOPE(L"WorldRendererShared setupProcessPass");
-	render::ImageGraphView view;
-
-	view.viewFrustum = worldRenderView.getViewFrustum();
-	view.viewToLight = Matrix44::identity();
-	view.view = worldRenderView.getView();
-	view.projection = worldRenderView.getProjection();
-	view.deltaTime = worldRenderView.getDeltaTime();
-	view.time = worldRenderView.getTime();
-
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	m_imageGraphContext->associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
-	m_imageGraphContext->associateTexture(s_handleInputColorGrading, m_colorGrading);
-
-	// Expose gamma and exposure.
-	m_imageGraphContext->setFloatParameter(s_handleGamma, m_gamma);
-	m_imageGraphContext->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	m_imageGraphContext->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-
-	// Expose jitter; in texture space.
-	const Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
-	const Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
-	m_imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
-
-	StaticVector< render::ImageGraph*, 5 > processes;
-	if (m_toneMap)
-		processes.push_back(m_toneMap);
-	if (m_motionBlur)
-		processes.push_back(m_motionBlur);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
-	if (m_visual)
-		processes.push_back(m_visual);
-	if (m_gammaCorrection)
-		processes.push_back(m_gammaCorrection);
-
-	render::handle_t intermediateTargetSetId = 0;
-	for (size_t i = 0; i < processes.size(); ++i)
-	{
-		auto process = processes[i];
-		const bool next = (bool)((i + 1) < processes.size());
-
-		Ref< render::RenderPass > rp = new render::RenderPass(L"Process");
-
-		if (next)
-		{
-			render::RenderGraphTargetSetDesc rgtd;
-			rgtd.count = 1;
-			rgtd.createDepthStencil = false;
-			rgtd.usingPrimaryDepthStencil = false;
-			rgtd.referenceWidthDenom = 1;
-			rgtd.referenceHeightDenom = 1;
-			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
-
-			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
-		}
-		else
-		{
-			render::Clear cl;
-			cl.mask = render::CfColor;
-			cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-			rp->setOutput(outputTargetSetId, cl, render::TfDepth, render::TfColor | render::TfDepth);
-		}
-
-		process->addPasses(
-			m_screenRenderer,
-			renderGraph,
-			rp,
-			*m_imageGraphContext,
-			view
-		);
-
-		if (next)
-			m_imageGraphContext->associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
-
-		renderGraph.addPass(rp);
-	}
 }
 
 }
