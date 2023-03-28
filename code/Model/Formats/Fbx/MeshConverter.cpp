@@ -45,12 +45,11 @@ bool convertMesh(
 		return false;
 
 	// Convert materials.
-	std::map< int32_t, int32_t > materialMap;
+	SmallMap< int32_t, int32_t > materialMap;
 	if (!convertMaterials(outModel, materialMap, meshNode))
 		return false;
 
 	const uint32_t positionBase = uint32_t(outModel.getPositions().size());
-
 	const FbxAMatrix nodeTransform = meshNode->EvaluateGlobalTransform();
 
 	const Matrix44 Mnode = convertMatrix(nodeTransform);
@@ -63,14 +62,15 @@ bool convertMesh(
 		return false;
 
 	const int32_t controlPointsCount = mesh->GetControlPointsCount();
+	outModel.reservePositions(positionBase + controlPointsCount);
 	for (int32_t i = 0; i < controlPointsCount; ++i)
 	{
-		Vector4 v = Mglobal * convertVector4(controlPoints[i]).xyz1();
+		const Vector4 v = Mglobal * convertVector4(controlPoints[i]).xyz1();
 		outModel.addPosition(v);
 	}
 
 	// Convert joint vertex weights; model must contain joints.
-	typedef std::map< uint32_t, float > bone_influences_t;
+	typedef SmallMap< uint32_t, float > bone_influences_t;
 
 	AlignedVector< bone_influences_t > vertexJoints;
 	vertexJoints.resize(controlPointsCount);
@@ -97,7 +97,6 @@ bool convertMesh(
 			T_ASSERT(jointNode);
 
 			std::wstring jointName = mbstows(jointNode->GetName());
-
 			const size_t p = jointName.find(L':');
 			if (p != std::wstring::npos)
 				jointName = jointName.substr(p + 1);

@@ -133,7 +133,7 @@ std::wstring uvChannel(Model& outModel, const std::string& name)
 
 	}
 
-bool convertMaterials(Model& outModel, std::map< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode)
+bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterialMap, FbxNode* meshNode)
 {
 	int32_t materialCount = meshNode->GetMaterialCount();
 	for (int32_t i = 0; i < materialCount; ++i)
