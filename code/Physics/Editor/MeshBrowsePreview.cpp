@@ -10,18 +10,16 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
-#include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/MeshAssetRasterizer.h"
-#include "Mesh/Editor/MeshBrowsePreview.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/Editor/MeshAssetRasterizer.h"
+#include "Physics/Editor/MeshBrowsePreview.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
-namespace traktor
+namespace traktor::physics
 {
-	namespace mesh
-	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MeshBrowsePreview", 0, MeshBrowsePreview, editor::IBrowsePreview)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshBrowsePreview", 0, MeshBrowsePreview, editor::IBrowsePreview)
 
 TypeInfoSet MeshBrowsePreview::getPreviewTypes() const
 {
@@ -39,7 +37,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 		ui::dpi96(128),
 		ui::dpi96(128)
 	);
-	meshThumb->clear(Color4f(0.4f, 0.4f, 0.6f, 0.0f));
+	meshThumb->clear(Color4f(0.4f, 0.6f, 0.4f, 0.0f));
 
 	MeshAssetRasterizer().generate(editor, asset, meshThumb);
 
@@ -54,5 +52,4 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 	return new ui::Bitmap(meshThumb);
 }
 
-	}
 }

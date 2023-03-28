@@ -24,7 +24,7 @@ class IEditor;
 
 }
 
-namespace traktor::mesh
+namespace traktor::physics
 {
 
 class MeshAsset;
