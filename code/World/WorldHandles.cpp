@@ -27,6 +27,7 @@ const render::Handle s_handleColorMap(L"World_ColorMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
 const render::Handle s_handleDepthMap(L"World_DepthMap");
 const render::Handle s_handleExposure(L"World_Exposure");
+const render::Handle s_handleFxRotate(L"World_FxRotate");
 const render::Handle s_handleExtent(L"World_Extent");
 const render::Handle s_handleFogColor(L"World_FogColor");
 const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");

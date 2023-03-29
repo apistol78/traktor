@@ -37,6 +37,7 @@ extern const render::Handle s_handleColorMap;
 extern const render::Handle s_handleDecalParams;
 extern const render::Handle s_handleDepthMap;
 extern const render::Handle s_handleExposure;
+extern const render::Handle s_handleFxRotate;
 extern const render::Handle s_handleExtent;
 extern const render::Handle s_handleFogColor;
 extern const render::Handle s_handleFogDistanceAndDensity;
