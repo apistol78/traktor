@@ -331,7 +331,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 				if (!image)
 					return nullptr;
 
-				const std::wstring name = image->getMemberString(L"name");
+				const std::wstring name = getImageName(image);
 				if (name.empty())
 					return nullptr;
 

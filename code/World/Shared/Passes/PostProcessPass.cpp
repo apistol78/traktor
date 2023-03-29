@@ -193,6 +193,12 @@ void PostProcessPass::setup(
 	view.deltaTime = worldRenderView.getDeltaTime();
 	view.time = worldRenderView.getTime();
 
+	// Calculate a "rotation" value based on view transform; useful
+	// for some post process effects.
+	const Vector4& axisX = view.view.axisX();
+	const Vector4& axisZ = view.view.axisZ();
+	const float fxRotate = axisX.z() + axisZ.y();
+
 	imageGraphContext->associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
 	imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
 	imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
@@ -204,6 +210,7 @@ void PostProcessPass::setup(
 	imageGraphContext->setFloatParameter(s_handleGamma, m_gamma);
 	imageGraphContext->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 	imageGraphContext->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+	imageGraphContext->setFloatParameter(s_handleFxRotate, fxRotate);
 
 	// Expose jitter; in texture space.
 	const Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
