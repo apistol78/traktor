@@ -35,11 +35,11 @@ void EventSubject::raiseEvent(Event* event)
 		auto eventHandlers = i->second;
 		for (int32_t j = (int32_t)eventHandlers.handlers.size() - 1; j >= 0; --j)
 		{
-			for (int32_t k = (int32_t)eventHandlers.handlers[j].size() - 1; k >= 0; --k)
+			for (Ref< IEventHandler > eventHandler : eventHandlers.handlers[j])
 			{
-				auto eventHandler = eventHandlers.handlers[j][k];
 				if (!eventHandler)
 					continue;
+
 				eventHandler->notify(event);
 				if (event->consumed())
 					break;
