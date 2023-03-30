@@ -854,7 +854,7 @@ void GraphControl::eventMouseUp(MouseButtonUpEvent* event)
 	if (m_mode == MdMoveSelected || m_mode == MdMoveGraph)
 	{
 		// Issue event for every group moved.
-		T_ASSERT(m_group.size() == m_groupPositions.size());
+		T_ASSERT(m_groups.size() == m_groupPositions.size());
 		for (uint32_t i = 0; i < m_groups.size(); ++i)
 		{
 			if (m_groups[i]->calculateRect() != m_groupPositions[i])
