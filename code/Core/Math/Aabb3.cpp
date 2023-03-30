@@ -9,7 +9,6 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Math/Aabb3.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {

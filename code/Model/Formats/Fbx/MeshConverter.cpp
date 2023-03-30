@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Misc/TString.h"
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/Conversion.h"

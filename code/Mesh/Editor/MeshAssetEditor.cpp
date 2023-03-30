@@ -9,7 +9,6 @@
 #include <algorithm>
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"

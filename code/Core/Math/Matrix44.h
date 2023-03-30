@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Config.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Vector4.h"
 

@@ -8,7 +8,6 @@
  */
 #include <cmath>
 #include "Core/Math/Matrix33.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {

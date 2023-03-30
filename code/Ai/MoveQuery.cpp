@@ -9,7 +9,6 @@
 #include <DetourNavMeshQuery.h>
 #include "Ai/MoveQuery.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 
 namespace traktor::ai

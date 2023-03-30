@@ -8,7 +8,6 @@
  */
 #include <algorithm>
 #include <cmath>
-#include "Core/Math/Const.h"
 #include "Core/Math/Triangulator.h"
 
 namespace traktor

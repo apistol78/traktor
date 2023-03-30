@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
-#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"

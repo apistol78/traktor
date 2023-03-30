@@ -8,7 +8,6 @@
  */
 #include <cmath>
 #include <limits>
-#include "Core/Math/Const.h"
 #if !defined(NDEBUG)
 #	include "Core/Math/Float.h"
 #endif

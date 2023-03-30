@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Const.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
