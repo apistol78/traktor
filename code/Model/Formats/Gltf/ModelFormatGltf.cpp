@@ -18,6 +18,8 @@
 #include "Model/Formats/Gltf/ModelFormatGltf.h"
 #include "Model/Model.h"
 
+// https://raw.githubusercontent.com/KhronosGroup/glTF/main/specification/2.0/figures/gltfOverview-2.0.0b.png
+
 namespace traktor::model
 {
 	namespace
@@ -63,6 +65,19 @@ Matrix44 parseTransform(const json::JsonObject* node)
 			);
 		}
 	}
+	if (node->getMember(L"matrix") != nullptr)
+	{
+		auto mx = node->getMemberValue(L"scale").getObject< json::JsonArray >();
+		if (mx != nullptr && mx->size() >= 4 * 4)
+		{
+			transform = transform * Matrix44(
+				mx->get( 0).getFloat(), mx->get (1).getFloat(), mx->get( 2).getFloat(), mx->get( 3).getFloat(),
+				mx->get( 4).getFloat(), mx->get( 5).getFloat(), mx->get( 6).getFloat(), mx->get( 7).getFloat(),
+				mx->get( 8).getFloat(), mx->get( 9).getFloat(), mx->get(10).getFloat(), mx->get(11).getFloat(),
+				mx->get(12).getFloat(), mx->get(13).getFloat(), mx->get(14).getFloat(), mx->get(15).getFloat()
+			);
+		}
+	}
 	return transform;
 }
 
@@ -77,6 +92,7 @@ bool decodeAsIndices(
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
 	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t accessorByteOffset = accessor->getMemberInt32(L"byteOffset", 0);
 	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
 	const std::wstring type = accessor->getMemberString(L"type", L"");
 	const int32_t count = accessor->getMemberInt32(L"count", 0);
@@ -93,9 +109,10 @@ bool decodeAsIndices(
 
 	const int32_t buffer = bufferView->getMemberInt32(L"buffer", 0);
 	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
+	const int32_t byteStride = bufferView->getMemberInt32(L"byteStride", (componentType == 5123) ? 2 : 4);
 
 	IStream* bufferStream = bufferStreams[buffer];
-	bufferStream->seek(IStream::SeekSet, byteOffset);
+	bufferStream->seek(IStream::SeekSet, byteOffset + accessorByteOffset);
 
 	outData.resize(count);
 	for (int32_t i = 0; i < count; ++i)
@@ -130,6 +147,7 @@ bool decodeAsScalars(
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
 	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t accessorByteOffset = accessor->getMemberInt32(L"byteOffset", 0);
 	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
 	const std::wstring type = accessor->getMemberString(L"type", L"");
 	const int32_t count = accessor->getMemberInt32(L"count", 0);
@@ -148,7 +166,7 @@ bool decodeAsScalars(
 	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
 
 	IStream* bufferStream = bufferStreams[buffer];
-	bufferStream->seek(IStream::SeekSet, byteOffset);
+	bufferStream->seek(IStream::SeekSet, byteOffset + accessorByteOffset);
 
 	outData.resize(count);
 	for (int32_t i = 0; i < count; ++i)
@@ -173,6 +191,7 @@ bool decodeAsVectors(
 	auto accessor = accessors->get(index).getObject< json::JsonObject >();
 
 	const int32_t bufferViewIndex = accessor->getMemberInt32(L"bufferView", 0);
+	const int32_t accessorByteOffset = accessor->getMemberInt32(L"byteOffset", 0);
 	const int32_t componentType = accessor->getMemberInt32(L"componentType", 0);
 	const std::wstring type = accessor->getMemberString(L"type", L"");
 	const int32_t count = accessor->getMemberInt32(L"count", 0);
@@ -200,7 +219,7 @@ bool decodeAsVectors(
 	const int32_t byteOffset = bufferView->getMemberInt32(L"byteOffset", 0);
 
 	IStream* bufferStream = bufferStreams[buffer];
-	bufferStream->seek(IStream::SeekSet, byteOffset);
+	bufferStream->seek(IStream::SeekSet, byteOffset + accessorByteOffset);
 
 	outData.resize(count);
 	for (int32_t i = 0; i < count; ++i)
@@ -467,33 +486,21 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 
 					if (metallicRoughness)
 					{
-						if (metallicFactor > 0.0f && roughnessFactor > 0.0f)
-						{
-							const drawing::SwizzleFilter b(L"BBBB");
-							metallicMap.image = metallicRoughness->clone();
-							metallicMap.image->apply(&b);
-							metallicMap.image->convert(drawing::PixelFormat::getR8());
+						const drawing::SwizzleFilter b(L"BBBB");
+						metallicMap.image = metallicRoughness->clone();
+						metallicMap.image->apply(&b);
+						metallicMap.image->convert(drawing::PixelFormat::getR8());
 
-							const drawing::SwizzleFilter g(L"GGGG");
-							roughnessMap.image = metallicRoughness->clone();
-							roughnessMap.image->apply(&g);
-							roughnessMap.image->convert(drawing::PixelFormat::getR8());
-						}
-						else
-						{
-							const drawing::SwizzleFilter r(L"RRRR");
-							roughnessMap.image = metallicRoughness->clone();
-							roughnessMap.image->apply(&r);
-							roughnessMap.image->convert(drawing::PixelFormat::getR8());
-						}
+						const drawing::SwizzleFilter g(L"GGGG");
+						roughnessMap.image = metallicRoughness->clone();
+						roughnessMap.image->apply(&g);
+						roughnessMap.image->convert(drawing::PixelFormat::getR8());
+
 						metallicRoughness = nullptr;
 					}
 
-					if (metallicFactor > 0.0f)
-						mt.setMetalnessMap(metallicMap);
-
-					if (roughnessFactor > 0.0f)
-						mt.setRoughnessMap(roughnessMap);
+					mt.setMetalnessMap(metallicMap);
+					mt.setRoughnessMap(roughnessMap);
 				}
 
 				mt.setMetalness(metallicFactor);
@@ -518,6 +525,16 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	auto nodes = docobj->getMemberValue(L"nodes").getObject< json::JsonArray >();
 	if (!nodes)
 		return nullptr;
+
+
+	//// Calculate global transforms of each node.
+	//auto scenes = docobj->getMemberValue(L"scenes").getObject< json::JsonArray >();
+	//if (!scenes || scenes->size() != 1)
+	//	return nullptr;
+
+	//const auto scene = scenes->get(0).getObject< json::JsonObject >();
+	//scene->getMemberInt32(L"nodes");
+
 
 	const Matrix44 Tpost = scale(1.0f, 1.0f, -1.0f);
 
@@ -601,6 +618,8 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			if (!primitives)
 				return nullptr;
 
+			const uint32_t vertexBase = md->getVertexCount();
+
 			for (uint32_t j = 0; j < primitives->size(); ++j)
 			{
 				const auto prim = primitives->get(j).getObject< json::JsonObject >();
@@ -674,8 +693,6 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 					bufferStreams,
 					dataWeights
 				);
-
-				const uint32_t vertexBase = md->getVertexCount();
 
 				for (uint32_t k = 0; k < dataPositions.size(); ++k)
 				{
