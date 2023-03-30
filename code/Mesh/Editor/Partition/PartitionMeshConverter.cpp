@@ -9,7 +9,6 @@
 #include <cstring>
 #include <limits>
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/String.h"

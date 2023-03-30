@@ -11,7 +11,6 @@
 #include <list>
 #include <map>
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/BspTree.h"

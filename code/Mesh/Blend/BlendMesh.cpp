@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
-#include "Core/Math/Const.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/Blend/BlendMesh.h"

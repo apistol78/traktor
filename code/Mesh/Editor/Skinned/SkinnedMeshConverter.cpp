@@ -10,7 +10,6 @@
 #include <cstring>
 #include <limits>
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Editor/IndexRange.h"

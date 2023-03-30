@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Test/CaseWinding.h"
-#include "Core/Math/Const.h"
 #include "Core/Math/Winding2.h"
 #include "Core/Math/Winding3.h"
 

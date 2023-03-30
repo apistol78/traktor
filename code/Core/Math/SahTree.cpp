@@ -8,7 +8,6 @@
  */
 #include <limits>
 #include <stack>
-#include "Core/Math/Const.h"
 #include "Core/Math/SahTree.h"
 
 namespace traktor

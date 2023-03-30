@@ -11,7 +11,6 @@
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"

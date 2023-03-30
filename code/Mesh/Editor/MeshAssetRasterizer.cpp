@@ -8,7 +8,6 @@
  */
 #include <functional>
 #include "Core/Io/FileSystem.h"
-#include "Core/Math/Const.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"

@@ -17,7 +17,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
