@@ -126,6 +126,7 @@ Ref< Image > Image::clone(bool includeData) const
 		std::memcpy(clone->m_data, m_data, m_height * m_pitch);
 		checkData(clone->m_data, clone->m_size);
 	}
+	clone->setImageInfo(m_imageInfo);
 	return clone;
 }
 
