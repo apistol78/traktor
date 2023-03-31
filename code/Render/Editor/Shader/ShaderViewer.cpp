@@ -240,12 +240,23 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 
 void ShaderViewer::updateTechniques()
 {
-	// Update techniques drop, keep current selected technique if still exist.
-	std::wstring currentTechnique = m_dropTechniques->getSelectedItem();
+	const std::wstring currentTechnique = m_dropTechniques->getSelectedItem();
+
+	// Update techniques drop.
 	m_dropTechniques->removeAll();
-	for (std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
-		m_dropTechniques->add(i->first);
-	m_dropTechniques->select(currentTechnique);
+	for (auto it : m_techniques)
+		m_dropTechniques->add(it.first);
+
+	// Select previous technique. 
+	if (m_dropTechniques->select(currentTechnique))
+		return;
+
+	// Select single technique.
+	if (m_techniques.size() == 1)
+		m_dropTechniques->select(0);
+
+	// Last fallback to Default as it's the most common.
+	m_dropTechniques->select(L"Default");
 }
 
 void ShaderViewer::updateCombinations()
@@ -255,10 +266,10 @@ void ShaderViewer::updateCombinations()
 
 	// Create checkboxes for combination in selected technique.
 	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
-	const std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
-	if (i != m_techniques.end())
+	const auto it = m_techniques.find(techniqueName);
+	if (it != m_techniques.end())
 	{
-		for (const auto& parameter : i->second.parameters)
+		for (const auto& parameter : it->second.parameters)
 			m_dropCombinations->add(parameter);
 	}
 
