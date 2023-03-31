@@ -139,6 +139,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 36, Text
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
+	const bool editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
+
 	m_generateMipsThread = settings->getPropertyExcludeHash< bool >(L"TexturePipeline.GenerateMipsThread", true);
 	m_skipMips = settings->getPropertyIncludeHash< int32_t >(L"TexturePipeline.SkipMips", 0);
 	m_clampSize = settings->getPropertyIncludeHash< int32_t >(L"TexturePipeline.ClampSize", 0);
@@ -147,22 +149,27 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 	m_sRGB = settings->getPropertyIncludeHash< bool >(L"TexturePipeline.sRGB", false);
 	m_compressedData = settings->getPropertyIncludeHash< bool >(L"TexturePipeline.CompressedData", true);
 
-	std::wstring compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-	if (compareIgnoreCase(compressionMethod, L"None") == 0)
-		m_compressionMethod = CompressionMethod::None;
-	else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
-		m_compressionMethod = CompressionMethod::DXTn;
-	else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
-		m_compressionMethod = CompressionMethod::PVRTC;
-	else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
-		m_compressionMethod = CompressionMethod::ETC1;
-	else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
-		m_compressionMethod = CompressionMethod::ASTC;
-	else
+	if (!editor)
 	{
-		log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
-		return false;
+		const std::wstring compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+		if (compareIgnoreCase(compressionMethod, L"None") == 0)
+			m_compressionMethod = CompressionMethod::None;
+		else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
+			m_compressionMethod = CompressionMethod::DXTn;
+		else if (compareIgnoreCase(compressionMethod, L"PVRTC") == 0)
+			m_compressionMethod = CompressionMethod::PVRTC;
+		else if (compareIgnoreCase(compressionMethod, L"ETC1") == 0)
+			m_compressionMethod = CompressionMethod::ETC1;
+		else if (compareIgnoreCase(compressionMethod, L"ASTC") == 0)
+			m_compressionMethod = CompressionMethod::ASTC;
+		else
+		{
+			log::error << L"Unknown compression method \"" << compressionMethod << L"\"." << Endl;
+			return false;
+		}
 	}
+	else
+		m_compressionMethod = CompressionMethod::None;
 
 	return true;
 }
@@ -819,10 +826,7 @@ bool TextureOutputPipeline::buildOutput(
 			}
 		}
 #else
-		if (
-			(m_compressionMethod == CompressionMethod::DXTn || m_compressionMethod == CompressionMethod::ETC1) &&
-			textureOutput->m_enableNormalMapCompression
-		)
+		if (textureOutput->m_enableNormalMapCompression)
 			isNormalMap = true;
 
 		for (int32_t i = 0; i < mipCount; ++i)
@@ -862,10 +866,7 @@ bool TextureOutputPipeline::buildOutput(
 				drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 				mipImage->apply(&normalizeFilter);
 
-				if (
-					m_compressionMethod == CompressionMethod::DXTn &&
-					textureOutput->m_enableNormalMapCompression
-				)
+				if (textureOutput->m_enableNormalMapCompression)
 				{
 					drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
 					mipImage->apply(&transformFilter);
