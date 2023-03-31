@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{049C6FDD-6C3D-4216-A876-C503BF713C26}</id>
@@ -253,7 +253,7 @@
 				<first>781</first>
 				<second>-817</second>
 			</position>
-			<name>Unnamed</name>
+			<name>Trace</name>
 			<technique/>
 			<inputPins>
 				<item>
@@ -315,7 +315,6 @@ for (int i = 0; i < 64; ++i)
 		break;
 	}
 }
-
 			]]>
 			</script>
 		</item>
@@ -383,8 +382,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{5A303AB2-8932-4D7F-87D5-135804F43B8C}</id>
 			<comment/>
 			<position>
-				<first>1240</first>
-				<second>-865</second>
+				<first>1189</first>
+				<second>-858</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -392,8 +391,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{561E0999-03FB-4719-9937-0D6659523A89}</id>
 			<comment/>
 			<position>
-				<first>1196</first>
-				<second>-960</second>
+				<first>1229</first>
+				<second>-953</second>
 			</position>
 			<parameterName>Color</parameterName>
 			<type>Texture2D</type>
@@ -403,8 +402,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{1BA70F8C-E7FC-45F9-92DC-2AE20D4CD0E2}</id>
 			<comment/>
 			<position>
-				<first>1400</first>
-				<second>-934</second>
+				<first>1366</first>
+				<second>-928</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -421,8 +420,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{B1F40F4A-B3F6-40FD-B295-8E87C0573303}</id>
 			<comment/>
 			<position>
-				<first>2329</first>
-				<second>-774</second>
+				<first>2521</first>
+				<second>-776</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -469,8 +468,8 @@ for (int i = 0; i < 64; ++i)
 			<id>{3764C2E4-8EFB-442B-81AC-1CC816B8947E}</id>
 			<comment/>
 			<position>
-				<first>1219</first>
-				<second>-910</second>
+				<first>1229</first>
+				<second>-903</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -495,7 +494,7 @@ for (int i = 0; i < 64; ++i)
 			<id>{3FCF8FB2-14D3-4238-85A4-72C8219D3150}</id>
 			<comment/>
 			<position>
-				<first>1731</first>
+				<first>1751</first>
 				<second>-635</second>
 			</position>
 			<name>L_Roughness</name>
@@ -538,6 +537,23 @@ for (int i = 0; i < 64; ++i)
 				<second>-754</second>
 			</position>
 			<swizzle>xyz1</swizzle>
+		</item>
+		<item type="traktor.render.Max" version="traktor.render.Node:1">
+			<id>{B317A2EA-D8D8-4E48-AD37-7C07E060C1B2}</id>
+			<comment/>
+			<position>
+				<first>2307</first>
+				<second>-747</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{4303869F-0B17-F34B-89FB-B2C92DC53A0D}</id>
+			<comment/>
+			<position>
+				<first>2081</first>
+				<second>-759</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -927,9 +943,30 @@ for (int i = 0; i < 64; ++i)
 				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{EF189922-9B95-4572-B8C9-E5BE23606F9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{D833DB7F-13CB-42D8-8135-48F35EB1288B}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[29]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{1CD3B29D-693D-4635-B49F-EF53300CAA8A}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups/>
 </object>

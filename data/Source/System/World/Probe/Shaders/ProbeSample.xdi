@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{BED25F68-B80B-DE4C-A9A2-495D9A6B8D97}</id>
@@ -41,20 +41,12 @@
 			<type>TextureCube</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{50E06897-C251-0D43-9A87-3EBAF324E59F}</id>
-			<comment/>
-			<position>
-				<first>428</first>
-				<second>511</second>
-			</position>
-		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{752A1211-6446-3C42-8A95-A1BE2F01AA39}</id>
 			<comment/>
 			<position>
-				<first>116</first>
-				<second>571</second>
+				<first>120</first>
+				<second>581</second>
 			</position>
 			<parameterName>World_ProbeTextureMips</parameterName>
 			<type>Scalar</type>
@@ -72,8 +64,8 @@
 			<id>{989F14A3-559A-6547-86AC-547520992458}</id>
 			<comment/>
 			<position>
-				<first>122</first>
-				<second>512</second>
+				<first>126</first>
+				<second>522</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -103,6 +95,41 @@
 			</position>
 			<name>Output</name>
 		</item>
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+			<id>{438930E4-FDFE-714A-A4D6-690F169C66E6}</id>
+			<comment/>
+			<position>
+				<first>397</first>
+				<second>522</second>
+			</position>
+			<name>RoughnessMip</name>
+			<technique/>
+			<inputPins>
+				<item>
+					<id>{8591349A-E2B3-A448-AA70-E4B8DBBF9894}</id>
+					<name>Roughness</name>
+				</item>
+				<item>
+					<id>{68138179-5E4F-F446-AAB9-8016A564D816}</id>
+					<name>Mips</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{EB716962-488F-C246-9A34-A7CACBA3F1DC}</id>
+					<name>Mip</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+const int mip = int($Roughness * $Mips);
+$Mip = clamp(mip, 0, int($Mips) - 1);
+
+
+			]]>
+			</script>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -111,7 +138,7 @@
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
@@ -121,7 +148,7 @@
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
@@ -137,37 +164,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{A790CEB7-0729-490D-94B0-4D7982C139F9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
@@ -177,13 +174,57 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{8591349A-E2B3-A448-AA70-E4B8DBBF9894}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{68138179-5E4F-F446-AAB9-8016A564D816}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{EB716962-488F-C246-9A34-A7CACBA3F1DC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{A790CEB7-0729-490D-94B0-4D7982C139F9}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Sample reflection probe</title>
+			<comment/>
+			<position>
+				<first>569</first>
+				<second>1123</second>
+			</position>
+			<size>
+				<first>200</first>
+				<second>200</second>
+			</size>
+		</item>
+	</groups>
 </object>

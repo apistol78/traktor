@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
@@ -700,8 +700,8 @@ Eye direction
 			<id>{EA858AF2-B41E-4B2E-9E23-3D2FD34828DC}</id>
 			<comment/>
 			<position>
-				<first>-162</first>
-				<second>-401</second>
+				<first>-159</first>
+				<second>-420</second>
 			</position>
 			<fragmentGuid>{55898E80-6B69-4F55-A40C-138A23496B50}</fragmentGuid>
 			<inputPins>
@@ -726,6 +726,11 @@ Eye direction
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{53F4AE34-9A52-2D49-AFB4-EB9C1962FEE5}</id>
+					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E38384FB-A792-504E-B3C9-EB43AAFE346E}</id>
 					<name>Roughness</name>
 					<optional>true</optional>
@@ -738,6 +743,10 @@ Eye direction
 					<second>1</second>
 				</item>
 				<item>
+					<first>Metalness</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Roughness</first>
 					<second>0</second>
 				</item>
@@ -748,7 +757,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-413</first>
-				<second>-436</second>
+				<second>-480</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 			<global>false</global>
@@ -957,8 +966,8 @@ Eye direction
 			<id>{D9CA157E-44A4-6940-871F-B050C16705C9}</id>
 			<comment/>
 			<position>
-				<first>-397</first>
-				<second>-391</second>
+				<first>-381</first>
+				<second>-436</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1118,8 +1127,8 @@ Eye direction
 			<id>{2421E9E3-07E6-114E-84CD-5FE488248544}</id>
 			<comment/>
 			<position>
-				<first>-365</first>
-				<second>-301</second>
+				<first>-349</first>
+				<second>-348</second>
 			</position>
 			<name>L_Enable</name>
 			<global>false</global>
@@ -1139,7 +1148,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-349</first>
-				<second>-346</second>
+				<second>-392</second>
 			</position>
 			<name>L_Alpha</name>
 			<global>false</global>
@@ -1149,7 +1158,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>-381</first>
-				<second>-256</second>
+				<second>-260</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -1617,6 +1626,16 @@ Eye direction
 				<first>972</first>
 				<second>1883</second>
 			</position>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{5CD34CAA-A866-9646-B555-7640BE7A1A5B}</id>
+			<comment/>
+			<position>
+				<first>-365</first>
+				<second>-304</second>
+			</position>
+			<name>L_Metalness</name>
+			<global>false</global>
 		</item>
 	</nodes>
 	<edges>
@@ -2930,5 +2949,16 @@ Eye direction
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[146]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{53F4AE34-9A52-2D49-AFB4-EB9C1962FEE5}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups/>
 </object>
