@@ -139,7 +139,7 @@ IProcess::WaitPipeResult ProcessLinux::waitPipeStream(int32_t timeout, Ref< IStr
 	int nfd = 0;
 
 	if (m_childStdOut == 0 && m_childStdErr == 0)
-		return Terminated;
+		return wait(timeout) ? Terminated : Timeout;
 
  	if (m_childStdOut != 0)
 	{
@@ -164,9 +164,11 @@ IProcess::WaitPipeResult ProcessLinux::waitPipeStream(int32_t timeout, Ref< IStr
 	else
 		rc = ::pselect(nfd + 1, &readSet, nullptr, nullptr, nullptr, &sigmask);
 
+	// No pipes ready; check child process if terminated.
 	if (rc <= 0)
 		return wait(0) ? Terminated : Timeout;
 
+	// Determine which pipe is ready.
 	if (FD_ISSET(m_childStdOut, &readSet))
 	{
 		outPipe = m_streamStdOut;
@@ -179,6 +181,8 @@ IProcess::WaitPipeResult ProcessLinux::waitPipeStream(int32_t timeout, Ref< IStr
 		return Ready;
 	}
 
+	// We shouldn't reach this normally, but if we do
+	// check child process instead.
 	return wait(0) ? Terminated : Timeout;
 }
 
