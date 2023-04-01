@@ -12,6 +12,10 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Drawing/Image.h"
 #include "Drawing/Palette.h"
 #include "Drawing/IImageFormat.h"
@@ -73,7 +77,7 @@ void freeData(uint8_t* ptr, size_t size)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Image", Image, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.Image", 0, Image, ISerializable)
 
 Image::Image(const Image& src)
 :	m_pixelFormat(src.m_pixelFormat)
@@ -597,6 +601,25 @@ Image& Image::operator = (const Image& src)
 
 	checkData(m_data, m_size);
 	return *this;
+}
+
+void Image::serialize(ISerializer& s)
+{
+	s >> MemberComposite< PixelFormat >(L"pixelFormat", m_pixelFormat);
+	s >> Member< int32_t >(L"width", m_width);
+	s >> Member< int32_t >(L"height", m_height);
+	s >> Member< int32_t >(L"pitch", m_pitch);
+	s >> MemberRef< Palette >(L"palette", m_palette);
+	s >> Member< size_t >(L"size", m_size);
+
+	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		m_data = allocData(m_size);
+		m_own = true;
+	}
+	s >> Member< void* >(L"data", m_data, m_size);
+
+	s >> MemberRef< const ImageInfo >(L"imageInfo", m_imageInfo);
 }
 
 }

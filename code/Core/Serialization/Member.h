@@ -151,12 +151,6 @@ public:
 	 */
 	value_type& operator * () const { return m_ref; }
 
-	///*! Dereference member.
-	// *
-	// * \return Member pointer.
-	// */
-	//value_type* operator -> () const { return &m_ref; }
-
 	/*! Assign value to member.
 	 *
 	 * \param value New member value.
@@ -179,6 +173,13 @@ template < >
 class Member< void* >
 {
 public:
+	explicit Member< void* >(const wchar_t* const name, void* blob, size_t& blobSize)
+	:	m_name(name)
+	,	m_blob(blob)
+	,	m_blobSize(&blobSize)
+	{
+	}
+
 	explicit Member< void* >(
 		const wchar_t* const name,
 		const std::function< size_t () >& fn_getSize,
@@ -192,14 +193,6 @@ public:
 	{
 	}
 
-	explicit Member< void* >(const wchar_t* const name, void* blob, size_t& blobSize)
-	:	m_name(name)
-	,	m_fn_getSize([&](){ return blobSize; })
-	,	m_fn_setSize([&](size_t s){ blobSize = s; return true; })
-	,	m_fn_getPointer([&](){ return blob; })
-	{
-	}
-
 	/*! Get member name.
 	 *
 	 * \return Member name.
@@ -210,25 +203,40 @@ public:
 	 *
 	 * \return Pointer to binary blob.
 	 */
-	void* getBlob() const { return m_fn_getPointer(); }
+	void* getBlob() const { return m_blob ? m_blob : m_fn_getPointer(); }
 
 	/*! Get size of binary blob.
 	 *
 	 * \return Size of binary blob.
 	 */
-	size_t getBlobSize() const { return m_fn_getSize(); }
+	size_t getBlobSize() const { return m_blobSize ? *m_blobSize : m_fn_getSize(); }
 
 	/*! Set size of binary blob.
 	 *
 	 * \param blobSize Size of binary blob.
 	 */
-	bool setBlobSize(size_t blobSize) const { return m_fn_setSize(blobSize); }
+	bool setBlobSize(size_t blobSize) const
+	{
+		if (m_blobSize)
+		{
+			*m_blobSize = blobSize;
+			return true;
+		}
+		else
+			return m_fn_setSize(blobSize);
+	}
 
 private:
 	const wchar_t* const m_name;
-	const std::function< size_t () >& m_fn_getSize;
-	const std::function< bool (size_t) >& m_fn_setSize;
-	const std::function< void* () >& m_fn_getPointer;
+
+	// Simple access.
+	void* m_blob = nullptr;
+	size_t* m_blobSize = nullptr;
+
+	// Lambda accessors.
+	const std::function< size_t () > m_fn_getSize;
+	const std::function< bool (size_t) > m_fn_setSize;
+	const std::function< void* () > m_fn_getPointer;
 };
 
 //@}

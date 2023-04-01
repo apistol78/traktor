@@ -11,6 +11,7 @@
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 
@@ -46,7 +47,7 @@ class ITransferFunction;
  * gets converted into the current pixel format before it's actually
  * painted onto the image.
  */
-class T_DLLCLASS Image : public Object
+class T_DLLCLASS Image : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -200,6 +201,9 @@ public:
 
 	/*! Copy image. */
 	Image& operator = (const Image& src);
+
+	/*! */
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	PixelFormat m_pixelFormat;
