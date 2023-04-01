@@ -1093,6 +1093,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	if (!text.empty())
 	{
 		auto fn = m_paintSettings.getFont();
+		fn.setBold(true);
 		fn.setSize(40);
 		canvas.setFont(fn);
 		canvas.setForeground(ss->getColor(this, L"color-label"));
