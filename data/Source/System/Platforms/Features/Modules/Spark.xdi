@@ -53,8 +53,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.jpeg-6b.a</item>
-								<item>libExtern.liblzf-3.6.a</item>
+								<item>libExtern.jpeg.a</item>
+								<item>libExtern.liblzf.a</item>
 								<item>libExtern.lpng.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
@@ -329,8 +329,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.jpeg-6b.lib</item>
-								<item>Extern.liblzf-3.6.lib</item>
+								<item>Extern.jpeg.lib</item>
+								<item>Extern.liblzf.lib</item>
 								<item>Extern.lpng.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
@@ -430,8 +430,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.jpeg-6b.lib</item>
-								<item>Extern.liblzf-3.6.lib</item>
+								<item>Extern.jpeg.lib</item>
+								<item>Extern.liblzf.lib</item>
 								<item>Extern.lpng.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
@@ -518,8 +518,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.jpeg-6b.lib</item>
-								<item>Extern.liblzf-3.6.lib</item>
+								<item>Extern.jpeg.lib</item>
+								<item>Extern.liblzf.lib</item>
 								<item>Extern.lpng.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Compress.lib</item>
@@ -606,8 +606,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.jpeg-6b.a</item>
-								<item>libExtern.liblzf-3.6.a</item>
+								<item>libExtern.jpeg.a</item>
+								<item>libExtern.liblzf.a</item>
 								<item>libExtern.lpng.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
@@ -694,8 +694,8 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>libExtern.jpeg-6b.a</item>
-								<item>libExtern.liblzf-3.6.a</item>
+								<item>libExtern.jpeg.a</item>
+								<item>libExtern.liblzf.a</item>
 								<item>libExtern.lpng.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Compress.a</item>
