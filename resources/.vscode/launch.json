@@ -59,8 +59,8 @@
 			"cwd": "${workspaceRoot}/..",
 			"environment": [
 				{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."},
-				{"name":"ANDROID_HOME", "value":"${workspaceRoot}/../3rdp/android-sdk/linux"},
-				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-ndk-r21"}
+				{"name":"ANDROID_HOME", "value":"${workspaceRoot}/../3rdp/android-sdk-linux"},
+				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-sdk-linux/ndk-bundle"}
 			],
 			"externalConsole": false,
 			"MIMode": "gdb",
