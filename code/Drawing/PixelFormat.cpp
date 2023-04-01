@@ -21,6 +21,8 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
 
@@ -202,6 +204,8 @@ bool isPacked32(const PixelFormat& pf)
 }
 
 	}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.PixelFormat", 0, PixelFormat, ISerializable)
 
 PixelFormat::PixelFormat()
 :	m_palettized(false)
@@ -1043,6 +1047,59 @@ bool PixelFormat::operator == (const PixelFormat& pf) const
 bool PixelFormat::operator != (const PixelFormat& pf) const
 {
 	return !(*this == pf);
+}
+
+void PixelFormat::serialize(ISerializer& s)
+{
+	s >> Member< bool >(L"palettized", m_palettized);
+	s >> Member< bool >(L"floatPoint", m_floatPoint);
+	s >> Member< int32_t >(L"colorBits", m_colorBits);
+	s >> Member< int32_t >(L"byteSize", m_byteSize);
+	s >> Member< int32_t >(L"redBits", m_redBits);
+	s >> Member< int32_t >(L"redShift", m_redShift);
+	s >> Member< int32_t >(L"greenBits", m_greenBits);
+	s >> Member< int32_t >(L"greenShift", m_greenShift);
+	s >> Member< int32_t >(L"blueBits", m_blueBits);
+	s >> Member< int32_t >(L"blueShift", m_blueShift);
+	s >> Member< int32_t >(L"alphaBits", m_alphaBits);
+	s >> Member< int32_t >(L"alphaShift", m_alphaShift);
+
+	if (s.getDirection() == ISerializer::Direction::Read)
+	{
+		// Get pointer to unpack operation.
+		switch (m_byteSize)
+		{
+		case 1:
+			m_unpack = &unpack_1;
+			break;
+		case 2:
+			m_unpack = &unpack_2;
+			break;
+		case 3:
+			m_unpack = &unpack_3;
+			break;
+		case 4:
+			m_unpack = &unpack_4;
+			break;
+		}
+
+		// Get pointer to pack operation.
+		switch (m_byteSize)
+		{
+		case 1:
+			m_pack = &pack_1;
+			break;
+		case 2:
+			m_pack = &pack_2;
+			break;
+		case 3:
+			m_pack = &pack_3;
+			break;
+		case 4:
+			m_pack = &pack_4;
+			break;
+		}		
+	}
 }
 
 const PixelFormat PixelFormat::ms_pfP4(4, 0, 0, 0, 0, true, false);

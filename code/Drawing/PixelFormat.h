@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Config.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,8 +33,10 @@ class Palette;
 /*! Pixel format description.
  * \ingroup Drawing
  */
-class T_DLLCLASS PixelFormat
+class T_DLLCLASS PixelFormat : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	PixelFormat();
 
@@ -146,6 +148,8 @@ public:
 	bool operator == (const PixelFormat& pf) const;
 
 	bool operator != (const PixelFormat& pf) const;
+
+	virtual void serialize(ISerializer& s) override;
 
 	/*! \group Common pixel formats. */
 	//@{
@@ -277,18 +281,18 @@ public:
 	//@}
 
 private:
-	bool m_palettized;	/**< If pixel format is describing palettized pixels. */
+	bool m_palettized;		/**< If pixel format is describing palettized pixels. */
 	bool m_floatPoint;
-	int m_colorBits;	/**< Number of bits for an entire pixel. */
-	int m_byteSize;		/**< Number of bytes for an entire pixel. */
-	int m_redBits;		/**< Red bits, only valid for non-palettized pixels. */
-	int m_redShift;
-	int m_greenBits;
-	int m_greenShift;
-	int m_blueBits;
-	int m_blueShift;
-	int m_alphaBits;
-	int m_alphaShift;
+	int32_t m_colorBits;	/**< Number of bits for an entire pixel. */
+	int32_t m_byteSize;		/**< Number of bytes for an entire pixel. */
+	int32_t m_redBits;		/**< Red bits, only valid for non-palettized pixels. */
+	int32_t m_redShift;
+	int32_t m_greenBits;
+	int32_t m_greenShift;
+	int32_t m_blueBits;
+	int32_t m_blueShift;
+	int32_t m_alphaBits;
+	int32_t m_alphaShift;
 	uint32_t (*m_unpack)(const void* T_RESTRICT);
 	void (*m_pack)(void* T_RESTRICT, uint32_t);
 

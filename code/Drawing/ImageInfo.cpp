@@ -6,12 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Drawing/ImageInfo.h"
 
 namespace traktor::drawing
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageInfo", ImageInfo, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.ImageInfo", 0, ImageInfo, Object)
 
 void ImageInfo::setAuthor(const std::wstring& author)
 {
@@ -51,6 +53,14 @@ void ImageInfo::setGamma(float gamma)
 float ImageInfo::getGamma() const
 {
 	return m_gamma;
+}
+
+void ImageInfo::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"author", m_author);
+	s >> Member< std::wstring >(L"copyright", m_copyright);
+	s >> Member< std::wstring >(L"format", m_format);
+	s >> Member< float >(L"gamma", m_gamma);
 }
 
 }

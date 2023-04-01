@@ -305,7 +305,7 @@ public:
 	 */
 	void resize(size_t size, const_reference init = value_type())
 	{
-		T_ASSERT(size < Capacity);
+		T_ASSERT(size <= Capacity);
 		if (size > m_size)
 		{
 			for (size_t i = m_size; i < size; ++i)

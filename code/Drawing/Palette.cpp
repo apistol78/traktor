@@ -8,12 +8,14 @@
  */
 #include <cmath>
 #include <limits>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Drawing/Palette.h"
 
 namespace traktor::drawing
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Palette", Palette, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.Palette", 0, Palette, Object)
 
 Palette::Palette(int32_t size)
 :	m_colors(size)
@@ -53,6 +55,11 @@ int32_t Palette::find(const Color4f& c, bool exact) const
 		}
 	}
 	return (exact && mn.first != 0.0f) ? -1 : mn.second;
+}
+
+void Palette::serialize(ISerializer& s)
+{
+	s >> MemberAlignedVector< Color4f >(L"colors", m_colors);
 }
 
 }

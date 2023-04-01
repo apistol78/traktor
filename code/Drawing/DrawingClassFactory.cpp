@@ -50,85 +50,14 @@ namespace traktor::drawing
 	namespace
 	{
 
-class BoxedPixelFormat : public Object
+Ref< Image > Image_constructor_3(const PixelFormat* pixelFormat, uint32_t width, uint32_t height)
 {
-	T_RTTI_CLASS;
-
-public:
-	BoxedPixelFormat(const PixelFormat& pf) : m_pf(pf) {}
-
-	const PixelFormat& unbox() const { return m_pf; }
-
-	static Ref< BoxedPixelFormat > getP4() { return new BoxedPixelFormat(PixelFormat::getP4()); }
-
-	static Ref< BoxedPixelFormat > getP8() { return new BoxedPixelFormat(PixelFormat::getP8()); }
-
-	static Ref< BoxedPixelFormat > getA8() { return new BoxedPixelFormat(PixelFormat::getA8()); }
-
-	static Ref< BoxedPixelFormat > getR8() { return new BoxedPixelFormat(PixelFormat::getR8()); }
-
-	static Ref< BoxedPixelFormat > getR16() { return new BoxedPixelFormat(PixelFormat::getR16()); }
-
-	static Ref< BoxedPixelFormat > getR5G5B5() { return new BoxedPixelFormat(PixelFormat::getR5G5B5()); }
-
-	static Ref< BoxedPixelFormat > getR5G6B5() { return new BoxedPixelFormat(PixelFormat::getR5G6B5()); }
-
-	static Ref< BoxedPixelFormat > getR5G5B5A1() { return new BoxedPixelFormat(PixelFormat::getR5G5B5A1()); }
-
-	static Ref< BoxedPixelFormat > getR4G4B4A4() { return new BoxedPixelFormat(PixelFormat::getR4G4B4A4()); }
-
-	static Ref< BoxedPixelFormat > getR8G8B8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8()); }
-
-	static Ref< BoxedPixelFormat > getB8G8R8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8()); }
-
-	static Ref< BoxedPixelFormat > getA1R5G5B5() { return new BoxedPixelFormat(PixelFormat::getA1R5G5B5()); }
-
-	static Ref< BoxedPixelFormat > getX8R8G8B8() { return new BoxedPixelFormat(PixelFormat::getX8R8G8B8()); }
-
-	static Ref< BoxedPixelFormat > getX8B8G8R8() { return new BoxedPixelFormat(PixelFormat::getX8B8G8R8()); }
-
-	static Ref< BoxedPixelFormat > getR8G8B8X8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8X8()); }
-
-	static Ref< BoxedPixelFormat > getB8G8R8X8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8X8()); }
-
-	static Ref< BoxedPixelFormat > getA8R8G8B8() { return new BoxedPixelFormat(PixelFormat::getA8R8G8B8()); }
-
-	static Ref< BoxedPixelFormat > getA8B8G8R8() { return new BoxedPixelFormat(PixelFormat::getA8B8G8R8()); }
-
-	static Ref< BoxedPixelFormat > getR8G8B8A8() { return new BoxedPixelFormat(PixelFormat::getR8G8B8A8()); }
-
-	static Ref< BoxedPixelFormat > getB8G8R8A8() { return new BoxedPixelFormat(PixelFormat::getB8G8R8A8()); }
-
-	static Ref< BoxedPixelFormat > getR16F() { return new BoxedPixelFormat(PixelFormat::getR16F()); }
-
-	static Ref< BoxedPixelFormat > getR32F() { return new BoxedPixelFormat(PixelFormat::getR32F()); }
-
-	static Ref< BoxedPixelFormat > getARGBF16() { return new BoxedPixelFormat(PixelFormat::getARGBF16()); }
-
-	static Ref< BoxedPixelFormat > getARGBF32() { return new BoxedPixelFormat(PixelFormat::getARGBF32()); }
-
-	static Ref< BoxedPixelFormat > getRGBAF16() { return new BoxedPixelFormat(PixelFormat::getRGBAF16()); }
-
-	static Ref< BoxedPixelFormat > getRGBAF32() { return new BoxedPixelFormat(PixelFormat::getRGBAF32()); }
-
-	static Ref< BoxedPixelFormat > getABGRF16() { return new BoxedPixelFormat(PixelFormat::getABGRF16()); }
-
-	static Ref< BoxedPixelFormat > getABGRF32() { return new BoxedPixelFormat(PixelFormat::getABGRF32()); }
-
-private:
-	const PixelFormat& m_pf;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PixelFormat", BoxedPixelFormat, Object)
-
-Ref< Image > Image_constructor_3(const BoxedPixelFormat* pixelFormat, uint32_t width, uint32_t height)
-{
-	return new Image(pixelFormat->unbox(), width, height);
+	return new Image(*pixelFormat, width, height);
 }
 
-Ref< Image > Image_constructor_4(BoxedPointer* pointer, const BoxedPixelFormat* pixelFormat, uint32_t width, uint32_t height)
+Ref< Image > Image_constructor_4(BoxedPointer* pointer, const PixelFormat* pixelFormat, uint32_t width, uint32_t height)
 {
-	return new Image(pointer->ptr(), pixelFormat->unbox(), width, height);
+	return new Image(pointer->ptr(), *pixelFormat, width, height);
 }
 
 Ref< CropFilter > CropFilter_constructor(int32_t anchorX, int32_t anchorY, int32_t width, int32_t height)
@@ -266,36 +195,36 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.DrawingClassFactory", 0, Drawin
 
 void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classBoxedPixelFormat = new AutoRuntimeClass< BoxedPixelFormat >();
-	classBoxedPixelFormat->addStaticMethod("getP4", &BoxedPixelFormat::getP4);
-	classBoxedPixelFormat->addStaticMethod("getP8", &BoxedPixelFormat::getP8);
-	classBoxedPixelFormat->addStaticMethod("getA8", &BoxedPixelFormat::getA8);
-	classBoxedPixelFormat->addStaticMethod("getR8", &BoxedPixelFormat::getR8);
-	classBoxedPixelFormat->addStaticMethod("getR16", &BoxedPixelFormat::getR16);
-	classBoxedPixelFormat->addStaticMethod("getR5G5B5", &BoxedPixelFormat::getR5G5B5);
-	classBoxedPixelFormat->addStaticMethod("getR5G6B5", &BoxedPixelFormat::getR5G6B5);
-	classBoxedPixelFormat->addStaticMethod("getR5G5B5A1", &BoxedPixelFormat::getR5G5B5A1);
-	classBoxedPixelFormat->addStaticMethod("getR4G4B4A4", &BoxedPixelFormat::getR4G4B4A4);
-	classBoxedPixelFormat->addStaticMethod("getR8G8B8", &BoxedPixelFormat::getR8G8B8);
-	classBoxedPixelFormat->addStaticMethod("getB8G8R8", &BoxedPixelFormat::getB8G8R8);
-	classBoxedPixelFormat->addStaticMethod("getA1R5G5B5", &BoxedPixelFormat::getA1R5G5B5);
-	classBoxedPixelFormat->addStaticMethod("getX8R8G8B8", &BoxedPixelFormat::getX8R8G8B8);
-	classBoxedPixelFormat->addStaticMethod("getX8B8G8R8", &BoxedPixelFormat::getX8B8G8R8);
-	classBoxedPixelFormat->addStaticMethod("getR8G8B8X8", &BoxedPixelFormat::getR8G8B8X8);
-	classBoxedPixelFormat->addStaticMethod("getB8G8R8X8", &BoxedPixelFormat::getB8G8R8X8);
-	classBoxedPixelFormat->addStaticMethod("getA8R8G8B8", &BoxedPixelFormat::getA8R8G8B8);
-	classBoxedPixelFormat->addStaticMethod("getA8B8G8R8", &BoxedPixelFormat::getA8B8G8R8);
-	classBoxedPixelFormat->addStaticMethod("getR8G8B8A8", &BoxedPixelFormat::getR8G8B8A8);
-	classBoxedPixelFormat->addStaticMethod("getB8G8R8A8", &BoxedPixelFormat::getB8G8R8A8);
-	classBoxedPixelFormat->addStaticMethod("getR16F", &BoxedPixelFormat::getR16F);
-	classBoxedPixelFormat->addStaticMethod("getR32F", &BoxedPixelFormat::getR32F);
-	classBoxedPixelFormat->addStaticMethod("getARGBF16", &BoxedPixelFormat::getARGBF16);
-	classBoxedPixelFormat->addStaticMethod("getARGBF32", &BoxedPixelFormat::getARGBF32);
-	classBoxedPixelFormat->addStaticMethod("getRGBAF16", &BoxedPixelFormat::getRGBAF16);
-	classBoxedPixelFormat->addStaticMethod("getRGBAF32", &BoxedPixelFormat::getRGBAF32);
-	classBoxedPixelFormat->addStaticMethod("getABGRF16", &BoxedPixelFormat::getABGRF16);
-	classBoxedPixelFormat->addStaticMethod("getABGRF32", &BoxedPixelFormat::getABGRF32);
-	registrar->registerClass(classBoxedPixelFormat);
+	auto classPixelFormat = new AutoRuntimeClass< PixelFormat >();
+	classPixelFormat->addStaticMethod("getP4", &PixelFormat::getP4);
+	classPixelFormat->addStaticMethod("getP8", &PixelFormat::getP8);
+	classPixelFormat->addStaticMethod("getA8", &PixelFormat::getA8);
+	classPixelFormat->addStaticMethod("getR8", &PixelFormat::getR8);
+	classPixelFormat->addStaticMethod("getR16", &PixelFormat::getR16);
+	classPixelFormat->addStaticMethod("getR5G5B5", &PixelFormat::getR5G5B5);
+	classPixelFormat->addStaticMethod("getR5G6B5", &PixelFormat::getR5G6B5);
+	classPixelFormat->addStaticMethod("getR5G5B5A1", &PixelFormat::getR5G5B5A1);
+	classPixelFormat->addStaticMethod("getR4G4B4A4", &PixelFormat::getR4G4B4A4);
+	classPixelFormat->addStaticMethod("getR8G8B8", &PixelFormat::getR8G8B8);
+	classPixelFormat->addStaticMethod("getB8G8R8", &PixelFormat::getB8G8R8);
+	classPixelFormat->addStaticMethod("getA1R5G5B5", &PixelFormat::getA1R5G5B5);
+	classPixelFormat->addStaticMethod("getX8R8G8B8", &PixelFormat::getX8R8G8B8);
+	classPixelFormat->addStaticMethod("getX8B8G8R8", &PixelFormat::getX8B8G8R8);
+	classPixelFormat->addStaticMethod("getR8G8B8X8", &PixelFormat::getR8G8B8X8);
+	classPixelFormat->addStaticMethod("getB8G8R8X8", &PixelFormat::getB8G8R8X8);
+	classPixelFormat->addStaticMethod("getA8R8G8B8", &PixelFormat::getA8R8G8B8);
+	classPixelFormat->addStaticMethod("getA8B8G8R8", &PixelFormat::getA8B8G8R8);
+	classPixelFormat->addStaticMethod("getR8G8B8A8", &PixelFormat::getR8G8B8A8);
+	classPixelFormat->addStaticMethod("getB8G8R8A8", &PixelFormat::getB8G8R8A8);
+	classPixelFormat->addStaticMethod("getR16F", &PixelFormat::getR16F);
+	classPixelFormat->addStaticMethod("getR32F", &PixelFormat::getR32F);
+	classPixelFormat->addStaticMethod("getARGBF16", &PixelFormat::getARGBF16);
+	classPixelFormat->addStaticMethod("getARGBF32", &PixelFormat::getARGBF32);
+	classPixelFormat->addStaticMethod("getRGBAF16", &PixelFormat::getRGBAF16);
+	classPixelFormat->addStaticMethod("getRGBAF32", &PixelFormat::getRGBAF32);
+	classPixelFormat->addStaticMethod("getABGRF16", &PixelFormat::getABGRF16);
+	classPixelFormat->addStaticMethod("getABGRF32", &PixelFormat::getABGRF32);
+	registrar->registerClass(classPixelFormat);
 
 	auto classIImageFilter = new AutoRuntimeClass< IImageFilter >();
 	registrar->registerClass(classIImageFilter);
@@ -307,8 +236,8 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classImage->addProperty("width", &Image::getWidth);
 	classImage->addProperty("height", &Image::getHeight);
 	classImage->addConstructor();
-	classImage->addConstructor< const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
-	classImage->addConstructor< BoxedPointer*, const BoxedPixelFormat*, uint32_t, uint32_t >(&Image_constructor_4);
+	classImage->addConstructor< const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_3);
+	classImage->addConstructor< BoxedPointer*, const PixelFormat*, uint32_t, uint32_t >(&Image_constructor_4);
 	classImage->addMethod("clone", &Image::clone);
 	classImage->addMethod("copy", &Image_copy_1);
 	classImage->addMethod("copy", &Image_copy_2);

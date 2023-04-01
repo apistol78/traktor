@@ -9,7 +9,7 @@
 #pragma once
 
 #include <string>
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ namespace traktor::drawing
  * Some image formats contain additional information about
  * author, copyright notes and such.
  */
-class T_DLLCLASS ImageInfo : public Object
+class T_DLLCLASS ImageInfo : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -49,6 +49,8 @@ public:
 	void setGamma(float gamma);
 
 	float getGamma() const;
+
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	std::wstring m_author;

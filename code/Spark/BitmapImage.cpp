@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Spark/BitmapImage.h"
@@ -46,24 +46,7 @@ const void* BitmapImage::getBits() const
 void BitmapImage::serialize(ISerializer& s)
 {
 	Bitmap::serialize(s);
-
-	if (s.getDirection() == ISerializer::Direction::Read)
-#if defined(T_LITTLE_ENDIAN)
-		m_image = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), m_width, m_height);
-#else
-		m_image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), m_width, m_height);
-#endif
-
-	void* bits = nullptr;
-	size_t size = 0;
-
-	if (m_image)
-	{
-		bits = m_image->getData();
-		size = m_width * m_height * 4;
-	}
-
-	s >> Member< void* >(L"bits", bits, size);
+	s >> MemberRef< drawing::Image >(L"image", m_image);
 }
 
 	}

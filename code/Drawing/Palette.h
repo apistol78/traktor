@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +26,7 @@ namespace traktor::drawing
 /*! Palette
  * \ingroup Drawing
  */
-class T_DLLCLASS Palette : public Object
+class T_DLLCLASS Palette : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -40,6 +40,8 @@ public:
 	const Color4f& get(int32_t index) const;
 
 	int32_t find(const Color4f& c, bool exact = false) const;
+
+	virtual void serialize(ISerializer& s) override;
 
 private:
 	AlignedVector< Color4f > m_colors;
