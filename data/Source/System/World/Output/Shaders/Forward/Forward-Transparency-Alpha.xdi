@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
 			<id>{9DD0D9E3-A2C0-4328-A34F-96E299ABEF5E}</id>
@@ -240,8 +240,8 @@ Eye direction
 			<id>{645143C2-E889-6740-AB8C-72DADC0B301C}</id>
 			<comment/>
 			<position>
-				<first>1386</first>
-				<second>-375</second>
+				<first>1356</first>
+				<second>-1039</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -249,16 +249,16 @@ Eye direction
 			<id>{5BBC4A39-6377-2F43-8E57-FB717C2BF54B}</id>
 			<comment/>
 			<position>
-				<first>567</first>
-				<second>-434</second>
+				<first>537</first>
+				<second>-1098</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{AFEDF1CB-2D27-BA41-9E3E-915922334156}</id>
 			<comment/>
 			<position>
-				<first>343</first>
-				<second>-376</second>
+				<first>313</first>
+				<second>-1040</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
 			<type>Matrix</type>
@@ -268,16 +268,16 @@ Eye direction
 			<id>{4ED325A8-FA3F-144E-86E6-A7DC6242E124}</id>
 			<comment/>
 			<position>
-				<first>570</first>
-				<second>-269</second>
+				<first>540</first>
+				<second>-933</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6F0C57FE-DDFB-764B-9E3E-058418DDC166}</id>
 			<comment/>
 			<position>
-				<first>331</first>
-				<second>-218</second>
+				<first>301</first>
+				<second>-882</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
 			<type>Matrix</type>
@@ -287,8 +287,8 @@ Eye direction
 			<id>{B5134B8C-DBE7-1642-9513-298C2E3A8438}</id>
 			<comment/>
 			<position>
-				<first>405</first>
-				<second>-271</second>
+				<first>375</first>
+				<second>-935</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -296,8 +296,8 @@ Eye direction
 			<id>{4FE59620-BE00-C84F-A6E3-E06AAB69E681}</id>
 			<comment/>
 			<position>
-				<first>417</first>
-				<second>-437</second>
+				<first>387</first>
+				<second>-1101</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -305,8 +305,8 @@ Eye direction
 			<id>{01AA224F-F89C-0342-895C-75C7DBADA85B}</id>
 			<comment/>
 			<position>
-				<first>918</first>
-				<second>-378</second>
+				<first>888</first>
+				<second>-1042</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
 			<inputPins>
@@ -333,8 +333,8 @@ Eye direction
 			<id>{C21A0CF9-9630-8142-A640-75F739873C48}</id>
 			<comment/>
 			<position>
-				<first>181</first>
-				<second>-291</second>
+				<first>151</first>
+				<second>-955</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -343,8 +343,8 @@ Eye direction
 			<id>{6A9E6D75-7F13-D649-AC7F-028610EA6979}</id>
 			<comment/>
 			<position>
-				<first>199</first>
-				<second>-455</second>
+				<first>169</first>
+				<second>-1119</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 			<global>false</global>
@@ -353,8 +353,8 @@ Eye direction
 			<id>{9E45E1C4-945F-844A-9376-3C2DD80CFCDC}</id>
 			<comment/>
 			<position>
-				<first>1115</first>
-				<second>-287</second>
+				<first>1085</first>
+				<second>-951</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -363,16 +363,16 @@ Eye direction
 			<id>{238000AF-946C-114F-A9E9-CAD2A9CD45FD}</id>
 			<comment/>
 			<position>
-				<first>1229</first>
-				<second>-371</second>
+				<first>1199</first>
+				<second>-1035</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{2CA9D823-652A-BC48-912E-D941CC5392DB}</id>
 			<comment/>
 			<position>
-				<first>1680</first>
-				<second>-306</second>
+				<first>1650</first>
+				<second>-970</second>
 			</position>
 			<name>L_Irradiance</name>
 			<global>false</global>
@@ -494,16 +494,16 @@ Eye direction
 			<id>{75152CA7-4F80-494D-947F-64422F954672}</id>
 			<comment/>
 			<position>
-				<first>299</first>
-				<second>838</second>
+				<first>662</first>
+				<second>-521</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{289C7C1D-ED7A-4448-8CE6-80F6E4343431}</id>
 			<comment/>
 			<position>
-				<first>134</first>
-				<second>830</second>
+				<first>497</first>
+				<second>-529</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -511,8 +511,8 @@ Eye direction
 			<id>{6D64C432-51BA-AE4D-8E4B-D4F9EAFB46E9}</id>
 			<comment/>
 			<position>
-				<first>550</first>
-				<second>957</second>
+				<first>913</first>
+				<second>-402</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -521,8 +521,8 @@ Eye direction
 			<id>{FE549096-8AF8-8A42-BE27-453F25C70F16}</id>
 			<comment/>
 			<position>
-				<first>-298</first>
-				<second>852</second>
+				<first>65</first>
+				<second>-507</second>
 			</position>
 			<name>L_EyeDirection</name>
 			<global>false</global>
@@ -531,8 +531,8 @@ Eye direction
 			<id>{FDB2A9BA-FAA9-1544-8E15-CC4F9BA7D03D}</id>
 			<comment/>
 			<position>
-				<first>-314</first>
-				<second>789</second>
+				<first>49</first>
+				<second>-570</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 			<global>false</global>
@@ -541,8 +541,8 @@ Eye direction
 			<id>{88FC6BE7-BD97-E449-8E62-CEAB2AE28FD8}</id>
 			<comment/>
 			<position>
-				<first>240</first>
-				<second>926</second>
+				<first>603</first>
+				<second>-433</second>
 			</position>
 			<parameterName>World_ViewInverse</parameterName>
 			<type>Matrix</type>
@@ -552,24 +552,24 @@ Eye direction
 			<id>{F1C493CD-832F-9346-B5D6-77E7FDA16B89}</id>
 			<comment/>
 			<position>
-				<first>-81</first>
-				<second>794</second>
+				<first>282</first>
+				<second>-565</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{00606BD7-2772-9248-BBE4-8FA79032E393}</id>
 			<comment/>
 			<position>
-				<first>501</first>
-				<second>865</second>
+				<first>864</first>
+				<second>-494</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{7F530D4C-06F9-694D-81FE-A3664D8C7AF0}</id>
 			<comment/>
 			<position>
-				<first>798</first>
-				<second>898</second>
+				<first>1161</first>
+				<second>-461</second>
 			</position>
 			<fragmentGuid>{2231E81B-359A-3149-B2EB-26BE4588529B}</fragmentGuid>
 			<inputPins>
@@ -596,8 +596,8 @@ Eye direction
 			<id>{FF77033E-0FB5-174E-94E0-45E617EF753C}</id>
 			<comment/>
 			<position>
-				<first>640</first>
-				<second>1152</second>
+				<first>1003</first>
+				<second>-207</second>
 			</position>
 			<name>L_Metalness</name>
 			<global>false</global>
@@ -606,8 +606,8 @@ Eye direction
 			<id>{348D820F-F996-EE45-A9EC-AE818F5F0C44}</id>
 			<comment/>
 			<position>
-				<first>640</first>
-				<second>1093</second>
+				<first>1003</first>
+				<second>-266</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -615,16 +615,16 @@ Eye direction
 			<id>{9FEFCBD9-E9DF-744A-BD5B-48A6C6CD3F7C}</id>
 			<comment/>
 			<position>
-				<first>844</first>
-				<second>1069</second>
+				<first>1207</first>
+				<second>-290</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{9F21EB53-F36C-2E44-A899-00A919A50F28}</id>
 			<comment/>
 			<position>
-				<first>1429</first>
-				<second>961</second>
+				<first>1792</first>
+				<second>-398</second>
 			</position>
 			<name>L_Reflections</name>
 			<global>false</global>
@@ -633,8 +633,8 @@ Eye direction
 			<id>{CDBE2929-5C85-BE48-9E4C-1447F8FC0F38}</id>
 			<comment/>
 			<position>
-				<first>640</first>
-				<second>1032</second>
+				<first>1003</first>
+				<second>-327</second>
 			</position>
 			<name>L_SpecularG</name>
 			<global>false</global>
@@ -643,8 +643,8 @@ Eye direction
 			<id>{0CD85EB9-D98B-B24F-851E-3ABAC3C12386}</id>
 			<comment/>
 			<position>
-				<first>1128</first>
-				<second>966</second>
+				<first>1491</first>
+				<second>-393</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
@@ -1362,4 +1362,30 @@ Eye direction
 			</destination>
 		</item>
 	</edges>
+	<groups>
+		<item type="traktor.render.Group">
+			<title>Irradiance</title>
+			<comment/>
+			<position>
+				<first>103</first>
+				<second>-1192</second>
+			</position>
+			<size>
+				<first>1768</first>
+				<second>411</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Reflection</title>
+			<comment/>
+			<position>
+				<first>-16</first>
+				<second>-684</second>
+			</position>
+			<size>
+				<first>1910</first>
+				<second>590</second>
+			</size>
+		</item>
+	</groups>
 </object>
