@@ -8,31 +8,29 @@
  */
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Weather/Fog/VolumetricFogComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/VolumetricFogComponent.h"
 
-namespace traktor::weather
+namespace traktor::world
 {
 	namespace
 	{
 
-const render::Handle s_handleWeather_FogVolume(L"Weather_FogVolume");
-const render::Handle s_handleWeather_FogVolumeTexture(L"Weather_FogVolumeTexture");
-const render::Handle s_handleWeather_MagicCoeffs(L"Weather_MagicCoeffs");
-const render::Handle s_handleWeather_SliceCount(L"Weather_SliceCount");
-const render::Handle s_handleWeather_MediumColor(L"Weather_MediumColor");
+const render::Handle s_handleWorld_FogVolume(L"World_FogVolume");
+const render::Handle s_handleWorld_MagicCoeffs(L"World_MagicCoeffs");
+const render::Handle s_handleWorld_SliceCount(L"World_SliceCount");
+const render::Handle s_handleWorld_MediumColor(L"World_MediumColor");
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
 VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor)
 :	m_shader(shader)
@@ -44,10 +42,6 @@ VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Sh
 
 bool VolumetricFogComponent::create(render::IRenderSystem* renderSystem)
 {
-	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return false;
-
 	render::VolumeTextureCreateDesc vtcd;
 	vtcd.width = 128;
 	vtcd.height = 128;
@@ -66,10 +60,9 @@ bool VolumetricFogComponent::create(render::IRenderSystem* renderSystem)
 void VolumetricFogComponent::destroy()
 {
 	safeDestroy(m_fogVolumeTexture);
-	safeDestroy(m_screenRenderer);
 }
 
-void VolumetricFogComponent::setOwner(world::Entity* owner)
+void VolumetricFogComponent::setOwner(Entity* owner)
 {
 	m_owner = owner;
 }
@@ -83,15 +76,11 @@ Aabb3 VolumetricFogComponent::getBoundingBox() const
 	return Aabb3();
 }
 
-void VolumetricFogComponent::update(const world::UpdateParams& update)
+void VolumetricFogComponent::update(const UpdateParams& update)
 {
 }
 
-void VolumetricFogComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
-{
-}
-
-void VolumetricFogComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
+void VolumetricFogComponent::build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass)
 {
 	if (worldRenderView.getSnapshot())
 		return;
@@ -114,7 +103,7 @@ void VolumetricFogComponent::build(const world::WorldBuildContext& context, cons
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
 	// Update the volume.
-	if (worldRenderPass.getTechnique() == world::s_techniqueForwardColor)
+	if (worldRenderPass.getTechnique() == s_techniqueForwardColor)
 	{
 		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
 
@@ -128,31 +117,13 @@ void VolumetricFogComponent::build(const world::WorldBuildContext& context, cons
 
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setImageViewParameter(s_handleWeather_FogVolume, m_fogVolumeTexture);
-		renderBlock->programParams->setVectorParameter(s_handleWeather_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
-		renderBlock->programParams->setVectorParameter(s_handleWeather_MediumColor, m_mediumColor);
-		renderBlock->programParams->setFloatParameter(s_handleWeather_SliceCount, (float)m_sliceCount);
+		renderBlock->programParams->setImageViewParameter(s_handleWorld_FogVolume, m_fogVolumeTexture);
+		renderBlock->programParams->setVectorParameter(s_handleWorld_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
+		renderBlock->programParams->setVectorParameter(s_handleWorld_MediumColor, m_mediumColor);
+		renderBlock->programParams->setFloatParameter(s_handleWorld_SliceCount, (float)m_sliceCount);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
-	}
-
-	// Render the volume.
-	{
-		auto perm = worldRenderPass.getPermutation(m_shader);
-
-		auto programParams = renderContext->alloc< render::ProgramParameters >();
-		programParams->beginParameters(renderContext);
-
-		worldRenderPass.setProgramParameters(programParams);
-
-		programParams->setTextureParameter(s_handleWeather_FogVolumeTexture, m_fogVolumeTexture);
-		programParams->setVectorParameter(s_handleWeather_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
-		programParams->setFloatParameter(s_handleWeather_SliceCount, (float)m_sliceCount);
-
-		programParams->endParameters(renderContext);
-
-		m_screenRenderer->draw(renderContext, m_shader, perm, programParams);
 	}
 }
 

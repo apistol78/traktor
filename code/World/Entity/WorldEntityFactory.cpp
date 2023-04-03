@@ -34,6 +34,8 @@
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
 #include "World/Entity/VolumeComponentData.h"
+#include "World/Entity/VolumetricFogComponent.h"
+#include "World/Entity/VolumetricFogComponentData.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor::world
@@ -81,6 +83,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< VolumeComponentData >();
+	typeSet.insert< VolumetricFogComponentData >();
 	return typeSet;
 }
 
@@ -275,6 +278,9 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (auto volumeComponentData = dynamic_type_cast< const VolumeComponentData* >(&entityComponentData))
 		return new VolumeComponent(volumeComponentData);
+
+	if (auto volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(&entityComponentData))
+		return volumetricFogComponentData->createComponent(m_resourceManager, m_renderSystem);
 
 	return nullptr;
 }

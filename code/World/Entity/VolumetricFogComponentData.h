@@ -14,7 +14,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_WEATHER_EXPORT)
+#if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -35,15 +35,15 @@ class Shader;
 
 }
 
-namespace traktor::weather
+namespace traktor::world
 {
 
 class VolumetricFogComponent;
 
 /*!
- * \ingroup Weather
+ * \ingroup World
  */
-class T_DLLCLASS VolumetricFogComponentData : public world::IEntityComponentData
+class T_DLLCLASS VolumetricFogComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
@@ -54,7 +54,7 @@ public:
 
 	virtual int32_t getOrdinal() const override final;
 
-	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

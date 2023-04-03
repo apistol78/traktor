@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.MixOut" version="traktor.render.Node:1">
 			<id>{44F67D43-8304-2A4F-8F5B-38BFD6185A67}</id>
@@ -540,30 +540,12 @@
 				<second>-625</second>
 			</position>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{63AFF6E3-107B-D74C-82F2-411BD7544102}</id>
-			<comment/>
-			<position>
-				<first>-1006</first>
-				<second>-565</second>
-			</position>
-			<value>0.5</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{603DB4AD-4614-054A-B3EF-A325A5A93B0A}</id>
-			<comment/>
-			<position>
-				<first>-984</first>
-				<second>-524</second>
-			</position>
-			<value>0.5</value>
-		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
 			<id>{66CB2AFF-A112-FB4A-98BD-8807452EC397}</id>
 			<comment/>
 			<position>
-				<first>-1012</first>
-				<second>-485</second>
+				<first>-1059</first>
+				<second>-564</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
@@ -571,8 +553,8 @@
 			<id>{169D9551-5A3F-6E49-BE13-C488B14CB0C6}</id>
 			<comment/>
 			<position>
-				<first>-985</first>
-				<second>-437</second>
+				<first>-1032</first>
+				<second>-516</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
@@ -1090,7 +1072,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
@@ -1100,7 +1082,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
@@ -1109,4 +1091,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

@@ -36,7 +36,6 @@
 #include "Terrain/TerrainFactory.h"
 #include "Weather/WeatherFactory.h"
 #include "Weather/Clouds/CloudRenderer.h"
-#include "Weather/Fog/VolumetricFogRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityBuilder.h"
@@ -50,6 +49,7 @@
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
+#include "World/Entity/VolumetricFogRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor::runtime
@@ -183,6 +183,7 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(new world::GroupRenderer());
 	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
+	m_entityRenderers->add(new world::VolumetricFogRenderer());
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
@@ -192,7 +193,6 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 	m_entityRenderers->add(new weather::CloudRenderer());
 	m_entityRenderers->add(new weather::PrecipitationRenderer());
 	m_entityRenderers->add(new weather::SkyRenderer());
-	m_entityRenderers->add(new weather::VolumetricFogRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
 }
 

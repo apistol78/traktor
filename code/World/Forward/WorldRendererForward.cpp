@@ -32,12 +32,12 @@
 #include "World/Packer.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/VolumetricFogComponent.h"
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -147,66 +147,8 @@ void WorldRendererForward::setup(
 	// 	worldRenderView.setProjection(proj);
 	// }
 
-	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
-
 	// Gather active renderables for this frame.
-	{
-		T_PROFILER_SCOPE(L"WorldRendererForward gather");
-
-		m_gatheredView.probes.resize(0);
-		m_gatheredView.renderables.resize(0);
-
-		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
-
-			// Gather lights and probes separately as we need them for shadows and lighting.
-			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
-			{
-				if (!lights.full())
-					lights.push_back(lightComponent);
-			}
-			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
-				m_gatheredView.probes.push_back(probeComponent);
-
-			m_gatheredView.renderables.push_back({ entityRenderer, renderable });
-
-		}).gather(const_cast< Entity* >(rootEntity));
-	}
-
-	// Arrange lights.
-	{
-		const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-
-		m_gatheredView.lights.resize(4);
-		m_gatheredView.lights[0] = nullptr;
-		m_gatheredView.lights[1] = nullptr;
-		m_gatheredView.lights[2] = nullptr;
-		m_gatheredView.lights[3] = nullptr;
-
-		// Find cascade shadow light; must be first.
-		if (shadowsEnable)
-		{
-			for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
-			{
-				auto& light = lights[i];
-				if (
-					light->getCastShadow() &&
-					light->getLightType() == LightType::Directional
-				)
-				{
-					m_gatheredView.lights[0] = light;
-					break;
-				}
-			}
-		}
-
-		// Add all other lights.
-		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
-		{
-			auto& light = lights[i];
-			if (light != m_gatheredView.lights[0])
-				m_gatheredView.lights.push_back(light);
-		}
-	}
+	gather(const_cast< Entity* >(rootEntity));
 
 	// Add additional passes by entity renderers.
 	{
@@ -634,7 +576,7 @@ void WorldRendererForward::setupVisualPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
 	// Find first, non-local, probe.
-	Ref< const ProbeComponent > probe;
+	const ProbeComponent* probe = nullptr;
 	for (auto p : m_gatheredView.probes)
 	{
 		if (!p->getLocal() && p->getTexture() != nullptr)
@@ -643,6 +585,9 @@ void WorldRendererForward::setupVisualPass(
 			break;
 		}
 	}
+
+	// Use first volumetric fog volume, only support one in forward.
+	const VolumetricFogComponent* fog = !m_gatheredView.fogs.empty() ? m_gatheredView.fogs.front() : nullptr;
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -665,20 +610,6 @@ void WorldRendererForward::setupVisualPass(
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
-#if defined(T_WORLD_USE_TILE_JOB)
-			// Enure light clustering job has finished.
-            Ref< Job > tileJob = m_tileJob;
-            if (tileJob)
-            {
-                auto rb = renderContext->alloc< render::LambdaRenderBlock >();
-                rb->lambda = [=](render::IRenderView*) {
-                    tileJob->wait();
-                };
-                renderContext->enqueue(rb);
-            }
-			m_tileJob = nullptr;
-#endif
-
 			const WorldBuildContext wc(
 				m_entityRenderers,
 				rootEntity,
@@ -730,6 +661,12 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
 			}
 
+			if (fog)
+			{
+				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, fog->getSliceCount());
+				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
+			}
+
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
 
@@ -760,7 +697,8 @@ void WorldRendererForward::setupVisualPass(
 				IWorldRenderPass::Last,
 				{
 					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
-					{ s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr) }
+					{ s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr) },
+					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr )}
 				}
 			);
 

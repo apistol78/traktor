@@ -17,6 +17,7 @@ namespace traktor::world
 class IEntityRenderer;
 class LightComponent;
 class ProbeComponent;
+class VolumetricFogComponent;
 
 enum
 {
@@ -79,6 +80,7 @@ struct GatherView
     AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
+	AlignedVector< const VolumetricFogComponent* > fogs;
 };
 
 }
