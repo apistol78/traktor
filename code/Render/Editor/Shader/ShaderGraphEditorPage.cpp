@@ -673,7 +673,9 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Delete")
 	{
 		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
-		if (nodes.empty())
+		const RefArray< ui::Group > groups = m_editorGraph->getSelectedGroups();
+
+		if (nodes.empty() && groups.empty())
 			return false;
 
 		// Save undo state.
@@ -698,6 +700,13 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 			// Ensure script editor is hidden if script node is being deleted.
 			if (shaderNode == m_script)
 				editScript(nullptr);
+		}
+
+		for (auto group : groups)
+		{
+			Ref< Group > shaderGroup = group->getData< Group >(L"SHADERGROUP");
+			m_editorGraph->removeGroup(group);
+			m_shaderGraph->removeGroup(shaderGroup);
 		}
 
 		updateGraph();
