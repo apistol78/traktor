@@ -18,6 +18,7 @@
 #include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
+#include "World/Entity/VolumetricFogComponentData.h"
 
 namespace traktor
 {
@@ -37,6 +38,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< ProbeComponentData >();
+	typeSet.insert< VolumetricFogComponentData >();
 	return typeSet;
 }
 
@@ -73,11 +75,14 @@ bool WorldEntityPipeline::buildDependencies(
 	}
 	else if (auto probeComponentData = dynamic_type_cast<const ProbeComponentData*>(sourceAsset))
 		pipelineDepends->addDependency(probeComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
+	else if (auto volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(volumetricFogComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else
 	{
 		log::error << L"Unsupported component data type in world pipeline, \"" << type_name(sourceAsset) << L"\"." << Endl;
 		return false;
 	}
+
 	return true;
 }
 

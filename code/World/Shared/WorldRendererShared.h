@@ -82,6 +82,8 @@ protected:
 	Ref< render::ITexture > m_blackCubeTexture;
 
 	GatherView m_gatheredView;
+
+	void gather(Entity* rootEntity);
 };
 
 }

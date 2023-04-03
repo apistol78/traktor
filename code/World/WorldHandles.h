@@ -32,6 +32,11 @@ extern const render::Handle T_DLLCLASS s_techniqueIrradianceWrite;
 extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
 extern const render::Handle T_DLLCLASS s_techniqueShadow;
 
+// Permutations
+extern const render::Handle s_handleShadowEnable;
+extern const render::Handle s_handleIrradianceEnable;
+extern const render::Handle s_handleVolumetricFogEnable;
+
 // Shader parameters.
 extern const render::Handle s_handleColorMap;
 extern const render::Handle s_handleDecalParams;
@@ -43,11 +48,6 @@ extern const render::Handle s_handleFogColor;
 extern const render::Handle s_handleFogDistanceAndDensity;
 extern const render::Handle s_handleGamma;
 extern const render::Handle s_handleGammaInverse;
-extern const render::Handle s_handleIrradianceEnable;
-extern const render::Handle s_handleIrradianceGridBoundsMax;
-extern const render::Handle s_handleIrradianceGridBoundsMin;
-extern const render::Handle s_handleIrradianceGridSBuffer;
-extern const render::Handle s_handleIrradianceGridSize;
 extern const render::Handle s_handleLastWorld;
 extern const render::Handle s_handleLastWorldView;
 extern const render::Handle s_handleLightCount;
@@ -60,19 +60,9 @@ extern const render::Handle s_handleMagicCoeffs;
 extern const render::Handle s_handleMiscMap;
 extern const render::Handle s_handleNormalMap;
 extern const render::Handle s_handleOcclusionMap;
-extern const render::Handle s_handleProbeDiffuse;
-extern const render::Handle s_handleProbeIntensity;
-extern const render::Handle s_handleProbeLocal;
-extern const render::Handle s_handleProbeSpecular;
-extern const render::Handle s_handleProbeSpecularMips;
-extern const render::Handle s_handleProbeTexture;
-extern const render::Handle s_handleProbeTextureMips;
-extern const render::Handle s_handleProbeVolumeCenter;
-extern const render::Handle s_handleProbeVolumeExtent;
 extern const render::Handle s_handleProjection;
 extern const render::Handle s_handleReflectionMap;
 extern const render::Handle s_handleScreenMap;
-extern const render::Handle s_handleShadowEnable;
 extern const render::Handle s_handleShadowMapAtlas;
 extern const render::Handle s_handleShadowBias;
 extern const render::Handle s_handleShadowMask;
@@ -86,6 +76,27 @@ extern const render::Handle s_handleWorldView;
 extern const render::Handle s_handleWorldViewInv;
 extern const render::Handle s_handleJitter;
 extern const render::Handle s_handleSlicePositions;
+
+// Irradiance grid.
+extern const render::Handle s_handleIrradianceGridBoundsMax;
+extern const render::Handle s_handleIrradianceGridBoundsMin;
+extern const render::Handle s_handleIrradianceGridSBuffer;
+extern const render::Handle s_handleIrradianceGridSize;
+
+// Reflection probe.
+extern const render::Handle s_handleProbeDiffuse;
+extern const render::Handle s_handleProbeIntensity;
+extern const render::Handle s_handleProbeLocal;
+extern const render::Handle s_handleProbeSpecular;
+extern const render::Handle s_handleProbeSpecularMips;
+extern const render::Handle s_handleProbeTexture;
+extern const render::Handle s_handleProbeTextureMips;
+extern const render::Handle s_handleProbeVolumeCenter;
+extern const render::Handle s_handleProbeVolumeExtent;
+
+// Volumetric fog.
+extern const render::Handle s_handleFogVolumeSliceCount;
+extern const render::Handle s_handleFogVolumeTexture;
 
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;

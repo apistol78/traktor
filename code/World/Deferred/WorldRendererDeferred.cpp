@@ -30,7 +30,6 @@
 #include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
@@ -187,28 +186,7 @@ void WorldRendererDeferred::setup(
 	// }
 
 	// Gather active renderables for this frame.
-	{
-		T_PROFILER_SCOPE(L"WorldRendererForward gather");
-
-		m_gatheredView.lights.resize(0);
-		m_gatheredView.probes.resize(0);
-		m_gatheredView.renderables.resize(0);
-
-		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
-
-			// Gather lights and probes separately as we need them for shadows and lighting.
-			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
-				m_gatheredView.lights.push_back(lightComponent);
-			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
-				m_gatheredView.probes.push_back(probeComponent);
-
-			m_gatheredView.renderables.push_back({ entityRenderer, renderable });
-
-		}).gather(const_cast< Entity* >(rootEntity));
-
-		if (m_gatheredView.lights.size() > LightClusterPass::c_maxLightCount)
-			m_gatheredView.lights.resize(LightClusterPass::c_maxLightCount);
-	}
+	gather(const_cast< Entity* >(rootEntity));
 
 	// // Begun writing light shader data; written both in setup and build.
 	// LightShaderData* lightShaderData = (LightShaderData*)m_lightSBufferMemory;

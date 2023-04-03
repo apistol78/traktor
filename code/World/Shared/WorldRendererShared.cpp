@@ -14,9 +14,12 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity.h"
 #include "World/IEntityRenderer.h"
+#include "World/WorldGatherContext.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/VolumetricFogComponent.h"
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
@@ -140,6 +143,70 @@ void WorldRendererShared::destroy()
 render::ImageGraphContext* WorldRendererShared::getImageGraphContext() const
 {
 	return m_imageGraphContext;
+}
+
+void WorldRendererShared::gather(Entity* rootEntity)
+{
+	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
+	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
+
+	m_gatheredView.renderables.resize(0);
+	m_gatheredView.lights.resize(0);
+	m_gatheredView.probes.resize(0);
+	m_gatheredView.fogs.resize(0);
+
+	WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
+
+		// Filter out components used to setup frame's lighting etc.
+		if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
+		{
+			if (!lights.full())
+				lights.push_back(lightComponent);
+		}
+		else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
+			m_gatheredView.probes.push_back(probeComponent);
+		else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(renderable))
+			m_gatheredView.fogs.push_back(volumetricFogComponent);
+
+		m_gatheredView.renderables.push_back({ entityRenderer, renderable });
+
+	}).gather(rootEntity);
+
+	// Arrange lights.
+	{
+		const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+
+		m_gatheredView.lights.resize(4);
+		m_gatheredView.lights[0] = nullptr;
+		m_gatheredView.lights[1] = nullptr;
+		m_gatheredView.lights[2] = nullptr;
+		m_gatheredView.lights[3] = nullptr;
+
+		// Find cascade shadow light; must be first.
+		if (shadowsEnable)
+		{
+			for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+			{
+				auto& light = lights[i];
+				if (
+					light->getCastShadow() &&
+					light->getLightType() == LightType::Directional
+				)
+				{
+					m_gatheredView.lights[0] = light;
+					break;
+				}
+			}
+		}
+
+		// Add all other lights.
+		for (int32_t i = 0; i < (int32_t)lights.size(); ++i)
+		{
+			auto& light = lights[i];
+			if (light != m_gatheredView.lights[0])
+				m_gatheredView.lights.push_back(light);
+		}
+	}
 }
 
 }

@@ -15,7 +15,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_WEATHER_EXPORT)
+#if defined(T_WORLD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -26,7 +26,7 @@ namespace traktor::render
 
 class IRenderSystem;
 class ITexture;
-class ScreenRenderer;
+// class ScreenRenderer;
 class Shader;
 
 }
@@ -39,14 +39,9 @@ class WorldBuildContext;
 class WorldRenderView;
 class WorldSetupContext;
 
-}
-
-namespace traktor::weather
-{
-
 /*!
  */
-class T_DLLCLASS VolumetricFogComponent : public world::IEntityComponent
+class T_DLLCLASS VolumetricFogComponent : public IEntityComponent
 {
 	T_RTTI_CLASS;
 
@@ -57,22 +52,23 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setOwner(world::Entity* owner) override final;
+	virtual void setOwner(Entity* owner) override final;
 
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void update(const world::UpdateParams& update) override final;
+	virtual void update(const UpdateParams& update) override final;
 
-	void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView);
+	void build(const WorldBuildContext& context, const WorldRenderView& worldRenderView, const IWorldRenderPass& worldRenderPass);
 
-	void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass);
+	render::ITexture* getFogVolumeTexture() const { return m_fogVolumeTexture; }
+
+	int32_t getSliceCount() const { return m_sliceCount; }
 
 private:
-	world::Entity* m_owner = nullptr;
+	Entity* m_owner = nullptr;
 	resource::Proxy< render::Shader > m_shader;
-	Ref< render::ScreenRenderer > m_screenRenderer;
 	Ref< render::ITexture > m_fogVolumeTexture;
 	float m_maxDistance;
 	int32_t m_sliceCount;

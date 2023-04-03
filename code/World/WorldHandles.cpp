@@ -22,6 +22,11 @@ const render::Handle s_techniqueIrradianceWrite(L"World_IrradianceWrite");
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_techniqueShadow(L"World_ShadowWrite");
 
+// Permutations
+const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
+const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
+const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
+
 // Shader parameters.
 const render::Handle s_handleColorMap(L"World_ColorMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
@@ -33,11 +38,6 @@ const render::Handle s_handleFogColor(L"World_FogColor");
 const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");
 const render::Handle s_handleGamma(L"World_Gamma");
 const render::Handle s_handleGammaInverse(L"World_GammaInverse");
-const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
-const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
-const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
-const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
-const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
 const render::Handle s_handleLastWorld(L"World_LastWorld");
 const render::Handle s_handleLastWorldView(L"World_LastWorldView");
 const render::Handle s_handleLightCount(L"World_LightCount");
@@ -50,19 +50,9 @@ const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
 const render::Handle s_handleMiscMap(L"World_MiscMap");
 const render::Handle s_handleNormalMap(L"World_NormalMap");
 const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
-const render::Handle s_handleProbeDiffuse(L"World_ProbeDiffuse");
-const render::Handle s_handleProbeIntensity(L"World_ProbeIntensity");
-const render::Handle s_handleProbeLocal(L"World_ProbeLocal");
-const render::Handle s_handleProbeSpecular(L"World_ProbeSpecular");
-const render::Handle s_handleProbeSpecularMips(L"World_ProbeSpecularMips");
-const render::Handle s_handleProbeTexture(L"World_ProbeTexture");
-const render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
-const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
-const render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
 const render::Handle s_handleProjection(L"World_Projection");
 const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
 const render::Handle s_handleScreenMap(L"World_ScreenMap");
-const render::Handle s_handleShadowEnable(L"World_ShadowEnable");
 const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
 const render::Handle s_handleShadowBias(L"World_ShadowBias");
 const render::Handle s_handleShadowMask(L"World_ShadowMask");
@@ -76,6 +66,27 @@ const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 const render::Handle s_handleJitter(L"World_Jitter");
 const render::Handle s_handleSlicePositions(L"World_SlicePositions");
+
+// Irradiance grid.
+const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
+const render::Handle s_handleIrradianceGridBoundsMin(L"World_IrradianceGridBoundsMin");
+const render::Handle s_handleIrradianceGridSBuffer(L"World_IrradianceGridSBuffer");
+const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
+
+// Reflection probe.
+const render::Handle s_handleProbeDiffuse(L"World_ProbeDiffuse");
+const render::Handle s_handleProbeIntensity(L"World_ProbeIntensity");
+const render::Handle s_handleProbeLocal(L"World_ProbeLocal");
+const render::Handle s_handleProbeSpecular(L"World_ProbeSpecular");
+const render::Handle s_handleProbeSpecularMips(L"World_ProbeSpecularMips");
+const render::Handle s_handleProbeTexture(L"World_ProbeTexture");
+const render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
+const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
+const render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
+
+// Volumetric fog.
+const render::Handle s_handleFogVolumeSliceCount(L"World_FogVolumeSliceCount");
+const render::Handle s_handleFogVolumeTexture(L"World_FogVolumeTexture");
 
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");

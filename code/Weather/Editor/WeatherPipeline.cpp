@@ -9,7 +9,6 @@
 #include "Editor/IPipelineDepends.h"
 #include "Weather/Clouds/CloudComponentData.h"
 #include "Weather/Editor/WeatherPipeline.h"
-#include "Weather/Fog/VolumetricFogComponentData.h"
 #include "Weather/Precipitation/PrecipitationComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
 
@@ -26,7 +25,6 @@ TypeInfoSet WeatherPipeline::getAssetTypes() const
 	typeSet.insert< CloudComponentData >();
 	typeSet.insert< PrecipitationComponentData >();
 	typeSet.insert< SkyComponentData >();
-	typeSet.insert< VolumetricFogComponentData >();
 	return typeSet;
 }
 
@@ -52,8 +50,6 @@ bool WeatherPipeline::buildDependencies(
 		pipelineDepends->addDependency(skyComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(skyComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
 	}
-	else if (const VolumetricFogComponentData* volumetricFogComponentData = dynamic_type_cast< const VolumetricFogComponentData* >(sourceAsset))
-		pipelineDepends->addDependency(volumetricFogComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 

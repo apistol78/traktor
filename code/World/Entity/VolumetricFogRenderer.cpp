@@ -6,15 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Weather/Fog/VolumetricFogComponent.h"
-#include "Weather/Fog/VolumetricFogRenderer.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
+#include "World/Entity/VolumetricFogComponent.h"
+#include "World/Entity/VolumetricFogRenderer.h"
 
-namespace traktor::weather
+namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.VolumetricFogRenderer", VolumetricFogRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogRenderer", VolumetricFogRenderer, IEntityRenderer)
 
 const TypeInfoSet VolumetricFogRenderer::getRenderableTypes() const
 {
@@ -22,7 +22,7 @@ const TypeInfoSet VolumetricFogRenderer::getRenderableTypes() const
 }
 
 void VolumetricFogRenderer::gather(
-	const world::WorldGatherContext& context,
+	const WorldGatherContext& context,
 	Object* renderable
 )
 {
@@ -30,25 +30,23 @@ void VolumetricFogRenderer::gather(
 }
 
 void VolumetricFogRenderer::setup(
-	const world::WorldSetupContext& context,
-	const world::WorldRenderView& worldRenderView,
+	const WorldSetupContext& context,
+	const WorldRenderView& worldRenderView,
 	Object* renderable
 )
 {
-	auto volumetricFogComponent = static_cast< VolumetricFogComponent* >(renderable);
-	volumetricFogComponent->setup(context, worldRenderView);
 }
 
 void VolumetricFogRenderer::setup(
-	const world::WorldSetupContext& context
+	const WorldSetupContext& context
 )
 {
 }
 
 void VolumetricFogRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass,
+	const WorldBuildContext& context,
+	const WorldRenderView& worldRenderView,
+	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
@@ -57,9 +55,9 @@ void VolumetricFogRenderer::build(
 }
 
 void VolumetricFogRenderer::build(
-	const world::WorldBuildContext& context,
-	const world::WorldRenderView& worldRenderView,
-	const world::IWorldRenderPass& worldRenderPass
+	const WorldBuildContext& context,
+	const WorldRenderView& worldRenderView,
+	const IWorldRenderPass& worldRenderPass
 )
 {
 }

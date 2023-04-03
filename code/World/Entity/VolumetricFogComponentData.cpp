@@ -11,19 +11,19 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
-#include "Weather/Fog/VolumetricFogComponent.h"
-#include "Weather/Fog/VolumetricFogComponentData.h"
+#include "World/Entity/VolumetricFogComponent.h"
+#include "World/Entity/VolumetricFogComponentData.h"
 
-namespace traktor::weather
+namespace traktor::world
 {
 	namespace
 	{
 
-const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
+const resource::Id< render::Shader > c_defaultShader(Guid(L"{FEDA90CE-25C6-BC4D-9767-EA4B45F4A043}"));
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.VolumetricFogComponentData", 2, VolumetricFogComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumetricFogComponentData", 0, VolumetricFogComponentData, IEntityComponentData)
 
 VolumetricFogComponentData::VolumetricFogComponentData()
 :	m_shader(c_defaultShader)
@@ -48,22 +48,16 @@ int32_t VolumetricFogComponentData::getOrdinal() const
 	return 0;
 }
 
-void VolumetricFogComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+void VolumetricFogComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
 }
 
 void VolumetricFogComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-
-	if (s.getVersion< VolumetricFogComponentData >() >= 1)
-	{
-		s >> Member< float >(L"maxDistance", m_maxDistance);
-		s >> Member< int32_t >(L"sliceCount", m_sliceCount);
-	}
-
-	if (s.getVersion< VolumetricFogComponentData >() >= 2)
-		s >> Member< Color4f >(L"mediumColor", m_mediumColor);
+	s >> Member< float >(L"maxDistance", m_maxDistance);
+	s >> Member< int32_t >(L"sliceCount", m_sliceCount);
+	s >> Member< Color4f >(L"mediumColor", m_mediumColor);
 }
 
 }
