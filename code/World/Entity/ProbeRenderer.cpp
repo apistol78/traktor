@@ -202,7 +202,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 	T_ASSERT(m_capture);
 
 	// Ensure probe hasn't been destroyed; could happen since
-	// we ammortize probe capturing over a couple of frames.
+	// we amortize probe capturing over a couple of frames.
 	if (!m_capture->hasOwner())
 	{
 		m_capture = nullptr;
@@ -243,6 +243,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
 		wcd.sharedDepthStencil = m_depthTargetSet;
+		wcd.irradianceGrid = context.getIrradianceGrid();
 
 		if (!m_worldRenderer->create(
 			m_resourceManager,

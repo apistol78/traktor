@@ -83,7 +83,7 @@ void WorldRendererSimple::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
-		const WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		const WorldSetupContext context(m_entityRenderers, nullptr, rootEntity, renderGraph);
 
 		for (auto gathered : m_gathered)
 			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
