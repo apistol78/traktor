@@ -595,10 +595,8 @@ void WorldRendererForward::setupVisualPass(
 
 	if (ambientOcclusionTargetSetId != 0)
 		rp->addInput(ambientOcclusionTargetSetId);
-
 	if (reflectionsTargetSetId != 0)
 		rp->addInput(reflectionsTargetSetId);
-
 	if (shadowsEnable)
 		rp->addInput(shadowMapAtlasTargetSetId);
 
@@ -616,10 +614,10 @@ void WorldRendererForward::setupVisualPass(
 				renderContext
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
- 			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
-			auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
-			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
+			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
+			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
 			const float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
 			const float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
@@ -663,7 +661,15 @@ void WorldRendererForward::setupVisualPass(
 
 			if (fog)
 			{
-				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, fog->getSliceCount());
+				const Vector4 fogRange(
+					viewNearZ,
+					std::min< float >(viewFarZ, fog->getMaxDistance()),
+					0.0f,
+					0.0f
+				);
+
+				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
+				sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
 				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
 			}
 

@@ -85,8 +85,12 @@ const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
 const render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
 
 // Volumetric fog.
-const render::Handle s_handleFogVolumeSliceCount(L"World_FogVolumeSliceCount");
+const render::Handle s_handleFogVolume(L"World_FogVolume");
 const render::Handle s_handleFogVolumeTexture(L"World_FogVolumeTexture");
+const render::Handle s_handleFogVolumeRange(L"World_FogVolumeRange");
+const render::Handle s_handleFogVolumeSliceCount(L"World_FogVolumeSliceCount");
+const render::Handle s_handleFogVolumeMediumColor(L"World_FogVolumeMediumColor");
+const render::Handle s_handleFogVolumeMediumDensity(L"World_FogVolumeMediumDensity");
 
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");

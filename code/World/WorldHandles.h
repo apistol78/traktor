@@ -95,8 +95,12 @@ extern const render::Handle s_handleProbeVolumeCenter;
 extern const render::Handle s_handleProbeVolumeExtent;
 
 // Volumetric fog.
-extern const render::Handle s_handleFogVolumeSliceCount;
+extern const render::Handle s_handleFogVolume;
 extern const render::Handle s_handleFogVolumeTexture;
+extern const render::Handle s_handleFogVolumeRange;
+extern const render::Handle s_handleFogVolumeSliceCount;
+extern const render::Handle s_handleFogVolumeMediumColor;
+extern const render::Handle s_handleFogVolumeMediumDensity;
 
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;
