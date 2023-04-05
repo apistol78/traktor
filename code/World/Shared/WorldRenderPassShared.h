@@ -55,8 +55,6 @@ public:
 		const WorldRenderView& worldRenderView,
 		uint32_t passFlags,
 		const std::initializer_list< TechniqueFlag >& techniqueFlags
-		//bool irradianceEnable,
-		//bool shadowEnable
 	);
 
 	virtual render::handle_t getTechnique() const override final;
@@ -75,9 +73,6 @@ private:
 	const WorldRenderView& m_worldRenderView;
 	uint32_t m_passFlags;
 	std::initializer_list< TechniqueFlag > m_techniqueFlags;
-
-	//bool m_irradianceEnable = false;
-	//bool m_shadowEnable = false;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Transform& lastWorld, const Transform& world) const;
 };
