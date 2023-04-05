@@ -198,6 +198,10 @@
 			<second>Create group</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_CREATE_FAVOURITE</first>
+			<second>Favourites...</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_DELETE_NODE</first>
 			<second>Delete</second>
 		</item>
