@@ -65,6 +65,7 @@ private:
 	float m_maxDistance = 100.0f;
 	int32_t m_sliceCount = 128;
 	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_mediumDensity = 0.2f;
 };
 
 }

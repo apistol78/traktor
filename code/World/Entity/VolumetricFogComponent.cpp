@@ -27,16 +27,18 @@ const render::Handle s_handleWorld_FogVolume(L"World_FogVolume");
 const render::Handle s_handleWorld_MagicCoeffs(L"World_MagicCoeffs");
 const render::Handle s_handleWorld_SliceCount(L"World_SliceCount");
 const render::Handle s_handleWorld_MediumColor(L"World_MediumColor");
+const render::Handle s_handleWorld_MediumDensity(L"World_MediumDensity");
 
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
-VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor)
+VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor, float mediumDensity)
 :	m_shader(shader)
 ,	m_maxDistance(maxDistance)
 ,	m_sliceCount(sliceCount)
 ,	m_mediumColor(mediumColor)
+,	m_mediumDensity(mediumDensity)
 {
 }
 
@@ -120,6 +122,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams->setImageViewParameter(s_handleWorld_FogVolume, m_fogVolumeTexture);
 		renderBlock->programParams->setVectorParameter(s_handleWorld_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
 		renderBlock->programParams->setVectorParameter(s_handleWorld_MediumColor, m_mediumColor);
+		renderBlock->programParams->setFloatParameter(s_handleWorld_MediumDensity, m_mediumDensity / m_sliceCount);
 		renderBlock->programParams->setFloatParameter(s_handleWorld_SliceCount, (float)m_sliceCount);
 		renderBlock->programParams->endParameters(renderContext);
 

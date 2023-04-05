@@ -587,7 +587,7 @@ void WorldRendererForward::setupVisualPass(
 	}
 
 	// Use first volumetric fog volume, only support one in forward.
-	const VolumetricFogComponent* fog = !m_gatheredView.fogs.empty() ? m_gatheredView.fogs.front() : nullptr;
+	const VolumetricFogComponent* fog = (!worldRenderView.getSnapshot() && !m_gatheredView.fogs.empty()) ? m_gatheredView.fogs.front() : nullptr;
 
 	// Create render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");

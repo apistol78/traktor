@@ -46,7 +46,7 @@ class T_DLLCLASS VolumetricFogComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor);
+	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor, float mediumDensity);
 
 	bool create(render::IRenderSystem* renderSystem);
 
@@ -73,6 +73,7 @@ private:
 	float m_maxDistance;
 	int32_t m_sliceCount;
 	Color4f m_mediumColor;
+	float m_mediumDensity;
 };
 
 }
