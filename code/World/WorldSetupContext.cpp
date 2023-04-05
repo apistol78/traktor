@@ -15,8 +15,9 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldSetupContext", WorldSetupContext, Object)
 
-WorldSetupContext::WorldSetupContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderGraph& renderGraph)
+WorldSetupContext::WorldSetupContext(const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, const Entity* rootEntity, render::RenderGraph& renderGraph)
 :	m_entityRenderers(entityRenderers)
+,	m_irradianceGrid(irradianceGrid)
 ,	m_rootEntity(rootEntity)
 ,	m_renderGraph(renderGraph)
 {

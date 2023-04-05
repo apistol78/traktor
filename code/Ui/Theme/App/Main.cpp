@@ -10,8 +10,10 @@
 #	include <windows.h>
 #endif
 #include "Core/Config.h"
+#include "Core/IO/FileSystem.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "Ui/Application.h"
 #include "Ui/Theme/App/ThemeForm.h"
 #if defined(_WIN32)
@@ -36,6 +38,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
+
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+	}
 
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(

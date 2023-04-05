@@ -22186,10 +22186,10 @@
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
-					<debugExecutable/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
 					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\debugshared;$(PATH)</debugEnvironment>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Theme.App.exe</sourceFile>
@@ -22219,10 +22219,10 @@
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
-					<debugExecutable/>
+					<debugExecutable>$(TargetPath)</debugExecutable>
 					<debugArguments/>
-					<debugEnvironment/>
-					<debugWorkingDirectory/>
+					<debugEnvironment>PATH=$(TRAKTOR_HOME)\bin\latest\win64\releaseshared;$(PATH)</debugEnvironment>
+					<debugWorkingDirectory>$(TRAKTOR_HOME)</debugWorkingDirectory>
 					<aggregationItems>
 						<item type="AggregationItem">
 							<sourceFile>Traktor.Ui.Theme.App.exe</sourceFile>

@@ -245,7 +245,7 @@ void WorldRendererDeferred::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
-		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		WorldSetupContext context(m_entityRenderers, m_irradianceGrid, rootEntity, renderGraph);
 
 		for (auto r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);

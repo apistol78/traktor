@@ -93,7 +93,9 @@ bool WorldRendererForward::create(
 	);
 
 	// Create irradiance grid.
-	if (!m_settings.irradianceGrid.isNull())
+	if (desc.irradianceGrid != nullptr)
+		m_irradianceGrid = resource::Proxy< IrradianceGrid >(const_cast< IrradianceGrid* >(desc.irradianceGrid));
+	else if (!m_settings.irradianceGrid.isNull())
 	{
 		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
 			return false;
@@ -153,7 +155,7 @@ void WorldRendererForward::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
-		WorldSetupContext context(m_entityRenderers, rootEntity, renderGraph);
+		WorldSetupContext context(m_entityRenderers, m_irradianceGrid, rootEntity, renderGraph);
 
 		for (auto r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
