@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -398,15 +399,14 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_NODE"));
 
+	// Collect and create items for each node type.
 	std::map< std::wstring, Ref< ui::MenuItem > > categories;
 	for (uint32_t i = 0; i < sizeof_array(c_nodeCategories); ++i)
 	{
 		if (categories.find(c_nodeCategories[i].category) == categories.end())
 		{
 			categories[c_nodeCategories[i].category] = new ui::MenuItem(i18n::Text(c_nodeCategories[i].category));
-			menuItemCreate->add(
-				categories[c_nodeCategories[i].category]
-			);
+			menuItemCreate->add(categories[c_nodeCategories[i].category]);
 		}
 
 		std::wstring title = c_nodeCategories[i].type.getName();
@@ -419,8 +419,23 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 		);
 	}
 
+	// Add favourites.
+	Ref< ui::MenuItem > menuItemFavourites = new ui::MenuItem(i18n::Text(L"SHADERGRAPH_CREATE_FAVOURITE"));
+	for (const std::wstring& id : m_editor->getSettings()->getProperty< SmallSet< std::wstring > >(L"ShaderEditor.Favourites"))
+	{
+		Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(Guid(id));
+		if (instance)
+		{
+			Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.CreateFavourite"), instance->getName());
+			item->setData(L"INSTANCE", instance);
+			menuItemFavourites->add(item);
+		}
+	}
+
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.CreateGroup"), i18n::Text(L"SHADERGRAPH_CREATE_GROUP")));
+	m_menuPopup->add(new ui::MenuItem(L"-"));
+	m_menuPopup->add(menuItemFavourites);
 	m_menuPopup->add(new ui::MenuItem(L"-"));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"ShaderGraph.Editor.FindInDatabase"), i18n::Text(L"SHADERGRAPH_FIND_IN_DATABASE")));
@@ -1599,7 +1614,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 			m_document->push();
 			createNode(&c_nodeCategories[command.getId()].type, position);
 		}
-		else if (command == L"ShaderGraph.Editor.CreateGroup")	// Create group
+		else if (command == L"ShaderGraph.Editor.CreateGroup")	// Create group.
 		{
 			m_document->push();
 
@@ -1613,6 +1628,31 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 			createEditorGroup(shaderGroup);
 
 			updateGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.CreateFavourite")	// Create favourite fragment node.
+		{
+			Ref< db::Instance > instance = selected->getData< db::Instance >(L"INSTANCE");
+			T_FATAL_ASSERT(instance != nullptr);
+
+			// Prevent dropping itself thus creating cyclic dependencies.
+			if (!m_document->containInstance(instance))
+			{
+				Ref< ShaderGraph > fragmentGraph = instance->getObject< ShaderGraph >();
+				T_ASSERT(fragmentGraph);
+
+				// Add to shader graph.
+				Ref< External > shaderNode = new External(
+					instance->getGuid(),
+					fragmentGraph
+				);
+				shaderNode->setId(Guid::create());
+				shaderNode->setPosition({ ui::invdpi96(position.x), ui::invdpi96(position.y) });
+				m_shaderGraph->addNode(shaderNode);
+
+				// Create editor node from shader node.
+				createEditorNode(shaderNode);
+				updateGraph();
+			}
 		}
 		else
 			handleCommand(command);
