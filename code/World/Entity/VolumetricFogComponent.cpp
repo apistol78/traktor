@@ -20,16 +20,6 @@
 
 namespace traktor::world
 {
-	namespace
-	{
-
-const render::Handle s_handleWorld_FogVolume(L"World_FogVolume");
-const render::Handle s_handleWorld_MagicCoeffs(L"World_MagicCoeffs");
-const render::Handle s_handleWorld_SliceCount(L"World_SliceCount");
-const render::Handle s_handleWorld_MediumColor(L"World_MediumColor");
-const render::Handle s_handleWorld_MediumDensity(L"World_MediumDensity");
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
@@ -99,12 +89,16 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		return;
 
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
-	const float farZ = std::min< float >(viewFrustum.getFarZ(), m_maxDistance);
+	const Vector4 fogRange(
+		viewFrustum.getNearZ(),
+		std::min< float >(viewFrustum.getFarZ(), m_maxDistance),
+		0.0f,
+		0.0f
+	);
 
 	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
-	// Update the volume.
 	if (worldRenderPass.getTechnique() == s_techniqueForwardColor)
 	{
 		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
@@ -119,11 +113,12 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setImageViewParameter(s_handleWorld_FogVolume, m_fogVolumeTexture);
-		renderBlock->programParams->setVectorParameter(s_handleWorld_MagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, viewFrustum.getNearZ(), farZ));
-		renderBlock->programParams->setVectorParameter(s_handleWorld_MediumColor, m_mediumColor);
-		renderBlock->programParams->setFloatParameter(s_handleWorld_MediumDensity, m_mediumDensity / m_sliceCount);
-		renderBlock->programParams->setFloatParameter(s_handleWorld_SliceCount, (float)m_sliceCount);
+		renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture);
+		renderBlock->programParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
+		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);
+		renderBlock->programParams->setFloatParameter(s_handleFogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
+		renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)m_sliceCount);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);

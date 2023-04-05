@@ -197,7 +197,7 @@ NDC
 				<first>487</first>
 				<second>923</second>
 			</position>
-			<swizzle>z</swizzle>
+			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{D26CDAB2-F4EE-6940-921D-AF4C11D91D10}</id>
@@ -206,7 +206,7 @@ NDC
 				<first>491</first>
 				<second>979</second>
 			</position>
-			<swizzle>w</swizzle>
+			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{BAAF68C0-C43B-5E49-B40B-C8A1302B274F}</id>
@@ -348,7 +348,7 @@ NDC
 				<first>-255</first>
 				<second>-522</second>
 			</position>
-			<parameterName>World_SliceCount</parameterName>
+			<parameterName>World_FogVolumeSliceCount</parameterName>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -429,7 +429,7 @@ $Output = fract(sin(sn) * c);
 				<first>-359</first>
 				<second>65</second>
 			</position>
-			<parameterName>World_MediumColor</parameterName>
+			<parameterName>World_FogVolumeMediumColor</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -632,7 +632,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 				<first>-403</first>
 				<second>204</second>
 			</position>
-			<parameterName>World_MediumDensity</parameterName>
+			<parameterName>World_FogVolumeMediumDensity</parameterName>
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
@@ -652,6 +652,17 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 				<second>521</second>
 			</position>
 			<value>0.2</value>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A1E3DF67-45D5-8544-919B-A61DE8D94B16}</id>
+			<comment/>
+			<position>
+				<first>178</first>
+				<second>948</second>
+			</position>
+			<parameterName>World_FogVolumeRange</parameterName>
+			<type>Vector</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -772,26 +783,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
@@ -1293,6 +1284,26 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<destination>
 				<node ref="/object/nodes/item[58]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

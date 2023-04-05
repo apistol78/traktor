@@ -64,6 +64,8 @@ public:
 
 	render::ITexture* getFogVolumeTexture() const { return m_fogVolumeTexture; }
 
+	float getMaxDistance() const { return m_maxDistance; }
+
 	int32_t getSliceCount() const { return m_sliceCount; }
 
 private:

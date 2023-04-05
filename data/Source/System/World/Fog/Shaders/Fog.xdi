@@ -373,8 +373,8 @@
 			<id>{323DD6D9-4348-4118-BA50-7E3D3B34D093}</id>
 			<comment/>
 			<position>
-				<first>-659</first>
-				<second>1376</second>
+				<first>8</first>
+				<second>1284</second>
 			</position>
 			<name>L_FogVolumeSize</name>
 			<global>false</global>
@@ -383,16 +383,16 @@
 			<id>{59023608-18D7-47ED-81BA-02A9CF508D0C}</id>
 			<comment/>
 			<position>
-				<first>-879</first>
-				<second>1394</second>
+				<first>-212</first>
+				<second>1302</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{8722B69F-6FB0-41B3-8687-C5AA680869F8}</id>
 			<comment/>
 			<position>
-				<first>-1165</first>
-				<second>1467</second>
+				<first>-498</first>
+				<second>1375</second>
 			</position>
 			<parameterName>World_FogVolumeSliceCount</parameterName>
 			<type>Scalar</type>
@@ -402,8 +402,8 @@
 			<id>{A59C3F90-B4A1-4B02-A510-FF4172D30A2A}</id>
 			<comment/>
 			<position>
-				<first>-848</first>
-				<second>1301</second>
+				<first>-181</first>
+				<second>1209</second>
 			</position>
 			<name>L_SliceDistributionExponent</name>
 			<global>false</global>
@@ -412,8 +412,8 @@
 			<id>{6119F81C-862E-43E6-9E68-164C2BFB7A34}</id>
 			<comment/>
 			<position>
-				<first>-1086</first>
-				<second>1281</second>
+				<first>-419</first>
+				<second>1189</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -421,8 +421,8 @@
 			<id>{B2F46217-F793-49EC-9B9B-74C40F85E4AD}</id>
 			<comment/>
 			<position>
-				<first>-1146</first>
-				<second>1385</second>
+				<first>-479</first>
+				<second>1293</second>
 			</position>
 			<value>128</value>
 		</item>
@@ -430,8 +430,8 @@
 			<id>{F93AA4AF-9FDF-4E3E-9B64-AE10C67AC598}</id>
 			<comment/>
 			<position>
-				<first>-643</first>
-				<second>1612</second>
+				<first>-47</first>
+				<second>1574</second>
 			</position>
 			<name>L_FarZ</name>
 			<global>false</global>
@@ -440,8 +440,8 @@
 			<id>{EE23E876-9284-48BC-9BDF-D750F142CAC9}</id>
 			<comment/>
 			<position>
-				<first>-637</first>
-				<second>1519</second>
+				<first>-41</first>
+				<second>1481</second>
 			</position>
 			<name>L_NearZ</name>
 			<global>false</global>
@@ -450,8 +450,8 @@
 			<id>{484B8A38-9862-49C8-B22F-FC0BFBD605E9}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
-				<second>1592</second>
+				<first>-216</first>
+				<second>1554</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -459,8 +459,8 @@
 			<id>{B3DB32FC-0D1B-4E97-83F5-FF96F1513869}</id>
 			<comment/>
 			<position>
-				<first>-816</first>
-				<second>1536</second>
+				<first>-220</first>
+				<second>1498</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -468,10 +468,10 @@
 			<id>{931585DF-7C5A-450A-9335-6ACA4A3F8CD1}</id>
 			<comment/>
 			<position>
-				<first>-1128</first>
-				<second>1573</second>
+				<first>-532</first>
+				<second>1535</second>
 			</position>
-			<parameterName>World_ViewDistance</parameterName>
+			<parameterName>World_FogVolumeRange</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
@@ -1555,12 +1555,12 @@
 			<title>Volumetric fog</title>
 			<comment/>
 			<position>
-				<first>-276</first>
+				<first>-565</first>
 				<second>1063</second>
 			</position>
 			<size>
-				<first>3508</first>
-				<second>652</second>
+				<first>3864</first>
+				<second>702</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -1571,8 +1571,8 @@
 				<second>1874</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1615</first>
+				<second>330</second>
 			</size>
 		</item>
 	</groups>
