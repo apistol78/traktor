@@ -125,8 +125,6 @@
 			<![CDATA[
 const int mip = int($Roughness * $Mips);
 $Mip = clamp(mip, 0, int($Mips) - 1);
-
-
 			]]>
 			</script>
 		</item>
@@ -140,16 +138,6 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -210,6 +198,16 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{A790CEB7-0729-490D-94B0-4D7982C139F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 	</edges>

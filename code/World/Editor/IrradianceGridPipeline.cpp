@@ -12,9 +12,11 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Polar.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Random.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -54,7 +56,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceGridPipeline", 0, IrradianceGridPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceGridPipeline", 1, IrradianceGridPipeline, editor::IPipeline)
 
 bool IrradianceGridPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -130,6 +132,31 @@ bool IrradianceGridPipeline::buildOutput(
 		return false;
 	}
 
+	// Figure out sun direction.
+	float sunIntensity = -1.0f;
+	Vector4 sunDirection;
+
+	if (asset->shouldCancelSun())
+	{
+		for (int32_t y = 0; y <= 100; ++y)
+		{
+			const float phi = PI * ((y / 100.0f) * 2.0f - 1.0f);
+
+			for (int32_t x = 0; x < 100; ++x)
+			{
+				const float theta = TWO_PI * (x / 100.0f);
+				const Vector4 direction = Polar(phi, theta).toUnitCartesian();
+				const float intensity = dot3(cubeMap->get(direction), Vector4(1.0f, 1.0f, 1.0f));
+				if (intensity > sunIntensity)
+				{
+					sunIntensity = intensity;
+					sunDirection = direction;
+				}
+			}
+		}
+	}
+
+	// Convolve sky into irradiance probe.
 	const Scalar intensity(asset->getIntensity());
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
@@ -138,7 +165,15 @@ bool IrradianceGridPipeline::buildOutput(
 		{
 			const Vector2 uv = Quasirandom::hammersley(i, 1000);
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			const Scalar w = dot3(direction, unit);
+			Scalar w = dot3(direction, unit);
+
+			// Reduce sun influence.
+			if (sunIntensity > 0.0f)
+			{
+				const Scalar f = clamp(dot3(direction, sunDirection), 0.0_simd, 1.0_simd);
+				w *= 1.0_simd - f;
+			}
+
 			cl += cubeMap->get(direction) * w;
 		}
 		return (cl * intensity * 2.0_simd) / 1000.0_simd;

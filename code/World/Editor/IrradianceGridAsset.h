@@ -18,25 +18,23 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 	
 class T_DLLCLASS IrradianceGridAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
-	IrradianceGridAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	float getIntensity() const { return m_intensity; }
 
+	bool shouldCancelSun() const { return m_cancelSun; }
+
 private:
-	float m_intensity;
+	float m_intensity = 1.0f;
+	bool m_cancelSun = true;
 };
 	
-	}
 }

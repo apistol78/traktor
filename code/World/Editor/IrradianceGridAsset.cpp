@@ -11,17 +11,10 @@
 #include "Core/Serialization/Member.h"
 #include "World/Editor/IrradianceGridAsset.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 	
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.IrradianceGridAsset", 1, IrradianceGridAsset, editor::Asset)
-
-IrradianceGridAsset::IrradianceGridAsset()
-:	m_intensity(1.0f)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.IrradianceGridAsset", 2, IrradianceGridAsset, editor::Asset)
 
 void IrradianceGridAsset::serialize(ISerializer& s)
 {
@@ -29,7 +22,9 @@ void IrradianceGridAsset::serialize(ISerializer& s)
 
 	if (s.getVersion< IrradianceGridAsset >() >= 1)
 		s >> Member< float >(L"intensity", m_intensity, AttributeUnit(UnitType::Percent));
+
+	if (s.getVersion< IrradianceGridAsset >() >= 2)
+		s >> Member< bool >(L"cancelSun", m_cancelSun);
 }
 
-	}
 }
