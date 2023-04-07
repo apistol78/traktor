@@ -101,7 +101,7 @@ inline bool isMeshVisible(
 
 		// Calculate screen area, cull if it's below threshold.
 		const Vector4 e = mx - mn;
-		if (e.x() * e.y() < minScreenArea)
+		if (max(e.x(), e.y()) < minScreenArea)
 			return false;
 	}
 
