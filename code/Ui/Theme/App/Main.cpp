@@ -10,7 +10,7 @@
 #	include <windows.h>
 #endif
 #include "Core/Config.h"
-#include "Core/IO/FileSystem.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
