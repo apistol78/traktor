@@ -218,12 +218,12 @@ void PostProcessPass::setup(
 	imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 5 > processes;
-	if (m_toneMap)
-		processes.push_back(m_toneMap);
 	if (m_motionBlur)
 		processes.push_back(m_motionBlur);
 	if (m_antiAlias)
 		processes.push_back(m_antiAlias);
+	if (m_toneMap)
+		processes.push_back(m_toneMap);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)
