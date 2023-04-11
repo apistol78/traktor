@@ -147,8 +147,7 @@ void ReflectionInspectSerializer::operator >> (const Member< Quaternion >& m)
 
 void ReflectionInspectSerializer::operator >> (const Member< ISerializable* >& m)
 {
-	Ref< ISerializable > object = m;
-	addMember(new RfmObject(m.getName(), object));
+	addMember(new RfmObject(m.getName(), m.getValue()));
 }
 
 void ReflectionInspectSerializer::operator >> (const Member< void* >& m)

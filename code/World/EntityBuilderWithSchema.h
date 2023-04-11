@@ -8,9 +8,6 @@
  */
 #pragma once
 
-#include <list>
-#include <stack>
-#include <string>
 #include "Core/Guid.h"
 #include "Core/Containers/SmallMap.h"
 #include "World/IEntityBuilder.h"
@@ -26,9 +23,7 @@
 namespace traktor::world
 {
 
-class EntitySchema;
-
-/*! Entity builder with recording schema.
+/*! Entity builder which records ID to entity mapping.
  * \ingroup World
  */
 class T_DLLCLASS EntityBuilderWithSchema : public IEntityBuilder
@@ -36,9 +31,7 @@ class T_DLLCLASS EntityBuilderWithSchema : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	explicit EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema);
-
-	explicit EntityBuilderWithSchema(IEntityBuilder* entityBuilder, EntitySchema* entitySchema, SmallMap< Guid, Ref< world::Entity > >& outEntityProducts);
+	explicit EntityBuilderWithSchema(IEntityBuilder* entityBuilder);
 
 	virtual void addFactory(const IEntityFactory* entityFactory) override;
 
@@ -58,13 +51,11 @@ public:
 
 	virtual const IEntityBuilder* getCompositeEntityBuilder() const override;
 
-private:
-	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;
+	const SmallMap< Guid, Ref< world::Entity > >& getEntityProducts() const { return m_entityProducts; }
 
+private:
 	Ref< IEntityBuilder > m_entityBuilder;
-	Ref< EntitySchema > m_entitySchema;
-	SmallMap< Guid, Ref< world::Entity > >* m_outEntityProducts;
-	mutable std::stack< scope_t > m_entityScope;
+	SmallMap< Guid, Ref< world::Entity > > m_entityProducts;
 };
 
 }
