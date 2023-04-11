@@ -29,18 +29,18 @@ SceneResource::SceneResource()
 
 Ref< Scene > SceneResource::createScene(world::IEntityBuilder* entityBuilder) const
 {
-	SmallMap< Guid, Ref< world::Entity > > entityProducts;
-
-	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, nullptr, entityProducts);
+	// Use schema builder to collect a map from ID to entity products.
+	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder);
 	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
 
+	// Create attached controller.
 	Ref< ISceneController > controller;
 	if (m_controllerData)
 	{
-		controller = m_controllerData->createController(entityProducts, false);
+		controller = m_controllerData->createController(entityBuilderSchema->getEntityProducts(), false);
 		if (!controller)
 		{
-			log::error << L"Failed to create scene; unable to instantiate scene controller" << Endl;
+			log::error << L"Failed to create scene; unable to instantiate scene controller." << Endl;
 			return nullptr;
 		}
 	}

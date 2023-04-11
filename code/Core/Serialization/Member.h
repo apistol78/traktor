@@ -131,6 +131,10 @@ public:
 	 */
 	const wchar_t* const getName() const { return m_name; }
 
+	/*! Get member value.
+	 */
+	ISerializable* getValue() const { return m_ref; }
+
 	/*! Get member attributes.
 	 *
 	 * Get member attributes if applicable.

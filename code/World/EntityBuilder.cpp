@@ -82,7 +82,7 @@ const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) co
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for \"" << entityData->getName() << L"\" of " << type_name(entityData) << Endl;
+		log::error << L"Unable to find entity factory for \"" << entityData->getName() << L"\" of \"" << type_name(entityData) << L"\"." << Endl;
 		return nullptr;
 	}
 
@@ -133,7 +133,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEv
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for event of " << type_name(entityEventData) << Endl;
+		log::error << L"Unable to find entity factory for event of \"" << type_name(entityEventData) << L"\"." << Endl;
 		return nullptr;
 	}
 
@@ -153,12 +153,12 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 	auto it = m_resolvedFactoryCache.find(&entityComponentDataType);
 	if (it != m_resolvedFactoryCache.end())
 	{
-		// This type of entity has already been created; reuse same factory.
+		// This type of entity component has already been created; reuse same factory.
 		entityFactory = it->second;
 	}
 	else
 	{
-		// Need to find factory best suited to create entity from it's data.
+		// Need to find factory best suited to create entity component from it's data.
 		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
 		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
 		{
@@ -184,7 +184,7 @@ const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* enti
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for component of " << type_name(entityComponentData) << Endl;
+		log::error << L"Unable to find entity factory for component of \"" << type_name(entityComponentData) << L"\"." << Endl;
 		return nullptr;
 	}
 
