@@ -262,7 +262,8 @@ bool TerrainEditModifier::activate()
 				file->seek(IStream::SeekSet, 0);
 				m_splatImage = drawing::Image::load(file, L"tga");
 			}
-			m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+			if (m_splatImage)
+				m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
 			file->close();
 			file = nullptr;
 		}
@@ -317,7 +318,8 @@ bool TerrainEditModifier::activate()
 				file->seek(IStream::SeekSet, 0);
 				m_colorImage = drawing::Image::load(file, L"tga");
 			}
-			m_colorImage->convert(drawing::PixelFormat::getABGRF32());
+			if (m_colorImage)
+				m_colorImage->convert(drawing::PixelFormat::getABGRF32());
 			file->close();
 			file = nullptr;
 		}
