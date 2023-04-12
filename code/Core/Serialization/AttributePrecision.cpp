@@ -23,4 +23,9 @@ AttributePrecision::PrecisionType AttributePrecision::getPrecision() const
 	return m_precision;
 }
 
+Ref< Attribute > AttributePrecision::internalClone() const
+{
+	return new AttributePrecision(m_precision);
+}
+
 }

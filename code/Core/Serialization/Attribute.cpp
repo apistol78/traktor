@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Attribute", Attribute, Object)
 
-Attribute::Attribute()
-:	m_next(0)
-{
-}
-
 const Attribute* Attribute::find(const TypeInfo& type) const
 {
 	for (const Attribute* i = this; i; i = i->m_next)
@@ -25,13 +20,21 @@ const Attribute* Attribute::find(const TypeInfo& type) const
 		if (&type_of(i) == &type)
 			return i;
 	}
-	return 0;
+	return nullptr;
 }
 
 const Attribute& Attribute::operator | (const Attribute& rh)
 {
-	m_next = &rh;
+	m_next = rh.clone();
 	return *this;
+}
+
+Ref< Attribute > Attribute::clone() const
+{
+	Ref< Attribute > c = internalClone();
+	if (c && m_next)
+		c->m_next = m_next->clone();
+	return c;
 }
 
 }

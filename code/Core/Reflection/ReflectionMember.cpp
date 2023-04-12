@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Reflection/ReflectionMember.h"
+#include "Core/Serialization/Attribute.h"
 
 namespace traktor
 {
@@ -18,8 +19,14 @@ const wchar_t* ReflectionMember::getName() const
 	return m_name;
 }
 
-ReflectionMember::ReflectionMember(const wchar_t* name)
+const Attribute* ReflectionMember::getAttributes() const
+{
+	return m_attributes;
+}
+
+ReflectionMember::ReflectionMember(const wchar_t* name, const Attribute* attributes)
 :	m_name(name)
+,	m_attributes(attributes ? attributes->clone() : nullptr)
 {
 }
 

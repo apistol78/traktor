@@ -23,4 +23,9 @@ const TypeInfo& AttributeType::getMemberType() const
 	return m_memberType;
 }
 
+Ref< Attribute > AttributeType::internalClone() const
+{
+	return new AttributeType(m_memberType);
+}
+
 }

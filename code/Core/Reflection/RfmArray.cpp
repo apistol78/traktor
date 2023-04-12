@@ -13,8 +13,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RfmArray", RfmArray, RfmCompound)
 
-RfmArray::RfmArray(const wchar_t* name)
-:	RfmCompound(name)
+RfmArray::RfmArray(const wchar_t* name, const Attribute* attributes)
+:	RfmCompound(name, attributes)
 {
 }
 

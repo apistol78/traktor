@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,6 +22,8 @@
 namespace traktor
 {
 
+class Attribute;
+
 /*! Reflected member base class.
  * \ingroup Core
  */
@@ -31,13 +34,16 @@ class T_DLLCLASS ReflectionMember : public Object
 public:
 	const wchar_t* getName() const;
 
+	const Attribute* getAttributes() const;
+
 	virtual bool replace(const ReflectionMember* source) = 0;
 
 protected:
-	ReflectionMember(const wchar_t* name);
+	ReflectionMember(const wchar_t* name, const Attribute* attributes);
 
 private:
 	const wchar_t* m_name;
+	Ref< const Attribute > m_attributes;
 };
 
 }

@@ -45,7 +45,7 @@ Ref< ISerializable > Reflection::clone(void* memory) const
 }
 
 Reflection::Reflection(const TypeInfo& objectType)
-:	RfmCompound(L"")
+:	RfmCompound(L"", nullptr)
 ,	m_objectType(objectType)
 {
 }

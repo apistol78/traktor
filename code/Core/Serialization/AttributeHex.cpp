@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributeHex", AttributeHex, Attribute)
 
+Ref< Attribute > AttributeHex::internalClone() const
+{
+	return new AttributeHex();
+}
+
 }

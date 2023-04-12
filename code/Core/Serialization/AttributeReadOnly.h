@@ -27,6 +27,9 @@ namespace traktor
 class T_DLLCLASS AttributeReadOnly : public Attribute
 {
 	T_RTTI_CLASS;
+
+protected:
+	virtual Ref< Attribute > internalClone() const override;
 };
 
 }

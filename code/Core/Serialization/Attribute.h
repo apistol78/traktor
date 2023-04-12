@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,8 +30,6 @@ class T_DLLCLASS Attribute : public Object
 	T_RTTI_CLASS;
 
 public:
-	Attribute();
-
 	const Attribute* find(const TypeInfo& type) const;
 
 	const Attribute& operator | (const Attribute& rh);
@@ -43,9 +42,13 @@ public:
 		);
 	}
 
+	Ref< Attribute > clone() const;
+
+protected:
+	virtual Ref< Attribute > internalClone() const = 0;
+
 private:
-	const Attribute* m_next;
+	Ref< const Attribute > m_next;
 };
 
 }
-

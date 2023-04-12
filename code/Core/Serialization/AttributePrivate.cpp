@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributePrivate", AttributePrivate, Attribute)
 
+Ref< Attribute > AttributePrivate::internalClone() const
+{
+	return new AttributePrivate();
+}
+
 }
