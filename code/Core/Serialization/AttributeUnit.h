@@ -56,6 +56,9 @@ public:
 
 	bool getPerSecond() const;
 
+protected:
+	virtual Ref< Attribute > internalClone() const override;
+
 private:
 	UnitType m_unit;
 	bool m_perSecond;

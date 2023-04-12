@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributeHdr", AttributeHdr, Attribute)
 
+Ref< Attribute > AttributeHdr::internalClone() const
+{
+	return new AttributeHdr();
+}
+
 }

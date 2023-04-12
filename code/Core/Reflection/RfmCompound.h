@@ -32,7 +32,7 @@ class T_DLLCLASS RfmCompound : public ReflectionMember
 	T_RTTI_CLASS;
 
 public:
-	RfmCompound(const wchar_t* name);
+	explicit RfmCompound(const wchar_t* name, const Attribute* attributes);
 
 	void addMember(ReflectionMember* member);
 

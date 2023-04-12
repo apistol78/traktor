@@ -14,7 +14,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RfmEnum", RfmEnum, ReflectionMember)
 
 RfmEnum::RfmEnum(const wchar_t* name, const std::wstring& value)
-:	ReflectionMember(name)
+:	ReflectionMember(name, nullptr)
 ,	m_value(value)
 {
 }

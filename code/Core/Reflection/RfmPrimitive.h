@@ -54,8 +54,8 @@ public:
 	}
 
 protected:
-	RfmPrimitive(const wchar_t* name, const type_t& value)
-	:	ReflectionMember(name)
+	RfmPrimitive(const wchar_t* name, const type_t& value, const Attribute* attributes)
+	:	ReflectionMember(name, attributes)
 	,	m_value(value)
 	{
 	}
@@ -64,20 +64,20 @@ private:
 	type_t T_ALIGN16 m_value;
 };
 
-#define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)	\
-	class T_DLLCLASS NAME : public RfmPrimitive< TYPE >		\
-	{														\
-		T_RTTI_CLASS;										\
-															\
-	public:													\
-		NAME(const wchar_t* name, TYPE_CONST_REF value)		\
-		:	RfmPrimitive< TYPE >(name, value)				\
-		{													\
-		}													\
-															\
-		NAME(NAME const &) = delete;						\
-		NAME(NAME &&) = delete;								\
-		void operator = (NAME const &) = delete;			\
+#define T_DEFINE_DERIVED_CLASS(NAME, TYPE, TYPE_CONST_REF)								\
+	class T_DLLCLASS NAME : public RfmPrimitive< TYPE >									\
+	{																					\
+		T_RTTI_CLASS;																	\
+																						\
+	public:																				\
+		NAME(const wchar_t* name, TYPE_CONST_REF value, const Attribute* attributes)	\
+		:	RfmPrimitive< TYPE >(name, value, attributes)								\
+		{																				\
+		}																				\
+																						\
+		NAME(NAME const &) = delete;													\
+		NAME(NAME &&) = delete;															\
+		void operator = (NAME const &) = delete;										\
 	};
 
 T_DEFINE_DERIVED_CLASS(RfmPrimitiveBoolean, bool, bool)

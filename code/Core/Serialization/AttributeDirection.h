@@ -29,15 +29,17 @@ class T_DLLCLASS AttributeDirection : public Attribute
 	T_RTTI_CLASS;
 
 public:
-	AttributeDirection();
+	AttributeDirection() = default;
 
 	explicit AttributeDirection(bool unit);
 
 	bool getUnit() const { return m_unit; }
 
+protected:
+	virtual Ref< Attribute > internalClone() const override;
+
 private:
-	bool m_unit;
+	bool m_unit = false;
 };
 
 }
-

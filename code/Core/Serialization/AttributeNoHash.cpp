@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributeNoHash", AttributeNoHash, Attribute)
 
+Ref< Attribute > AttributeNoHash::internalClone() const
+{
+	return new AttributeNoHash();
+}
+
 }

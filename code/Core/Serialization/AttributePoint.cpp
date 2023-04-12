@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributePoint", AttributePoint, Attribute)
 
+Ref< Attribute > AttributePoint::internalClone() const
+{
+	return new AttributePoint();
+}
+
 }

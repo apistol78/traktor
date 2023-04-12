@@ -13,8 +13,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RfmObject", RfmObject, ReflectionMember)
 
-RfmObject::RfmObject(const wchar_t* name, ISerializable* value)
-:	ReflectionMember(name)
+RfmObject::RfmObject(const wchar_t* name, ISerializable* value, const Attribute* attributes)
+:	ReflectionMember(name, attributes)
 ,	m_value(value)
 {
 }

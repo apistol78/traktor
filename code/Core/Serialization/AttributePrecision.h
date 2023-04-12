@@ -39,6 +39,9 @@ public:
 
 	PrecisionType getPrecision() const;
 
+protected:
+	virtual Ref< Attribute > internalClone() const override;
+
 private:
 	PrecisionType m_precision;
 };

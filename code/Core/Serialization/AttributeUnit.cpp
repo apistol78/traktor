@@ -29,4 +29,9 @@ bool AttributeUnit::getPerSecond() const
 	return m_perSecond;
 }
 
+Ref< Attribute > AttributeUnit::internalClone() const
+{
+	return new AttributeUnit(m_unit, m_perSecond);
+}
+
 }

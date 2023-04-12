@@ -21,12 +21,15 @@
 namespace traktor
 {
 
-/*! \brief
+/*!
  * \ingroup Core
  */
 class T_DLLCLASS AttributeHdr : public Attribute
 {
 	T_RTTI_CLASS;
+
+protected:
+	virtual Ref< Attribute > internalClone() const override;
 };
 
 }

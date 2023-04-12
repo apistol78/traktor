@@ -14,8 +14,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.RfmCompound", RfmCompound, ReflectionMember)
 
-RfmCompound::RfmCompound(const wchar_t* name)
-:	ReflectionMember(name)
+RfmCompound::RfmCompound(const wchar_t* name, const Attribute* attributes)
+:	ReflectionMember(name, attributes)
 {
 }
 

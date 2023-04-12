@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributeMultiLine", AttributeMultiLine, Attribute)
 
+Ref< Attribute > AttributeMultiLine::internalClone() const
+{
+	return new AttributeMultiLine();
+}
+
 }

@@ -33,6 +33,9 @@ public:
 
 	const TypeInfo& getMemberType() const;
 
+protected:
+	virtual Ref< Attribute > internalClone() const override;
+
 private:
 	const TypeInfo& m_memberType;
 };

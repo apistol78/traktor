@@ -13,4 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.AttributeReadOnly", AttributeReadOnly, Attribute)
 
+Ref< Attribute > AttributeReadOnly::internalClone() const
+{
+	return new AttributeReadOnly();
+}
+
 }

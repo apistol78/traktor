@@ -32,7 +32,7 @@ class T_DLLCLASS RfmObject : public ReflectionMember
 	T_RTTI_CLASS;
 
 public:
-	RfmObject(const wchar_t* name, ISerializable* value);
+	explicit RfmObject(const wchar_t* name, ISerializable* value, const Attribute* attributes);
 
 	void set(ISerializable* value) { m_value = value; }
 

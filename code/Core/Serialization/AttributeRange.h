@@ -39,6 +39,9 @@ public:
 
 	float getMax() const;
 
+protected:
+	virtual Ref< Attribute > internalClone() const override;
+
 private:
 	float m_min;
 	float m_max;

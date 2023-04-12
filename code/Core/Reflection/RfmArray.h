@@ -30,7 +30,7 @@ class T_DLLCLASS RfmArray : public RfmCompound
 	T_RTTI_CLASS;
 
 public:
-	explicit RfmArray(const wchar_t* name);
+	explicit RfmArray(const wchar_t* name, const Attribute* attributes);
 
 	void insertDefault();
 

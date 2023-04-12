@@ -27,6 +27,9 @@ namespace traktor
 class T_DLLCLASS AttributeHex : public Attribute
 {
 	T_RTTI_CLASS;
+
+protected:
+	virtual Ref< Attribute > internalClone() const override;
 };
 
 }

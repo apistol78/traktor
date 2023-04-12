@@ -29,4 +29,9 @@ float AttributeRange::getMax() const
 	return m_max;
 }
 
+Ref< Attribute > AttributeRange::internalClone() const
+{
+	return new AttributeRange(m_min, m_max);
+}
+
 }
