@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/IObjectRefDebugger.h"
 #include "Core/Object.h"
 
 #if defined(__clang__) || defined (__GNUC__)
@@ -53,21 +52,13 @@ inline bool isObjectHeapAllocated(const void* ptr)
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
 #if defined(_DEBUG)
-IObjectRefDebugger* Object::ms_refDebugger = nullptr;
-#endif
-
-#if defined(_DEBUG)
 void Object::addRef(void* owner) const
 {
 	++m_refCount;
-	if (ms_refDebugger)
-		ms_refDebugger->addObjectRef(owner, (void*)this);
 }
 
 void Object::release(void* owner) const
 {
-	if (ms_refDebugger)
-		ms_refDebugger->removeObjectRef(owner, (void*)this);
 	if (--m_refCount == 0)
 		finalRelease();
 }
@@ -82,19 +73,11 @@ void* Object::operator new (size_t size)
 {
 	const size_t objectHeaderSize = sizeof(ObjectHeader);
 
-	IAllocator* allocator = getAllocator();
-
-	ObjectHeader* header = static_cast< ObjectHeader* >(allocator->alloc(size + objectHeaderSize, 16, "Object"));
+	ObjectHeader* header = static_cast< ObjectHeader* >(getAllocator()->alloc(size + objectHeaderSize, 16, "Object"));
 	T_FATAL_ASSERT_M (header, L"Out of memory (object)");
-
 	header->magic = c_magic;
 
 	Object* object = reinterpret_cast< Object* >(header + 1);
-
-#if defined(_DEBUG)
-	if (ms_refDebugger)
-		ms_refDebugger->addObject(object, size);
-#endif
 
 	s_heapObjectCount++;
 	return object;
@@ -112,11 +95,6 @@ void Object::operator delete (void* ptr)
 		ObjectHeader* header = static_cast< ObjectHeader* >(ptr) - 1;
 		T_ASSERT(header->magic == c_magic);
 
-#if defined(_DEBUG)
-		if (ms_refDebugger)
-			ms_refDebugger->removeObject(ptr);
-#endif
-
 		IAllocator* allocator = getAllocator();
 		allocator->free(header);
 
@@ -126,13 +104,6 @@ void Object::operator delete (void* ptr)
 
 void Object::operator delete (void* ptr, void* memory)
 {
-}
-
-void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
-{
-#if defined(_DEBUG)
-	ms_refDebugger = refDebugger;
-#endif
 }
 
 int32_t Object::getHeapObjectCount()
