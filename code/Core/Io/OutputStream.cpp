@@ -76,9 +76,9 @@ const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 {
 	typedef typename ftoa_int_type< T >::int_t int_t;
 
-	if (isNan(value))
+	if (std::isnan(value))
 		return L"NaN";
-	else if (isInfinite(value))
+	else if (std::isinf(value))
 		return L"Inf";
 
 	bool negative = value < 0;

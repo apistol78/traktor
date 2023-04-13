@@ -21,8 +21,6 @@
 namespace traktor
 {
 
-struct IObjectRefDebugger;
-
 /*! Managed object base class.
  * \ingroup Core
  */
@@ -67,15 +65,9 @@ public:
 
 	void operator delete (void* ptr, void* memory);
 
-	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
-
 	static int32_t getHeapObjectCount();
 
 private:
-#if defined(_DEBUG)
-	static IObjectRefDebugger* ms_refDebugger;
-#endif
-
 	void finalRelease() const;
 };
 
