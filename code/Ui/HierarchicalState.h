@@ -34,6 +34,10 @@ public:
 
 	int32_t getScrollPosition() const;
 
+	void setValue(uint32_t id, int32_t value);
+
+	int32_t getValue(uint32_t id, int32_t defaultValue) const;
+
 	void addState(const std::wstring& path, bool expanded, bool selected);
 
 	bool getExpanded(const std::wstring& path) const;
@@ -55,6 +59,7 @@ public:
 
 private:
 	int32_t m_scrollPosition = 0;
+	SmallMap< uint32_t, int32_t > m_values;
 	SmallMap< std::wstring, std::pair< bool, bool > > m_states;
 };
 

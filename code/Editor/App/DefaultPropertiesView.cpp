@@ -11,6 +11,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -53,12 +54,29 @@ bool DefaultPropertiesView::create(ui::Widget* parent)
 
 	setText(i18n::Text(L"TITLE_PROPERTIES"));
 
+	const int32_t separator = m_editor->getSettings()->getProperty< int32_t >(L"Editor.DefaultPropertiesView.Separator", 180);
+
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(this, ui::WsAccelerated | ui::WsTabStop, this);
-	m_propertyList->setSeparator(ui::dpi96(180));
+	m_propertyList->setSeparator(ui::dpi96(separator));
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultPropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &DefaultPropertiesView::eventPropertyChange);
 	return true;
+}
+
+void DefaultPropertiesView::destroy()
+{
+	if (m_editor)
+	{
+		Ref< PropertyGroup > settings = m_editor->checkoutGlobalSettings();
+		if (settings)
+		{
+			const int32_t separator = ui::invdpi96(m_propertyList->getSeparator());
+			settings->setProperty< PropertyInteger >(L"Editor.DefaultPropertiesView.Separator", separator);
+			m_editor->commitGlobalSettings();
+		}
+	}
+	PropertiesView::destroy();
 }
 
 void DefaultPropertiesView::update(const ui::Rect* rc, bool immediate)
@@ -263,9 +281,9 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				if (ui::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::ArrayPropertyItem* >(objectItem->getParentItem()))
 					m_propertyList->removePropertyItem(parentArrayItem, objectItem);
 				else
-					objectItem->setObject(0);
+					objectItem->setObject(nullptr);
 
-				m_propertyList->refresh(objectItem, 0);
+				m_propertyList->refresh(objectItem, nullptr);
 				m_propertyList->apply();
 
 				ui::ContentChangeEvent event(this);

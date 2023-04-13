@@ -189,10 +189,7 @@ DialogResult FileDialog::showModal(std::vector< Path >& outPaths)
 	if (ConfigDialog::showModal() != DialogResult::Ok)
 		return DialogResult::Cancel;
 
-	RefArray< ui::GridRow > rows;
-	m_gridFiles->getRows(rows, ui::GridView::GfSelectedOnly);
-
-	for (auto row : rows)
+	for (auto row : m_gridFiles->getRows(ui::GridView::GfSelectedOnly))
 	{
 		auto file = row->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);

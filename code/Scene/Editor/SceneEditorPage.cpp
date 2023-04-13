@@ -557,8 +557,8 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		Ref< EntityAdapter > parentGroupAdapter;
 
 		// Get selected items, must be a single item.
-		RefArray< ui::GridRow > selectedRows;
-		if (m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly) == 1)
+		RefArray< ui::GridRow > selectedRows = m_instanceGrid->getRows(ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
+		if (selectedRows.size() == 1)
 		{
 			Ref< EntityAdapter > selectedEntity = selectedRows[0]->getData< EntityAdapter >(L"ENTITY");
 			T_ASSERT(selectedEntity);
@@ -1433,9 +1433,7 @@ void SceneEditorPage::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	m_context->selectAllEntities(false);
 
 	// Select only entities which is selected in the grid.
-	RefArray< ui::GridRow > selectedRows;
-	m_instanceGrid->getRows(selectedRows, ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly);
-	for (auto selectedRow : selectedRows)
+	for (auto selectedRow : m_instanceGrid->getRows(ui::GridView::GfDescendants | ui::GridView::GfSelectedOnly))
 	{
 		EntityAdapter* entityAdapter = selectedRow->getData< EntityAdapter >(L"ENTITY");
 		T_ASSERT(entityAdapter);

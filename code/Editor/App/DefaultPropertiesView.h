@@ -40,6 +40,8 @@ public:
 
 	bool create(ui::Widget* parent);
 
+	virtual void destroy() override final;
+
 	virtual void update(const ui::Rect* rc, bool immediate) override final;
 
 	virtual void setPropertyObject(ISerializable* object) override final;
