@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS PostFrameEvent : public ui::Event
 {
@@ -31,6 +29,4 @@ public:
 	explicit PostFrameEvent(ui::EventSubject* sender);
 };
 
-	}
 }
-

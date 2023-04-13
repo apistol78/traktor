@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS CameraMovedEvent : public ui::Event
 {
@@ -31,6 +29,4 @@ public:
 	explicit CameraMovedEvent(ui::EventSubject* sender);
 };
 
-	}
 }
-

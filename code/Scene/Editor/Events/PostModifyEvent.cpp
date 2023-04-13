@@ -8,10 +8,8 @@
  */
 #include "Scene/Editor/Events/PostModifyEvent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.PostModifyEvent", PostModifyEvent, ui::Event)
 
@@ -20,5 +18,4 @@ PostModifyEvent::PostModifyEvent(ui::EventSubject* sender)
 {
 }
 
-	}
 }
