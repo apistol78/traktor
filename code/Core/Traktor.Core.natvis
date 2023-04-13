@@ -1,40 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
-  <Type Name="traktor::AlignedVector&lt;*&gt;">
-    <DisplayString>{{ size={m_size} }}</DisplayString>
-    <Expand>
-        <Item Name="[size]" ExcludeView="simple">m_size</Item>
-        <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
-        <ArrayItems>
-          <Size>m_size</Size>
-          <ValuePointer>m_data</ValuePointer>
-        </ArrayItems>
-    </Expand>
-  </Type>
-  <Type Name="traktor::Ref&lt;*&gt;">
-    <DisplayString>{m_ptr}</DisplayString>
-    <Expand>
-      <ExpandedItem>m_ptr</ExpandedItem>
-    </Expand>
-  </Type>
-  <Type Name="traktor::RefArray&lt;*&gt;">
-    <DisplayString>{{ size={m_size} }}</DisplayString>
-    <Expand>
-        <Item Name="[size]" ExcludeView="simple">m_size</Item>
-        <Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
-        <ArrayItems>
-          <Size>m_size</Size>
-          <ValuePointer>m_items</ValuePointer>
-        </ArrayItems>
-    </Expand>
-  </Type>
-  <Type Name="traktor::Scalar">
-    <DisplayString>{m_data.m128_f32[0]}</DisplayString>
-  </Type>
-  <Type Name="traktor::Vector4">
-    <DisplayString>{m_data.m128_f32[0]}, {m_data.m128_f32[1]}, {m_data.m128_f32[2]}, {m_data.m128_f32[3]}</DisplayString>
-  </Type>
-  <Type Name="traktor::Quaternion">
-    <DisplayString>{e.m_data.m128_f32[0]}, {e.m_data.m128_f32[1]}, {e.m_data.m128_f32[2]}, {e.m_data.m128_f32[3]}</DisplayString>
-  </Type>
+	<Type Name="traktor::AlignedVector&lt;*&gt;">
+		<DisplayString>{{ size={m_size} }}</DisplayString>
+		<Expand>
+			<Item Name="[size]" ExcludeView="simple">m_size</Item>
+			<Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>m_data</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name="traktor::StaticVector&lt;*&gt;">
+		<DisplayString>{{ size={m_size} }}</DisplayString>
+		<Expand>
+			<Item Name="[size]" ExcludeView="simple">m_size</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>m_items</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name="traktor::Ref&lt;*&gt;">
+		<DisplayString>{m_ptr}</DisplayString>
+		<Expand>
+			<ExpandedItem>m_ptr</ExpandedItem>
+		</Expand>
+	</Type>
+	<Type Name="traktor::RefArray&lt;*&gt;">
+		<DisplayString>{{ size={m_size} }}</DisplayString>
+		<Expand>
+			<Item Name="[size]" ExcludeView="simple">m_size</Item>
+			<Item Name="[capacity]" ExcludeView="simple">m_capacity</Item>
+			<ArrayItems>
+				<Size>m_size</Size>
+				<ValuePointer>m_items</ValuePointer>
+			</ArrayItems>
+		</Expand>
+	</Type>
+	<Type Name="traktor::Scalar">
+		<DisplayString>{m_data.m128_f32[0]}</DisplayString>
+	</Type>
+	<Type Name="traktor::Vector4">
+		<DisplayString>{m_data.m128_f32[0]}, {m_data.m128_f32[1]}, {m_data.m128_f32[2]}, {m_data.m128_f32[3]}</DisplayString>
+	</Type>
+	<Type Name="traktor::Quaternion">
+		<DisplayString>{e.m_data.m128_f32[0]}, {e.m_data.m128_f32[1]}, {e.m_data.m128_f32[2]}, {e.m_data.m128_f32[3]}</DisplayString>
+	</Type>
 </AutoVisualizer>
