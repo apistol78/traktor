@@ -541,6 +541,8 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 				m_builtInstances.swap(previousBuiltInstances);
 				m_builtAdHocKeys.swap(previousBuiltAdHocKeys);
 
+				m_adHocBuilds.insert(dependency->outputGuid);
+
 				m_cacheHit++;
 				continue;
 			}
