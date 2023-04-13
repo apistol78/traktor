@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 class GridItem;
@@ -89,7 +87,7 @@ public:
 
 	const RefArray< GridRow >& getRows() const;
 
-	uint32_t getRows(RefArray< GridRow >& outRows, uint32_t flags) const;
+	RefArray< GridRow > getRows(uint32_t flags) const;
 
 	GridRow* getSelectedRow() const;
 
@@ -139,6 +137,4 @@ private:
 	void eventDoubleClick(MouseDoubleClickEvent* event);
 };
 
-	}
 }
-

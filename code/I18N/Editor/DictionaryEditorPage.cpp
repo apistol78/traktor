@@ -170,8 +170,8 @@ bool DictionaryEditorPage::handleCommand(const ui::Command& command)
 {
 	if (command == L"Editor.Delete")
 	{
-		RefArray< ui::GridRow > selectedRows;
-		if (m_gridDictionary->getRows(selectedRows, ui::GridView::GfSelectedOnly) > 0)
+		RefArray< ui::GridRow > selectedRows = m_gridDictionary->getRows(ui::GridView::GfSelectedOnly);
+		if (!selectedRows.empty())
 		{
 			m_document->push();
 			for (auto selectedRow : selectedRows)
@@ -299,11 +299,8 @@ void DictionaryEditorPage::eventToolClick(ui::ToolBarButtonClickEvent* event)
 		{
 			m_document->push();
 
-			RefArray< ui::GridRow > selectedRows;
-			m_gridDictionary->getRows(selectedRows, ui::GridView::GfSelectedOnly);
-
 			Translator translator(fields[0].value, fields[1].value);
-			for (auto selectedRow : selectedRows)
+			for (auto selectedRow : m_gridDictionary->getRows(ui::GridView::GfSelectedOnly))
 			{
 				std::wstring source = selectedRow->get(1)->getText();
 				std::wstring out;

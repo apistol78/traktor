@@ -1247,7 +1247,6 @@ void DatabaseView::updateGridInstances()
 		}
 	}
 
-	//m_gridInstances->update();
 	m_listInstances->setItems(previewItems);
 }
 

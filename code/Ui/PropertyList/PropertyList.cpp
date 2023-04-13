@@ -141,7 +141,7 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	addEventHandler< SizeEvent >(this, &PropertyList::eventSize);
 	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
-	m_propertyItemHeight = getFont().getPixelSize() + dpi96(8);
+	m_propertyItemHeight = getFont().getPixelSize() + dpi96(10);
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
 
@@ -313,11 +313,9 @@ bool PropertyList::resolvePropertyGuid(const Guid& guid, std::wstring& resolved)
 Ref< HierarchicalState > PropertyList::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
-
 	state->setScrollPosition(m_scrollBar->getPosition());
 	for (const auto item : m_propertyItems)
 		recursiveCaptureState(item, state);
-
 	return state;
 }
 
@@ -325,7 +323,6 @@ void PropertyList::applyState(const HierarchicalState* state)
 {
 	for (const auto item : m_propertyItems)
 		recursiveApplyState(item, state);
-
 	updateScrollBar();
 	m_scrollBar->setPosition(state->getScrollPosition());
 }

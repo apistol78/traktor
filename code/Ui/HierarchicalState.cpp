@@ -13,7 +13,7 @@
 namespace traktor::ui
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 0, HierarchicalState, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.HierarchicalState", 1, HierarchicalState, ISerializable)
 
 void HierarchicalState::setScrollPosition(int32_t scrollPosition)
 {
@@ -23,6 +23,17 @@ void HierarchicalState::setScrollPosition(int32_t scrollPosition)
 int32_t HierarchicalState::getScrollPosition() const
 {
 	return m_scrollPosition;
+}
+
+void HierarchicalState::setValue(uint32_t id, int32_t value)
+{
+	m_values[id] = value;
+}
+
+int32_t HierarchicalState::getValue(uint32_t id, int32_t defaultValue) const
+{
+	auto it = m_values.find(id);
+	return it != m_values.end() ? it->second : defaultValue;
 }
 
 void HierarchicalState::addState(const std::wstring& path, bool expanded, bool selected)
@@ -63,6 +74,10 @@ Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state
 void HierarchicalState::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"scrollPosition", m_scrollPosition);
+
+	if (s.getVersion< HierarchicalState >() >= 1)
+		s >> MemberSmallMap < uint32_t, int32_t >(L"values", m_values);
+
 	s >> MemberSmallMap<
 		std::wstring,
 		std::pair< bool, bool >,

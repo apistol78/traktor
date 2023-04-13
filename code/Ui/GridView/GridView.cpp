@@ -21,12 +21,10 @@
 #include "Ui/GridView/GridView.h"
 #include "Ui/HierarchicalState.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_headerSize = 24;
 
@@ -98,7 +96,7 @@ std::wstring getRowPath(GridRow* row)
 		return row->get(0)->getText();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridView", GridView, AutoWidget)
 
@@ -208,9 +206,11 @@ const RefArray< GridRow >& GridView::getRows() const
 	return m_rows;
 }
 
-uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
+RefArray< GridRow > GridView::getRows(uint32_t flags) const
 {
 	typedef std::pair< RefArray< GridRow >::const_iterator, RefArray< GridRow >::const_iterator > range_t;
+
+	RefArray< GridRow > rows;
 
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_rows.begin(), m_rows.end()));
@@ -225,10 +225,10 @@ uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 			if (flags & GfSelectedOnly)
 			{
 				if (row->getState() & GridRow::Selected)
-					outRows.push_back(row);
+					rows.push_back(row);
 			}
 			else
-				outRows.push_back(row);
+				rows.push_back(row);
 
 			if (flags & GfDescendants)
 			{
@@ -244,13 +244,13 @@ uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 			stack.pop();
 	}
 
-	return uint32_t(outRows.size());
+	return rows;
 }
 
 GridRow* GridView::getSelectedRow() const
 {
-	RefArray< GridRow > selectedRows;
-	if (getRows(selectedRows, GfDescendants | GfSelectedOnly) == 1)
+	RefArray< GridRow > selectedRows = getRows(GfDescendants | GfSelectedOnly);
+	if (selectedRows.size() == 1)
 		return selectedRows[0];
 	else
 		return nullptr;
@@ -258,18 +258,14 @@ GridRow* GridView::getSelectedRow() const
 
 void GridView::selectAll()
 {
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants);
-	for (auto row : rows)
+	for (auto row : getRows(GfDescendants))
 		row->setState(row->getState() | GridRow::Selected);
 	requestUpdate();
 }
 
 void GridView::deselectAll()
 {
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants);
-	for (auto row : rows)
+	for (auto row : getRows(GfDescendants))
 		row->setState(row->getState() & ~GridRow::Selected);
 	requestUpdate();
 }
@@ -282,9 +278,11 @@ void GridView::setMultiSelect(bool multiSelect)
 Ref< HierarchicalState > GridView::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants);
-	for (auto row : rows)
+
+	for (uint32_t i = 0; i < (uint32_t)m_columns.size(); ++i)
+		state->setValue(i, m_columns[i]->getWidth());
+
+	for (auto row : getRows(GfDescendants))
 	{
 		state->addState(
 			getRowPath(row),
@@ -292,16 +290,21 @@ Ref< HierarchicalState > GridView::captureState() const
 			(row->getState() & GridRow::Selected) != 0
 		);
 	}
+
 	return state;
 }
 
 void GridView::applyState(const HierarchicalState* state)
 {
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants);
-	for (auto row : rows)
+	for (uint32_t i = 0; i < (uint32_t)m_columns.size(); ++i)
 	{
-		std::wstring path = getRowPath(row);
+		const int32_t width = state->getValue(i, m_columns[i]->getWidth());
+		m_columns[i]->setWidth(width);
+	}
+
+	for (auto row : getRows(GfDescendants))
+	{
+		const std::wstring path = getRowPath(row);
 		row->setState(
 			(state->getExpanded(path) ? GridRow::Expanded : 0) |
 			(state->getSelected(path) ? GridRow::Selected : 0)
@@ -320,8 +323,7 @@ void GridView::layoutCells(const Rect& rc)
 		rcLayout.top += dpi96(c_headerSize);
 	}
 
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants | GfExpandedOnly);
+	RefArray< GridRow > rows = getRows(GfDescendants | GfExpandedOnly);
 
 	if (m_sortColumnIndex >= 0)
 	{
@@ -435,17 +437,14 @@ void GridView::eventButtonDown(MouseButtonDownEvent* event)
 	const bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier || !m_multiSelect)
 	{
-		RefArray< GridRow > rows;
-		getRows(rows, GfDescendants);
-		for (auto row : rows)
+		for (auto row : getRows(GfDescendants))
 			row->setState(row->getState() & ~GridRow::Selected);
 	}
 
 	// Check for row click; move selection.
 	if (GridRow* row = dynamic_type_cast< GridRow* >(cell))
 	{
-		RefArray< GridRow > rows;
-		getRows(rows, GfDescendants | GfExpandedOnly);
+		RefArray< GridRow > rows = getRows(GfDescendants | GfExpandedOnly);
 
 		// Select range.
 		if (m_multiSelect && (state & KsShift) != 0 && m_clickRow)
@@ -526,5 +525,4 @@ void GridView::eventDoubleClick(MouseDoubleClickEvent* event)
 	}
 }
 
-	}
 }

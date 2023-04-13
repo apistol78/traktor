@@ -178,9 +178,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 
 void ShortcutsSettingsPage::eventShortcutSelect(ui::SelectionChangeEvent* event)
 {
-	RefArray< ui::GridRow > selectedRows;
-	m_gridShortcuts->getRows(selectedRows, ui::GridView::GfSelectedOnly);
-
+	RefArray< ui::GridRow > selectedRows = m_gridShortcuts->getRows(ui::GridView::GfSelectedOnly);
 	if (selectedRows.size() == 1)
 	{
 		Ref< PropertyString > propertyKey = selectedRows[0]->getData< PropertyString >(L"PROPERTYKEY");
