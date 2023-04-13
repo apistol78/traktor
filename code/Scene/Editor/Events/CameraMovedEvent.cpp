@@ -8,10 +8,8 @@
  */
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.CameraMovedEvent", CameraMovedEvent, ui::Event)
 
@@ -20,5 +18,4 @@ CameraMovedEvent::CameraMovedEvent(ui::EventSubject* sender)
 {
 }
 
-	}
 }

@@ -8,10 +8,8 @@
  */
 #include "Scene/Editor/Events/PostBuildEvent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.PostBuildEvent", PostBuildEvent, ui::Event)
 
@@ -20,5 +18,4 @@ PostBuildEvent::PostBuildEvent(ui::EventSubject* sender)
 {
 }
 
-	}
 }

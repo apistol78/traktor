@@ -8,10 +8,8 @@
  */
 #include "Scene/Editor/Events/MeasurementEvent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.MeasurementEvent", MeasurementEvent, ui::Event)
 
@@ -25,5 +23,4 @@ MeasurementEvent::MeasurementEvent(ui::EventSubject* sender, int32_t pass, int32
 {
 }
 
-	}
 }

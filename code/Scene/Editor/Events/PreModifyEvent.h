@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class T_DLLCLASS PreModifyEvent : public ui::Event
 {
@@ -31,6 +29,4 @@ public:
 	explicit PreModifyEvent(ui::EventSubject* sender);
 };
 
-	}
 }
-
