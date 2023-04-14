@@ -400,8 +400,8 @@ void TextLayout::newLine()
 
 void TextLayout::end()
 {
-	// Calculate height of last line.
 	float lineHeight = m_fontHeight + m_leading;
+	float lineOffset = m_fontHeight + m_leading;
 	if (!m_attribs.empty())
 	{
 		const Attribute& attrib = m_attribs[m_currentAttrib];
@@ -409,7 +409,8 @@ void TextLayout::end()
 		{
 			const float coordScale = attrib.font->getCoordinateType() == Font::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 			const float fontScale = coordScale * m_fontHeight;
-			lineHeight = attrib.font->getDescent() * fontScale;
+			lineHeight = (attrib.font->getAscent() + attrib.font->getDescent()) * fontScale;
+			lineOffset = attrib.font->getAscent() * fontScale;
 		}
 	}
 
@@ -417,7 +418,7 @@ void TextLayout::end()
 	for (auto& line : m_lines)
 	{
 		line.x = m_bounds.mn.x;
-		line.y += lineHeight;
+		line.y += lineOffset;
 		line.offset = 0.0f;
 
 		if (line.words.empty())

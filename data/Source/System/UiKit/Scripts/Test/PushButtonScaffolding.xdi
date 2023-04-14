@@ -10,27 +10,28 @@ PushButtonScaffolding = PushButtonScaffolding or class("PushButtonScaffolding", 
 function PushButtonScaffolding:setup(frame)
 	local ct = Container(frame, TableLayout({0}, {0}, 4, 4, 4, 16))
 
---	Border(ct)
+	-- Border(ct)
 
---	CheckBox(ct)
+	CheckBox(ct)
 
---	DropDown(ct, {
-		--"A", "B", "C", "D", "E", "F", "G"
---	})
+	DropDown(ct, {
+		"A", "B", "C", "D", "E", "F", "G"
+	})
 
---	local lb = ListBox(ct)
---	lb:add("A")
---	lb:add("B")
---	lb:add("C")
---	lb:add("D")
---
---	Static(ct, "A Static Text")
+	local lb = ListBox(ct)
+	lb:add("A")
+	lb:add("B")
+	lb:add("C")
+	lb:add("D")
+
+	Static(ct, "A Static Text")
 
 	PushButton(ct, "Light", PushButton.Toggle):setMinimumWidth(0)
 	PushButton(ct, "Regular"):setMinimumWidth(0)
 
---	Slider(ct)
+	Slider(ct)
 end
+
 	]]>
 	</text>
 </object>
