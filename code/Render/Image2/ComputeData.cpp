@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Render/Image2/Compute.h"
 #include "Render/Image2/ComputeData.h"
@@ -16,7 +17,7 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeData", 0, ComputeData, ImagePassOpData)
 
-Ref< const ImagePassOp > ComputeData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+Ref< const ImagePassOp > ComputeData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
 	Ref< Compute > instance = new Compute();
 
@@ -32,6 +33,9 @@ Ref< const ImagePassOp > ComputeData::createInstance(resource::IResourceManager*
 			getParameterHandle(source.parameter)
 		});
 	}
+
+	// \hack Eye adaption.
+	instance->m_bufferCurrentIllumination = renderSystem->createBuffer(render::BuStructured, 1, 4 * sizeof(float), false);
 
 	return instance; 
 }
