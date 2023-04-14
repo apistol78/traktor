@@ -72,12 +72,9 @@ bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 			continue;
 		}
 
-		std::wstring errorPrefix = L"Error when updating shader graph \"" + instance->getGuid().format() + L"\"; ";
+		const std::wstring errorPrefix = L"Error when updating shader graph \"" + instance->getGuid().format() + L"\"; ";
 
-		RefArray< External > externalNodes;
-		shaderGraph->findNodesOf< External >(externalNodes);
-
-		for (auto externalNode : externalNodes)
+		for (auto externalNode : shaderGraph->findNodesOf< External >())
 		{
 			Ref< const ShaderGraph > fragmentGraph = database->getObjectReadOnly< ShaderGraph >(externalNode->getFragmentGuid());
 			if (!fragmentGraph)
@@ -87,11 +84,8 @@ bool TouchShaderGraphsTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 				continue;
 			}
 
-			RefArray< InputPort > inputPorts;
-			fragmentGraph->findNodesOf< InputPort >(inputPorts);
-
-			RefArray< OutputPort > outputPorts;
-			fragmentGraph->findNodesOf< OutputPort >(outputPorts);
+			RefArray< InputPort > inputPorts = fragmentGraph->findNodesOf< InputPort >();
+			RefArray< OutputPort > outputPorts = fragmentGraph->findNodesOf< OutputPort >();
 
 			for (auto& inputPin : externalNode->getInputPins())
 			{

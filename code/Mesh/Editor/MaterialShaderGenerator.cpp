@@ -146,10 +146,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			log::warning << L"Material \"" << material.getName() << L"\" has directional lightmap ID but no normal map associated." << Endl;
 	}
 
-	RefArray< render::External > externalNodes;
 	RefArray< render::External > resolveNodes;
-	materialShaderGraph->findNodesOf< render::External >(externalNodes);
-	for (auto externalNode : externalNodes)
+	for (auto externalNode : materialShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		T_ASSERT(fragmentGuid.isValid());

@@ -31,9 +31,7 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 		if (!shaderGraph)
 			continue;
 
-		RefArray< External > externalNodes;
-		shaderGraph->findNodesOf< External >(externalNodes);
-		for (auto externalNode : externalNodes)
+		for (auto externalNode : shaderGraph->findNodesOf< External >())
 			tracker->addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
 	}
 }
@@ -48,9 +46,7 @@ void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* data
 		{
 			tracker->removeDependencies(shader);
 
-			RefArray< External > externalNodes;
-			shaderGraph->findNodesOf< External >(externalNodes);
-			for (auto externalNode : externalNodes)
+			for (auto externalNode : shaderGraph->findNodesOf< External >())
 				tracker->addDependency(shader, externalNode->getFragmentGuid());
 		}
 	}

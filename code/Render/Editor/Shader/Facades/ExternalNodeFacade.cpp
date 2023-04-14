@@ -75,7 +75,7 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	{
 		title = instance->getName();
 		fragmentGraph = instance->getObject< ShaderGraph >();
-		fragmentGraph->findNodesOf< InputPort >(inputPorts);
+		inputPorts = fragmentGraph->findNodesOf< InputPort >();
 	}
 	else
 		title = fragmentGuid.format();

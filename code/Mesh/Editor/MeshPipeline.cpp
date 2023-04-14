@@ -568,9 +568,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Set vertex fragment reference.
-		RefArray< render::External > externals;
-		materialShaderGraph->findNodesOf< render::External >(externals);
-		for (auto external : externals)
+		for (auto external : materialShaderGraph->findNodesOf< render::External >())
 		{
 			if (external->getFragmentGuid() == c_guidVertexInterfaceGuid)
 				external->setFragmentGuid(vertexShaderGuid);
@@ -705,9 +703,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Build vertex declaration from shader vertex inputs.
-		RefArray< render::VertexInput > vertexInputNodes;
-		materialShaderGraph->findNodesOf< render::VertexInput >(vertexInputNodes);
-		for (auto vertexInputNode : vertexInputNodes)
+		for (auto vertexInputNode : materialShaderGraph->findNodesOf< render::VertexInput >())
 		{
 			render::DataType elementDataType = vertexInputNode->getDataType();
 			if (m_promoteHalf)

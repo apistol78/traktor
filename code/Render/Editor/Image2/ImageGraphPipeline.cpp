@@ -74,8 +74,7 @@ bool ImageGraphPipeline::buildDependencies(
 	const ImageGraphAsset* asset = mandatory_non_null_type_cast< const ImageGraphAsset* >(sourceAsset);
 
 	// Find output node in graph.
-	RefArray< ImgOutput > outputs;
-	asset->findNodesOf< ImgOutput >(outputs);
+	RefArray< ImgOutput > outputs = asset->findNodesOf< ImgOutput >();
 	if (outputs.size() != 1)
 	{
 		log::error << L"Image graph pipeline failed; graph must only contain one output node." << Endl;
@@ -125,8 +124,7 @@ bool ImageGraphPipeline::buildOutput(
 	const ImageGraphAsset* asset = mandatory_non_null_type_cast< const ImageGraphAsset* >(sourceAsset);
 	
 	// Find output node in graph.
-	RefArray< ImgOutput > outputs;
-	asset->findNodesOf< ImgOutput >(outputs);
+	RefArray< ImgOutput > outputs = asset->findNodesOf< ImgOutput >();
 	if (outputs.size() != 1)
 	{
 		log::error << L"Image graph pipeline failed; graph must only contain one output node." << Endl;

@@ -62,8 +62,8 @@ namespace traktor
 
 uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 {
-	RefArray< render::PixelOutput > nodes;
-	if (shaderGraph->findNodesOf< render::PixelOutput >(nodes) == 0)
+	RefArray< render::PixelOutput > nodes = shaderGraph->findNodesOf< render::PixelOutput >();
+	if (nodes.empty())
 		return 0;
 
 	uint32_t priority = 0;
@@ -453,9 +453,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Extract uniform initial values and add to initialization block in shader resource.
-				RefArray< Uniform > uniformNodes;
-				programGraph->findNodesOf< Uniform >(uniformNodes);
-				for (const auto uniformNode : uniformNodes)
+				for (const auto uniformNode : programGraph->findNodesOf< Uniform >())
 				{
 					const OutputPin* outputPin = programGraph->findSourcePin(uniformNode->getInputPin(0));
 					if (!outputPin)
@@ -485,9 +483,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Replace texture nodes with uniforms; keep list of texture references in shader resource.
-				RefArray< Texture > textureNodes;
-				programGraph->findNodesOf< Texture >(textureNodes);
-				for (const auto textureNode : textureNodes)
+				for (const auto textureNode : programGraph->findNodesOf< Texture >())
 				{
 					const Guid& textureGuid = textureNode->getExternal();
 					int32_t textureIndex;

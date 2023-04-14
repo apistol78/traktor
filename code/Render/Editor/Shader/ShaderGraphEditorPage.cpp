@@ -1212,9 +1212,7 @@ void ShaderGraphEditorPage::updateGraph()
 		m_toolTechniques->add(technique);
 
 	// Update variables grid.
-	RefArray< Variable > variableNodes;
-	m_shaderGraph->findNodesOf< Variable >(variableNodes);
-	for (auto variableNode : variableNodes)
+	for (auto variableNode : m_shaderGraph->findNodesOf< Variable >())
 	{
 		auto& vi = variables[variableNode->getName()];
 
@@ -1440,8 +1438,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	}
 
 	// Get input ports; remove non-connectable ports.
-	RefArray< InputPort > fragmentInputs;
-	fragmentGraph->findNodesOf< InputPort >(fragmentInputs);
+	RefArray< InputPort > fragmentInputs = fragmentGraph->findNodesOf< InputPort >();
 
 	RefArray< InputPort >::iterator it;
 	it = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), [](InputPort* ip) {
@@ -1454,8 +1451,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	fragmentInputs.erase(it, fragmentInputs.end());
 
 	// Get output ports.
-	RefArray< OutputPort > fragmentOutputs;
-	fragmentGraph->findNodesOf< OutputPort >(fragmentOutputs);
+	RefArray< OutputPort > fragmentOutputs = fragmentGraph->findNodesOf< OutputPort >();
 
 	// Get input-/output pins; these might differ if fragment has been updated.
 	const uint32_t externalInputPinCount = external->getInputPinCount();
@@ -1838,22 +1834,21 @@ void ShaderGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event
 
 void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* event)
 {
-	RefArray< Variable > variableNodes;
-	m_shaderGraph->findNodesOf< Variable >(variableNodes);
+	RefArray< Variable > variableNodes = m_shaderGraph->findNodesOf< Variable >();
 
-	std::wstring renameFrom = event->getOriginalText();
-	std::wstring renameTo = event->getItem()->getText();
+	const std::wstring renameFrom = event->getOriginalText();
+	const std::wstring renameTo = event->getItem()->getText();
 
 	if (renameFrom == renameTo)
 		return;
 
-	// Check if "rename to" is a valid name, ie not empty nor collide.
+	// Check if "rename to" is a valid name, i.e. not empty nor collide.
 	if (renameTo.empty())
 		return;
 
 	for (auto variableNode : variableNodes)
 	{
-		std::wstring name = variableNode->getName();
+		const std::wstring name = variableNode->getName();
 		if (name != renameFrom && name == renameTo)
 			return;
 	}
@@ -1862,7 +1857,7 @@ void ShaderGraphEditorPage::eventVariableEdit(ui::GridItemContentChangeEvent* ev
 	m_document->push();
 	for (auto variableNode : variableNodes)
 	{
-		std::wstring name = variableNode->getName();
+		const std::wstring name = variableNode->getName();
 		if (name == renameFrom)
 			variableNode->setName(renameTo);
 	}
@@ -1877,8 +1872,7 @@ void ShaderGraphEditorPage::eventVariableDoubleClick(ui::GridRowDoubleClickEvent
 {
 	std::wstring variableName = event->getRow()->get(0)->getText();
 
-	RefArray< Variable > variableNodes;
-	m_shaderGraph->findNodesOf< Variable >(variableNodes);
+	RefArray< Variable > variableNodes = m_shaderGraph->findNodesOf< Variable >();
 
 	auto it = std::find_if(variableNodes.begin(), variableNodes.end(), [&](const Variable* v) {
 		if (v->getName() != variableName)

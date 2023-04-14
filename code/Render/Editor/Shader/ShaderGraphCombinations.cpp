@@ -88,9 +88,7 @@ void buildCombinations(
 	AlignedVector< ShaderGraphCombinations::Combination >& outCombinations
 )
 {
-	RefArray< Branch > branchNodes;
-	shaderGraph->findNodesOf< Branch >(branchNodes);
-
+	RefArray< Branch > branchNodes = shaderGraph->findNodesOf< Branch >();
 	if (!branchNodes.empty())
 	{
 		Branch* branch = branchNodes.front();
@@ -150,8 +148,7 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph,
 {
 	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 
-	RefArray< Branch > branchNodes;
-	m_shaderGraph->findNodesOf< Branch >(branchNodes);
+	RefArray< Branch > branchNodes = m_shaderGraph->findNodesOf< Branch >();
 
 	std::set< std::wstring > parameterNames;
 	for (auto branchNode : branchNodes)
