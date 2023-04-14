@@ -92,9 +92,7 @@ private:
 
 void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* textureNode, bool anisotropic)
 {
-	AlignedVector< const render::InputPin* > destinationPins;
-	shaderGraph->findDestinationPins(textureNode->getOutputPin(0), destinationPins);
-	for (auto destinationPin : destinationPins)
+	for (auto destinationPin : shaderGraph->findDestinationPins(textureNode->getOutputPin(0)))
 	{
 		if (auto samplerNode = dynamic_type_cast< render::Sampler* >(destinationPin->getNode()))
 		{

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/RefSet.h"
 #include "Core/Log/Log.h"
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -79,7 +80,6 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		nodeSetInput.insert(node);
 
 	// Iteratively solve types until all types are stable.
-	AlignedVector< const InputPin* > destinationInputPins;
 	PinType currentInputPinTypes[32];
 	PinType outputPinTypes[32];
 	uint32_t iterationCount = 0;
@@ -163,8 +163,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				const OutputPin* outputPin = node->getOutputPin(i);
 				T_ASSERT(outputPin);
 
-				destinationInputPins.resize(0);
-				m_shaderGraph->findDestinationPins(outputPin, destinationInputPins);
+				AlignedVector< const InputPin* > destinationInputPins = m_shaderGraph->findDestinationPins(outputPin);
 				if (destinationInputPins.empty())
 					continue;
 

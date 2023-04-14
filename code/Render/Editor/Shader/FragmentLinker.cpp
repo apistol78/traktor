@@ -244,8 +244,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			continue;
 		}
 		
-		AlignedVector< const InputPin* > destinationPins;
-		mutableShaderGraph->findDestinationPins(connector->getOutputPin(0), destinationPins);
+		AlignedVector< const InputPin* > destinationPins = mutableShaderGraph->findDestinationPins(connector->getOutputPin(0));
 
 		mutableShaderGraph->detach(connector);
 		mutableShaderGraph->removeNode(connector);

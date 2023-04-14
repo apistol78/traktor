@@ -9,6 +9,7 @@
 #pragma once
 
 #include <functional>
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallSet.h"
