@@ -285,13 +285,10 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 
 	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
 
-	RefArray< PixelOutput > pixelOutputNodes;
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
-
 	Ref< ShaderGraphOrderEvaluator > orderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear);
 	SmallSet< const Node* > visited;
 
-	for (auto pixelOutputNode : pixelOutputNodes)
+	for (auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
 		insertInterpolators(visited, shaderGraph, pixelOutputNode, orderEvaluator);
 
 	return shaderGraph;

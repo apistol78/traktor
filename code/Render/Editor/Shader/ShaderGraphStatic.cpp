@@ -135,10 +135,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 		m_shaderGraph->getEdges()
 	);
 
-	RefArray< Platform > nodes;
-	shaderGraph->findNodesOf< Platform >(nodes);
-
-	for (const auto node : nodes)
+	for (const auto node : shaderGraph->findNodesOf< Platform >())
 	{
 		const InputPin* inputPin = node->findInputPin(platform);
 		T_ASSERT(inputPin);
@@ -186,10 +183,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 		m_shaderGraph->getEdges()
 	);
 
-	RefArray< Renderer > nodes;
-	shaderGraph->findNodesOf< Renderer >(nodes);
-
-	for (const auto node : nodes)
+	for (const auto node : shaderGraph->findNodesOf< Renderer >())
 	{
 		const InputPin* inputPin = node->findInputPin(renderer);
 		T_ASSERT(inputPin);
@@ -237,8 +231,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 		m_shaderGraph->getEdges()
 	);
 
-	RefArray< Connected > nodes;
-	if (shaderGraph->findNodesOf< Connected >(nodes) <= 0)
+	RefArray< Connected > nodes = shaderGraph->findNodesOf< Connected >();
+	if (nodes.empty())
 		return shaderGraph;
 
 	for (const auto node : nodes)
@@ -297,8 +291,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		m_shaderGraph->getEdges()
 	);
 
-	RefArray< Type > nodes;
-	if (shaderGraph->findNodesOf< Type >(nodes) <= 0)
+	RefArray< Type > nodes = shaderGraph->findNodesOf< Type >();
+	if (nodes.empty())
 		return shaderGraph;
 
 	ShaderGraphTypeEvaluator evaluator(shaderGraph);
@@ -632,8 +626,7 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
-	RefArray< Swizzle > swizzleNodes;
-	shaderGraph->findNodesOf< Swizzle >(swizzleNodes);
+	RefArray< Swizzle > swizzleNodes = shaderGraph->findNodesOf< Swizzle >();
 	for (auto i = swizzleNodes.begin(); i != swizzleNodes.end(); )
 	{
 		Swizzle* swizzleRightNode = *i;
@@ -713,9 +706,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	);
 
 	// Pixel output state.
-	RefArray< PixelOutput > pixelOutputNodes;
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
-	for (const auto pixelOutputNode : pixelOutputNodes)
+	for (const auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
 	{
 		Ref< Edge > edge = shaderGraph->findEdge(pixelOutputNode->findInputPin(L"State"));
 		if (!edge)
@@ -740,9 +731,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	}
 
 	// Sampler state.
-	RefArray< Sampler > samplerNodes;
-	shaderGraph->findNodesOf< Sampler >(samplerNodes);
-	for (const auto samplerNode : samplerNodes)
+	for (const auto samplerNode : shaderGraph->findNodesOf< Sampler >())
 	{
 		Ref< Edge > edge = shaderGraph->findEdge(samplerNode->findInputPin(L"State"));
 		if (!edge)
@@ -772,8 +761,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
 
 	// Get all variable nodes from shader graph.
-	RefArray< Variable > variableNodes;
-	shaderGraph->findNodesOf< Variable >(variableNodes);
+	RefArray< Variable > variableNodes = shaderGraph->findNodesOf< Variable >();
 
 	// Ignore variables of other scopes.
 	for (;;)
@@ -838,10 +826,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 		m_shaderGraph->getEdges()
 	);
 
-	RefArray< PixelOutput > pixelOutputNodes;
-	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
-
-	for (const auto pixelOutputNode : pixelOutputNodes)
+	for (const auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
 	{
 		const OutputPin* enableSource = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(0));
 		if (!enableSource)
@@ -864,10 +849,7 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
-	RefArray< ComputeOutput > computeOutputNodes;
-	shaderGraph->findNodesOf< ComputeOutput >(computeOutputNodes);
-
-	for (const auto computeOutputNode : computeOutputNodes)
+	for (const auto computeOutputNode : shaderGraph->findNodesOf< ComputeOutput >())
 	{
 		const OutputPin* enableSource = shaderGraph->findSourcePin(computeOutputNode->getInputPin(0));
 		if (!enableSource)
@@ -898,10 +880,7 @@ Ref< ShaderGraph > ShaderGraphStatic::propagateConstantExternalValues() const
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
 	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
-
-	RefArray< External > externalNodes;
-	shaderGraph->findNodesOf< External >(externalNodes);
-	for (auto externalNode : externalNodes)
+	for (auto externalNode : shaderGraph->findNodesOf< External >())
 	{
 		for (auto inputPin : externalNode->getInputPins())
 		{

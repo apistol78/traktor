@@ -71,9 +71,7 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
 			continue;
 		}
 
-		RefArray< Uniform > uniformNodes;
-		shaderGraph->findNodesOf< Uniform >(uniformNodes);
-		for (auto uniformNode : uniformNodes)
+		for (auto uniformNode : shaderGraph->findNodesOf< Uniform >())
 		{
             auto& ui = uniformInfos[uniformNode->getParameterName()];
             ui.push_back({
@@ -84,9 +82,7 @@ bool ListUniformsTool::launch(ui::Widget* parent, editor::IEditor* editor, const
             });
         }
 
-		RefArray< IndexedUniform > indexedUniformNodes;
-		shaderGraph->findNodesOf< IndexedUniform >(indexedUniformNodes);
-		for (auto indexedUniformNode : indexedUniformNodes)
+		for (auto indexedUniformNode : shaderGraph->findNodesOf< IndexedUniform >())
 		{
             auto& ui = uniformInfos[indexedUniformNode->getParameterName()];
             ui.push_back({

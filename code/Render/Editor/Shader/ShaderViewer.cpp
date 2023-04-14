@@ -500,9 +500,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 			if (programGraph)
 			{
 				// Replace texture nodes with uniforms.
-				RefArray< Texture > textureNodes;
-				programGraph->findNodesOf< Texture >(textureNodes);
-				for (auto textureNode : textureNodes)
+				for (auto textureNode : programGraph->findNodesOf< Texture >())
 				{
 					const Guid& textureGuid = textureNode->getExternal();
 					int32_t textureIndex;

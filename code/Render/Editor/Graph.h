@@ -94,16 +94,11 @@ public:
 	 * \return Number of nodes.
 	 */
 	template < typename NodeType >
-	size_t findNodesOf(RefArray< NodeType >& outNodes) const
+	RefArray< NodeType > findNodesOf() const
 	{
 		RefArray< Node > untypedNodes;
 		findNodesOf(type_of< NodeType >(), untypedNodes);
-
-		outNodes.resize(untypedNodes.size());
-		for (size_t i = 0; i < untypedNodes.size(); ++i)
-			outNodes[i] = checked_type_cast< NodeType* >(untypedNodes[i]);
-
-		return outNodes.size();
+		return (RefArray< NodeType >&&)untypedNodes;
 	}
 
 	/*! Find edge connected to input pin.

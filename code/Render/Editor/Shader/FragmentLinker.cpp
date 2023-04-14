@@ -78,8 +78,7 @@ FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
-	RefArray< External > externalNodes;
-	shaderGraph->findNodesOf< External >(externalNodes);
+	RefArray< External > externalNodes = shaderGraph->findNodesOf< External >();
 	return resolve(shaderGraph, externalNodes, fullResolve, optionalShaderGraphGuid);
 }
 
@@ -237,9 +236,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	}
 
 	// Re-wire edges which has been temporarily connected to a "port connection" node.
-	RefArray< PortConnector > connectors;
-	mutableShaderGraph->findNodesOf< PortConnector >(connectors);
-	for (auto connector : connectors)
+	for (auto connector : mutableShaderGraph->findNodesOf< PortConnector >())
 	{
 		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
 		if (!sourcePin)
