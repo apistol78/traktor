@@ -154,8 +154,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 		const OutputPin* outputPin = node->findOutputPin(L"Output");
 		T_ASSERT(outputPin);
 
-		RefSet< Edge > destinationEdges;
-		shaderGraph->findEdges(outputPin, destinationEdges);
+		RefArray< Edge > destinationEdges = shaderGraph->findEdges(outputPin);
 
 		shaderGraph->removeEdge(sourceEdge);
 		for (const auto destinationEdge : destinationEdges)
@@ -202,8 +201,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 		const OutputPin* outputPin = node->findOutputPin(L"Output");
 		T_ASSERT(outputPin);
 
-		RefSet< Edge > destinationEdges;
-		shaderGraph->findEdges(outputPin, destinationEdges);
+		RefArray< Edge > destinationEdges = shaderGraph->findEdges(outputPin);
 
 		shaderGraph->removeEdge(sourceEdge);
 		for (const auto destinationEdge : destinationEdges)
@@ -263,10 +261,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 		const OutputPin* outputPin = node->findOutputPin(L"Output");
 		T_ASSERT(outputPin);
 
-		RefSet< Edge > destinationEdges;
-		shaderGraph->findEdges(outputPin, destinationEdges);
-
-		for (const auto destinationEdge : destinationEdges)
+		for (const auto destinationEdge : shaderGraph->findEdges(outputPin))
 		{
 			shaderGraph->removeEdge(destinationEdge);
 			shaderGraph->addEdge(new Edge(
@@ -343,8 +338,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 				return nullptr;
 		}
 
-		RefSet< Edge > destinationEdges;
-		shaderGraph->findEdges(outputPin, destinationEdges);
+		RefArray< Edge > destinationEdges = shaderGraph->findEdges(outputPin);
 
 		shaderGraph->removeEdge(sourceEdge);
 		for (const auto destinationEdge : destinationEdges)
@@ -418,7 +412,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
 	AlignedVector< const OutputPin* > inputOutputPins;
-	RefSet< Edge > edges;
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
@@ -563,9 +556,7 @@ restart_iteration:
 							}
 						}
 
-						edges.reset();
-						shaderGraph->findEdges(outputPin, edges);
-						for (auto edge : edges)
+						for (auto edge : shaderGraph->findEdges(outputPin))
 						{
 							shaderGraph->removeEdge(edge);
 							shaderGraph->addEdge(new Edge(foldOutputPin, edge->getDestination()));

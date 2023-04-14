@@ -114,7 +114,7 @@ public:
 	 * \param outEdges Connected edges.
 	 * \return Number of connected edges.
 	 */
-	uint32_t findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const;
+	RefArray< Edge > findEdges(const OutputPin* outputPin) const;
 
 	/*! Find output pin connected to input pin.
 	 *

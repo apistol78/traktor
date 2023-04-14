@@ -1520,9 +1520,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 	}
 	while (!externalOutputPins.empty())
 	{
-		RefSet< Edge > edges;
-		m_shaderGraph->findEdges(externalOutputPins.back(), edges);
-		for (auto edge : edges)
+		for (auto edge : m_shaderGraph->findEdges(externalOutputPins.back()))
 			m_shaderGraph->removeEdge(edge);
 
 		external->removeOutputPin(externalOutputPins.back());

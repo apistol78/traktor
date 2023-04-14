@@ -194,9 +194,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(edge->getDestination()->getNode()))
 			{
 				const OutputPin* externalOutputPin = findExternalOutputPin(externalNode, outputPort);
-
-				RefSet< Edge > externalDestinationEdges;
-				mutableShaderGraph->findEdges(externalOutputPin, externalDestinationEdges);
+				RefArray< Edge > externalDestinationEdges = mutableShaderGraph->findEdges(externalOutputPin);
 
 				if (externalOutputPin && !externalDestinationEdges.empty())
 				{

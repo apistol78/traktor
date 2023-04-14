@@ -59,8 +59,7 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 	if (!sourceEdge)
 		return nullptr;
 
-	RefSet< Edge > destinationEdges;
-	shaderGraphResult->findEdges(outputPin, destinationEdges);
+	RefArray< Edge > destinationEdges = shaderGraphResult->findEdges(outputPin);
 
 	shaderGraphResult->removeEdge(sourceEdge);
 	for (auto destinationEdge : destinationEdges)

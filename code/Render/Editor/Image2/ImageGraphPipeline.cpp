@@ -331,7 +331,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			}
 			else if (auto outputNode = dynamic_type_cast< const ImgOutput* >(destinationPins.front()->getNode()))
 			{
-				log::info << L"\t\tOutput into backbuffer." << Endl;
+				log::info << L"\t\tOutput into back buffer." << Endl;
 			}
 			else
 			{
