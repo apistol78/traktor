@@ -124,7 +124,6 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
-	RefSet< Edge > edges;
 	uint32_t mergedNodes = 0;
 
 	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
@@ -167,18 +166,18 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 			}
 
 			// Identical nodes found; rewire edges.
-			edges.reset();
-			if (shaderGraph->findEdges(nodes[j]->getOutputPin(0), edges) > 0)
+			RefArray< Edge > edges = shaderGraph->findEdges(nodes[j]->getOutputPin(0));
+			if (!edges.empty())
 			{
-				for (RefSet< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
+				for (auto edge : edges)
 				{
-					Ref< Edge > edge = new Edge(
+					Ref< Edge > rewireEdge = new Edge(
 						nodes[i]->getOutputPin(0),
-						(*k)->getDestination()
+						edge->getDestination()
 					);
 
-					shaderGraph->removeEdge(*k);
-					shaderGraph->addEdge(edge);
+					shaderGraph->removeEdge(edge);
+					shaderGraph->addEdge(rewireEdge);
 				}
 			}
 
@@ -237,16 +236,14 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 				// Identically wired nodes found; rewire output edges.
 				for (int32_t k = 0; k < outputPinCount; ++k)
 				{
-					edges.reset();
-					shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
-					for (RefSet< Edge >::const_iterator m = edges.begin(); m != edges.end(); ++m)
+					for (auto edge : shaderGraph->findEdges(nodes[j]->getOutputPin(k)))
 					{
-						Ref< Edge > edge = new Edge(
+						Ref< Edge > rewireEdge = new Edge(
 							nodes[i]->getOutputPin(k),
-							(*m)->getDestination()
+							edge->getDestination()
 						);
-						shaderGraph->removeEdge(*m);
-						shaderGraph->addEdge(edge);
+						shaderGraph->removeEdge(edge);
+						shaderGraph->addEdge(rewireEdge);
 					}
 				}
 
@@ -350,9 +347,7 @@ void ShaderGraphOptimizer::insertInterpolators(
 				edge = nullptr;
 
 				// If this output pin already connected to an interpolator node then we reuse it.
-				RefSet< Edge > outputEdges;
-				shaderGraph->findEdges(sourceOutputPin, outputEdges);
-				for (auto outputEdge : outputEdges)
+				for (auto outputEdge : shaderGraph->findEdges(sourceOutputPin))
 				{
 					Ref< Node > targetNode = outputEdge->getDestination()->getNode();
 					if (is_a< Interpolator >(targetNode))

@@ -100,15 +100,15 @@ Edge* Graph::findEdge(const InputPin* inputPin) const
 	return it != m_inputPinToEdge.end() ? it->second : nullptr;
 }
 
-uint32_t Graph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
+RefArray< Edge > Graph::findEdges(const OutputPin* outputPin) const
 {
-	outEdges.clear();
+	RefArray< Edge > edges;
 	for (auto edge : m_edges)
 	{
 		if (edge->getSource() == outputPin)
-			outEdges.insert(edge);
+			edges.push_back(edge);
 	}
-	return uint32_t(outEdges.size());
+	return edges;
 }
 
 const OutputPin* Graph::findSourcePin(const InputPin* inputPin) const
@@ -136,8 +136,6 @@ uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 
 void Graph::detach(const Node* node)
 {
-	RefSet< Edge > edges;
-
 	const int32_t inputPinCount = node->getInputPinCount();
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
@@ -149,9 +147,7 @@ void Graph::detach(const Node* node)
 	const int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
-		edges.reset();
-		findEdges(node->getOutputPin(i), edges);
-		for (auto edge : edges)
+		for (auto edge : findEdges(node->getOutputPin(i)))
 			removeEdge(edge);
 	}
 }
@@ -159,8 +155,7 @@ void Graph::detach(const Node* node)
 void Graph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
 {
 	// Find all edges connected to output pin.
-	RefSet< Edge > outputEdges;
-	findEdges(outputPin, outputEdges);
+	RefArray< Edge > outputEdges = findEdges(outputPin);
 
 	// Remove all those edges first.
 	for (auto edge : outputEdges)
