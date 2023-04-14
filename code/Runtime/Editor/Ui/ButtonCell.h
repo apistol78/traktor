@@ -12,12 +12,10 @@
 #include "Ui/IBitmap.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class ButtonCell : public ui::AutoWidgetCell
@@ -25,7 +23,7 @@ class ButtonCell : public ui::AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	ButtonCell(
+	explicit ButtonCell(
 		ui::IBitmap* bitmap,
 		const ui::Command& command
 	);
@@ -45,6 +43,4 @@ private:
 	bool m_down;
 };
 
-	}
 }
-

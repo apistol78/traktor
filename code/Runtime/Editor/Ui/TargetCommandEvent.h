@@ -11,14 +11,12 @@
 #include <string>
 #include "Ui/Event.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetCommandEvent : public ui::Event
@@ -26,7 +24,7 @@ class TargetCommandEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	TargetCommandEvent(ui::EventSubject* sender, TargetInstance* instance, int32_t connectionIndex, const std::wstring& command);
+	explicit TargetCommandEvent(ui::EventSubject* sender, TargetInstance* instance, int32_t connectionIndex, const std::wstring& command);
 
 	TargetInstance* getInstance() const;
 
@@ -40,6 +38,4 @@ private:
 	std::wstring m_command;
 };
 
-	}
 }
-

@@ -10,12 +10,10 @@
 
 #include "Ui/Auto/AutoWidgetCell.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class ProgressCell : public ui::AutoWidgetCell
@@ -36,6 +34,4 @@ private:
 	int32_t m_progress;
 };
 
-	}
 }
-

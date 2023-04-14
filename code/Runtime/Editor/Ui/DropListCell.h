@@ -11,15 +11,13 @@
 #include "Ui/Command.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class HostEnumerator;
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class DropListCell : public ui::AutoWidgetCell
@@ -27,7 +25,7 @@ class DropListCell : public ui::AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance);
+	explicit DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance);
 
 protected:
 	virtual void mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& position)  override final;
@@ -40,6 +38,4 @@ private:
 	ui::Point m_menuPosition;
 };
 
-	}
 }
-

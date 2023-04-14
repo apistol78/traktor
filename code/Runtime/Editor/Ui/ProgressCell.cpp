@@ -10,10 +10,8 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ProgressCell", ProgressCell, ui::AutoWidgetCell)
 
@@ -71,5 +69,4 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	}
 }
 
-	}
 }

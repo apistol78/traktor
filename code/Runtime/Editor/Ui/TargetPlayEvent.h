@@ -10,14 +10,12 @@
 
 #include "Ui/Event.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetPlayEvent : public ui::Event
@@ -25,7 +23,7 @@ class TargetPlayEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	TargetPlayEvent(ui::EventSubject* sender, TargetInstance* instance);
+	explicit TargetPlayEvent(ui::EventSubject* sender, TargetInstance* instance);
 
 	TargetInstance* getInstance() const;
 
@@ -33,6 +31,4 @@ private:
 	Ref< TargetInstance > m_instance;
 };
 
-	}
 }
-

@@ -29,12 +29,10 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Auto/AutoWidget.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_performanceLineHeight = 18;
 const int32_t c_performanceHeight = 3 * c_performanceLineHeight;
@@ -66,7 +64,7 @@ c_markers[] =
 	{ L"Script", Color4ub(255, 80, 128) }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetInstanceListItem", TargetInstanceListItem, ui::AutoWidgetCell)
 
@@ -409,7 +407,7 @@ void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
 	}
 	else if (event->getVirtualKey() == ui::VkReturn)
 	{
-		std::wstring command = edit->getText();
+		const std::wstring command = edit->getText();
 		if (!command.empty())
 		{
 			TargetCommandEvent commandEvent(this, m_instance, connectionIndex, command);
@@ -419,5 +417,4 @@ void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
 	}
 }
 
-	}
 }

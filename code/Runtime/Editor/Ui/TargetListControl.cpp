@@ -10,10 +10,8 @@
 #include "Runtime/Editor/Ui/TargetListControl.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetListControl", TargetListControl, ui::AutoWidget)
 
@@ -72,5 +70,4 @@ void TargetListControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 	requestUpdate();
 }
 
-	}
 }
