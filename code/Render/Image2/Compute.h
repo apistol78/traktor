@@ -23,6 +23,7 @@
 namespace traktor::render
 {
 
+class Buffer;
 class Shader;
 
 /*!
@@ -60,6 +61,9 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	AlignedVector< Source > m_sources;
+
+	// \hack Eye adaption.
+	Ref< render::Buffer > m_bufferCurrentIllumination;
 };
 
 }

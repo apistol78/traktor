@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Math/Random.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
@@ -87,22 +88,27 @@ void Compute::build(
 	pp->setMatrixParameter(s_handleLastView, view.lastView);
 	pp->setMatrixParameter(s_handleLastViewInverse, view.lastView.inverse());
 
+	// \hack Eye adaption.
+	pp->setBufferViewParameter(getParameterHandle(L"CurrentIllumination"), m_bufferCurrentIllumination->getBufferView());
+
 	for (const auto& source : m_sources)
 	{
 		auto texture = context.findTexture(renderGraph, source.textureId);
-		pp->setImageViewParameter(source.parameter, texture);
+		//pp->setImageViewParameter(source.parameter, texture);
+		pp->setTextureParameter(source.parameter, texture);
 	}
 
 	pp->endParameters(renderContext);
 
-	IProgram* program = m_shader->getProgram().program;
+	const Shader::Permutation perm(getParameterHandle(L"Adapt"));
+	IProgram* program = m_shader->getProgram(perm).program;
 	if (!program)
 		return;
 
 	auto rb = renderContext->alloc< ComputeRenderBlock >(T_FILE_LINE_W);
 	rb->program = program;
 	rb->programParams = pp;
-	renderContext->enqueue(rb);
+	renderContext->compute(rb);
 }
 
 }
