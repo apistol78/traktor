@@ -117,15 +117,15 @@ const OutputPin* Graph::findSourcePin(const InputPin* inputPin) const
 	return edge ? edge->getSource() : nullptr;
 }
 
-uint32_t Graph::findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const
+AlignedVector< const InputPin* > Graph::findDestinationPins(const OutputPin* outputPin) const
 {
-	outDestinations.resize(0);
+	AlignedVector< const InputPin* > destinations;
 	for (auto edge : m_edges)
 	{
 		if (edge->getSource() == outputPin)
-			outDestinations.push_back(edge->getDestination());
+			destinations.push_back(edge->getDestination());
 	}
-	return uint32_t(outDestinations.size());
+	return destinations;
 }
 
 uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const

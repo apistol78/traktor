@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Core/RefSet.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -90,8 +89,7 @@ public:
 	/*! Get all nodes of a specific type.
 	 *
 	 * \param nodeType Type of node to find.
-	 * \param outNodes Nodes of given type.
-	 * \return Number of nodes.
+	 * \return Nodes of given type.
 	 */
 	template < typename NodeType >
 	RefArray< NodeType > findNodesOf() const
@@ -111,8 +109,7 @@ public:
 	/*! Find edges connected from output pin.
 	 *
 	 * \param outputPin Output pin.
-	 * \param outEdges Connected edges.
-	 * \return Number of connected edges.
+	 * \return Connected edges.
 	 */
 	RefArray< Edge > findEdges(const OutputPin* outputPin) const;
 
@@ -126,10 +123,9 @@ public:
 	/*! Find all input pins which are connected to output pin.
 	 *
 	 * \param outputPin Output pin.
-	 * \param outDestinations Connected input pins.
-	 * \return Number of connected input pins.
+	 * \return Connected input pins.
 	 */
-	uint32_t findDestinationPins(const OutputPin* outputPin, AlignedVector< const InputPin* >& outDestinations) const;
+	AlignedVector< const InputPin* > findDestinationPins(const OutputPin* outputPin) const;
 
 	/*! Get number of destination pins connected to an output pin.
 	 *

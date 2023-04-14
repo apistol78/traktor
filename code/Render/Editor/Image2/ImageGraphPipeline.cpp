@@ -190,11 +190,7 @@ bool ImageGraphPipeline::buildOutput(
 	{
 		if (auto pass = dynamic_type_cast< const ImgPass* >(nodes[i]))
 		{
-			AlignedVector< const InputPin* > destinationPins;
-			asset->findDestinationPins(
-				pass->getOutputPin(0),
-				destinationPins
-			);
+			AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(pass->getOutputPin(0));
 			if (destinationPins.size() != 1)
 			{
 				log::error << L"Image graph pipeline failed; pass output only be connected to exactly one output node." << Endl;
@@ -313,8 +309,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			const OutputPin* outputPin = pass->getOutputPin(0);
 			T_FATAL_ASSERT(outputPin != nullptr);
 
-			AlignedVector< const InputPin* > destinationPins;
-			asset->findDestinationPins(outputPin, destinationPins);
+			AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(outputPin);
 			if (destinationPins.size() != 1)
 			{
 				log::error << L"Image graph pipeline failed; pass output not connected properly." << Endl;
