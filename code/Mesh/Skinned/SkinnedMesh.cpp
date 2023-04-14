@@ -50,6 +50,25 @@ void SkinnedMesh::build(
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT(it != m_parts.end());
 
+	// Setup the parameters; these are shared for all technique parts.
+	auto programParams = renderContext->alloc< render::ProgramParameters >();
+	programParams->beginParameters(renderContext);
+
+	worldRenderPass.setProgramParameters(
+		programParams,
+		lastWorldTransform,
+		worldTransform
+	);
+
+	if (parameterCallback)
+		parameterCallback->setParameters(programParams);
+
+	programParams->setBufferViewParameter(s_handleLastJoints, lastJointTransforms->getBufferView());
+	programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
+
+	programParams->endParameters(renderContext);
+
+	// Draw each technique part.
 	const auto& meshParts = m_mesh->getParts();
 	for (const auto& part : it->second)
 	{
@@ -62,27 +81,12 @@ void SkinnedMesh::build(
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"SkinnedMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams = programParams;
 		renderBlock->indexBuffer = m_mesh->getIndexBuffer()->getBufferView();
 		renderBlock->indexType = m_mesh->getIndexType();
 		renderBlock->vertexBuffer = m_mesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_mesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
-
-		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(
-			renderBlock->programParams,
-			lastWorldTransform,
-			worldTransform
-		);
-
-		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->programParams);
-
-		renderBlock->programParams->setBufferViewParameter(s_handleLastJoints, lastJointTransforms->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleJoints, jointTransforms->getBufferView());
-
-		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			sp.priority,

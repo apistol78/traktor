@@ -39,6 +39,22 @@ void StaticMesh::build(
 	const IMeshParameterCallback* parameterCallback
 )
 {
+	// Setup the parameters; these are shared for all technique parts.
+	auto programParams = renderContext->alloc< render::ProgramParameters >();
+	programParams->beginParameters(renderContext);
+	
+	worldRenderPass.setProgramParameters(
+		programParams,
+		lastWorldTransform,
+		worldTransform
+	);
+	
+	if (parameterCallback)
+		parameterCallback->setParameters(programParams);
+
+	programParams->endParameters(renderContext);
+
+	// Draw each technique part.
 	const auto& meshParts = m_renderMesh->getParts();
 	for (uint32_t i = techniqueParts.first; i < techniqueParts.second; ++i)
 	{
@@ -53,25 +69,12 @@ void StaticMesh::build(
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"StaticMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams = programParams;
 		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
 		renderBlock->indexType = m_renderMesh->getIndexType();
 		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 		renderBlock->primitives = meshParts[part.meshPart].primitives;
-
-		renderBlock->programParams->beginParameters(renderContext);
-
-		worldRenderPass.setProgramParameters(
-			renderBlock->programParams,
-			lastWorldTransform,
-			worldTransform
-		);
-
-		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->programParams);
-
-		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
 			sp.priority,
