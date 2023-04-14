@@ -8,10 +8,8 @@
  */
 #include "Runtime/Editor/Ui/TargetStopEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetStopEvent", TargetStopEvent, ui::Event)
 
@@ -32,5 +30,4 @@ int32_t TargetStopEvent::getConnectionIndex() const
 	return m_connectionIndex;
 }
 
-	}
 }

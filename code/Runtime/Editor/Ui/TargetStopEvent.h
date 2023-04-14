@@ -10,14 +10,12 @@
 
 #include "Ui/Event.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetStopEvent : public ui::Event
@@ -25,7 +23,7 @@ class TargetStopEvent : public ui::Event
 	T_RTTI_CLASS;
 
 public:
-	TargetStopEvent(ui::EventSubject* sender, TargetInstance* instance, int32_t connectionIndex);
+	explicit TargetStopEvent(ui::EventSubject* sender, TargetInstance* instance, int32_t connectionIndex);
 
 	TargetInstance* getInstance() const;
 
@@ -36,6 +34,4 @@ private:
 	int32_t m_connectionIndex;
 };
 
-	}
 }
-

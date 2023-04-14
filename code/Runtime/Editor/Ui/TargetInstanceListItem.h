@@ -12,18 +12,16 @@
 #include "Runtime/Editor/TargetInstance.h"
 #include "Ui/Auto/ChildWidgetCell.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class ButtonClickEvent;
 class IBitmap;
 
-	}
+}
 
-	namespace runtime
-	{
+namespace traktor::runtime
+{
 
 class ButtonCell;
 class DropListCell;
@@ -77,6 +75,4 @@ private:
 	void eventCommandEditKeyDown(ui::KeyDownEvent* event);
 };
 
-	}
 }
-

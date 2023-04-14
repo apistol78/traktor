@@ -10,10 +10,8 @@
 #include "Ui/Application.h"
 #include "Ui/Auto/AutoWidget.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ButtonCell", ButtonCell, ui::AutoWidgetCell)
 
@@ -72,5 +70,4 @@ void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	);
 }
 
-	}
 }

@@ -10,14 +10,12 @@
 
 #include "Ui/Event.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetInstance;
 
-/*! \brief
+/*!
  * \ingroup Runtime
  */
 class TargetBuildEvent : public ui::Event
@@ -33,6 +31,4 @@ private:
 	Ref< TargetInstance > m_instance;
 };
 
-	}
 }
-

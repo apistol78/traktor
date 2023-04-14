@@ -11,10 +11,8 @@
 #include "Core/RefArray.h"
 #include "Ui/Auto/AutoWidget.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class TargetInstanceListItem;
 
@@ -40,6 +38,4 @@ private:
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 };
 
-	}
 }
-

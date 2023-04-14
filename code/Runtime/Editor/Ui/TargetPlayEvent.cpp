@@ -8,10 +8,8 @@
  */
 #include "Runtime/Editor/Ui/TargetPlayEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPlayEvent", TargetPlayEvent, ui::Event)
 
@@ -26,5 +24,4 @@ TargetInstance* TargetPlayEvent::getInstance() const
 	return m_instance;
 }
 
-	}
 }

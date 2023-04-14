@@ -8,10 +8,8 @@
  */
 #include "Runtime/Editor/Ui/TargetCommandEvent.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetCommandEvent", TargetCommandEvent, ui::Event)
 
@@ -38,5 +36,4 @@ const std::wstring& TargetCommandEvent::getCommand() const
 	return m_command;
 }
 
-	}
 }
