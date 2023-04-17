@@ -22,12 +22,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePassStepData", ImagePassStepData, I
 void ImagePassStepData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"sources", m_sources);
+	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"textureSources", m_textureSources);
+	s >> MemberAlignedVector< Source, MemberComposite< Source > >(L"structBufferSources", m_structBufferSources);
 }
 
 void ImagePassStepData::Source::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"textureId", textureId);
+	s >> Member< std::wstring >(L"id", id);
 	s >> Member< std::wstring >(L"parameter", parameter);
 }
 

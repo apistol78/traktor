@@ -33,6 +33,7 @@ namespace traktor::render
 class ImageGraph;
 class ImagePassData;
 class ImagePassStepData;
+class ImageStructBufferData;
 class ImageTargetSetData;
 class ImageTextureData;
 class IRenderSystem;
@@ -53,6 +54,7 @@ private:
     friend class ImageGraphPipeline;
 
     std::wstring m_name;
+    RefArray< ImageStructBufferData > m_structBuffers;
     RefArray< ImageTextureData > m_textures;
     RefArray< ImageTargetSetData > m_targetSets;
     RefArray< ImagePassData > m_passes;

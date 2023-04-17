@@ -324,6 +324,43 @@
 			</steps>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{0A105C00-4A7B-CB44-8C7B-AD779023A80F}</id>
+			<comment/>
+			<position>
+				<first>1156</first>
+				<second>674</second>
+			</position>
+			<name>Adaptation</name>
+			<clear>
+				<mask>
+					<Color>false</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepCompute">
+					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
+					<parameters>
+						<item>SourceTexture</item>
+						<item>CurrentIllum</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{E2399978-316D-D549-A53F-EF4008F86D01}</id>
 			<comment/>
 			<position>
@@ -355,71 +392,21 @@
 					<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
 					<parameters>
 						<item>ColorTexture</item>
-						<item>CurrentIllumTexture</item>
+						<item>CurrentIllum</item>
 					</parameters>
 				</item>
 			</steps>
 		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{0CE40D02-5155-3845-8A1B-F22F15E3EDE7}</id>
+		<item type="traktor.render.ImgStructBuffer" version="traktor.render.Node:1">
+			<id>{91C6205C-12DB-5449-93BE-19AF3AA7EC00}</id>
 			<comment/>
 			<position>
-				<first>1201</first>
-				<second>802</second>
+				<first>1194</first>
+				<second>845</second>
 			</position>
-			<targetSetId>Adapt</targetSetId>
-			<persistent>false</persistent>
-			<width>1</width>
-			<height>1</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>true</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{0A105C00-4A7B-CB44-8C7B-AD779023A80F}</id>
-			<comment/>
-			<position>
-				<first>1163</first>
-				<second>674</second>
-			</position>
-			<name>Adaptation</name>
-			<clear>
-				<mask>
-					<Color>false</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepCompute">
-					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-					</parameters>
-				</item>
-			</steps>
+			<persistent>true</persistent>
+			<elementCount>1</elementCount>
+			<elementSize>4</elementSize>
 		</item>
 	</nodes>
 	<edges>
@@ -525,27 +512,7 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
@@ -555,22 +522,52 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
+				<id>{96622082-61C1-4849-95C6-44E30EACB145}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[14]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 	</edges>

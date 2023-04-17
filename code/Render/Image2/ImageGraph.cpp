@@ -15,6 +15,7 @@
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassStep.h"
+#include "Render/Image2/ImageStructBuffer.h"
 #include "Render/Image2/ImageTargetSet.h"
 #include "Render/Image2/ImageTexture.h"
 
@@ -36,11 +37,23 @@ void ImageGraph::addPasses(
 	const ImageGraphView& view
 ) const
 {
+	ImagePass::targetSetVector_t structBufferIds;
 	ImagePass::targetSetVector_t targetSetIds;
 
 	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
+
+	structBufferIds.resize(m_structBuffers.size());
+	for (int32_t i = 0; i < (int32_t)m_structBuffers.size(); ++i)
+	{
+		structBufferIds[i] = renderGraph.addPersistentBuffer(
+			m_structBuffers[i]->getName().c_str(),
+			m_structBuffers[i]->getPersistentHandle(),
+			m_structBuffers[i]->getElementCount(),
+			m_structBuffers[i]->getElementSize()
+		);
+	}
 
 	for (int32_t i = 0; i < (int32_t)m_textures.size(); ++i)
 	{
@@ -50,6 +63,7 @@ void ImageGraph::addPasses(
 		);
 	}
 
+	targetSetIds.resize(m_targetSets.size());
 	for (int32_t i = 0; i < (int32_t)m_targetSets.size(); ++i)
 	{
 		if (m_targetSets[i]->getPersistentHandle() != 0)

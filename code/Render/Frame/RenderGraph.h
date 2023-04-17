@@ -68,7 +68,10 @@ public:
 	struct BufferResource
 	{
 		const wchar_t* name = nullptr;
+		handle_t persistentHandle = 0;
 		Ref< Buffer > buffer;
+		uint32_t elementCount;
+		uint32_t elementSize;
 	};
 
 	/*! */
@@ -138,6 +141,10 @@ public:
 	 * \return Opaque resource handle.
 	 */
 	handle_t addBuffer(const wchar_t* const name, Buffer* buffer);
+
+	/*!
+	 */
+	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize);
 
 	/*! Find target ID by name.
 	 *

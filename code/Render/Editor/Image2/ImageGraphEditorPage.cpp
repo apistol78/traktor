@@ -25,6 +25,7 @@
 #include "Render/Editor/Image2/ImgInput.h"
 #include "Render/Editor/Image2/ImgOutput.h"
 #include "Render/Editor/Image2/ImgPass.h"
+#include "Render/Editor/Image2/ImgStructBuffer.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
 #include "Ui/Application.h"
@@ -108,6 +109,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddPass"), i18n::Text(L"IMAGEGRAPH_CREATE_PASS")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTargetSet"), i18n::Text(L"IMAGEGRAPH_CREATE_TARGETSET")));
 	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddTexture"), i18n::Text(L"IMAGEGRAPH_CREATE_TEXTURE")));
+	menuItemCreate->add(new ui::MenuItem(ui::Command(L"ImageGraph.Editor.AddStructBuffer"), i18n::Text(L"IMAGEGRAPH_CREATE_STRUCT_BUFFER")));
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"IMAGEGRAPH_DELETE")));
 
@@ -372,6 +374,16 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		// Create node in graph control.
 		createEditorNode(texture);
 	}
+	else if (command == L"ImageGraph.Editor.AddStructBuffer")
+	{
+		// Create image graph struct buffer reference.
+		Ref< ImgStructBuffer > sbuffer = new ImgStructBuffer();
+		sbuffer->setId(Guid::create());
+		m_imageGraph->addNode(sbuffer);
+
+		// Create node in graph control.
+		createEditorNode(sbuffer);
+	}
 	else
 		return false;
 
@@ -434,6 +446,15 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 			textureInstance ? textureInstance->getName() : Guid(texture->getTexture()).format(),
 			position,
 			new ui::InputNodeShape()
+		);
+	}
+	else if (auto sbuffer = dynamic_type_cast< ImgStructBuffer* >(node))
+	{
+		editorNode = m_editorGraph->createNode(
+			L"Struct buffer",
+			L"",
+			position,
+			new ui::DefaultNodeShape(ui::DefaultNodeShape::StExternal)
 		);
 	}
 	else
@@ -603,8 +624,8 @@ void ImageGraphEditorPage::eventEdgeConnect(ui::EdgeConnectEvent* event)
 	T_ASSERT(destinationNode);
 
 	// Ensure compatible types of nodes are connected.
-	const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
-	const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
+	const bool sourceTarget = is_a< ImgInput >(sourceNode) || is_a< ImgOutput >(sourceNode) || is_a< ImgStructBuffer >(sourceNode) || is_a< ImgTargetSet >(sourceNode) || is_a< ImgTexture >(sourceNode);
+	const bool destinationTarget = is_a< ImgInput >(destinationNode) || is_a< ImgOutput >(destinationNode) || is_a< ImgStructBuffer >(destinationNode) || is_a< ImgTargetSet >(destinationNode);
 	if (sourceTarget == destinationTarget)
 	{
 		log::warning << L"Only \"pass to target\" or \"target to pass\" can be connected." << Endl;

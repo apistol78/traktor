@@ -41,26 +41,27 @@ class Shader;
  */
 class T_DLLCLASS ImagePassStepData : public ISerializable
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
+	virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
 
-    virtual void serialize(ISerializer& s) override;
+	virtual void serialize(ISerializer& s) override;
 
 protected:
 	friend class ImageGraphPipeline;
 
 	struct Source
 	{
-		std::wstring textureId;
+		std::wstring id;
 		std::wstring parameter;
 
 		void serialize(ISerializer& s);
 	};
 
 	resource::Id< Shader > m_shader;
-	AlignedVector< Source > m_sources;    
+	AlignedVector< Source > m_textureSources;
+	AlignedVector< Source > m_structBufferSources;
 };
 
 }
