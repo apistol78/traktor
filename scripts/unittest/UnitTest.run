@@ -9,11 +9,11 @@
 import(traktor)
 
 local function escape(s)
-	s = gsub(s, "&", "&amp;")
-	s = gsub(s, "<", "&lt;")
-	s = gsub(s, ">", "&gt;")
-	s = gsub(s, "'", "&apos;")
-	s = gsub(s, '"', "&quot;")
+	-- s = gsub(s, "&", "&amp;")
+	-- s = gsub(s, "<", "&lt;")
+	-- s = gsub(s, ">", "&gt;")
+	-- s = gsub(s, "'", "&apos;")
+	-- s = gsub(s, '"', "&quot;")
 	return s
 end
 
