@@ -72,7 +72,6 @@ render::handle_t VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::ImageGraphContext* imageGraphContext,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
@@ -102,13 +101,14 @@ render::handle_t VelocityPass::setup(
 		view.projection = worldRenderView.getProjection();
 		view.deltaTime = worldRenderView.getDeltaTime();
 
-		imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+		render::ImageGraphContext igctx;
+		igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 
 		m_velocityPrime->addPasses(
 			m_screenRenderer,
 			renderGraph,
 			rp,
-			*imageGraphContext,
+			igctx,
 			view
 		);
 	}

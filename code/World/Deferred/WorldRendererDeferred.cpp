@@ -86,10 +86,6 @@ bool WorldRendererDeferred::create(
 	if (!m_lightSBuffer)
 		return false;
 
-	// Pack fog parameters.
-	m_fogDistanceAndDensity = Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f);
-	m_fogColor = m_settings.fogColor;
-
 	// Create light, reflection and fog shaders.
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
 		return false;
@@ -268,8 +264,8 @@ void WorldRendererDeferred::setup(
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 
 	auto shadowMapCascadeTargetSetId = (int32_t)0;
 	// setupCascadeShadowMapPass(
@@ -301,7 +297,7 @@ void WorldRendererDeferred::setup(
 		lightCascadeIndex
 	);
 
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	setupVisualPass(
 		worldRenderView,
@@ -315,7 +311,7 @@ void WorldRendererDeferred::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	m_count++;
 }
@@ -766,8 +762,8 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setFloatParameter(s_handleLightCount, (float)lightCount);
 			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, m_fogDistanceAndDensity);
-			sharedParams->setVectorParameter(s_handleFogColor, m_fogColor);
+			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f));
+			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
 			sharedParams->setMatrixParameter(s_handleView, view);
 			sharedParams->setMatrixParameter(s_handleViewInverse, view.inverse());
 			sharedParams->setMatrixParameter(s_handleProjection, projection);
@@ -817,7 +813,7 @@ void WorldRendererDeferred::setupVisualPass(
 			m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 
 			// Module with fog.
-			if (dot4(m_fogDistanceAndDensity, Vector4(0.0f, 0.0f, 1.0f, 1.0f)) > FUZZY_EPSILON)
+			if (m_settings.fogDensity > FUZZY_EPSILON)
 				m_screenRenderer->draw(renderContext, m_fogShader, sharedParams);
 
 			// Forward visuals; not included in GBuffer.

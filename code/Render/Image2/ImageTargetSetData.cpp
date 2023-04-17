@@ -134,11 +134,10 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 
 void ImageTargetSetData::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT(s.getVersion() >= 2);
+
 	s >> Member< std::wstring >(L"targetSetId", m_targetSetId);
-
-	if (s.getVersion() >= 2)
-		s >> Member< std::wstring >(L"persistentHandle", m_persistentHandle);
-
+	s >> Member< std::wstring >(L"persistentHandle", m_persistentHandle);
 	s >> MemberStaticArray< std::wstring, RenderGraphTargetSetDesc::MaxColorTargets >(L"textureIds", m_textureIds);
 	s >> MemberRenderGraphTargetSetDesc(L"targetSetDesc", m_targetSetDesc);
 }

@@ -39,9 +39,9 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AmbientOcclusion", AmbientOcclusion, ImagePassOp)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AmbientOcclusion", AmbientOcclusion, ImagePassStep)
 
-void AmbientOcclusion::setup(
+void AmbientOcclusion::addRenderPassInputs(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	RenderPass& pass

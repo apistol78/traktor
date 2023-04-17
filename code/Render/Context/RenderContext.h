@@ -63,9 +63,7 @@ public:
 	ObjectType* alloc(const std::wstring& name)
 	{
 		ObjectType* object = alloc< ObjectType >();
-#if defined(_DEBUG)
 		object->name = name;
-#endif
 		return object;
 	}
 

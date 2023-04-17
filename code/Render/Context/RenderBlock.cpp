@@ -10,13 +10,13 @@
 #include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
 
-#if defined(_DEBUG)
-#	define T_CONTEXT_PUSH_MARKER(renderView, name) // T_RENDER_PUSH_MARKER(renderView, name)
-#	define T_CONTEXT_POP_MARKER(renderView) // T_RENDER_POP_MARKER(renderView)
-#else
-#	define T_CONTEXT_PUSH_MARKER(renderView, name)
-#	define T_CONTEXT_POP_MARKER(renderView)
-#endif
+//#if defined(_DEBUG)
+#	define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
+#	define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
+//#else
+//#	define T_CONTEXT_PUSH_MARKER(renderView, name)
+//#	define T_CONTEXT_POP_MARKER(renderView)
+//#endif
 
 namespace traktor::render
 {
@@ -186,14 +186,10 @@ void BeginPassRenderBlock::render(IRenderView* renderView) const
 	}
 	else
 		renderView->beginPass(&clear, load, store);
-
-	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void EndPassRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
-
 	renderView->endPass();
 
 	T_CONTEXT_POP_MARKER(renderView);

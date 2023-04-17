@@ -40,7 +40,7 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
-		const std::wstring renderDocDLL = Path(L"$(RENDERDOC_SDK)/renderdoc.dll").getPathNameOS();
+		const std::wstring renderDocDLL = Path(L"renderdoc.dll").getPathNameOS();
 
 		m_libRenderDoc = new Library();
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))

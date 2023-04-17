@@ -307,7 +307,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIWorldRenderer->addConstant("Medium", Any::fromInt32((int32_t)Quality::Medium));
 	classIWorldRenderer->addConstant("High", Any::fromInt32((int32_t)Quality::High));
 	classIWorldRenderer->addConstant("Ultra", Any::fromInt32((int32_t)Quality::Ultra));
-	classIWorldRenderer->addProperty("imageGraphContext", &IWorldRenderer::getImageGraphContext);
 	registrar->registerClass(classIWorldRenderer);
 }
 

@@ -609,7 +609,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_primitiveRenderer->end(0);
 
-		auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+		auto rb = renderContext->alloc< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [&](render::IRenderView* renderView) {
 			m_primitiveRenderer->render(m_renderView, 0);
 		};

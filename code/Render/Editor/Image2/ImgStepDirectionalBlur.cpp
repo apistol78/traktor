@@ -27,11 +27,6 @@ ImgStepDirectionalBlur::ImgStepDirectionalBlur()
 {
 }
 
-std::wstring ImgStepDirectionalBlur::getTitle() const
-{
-    return L"Directional Blur";
-}
-
 void ImgStepDirectionalBlur::getInputs(std::set< std::wstring >& outInputs) const
 {
     for (const auto& parameter : m_parameters)

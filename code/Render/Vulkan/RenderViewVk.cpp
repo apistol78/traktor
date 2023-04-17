@@ -15,6 +15,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Vulkan/BufferViewVk.h"
 #include "Render/Vulkan/ProgramVk.h"
@@ -531,6 +532,7 @@ bool RenderViewVk::beginFrame()
 		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
+	frame.markers.clear();
 
 	// Reset command buffers.
 	// \hack Lazy create since we don't know about rendering thread until beginFrame
@@ -1233,16 +1235,17 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 #endif
 }
 
-void RenderViewVk::pushMarker(const char* const marker)
+void RenderViewVk::pushMarker(const std::wstring& marker)
 {
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
+		frame.markers.push_back(wstombs(marker));
 
 		VkDebugUtilsLabelEXT dul = {};
 		dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		dul.pLabelName = marker;
+		dul.pLabelName = frame.markers.back().c_str();
 		vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
 	}
 #endif

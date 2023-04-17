@@ -16,9 +16,6 @@
 namespace traktor::render
 {
 
-class Buffer;
-class ImageGraph;
-class ImageGraphContext;
 class IRenderTargetSet;
 class ITexture;
 class ScreenRenderer;
@@ -54,8 +51,6 @@ public:
 
 	virtual void destroy() override;
 
-    virtual render::ImageGraphContext* getImageGraphContext() const override final;
-
 protected:
 	WorldRenderSettings m_settings;
 
@@ -71,8 +66,6 @@ protected:
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
-
-    Ref< render::ImageGraphContext > m_imageGraphContext;
 
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::ScreenRenderer > m_screenRenderer;

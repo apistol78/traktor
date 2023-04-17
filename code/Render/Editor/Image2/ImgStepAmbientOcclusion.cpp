@@ -19,11 +19,6 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepAmbientOcclusion", 0, ImgStepAmbientOcclusion, IImgStep)
 
-std::wstring ImgStepAmbientOcclusion::getTitle() const
-{
-    return L"Ambient Occlusion";
-}
-
 void ImgStepAmbientOcclusion::getInputs(std::set< std::wstring >& outInputs) const
 {
     for (const auto& parameter : m_parameters)

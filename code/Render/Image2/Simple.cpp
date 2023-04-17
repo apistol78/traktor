@@ -37,9 +37,9 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Simple", Simple, ImagePassOp)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Simple", Simple, ImagePassStep)
 
-void Simple::setup(
+void Simple::addRenderPassInputs(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	RenderPass& pass

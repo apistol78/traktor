@@ -199,7 +199,7 @@ public:
 	//@{
 
 	/*! Write push debug marker to command buffer. */
-	virtual void pushMarker(const char* const marker) = 0;
+	virtual void pushMarker(const std::wstring& marker) = 0;
 
 	/*! Write pop debug marker to command buffer. */
 	virtual void popMarker() = 0;

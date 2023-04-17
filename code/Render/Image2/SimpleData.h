@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Render/Image2/ImagePassOpData.h"
+#include "Render/Image2/ImagePassStepData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,12 +24,12 @@ namespace traktor::render
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS SimpleData : public ImagePassOpData
+class T_DLLCLASS SimpleData : public ImagePassStepData
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< const ImagePassOp > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
+	virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
 };
 
 }

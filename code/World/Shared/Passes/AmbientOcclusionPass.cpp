@@ -91,7 +91,6 @@ render::handle_t AmbientOcclusionPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::ImageGraphContext* imageGraphContext,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
@@ -118,15 +117,16 @@ render::handle_t AmbientOcclusionPass::setup(
 	view.view = worldRenderView.getView();
 	view.projection = worldRenderView.getProjection();
 
-	imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	render::ImageGraphContext igctx;
+	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	m_ambientOcclusion->addPasses(
 		m_screenRenderer,
 		renderGraph,
 		rp,
-		*imageGraphContext,
+		igctx,
 		view
 	);
 

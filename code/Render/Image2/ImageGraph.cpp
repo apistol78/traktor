@@ -11,10 +11,10 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-#include "Render/Image2/IImageStep.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
-#include "Render/Image2/ImagePassOp.h"
+#include "Render/Image2/ImagePass.h"
+#include "Render/Image2/ImagePassStep.h"
 #include "Render/Image2/ImageTargetSet.h"
 #include "Render/Image2/ImageTexture.h"
 
@@ -36,7 +36,7 @@ void ImageGraph::addPasses(
 	const ImageGraphView& view
 ) const
 {
-	IImageStep::targetSetVector_t targetSetIds;
+	ImagePass::targetSetVector_t targetSetIds;
 
 	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
@@ -80,15 +80,15 @@ void ImageGraph::addPasses(
 	}
 
 	// Add all steps to render graph.
-	for (auto step : m_steps)
-		step->addPasses(this, context, view, targetSetIds, screenRenderer, renderGraph);
+	for (auto imagePass : m_passes)
+		imagePass->addRenderGraphPasses(this, context, view, targetSetIds, screenRenderer, renderGraph);
 
-	// Override pass's name with our root node's name.
+	// Override pass name with our root node's name.
 	pass->setName(m_name);
 
-	// Add build steps to pass.
-	for (auto op : m_ops)
-		op->setup(this, context, *pass);
+	// Add render pass inputs from each step.
+	for (auto step : m_steps)
+		step->addRenderPassInputs(this, context, *pass);
 
 	pass->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)
@@ -101,8 +101,8 @@ void ImageGraph::addPasses(
 				sharedParams->setVectorParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 
-			for (auto op : m_ops)
-				op->build(
+			for (auto step : m_steps)
+				step->build(
 					this,
 					context,
 					view,

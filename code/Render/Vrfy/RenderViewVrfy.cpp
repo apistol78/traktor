@@ -405,11 +405,9 @@ bool RenderViewVrfy::getTimeQuery(int32_t query, bool wait, double& outStart, do
 	return m_renderView->getTimeQuery(query, wait, outStart, outEnd);
 }
 
-void RenderViewVrfy::pushMarker(const char* const marker)
+void RenderViewVrfy::pushMarker(const std::wstring& marker)
 {
 	T_CAPTURE_TRACE(L"pushMarker");
-	T_CAPTURE_ASSERT(marker != nullptr, L"Invalid marker.");
-
 	m_renderView->pushMarker(marker);
 }
 

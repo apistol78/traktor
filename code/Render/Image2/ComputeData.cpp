@@ -15,9 +15,9 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeData", 0, ComputeData, ImagePassOpData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeData", 0, ComputeData, ImagePassStepData)
 
-Ref< const ImagePassOp > ComputeData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const ImagePassStep > ComputeData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
 	Ref< Compute > instance = new Compute();
 

@@ -174,7 +174,6 @@ void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::ImageGraphContext* imageGraphContext,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t velocityTargetSetId,
@@ -199,23 +198,24 @@ void PostProcessPass::setup(
 	const Vector4& axisZ = view.view.axisZ();
 	const float fxRotate = axisX.z() + axisZ.y();
 
-	imageGraphContext->associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	imageGraphContext->associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
-	imageGraphContext->associateTexture(s_handleInputColorGrading, m_colorGrading);
+	render::ImageGraphContext igctx;
+	igctx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
 
 	// Expose gamma and exposure.
-	imageGraphContext->setFloatParameter(s_handleGamma, m_gamma);
-	imageGraphContext->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	imageGraphContext->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-	imageGraphContext->setFloatParameter(s_handleFxRotate, fxRotate);
+	igctx.setFloatParameter(s_handleGamma, m_gamma);
+	igctx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+	igctx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+	igctx.setFloatParameter(s_handleFxRotate, fxRotate);
 
 	// Expose jitter; in texture space.
 	const Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
-	imageGraphContext->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
+	igctx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_motionBlur)
@@ -262,12 +262,12 @@ void PostProcessPass::setup(
 			m_screenRenderer,
 			renderGraph,
 			rp,
-			*imageGraphContext,
+			igctx,
 			view
 		);
 
 		if (next)
-			imageGraphContext->associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
+			igctx.associateTextureTargetSet(s_handleInputColor, intermediateTargetSetId, 0);
 
 		renderGraph.addPass(rp);
 	}
