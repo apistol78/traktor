@@ -87,7 +87,6 @@
 			<![CDATA[
 const float last = $Buffer[0].value.x;
 $Buffer[0].value.x = $Current * 0.01f + last * 0.99f;
-
 			]]>
 			</script>
 		</item>
@@ -163,8 +162,8 @@ $Buffer[0].value.x = $Current * 0.01f + last * 0.99f;
 			<id>{994E2B1A-BC15-5143-BCE5-A6B25E4C86EC}</id>
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>-192</second>
+				<first>-196</first>
+				<second>-4</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>

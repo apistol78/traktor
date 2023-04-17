@@ -26,6 +26,7 @@ namespace traktor::render
 class ImageGraphContext;
 class ImagePass;
 class ImagePassStep;
+class ImageStructBuffer;
 class ImageTargetSet;
 class ImageTexture;
 class RenderGraph;
@@ -56,6 +57,7 @@ private:
     friend class ImageGraphData;
 
     std::wstring m_name;
+    RefArray< const ImageStructBuffer > m_structBuffers;
     RefArray< const ImageTexture > m_textures;
     RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;

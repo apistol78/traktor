@@ -22,6 +22,7 @@
 #include "Render/Editor/Image2/ImgStepDirectionalBlur.h"
 #include "Render/Editor/Image2/ImgStepShadowProject.h"
 #include "Render/Editor/Image2/ImgStepSimple.h"
+#include "Render/Editor/Image2/ImgStructBuffer.h"
 #include "Render/Editor/Image2/ImgTargetSet.h"
 #include "Render/Editor/Image2/ImgTexture.h"
 #include "Render/Image2/AmbientOcclusionData.h"
@@ -29,6 +30,7 @@
 #include "Render/Image2/DirectionalBlurData.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImagePassData.h"
+#include "Render/Image2/ImageStructBufferData.h"
 #include "Render/Image2/ImageTargetSetData.h"
 #include "Render/Image2/ImageTextureData.h"
 #include "Render/Image2/ShadowProjectData.h"
@@ -37,7 +39,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 6, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 9, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -158,7 +160,19 @@ bool ImageGraphPipeline::buildOutput(
 	// Convert all textures and target sets.
 	for (size_t i = 1; i < nodes.size(); ++i)
 	{
-		if (auto textureNode = dynamic_type_cast< const ImgTexture* >(nodes[i]))
+		if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(nodes[i]))
+		{
+			Ref< ImageStructBufferData > sbd = new ImageStructBufferData();
+
+			if (sbufferNode->getPersistent())
+				sbd->m_persistentHandle = Guid::create().format();
+
+			sbd->m_elementCount = sbufferNode->m_elementCount;
+			sbd->m_elementSize = sbufferNode->m_elementSize;
+
+			data->m_structBuffers.push_back(sbd);
+		}
+		else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(nodes[i]))
 		{
 			Ref< ImageTextureData > td = new ImageTextureData();
 
@@ -353,29 +367,40 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 			if (auto inputNode = dynamic_type_cast< const ImgInput* >(sourcePin->getNode()))
 			{
 				// Reading texture from input texture.
-				auto& sourceData = opData->m_sources.push_back();
-				sourceData.textureId = inputNode->getTextureId();
+				auto& sourceData = opData->m_textureSources.push_back();
+				sourceData.id = inputNode->getTextureId();
 				sourceData.parameter = input;
-				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = input \"" << sourceData.textureId << L"\"." << Endl;
+				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = input \"" << sourceData.id << L"\"." << Endl;
+			}
+			else if (auto structBufferNode = dynamic_type_cast< const ImgStructBuffer* >(sourcePin->getNode()))
+			{
+				// Reading struct buffer.
+				auto& sourceData = opData->m_structBufferSources.push_back();
+				sourceData.id = structBufferNode->getId().format();
+				sourceData.parameter = input;
+				if (!structBufferNode->getPersistent())
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient sbuffer \"" << sourceData.id << L"\"." << Endl;
+				else
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent sbuffer \"" << sourceData.id << L"\"." << Endl;
 			}
 			else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
 			{
 				// Reading texture from transient target set.
-				auto& sourceData = opData->m_sources.push_back();
-				sourceData.textureId = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
+				auto& sourceData = opData->m_textureSources.push_back();
+				sourceData.id = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
 				sourceData.parameter = input;
 				if (!targetSetNode->getPersistent())
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient target \"" << sourceData.textureId << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient target \"" << sourceData.id << L"\"." << Endl;
 				else
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent target \"" << sourceData.textureId << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent target \"" << sourceData.id << L"\"." << Endl;
 			}
 			else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
 			{
 				// Reading texture resource.
-				auto& sourceData = opData->m_sources.push_back();
-				sourceData.textureId = textureNode->getId().format();
+				auto& sourceData = opData->m_textureSources.push_back();
+				sourceData.id = textureNode->getId().format();
 				sourceData.parameter = input;
-				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = texture resource \"" << sourceData.textureId << L"\"." << Endl;
+				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = texture resource \"" << sourceData.id << L"\"." << Endl;
 			}
 			else
 			{

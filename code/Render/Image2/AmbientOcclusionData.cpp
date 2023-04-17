@@ -30,10 +30,10 @@ Ref< const ImagePassStep > AmbientOcclusionData::createInstance(resource::IResou
 		return nullptr;
 
 	// Get handles of sources.
-	for (const auto& source : m_sources)
+	for (const auto& source : m_textureSources)
 	{
 		instance->m_sources.push_back({
-			getParameterHandle(source.textureId),
+			getParameterHandle(source.id),
 			getParameterHandle(source.parameter)
 		});
 	}
