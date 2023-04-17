@@ -237,7 +237,7 @@ void ClothComponent::build(
 	render::RenderContext* renderContext = context.getRenderContext();
 	T_ASSERT(renderContext);
 
-	auto renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+	auto renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Cloth");
 	renderBlock->distance = 0.0f;
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

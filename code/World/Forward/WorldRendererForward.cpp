@@ -178,9 +178,9 @@ void WorldRendererForward::setup(
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -202,7 +202,7 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_imageGraphContext, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	m_count++;
 }

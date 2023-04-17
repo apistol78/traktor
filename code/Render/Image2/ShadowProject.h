@@ -10,7 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Image2/ImagePassOp.h"
+#include "Render/Image2/ImagePassStep.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -30,12 +30,12 @@ class Shader;
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ShadowProject : public ImagePassOp
+class T_DLLCLASS ShadowProject : public ImagePassStep
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void setup(
+	virtual void addRenderPassInputs(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
 		RenderPass& pass

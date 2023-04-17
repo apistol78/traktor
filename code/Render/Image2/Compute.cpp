@@ -38,9 +38,9 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Compute", Compute, ImagePassOp)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Compute", Compute, ImagePassStep)
 
-void Compute::setup(
+void Compute::addRenderPassInputs(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	RenderPass& pass
@@ -105,7 +105,7 @@ void Compute::build(
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< ComputeRenderBlock >(T_FILE_LINE_W);
+	auto rb = renderContext->alloc< ComputeRenderBlock >(L"Image - compute");
 	rb->program = program;
 	rb->programParams = pp;
 	renderContext->compute(rb);

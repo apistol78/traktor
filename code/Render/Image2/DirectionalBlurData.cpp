@@ -25,7 +25,7 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImagePassOpData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImagePassStepData)
 
 DirectionalBlurData::DirectionalBlurData()
 :   m_blurType(BtGaussian)
@@ -34,7 +34,7 @@ DirectionalBlurData::DirectionalBlurData()
 {
 }
 
-Ref< const ImagePassOp > DirectionalBlurData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
+Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* /*renderSystem*/) const
 {
 	Ref< DirectionalBlur > instance = new DirectionalBlur();
 
@@ -183,7 +183,7 @@ void DirectionalBlurData::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	ImagePassOpData::serialize(s);
+	ImagePassStepData::serialize(s);
 
 	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
 	s >> Member< Vector2 >(L"direction", m_direction);

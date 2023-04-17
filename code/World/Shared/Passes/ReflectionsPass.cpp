@@ -70,7 +70,6 @@ render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::ImageGraphContext* imageGraphContext,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t visualReadTargetSetId,
@@ -170,7 +169,7 @@ render::handle_t ReflectionsPass::setup(
 	// 	}
 	// );
 
-	 // Render screenspace reflections.
+	 // Render screen space reflections.
 	render::ImageGraphView view;
 	view.viewFrustum = worldRenderView.getViewFrustum();
 	view.view = worldRenderView.getView();
@@ -178,16 +177,17 @@ render::handle_t ReflectionsPass::setup(
 	view.projection = worldRenderView.getProjection();
 	view.deltaTime = worldRenderView.getDeltaTime();
 
-	imageGraphContext->associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	imageGraphContext->associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	imageGraphContext->associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
+	render::ImageGraphContext igctx;
+	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	igctx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
 
 	m_screenReflections->addPasses(
 		m_screenRenderer,
 		renderGraph,
 		rp,
-		*imageGraphContext,
+		igctx,
 		view
 	);
 

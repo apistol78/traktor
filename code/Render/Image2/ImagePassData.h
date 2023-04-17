@@ -10,8 +10,8 @@
 
 #include <string>
 #include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Render/Types.h"
-#include "Render/Image2/IImageStepData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,20 +21,29 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::render
 {
 
-class ImagePassOpData;
+class ImagePass;
+class ImagePassStepData;
+class IRenderSystem;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImagePassData : public IImageStepData
+class T_DLLCLASS ImagePassData : public ISerializable
 {
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< const IImageStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
+    Ref< const ImagePass > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const;
 
     virtual void serialize(ISerializer& s) override final;
 
@@ -44,7 +53,7 @@ private:
     std::wstring m_name;
     int32_t m_outputTargetSet;
     Clear m_clear;
-    RefArray< ImagePassOpData > m_ops;
+    RefArray< ImagePassStepData > m_steps;
 };
 
 }

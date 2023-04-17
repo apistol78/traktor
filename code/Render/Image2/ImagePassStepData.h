@@ -32,19 +32,19 @@ class IResourceManager;
 namespace traktor::render
 {
 
-class ImagePassOp;
+class ImagePassStep;
 class IRenderSystem;
 class Shader;
 
 /*!
  * \ingroup Render
  */
-class T_DLLCLASS ImagePassOpData : public ISerializable
+class T_DLLCLASS ImagePassStepData : public ISerializable
 {
     T_RTTI_CLASS;
 
 public:
-    virtual Ref< const ImagePassOp > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
+    virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const = 0;
 
     virtual void serialize(ISerializer& s) override;
 

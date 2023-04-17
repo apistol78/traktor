@@ -37,7 +37,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 5, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 6, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -152,7 +152,7 @@ bool ImageGraphPipeline::buildOutput(
 	convertAssetPassToSteps(
 		asset,
 		rootPass,
-		data->m_ops
+		data->m_steps
 	);
 
 	// Convert all textures and target sets.
@@ -226,9 +226,9 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			// Convert pass's steps.
-			convertAssetPassToSteps(asset, pass, passData->m_ops);
+			convertAssetPassToSteps(asset, pass, passData->m_steps);
 
-			data->m_steps.push_back(passData);
+			data->m_passes.push_back(passData);
 		}
 	}
 
@@ -255,11 +255,11 @@ Ref< ISerializable > ImageGraphPipeline::buildProduct(
 	return nullptr;
 }
 
-bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassOpData >& outOpData) const
+bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassStepData >& outOpData) const
 {
 	for (auto step : pass->getSteps())
 	{
-		Ref< ImagePassOpData > opData;
+		Ref< ImagePassStepData > opData;
 
 		// Create step data instance.
 		if (auto ambientOcclusionStep = dynamic_type_cast< const ImgStepAmbientOcclusion* >(step))

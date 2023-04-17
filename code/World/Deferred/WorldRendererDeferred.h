@@ -22,7 +22,8 @@
 namespace traktor::render
 {
 
-class ITexture;
+class Buffer;
+class ImageGraph;
 class Shader;
 
 }
@@ -97,8 +98,6 @@ private:
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 
 	float m_slicePositions[MaxSliceCount + 1];
-	Vector4 m_fogDistanceAndDensity;
-	Vector4 m_fogColor;
 
 	render::handle_t setupCascadeShadowMapPass(
 		const WorldRenderView& worldRenderView,

@@ -292,7 +292,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 			m_moviePlayer->render(m_movieRendererWire);
 			m_displayRendererWire->end(0);
 
-			auto rb = renderContext->alloc< render::LambdaRenderBlock >();
+			auto rb = renderContext->alloc< render::LambdaRenderBlock >(L"Debug wire");
 			rb->lambda = [&](render::IRenderView* renderView) {
 				m_displayRendererWire->render(m_renderView, 0);
 			};

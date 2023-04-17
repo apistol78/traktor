@@ -139,6 +139,7 @@ void ImgPass::refresh()
 	std::set< std::wstring > inputs;
 	for (auto step : m_steps)
 		step->getInputs(inputs);
+
 	for (const auto& input : inputs)
 	{
 		m_inputPins.push_back(new InputPin(this, inputId, input, false));

@@ -30,8 +30,6 @@ class T_DLLCLASS ImgStepShadowProject : public IImgStep
     T_RTTI_CLASS;
 
 public:
-    virtual std::wstring getTitle() const override final;
-
     virtual void getInputs(std::set< std::wstring >& outInputs) const override final;
 
     virtual void serialize(ISerializer& s) override final;

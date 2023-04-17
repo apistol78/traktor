@@ -30,9 +30,9 @@ class IResourceManager;
 namespace traktor::render
 {
 
-class IImageStepData;
 class ImageGraph;
-class ImagePassOpData;
+class ImagePassData;
+class ImagePassStepData;
 class ImageTargetSetData;
 class ImageTextureData;
 class IRenderSystem;
@@ -55,8 +55,8 @@ private:
     std::wstring m_name;
     RefArray< ImageTextureData > m_textures;
     RefArray< ImageTargetSetData > m_targetSets;
-    RefArray< IImageStepData > m_steps;
-    RefArray< ImagePassOpData > m_ops;
+    RefArray< ImagePassData > m_passes;
+    RefArray< ImagePassStepData > m_steps;
 };
 
 }

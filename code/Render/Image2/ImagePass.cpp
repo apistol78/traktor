@@ -12,7 +12,7 @@
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Render/Image2/ImagePass.h"
-#include "Render/Image2/ImagePassOp.h"
+#include "Render/Image2/ImagePassStep.h"
 
 namespace traktor::render
 {
@@ -24,9 +24,9 @@ const static Handle s_handleDeltaTime(L"DeltaTime");
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, IImageStep)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, Object)
 
-void ImagePass::addPasses(
+void ImagePass::addRenderGraphPasses(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
@@ -37,8 +37,8 @@ void ImagePass::addPasses(
 {
 	Ref< RenderPass > rp = new RenderPass(m_name);
 
-	for (auto op : m_ops)
-		op->setup(graph, context, *rp);
+	for (auto step : m_steps)
+		step->addRenderPassInputs(graph, context, *rp);
 
 	if (m_outputTargetSet >= 0)
 	{
@@ -66,8 +66,8 @@ void ImagePass::addPasses(
 
 			sharedParams->endParameters(renderContext);
 				
-			for (auto op : m_ops)
-				op->build(
+			for (auto step : m_steps)
+				step->build(
 					graph,
 					context,
 					view,

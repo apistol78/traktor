@@ -18,9 +18,9 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AmbientOcclusionData", 0, AmbientOcclusionData, ImagePassOpData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AmbientOcclusionData", 0, AmbientOcclusionData, ImagePassStepData)
 
-Ref< const ImagePassOp > AmbientOcclusionData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const ImagePassStep > AmbientOcclusionData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
 	Ref< AmbientOcclusion > instance = new AmbientOcclusion();
 	RandomGeometry random;

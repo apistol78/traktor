@@ -19,11 +19,6 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepSimple", 0, ImgStepSimple, IImgStep)
 
-std::wstring ImgStepSimple::getTitle() const
-{
-    return L"Simple";
-}
-
 void ImgStepSimple::getInputs(std::set< std::wstring >& outInputs) const
 {
     for (const auto& parameter : m_parameters)

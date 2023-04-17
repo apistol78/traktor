@@ -44,8 +44,6 @@ public:
 
 	ImgStepDirectionalBlur();
 
-    virtual std::wstring getTitle() const override final;
-
     virtual void getInputs(std::set< std::wstring >& outInputs) const override final;
 
     virtual void serialize(ISerializer& s) override final;

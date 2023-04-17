@@ -76,21 +76,15 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	// Execute export script through headless blender process.
 	Path blenderPath;
 	if (!OS::getInstance().whereIs(L"blender", blenderPath))
-		return nullptr;
-
-#if defined(_WIN32)
-	const std::wstring blender = blenderPath.getPathName();
-#else
-	const std::wstring blender = blenderPath.getPathNameNoVolume();
-#endif
+	{
+		// No path found; try to run executable without path in case system knowns
+		// something we don't.
+		blenderPath = L"blender.exe";
+	}
 
 	const Path filePathAbs = FileSystem::getInstance().getAbsolutePath(filePath);
+	const std::wstring commandLine = L"\"" + blenderPath.getPathNameOS() + L"\" -b \"" + filePathAbs.getPathNameOS() + L"\" -P " + scratchPath + L"/__export__.py";
 
-#if defined(_WIN32)
-	const std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathName() + L"\" -P " + scratchPath + L"/__export__.py";
-#else
-	const std::wstring commandLine = L"\"" + blender + L"\" -b \"" + filePathAbs.getPathNameNoVolume() + L"\" -P " + scratchPath + L"/__export__.py";
-#endif
 	Ref< IProcess > process = OS::getInstance().execute(
 		commandLine,
 		scratchPath,

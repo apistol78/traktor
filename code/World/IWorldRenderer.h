@@ -120,9 +120,6 @@ public:
 	) = 0;
 
 	//@}
-
-	/*! */
-	virtual render::ImageGraphContext* getImageGraphContext() const = 0;
 };
 
 }

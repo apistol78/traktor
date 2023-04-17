@@ -19,11 +19,6 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepShadowProject", 0, ImgStepShadowProject, IImgStep)
 
-std::wstring ImgStepShadowProject::getTitle() const
-{
-    return L"Shadow Project";
-}
-
 void ImgStepShadowProject::getInputs(std::set< std::wstring >& outInputs) const
 {
     outInputs.insert(L"ShadowMap");

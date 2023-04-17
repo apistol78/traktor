@@ -19,11 +19,6 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepCompute", 0, ImgStepCompute, IImgStep)
 
-std::wstring ImgStepCompute::getTitle() const
-{
-    return L"Compute";
-}
-
 void ImgStepCompute::getInputs(std::set< std::wstring >& outInputs) const
 {
     for (const auto& parameter : m_parameters)

@@ -17,7 +17,6 @@ namespace traktor::render
 {
 
 class ImageGraph;
-class ImageGraphContext;
 class IRenderSystem;
 class IRenderTargetSet;
 class RenderGraph;
@@ -53,7 +52,6 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
-        render::ImageGraphContext* imageGraphContext,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t velocityTargetSetId,

@@ -95,7 +95,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
+	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
@@ -114,7 +114,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
+	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
@@ -133,7 +133,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(T_FILE_LINE_W);
+	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;

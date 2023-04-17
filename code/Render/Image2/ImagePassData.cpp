@@ -12,12 +12,12 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Render/Image2/ImagePass.h"
 #include "Render/Image2/ImagePassData.h"
-#include "Render/Image2/ImagePassOpData.h"
+#include "Render/Image2/ImagePassStepData.h"
 
 namespace traktor::render
 {
-    namespace
-    {
+	namespace
+	{
 
 class MemberClear : public MemberComplex
 {
@@ -40,35 +40,36 @@ private:
 	Clear& m_ref;
 };
 
-       }
+	   }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 0, ImagePassData, IImageStepData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImagePassData", 1, ImagePassData, ISerializable)
 
-Ref< const IImageStep > ImagePassData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
+Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
-    Ref< ImagePass > instance = new ImagePass();
+	Ref< ImagePass > instance = new ImagePass();
 
-    instance->m_name = m_name;
-    instance->m_outputTargetSet = m_outputTargetSet;
-    instance->m_clear = m_clear;
+	instance->m_name = m_name;
+	instance->m_outputTargetSet = m_outputTargetSet;
+	instance->m_clear = m_clear;
 
-    for (auto opd : m_ops)
-    {
-        Ref< const ImagePassOp > op = opd->createInstance(resourceManager, renderSystem);
-        if (!op)
-            return nullptr;
-        instance->m_ops.push_back(op);
-    }
+	for (auto stepData : m_steps)
+	{
+		Ref< const ImagePassStep > step = stepData->createInstance(resourceManager, renderSystem);
+		if (!step)
+			return nullptr;
+		instance->m_steps.push_back(step);
+	}
 
-    return instance;
+	return instance;
 }
 
 void ImagePassData::serialize(ISerializer& s)
 {
-    s >> Member< std::wstring >(L"name", m_name);
-    s >> Member< int32_t >(L"outputTargetSet", m_outputTargetSet);
-    s >> MemberClear(L"clear", m_clear);
-    s >> MemberRefArray< ImagePassOpData >(L"ops", m_ops);
+	T_FATAL_ASSERT(s.getVersion< ImagePassData >() >= 1);
+	s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< int32_t >(L"outputTargetSet", m_outputTargetSet);
+	s >> MemberClear(L"clear", m_clear);
+	s >> MemberRefArray< ImagePassStepData >(L"steps", m_steps);
 }
 
 }

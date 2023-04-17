@@ -86,8 +86,6 @@ bool WorldRendererShared::create(
 	m_settings = *desc.worldRenderSettings;
 	m_shadowsQuality = desc.quality.shadows;
 	m_sharedDepthStencil = desc.sharedDepthStencil;
-
-	m_imageGraphContext = new render::ImageGraphContext();
 	
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -138,11 +136,6 @@ void WorldRendererShared::destroy()
 	m_gbufferPass = nullptr;
 
 	safeDestroy(m_lightClusterPass);
-}
-
-render::ImageGraphContext* WorldRendererShared::getImageGraphContext() const
-{
-	return m_imageGraphContext;
 }
 
 void WorldRendererShared::gather(Entity* rootEntity)

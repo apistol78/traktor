@@ -115,7 +115,7 @@ public:
 
 	virtual bool getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const override final;
 
-	virtual void pushMarker(const char* const marker) override final;
+	virtual void pushMarker(const std::wstring& marker) override final;
 
 	virtual void popMarker() override final;
 
@@ -134,6 +134,8 @@ private:
 		VkPipeline boundComputePipeline = 0;
 		BufferViewVk boundIndexBuffer;
 		BufferViewVk boundVertexBuffer;
+
+		std::list< std::string > markers;
 	};
 
 	struct PipelineEntry

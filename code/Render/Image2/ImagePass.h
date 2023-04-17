@@ -9,9 +9,10 @@
 #pragma once
 
 #include <string>
+#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/StaticVector.h"
 #include "Render/Types.h"
-#include "Render/Image2/IImageStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,24 +25,36 @@
 namespace traktor::render
 {
 
-class ImagePassOp;
+class ImageGraph;
+class ImageGraphContext;
+class ImagePassStep;
+class RenderGraph;
+class ScreenRenderer;
 
-/*!
+struct ImageGraphView;
+
+/*! Image pass
  * \ingroup Render
+ * 
+ * An image pass represent an entire render pass,
+ * so an image pass may contain several steps which
+ * are executed in sequence in a single render pass.
  */
-class T_DLLCLASS ImagePass : public IImageStep
+class T_DLLCLASS ImagePass : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void addPasses(
+	typedef StaticVector< handle_t, 32 > targetSetVector_t;
+
+	void addRenderGraphPasses(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
 		ScreenRenderer* screenRenderer,
 		RenderGraph& renderGraph
-	) const override final;
+	) const;
 
 private:
 	friend class ImagePassData;
@@ -49,7 +62,7 @@ private:
 	std::wstring m_name;
 	int32_t m_outputTargetSet;
 	Clear m_clear;
-	RefArray< const ImagePassOp > m_ops;
+	RefArray< const ImagePassStep > m_steps;
 };
 
 }

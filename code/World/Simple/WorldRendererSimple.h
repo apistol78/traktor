@@ -59,8 +59,6 @@ public:
 		render::handle_t outputTargetSetId
 	) override final;
 
-	virtual render::ImageGraphContext* getImageGraphContext() const override final;
-
 private:
 	struct Gather
 	{
