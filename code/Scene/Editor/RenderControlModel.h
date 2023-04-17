@@ -42,6 +42,12 @@ public:
 
 	void eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseMoveEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
+	void eventKeyDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
+
+	void eventKeyUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
+
+	void eventTimer(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::TimerEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
+
 private:
 	enum ModifyType
 	{
@@ -58,6 +64,7 @@ private:
 	bool m_modifyAlternative;
 	bool m_modifyClone;
 	ModifyType m_modify;
+	uint32_t m_moveCamera;
 };
 
 }

@@ -157,6 +157,10 @@ bool EventLoopWin32::isKeyDown(VirtualKey vk) const
 
 bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 {
+	// If some window has capture then we should ignore any global event listeners.
+	if (GetCapture() != NULL)
+		return false;
+
 	bool consumed = false;
 	if (msg.message == WM_KEYDOWN)
 	{

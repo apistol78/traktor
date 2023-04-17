@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -14,6 +15,7 @@
 #include "Scene/Editor/RenderControlModel.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
+#include "Ui/Application.h"
 #include "Ui/Widget.h"
 
 namespace traktor::scene
@@ -43,6 +45,7 @@ RenderControlModel::RenderControlModel()
 ,	m_modifyAlternative(false)
 ,	m_modifyClone(false)
 ,	m_modify(MtNothing)
+,	m_moveCamera(0)
 {
 }
 
@@ -62,7 +65,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	ui::Rect innerRect = renderWidget->getInnerRect();
 	Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
 
-	if ((event->getKeyState() & ui::KsMenu) != 0)
+	if (m_mouseButton == 2)
 		m_modify = MtCamera;
 	if ((event->getKeyState() & ui::KsControl) != 0)
 		m_modifyAlternative = true;
@@ -198,6 +201,8 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 	m_modifyClone = false;
 	m_modifyBegun = false;
 
+	m_moveCamera = 0;
+
 	if (renderWidget->hasCapture())
 		renderWidget->releaseCapture();
 
@@ -285,9 +290,9 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	else if (m_modify == MtCamera)
 	{
 		if (m_mouseButton == 1)
-			renderControl->moveCamera(ISceneRenderControl::McmRotate, mouseDelta, viewDelta);
-		else if (m_mouseButton == 2 && !m_modifyAlternative)
 			renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, mouseDelta, viewDelta);
+		else if (m_mouseButton == 2 && !m_modifyAlternative)
+			renderControl->moveCamera(ISceneRenderControl::McmRotate, mouseDelta, viewDelta);
 		else if (m_mouseButton == 3 || (m_mouseButton == 2 && m_modifyAlternative))
 			renderControl->moveCamera(ISceneRenderControl::McmMoveXY, mouseDelta, viewDelta);
 
@@ -327,6 +332,86 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 		context->enqueueRedraw(renderControl);
 
 	m_mousePosition = mousePosition;
+}
+
+void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
+{
+	if (m_mouseButton == 0)
+		return;
+
+	switch (event->getVirtualKey())
+	{
+	case ui::VkW:
+		m_moveCamera |= (1 << 0);
+		break;
+
+	case ui::VkS:
+		m_moveCamera |= (1 << 1);
+		break;
+
+	case ui::VkA:
+		m_moveCamera |= (1 << 2);
+		break;
+
+	case ui::VkD:
+		m_moveCamera |= (1 << 3);
+		break;
+
+	default:
+		return;
+	}
+
+	event->consume();
+}
+
+void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
+{
+	if (m_mouseButton == 0)
+		return;
+
+	switch (event->getVirtualKey())
+	{
+	case ui::VkW:
+		m_moveCamera &= ~(1 << 0);
+		break;
+
+	case ui::VkS:
+		m_moveCamera &= ~(1 << 1);
+		break;
+
+	case ui::VkA:
+		m_moveCamera &= ~(1 << 2);
+		break;
+
+	case ui::VkD:
+		m_moveCamera &= ~(1 << 3);
+		break;
+
+	default:
+		return;
+	}
+
+	event->consume();
+}
+
+void RenderControlModel::eventTimer(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::TimerEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
+{
+	if (m_mouseButton == 0 || m_moveCamera == 0)
+		return;
+
+	Vector4 delta = Vector4::zero();
+	if ((m_moveCamera & (1 << 0)) != 0)
+		delta += Vector4(0.0f, 1.0f, 0.0f);
+	if ((m_moveCamera & (1 << 1)) != 0)
+		delta += Vector4(0.0f, -1.0f, 0.0f);
+	if ((m_moveCamera & (1 << 2)) != 0)
+		delta += Vector4(-1.0f, 0.0f, 0.0f);
+	if ((m_moveCamera & (1 << 3)) != 0)
+		delta += Vector4(1.0f, 0.0f, 0.0f);
+
+	renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, delta * 8.0_simd, Vector4::zero());
+
+	context->enqueueRedraw(renderControl);
 }
 
 }

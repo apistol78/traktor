@@ -167,6 +167,9 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &PerspectiveRenderControl::eventDoubleClick);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &PerspectiveRenderControl::eventMouseMove);
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &PerspectiveRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::KeyDownEvent >(this, &PerspectiveRenderControl::eventKeyDown);
+	m_renderWidget->addEventHandler< ui::KeyUpEvent >(this, &PerspectiveRenderControl::eventKeyUp);
+	m_renderWidget->addEventHandler< ui::TimerEvent >(this, &PerspectiveRenderControl::eventTimer);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &PerspectiveRenderControl::eventPaint);
 
 	updateSettings();
@@ -179,6 +182,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_dirtySize.cx = m_renderView->getWidth();
 	m_dirtySize.cy = m_renderView->getHeight();
 
+	m_renderWidget->startTimer(1000 / 60);
 	return true;
 }
 
@@ -371,6 +375,10 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
 		break;
 	}
+
+	//m_context->raiseCameraMoved();
+	//m_context->enqueueRedraw(this);
+	//update();
 }
 
 void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
@@ -495,6 +503,30 @@ void PerspectiveRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	m_camera->move(Vector4(0.0f, 0.0f, rotation * -m_mouseWheelRate, 0.0f));
 	m_context->raiseCameraMoved();
 	m_context->enqueueRedraw(this);
+}
+
+void PerspectiveRenderControl::eventKeyDown(ui::KeyDownEvent* event)
+{
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventKeyDown(this, m_renderWidget, event, m_context, transformChain);
+}
+
+void PerspectiveRenderControl::eventKeyUp(ui::KeyUpEvent* event)
+{
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventKeyUp(this, m_renderWidget, event, m_context, transformChain);
+}
+
+void PerspectiveRenderControl::eventTimer(ui::TimerEvent* event)
+{
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventTimer(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)

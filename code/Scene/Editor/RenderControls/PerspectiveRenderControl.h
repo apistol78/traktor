@@ -148,6 +148,12 @@ private:
 
 	void eventMouseWheel(ui::MouseWheelEvent* event);
 
+	void eventKeyDown(ui::KeyDownEvent* event);
+
+	void eventKeyUp(ui::KeyUpEvent* event);
+
+	void eventTimer(ui::TimerEvent* event);
+
 	void eventPaint(ui::PaintEvent* event);
 };
 
