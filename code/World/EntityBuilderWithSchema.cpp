@@ -54,7 +54,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 
 	if (entityData->getId().isNotNull())
-		m_entityProducts[entityData->getId()] = entity;
+		m_entityProducts.insert(entityData->getId(), entity);
 
 	return entity;
 }

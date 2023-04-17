@@ -55,7 +55,7 @@ public:
 
 private:
 	Ref< IEntityBuilder > m_entityBuilder;
-	SmallMap< Guid, Ref< world::Entity > > m_entityProducts;
+	mutable SmallMap< Guid, Ref< world::Entity > > m_entityProducts;
 };
 
 }
