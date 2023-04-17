@@ -191,6 +191,9 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 {
 	bool consumed = false;
 
+	if (m_context->anyGrabbed())
+		return false;
+
 	if (e.type == KeyPress)
 	{
 		m_keyState = e.xkey.state;

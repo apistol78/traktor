@@ -64,6 +64,8 @@ public:
 
 	XIM getXIM() const { return m_xim; }
 
+	bool anyGrabbed() const { return m_grabbed != nullptr; }
+
 	//@}
 
 private:
