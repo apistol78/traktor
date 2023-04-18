@@ -47,13 +47,14 @@ render::handle_t GBufferPass::setup(
 
 	// Add GBuffer target set.
 	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 2;
+	rgtd.count = 3;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Depth (R), Roughness (G), Metalness (B)
 	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
+	rgtd.targets[2].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGB)
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
@@ -63,6 +64,7 @@ render::handle_t GBufferPass::setup(
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
 	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.0f);
 	clear.colors[1] = Color4f(0.5f, 0.5f, 0.0f, 0.0f);
+	clear.colors[2] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;
 	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);

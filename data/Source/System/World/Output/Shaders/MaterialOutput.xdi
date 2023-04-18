@@ -2162,12 +2162,12 @@ Opaque
 			<title>Forward Opaque</title>
 			<comment/>
 			<position>
-				<first>-1259</first>
-				<second>208</second>
+				<first>-1250</first>
+				<second>217</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>667</first>
+				<second>650</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -2186,24 +2186,24 @@ Opaque
 			<title>Deferred Transparent</title>
 			<comment/>
 			<position>
-				<first>-2143</first>
-				<second>925</second>
+				<first>-2112</first>
+				<second>916</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>664</first>
+				<second>523</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Forward Transparent</title>
 			<comment/>
 			<position>
-				<first>-1267</first>
-				<second>911</second>
+				<first>-1302</first>
+				<second>914</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>709</first>
+				<second>525</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -2226,20 +2226,20 @@ Opaque
 				<second>495</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1188</first>
+				<second>1680</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
 			<title>Shared</title>
 			<comment/>
 			<position>
-				<first>-2096</first>
-				<second>1681</second>
+				<first>-2085</first>
+				<second>1701</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>2530</first>
+				<second>429</second>
 			</size>
 		</item>
 	</groups>

@@ -700,11 +700,16 @@ Eye direction
 			<id>{EA858AF2-B41E-4B2E-9E23-3D2FD34828DC}</id>
 			<comment/>
 			<position>
-				<first>-159</first>
-				<second>-420</second>
+				<first>-147</first>
+				<second>-458</second>
 			</position>
 			<fragmentGuid>{55898E80-6B69-4F55-A40C-138A23496B50}</fragmentGuid>
 			<inputPins>
+				<item>
+					<id>{8F145F29-2C07-A443-BBFE-552B7DA8F407}</id>
+					<name>Albedo</name>
+					<optional>false</optional>
+				</item>
 				<item>
 					<id>{30E85928-7B55-E740-9734-68440CE06674}</id>
 					<name>ViewNormal</name>
@@ -756,8 +761,8 @@ Eye direction
 			<id>{10790711-A620-41B4-9872-DAD870F1B693}</id>
 			<comment/>
 			<position>
-				<first>-413</first>
-				<second>-480</second>
+				<first>-410</first>
+				<second>-481</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 			<global>false</global>
@@ -966,8 +971,8 @@ Eye direction
 			<id>{D9CA157E-44A4-6940-871F-B050C16705C9}</id>
 			<comment/>
 			<position>
-				<first>-381</first>
-				<second>-436</second>
+				<first>-378</first>
+				<second>-437</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1127,8 +1132,8 @@ Eye direction
 			<id>{2421E9E3-07E6-114E-84CD-5FE488248544}</id>
 			<comment/>
 			<position>
-				<first>-349</first>
-				<second>-348</second>
+				<first>-346</first>
+				<second>-349</second>
 			</position>
 			<name>L_Enable</name>
 			<global>false</global>
@@ -1147,8 +1152,8 @@ Eye direction
 			<id>{D3FEC089-5DDC-1548-A514-B67998C090A4}</id>
 			<comment/>
 			<position>
-				<first>-349</first>
-				<second>-392</second>
+				<first>-346</first>
+				<second>-393</second>
 			</position>
 			<name>L_Alpha</name>
 			<global>false</global>
@@ -1157,8 +1162,8 @@ Eye direction
 			<id>{A91E0D2C-F7E8-1A40-8ECA-CA1E5A8671E1}</id>
 			<comment/>
 			<position>
-				<first>-381</first>
-				<second>-260</second>
+				<first>-378</first>
+				<second>-261</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -1631,10 +1636,20 @@ Eye direction
 			<id>{5CD34CAA-A866-9646-B555-7640BE7A1A5B}</id>
 			<comment/>
 			<position>
-				<first>-365</first>
-				<second>-304</second>
+				<first>-362</first>
+				<second>-305</second>
 			</position>
 			<name>L_Metalness</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{493F0EF8-AA4C-704B-8AE1-DFD675345422}</id>
+			<comment/>
+			<position>
+				<first>-378</first>
+				<second>-525</second>
+			</position>
+			<name>L_SurfaceColor</name>
 			<global>false</global>
 		</item>
 	</nodes>
@@ -2959,6 +2974,16 @@ Eye direction
 				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[147]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{8F145F29-2C07-A443-BBFE-552B7DA8F407}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -2969,8 +2994,8 @@ Eye direction
 				<second>-1072</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1424</first>
+				<second>377</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -2981,8 +3006,8 @@ Eye direction
 				<second>-540</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1965</first>
+				<second>434</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -2993,8 +3018,8 @@ Eye direction
 				<second>-666</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>2502</first>
+				<second>681</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -3005,8 +3030,8 @@ Eye direction
 				<second>153</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1722</first>
+				<second>483</second>
 			</size>
 		</item>
 	</groups>
