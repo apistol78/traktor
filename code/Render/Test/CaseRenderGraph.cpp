@@ -40,6 +40,10 @@ void CaseRenderGraph::run()
 	}
 
 	bool result = rg->validate();
+
+	rg->destroy();
+	rg = nullptr;
+
 	CASE_ASSERT(result);
 }
 
