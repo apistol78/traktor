@@ -185,8 +185,8 @@
 			<id>{45D4C386-83A8-9444-940D-F9CC9DB1B566}</id>
 			<comment/>
 			<position>
-				<first>-924</first>
-				<second>967</second>
+				<first>-918</first>
+				<second>1000</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
@@ -654,10 +654,10 @@ $Output.w = $Input.w;
 			<id>{CEDBCA44-0B79-C444-8BC2-9D2BE314B1CC}</id>
 			<comment/>
 			<position>
-				<first>-912</first>
-				<second>1123</second>
+				<first>-890</first>
+				<second>1048</second>
 			</position>
-			<value>0.25</value>
+			<value>0.5</value>
 		</item>
 	</nodes>
 	<edges>
