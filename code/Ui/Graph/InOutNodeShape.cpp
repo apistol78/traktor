@@ -43,6 +43,7 @@ int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
 
 InOutNodeShape::InOutNodeShape(Style style)
+:	m_style(style)
 {
 	if (style == StDefault)
 	{
@@ -58,7 +59,7 @@ InOutNodeShape::InOutNodeShape(Style style)
 		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.UniformError");
 		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.UniformErrorSelected");
 	}
-	else if (style == StVariable)
+	else if (style == StLocalVariable || style == StGlobalVariable)
 	{
 		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Variable");
 		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.VariableSelected");
@@ -161,22 +162,24 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		BlendMode::Alpha
 	);
 
-	std::wstring info = node->getInfo();
+	const std::wstring info = node->getInfo();
 	if (!info.empty())
 	{
-		canvas->setForeground(ss->getColor(this, L"color-info")); //settings->getNodeTextInfo());
+		canvas->setForeground(ss->getColor(this, L"color-info"));
+		canvas->setFont(m_style == StGlobalVariable ? graph->getPaintSettings().getFontBold() : graph->getPaintSettings().getFont());
 		canvas->drawText(
 			rc,
 			info,
 			AnCenter,
 			AnCenter
 		);
+		canvas->setFont(graph->getPaintSettings().getFont());
 	}
 
 	const std::wstring& comment = node->getComment();
 	if (!comment.empty())
 	{
-		canvas->setForeground(ss->getColor(this, L"color-comment")); //settings->getNodeShadow());
+		canvas->setForeground(ss->getColor(this, L"color-comment"));
 		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
