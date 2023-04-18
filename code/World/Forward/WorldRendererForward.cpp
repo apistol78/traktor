@@ -59,6 +59,15 @@ const render::Handle s_handleVisualTargetSet[] =
 	render::Handle(L"World_VisualTargetSet_Odd")
 };
 
+Vector2 jitter(int32_t count)
+{
+	const Vector2 kernelSize(0.5f, 0.5f);
+	return Vector2(
+		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
+		(float)(count & 1) * kernelSize.y - kernelSize.y / 2.0f
+	);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, WorldRendererShared)
@@ -141,13 +150,13 @@ void WorldRendererForward::setup(
 #endif
 
 	// Jitter projection for TAA, calculate jitter in clip space.
-	// if (m_antiAliasQuality >= Quality::Ultra)
-	// {
-	// 	Vector2 r = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
-	// 	Matrix44 proj = immutableWorldRenderView.getProjection();
-	// 	proj = translate(r.x, r.y, 0.0f) * proj;
-	// 	worldRenderView.setProjection(proj);
-	// }
+	 if (m_postProcessPass->needCameraJitter())
+	 {
+	 	Vector2 r = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
+	 	Matrix44 proj = immutableWorldRenderView.getProjection();
+	 	proj = translate(r.x, r.y, 0.0f) * proj;
+	 	worldRenderView.setProjection(proj);
+	 }
 
 	// Gather active renderables for this frame.
 	gather(const_cast< Entity* >(rootEntity));
@@ -202,7 +211,7 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	m_count++;
 }

@@ -126,6 +126,7 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 			return false;
 		}
 	}
+	m_needCameraJitter = (bool)(desc.quality.antiAlias >= Quality::Ultra);
 
 	// Create "visual" post processing filter.
 	if (desc.quality.imageProcess > Quality::Disabled)
@@ -174,6 +175,7 @@ void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
+	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t velocityTargetSetId,
@@ -213,8 +215,8 @@ void PostProcessPass::setup(
 	igctx.setFloatParameter(s_handleFxRotate, fxRotate);
 
 	// Expose jitter; in texture space.
-	const Vector2 rc = jitter(m_count) / worldRenderView.getViewSize();
-	const Vector2 rp = jitter(m_count - 1) / worldRenderView.getViewSize();
+	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
+	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
 	igctx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 5 > processes;
