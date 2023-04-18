@@ -24,7 +24,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VariableNodeFacade", VariableNodeFacade,
 
 VariableNodeFacade::VariableNodeFacade()
 {
-	m_nodeShape = new ui::InOutNodeShape(ui::InOutNodeShape::StVariable);
+	m_nodeShape[0] = new ui::InOutNodeShape(ui::InOutNodeShape::StGlobalVariable);
+	m_nodeShape[1] = new ui::InOutNodeShape(ui::InOutNodeShape::StLocalVariable);
 }
 
 Ref< Node > VariableNodeFacade::createShaderNode(
@@ -42,6 +43,8 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
+	const Variable* variableShaderNode = mandatory_non_null_type_cast< const Variable* >(shaderNode);
+
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		shaderNode->getInformation(),
@@ -49,7 +52,7 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 			ui::dpi96(shaderNode->getPosition().first),
 			ui::dpi96(shaderNode->getPosition().second)
 		),
-		m_nodeShape
+		m_nodeShape[variableShaderNode->isGlobal() ? 0 : 1]
 	);
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)

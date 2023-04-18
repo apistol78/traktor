@@ -37,7 +37,8 @@ public:
 	{
 		StDefault = 0,
 		StUniform = 1,
-		StVariable = 2
+		StLocalVariable = 2,
+		StGlobalVariable = 3
 	};
 
 	explicit InOutNodeShape(Style style);
@@ -51,6 +52,7 @@ public:
 	virtual Size calculateSize(GraphControl* graph, const Node* node) const override final;
 
 private:
+	Style m_style;
 	Ref< IBitmap > m_imageNode[4];
 	Ref< IBitmap > m_imagePin;
 	Ref< IBitmap > m_imagePinHot;
