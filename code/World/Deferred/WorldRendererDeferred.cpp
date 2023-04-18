@@ -311,7 +311,7 @@ void WorldRendererDeferred::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	m_count++;
 }

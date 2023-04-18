@@ -52,6 +52,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
 		render::handle_t velocityTargetSetId,
@@ -59,6 +60,8 @@ public:
 		render::handle_t visualReadTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;
+
+    bool needCameraJitter() const { return m_needCameraJitter; }
 
 private:
     WorldRenderSettings m_settings;
@@ -72,7 +75,7 @@ private:
     resource::Proxy< render::ImageGraph > m_gammaCorrection;
     resource::Proxy< render::ITexture > m_colorGrading;
     float m_gamma = 2.2f;
-    int32_t m_count = 0;
+    bool m_needCameraJitter = false;
 };
 
 }
