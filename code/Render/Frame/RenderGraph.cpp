@@ -23,17 +23,23 @@ namespace traktor::render
 	namespace
 	{
 
-void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t index, const std::function< void(int32_t, int32_t) >& fn)
+void traverse(const RefArray< const RenderPass >& passes, int32_t depth, int32_t index, StaticVector< uint32_t, 512 >& chain, const std::function< void(int32_t, int32_t) >& fn)
 {
+	// Check if we're in a cyclic path.
+	if (std::find(chain.begin(), chain.end(), index) != chain.end())
+		return;
+
 	// Traverse inputs first as we want to traverse passes depth-first.
+	chain.push_back(index);
 	for (const auto& input : passes[index]->getInputs())
 	{
 		for (int32_t i = 0; i < passes.size(); ++i)
 		{
 			if (passes[i]->getOutput().resourceId == input.resourceId)
-				traverse(passes, depth + 1, i, fn);
+				traverse(passes, depth + 1, i, chain, fn);
 		}
 	}
+	chain.pop_back();
 
 	// Call visitor for this pass.
 	fn(depth, index);
@@ -200,7 +206,8 @@ bool RenderGraph::validate()
 	depths.resize(m_passes.size(), -1);
 	for (auto root : roots)
 	{
-		traverse(m_passes, 0, root, [&](int32_t depth, int32_t index) {
+		StaticVector< uint32_t, 512 > chain;
+		traverse(m_passes, 0, root, chain, [&](int32_t depth, int32_t index) {
 			T_ASSERT(depth < sizeof_array(m_order));
 			depths[index] = std::max(depths[index], depth);
 		});
