@@ -193,6 +193,19 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8F145F29-2C07-A443-BBFE-552B7DA8F407}</id>
+			<comment/>
+			<position>
+				<first>665</first>
+				<second>531</second>
+			</position>
+			<name>Albedo</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -313,6 +326,16 @@
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{1FAB08BF-4315-4DDA-99DA-91F76FCA4F12}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{6642BD4D-39D8-4AF4-A31B-5D7A491E0C48}</id>
 			</destination>
 		</item>
 	</edges>

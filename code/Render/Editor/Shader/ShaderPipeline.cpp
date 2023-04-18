@@ -22,6 +22,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -50,8 +51,6 @@
 #include "Render/Resource/ShaderResource.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
-
-#include "Core/Thread/JobManager.h"
 
 namespace traktor
 {
