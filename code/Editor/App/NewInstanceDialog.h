@@ -56,6 +56,8 @@ private:
 	void eventDialogClick(ui::ButtonClickEvent* event);
 
 	void eventTreeItemSelected(ui::SelectionChangeEvent* event);
+
+	void eventInstanceNameKey(ui::KeyEvent* event);
 };
 
 	}

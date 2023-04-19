@@ -112,6 +112,7 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 
 	m_editInstanceName = new ui::Edit();
 	m_editInstanceName->create(bottom, i18n::Text(L"NEW_INSTANCE_DEFAULT_NAME"));
+	m_editInstanceName->addEventHandler< ui::KeyEvent >(this, &NewInstanceDialog::eventInstanceNameKey);
 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 1);
 	groupRoot->setImage(0, 0, 1);
@@ -254,6 +255,34 @@ void NewInstanceDialog::eventDialogClick(ui::ButtonClickEvent* event)
 void NewInstanceDialog::eventTreeItemSelected(ui::SelectionChangeEvent* event)
 {
 	updatePreviewList();
+}
+
+void NewInstanceDialog::eventInstanceNameKey(ui::KeyEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkEscape)
+	{
+		endModal(ui::DialogResult::Cancel);
+		event->consume();
+	}
+	else if (event->getVirtualKey() == ui::VkReturn)
+	{
+		Ref< ui::PreviewItem > item = m_typeList->getSelectedItem();
+		if (!item)
+			return;
+
+		TypeInfoWrapper* typeInfoWrapper = item->getData< TypeInfoWrapper >(L"TYPE");
+		if (typeInfoWrapper)
+			m_type = &typeInfoWrapper->m_typeInfo;
+		else
+			m_type = nullptr;
+
+		m_instanceName = m_editInstanceName->getText();
+		if (m_instanceName.empty())
+			return;
+
+		endModal(ui::DialogResult::Ok);
+		event->consume();
+	}
 }
 
 	}
