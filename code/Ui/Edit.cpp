@@ -527,7 +527,6 @@ void Edit::eventPaint(PaintEvent* event)
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
 	else
 		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
-
 	canvas.fillRect(rcInner);
 
 	if (m_borderColor.a != 0)
