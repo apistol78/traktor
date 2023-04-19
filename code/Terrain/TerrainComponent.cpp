@@ -69,6 +69,20 @@ struct DrawData
 	float surfaceOffset[4];
 };
 
+Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, const Color4ub& value)
+{
+	render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 1;
+	stcd.height = 1;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR8G8B8A8;
+	stcd.sRGB = false;
+	stcd.immutable = true;
+	stcd.initialData[0].data = &value;
+	stcd.initialData[0].pitch = 4;
+	return renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainComponent", TerrainComponent, world::IEntityComponent)
@@ -98,6 +112,9 @@ bool TerrainComponent::create(const TerrainComponentData& data)
 
 	if (!createPatches())
 		return false;
+
+	m_defaultColorMap = create1x1Texture(m_renderSystem, Color4ub(128, 128, 128, 128));
+	m_defaultCutMap = create1x1Texture(m_renderSystem, Color4ub(0, 0, 0, 0));
 
 	return true;
 }
@@ -384,10 +401,10 @@ void TerrainComponent::build(
 		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getBaseTexture());
 	}
 
-	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap);
 	rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
 	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
-	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap());
+	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap);
 	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
