@@ -169,7 +169,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &PerspectiveRenderControl::eventMouseWheel);
 	m_renderWidget->addEventHandler< ui::KeyDownEvent >(this, &PerspectiveRenderControl::eventKeyDown);
 	m_renderWidget->addEventHandler< ui::KeyUpEvent >(this, &PerspectiveRenderControl::eventKeyUp);
-	m_renderWidget->addEventHandler< ui::TimerEvent >(this, &PerspectiveRenderControl::eventTimer);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &PerspectiveRenderControl::eventPaint);
 
 	updateSettings();
@@ -276,6 +275,11 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 
 void PerspectiveRenderControl::update()
 {
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.update(this, m_renderWidget, m_context, transformChain);
+
 #if defined(_WIN32)
 	m_renderWidget->update(nullptr, true);
 #else
@@ -519,14 +523,6 @@ void PerspectiveRenderControl::eventKeyUp(ui::KeyUpEvent* event)
 	transformChain.pushProjection(getProjectionTransform());
 	transformChain.pushView(getViewTransform());
 	m_model.eventKeyUp(this, m_renderWidget, event, m_context, transformChain);
-}
-
-void PerspectiveRenderControl::eventTimer(ui::TimerEvent* event)
-{
-	TransformChain transformChain;
-	transformChain.pushProjection(getProjectionTransform());
-	transformChain.pushView(getViewTransform());
-	m_model.eventTimer(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)

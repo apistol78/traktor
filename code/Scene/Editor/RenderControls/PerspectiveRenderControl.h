@@ -152,8 +152,6 @@ private:
 
 	void eventKeyUp(ui::KeyUpEvent* event);
 
-	void eventTimer(ui::TimerEvent* event);
-
 	void eventPaint(ui::PaintEvent* event);
 };
 

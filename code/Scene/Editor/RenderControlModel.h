@@ -34,6 +34,8 @@ class RenderControlModel : public Object
 public:
 	RenderControlModel();
 
+	void update(ISceneRenderControl* renderControl, ui::Widget* renderWidget, SceneEditorContext* context, const TransformChain& transformChain);
+
 	void eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
 	void eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
@@ -45,8 +47,6 @@ public:
 	void eventKeyDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
 	void eventKeyUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
-
-	void eventTimer(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::TimerEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
 private:
 	enum ModifyType
