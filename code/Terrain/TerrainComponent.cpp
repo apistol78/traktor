@@ -401,10 +401,10 @@ void TerrainComponent::build(
 		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getBaseTexture());
 	}
 
-	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap);
+	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
 	rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
 	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
-	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap);
+	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap.ptr());
 	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
 	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
