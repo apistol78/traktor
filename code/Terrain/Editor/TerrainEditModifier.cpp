@@ -45,6 +45,7 @@
 #include "Terrain/Editor/SmoothFallOff.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -544,7 +545,7 @@ bool TerrainEditModifier::begin(
 	int32_t mouseButton
 )
 {
-	bool inverted = (bool)(mouseButton != 1);
+	const bool inverted = (ui::Application::getInstance()->getEventLoop()->getAsyncKeyState() & ui::KsControl) != 0;
 	return begin(inverted);
 }
 

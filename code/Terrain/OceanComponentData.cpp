@@ -20,6 +20,7 @@ namespace traktor::terrain
 	namespace
 	{
 	
+const resource::Id< render::Shader > c_waveShader(Guid(L"{3ABA4673-C5A5-404E-8563-CE8A6E043AC4}"));
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-82EB-453BE2B558A8}"));
 	
 	}
@@ -27,7 +28,8 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 3, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
-:	m_shader(c_defaultShader)
+:	m_shaderWave(c_waveShader)
+,	m_shader(c_defaultShader)
 ,	m_shallowTint(1.0f, 1.0f, 1.0f, 1.0f)
 ,	m_deepColor(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_elevation(0.0f)
