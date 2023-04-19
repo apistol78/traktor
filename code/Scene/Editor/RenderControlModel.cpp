@@ -49,6 +49,34 @@ RenderControlModel::RenderControlModel()
 {
 }
 
+void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* renderWidget, SceneEditorContext* context, const TransformChain& transformChain)
+{
+	if (m_mouseButton == 0 || m_moveCamera == 0)
+		return;
+
+	Vector4 delta = Vector4::zero();
+	if ((m_moveCamera & (1 << 0)) != 0)
+		delta += Vector4(0.0f, 1.0f, 0.0f);
+	if ((m_moveCamera & (1 << 1)) != 0)
+		delta += Vector4(0.0f, -1.0f, 0.0f);
+	if ((m_moveCamera & (1 << 2)) != 0)
+		delta += Vector4(-1.0f, 0.0f, 0.0f);
+	if ((m_moveCamera & (1 << 3)) != 0)
+		delta += Vector4(1.0f, 0.0f, 0.0f);
+
+	Scalar speed = 8.0_simd;
+
+	const uint32_t keyState = ui::Application::getInstance()->getEventLoop()->getAsyncKeyState();
+	if ((keyState & ui::KsShift) != 0)
+		speed *= 4.0_simd;
+	if ((keyState & ui::KsControl) != 0)
+		speed /= 4.0_simd;
+
+	renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, delta * speed, Vector4::zero());
+
+	context->enqueueRedraw(renderControl);
+}
+
 void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonDownEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
 	m_mousePosition0 =
@@ -122,7 +150,8 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 
 	renderWidget->setCapture();
 	renderWidget->setFocus();
-	renderWidget->update();
+
+	context->enqueueRedraw(renderControl);
 }
 
 void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::MouseButtonUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
@@ -361,6 +390,8 @@ void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Wi
 		return;
 	}
 
+	context->enqueueRedraw(renderControl);
+
 	event->consume();
 }
 
@@ -391,27 +422,9 @@ void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widg
 		return;
 	}
 
-	event->consume();
-}
-
-void RenderControlModel::eventTimer(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::TimerEvent* event, SceneEditorContext* context, const TransformChain& transformChain)
-{
-	if (m_mouseButton == 0 || m_moveCamera == 0)
-		return;
-
-	Vector4 delta = Vector4::zero();
-	if ((m_moveCamera & (1 << 0)) != 0)
-		delta += Vector4(0.0f, 1.0f, 0.0f);
-	if ((m_moveCamera & (1 << 1)) != 0)
-		delta += Vector4(0.0f, -1.0f, 0.0f);
-	if ((m_moveCamera & (1 << 2)) != 0)
-		delta += Vector4(-1.0f, 0.0f, 0.0f);
-	if ((m_moveCamera & (1 << 3)) != 0)
-		delta += Vector4(1.0f, 0.0f, 0.0f);
-
-	renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, delta * 8.0_simd, Vector4::zero());
-
 	context->enqueueRedraw(renderControl);
+
+	event->consume();
 }
 
 }

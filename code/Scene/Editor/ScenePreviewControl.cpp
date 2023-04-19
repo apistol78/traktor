@@ -147,8 +147,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	updateEditState();
 
-	addEventHandler< ui::TimerEvent >(this, &ScenePreviewControl::eventTimer);
-	startTimer(1000 / 60);
+	// Create idle event handler for updating preview.
+	m_idleEventHandler =  ui::Application::getInstance()->addEventHandler< ui::IdleEvent >(this, &ScenePreviewControl::eventIdle);
 
 	m_timer.reset();
 	return true;
@@ -165,6 +165,9 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< PropertyInteger >(L"SceneEditor.SplitCount", m_splitCount);
 
 	m_context->getEditor()->commitGlobalSettings();
+
+	// Remove idle event handler.
+	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
 
 	// Destroy render controls.
 	for (auto renderControl : m_renderControls)
@@ -542,9 +545,10 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 	}
 }
 
-void ScenePreviewControl::eventTimer(ui::TimerEvent* event)
+void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 {
 	m_context->processAutoRedraw();
+	event->requestMore();
 }
 
 }

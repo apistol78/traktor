@@ -67,6 +67,7 @@ private:
 		StQuadruple = 4
 	};
 
+	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< ui::ToolBar > m_toolBarActions;
 	Ref< ui::ToolBarButton > m_toolTogglePick;
 	Ref< ui::ToolBarButton > m_toolToggleTranslate;
@@ -95,7 +96,7 @@ private:
 
 	void eventRedraw(RedrawEvent* event);
 
-	void eventTimer(ui::TimerEvent* event);
+	void eventIdle(ui::IdleEvent* event);
 };
 
 }
