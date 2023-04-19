@@ -93,7 +93,8 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 
 Aabb3 AnimatedMeshComponent::getBoundingBox() const
 {
-	return m_mesh->getBoundingBox();
+	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+	return skeletonComponent != nullptr ? skeletonComponent->getBoundingBox() : m_mesh->getBoundingBox();
 }
 
 void AnimatedMeshComponent::update(const world::UpdateParams& update)
@@ -147,17 +148,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	const Transform worldTransform = m_transform.get(interval);
 	const Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
 
-	float distance = 0.0f;
-	if (!mesh::isMeshVisible(
-		m_mesh->getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * worldTransform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
-		distance
-	))
-		return;
-
 	auto jointBufferLast = m_jointBuffers[0];
 	auto jointBufferCurrent = m_jointBuffers[1];
 
@@ -181,16 +171,27 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		jointBufferCurrent->unlock();
 	}
 
-	m_mesh->build(
-		context.getRenderContext(),
-		worldRenderPass,
-		lastWorldTransform,
-		worldTransform,
-		jointBufferLast,
-		jointBufferCurrent,
-		distance,
-		getParameterCallback()
-	);
+	float distance = 0.0f;
+	if (mesh::isMeshVisible(
+		getBoundingBox(),
+		worldRenderView.getCullFrustum(),
+		worldRenderView.getView() * worldTransform.toMatrix44(),
+		worldRenderView.getProjection(),
+		0.001f,
+		distance
+	))
+	{
+		m_mesh->build(
+			context.getRenderContext(),
+			worldRenderPass,
+			lastWorldTransform,
+			worldTransform,
+			jointBufferLast,
+			jointBufferCurrent,
+			distance,
+			getParameterCallback()
+		);
+	}
 
 	// Save last rendered transform so we can properly write velocities next frame.
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::Last) != 0)
