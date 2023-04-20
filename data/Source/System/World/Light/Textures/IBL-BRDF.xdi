@@ -24,7 +24,7 @@
 	<inverseNormalMapX>false</inverseNormalMapX>
 	<inverseNormalMapY>false</inverseNormalMapY>
 	<scaleNormalMap>0</scaleNormalMap>
-	<linearGamma>true</linearGamma>
+	<linearGamma>false</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>
