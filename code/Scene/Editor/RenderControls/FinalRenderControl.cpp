@@ -19,6 +19,7 @@
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
@@ -42,6 +43,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
+#include "World/Editor/IDebugOverlay.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor
@@ -135,11 +137,20 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_renderContext = new render::RenderContext(16 * 1024 * 1024);
 	m_renderGraph = new render::RenderGraph(m_context->getRenderSystem(), m_multiSample);
 
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(m_context->getRenderSystem()))
+	{
+		destroy();
+		return false;
+	}
+
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &FinalRenderControl::eventButtonDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &FinalRenderControl::eventButtonUp);
 	m_renderWidget->addEventHandler< ui::MouseDoubleClickEvent >(this, &FinalRenderControl::eventDoubleClick);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &FinalRenderControl::eventMouseMove);
 	m_renderWidget->addEventHandler< ui::MouseWheelEvent >(this, &FinalRenderControl::eventMouseWheel);
+	m_renderWidget->addEventHandler< ui::KeyDownEvent >(this, &FinalRenderControl::eventKeyDown);
+	m_renderWidget->addEventHandler< ui::KeyUpEvent >(this, &FinalRenderControl::eventKeyUp);
 	m_renderWidget->addEventHandler< ui::PaintEvent >(this, &FinalRenderControl::eventPaint);
 
 	updateSettings();
@@ -165,6 +176,7 @@ void FinalRenderControl::destroy()
 
 	safeDestroy(m_renderGraph);
 	safeDestroy(m_worldRenderer);
+	safeDestroy(m_screenRenderer);
 	safeClose(m_renderView);
 	safeDestroy(m_containerAspect);
 }
@@ -198,10 +210,12 @@ void FinalRenderControl::setQuality(world::Quality imageProcess, world::Quality 
 
 void FinalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
+	m_overlay = overlay;
 }
 
 void FinalRenderControl::setDebugOverlayAlpha(float alpha)
 {
+	m_overlayAlpha = alpha;
 }
 
 bool FinalRenderControl::handleCommand(const ui::Command& command)
@@ -225,7 +239,16 @@ bool FinalRenderControl::handleCommand(const ui::Command& command)
 
 void FinalRenderControl::update()
 {
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.update(this, m_renderWidget, m_context, transformChain);
+
+#if defined(_WIN32)
+	m_renderWidget->update(nullptr, true);
+#else
 	m_renderWidget->update(nullptr, false);
+#endif
 }
 
 bool FinalRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
@@ -393,6 +416,22 @@ void FinalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	m_context->enqueueRedraw(this);
 }
 
+void FinalRenderControl::eventKeyDown(ui::KeyDownEvent* event)
+{
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventKeyDown(this, m_renderWidget, event, m_context, transformChain);
+}
+
+void FinalRenderControl::eventKeyUp(ui::KeyUpEvent* event)
+{
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventKeyUp(this, m_renderWidget, event, m_context, transformChain);
+}
+
 void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 {
 	// Reload scene if changed.
@@ -468,6 +507,18 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+
+	// Draw debug overlay, content of any target from render graph as an overlay.
+	if (m_overlay)
+	{
+		m_overlay->setup(
+			*m_renderGraph,
+			m_screenRenderer,
+			m_worldRenderer,
+			m_worldRenderView,
+			m_overlayAlpha
+		);
+	}
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
