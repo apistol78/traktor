@@ -154,9 +154,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	}
 
 	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(
-		m_context->getRenderSystem()
-	))
+	if (!m_screenRenderer->create(m_context->getRenderSystem()))
 	{
 		destroy();
 		return false;

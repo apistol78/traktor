@@ -19,35 +19,34 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Container;
 class Widget;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderView;
 class RenderContext;
 class RenderGraph;
+class ScreenRenderer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderer;
 class Entity;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class Camera;
 class Scene;
@@ -96,6 +95,7 @@ private:
 	Ref< render::RenderContext > m_renderContext;
 	Ref< render::RenderGraph > m_renderGraph;
 	resource::Proxy< scene::Scene > m_sceneInstance;
+	Ref< render::ScreenRenderer > m_screenRenderer;
 	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	uint32_t m_worldRendererHash = 0;
@@ -108,6 +108,8 @@ private:
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;
+	Ref< world::IDebugOverlay > m_overlay;
+	float m_overlayAlpha = 1.0f;
 	Color4ub m_colorClear;
 	float m_fieldOfView;
 	float m_mouseWheelRate;
@@ -135,9 +137,11 @@ private:
 
 	void eventMouseWheel(ui::MouseWheelEvent* event);
 
+	void eventKeyDown(ui::KeyDownEvent* event);
+
+	void eventKeyUp(ui::KeyUpEvent* event);
+
 	void eventPaint(ui::PaintEvent* event);
 };
 
-	}
 }
-
