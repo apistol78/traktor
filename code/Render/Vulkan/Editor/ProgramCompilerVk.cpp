@@ -246,7 +246,8 @@ const wchar_t* ProgramCompilerVk::getRendererSignature() const
 Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
-	const std::wstring& name
+	const std::wstring& name,
+	std::list< Error >& outErrors
 ) const
 {
 	RefArray< VertexOutput > vertexOutputs;
@@ -304,9 +305,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (vertexShader->getInfoLog())
 		{
-			std::wstring info = trim(mbstows(vertexShader->getInfoLog()));
-			if (!info.empty())
-				log::info << info << Endl;
+			if (!vertexResult)
+			{
+				outErrors.push_back({
+					trim(mbstows(vertexShader->getInfoLog())),
+					mbstows(vertexShaderText)
+				});
+			}
 		}
 		if (!vertexResult)
 			return nullptr;
@@ -320,9 +325,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (fragmentShader->getInfoLog())
 		{
-			std::wstring info = trim(mbstows(fragmentShader->getInfoLog()));
-			if (!info.empty())
-				log::info << info << Endl;
+			if (!fragmentResult)
+			{
+				outErrors.push_back({
+					trim(mbstows(fragmentShader->getInfoLog())),
+					mbstows(fragmentShaderText)
+				});
+			}
 		}
 		if (!fragmentResult)
 			return nullptr;
@@ -354,9 +363,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
 		if (computeShader->getInfoLog())
 		{
-			std::wstring info = trim(mbstows(computeShader->getInfoLog()));
-			if (!info.empty())
-				log::info << info << Endl;
+			if (!computeResult)
+			{
+				outErrors.push_back({
+					trim(mbstows(computeShader->getInfoLog())),
+					mbstows(computeShaderText)
+				});
+			}
 		}
 		if (!computeResult)
 			return nullptr;
@@ -772,10 +785,12 @@ bool ProgramCompilerVk::generate(
 	}
 	else
 	{
+		std::list< IProgramCompiler::Error > errors;
 		Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
 			shaderGraph,
 			settings,
-			name
+			name,
+			errors
 		));
 		if (!programResource)
 			return false;

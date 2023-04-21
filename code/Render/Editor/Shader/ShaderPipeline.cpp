@@ -271,6 +271,9 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Keep a reference to the resolved graph; in case of failure it's good for debugging.
+	Ref< const ShaderGraph > resolvedGraph = shaderGraph;
+
 	// Get connected permutation.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getConnectedPermutation();
 	if (!shaderGraph)
@@ -321,6 +324,18 @@ bool ShaderPipeline::buildOutput(
 		}
 		techniqueNames = keepTechniqueNames;
 	}
+
+	struct Error
+	{
+		IProgramCompiler::Error error;
+		std::wstring techniqueName;
+		uint32_t combination;
+		Ref< const ShaderGraph > resolvedGraph;
+		Ref< const ShaderGraph > combinationGraph;
+		Ref< const ShaderGraph > programGraph;
+	};
+	std::list< Error > errors;
+	Semaphore errorsLock;
 
 	for (const auto& techniqueName : techniqueNames)
 	{
@@ -529,9 +544,20 @@ bool ShaderPipeline::buildOutput(
 					[&](const ProgramResource* object, IStream* stream) {
 						return BinarySerializer(stream).writeObject(object);
 					},
-					[&]() {
+						[&]() {
 						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
-						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path);
+
+						std::list< IProgramCompiler::Error > jobErrors;
+						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path, jobErrors);
+
+						// Merge errors into output list.
+						if (!jobErrors.empty())
+						{
+							T_ANONYMOUS_VAR(Acquire< Semaphore >)(errorsLock);
+							for (const auto& jobError : jobErrors)
+								errors.push_back({ jobError, techniqueName, combination, resolvedGraph, combinationGraph, programGraph });
+						}
+
 						pipelineBuilder->getProfiler()->end(type_of(programCompiler));
 						return programResource;
 					}
@@ -549,6 +575,57 @@ bool ShaderPipeline::buildOutput(
 		}
 
 		JobManager::getInstance().fork(jobs.c_ptr(), jobs.size());
+
+		for (const auto& error : errors)
+		{
+			T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+			log::info.setIndent(0);
+			log::info << Endl;
+			log::info << L"-----------------------------------------------------" << Endl;
+			log::info << error.error.message << Endl;
+			log::info << L"-----------------------------------------------------" << Endl;
+			FormatMultipleLines(log::info, error.error.source);
+			log::info << L"-----------------------------------------------------" << Endl;
+
+			{
+				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Resolved/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+				if (dumpInstance)
+				{
+					dumpInstance->setObject(error.resolvedGraph);
+					dumpInstance->commit();
+					log::info << L"Resolved: " << dumpInstance->getGuid().format() << Endl;
+				}
+				else
+					log::warning << L"Unable to create error instance." << Endl;
+			}
+
+			{
+				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Combination/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+				if (dumpInstance)
+				{
+					dumpInstance->setObject(error.combinationGraph);
+					dumpInstance->commit();
+					log::info << L"Combination: " << dumpInstance->getGuid().format() << Endl;
+				}
+				else
+					log::warning << L"Unable to create error instance." << Endl;
+			}
+
+			{
+				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Program/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+				if (dumpInstance)
+				{
+					dumpInstance->setObject(error.programGraph);
+					dumpInstance->commit();
+					log::info << L"Program: " << dumpInstance->getGuid().format() << Endl;
+				}
+				else
+					log::warning << L"Unable to create error instance." << Endl;
+			}
+
+			log::info << L"-----------------------------------------------------" << Endl;
+		}
+
 		if (!status)
 			return false;
 

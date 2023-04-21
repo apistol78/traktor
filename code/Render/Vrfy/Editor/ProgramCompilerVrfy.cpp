@@ -31,11 +31,12 @@ const wchar_t* ProgramCompilerVrfy::getRendererSignature() const
 Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
-	const std::wstring& name
+	const std::wstring& name,
+	std::list< Error >& outErrors
 ) const
 {
 	// Compile program using wrapped compiler.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, outErrors);
 	if (!resource)
 		return nullptr;
 
