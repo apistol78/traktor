@@ -36,7 +36,8 @@ public:
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
-		const std::wstring& name
+		const std::wstring& name,
+		std::list< Error >& outErrors
 	) const override final;
 
 	virtual bool generate(
