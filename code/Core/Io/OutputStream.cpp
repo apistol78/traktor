@@ -10,6 +10,7 @@
 #include "Core/Io/OutputStream.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -446,12 +447,12 @@ OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str)
 	for (uint32_t ln = 1;; ++ln)
 	{
 		size_t p1 = str.find_first_of(L"\r\n", p0);
-		s << ln << L": " << str.substr(p0, p1 - p0) << Endl;
+		s << traktor::str(L"%4d: ", ln) << str.substr(p0, p1 - p0) << Endl;
 		if (p1 != str.npos)
 		{
+			if (str[p1] == '\r' && str[p1 + 1] == '\n')
+				p1++;
 			p0 = p1 + 1;
-			while (str[p0] == L'\r' || str[p0] == L'\n')
-				++p0;
 		}
 		else
 			break;
