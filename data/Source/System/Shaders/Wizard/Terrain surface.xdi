@@ -145,16 +145,7 @@
 					<name>Roughness</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>NormalMap</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RoughnessMap</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{728ECD68-8116-6A4D-95E1-D374A6CB89E9}</id>
@@ -200,16 +191,7 @@
 					<name>Roughness</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>NormalMap</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RoughnessMap</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{30CF78A2-54DA-1A47-8B06-AE4183057B91}</id>
@@ -255,16 +237,7 @@
 					<name>Roughness</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>NormalMap</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RoughnessMap</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{4257E017-9301-BA45-A95F-0E58D2E70AF5}</id>
@@ -310,16 +283,7 @@
 					<name>Roughness</name>
 				</item>
 			</outputPins>
-			<values>
-				<item>
-					<first>NormalMap</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>RoughnessMap</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0FC86384-517B-8242-9E6E-11CDFF310A08}</id>

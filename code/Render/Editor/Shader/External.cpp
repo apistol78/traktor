@@ -30,7 +30,7 @@ class MemberInputPin : public MemberComplex
 public:
 	typedef InputPin* value_type;
 
-	MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
+	explicit MemberInputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_node(node)
 	,	m_pin(pin)
@@ -98,7 +98,7 @@ class MemberOutputPin : public MemberComplex
 public:
 	typedef OutputPin* value_type;
 
-	MemberOutputPin(const wchar_t* const name, Node* node, value_type& pin)
+	explicit MemberOutputPin(const wchar_t* const name, Node* node, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_node(node)
 	,	m_pin(pin)
@@ -158,7 +158,7 @@ public:
 	typedef typename PinMember::value_type pin_type;
 	typedef AlignedVector< pin_type > value_type;
 
-	MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
+	explicit MemberPinArray(const wchar_t* const name, Node* node, value_type& pins)
 	:	MemberArray(name, &m_attribute)
 	,	m_node(node)
 	,	m_pins(pins)
@@ -227,7 +227,7 @@ struct SortOutputPinPredicate
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 2, External, Node)
 
-External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
+External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 :	m_fragmentGuid(fragmentGuid)
 {
 	for (auto fragmentNode : fragmentGraph->getNodes())
@@ -316,20 +316,16 @@ void External::removeValue(const std::wstring& name)
 const InputPin* External::createInputPin(const Guid& id, const std::wstring& name, bool optional)
 {
 	InputPin* inputPin = new InputPin(this, id, name, optional);
-
 	m_inputPins.push_back(inputPin);
 	std::sort(m_inputPins.begin(), m_inputPins.end(), SortInputPinPredicate());
-
 	return inputPin;
 }
 
 const OutputPin* External::createOutputPin(const Guid& id, const std::wstring& name)
 {
 	OutputPin* outputPin = new OutputPin(this, id, name);
-
 	m_outputPins.push_back(outputPin);
 	std::sort(m_outputPins.begin(), m_outputPins.end(), SortOutputPinPredicate());
-
 	return outputPin;
 }
 
