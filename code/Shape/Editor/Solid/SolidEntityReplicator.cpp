@@ -129,7 +129,7 @@ Ref< model::Model > SolidEntityReplicator::createVisualModel(
 
 			switch ((*it)->getOperation())
 			{
-			case BooleanOperation::BoUnion:
+			case BooleanOperation::Union:
 				{
 					model::Boolean(
 						current,
@@ -141,7 +141,7 @@ Ref< model::Model > SolidEntityReplicator::createVisualModel(
 				}
 				break;
 
-			case BooleanOperation::BoIntersection:
+			case BooleanOperation::Intersection:
 				{
 					model::Boolean(
 						current,
@@ -153,7 +153,7 @@ Ref< model::Model > SolidEntityReplicator::createVisualModel(
 				}
 				break;
 
-			case BooleanOperation::BoDifference:
+			case BooleanOperation::Difference:
 				{
 					model::Boolean(
 						current,

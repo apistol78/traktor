@@ -107,7 +107,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 
                 switch ((*it)->getData()->getOperation())
                 {
-                case BooleanOperation::BoUnion:
+                case BooleanOperation::Union:
                     {
 						model::Boolean(
 							current,
@@ -119,7 +119,7 @@ void SolidEntity::update(const world::UpdateParams& update)
                     }
                     break;
 
-                case BooleanOperation::BoIntersection:
+                case BooleanOperation::Intersection:
                     {
 						model::Boolean(
 							current,
@@ -131,7 +131,7 @@ void SolidEntity::update(const world::UpdateParams& update)
 					}
                     break;
 
-                case BooleanOperation::BoDifference:
+                case BooleanOperation::Difference:
                     {
 						model::Boolean(
 							current,

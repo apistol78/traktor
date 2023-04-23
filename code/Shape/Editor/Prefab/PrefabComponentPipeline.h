@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class T_DLLCLASS PrefabComponentPipeline : public world::EntityPipeline
 {
@@ -43,6 +41,4 @@ private:
 	bool m_editor = false;
 };
 
-	}
 }
-

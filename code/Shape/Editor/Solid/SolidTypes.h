@@ -18,9 +18,9 @@ namespace traktor
  */
 enum class BooleanOperation
 {
-    BoUnion,
-    BoIntersection,
-    BoDifference
+    Union,
+    Intersection,
+    Difference
 };
 
     }
