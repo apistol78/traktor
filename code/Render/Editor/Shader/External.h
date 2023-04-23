@@ -42,7 +42,7 @@ class T_DLLCLASS External : public Node
 public:
 	External() = default;
 
-	explicit External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
+	explicit External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph);
 
 	virtual ~External();
 

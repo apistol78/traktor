@@ -65,18 +65,11 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	External* externalNode = mandatory_non_null_type_cast< External* >(shaderNode);
 	std::wstring title;
 
-	Guid fragmentGuid = externalNode->getFragmentGuid();
-
-	Ref< ShaderGraph > fragmentGraph;
-	RefArray< InputPort > inputPorts;
+	const Guid fragmentGuid = externalNode->getFragmentGuid();
 
 	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(fragmentGuid);
 	if (instance)
-	{
 		title = instance->getName();
-		fragmentGraph = instance->getObject< ShaderGraph >();
-		inputPorts = fragmentGraph->findNodesOf< InputPort >();
-	}
 	else
 		title = fragmentGuid.format();
 

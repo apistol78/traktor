@@ -99,6 +99,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 	{
 		const Guid& fragmentId = externalNode->getFragmentGuid();
 
+		// Read fragment shader.
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);
 		if (!fragmentShaderGraph)
 		{
@@ -106,7 +107,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			return nullptr;
 		}
 
-		// Resolve variables of each fragment.
+		// Resolve local variables of each read fragment.
 		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved(ShaderGraphStatic::VrtLocal);
 		if (!fragmentShaderGraph)
 		{
