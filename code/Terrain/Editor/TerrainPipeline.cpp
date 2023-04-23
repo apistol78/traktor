@@ -365,7 +365,7 @@ bool TerrainPipeline::buildOutput(
 		terrainShaderGuid
 	))
 	{
-		log::error << L"Terrain pipeline failed; unable to build shader." << Endl;
+		log::error << L"Terrain pipeline failed; unable to build terrain shader." << Endl;
 		return false;
 	}
 
@@ -375,7 +375,7 @@ bool TerrainPipeline::buildOutput(
 		surfaceShaderGuid
 	))
 	{
-		log::error << L"Terrain pipeline failed; unable to build surface shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to build surface shader." << Endl;
 		return false;
 	}
 

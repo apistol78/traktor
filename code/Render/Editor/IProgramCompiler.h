@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <list>
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
@@ -42,6 +43,12 @@ class T_DLLCLASS IProgramCompiler : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct Error
+	{
+		std::wstring message;
+		std::wstring source;
+	};
+
 	/*! Get renderer signature.
 	 *
 	 * \return Renderer signature.
@@ -58,7 +65,8 @@ public:
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
-		const std::wstring& name
+		const std::wstring& name,
+		std::list< Error >& outErrors
 	) const = 0;
 
 	/*! Generate render specific shader if possible.
