@@ -15,10 +15,8 @@
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Prefab/PrefabComponentPipeline.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabComponentPipeline", 1, PrefabComponentPipeline, world::EntityPipeline)
 
@@ -62,5 +60,4 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 	);
 }
 
-	}
 }

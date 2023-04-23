@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class T_DLLCLASS PrefabEntityReplicator : public scene::IEntityReplicator
 {
@@ -55,5 +53,4 @@ private:
 	std::wstring m_modelCachePath;
 };
 
-	}
 }

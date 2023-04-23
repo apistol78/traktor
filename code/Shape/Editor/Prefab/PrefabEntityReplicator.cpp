@@ -32,16 +32,14 @@
 #include "World/EntityData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 
 const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, PrefabEntityReplicator, scene::IEntityReplicator)
 
@@ -287,5 +285,4 @@ void PrefabEntityReplicator::transform(
 	entityData->removeComponent(prefabComponentData);
 }
 
-	}
 }
