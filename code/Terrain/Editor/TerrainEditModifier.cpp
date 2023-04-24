@@ -926,6 +926,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	for (auto terrainLayer : m_terrainLayers)
 		terrainLayer->updatePatches();
 
+	m_context->raiseRedraw(nullptr);
 	m_applied = true;	
 }
 
@@ -1085,7 +1086,9 @@ void TerrainEditModifier::end()
 		}
 		else
 			log::error << L"Unable to write heights" << Endl;
-	}	
+	}
+
+	m_context->raiseRedraw(nullptr);
 }
 
 void TerrainEditModifier::applySpline(bool alignToGround)
