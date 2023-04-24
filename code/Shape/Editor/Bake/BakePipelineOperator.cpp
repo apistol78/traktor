@@ -62,7 +62,7 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Resource/AliasTextureResource.h"
-#include "Scene/Editor/IEntityReplicator.h"
+#include "World/Editor/IEntityReplicator.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
@@ -390,9 +390,9 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 		return true;
 
 	// Create entity replicators.
-	for (const auto entityReplicatorType : type_of< scene::IEntityReplicator >().findAllOf(false))
+	for (const auto entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
 	{
-		Ref< scene::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
+		Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
 		if (!entityReplicator->create(settings))
 			return false;	
 
@@ -486,7 +486,7 @@ bool BakePipelineOperator::transform(
 			auto componentDatas = inoutEntityData->getComponents();
 			for (auto componentData : componentDatas)
 			{
-				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
 
@@ -645,7 +645,7 @@ bool BakePipelineOperator::build(
 			auto componentDatas = inoutEntityData->getComponents();
 			for (auto componentData : componentDatas)
 			{
-				const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
 
@@ -662,7 +662,7 @@ bool BakePipelineOperator::build(
 					},
 					[&]() -> Ref< model::Model > {
 						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-						Ref< model::Model > model = entityReplicator->createVisualModel(pipelineBuilder, inoutEntityData, componentData);
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
 						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
 						if (!model)
 							return nullptr;
@@ -699,7 +699,7 @@ bool BakePipelineOperator::build(
 					},
 					[&]() -> Ref< model::Model > {
 						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-						Ref< model::Model > model = entityReplicator->createCollisionModel(pipelineBuilder, inoutEntityData, componentData);
+						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
 						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
 						return model;
 					}
@@ -803,16 +803,16 @@ bool BakePipelineOperator::build(
 
 					if (visualModel)
 					{
-						Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(scene::IEntityReplicator::VisualMesh));
+						//Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(world::IEntityReplicator::VisualMesh));
 
 						// Create and build a new mesh asset referencing the modified model.
 						Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 						outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-						if (meshAsset)
-						{
-							outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
-							outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
-						}
+						//if (meshAsset)
+						//{
+						//	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+						//	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+						//}
 
 						Ref< world::EntityData > outputMeshEntity = new world::EntityData();
 						outputMeshEntity->setId(Guid::create());
@@ -833,29 +833,29 @@ bool BakePipelineOperator::build(
 					{
 						const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
 
-						Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionMesh));
-						Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionShape));
-						Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(scene::IEntityReplicator::CollisionBody));
+						//Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionMesh));
+						//Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionShape));
+						//Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionBody));
 
 						// Build collision shape mesh.
 						Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
 						outputMeshAsset->setCalculateConvexHull(false);
-						if (meshAsset)
-							outputMeshAsset->setMaterials(meshAsset->getMaterials());
+						//if (meshAsset)
+						//	outputMeshAsset->setMaterials(meshAsset->getMaterials());
 
 						Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
-						if (shapeDesc)
-						{
-							outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
-							outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
-						}
+						//if (shapeDesc)
+						//{
+						//	outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
+						//	outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
+						//}
 
 						Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
-						if (bodyDesc)
-						{
-							outputBodyDesc->setFriction(bodyDesc->getFriction());
-							outputBodyDesc->setRestitution(bodyDesc->getRestitution());
-						}
+						//if (bodyDesc)
+						//{
+						//	outputBodyDesc->setFriction(bodyDesc->getFriction());
+						//	outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+						//}
 
 						Ref< world::EntityData > outputShapeEntity = new world::EntityData();
 						outputShapeEntity->setId(Guid::create());

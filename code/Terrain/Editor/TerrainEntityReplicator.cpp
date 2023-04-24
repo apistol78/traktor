@@ -25,7 +25,7 @@ namespace traktor
     namespace terrain
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, TerrainEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TerrainEntityReplicator", 0, TerrainEntityReplicator, world::IEntityReplicator)
 
 bool TerrainEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -37,10 +37,11 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< TerrainComponentData >();
 }
 
-Ref< model::Model > TerrainEntityReplicator::createVisualModel(
+Ref< model::Model > TerrainEntityReplicator::createModel(
     editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
+	const world::IEntityComponentData* componentData,
+    Usage usage
 ) const
 {
 	const TerrainComponentData* terrainComponentData = mandatory_non_null_type_cast< const TerrainComponentData* >(componentData);
@@ -72,15 +73,6 @@ Ref< model::Model > TerrainEntityReplicator::createVisualModel(
     safeClose(sourceData);
 
     return hf::ConvertHeightfield().convert(heightfield, 64, heightfieldAsset->getVistaDistance());
-}
-
-Ref< model::Model > TerrainEntityReplicator::createCollisionModel(
-    editor::IPipelineCommon* pipelineCommon,
-	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
-{
-    return nullptr;
 }
 
 void TerrainEntityReplicator::transform(

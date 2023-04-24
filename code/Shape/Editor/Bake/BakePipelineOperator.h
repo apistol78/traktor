@@ -24,7 +24,7 @@
 
 namespace traktor
 {
-	namespace scene
+	namespace world
 	{
 
 class IEntityReplicator;
@@ -77,7 +77,7 @@ private:
 	const TypeInfo* m_tracerType;
 	std::wstring m_compressionMethod;
 	bool m_asynchronous;
-	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
+	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 
 	}

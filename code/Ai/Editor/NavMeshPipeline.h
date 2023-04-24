@@ -19,7 +19,7 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::scene
+namespace traktor::world
 {
 
 class IEntityReplicator;
@@ -67,7 +67,7 @@ private:
 	std::wstring m_assetPath;
 	bool m_editor = false;
 	bool m_build = true;
-	SmallMap< const TypeInfo*, Ref< const scene::IEntityReplicator > > m_entityReplicators;
+	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 
 }

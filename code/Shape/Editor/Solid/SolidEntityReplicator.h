@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Scene/Editor/IEntityReplicator.h"
+#include "World/Editor/IEntityReplicator.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +26,7 @@ namespace traktor
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS SolidEntityReplicator : public scene::IEntityReplicator
+class T_DLLCLASS SolidEntityReplicator : public world::IEntityReplicator
 {
 	T_RTTI_CLASS;
 
@@ -35,16 +35,11 @@ public:
 
 	virtual TypeInfoSet getSupportedTypes() const override final;
 
-	virtual Ref< model::Model > createVisualModel(
+	virtual Ref< model::Model > createModel(
 		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const override final;
-
-	virtual Ref< model::Model > createCollisionModel(
-		editor::IPipelineCommon* pipelineCommon,
-		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
+		const world::IEntityComponentData* componentData,
+		Usage usage
 	) const override final;
 
 	virtual void transform(

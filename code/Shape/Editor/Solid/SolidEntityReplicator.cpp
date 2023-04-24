@@ -59,7 +59,7 @@ namespace traktor
 //
 //		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityReplicator", 0, SolidEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SolidEntityReplicator", 0, SolidEntityReplicator, world::IEntityReplicator)
 
 bool SolidEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -71,10 +71,11 @@ TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< SolidEntityData >();
 }
 
-Ref< model::Model > SolidEntityReplicator::createVisualModel(
+Ref< model::Model > SolidEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
+    const world::IEntityComponentData* componentData,
+	Usage usage
 ) const
 {
 	const SolidEntityData* solidEntityData = mandatory_non_null_type_cast< const SolidEntityData* >(entityData);
@@ -175,15 +176,6 @@ Ref< model::Model > SolidEntityReplicator::createVisualModel(
 	model::Transform(solidEntityData->getTransform().inverse().toMatrix44()).apply(current);
 
 	return new model::Model(current);
-}
-
-Ref< model::Model > SolidEntityReplicator::createCollisionModel(
-	editor::IPipelineCommon* pipelineCommon,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
-) const
-{
-	return nullptr;
 }
 
 	}

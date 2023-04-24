@@ -26,7 +26,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityReplicator", 0, MeshEntityReplicator, world::IEntityReplicator)
 
 bool MeshEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -40,12 +40,16 @@ TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< MeshComponentData >();
 }
 
-Ref< model::Model > MeshEntityReplicator::createVisualModel(
+Ref< model::Model > MeshEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
+	const world::IEntityComponentData* componentData,
+	Usage usage
 ) const
 {
+	if (usage != Usage::Visual)
+		return nullptr;
+
 	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(componentData);
 
 	// Get referenced mesh asset.
@@ -63,6 +67,10 @@ Ref< model::Model > MeshEntityReplicator::createVisualModel(
 		translate(meshAsset->getOffset()) *
 		scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
 	).apply(*model);
+
+	// Create a mesh asset; used by bake pipeline to set appropriate materials.
+	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 
 	// Create list of texture references.
 	std::map< std::wstring, Guid > materialTextures;
@@ -94,22 +102,8 @@ Ref< model::Model > MeshEntityReplicator::createVisualModel(
 		}
 	}
 
-	// Create a mesh asset; used by bake pipeline to set appropriate materials.
-	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 	outputMeshAsset->setMaterialTextures(materialTextures);
-	model->setProperty< PropertyObject >(scene::IEntityReplicator::VisualMesh, outputMeshAsset);
-
 	return model;
-}
-
-Ref< model::Model > MeshEntityReplicator::createCollisionModel(
-	editor::IPipelineCommon* pipelineCommon,
-	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
-{
-	return nullptr;
 }
 
 void MeshEntityReplicator::transform(

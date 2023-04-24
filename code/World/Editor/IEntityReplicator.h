@@ -14,7 +14,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SCENE_EDITOR_EXPORT)
+#if defined(T_WORLD_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -51,21 +51,22 @@ class IEntityComponentData;
 
 }
 
-namespace traktor::scene
+namespace traktor::world
 {
 
 /*! Generate model from source entity or component data, such as mesh, terrain, spline, solid etc.
- * \ingroup Scene
+ * \ingroup World
  */
 class T_DLLCLASS IEntityReplicator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	static const wchar_t* VisualMesh;
-	static const wchar_t* CollisionMesh;
-	static const wchar_t* CollisionShape;
-	static const wchar_t* CollisionBody;
+	enum class Usage
+	{
+		Visual,
+		Collision
+	};
 
 	/*! */
 	virtual bool create(const editor::IPipelineSettings* settings) = 0;
@@ -73,30 +74,19 @@ public:
 	/*! */
 	virtual TypeInfoSet getSupportedTypes() const = 0;
 
-	/*! Create visual model replica from entity or component data.
+	/*! Create model replica from entity or component data.
 	 *
 	 * \param pipelineCommon Pipeline common implementation.
 	 * \param entityData Owner entity data.
 	 * \param componentData Component data which we want to represent as a model.
+	 * \param usage Usage of replica.
 	 * \return Model replica of entity or component.
 	 */
-	virtual Ref< model::Model > createVisualModel(
+	virtual Ref< model::Model > createModel(
 		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
-	) const = 0;
-
-	/*! Create collision model replica from entity or component data.
-	 *
-	 * \param pipelineCommon Pipeline common implementation.
-	 * \param entityData Owner entity data.
-	 * \param componentData Component data which we want to represent as a model.
-	 * \return Model replica of entity or component.
-	 */
-	virtual Ref< model::Model > createCollisionModel(
-		editor::IPipelineCommon* pipelineCommon,
-		const world::EntityData* entityData,
-		const world::IEntityComponentData* componentData
+		const world::IEntityComponentData* componentData,
+		Usage usage
 	) const = 0;
 
 	/*! Transform entity and component data. */

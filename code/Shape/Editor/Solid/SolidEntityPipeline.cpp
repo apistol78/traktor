@@ -105,7 +105,7 @@ Ref< ISerializable > SolidEntityPipeline::buildProduct(
 {
 	if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(sourceAsset))
 	{
-		Ref< model::Model > outputModel = SolidEntityReplicator().createVisualModel(pipelineBuilder, solidEntityData, nullptr);
+		Ref< model::Model > outputModel = SolidEntityReplicator().createModel(pipelineBuilder, solidEntityData, nullptr, world::IEntityReplicator::Usage::Visual);
 		if (!outputModel)
 			return nullptr;
 
