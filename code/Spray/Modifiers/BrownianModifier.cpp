@@ -24,7 +24,7 @@ void BrownianModifier::update(const Scalar& deltaTime, const Transform& transfor
 {
 	for (size_t i = first; i < last; ++i)
 	{
-		Vector4 r(
+		const Vector4 r(
 			m_random.nextFloat() * 2.0f - 1.0f,
 			m_random.nextFloat() * 2.0f - 1.0f,
 			m_random.nextFloat() * 2.0f - 1.0f
