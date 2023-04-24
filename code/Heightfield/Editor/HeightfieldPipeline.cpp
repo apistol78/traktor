@@ -80,7 +80,7 @@ bool HeightfieldPipeline::buildOutput(
 	Ref< IStream > sourceData = sourceInstance->readData(L"Data");
 	if (!sourceData)
 	{
-		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to open heights." << Endl;
 		return false;
 	}
 
@@ -90,7 +90,7 @@ bool HeightfieldPipeline::buildOutput(
 	);
 	if (!heightfield)
 	{
-		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to read heights." << Endl;
 		return false;
 	}
 
@@ -111,14 +111,14 @@ bool HeightfieldPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Heightfield pipeline failed; unable to create instance" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to create instance." << Endl;
 		return false;
 	}
 
 	Ref< IStream > outputData = instance->writeData(L"Data");
 	if (!outputData)
 	{
-		log::error << L"Heightfield pipeline failed; unable to create data stream" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to create data stream." << Endl;
 		instance->revert();
 		return false;
 	}

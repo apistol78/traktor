@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{709ABEBA-568B-B64C-91F3-A1A94DC8CB4C}</id>
@@ -12,7 +12,12 @@
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{A91531C3-5BEF-584A-A1FB-2D7EC06D0BEB}</id>
-			<comment/>
+			<comment>
+			<![CDATA[
+Color
+
+			]]>
+			</comment>
 			<position>
 				<first>1266</first>
 				<second>188</second>
@@ -118,7 +123,12 @@
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{EA87A27A-E8FB-6C47-94E2-21E6D0B67526}</id>
-			<comment/>
+			<comment>
+			<![CDATA[
+Roughness
+
+			]]>
+			</comment>
 			<position>
 				<first>1067</first>
 				<second>686</second>
@@ -388,4 +398,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
