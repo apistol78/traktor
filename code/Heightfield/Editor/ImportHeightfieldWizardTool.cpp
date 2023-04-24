@@ -44,17 +44,7 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 		size,
 		size
 	);
-
 	stream->read(image->getData(), fileSize);
-
-	uint16_t* d = (uint16_t*)image->getData();
-	for (uint32_t i = 0; i < fileSize / 2; ++i)
-	{
-		swap8in16(*d);
-		const int32_t v = *(int16_t*)d + 32767;
-		*d = (uint16_t)v;
-	}
-
 	stream->close();
 
 	return image;
@@ -118,8 +108,8 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 	// First try reading heightfield as an image.
 	image = drawing::Image::load(file, fileName.getExtension());
-	if (image)
-		image->convert(drawing::PixelFormat::getR16());
+	//if (image)
+	//	image->convert(drawing::PixelFormat::getR16());
 
 	// Last we try as a raw image.
 	if (!image)

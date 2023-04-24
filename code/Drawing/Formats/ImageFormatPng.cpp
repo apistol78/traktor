@@ -13,6 +13,7 @@
 #include <png.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/Endian.h"
 #include "Drawing/Formats/ImageFormatPng.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
@@ -153,6 +154,15 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 			rows[i],
 			rowsize
 		);
+
+#if defined(T_LITTLE_ENDIAN)
+		if (bit_depth == 16)
+		{
+			uint16_t* p = (uint16_t*)data;
+			for (uint32_t x = 0; x < width; ++x)
+				swap8in16(*p++);
+		}
+#endif
 		data += rowsize;
 	}
 
