@@ -11,10 +11,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Run/App/IOutput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Output writer with interleaved sections.
  * \ingroup Run
@@ -39,6 +37,4 @@ private:
 	StringOutputStream m_ss;
 };
 
-	}
 }
-

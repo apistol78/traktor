@@ -9,10 +9,8 @@
 #include "Core/Io/IStream.h"
 #include "Run/App/StreamInput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.StreamInput", StreamInput, IInput)
 
@@ -42,5 +40,4 @@ std::wstring StreamInput::readLn()
 		return L"";
 }
 
-	}
 }

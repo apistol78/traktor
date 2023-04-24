@@ -17,17 +17,19 @@ namespace traktor
 
 class Environment;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class IScriptCompiler;
 class IScriptContext;
 class IScriptManager;
 
-	}
+}
 
-	namespace run
-	{
+namespace traktor::run
+{
 
 /*! Simplified interface for common scriptable actions.
  * \ingroup Run
@@ -99,6 +101,4 @@ private:
 	int32_t m_exitCode;
 };
 
-	}
 }
-

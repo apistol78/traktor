@@ -51,12 +51,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
+	namespace
 	{
-		namespace
-		{
 
 void IOutput_printLn_0(IOutput* self)
 {
@@ -122,7 +120,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 		return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.Run", Run, Object)
 
@@ -669,5 +667,4 @@ void Run::registerRuntimeClasses(script::IScriptManager* scriptManager)
 	registrar.registerClassesInOrder(scriptManager);
 }
 
-	}
 }

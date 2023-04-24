@@ -11,10 +11,8 @@
 #include <cstdio>
 #include "Run/App/IOutput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Standard IO output writer.
  * \ingroup Run
@@ -24,7 +22,7 @@ class StdOutput : public IOutput
 	T_RTTI_CLASS;
 
 public:
-	StdOutput(FILE* handle);
+	explicit StdOutput(FILE* handle);
 
 	virtual void print(const std::wstring& s) override final;
 
@@ -34,6 +32,4 @@ private:
 	FILE* m_handle;
 };
 
-	}
 }
-

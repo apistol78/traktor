@@ -9,10 +9,8 @@
 #include "Core/Misc/TString.h"
 #include "Run/App/StdOutput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.StdOutput", StdOutput, IOutput)
 
@@ -41,5 +39,4 @@ void StdOutput::printLn(const std::wstring& s)
 	fflush(m_handle);
 }
 
-	}
 }

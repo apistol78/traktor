@@ -8,12 +8,10 @@
  */
 #include "Run/App/StreamOutput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
+	namespace
 	{
-		namespace
-		{
 
 OutputStream::LineEnd translateLineEnding(const std::wstring& lineEnding)
 {
@@ -29,7 +27,7 @@ OutputStream::LineEnd translateLineEnding(const std::wstring& lineEnding)
 		return OutputStream::LineEnd::Auto;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.StreamOutput", StreamOutput, IOutput)
 
@@ -53,5 +51,4 @@ void StreamOutput::printLn(const std::wstring& s)
 	m_output << s << Endl;
 }
 
-	}
 }
