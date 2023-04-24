@@ -11,10 +11,8 @@
 #include <string>
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Scriptable output writer interface.
  * \ingroup Run
@@ -29,6 +27,4 @@ public:
 	virtual void printLn(const std::wstring& s) = 0;
 };
 
-	}
 }
-

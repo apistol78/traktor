@@ -11,10 +11,8 @@
 #include <string>
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Scriptable input reader interface.
  * \ingroup Run
@@ -31,6 +29,4 @@ public:
 	virtual std::wstring readLn() = 0;
 };
 
-	}
 }
-

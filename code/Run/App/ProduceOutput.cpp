@@ -8,10 +8,8 @@
  */
 #include "Run/App/ProduceOutput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.run.ProduceOutput", ProduceOutput, IOutput)
 
@@ -42,5 +40,4 @@ std::wstring ProduceOutput::getProduct() const
 	return m_ss.str();
 }
 
-	}
 }

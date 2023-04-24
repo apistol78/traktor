@@ -11,10 +11,8 @@
 #include "Core/Io/StringReader.h"
 #include "Run/App/IInput.h"
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Stream input reader.
  * \ingroup Run
@@ -24,7 +22,7 @@ class StreamInput : public IInput
 	T_RTTI_CLASS;
 
 public:
-	StreamInput(IStream* stream, IEncoding* encoding);
+	explicit StreamInput(IStream* stream, IEncoding* encoding);
 
 	virtual bool endOfFile() override final;
 
@@ -37,6 +35,4 @@ private:
 	StringReader m_reader;
 };
 
-	}
 }
-
