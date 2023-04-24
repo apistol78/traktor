@@ -31,7 +31,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEntityReplicator", 0, PhysicsEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEntityReplicator", 0, PhysicsEntityReplicator, world::IEntityReplicator)
 
 bool PhysicsEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -45,21 +45,16 @@ TypeInfoSet PhysicsEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< RigidBodyComponentData >();
 }
 
-Ref< model::Model > PhysicsEntityReplicator::createVisualModel(
+Ref< model::Model > PhysicsEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
+	const world::IEntityComponentData* componentData,
+	Usage usage
 ) const
 {
-	return nullptr;
-}
+	if (usage != Usage::Collision)
+		return nullptr;
 
-Ref< model::Model > PhysicsEntityReplicator::createCollisionModel(
-	editor::IPipelineCommon* pipelineCommon,
-	const world::EntityData* entityData,
-	const world::IEntityComponentData* componentData
-) const
-{
 	const RigidBodyComponentData* rigidBodyComponentData = mandatory_non_null_type_cast< const RigidBodyComponentData* >(componentData);
 
 	auto bodyDesc = dynamic_type_cast< const StaticBodyDesc* >(rigidBodyComponentData->getBodyDesc());

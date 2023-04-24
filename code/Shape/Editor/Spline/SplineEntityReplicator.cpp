@@ -22,7 +22,7 @@ namespace traktor
     namespace shape
     {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityReplicator", 0, SplineEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityReplicator", 0, SplineEntityReplicator, world::IEntityReplicator)
 
 bool SplineEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -34,10 +34,11 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< SplineEntityData >();
 }
 
-Ref< model::Model > SplineEntityReplicator::createVisualModel(
+Ref< model::Model > SplineEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
+    const world::IEntityComponentData* componentData,
+	Usage usage
 ) const
 {
 	auto splineEntityData = mandatory_non_null_type_cast< const SplineEntityData* >(entityData);
@@ -105,15 +106,6 @@ Ref< model::Model > SplineEntityReplicator::createVisualModel(
 	}
 
     return outputModel;
-}
-
-Ref< model::Model > SplineEntityReplicator::createCollisionModel(
-	editor::IPipelineCommon* pipelineCommon,
-    const world::EntityData* entityData,
-    const world::IEntityComponentData* componentData
-) const
-{
-	return nullptr;
 }
 
 void SplineEntityReplicator::transform(

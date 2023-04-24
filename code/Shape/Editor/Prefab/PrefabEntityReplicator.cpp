@@ -41,7 +41,7 @@ const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, PrefabEntityReplicator, scene::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, PrefabEntityReplicator, world::IEntityReplicator)
 
 bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -53,6 +53,55 @@ bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 {
 	return makeTypeInfoSet< PrefabComponentData >();
+}
+
+Ref< model::Model > PrefabEntityReplicator::createModel(
+	editor::IPipelineCommon* pipelineCommon,
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData,
+	Usage usage
+) const
+{
+	if (usage == Usage::Visual)
+		return createVisualModel(pipelineCommon, entityData, componentData);
+	else if (usage == Usage::Collision)
+		return createCollisionModel(pipelineCommon, entityData, componentData);
+	else
+		return nullptr;
+}
+
+void PrefabEntityReplicator::transform(
+	world::EntityData* entityData,
+	world::IEntityComponentData* componentData,
+	world::GroupComponentData* outputGroup
+) const
+{
+	PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast<PrefabComponentData*>(componentData);
+
+	// Remove "consumed" components from prefab.
+	scene::Traverser::visit(prefabComponentData, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+		{
+			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
+			{
+				if (!editorAttributes->include || editorAttributes->dynamic)
+					return scene::Traverser::VrSkip;
+			}
+
+			if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
+				inoutEntityData->removeComponent(meshComponentData);
+
+			if (auto rigidBodyComponentData = inoutEntityData->getComponent< physics::RigidBodyComponentData >())
+				inoutEntityData->removeComponent(rigidBodyComponentData);
+
+			return scene::Traverser::VrContinue;
+		});
+
+	// Move "non-consumed" entities from prefab into output group.
+	for (auto entityData : prefabComponentData->getEntityData())
+		outputGroup->addEntityData(entityData);
+
+	// Remove prefab component.
+	entityData->removeComponent(prefabComponentData);
 }
 
 Ref< model::Model > PrefabEntityReplicator::createVisualModel(
@@ -141,11 +190,11 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
-	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	outputMeshAsset->setMaterialTemplates(materialTemplates);
-	outputMeshAsset->setMaterialTextures(materialTextures);
-	outputModel->setProperty< PropertyObject >(scene::IEntityReplicator::VisualMesh, outputMeshAsset);
+	//Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+	//outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	//outputMeshAsset->setMaterialTemplates(materialTemplates);
+	//outputMeshAsset->setMaterialTextures(materialTextures);
+	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::VisualMesh, outputMeshAsset);
 
 	return outputModel;
 }
@@ -233,56 +282,22 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
 
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
- 	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
- 	outputShapeMeshAsset->setCalculateConvexHull(false);
- 	outputShapeMeshAsset->setMaterials(materialPhysics);
-	outputModel->setProperty< PropertyObject >(scene::IEntityReplicator::CollisionMesh, outputShapeMeshAsset);
+ //	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+ //	outputShapeMeshAsset->setCalculateConvexHull(false);
+ //	outputShapeMeshAsset->setMaterials(materialPhysics);
+	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionMesh, outputShapeMeshAsset);
 
-	Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
-	outputShapeDesc->setCollisionGroup(collisionGroup);
-	outputShapeDesc->setCollisionMask(collisionMask);
-	outputModel->setProperty< PropertyObject >(scene::IEntityReplicator::CollisionShape, outputShapeDesc);
+	//Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
+	//outputShapeDesc->setCollisionGroup(collisionGroup);
+	//outputShapeDesc->setCollisionMask(collisionMask);
+	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionShape, outputShapeDesc);
 
-	Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-	outputBodyDesc->setFriction(friction);
-	outputBodyDesc->setRestitution(restitution);
-	outputModel->setProperty< PropertyObject >(scene::IEntityReplicator::CollisionBody, outputBodyDesc);
+	//Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+	//outputBodyDesc->setFriction(friction);
+	//outputBodyDesc->setRestitution(restitution);
+	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionBody, outputBodyDesc);
 
 	return outputModel;
-}
-
-void PrefabEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
-	PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< PrefabComponentData* >(componentData);
-
-	// Remove "consumed" components from prefab.
-	scene::Traverser::visit(prefabComponentData, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
-	{
-		if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::VrSkip;
-		}
-
-		if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
-			inoutEntityData->removeComponent(meshComponentData);
-
-		if (auto rigidBodyComponentData = inoutEntityData->getComponent< physics::RigidBodyComponentData >())
-			inoutEntityData->removeComponent(rigidBodyComponentData);
-
-		return scene::Traverser::VrContinue;
-	});
-
-	// Move "non-consumed" entities from prefab into output group.
-	for (auto entityData : prefabComponentData->getEntityData())
-		outputGroup->addEntityData(entityData);
-
-	// Remove prefab component.
-	entityData->removeComponent(prefabComponentData);
 }
 
 }

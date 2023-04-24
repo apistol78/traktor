@@ -113,7 +113,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
 	{
 		// Create model from spline.
-		Ref< model::Model > outputModel = SplineEntityReplicator().createVisualModel(pipelineBuilder, splineEntityData, nullptr);
+		Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, splineEntityData, nullptr, world::IEntityReplicator::Usage::Visual);
 		if (!outputModel)
 		{
 			log::warning << L"Unable to create model from spline \"" << splineEntityData->getName() << L"\"." << Endl;

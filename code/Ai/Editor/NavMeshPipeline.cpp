@@ -30,7 +30,7 @@
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/Triangulate.h"
-#include "Scene/Editor/IEntityReplicator.h"
+#include "World/Editor/IEntityReplicator.h"
 #include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
 #include "World/EntityData.h"
@@ -87,9 +87,9 @@ bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_build = settings->getPropertyIncludeHash< bool >(L"NavMeshPipeline.Build", true);
 
 	// Create entity replicators.
-	for (const auto& entityReplicatorType : type_of< scene::IEntityReplicator >().findAllOf(false))
+	for (const auto& entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
 	{
-		Ref< scene::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< scene::IEntityReplicator* >(entityReplicatorType->createInstance());
+		Ref< world::IEntityReplicator > entityReplicator = mandatory_non_null_type_cast< world::IEntityReplicator* >(entityReplicatorType->createInstance());
 		if (!entityReplicator->create(settings))
 			return false;	
 
@@ -181,10 +181,10 @@ bool NavMeshPipeline::buildOutput(
 		for (auto componentData : entityData->getComponents())
 		{
 			// Find model synthesizer which can generate from current component.
-			const scene::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+			const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 			if (entityReplicator)
 			{
-				if ((model = entityReplicator->createCollisionModel(pipelineBuilder, entityData, componentData)) != nullptr)
+				if ((model = entityReplicator->createModel(pipelineBuilder, entityData, componentData, world::IEntityReplicator::Usage::Collision)) != nullptr)
 					break;
 			}
 		}
