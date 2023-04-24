@@ -19,24 +19,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 class Heightfield;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Shader;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 /*! Terrain source asset.
  * \ingroup Terrain
@@ -50,8 +48,6 @@ class T_DLLCLASS TerrainAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	TerrainAsset();
-
 	virtual void serialize(ISerializer& s) override final;
 
 	uint32_t getDetailSkip() const { return m_detailSkip; }
@@ -63,12 +59,11 @@ public:
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
 private:
-	uint32_t m_detailSkip;
-	uint32_t m_patchDim;
+	uint32_t m_detailSkip = 1;
+	uint32_t m_patchDim = 129;
 	resource::Id< hf::Heightfield > m_heightfield;
 	resource::Id< render::Shader > m_surfaceShader;
 };
 
-	}
 }
 

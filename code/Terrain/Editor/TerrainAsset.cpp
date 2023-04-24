@@ -13,18 +13,10 @@
 #include "Resource/Member.h"
 #include "Terrain/Editor/TerrainAsset.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 6, TerrainAsset, ISerializable)
-
-TerrainAsset::TerrainAsset()
-:	m_detailSkip(2)
-,	m_patchDim(129)
-{
-}
 
 void TerrainAsset::serialize(ISerializer& s)
 {
@@ -36,5 +28,4 @@ void TerrainAsset::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
 }
 
-	}
 }
