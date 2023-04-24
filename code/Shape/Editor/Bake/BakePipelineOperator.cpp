@@ -439,6 +439,10 @@ bool BakePipelineOperator::transform(
 	if (!m_tracerType || !ms_tracerProcessor)
 		return true;
 
+	// Do not transform anything if we're not tracing lightmaps.
+	if (!configuration->getEnableLightmaps())
+		return true;
+
 	RefArray< world::LayerEntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
@@ -528,7 +532,7 @@ bool BakePipelineOperator::build(
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 
-	// Skip baking all to gether if no tracer type specified.
+	// Skip baking all to gather if no tracer type specified.
 	if (!m_tracerType || !ms_tracerProcessor)
 		return true;
 
@@ -544,354 +548,361 @@ bool BakePipelineOperator::build(
 		configuration
 	);
 
-	RefArray< world::LayerEntityData > layers;
-	SmallMap< Path, Ref< drawing::Image > > images;
-	Aabb3 irradianceBoundingBox;
+	Aabb3 irradianceBoundingBox(
+		Vector4(-10000.0f, -10000.0f, -10000.0f),
+		Vector4( 10000.0f,  10000.0f,  10000.0f)
+	);
 
-	// Find all static meshes and lights; replace external referenced entities with local if necessary.
-	for (const auto layer : inoutSceneAsset->getLayers())
+	if (configuration->getEnableLightmaps())
 	{
-		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
-		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
-			[&](const Guid& objectId) -> Ref< const ISerializable > {
-				return pipelineBuilder->getObjectReadOnly(objectId);
-			},
-			layer,
-			Guid::null,
-			nullptr
-		));
-		if (!flattenedLayer)
-			return false;
+		RefArray< world::LayerEntityData > layers;
+		SmallMap< Path, Ref< drawing::Image > > images;
 
-		// Dynamic layers do not get baked.
-		if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
+		// Find all static meshes and lights; replace external referenced entities with local if necessary.
+		for (const auto layer : inoutSceneAsset->getLayers())
 		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-			{
-				layers.push_back(flattenedLayer);
-				continue;
-			}
-		}
+			// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
+			// entities which are inline in scene, only those referenced from an external entity should be re-assigned IDs.
+			Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
+				[&](const Guid& objectId) -> Ref< const ISerializable > {
+					return pipelineBuilder->getObjectReadOnly(objectId);
+				},
+				layer,
+				Guid::null,
+				nullptr
+			));
+			if (!flattenedLayer)
+				return false;
 
-		// Collect all entities from layer which we will include in bake.
-		RefArray< world::EntityData > bakeEntityData;
-		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
-		{
-			// Check editor attributes component if we should include entity.
-			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
+			// Dynamic layers do not get baked.
+			if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
 			{
 				if (!editorAttributes->include || editorAttributes->dynamic)
-					return scene::Traverser::VrSkip;
-			}
-
-			// We only bake "named" entities.
-			if (inoutEntityData->getId().isNull())
-				return scene::Traverser::VrContinue;
-
-			// Light and sky must be included.
-			if (
-				inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
-				inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
-				inoutEntityData->getName() == L"Irradiance"
-			)
-			{
-				bakeEntityData.push_back(inoutEntityData);
-				return scene::Traverser::VrContinue;
-			}
-
-			// Include in bake.
-			auto componentDatas = inoutEntityData->getComponents();
-			for (auto componentData : componentDatas)
-			{
-				if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
 				{
-					bakeEntityData.push_back(inoutEntityData);
-					return scene::Traverser::VrSkip;
+					layers.push_back(flattenedLayer);
+					continue;
 				}
 			}
 
-			return scene::Traverser::VrContinue;
-		});
+			// Collect all entities from layer which we will include in bake.
+			RefArray< world::EntityData > bakeEntityData;
+			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+				{
+					// Check editor attributes component if we should include entity.
+					if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
+					{
+						if (!editorAttributes->include || editorAttributes->dynamic)
+							return scene::Traverser::VrSkip;
+					}
 
-		// Traverse and visit all entities in layer.
-		for (auto inoutEntityData : bakeEntityData)
-		{
-			// Add light source.
-			if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
+					// We only bake "named" entities.
+					if (inoutEntityData->getId().isNull())
+						return scene::Traverser::VrContinue;
+
+					// Light and sky must be included.
+					if (
+						inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
+						inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
+						inoutEntityData->getName() == L"Irradiance"
+						)
+					{
+						bakeEntityData.push_back(inoutEntityData);
+						return scene::Traverser::VrContinue;
+					}
+
+					// Include in bake.
+					auto componentDatas = inoutEntityData->getComponents();
+					for (auto componentData : componentDatas)
+					{
+						if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
+						{
+							bakeEntityData.push_back(inoutEntityData);
+							return scene::Traverser::VrSkip;
+						}
+					}
+
+					return scene::Traverser::VrContinue;
+				});
+
+			// Traverse and visit all entities in layer.
+			for (auto inoutEntityData : bakeEntityData)
 			{
-				if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
-					inoutEntityData->removeComponent(lightComponentData);
-			}
+				// Add light source.
+				if (auto lightComponentData = inoutEntityData->getComponent< world::LightComponentData >())
+				{
+					if (addLight(lightComponentData, inoutEntityData->getTransform(), tracerTask))
+						inoutEntityData->removeComponent(lightComponentData);
+				}
 
-			// Add sky source.
-			if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
-				addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), configuration->getSkyAttenuation(), tracerTask);
+				// Add sky source.
+				if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
+					addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), configuration->getSkyAttenuation(), tracerTask);
 
-			// Get volume for irradiance grid.
-			if (inoutEntityData->getName() == L"Irradiance")
-			{
-				if (auto volumeComponentData = inoutEntityData->getComponent< world::VolumeComponentData >())
-					irradianceBoundingBox = volumeComponentData->getVolumes().front().transform(inoutEntityData->getTransform());
-			}
+				// Get volume for irradiance grid.
+				if (inoutEntityData->getName() == L"Irradiance")
+				{
+					if (auto volumeComponentData = inoutEntityData->getComponent< world::VolumeComponentData >())
+						irradianceBoundingBox = volumeComponentData->getVolumes().front().transform(inoutEntityData->getTransform());
+				}
 
-			// Calculate synthesized ids.
-			const Guid entityId = inoutEntityData->getId();
-			Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
-			Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
-			Guid outputId = entityId.permutation(c_outputIdSeed);
+				// Calculate synthesized ids.
+				const Guid entityId = inoutEntityData->getId();
+				Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
+				Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
+				Guid outputId = entityId.permutation(c_outputIdSeed);
 
-			// Find model synthesizer which can generate from components.
-			auto componentDatas = inoutEntityData->getComponents();
-			for (auto componentData : componentDatas)
-			{
-				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
-				if (!entityReplicator)
-					continue;
+				// Find model synthesizer which can generate from components.
+				auto componentDatas = inoutEntityData->getComponents();
+				for (auto componentData : componentDatas)
+				{
+					const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
+					if (!entityReplicator)
+						continue;
 
-				const uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
-				const uint32_t modelHash = configurationHash + componentDataHash;
+					const uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
+					const uint32_t modelHash = configurationHash + componentDataHash;
 
-				Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-					[&](IStream* stream) -> Ref< model::Model > {
-						return BinarySerializer(stream).readObject< model::Model >();
-					},
-					[=](const model::Model* model, IStream* stream) -> bool {
-						return BinarySerializer(stream).writeObject(model);
-					},
-					[&]() -> Ref< model::Model > {
-						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
-						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
-						if (!model)
-							return nullptr;
+					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
+						Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
+						[&](IStream* stream) -> Ref< model::Model > {
+							return BinarySerializer(stream).readObject< model::Model >();
+						},
+						[=](const model::Model* model, IStream* stream) -> bool {
+							return BinarySerializer(stream).writeObject(model);
+						},
+							[&]() -> Ref< model::Model > {
+							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
+							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
+							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
+							if (!model)
+								return nullptr;
 
-						// Calculate size of lightmap from geometry.
-						const int32_t lightmapSize = calculateLightmapSize(
-							model,
-							configuration->getLumelDensity(),
-							configuration->getMinimumLightMapSize(),
-							configuration->getMaximumLightMapSize()
+							// Calculate size of lightmap from geometry.
+							const int32_t lightmapSize = calculateLightmapSize(
+								model,
+								configuration->getLumelDensity(),
+								configuration->getMinimumLightMapSize(),
+								configuration->getMaximumLightMapSize()
+							);
+
+							// Prepare model for baking.
+							if (!prepareModel(
+								pipelineBuilder,
+								model,
+								m_assetPath,
+								lightmapSize
+							))
+								return nullptr;
+
+							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
+							return model;
+						}
 						);
 
-						// Prepare model for baking.
-						if (!prepareModel(
-							pipelineBuilder,
-							model,
-							m_assetPath,
-							lightmapSize
-						))
-							return nullptr;
-
-						model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
-						return model;
-					}
-				);
-
-				Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
-					Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-					[&](IStream* stream) -> Ref< model::Model > {
-						return BinarySerializer(stream).readObject< model::Model >();
-					},
-					[=](const model::Model* model, IStream* stream) -> bool {
-						return BinarySerializer(stream).writeObject(model);
-					},
-					[&]() -> Ref< model::Model > {
-						pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
-						Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
-						pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
-						return model;
-					}
-				);
-
-				// Add visual model to tracer task.
-				if (visualModel)
-				{
-					log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
-
-					const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
-					bool needDirectionalMap = false;
-
-					// Modify all materials to contain reference to lightmap channel.
-					for (auto& material : visualModel->getMaterials())
-					{
-						material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
-						if (configuration->getEnableDirectionalMaps() && !material.getNormalMap().name.empty())
-						{
-							material.setProperty< PropertyString >(L"LightMapDirectionalId", lightmapDirectionalId.format());
-							needDirectionalMap = true;
+					Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
+						Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
+						[&](IStream* stream) -> Ref< model::Model > {
+							return BinarySerializer(stream).readObject< model::Model >();
+						},
+						[=](const model::Model* model, IStream* stream) -> bool {
+							return BinarySerializer(stream).writeObject(model);
+						},
+							[&]() -> Ref< model::Model > {
+							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
+							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
+							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
+							return model;
 						}
-					}
+						);
 
-					// Load texture images and attach to materials.
-					for (auto& material : visualModel->getMaterials())
-					{
-						auto diffuseMap = material.getDiffuseMap();
-						if (diffuseMap.texture.isNotNull())
-						{
-							Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-							if (!textureAsset)
-								continue;
-
-							Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
-							Ref< drawing::Image > image = images[filePath];
-							if (image == nullptr)
-							{
-								Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-								if (file)
-								{
-									image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-									if (image && !textureAsset->m_output.m_linearGamma)
-									{
-										// Convert to linear color space.
-										const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-										image->apply(&gammaFilter);							
-									}
-									images[filePath] = image;
-								}
-							}
-
-							diffuseMap.image = image;			
-							material.setDiffuseMap(diffuseMap);
-						}
-					}
-
-					Ref< db::Instance > lightmapDiffuseInstance;
-					if (lightmapDiffuseId.isNotNull())
-					{
-						lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
-						if (!lightmapDiffuseInstance)
-							return false;
-						lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-							resource::Id< render::ITexture >(c_lightmapProxyId)
-						));
-						lightmapDiffuseInstance->commit();
-					}
-
-					Ref< db::Instance > lightmapDirectionalInstance;
-					if (needDirectionalMap && lightmapDirectionalId.isNotNull())
-					{
-						lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
-						if (!lightmapDirectionalInstance)
-							return false;
-						lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
-							resource::Id< render::ITexture >(c_lightmapProxyId)
-						));
-						lightmapDirectionalInstance->commit();
-					}
-
-					tracerTask->addTracerModel(new TracerModel(
-						visualModel,
-						inoutEntityData->getTransform()
-					));
-
-					tracerTask->addTracerOutput(new TracerOutput(
-						lightmapDiffuseInstance,
-						lightmapDirectionalInstance,
-						visualModel,
-						inoutEntityData->getTransform(),
-						lightmapSize
-					));
-				}
-
-				// Modify entity.
-				if (visualModel || collisionModel)
-				{
-					Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
-					entityReplicator->transform(inoutEntityData, componentData, outputGroup);
-
+					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						//Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(world::IEntityReplicator::VisualMesh));
+						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
 
-						// Create and build a new mesh asset referencing the modified model.
-						Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-						outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-						//if (meshAsset)
-						//{
-						//	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
-						//	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
-						//}
+						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
+						bool needDirectionalMap = false;
 
-						Ref< world::EntityData > outputMeshEntity = new world::EntityData();
-						outputMeshEntity->setId(Guid::create());
-						outputMeshEntity->setName(inoutEntityData->getName());
-						outputMeshEntity->setTransform(inoutEntityData->getTransform());
-						outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputId)));
-						outputGroup->addEntityData(outputMeshEntity);
+						// Modify all materials to contain reference to lightmap channel.
+						for (auto& material : visualModel->getMaterials())
+						{
+							material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
+							if (configuration->getEnableDirectionalMaps() && !material.getNormalMap().name.empty())
+							{
+								material.setProperty< PropertyString >(L"LightMapDirectionalId", lightmapDirectionalId.format());
+								needDirectionalMap = true;
+							}
+						}
 
-						// Ensure visual mesh is build.
-						pipelineBuilder->buildAdHocOutput(
-							outputMeshAsset,
-							outputId,
-							visualModel
-						);
+						// Load texture images and attach to materials.
+						for (auto& material : visualModel->getMaterials())
+						{
+							auto diffuseMap = material.getDiffuseMap();
+							if (diffuseMap.texture.isNotNull())
+							{
+								Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+								if (!textureAsset)
+									continue;
+
+								Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
+								Ref< drawing::Image > image = images[filePath];
+								if (image == nullptr)
+								{
+									Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+									if (file)
+									{
+										image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+										if (image && !textureAsset->m_output.m_linearGamma)
+										{
+											// Convert to linear color space.
+											const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+											image->apply(&gammaFilter);
+										}
+										images[filePath] = image;
+									}
+								}
+
+								diffuseMap.image = image;
+								material.setDiffuseMap(diffuseMap);
+							}
+						}
+
+						Ref< db::Instance > lightmapDiffuseInstance;
+						if (lightmapDiffuseId.isNotNull())
+						{
+							lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+							if (!lightmapDiffuseInstance)
+								return false;
+							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+								resource::Id< render::ITexture >(c_lightmapProxyId)
+							));
+							lightmapDiffuseInstance->commit();
+						}
+
+						Ref< db::Instance > lightmapDirectionalInstance;
+						if (needDirectionalMap && lightmapDirectionalId.isNotNull())
+						{
+							lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
+							if (!lightmapDirectionalInstance)
+								return false;
+							lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
+								resource::Id< render::ITexture >(c_lightmapProxyId)
+							));
+							lightmapDirectionalInstance->commit();
+						}
+
+						tracerTask->addTracerModel(new TracerModel(
+							visualModel,
+							inoutEntityData->getTransform()
+						));
+
+						tracerTask->addTracerOutput(new TracerOutput(
+							lightmapDiffuseInstance,
+							lightmapDirectionalInstance,
+							visualModel,
+							inoutEntityData->getTransform(),
+							lightmapSize
+						));
 					}
 
-					if (collisionModel)
+					// Modify entity.
+					if (visualModel || collisionModel)
 					{
-						const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
+						Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
+						entityReplicator->transform(inoutEntityData, componentData, outputGroup);
 
-						//Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionMesh));
-						//Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionShape));
-						//Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionBody));
+						if (visualModel)
+						{
+							//Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(world::IEntityReplicator::VisualMesh));
 
-						// Build collision shape mesh.
-						Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
-						outputMeshAsset->setCalculateConvexHull(false);
-						//if (meshAsset)
-						//	outputMeshAsset->setMaterials(meshAsset->getMaterials());
+							// Create and build a new mesh asset referencing the modified model.
+							Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+							outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+							//if (meshAsset)
+							//{
+							//	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+							//	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+							//}
 
-						Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
-						//if (shapeDesc)
-						//{
-						//	outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
-						//	outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
-						//}
+							Ref< world::EntityData > outputMeshEntity = new world::EntityData();
+							outputMeshEntity->setId(Guid::create());
+							outputMeshEntity->setName(inoutEntityData->getName());
+							outputMeshEntity->setTransform(inoutEntityData->getTransform());
+							outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputId)));
+							outputGroup->addEntityData(outputMeshEntity);
 
-						Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
-						//if (bodyDesc)
-						//{
-						//	outputBodyDesc->setFriction(bodyDesc->getFriction());
-						//	outputBodyDesc->setRestitution(bodyDesc->getRestitution());
-						//}
+							// Ensure visual mesh is build.
+							pipelineBuilder->buildAdHocOutput(
+								outputMeshAsset,
+								outputId,
+								visualModel
+							);
+						}
 
-						Ref< world::EntityData > outputShapeEntity = new world::EntityData();
-						outputShapeEntity->setId(Guid::create());
-						outputShapeEntity->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
-						outputGroup->addEntityData(outputShapeEntity);
+						if (collisionModel)
+						{
+							const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
 
-						// Ensure collision shape is built.
-						pipelineBuilder->buildAdHocOutput(
-							outputMeshAsset,
-							outputShapeId,
-							collisionModel
-						);
+							//Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionMesh));
+							//Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionShape));
+							//Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionBody));
+
+							// Build collision shape mesh.
+							Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
+							outputMeshAsset->setCalculateConvexHull(false);
+							//if (meshAsset)
+							//	outputMeshAsset->setMaterials(meshAsset->getMaterials());
+
+							Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
+							//if (shapeDesc)
+							//{
+							//	outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
+							//	outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
+							//}
+
+							Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
+							//if (bodyDesc)
+							//{
+							//	outputBodyDesc->setFriction(bodyDesc->getFriction());
+							//	outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+							//}
+
+							Ref< world::EntityData > outputShapeEntity = new world::EntityData();
+							outputShapeEntity->setId(Guid::create());
+							outputShapeEntity->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
+							outputGroup->addEntityData(outputShapeEntity);
+
+							// Ensure collision shape is built.
+							pipelineBuilder->buildAdHocOutput(
+								outputMeshAsset,
+								outputShapeId,
+								collisionModel
+							);
+						}
+
+						// Transfer entities from existing group, need to merge with our output group.
+						Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
+						if (existingGroup)
+						{
+							for (auto childEntity : existingGroup->getEntityData())
+								outputGroup->addEntityData(childEntity);
+						}
+
+						inoutEntityData->setComponent(outputGroup);
 					}
 
-					// Transfer entities from existing group, need to merge with our output group.
-					Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
-					if (existingGroup)
-					{
-						for (auto childEntity : existingGroup->getEntityData())
-							outputGroup->addEntityData(childEntity);
-					}
-
-					inoutEntityData->setComponent(outputGroup);
+					lightmapDiffuseId.permutate();
+					lightmapDirectionalId.permutate();
+					outputId.permutate();
 				}
-
-				lightmapDiffuseId.permutate();
-				lightmapDirectionalId.permutate();
-				outputId.permutate();
 			}
-		}
 
-		// Replace with modified layer in output scene.
-		layers.push_back(flattenedLayer);
+			// Replace with modified layer in output scene.
+			layers.push_back(flattenedLayer);
+		}
+		inoutSceneAsset->setLayers(layers);
+		images.clear();
 	}
-	inoutSceneAsset->setLayers(layers);
-	images.clear();
 
 	// Create irradiance grid task.
 	{

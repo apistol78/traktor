@@ -29,6 +29,8 @@ class T_DLLCLASS BakeConfiguration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	bool getEnableLightmaps() const { return m_enableLightmaps; }
+
 	uint32_t getPrimarySampleCount() const { return m_primarySampleCount; }
 
 	uint32_t getSecondarySampleCount() const { return m_secondarySampleCount; }
@@ -62,6 +64,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	bool m_enableLightmaps = true;
 	uint32_t m_primarySampleCount = 100;
 	uint32_t m_secondarySampleCount = 50;
 	uint32_t m_shadowSampleCount = 50;
