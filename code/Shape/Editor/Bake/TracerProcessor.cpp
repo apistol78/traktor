@@ -630,7 +630,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		auto tracerIrradiance = tracerIrradiances[i];
 		const Scalar gridDensity(configuration->getIrradianceGridDensity());
 
-		// Determine bounding box from all trace models if noone is already provided.
+		// Determine bounding box from all trace models if no one is already provided.
 		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
 		if (boundingBox.empty())
 		{

@@ -18,11 +18,14 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 27, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 28, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT(s.getVersion< BakeConfiguration >() >= 17);
+
+	if (s.getVersion< BakeConfiguration >() >= 28)
+		s >> Member< bool >(L"enableLightmaps", m_enableLightmaps);
 
 	if (s.getVersion< BakeConfiguration >() >= 24)
 	{

@@ -348,22 +348,22 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				const Vector4 basisY(-1.0f / std::sqrt(6.0f), 1.0f / std::sqrt(2.0f), z);
 				const Vector4 basisZ(-1.0f / std::sqrt(6.0f), -1.0f / std::sqrt(2.0f), z);
 
-				Vector4 binormal = -cross(elm.normal, elm.tangent);
+				const Vector4 binormal = -cross(elm.normal, elm.tangent);
 
-				Matrix44 frame(
+				const Matrix44 frame(
 					elm.tangent,
 					binormal,
 					elm.normal,
 					Vector4::zero()
 				);
 
-				Color4f incomingX = tracePath0(elm.position, frame * basisX, random);
-				Color4f incomingY = tracePath0(elm.position, frame * basisY, random);
-				Color4f incomingZ = tracePath0(elm.position, frame * basisZ, random);
+				const Color4f incomingX = tracePath0(elm.position, frame * basisX, random);
+				const Color4f incomingY = tracePath0(elm.position, frame * basisY, random);
+				const Color4f incomingZ = tracePath0(elm.position, frame * basisZ, random);
 
-				Scalar intensityX = horizontalAdd3(incomingX) / 3.0_simd;
-				Scalar intensityY = horizontalAdd3(incomingY) / 3.0_simd;
-				Scalar intensityZ = horizontalAdd3(incomingZ) / 3.0_simd;
+				const Scalar intensityX = horizontalAdd3(incomingX) / 3.0_simd;
+				const Scalar intensityY = horizontalAdd3(incomingY) / 3.0_simd;
+				const Scalar intensityZ = horizontalAdd3(incomingZ) / 3.0_simd;
 
 				lightmapDirectional->setPixel(x, y, Color4f(
 					0.5_simd * (intensityX / intensity) * (1.0_simd / z),
@@ -417,7 +417,7 @@ Color4f RayTracerEmbree::tracePath0(
 	{
 		for (int32_t j = 0; j < 16; ++j)
 		{
-			Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			directions[j] = Quasirandom::uniformHemiSphere(uv, normal);
 			constructRay(origin, directions[j], m_configuration->getMaxPathDistance(), rhv[j]);
 		}
@@ -437,8 +437,8 @@ Color4f RayTracerEmbree::tracePath0(
 				continue;
 			}
 
-			Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
-			Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
+			const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+			const Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
 			if (m_irradianceCache)
 			{
@@ -454,7 +454,7 @@ Color4f RayTracerEmbree::tracePath0(
 							continue;
 						if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
 							continue;
-						Scalar k = max(1.0_simd - ((irr.position - hitOrigin).length() / maxDistance), 0.0_simd);
+						const Scalar k = max(1.0_simd - ((irr.position - hitOrigin).length() / maxDistance), 0.0_simd);
 						output += irr.irradiance * k;
 						weight += k;
 					}
@@ -467,7 +467,7 @@ Color4f RayTracerEmbree::tracePath0(
 				}
 			}
 
-			uint32_t offset = m_materialOffset[rh.hit.geomID];
+			const uint32_t offset = m_materialOffset[rh.hit.geomID];
 			const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 			Color4f hitMaterialColor = hitMaterial.getColor();
@@ -486,20 +486,20 @@ Color4f RayTracerEmbree::tracePath0(
 					hitMaterialColor
 				);
 			}
-			Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
-			Color4f BRDF = hitMaterialColor / Scalar(PI);
+			const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+			const Color4f BRDF = hitMaterialColor / Scalar(PI);
 
-			Vector2 uv(random.nextFloat(), random.nextFloat());
+			const Vector2 uv(random.nextFloat(), random.nextFloat());
 
-			Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+			const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 			const Scalar probability = 1.0_simd;
 
 			//Vector4 newDirection = lambertianDirection(uv, hitNormal);
 			//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 
-			Scalar cosPhi = dot3(newDirection, hitNormal);
-			Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
-			Color4f direct = sampleAnalyticalLights(
+			const Scalar cosPhi = dot3(newDirection, hitNormal);
+			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
+			const Color4f direct = sampleAnalyticalLights(
 				random,
 				hitOrigin,
 				hitNormal,
@@ -507,7 +507,7 @@ Color4f RayTracerEmbree::tracePath0(
 				true
 			);
 
-			Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+			const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 
 			if (m_irradianceCache)
 				m_irradianceCache->insert({ hitOrigin, hitNormal, output });
@@ -583,7 +583,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 			return output / weight;
 	}
 
-	uint32_t offset = m_materialOffset[rh.hit.geomID];
+	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 	Color4f hitMaterialColor = hitMaterial.getColor();
@@ -602,20 +602,20 @@ Color4f RayTracerEmbree::traceSinglePath(
 			hitMaterialColor
 		);
 	}
-	Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
-	Color4f BRDF = hitMaterialColor / Scalar(PI);
+	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+	const Color4f BRDF = hitMaterialColor / Scalar(PI);
 
-	Vector2 uv(random.nextFloat(), random.nextFloat());
+	const Vector2 uv(random.nextFloat(), random.nextFloat());
 
-	Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
+	const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 	const Scalar probability = 1.0_simd;
 
 	//Vector4 newDirection = lambertianDirection(uv, hitNormal);
 	//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 
-	Scalar cosPhi = dot3(newDirection, hitNormal);
-	Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
-	Color4f direct = sampleAnalyticalLights(
+	const Scalar cosPhi = dot3(newDirection, hitNormal);
+	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
+	const Color4f direct = sampleAnalyticalLights(
 		random,
 		hitOrigin,
 		hitNormal,
@@ -623,7 +623,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 		true
 	);
 
-	Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 
 	if (m_irradianceCache)
 		m_irradianceCache->insert({ hitOrigin, hitNormal, output });
@@ -666,8 +666,8 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 		}
 	}
 
-	float k = float(unoccluded) / sampleCount;
-	float o = std::pow(k, 2.0f);
+	const float k = float(unoccluded) / sampleCount;
+	const float o = std::pow(k, 2.0f);
 
 	return Scalar(o);
 }
@@ -712,9 +712,9 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
+						const Vector4 traceDirection = -light.direction;
+						const Vector2 uv = m_shadowSampleOffsets[j];
 						Vector4 lumelPosition = origin;
-						Vector4 traceDirection = -light.direction;
-						Vector2 uv = m_shadowSampleOffsets[j];
 						lumelPosition += u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius);
 
 						lumelPosition.storeAligned(&r.org_x); 
@@ -743,15 +743,15 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		case Light::LtPoint:
 			{
 				Vector4 lightDirection = (light.position - origin).xyz0();
-				Scalar lightDistance = lightDirection.normalize();
+				const Scalar lightDistance = lightDirection.normalize();
 				if (lightDistance > light.range)
 					break;
 
-				Scalar phi = dot3(normal, lightDirection);
+				const Scalar phi = dot3(normal, lightDirection);
 				if (phi <= 0.0f)
 					break;
 
-				Scalar f = attenuation(lightDistance, light.range);
+				const Scalar f = attenuation(lightDistance, light.range);
 				if (f <= 0.0f)
 					break;
 
@@ -769,9 +769,9 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
-						Vector4 lumelPosition = origin;
+						const Vector4 lumelPosition = origin;
+						const Vector2 uv = m_shadowSampleOffsets[j];
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
-						Vector2 uv = m_shadowSampleOffsets[j];
 						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
 						lumelPosition.storeAligned(&r.org_x); 
@@ -800,20 +800,20 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		case Light::LtSpot:
 			{
 				Vector4 lightToPoint = (origin - light.position).xyz0();
-				Scalar lightDistance = lightToPoint.normalize();
+				const Scalar lightDistance = lightToPoint.normalize();
 				if (lightDistance > light.range)
 					break;
 
-				float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
-				Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
+				const float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
+				const Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
 				if (k0 <= 0.0f)
 					break;
 
-				Scalar k1 = dot3(normal, -lightToPoint);
+				const Scalar k1 = dot3(normal, -lightToPoint);
 				if (k1 <= 0.0f)
 					break;
 
-				Scalar k2 = attenuation(lightDistance, light.range);
+				const Scalar k2 = attenuation(lightDistance, light.range);
 				if (k2 <= 0.0f)
 					break;
 
@@ -831,9 +831,9 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
-						Vector4 lumelPosition = origin;
+						const Vector4 lumelPosition = origin;
+						const Vector2 uv = m_shadowSampleOffsets[j];
 						Vector4 traceDirection = (light.position - origin).xyz0().normalized();
-						Vector2 uv = m_shadowSampleOffsets[j];
 						traceDirection = (light.position + u * Scalar(uv.x * shadowRadius) + v * Scalar(uv.y * shadowRadius) - origin).xyz0().normalized();
 
 						lumelPosition.storeAligned(&r.org_x); 
@@ -878,10 +878,10 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		if (args->valid[i] != -1)
 			continue;
 
-		uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
-		uint32_t primID = RTCHitN_primID(hits, args->N, i);
+		const uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
+		const uint32_t primID = RTCHitN_primID(hits, args->N, i);
 
-		uint32_t offset = self->m_materialOffset[geomID];
+		const uint32_t offset = self->m_materialOffset[geomID];
 		const auto& hitMaterial = *self->m_materials[offset + primID];
 
 		if (hitMaterial.getBlendOperator() != model::Material::BoAlphaTest)
@@ -893,8 +893,8 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 			const uint32_t slot = 0;
 			float texCoord[2] = { 0.0f, 0.0f };
 
-			float u = RTCHitN_u(hits, args->N, i);
-			float v = RTCHitN_v(hits, args->N, i);
+			const float u = RTCHitN_u(hits, args->N, i);
+			const float v = RTCHitN_v(hits, args->N, i);
 
 			RTCGeometry geometry = rtcGetGeometry(self->m_scene, geomID);
 			rtcInterpolate0(geometry, primID, u, v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
