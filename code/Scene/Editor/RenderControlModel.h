@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Timer/Timer.h"
 #include "Ui/Point.h"
 #include "Ui/Events/AllEvents.h"
 
@@ -57,6 +58,7 @@ private:
 		MtSelection
 	};
 
+	Timer m_timer;
 	ui::Point m_mousePosition0;
 	ui::Point m_mousePosition;
 	int32_t m_mouseButton;
