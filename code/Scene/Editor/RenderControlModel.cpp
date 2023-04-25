@@ -64,7 +64,8 @@ void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* 
 	if ((m_moveCamera & (1 << 3)) != 0)
 		delta += Vector4(1.0f, 0.0f, 0.0f);
 
-	Scalar speed = 8.0_simd;
+	const float deltaTime = std::min< float >(m_timer.getDeltaTime(), 1.0f / 60.0f);
+	Scalar speed = Scalar(deltaTime * 20.0f) * 8.0_simd;
 
 	const uint32_t keyState = ui::Application::getInstance()->getEventLoop()->getAsyncKeyState();
 	if ((keyState & ui::KsShift) != 0)
@@ -390,8 +391,10 @@ void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Wi
 		return;
 	}
 
-	context->enqueueRedraw(renderControl);
+	// Just issue this to ensure first update isn't too large.
+	m_timer.getDeltaTime();
 
+	context->enqueueRedraw(renderControl);
 	event->consume();
 }
 
@@ -423,7 +426,6 @@ void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widg
 	}
 
 	context->enqueueRedraw(renderControl);
-
 	event->consume();
 }
 

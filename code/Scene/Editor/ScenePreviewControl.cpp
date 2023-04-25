@@ -469,7 +469,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 	{
 		Ref< Scene > scene = m_context->getScene();
 
-		const float deltaTime = (float)m_timer.getDeltaTime();
+		const float deltaTime = std::min((float)m_timer.getDeltaTime(), 1.0f / 10.0f);
 		const float scaledTime = m_context->getTime();
 		const float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 
