@@ -321,6 +321,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			{
 				if (output.resourceId != 0)
 				{
+					// Continue rendering to same target if possible; else start another pass.
 					if (currentOutputTargetSetId != output.resourceId)
 					{
 						if (currentOutputTargetSetId != ~0U)
@@ -343,7 +344,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 									cleanup();
 									return false;
 								}
-							}	
+							}
 
 							auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
 							tb->renderTargetSet = target.rts;
@@ -351,12 +352,14 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							tb->load = output.load;
 							tb->store = output.store;
 							renderContext->enqueue(tb);
-						}
 
-						currentOutputTargetSetId = output.resourceId;
+							currentOutputTargetSetId = output.resourceId;
+						}
+						else
+							currentOutputTargetSetId = ~0U;
 					}
 				}
-				else
+				else // Output to framebuffer; implicit as target 0.
 				{
 					if (currentOutputTargetSetId != 0)
 					{
