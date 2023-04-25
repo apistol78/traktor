@@ -163,7 +163,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(diffuseTexture);
 			mm.setDiffuseMap(Material::Map(
-				getTextureName(diffuseTexture) + L"_D",
+				getTextureName(diffuseTexture),
 				uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer()),
 				true,
 				Guid(),
@@ -176,7 +176,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > specularImage = getEmbeddedTexture(specularTexture);
 			mm.setSpecularMap(Material::Map(
-				getTextureName(specularTexture) + L"_S",
+				getTextureName(specularTexture),
 				uvChannel(outModel, specularTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -189,12 +189,13 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > shininessImage = getEmbeddedTexture(shininessTexture);
 			mm.setRoughnessMap(Material::Map(
-				getTextureName(shininessTexture) + L"_Sh",
+				getTextureName(shininessTexture),
 				uvChannel(outModel, shininessTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
 				shininessImage
 			));
+			mm.setRoughness(1.0f);
 		}
 
 		const FbxTexture* reflectionFactorTexture = getTexture(material, FbxSurfaceMaterial::sReflectionFactor);
@@ -202,12 +203,13 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > reflectionFactorImage = getEmbeddedTexture(reflectionFactorTexture);
 			mm.setMetalnessMap(Material::Map(
-				getTextureName(reflectionFactorTexture) + L"_Rf",
+				getTextureName(reflectionFactorTexture),
 				uvChannel(outModel, reflectionFactorTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
 				reflectionFactorImage
 			));
+			mm.setMetalness(1.0f);
 		}
 
 		const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
@@ -215,7 +217,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > normalImage = getEmbeddedTexture(normalTexture);
 			mm.setNormalMap(Material::Map(
-				getTextureName(normalTexture) + L"_N",
+				getTextureName(normalTexture),
 				uvChannel(outModel, normalTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -228,7 +230,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > transparencyImage = getEmbeddedTexture(transparencyTexture);
 			mm.setTransparencyMap(Material::Map(
-				getTextureName(transparencyTexture) + L"_T",
+				getTextureName(transparencyTexture),
 				uvChannel(outModel, transparencyTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -242,7 +244,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > transparencyFactorImage = getEmbeddedTexture(transparencyFactorTexture);
 			mm.setTransparencyMap(Material::Map(
-				getTextureName(transparencyFactorTexture) + L"_Tf",
+				getTextureName(transparencyFactorTexture),
 				uvChannel(outModel, transparencyFactorTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -256,7 +258,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		{
 			Ref< drawing::Image > emissiveImage = getEmbeddedTexture(emissiveTexture);
 			mm.setEmissiveMap(Material::Map(
-				getTextureName(emissiveTexture) + L"_E",
+				getTextureName(emissiveTexture),
 				uvChannel(outModel, emissiveTexture->UVSet.Get().Buffer()),
 				false,
 				Guid(),
@@ -297,19 +299,27 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 				mm.setSpecularTerm(clamp(float(specularFactor), 0.0f, 1.0f));
 			}
 
-			FbxPropertyT< FbxDouble > phongShininess = phongMaterial->Shininess;
-			if (phongShininess.IsValid())
+			// Do not modulate roughness in case a roughness map already exist.
+			if (shininessTexture == nullptr)
 			{
-				FbxDouble shininess = phongShininess.Get();
-				float roughness = std::pow(1.0f - shininess / 100.0f, 2.0f);
-				mm.setRoughness(clamp(roughness, 0.0f, 1.0f));
+				FbxPropertyT< FbxDouble > phongShininess = phongMaterial->Shininess;
+				if (phongShininess.IsValid())
+				{
+					FbxDouble shininess = phongShininess.Get();
+					float roughness = std::pow(1.0f - shininess / 100.0f, 2.0f);
+					mm.setRoughness(clamp(roughness, 0.0f, 1.0f));
+				}
 			}
 
-			FbxPropertyT< FbxDouble > reflectionFactor = phongMaterial->ReflectionFactor;
-			if (reflectionFactor.IsValid())
+			// Do not modulate metalness in case a roughness map already exist.
+			if (reflectionFactorTexture == nullptr)
 			{
-				FbxDouble reflection = reflectionFactor.Get();
-				mm.setMetalness(clamp(float(reflection), 0.0f, 1.0f));
+				FbxPropertyT< FbxDouble > reflectionFactor = phongMaterial->ReflectionFactor;
+				if (reflectionFactor.IsValid())
+				{
+					FbxDouble reflection = reflectionFactor.Get();
+					mm.setMetalness(clamp(float(reflection), 0.0f, 1.0f));
+				}
 			}
 
 			FbxPropertyT< FbxDouble3 > phongEmissive = /*mayaExported ? phongMaterial->Ambient :*/ phongMaterial->Emissive;

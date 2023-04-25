@@ -574,7 +574,7 @@ void MeshAssetEditor::createMaterialShader()
 	if (!selectedItem)
 		return;
 
-	std::wstring materialName = selectedItem->get(0)->getText();
+	const std::wstring materialName = selectedItem->get(0)->getText();
 	std::wstring outputName = materialName;
 
 	// Find model material to associate shader with.
