@@ -389,8 +389,8 @@ Eye direction
 			<id>{6F39E350-B6CE-429E-A2FE-92C3D97AF145}</id>
 			<comment/>
 			<position>
-				<first>388</first>
-				<second>1498</second>
+				<first>282</first>
+				<second>1504</second>
 			</position>
 			<name>kS</name>
 			<global>false</global>
@@ -1571,13 +1571,11 @@ Eye direction
 			</outputPins>
 			<script>
 			<![CDATA[
-
 const float diffuseCoeff = $kD.x;
-const float specularCoeff = $kS.x * $BRDF.x + $BRDF.y;
+const vec3 specularCoeff = $kS.xyz * $BRDF.x + $BRDF.y;
 const vec3 emissive = $SurfaceColor.xyz * $Emissive.x;
 const vec3 combined = $Diffuse.xyz * diffuseCoeff + $Specular.xyz * specularCoeff + emissive;
 $Output = vec4(combined * $Occlusion, 0.0f);
-
 
 			]]>
 			</script>
@@ -1634,15 +1632,6 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<position>
 				<first>-244</first>
 				<second>1204</second>
-			</position>
-			<swizzle>x</swizzle>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{54DFDE22-BD62-6048-866A-BBD03BF04520}</id>
-			<comment/>
-			<position>
-				<first>225</first>
-				<second>1483</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -2842,16 +2831,6 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<source>
 				<node ref="/object/nodes/item[33]"/>
 				<id>{235CF902-4053-4B14-B9DA-9AF8F2CC030D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[136]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[136]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[30]"/>
