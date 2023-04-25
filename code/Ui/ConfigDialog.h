@@ -47,6 +47,8 @@ public:
 
 	virtual Rect getInnerRect() const override;
 
+	virtual Size getMinimumSize() const override;
+
 private:
 	Ref< Button > m_ok;
 	Ref< Button > m_cancel;

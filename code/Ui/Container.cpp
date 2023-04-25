@@ -67,6 +67,10 @@ void Container::fit(uint32_t axis)
 		Rect outer = getRect();
 		const Size nc = outer.getSize() - getInnerRect().getSize();
 
+		const Size ms = getMinimumSize();
+		bounds.cx = std::max(bounds.cx, ms.cx);
+		bounds.cy = std::max(bounds.cy, ms.cy);
+
 		if ((axis & Horizontal) != 0)
 			outer.setWidth(bounds.cx + nc.cx);
 		if ((axis & Vertical) != 0)

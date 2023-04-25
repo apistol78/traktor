@@ -69,7 +69,7 @@ void ConfigDialog::update(const Rect* rc, bool immediate)
 	const int32_t four = dpi96(4);
 	if (m_apply)
 	{
-		Size apply = m_apply->getPreferredSize(rcInner.getSize());
+		const Size apply = m_apply->getPreferredSize(rcInner.getSize());
 
 		m_ok->setRect(Rect(Point(rcInner.right - ok.cx - cancel.cx - apply.cx - 3 * four, rcInner.bottom + four + four), ok));
 		m_cancel->setRect(Rect(Point(rcInner.right - cancel.cx - apply.cx - 2 * four, rcInner.bottom + four + four), cancel));
@@ -93,6 +93,31 @@ Rect ConfigDialog::getInnerRect() const
 		rc.bottom -= m_ok->getPreferredSize(rc.getSize()).cy + 2 * four + four;
 	}
 	return rc;
+}
+
+Size ConfigDialog::getMinimumSize() const
+{
+	Size sz = Dialog::getMinimumSize();
+	if (m_ok)
+	{
+		const Rect rc = Dialog::getInnerRect();
+		const int32_t four = dpi96(4);
+
+		const Size ok = m_ok->getPreferredSize(rc.getSize());
+		const Size cancel = m_cancel->getPreferredSize(rc.getSize());
+
+		int32_t width = ok.cx + four + cancel.cx;
+
+		if (m_apply)
+		{
+			const Size apply = m_apply->getPreferredSize(rc.getSize());
+			width += four + apply.cx;
+		}
+
+		sz.cx = std::max(sz.cy, width + four * 2);
+		sz.cy += ok.cy + 2 * four + four;
+	}
+	return sz;
 }
 
 void ConfigDialog::eventButtonClick(ButtonClickEvent* event)
