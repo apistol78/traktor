@@ -1374,6 +1374,10 @@
 			</inputPins>
 			<outputPins>
 				<item>
+					<id>{EB6DB3E6-015F-2741-89F6-7D59C254A46F}</id>
+					<name>ClusterPosition</name>
+				</item>
+				<item>
 					<id>{FEF9EF0E-8741-4E46-9DA9-8C2D1978CE9A}</id>
 					<name>LightCount</name>
 				</item>
@@ -1440,7 +1444,7 @@
 				<first>3035</first>
 				<second>2652</second>
 			</position>
-			<value>8</value>
+			<value>5</value>
 		</item>
 		<item type="traktor.render.Sampler" version="5,traktor.render.Node:1">
 			<id>{A6643356-276A-9547-B61E-A9C938D6ECC0}</id>
@@ -1728,8 +1732,6 @@ if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
 			]]>
 			</script>
 		</item>
@@ -1762,8 +1764,6 @@ if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
 			]]>
 			</script>
 		</item>
@@ -1796,8 +1796,6 @@ if (v >= 0.0f && v <= 1.0f)
 	$Output = vec4(v, v, v, 1.0f);
 else
 	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-
-
 			]]>
 			</script>
 		</item>
@@ -2485,16 +2483,6 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[83]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[81]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -2681,6 +2669,16 @@ else
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
 				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

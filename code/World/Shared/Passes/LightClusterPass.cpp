@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Math/Range.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
@@ -154,25 +155,36 @@ void LightClusterPass::setup(
 				const Scalar lz = lightPositions[i].z();
 				if (lz + lr >= snz && lz - lr <= sfz)
 				{
-					//Frustum spotFrustum;
-					//spotFrustum.buildPerspective(light.radius, 1.0f, 0.0f, light.range);
+					Frustum spotFrustum;
+					spotFrustum.buildPerspective(light->getRadius(), 1.0f, 0.0f, lr);
 
-					//Vector4 p[4];
-					//p[0] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[4].xyz0();
-					//p[1] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[5].xyz0();
-					//p[2] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[6].xyz0();
-					//p[3] = lightPositions[i] + worldRenderView.getView() * spotFrustum.corners[7].xyz0();
+					Matrix44 lmt = light->getTransform().toMatrix44() * rotateX(deg2rad(90.0f));
 
-					//Range< Scalar > bb;
-					//bb.min = lz;
-					//bb.max = lz;
-					//for (int i = 0; i < 4; ++i)
-					//{
-					//	bb.min = min(bb.min, p[i].z());
-					//	bb.max = max(bb.max, p[i].z());
-					//}
-					//if (Range< Scalar >::intersection(bb, Range< Scalar >(snz, sfz)).delta() > 0.0_simd)
-					sliceLights.push_back(i);
+					Vector4 fr[4] =
+					{
+						lmt * spotFrustum.corners[4],
+						lmt * spotFrustum.corners[5],
+						lmt * spotFrustum.corners[6],
+						lmt * spotFrustum.corners[7]
+					};
+
+					Vector4 p[5];
+					p[0] = lightPositions[i];
+					p[1] = worldRenderView.getView() * fr[0].xyz1();
+					p[2] = worldRenderView.getView() * fr[1].xyz1();
+					p[3] = worldRenderView.getView() * fr[2].xyz1();
+					p[4] = worldRenderView.getView() * fr[3].xyz1();
+
+					Range< Scalar > bb;
+					bb.min = lz;
+					bb.max = lz;
+					for (int i = 0; i < 5; ++i)
+					{
+						bb.min = min(bb.min, p[i].z());
+						bb.max = max(bb.max, p[i].z());
+					}
+					if (Range< Scalar >::intersection(bb, Range< Scalar >(snz, sfz)).delta() >= 0.0_simd)
+						sliceLights.push_back(i);
 				}
 			}
 		}
