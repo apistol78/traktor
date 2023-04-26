@@ -49,6 +49,8 @@ public:
 
 	void eventKeyUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::KeyUpEvent* event, SceneEditorContext* context, const TransformChain& transformChain);
 
+	void setMovementSpeed(float movementSpeed) { m_movementSpeed = movementSpeed; }
+
 private:
 	enum ModifyType
 	{
@@ -67,6 +69,7 @@ private:
 	bool m_modifyClone;
 	ModifyType m_modify;
 	uint32_t m_moveCamera;
+	float m_movementSpeed;
 };
 
 }
