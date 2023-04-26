@@ -33,7 +33,6 @@
 #include "Script/Editor/IScriptOutline.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptClassesView.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditorPage.h"
@@ -127,8 +126,7 @@ ScriptEditorPage::ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageS
 bool ScriptEditorPage::create(ui::Container* parent)
 {
 	m_script = m_document->getObject< Script >(0);
-	m_scriptAsset = m_document->getObject< ScriptAsset >(0);
-	if (!m_script && !m_scriptAsset)
+	if (!m_script)
 		return false;
 
 	// Explorer panel container.
@@ -196,26 +194,6 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			else
 				return L"\"\"";
 		}));
-	}
-	else if (m_scriptAsset)
-	{
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + Path(m_scriptAsset->getFileName().getOriginal()));
-		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-		if (file)
-		{
-			StringOutputStream ss;
-			std::wstring line;
-
-			// Read script using utf-8 encoding.
-			Utf8Encoding encoding;
-			StringReader sr(file, &encoding);
-			while (sr.readLine(line) >= 0)
-				ss << line << Endl;
-
-			m_edit->setText(ss.str());
-		}
-		else
-			log::error << L"Unable to open external script (" << m_scriptAsset->getFileName().getOriginal() << L")" << Endl;
 	}
 
 	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();

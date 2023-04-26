@@ -8,7 +8,6 @@
  */
 #include "Core/Serialization/DeepClone.h"
 #include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptEditorPage.h"
 #include "Script/Editor/ScriptEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -22,10 +21,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorPageFactory", 0, Scr
 
 const TypeInfoSet ScriptEditorPageFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Script >();
-	typeSet.insert< ScriptAsset >();
-	return typeSet;
+	return makeTypeInfoSet< Script >();
 }
 
 bool ScriptEditorPageFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const

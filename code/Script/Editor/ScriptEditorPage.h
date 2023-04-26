@@ -59,7 +59,6 @@ class IScriptCompiler;
 class IScriptContext;
 class Preprocessor;
 class Script;
-class ScriptAsset;
 class ScriptBreakpointEvent;
 class ScriptClassesView;
 
@@ -91,7 +90,6 @@ private:
 
 	std::wstring m_assetPath;
 	Ref< Script > m_script;
-	Ref< ScriptAsset > m_scriptAsset;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< IScriptCompiler > m_scriptCompiler;
 	Ref< IScriptOutline > m_scriptOutline;
@@ -143,8 +141,6 @@ private:
 	void buildOutlineGrid(ui::GridView* grid, ui::GridRow* parent, const IScriptOutline::Node* on);
 
 	void eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event);
-
-	void eventToolBarEditClick(ui::ToolBarButtonClickEvent* event);
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
 
