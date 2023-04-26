@@ -29,7 +29,6 @@
 #include "Script/ScriptResource.h"
 #include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
-#include "Script/Editor/ScriptAsset.h"
 #include "Script/Editor/ScriptPipeline.h"
 
 namespace traktor
@@ -60,28 +59,6 @@ bool readScript(editor::IPipelineCommon* pipelineCommon, const std::wstring& ass
 		outSource = script->escape([&] (const Guid& g) -> std::wstring {
 			return g.format();
 		});
-	}
-	else if (const ScriptAsset* scriptAsset = dynamic_type_cast< const ScriptAsset* >(sourceAsset))
-	{
-		// Read script from asset as-is as we need to traverse dependencies.
-		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + scriptAsset->getFileName());
-		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-		if (!file)
-		{
-			log::error << L"Script pipeline failed; unable to open script \"" << filePath.getPathName() << L"\"." << Endl;
-			return false;
-		}
-
-		StringOutputStream ss;
-		std::wstring line;
-
-		// Read script using utf-8 encoding.
-		Utf8Encoding encoding;
-		StringReader sr(file, &encoding);
-		while (sr.readLine(line) >= 0)
-			ss << line << Endl;
-
-		outSource = ss.str();
 	}
 
 	// Ensure no double character line breaks.
@@ -173,10 +150,7 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 
 TypeInfoSet ScriptPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< Script >();
-	typeSet.insert< ScriptAsset >();
-	return typeSet;
+	return makeTypeInfoSet< Script >();
 }
 
 bool ScriptPipeline::buildDependencies(
@@ -187,10 +161,6 @@ bool ScriptPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	// Add dependency to script file.
-	if (const ScriptAsset* scriptAsset = dynamic_type_cast< const ScriptAsset* >(sourceAsset))
-		pipelineDepends->addDependency(Path(m_assetPath), scriptAsset->getFileName().getOriginal());
-
 	std::wstring source;
 	if (!readScript(pipelineDepends, m_assetPath, sourceAsset, source))
 		return false;
