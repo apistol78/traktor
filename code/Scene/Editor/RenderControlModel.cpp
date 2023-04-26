@@ -46,6 +46,7 @@ RenderControlModel::RenderControlModel()
 ,	m_modifyClone(false)
 ,	m_modify(MtNothing)
 ,	m_moveCamera(0)
+,	m_movementSpeed(40.0f)
 {
 }
 
@@ -64,8 +65,8 @@ void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* 
 	if ((m_moveCamera & (1 << 3)) != 0)
 		delta += Vector4(1.0f, 0.0f, 0.0f);
 
-	const float deltaTime = std::min< float >(m_timer.getDeltaTime(), 1.0f / 60.0f);
-	Scalar speed = Scalar(deltaTime * 20.0f) * 8.0_simd;
+	const float deltaTime = std::min< float >(m_timer.getDeltaTime(), 1.0f / 30.0f);
+	Scalar speed = Scalar(deltaTime * m_movementSpeed) * 8.0_simd;
 
 	const uint32_t keyState = ui::Application::getInstance()->getEventLoop()->getAsyncKeyState();
 	if ((keyState & ui::KsShift) != 0)

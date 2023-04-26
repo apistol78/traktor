@@ -520,7 +520,6 @@ bool RenderGraph::acquire(int32_t width, int32_t height, TargetResource& inoutTa
 	// Use size of shared depth/stencil target since they must match.
 	if (inoutTarget.sharedDepthStencilTargetSet != nullptr)
 	{
-		T_FATAL_ASSERT(inoutTarget.sizeReferenceTargetSetId == 0);
 		width = inoutTarget.sharedDepthStencilTargetSet->getWidth();
 		height = inoutTarget.sharedDepthStencilTargetSet->getHeight();
 	}
