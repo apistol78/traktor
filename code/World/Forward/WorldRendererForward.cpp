@@ -152,9 +152,9 @@ void WorldRendererForward::setup(
 	// Jitter projection for TAA, calculate jitter in clip space.
 	 if (m_postProcessPass->needCameraJitter())
 	 {
-	 	Vector2 r = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
+	 	const Vector2 ndc = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
 	 	Matrix44 proj = immutableWorldRenderView.getProjection();
-	 	proj = translate(r.x, r.y, 0.0f) * proj;
+	 	proj = translate(ndc.x, ndc.y, 0.0f) * proj;
 	 	worldRenderView.setProjection(proj);
 	 }
 
