@@ -28,6 +28,7 @@ namespace traktor::scene
 	{
 
 const float c_defaultFieldOfView = 80.0f;
+const float c_defaultMovementSpeed = 40.0f;
 const float c_defaultMouseWheelRate = 10.0f;
 
 	}
@@ -63,6 +64,18 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	m_staticFovValue = new ui::Static();
 	m_staticFovValue->create(containerSliders, L"");
+
+	Ref< ui::Static > staticMovementSpeed = new ui::Static();
+	staticMovementSpeed->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_MOVEMENT_SPEED"));
+
+	m_sliderMovementSpeed = new ui::Slider();
+	m_sliderMovementSpeed->create(containerSliders);
+	m_sliderMovementSpeed->setRange(1, 1000);
+	m_sliderMovementSpeed->setValue(int32_t(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed)));
+	m_sliderMovementSpeed->addEventHandler< ui::ContentChangeEvent >(this, &SceneEditorSettingsPage::eventValueChange);
+
+	m_staticMovementSpeedValue = new ui::Static();
+	m_staticMovementSpeedValue->create(containerSliders, L"");
 
 	Ref< ui::Static > staticMouseWheelRate = new ui::Static();
 	staticMouseWheelRate->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE"));
@@ -119,6 +132,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"SceneEditor.WorldRendererType", m_dropWorldRenderer->getSelectedItem());
 	settings->setProperty< PropertyFloat >(L"SceneEditor.FieldOfView", float(m_sliderFov->getValue()));
+	settings->setProperty< PropertyFloat >(L"SceneEditor.MovementSpeed", float(m_sliderMovementSpeed->getValue()));
 	settings->setProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", float(m_sliderMouseWheelRate->getValue()));
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel", m_checkInvertMouseWheel->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
@@ -130,11 +144,15 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 
 void SceneEditorSettingsPage::updateValues()
 {
-	int32_t fov = m_sliderFov->getValue();
+	const int32_t fov = m_sliderFov->getValue();
 	m_staticFovValue->setText(toString(fov) + L" degree(s)");
 	m_staticFovValue->update();
 
-	int32_t mouseWheelRate = m_sliderMouseWheelRate->getValue();
+	const int32_t movementSpeed = m_sliderMovementSpeed->getValue();
+	m_staticMovementSpeedValue->setText(toString(movementSpeed));
+	m_staticMovementSpeedValue->update();
+
+	const int32_t mouseWheelRate = m_sliderMouseWheelRate->getValue();
 	m_staticMouseWheelRateValue->setText(toString(mouseWheelRate));
 	m_staticMouseWheelRateValue->update();
 

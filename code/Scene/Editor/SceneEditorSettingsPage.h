@@ -50,6 +50,8 @@ private:
 	Ref< ui::Container > m_container;
 	Ref< ui::DropDown > m_dropWorldRenderer;
 	Ref< ui::Slider > m_sliderFov;
+	Ref< ui::Slider > m_sliderMovementSpeed;
+	Ref< ui::Static > m_staticMovementSpeedValue;
 	Ref< ui::Slider > m_sliderMouseWheelRate;
 	Ref< ui::Static > m_staticFovValue;
 	Ref< ui::Static > m_staticMouseWheelRateValue;
