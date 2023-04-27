@@ -18,7 +18,9 @@
 #	include "Ui/X11/WidgetFactoryX11.h"
 #endif
 #include "Core/Config.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "SolutionForm.h"
 #include "SolutionBuilder/ProjectDependency.h"
 #include "SolutionBuilder/ExternalDependency.h"
@@ -40,6 +42,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 	T_FORCE_LINK_REF(ProjectDependency)
 	T_FORCE_LINK_REF(ExternalDependency)
+
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+	}
 
 #if defined(_WIN32)
 	ui::Application::getInstance()->initialize(
