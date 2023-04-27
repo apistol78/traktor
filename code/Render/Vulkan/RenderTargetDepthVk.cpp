@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
@@ -50,6 +51,40 @@ bool RenderTargetDepthVk::createPrimary(
 	m_haveStencil = true;
 	m_width = width;
 	m_height = height;
+
+	{
+		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
+
+		static const uint32_t k_bindless_texture_binding = 8;
+
+		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
+		StaticVector< VkWriteDescriptorSet, 2 > writes;
+
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = 0;
+		imageInfo.imageView = m_image->getVkImageView();
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_context->getBindlessDescriptorSet();
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = m_bindlessResourceIndex;
+		write.dstBinding = k_bindless_texture_binding;
+
+		vkUpdateDescriptorSets(
+			m_context->getLogicalDevice(),
+			(uint32_t)writes.size(),
+			writes.c_ptr(),
+			0,
+			nullptr
+		);
+	}
+
 	return true;
 }
 
@@ -85,6 +120,40 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 	m_haveStencil = !setDesc.ignoreStencil;
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+
+	{
+		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
+
+		static const uint32_t k_bindless_texture_binding = 8;
+
+		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
+		StaticVector< VkWriteDescriptorSet, 2 > writes;
+
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = 0;
+		imageInfo.imageView = m_image->getVkImageView();
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+
+		auto& write = writes.push_back();
+		write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_context->getBindlessDescriptorSet();
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = m_bindlessResourceIndex;
+		write.dstBinding = k_bindless_texture_binding;
+
+		vkUpdateDescriptorSets(
+			m_context->getLogicalDevice(),
+			(uint32_t)writes.size(),
+			writes.c_ptr(),
+			0,
+			nullptr
+		);
+	}
+
 	return true;
 }
 

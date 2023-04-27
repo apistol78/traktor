@@ -1871,6 +1871,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GlslType::Float4 : GlslType::Float);
 
+	const std::wstring textureName = texture->getName() + L"__bindlessIndex__";
 	const bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
 	std::wstring samplerName;
 
@@ -1902,22 +1903,22 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		{
 			if (!mip && !samplerState.ignoreMips)
 			{
-				float bias = samplerState.mipBias;
+				const float bias = samplerState.mipBias;
 				switch (texture->getType())
 				{
 				case GlslType::Texture2D:
 					if (std::abs(bias) < FUZZY_EPSILON)
-						assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L");" << Endl;
+						assign(f, out) << L"texture(sampler2D(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L");" << Endl;
 					else
-						assign(f, out) << L"texture(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << formatFloat(bias) << L");" << Endl;
+						assign(f, out) << L"texture(sampler2D(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << formatFloat(bias) << L");" << Endl;
 					break;
 
 				case GlslType::Texture3D:
-					assign(f, out) << L"texture(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
+					assign(f, out) << L"texture(sampler3D(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					assign(f, out) << L"texture(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
+					assign(f, out) << L"texture(samplerCube(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
 					break;
 
 				default:
@@ -1929,15 +1930,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GlslType::Texture2D:
-					assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(sampler2D(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				case GlslType::Texture3D:
-					assign(f, out) << L"textureLod(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(sampler3D(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					assign(f, out) << L"textureLod(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(samplerCube(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				default:
@@ -1952,15 +1953,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GlslType::Texture2D:
-					assign(f, out) << L"texture(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
+					assign(f, out) << L"texture(sampler2DShadow(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L");" << Endl;
 					break;
 
 				case GlslType::Texture3D:
-					assign(f, out) << L"texture(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
+					assign(f, out) << L"texture(sampler3DShadow(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					assign(f, out) << L"texture(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
+					assign(f, out) << L"texture(samplerCubeShadow(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L" * vec3(1.0, 1.0, 1.0, 0.5) + vec3(0.0, 0.0, 0.0, 0.5)));" << Endl;
 					break;
 
 				default:
@@ -1972,15 +1973,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 				switch (texture->getType())
 				{
 				case GlslType::Texture2D:
-					assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(sampler2DShadow(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				case GlslType::Texture3D:
-					assign(f, out) << L"textureLod(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(sampler3DShadow(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				case GlslType::TextureCube:
-					assign(f, out) << L"textureLod(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+					assign(f, out) << L"textureLod(samplerCubeShadow(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " <<  texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 					break;
 
 				default:
@@ -1995,7 +1996,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GlslType::Texture2D:
-			assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", 0.0);" << Endl;
+			assign(f, out) << L"textureLod(sampler2D(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", 0.0);" << Endl;
 			break;
 
 		case GlslType::Texture3D:
@@ -2012,15 +2013,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 			switch (texture->getType())
 			{
 			case GlslType::Texture2D:
-				assign(f, out) << L"textureLod(sampler2D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(sampler2D(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float2) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			case GlslType::Texture3D:
-				assign(f, out) << L"textureLod(sampler3D(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(sampler3D(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			case GlslType::TextureCube:
-				assign(f, out) << L"textureLod(samplerCube(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(samplerCube(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			default:
@@ -2032,15 +2033,15 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 			switch (texture->getType())
 			{
 			case GlslType::Texture2D:
-				assign(f, out) << L"textureLod(sampler2DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(sampler2DShadow(__bindlessTextures2D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float3) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			case GlslType::Texture3D:
-				assign(f, out) << L"textureLod(sampler3DShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(sampler3DShadow(__bindlessTextures3D__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			case GlslType::TextureCube:
-				assign(f, out) << L"textureLod(samplerCubeShadow(" << texture->getName() << L", " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
+				assign(f, out) << L"textureLod(samplerCubeShadow(__bindlessTexturesCube__[" << textureName << L"], " << samplerName << L"), " << texCoord->cast(GlslType::Float4) << L", " << (mip != nullptr ? mip->cast(GlslType::Float) : L"0.0") << L");" << Endl;
 				break;
 
 			default:
@@ -2643,11 +2644,7 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 
 	auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Once);
 	ub->addStage(getBindStage(cx));
-	if (!ub->add(
-		L"_vk_targetSize",
-		GlslType::Float4,
-		1
-	))
+	if (!ub->add(L"_vk_targetSize", GlslType::Float4, 1))
 		return false;
 
 	cx.addParameter(L"_vk_targetSize", ParameterType::Vector, 1, UpdateFrequency::Once);
@@ -2663,10 +2660,10 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
-	if (!in || in->getType() < GlslType::Texture2D)
+	if (!in)
 		return false;
 
-	std::wstring textureName = in->getName();
+	const std::wstring textureName = in->getName() + L"__bindlessIndex__";
 	Ref< GlslVariable > out;
 
 	comment(f, node);
@@ -2674,17 +2671,17 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 	{
 	case GlslType::Texture2D:
 		out = cx.emitOutput(node, L"Output", GlslType::Float2);
-		f << L"const vec2 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec2 " << out->getName() << L" = textureSize(__bindlessTextures2D__[" << textureName << L"], 0);" << Endl;
 		break;
 
 	case GlslType::Texture3D:
 		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"const vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec3 " << out->getName() << L" = textureSize(__bindlessTextures3D__[" << textureName << L"], 0);" << Endl;
 		break;
 
 	case GlslType::TextureCube:
 		out = cx.emitOutput(node, L"Output", GlslType::Float3);
-		f << L"const vec3 " << out->getName() << L" = textureSize(" << textureName << L", 0);" << Endl;
+		f << L"const vec3 " << out->getName() << L" = textureSize(__bindlessTexturesCube__[" << textureName << L"], 0);" << Endl;
 		break;
 
 	default:
@@ -2788,6 +2785,11 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 			// Texture do not exist; add new texture resource.
 			cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
 		}
+
+		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Draw);
+		ub->addStage(getBindStage(cx));
+		if (!ub->add(node->getParameterName() + L"__bindlessIndex__", GlslType::Integer, 1))
+			return false;
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)
 	{

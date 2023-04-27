@@ -55,8 +55,9 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 
 	}
 
-PipelineLayoutCache::PipelineLayoutCache(VkDevice logicalDevice)
+PipelineLayoutCache::PipelineLayoutCache(VkDevice logicalDevice, VkDescriptorSetLayout bindlessDescriptorLayout)
 :	m_logicalDevice(logicalDevice)
+,	m_bindlessDescriptorLayout(bindlessDescriptorLayout)
 {
 }
 
@@ -99,10 +100,12 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayout
 		if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
 			return false;
 
+		const VkDescriptorSetLayout setLayouts[] = { outDescriptorSetLayout, m_bindlessDescriptorLayout };
+
 		VkPipelineLayoutCreateInfo lci = {};
 		lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		lci.setLayoutCount = 1;
-		lci.pSetLayouts = &outDescriptorSetLayout;
+		lci.setLayoutCount = 2;
+		lci.pSetLayouts = setLayouts;
 		lci.pushConstantRangeCount = 0;
 		lci.pPushConstantRanges = nullptr;
 		if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)

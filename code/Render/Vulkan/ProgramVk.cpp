@@ -375,6 +375,18 @@ bool ProgramVk::validateGraphics(
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
 
+
+	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
+	vkCmdBindDescriptorSets(
+		*commandBuffer,
+		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		m_pipelineLayout,
+		1,
+		1, &bindlessDescriptorSet,
+		0, nullptr
+	);
+
+
 	if (m_renderState.stencilEnable)
 		vkCmdSetStencilReference(
 			*commandBuffer,
@@ -440,6 +452,19 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 		1, &m_descriptorSet,
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
+
+
+	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
+	vkCmdBindDescriptorSets(
+		*commandBuffer,
+		VK_PIPELINE_BIND_POINT_COMPUTE,
+		m_pipelineLayout,
+		1,
+		1, &bindlessDescriptorSet,
+		0, nullptr
+	);
+
+
 	return true;
 }
 
@@ -583,15 +608,15 @@ bool ProgramVk::validateDescriptorSet()
 			continue;
 		key.push_back((intptr_t)m_uniformBuffers[i].range.chain);
 	}	
-	for (const auto& texture : m_textures)
-	{
-		if (!texture.texture)
-			return false;
-		auto resolved = texture.texture->resolve();
-		if (!resolved)
-			return false;
-		key.push_back((intptr_t)resolved);
-	}
+	//for (const auto& texture : m_textures)
+	//{
+	//	if (!texture.texture)
+	//		return false;
+	//	auto resolved = texture.texture->resolve();
+	//	if (!resolved)
+	//		return false;
+	//	key.push_back((intptr_t)resolved);
+	//}
 	for (const auto& image : m_images)
 	{
 		if (!image.texture)
@@ -689,44 +714,44 @@ bool ProgramVk::validateDescriptorSet()
 	}
 
 	// Add texture bindings.
-	for (const auto& texture : m_textures)
-	{
-		T_ASSERT(texture.texture);
-		auto resolved = texture.texture->resolve();
-		T_ASSERT(resolved);
+	//for (const auto& texture : m_textures)
+	//{
+	//	T_ASSERT(texture.texture);
+	//	auto resolved = texture.texture->resolve();
+	//	T_ASSERT(resolved);
 
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = 0;
+	//	auto& imageInfo = imageInfos.push_back();
+	//	imageInfo.sampler = 0;
 
-		if (is_a< TextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
-			imageInfo.imageLayout = static_cast< TextureVk* >(resolved)->getImage().getVkImageLayout(0, 0); // \fixme Assuming all mips have same layout at this point.
-		}
-		else if (is_a< RenderTargetVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
-		else if (is_a< RenderTargetDepthVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
-		}
+	//	if (is_a< TextureVk >(resolved))
+	//	{
+	//		imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
+	//		imageInfo.imageLayout = static_cast< TextureVk* >(resolved)->getImage().getVkImageLayout(0, 0); // \fixme Assuming all mips have same layout at this point.
+	//	}
+	//	else if (is_a< RenderTargetVk >(resolved))
+	//	{
+	//		imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getVkImageView();
+	//		imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+	//	}
+	//	else if (is_a< RenderTargetDepthVk >(resolved))
+	//	{
+	//		imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getVkImageView();
+	//		imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+	//	}
 
-		T_ASSERT(imageInfo.imageView != 0);
+	//	T_ASSERT(imageInfo.imageView != 0);
 
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = texture.binding;
-	}
+	//	auto& write = writes.push_back();
+	//	write = {};
+	//	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	//	write.pNext = nullptr;
+	//	write.dstSet = m_descriptorSet;
+	//	write.descriptorCount = 1;
+	//	write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	//	write.pImageInfo = &imageInfo;
+	//	write.dstArrayElement = 0;
+	//	write.dstBinding = texture.binding;
+	//}
 
 	// Add image bindings.
 	for (const auto& image : m_images)
