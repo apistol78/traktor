@@ -262,6 +262,10 @@
 			<second>Invert mouse Y when panning</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_SETTINGS_MOVEMENT_SPEED</first>
+			<second>Movement speed</second>
+		</item>
+		<item>
 			<first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
 			<second>Mouse wheel rate</second>
 		</item>
