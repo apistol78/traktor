@@ -108,7 +108,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 	m_multiSample = settings->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
-	m_model.setMovementSpeed(settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMovementSpeed));
+	m_model.setMovementSpeed(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed));
 
 	m_containerAspect = new ui::Container();
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
@@ -453,6 +453,7 @@ void PerspectiveRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+	m_model.setMovementSpeed(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed));
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
