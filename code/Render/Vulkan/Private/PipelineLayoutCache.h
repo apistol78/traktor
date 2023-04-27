@@ -18,7 +18,7 @@ namespace traktor::render
 class PipelineLayoutCache : public Object
 {
 public:
-	explicit PipelineLayoutCache(VkDevice logicalDevice);
+	explicit PipelineLayoutCache(VkDevice logicalDevice, VkDescriptorSetLayout bindlessDescriptorLayout);
 
 	virtual ~PipelineLayoutCache();
 
@@ -36,7 +36,8 @@ private:
 #endif
 	};
 
-	VkDevice m_logicalDevice = 0;;
+	VkDevice m_logicalDevice;
+	VkDescriptorSetLayout m_bindlessDescriptorLayout;
 	SmallMap< uint32_t, Entry > m_entries;
 	SmallMap< uint32_t, VkSampler > m_samplers;
 };

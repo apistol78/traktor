@@ -294,9 +294,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
     features.shaderClipDistance = VK_TRUE;
 	features.samplerAnisotropy = VK_TRUE;
     dci.pEnabledFeatures = &features;
-#endif
 
-#if !defined(__ANDROID__) && !defined(__RPI__)
 	VkPhysicalDevice8BitStorageFeaturesKHR s8 = {};
 	s8.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_8BIT_STORAGE_FEATURES_KHR;
 	s8.pNext = nullptr;
@@ -320,6 +318,12 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	f16.shaderFloat16 = VK_FALSE;
 	f16.shaderInt8 = VK_TRUE;
 	s16.pNext = &f16;
+
+	// Bindless textures.
+	VkPhysicalDeviceDescriptorIndexingFeatures di = {};
+	di.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
+	di.runtimeDescriptorArray = VK_TRUE;
+	f16.pNext = &di;
 #endif
 
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
@@ -379,9 +383,14 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 		m_allocator,
 		graphicsQueueIndex
 	);
+	if (!m_context->create())
+	{
+		log::error << L"Failed to create Vulkan; failed to create context." << Endl;
+		return false;
+	}
 
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
-	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice);
+	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice, m_context->getBindlessSetLayout());
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
 

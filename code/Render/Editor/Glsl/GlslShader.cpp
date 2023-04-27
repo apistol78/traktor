@@ -158,6 +158,8 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
 
+	ss << L"#extension GL_EXT_nonuniform_qualifier : enable" << Endl;
+
 	const bool supportControlFlowAttributes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
 	if (supportControlFlowAttributes)
 		ss << L"#extension GL_EXT_control_flow_attributes : enable" << Endl;
@@ -263,29 +265,34 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	if (layout.count< GlslTexture >(stageMask) > 0)
 	{
 		ss << L"// Textures" << Endl;
-		for (auto resource : layout.get(stageMask))
-		{
-			if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-			{
-				switch (texture->getUniformType())
-				{
-				case GlslType::Texture2D:
-					ss << L"layout (binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
-					break;
+		//for (auto resource : layout.get(stageMask))
+		//{
+		//	if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+		//	{
+		//		switch (texture->getUniformType())
+		//		{
+		//		case GlslType::Texture2D:
+		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
+		//			break;
 
-				case GlslType::Texture3D:
-					ss << L"layout (binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
-					break;
+		//		case GlslType::Texture3D:
+		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
+		//			break;
 
-				case GlslType::TextureCube:
-					ss << L"layout (binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
-					break;
+		//		case GlslType::TextureCube:
+		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
+		//			break;
 
-				default:
-					break;
-				}
-			}
-		}
+		//		default:
+		//			break;
+		//		}
+		//	}
+		//}
+		//ss << Endl;
+
+		ss << L"layout (binding = 8, set = 1) uniform texture2D __bindlessTextures2D__[];" << Endl;
+		ss << L"layout (binding = 8, set = 1) uniform texture3D __bindlessTextures3D__[];" << Endl;
+		ss << L"layout (binding = 8, set = 1) uniform textureCube __bindlessTexturesCube__[];" << Endl;
 		ss << Endl;
 	}
 

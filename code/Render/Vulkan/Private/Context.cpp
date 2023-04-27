@@ -34,15 +34,37 @@ Context::Context(
 :	m_physicalDevice(physicalDevice)
 ,	m_logicalDevice(logicalDevice)
 ,	m_allocator(allocator)
+,	m_graphicsQueueIndex(graphicsQueueIndex)
 ,	m_pipelineCache(0)
 ,	m_descriptorPool(0)
 ,	m_views(0)
 ,	m_descriptorPoolRevision(0)
 {
+}
+
+Context::~Context()
+{
+	// Destroy uniform buffer pools.
+	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+	{
+		m_uniformBufferPools[i]->destroy();
+		m_uniformBufferPools[i] = nullptr;
+	}
+
+	// Destroy descriptor pool.
+	if (m_descriptorPool != 0)
+	{
+		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
+		m_descriptorPool = 0;
+	}
+}
+
+bool Context::create()
+{
 	AlignedVector< uint8_t > buffer;
 
 	// Create queues.
-	m_graphicsQueue = Queue::create(this, graphicsQueueIndex);
+	m_graphicsQueue = Queue::create(this, m_graphicsQueueIndex);
 
 	// Create pipeline cache.
 	VkPipelineCacheCreateInfo pcci = {};
@@ -69,11 +91,10 @@ Context::Context(
 		pcci.initialDataSize = size;
 		pcci.pInitialData = buffer.c_ptr();
 
-		log::debug << L"Pipeline cache \"" << ss.str() << L"\" loaded succesfully." << Endl;
+		log::debug << L"Pipeline cache \"" << ss.str() << L"\" loaded successfully." << Endl;
 	}
 	else
 		log::debug << L"No pipeline cache found; creating new cache." << Endl;
-
 
 	vkCreatePipelineCache(
 		m_logicalDevice,
@@ -102,29 +123,88 @@ Context::Context(
 	dpci.maxSets = 32000;
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
+
+	// Bindless textures.
+	dpci.flags |= VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
+
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 
 	// Create uniform buffer pools.
 	m_uniformBufferPools[0] = new UniformBufferPool(this,   1000, L"Once");
 	m_uniformBufferPools[1] = new UniformBufferPool(this,  10000, L"Frame");
 	m_uniformBufferPools[2] = new UniformBufferPool(this, 100000, L"Draw");
-}
 
-Context::~Context()
-{
-	// Destroy uniform buffer pools.
-	for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
+	// Bindless textures.
 	{
-		m_uniformBufferPools[i]->destroy();
-		m_uniformBufferPools[i] = nullptr;
+		static const uint32_t k_max_bindless_resources = 16536;
+		static const uint32_t k_bindless_texture_binding = 8;
+
+
+		// Create descriptor set pool.
+		VkDescriptorPoolSize dps[1];
+		dps[0].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		dps[0].descriptorCount = k_max_bindless_resources;
+
+		VkDescriptorPoolCreateInfo dpci = {};
+		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		dpci.pNext = nullptr;
+		dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
+		dpci.maxSets = k_max_bindless_resources * sizeof_array(dps);
+		dpci.poolSizeCount = sizeof_array(dps);
+		dpci.pPoolSizes = dps;
+
+		vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_bindlessDescriptorPool);
+
+
+		// Create descriptor layout.
+		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
+
+		VkDescriptorSetLayoutBinding binding;
+		binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		binding.descriptorCount = k_max_bindless_resources;
+		binding.binding = k_bindless_texture_binding;
+		binding.stageFlags = VK_SHADER_STAGE_ALL;
+		binding.pImmutableSamplers = nullptr;
+
+		VkDescriptorSetLayoutCreateInfo layoutInfo = { VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO };
+		layoutInfo.bindingCount = 1;
+		layoutInfo.pBindings = &binding;
+		layoutInfo.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT;
+
+		VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT, nullptr };
+		extendedInfo.bindingCount = 1;
+		extendedInfo.pBindingFlags = &bindlessFlags;
+
+		layoutInfo.pNext = &extendedInfo;
+
+		if (vkCreateDescriptorSetLayout(m_logicalDevice, &layoutInfo, nullptr, &m_bindlessDescriptorLayout) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; failed to create bindless descriptor layout." << Endl;
+			return false;
+		}
+
+
+		// Create descriptor set.
+		VkDescriptorSetAllocateInfo alloc_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO };
+		alloc_info.descriptorPool = m_bindlessDescriptorPool;
+		alloc_info.descriptorSetCount = 1;
+		alloc_info.pSetLayouts = &m_bindlessDescriptorLayout;
+
+		VkDescriptorSetVariableDescriptorCountAllocateInfoEXT count_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT };
+		uint32_t max_binding = k_max_bindless_resources - 1;
+		count_info.descriptorSetCount = 1;
+		count_info.pDescriptorCounts = &max_binding;	// This number is the max allocatable count.
+		alloc_info.pNext = &count_info;
+
+		if (vkAllocateDescriptorSets(m_logicalDevice, &alloc_info, &m_bindlessDescriptorSet) != VK_SUCCESS)
+		{
+			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set." << Endl;
+			return false;
+
+		}
 	}
 
-	// Destroy descriptor pool.
-	if (m_descriptorPool != 0)
-	{
-		vkDestroyDescriptorPool(m_logicalDevice, m_descriptorPool, nullptr);
-		m_descriptorPool = 0;
-	}
+	return true;
 }
 
 void Context::incrementViews()
@@ -225,6 +305,12 @@ bool Context::savePipelineCache()
 	
 	log::debug << L"Pipeline cache \"" << ss.str() << L"\" saved successfully." << Endl;
 	return true;
+}
+
+uint32_t Context::allocBindlessResourceIndex()
+{
+	static uint32_t resourceIndex = 0;
+	return resourceIndex++;
 }
 
 }

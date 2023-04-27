@@ -42,6 +42,8 @@ public:
 
 	virtual ~Context();
 
+	bool create();
+
 	void incrementViews();
 
 	void decrementViews();
@@ -72,10 +74,18 @@ public:
 
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
+
+	VkDescriptorSetLayout getBindlessSetLayout() const { return m_bindlessDescriptorLayout; }
+
+	VkDescriptorSet getBindlessDescriptorSet() const { return m_bindlessDescriptorSet; }
+
+	uint32_t allocBindlessResourceIndex();
+
 private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
 	VmaAllocator m_allocator;
+	uint32_t m_graphicsQueueIndex;
 	VkPipelineCache m_pipelineCache;
 	VkDescriptorPool m_descriptorPool;
 	int32_t m_views;
@@ -84,6 +94,10 @@ private:
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
+
+	VkDescriptorPool m_bindlessDescriptorPool;
+	VkDescriptorSetLayout m_bindlessDescriptorLayout;
+	VkDescriptorSet m_bindlessDescriptorSet;
 };
 
 }
