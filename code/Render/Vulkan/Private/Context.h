@@ -95,7 +95,6 @@ private:
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 
-	VkDescriptorPool m_bindlessDescriptorPool;
 	VkDescriptorSetLayout m_bindlessDescriptorLayout;
 	VkDescriptorSet m_bindlessDescriptorSet;
 };

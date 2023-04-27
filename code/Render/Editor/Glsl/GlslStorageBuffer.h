@@ -41,6 +41,8 @@ public:
 
 	virtual int32_t getOrdinal() const override final;
 
+	virtual bool isBindless() const override final { return false; }
+
 private:
 	AlignedVector< Element > m_elements;
 };

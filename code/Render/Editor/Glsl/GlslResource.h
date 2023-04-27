@@ -37,7 +37,7 @@ public:
 		BsCompute = 4
 	};
 
-	int32_t getBinding() const;
+	int32_t getBinding() const { return m_binding; }
 
 	void addStage(uint8_t stage) { m_stages |= stage; }
 
@@ -47,15 +47,17 @@ public:
 
 	virtual int32_t getOrdinal() const = 0;
 
+	virtual bool isBindless() const = 0;
+
 protected:
 	explicit GlslResource(const std::wstring& name, uint8_t stages);
 
 private:
 	friend class GlslLayout;
 
-	GlslLayout* m_layout = nullptr;
 	std::wstring m_name;
 	uint8_t m_stages = 0;
+	int32_t m_binding = 0;
 };
 
 }

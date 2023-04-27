@@ -43,6 +43,8 @@ public:
 
 	virtual int32_t getOrdinal() const override final { return m_ordinal; }
 
+	virtual bool isBindless() const override final { return false; }
+
 private:
 	AlignedVector< Uniform > m_uniforms;
 	int32_t m_ordinal;

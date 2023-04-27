@@ -33,6 +33,8 @@ public:
 
 	virtual int32_t getOrdinal() const override final;
 
+	virtual bool isBindless() const override final { return true; }
+
 private:
 	GlslType m_uniformType;
 };

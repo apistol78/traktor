@@ -64,9 +64,6 @@ public:
 	/*! Get all resources bound to a specific stage. */
 	RefArray< GlslResource > get(uint8_t stageMask) const;
 
-	/*! Get local index of resource. */
-	int32_t getLocalIndex(const GlslResource* resource) const;
-
 	/*! Get global index of resource. */
 	int32_t getGlobalIndex(const GlslResource* resource) const;
 
