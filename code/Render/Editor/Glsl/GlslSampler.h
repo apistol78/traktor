@@ -35,6 +35,8 @@ public:
 
 	virtual int32_t getOrdinal() const override final;
 
+	virtual bool isBindless() const override final { return false; }
+
 private:
 	SamplerState m_state;
 	std::wstring m_textureName;	//!< Bound texture with sampler, only used in OpenGL since samplers and textures are bound.

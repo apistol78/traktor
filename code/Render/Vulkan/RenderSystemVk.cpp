@@ -77,7 +77,8 @@ const char* c_deviceExtensions[] =
 #if !defined(__ANDROID__)
 	"VK_EXT_shader_subgroup_ballot",
 #endif
-	"VK_EXT_memory_budget"
+	"VK_EXT_memory_budget",
+	"VK_EXT_descriptor_indexing"
 };
 #endif
 

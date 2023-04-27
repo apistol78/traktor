@@ -19,6 +19,7 @@
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/Queue.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
+#include "Render/Vulkan/Private/Utilities.h"
 
 namespace traktor::render
 {
@@ -119,13 +120,10 @@ bool Context::create()
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 	dpci.pNext = nullptr;
-	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
 	dpci.maxSets = 32000;
 	dpci.poolSizeCount = sizeof_array(dps);
 	dpci.pPoolSizes = dps;
-
-	// Bindless textures.
-	dpci.flags |= VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
 
 	vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_descriptorPool);
 
@@ -138,23 +136,6 @@ bool Context::create()
 	{
 		static const uint32_t k_max_bindless_resources = 16536;
 		static const uint32_t k_bindless_texture_binding = 8;
-
-
-		// Create descriptor set pool.
-		VkDescriptorPoolSize dps[1];
-		dps[0].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		dps[0].descriptorCount = k_max_bindless_resources;
-
-		VkDescriptorPoolCreateInfo dpci = {};
-		dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-		dpci.pNext = nullptr;
-		dpci.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT | VK_DESCRIPTOR_POOL_CREATE_UPDATE_AFTER_BIND_BIT_EXT;
-		dpci.maxSets = k_max_bindless_resources * sizeof_array(dps);
-		dpci.poolSizeCount = sizeof_array(dps);
-		dpci.pPoolSizes = dps;
-
-		vkCreateDescriptorPool(m_logicalDevice, &dpci, nullptr, &m_bindlessDescriptorPool);
-
 
 		// Create descriptor layout.
 		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
@@ -183,10 +164,13 @@ bool Context::create()
 			return false;
 		}
 
+		// we need to allocate from same descriptor pool,
+		// unfortunally this pool get reset...
+
 
 		// Create descriptor set.
 		VkDescriptorSetAllocateInfo alloc_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO };
-		alloc_info.descriptorPool = m_bindlessDescriptorPool;
+		alloc_info.descriptorPool = m_descriptorPool;
 		alloc_info.descriptorSetCount = 1;
 		alloc_info.pSetLayouts = &m_bindlessDescriptorLayout;
 
@@ -196,9 +180,10 @@ bool Context::create()
 		count_info.pDescriptorCounts = &max_binding;	// This number is the max allocatable count.
 		alloc_info.pNext = &count_info;
 
-		if (vkAllocateDescriptorSets(m_logicalDevice, &alloc_info, &m_bindlessDescriptorSet) != VK_SUCCESS)
+		VkResult result;
+		if ((result = vkAllocateDescriptorSets(m_logicalDevice, &alloc_info, &m_bindlessDescriptorSet)) != VK_SUCCESS)
 		{
-			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set." << Endl;
+			log::error << L"Failed to create Vulkan; failed to create bindless descriptor set. " << getHumanResult(result) << Endl;
 			return false;
 
 		}

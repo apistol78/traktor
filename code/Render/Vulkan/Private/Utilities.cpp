@@ -398,8 +398,10 @@ std::wstring getHumanResult(VkResult result)
 		return L"VK_ERROR_VALIDATION_FAILED_EXT";
 	case VK_ERROR_INVALID_SHADER_NV:
 		return L"VK_ERROR_INVALID_SHADER_NV";
+	case VK_ERROR_OUT_OF_POOL_MEMORY:
+		return L"VK_ERROR_OUT_OF_POOL_MEMORY";
 	default:
-		return str(L"Unknown Vulkan result %08x", (uint32_t)result);
+		return str(L"Unknown Vulkan result 0x%08x", (uint32_t)result);
 	}
 }
 

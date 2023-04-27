@@ -703,7 +703,7 @@ bool ProgramCompilerVk::generate(
 		const auto& layout = cx.getLayout();
 		StringOutputStream ss;
 
-#if 0
+#if 1
 		ss << L"// Layout" << Endl;
 		for (auto resource : layout.get())
 		{

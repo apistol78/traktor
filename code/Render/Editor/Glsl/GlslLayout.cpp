@@ -36,7 +36,13 @@ void GlslLayout::add(GlslResource* resource)
 			return true;
 	});
 
-	resource->m_layout = this;
+	// Calculate binding locations.
+	int32_t binding = 0;
+	for (auto resource : m_resources)
+	{
+		if (!resource->isBindless())
+			resource->m_binding = binding++;
+	}
 }
 
 GlslResource* GlslLayout::get(int32_t index)
@@ -69,19 +75,6 @@ RefArray< GlslResource > GlslLayout::get(uint8_t stageMask) const
 			stageResources.push_back(resource);
 	}
 	return stageResources;
-}
-
-int32_t GlslLayout::getLocalIndex(const GlslResource* resource) const
-{
-	int32_t index = 0;
-	for (auto untypedResource : m_resources)
-	{
-		if (untypedResource == resource)
-			return index;
-		if (&type_of(untypedResource) == &type_of(resource))
-			++index;
-	}
-	return -1;
 }
 
 int32_t GlslLayout::getGlobalIndex(const GlslResource* resource) const

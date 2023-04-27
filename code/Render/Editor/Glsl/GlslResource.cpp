@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Render/Editor/Glsl/GlslLayout.h"
 #include "Render/Editor/Glsl/GlslResource.h"
 
 namespace traktor::render
@@ -18,11 +17,6 @@ GlslResource::GlslResource(const std::wstring& name, uint8_t stages)
 :	m_name(name)
 ,	m_stages(stages)
 {
-}
-
-int32_t GlslResource::getBinding() const
-{
-	return m_layout->getGlobalIndex(this);
 }
 
 }
