@@ -290,9 +290,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		//}
 		//ss << Endl;
 
-		ss << L"layout (binding = 8, set = 1) uniform texture2D __bindlessTextures2D__[];" << Endl;
-		ss << L"layout (binding = 8, set = 1) uniform texture3D __bindlessTextures3D__[];" << Endl;
-		ss << L"layout (binding = 8, set = 1) uniform textureCube __bindlessTexturesCube__[];" << Endl;
+		ss << L"layout (binding = 16, set = 1) uniform texture2D __bindlessTextures2D__[];" << Endl;
+		ss << L"layout (binding = 16, set = 1) uniform texture3D __bindlessTextures3D__[];" << Endl;
+		ss << L"layout (binding = 16, set = 1) uniform textureCube __bindlessTexturesCube__[];" << Endl;
 		ss << Endl;
 	}
 

@@ -159,7 +159,7 @@ bool TextureVk::create(
 	{
 		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
 
-		static const uint32_t k_bindless_texture_binding = 8;
+		static const uint32_t k_bindless_texture_binding = 16;
 
 		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
 		StaticVector< VkWriteDescriptorSet, 2 > writes;
@@ -314,7 +314,7 @@ bool TextureVk::create(
 	{
 		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
 
-		static const uint32_t k_bindless_texture_binding = 8;
+		static const uint32_t k_bindless_texture_binding = 16;
 
 		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
 		StaticVector< VkWriteDescriptorSet, 2 > writes;
@@ -458,7 +458,7 @@ bool TextureVk::create(
 	{
 		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
 
-		static const uint32_t k_bindless_texture_binding = 8;
+		static const uint32_t k_bindless_texture_binding = 16;
 
 		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
 		StaticVector< VkWriteDescriptorSet, 2 > writes;

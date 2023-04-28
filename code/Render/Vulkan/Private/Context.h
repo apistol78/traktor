@@ -68,7 +68,7 @@ public:
 
 	VkDescriptorPool getDescriptorPool() const { return m_descriptorPool; }
 
-	uint32_t getDescriptorPoolRevision() const { return m_descriptorPoolRevision; }
+	//uint32_t getDescriptorPoolRevision() const { return m_descriptorPoolRevision; }
 
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
@@ -89,7 +89,7 @@ private:
 	VkPipelineCache m_pipelineCache;
 	VkDescriptorPool m_descriptorPool;
 	int32_t m_views;
-	uint32_t m_descriptorPoolRevision;
+	//uint32_t m_descriptorPoolRevision;
 	Ref< Queue > m_graphicsQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
