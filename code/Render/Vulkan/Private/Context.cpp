@@ -141,7 +141,7 @@ bool Context::create()
 		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
 
 		VkDescriptorSetLayoutBinding binding;
-		binding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 		binding.descriptorCount = k_max_bindless_resources;
 		binding.binding = k_bindless_texture_binding;
 		binding.stageFlags = VK_SHADER_STAGE_ALL;
@@ -165,7 +165,7 @@ bool Context::create()
 		}
 
 		// we need to allocate from same descriptor pool,
-		// unfortunally this pool get reset...
+		// unfortunately this pool get reset...
 
 
 		// Create descriptor set.
@@ -248,8 +248,8 @@ void Context::performCleanup()
 		}
 		
 		// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
-		vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
-		m_descriptorPoolRevision++;
+		//vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
+		//m_descriptorPoolRevision++;
 	}
 }
 

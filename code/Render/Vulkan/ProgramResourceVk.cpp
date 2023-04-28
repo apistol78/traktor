@@ -88,11 +88,11 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 4, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 5, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 4);
+	T_FATAL_ASSERT(s.getVersion() >= 5);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
@@ -100,7 +100,7 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
-	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
+	//s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
 	s >> MemberAlignedVector< ImageDesc, MemberComposite< ImageDesc > >(L"images", m_images);
 	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
@@ -125,12 +125,12 @@ void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 	s >> MemberSamplerState(L"state", state);
 }
 
-void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"binding", binding);
-	s >> Member< uint8_t >(L"stages", stages);
-}
+//void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
+//{
+//	s >> Member< std::wstring >(L"name", name);
+//	s >> Member< uint32_t >(L"binding", binding);
+//	s >> Member< uint8_t >(L"stages", stages);
+//}
 
 void ProgramResourceVk::ImageDesc::serialize(ISerializer& s)
 {

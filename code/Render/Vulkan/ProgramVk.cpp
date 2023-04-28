@@ -154,7 +154,7 @@ bool ProgramVk::create(
 	// Create descriptor set layouts for shader uniforms.
 	AlignedVector< VkDescriptorSetLayoutBinding  > dslb;
 
-	// Each program has 3 uniform buffer bindings (Once, Frame and Draw cbuffers).
+	// Each program has 3 uniform buffer bindings (Once, Frame and Draw).
 	for (int32_t i = 0; i < 3; ++i)
 	{
 		if (resource->m_uniformBufferSizes[i] == 0)
@@ -180,15 +180,15 @@ bool ProgramVk::create(
 	}
 
 	// Append texture bindings.
-	for (const auto& texture : resource->m_textures)
-	{
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = texture.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(texture.stages);
-	}
+	//for (const auto& texture : resource->m_textures)
+	//{
+	//	auto& lb = dslb.push_back();
+	//	lb = {};
+	//	lb.binding = texture.binding;
+	//	lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	//	lb.descriptorCount = 1;
+	//	lb.stageFlags = getShaderStageFlags(texture.stages);
+	//}
 
 	// Append image bindings.
 	for (const auto& image : resource->m_images)
@@ -266,14 +266,14 @@ bool ProgramVk::create(
 	}
 
 	// Create textures.
-	for (const auto& resourceTexture : resource->m_textures)
-	{
-#if !defined(_DEBUG)
-		m_textures.push_back({ resourceTexture.binding });
-#else
-		m_textures.push_back({ resourceTexture.name + L" (" + getShaderStageNames(resourceTexture.stages) + L")", resourceTexture.binding });
-#endif
-	}
+//	for (const auto& resourceTexture : resource->m_textures)
+//	{
+//#if !defined(_DEBUG)
+//		m_textures.push_back({ resourceTexture.binding });
+//#else
+//		m_textures.push_back({ resourceTexture.name + L" (" + getShaderStageNames(resourceTexture.stages) + L")", resourceTexture.binding });
+//#endif
+//	}
 
 	// Create images.
 	for (const auto& resourceImage : resource->m_images)
@@ -497,7 +497,7 @@ void ProgramVk::destroy()
 	m_pipelineLayout = 0;
 
 	m_samplers.clear();
-	m_textures.clear();
+	//m_textures.clear();
 	m_images.clear();
 	m_sbuffers.clear();
 }
@@ -569,7 +569,30 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-		m_textures[i->second.offset].texture = texture;
+		//m_textures[i->second.offset].texture = texture;
+	{
+
+		ITexture* resolved = texture->resolve();
+		T_ASSERT(resolved);
+
+		uint32_t resourceIndex = ~0U;
+		if (is_a< TextureVk >(resolved))
+			resourceIndex = static_cast< TextureVk* >(resolved)->getBindlessResourceIndex();
+		else if (is_a< RenderTargetVk >(resolved))
+			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getBindlessResourceIndex();
+		else if (is_a< RenderTargetDepthVk >(resolved))
+			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getBindlessResourceIndex();
+
+		T_FATAL_ASSERT(resourceIndex != ~0U);
+
+		auto& ub = m_uniformBuffers[i->second.buffer];
+		//if (storeIfNotEqual(&param, 1, &ub.data[i->second.offset]))
+		//	ub.dirty = true;
+
+		uint32_t* ubd = (uint32_t*)&ub.data[i->second.offset];
+		*ubd = resourceIndex;
+
+	}
 }
 
 void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView)
@@ -634,12 +657,6 @@ bool ProgramVk::validateDescriptorSet()
 	}
 
 	// Get already created descriptor set for bound resources.
-	//auto it = m_descriptorSets.find(key);
-	//if (it != m_descriptorSets.end())
-	//{
-	//	m_descriptorSet = it->second;
-	//	return true;
-	//}
 	for (const auto& k : m_descriptorSets)
 	{
 		if (k.first.size() == key.size())

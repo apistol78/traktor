@@ -435,6 +435,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 	for (auto resource : cx.getLayout().get())
 	{
+		if (resource->isBindless())
+			continue;
+
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
 			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
@@ -443,19 +446,19 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				sampler->getState()
 			));
 		}
-		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		{
-			auto& pm = parameterMapping[texture->getName()];
-			pm.buffer = texture->getBinding();
-			pm.offset = (uint32_t)programResource->m_textures.size();
-			pm.length = 0;
+		//else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+		//{
+		//	auto& pm = parameterMapping[texture->getName()];
+		//	pm.buffer = texture->getBinding();
+		//	pm.offset = (uint32_t)programResource->m_textures.size();
+		//	pm.length = 0;
 
-			programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
-				texture->getName(),
-				texture->getBinding(),
-				texture->getStages()
-			));
-		}
+		//	programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
+		//		texture->getName(),
+		//		texture->getBinding(),
+		//		texture->getStages()
+		//	));
+		//}
 		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 		{
 			auto& pm = parameterMapping[image->getName()];
@@ -604,14 +607,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(programResource->m_samplers[i].stages);
 		}
 
-		checksum.feed(programResource->m_textures.size());
-		for (uint32_t i = 0; i < programResource->m_textures.size(); ++i)
-		{
-			checksum.feed(L"T");
-			checksum.feed(i);
-			checksum.feed(programResource->m_textures[i].binding);
-			checksum.feed(programResource->m_textures[i].stages);
-		}
+		//checksum.feed(programResource->m_textures.size());
+		//for (uint32_t i = 0; i < programResource->m_textures.size(); ++i)
+		//{
+		//	checksum.feed(L"T");
+		//	checksum.feed(i);
+		//	checksum.feed(programResource->m_textures[i].binding);
+		//	checksum.feed(programResource->m_textures[i].stages);
+		//}
 
 		checksum.feed(programResource->m_sbuffers.size());
 		for (uint32_t i = 0; i < programResource->m_sbuffers.size(); ++i)

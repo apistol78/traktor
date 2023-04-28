@@ -76,23 +76,23 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	struct TextureDesc
-	{
-		std::wstring name;
-		uint32_t binding = 0;
-		uint8_t stages = 0;
+	//struct TextureDesc
+	//{
+	//	std::wstring name;
+	//	uint32_t binding = 0;
+	//	uint8_t stages = 0;
 
-		TextureDesc() = default;
+	//	TextureDesc() = default;
 
-		explicit TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
-		:	name(name_)
-		,	binding(binding_)
-		,	stages(stages_)
-		{
-		}
+	//	explicit TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
+	//	:	name(name_)
+	//	,	binding(binding_)
+	//	,	stages(stages_)
+	//	{
+	//	}
 
-		void serialize(ISerializer& s);
-	};
+	//	void serialize(ISerializer& s);
+	//};
 
 	struct ImageDesc
 	{
@@ -146,7 +146,7 @@ private:
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
 
 	AlignedVector< SamplerDesc > m_samplers;
-	AlignedVector< TextureDesc > m_textures;
+	//AlignedVector< TextureDesc > m_textures;
 	AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
 

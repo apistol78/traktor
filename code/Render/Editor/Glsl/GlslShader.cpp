@@ -262,7 +262,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		}
 	}
 
-	if (layout.count< GlslTexture >(stageMask) > 0)
+	//if (layout.count< GlslTexture >(stageMask) > 0)
 	{
 		ss << L"// Textures" << Endl;
 		//for (auto resource : layout.get(stageMask))
