@@ -22,7 +22,7 @@
 #include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslSampler.h"
 #include "Render/Editor/Glsl/GlslStorageBuffer.h"
-#include "Render/Editor/Glsl/GlslTexture.h"
+//#include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
 
 namespace traktor::render
@@ -1871,7 +1871,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GlslType::Float4 : GlslType::Float);
 
-	const std::wstring textureName = texture->getName() + L"__bindlessIndex__";
+	const std::wstring textureName = texture->getName();
 	const bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
 	std::wstring samplerName;
 
@@ -2170,7 +2170,24 @@ bool emitScript(GlslContext& cx, Script* node)
 	for (int32_t i = 0; i < inputPinCount; ++i)
 	{
 		const std::wstring variableName = L"$" + node->getInputPin(i)->getName();
-		reps.push_back({ variableName, ins[i]->getName() });
+		switch (ins[i]->getType())
+		{
+		case GlslType::Texture2D:
+			reps.push_back({ variableName, L"__bindlessTextures2D__[" + ins[i]->getName() + L"]" });
+			break;
+
+		case GlslType::Texture3D:
+			reps.push_back({ variableName, L"__bindlessTextures3D__[" + ins[i]->getName() + L"]" });
+			break;
+
+		case GlslType::TextureCube:
+			reps.push_back({ variableName, L"__bindlessTexturesCube__[" + ins[i]->getName() + L"]" });
+			break;
+
+		default:
+			reps.push_back({ variableName, ins[i]->getName() });
+			break;
+		}
 	}
 
 	for (int32_t i = 0; i < outputPinCount; ++i)
@@ -2663,7 +2680,7 @@ bool emitTextureSize(GlslContext& cx, TextureSize* node)
 	if (!in)
 		return false;
 
-	const std::wstring textureName = in->getName() + L"__bindlessIndex__";
+	const std::wstring textureName = in->getName();
 	Ref< GlslVariable > out;
 
 	comment(f, node);
@@ -2764,31 +2781,31 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	}
 	else if (out->getType() >= GlslType::Texture2D && out->getType() <= GlslType::TextureCube)
 	{
-		auto existing = cx.getLayout().get(node->getParameterName());
-		if (existing != nullptr)
-		{
-			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
-			{
-				// Texture already exist; ensure type match.
-				if (existingTexture->getUniformType() != out->getType())
-					return false;
-				existingTexture->addStage(getBindStage(cx));
-			}
-			else
-			{
-				// Resource already exist but is not a texture.
-				return false;
-			}
-		}
-		else
-		{
-			// Texture do not exist; add new texture resource.
-			cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
-		}
+		//auto existing = cx.getLayout().get(node->getParameterName());
+		//if (existing != nullptr)
+		//{
+		//	if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
+		//	{
+		//		// Texture already exist; ensure type match.
+		//		if (existingTexture->getUniformType() != out->getType())
+		//			return false;
+		//		existingTexture->addStage(getBindStage(cx));
+		//	}
+		//	else
+		//	{
+		//		// Resource already exist but is not a texture.
+		//		return false;
+		//	}
+		//}
+		//else
+		//{
+		//	// Texture do not exist; add new texture resource.
+		//	cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
+		//}
 
 		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Draw);
 		ub->addStage(getBindStage(cx));
-		if (!ub->add(node->getParameterName() + L"__bindlessIndex__", GlslType::Integer, 1))
+		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)

@@ -115,14 +115,14 @@ private:
 		VkSampler sampler;
 	};
 
-	struct Texture
-	{
-#if defined(_DEBUG)
-		std::wstring name;
-#endif
-		uint32_t binding;
-		Ref< ITexture > texture;
-	};
+//	struct Texture
+//	{
+//#if defined(_DEBUG)
+//		std::wstring name;
+//#endif
+//		uint32_t binding;
+//		Ref< ITexture > texture;
+//	};
 
 	struct Image
 	{
@@ -157,7 +157,7 @@ private:
 	UniformBuffer m_uniformBuffers[3];
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< Sampler > m_samplers;
-	AlignedVector< Texture > m_textures;
+	//AlignedVector< Texture > m_textures;
 	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
