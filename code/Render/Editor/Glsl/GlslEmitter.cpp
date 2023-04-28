@@ -30,6 +30,8 @@ namespace traktor::render
 	namespace
 	{
 
+const wchar_t* c_uniformBufferNames[] = { L"UbOnce", L"UbFrame", L"UbDraw" };
+
 uint8_t getBindStage(const GlslContext& cx)
 {
 	if (cx.inVertex())
@@ -239,7 +241,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			return false;
 
 		// Check if image needs to be defined.
-		auto existing = cx.getLayout().get(storageUniformNode->getParameterName());
+		auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
 		if (existing != nullptr)
 		{
 			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
@@ -270,7 +272,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 	else if (const Struct* storageStructNode = dynamic_type_cast< const Struct* >(storage))
 	{
 		// Check if storage buffer needs to be defined.
-		auto existing = cx.getLayout().get(storageStructNode->getParameterName());
+		auto existing = cx.getLayout().getByName(storageStructNode->getParameterName());
 		if (existing != nullptr)
 		{
 			auto existingBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing);
@@ -707,7 +709,7 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	// Add uniform to layout.
 	if (out->getType() < GlslType::Texture2D)
 	{
-		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)node->getFrequency());
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)node->getFrequency()]);
 		ub->addStage(getBindStage(cx));
 		ub->add(node->getParameterName(), out->getType(), node->getLength());
 	}
@@ -2266,7 +2268,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		GlslType::StructBuffer
 	);
 
-	auto existing = cx.getLayout().get(node->getParameterName());
+	auto existing = cx.getLayout().getByName(node->getParameterName());
 	if (existing != nullptr)
 	{
 		if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
@@ -2659,7 +2661,7 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float2);
 
-	auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Once);
+	auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbOnce");
 	ub->addStage(getBindStage(cx));
 	if (!ub->add(L"_vk_targetSize", GlslType::Float4, 1))
 		return false;
@@ -2774,7 +2776,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	// Add uniform to layout.
 	if (out->getType() < GlslType::Texture2D)
 	{
-		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)node->getFrequency());
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)node->getFrequency()]);
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), out->getType(), 1))
 			return false;
@@ -2803,14 +2805,14 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		//	cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
 		//}
 
-		auto ub = cx.getLayout().get< GlslUniformBuffer >((int32_t)UpdateFrequency::Draw);
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)
 	{
-		auto existing = cx.getLayout().get(node->getParameterName());
+		auto existing = cx.getLayout().getByName(node->getParameterName());
 		if (existing != nullptr)
 		{
 			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))

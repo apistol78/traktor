@@ -35,19 +35,18 @@ public:
 		int32_t length;
 	};
 
-	explicit GlslUniformBuffer(const std::wstring& name, uint8_t stages, int32_t ordinal);
+	explicit GlslUniformBuffer(const std::wstring& name, uint8_t stages);
 
 	bool add(const std::wstring& uniformName, GlslType uniformType, int32_t length);
 
 	const AlignedVector< Uniform >& get() const { return m_uniforms; }
 
-	virtual int32_t getOrdinal() const override final { return m_ordinal; }
+	virtual int32_t getOrdinal() const override final { return 0; }
 
 	virtual bool isBindless() const override final { return false; }
 
 private:
 	AlignedVector< Uniform > m_uniforms;
-	int32_t m_ordinal;
 };
 
 }

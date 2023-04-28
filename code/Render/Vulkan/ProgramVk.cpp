@@ -162,7 +162,7 @@ bool ProgramVk::create(
 
 		auto& lb = dslb.push_back();
 		lb = {};
-		lb.binding = i;
+		lb.binding = i + 1;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 		lb.descriptorCount = 1;
 		lb.stageFlags = stageFlags;
@@ -370,7 +370,7 @@ bool ProgramVk::validateGraphics(
 		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
-		0,
+		1,
 		1, &m_descriptorSet,
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
@@ -381,7 +381,7 @@ bool ProgramVk::validateGraphics(
 		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
 		m_pipelineLayout,
-		1,
+		0,
 		1, &bindlessDescriptorSet,
 		0, nullptr
 	);
@@ -448,7 +448,7 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_COMPUTE,
 		m_pipelineLayout,
-		0,
+		1,
 		1, &m_descriptorSet,
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
@@ -459,7 +459,7 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 		*commandBuffer,
 		VK_PIPELINE_BIND_POINT_COMPUTE,
 		m_pipelineLayout,
-		1,
+		0,
 		1, &bindlessDescriptorSet,
 		0, nullptr
 	);
@@ -717,7 +717,7 @@ bool ProgramVk::validateDescriptorSet()
 		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 		write.pBufferInfo = &bufferInfo;
 		write.dstArrayElement = 0;
-		write.dstBinding = i;
+		write.dstBinding = i + 1;
 	}
 
 	// Add sampler bindings.

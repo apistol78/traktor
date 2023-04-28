@@ -14,9 +14,8 @@ namespace traktor::render
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslUniformBuffer", GlslUniformBuffer, GlslResource)
 
-GlslUniformBuffer::GlslUniformBuffer(const std::wstring& name, uint8_t stages, int32_t ordinal)
+GlslUniformBuffer::GlslUniformBuffer(const std::wstring& name, uint8_t stages)
 :	GlslResource(name, stages)
-,	m_ordinal(ordinal)
 {
 }
 
