@@ -39,7 +39,7 @@ Context::Context(
 ,	m_pipelineCache(0)
 ,	m_descriptorPool(0)
 ,	m_views(0)
-,	m_descriptorPoolRevision(0)
+//,	m_descriptorPoolRevision(0)
 {
 }
 
@@ -135,7 +135,7 @@ bool Context::create()
 	// Bindless textures.
 	{
 		static const uint32_t k_max_bindless_resources = 16536;
-		static const uint32_t k_bindless_texture_binding = 8;
+		static const uint32_t k_bindless_texture_binding = 16;
 
 		// Create descriptor layout.
 		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
