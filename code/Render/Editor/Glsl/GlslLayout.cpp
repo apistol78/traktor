@@ -14,15 +14,18 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslLayout", GlslLayout, Object)
 
+void GlslLayout::addStatic(GlslResource* resource)
+{
+	resource->m_binding = (int32_t)m_staticResources.size();
+	m_staticResources.push_back(resource);
+	m_resources = m_staticResources;
+	m_resources.insert(m_resources.end(), m_dynamicResources.begin(), m_dynamicResources.end());
+}
+
 void GlslLayout::add(GlslResource* resource)
 {
-	T_ASSERT(resource->m_layout == nullptr);
-	m_resources.push_back(resource);
-
-	// Note! Emitter assumes the first three resources are GlslUniformBuffer;s
-	// but since they will be sorted first due to it's name it's currently safe to ignore this
-	// explicit constraint.
-	m_resources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
+	m_dynamicResources.push_back(resource);
+	m_dynamicResources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
 		const wchar_t* tn0 = type_name(r0);
 		const wchar_t* tn1 = type_name(r1);
 		int32_t c = wcscmp(tn0, tn1);
@@ -36,34 +39,43 @@ void GlslLayout::add(GlslResource* resource)
 			return true;
 	});
 
-	// Calculate binding locations.
 	int32_t binding = 0;
-	for (auto resource : m_resources)
-	{
-		if (!resource->isBindless())
-			resource->m_binding = binding++;
-	}
+	for (auto resource : m_staticResources)
+		binding = std::max(binding, resource->m_binding + 1);
+	for (auto resource : m_dynamicResources)
+		resource->m_binding = binding++;
+
+	m_resources = m_staticResources;
+	m_resources.insert(m_resources.end(), m_dynamicResources.begin(), m_dynamicResources.end());
 }
 
-GlslResource* GlslLayout::get(int32_t index)
+GlslResource* GlslLayout::getByIndex(int32_t index)
 {
 	return m_resources[index];
 }
 
-GlslResource* GlslLayout::get(const std::wstring& name)
+GlslResource* GlslLayout::getByBinding(int32_t binding)
 {
 	auto it = std::find_if(m_resources.begin(), m_resources.end(), [&](const GlslResource* resource) {
-		return resource->getName() == name;
+		return resource->getBinding() == binding;
 	});
 	return it != m_resources.end() ? (*it).ptr() : nullptr;
 }
 
-const GlslResource* GlslLayout::get(const std::wstring& name) const
+const GlslResource* GlslLayout::getByName(const std::wstring& name) const
 {
 	auto it = std::find_if(m_resources.begin(), m_resources.end(), [&](const GlslResource* resource) {
 		return resource->getName() == name;
 	});
 	return it != m_resources.end() ? (*it) : nullptr;
+}
+
+GlslResource* GlslLayout::getByName(const std::wstring& name)
+{
+	auto it = std::find_if(m_resources.begin(), m_resources.end(), [&](const GlslResource* resource) {
+		return resource->getName() == name;
+	});
+	return it != m_resources.end() ? (*it).ptr() : nullptr;
 }
 
 RefArray< GlslResource > GlslLayout::get(uint8_t stageMask) const
@@ -75,18 +87,6 @@ RefArray< GlslResource > GlslLayout::get(uint8_t stageMask) const
 			stageResources.push_back(resource);
 	}
 	return stageResources;
-}
-
-int32_t GlslLayout::getGlobalIndex(const GlslResource* resource) const
-{
-	int32_t index = 0;
-	for (auto untypedResource : m_resources)
-	{
-		if (untypedResource == resource)
-			return index;
-		++index;
-	}
-	return -1;
 }
 
 uint32_t GlslLayout::count(const TypeInfo& resourceType, uint8_t stageMask) const

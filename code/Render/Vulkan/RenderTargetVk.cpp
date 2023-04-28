@@ -71,7 +71,7 @@ bool RenderTargetVk::createPrimary(
 	{
 		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
 
-		static const uint32_t k_bindless_texture_binding = 16;
+		static const uint32_t k_bindless_texture_binding = 0;
 
 		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
 		StaticVector< VkWriteDescriptorSet, 2 > writes;
@@ -158,7 +158,7 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	{
 		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
 
-		static const uint32_t k_bindless_texture_binding = 16;
+		static const uint32_t k_bindless_texture_binding = 0;
 
 		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
 		StaticVector< VkWriteDescriptorSet, 2 > writes;

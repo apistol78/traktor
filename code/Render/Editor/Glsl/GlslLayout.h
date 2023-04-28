@@ -30,20 +30,33 @@ class T_DLLCLASS GlslLayout : public Object
 	T_RTTI_CLASS;
 
 public:
+	void addStatic(GlslResource* resource);
+
 	void add(GlslResource* resource);
 
 	/*! Get resource at index. */
-	GlslResource* get(int32_t index);
+	GlslResource* getByIndex(int32_t index);
 
 	/*! Get typed resource at index. */
 	template < typename T >
-	T* get(int32_t index) { return mandatory_non_null_type_cast< T* >(get(index)); }
+	T* getByIndex(int32_t index) { return mandatory_non_null_type_cast< T* >(getByIndex(index)); }
+
+	/*! Get resource by binding. */
+	GlslResource* getByBinding(int32_t binding);
+
+	/*! Get typed resource by binding. */
+	template < typename T >
+	T* getByBinding(int32_t binding) { return mandatory_non_null_type_cast< T* >(getByBinding(binding)); }
 
 	/*! Get resource by name. */
-	const GlslResource* get(const std::wstring& name) const;
+	const GlslResource* getByName(const std::wstring& name) const;
 
 	/*! Get resource by name. */
-	GlslResource* get(const std::wstring& name);
+	template < typename T >
+	T* getByName(const std::wstring& name) { return mandatory_non_null_type_cast<T*>(getByName(name)); }
+
+	/*! Get resource by name. */
+	GlslResource* getByName(const std::wstring& name);
 
 	/*! Get all resources. */
 	const RefArray< GlslResource >& get() const { return m_resources; }
@@ -64,9 +77,6 @@ public:
 	/*! Get all resources bound to a specific stage. */
 	RefArray< GlslResource > get(uint8_t stageMask) const;
 
-	/*! Get global index of resource. */
-	int32_t getGlobalIndex(const GlslResource* resource) const;
-
 	/*! Number of resources. */
 	uint32_t count() const { return (uint32_t)m_resources.size(); }
 
@@ -76,6 +86,8 @@ public:
 	uint32_t count(uint8_t stageMask = ~0) const { return count(type_of< T >(), stageMask); }
 
 private:
+	RefArray< GlslResource > m_staticResources;
+	RefArray< GlslResource > m_dynamicResources;
 	RefArray< GlslResource > m_resources;
 };
 

@@ -100,7 +100,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayout
 		if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
 			return false;
 
-		const VkDescriptorSetLayout setLayouts[] = { outDescriptorSetLayout, m_bindlessDescriptorLayout };
+		const VkDescriptorSetLayout setLayouts[] = { m_bindlessDescriptorLayout, outDescriptorSetLayout };
 
 		VkPipelineLayoutCreateInfo lci = {};
 		lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

@@ -474,6 +474,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
+			// Runtime CPU buffer index; remap from UB binding locations.
+			const int32_t bufferIndex = uniformBuffer->getBinding() - 1;
+			T_FATAL_ASSERT(bufferIndex >= 0 && bufferIndex <= 2);
+
 			uint32_t size = 0;
 			for (auto uniform : uniformBuffer->get())
 			{
@@ -481,13 +485,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 					size = alignUp(size, 4);
 
 				auto& pm = parameterMapping[uniform.name];
-				pm.buffer = uniformBuffer->getBinding();
+				pm.buffer = bufferIndex;
 				pm.offset = size;
 				pm.length = glsl_type_width(uniform.type) * uniform.length;
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
-			programResource->m_uniformBufferSizes[uniformBuffer->getBinding()] = size;
+
+			programResource->m_uniformBufferSizes[bufferIndex] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
