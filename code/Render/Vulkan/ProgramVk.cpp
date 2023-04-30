@@ -99,11 +99,13 @@ ProgramVk::ProgramVk(Context* context, uint32_t& instances)
 ,	m_instances(instances)
 {
 	Atomic::increment((int32_t&)m_instances);
+	m_context->addCleanupListener(this);
 }
 
 ProgramVk::~ProgramVk()
 {
 	destroy();
+	m_context->removeCleanupListener(this);
 	Atomic::decrement((int32_t&)m_instances);
 }
 
@@ -614,25 +616,6 @@ void ProgramVk::setStencilReference(uint32_t stencilReference)
 
 bool ProgramVk::validateDescriptorSet()
 {
-	// Ensure we're still using same descriptor pool revision; if not then we need to flush our cached descriptor sets.
-	//if (m_context->getDescriptorPoolRevision() != m_descriptorPoolRevision)
-	//{
-	//	for (auto it : m_descriptorSets)
-	//	{
-	//		m_context->addDeferredCleanup([
-	//			descriptorSet = it.second
-	//		](Context* cx) {
-	//				vkFreeDescriptorSets(cx->getLogicalDevice(), cx->getDescriptorPool(), 1, &descriptorSet);
-	//			});
-	//	}
-	//	m_descriptorSets.reset();
-	//	m_descriptorPoolRevision = m_context->getDescriptorPoolRevision();
-	//}
-
-	// fixme cached descriptor sets never get removed; after a texture has been destroyed etc
-	// we need to clean sets.
-
-
 	// Create key from current bound resources.
 	DescriptorSetKey key;
 	for (uint32_t i = 0; i < 3; ++i)
@@ -843,6 +826,15 @@ bool ProgramVk::validateDescriptorSet()
 
 	m_descriptorSets.insert(key, m_descriptorSet);
 	return true;
+}
+
+void ProgramVk::postCleanup()
+{
+	// Since some resource has been cleaned up we cannot guarantee integrity
+	// of our cached descriptor sets, thus we need to rebuild every set.
+	for (auto it : m_descriptorSets)
+		vkFreeDescriptorSets(m_context->getLogicalDevice(), m_context->getDescriptorPool(), 1, &it.second);
+	m_descriptorSets.reset();
 }
 
 bool ProgramVk::DescriptorSetKey::operator < (const DescriptorSetKey& rh) const

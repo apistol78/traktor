@@ -241,7 +241,7 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			{
 				if (!uniformBuffer->get().empty())
 				{
-					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L") uniform " << uniformBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L", set = 1) uniform " << uniformBuffer->getName() << Endl;
 					ss << L"{" << Endl;
 					ss << IncreaseIndent;
 					for (auto uniform : uniformBuffer->get())
@@ -290,9 +290,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		//}
 		//ss << Endl;
 
-		ss << L"layout (binding = 0, set = 1) uniform texture2D __bindlessTextures2D__[];" << Endl;
-		ss << L"layout (binding = 0, set = 1) uniform texture3D __bindlessTextures3D__[];" << Endl;
-		ss << L"layout (binding = 0, set = 1) uniform textureCube __bindlessTexturesCube__[];" << Endl;
+		ss << L"layout (binding = 0, set = 0) uniform texture2D __bindlessTextures2D__[];" << Endl;
+		ss << L"layout (binding = 0, set = 0) uniform texture3D __bindlessTextures3D__[];" << Endl;
+		ss << L"layout (binding = 0, set = 0) uniform textureCube __bindlessTexturesCube__[];" << Endl;
 		ss << Endl;
 	}
 
@@ -304,9 +304,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
 				if (sampler->getState().compare == CfNone)
-					ss << L"layout (binding = " << sampler->getBinding() << L") uniform sampler " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L", set = 1) uniform sampler " << sampler->getName() << L";" << Endl;
 				else
-					ss << L"layout (binding = " << sampler->getBinding() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L", set = 1) uniform samplerShadow " << sampler->getName() << L";" << Endl;
 			}
 		}
 		ss << Endl;
@@ -322,15 +322,15 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				switch (image->getUniformType())
 				{
 				case GlslType::Image2D:
-					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image2D " << image->getName() << L";" << Endl;
 					break;
 
 				case GlslType::Image3D:
-					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform image3D " << image->getName() << L";" << Endl;
+					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image3D " << image->getName() << L";" << Endl;
 					break;
 
 				case GlslType::ImageCube:
-					ss << L"layout (binding = " << image->getBinding() << L", rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
+					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
 					break;
 
 				default:
@@ -362,9 +362,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				ss << L"};" << Endl;
 				ss << Endl;
 				if (m_shaderType != StCompute)
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") readonly buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = 1) readonly buffer " << storageBuffer->getName() << Endl;
 				else
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L") buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = 1) buffer " << storageBuffer->getName() << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
 				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;

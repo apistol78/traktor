@@ -160,7 +160,12 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 void RenderTargetDepthVk::destroy()
 {
 	safeDestroy(m_image);
-	m_context = nullptr;
+
+	if (m_context != nullptr)
+	{
+		m_context->freeResourceIndex(m_bindlessResourceIndex);
+		m_context = nullptr;
+	}
 }
 
 ITexture::Size RenderTargetDepthVk::getSize() const

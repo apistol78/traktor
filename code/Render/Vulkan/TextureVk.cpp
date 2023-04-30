@@ -493,9 +493,14 @@ bool TextureVk::create(
 
 void TextureVk::destroy()
 {
-	m_context = nullptr;
 	safeDestroy(m_stagingBuffer);
 	safeDestroy(m_textureImage);
+
+	if (m_context != nullptr)
+	{
+		m_context->freeResourceIndex(m_bindlessResourceIndex);
+		m_context = nullptr;
+	}
 }
 
 ITexture* TextureVk::resolve()
