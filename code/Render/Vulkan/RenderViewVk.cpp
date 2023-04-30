@@ -644,11 +644,11 @@ void RenderViewVk::present()
 	}
 
 	// Cleanup destroyed resources.
-	if (m_context->needCleanup())
-	{
-		if (frame.graphicsCommandBuffer->wait())
+	// if (m_context->needCleanup())
+	// {
+	// 	if (frame.graphicsCommandBuffer->wait())
 			m_context->performCleanup();
-	}
+	// }
 
 	// Recycle uniform buffers.
 	m_context->recycle();

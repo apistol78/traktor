@@ -12,6 +12,7 @@
 #include "Core/Containers/StaticVector.h"
 #include "Render/IProgram.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
+#include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/UniformBufferPool.h"
 
 namespace traktor::render
@@ -20,7 +21,6 @@ namespace traktor::render
 class Buffer;
 class BufferViewVk;
 class CommandBuffer;
-class Context;
 class PipelineLayoutCache;
 class ProgramResourceVk;
 class ShaderModuleCache;
@@ -28,7 +28,9 @@ class ShaderModuleCache;
 /*!
  * \ingroup Vulkan
  */
-class ProgramVk : public IProgram
+class ProgramVk
+:	public IProgram
+,	public Context::ICleanupListener
 {
 	T_RTTI_CLASS;
 
@@ -164,6 +166,8 @@ private:
 	uint32_t m_shaderHash = 0;
 
 	bool validateDescriptorSet();
+
+	virtual void postCleanup() override final;
 };
 
 }

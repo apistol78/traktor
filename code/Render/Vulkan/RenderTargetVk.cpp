@@ -195,7 +195,12 @@ void RenderTargetVk::destroy()
 {
 	safeDestroy(m_imageTarget);
 	safeDestroy(m_imageResolved);
-	m_context = nullptr;
+	
+	if (m_context != nullptr)
+	{
+		m_context->freeResourceIndex(m_bindlessResourceIndex);
+		m_context = nullptr;
+	}
 }
 
 ITexture::Size RenderTargetVk::getSize() const

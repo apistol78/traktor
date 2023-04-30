@@ -23,6 +23,13 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+const uint32_t k_max_bindless_resources = 16536;
+const uint32_t k_bindless_texture_binding = 0;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Context", Context, Object)
 
@@ -40,6 +47,9 @@ Context::Context(
 ,	m_descriptorPool(0)
 ,	m_views(0)
 //,	m_descriptorPoolRevision(0)
+,	m_bindlessDescriptorLayout(0)
+,	m_bindlessDescriptorSet(0)
+,	m_resourceIndexAllocator(0, k_max_bindless_resources - 1)
 {
 }
 
@@ -134,9 +144,6 @@ bool Context::create()
 
 	// Bindless textures.
 	{
-		static const uint32_t k_max_bindless_resources = 16536;
-		static const uint32_t k_bindless_texture_binding = 0;
-
 		// Create descriptor layout.
 		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
 
@@ -219,10 +226,23 @@ void Context::addDeferredCleanup(const cleanup_fn_t& fn)
 	}
 }
 
-bool Context::needCleanup() const
+void Context::addCleanupListener(ICleanupListener* cleanupListener)
 {
-	return !m_cleanupFns.empty();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+	m_cleanupListeners.push_back(cleanupListener);
 }
+
+void Context::removeCleanupListener(ICleanupListener* cleanupListener)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_cleanupLock);
+	auto it = std::find(m_cleanupListeners.begin(), m_cleanupListeners.end(), cleanupListener);
+	m_cleanupListeners.erase(it);
+}
+
+// bool Context::needCleanup() const
+// {
+// 	return !m_cleanupFns.empty();
+// }
 
 void Context::performCleanup()
 {
@@ -250,6 +270,9 @@ void Context::performCleanup()
 		// Reset descriptor pool since we need to ensure programs clear their cached descriptor sets.
 		//vkResetDescriptorPool(m_logicalDevice, m_descriptorPool, 0);
 		//m_descriptorPoolRevision++;
+
+		for (auto cleanupListener : m_cleanupListeners)
+			cleanupListener->postCleanup();
 	}
 }
 
@@ -294,8 +317,14 @@ bool Context::savePipelineCache()
 
 uint32_t Context::allocBindlessResourceIndex()
 {
-	static uint32_t resourceIndex = 0;
-	return resourceIndex++;
+	return m_resourceIndexAllocator.alloc();
+}
+
+void Context::freeResourceIndex(uint32_t& resourceIndex)
+{
+	T_FATAL_ASSERT(resourceIndex != ~0U);
+	m_resourceIndexAllocator.free(resourceIndex);
+	resourceIndex = ~0U;
 }
 
 }

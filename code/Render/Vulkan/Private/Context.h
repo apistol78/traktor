@@ -12,6 +12,7 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/IdAllocator.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
@@ -33,6 +34,11 @@ class Context : public Object
 public:
 	typedef std::function< void(Context*) > cleanup_fn_t;
 
+	struct ICleanupListener
+	{
+		virtual void postCleanup() = 0;
+	};
+
 	explicit Context(
 		VkPhysicalDevice physicalDevice,
 		VkDevice logicalDevice,
@@ -48,9 +54,19 @@ public:
 
 	void decrementViews();
 
+	/*! Add a deferred cleanup.
+	 *
+	 * Deferred cleanups are issued after the current
+	 * frame has finished, from the calling thread
+	 * of present.
+	 */
 	void addDeferredCleanup(const cleanup_fn_t& fn);
 
-	bool needCleanup() const;
+	void addCleanupListener(ICleanupListener* cleanupListener);
+
+	void removeCleanupListener(ICleanupListener* cleanupListener);
+
+	// bool needCleanup() const;
 
 	void performCleanup();
 
@@ -81,6 +97,8 @@ public:
 
 	uint32_t allocBindlessResourceIndex();
 
+	void freeResourceIndex(uint32_t &resourceIndex);
+
 private:
 	VkPhysicalDevice m_physicalDevice;
 	VkDevice m_logicalDevice;
@@ -94,9 +112,12 @@ private:
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
+	AlignedVector< ICleanupListener* > m_cleanupListeners;
 
 	VkDescriptorSetLayout m_bindlessDescriptorLayout;
 	VkDescriptorSet m_bindlessDescriptorSet;
+
+	IdAllocator m_resourceIndexAllocator;
 };
 
 }
