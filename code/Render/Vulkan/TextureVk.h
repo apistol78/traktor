@@ -58,9 +58,7 @@ public:
 
 	virtual ITexture* resolve() override final;
 
-	Image& getImage() const { return *m_textureImage; }
-
-	uint32_t getBindlessResourceIndex() const { return m_bindlessResourceIndex; }
+	Image* getImage() const { return m_textureImage; }
 
 private:
 	Context* m_context = nullptr;
@@ -69,8 +67,6 @@ private:
 	Ref< Image > m_textureImage;
 	ITexture::Size m_size;
 	TextureFormat m_format;
-
-	uint32_t m_bindlessResourceIndex;
 };
 
 }

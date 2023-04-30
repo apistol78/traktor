@@ -57,8 +57,6 @@ public:
 
 	Image* getImage() const { return m_image; }
 
-	uint32_t getBindlessResourceIndex() const { return m_bindlessResourceIndex; }
-
 private:
 	friend class RenderTargetSetVk;
 	
@@ -68,8 +66,6 @@ private:
 	bool m_haveStencil = false;
 	int32_t m_width = 0;
 	int32_t m_height = 0;
-
-	uint32_t m_bindlessResourceIndex;
 
 	void prepareAsTarget(CommandBuffer* commandBuffer);
 

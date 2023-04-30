@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
-#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
@@ -154,41 +153,6 @@ bool TextureVk::create(
 
 	m_size = { desc.width, desc.height, 1, desc.mipCount };
 	m_format = desc.format;
-
-
-	{
-		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
-
-		static const uint32_t k_bindless_texture_binding = 0;
-
-		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
-		StaticVector< VkWriteDescriptorSet, 2 > writes;
-
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = 0;
-		imageInfo.imageView = m_textureImage->getVkImageView();
-		imageInfo.imageLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_context->getBindlessDescriptorSet();
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = m_bindlessResourceIndex;
-		write.dstBinding = k_bindless_texture_binding;
-
-		vkUpdateDescriptorSets(
-			m_context->getLogicalDevice(),
-			(uint32_t)writes.size(),
-			writes.c_ptr(),
-			0,
-			nullptr
-		);
-	}
-
 	return true;
 }
 
@@ -310,40 +274,6 @@ bool TextureVk::create(
 
 	m_size = { desc.side, desc.side, 1, desc.mipCount };
 	m_format = desc.format;
-
-	{
-		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
-
-		static const uint32_t k_bindless_texture_binding = 0;
-
-		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
-		StaticVector< VkWriteDescriptorSet, 2 > writes;
-
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = 0;
-		imageInfo.imageView = m_textureImage->getVkImageView();
-		imageInfo.imageLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_context->getBindlessDescriptorSet();
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = m_bindlessResourceIndex;
-		write.dstBinding = k_bindless_texture_binding;
-
-		vkUpdateDescriptorSets(
-			m_context->getLogicalDevice(),
-			(uint32_t)writes.size(),
-			writes.c_ptr(),
-			0,
-			nullptr
-		);
-	}
-
 	return true;
 }
 
@@ -454,40 +384,6 @@ bool TextureVk::create(
 
 	m_size = { desc.width, desc.height, desc.depth, desc.mipCount };
 	m_format = desc.format;
-
-	{
-		m_bindlessResourceIndex = m_context->allocBindlessResourceIndex();
-
-		static const uint32_t k_bindless_texture_binding = 0;
-
-		StaticVector< VkDescriptorImageInfo, 2 > imageInfos;
-		StaticVector< VkWriteDescriptorSet, 2 > writes;
-
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = 0;
-		imageInfo.imageView = m_textureImage->getVkImageView();
-		imageInfo.imageLayout = desc.shaderStorage ? VK_IMAGE_LAYOUT_GENERAL : VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_context->getBindlessDescriptorSet();
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = m_bindlessResourceIndex;
-		write.dstBinding = k_bindless_texture_binding;
-
-		vkUpdateDescriptorSets(
-			m_context->getLogicalDevice(),
-			(uint32_t)writes.size(),
-			writes.c_ptr(),
-			0,
-			nullptr
-		);
-	}
-
 	return true;
 }
 
@@ -495,12 +391,7 @@ void TextureVk::destroy()
 {
 	safeDestroy(m_stagingBuffer);
 	safeDestroy(m_textureImage);
-
-	if (m_context != nullptr)
-	{
-		m_context->freeResourceIndex(m_bindlessResourceIndex);
-		m_context = nullptr;
-	}
+	m_context = nullptr;
 }
 
 ITexture* TextureVk::resolve()

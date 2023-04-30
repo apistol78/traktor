@@ -73,8 +73,6 @@ public:
 
 	Image* getImageResolved() const { return m_imageResolved; }
 
-	uint32_t getBindlessResourceIndex() const { return m_bindlessResourceIndex; }
-
 private:
 	friend class RenderTargetSetVk;
 
@@ -84,8 +82,6 @@ private:
 	Ref< Image > m_imageResolved;	//!< For MSAA targets; target image is resolved to this image after rendering.
 	int32_t m_width = 0;
 	int32_t m_height = 0;
-
-	uint32_t m_bindlessResourceIndex;
 
 	void prepareAsTarget(CommandBuffer* commandBuffer);
 

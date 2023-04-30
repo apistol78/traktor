@@ -16,6 +16,12 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+static const uint32_t k_bindless_texture_binding = 0;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Image", Image, Object)
 
@@ -88,7 +94,10 @@ bool Image::createSimple(
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
-    return true;
+
+	// \fixme shaderStorage
+	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	return true;
 }
 
 bool Image::createCube(
@@ -150,7 +159,10 @@ bool Image::createCube(
 	m_mipCount = mipLevels;
 	m_layerCount = 6;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
-    return true;
+
+	// \fixme shaderStorage
+	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	return true;
 }
 
 bool Image::createVolume(
@@ -213,14 +225,17 @@ bool Image::createVolume(
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
-    return true;
+
+	// \fixme shaderStorage
+	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	return true;
 }
 
 bool Image::createTarget(
-    uint32_t width,
-    uint32_t height,
-    uint32_t multiSample,
-    VkFormat format,
+	uint32_t width,
+	uint32_t height,
+	uint32_t multiSample,
+	VkFormat format,
 	VkImage swapChainImage
 )
 {
@@ -244,7 +259,7 @@ bool Image::createTarget(
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
 		ici.flags = 0;
- 	
+	
 		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
 		if (vmaCreateImage(m_context->getAllocator(), &ici, &aci, &m_image, &m_allocation, nullptr) != VK_SUCCESS)
@@ -272,7 +287,7 @@ bool Image::createTarget(
 	ivci.subresourceRange.levelCount = 1;
 	ivci.subresourceRange.baseArrayLayer = 0;
 	ivci.subresourceRange.layerCount = 1;
- 	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
+	if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_imageView) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
@@ -281,14 +296,16 @@ bool Image::createTarget(
 	m_mipCount = 1;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
+
+	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	return true;
 }
 
 bool Image::createDepthTarget(
-    uint32_t width,
-    uint32_t height,
-    uint32_t multiSample,
-    VkFormat format,
+	uint32_t width,
+	uint32_t height,
+	uint32_t multiSample,
+	VkFormat format,
 	bool usedAsTexture
 )
 {
@@ -348,7 +365,9 @@ bool Image::createDepthTarget(
 	m_mipCount = 1;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
-    return true;
+
+	updateBindlessResource(VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
+	return true;
 }
 
 void Image::destroy()
@@ -370,6 +389,12 @@ void Image::destroy()
 		](Context* cx) {
 			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
 		});
+	}
+	if (m_resourceIndex != ~0U)
+	{
+		log::debug << L"Resource index " << m_resourceIndex << L" freed" << Endl;
+		m_context->freeResourceIndex(m_resourceIndex);
+		m_resourceIndex = ~0U;
 	}
 	m_allocation = 0;
 	m_image = 0;
@@ -449,6 +474,45 @@ bool Image::changeLayout(
 			m_imageLayouts[(layerLevel + layer) * m_mipCount + (mipLevel + mip)] = imb.newLayout;
 		}
 	}
+
+	return true;
+}
+
+bool Image::updateBindlessResource(VkImageLayout imageLayout)
+{
+	if (m_resourceIndex == ~0U)
+	{
+		m_resourceIndex = m_context->allocBindlessResourceIndex();
+		if (m_resourceIndex == ~0U)
+		{
+			log::error << L"Unable to allocate bindless resource index." << Endl;
+			return false;
+		}
+		log::debug << L"Resource index " << m_resourceIndex << L" allocated" << Endl;
+	}
+
+	VkDescriptorImageInfo imageInfo = {};
+	imageInfo.sampler = 0;
+	imageInfo.imageView = m_imageView;
+	imageInfo.imageLayout = imageLayout;
+
+	VkWriteDescriptorSet write = {};
+	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	write.pNext = nullptr;
+	write.dstSet = m_context->getBindlessDescriptorSet();
+	write.descriptorCount = 1;
+	write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	write.pImageInfo = &imageInfo;
+	write.dstArrayElement = m_resourceIndex;
+	write.dstBinding = k_bindless_texture_binding;
+
+	vkUpdateDescriptorSets(
+		m_context->getLogicalDevice(),
+		1,
+		&write,
+		0,
+		nullptr
+	);
 
 	return true;
 }

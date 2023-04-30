@@ -577,11 +577,11 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 
 		uint32_t resourceIndex = ~0U;
 		if (is_a< TextureVk >(resolved))
-			resourceIndex = static_cast< TextureVk* >(resolved)->getBindlessResourceIndex();
+			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
 		else if (is_a< RenderTargetVk >(resolved))
-			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getBindlessResourceIndex();
+			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
 		else if (is_a< RenderTargetDepthVk >(resolved))
-			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getBindlessResourceIndex();
+			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
 
 		T_FATAL_ASSERT(resourceIndex != ~0U);
 
@@ -775,7 +775,7 @@ bool ProgramVk::validateDescriptorSet()
 
 		if (is_a< TextureVk >(resolved))
 		{
-			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage().getVkImageView();
+			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getVkImageView();
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 		}
 

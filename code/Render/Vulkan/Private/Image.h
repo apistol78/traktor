@@ -99,6 +99,8 @@ public:
 
 	VkImageView getVkImageView() const { return m_imageView; }
 
+	uint32_t getResourceIndex() const { return m_resourceIndex; }
+
 private:
 	Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
@@ -107,7 +109,10 @@ private:
 	AlignedVector< VkImageLayout > m_imageLayouts;
 	uint32_t m_mipCount = 0;
 	uint32_t m_layerCount = 0;
+	uint32_t m_resourceIndex = ~0U;
 	void* m_locked = nullptr;
+
+	bool updateBindlessResource(VkImageLayout imageLayout);
 };
 		
 }
