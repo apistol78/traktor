@@ -1109,7 +1109,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		sourceImage = sourceRenderTarget->getImageResolved();
 	else if (auto sourceTextureVk = dynamic_type_cast< TextureVk* >(sourceTexture))
 	{
-		sourceImage = &sourceTextureVk->getImage();
+		sourceImage = sourceTextureVk->getImage();
 		region.srcSubresource.baseArrayLayer = sourceRegion.z;
 	}
 	else
@@ -1119,7 +1119,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 		destinationImage = destinationRenderTarget->getImageResolved();
 	else if (auto destinationTextureVk = dynamic_type_cast< TextureVk* >(destinationTexture))
 	{
-		destinationImage = &destinationTextureVk->getImage();
+		destinationImage = destinationTextureVk->getImage();
 		region.dstSubresource.baseArrayLayer = destinationRegion.z;
 	}
 	else
