@@ -459,23 +459,23 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		//		texture->getStages()
 		//	));
 		//}
-		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		{
-			auto& pm = parameterMapping[image->getName()];
-			pm.buffer = image->getBinding();
-			pm.offset = (uint32_t)programResource->m_images.size();
-			pm.length = 0;
+		// else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		// {
+		// 	auto& pm = parameterMapping[image->getName()];
+		// 	pm.buffer = image->getBinding();
+		// 	pm.offset = (uint32_t)programResource->m_images.size();
+		// 	pm.length = 0;
 
-			programResource->m_images.push_back(ProgramResourceVk::ImageDesc(
-				image->getName(),
-				image->getBinding(),
-				image->getStages()
-			));
-		}
+		// 	programResource->m_images.push_back(ProgramResourceVk::ImageDesc(
+		// 		image->getName(),
+		// 		image->getBinding(),
+		// 		image->getStages()
+		// 	));
+		// }
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
 			// Runtime CPU buffer index; remap from UB binding locations.
-			const int32_t bufferIndex = uniformBuffer->getBinding() - 1;
+			const int32_t bufferIndex = uniformBuffer->getBinding() - 2;
 			T_FATAL_ASSERT(bufferIndex >= 0 && bufferIndex <= 2);
 
 			uint32_t size = 0;
@@ -510,6 +510,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 
 	programResource->m_textureCount = 0;
+	programResource->m_imageCount = 0;
 
 	for (auto p : cx.getParameters())
 	{
@@ -562,6 +563,25 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				pm.offset,
 				pm.length
 			});
+		}
+		else if (p.type >= ParameterType::Image2D && p.type <= ParameterType::ImageCube)
+		{
+			auto it = parameterMapping.find(p.name);
+			if (it == parameterMapping.end())
+				continue;
+
+			const auto& pm = it->second;
+			// T_FATAL_ASSERT(pm.length == 1);
+
+			programResource->m_parameters.push_back({
+				p.name,
+				pm.buffer,
+				pm.offset,
+				pm.length,
+				(int32_t)programResource->m_imageCount
+			});
+
+			programResource->m_imageCount++;
 		}
 	}
 

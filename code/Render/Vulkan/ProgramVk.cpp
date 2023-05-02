@@ -193,15 +193,15 @@ bool ProgramVk::create(
 	//}
 
 	// Append image bindings.
-	for (const auto& image : resource->m_images)
-	{
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = image.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(image.stages);		
-	}
+	// for (const auto& image : resource->m_images)
+	// {
+	// 	auto& lb = dslb.push_back();
+	// 	lb = {};
+	// 	lb.binding = image.binding;
+	// 	lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	// 	lb.descriptorCount = 1;
+	// 	lb.stageFlags = getShaderStageFlags(image.stages);		
+	// }
 
 	// Append sbuffer bindings.
 	for (const auto& sbuffer : resource->m_sbuffers)
@@ -280,14 +280,16 @@ bool ProgramVk::create(
 	m_textures.resize(resource->m_textureCount);
 
 	// Create images.
-	for (const auto& resourceImage : resource->m_images)
-	{
-#if !defined(_DEBUG)
-		m_images.push_back({ resourceImage.binding });
-#else
-		m_images.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
-#endif
-	}
+// 	for (const auto& resourceImage : resource->m_images)
+// 	{
+// #if !defined(_DEBUG)
+// 		m_images.push_back({ resourceImage.binding });
+// #else
+// 		m_images.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
+// #endif
+// 	}
+
+	m_images.resize(resource->m_imageCount);
 
 	// Create sbuffers.
 	for (const auto& resourceSBuffer : resource->m_sbuffers)
@@ -330,29 +332,52 @@ bool ProgramVk::validateGraphics(
 	for (auto it : m_parameterMap)
 	{
 		const ParameterMap& pm = it.second;
-		if (pm.textureIndex < 0)
-			continue;
+		if (pm.textureIndex >= 0)
+		{
+			ITexture* texture = m_textures[pm.textureIndex];
+			if (!texture)
+				return false;
 
-		ITexture* texture = m_textures[pm.textureIndex];
-		if (!texture)
-			return false;
+			ITexture* resolved = texture->resolve();
+			T_ASSERT(resolved);
 
-		ITexture* resolved = texture->resolve();
-		T_ASSERT(resolved);
+			uint32_t resourceIndex = ~0U;
+			if (is_a< TextureVk >(resolved))
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+			else if (is_a< RenderTargetVk >(resolved))
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+			else if (is_a< RenderTargetDepthVk >(resolved))
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
 
-		uint32_t resourceIndex = ~0U;
-		if (is_a< TextureVk >(resolved))
-			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-		else if (is_a< RenderTargetVk >(resolved))
-			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-		else if (is_a< RenderTargetDepthVk >(resolved))
-			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+			T_FATAL_ASSERT(resourceIndex != ~0U);
 
-		T_FATAL_ASSERT(resourceIndex != ~0U);
+			auto& ub = m_uniformBuffers[pm.buffer];
+			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+				ub.dirty = true;
+		}
+		else if (pm.imageIndex >= 0)
+		{
+			ITexture* texture = m_textures[pm.imageIndex];
+			if (!texture)
+				return false;
 
-		auto& ub = m_uniformBuffers[pm.buffer];
-		if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
-			ub.dirty = true;
+			ITexture* resolved = texture->resolve();
+			T_ASSERT(resolved);
+
+			uint32_t resourceIndex = ~0U;
+			if (is_a< TextureVk >(resolved))
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+			else if (is_a< RenderTargetVk >(resolved))
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+			else if (is_a< RenderTargetDepthVk >(resolved))
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+
+			T_FATAL_ASSERT(resourceIndex != ~0U);
+
+			auto& ub = m_uniformBuffers[pm.buffer];
+			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+				ub.dirty = true;			
+		}
 	}
 
 	// Update content of uniform buffers.
@@ -437,29 +462,52 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 	for (auto it : m_parameterMap)
 	{
 		const ParameterMap& pm = it.second;
-		if (pm.textureIndex < 0)
-			continue;
+		if (pm.textureIndex >= 0)
+		{
+			ITexture* texture = m_textures[pm.textureIndex];
+			if (!texture)
+				return false;
 
-		ITexture* texture = m_textures[pm.textureIndex];
-		if (!texture)
-			return false;
+			ITexture* resolved = texture->resolve();
+			T_ASSERT(resolved);
 
-		ITexture* resolved = texture->resolve();
-		T_ASSERT(resolved);
+			uint32_t resourceIndex = ~0U;
+			if (is_a< TextureVk >(resolved))
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+			else if (is_a< RenderTargetVk >(resolved))
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+			else if (is_a< RenderTargetDepthVk >(resolved))
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
 
-		uint32_t resourceIndex = ~0U;
-		if (is_a< TextureVk >(resolved))
-			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-		else if (is_a< RenderTargetVk >(resolved))
-			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-		else if (is_a< RenderTargetDepthVk >(resolved))
-			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+			T_FATAL_ASSERT(resourceIndex != ~0U);
 
-		T_FATAL_ASSERT(resourceIndex != ~0U);
+			auto& ub = m_uniformBuffers[pm.buffer];
+			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+				ub.dirty = true;
+		}
+		else if (pm.imageIndex >= 0)
+		{
+			ITexture* texture = m_textures[pm.imageIndex];
+			if (!texture)
+				return false;
 
-		auto& ub = m_uniformBuffers[pm.buffer];
-		if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
-			ub.dirty = true;
+			ITexture* resolved = texture->resolve();
+			T_ASSERT(resolved);
+
+			uint32_t resourceIndex = ~0U;
+			if (is_a< TextureVk >(resolved))
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+			else if (is_a< RenderTargetVk >(resolved))
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+			else if (is_a< RenderTargetDepthVk >(resolved))
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+
+			T_FATAL_ASSERT(resourceIndex != ~0U);
+
+			auto& ub = m_uniformBuffers[pm.buffer];
+			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+				ub.dirty = true;			
+		}
 	}
 
 	// Update content of uniform buffers.
@@ -516,7 +564,6 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
 
-
 	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
@@ -526,7 +573,6 @@ bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 		1, &bindlessDescriptorSet,
 		0, nullptr
 	);
-
 
 	return true;
 }
@@ -558,7 +604,7 @@ void ProgramVk::destroy()
 	m_pipelineLayout = 0;
 
 	m_samplers.clear();
-	//m_textures.clear();
+	m_textures.clear();
 	m_images.clear();
 	m_sbuffers.clear();
 }
@@ -631,36 +677,13 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 		m_textures[i->second.textureIndex] = texture;
-	// {
-
-	// 	ITexture* resolved = texture->resolve();
-	// 	T_ASSERT(resolved);
-
-	// 	uint32_t resourceIndex = ~0U;
-	// 	if (is_a< TextureVk >(resolved))
-	// 		resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-	// 	else if (is_a< RenderTargetVk >(resolved))
-	// 		resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-	// 	else if (is_a< RenderTargetDepthVk >(resolved))
-	// 		resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
-
-	// 	T_FATAL_ASSERT(resourceIndex != ~0U);
-
-	// 	auto& ub = m_uniformBuffers[i->second.buffer];
-	// 	//if (storeIfNotEqual(&param, 1, &ub.data[i->second.offset]))
-	// 	//	ub.dirty = true;
-
-	// 	uint32_t* ubd = (uint32_t*)&ub.data[i->second.offset];
-	// 	*ubd = resourceIndex;
-
-	// }
 }
 
 void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-		m_images[i->second.offset].texture = imageView;
+		m_images[i->second.imageIndex] = imageView;
 }
 
 void ProgramVk::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
@@ -694,15 +717,15 @@ bool ProgramVk::validateDescriptorSet()
 	//		return false;
 	//	key.push_back((intptr_t)resolved);
 	//}
-	for (const auto& image : m_images)
-	{
-		if (!image.texture)
-			return false;
-		auto resolved = image.texture->resolve();
-		if (!resolved)
-			return false;
-		key.push_back((intptr_t)resolved);
-	}
+	// for (const auto& image : m_images)
+	// {
+	// 	if (!image.texture)
+	// 		return false;
+	// 	auto resolved = image.texture->resolve();
+	// 	if (!resolved)
+	// 		return false;
+	// 	key.push_back((intptr_t)resolved);
+	// }
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.bufferView)
@@ -825,34 +848,34 @@ bool ProgramVk::validateDescriptorSet()
 	//}
 
 	// Add image bindings.
-	for (const auto& image : m_images)
-	{
-		T_ASSERT(image.texture);
-		auto resolved = image.texture->resolve();
-		T_ASSERT(resolved);
+	// for (const auto& image : m_images)
+	// {
+	// 	T_ASSERT(image.texture);
+	// 	auto resolved = image.texture->resolve();
+	// 	T_ASSERT(resolved);
 
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = 0;
+	// 	auto& imageInfo = imageInfos.push_back();
+	// 	imageInfo.sampler = 0;
 
-		if (is_a< TextureVk >(resolved))
-		{
-			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getVkImageView();
-			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-		}
+	// 	if (is_a< TextureVk >(resolved))
+	// 	{
+	// 		imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getVkImageView();
+	// 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+	// 	}
 
-		T_ASSERT(imageInfo.imageView != 0);
+	// 	T_ASSERT(imageInfo.imageView != 0);
 
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = image.binding;
-	}
+	// 	auto& write = writes.push_back();
+	// 	write = {};
+	// 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+	// 	write.pNext = nullptr;
+	// 	write.dstSet = m_descriptorSet;
+	// 	write.descriptorCount = 1;
+	// 	write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+	// 	write.pImageInfo = &imageInfo;
+	// 	write.dstArrayElement = 0;
+	// 	write.dstBinding = image.binding;
+	// }
 
 	// Add sbuffer bindings.
 	for (const auto& sbuffer : m_sbuffers)

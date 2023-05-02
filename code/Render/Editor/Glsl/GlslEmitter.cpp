@@ -2814,26 +2814,32 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)
 	{
-		// Image parameter; ensure a single image is created correctly.
-		auto existing = cx.getLayout().getByName(node->getParameterName());
-		if (existing != nullptr)
-		{
-			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
-			{
-				// Image already exist.
-				existingImage->addStage(getBindStage(cx));
-			}
-			else
-			{
-				// Resource already exist but is not an image.
-				return false;
-			}
-		}
-		else
-		{
-			// Image do not exist; add new image resource.
-			cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx), out->getType()));
-		}
+		// // Image parameter; ensure a single image is created correctly.
+		// auto existing = cx.getLayout().getByName(node->getParameterName());
+		// if (existing != nullptr)
+		// {
+		// 	if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
+		// 	{
+		// 		// Image already exist.
+		// 		existingImage->addStage(getBindStage(cx));
+		// 	}
+		// 	else
+		// 	{
+		// 		// Resource already exist but is not an image.
+		// 		return false;
+		// 	}
+		// }
+		// else
+		// {
+		// 	// Image do not exist; add new image resource.
+		// 	cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx), out->getType()));
+		// }
+
+		// Image parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+		ub->addStage(getBindStage(cx));
+		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
+			return false;
 	}
 
 	// Define parameter in context.
