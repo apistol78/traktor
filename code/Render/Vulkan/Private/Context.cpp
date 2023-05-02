@@ -28,6 +28,7 @@ namespace traktor::render
 
 const uint32_t k_max_bindless_resources = 16536;
 const uint32_t k_bindless_texture_binding = 0;
+const uint32_t k_bindless_image_binding = 1;
 
 	}
 
@@ -46,7 +47,6 @@ Context::Context(
 ,	m_pipelineCache(0)
 ,	m_descriptorPool(0)
 ,	m_views(0)
-//,	m_descriptorPoolRevision(0)
 ,	m_bindlessDescriptorLayout(0)
 ,	m_bindlessDescriptorSet(0)
 ,	m_resourceIndexAllocator(0, k_max_bindless_resources - 1)
@@ -121,11 +121,11 @@ bool Context::create()
 	dps[1].type = VK_DESCRIPTOR_TYPE_SAMPLER;
 	dps[1].descriptorCount = 80000;
 	dps[2].type = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-	dps[2].descriptorCount = 80000;
+	dps[2].descriptorCount = k_max_bindless_resources;
 	dps[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
 	dps[3].descriptorCount = 8000;
 	dps[4].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-	dps[4].descriptorCount = 1000;
+	dps[4].descriptorCount = k_max_bindless_resources;
 
 	VkDescriptorPoolCreateInfo dpci = {};
 	dpci.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -145,23 +145,32 @@ bool Context::create()
 	// Bindless textures.
 	{
 		// Create descriptor layout.
-		VkDescriptorBindingFlags bindlessFlags = VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT;
+		VkDescriptorBindingFlags bindlessFlags[] = {
+			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT,
+			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT
+		};
 
-		VkDescriptorSetLayoutBinding binding;
-		binding.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		binding.descriptorCount = k_max_bindless_resources;
-		binding.binding = k_bindless_texture_binding;
-		binding.stageFlags = VK_SHADER_STAGE_ALL;
-		binding.pImmutableSamplers = nullptr;
+		VkDescriptorSetLayoutBinding binding[2];
+		binding[0].descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+		binding[0].descriptorCount = k_max_bindless_resources;
+		binding[0].binding = k_bindless_texture_binding;
+		binding[0].stageFlags = VK_SHADER_STAGE_ALL;
+		binding[0].pImmutableSamplers = nullptr;
+
+		binding[1].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		binding[1].descriptorCount = k_max_bindless_resources;
+		binding[1].binding = k_bindless_image_binding;
+		binding[1].stageFlags = VK_SHADER_STAGE_ALL;
+		binding[1].pImmutableSamplers = nullptr;
 
 		VkDescriptorSetLayoutCreateInfo layoutInfo = { VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO };
-		layoutInfo.bindingCount = 1;
-		layoutInfo.pBindings = &binding;
+		layoutInfo.bindingCount = 2;
+		layoutInfo.pBindings = binding;
 		layoutInfo.flags = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT;
 
 		VkDescriptorSetLayoutBindingFlagsCreateInfoEXT extendedInfo{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO_EXT, nullptr };
-		extendedInfo.bindingCount = 1;
-		extendedInfo.pBindingFlags = &bindlessFlags;
+		extendedInfo.bindingCount = 2;
+		extendedInfo.pBindingFlags = bindlessFlags;
 
 		layoutInfo.pNext = &extendedInfo;
 
@@ -170,10 +179,6 @@ bool Context::create()
 			log::error << L"Failed to create Vulkan; failed to create bindless descriptor layout." << Endl;
 			return false;
 		}
-
-		// we need to allocate from same descriptor pool,
-		// unfortunately this pool get reset...
-
 
 		// Create descriptor set.
 		VkDescriptorSetAllocateInfo alloc_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO };

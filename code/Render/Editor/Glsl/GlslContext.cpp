@@ -15,6 +15,7 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Glsl/GlslContext.h"
+#include "Render/Editor/Glsl/GlslImage.h"
 #include "Render/Editor/Glsl/GlslShader.h"
 #include "Render/Editor/Glsl/GlslTexture.h"
 #include "Render/Editor/Glsl/GlslUniformBuffer.h"
@@ -42,6 +43,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures??__", 0, GlslType::Void));
+	m_layout.addStatic(new GlslImage(L"__bindlessTextures??__", 0, GlslType::Void));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", 0));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", 0));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", 0));

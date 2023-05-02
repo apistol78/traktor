@@ -45,6 +45,7 @@ public:
 		uint32_t offset = 0;	//!< Offset in 4-byte floats.
 		uint32_t size = 0;		//!< Size in 4-byte floats.
 		int32_t textureIndex = -1;
+		int32_t imageIndex = -1;
 
 		void serialize(ISerializer& s);
 	};
@@ -85,23 +86,23 @@ public:
 	//	void serialize(ISerializer& s);
 	//};
 
-	struct ImageDesc
-	{
-		std::wstring name;
-		uint32_t binding = 0;
-		uint8_t stages = 0;
+	// struct ImageDesc
+	// {
+	// 	std::wstring name;
+	// 	uint32_t binding = 0;
+	// 	uint8_t stages = 0;
 
-		ImageDesc() = default;
+	// 	ImageDesc() = default;
 
-		explicit ImageDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
-		:	name(name_)
-		,	binding(binding_)
-		,	stages(stages_)
-		{
-		}
+	// 	explicit ImageDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
+	// 	:	name(name_)
+	// 	,	binding(binding_)
+	// 	,	stages(stages_)
+	// 	{
+	// 	}
 
-		void serialize(ISerializer& s);
-	};
+	// 	void serialize(ISerializer& s);
+	// };
 
 	struct SBufferDesc
 	{
@@ -135,12 +136,13 @@ private:
 
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
 	uint32_t m_textureCount = 0;
+	uint32_t m_imageCount = 0;
 
 	AlignedVector< ParameterDesc > m_parameters;
 
 	AlignedVector< SamplerDesc > m_samplers;
 	//AlignedVector< TextureDesc > m_textures;
-	AlignedVector< ImageDesc > m_images;
+	// AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
 
 	uint32_t m_vertexShaderHash = 0;

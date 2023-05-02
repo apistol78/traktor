@@ -312,32 +312,37 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	if (layout.count< GlslImage >(stageMask) > 0)
+	// if (layout.count< GlslImage >(stageMask) > 0)
 	{
 		ss << L"// Images" << Endl;
-		for (auto resource : layout.get(stageMask))
-		{
-			if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-			{
-				switch (image->getUniformType())
-				{
-				case GlslType::Image2D:
-					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image2D " << image->getName() << L";" << Endl;
-					break;
+		// for (auto resource : layout.get(stageMask))
+		// {
+		// 	if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		// 	{
+		// 		switch (image->getUniformType())
+		// 		{
+		// 		case GlslType::Image2D:
+		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image2D " << image->getName() << L";" << Endl;
+		// 			break;
 
-				case GlslType::Image3D:
-					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image3D " << image->getName() << L";" << Endl;
-					break;
+		// 		case GlslType::Image3D:
+		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image3D " << image->getName() << L";" << Endl;
+		// 			break;
 
-				case GlslType::ImageCube:
-					ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
-					break;
+		// 		case GlslType::ImageCube:
+		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
+		// 			break;
 
-				default:
-					break;
-				}
-			}
-		}
+		// 		default:
+		// 			break;
+		// 		}
+		// 	}
+		// }
+		// ss << Endl;
+
+		ss << L"layout (binding = 1, set = 0, rgba32f) uniform image2D __bindlessImages2D__[];" << Endl;
+		ss << L"layout (binding = 1, set = 0, rgba32f) uniform image3D __bindlessImages3D__[];" << Endl;
+		ss << L"layout (binding = 1, set = 0, rgba32f) uniform imageCube __bindlessImagesCube__[];" << Endl;
 		ss << Endl;
 	}
 
