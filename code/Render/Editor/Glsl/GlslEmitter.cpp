@@ -2776,6 +2776,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	// Add uniform to layout.
 	if (out->getType() < GlslType::Texture2D)
 	{
+		// Scalar parameter, add to uniform buffer.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)node->getFrequency()]);
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), out->getType(), 1))
@@ -2805,13 +2806,15 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		//	cx.getLayout().add(new GlslTexture(node->getParameterName(), getBindStage(cx), out->getType()));
 		//}
 
-		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw");
+		// Texture parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(node->getParameterName(), GlslType::Integer, 1))
 			return false;
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)
 	{
+		// Image parameter; ensure a single image is created correctly.
 		auto existing = cx.getLayout().getByName(node->getParameterName());
 		if (existing != nullptr)
 		{
@@ -2822,7 +2825,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 			}
 			else
 			{
-				// Resource already exist but is not a texture.
+				// Resource already exist but is not an image.
 				return false;
 			}
 		}

@@ -88,16 +88,17 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 5, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 6, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion() >= 5);
+	T_FATAL_ASSERT(s.getVersion() >= type_of< ProgramResourceVk >().getVersion());
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> MemberAlignedVector< uint32_t >(L"vertexShader", m_vertexShader);
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
 	s >> MemberAlignedVector< uint32_t >(L"computeShader", m_computeShader);
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
+	s >> Member< uint32_t >(L"textureCount", m_textureCount);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
 	//s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
@@ -116,6 +117,7 @@ void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"buffer", buffer);
 	s >> Member< uint32_t >(L"offset", offset);
 	s >> Member< uint32_t >(L"size", size);
+	s >> Member< int32_t >(L"textureIndex", textureIndex);
 }
 
 void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)

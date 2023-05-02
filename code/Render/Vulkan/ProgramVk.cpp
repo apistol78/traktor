@@ -277,6 +277,8 @@ bool ProgramVk::create(
 //#endif
 //	}
 
+	m_textures.resize(resource->m_textureCount);
+
 	// Create images.
 	for (const auto& resourceImage : resource->m_images)
 	{
@@ -307,6 +309,7 @@ bool ProgramVk::create(
 		pm.buffer = p.buffer;
 		pm.offset = p.offset;
 		pm.size = p.size;
+		pm.textureIndex = p.textureIndex;
 	}
 
 	return true;
@@ -322,6 +325,35 @@ bool ProgramVk::validateGraphics(
 		s_handleTargetSize,
 		Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
 	);
+
+	// Set texture resource indices.
+	for (auto it : m_parameterMap)
+	{
+		const ParameterMap& pm = it.second;
+		if (pm.textureIndex < 0)
+			continue;
+
+		ITexture* texture = m_textures[pm.textureIndex];
+		if (!texture)
+			return false;
+
+		ITexture* resolved = texture->resolve();
+		T_ASSERT(resolved);
+
+		uint32_t resourceIndex = ~0U;
+		if (is_a< TextureVk >(resolved))
+			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+		else if (is_a< RenderTargetVk >(resolved))
+			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+		else if (is_a< RenderTargetDepthVk >(resolved))
+			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+
+		T_FATAL_ASSERT(resourceIndex != ~0U);
+
+		auto& ub = m_uniformBuffers[pm.buffer];
+		if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+			ub.dirty = true;
+	}
 
 	// Update content of uniform buffers.
 	for (uint32_t i = 0; i < 3; ++i)
@@ -401,6 +433,35 @@ bool ProgramVk::validateGraphics(
 
 bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
 {
+	// Set texture resource indices.
+	for (auto it : m_parameterMap)
+	{
+		const ParameterMap& pm = it.second;
+		if (pm.textureIndex < 0)
+			continue;
+
+		ITexture* texture = m_textures[pm.textureIndex];
+		if (!texture)
+			return false;
+
+		ITexture* resolved = texture->resolve();
+		T_ASSERT(resolved);
+
+		uint32_t resourceIndex = ~0U;
+		if (is_a< TextureVk >(resolved))
+			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+		else if (is_a< RenderTargetVk >(resolved))
+			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+		else if (is_a< RenderTargetDepthVk >(resolved))
+			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+
+		T_FATAL_ASSERT(resourceIndex != ~0U);
+
+		auto& ub = m_uniformBuffers[pm.buffer];
+		if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.offset]))
+			ub.dirty = true;
+	}
+
 	// Update content of uniform buffers.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
@@ -569,30 +630,30 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
-		//m_textures[i->second.offset].texture = texture;
-	{
+		m_textures[i->second.textureIndex] = texture;
+	// {
 
-		ITexture* resolved = texture->resolve();
-		T_ASSERT(resolved);
+	// 	ITexture* resolved = texture->resolve();
+	// 	T_ASSERT(resolved);
 
-		uint32_t resourceIndex = ~0U;
-		if (is_a< TextureVk >(resolved))
-			resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-		else if (is_a< RenderTargetVk >(resolved))
-			resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-		else if (is_a< RenderTargetDepthVk >(resolved))
-			resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+	// 	uint32_t resourceIndex = ~0U;
+	// 	if (is_a< TextureVk >(resolved))
+	// 		resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+	// 	else if (is_a< RenderTargetVk >(resolved))
+	// 		resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+	// 	else if (is_a< RenderTargetDepthVk >(resolved))
+	// 		resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
 
-		T_FATAL_ASSERT(resourceIndex != ~0U);
+	// 	T_FATAL_ASSERT(resourceIndex != ~0U);
 
-		auto& ub = m_uniformBuffers[i->second.buffer];
-		//if (storeIfNotEqual(&param, 1, &ub.data[i->second.offset]))
-		//	ub.dirty = true;
+	// 	auto& ub = m_uniformBuffers[i->second.buffer];
+	// 	//if (storeIfNotEqual(&param, 1, &ub.data[i->second.offset]))
+	// 	//	ub.dirty = true;
 
-		uint32_t* ubd = (uint32_t*)&ub.data[i->second.offset];
-		*ubd = resourceIndex;
+	// 	uint32_t* ubd = (uint32_t*)&ub.data[i->second.offset];
+	// 	*ubd = resourceIndex;
 
-	}
+	// }
 }
 
 void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView)

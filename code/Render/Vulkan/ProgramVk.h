@@ -100,6 +100,7 @@ private:
 		uint32_t buffer = 0;	//!< Uniform buffer index.
 		uint32_t offset = 0;	//!< Offset into uniform buffer's data.
 		uint32_t size = 0;		//!< Number of floats.
+		int32_t textureIndex = -1;
 	};
 
 	struct UniformBuffer
@@ -160,6 +161,7 @@ private:
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< Sampler > m_samplers;
 	//AlignedVector< Texture > m_textures;
+	RefArray< ITexture > m_textures;
 	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
