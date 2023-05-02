@@ -509,6 +509,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		}
 	}
 
+	programResource->m_textureCount = 0;
+
 	for (auto p : cx.getParameters())
 	{
 		if (p.type <= ParameterType::Matrix)
@@ -519,12 +521,12 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 			const auto& pm = it->second;
 
-			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+			programResource->m_parameters.push_back({
 				p.name,
 				pm.buffer,
 				pm.offset,
 				pm.length
-			));
+			});
 		}
 		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube)
 		{
@@ -533,13 +535,17 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				continue;
 
 			const auto& pm = it->second;
+			// T_FATAL_ASSERT(pm.length == 1);
 
-			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+			programResource->m_parameters.push_back({
 				p.name,
 				pm.buffer,
 				pm.offset,
-				pm.length
-			));
+				pm.length,
+				(int32_t)programResource->m_textureCount
+			});
+
+			programResource->m_textureCount++;
 		}
 		else if (p.type >= ParameterType::StructBuffer)
 		{
@@ -548,13 +554,14 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				continue;
 
 			const auto& pm = it->second;
+			// T_FATAL_ASSERT(pm.length == 1);
 
-			programResource->m_parameters.push_back(ProgramResourceVk::ParameterDesc(
+			programResource->m_parameters.push_back({
 				p.name,
 				pm.buffer,
 				pm.offset,
 				pm.length
-			));
+			});
 		}
 	}
 

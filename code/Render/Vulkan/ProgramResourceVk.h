@@ -44,16 +44,7 @@ public:
 		uint32_t buffer = 0;	//!< Index into which uniform buffer (0-2).
 		uint32_t offset = 0;	//!< Offset in 4-byte floats.
 		uint32_t size = 0;		//!< Size in 4-byte floats.
-
-		ParameterDesc() = default;
-
-		explicit ParameterDesc(const std::wstring& name_, uint32_t buffer_, uint32_t offset_, uint32_t size_)
-		:	name(name_)
-		,	buffer(buffer_)
-		,	offset(offset_)
-		,	size(size_)
-		{
-		}
+		int32_t textureIndex = -1;
 
 		void serialize(ISerializer& s);
 	};
@@ -142,8 +133,10 @@ private:
 	AlignedVector< uint32_t > m_fragmentShader;
 	AlignedVector< uint32_t > m_computeShader;
 
-	AlignedVector< ParameterDesc > m_parameters;
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
+	uint32_t m_textureCount = 0;
+
+	AlignedVector< ParameterDesc > m_parameters;
 
 	AlignedVector< SamplerDesc > m_samplers;
 	//AlignedVector< TextureDesc > m_textures;
