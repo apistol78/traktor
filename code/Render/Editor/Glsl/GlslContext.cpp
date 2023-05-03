@@ -43,7 +43,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_currentShader(nullptr)
 {
 	m_layout.addStatic(new GlslTexture(L"__bindlessTextures??__", 0, GlslType::Void));
-	m_layout.addStatic(new GlslImage(L"__bindlessTextures??__", 0, GlslType::Void));
+	m_layout.addStatic(new GlslImage(L"__bindlessImages??__", 0, GlslType::Void));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", 0));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", 0));
 	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", 0));

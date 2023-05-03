@@ -164,7 +164,7 @@ bool ProgramVk::create(
 
 		auto& lb = dslb.push_back();
 		lb = {};
-		lb.binding = i + 1;
+		lb.binding = i + 2;
 		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 		lb.descriptorCount = 1;
 		lb.stageFlags = stageFlags;
@@ -328,7 +328,7 @@ bool ProgramVk::validateGraphics(
 		Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
 	);
 
-	// Set texture resource indices.
+	// Set resource indices.
 	for (auto it : m_parameterMap)
 	{
 		const ParameterMap& pm = it.second;
@@ -434,7 +434,6 @@ bool ProgramVk::validateGraphics(
 		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
 
-
 	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
@@ -444,7 +443,6 @@ bool ProgramVk::validateGraphics(
 		1, &bindlessDescriptorSet,
 		0, nullptr
 	);
-
 
 	if (m_renderState.stencilEnable)
 		vkCmdSetStencilReference(
@@ -784,7 +782,7 @@ bool ProgramVk::validateDescriptorSet()
 		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
 		write.pBufferInfo = &bufferInfo;
 		write.dstArrayElement = 0;
-		write.dstBinding = i + 1;
+		write.dstBinding = i + 2;
 	}
 
 	// Add sampler bindings.
