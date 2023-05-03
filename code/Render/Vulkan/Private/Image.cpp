@@ -392,7 +392,6 @@ void Image::destroy()
 	}
 	if (m_resourceIndex != ~0U)
 	{
-		log::debug << L"Resource index " << m_resourceIndex << L" freed" << Endl;
 		m_context->freeResourceIndex(m_resourceIndex);
 		m_resourceIndex = ~0U;
 	}
@@ -488,7 +487,6 @@ bool Image::updateBindlessResource(VkImageLayout imageLayout)
 			log::error << L"Unable to allocate bindless resource index." << Endl;
 			return false;
 		}
-		log::debug << L"Resource index " << m_resourceIndex << L" allocated" << Endl;
 	}
 
 	VkDescriptorImageInfo imageInfo = {};
