@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/Indoor/IndoorMeshComponent.h"
 #include "World/IWorldRenderPass.h"
@@ -43,15 +42,11 @@ void IndoorMeshComponent::build(const world::WorldBuildContext& context, const w
 	const Aabb3 boundingBox = m_mesh->getBoundingBox();
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		boundingBox,
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * transform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.0f,
+		transform,
 		distance
 	))
-		return;
 
 	m_mesh->build(
 		context.getRenderContext(),

@@ -8,6 +8,9 @@
  */
 #include "World/WorldRenderView.h"
 
+/*! Enable screen-space culling; quite expensive but might yield less draw calls. */
+#define T_ENABLE_SCREENSPACE_CULLING 1
+
 namespace traktor::world
 {
 
@@ -79,7 +82,7 @@ void WorldRenderView::setView(const Matrix44& lastView, const Matrix44& view)
 	m_view = view;
 
 	// Calculate eye position and direction in world space.
-	Matrix44 viewInverse = view.inverse();
+	const Matrix44 viewInverse = view.inverse();
 	m_eyePosition = viewInverse.translation().xyz1();
 	m_eyeDirection = viewInverse.axisZ().xyz0();
 }
@@ -94,6 +97,78 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_time = time;
 	m_deltaTime = deltaTime;
 	m_interval = interval;
+}
+
+bool WorldRenderView::isBoxVisible(const Aabb3& box, const Transform& worldTransform, const float minScreenArea, float& outDistance) const
+{
+	// Earliest, empty bounding boxes cannot contain anything visible.
+	if (box.empty())
+		return false;
+
+	const Matrix44 worldView = m_view * worldTransform.toMatrix44();
+
+	// Early out of bounding sphere is outside of frustum.
+	const Vector4 center = worldView * box.getCenter();
+	const Scalar radius = box.getExtent().length();
+
+	if (m_cullFrustum.inside(center, radius) == Frustum::IrOutside)
+		return false;
+
+#if T_ENABLE_SCREENSPACE_CULLING
+
+	if (minScreenArea > FUZZY_EPSILON)
+	{
+		// Project bounding box extents onto view plane.
+		Vector4 extents[8];
+		box.getExtents(extents);
+
+		Vector4 mn(
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max()
+		);
+		Vector4 mx(
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max()
+		);
+
+		const Matrix44 worldViewProj = m_projection * worldView;
+
+		for (int i = 0; i < sizeof_array(extents); ++i)
+		{
+			Vector4 p = worldViewProj * extents[i];
+			if (p.w() <= 0.0_simd)
+			{
+				// Bounding box clipped to view plane; assume it's visible.
+				outDistance = center.z() + radius;
+				return true;
+			}
+
+			// Homogeneous divide.
+			p /= p.w();
+
+			// Track screen space extents.
+			mn = min(mn, p);
+			mx = max(mx, p);
+		}
+
+		// Ensure we're visible.
+		if (mn.x() > 1.0_simd || mn.y() > 1.0_simd || mx.x() < -1.0_simd || mx.y() < -1.0_simd)
+			return false;
+
+		// Calculate screen area, cull if it's below threshold.
+		const Vector4 e = mx - mn;
+		if (max(e.x(), e.y()) < minScreenArea)
+			return false;
+	}
+
+#endif
+
+	outDistance = center.z() + radius;
+	return true;
 }
 
 }

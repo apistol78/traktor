@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
@@ -70,12 +69,9 @@ void InstanceMeshComponentRenderer::build(
 	const Transform transform = meshComponent->getTransform().get(worldRenderView.getInterval());
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		boundingBox,
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * transform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+		transform,
 		distance
 	))
 		return;

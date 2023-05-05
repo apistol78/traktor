@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Partition/PartitionMesh.h"
 #include "Mesh/Partition/PartitionMeshComponent.h"
 #include "World/IWorldRenderPass.h"
@@ -43,12 +42,9 @@ void PartitionMeshComponent::build(const world::WorldBuildContext& context, cons
 	const Aabb3 boundingBox = m_mesh->getBoundingBox();
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
-		boundingBox,
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * transform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+	if (!worldRenderView.isBoxVisible(
+		m_mesh->getBoundingBox(),
+		transform,
 		distance
 	))
 		return;

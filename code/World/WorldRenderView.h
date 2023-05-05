@@ -73,6 +73,16 @@ public:
 
 	void setTimes(float time, float deltaTime, float interval);
 
+	/*!
+	 */
+	bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, const float minScreenArea, float& outDistance) const;
+
+	/*!
+	 */
+	T_FORCE_INLINE bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, float& outDistance) const {
+		return isBoxVisible(box, worldTransform, 0.001f, outDistance);
+	}
+
 	T_FORCE_INLINE int getIndex() const {
 		return m_index;
 	}

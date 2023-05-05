@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Lod/AutoLodMesh.h"
 #include "Mesh/Lod/AutoLodMeshComponent.h"
 #include "World/IWorldRenderPass.h"
@@ -48,12 +47,9 @@ void AutoLodMeshComponent::build(const world::WorldBuildContext& context, const 
 	const Aabb3 boundingBox = m_mesh->getBoundingBox(m_lodDistance);
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		boundingBox,
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * transform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+		transform,
 		distance
 	))
 		return;
