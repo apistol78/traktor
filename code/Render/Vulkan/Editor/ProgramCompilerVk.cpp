@@ -507,7 +507,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				return false;
+				return nullptr;
 
 			const auto& pm = it->second;
 
@@ -522,7 +522,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				return false;
+				return nullptr;
 
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
@@ -541,7 +541,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				return false;
+				return nullptr;
 
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
@@ -560,7 +560,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				return false;
+				return nullptr;
 
 			const auto& pm = it->second;
 			T_FATAL_ASSERT(pm.resourceIndex >= 0);
