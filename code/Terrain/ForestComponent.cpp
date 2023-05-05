@@ -12,7 +12,6 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Heightfield/Heightfield.h"
-#include "Mesh/MeshCulling.h"
 #include "Render/ITexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
@@ -119,12 +118,9 @@ void ForestComponent::build(
 				const auto& tree = m_trees[i];
 
 				float distance = 0.0f;
-				if (!mesh::isMeshVisible(
+				if (!worldRenderView.isBoxVisible(
 					m_boundingBox,
-					cullFrustum,
-					view * translate(tree.position),
-					worldRenderView.getProjection(),
-					0.0f,
+					Transform(tree.position),
 					distance
 				))
 					continue;
@@ -147,12 +143,9 @@ void ForestComponent::build(
 			const auto& tree = m_trees[i];
 
 			float distance = 0.0f;
-			if (!mesh::isMeshVisible(
+			if (!worldRenderView.isBoxVisible(
 				m_boundingBox,
-				cullFrustum,
-				view * translate(tree.position),
-				worldRenderView.getProjection(),
-				0.0f,
+				Transform(tree.position),
 				distance
 			))
 				continue;

@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Render/Buffer.h"
@@ -64,12 +63,9 @@ void SkinnedMeshComponent::build(const world::WorldBuildContext& context, const 
 	}
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		m_mesh->getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * worldTransform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+		worldTransform,
 		distance
 	))
 		return;

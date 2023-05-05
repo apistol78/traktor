@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
 #include "World/Entity.h"
@@ -65,12 +64,9 @@ void StaticMeshComponent::build(const world::WorldBuildContext& context, const w
 	}
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		m_mesh->getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * worldTransform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+		worldTransform,
 		distance
 	))
 		return;

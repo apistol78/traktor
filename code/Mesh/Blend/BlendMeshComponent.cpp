@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshComponent.h"
 #include "World/IWorldRenderPass.h"
@@ -21,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshComponent", BlendMeshComponent, M
 BlendMeshComponent::BlendMeshComponent(const resource::Proxy< BlendMesh >& mesh)
 :	m_mesh(mesh)
 {
-	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
+	const uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
 	m_blendWeights.resize(blendTargetCount, 0.0f);
 }
 
@@ -43,15 +42,11 @@ void BlendMeshComponent::build(const world::WorldBuildContext& context, const wo
 		return;
 
 	float distance = 0.0f;
-	if (!isMeshVisible(
+	if (!worldRenderView.isBoxVisible(
 		m_mesh->getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * m_transform.get().toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+		m_transform.get(),
 		distance
 	))
-		return;
 
 	if (!m_instance || m_mesh.changed())
 	{

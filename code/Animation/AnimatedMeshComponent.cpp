@@ -15,7 +15,6 @@
 #include "Animation/Joint.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
-#include "Mesh/MeshCulling.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Buffer.h"
 #include "World/Entity.h"
@@ -172,12 +171,9 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	}
 
 	float distance = 0.0f;
-	if (mesh::isMeshVisible(
-		getBoundingBox(),
-		worldRenderView.getCullFrustum(),
-		worldRenderView.getView() * worldTransform.toMatrix44(),
-		worldRenderView.getProjection(),
-		0.001f,
+	if (worldRenderView.isBoxVisible(
+		m_mesh->getBoundingBox(),
+		worldTransform,
 		distance
 	))
 	{
