@@ -235,13 +235,16 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	if (layout.count< GlslUniformBuffer >(stageMask) > 0)
 	{
 		ss << L"// Uniform buffers." << Endl;
-		for (auto resource : layout.get(stageMask))
+		for (auto resource : layout.getByStage(stageMask))
 		{
+			if (resource->getBinding() < 0)
+				continue;
+
 			if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 			{
 				if (!uniformBuffer->get().empty())
 				{
-					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L", set = 1) uniform " << uniformBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << uniformBuffer->getBinding() << L", set = " << uniformBuffer->getSet() << L") uniform " << uniformBuffer->getName() << Endl;
 					ss << L"{" << Endl;
 					ss << IncreaseIndent;
 					for (auto uniform : uniformBuffer->get())
@@ -262,95 +265,97 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		}
 	}
 
-	//if (layout.count< GlslTexture >(stageMask) > 0)
+	if (layout.count< GlslTexture >(stageMask) > 0)
 	{
 		ss << L"// Textures" << Endl;
-		//for (auto resource : layout.get(stageMask))
-		//{
-		//	if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		//	{
-		//		switch (texture->getUniformType())
-		//		{
-		//		case GlslType::Texture2D:
-		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform texture2D " << texture->getName() << L";" << Endl;
-		//			break;
+		for (auto resource : layout.getByStage(stageMask))
+		{
+			if (resource->getBinding() < 0)
+				continue;
 
-		//		case GlslType::Texture3D:
-		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform texture3D " << texture->getName() << L";" << Endl;
-		//			break;
+			if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+			{
+				switch (texture->getUniformType())
+				{
+				case GlslType::Texture2D:
+					ss << L"layout (binding = " << texture->getBinding() << L", set = " << texture->getSet() << L") uniform texture2D " << texture->getName() << (texture->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		//		case GlslType::TextureCube:
-		//			ss << L"layout (binding = " << texture->getBinding() << L") uniform textureCube " << texture->getName() << L";" << Endl;
-		//			break;
+				case GlslType::Texture3D:
+					ss << L"layout (binding = " << texture->getBinding() << L", set = " << texture->getSet() << L") uniform texture3D " << texture->getName() << (texture->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		//		default:
-		//			break;
-		//		}
-		//	}
-		//}
-		//ss << Endl;
+				case GlslType::TextureCube:
+					ss << L"layout (binding = " << texture->getBinding() << L", set = " << texture->getSet() << L") uniform textureCube " << texture->getName() << (texture->isIndexed() ? L"[];" : L";") << Endl;
+					break;
 
-		ss << L"layout (binding = 0, set = 0) uniform texture2D __bindlessTextures2D__[];" << Endl;
-		ss << L"layout (binding = 0, set = 0) uniform texture3D __bindlessTextures3D__[];" << Endl;
-		ss << L"layout (binding = 0, set = 0) uniform textureCube __bindlessTexturesCube__[];" << Endl;
+				default:
+					break;
+				}
+			}
+		}
 		ss << Endl;
 	}
 
 	if (layout.count< GlslSampler >(stageMask) > 0)
 	{
 		ss << L"// Samplers" << Endl;
-		for (auto resource : layout.get(stageMask))
+		for (auto resource : layout.getByStage(stageMask))
 		{
+			if (resource->getBinding() < 0)
+				continue;
+
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
 				if (sampler->getState().compare == CfNone)
-					ss << L"layout (binding = " << sampler->getBinding() << L", set = 1) uniform sampler " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L", set = " << sampler->getSet() << L") uniform sampler " << sampler->getName() << L"; " << Endl;
 				else
-					ss << L"layout (binding = " << sampler->getBinding() << L", set = 1) uniform samplerShadow " << sampler->getName() << L";" << Endl;
+					ss << L"layout (binding = " << sampler->getBinding() << L", set = " << sampler->getSet() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;
 			}
 		}
 		ss << Endl;
 	}
 
-	// if (layout.count< GlslImage >(stageMask) > 0)
+	 if (layout.count< GlslImage >(stageMask) > 0)
 	{
 		ss << L"// Images" << Endl;
-		// for (auto resource : layout.get(stageMask))
-		// {
-		// 	if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		// 	{
-		// 		switch (image->getUniformType())
-		// 		{
-		// 		case GlslType::Image2D:
-		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image2D " << image->getName() << L";" << Endl;
-		// 			break;
+		 for (auto resource : layout.getByStage(stageMask))
+		 {
+			 if (resource->getBinding() < 0)
+				 continue;
 
-		// 		case GlslType::Image3D:
-		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform image3D " << image->getName() << L";" << Endl;
-		// 			break;
+		 	if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		 	{
+		 		switch (image->getUniformType())
+		 		{
+		 		case GlslType::Image2D:
+		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << image->getSet() << L", rgba32f) uniform image2D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+		 			break;
 
-		// 		case GlslType::ImageCube:
-		// 			ss << L"layout (binding = " << image->getBinding() << L", set = 1, rgba32f) uniform imageCube " << image->getName() << L";" << Endl;
-		// 			break;
+		 		case GlslType::Image3D:
+		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << image->getSet() << L", rgba32f) uniform image3D " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+		 			break;
 
-		// 		default:
-		// 			break;
-		// 		}
-		// 	}
-		// }
-		// ss << Endl;
+		 		case GlslType::ImageCube:
+		 			ss << L"layout (binding = " << image->getBinding() << L", set = " << image->getSet() << L", rgba32f) uniform imageCube " << image->getName() << (image->isIndexed() ? L"[];" : L";") << Endl;
+		 			break;
 
-		ss << L"layout (binding = 1, set = 0, rgba32f) uniform image2D __bindlessImages2D__[];" << Endl;
-		ss << L"layout (binding = 1, set = 0, rgba32f) uniform image3D __bindlessImages3D__[];" << Endl;
-		ss << L"layout (binding = 1, set = 0, rgba32f) uniform imageCube __bindlessImagesCube__[];" << Endl;
-		ss << Endl;
+		 		default:
+		 			break;
+		 		}
+		 	}
+		 }
+		 ss << Endl;
 	}
 
 	if (layout.count< GlslStorageBuffer >(stageMask) > 0)
 	{
 		ss << L"// Storage buffers." << Endl;
-		for (auto resource : layout.get(stageMask))
+		for (auto resource : layout.getByStage(stageMask))
 		{
+			if (resource->getBinding() < 0)
+				continue;
+
 			if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 			{
 				ss << L"struct " << storageBuffer->getName() << L"_Type" << Endl;
@@ -367,9 +372,9 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 				ss << L"};" << Endl;
 				ss << Endl;
 				if (m_shaderType != StCompute)
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = 1) readonly buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = " << storageBuffer->getSet() << L") readonly buffer " << storageBuffer->getName() << Endl;
 				else
-					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = 1) buffer " << storageBuffer->getName() << Endl;
+					ss << L"layout (std140, binding = " << storageBuffer->getBinding() << L", set = " << storageBuffer->getSet() << L") buffer " << storageBuffer->getName() << Endl;
 				ss << L"{" << Endl;
 				ss << IncreaseIndent;
 				ss << storageBuffer->getName() << L"_Type " << storageBuffer->getName() << L"_Data[];" << Endl;

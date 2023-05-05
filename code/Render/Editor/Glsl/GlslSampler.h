@@ -27,15 +27,13 @@ class T_DLLCLASS GlslSampler : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslSampler(const std::wstring& name, uint8_t stages, const SamplerState& state, const std::wstring& textureName = L"");
+	explicit GlslSampler(const std::wstring& name, int32_t set, uint8_t stages, const SamplerState& state, const std::wstring& textureName = L"");
 
 	const SamplerState& getState() const { return m_state; }
 
 	const std::wstring& getTextureName() const { return m_textureName; }
 
 	virtual int32_t getOrdinal() const override final;
-
-	virtual bool isBindless() const override final { return false; }
 
 private:
 	SamplerState m_state;

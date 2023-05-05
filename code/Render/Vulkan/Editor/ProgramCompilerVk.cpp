@@ -427,56 +427,50 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	// Map parameters to uniforms.
 	struct ParameterMapping
 	{
-		uint32_t buffer;
-		uint32_t offset;
-		uint32_t length;
+		int32_t ubuffer = -1;
+		uint32_t ubufferOffset = 0;
+		uint32_t ubufferLength = 0;
+		int32_t resourceIndex = -1;
 	};
 	std::map< std::wstring, ParameterMapping > parameterMapping;
 
-	for (auto resource : cx.getLayout().get())
+	for (auto resource : cx.getLayout().getBySet(1))
 	{
-		if (resource->isBindless())
-			continue;
-
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
-			programResource->m_samplers.push_back(ProgramResourceVk::SamplerDesc(
+			programResource->m_samplers.push_back({
 				sampler->getBinding(),
 				sampler->getStages(),
 				sampler->getState()
-			));
+			});
 		}
-		//else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-		//{
-		//	auto& pm = parameterMapping[texture->getName()];
-		//	pm.buffer = texture->getBinding();
-		//	pm.offset = (uint32_t)programResource->m_textures.size();
-		//	pm.length = 0;
+		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
+		{
+			programResource->m_textures.push_back({
+				texture->getName(),
+				texture->getBinding(),
+				texture->getStages()
+			});
 
-		//	programResource->m_textures.push_back(ProgramResourceVk::TextureDesc(
-		//		texture->getName(),
-		//		texture->getBinding(),
-		//		texture->getStages()
-		//	));
-		//}
-		// else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-		// {
-		// 	auto& pm = parameterMapping[image->getName()];
-		// 	pm.buffer = image->getBinding();
-		// 	pm.offset = (uint32_t)programResource->m_images.size();
-		// 	pm.length = 0;
+			auto& pm = parameterMapping[texture->getName()];
+			pm.resourceIndex = (int32_t)programResource->m_textures.size() - 1;
+		}
+		 else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		 {
+			programResource->m_images.push_back({
+				image->getName(),
+				image->getBinding(),
+				image->getStages()
+			});
 
-		// 	programResource->m_images.push_back(ProgramResourceVk::ImageDesc(
-		// 		image->getName(),
-		// 		image->getBinding(),
-		// 		image->getStages()
-		// 	));
-		// }
+		 	auto& pm = parameterMapping[image->getName()];
+		 	pm.resourceIndex = (int32_t)programResource->m_images.size() - 1;
+		 }
 		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 		{
 			// Runtime CPU buffer index; remap from UB binding locations.
-			const int32_t bufferIndex = uniformBuffer->getBinding() - 2;
-			T_FATAL_ASSERT(bufferIndex >= 0 && bufferIndex <= 2);
+			const int32_t ubufferIndex = uniformBuffer->getBinding() - 2;
+			T_FATAL_ASSERT(ubufferIndex >= 0 && ubufferIndex <= 2);
 
 			uint32_t size = 0;
 			for (auto uniform : uniformBuffer->get())
@@ -485,103 +479,101 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 					size = alignUp(size, 4);
 
 				auto& pm = parameterMapping[uniform.name];
-				pm.buffer = bufferIndex;
-				pm.offset = size;
-				pm.length = glsl_type_width(uniform.type) * uniform.length;
+				pm.ubuffer = ubufferIndex;
+				pm.ubufferOffset = size;
+				pm.ubufferLength = glsl_type_width(uniform.type) * uniform.length;
 
 				size += glsl_type_width(uniform.type) * uniform.length;
 			}
 
-			programResource->m_uniformBufferSizes[bufferIndex] = size;
+			programResource->m_uniformBufferSizes[ubufferIndex] = size;
 		}
 		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 		{
-			auto& pm = parameterMapping[storageBuffer->getName()];
-			pm.buffer = storageBuffer->getBinding();
-			pm.offset = (uint32_t)programResource->m_sbuffers.size();
-			pm.length = 0;
-
-			programResource->m_sbuffers.push_back(ProgramResourceVk::SBufferDesc(
+			programResource->m_sbuffers.push_back({
 				storageBuffer->getName(),
 				storageBuffer->getBinding(),
 				storageBuffer->getStages()
-			));
+			});
+
+			auto& pm = parameterMapping[storageBuffer->getName()];
+			pm.resourceIndex = (int32_t)programResource->m_sbuffers.size() - 1;
 		}
 	}
 
-	programResource->m_textureCount = 0;
-	programResource->m_imageCount = 0;
-
 	for (auto p : cx.getParameters())
 	{
-		if (p.type <= ParameterType::Matrix)
+		if (p.type <= ParameterType::Matrix)	// Uniform parameter
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				continue;
+				return false;
 
 			const auto& pm = it->second;
 
 			programResource->m_parameters.push_back({
 				p.name,
-				pm.buffer,
-				pm.offset,
-				pm.length
+				pm.ubuffer,
+				pm.ubufferOffset,
+				pm.ubufferLength
 			});
 		}
-		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube)
+		else if (p.type >= ParameterType::Texture2D && p.type <= ParameterType::TextureCube)	// Texture parameter
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				continue;
+				return false;
 
 			const auto& pm = it->second;
-			// T_FATAL_ASSERT(pm.length == 1);
+			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
 			programResource->m_parameters.push_back({
 				p.name,
-				pm.buffer,
-				pm.offset,
-				pm.length,
-				(int32_t)programResource->m_textureCount
+				pm.ubuffer,
+				pm.ubufferOffset,
+				pm.ubufferLength,
+				pm.resourceIndex,
+				-1,
+				-1
 			});
-
-			programResource->m_textureCount++;
 		}
-		else if (p.type >= ParameterType::StructBuffer)
+		else if (p.type == ParameterType::StructBuffer)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				continue;
+				return false;
 
 			const auto& pm = it->second;
-			// T_FATAL_ASSERT(pm.length == 1);
+			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
 			programResource->m_parameters.push_back({
 				p.name,
-				pm.buffer,
-				pm.offset,
-				pm.length
+				pm.ubuffer,
+				pm.ubufferOffset,
+				pm.ubufferLength,
+				-1,
+				-1,
+				pm.resourceIndex
 			});
 		}
 		else if (p.type >= ParameterType::Image2D && p.type <= ParameterType::ImageCube)
 		{
 			auto it = parameterMapping.find(p.name);
 			if (it == parameterMapping.end())
-				continue;
+				return false;
 
 			const auto& pm = it->second;
-			// T_FATAL_ASSERT(pm.length == 1);
+			T_FATAL_ASSERT(pm.resourceIndex >= 0);
 
 			programResource->m_parameters.push_back({
 				p.name,
-				pm.buffer,
-				pm.offset,
-				pm.length,
-				(int32_t)programResource->m_imageCount
+				pm.ubuffer,
+				pm.ubufferOffset,
+				pm.ubufferLength,
+				-1,
+				pm.resourceIndex,
+				-1
 			});
-
-			programResource->m_imageCount++;
 		}
 	}
 
@@ -639,14 +631,23 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			checksum.feed(programResource->m_samplers[i].stages);
 		}
 
-		//checksum.feed(programResource->m_textures.size());
-		//for (uint32_t i = 0; i < programResource->m_textures.size(); ++i)
-		//{
-		//	checksum.feed(L"T");
-		//	checksum.feed(i);
-		//	checksum.feed(programResource->m_textures[i].binding);
-		//	checksum.feed(programResource->m_textures[i].stages);
-		//}
+		checksum.feed(programResource->m_textures.size());
+		for (uint32_t i = 0; i < programResource->m_textures.size(); ++i)
+		{
+			checksum.feed(L"T");
+			checksum.feed(i);
+			checksum.feed(programResource->m_textures[i].binding);
+			checksum.feed(programResource->m_textures[i].stages);
+		}
+
+		checksum.feed(programResource->m_images.size());
+		for (uint32_t i = 0; i < programResource->m_images.size(); ++i)
+		{
+			checksum.feed(L"I");
+			checksum.feed(i);
+			checksum.feed(programResource->m_images[i].binding);
+			checksum.feed(programResource->m_images[i].stages);
+		}
 
 		checksum.feed(programResource->m_sbuffers.size());
 		for (uint32_t i = 0; i < programResource->m_sbuffers.size(); ++i)
@@ -744,18 +745,18 @@ bool ProgramCompilerVk::generate(
 		{
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
-				ss << L"// [" << sampler->getBinding() << L"] = sampler" << Endl;
+				ss << L"// [binding = " << sampler->getBinding() << L", set = " << sampler->getSet() << L"] = sampler" << Endl;
 				ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
 			}
 			else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 			{
-				ss << L"// [" << texture->getBinding() << L"] = texture" << Endl;
+				ss << L"// [binding = " << texture->getBinding() << L", set = " << texture->getSet() << L"] = texture" << Endl;
 				ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
 				ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
 			}
 			else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 			{
-				ss << L"// [" << uniformBuffer->getBinding() << L"] = uniform buffer" << Endl;
+				ss << L"// [binding = " << uniformBuffer->getBinding() << L", set = " << uniformBuffer->getSet() << L"] = uniform buffer" << Endl;
 				ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
 				ss << L"//   .uniforms = {" << Endl;
 				for (auto uniform : uniformBuffer->get())
@@ -766,12 +767,13 @@ bool ProgramCompilerVk::generate(
 			}
 			else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 			{
-				ss << L"// [" << image->getBinding() << L"] = image" << Endl;
+				ss << L"// [binding = " << image->getBinding() << L", set = " << image->getSet() << L"] = image" << Endl;
 				ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
+				ss << L"//   .type = " << int32_t(image->getUniformType()) << Endl;
 			}
 			else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 			{
-				ss << L"// [" << storageBuffer->getBinding() << L"] = storage buffer" << Endl;
+				ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << storageBuffer->getSet() << L"] = storage buffer" << Endl;
 				ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
 				ss << L"//   .elements = {" << Endl;
 				for (auto element : storageBuffer->get())
@@ -780,6 +782,14 @@ bool ProgramCompilerVk::generate(
 				}
 				ss << L"//   }" << Endl;
 			}
+		}
+
+		ss << Endl;
+		ss << L"// Parameters" << Endl;
+		for (auto p : cx.getParameters())
+		{
+			const wchar_t* c_parameterTypeNames[] = { L"scalar", L"vector", L"matrix", L"texture2d", L"texture3d", L"textureCube", L"sbuffer", L"image2d", L"image3d", L"imageCube" };
+			ss << L"// " << c_parameterTypeNames[(int32_t)p.type] << L" " << p.name << L", length = " << p.length << L", frequency = " << (int32_t)p.frequency << Endl;
 		}
 #endif
 

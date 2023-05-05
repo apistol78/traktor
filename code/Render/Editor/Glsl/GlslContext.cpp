@@ -42,11 +42,15 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_computeShader(GlslShader::StCompute)
 ,	m_currentShader(nullptr)
 {
-	m_layout.addStatic(new GlslTexture(L"__bindlessTextures??__", 0, GlslType::Void));
-	m_layout.addStatic(new GlslImage(L"__bindlessImages??__", 0, GlslType::Void));
-	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", 0));
-	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", 0));
-	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", 0));
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__", 0, GlslResource::BsAll, GlslType::Texture2D, true), 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__", 0, GlslResource::BsAll, GlslType::Texture3D, true), 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTexturesCube__", 0, GlslResource::BsAll, GlslType::TextureCube, true), 0);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__", 0, GlslResource::BsAll, GlslType::Image2D, true), 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__", 0, GlslResource::BsAll, GlslType::Image3D, true), 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", 0, GlslResource::BsAll, GlslType::ImageCube, true), 1);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", 1, 0), 2);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", 1, 0), 3);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", 1, 0), 4);
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)
@@ -62,6 +66,7 @@ Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 
 	return getInputNode(inputPin);
 }
+
 bool GlslContext::emit(Node* node)
 {
 	// In case we're in failure state we ignore recursing further.
@@ -71,7 +76,7 @@ bool GlslContext::emit(Node* node)
 	bool allOutputsEmitted = true;
 
 	// Check if all active outputs of node already has been emitted.
-	int32_t outputPinCount = node->getOutputPinCount();
+	const int32_t outputPinCount = node->getOutputPinCount();
 	for (int32_t i = 0; i < outputPinCount; ++i)
 	{
 		const OutputPin* outputPin = node->getOutputPin(i);
@@ -90,7 +95,7 @@ bool GlslContext::emit(Node* node)
 	if (outputPinCount > 0 && allOutputsEmitted)
 		return true;
 
-	bool result = m_emitter.emit(*this, node);
+	const bool result = m_emitter.emit(*this, node);
 	if (!result)
 	{
 		// Only log first failure point; all recursions will also fail.
@@ -245,7 +250,7 @@ const GlslRequirements& GlslContext::requirements() const
 
 bool GlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
 {
-	int32_t lastId = int32_t(m_interpolatorMap.size());
+	const int32_t lastId = int32_t(m_interpolatorMap.size());
 
 	for (int32_t i = 0; i < lastId; ++i)
 	{

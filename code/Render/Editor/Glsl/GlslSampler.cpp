@@ -14,8 +14,8 @@ namespace traktor::render
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslSampler", GlslSampler, GlslResource)
 
-GlslSampler::GlslSampler(const std::wstring& name, uint8_t stages, const SamplerState& state, const std::wstring& textureName)
-:	GlslResource(name, stages)
+GlslSampler::GlslSampler(const std::wstring& name, int32_t set, uint8_t stages, const SamplerState& state, const std::wstring& textureName)
+:	GlslResource(name, set, stages)
 ,	m_state(state)
 ,	m_textureName(textureName)
 {

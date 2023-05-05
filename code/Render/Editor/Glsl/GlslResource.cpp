@@ -13,8 +13,9 @@ namespace traktor::render
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslResource", GlslResource, Object)
 	
-GlslResource::GlslResource(const std::wstring& name, uint8_t stages)
+GlslResource::GlslResource(const std::wstring& name, int32_t set, uint8_t stages)
 :	m_name(name)
+,	m_set(set)
 ,	m_stages(stages)
 {
 }
