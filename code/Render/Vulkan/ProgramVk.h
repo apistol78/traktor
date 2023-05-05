@@ -94,14 +94,13 @@ public:
 private:
 	struct ParameterMap
 	{
-#if defined(_DEBUG)
 		std::wstring name;
-#endif
-		uint32_t buffer = 0;	//!< Uniform buffer index.
-		uint32_t offset = 0;	//!< Offset into uniform buffer's data.
-		uint32_t size = 0;		//!< Number of floats.
+		int32_t ubuffer = -1;		//!< Uniform buffer index.
+		uint32_t ubufferOffset = 0;	//!< Offset into uniform buffer's data.
+		uint32_t ubufferSize = 0;	//!< Number of floats.
 		int32_t textureIndex = -1;
 		int32_t imageIndex = -1;
+		int32_t sbufferIndex = -1;
 	};
 
 	struct UniformBuffer
@@ -115,34 +114,28 @@ private:
 
 	struct Sampler
 	{
-		uint32_t binding;
+		int32_t binding;
 		VkSampler sampler;
 	};
 
-//	struct Texture
-//	{
-//#if defined(_DEBUG)
-//		std::wstring name;
-//#endif
-//		uint32_t binding;
-//		Ref< ITexture > texture;
-//	};
+	struct Texture
+	{
+		std::wstring name;
+		int32_t binding;
+		Ref< ITexture > texture;
+	};
 
-// 	struct Image
-// 	{
-// #if defined(_DEBUG)
-// 		std::wstring name;
-// #endif
-// 		uint32_t binding;
-// 		Ref< ITexture > texture;
-// 	};
+	struct Image
+	{
+		std::wstring name;
+		int32_t binding;
+		Ref< ITexture > texture;
+	};
 
 	struct SBuffer
 	{
-#if defined(_DEBUG)
 		std::wstring name;
-#endif
-		uint32_t binding;
+		int32_t binding;
 		const BufferViewVk* bufferView = nullptr;
 	};
 
@@ -161,10 +154,8 @@ private:
 	UniformBuffer m_uniformBuffers[3];
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< Sampler > m_samplers;
-	//AlignedVector< Texture > m_textures;
-	RefArray< ITexture > m_textures;
-	// AlignedVector< Image > m_images;
-	RefArray< ITexture  > m_images;
+	AlignedVector< Texture > m_textures;
+	AlignedVector< Image > m_images;
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;

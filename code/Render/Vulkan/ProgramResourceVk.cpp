@@ -88,7 +88,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 7, ProgramResourceVk, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceVk", 10, ProgramResourceVk, ProgramResource)
 
 void ProgramResourceVk::serialize(ISerializer& s)
 {
@@ -98,12 +98,10 @@ void ProgramResourceVk::serialize(ISerializer& s)
 	s >> MemberAlignedVector< uint32_t >(L"fragmentShader", m_fragmentShader);
 	s >> MemberAlignedVector< uint32_t >(L"computeShader", m_computeShader);
 	s >> MemberStaticArray< uint32_t, 3 >(L"uniformBufferSizes", m_uniformBufferSizes);
-	s >> Member< uint32_t >(L"textureCount", m_textureCount);
-	s >> Member< uint32_t >(L"imageCount", m_imageCount);
 	s >> MemberAlignedVector< ParameterDesc, MemberComposite< ParameterDesc > >(L"parameters", m_parameters);
 	s >> MemberAlignedVector< SamplerDesc, MemberComposite< SamplerDesc > >(L"samplers", m_samplers);
-	//s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
-	// s >> MemberAlignedVector< ImageDesc, MemberComposite< ImageDesc > >(L"images", m_images);
+	s >> MemberAlignedVector< TextureDesc, MemberComposite< TextureDesc > >(L"textures", m_textures);
+	 s >> MemberAlignedVector< ImageDesc, MemberComposite< ImageDesc > >(L"images", m_images);
 	s >> MemberAlignedVector< SBufferDesc, MemberComposite< SBufferDesc > >(L"sbuffers", m_sbuffers);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"fragmentShaderHash", m_fragmentShaderHash);
@@ -115,37 +113,39 @@ void ProgramResourceVk::serialize(ISerializer& s)
 void ProgramResourceVk::ParameterDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"buffer", buffer);
-	s >> Member< uint32_t >(L"offset", offset);
-	s >> Member< uint32_t >(L"size", size);
+	s >> Member< int32_t >(L"ubuffer", ubuffer);
+	s >> Member< uint32_t >(L"ubufferOffset", ubufferOffset);
+	s >> Member< uint32_t >(L"ubufferSize", ubufferSize);
 	s >> Member< int32_t >(L"textureIndex", textureIndex);
+	s >> Member< int32_t >(L"imageIndex", imageIndex);
+	s >> Member< int32_t >(L"sbufferIndex", sbufferIndex);
 }
 
 void ProgramResourceVk::SamplerDesc::serialize(ISerializer& s)
 {
-	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< int32_t >(L"binding", binding);
 	s >> Member< uint8_t >(L"stages", stages);
 	s >> MemberSamplerState(L"state", state);
 }
 
-//void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
-//{
-//	s >> Member< std::wstring >(L"name", name);
-//	s >> Member< uint32_t >(L"binding", binding);
-//	s >> Member< uint8_t >(L"stages", stages);
-//}
+void ProgramResourceVk::TextureDesc::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< int32_t >(L"binding", binding);
+	s >> Member< uint8_t >(L"stages", stages);
+}
 
-// void ProgramResourceVk::ImageDesc::serialize(ISerializer& s)
-// {
-// 	s >> Member< std::wstring >(L"name", name);
-// 	s >> Member< uint32_t >(L"binding", binding);
-// 	s >> Member< uint8_t >(L"stages", stages);
-// }
+ void ProgramResourceVk::ImageDesc::serialize(ISerializer& s)
+ {
+ 	s >> Member< std::wstring >(L"name", name);
+ 	s >> Member< int32_t >(L"binding", binding);
+ 	s >> Member< uint8_t >(L"stages", stages);
+ }
 
 void ProgramResourceVk::SBufferDesc::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"binding", binding);
+	s >> Member< int32_t >(L"binding", binding);
 	s >> Member< uint8_t >(L"stages", stages);
 }
 

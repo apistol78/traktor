@@ -41,83 +41,48 @@ public:
 	struct ParameterDesc
 	{
 		std::wstring name;
-		uint32_t buffer = 0;	//!< Index into which uniform buffer (0-2).
-		uint32_t offset = 0;	//!< Offset in 4-byte floats.
-		uint32_t size = 0;		//!< Size in 4-byte floats.
+		int32_t ubuffer = -1;			//!< Index into which uniform buffer, -1 if not a uniform parameter.
+		uint32_t ubufferOffset = 0;		//!< Offset in 4-byte floats.
+		uint32_t ubufferSize = 0;		//!< Size in 4-byte floats.
 		int32_t textureIndex = -1;
 		int32_t imageIndex = -1;
+		int32_t sbufferIndex = -1;
 
 		void serialize(ISerializer& s);
 	};
 
 	struct SamplerDesc
 	{
-		uint32_t binding = 0;
+		int32_t binding = -1;
 		uint8_t stages = 0;
 		SamplerState state;
-
-		SamplerDesc() = default;
-
-		explicit SamplerDesc(uint32_t binding_, uint8_t stages_, const SamplerState& state_)
-		:	binding(binding_)
-		,	stages(stages_)
-		,	state(state_)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};
 
-	//struct TextureDesc
-	//{
-	//	std::wstring name;
-	//	uint32_t binding = 0;
-	//	uint8_t stages = 0;
+	struct TextureDesc
+	{
+		std::wstring name;
+		int32_t binding = -1;
+		uint8_t stages = 0;
 
-	//	TextureDesc() = default;
+		void serialize(ISerializer& s);
+	};
 
-	//	explicit TextureDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
-	//	:	name(name_)
-	//	,	binding(binding_)
-	//	,	stages(stages_)
-	//	{
-	//	}
+	 struct ImageDesc
+	 {
+	 	std::wstring name;
+	 	int32_t binding = -1;
+	 	uint8_t stages = 0;
 
-	//	void serialize(ISerializer& s);
-	//};
-
-	// struct ImageDesc
-	// {
-	// 	std::wstring name;
-	// 	uint32_t binding = 0;
-	// 	uint8_t stages = 0;
-
-	// 	ImageDesc() = default;
-
-	// 	explicit ImageDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
-	// 	:	name(name_)
-	// 	,	binding(binding_)
-	// 	,	stages(stages_)
-	// 	{
-	// 	}
-
-	// 	void serialize(ISerializer& s);
-	// };
+	 	void serialize(ISerializer& s);
+	 };
 
 	struct SBufferDesc
 	{
 		std::wstring name;
-		uint32_t binding = 0;
+		int32_t binding = -1;
 		uint8_t stages = 0;
-
-		SBufferDesc() = default;
-
-		explicit SBufferDesc(const std::wstring& name_, uint32_t binding_, uint8_t stages_)
-		:	name(name_)
-		,	binding(binding_)
-		,	stages(stages_)
-		{
-		}
 
 		void serialize(ISerializer& s);
 	};
@@ -135,14 +100,12 @@ private:
 	AlignedVector< uint32_t > m_computeShader;
 
 	uint32_t m_uniformBufferSizes[3];	// Once(0), Frame(1) and Draw(2)
-	uint32_t m_textureCount = 0;
-	uint32_t m_imageCount = 0;
 
 	AlignedVector< ParameterDesc > m_parameters;
 
 	AlignedVector< SamplerDesc > m_samplers;
-	//AlignedVector< TextureDesc > m_textures;
-	// AlignedVector< ImageDesc > m_images;
+	AlignedVector< TextureDesc > m_textures;
+	AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
 
 	uint32_t m_vertexShaderHash = 0;

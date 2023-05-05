@@ -14,8 +14,8 @@ namespace traktor::render
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslStorageBuffer", GlslStorageBuffer, GlslResource)
 
-GlslStorageBuffer::GlslStorageBuffer(const std::wstring& name, uint8_t stages)
-:	GlslResource(name, stages)
+GlslStorageBuffer::GlslStorageBuffer(const std::wstring& name, int32_t set, uint8_t stages)
+:	GlslResource(name, set, stages)
 {
 }
 

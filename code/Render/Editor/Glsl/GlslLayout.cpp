@@ -14,12 +14,18 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.GlslLayout", GlslLayout, Object)
 
-void GlslLayout::addStatic(GlslResource* resource)
+void GlslLayout::addStatic(GlslResource* resource, int32_t binding)
 {
-	resource->m_binding = (int32_t)m_staticResources.size();
+	resource->m_binding = binding;
 	m_staticResources.push_back(resource);
-	m_resources = m_staticResources;
-	m_resources.insert(m_resources.end(), m_dynamicResources.begin(), m_dynamicResources.end());
+	updateResourceLayout();
+}
+
+void GlslLayout::addBindless(GlslResource* resource)
+{
+	resource->m_binding = -1;
+	m_bindlessResources.push_back(resource);
+	updateResourceLayout();
 }
 
 void GlslLayout::add(GlslResource* resource)
@@ -45,8 +51,7 @@ void GlslLayout::add(GlslResource* resource)
 	for (auto resource : m_dynamicResources)
 		resource->m_binding = binding++;
 
-	m_resources = m_staticResources;
-	m_resources.insert(m_resources.end(), m_dynamicResources.begin(), m_dynamicResources.end());
+	updateResourceLayout();
 }
 
 GlslResource* GlslLayout::getByIndex(int32_t index)
@@ -78,7 +83,18 @@ GlslResource* GlslLayout::getByName(const std::wstring& name)
 	return it != m_resources.end() ? (*it).ptr() : nullptr;
 }
 
-RefArray< GlslResource > GlslLayout::get(uint8_t stageMask) const
+RefArray< GlslResource > GlslLayout::getBySet(int32_t set)
+{
+	RefArray< GlslResource > setResources;
+	for (auto resource : m_resources)
+	{
+		if (resource->getSet() == set)
+			setResources.push_back(resource);
+	}
+	return setResources;
+}
+
+RefArray< GlslResource > GlslLayout::getByStage(uint8_t stageMask) const
 {
 	RefArray< GlslResource > stageResources;
 	for (auto resource : m_resources)
@@ -98,6 +114,13 @@ uint32_t GlslLayout::count(const TypeInfo& resourceType, uint8_t stageMask) cons
 			++c;
 	}
 	return c;
+}
+
+void GlslLayout::updateResourceLayout()
+{
+	m_resources = m_staticResources;
+	m_resources.insert(m_resources.end(), m_dynamicResources.begin(), m_dynamicResources.end());
+	m_resources.insert(m_resources.end(), m_bindlessResources.begin(), m_bindlessResources.end());
 }
 
 }

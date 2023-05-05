@@ -27,16 +27,17 @@ class T_DLLCLASS GlslTexture : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslTexture(const std::wstring& name, uint8_t stages, GlslType uniformType);
+	explicit GlslTexture(const std::wstring& name, int32_t set, uint8_t stages, GlslType uniformType, bool indexed);
 
 	GlslType getUniformType() const { return m_uniformType; }
 
-	virtual int32_t getOrdinal() const override final;
+	bool isIndexed() const { return m_indexed; }
 
-	virtual bool isBindless() const override final { return true; }
+	virtual int32_t getOrdinal() const override final;
 
 private:
 	GlslType m_uniformType;
+	bool m_indexed;
 };
 
 }

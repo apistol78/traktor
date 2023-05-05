@@ -30,7 +30,9 @@ class T_DLLCLASS GlslLayout : public Object
 	T_RTTI_CLASS;
 
 public:
-	void addStatic(GlslResource* resource);
+	void addStatic(GlslResource* resource, int32_t binding);
+
+	void addBindless(GlslResource* resource);
 
 	void add(GlslResource* resource);
 
@@ -59,6 +61,9 @@ public:
 	GlslResource* getByName(const std::wstring& name);
 
 	/*! Get all resources. */
+	RefArray< GlslResource > getBySet(int32_t set);
+
+	/*! Get all resources. */
 	const RefArray< GlslResource >& get() const { return m_resources; }
 
 	/*! Get resources by type. */
@@ -75,7 +80,7 @@ public:
 	}
 
 	/*! Get all resources bound to a specific stage. */
-	RefArray< GlslResource > get(uint8_t stageMask) const;
+	RefArray< GlslResource > getByStage(uint8_t stageMask) const;
 
 	/*! Number of resources. */
 	uint32_t count() const { return (uint32_t)m_resources.size(); }
@@ -88,7 +93,10 @@ public:
 private:
 	RefArray< GlslResource > m_staticResources;
 	RefArray< GlslResource > m_dynamicResources;
+	RefArray< GlslResource > m_bindlessResources;
 	RefArray< GlslResource > m_resources;
+
+	void updateResourceLayout();
 };
 
 }

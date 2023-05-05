@@ -34,8 +34,11 @@ public:
 	{
 		BsVertex = 1,
 		BsFragment = 2,
-		BsCompute = 4
+		BsCompute = 4,
+		BsAll = (BsVertex | BsFragment | BsCompute)
 	};
+
+	int32_t getSet() const { return m_set; }
 
 	int32_t getBinding() const { return m_binding; }
 
@@ -47,17 +50,16 @@ public:
 
 	virtual int32_t getOrdinal() const = 0;
 
-	virtual bool isBindless() const = 0;
-
 protected:
-	explicit GlslResource(const std::wstring& name, uint8_t stages);
+	explicit GlslResource(const std::wstring& name, int32_t set, uint8_t stages);
 
 private:
 	friend class GlslLayout;
 
 	std::wstring m_name;
+	int32_t m_set = -1;
+	int32_t m_binding = -1;
 	uint8_t m_stages = 0;
-	int32_t m_binding = 0;
 };
 
 }

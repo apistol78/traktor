@@ -33,15 +33,13 @@ public:
 		DataType type;
 	};
 
-	explicit GlslStorageBuffer(const std::wstring& name, uint8_t stages);
+	explicit GlslStorageBuffer(const std::wstring& name, int32_t set, uint8_t stages);
 
 	bool add(const std::wstring& elementName, DataType elementType);
 
 	const AlignedVector< Element >& get() const { return m_elements; }
 
 	virtual int32_t getOrdinal() const override final;
-
-	virtual bool isBindless() const override final { return false; }
 
 private:
 	AlignedVector< Element > m_elements;
