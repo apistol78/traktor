@@ -23,8 +23,6 @@
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
-#include "Mesh/Stream/StreamMesh.h"
-#include "Mesh/Stream/StreamMeshComponent.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -60,8 +58,6 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 		component = new SkinnedMeshComponent(resource::Proxy< SkinnedMesh >(mesh.getHandle()), renderSystem);
 	else if (is_a< StaticMesh >(mesh.getResource()))
 		component = new StaticMeshComponent(resource::Proxy< StaticMesh >(mesh.getHandle()));
-	else if (is_a< StreamMesh >(mesh.getResource()))
-		component = new StreamMeshComponent(resource::Proxy< StreamMesh >(mesh.getHandle()));
 
 	return component;
 }

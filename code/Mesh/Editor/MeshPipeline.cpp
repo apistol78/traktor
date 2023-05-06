@@ -37,10 +37,8 @@
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/Lod/AutoLodMeshConverter.h"
 #include "Mesh/Editor/Partition/PartitionMeshConverter.h"
-#include "Mesh/Editor/Proc/ProcMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
-#include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/CalculateTangents.h"
@@ -123,9 +121,6 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 		return Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
 
 	case MeshAsset::MtStatic:
-		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-
-	case MeshAsset::MtStream:
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	default:
@@ -321,20 +316,12 @@ bool MeshPipeline::buildOutput(
 		converter = new PartitionMeshConverter();
 		break;
 
-	case MeshAsset::MtProc:
-		converter = new ProcMeshConverter();
-		break;
-
 	case MeshAsset::MtSkinned:
 		converter = new SkinnedMeshConverter();
 		break;
 
 	case MeshAsset::MtStatic:
 		converter = new StaticMeshConverter();
-		break;
-
-	case MeshAsset::MtStream:
-		converter = new StreamMeshConverter();
 		break;
 
 	default:

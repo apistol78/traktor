@@ -16,7 +16,6 @@
 #include "Mesh/MeshComponent.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshComponent.h"
-#include "Mesh/Composite/CompositeMeshComponent.h"
 #include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/Indoor/IndoorMeshComponent.h"
 #include "Mesh/Instance/InstanceMesh.h"
@@ -29,8 +28,6 @@
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshComponent.h"
-#include "Mesh/Stream/StreamMesh.h"
-#include "Mesh/Stream/StreamMeshComponent.h"
 #include "Render/Buffer.h"
 #include "Render/ITexture.h"
 #include "Render/RenderClassFactory.h"
@@ -105,13 +102,6 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBlendMeshComponent->addMethod("getBlendWeights", &BlendMeshComponent::getBlendWeights);
 	registrar->registerClass(classBlendMeshComponent);
 
-	auto classCompositeMeshComponent = new AutoRuntimeClass< CompositeMeshComponent >();
-	classCompositeMeshComponent->addConstructor();
-	classCompositeMeshComponent->addMethod("removeAll", &CompositeMeshComponent::removeAll);
-	classCompositeMeshComponent->addMethod("remove", &CompositeMeshComponent::remove);
-	classCompositeMeshComponent->addMethod("add", &CompositeMeshComponent::add);
-	registrar->registerClass(classCompositeMeshComponent);
-
 	auto classIndoorMesh = new AutoRuntimeClass< IndoorMesh >();
 	registrar->registerClass(classIndoorMesh);
 
@@ -147,14 +137,6 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classStaticMeshComponent = new AutoRuntimeClass< StaticMeshComponent >();
 	registrar->registerClass(classStaticMeshComponent);
-
-	auto classStreamMesh = new AutoRuntimeClass< StreamMesh >();
-	registrar->registerClass(classStreamMesh);
-
-	auto classStreamMeshComponent = new AutoRuntimeClass< StreamMeshComponent >();
-	classStreamMeshComponent->addProperty("frameCount", &StreamMeshComponent::getFrameCount);
-	classStreamMeshComponent->addProperty("frame", &StreamMeshComponent::setFrame, &StreamMeshComponent::getFrame);
-	registrar->registerClass(classStreamMeshComponent);
 }
 
 }
