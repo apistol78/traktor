@@ -41,10 +41,8 @@ public:
 		MtInstance = 2,
 		MtLod = 3,
 		MtPartition = 4,
-		MtProc = 5,
-		MtSkinned = 6,
-		MtStatic = 7,
-		MtStream = 8
+		MtSkinned = 5,
+		MtStatic = 6
 	};
 
 	virtual void serialize(ISerializer& s) override final;

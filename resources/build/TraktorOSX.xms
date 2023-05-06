@@ -1862,26 +1862,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Composite</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Composite/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Stream</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Stream/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Partition</name>
 								<items>
 									<item type="File" version="1">
@@ -1896,16 +1876,6 @@
 								<items>
 									<item type="File" version="1">
 										<fileName>Lod/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Proc</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Proc/*.*</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
@@ -7184,16 +7154,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Stream</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Stream/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Partition</name>
 								<items>
 									<item type="File" version="1">
@@ -7208,16 +7168,6 @@
 								<items>
 									<item type="File" version="1">
 										<fileName>Lod/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Proc</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Proc/*.*</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
