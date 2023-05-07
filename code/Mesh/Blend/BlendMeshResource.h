@@ -32,6 +32,9 @@ class Shader;
 namespace traktor::mesh
 {
 
+/*! Blend mesh persistent resource.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS BlendMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;

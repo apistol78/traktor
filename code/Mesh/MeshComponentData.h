@@ -47,7 +47,7 @@ namespace traktor::mesh
 class IMesh;
 class MeshComponent;
 
-/*!
+/*! Mesh component persistent data.
  * \ingroup Mesh
  */
 class T_DLLCLASS MeshComponentData : public world::IEntityComponentData

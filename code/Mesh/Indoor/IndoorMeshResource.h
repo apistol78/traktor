@@ -32,6 +32,9 @@ class Shader;
 namespace traktor::mesh
 {
 
+/*! Indoor mesh persistent resource.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS IndoorMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;

@@ -44,6 +44,7 @@ class IMeshParameterCallback;
 class StaticMesh;
 
 /*! Level-of-detail mesh.
+ * \ingroup Mesh
  */
 class T_DLLCLASS AutoLodMesh : public IMesh
 {

@@ -18,12 +18,10 @@
 // Resources
 #include "Resources/Error.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace amalgam
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ErrorDialog", ErrorDialog, ui::Dialog)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ErrorDialog", ErrorDialog, ui::Dialog)
 
 bool ErrorDialog::create()
 {
@@ -84,5 +82,4 @@ void ErrorDialog::eventButtonClickQuit(ui::ButtonClickEvent* event)
 	endModal(DialogResult::Ok);
 }
 
-	}
 }

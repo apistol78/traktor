@@ -24,6 +24,9 @@ namespace traktor::mesh
 
 class IPartition;
 
+/*! Partitioning scheme persistent data.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS IPartitionData : public ISerializable
 {
 	T_RTTI_CLASS;

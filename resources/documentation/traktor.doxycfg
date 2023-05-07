@@ -415,7 +415,7 @@ EXTRACT_ALL            = NO
 # be included in the documentation.
 # The default value is: NO.
 
-EXTRACT_PRIVATE        = NO
+EXTRACT_PRIVATE        = YES
 
 # If the EXTRACT_PACKAGE tag is set to YES all members with package or internal
 # scope will be included in the documentation.
@@ -598,20 +598,20 @@ GENERATE_TODOLIST      = YES
 # documentation.
 # The default value is: YES.
 
-GENERATE_TESTLIST      = YES
+GENERATE_TESTLIST      = NO
 
 # The GENERATE_BUGLIST tag can be used to enable ( YES) or disable ( NO) the bug
 # list. This list is created by putting \bug commands in the documentation.
 # The default value is: YES.
 
-GENERATE_BUGLIST       = YES
+GENERATE_BUGLIST       = NO
 
 # The GENERATE_DEPRECATEDLIST tag can be used to enable ( YES) or disable ( NO)
 # the deprecated list. This list is created by putting \deprecated commands in
 # the documentation.
 # The default value is: YES.
 
-GENERATE_DEPRECATEDLIST= YES
+GENERATE_DEPRECATEDLIST= NO
 
 # The ENABLED_SECTIONS tag can be used to enable conditional documentation
 # sections, marked by \if <section_label> ... \endif and \cond <section_label>
@@ -635,14 +635,14 @@ MAX_INITIALIZER_LINES  = 30
 # will mention the files that were used to generate the documentation.
 # The default value is: YES.
 
-SHOW_USED_FILES        = YES
+SHOW_USED_FILES        = NO
 
 # Set the SHOW_FILES tag to NO to disable the generation of the Files page. This
 # will remove the Files entry from the Quick Index and from the Folder Tree View
 # (if specified).
 # The default value is: YES.
 
-SHOW_FILES             = YES
+SHOW_FILES             = NO
 
 # Set the SHOW_NAMESPACES tag to NO to disable the generation of the Namespaces
 # page. This will remove the Namespaces entry from the Quick Index and from the
@@ -709,7 +709,7 @@ WARNINGS               = YES
 # will automatically be disabled.
 # The default value is: YES.
 
-WARN_IF_UNDOCUMENTED   = YES
+WARN_IF_UNDOCUMENTED   = NO
 
 # If the WARN_IF_DOC_ERROR tag is set to YES, doxygen will generate warnings for
 # potential errors in the documentation, such as not documenting some parameters

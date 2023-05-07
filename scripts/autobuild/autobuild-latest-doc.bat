@@ -9,7 +9,7 @@ pushd %TRAKTOR_HOME%\resources\documentation
 del /F /Q html
 
 :: Rebuild entire documentation.
-doxygen traktor.doxycfg
+%DOXYGEN_SDK%\doxygen traktor.doxycfg
 
 :: Copy generated documentation.
 del /F /Q latest

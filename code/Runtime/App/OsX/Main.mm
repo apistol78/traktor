@@ -120,7 +120,7 @@ bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 
 void showErrorDialog(const std::list< std::wstring >& tail)
 {
-	amalgam::ErrorDialog errorDialog;
+	runtime::ErrorDialog errorDialog;
 	if (errorDialog.create())
 	{
 		for (const auto& error : tail)

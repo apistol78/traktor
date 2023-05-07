@@ -48,6 +48,7 @@ namespace traktor::mesh
 class IMesh;
 
 /*! Mesh resource.
+ * \ingroup Mesh
  *
  * Base class for all mesh resources.
  */

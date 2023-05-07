@@ -29,6 +29,9 @@ class MeshFactory;
 namespace traktor::mesh
 {
 
+/*! Mesh resource factory.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS MeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;

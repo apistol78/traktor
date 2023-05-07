@@ -30,6 +30,7 @@ namespace traktor::mesh
 {
 
 /*! Set custom shader parameter callback.
+ * \ingroup Mesh
  *
  * Called when meshes are rendered in order to allow
  * user defined shader parameters.

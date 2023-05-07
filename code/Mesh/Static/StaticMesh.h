@@ -45,6 +45,7 @@ namespace traktor::mesh
 class IMeshParameterCallback;
 
 /*! Static mesh.
+ * \ingroup Mesh
  *
  * A static mesh is a basic rigid mesh which at
  * all times should be placed on the GPU for

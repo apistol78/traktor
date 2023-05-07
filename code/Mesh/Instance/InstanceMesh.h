@@ -48,6 +48,7 @@ namespace traktor::mesh
 {
 
 /*! Instance mesh.
+ * \ingroup Mesh
  *
  * Instance meshes are meshes which are repeated
  * automatically by the GPU in any number of instances

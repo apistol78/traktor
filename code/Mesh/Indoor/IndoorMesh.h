@@ -48,6 +48,9 @@ namespace traktor::mesh
 
 class IMeshParameterCallback;
 
+/*! Indoor mesh.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS IndoorMesh : public IMesh
 {
 	T_RTTI_CLASS;
