@@ -9,10 +9,8 @@
 #include "Input/Xi/InputDriverXi.h"
 #include "Input/Xi/InputDeviceXi.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverXi", 0, InputDriverXi, IInputDriver)
 
@@ -42,5 +40,4 @@ IInputDriver::UpdateResult InputDriverXi::update()
 	return UrOk;
 }
 
-	}
 }

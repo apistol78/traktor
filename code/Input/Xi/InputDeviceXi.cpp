@@ -11,12 +11,10 @@
 #include "Core/Misc/String.h"
 #include "Input/Xi/InputDeviceXi.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct ControlConfig
 {
@@ -60,7 +58,7 @@ float adjustDeadZone(float value)
 	return value;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceXi", InputDeviceXi, IInputDevice)
 
@@ -178,7 +176,7 @@ void InputDeviceXi::readState()
 {
 	if (!m_skip)
 	{
-		bool connected = m_connected;
+		const bool connected = m_connected;
 
 		HWND hWndActive = GetActiveWindow();
 		DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
@@ -227,5 +225,4 @@ void InputDeviceXi::setExclusive(bool exclusive)
 {
 }
 
-	}
 }
