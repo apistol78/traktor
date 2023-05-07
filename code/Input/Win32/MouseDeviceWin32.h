@@ -10,17 +10,15 @@
 
 #include "Input/IInputDevice.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class MouseDeviceWin32 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceWin32(HWND hWnd);
+	explicit MouseDeviceWin32(HWND hWnd);
 
 	virtual std::wstring getName() const;
 
@@ -70,6 +68,4 @@ private:
 	float m_button3;
 };
 
-	}
 }
-

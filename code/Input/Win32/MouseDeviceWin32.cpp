@@ -10,12 +10,10 @@
 #include "Core/Math/MathUtils.h"
 #include "Input/Win32/MouseDeviceWin32.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 const struct MouseControlMap
 {
@@ -35,7 +33,7 @@ c_mouseControlMap[] =
 	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceWin32", MouseDeviceWin32, IInputDevice)
 
@@ -153,7 +151,7 @@ void MouseDeviceWin32::readState()
 {
 	if (m_connected && m_hWnd)
 	{
-		bool exclusive = ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
+		const bool exclusive = ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 
 		if (exclusive)
 		{
@@ -220,5 +218,4 @@ void MouseDeviceWin32::setExclusive(bool exclusive)
 {
 }
 
-	}
 }

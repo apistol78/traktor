@@ -10,10 +10,8 @@
 #include "Core/Misc/TString.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32, IInputDevice)
 
@@ -110,7 +108,7 @@ bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType,
 	if (analogue || !c_vkControlKeys[int32_t(controlType)])
 		return false;
 
-	control = int32_t(controlType);
+	control = (int32_t)controlType;
 	return true;
 }
 
@@ -140,7 +138,7 @@ void KeyboardDeviceWin32::readState()
 			if (c_vkControlKeys[i] == 0)
 				continue;
 
-			SHORT keyState = GetAsyncKeyState(c_vkControlKeys[i]);
+			const SHORT keyState = GetAsyncKeyState(c_vkControlKeys[i]);
 			if (keyState & 0x8000)
 				m_keyStates[i] = 0xff;
 			else
@@ -205,5 +203,4 @@ LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 	return CallWindowProc(this_->m_pWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-	}
 }

@@ -12,16 +12,10 @@
 #include "Input/Win32/KeyboardDeviceWin32.h"
 #include "Input/Win32/MouseDeviceWin32.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverWin32", 0, InputDriverWin32, IInputDriver)
-
-InputDriverWin32::InputDriverWin32()
-{
-}
 
 bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
 {
@@ -41,15 +35,15 @@ bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindo
 
 int InputDriverWin32::getDeviceCount()
 {
-	return int(m_devices.size());
+	return (int)m_devices.size();
 }
 
 Ref< IInputDevice > InputDriverWin32::getDevice(int index)
 {
-	if (index < int(m_devices.size()))
+	if (index < (int)m_devices.size())
 		return m_devices[index];
 	else
-		return 0;
+		return nullptr;
 }
 
 IInputDriver::UpdateResult InputDriverWin32::update()
@@ -60,7 +54,7 @@ IInputDriver::UpdateResult InputDriverWin32::update()
 	HWND hWndActive = GetActiveWindow();
 	DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
 
-	bool connected = bool(GetCurrentProcessId() == dwPID);
+	const bool connected = bool(GetCurrentProcessId() == dwPID);
 
 	if (m_keyboardDevice)
 		m_keyboardDevice->m_connected = connected;
@@ -71,5 +65,4 @@ IInputDriver::UpdateResult InputDriverWin32::update()
 	return UrOk;
 }
 
-	}
 }

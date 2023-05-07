@@ -12,17 +12,15 @@
 #include "Input/IInputDevice.h"
 #include "Input/Win32/TypesWin32.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class KeyboardDeviceWin32 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceWin32(HWND hWnd);
+	explicit KeyboardDeviceWin32(HWND hWnd);
 
 	virtual ~KeyboardDeviceWin32();
 
@@ -70,6 +68,4 @@ private:
 	static LRESULT WINAPI wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
-	}
 }
-
