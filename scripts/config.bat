@@ -37,6 +37,7 @@ set TINYEXR_SDK=%TRAKTOR_HOME%\3rdp\tinyexr
 set VORBIS_SDK=%TRAKTOR_HOME%\3rdp\vorbis
 set XATLAS_SDK=%TRAKTOR_HOME%\3rdp\xatlas
 set ZLIB_SDK=%TRAKTOR_HOME%\3rdp\zlib
+set DOXYGEN_SDK=%TRAKTOR_HOME%\3rdp\doxygen
 
 :: Vulkan SDK
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\VulkanSDK-1.3.239.0

@@ -493,6 +493,17 @@ local PACKAGES =
 			run:execute(UNZIP .. " -qq RenderDoc_1.26_64.zip")
 		end
 	},
+
+	-- Doxygen
+	{
+		type = "GET",
+		name = "doxygen",
+		os = "windows",
+		url = "https://www.doxygen.nl/files/doxygen-1.9.6.windows.x64.bin.zip",
+		patch = function()
+			run:execute(UNZIP .. " -qq doxygen-1.9.6.windows.x64.bin.zip")
+		end
+	},
 }
 
 --[[

@@ -21,6 +21,9 @@
 namespace traktor::mesh
 {
 
+/*! Mesh runtime class factory.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS MeshClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;

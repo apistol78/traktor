@@ -21,6 +21,9 @@
 namespace traktor::mesh
 {
 
+/*! Runtime mesh interface.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS IMesh : public Object
 {
 	T_RTTI_CLASS;

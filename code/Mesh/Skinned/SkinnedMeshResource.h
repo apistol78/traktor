@@ -32,6 +32,9 @@ class Shader;
 namespace traktor::mesh
 {
 
+/*! Skinned mesh persistent data.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS SkinnedMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;

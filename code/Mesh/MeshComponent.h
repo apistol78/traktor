@@ -54,6 +54,14 @@ public:
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
 
+	/*! Set parameter callback.
+	 * 
+	 * Callback is invoked each time a piece of a
+	 * mesh is rendered, ie for each draw call,
+	 * to let user specify custom parameters.
+	 * 
+	 * \param parameterCallback Parameter callback.
+	 */
 	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
 	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }

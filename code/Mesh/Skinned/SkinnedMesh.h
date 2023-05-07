@@ -46,6 +46,7 @@ namespace traktor::mesh
 class IMeshParameterCallback;
 
 /*! Skinned mesh.
+ * \ingroup Mesh
  *
  * For each vertex the skinned mesh blends
  * the final world transform from a palette of

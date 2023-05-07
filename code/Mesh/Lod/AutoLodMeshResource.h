@@ -25,6 +25,9 @@ namespace traktor::mesh
 
 class StaticMeshResource;
 
+/*! Automatic lod mesh persistent resource.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS AutoLodMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;

@@ -31,6 +31,9 @@ class Shader;
 namespace traktor::mesh
 {
 
+/*! Static mesh persistent data.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS StaticMeshResource : public MeshResource
 {
 	T_RTTI_CLASS;

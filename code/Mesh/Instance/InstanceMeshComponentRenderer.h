@@ -24,6 +24,9 @@
 namespace traktor::mesh
 {
 
+/*! Instance mesh component renderer.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS InstanceMeshComponentRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;

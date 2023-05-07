@@ -25,7 +25,7 @@
 namespace traktor::mesh
 {
 
-/*!
+/*! Partitioning scheme interface.
  * \ingroup Mesh
  */
 class IPartition : public Object

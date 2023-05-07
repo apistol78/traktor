@@ -35,6 +35,9 @@ class IResourceManager;
 namespace traktor::mesh
 {
 
+/*! Mesh component factory.
+ * \ingroup Mesh
+ */
 class T_DLLCLASS MeshEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS;
