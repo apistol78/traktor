@@ -24,8 +24,10 @@ namespace traktor
 
 struct SystemWindow;
 
-	namespace input
-	{
+}
+
+namespace traktor::input
+{
 
 class KeyboardDeviceWin32;
 class MouseDeviceWin32;
@@ -35,8 +37,6 @@ class T_DLLCLASS InputDriverWin32 : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	InputDriverWin32();
-
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
 	virtual int getDeviceCount() override final;
@@ -51,6 +51,4 @@ private:
 	RefArray< IInputDevice > m_devices;
 };
 
-	}
 }
-

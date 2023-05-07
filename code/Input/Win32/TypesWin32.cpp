@@ -9,10 +9,8 @@
 #include <Windows.h>
 #include "Input/Win32/TypesWin32.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 uint32_t translateFromVk(uint32_t vk)
 {
@@ -24,5 +22,4 @@ uint32_t translateFromVk(uint32_t vk)
 	return 0;
 }
 
-	}
 }

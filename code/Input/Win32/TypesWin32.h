@@ -10,10 +10,8 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! InputDefaultControlType to VK mapping. */
 const DWORD c_vkControlKeys[] =
@@ -206,6 +204,4 @@ const DWORD c_vkControlKeys[] =
 
 uint32_t translateFromVk(uint32_t vk);
 
-	}
 }
-
