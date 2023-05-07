@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InputDeviceXi;
 
@@ -36,7 +34,7 @@ class T_DLLCLASS InputDriverXi : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	InputDriverXi(DWORD deviceCount = 4);
+	explicit InputDriverXi(DWORD deviceCount = 4);
 
 	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
 
@@ -50,6 +48,4 @@ private:
 	RefArray< InputDeviceXi > m_devices;
 };
 
-	}
 }
-

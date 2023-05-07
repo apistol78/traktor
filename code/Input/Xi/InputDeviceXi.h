@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! XInput device.
  * \ingroup Input
@@ -33,7 +31,7 @@ class T_DLLCLASS InputDeviceXi : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	InputDeviceXi(DWORD controller);
+	explicit InputDeviceXi(DWORD controller);
 
 	virtual std::wstring getName() const;
 
@@ -74,6 +72,4 @@ private:
 	uint32_t m_skip;
 };
 
-	}
 }
-
