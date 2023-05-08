@@ -617,7 +617,14 @@ bool GraphControl::endSelectModification()
 
 void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 {
-	setFocus();
+	// Only move over focus if control doesn't currently have focus, we
+	// don't want to modify selection in that case.
+	if (!hasFocus())
+	{
+		setFocus();
+		if (event->getButton() == MbtLeft)
+			return;
+	}
 
 	// Save origin of drag and where the cursor is currently at.
 	m_cursor =
