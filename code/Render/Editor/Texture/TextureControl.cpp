@@ -89,6 +89,7 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 
 		// Create output image.
 		Ref< drawing::Image > imageOutput = image->clone();
+		imageOutput->convert(drawing::PixelFormat::getR8G8B8A8());
 
 		// Discard alpha.
 		if (output.m_ignoreAlpha)
