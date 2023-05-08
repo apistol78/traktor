@@ -5,8 +5,8 @@
 			<id>{13F7D07E-8C1D-9549-9F74-8D78D03ECBD1}</id>
 			<comment/>
 			<position>
-				<first>1572</first>
-				<second>179</second>
+				<first>1557</first>
+				<second>116</second>
 			</position>
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
@@ -430,8 +430,8 @@ Setup global variables required by material shaders.
 			]]>
 			</comment>
 			<position>
-				<first>1559</first>
-				<second>518</second>
+				<first>1651</first>
+				<second>554</second>
 			</position>
 			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
 			<inputPins>
@@ -502,6 +502,14 @@ Setup global variables required by material shaders.
 				<second>344</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{A2702CCD-A40C-7B40-AEFB-AEDD9AD70506}</id>
+			<comment/>
+			<position>
+				<first>1530</first>
+				<second>626</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -718,16 +726,6 @@ Setup global variables required by material shaders.
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[20]"/>
-				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
 				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 			</source>
 			<destination>
@@ -883,6 +881,26 @@ Setup global variables required by material shaders.
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 			</destination>
 		</item>
 	</edges>
