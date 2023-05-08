@@ -1304,9 +1304,12 @@ void ShaderGraphEditorPage::updateGraph()
 		}
 	}
 
+	ShaderGraphValidator validator(m_shaderGraph);
+	const auto graphType = validator.estimateType();
+
 	// Validate shader graph.
 	std::vector< const Node* > errorNodes;
-	const bool validationResult = ShaderGraphValidator(m_shaderGraph).validate(ShaderGraphValidator::SgtFragment, &errorNodes);
+	const bool validationResult = validator.validate(graphType, &errorNodes);
 
 	// Update validation indication of each node.
 	for (auto editorNode : m_editorGraph->getNodes())
@@ -1324,7 +1327,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// If validation succeeded then update generated shader as well.
-	if (validationResult)
+	if (validationResult && graphType == ShaderGraphValidator::SgtProgram)
 		m_shaderViewer->reflect(m_shaderGraph);
 
 	// Evaluate output types (and partial values) if validation succeeded.
