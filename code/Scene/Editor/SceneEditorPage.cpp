@@ -945,11 +945,13 @@ void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 	if (!m_context || database == m_editor->getSourceDatabase())
 		return;
 
+	bool externalModified = false;
+
 	// Flush resource from manager.
-	m_context->getResourceManager()->reload(eventId, false);
+	if (m_context->getResourceManager()->reload(eventId, false))
+		externalModified = true;
 
 	// Check if guid is used as an external reference.
-	bool externalModified = false;
 	for (auto entityAdapter : m_context->getEntities())
 	{
 		Guid externalGuid;

@@ -370,6 +370,8 @@ void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Wi
 	if (m_mouseButton == 0)
 		return;
 
+	const uint32_t lastMoveCamera = m_moveCamera;
+
 	switch (event->getVirtualKey())
 	{
 	case ui::VkW:
@@ -392,10 +394,13 @@ void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Wi
 		return;
 	}
 
-	// Just issue this to ensure first update isn't too large.
-	m_timer.getDeltaTime();
+	if (lastMoveCamera != m_moveCamera)
+	{
+		// Just issue this to ensure first update isn't too large.
+		m_timer.getDeltaTime();
+		context->enqueueRedraw(renderControl);
+	}
 
-	context->enqueueRedraw(renderControl);
 	event->consume();
 }
 
