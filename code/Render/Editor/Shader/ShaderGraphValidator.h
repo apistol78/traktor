@@ -43,6 +43,8 @@ public:
 
 	explicit ShaderGraphValidator(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
+	ShaderGraphType estimateType() const;
+
 	bool validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes = 0) const;
 
 	bool validateIntegrity() const;

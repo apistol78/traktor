@@ -378,6 +378,16 @@ ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph, const
 {
 }
 
+ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
+{
+	if (!m_shaderGraph->findNodesOf< InputPort >().empty())
+		return SgtFragment;
+	if (!m_shaderGraph->findNodesOf< OutputPort >().empty())
+		return SgtFragment;
+
+	return SgtProgram;
+}
+
 bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes) const
 {
 	// Collect root nodes.
