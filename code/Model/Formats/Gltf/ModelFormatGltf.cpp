@@ -536,7 +536,19 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	//scene->getMemberInt32(L"nodes");
 
 
-	const Matrix44 Tpost = scale(1.0f, 1.0f, -1.0f);
+	const Matrix44 TpostA(
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f
+	);
+	const Matrix44 TpostB(
+		 0.0f, 0.0f, 1.0f, 0.0f,
+		 0.0f, 1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f, 0.0f,
+		 0.0f, 0.0f, 0.0f, 1.0f
+	);
+	const Matrix44 Tpost = TpostB * TpostA;
 
 	// Parse skeleton.
 	auto skins = docobj->getMemberValue(L"skins").getObject< json::JsonArray >();
