@@ -299,8 +299,8 @@ void UndergrowthComponent::build(
 				renderBlock->programParams->attachParameters(extraParameters);
 
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
-			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances1, instanceData1, count);
-			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances2, instanceData2, count);
+			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances1, instanceData1, batch);
+			renderBlock->programParams->setVectorArrayParameter(s_handleUndergrowth_Instances2, instanceData2, batch);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
