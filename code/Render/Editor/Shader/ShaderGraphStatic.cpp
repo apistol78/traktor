@@ -745,6 +745,60 @@ Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
 	return shaderGraph;
 }
 
+Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
+{
+	T_IMMUTABLE_CHECK(m_shaderGraph);
+
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< BundleSplit > splitNodes = shaderGraph->findNodesOf< BundleSplit >();
+	RefArray< BundleUnite > uniteNodes = shaderGraph->findNodesOf< BundleUnite >();
+
+	for (const auto splitNode : splitNodes)
+	{
+		const OutputPin* sourcePin = shaderGraph->findSourcePin(splitNode->getInputPin(0));
+		if (!sourcePin)
+			return nullptr;
+
+		const BundleUnite* uniteNode = dynamic_type_cast< const BundleUnite* >(sourcePin->getNode());
+		if (!uniteNode)
+			return nullptr;
+
+		const int32_t outputPinCount = splitNode->getOutputPinCount();
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			const OutputPin* outputPin = splitNode->getOutputPin(i);
+
+			const auto destinationPins = shaderGraph->findDestinationPins(outputPin);
+			if (destinationPins.empty())
+				continue;
+
+			// Find input into unite node with matching name.
+			const InputPin* inputPin = uniteNode->findInputPin(outputPin->getName());
+			if (!inputPin)
+				return nullptr;
+
+			const OutputPin* sourcePin = shaderGraph->findSourcePin(inputPin);
+			if (!sourcePin)
+				return nullptr;
+
+			for (auto destinationPin : destinationPins)
+				shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
+		}
+
+		shaderGraph->detach(splitNode);
+		shaderGraph->removeNode(splitNode);
+	}
+
+	for (const auto uniteNode : uniteNodes)
+	{
+		shaderGraph->detach(uniteNode);
+		shaderGraph->removeNode(uniteNode);
+	}
+
+	return shaderGraph;
+}
+
 Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType resolve) const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);

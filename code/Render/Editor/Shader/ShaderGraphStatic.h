@@ -66,6 +66,9 @@ public:
 	/*! Propagate state given as input into PixelOutput. */
 	Ref< ShaderGraph > getStateResolved() const;
 
+	/*! Replace bundle nodes with direct connections. */
+	Ref< ShaderGraph > getBundleResolved() const;
+
 	/*! Replace variable nodes with direct connections. */
 	Ref< ShaderGraph > getVariableResolved(VariableResolveType resolve) const;
 

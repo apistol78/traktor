@@ -267,6 +267,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 16, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_BUNDLES"), 16, ui::Command(L"ShaderGraph.Editor.ResolveBundles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 17, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -902,6 +903,17 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
+		T_ASSERT(m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		createEditorGraph();
+	}
+	else if (command == L"ShaderGraph.Editor.ResolveBundles")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getBundleResolved();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);

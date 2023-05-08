@@ -314,6 +314,155 @@ ArcusTan::ArcusTan()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Branch", 0, Branch, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Branch_i[] =
+{
+	{ L"True", L"{A1DDB166-9422-45A3-AE93-6702275DAD1C}", false },
+	{ L"False", L"{92AA3735-BB4C-4541-81DA-AC500930B2E6}", false },
+	{ 0 }
+};
+const ImmutableNode::OutputPinDesc c_Branch_o[] =
+{
+	{ L"Output", L"{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}" },
+	{ 0 }
+};
+
+Branch::Branch(const std::wstring& parameterName)
+	: ImmutableNode(c_Branch_i, c_Branch_o)
+	, m_parameterName(parameterName)
+{
+}
+
+void Branch::setParameterName(const std::wstring& parameterName)
+{
+	m_parameterName = parameterName;
+}
+
+const std::wstring& Branch::getParameterName() const
+{
+	return m_parameterName;
+}
+
+std::wstring Branch::getInformation() const
+{
+	return m_parameterName;
+}
+
+void Branch::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleUnite", 0, BundleUnite, Node)
+
+BundleUnite::BundleUnite()
+{
+	updatePins();
+}
+
+int BundleUnite::getInputPinCount() const
+{
+	return (int)m_inputPins.size();
+}
+
+const InputPin* BundleUnite::getInputPin(int index) const
+{
+	return &m_inputPins[index];
+}
+
+int BundleUnite::getOutputPinCount() const
+{
+	return 1;
+}
+
+const OutputPin* BundleUnite::getOutputPin(int index) const
+{
+	return &m_outputPin;
+}
+
+void BundleUnite::serialize(ISerializer& s)
+{
+	Node::serialize(s);
+
+	s >> MemberAlignedVector< std::wstring >(L"names", m_names);
+
+	if (s.getDirection() == ISerializer::Direction::Read)
+		updatePins();
+}
+
+void BundleUnite::updatePins()
+{
+	Guid id(L"{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}");
+
+	m_inputPins.resize(m_names.size());
+	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
+	{
+		m_inputPins[i] = InputPin(this, id, m_names[i], false);
+		id.permutate();
+	}
+
+	m_outputPin = OutputPin(this, id, L"Output"); id.permutate();
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BundleSplit", 0, BundleSplit, Node)
+
+BundleSplit::BundleSplit()
+{
+	updatePins();
+}
+
+int BundleSplit::getInputPinCount() const
+{
+	return 1;
+}
+
+const InputPin* BundleSplit::getInputPin(int index) const
+{
+	return &m_inputPin;
+}
+
+int BundleSplit::getOutputPinCount() const
+{
+	return (int)m_outputPins.size();
+}
+
+const OutputPin* BundleSplit::getOutputPin(int index) const
+{
+	return &m_outputPins[index];
+}
+
+void BundleSplit::serialize(ISerializer& s)
+{
+	Node::serialize(s);
+
+	s >> MemberAlignedVector< std::wstring >(L"names", m_names);
+
+	if (s.getDirection() == ISerializer::Direction::Read)
+		updatePins();
+}
+
+void BundleSplit::updatePins()
+{
+	Guid id(L"{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}");
+
+	m_inputPin = InputPin(this, id, L"Input", false); id.permutate();
+
+	m_outputPins.resize(m_names.size());
+	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
+	{
+		m_outputPins[i] = OutputPin(this, id, m_names[i]);
+		id.permutate();
+	}
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Clamp", 0, Clamp, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Clamp_i[] =
@@ -367,49 +516,6 @@ void Clamp::serialize(ISerializer& s)
 
 	s >> Member< float >(L"min", m_min);
 	s >> Member< float >(L"max", m_max);
-}
-
-/*---------------------------------------------------------------------------*/
-
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Branch", 0, Branch, ImmutableNode)
-
-const ImmutableNode::InputPinDesc c_Branch_i[] =
-{
-	{ L"True", L"{A1DDB166-9422-45A3-AE93-6702275DAD1C}", false },
-	{ L"False", L"{92AA3735-BB4C-4541-81DA-AC500930B2E6}", false },
-	{ 0 }
-};
-const ImmutableNode::OutputPinDesc c_Branch_o[] =
-{
-	{ L"Output", L"{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}" },
-	{ 0 }
-};
-
-Branch::Branch(const std::wstring& parameterName)
-:	ImmutableNode(c_Branch_i, c_Branch_o)
-,	m_parameterName(parameterName)
-{
-}
-
-void Branch::setParameterName(const std::wstring& parameterName)
-{
-	m_parameterName = parameterName;
-}
-
-const std::wstring& Branch::getParameterName() const
-{
-	return m_parameterName;
-}
-
-std::wstring Branch::getInformation() const
-{
-	return m_parameterName;
-}
-
-void Branch::serialize(ISerializer& s)
-{
-	ImmutableNode::serialize(s);
-	s >> Member< std::wstring >(L"parameterName", m_parameterName);
 }
 
 /*---------------------------------------------------------------------------*/

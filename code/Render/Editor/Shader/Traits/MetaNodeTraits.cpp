@@ -38,6 +38,8 @@ TypeInfoSet MetaNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert< Branch >();
+	typeSet.insert< BundleUnite >();
+	typeSet.insert< BundleSplit >();
 	typeSet.insert< Comment >();
 	typeSet.insert< Connected >();
 	typeSet.insert< External >();

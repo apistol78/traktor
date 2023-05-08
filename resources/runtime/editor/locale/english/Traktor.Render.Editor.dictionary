@@ -258,6 +258,14 @@
 			<second>Branch</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_BUNDLEUNITE</first>
+			<second>Bundle unite</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_BUNDLESPLIT</first>
+			<second>Bundle split</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_CLAMP</first>
 			<second>Clamp</second>
 		</item>

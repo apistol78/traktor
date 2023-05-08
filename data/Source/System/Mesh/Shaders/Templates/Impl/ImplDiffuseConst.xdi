@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
-				<first>912</first>
-				<second>294</second>
+				<first>951</first>
+				<second>295</second>
 			</position>
 			<name>T_DiffuseColor</name>
 		</item>
@@ -18,8 +18,8 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>445</first>
-				<second>261</second>
+				<first>484</first>
+				<second>262</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>true</linear>
@@ -28,8 +28,8 @@ Tag_DiffuseColor
 			<id>{16815465-4E22-514C-9E23-58398275B1B4}</id>
 			<comment/>
 			<position>
-				<first>465</first>
-				<second>446</second>
+				<first>459</first>
+				<second>380</second>
 			</position>
 			<name>T_TexCoord</name>
 			<connectable>true</connectable>
@@ -41,24 +41,24 @@ Tag_DiffuseColor
 			<id>{D791ACB9-E455-A84F-BC76-EDAF8563412F}</id>
 			<comment/>
 			<position>
-				<first>691</first>
-				<second>277</second>
+				<first>730</first>
+				<second>278</second>
 			</position>
 			<parameterName>Mesh_DiffuseColor</parameterName>
 			<type>Vector</type>
 			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{8E6BF2A3-093C-C34F-A66E-4691CFBD9154}</id>
+			<id>{D9396A62-A247-F44E-A7AD-78AB61AF07D5}</id>
 			<comment/>
 			<position>
-				<first>461</first>
-				<second>411</second>
+				<first>458</first>
+				<second>343</second>
 			</position>
-			<name>T_VertexColor</name>
+			<name>T_Attributes</name>
 			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -84,4 +84,5 @@ Tag_DiffuseColor
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
