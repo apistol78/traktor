@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{BDE4D8D4-7A3A-DB49-A406-04AFBA127934}</id>
@@ -63,19 +63,6 @@ Tag_DiffuseMap
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{182185C0-086A-954A-A79A-743F464CCF73}</id>
-			<comment/>
-			<position>
-				<first>307</first>
-				<second>252</second>
-			</position>
-			<name>T_VertexColor</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{011BBA32-3102-6A4D-9084-79107C12B18F}</id>
 			<comment/>
@@ -100,6 +87,19 @@ Tag_DiffuseColor
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{294F9CD5-8590-2E4A-A76D-8825710F4E38}</id>
+			<comment/>
+			<position>
+				<first>310</first>
+				<second>251</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -145,17 +145,17 @@ Tag_DiffuseColor
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -164,4 +164,5 @@ Tag_DiffuseColor
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

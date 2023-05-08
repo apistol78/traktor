@@ -29,6 +29,8 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< ArcusCos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Inverse cosine" },
 	{ type_of< ArcusTan >(), L"SHADERGRAPH_TRIGONOMETRY", L"Inverse tangent" },
 	{ type_of< Branch >(), L"SHADERGRAPH_PERMUTATION", L"Static branch permutation" },
+	{ type_of< BundleUnite >(), L"SHADERGRAPH_MISCELLANEOUS", L"Create a bundle of wires" },
+	{ type_of< BundleSplit >(), L"SHADERGRAPH_MISCELLANEOUS", L"Extract wires from bundle" },
 	{ type_of< Clamp >(), L"SHADERGRAPH_CONDITIONAL", L"Clamp values within range" },
 	{ type_of< Color >(), L"SHADERGRAPH_VALUE", L"Color constant" },
 	{ type_of< Comment >(), L"SHADERGRAPH_MISCELLANEOUS", L"Comment" },

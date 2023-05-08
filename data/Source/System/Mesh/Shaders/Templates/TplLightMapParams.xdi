@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A5352BEE-ABAF-0045-96F8-0D340D11ED4A}</id>
 			<comment/>
 			<position>
-				<first>628</first>
-				<second>208</second>
+				<first>604</first>
+				<second>139</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -14,36 +14,10 @@
 			<id>{6720CA68-57EE-2244-839A-47C857E2387E}</id>
 			<comment/>
 			<position>
-				<first>276</first>
-				<second>132</second>
+				<first>281</first>
+				<second>130</second>
 			</position>
 			<name>T_TexCoordLightMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{3263A226-A040-DF49-804F-26A68C0346DB}</id>
-			<comment/>
-			<position>
-				<first>305</first>
-				<second>262</second>
-			</position>
-			<name>T_ViewNormal</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{D839A2B6-AA76-44F5-A8C6-A43D99EAF91E}</id>
-			<comment/>
-			<position>
-				<first>305</first>
-				<second>219</second>
-			</position>
-			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -53,8 +27,8 @@
 			<id>{BF772F81-A5B6-5C46-9995-B505DD41619D}</id>
 			<comment/>
 			<position>
-				<first>256</first>
-				<second>176</second>
+				<first>271</first>
+				<second>175</second>
 			</position>
 			<name>T_TexCoordNormalMap</name>
 			<connectable>true</connectable>
@@ -62,6 +36,20 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{311BDC2F-8863-FB45-B45F-E0912B253CEE}</id>
+			<comment/>
+			<position>
+				<first>331</first>
+				<second>85</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges/>
+	<groups/>
 </object>

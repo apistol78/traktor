@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{7B9AF5AF-3779-9A4F-A0CC-C3351EE38EE7}</id>
-			<comment/>
-			<position>
-				<first>349</first>
-				<second>413</second>
-			</position>
-			<name>T_TexCoord1</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{48210643-CE9C-2848-865D-AB08505C8CFC}</id>
-			<comment/>
-			<position>
-				<first>349</first>
-				<second>375</second>
-			</position>
-			<name>T_TexCoord0</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{DCC189A0-5F03-8A4F-9771-BDFF0CBA846D}</id>
 			<comment/>
 			<position>
-				<first>735</first>
-				<second>390</second>
+				<first>845</first>
+				<second>439</second>
 			</position>
 			<name>T_TexCoord</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{48B9D210-F4D7-3F46-9223-BE6F521277B6}</id>
+			<comment/>
+			<position>
+				<first>297</first>
+				<second>454</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{516D65E1-37D5-784F-BCBB-F59CC0308581}</id>
+			<comment/>
+			<position>
+				<first>589</first>
+				<second>371</second>
+			</position>
+			<names>
+				<item>ViewVelocity</item>
+				<item>ViewBinormal</item>
+				<item>ViewNormal</item>
+				<item>ViewPosition</item>
+				<item>ViewTangent</item>
+				<item>WorldPosition</item>
+				<item>TexCoord0</item>
+				<item>TexCoord1</item>
+				<item>VertexColor</item>
+			</names>
 		</item>
 	</nodes>
 	<edges>
@@ -45,8 +51,19 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D596E4E4-1A78-4D80-C36B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

@@ -613,6 +613,14 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Resolve all bundles.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getBundleResolved();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to resolve bundles." << Endl;
+			return false;
+		}
+
 		// Freeze types, get typed permutation.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getTypePermutation();
 		if (!materialShaderGraph)

@@ -1,51 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{3BCA4AE4-E171-164F-8AE5-6787AA581FBE}</id>
-			<comment/>
-			<position>
-				<first>600</first>
-				<second>79</second>
-			</position>
-			<name>T_ViewNormal</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{4AA2503A-6162-A145-9515-5F920832B6B5}</id>
-			<comment/>
-			<position>
-				<first>600</first>
-				<second>119</second>
-			</position>
-			<name>T_ViewTangent</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{F957BA2B-D070-494A-B06E-A477CC726746}</id>
-			<comment/>
-			<position>
-				<first>600</first>
-				<second>159</second>
-			</position>
-			<name>T_ViewBinormal</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A50D3A5A-1226-A345-B3D4-BA9F763EADFF}</id>
 			<comment/>
 			<position>
-				<first>892</first>
-				<second>86</second>
+				<first>950</first>
+				<second>-150</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -53,8 +14,8 @@
 			<id>{1FA8FBF1-DB31-0D46-BF04-D33F2EC0453D}</id>
 			<comment/>
 			<position>
-				<first>892</first>
-				<second>125</second>
+				<first>950</first>
+				<second>-112</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
@@ -62,8 +23,8 @@
 			<id>{22A15FA0-6319-0247-87BB-AE1263F4D758}</id>
 			<comment/>
 			<position>
-				<first>892</first>
-				<second>164</second>
+				<first>950</first>
+				<second>-188</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -71,8 +32,8 @@
 			<id>{46898871-9F7C-D04A-BCA0-78B45F20637F}</id>
 			<comment/>
 			<position>
-				<first>610</first>
-				<second>39</second>
+				<first>385</first>
+				<second>-137</second>
 			</position>
 			<name>T_TexCoord</name>
 			<connectable>true</connectable>
@@ -80,37 +41,80 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{226C4179-7C2E-A04C-A2BB-7950667BDD4C}</id>
+			<comment/>
+			<position>
+				<first>385</first>
+				<second>-183</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{0A021E49-3C3E-794C-8A74-B96763E13C77}</id>
+			<comment/>
+			<position>
+				<first>650</first>
+				<second>-179</second>
+			</position>
+			<names>
+				<item>ViewVelocity</item>
+				<item>ViewBinormal</item>
+				<item>ViewNormal</item>
+				<item>ViewPosition</item>
+				<item>ViewTangent</item>
+				<item>WorldPosition</item>
+				<item>TexCoord0</item>
+				<item>TexCoord1</item>
+				<item>VertexColor</item>
+			</names>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

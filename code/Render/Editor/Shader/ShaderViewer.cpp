@@ -403,7 +403,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
+		log::error << L"Shader viewer failed; unable to resolve local variables." << Endl;
 		return;
 	}
 
@@ -416,7 +416,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtGlobal);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
+		log::error << L"Shader viewer failed; unable to resolve global variables." << Endl;
 		return;
 	}
 
@@ -424,7 +424,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getConnectedPermutation();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
+		log::error << L"Shader viewer failed; unable to resolve connected permutation." << Endl;
 		return;
 	}
 
@@ -432,7 +432,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getPlatformPermutation(L"Other");
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to create platform permutation." << Endl;
+		log::error << L"Shader viewer failed; unable to create platform permutation." << Endl;
 		return;
 	}
 
@@ -440,7 +440,15 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getRendererPermutation(rendererSignature);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to create renderer permutation." << Endl;
+		log::error << L"Shader viewer failed; unable to create renderer permutation." << Endl;
+		return;
+	}
+
+	// Resolve all bundles.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();
+	if (!shaderGraph)
+	{
+		log::error << L"Shader viewer failed; unable to resolve bundles." << Endl;
 		return;
 	}
 

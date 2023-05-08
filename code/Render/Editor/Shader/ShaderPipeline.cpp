@@ -298,6 +298,14 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+	// Resolve all bundles.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getBundleResolved();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve bundles." << Endl;
+		return false;
+	}
+
 	// Remove unused branches from shader graph.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
 	if (!shaderGraph)

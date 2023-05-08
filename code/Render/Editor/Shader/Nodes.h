@@ -93,6 +93,58 @@ private:
 	std::wstring m_parameterName;
 };
 
+/*! */
+class T_DLLCLASS BundleUnite : public Node
+{
+	T_RTTI_CLASS;
+
+public:
+	BundleUnite();
+
+	virtual int getInputPinCount() const override final;
+
+	virtual const InputPin* getInputPin(int index) const override final;
+
+	virtual int getOutputPinCount() const override final;
+
+	virtual const OutputPin* getOutputPin(int index) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	AlignedVector< std::wstring > m_names;
+	StaticVector< InputPin, 32 > m_inputPins;
+	OutputPin m_outputPin;
+
+	void updatePins();
+};
+
+/*! */
+class T_DLLCLASS BundleSplit : public Node
+{
+	T_RTTI_CLASS;
+
+public:
+	BundleSplit();
+
+	virtual int getInputPinCount() const override final;
+
+	virtual const InputPin* getInputPin(int index) const override final;
+
+	virtual int getOutputPinCount() const override final;
+
+	virtual const OutputPin* getOutputPin(int index) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	AlignedVector< std::wstring > m_names;
+	InputPin m_inputPin;
+	StaticVector< OutputPin, 32 > m_outputPins;
+
+	void updatePins();
+};
+
 /*! Clamp value to given range. */
 class T_DLLCLASS Clamp : public ImmutableNode
 {
