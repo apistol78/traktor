@@ -8,6 +8,7 @@
  */
 #include <algorithm>
 #include "Core/Serialization/AttributePrivate.h"
+#include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -379,7 +380,7 @@ void External::serialize(ISerializer& s)
 	s >> MemberPinArray< MemberOutputPin >(L"outputPins", this, m_outputPins);
 
 	if (s.getVersion() >= 1)
-		s >> MemberSmallMap< std::wstring, float >(L"values", m_values, AttributePrivate());
+		s >> MemberSmallMap< std::wstring, float >(L"values", m_values, AttributeReadOnly());
 }
 
 }
