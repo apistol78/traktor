@@ -240,20 +240,20 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
 			return false;
 
-		//// Check if image needs to be defined.
-		//auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
-		//if (existing != nullptr)
-		//{
-		//	auto existingImage = dynamic_type_cast< GlslImage* >(existing);
-		//	if (!existingImage)
-		//		return false;
-		//	existingImage->addStage(GlslResource::BsCompute);
-		//}
-		//else
-		//{
-		//	// Image do not exist; add new image resource.
-		//	cx.getLayout().add(new GlslImage(storageUniformNode->getParameterName(), GlslResource::BsCompute, glsl_from_parameter_type(storageUniformNode->getParameterType())));
-		//}
+		// Check if image needs to be defined.
+		auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+		if (existing != nullptr)
+		{
+			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
+			if (!existingImage)
+				return false;
+			existingImage->addStage(GlslResource::BsCompute);
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().addBindless(new GlslImage(storageUniformNode->getParameterName(), 1, GlslResource::BsCompute, glsl_from_parameter_type(storageUniformNode->getParameterType()), false));
+		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 		if (storageUniformNode->getParameterType() == ParameterType::Image2D)
@@ -262,6 +262,12 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			f << L"imageStore(__bindlessImages3D__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
 		else
 			f << L"imageStore(__bindlessImagesCube__[" << storageUniformNode->getParameterName() << L"], " << offset->cast(GlslType::Integer3) << L", " << in->cast(GlslType::Float4) << L");" << Endl;
+
+		// Image parameter; since resource index is passed to shader we define an integer uniform.
+		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
+		ub->addStage(getBindStage(cx));
+		if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+			return false;
 
 		// Define parameter in context.
 		cx.addParameter(
