@@ -103,19 +103,6 @@ Tag_NormalMap
 			<name>T_ViewBinormal</name>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{8FF5D60E-2D0A-2D42-9CA9-062489E65D5C}</id>
-			<comment/>
-			<position>
-				<first>154</first>
-				<second>-55</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{4DA840C9-83B7-1841-98DA-B02AB500EF47}</id>
 			<comment/>
 			<position>
@@ -145,6 +132,7 @@ Tag_NormalMap
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
+				<item>TexCoord</item>
 			</names>
 		</item>
 	</nodes>
@@ -175,23 +163,13 @@ Tag_NormalMap
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
 				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
@@ -201,7 +179,7 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
@@ -211,7 +189,7 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
@@ -221,7 +199,7 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
@@ -231,12 +209,22 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{D596E4E4-1A78-4D80-C66B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
 			</destination>
 		</item>
 	</edges>

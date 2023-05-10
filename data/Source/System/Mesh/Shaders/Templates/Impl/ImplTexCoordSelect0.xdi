@@ -5,8 +5,8 @@
 			<id>{DCC189A0-5F03-8A4F-9771-BDFF0CBA846D}</id>
 			<comment/>
 			<position>
-				<first>845</first>
-				<second>439</second>
+				<first>1103</first>
+				<second>436</second>
 			</position>
 			<name>T_TexCoord</name>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{48B9D210-F4D7-3F46-9223-BE6F521277B6}</id>
 			<comment/>
 			<position>
-				<first>297</first>
-				<second>454</second>
+				<first>173</first>
+				<second>433</second>
 			</position>
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
@@ -27,8 +27,8 @@
 			<id>{516D65E1-37D5-784F-BCBB-F59CC0308581}</id>
 			<comment/>
 			<position>
-				<first>589</first>
-				<second>371</second>
+				<first>484</first>
+				<second>502</second>
 			</position>
 			<names>
 				<item>ViewVelocity</item>
@@ -40,6 +40,21 @@
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
+			</names>
+		</item>
+		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
+			<id>{455E9F6C-AAA6-524B-89C8-754D8C29F0E7}</id>
+			<comment>
+			<![CDATA[
+Append selected texcoord channel.
+			]]>
+			</comment>
+			<position>
+				<first>784</first>
+				<second>453</second>
+			</position>
+			<names>
+				<item>TexCoord</item>
 			</names>
 		</item>
 	</nodes>
@@ -56,8 +71,28 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{FFD72AB8-3ECF-4EBE-AF54-041F18540D4D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{D596E4E4-1A78-4D80-C36B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{EEB495BD-DE7F-4DE8-953A-7E9B220B927F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

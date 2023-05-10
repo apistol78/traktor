@@ -102,41 +102,39 @@ Tag_LightMapDiffuse
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{0E119163-35C8-8D44-8D21-89A88F1BBD83}</id>
-			<comment/>
-			<position>
-				<first>-40</first>
-				<second>85</second>
-			</position>
-			<name>T_TexCoordLightMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{0351B464-E45D-8C4D-BD15-C777DCFB3BCA}</id>
-			<comment/>
-			<position>
-				<first>-50</first>
-				<second>128</second>
-			</position>
-			<name>T_TexCoordNormalMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{42AEDE1B-9345-E949-9910-F440004F7766}</id>
 			<comment/>
 			<position>
 				<first>10</first>
-				<second>42</second>
+				<second>64</second>
 			</position>
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{2A37A270-60BF-6C4A-B37C-29BF5A471878}</id>
+			<comment/>
+			<position>
+				<first>250</first>
+				<second>65</second>
+			</position>
+			<names>
+				<item>TexCoord</item>
+			</names>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2FBACD29-D607-3D4A-A4C7-64DE1DAE4F3C}</id>
+			<comment/>
+			<position>
+				<first>-54</first>
+				<second>108</second>
+			</position>
+			<name>T_AttributesNormalMap</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
@@ -228,14 +226,24 @@ Tag_LightMapDiffuse
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>

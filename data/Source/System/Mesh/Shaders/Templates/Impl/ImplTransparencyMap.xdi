@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Texture" version="1,traktor.render.Node:1">
 			<id>{FA0B2A22-A1D1-114B-A179-CED497DA546A}</id>
@@ -51,17 +51,28 @@ Tag_TransparencyMap
 			</position>
 			<name>T_Transparency</name>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{EFED6E54-458B-E44C-9DD7-2F7FEE4E5FFE}</id>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{6071B3DF-D813-6943-9FB3-212038A24354}</id>
 			<comment/>
 			<position>
-				<first>258</first>
-				<second>232</second>
+				<first>324</first>
+				<second>217</second>
 			</position>
-			<name>T_TexCoord</name>
+			<names>
+				<item>TexCoord</item>
+			</names>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7405FC22-4579-5C44-B4F7-E3360C7FCE36}</id>
+			<comment/>
+			<position>
+				<first>48</first>
+				<second>226</second>
+			</position>
+			<name>T_Attributes</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -99,12 +110,23 @@ Tag_TransparencyMap
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups/>
 </object>

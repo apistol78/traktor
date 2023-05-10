@@ -6,35 +6,9 @@
 			<comment/>
 			<position>
 				<first>611</first>
-				<second>187</second>
+				<second>165</second>
 			</position>
 			<name>T_Irradiance</name>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{096DE230-9FEE-5445-9C60-8F56D37BAE54}</id>
-			<comment/>
-			<position>
-				<first>174</first>
-				<second>176</second>
-			</position>
-			<name>T_TexCoordLightMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{A0198F93-1A56-AC46-AE22-164AB1B05FA5}</id>
-			<comment/>
-			<position>
-				<first>164</first>
-				<second>223</second>
-			</position>
-			<name>T_TexCoordNormalMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{827D4160-D224-6241-80AF-90893915790B}</id>
@@ -46,6 +20,19 @@
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F5478D40-453C-F04D-B34E-1117C416F128}</id>
+			<comment/>
+			<position>
+				<first>168</first>
+				<second>173</second>
+			</position>
+			<name>T_AttributesNormalMap</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>

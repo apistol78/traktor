@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EAE0EEE3-AF24-2741-B4F5-54BB986B9DD3}</id>
@@ -30,10 +30,10 @@ Tag_Emissive
 				<first>488</first>
 				<second>424</second>
 			</position>
-			<name>T_TexCoord</name>
+			<name>T_Attributes</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
@@ -49,4 +49,5 @@ Tag_Emissive
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
