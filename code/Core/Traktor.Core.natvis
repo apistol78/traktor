@@ -47,4 +47,7 @@
 	<Type Name="traktor::Quaternion">
 		<DisplayString>{e.m_data.m128_f32[0]}, {e.m_data.m128_f32[1]}, {e.m_data.m128_f32[2]}, {e.m_data.m128_f32[3]}</DisplayString>
 	</Type>
+	<Type Name="traktor::Guid">
+		<DisplayString>{{{m_data[0],nvoXb}{m_data[1],nvoXb}{m_data[2],nvoXb}{m_data[3],nvoXb}-{m_data[4],nvoXb}{m_data[5],nvoXb}-{m_data[6],nvoXb}{m_data[7],nvoXb}-{m_data[8],nvoXb}{m_data[9],nvoXb}-{m_data[10],nvoXb}{m_data[11],nvoXb}{m_data[12],nvoXb}{m_data[13],nvoXb}{m_data[14],nvoXb}{m_data[15],nvoXb}}}</DisplayString>
+	</Type>
 </AutoVisualizer>
