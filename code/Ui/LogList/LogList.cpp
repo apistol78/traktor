@@ -83,11 +83,12 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 			Guid id(e.text.substr(j));
 			if (id.isValid())
 			{
+				e.symbolId = id;
+
 				std::wstring symbol;
 				if (m_lookup->lookupLogSymbol(id, symbol))
 				{
 					e.text = e.text.substr(0, j) + symbol + e.text.substr(j + 38);
-					e.symbolId = id;
 					continue;
 				}
 			}
