@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{9A56C56D-030D-5746-A8C1-1BBB418D0C59}</id>
@@ -23,19 +23,6 @@ Tag_Specular
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{93088A3B-EC85-C842-AE60-52205D2FDB87}</id>
-			<comment/>
-			<position>
-				<first>225</first>
-				<second>489</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A3854773-894F-B94F-8BC2-74AF668BAAEC}</id>
 			<comment/>
@@ -47,11 +34,24 @@ Tag_Specular
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{6D0CCCA7-1A3E-5141-B7E9-B78AB5105627}</id>
+			<comment/>
+			<position>
+				<first>238</first>
+				<second>392</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -65,9 +65,10 @@ Tag_Specular
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

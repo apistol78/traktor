@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C024E223-E3B4-E649-A8CE-A9512F4435B7}</id>
@@ -10,19 +10,6 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{4ED91E46-072F-2C4A-BDD6-AE170BFFC68C}</id>
-			<comment/>
-			<position>
-				<first>226</first>
-				<second>330</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{0CECD540-DED6-5845-A81A-8A2CA3F1BB96}</id>
 			<comment/>
@@ -32,6 +19,19 @@
 			</position>
 			<name>T_Metalness</name>
 		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{AD55FAE6-8994-AB44-AB09-F9FA6923D2B6}</id>
+			<comment/>
+			<position>
+				<first>230</first>
+				<second>331</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -40,9 +40,10 @@
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

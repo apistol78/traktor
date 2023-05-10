@@ -32,23 +32,10 @@
 			<id>{CADD0680-B31A-D140-A748-545976FB3B71}</id>
 			<comment/>
 			<position>
-				<first>404</first>
-				<second>254</second>
+				<first>433</first>
+				<second>436</second>
 			</position>
 			<value>0</value>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{2CF107FE-DF90-2745-B231-32F6A03CA23E}</id>
-			<comment/>
-			<position>
-				<first>197</first>
-				<second>473</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{FFBCA6B0-C312-1949-B790-1B5011349B60}</id>
