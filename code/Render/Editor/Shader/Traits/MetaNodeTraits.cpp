@@ -95,6 +95,8 @@ PinType MetaNodeTraits::getOutputPinType(
 				inputPinTypes[i]
 			);
 	}
+	else if (is_a< BundleUnite >(node))
+		return PinType::Bundle;
 	else if (is_a< Type >(node))
 	{
 		switch (inputPinTypes[0])
