@@ -113,6 +113,7 @@ private:
 	Ref< ui::GridView > m_variablesGrid;
 	Ref< ui::GridView > m_uniformsGrid;
 	Ref< ui::GridView > m_portsGrid;
+	Ref< ui::GridView > m_nodeCountGrid;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;

@@ -80,6 +80,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	Guid m_shaderGraphId;
 };
 
 	}

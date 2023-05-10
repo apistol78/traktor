@@ -19,13 +19,14 @@
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
+
+#define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
 
 struct CopyVisitor
 {
@@ -90,7 +91,7 @@ bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimizer, Object)
 
@@ -117,6 +118,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches(bool keepExternalA
 	CopyVisitor visitor;
 	visitor.m_shaderGraph = new ShaderGraph();
 	GraphTraverse(m_shaderGraph, roots).preorder(visitor);
+
+	T_VALIDATE_SHADERGRAPH(visitor.m_shaderGraph);
 	return visitor.m_shaderGraph;
 }
 
@@ -130,6 +133,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	// Keep reference to array as we assume it will shrink
 	// when we remove nodes.
@@ -268,6 +272,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 	}
 
 	T_DEBUG(L"Merged " << mergedNodes << L" node(s)");
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
 	return shaderGraph;
 }
 
@@ -279,6 +284,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
 
@@ -288,6 +294,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	for (auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
 		insertInterpolators(visited, shaderGraph, pixelOutputNode, orderEvaluator);
 
+	T_VALIDATE_SHADERGRAPH(shaderGraph);
 	return shaderGraph;
 }
 
@@ -387,5 +394,4 @@ void ShaderGraphOptimizer::insertInterpolators(
 	}
 }
 
-	}
 }

@@ -394,6 +394,18 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	tab->addPage(tabPagePorts);
 
+	// Node count
+	Ref< ui::TabPage > tabPageNodeCount = new ui::TabPage();
+	tabPageNodeCount->create(tab, i18n::Text(L"SHADERGRAPH_NODE_COUNTS"), new ui::FloodLayout());
+
+	m_nodeCountGrid = new ui::GridView();
+	m_nodeCountGrid->create(tabPageNodeCount, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
+	m_nodeCountGrid->setSortColumn(0, false, ui::GridView::SmLexical);
+	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_TYPE"), ui::dpi96(140), false));
+	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_COUNT"), ui::dpi96(80), false));
+
+	tab->addPage(tabPageNodeCount);
+
 	tab->setActivePage(tabPageVariables);
 
 	// Build popup menu.
@@ -939,6 +951,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		const std::wstring platformSignature = m_toolPlatform->getSelectedItem();
+
+		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches(true);
+		T_ASSERT(m_shaderGraph);
+
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getPlatformPermutation(platformSignature);
 		T_ASSERT(m_shaderGraph);
 
@@ -987,22 +1003,44 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ShaderGraph.Editor.FindInDatabase")
 	{
 		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
-		if (nodes.empty())
+		if (nodes.size() != 1)
 			return false;
 
-		for (auto node : nodes)
+		if (auto selectedExternal = nodes[0]->getData< External >(L"SHADERNODE"))
 		{
-			if (auto selectedExternal = node->getData< External >(L"SHADERNODE"))
+			Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
+			if (fragmentInstance)
+				m_editor->highlightInstance(fragmentInstance);
+		}
+		else if (auto selectedTexture = nodes[0]->getData< Texture >(L"SHADERNODE"))
+		{
+			Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
+			if (textureInstance)
+				m_editor->highlightInstance(textureInstance);
+		}
+		else if (auto selectedNode = nodes[0]->getData< Node >(L"SHADERNODE"))
+		{
+			const Guid selectedNodeId = selectedNode->getId();
+			if (selectedNodeId.isNotNull())
 			{
-				Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
-				if (fragmentInstance)
-					m_editor->highlightInstance(fragmentInstance);
-			}
-			else if (auto selectedTexture = node->getData< Texture >(L"SHADERNODE"))
-			{
-				Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
-				if (textureInstance)
-					m_editor->highlightInstance(textureInstance);
+				RefArray< db::Instance > shaderGraphInstances;
+				db::recursiveFindChildInstances(
+					m_editor->getSourceDatabase()->getRootGroup(),
+					db::FindInstanceByType(type_of< ShaderGraph >()),
+					shaderGraphInstances
+				);
+				for (auto shaderGraphInstance : shaderGraphInstances)
+				{
+					auto shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
+					if (!shaderGraph)
+						continue;
+
+					for (auto node : shaderGraph->getNodes())
+					{
+						if (node->getId() == selectedNodeId)
+							log::info << L"Found node in " << shaderGraphInstance->getGuid().format() << Endl;
+					}
+				}
 			}
 		}
 	}
@@ -1220,7 +1258,7 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Extract techniques.
 	m_toolTechniques->removeAll();	
-	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
+	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid(), false).getNames())
 		m_toolTechniques->add(technique);
 
 	// Update variables grid.
@@ -1314,6 +1352,21 @@ void ShaderGraphEditorPage::updateGraph()
 			row->add(new ui::GridItem(L"Output"));
 			m_portsGrid->addRow(row);
 		}
+	}
+
+	// Update node count grid.
+	m_nodeCountGrid->removeAllRows();
+
+	SmallMap< const TypeInfo*, int32_t > nodeCounts;
+	for (auto node : m_shaderGraph->getNodes())
+		nodeCounts[&type_of(node)]++;
+
+	for (const auto& it : nodeCounts)
+	{
+		Ref< ui::GridRow > row = new ui::GridRow();
+		row->add(new ui::GridItem(it.first->getName()));
+		row->add(new ui::GridItem(str(L"%d", it.second)));
+		m_nodeCountGrid->addRow(row);
 	}
 
 	ShaderGraphValidator validator(m_shaderGraph);

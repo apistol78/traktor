@@ -420,6 +420,14 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		return;
 	}
 
+	// Resolve all bundles.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();
+	if (!shaderGraph)
+	{
+		log::error << L"Shader viewer failed; unable to resolve bundles." << Endl;
+		return;
+	}
+
 	// Get connected permutation.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getConnectedPermutation();
 	if (!shaderGraph)
@@ -444,20 +452,12 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 		return;
 	}
 
-	// Resolve all bundles.
-	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();
-	if (!shaderGraph)
-	{
-		log::error << L"Shader viewer failed; unable to resolve bundles." << Endl;
-		return;
-	}
-
 	// Remove unused branches from shader graph.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
 	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
-	ShaderGraphTechniques techniques(shaderGraph, Guid());
+	ShaderGraphTechniques techniques(shaderGraph, Guid(), false);
 	std::set< std::wstring > techniqueNames = techniques.getNames();
 	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
 	{
@@ -534,8 +534,8 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 					T_ASSERT(textureNodeOutput);
 
-					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 					programGraph->addNode(textureUniform);
+					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
 				// Finally ready to compile program graph.

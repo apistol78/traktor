@@ -238,6 +238,18 @@
 			<second>No dependency tracker, unable to list referees.</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_TYPE</first>
+			<second>Type</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_COUNT</first>
+			<second>Count</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_NODE_COUNTS</first>
+			<second>Node counts</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_ABS</first>
 			<second>Abs</second>
 		</item>

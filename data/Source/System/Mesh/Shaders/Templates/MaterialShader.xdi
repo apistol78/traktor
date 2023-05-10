@@ -34,7 +34,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>748</second>
+				<second>745</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
 			<inputPins>
@@ -69,8 +69,8 @@
 			<id>{9855CB64-63DB-D04E-87B5-6274094F5663}</id>
 			<comment/>
 			<position>
-				<first>-861</first>
-				<second>203</second>
+				<first>-836</first>
+				<second>345</second>
 			</position>
 			<fragmentGuid>{AEBE83FB-68D4-9D45-A672-0A8487A197CD}</fragmentGuid>
 			<inputPins>
@@ -93,7 +93,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>58</second>
+				<second>41</second>
 			</position>
 			<fragmentGuid>{1E35F0A7-23A9-EA49-A518-125A77BAD564}</fragmentGuid>
 			<inputPins>
@@ -116,7 +116,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>641</second>
+				<second>633</second>
 			</position>
 			<fragmentGuid>{052265E6-233C-754C-A297-9369803ADB88}</fragmentGuid>
 			<inputPins>
@@ -138,8 +138,8 @@
 			<id>{8A603EBC-4BAF-0F4B-B571-9DDC6796C4BE}</id>
 			<comment/>
 			<position>
-				<first>332</first>
-				<second>165</second>
+				<first>277</first>
+				<second>153</second>
 			</position>
 			<fragmentGuid>{2449B257-5B2A-5242-86F9-32105E1F1771}</fragmentGuid>
 			<inputPins>
@@ -171,8 +171,8 @@
 			<id>{C701AB70-A758-0F47-8EE8-DBD9C4CD89F3}</id>
 			<comment/>
 			<position>
-				<first>996</first>
-				<second>156</second>
+				<first>1026</first>
+				<second>284</second>
 			</position>
 			<fragmentGuid>{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}</fragmentGuid>
 			<inputPins>
@@ -250,7 +250,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>427</second>
+				<second>409</second>
 			</position>
 			<fragmentGuid>{709A171A-6050-1249-AAA7-5AAE428B956C}</fragmentGuid>
 			<inputPins>
@@ -273,7 +273,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>320</second>
+				<second>297</second>
 			</position>
 			<fragmentGuid>{43E7FEE9-043B-A242-B031-BC274995A3A8}</fragmentGuid>
 			<inputPins>
@@ -296,7 +296,7 @@
 			<comment/>
 			<position>
 				<first>332</first>
-				<second>534</second>
+				<second>521</second>
 			</position>
 			<fragmentGuid>{78C32C63-EE8D-AB4C-B2CF-E3FF242980DA}</fragmentGuid>
 			<inputPins>
@@ -350,7 +350,7 @@ Tag_EmissiveTexCoord
 			</comment>
 			<position>
 				<first>-72</first>
-				<second>52</second>
+				<second>64</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -377,7 +377,7 @@ Tag_LightmapTexCoord
 			</comment>
 			<position>
 				<first>-72</first>
-				<second>150</second>
+				<second>177</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -404,7 +404,7 @@ Tag_MetalnessTexCoord
 			</comment>
 			<position>
 				<first>-72</first>
-				<second>284</second>
+				<second>290</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -431,7 +431,7 @@ Tag_RoughnessTexCoord
 			</comment>
 			<position>
 				<first>-72</first>
-				<second>400</second>
+				<second>403</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -485,7 +485,7 @@ Tag_TransparencyTexCoord
 			</comment>
 			<position>
 				<first>-72</first>
-				<second>632</second>
+				<second>629</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -511,8 +511,8 @@ Tag_NormalTexCoord
 			]]>
 			</comment>
 			<position>
-				<first>-76</first>
-				<second>748</second>
+				<first>-72</first>
+				<second>742</second>
 			</position>
 			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
 			<inputPins>
@@ -529,6 +529,57 @@ Tag_NormalTexCoord
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{88B90375-2E4D-0547-9F6E-AC03374790E9}</id>
+			<comment>
+			<![CDATA[
+Setup global variables required by material shaders.
+			]]>
+			</comment>
+			<position>
+				<first>321</first>
+				<second>960</second>
+			</position>
+			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+					<name>ViewNormal</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
+					<name>ViewVelocity</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{B6BD0D74-400F-E946-9FDE-36713D82BA73}</id>
+			<comment/>
+			<position>
+				<first>43</first>
+				<second>951</second>
+			</position>
+			<names>
+				<item>ViewVelocity</item>
+				<item>ViewBinormal</item>
+				<item>ViewNormal</item>
+				<item>ViewPosition</item>
+				<item>ViewTangent</item>
+				<item>WorldPosition</item>
+				<item>TexCoord0</item>
+				<item>TexCoord1</item>
+				<item>VertexColor</item>
+			</names>
 		</item>
 	</nodes>
 	<edges>
@@ -810,6 +861,46 @@ Tag_NormalTexCoord
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{FFBCA6B0-C312-1949-B790-1B5011349B60}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{31857D74-FC58-274B-943B-ABD358A3E529}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{D596E4E4-1A78-4D80-C06B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
 			</destination>
 		</item>
 	</edges>

@@ -86,9 +86,21 @@ void Graph::removeAll()
 
 size_t Graph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const
 {
+	T_FATAL_ASSERT(outNodes.empty());
 	for (auto node : m_nodes)
 	{
 		if (is_type_of(nodeType, type_of(node)))
+			outNodes.push_back(node);
+	}
+	return outNodes.size();
+}
+
+size_t Graph::findNodesOf(const TypeInfo& nodeType, const std::function< bool(const Node*) >& predicate, RefArray< Node >& outNodes) const
+{
+	T_FATAL_ASSERT(outNodes.empty());
+	for (auto node : m_nodes)
+	{
+		if (is_type_of(nodeType, type_of(node)) && predicate(node))
 			outNodes.push_back(node);
 	}
 	return outNodes.size();
@@ -136,19 +148,27 @@ uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 
 void Graph::detach(const Node* node)
 {
-	const int32_t inputPinCount = node->getInputPinCount();
-	for (int32_t i = 0; i < inputPinCount; ++i)
+	T_FATAL_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), node) != m_nodes.end());
+
+	int32_t removed = 0;
+	for (;;)
 	{
-		Edge* edge = findEdge(node->getInputPin(i));
-		if (edge)
-			removeEdge(edge);
+		auto it = std::find_if(m_edges.begin(), m_edges.end(), [&](Edge* edge) {
+			return edge->getSource()->getNode() == node || edge->getDestination()->getNode() == node;
+		});
+		if (it != m_edges.end())
+		{
+			m_edges.erase(it);
+			removed++;
+		}
+		else
+			break;
 	}
 
-	const int32_t outputPinCount = node->getOutputPinCount();
-	for (int32_t i = 0; i < outputPinCount; ++i)
+	if (removed > 0)
 	{
-		for (auto edge : findEdges(node->getOutputPin(i)))
-			removeEdge(edge);
+		updateInputPinToEdge();
+		updateOutputPinDestinationCount();
 	}
 }
 
@@ -164,6 +184,7 @@ void Graph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
 	// Create new edges.
 	if (newOutputPin)
 	{
+		T_FATAL_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), newOutputPin->getNode()) != m_nodes.end());
 		for (auto edge : outputEdges)
 			addEdge(new Edge(newOutputPin, edge->getDestination()));
 	}
@@ -173,6 +194,9 @@ void Graph::replace(Node* oldNode, Node* newNode)
 {
 	// Ensure node isn't deleted until possibly the very end of this method.
 	T_ANONYMOUS_VAR(Ref< Node >)(oldNode);
+
+	T_FATAL_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), oldNode) != m_nodes.end());
+	T_FATAL_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), newNode) == m_nodes.end());
 
 	// Replace node.
 	m_nodes.remove(oldNode);
@@ -230,7 +254,7 @@ void Graph::serialize(ISerializer& s)
 
 void Graph::updateInputPinToEdge()
 {
-	m_inputPinToEdge.clear();
+	m_inputPinToEdge.reset();
 	m_inputPinToEdge.reserve(m_edges.size());
 	for (auto edge : m_edges)
 		m_inputPinToEdge[edge->getDestination()] = edge;
@@ -238,7 +262,7 @@ void Graph::updateInputPinToEdge()
 
 void Graph::updateOutputPinDestinationCount()
 {
-	m_outputPinDestinationCount.clear();
+	m_outputPinDestinationCount.reset();
 	m_outputPinDestinationCount.reserve(m_edges.size());
 	for (auto edge : m_edges)
 		m_outputPinDestinationCount[edge->getSource()]++;

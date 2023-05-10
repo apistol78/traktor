@@ -139,14 +139,14 @@ class NonOptionalInputs : public Specification
 public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (auto activeNode : activeNodes)
 		{
-			int inputPinCount = (*i)->getInputPinCount();
+			const int inputPinCount = activeNode->getInputPinCount();
 			for (int j = 0; j < inputPinCount; ++j)
 			{
-				const InputPin* inputPin = (*i)->getInputPin(j);
+				const InputPin* inputPin = activeNode->getInputPin(j);
 				if (!inputPin->isOptional() && !shaderGraph->findSourcePin(inputPin))
-					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" not connected", *i);
+					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" of " + activeNode->getId().format() + L" (" + type_name(activeNode) + L") not connected.", activeNode);
 			}
 		}
 	}
@@ -384,6 +384,8 @@ ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
 		return SgtFragment;
 	if (!m_shaderGraph->findNodesOf< OutputPort >().empty())
 		return SgtFragment;
+	if (!m_shaderGraph->findNodesOf< Branch >().empty())
+		return SgtFragment;
 
 	return SgtProgram;
 }
@@ -431,10 +433,12 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 bool ShaderGraphValidator::validateIntegrity() const
 {
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+
 	for (auto edge : m_shaderGraph->getEdges())
 	{
 		const OutputPin* sourcePin = edge->getSource();
 		const InputPin* destinationPin = edge->getDestination();
+
 		if (!sourcePin || !destinationPin)
 		{
 			log::error << L"Invalid edge found in shader graph (" << m_shaderGraphId.format() << L")." << Endl;
@@ -450,12 +454,49 @@ bool ShaderGraphValidator::validateIntegrity() const
 			log::error << L"Source node " << sourcePin->getNode()->getId().format() << L" (" << type_name(sourcePin->getNode()) << L") of edge (pin \"" << sourcePin->getName() << L"\") not part of shader graph (" << m_shaderGraphId.format() << L")." << Endl;
 			return false;
 		}
+
 		if (std::find(nodes.begin(), nodes.end(), destinationPin->getNode()) == nodes.end())
 		{
 			log::error << L"Destination node " << destinationPin->getNode()->getId().format() << L" (" << type_name(destinationPin->getNode()) << L") of edge (pin \"" << destinationPin->getName() << L"\") not part of shader graph (" << m_shaderGraphId.format() << L")." << Endl;
 			return false;
 		}
+
+		if (sourcePin->getNode() == destinationPin->getNode())
+		{
+			log::error << L"Circular edge; both pins reference same node." << Endl;
+			return false;
+		}
 	}
+
+	for (auto node : nodes)
+	{
+		SmallSet< Guid > ids;
+
+		const int inputPinCount = node->getInputPinCount();
+		for (int i = 0; i < inputPinCount; ++i)
+		{
+			const Guid& id = node->getInputPin(i)->getId();
+			if (ids.find(id) != ids.end())
+			{
+				log::error << L"Node " << node->getId().format() << L" (" << type_name(node) << L") contain invalid pins; duplicated ids." << Endl;
+				return false;
+			}
+			ids.insert(id);
+		}
+
+		const int outputPinCount = node->getOutputPinCount();
+		for (int i = 0; i < outputPinCount; ++i)
+		{
+			const Guid& id = node->getOutputPin(i)->getId();
+			if (ids.find(id) != ids.end())
+			{
+				log::error << L"Node " << node->getId().format() << L" (" << type_name(node) << L") contain invalid pins; duplicated ids." << Endl;
+				return false;
+			}
+			ids.insert(id);
+		}
+	}
+
 	return true;
 }
 
