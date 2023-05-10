@@ -586,6 +586,14 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Cleanup unused branches.
+		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
 		// Get connected permutation.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConnectedPermutation();
 		if (!materialShaderGraph)

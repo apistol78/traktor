@@ -22,6 +22,8 @@ namespace traktor::render
 	namespace
 	{
 
+#define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
+
 const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", L"{581D486E-5A7F-46CE-BB38-251008DCF746}", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output", L"{255B6D44-455E-46D2-9865-E1764FBF20BF}" }, { 0 } };
 
@@ -30,13 +32,17 @@ class PortConnector : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	PortConnector()
+	explicit PortConnector(const Guid& fromFragmentId)
 	:	ImmutableNode(c_PortConnector_i, c_PortConnector_o)
+	,	m_fromFragmentId(fromFragmentId)
 	{
 	}
+
+private:
+	Guid m_fromFragmentId;
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.PortConnector", 0, PortConnector, ImmutableNode)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker.PortConnector", PortConnector, ImmutableNode)
 
 const InputPin* findExternalInputPin(const External* externalNode, const InputPort* fragmentInputPort)
 {
@@ -78,7 +84,7 @@ FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid) const
 {
-	RefArray< External > externalNodes = shaderGraph->findNodesOf< External >();
+	const RefArray< External > externalNodes = shaderGraph->findNodesOf< External >();
 	return resolve(shaderGraph, externalNodes, fullResolve, optionalShaderGraphGuid);
 }
 
@@ -94,6 +100,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		shaderGraph->getNodes(),
 		shaderGraph->getEdges()
 	);
+	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 
 	for (auto externalNode : externalNodes)
 	{
@@ -103,9 +110,10 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(fragmentId);
 		if (!fragmentShaderGraph)
 		{
-			log::error << errorPrefix << L"unable to read fragment \"" << fragmentId.format() << L"\"" << Endl;
+			log::error << errorPrefix << L"unable to read fragment \"" << fragmentId.format() << L"\"." << Endl;
 			return nullptr;
 		}
+		T_VALIDATE_SHADERGRAPH(fragmentShaderGraph);
 
 		// Resolve local variables of each read fragment.
 		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved(ShaderGraphStatic::VrtLocal);
@@ -143,7 +151,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 					const OutputPin* externalSourcePin = mutableShaderGraph->findSourcePin(externalInputPin);
 					if (externalInputPin && externalSourcePin)
 					{
-						Ref< PortConnector > connector = new PortConnector();
+						Ref< PortConnector > connector = new PortConnector(fragmentId);
 						mutableShaderGraph->addNode(connector);
 						mutableShaderGraph->addEdge(new Edge(externalSourcePin, connector->getInputPin(0)));
 						sourcePin = connector->getOutputPin(0);
@@ -199,7 +207,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 
 				if (externalOutputPin && !externalDestinationEdges.empty())
 				{
-					Ref< PortConnector > connector = new PortConnector();
+					Ref< PortConnector > connector = new PortConnector(fragmentId);
 					mutableShaderGraph->addNode(connector);
 					for (auto externalDestinationEdge : externalDestinationEdges)
 					{
@@ -232,6 +240,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		// Remove external node.
 		mutableShaderGraph->detach(externalNode);
 		mutableShaderGraph->removeNode(externalNode);
+		T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 	}
 
 	// Re-wire edges which has been temporarily connected to a "port connection" node.
@@ -246,18 +255,22 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		}
 		
 		AlignedVector< const InputPin* > destinationPins = mutableShaderGraph->findDestinationPins(connector->getOutputPin(0));
-
-		mutableShaderGraph->detach(connector);
-		mutableShaderGraph->removeNode(connector);
-
 		for (auto destinationPin : destinationPins)
 		{
+			T_FATAL_ASSERT(destinationPin->getNode() != sourcePin->getNode());
 			mutableShaderGraph->addEdge(new Edge(
 				sourcePin,
 				destinationPin
 			));
 		}
+
+		mutableShaderGraph->detach(connector);
+		mutableShaderGraph->removeNode(connector);
 	}
+
+	// Create a unique clone of the resolved shader before returning.
+	mutableShaderGraph = DeepClone(mutableShaderGraph).create< ShaderGraph >();
+	T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 
 	return mutableShaderGraph;
 }

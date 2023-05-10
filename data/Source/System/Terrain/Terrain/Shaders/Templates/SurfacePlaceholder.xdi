@@ -1,84 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{524CBBA2-C160-CB43-ADE9-BE7299EFF622}</id>
-			<comment/>
-			<position>
-				<first>503</first>
-				<second>445</second>
-			</position>
-			<name>T_Normal</name>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{10231020-AD85-D648-98B2-E9B028704052}</id>
 			<comment/>
 			<position>
-				<first>503</first>
-				<second>412</second>
+				<first>960</first>
+				<second>353</second>
 			</position>
-			<name>T_Color</name>
+			<name>T_SurfaceAttributes</name>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{5E3C7A16-8233-0946-9F8E-656A2F545AD8}</id>
 			<comment/>
 			<position>
-				<first>54</first>
-				<second>380</second>
+				<first>17</first>
+				<second>307</second>
 			</position>
-			<name>T_PatchTexCoord</name>
+			<name>T_TerrainAttributes</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{0F740AA1-AF96-F141-B047-9F2E0FFAA003}</id>
-			<comment/>
-			<position>
-				<first>84</first>
-				<second>450</second>
-			</position>
-			<name>T_Normal</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{8230C4D0-206C-CD4A-9A60-1B39BCCA921F}</id>
-			<comment/>
-			<position>
-				<first>54</first>
-				<second>415</second>
-			</position>
-			<name>T_WorldTexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{5B0F7E0B-4BD2-5F49-80CB-173E05D74159}</id>
-			<comment/>
-			<position>
-				<first>104</first>
-				<second>485</second>
-			</position>
-			<name>T_Height</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{5E6ACBAB-A90A-B443-8DDA-98440B5136BA}</id>
 			<comment/>
 			<position>
-				<first>302</first>
-				<second>446</second>
+				<first>417</first>
+				<second>444</second>
 			</position>
-			<value>0</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.Comment" version="traktor.render.Node:1">
 			<id>{FA9DB504-8F40-ED4A-97F8-C4B53F5BA20C}</id>
@@ -92,31 +44,44 @@ This is the contract of a terrain surface shader.
 				<second>214</second>
 			</position>
 		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{C20462C0-7BDF-4542-A9AE-B885F31015EE}</id>
+		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
+			<id>{AFC487AA-51A8-1541-A092-439B3994E4F9}</id>
 			<comment/>
 			<position>
-				<first>503</first>
-				<second>478</second>
+				<first>669</first>
+				<second>323</second>
 			</position>
-			<name>T_Roughness</name>
+			<names>
+				<item>Color</item>
+				<item>Normal</item>
+				<item>Roughness</item>
+			</names>
+		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{BE7A4227-2A56-1E43-9537-037443C769F3}</id>
+			<comment/>
+			<position>
+				<first>387</first>
+				<second>376</second>
+			</position>
+			<value>0, 1, 0, 0</value>
+		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{39FA1A2C-AF38-5847-BF91-4912C355351A}</id>
+			<comment/>
+			<position>
+				<first>337</first>
+				<second>308</second>
+			</position>
+			<color>0, 0.564706, 0, 1</color>
+			<linear>false</linear>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{EEB495BD-DE7F-4DE8-973A-7E9B220B927F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -125,13 +90,34 @@ This is the contract of a terrain surface shader.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{EEB495BD-DE7F-4DE8-953A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{EEB495BD-DE7F-4DE8-963A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

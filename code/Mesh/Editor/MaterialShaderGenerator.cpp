@@ -441,11 +441,9 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 	}
 
-#if defined(_DEBUG)
 	// Validate integrity and then return complete mesh material shader.
 	if (!render::ShaderGraphValidator(materialShaderGraph, templateGuid).validateIntegrity())
 		return nullptr;
-#endif
 
 	return materialShaderGraph;
 }

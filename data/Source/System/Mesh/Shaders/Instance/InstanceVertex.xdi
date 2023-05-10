@@ -422,38 +422,6 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{E202275F-A519-AB40-803B-3CD8ECD65550}</id>
-			<comment>
-			<![CDATA[
-Setup global variables required by material shaders.
-			]]>
-			</comment>
-			<position>
-				<first>1651</first>
-				<second>554</second>
-			</position>
-			<fragmentGuid>{E8573411-AD4D-EA43-9593-5433C6598063}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-					<name>ViewNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
-					<name>ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
-					<name>ViewVelocity</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values/>
-		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{69F2AB9C-90B1-49F6-ACD0-849232A805AD}</id>
 			<comment/>
@@ -507,8 +475,8 @@ Setup global variables required by material shaders.
 			<id>{A2702CCD-A40C-7B40-AEFB-AEDD9AD70506}</id>
 			<comment/>
 			<position>
-				<first>1530</first>
-				<second>626</second>
+				<first>1410</first>
+				<second>299</second>
 			</position>
 		</item>
 	</nodes>
@@ -725,41 +693,21 @@ Setup global variables required by material shaders.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{2516E79C-CCF8-3F42-9481-D5ED77016424}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{0BCBD228-70F4-984B-B71D-34D4007143D4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
 			</destination>
 		</item>
@@ -769,13 +717,13 @@ Setup global variables required by material shaders.
 				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
 			</source>
 			<destination>
@@ -786,20 +734,10 @@ Setup global variables required by material shaders.
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[20]"/>
-				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
 				<id>{BAB1B9B3-E3FB-B745-9F56-B0EF26BAF2C6}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-953A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -809,7 +747,7 @@ Setup global variables required by material shaders.
 				<id>{64FF9F9F-41F4-CA4E-9206-A2CE15474347}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-963A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -819,7 +757,7 @@ Setup global variables required by material shaders.
 				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-973A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -829,7 +767,7 @@ Setup global variables required by material shaders.
 				<id>{5172DC2C-EB40-174A-97E2-34D0AA84201E}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-983A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -839,7 +777,7 @@ Setup global variables required by material shaders.
 				<id>{099C3159-AA8C-954A-B41A-516554123CC2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-993A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -849,7 +787,7 @@ Setup global variables required by material shaders.
 				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -859,7 +797,7 @@ Setup global variables required by material shaders.
 				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-9B3A-7E9B220B927F}</id>
 			</destination>
 		</item>
@@ -869,17 +807,17 @@ Setup global variables required by material shaders.
 				<id>{97544039-E417-514E-BA37-0529DAA2C665}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-9C3A-7E9B220B927F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<id>{EEB495BD-DE7F-4DE8-9D3A-7E9B220B927F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
@@ -889,18 +827,18 @@ Setup global variables required by material shaders.
 				<id>{85780AFE-3DC6-F448-8805-9A8136B871B8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[25]"/>
 				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{2E88C633-F2D2-9641-BD25-02B259FF8DBE}</id>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
 			</destination>
 		</item>
 	</edges>

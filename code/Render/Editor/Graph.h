@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
@@ -96,6 +97,27 @@ public:
 	{
 		RefArray< Node > untypedNodes;
 		findNodesOf(type_of< NodeType >(), untypedNodes);
+		return (RefArray< NodeType >&&)untypedNodes;
+	}
+
+	/*! Get all nodes of a specific type and a predicate.
+	 *
+	 * \param nodeType Type of node to find.
+	 * \param outNodes Nodes of given type.
+	 * \return Number of nodes.
+	 */
+	size_t findNodesOf(const TypeInfo& nodeType, const std::function< bool(const Node*) >& predicate, RefArray< Node >& outNodes) const;
+
+	/*! Get all nodes of a specific type and a predicate.
+	 *
+	 * \param nodeType Type of node to find.
+	 * \return Nodes of given type.
+	 */
+	template < typename NodeType >
+	RefArray< NodeType > findNodesOf(const std::function< bool(const NodeType*) >& predicate) const
+	{
+		RefArray< Node > untypedNodes;
+		findNodesOf(type_of< NodeType >(), [&](const Node* node) { return predicate(static_cast< const NodeType* >(node)); }, untypedNodes);
 		return (RefArray< NodeType >&&)untypedNodes;
 	}
 

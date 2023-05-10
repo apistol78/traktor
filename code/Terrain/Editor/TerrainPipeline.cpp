@@ -342,17 +342,17 @@ bool TerrainPipeline::buildOutput(
 	// Resolve fragments in templates and insert surface shader at placeholders.
 	FragmentReaderAdapter fragmentReader(pipelineBuilder, surfaceShaderImpl);
 
-	Ref< render::ShaderGraph > terrainShader = render::FragmentLinker(fragmentReader).resolve(terrainShaderTemplate, true);
+	Ref< render::ShaderGraph > terrainShader = render::FragmentLinker(fragmentReader).resolve(terrainShaderTemplate, false);
 	if (!terrainShader)
 	{
 		log::error << L"Terrain pipeline failed; unable to link terrain shader." << Endl;
 		return false;
 	}
 
-	Ref< render::ShaderGraph > surfaceShader = render::FragmentLinker(fragmentReader).resolve(surfaceShaderTemplate, true);
+	Ref< render::ShaderGraph > surfaceShader = render::FragmentLinker(fragmentReader).resolve(surfaceShaderTemplate, false);
 	if (!surfaceShader)
 	{
-		log::error << L"Terrain pipeline failed; unable to link surface shader" << Endl;
+		log::error << L"Terrain pipeline failed; unable to link surface shader." << Endl;
 		return false;
 	}
 

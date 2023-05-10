@@ -538,8 +538,8 @@ bool ShaderPipeline::buildOutput(
 					const OutputPin* textureNodeOutput = textureNode->getOutputPin(0);
 					T_ASSERT(textureNodeOutput);
 
-					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 					programGraph->addNode(textureUniform);
+					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
 				// Compile shader program.
