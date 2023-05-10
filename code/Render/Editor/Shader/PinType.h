@@ -34,7 +34,8 @@ enum class PinType : int32_t
 	Image3D = 11,
 	ImageCube = 12,
 	State = 13,
-	Any = (State)
+	Bundle = 14,
+	Any = (Bundle)
 };
 
 /*! Return true if type is a scalar.

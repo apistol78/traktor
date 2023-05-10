@@ -1473,6 +1473,11 @@ void ShaderGraphEditorPage::updateGraph()
 				ss << L"State";
 				editorEdge->setThickness(4);
 				break;
+
+			case PinType::Bundle:
+				ss << L"Bundle";
+				editorEdge->setThickness(6);
+				break;
 			}
 
 			editorEdge->setText(ss.str());
