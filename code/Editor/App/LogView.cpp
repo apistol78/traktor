@@ -8,11 +8,16 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmPrimitive.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "Editor/App/LogView.h"
 #include "I18N/Text.h"
@@ -162,6 +167,36 @@ void LogView::eventLogActivate(ui::LogActivateEvent* event)
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(event->getSymbolId());
 	if (instance)
 		m_editor->openEditor(instance);
+	else
+	{
+		RefArray< db::Instance > instances;
+		db::recursiveFindChildInstances(
+			m_editor->getSourceDatabase()->getRootGroup(),
+			db::FindInstanceAll(),
+			instances
+		);
+		for (auto instance : instances)
+		{
+			auto object = instance->getObject();
+			if (!object)
+				continue;
+
+			Ref< Reflection > r = Reflection::create(object);
+			if (!r)
+				continue;
+
+			RefArray< RfmPrimitiveGuid > members;
+			r->findMembers(RfpMemberType(type_of< RfmPrimitiveGuid >()), (RefArray< ReflectionMember >&)members);
+			for (auto member : members)
+			{
+				if (member->get() == event->getSymbolId())
+				{
+					m_editor->openEditor(instance);
+					return;
+				}
+			}
+		}
+	}
 }
 
 bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const
