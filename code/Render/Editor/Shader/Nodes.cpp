@@ -396,12 +396,13 @@ void BundleUnite::serialize(ISerializer& s)
 
 void BundleUnite::updatePins()
 {
-	Guid id(L"{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}");
+	m_inputPins.resize(1 + m_names.size());
+	m_inputPins[0] = InputPin(this, Guid(L"{FFD72AB8-3ECF-4EBE-AF54-041F18540D4D}"), L"Input", true);
 
-	m_inputPins.resize(m_names.size());
+	Guid id(L"{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}");
 	for (int32_t i = 0; i < (int32_t)m_names.size(); ++i)
 	{
-		m_inputPins[i] = InputPin(this, id, m_names[i], false);
+		m_inputPins[1 + i] = InputPin(this, id, m_names[i], true);
 		id.permutate();
 	}
 
