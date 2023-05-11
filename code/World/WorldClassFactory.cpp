@@ -9,6 +9,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedAabb3.h"
 #include "Core/Class/Boxes/BoxedColor4f.h"
+#include "Core/Class/Boxes/BoxedGuid.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
@@ -34,6 +35,7 @@
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
+#include "World/Entity/PersistentIdComponent.h"
 #include "World/Entity/ScriptComponent.h"
 #include "World/Entity/ScriptComponentData.h"
 #include "World/Entity/VolumeComponent.h"
@@ -262,6 +264,10 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classLightComponent->addProperty("flickerAmount", &LightComponent::setFlickerAmount, &LightComponent::getFlickerAmount);
 	classLightComponent->addProperty("flickerFilter", &LightComponent::setFlickerFilter, &LightComponent::getFlickerFilter);
 	registrar->registerClass(classLightComponent);
+
+	auto classPersistentIdComponent = new AutoRuntimeClass< PersistentIdComponent >();
+	classPersistentIdComponent->addProperty("id", &PersistentIdComponent::getId);
+	registrar->registerClass(classPersistentIdComponent);
 
 	auto classScriptComponentData = new AutoRuntimeClass< ScriptComponentData >();
 	registrar->registerClass(classScriptComponentData);

@@ -28,6 +28,8 @@
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
+#include "World/Entity/PersistentIdComponent.h"
+#include "World/Entity/PersistentIdComponentData.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/ScriptComponent.h"
@@ -80,6 +82,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< LightComponentData >();
+	typeSet.insert< PersistentIdComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
 	typeSet.insert< VolumeComponentData >();
@@ -221,6 +224,13 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
 			lightComponentData->getFlickerFilter()
+		);
+	}
+
+	if (auto persistentIdComponentData = dynamic_type_cast< const PersistentIdComponentData* >(&entityComponentData))
+	{
+		return new PersistentIdComponent(
+			persistentIdComponentData->getId()
 		);
 	}
 
