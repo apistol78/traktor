@@ -53,6 +53,7 @@ private:
 	Ref< ui::CheckBox > m_checkFileCacheWrite;
 	Ref< ui::Edit > m_editInstanceCachePath;
 	Ref< ui::Edit > m_editModelCachePath;
+	Ref< ui::Edit > m_editAssetPath;
 
 	void eventUseCacheClick(ui::ButtonClickEvent* event);
 };

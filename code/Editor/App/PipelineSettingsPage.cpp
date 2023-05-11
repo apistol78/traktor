@@ -99,6 +99,9 @@ bool PipelineSettingsPage::create(ui::Container* parent, const PropertyGroup* or
 	m_editModelCachePath = new ui::Edit();
 	m_editModelCachePath->create(container, settings->getProperty< std::wstring >(L"Pipeline.ModelCache.Path"), ui::WsNone);
 
+	m_editAssetPath = new ui::Edit();
+	m_editAssetPath->create(container, settings->getProperty< std::wstring >(L"Pipeline.AssetPath"), ui::Edit::WsReadOnly);
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_PIPELINE"));
 	return true;
 }
