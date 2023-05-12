@@ -17,6 +17,7 @@
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/StageState.h"
 #include "Runtime/Events/ActiveEvent.h"
+#include "Runtime/Events/HotReloadEvent.h"
 #include "Runtime/Events/ReconfigureEvent.h"
 #include "Runtime/Target/CommandEvent.h"
 
@@ -151,6 +152,10 @@ bool StageState::take(const Object* event)
 			m_stage->resume();
 		else
 			m_stage->suspend();
+	}
+	else if (auto hotReloadEvent = dynamic_type_cast< const HotReloadEvent* >(event))
+	{
+		m_stage->hotReload();
 	}
 	else if (auto commandEvent = dynamic_type_cast< const CommandEvent* >(event))
 	{

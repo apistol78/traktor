@@ -90,6 +90,8 @@ public:
 
 	virtual void resume() override final;
 
+	virtual void hotReload() override final;
+
 	scene::Scene* getScene() const;
 
 	world::IWorldRenderer* getWorldRenderer() const;
@@ -165,6 +167,7 @@ private:
 	float m_fieldOfView = 70.0f;
 	float m_feedbackScale = 1.0f;
 	bool m_controllerEnable = true;
+	SmallMap< Guid, Transform > m_entityTransforms;
 };
 
 }

@@ -91,6 +91,8 @@ public:
 
 	virtual void resume() override final;
 
+	virtual void hotReload() override final;
+
 	/*! Get reference to current Spark movie player.
 	 *
 	 * \return Spark movie player object.

@@ -9,6 +9,7 @@
 #include "Runtime/IRuntimePlugin.h"
 #include "Runtime/IState.h"
 #include "Runtime/Events/ActiveEvent.h"
+#include "Runtime/Events/HotReloadEvent.h"
 #include "Runtime/Events/ReconfigureEvent.h"
 #include "Runtime/Impl/Application.h"
 #include "Runtime/Impl/AudioServer.h"
@@ -1033,6 +1034,12 @@ void Application::pollDatabase()
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+
+		if (auto currentState = m_stateManager->getCurrent())
+		{
+			HotReloadEvent hotReloadEvent;
+			currentState->take(&hotReloadEvent);
+		}
 
 		Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 		if (resourceManager)

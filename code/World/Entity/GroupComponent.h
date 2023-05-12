@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Core/RefArray.h"
 #include "World/IEntityComponent.h"
@@ -51,9 +52,11 @@ public:
 
 	const RefArray< Entity >& getEntities() const;
 
-	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
+	Entity* getEntity(const std::wstring& name, int32_t index) const;
 
-	RefArray< world::Entity > getEntities(const std::wstring& name) const;
+	RefArray< Entity > getEntities(const std::wstring& name) const;
+
+	bool traverse(const std::function< bool(Entity*) >& visitor);
 
 private:
 	Entity* m_owner = nullptr;

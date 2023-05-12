@@ -132,7 +132,7 @@ const RefArray< Entity >& GroupComponent::getEntities() const
 	return m_entities;
 }
 
-world::Entity* GroupComponent::getEntity(const std::wstring& name, int32_t index) const
+Entity* GroupComponent::getEntity(const std::wstring& name, int32_t index) const
 {
 	for (auto entity : m_entities)
 	{
@@ -145,15 +145,30 @@ world::Entity* GroupComponent::getEntity(const std::wstring& name, int32_t index
 	return nullptr;
 }
 
-RefArray< world::Entity > GroupComponent::getEntities(const std::wstring& name) const
+RefArray< Entity > GroupComponent::getEntities(const std::wstring& name) const
 {
-	RefArray< world::Entity > entities;
+	RefArray< Entity > entities;
 	for (auto entity : m_entities)
 	{
 		if (entity->getName() == name)
 			entities.push_back(entity);
 	}
 	return entities;
+}
+
+bool GroupComponent::traverse(const std::function< bool(Entity*) >& visitor)
+{
+	for (auto entity : m_entities)
+	{
+		if (!visitor(entity))
+			return false;
+		if (auto childGroup = entity->getComponent< GroupComponent >())
+		{
+			if (!childGroup->traverse(visitor))
+				return false;
+		}
+	}
+	return true;
 }
 
 }

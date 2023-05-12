@@ -460,6 +460,10 @@ void SparkLayer::resume()
 {
 }
 
+void SparkLayer::hotReload()
+{
+}
+
 MoviePlayer* SparkLayer::getMoviePlayer()
 {
 	return m_moviePlayer;

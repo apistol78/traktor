@@ -381,6 +381,12 @@ void Stage::resume()
 	}
 }
 
+void Stage::hotReload()
+{
+	for (auto layer : m_layers)
+		layer->hotReload();
+}
+
 bool Stage::validateScriptContext()
 {
 	if (!m_class)

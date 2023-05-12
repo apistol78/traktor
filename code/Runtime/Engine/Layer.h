@@ -97,6 +97,9 @@ public:
 	/*! Called after application has resumed executing. */
 	virtual void resume() = 0;
 
+	/*! */
+	virtual void hotReload() = 0;
+
 	/*! Get owner stage object.
 	 *
 	 * \return Stage object.
