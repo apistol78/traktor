@@ -123,7 +123,7 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-const int mip = int($Roughness * $Mips);
+const int mip = int(pow($Roughness, 2) * $Mips);
 $Mip = clamp(mip, 0, int($Mips) - 1);
 			]]>
 			</script>
@@ -216,12 +216,12 @@ $Mip = clamp(mip, 0, int($Mips) - 1);
 			<title>Sample reflection probe</title>
 			<comment/>
 			<position>
-				<first>569</first>
-				<second>1123</second>
+				<first>27</first>
+				<second>195</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1602</first>
+				<second>544</second>
 			</size>
 		</item>
 	</groups>
