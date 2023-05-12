@@ -236,7 +236,7 @@ External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 		if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(fragmentNode))
 		{
 			const Guid& id = inputPort->getId();
-			std::wstring name = inputPort->getName();
+			const std::wstring name = inputPort->getName();
 
 			if (inputPort->isConnectable())
 			{
@@ -248,13 +248,13 @@ External::External(const Guid& fragmentGuid, const ShaderGraph* fragmentGraph)
 				));
 			}
 
-			if (!inputPort->isConnectable() || (inputPort->isOptional() && inputPort->haveDefaultValue()))
+			if (inputPort->haveDefaultValue() && (inputPort->isOptional() || !inputPort->isConnectable()))
 				m_values[name] = inputPort->getDefaultValue();
 		}
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{
 			const Guid& id = outputPort->getId();
-			std::wstring name = outputPort->getName();
+			const std::wstring name = outputPort->getName();
 
 			m_outputPins.push_back(new OutputPin(
 				this,
