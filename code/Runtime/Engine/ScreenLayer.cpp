@@ -110,4 +110,8 @@ void ScreenLayer::resume()
 {
 }
 
+void ScreenLayer::hotReload()
+{
+}
+
 }

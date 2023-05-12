@@ -105,6 +105,8 @@ public:
 
 	virtual void resume() override final;
 
+	virtual void hotReload() override final;
+
 private:
 	struct Tween
 	{

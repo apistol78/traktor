@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <limits>
 #include "World/WorldRenderView.h"
 
 /*! Enable screen-space culling; quite expensive but might yield less draw calls. */

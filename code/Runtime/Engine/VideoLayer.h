@@ -103,6 +103,8 @@ public:
 
 	virtual void resume() override final;
 
+	virtual void hotReload() override final;
+
 private:
 	IEnvironment* m_environment;
 	resource::Proxy< video::Video > m_video;

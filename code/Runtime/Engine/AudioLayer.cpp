@@ -211,4 +211,8 @@ void AudioLayer::resume()
 {
 }
 
+void AudioLayer::hotReload()
+{
+}
+
 }

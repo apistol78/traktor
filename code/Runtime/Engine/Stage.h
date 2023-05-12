@@ -163,6 +163,8 @@ public:
 
 	void resume();
 
+	void hotReload();
+
 	const std::wstring& getName() const { return m_name; }
 
 	IEnvironment* getEnvironment() { return m_environment; }

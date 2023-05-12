@@ -187,4 +187,8 @@ void VideoLayer::resume()
 {
 }
 
+void VideoLayer::hotReload()
+{
+}
+
 }

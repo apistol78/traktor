@@ -33,6 +33,7 @@
 #include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
+#include "World/Entity/PersistentIdComponent.h"
 
 namespace traktor::runtime
 {
@@ -319,6 +320,27 @@ void WorldLayer::postReconfigured()
 	// to be created during reconfiguration has the render lock.
 	UpdateInfo info;
 	preUpdate(info);
+
+	// Restore entity transforms captured before reconfiguration.
+	if (m_scene)
+	{
+		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			group->traverse([&](world::Entity* entity) {
+				if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
+				{
+					auto it = m_entityTransforms.find(persistentIdComponent->getId());
+					if (it != m_entityTransforms.end())
+						entity->setTransform(it->second);
+				}
+				return true;
+			});
+			log::info << L"Restored " << m_entityTransforms.size() << L" entity transforms." << Endl;
+		}
+	}
+
+	m_entityTransforms.clear();
 }
 
 void WorldLayer::suspend()
@@ -332,6 +354,25 @@ void WorldLayer::suspend()
 
 void WorldLayer::resume()
 {
+}
+
+void WorldLayer::hotReload()
+{
+	// Capture transforms of all entities in the scene, so we
+	// can restore then after reload.
+	if (m_scene)
+	{
+		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			group->traverse([&](world::Entity* entity) {
+				if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
+					m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
+				return true;
+				});
+}
+		log::info << L"Captured " << m_entityTransforms.size() << L" entity transforms." << Endl;
+	}
 }
 
 scene::Scene* WorldLayer::getScene() const
@@ -379,16 +420,22 @@ RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) cons
 		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
 		if (group)
 		{
-			auto e = group->getEntities(name);
-			entities.insert(entities.end(), e.begin(), e.end());
+			group->traverse([&](world::Entity* entity) {
+				if (entity->getName() == name)
+					entities.push_back(entity);
+				return true;
+			});
 		}
 	}
 	{
 		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
 		if (group)
 		{
-			auto e = group->getEntities(name);
-			entities.insert(entities.end(), e.begin(), e.end());
+			group->traverse([&](world::Entity* entity) {
+				if (entity->getName() == name)
+					entities.push_back(entity);
+				return true;
+			});
 		}
 	}
 	return entities;

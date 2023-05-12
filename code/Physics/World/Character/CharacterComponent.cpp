@@ -66,12 +66,14 @@ void CharacterComponent::setOwner(world::Entity* owner)
 		const Transform transform = m_owner->getTransform();
 		m_bodyWide->setTransform(transform * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
 		m_bodyWide->setEnable(true);
+		m_headAngle = transform.rotation().toEulerAngles().x();
 	}
 }
 
 void CharacterComponent::setTransform(const Transform& transform)
 {
 	m_bodyWide->setTransform(transform * Transform(Vector4(0.0f, m_data->getHeight() / 2.0f, 0.0f)));
+	m_headAngle = transform.rotation().toEulerAngles().x();
 }
 
 Aabb3 CharacterComponent::getBoundingBox() const

@@ -70,6 +70,8 @@ public:
 
 	virtual void resume() override final;
 
+	virtual void hotReload() override final;
+
 	void setParameterCallback(const std::function< void(render::ProgramParameters*) >& parameterCallback) { m_parameterCallback = parameterCallback; }
 
 	const std::function< void(render::ProgramParameters*) >& getParameterCallback() const { return m_parameterCallback; }
