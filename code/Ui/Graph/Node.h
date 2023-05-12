@@ -83,7 +83,7 @@ public:
 
 	const INodeShape* getShape() const;
 
-	Pin* createInputPin(const std::wstring& name, const Guid& id, bool mandatory);
+	Pin* createInputPin(const std::wstring& name, const Guid& id, bool mandatory, bool bold);
 
 	bool removeInputPin(Pin* pin);
 

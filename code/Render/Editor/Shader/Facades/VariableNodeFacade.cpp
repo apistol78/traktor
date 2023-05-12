@@ -61,7 +61,8 @@ Ref< ui::Node > VariableNodeFacade::createEditorNode(
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
-			!inputPin->isOptional()
+			!inputPin->isOptional(),
+			false
 		);
 	}
 

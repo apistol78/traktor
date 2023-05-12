@@ -69,7 +69,8 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
-			!inputPin->isOptional()
+			!inputPin->isOptional(),
+			false
 		);
 	}
 

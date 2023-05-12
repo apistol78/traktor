@@ -58,7 +58,8 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
-			!inputPin->isOptional()
+			!inputPin->isOptional(),
+			false
 		);
 	}
 

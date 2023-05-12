@@ -466,7 +466,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
-		editorNode->createInputPin(inputPin->getName(), Guid(), false);
+		editorNode->createInputPin(inputPin->getName(), Guid(), false, false);
 	}
 
 	for (int i = 0; i < node->getOutputPinCount(); ++i)

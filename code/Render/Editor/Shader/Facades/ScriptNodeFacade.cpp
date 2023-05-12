@@ -70,7 +70,8 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
-			!inputPin->isOptional()
+			!inputPin->isOptional(),
+			false
 		);
 	}
 
@@ -123,7 +124,7 @@ void ScriptNodeFacade::refreshEditorNode(
 		if (editorInputPin)
 			editorInputPin->setName(inputPin->getName());
 		else
-			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional());
+			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
 	}
 
 	for (int j = 0; j < scriptNode->getOutputPinCount(); ++j)

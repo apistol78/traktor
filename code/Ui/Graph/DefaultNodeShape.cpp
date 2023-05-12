@@ -274,6 +274,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 		if (pin->isMandatory())
 			canvas->setFont(settings.getFontUnderline());
+		if (pin->isBold())
+			canvas->setFont(settings.getFontBold());
 
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
@@ -300,6 +302,9 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		const std::wstring& label = pin->getName();
 		const Size extent = canvas->getTextExtent(label);
 
+		if (pin->isBold())
+			canvas->setFont(settings.getFontBold());
+
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
@@ -310,6 +315,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			AnLeft,
 			AnCenter
 		);
+
+		canvas->setFont(settings.getFont());
 	}
 }
 

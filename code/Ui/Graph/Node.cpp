@@ -126,10 +126,10 @@ const INodeShape* Node::getShape() const
 	return m_shape;
 }
 
-Pin* Node::createInputPin(const std::wstring& name, const Guid& id, bool mandatory)
+Pin* Node::createInputPin(const std::wstring& name, const Guid& id, bool mandatory, bool bold)
 {
 	T_ASSERT(m_shape);
-	Ref< Pin > pin = new Pin(this, name, id, Pin::DrInput, mandatory);
+	Ref< Pin > pin = new Pin(this, name, id, Pin::DrInput, mandatory, bold);
 	m_inputPins.push_back(pin);
 	m_size = m_shape->calculateSize(m_owner, this);
 	return pin;
@@ -179,7 +179,7 @@ Pin* Node::findInputPin(const Guid& id) const
 Pin* Node::createOutputPin(const std::wstring& name, const Guid& id)
 {
 	T_ASSERT(m_shape);
-	Ref< Pin > pin = new Pin(this, name, id, Pin::DrOutput, false);
+	Ref< Pin > pin = new Pin(this, name, id, Pin::DrOutput, false, false);
 	m_outputPins.push_back(pin);
 	m_size = m_shape->calculateSize(m_owner, this);
 	return pin;

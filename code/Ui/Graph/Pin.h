@@ -45,7 +45,7 @@ public:
 		DrOutput
 	};
 
-	explicit Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory);
+	explicit Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory, bool bold);
 
 	Node* getNode() const;
 
@@ -59,6 +59,8 @@ public:
 
 	bool isMandatory() const;
 
+	bool isBold() const;
+
 	Point getPosition() const;
 
 private:
@@ -67,6 +69,7 @@ private:
 	Guid m_id;
 	Direction m_direction;
 	bool m_mandatory;
+	bool m_bold;
 };
 
 }

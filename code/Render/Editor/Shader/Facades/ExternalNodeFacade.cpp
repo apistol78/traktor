@@ -86,10 +86,12 @@ Ref< ui::Node > ExternalNodeFacade::createEditorNode(
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
+		const bool usingDefaultValue = (shaderGraph->findSourcePin(inputPin) == nullptr && externalNode->haveValue(inputPin->getName()));
 		editorNode->createInputPin(
 			inputPin->getName(),
 			inputPin->getId(),
-			!inputPin->isOptional()
+			!inputPin->isOptional(),
+			usingDefaultValue
 		);
 	}
 
