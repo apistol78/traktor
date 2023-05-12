@@ -250,7 +250,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuShadows->get(4)->setChecked(true);
 	m_menuReflections->get(4)->setChecked(true);
 	m_menuAO->get(4)->setChecked(true);
-	m_menuAA->get(0)->setChecked(true);
+	m_menuAA->get(4)->setChecked(true);
 
 	if (!createRenderControl(viewType))
 		return false;
