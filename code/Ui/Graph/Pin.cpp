@@ -14,12 +14,13 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Pin", Pin, Object)
 
-Pin::Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory)
+Pin::Pin(Node* node, const std::wstring& name, const Guid& id, Direction direction, bool mandatory, bool bold)
 :	m_node(node)
 ,	m_name(name)
 ,	m_id(id)
 ,	m_direction(direction)
 ,	m_mandatory(mandatory)
+,	m_bold(bold)
 {
 }
 
@@ -51,6 +52,11 @@ Pin::Direction Pin::getDirection() const
 bool Pin::isMandatory() const
 {
 	return m_mandatory;
+}
+
+bool Pin::isBold() const
+{
+	return m_bold;
 }
 
 Point Pin::getPosition() const

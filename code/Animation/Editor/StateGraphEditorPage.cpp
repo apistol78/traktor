@@ -509,7 +509,7 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 		shape
 	);
 	node->setData(L"STATE", state);
-	node->createInputPin(L"Enter", Guid(), true);
+	node->createInputPin(L"Enter", Guid(), true, false);
 	node->createOutputPin(L"Leave", Guid());
 
 	return node;

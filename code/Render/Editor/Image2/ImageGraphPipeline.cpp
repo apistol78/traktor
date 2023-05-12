@@ -212,37 +212,34 @@ bool ImageGraphPipeline::buildOutput(
 			}
 
 			auto targetSet = dynamic_type_cast< const ImgTargetSet* >(destinationPins[0]->getNode());
-			if (!targetSet)
+			if (targetSet)
 			{
-				log::error << L"Image graph pipeline failed; pass output must be connected to a target node." << Endl;
-				return false;
-			}
+				Ref< ImagePassData > passData = new ImagePassData();
+				passData->m_name = pass->getName();
+				passData->m_outputTargetSet = -1;
+				passData->m_clear = pass->getClear();
 
-			Ref< ImagePassData > passData = new ImagePassData();
-			passData->m_name = pass->getName();
-			passData->m_outputTargetSet = -1;
-			passData->m_clear = pass->getClear();
-
-			// Find index of output target set.
-			int32_t targetSetIndex = 0;
-			for (size_t i = 1; i < nodes.size(); ++i)
-			{
-				if (!is_a< ImgTargetSet >(nodes[i]))
-					continue;
-
-				if (targetSet == nodes[i])
+				// Find index of output target set.
+				int32_t targetSetIndex = 0;
+				for (size_t i = 1; i < nodes.size(); ++i)
 				{
-					passData->m_outputTargetSet = targetSetIndex;
-					break;
+					if (!is_a< ImgTargetSet >(nodes[i]))
+						continue;
+
+					if (targetSet == nodes[i])
+					{
+						passData->m_outputTargetSet = targetSetIndex;
+						break;
+					}
+					else
+						++targetSetIndex;
 				}
-				else
-					++targetSetIndex;
+
+				// Convert pass's steps.
+				convertAssetPassToSteps(asset, pass, passData->m_steps);
+
+				data->m_passes.push_back(passData);
 			}
-
-			// Convert pass's steps.
-			convertAssetPassToSteps(asset, pass, passData->m_steps);
-
-			data->m_passes.push_back(passData);
 		}
 	}
 

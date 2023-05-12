@@ -132,7 +132,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 
 		for (std::map< const std::wstring, Ref< const IInputNode > >::const_iterator i = childNodes.begin(); i != childNodes.end(); ++i)
 		{
-			Ref< ui::Pin > pin = graphNode->createInputPin(i->first, Guid(), false);
+			Ref< ui::Pin > pin = graphNode->createInputPin(i->first, Guid(), false, false);
 			createInputNodes(mappingAsset, graph, traits, i->second, pin);
 		}
 	}
@@ -373,7 +373,7 @@ void InputMappingEditor::updateGraphView()
 		);
 		node->setData(L"NAME", new PropertyString(it.first));
 		node->setData(L"DATA", it.second);
-		Ref< ui::Pin > inputPin = node->createInputPin(L"Input", Guid(), false);
+		Ref< ui::Pin > inputPin = node->createInputPin(L"Input", Guid(), false, false);
 
 		// Create edge to input node.
 		if (it.second->getSource() != nullptr)

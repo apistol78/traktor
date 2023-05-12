@@ -131,13 +131,13 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 
 		{
 			Node* node = graphControl->createNode(L"First", L"Info", Point(0, 0), new DefaultNodeShape(DefaultNodeShape::StDefault));
-			node->createInputPin(L"Input", Guid(), true);
+			node->createInputPin(L"Input", Guid(), true, false);
 			edge->setSourcePin(node->createOutputPin(L"Output", Guid()));
 		}
 
 		{
 			Node* node = graphControl->createNode(L"Second", L"Info", Point(100, 0), new DefaultNodeShape(DefaultNodeShape::StExternal));
-			edge->setDestinationPin(node->createInputPin(L"Input", Guid(), true));
+			edge->setDestinationPin(node->createInputPin(L"Input", Guid(), true, false));
 			node->createOutputPin(L"Output", Guid());
 		}
 
