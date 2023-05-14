@@ -100,7 +100,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	if (m_impulse.length() < FUZZY_EPSILON)
 	{
 		if (currentVelocity > FUZZY_EPSILON)
-			m_velocity -= ((m_velocity * c_101) / currentVelocity) * Scalar(m_data->getVelocityDamping()); // * dT;
+			m_velocity -= (m_velocity * c_101) * Scalar(m_data->getVelocityDamping());
 		else
 			m_velocity *= c_010;
 	}
@@ -124,7 +124,8 @@ void CharacterComponent::update(const world::UpdateParams& update)
 
 	// Step forward.
 	const Vector4 movementXZ = movement * c_101;
-	step(movementXZ, position);
+	if (movementXZ.length() > FUZZY_EPSILON)
+		step(movementXZ, position);
 
 	// Step down, step further down to simulate falling.
 	float stepDownLength = m_data->getStep();
