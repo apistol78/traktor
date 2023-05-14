@@ -264,6 +264,30 @@ Ref< ReplicatorConfiguration > net_Replicator_getConfiguration(Replicator* self)
 	return new ReplicatorConfiguration(self->getConfiguration());
 }
 
+Ref< Object > Replicator_addListener(Replicator* self, IRuntimeDelegate* delegate)
+{
+	Ref< IReplicatorStateListener > listener = new ReplicatorListener(delegate);
+	self->addListener(listener);
+	return listener;
+}
+
+void Replicator_removeListener(Replicator* self, Object* listener)
+{
+	self->removeListener(mandatory_non_null_type_cast< IReplicatorStateListener* >(listener));
+}
+
+Ref< Object > Replicator_addEventListener(Replicator* self, const TypeInfo& eventType, IRuntimeDelegate* delegate)
+{
+	Ref< IReplicatorEventListener > listener = new ReplicatorEventListener(delegate);
+	self->addEventListener(eventType, listener);
+	return listener;
+}
+
+void Replicator_removeEventListener(Replicator* self, Object* listener)
+{
+	self->removeEventListener(mandatory_non_null_type_cast< IReplicatorEventListener* >(listener));
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetClassFactory", 0, NetClassFactory, IRuntimeClassFactory)
@@ -490,14 +514,6 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicatorConfiguration->addProperty("timeUntilTxPing", &ReplicatorConfiguration::setTimeUntilTxPing, &ReplicatorConfiguration::getTimeUntilTxPing);
 	registrar->registerClass(classReplicatorConfiguration);
 
-	auto classReplicatorListener = new AutoRuntimeClass< ReplicatorListener >();
-	classReplicatorListener->addConstructor< IRuntimeDelegate* >();
-	registrar->registerClass(classReplicatorListener);
-
-	auto classReplicatorEventListener = new AutoRuntimeClass< ReplicatorEventListener >();
-	classReplicatorEventListener->addConstructor< IRuntimeDelegate* >();
-	registrar->registerClass(classReplicatorEventListener);
-
 	auto classReplicator = new AutoRuntimeClass< Replicator >();
 	classReplicator->addConstructor();
 	classReplicator->addProperty("name", &Replicator::getName);
@@ -521,11 +537,11 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicator->addMethod("getConfiguration", &net_Replicator_getConfiguration);
 	classReplicator->addMethod("addEventType", &Replicator::addEventType);
 	classReplicator->addMethod("removeAllEventTypes", &Replicator::removeAllEventTypes);
-	classReplicator->addMethod("addListener", &Replicator::addListener);
-	classReplicator->addMethod("removeListener", &Replicator::removeListener);
+	classReplicator->addMethod("addListener", &Replicator_addListener);
+	classReplicator->addMethod("removeListener", &Replicator_removeListener);
 	classReplicator->addMethod("removeAllListeners", &Replicator::removeAllListeners);
-	classReplicator->addMethod("addEventListener", &Replicator::addEventListener);
-	classReplicator->addMethod("removeEventListener", &Replicator::removeEventListener);
+	classReplicator->addMethod("addEventListener", &Replicator_addEventListener);
+	classReplicator->addMethod("removeEventListener", &Replicator_removeEventListener);
 	classReplicator->addMethod("removeAllEventListeners", &Replicator::removeAllEventListeners);
 	classReplicator->addMethod("update", &Replicator::update);
 	classReplicator->addMethod("flush", &Replicator::flush);

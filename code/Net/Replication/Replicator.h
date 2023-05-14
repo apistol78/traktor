@@ -122,15 +122,15 @@ public:
 	/*! Remove all replicator state listener. */
 	void removeAllListeners();
 
-	/*! \brief
+	/*!
 	 */
 	IReplicatorEventListener* addEventListener(const TypeInfo& eventType, IReplicatorEventListener* eventListener);
 
-	/*! \brief
+	/*!
 	 */
 	void removeEventListener(IReplicatorEventListener* eventListener);
 
-	/*! \brief
+	/*!
 	 */
 	void removeAllEventListeners();
 
@@ -143,7 +143,7 @@ public:
 	 */
 	bool update();
 
-	/*! \brief
+	/*!
 	 */
 	void flush();
 
@@ -195,7 +195,7 @@ public:
 	 */
 	const State* getState() const;
 
-	/*! \brief
+	/*!
 	 */
 	void setSendState(bool sendState);
 
