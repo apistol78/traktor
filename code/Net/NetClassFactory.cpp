@@ -437,8 +437,8 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classMeasureP2PProvider = new AutoRuntimeClass< MeasureP2PProvider >();
 	classMeasureP2PProvider->addConstructor< IPeer2PeerProvider* >();
-	classMeasureP2PProvider->addMethod("getSendBitsPerSecond", &MeasureP2PProvider::getSendBitsPerSecond);
-	classMeasureP2PProvider->addMethod("getRecvBitsPerSecond", &MeasureP2PProvider::getRecvBitsPerSecond);
+	classMeasureP2PProvider->addProperty("sendBitsPerSecond", &MeasureP2PProvider::getSendBitsPerSecond);
+	classMeasureP2PProvider->addProperty("recvBitsPerSecond", &MeasureP2PProvider::getRecvBitsPerSecond);
 	registrar->registerClass(classMeasureP2PProvider);
 
 	auto classPeer2PeerTopology = new AutoRuntimeClass< Peer2PeerTopology >();
@@ -448,29 +448,26 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPeer2PeerTopology);
 
 	auto classReplicatorProxy = new AutoRuntimeClass< ReplicatorProxy >();
-	classReplicatorProxy->addMethod("getHandle", &ReplicatorProxy::getHandle);
-	classReplicatorProxy->addMethod("getName", &ReplicatorProxy::getName);
-	classReplicatorProxy->addMethod("getUser", &ReplicatorProxy::getUser);
-	classReplicatorProxy->addMethod("getStatus", &ReplicatorProxy::getStatus);
-	classReplicatorProxy->addMethod("isLatencyReliable", &ReplicatorProxy::isLatencyReliable);
-	classReplicatorProxy->addMethod("getLatency", &ReplicatorProxy::getLatency);
-	classReplicatorProxy->addMethod("getLatencySpread", &ReplicatorProxy::getLatencySpread);
-	classReplicatorProxy->addMethod("getReverseLatency", &ReplicatorProxy::getReverseLatency);
-	classReplicatorProxy->addMethod("getReverseLatencySpread", &ReplicatorProxy::getReverseLatencySpread);
-	classReplicatorProxy->addMethod("resetLatencies", &ReplicatorProxy::resetLatencies);
-	classReplicatorProxy->addMethod("getTimeRate", &ReplicatorProxy::getTimeRate);
-	classReplicatorProxy->addMethod("isConnected", &ReplicatorProxy::isConnected);
-	classReplicatorProxy->addMethod("setPrimary", &ReplicatorProxy::setPrimary);
-	classReplicatorProxy->addMethod("isPrimary", &ReplicatorProxy::isPrimary);
-	classReplicatorProxy->addMethod("isRelayed", &ReplicatorProxy::isRelayed);
-	classReplicatorProxy->addMethod("setObject", &ReplicatorProxy::setObject);
-	classReplicatorProxy->addMethod("getObject", &ReplicatorProxy::getObject);
-	classReplicatorProxy->addMethod("setOrigin", &ReplicatorProxy::setOrigin);
-	classReplicatorProxy->addMethod("getOrigin", &ReplicatorProxy::getOrigin);
-	classReplicatorProxy->addMethod("setStateTemplate", &ReplicatorProxy::setStateTemplate);
-	classReplicatorProxy->addMethod("getStateTemplate", &ReplicatorProxy::getStateTemplate);
+	classReplicatorProxy->addProperty("handle", &ReplicatorProxy::getHandle);
+	classReplicatorProxy->addProperty("name", &ReplicatorProxy::getName);
+	classReplicatorProxy->addProperty("user", &ReplicatorProxy::getUser);
+	classReplicatorProxy->addProperty("status", &ReplicatorProxy::getStatus);
+	classReplicatorProxy->addProperty("latencyReliable", &ReplicatorProxy::isLatencyReliable);
+	classReplicatorProxy->addProperty("latency", &ReplicatorProxy::getLatency);
+	classReplicatorProxy->addProperty("latencySpread", &ReplicatorProxy::getLatencySpread);
+	classReplicatorProxy->addProperty("reverseLatency", &ReplicatorProxy::getReverseLatency);
+	classReplicatorProxy->addProperty("reverseLatencySpread", &ReplicatorProxy::getReverseLatencySpread);
+	classReplicatorProxy->addProperty("timeRate", &ReplicatorProxy::getTimeRate);
+	classReplicatorProxy->addProperty("connected", &ReplicatorProxy::isConnected);
+	classReplicatorProxy->addProperty("primary", &ReplicatorProxy::isPrimary);
+	classReplicatorProxy->addProperty("relayed", &ReplicatorProxy::isRelayed);
+	classReplicatorProxy->addProperty("object", &ReplicatorProxy::setObject, &ReplicatorProxy::getObject);
+	classReplicatorProxy->addProperty("origin", &ReplicatorProxy::setOrigin, &ReplicatorProxy::getOrigin);
+	classReplicatorProxy->addProperty("stateTemplate", &ReplicatorProxy::setStateTemplate, &ReplicatorProxy::getStateTemplate);
 	classReplicatorProxy->addMethod("getState", &ReplicatorProxy::getState);
 	classReplicatorProxy->addMethod("getFilteredState", &ReplicatorProxy::getFilteredState);
+	classReplicatorProxy->addMethod("setPrimary", &ReplicatorProxy::setPrimary);
+	classReplicatorProxy->addMethod("resetLatencies", &ReplicatorProxy::resetLatencies);
 	classReplicatorProxy->addMethod("resetStates", &ReplicatorProxy::resetStates);
 	classReplicatorProxy->addMethod("setSendState", &ReplicatorProxy::setSendState);
 	classReplicatorProxy->addMethod("sendEvent", &ReplicatorProxy::sendEvent);
