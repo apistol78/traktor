@@ -503,6 +503,21 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classReplicator = new AutoRuntimeClass< Replicator >();
 	classReplicator->addConstructor();
+	classReplicator->addProperty("name", &Replicator::getName);
+	classReplicator->addProperty("status", &Replicator::setStatus, &Replicator::getStatus);
+	classReplicator->addProperty("primary", &Replicator::isPrimary);
+	classReplicator->addProperty("state", &Replicator::setState, &Replicator::getState);
+	classReplicator->addProperty("averageLatency", &Replicator::getAverageLatency);
+	classReplicator->addProperty("averageReverseLatency", &Replicator::getAverageReverseLatency);
+	classReplicator->addProperty("bestLatency", &Replicator::getBestLatency);
+	classReplicator->addProperty("bestReverseLatency", &Replicator::getBestReverseLatency);
+	classReplicator->addProperty("worstLatency", &Replicator::getWorstLatency);
+	classReplicator->addProperty("worstReverseLatency", &Replicator::getWorstReverseLatency);
+	classReplicator->addProperty("time", &Replicator::getTime);
+	classReplicator->addProperty("timeVariance", &Replicator::getTimeVariance);
+	classReplicator->addProperty("timeSynchronized", &Replicator::isTimeSynchronized);
+	classReplicator->addProperty("proxyCount", &Replicator::getProxyCount);
+	classReplicator->addProperty("primaryProxy", &Replicator::getPrimaryProxy);
 	classReplicator->addMethod("create", &net_Replicator_create);
 	classReplicator->addMethod("destroy", &Replicator::destroy);
 	classReplicator->addMethod("setConfiguration", &net_Replicator_setConfiguration);
@@ -517,31 +532,14 @@ void NetClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicator->addMethod("removeAllEventListeners", &Replicator::removeAllEventListeners);
 	classReplicator->addMethod("update", &Replicator::update);
 	classReplicator->addMethod("flush", &Replicator::flush);
-	classReplicator->addMethod("getName", &Replicator::getName);
-	classReplicator->addMethod("setStatus", &Replicator::setStatus);
-	classReplicator->addMethod("getStatus", &Replicator::getStatus);
-	classReplicator->addMethod("isPrimary", &Replicator::isPrimary);
 	classReplicator->addMethod("setOrigin", &Replicator::setOrigin);
 	classReplicator->addMethod("setStateTemplate", &Replicator::setStateTemplate);
-	classReplicator->addMethod("setState", &Replicator::setState);
-	classReplicator->addMethod("getState", &Replicator::getState);
 	classReplicator->addMethod("setSendState", &Replicator::setSendState);
-	classReplicator->addMethod("getProxyCount", &Replicator::getProxyCount);
 	classReplicator->addMethod("getProxy", &Replicator::getProxy);
-	classReplicator->addMethod("getPrimaryProxy", &Replicator::getPrimaryProxy);
 	classReplicator->addMethod("resetAllLatencies", &Replicator::resetAllLatencies);
-	classReplicator->addMethod("getAverageLatency", &Replicator::getAverageLatency);
-	classReplicator->addMethod("getAverageReverseLatency", &Replicator::getAverageReverseLatency);
-	classReplicator->addMethod("getBestLatency", &Replicator::getBestLatency);
-	classReplicator->addMethod("getBestReverseLatency", &Replicator::getBestReverseLatency);
-	classReplicator->addMethod("getWorstLatency", &Replicator::getWorstLatency);
-	classReplicator->addMethod("getWorstReverseLatency", &Replicator::getWorstReverseLatency);
 	classReplicator->addMethod("broadcastEvent", &Replicator::broadcastEvent);
 	classReplicator->addMethod("sendEventToPrimary", &Replicator::sendEventToPrimary);
 	classReplicator->addMethod("setTimeSynchronization", &Replicator::setTimeSynchronization);
-	classReplicator->addMethod("getTime", &Replicator::getTime);
-	classReplicator->addMethod("getTimeVariance", &Replicator::getTimeVariance);
-	classReplicator->addMethod("isTimeSynchronized", &Replicator::isTimeSynchronized);
 	registrar->registerClass(classReplicator);
 }
 
