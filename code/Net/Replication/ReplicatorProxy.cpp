@@ -169,8 +169,8 @@ Ref< const State > ReplicatorProxy::getState(double time, double limit) const
 {
 	if (m_stateTemplate)
 	{
-		double k = m_stateReceivedTime - m_stateTime0;
-		double offset = std::max(k - limit, 0.0);
+		const double k = m_stateReceivedTime - m_stateTime0;
+		const double offset = std::max(k - limit, 0.0);
 
 		return m_stateTemplate->extrapolate(
 			m_stateN2,
@@ -190,8 +190,8 @@ Ref< const State > ReplicatorProxy::getFilteredState(double time, double limit, 
 {
 	if (m_stateTemplate)
 	{
-		double k = m_stateReceivedTime - m_stateTime0;
-		double offset = std::max(k - limit, 0.0);
+		const double k = m_stateReceivedTime - m_stateTime0;
+		const double offset = std::max(k - limit, 0.0);
 
 		Ref< const State > extrapolatedState = m_stateTemplate->extrapolate(
 			m_stateN2,
@@ -207,7 +207,7 @@ Ref< const State > ReplicatorProxy::getFilteredState(double time, double limit, 
 
 		if (currentState)
 			return m_stateTemplate->extrapolate(
-				0, 0.0f,
+				nullptr, 0.0f,
 				extrapolatedState, 0.0f,
 				currentState, 1.0f,
 				filterCoeff
