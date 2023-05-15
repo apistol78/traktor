@@ -286,12 +286,11 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 	);
 }
 
-bool BodyBullet::setState(const BodyState& state)
+void BodyBullet::setState(const BodyState& state)
 {
 	setTransform(state.getTransform());
 	setLinearVelocity(state.getLinearVelocity());
 	setAngularVelocity(state.getAngularVelocity());
-	return true;
 }
 
 BodyState BodyBullet::getState() const

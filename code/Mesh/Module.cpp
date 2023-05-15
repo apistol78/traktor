@@ -18,7 +18,6 @@
 #	include "Mesh/Partition/PartitionMeshResource.h"
 #	include "Mesh/Skinned/SkinnedMeshResource.h"
 #	include "Mesh/Static/StaticMeshResource.h"
-#	include "Mesh/Stream/StreamMeshResource.h"
 
 namespace traktor::mesh
 {
@@ -34,7 +33,6 @@ extern "C" void __module__Traktor_Mesh()
 	T_FORCE_LINK_REF(PartitionMeshResource);
 	T_FORCE_LINK_REF(SkinnedMeshResource);
 	T_FORCE_LINK_REF(StaticMeshResource);
-	T_FORCE_LINK_REF(StreamMeshResource);
 }
 
 }

@@ -258,13 +258,10 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 		))
 		{
 			const Scalar move = Scalar(motionLength * result.fraction);
-
-			// Don't move entire distance to prevent stability issues.
-			const Scalar c_fudge = 0.01_simd;
-			inoutPosition += motion * ((move > c_fudge) ? move - c_fudge : move);
+			inoutPosition += motion * move;
 
 			// Adjust movement vector.
-			const Scalar k = dot3(-motion, result.normal);
+			const Scalar k = abs(dot3(-motion, result.normal)) + 0.0001_simd;
 			motion += result.normal * k;
 			if (motion.normalize() <= FUZZY_EPSILON)
 				break;

@@ -15,6 +15,7 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Physics/BallJoint.h"
 #include "Physics/Body.h"
+#include "Physics/BoxedBodyState.h"
 #include "Physics/CollisionListener.h"
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/Hinge2Joint.h"
@@ -174,31 +175,6 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.QueryResult", QueryResultWrapper, Object)
 
-class BodyStateWrapper : public Object
-{
-	T_RTTI_CLASS;
-
-public:
-	BodyStateWrapper()
-	{
-	}
-
-	BodyStateWrapper(const BodyState& state)
-	:	m_state(state)
-	{
-	}
-
-	operator const BodyState& () const
-	{
-		return m_state;
-	}
-
-private:
-	BodyState m_state;
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyState", BodyStateWrapper, Object)
-
 Ref< QueryResultWrapper > PhysicsManager_queryPoint(PhysicsManager* self, const Vector4& at, float margin)
 {
 	QueryResult result;
@@ -282,19 +258,6 @@ Ref< QueryResultWrapper > PhysicsManager_querySweep_2(
 		return nullptr;
 }
 
-bool Body_setState(Body* self, const BodyStateWrapper* state)
-{
-	if (state)
-		return self->setState(*state);
-	else
-		return false;
-}
-
-Ref< BodyStateWrapper > Body_getState(Body* self)
-{
-	return new BodyStateWrapper(self->getState());
-}
-
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, PhysicsClassFactory, IRuntimeClassFactory)
@@ -315,9 +278,6 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classQueryResult->addProperty("fraction", &QueryResultWrapper::fraction);
 	classQueryResult->addProperty("material", &QueryResultWrapper::material);
 	registrar->registerClass(classQueryResult);
-
-	auto classBodyState = new AutoRuntimeClass< BodyStateWrapper >();
-	registrar->registerClass(classBodyState);
 
 	auto classPhysicsManager = new AutoRuntimeClass< PhysicsManager >();
 	classPhysicsManager->addProperty("gravity", &PhysicsManager::setGravity, &PhysicsManager::getGravity);
@@ -341,6 +301,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addProperty("kinematic", &Body::isKinematic);
 	classBody->addProperty("active", &Body::setActive, &Body::isActive);
 	classBody->addProperty("enable", &Body::setEnable, &Body::isEnable);
+	classBody->addProperty("state", &Body::setState, &Body::getState);
 	classBody->addProperty("linearVelocity", &Body::setLinearVelocity, &Body::getLinearVelocity);
 	classBody->addProperty("angularVelocity", &Body::setAngularVelocity, &Body::getAngularVelocity);
 	classBody->addProperty("userObject", &Body::setUserObject, &Body::getUserObject);
@@ -352,8 +313,6 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBody->addMethod("addAngularImpulse", &Body::addAngularImpulse);
 	classBody->addMethod("addImpulse", &Body::addImpulse);
 	classBody->addMethod("getVelocityAt", &Body::getVelocityAt);
-	classBody->addMethod("setState", &Body_setState);
-	classBody->addMethod("getState", &Body_getState);
 	classBody->addMethod("addCollisionListener", &Body::addCollisionListener);
 	classBody->addMethod("removeCollisionListener", &Body::removeCollisionListener);
 	classBody->addMethod("removeAllCollisionListeners", &Body::removeAllCollisionListeners);
