@@ -138,7 +138,7 @@ public:
 	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const = 0;
 
 	/*! Set body's complete state. */
-	virtual bool setState(const BodyState& state) = 0;
+	virtual void setState(const BodyState& state) = 0;
 
 	/*! Get complete state of body. */
 	virtual BodyState getState() const = 0;

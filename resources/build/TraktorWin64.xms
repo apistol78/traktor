@@ -3733,16 +3733,6 @@
 											<items/>
 										</item>
 										<item type="Filter">
-											<name>Test</name>
-											<items>
-												<item type="File" version="1">
-													<fileName>Test/*.*</fileName>
-													<excludeFilter/>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Ftp</name>
 											<items>
 												<item type="File" version="1">
@@ -3787,26 +3777,6 @@
 											<items>
 												<item type="File" version="1">
 													<fileName>Discovery/*.*</fileName>
-													<excludeFilter/>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>Replication</name>
-											<items>
-												<item type="Filter">
-													<name>State</name>
-													<items>
-														<item type="File" version="1">
-															<fileName>Replication/State/*.*</fileName>
-															<excludeFilter/>
-															<items/>
-														</item>
-													</items>
-												</item>
-												<item type="File" version="1">
-													<fileName>Replication/*.*</fileName>
 													<excludeFilter/>
 													<items/>
 												</item>
@@ -14785,17 +14755,17 @@
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
-											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-										</item>
-										<item type="ProjectDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
 											<project ref="/object/projects/item[1]/dependencies/item[7]/project/dependencies/item[14]/project"/>
 										</item>
 										<item type="ProjectDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -21836,6 +21806,190 @@
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
 					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Jungle</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Jungle/</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_JUNGLE_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.lib</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.dll</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.pdb</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_JUNGLE_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.lib</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.dll</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.pdb</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.lib</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.pdb</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.lib</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+						<item type="AggregationItem">
+							<sourceFile>Traktor.Jungle.pdb</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File" version="1">
+					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>State</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>State/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Test</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>Test/*.*</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[61]/dependencies/item[14]/project/dependencies/item[19]/project"/>
 				</item>
 			</dependencies>
 		</item>

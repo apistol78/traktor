@@ -9,9 +9,6 @@
 #if defined(_WIN32)
 #	include <Windows.h>
 #endif
-#if defined(_DEBUG)
-#	include "Core/CycleRefDebugger.h"
-#endif
 #include "Core/Debug/Debugger.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"

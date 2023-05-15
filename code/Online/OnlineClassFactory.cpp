@@ -27,7 +27,6 @@
 #include "Online/IVideoSharing.h"
 #include "Online/IVoiceChat.h"
 #include "Online/LobbyFilter.h"
-#include "Online/OnlinePeer2PeerProvider.h"
 #include "Online/Score.h"
 #include "Online/ScoreArrayResult.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -407,10 +406,6 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIVoiceChat->addMethod("setMute", &IVoiceChat::setMute);
 	classIVoiceChat->addMethod("isTransmitting", &IVoiceChat::isTransmitting);
 	registrar->registerClass(classIVoiceChat);
-
-	auto classOnlinePeer2PeerProvider = new AutoRuntimeClass< OnlinePeer2PeerProvider >();
-	classOnlinePeer2PeerProvider->addConstructor< ISessionManager*, ILobby*, bool, bool >();
-	registrar->registerClass(classOnlinePeer2PeerProvider);
 }
 
 	}

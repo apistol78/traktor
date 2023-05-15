@@ -104,7 +104,7 @@ public:
 
 	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const override final;
 
-	virtual bool setState(const BodyState& state) override final;
+	virtual void setState(const BodyState& state) override final;
 
 	virtual BodyState getState() const override final;
 
