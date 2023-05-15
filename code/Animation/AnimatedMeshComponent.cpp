@@ -162,9 +162,9 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
 		{
 			auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
-			auto rotation = lerp(skinTransformsLastUpdate[i], skinTransformsCurrentUpdate[i], interval);
+			auto rotation = slerp(Quaternion(skinTransformsLastUpdate[i]), Quaternion(skinTransformsCurrentUpdate[i]), interval);
 			translation.storeAligned(jointData->translation);
-			rotation.storeAligned(jointData->rotation);
+			rotation.e.storeAligned(jointData->rotation);
 			jointData++;
 		}
 		jointBufferCurrent->unlock();

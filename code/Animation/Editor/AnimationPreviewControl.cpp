@@ -256,6 +256,9 @@ void AnimationPreviewControl::updateWorldRenderer()
 	world::WorldRenderSettings wrs;
 	wrs.viewNearZ = 0.1f;
 	wrs.viewFarZ = 1000.0f;
+	wrs.colorGrading = resource::Id< render::ITexture >(Guid(
+		L"{3DEEC673-EDF5-364A-B796-BAC7EF575258}"
+	));
 
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &wrs;

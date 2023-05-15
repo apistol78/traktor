@@ -34,7 +34,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 14, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 16, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -258,7 +258,7 @@ bool AnimationPipeline::buildOutput(
 			}
 
 			const float duration = anim->getLastKeyPose().at - anim->getKeyPose(0).at;
-			anim->setTimePerDistance(duration / locomotionDistance);
+			anim->setTimePerDistance(std::abs(locomotionDistance) > FUZZY_EPSILON ? duration / locomotionDistance : 0.0f);
 			anim->setTotalLocomotion(totalLocomotion);
 		}
 	}

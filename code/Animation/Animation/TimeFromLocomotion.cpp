@@ -16,7 +16,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.TimeFromLocomotion", TimeFromLocomoti
 
 void TimeFromLocomotion::calculateTime(const Animation* animation, const Transform& worldTransform, float& inoutTime, float& outDeltaTime)
 {
-	const Vector4 locomotionDirection = (worldTransform * animation->getTotalLocomotion().xyz0()).normalized();
+	Vector4 locomotionDirection = worldTransform * animation->getTotalLocomotion().xyz0();
+	Scalar locomotionDistance = locomotionDirection.length();
+	if (locomotionDistance < FUZZY_EPSILON)
+		return;
+	locomotionDirection /= locomotionDistance;
+	
 	const float distance = dot3(locomotionDirection, (worldTransform.translation() - m_transform.translation()) * Vector4(1.0f, 0.0f, 1.0f));
 
 	outDeltaTime = animation->getTimePerDistance() * distance;
