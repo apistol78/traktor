@@ -84,7 +84,6 @@ Aabb3 CharacterComponent::getBoundingBox() const
 void CharacterComponent::update(const world::UpdateParams& update)
 {
 	const Scalar dT(update.deltaTime);
-	const Vector4 movement = m_velocity * dT;
 	Vector4 position = m_bodyWide->getTransform().translation();
 
 	// Add user impulses.
@@ -112,6 +111,7 @@ void CharacterComponent::update(const world::UpdateParams& update)
 	m_impulse = Vector4::zero();
 
 	// Step up.
+	const Vector4 movement = m_velocity * dT;
 	float stepUpLength = m_data->getStep();
 	if (movement.y() > 0.0f)
 		stepUpLength += movement.y();
