@@ -594,6 +594,14 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Resolve all bundles.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getBundleResolved();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to resolve bundles." << Endl;
+			return false;
+		}
+
 		// Get connected permutation.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConnectedPermutation();
 		if (!materialShaderGraph)
@@ -618,14 +626,6 @@ bool MeshPipeline::buildOutput(
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get renderer permutation." << Endl;
-			return false;
-		}
-
-		// Resolve all bundles.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getBundleResolved();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to resolve bundles." << Endl;
 			return false;
 		}
 

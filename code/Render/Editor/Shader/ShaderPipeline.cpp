@@ -274,6 +274,14 @@ bool ShaderPipeline::buildOutput(
 	// Keep a reference to the resolved graph; in case of failure it's good for debugging.
 	Ref< const ShaderGraph > resolvedGraph = shaderGraph;
 
+	// Resolve all bundles.
+	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getBundleResolved();
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to resolve bundles." << Endl;
+		return false;
+	}
+
 	// Get connected permutation.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getConnectedPermutation();
 	if (!shaderGraph)
@@ -295,14 +303,6 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
-		return false;
-	}
-
-	// Resolve all bundles.
-	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getBundleResolved();
-	if (!shaderGraph)
-	{
-		log::error << L"ShaderPipeline failed; unable to resolve bundles." << Endl;
 		return false;
 	}
 
