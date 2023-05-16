@@ -1,77 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{4E36EC8B-5317-45CD-9008-23F6B945CC9C}</id>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{22BCBF51-869C-9843-8278-3C56AA3F862A}</id>
 			<comment/>
 			<position>
-				<first>1157</first>
-				<second>518</second>
+				<first>1148</first>
+				<second>243</second>
 			</position>
-			<name>T_Roughness</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{CF9A479B-DE29-DC4E-A986-0F29EC645368}</id>
+			<comment/>
+			<position>
+				<first>1756</first>
+				<second>360</second>
+			</position>
+			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
+					<name>Attributes</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D33A9610-7887-6941-BCCE-C09BB94D18E9}</id>
+			<comment/>
+			<position>
+				<first>1148</first>
+				<second>200</second>
+			</position>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{79CB08EB-6352-E14D-8568-9773CC85B75A}</id>
+			<comment/>
+			<position>
+				<first>1397</first>
+				<second>380</second>
+			</position>
+			<fragmentGuid>{78B269D7-7546-FB42-8539-BAC518A5A174}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E0A19334-5502-FC49-AB32-3860B9607516}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{91FF0666-4296-9248-8DED-8DFE98C8F815}</id>
+					<name>Input</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{17DB9995-C5C3-824C-9CDA-5D3A524A7346}</id>
+					<name>Irradiance</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
+					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
+					<name>Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{1D7FFB3D-01E1-BF42-9E16-D5247E953065}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
+					<name>SurfaceColor</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+					<name>Transparent</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{10CC7B54-4F11-1645-967D-E3693051A121}</id>
+					<name>View position</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
+					<name>View velocity</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E863FD25-4DB6-F44E-B51C-5EAE291EA5CF}</id>
+					<name>Write velocity</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{9D13C425-2DBE-B241-AE2D-C174C8D77790}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{D710345F-679E-414F-845A-EE9D399114DC}</id>
+			<id>{6AC47625-F84A-A742-954C-E902EE64971F}</id>
 			<comment/>
 			<position>
-				<first>1147</first>
-				<second>570</second>
-			</position>
-			<name>T_Transparency</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{289CD48A-9CB6-4736-AAC4-5CA6E7A16593}</id>
-			<comment/>
-			<position>
-				<first>1157</first>
-				<second>466</second>
-			</position>
-			<name>T_Metalness</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{EEF85D37-46B1-422A-8C5A-E23DABA4EB3E}</id>
-			<comment/>
-			<position>
-				<first>1177</first>
-				<second>362</second>
-			</position>
-			<name>T_Emissive</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{F6A033FD-B0FB-498A-93C7-B28292F04459}</id>
-			<comment/>
-			<position>
-				<first>1147</first>
-				<second>310</second>
+				<first>883</first>
+				<second>352</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{63D03AB6-AC64-4923-8F06-CFB28B13F4CB}</id>
+			<id>{BA4B677D-76F8-7A46-AC18-685A615679CB}</id>
 			<comment/>
 			<position>
-				<first>1157</first>
-				<second>414</second>
+				<first>903</first>
+				<second>400</second>
+			</position>
+			<name>T_Emissive</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{F086D80B-02B8-F24C-93CD-8DF6931EB720}</id>
+			<comment/>
+			<position>
+				<first>903</first>
+				<second>448</second>
 			</position>
 			<name>T_Irradiance</name>
 			<connectable>true</connectable>
@@ -79,153 +164,146 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{12E0D058-A991-234B-8BAB-69063C348721}</id>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{9ADB7753-0E41-EB47-B0CA-907936C3B576}</id>
 			<comment/>
 			<position>
-				<first>1521</first>
-				<second>385</second>
+				<first>903</first>
+				<second>496</second>
 			</position>
-			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
-					<name>SurfaceColor</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
-					<name>Alpha</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
-					<name>Cast shadow</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
-					<name>Emissive</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
-					<name>Irradiance</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
-					<name>Metalness</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
-					<name>Roughness</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
-					<name>Specular</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
-					<name>Transparent</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
-					<name>View normal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
-					<name>Write velocity</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Cast shadow</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Metalness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Roughness</first>
-					<second>0.8</second>
-				</item>
-				<item>
-					<first>Specular</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Transparent</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Write velocity</first>
-					<second>1</second>
-				</item>
-			</values>
+			<name>T_Metalness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{7561B5F6-B46D-054E-A128-723113665F8C}</id>
+			<id>{FF2773B3-2EB8-1B4D-A408-CEC844DDF40C}</id>
 			<comment/>
 			<position>
-				<first>1177</first>
-				<second>622</second>
+				<first>883</first>
+				<second>544</second>
+			</position>
+			<name>T_Roughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{2518B458-7310-174C-BB1B-F4454AEDB150}</id>
+			<comment/>
+			<position>
+				<first>883</first>
+				<second>592</second>
+			</position>
+			<name>T_Transparency</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{8A117A40-9641-8A41-AF45-65AB84F73AAC}</id>
+			<comment/>
+			<position>
+				<first>903</first>
+				<second>640</second>
 			</position>
 			<name>T_Specular</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
+			<optional>false</optional>
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{3EC5AA20-AB36-405E-A6F8-26C21D9F60D6}</id>
+			<id>{6F21E453-9366-4142-98AE-E1DD887F3941}</id>
 			<comment/>
 			<position>
-				<first>1117</first>
-				<second>674</second>
+				<first>883</first>
+				<second>736</second>
 			</position>
-			<name>T_ViewNormalDetail</name>
+			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{CEE62709-A4CF-994C-BE83-812E6717A9B5}</id>
+			<comment/>
+			<position>
+				<first>883</first>
+				<second>784</second>
+			</position>
+			<name>T_ViewVelocity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{4F252980-8358-664C-96B3-FAAF7C0F7A6E}</id>
+			<comment/>
+			<position>
+				<first>883</first>
+				<second>688</second>
+			</position>
+			<name>T_ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{E73D4139-FF99-504F-B0D3-EBD56969AF0C}</id>
+			<comment/>
+			<position>
+				<first>1148</first>
+				<second>286</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9D13C425-2DBE-B241-AE2D-C174C8D77790}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
+				<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -234,28 +312,18 @@
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{E0A19334-5502-FC49-AB32-3860B9607516}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{17DB9995-C5C3-824C-9CDA-5D3A524A7346}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -264,8 +332,8 @@
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -274,9 +342,70 @@
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1D7FFB3D-01E1-BF42-9E16-D5247E953065}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{10CC7B54-4F11-1645-967D-E3693051A121}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{E863FD25-4DB6-F44E-B51C-5EAE291EA5CF}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
