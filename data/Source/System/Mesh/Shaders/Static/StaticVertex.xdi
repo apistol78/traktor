@@ -218,6 +218,8 @@
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
+				<item>Position</item>
+				<item>Normal</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -414,11 +416,31 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{EEB495BD-DE7F-4DE8-9D3A-7E9B220B927F}</id>
+				<id>{EEB495BD-DE7F-4DE8-9F3A-7E9B220B927F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{EEB495BD-DE7F-4DE8-9D3A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{EEB495BD-DE7F-4DE8-9E3A-7E9B220B927F}</id>
 			</destination>
 		</item>
 	</edges>
