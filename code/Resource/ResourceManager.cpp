@@ -102,14 +102,14 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		}
 
 		// Determine product type; must be explicitly determined if we can safely preload the resource.
-		TypeInfoSet productTypes = factory->getProductTypes(*resourceType);
+		const TypeInfoSet productTypes = factory->getProductTypes(*resourceType);
 		if (productTypes.size() != 1)
 		{
 			log::warning << L"Unable to preload resource " << resource.second.format() << L"; unable to determine product type, skipped." << Endl;
 			continue;
 		}
 
-		bool cacheable = factory->isCacheable(*resource.first);
+		const bool cacheable = factory->isCacheable(*resource.first);
 		if (!cacheable)
 		{
 			log::warning << L"Unable to preload resource " << resource.second.format() << L"; resource non cacheable, skipped." << Endl;
@@ -176,7 +176,7 @@ Ref< ResourceHandle > ResourceManager::bind(const TypeInfo& productType, const G
 	}
 
 	// Create resource handle.
-	bool cacheable = factory->isCacheable(productType);
+	const bool cacheable = factory->isCacheable(productType);
 	if (cacheable)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -245,7 +245,7 @@ bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 
 	bool loaded = false;
 
-	auto i1 = m_residentHandles.find(guid);
+	const auto i1 = m_residentHandles.find(guid);
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& productType = i1->second->getProductType();
@@ -256,7 +256,7 @@ bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 		}
 	}
 
-	auto i0 = m_exclusiveHandles.find(guid);
+	const auto i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
 		for (auto handle : i0->second)

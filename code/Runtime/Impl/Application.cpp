@@ -427,9 +427,9 @@ void Application::destroy()
 	m_plugins.clear();
 
 	// Destroy environment servers.
+	safeDestroy(m_resourceServer);
 	safeDestroy(m_scriptServer);
 	safeDestroy(m_audioServer);
-	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
 	safeDestroy(m_physicsServer);
 	safeDestroy(m_inputServer);
