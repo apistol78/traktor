@@ -816,35 +816,18 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 				const OutputPin* parentBundleSourcePin = shaderGraph->findSourcePin(parentBundleInputPin);
 				if (parentBundleSourcePin)
 					uniteNodeIt = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
+				else
+					uniteNodeIt = nullptr;
 			}
-
-			if (!sourcePin)
-			{
-				log::error << L"No input in bundle named \"" << outputPin->getName() << L"\"; in shader " << m_shaderGraphId.format() << Endl;
-				return nullptr;
-			}
-
-			//// Find input into unite node with matching name.
-			//const InputPin* inputPin = uniteNode->findInputPin(outputPin->getName());
-			//if (!inputPin)
-			//{
-			//	log::error << L"No input in bundle named \"" << outputPin->getName() << L"\"; in shader " << m_shaderGraphId.format() << Endl;
-			//	return nullptr;
-			//}
-
-			//const OutputPin* sourcePin = shaderGraph->findSourcePin(inputPin);
-			//if (!sourcePin)
-			//{
-			//	log::warning << L"Unconnected wire \"" << outputPin->getName() << L"\" in bundle; in shader " << m_shaderGraphId.format() << Endl;
-			//	continue;
-			//}
-
 
 			for (auto edge : shaderGraph->findEdges(outputPin))
 				shaderGraph->removeEdge(edge);
 
-			for (auto destinationPin : destinationPins)
-				shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
+			if (sourcePin)
+			{
+				for (auto destinationPin : destinationPins)
+					shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
+			}
 		}
 	}
 
