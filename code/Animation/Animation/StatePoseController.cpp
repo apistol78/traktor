@@ -319,6 +319,14 @@ bool StatePoseController::evaluate(
 			}
 		}
 
+		// Yet no transition, repeat current state if we're at the end.
+		if (selectedTransition == nullptr)
+		{
+			const float timeLeft = max(m_currentStateContext.getDuration() - m_currentStateContext.getTime(), 0.0f);
+			if (timeLeft <= 0.0f)
+				selectedTransition = new Transition(m_currentState, m_currentState);
+		}
+
 		// Begin transition to found state.
 		if (selectedTransition != nullptr)
 		{
