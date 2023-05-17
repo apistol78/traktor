@@ -17,6 +17,7 @@
 #include "Core/Timer/Profiler.h"
 #include "Render/IRenderTargetSet.h"
 #include "Render/IRenderView.h"
+#include "Resource/IResourceManager.h"
 #include "Runtime/IAudioServer.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/UpdateInfo.h"
@@ -216,7 +217,7 @@ void WorldLayer::update(const UpdateInfo& info)
 	// Update camera transform from entity.
 	if (m_cameraEntity)
 	{
-		Transform cameraTransform = m_cameraEntity->getTransform();
+		const Transform cameraTransform = m_cameraEntity->getTransform();
 		m_cameraTransform.step();
 		m_cameraTransform.set(cameraTransform);
 	}
@@ -266,9 +267,10 @@ void WorldLayer::preSetup(const UpdateInfo& info)
 	// Grab interpolated camera transform.
 	if (m_cameraEntity)
 	{
+		const float cameraInterval = info.getInterval();
 		m_worldRenderView.setView(
 			m_worldRenderView.getView(),
-			(m_cameraTransform.get(info.getInterval()) * m_cameraOffset).inverse().toMatrix44()
+			(m_cameraTransform.get(cameraInterval) * m_cameraOffset).inverse().toMatrix44()
 		);
 	}
 
@@ -439,6 +441,15 @@ RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) cons
 		}
 	}
 	return entities;
+}
+
+Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
+{
+	resource::Proxy< world::EntityData > entityData;
+	if (!m_environment->getResource()->getResourceManager()->bind(resource::Id< world::EntityData >(entityDataId), entityData))
+		return nullptr;
+
+	return m_environment->getWorld()->getEntityBuilder()->create(entityData);
 }
 
 void WorldLayer::addEntity(world::Entity* entity)
