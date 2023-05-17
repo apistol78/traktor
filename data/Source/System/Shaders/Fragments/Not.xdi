@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{3BEE6FBC-73D2-40AE-8491-667E79827E2E}</id>
 			<comment/>
 			<position>
-				<first>212</first>
-				<second>382</second>
+				<first>238</first>
+				<second>365</second>
 			</position>
 			<name>Input</name>
 			<connectable>true</connectable>
@@ -73,4 +73,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

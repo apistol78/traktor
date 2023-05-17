@@ -1409,7 +1409,7 @@
 				<first>2947</first>
 				<second>-602</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>BrDynamic</branch>
 			<width>2</width>
 			<cases>
 				<item>1</item>
