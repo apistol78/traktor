@@ -35,7 +35,19 @@ void JointBindingComponent::setOwner(world::Entity* owner)
 {
 	T_ASSERT(m_owner == nullptr);
 	if ((m_owner = owner) != nullptr)
+	{
 		m_transform = m_owner->getTransform();
+
+		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+		if (skeletonComponent)
+		{
+			for (auto& binding : m_bindings)
+			{
+				if (!skeletonComponent->getPoseTransform(binding.jointHandle, binding.poseTransform))
+					binding.poseTransform = Transform::identity();
+			}
+		}
+	}
 }
 
 void JointBindingComponent::setTransform(const Transform& transform)
@@ -75,11 +87,18 @@ void JointBindingComponent::update(const world::UpdateParams& update)
 	auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
 	if (skeletonComponent)
 	{
-		for (const auto& binding : m_bindings)
+		for (auto& binding : m_bindings)
 		{
 			Transform T;
 			if (skeletonComponent->getPoseTransform(binding.jointHandle, T))
-				binding.entity->setTransform(m_transform * T);
+			{
+				const Transform invPoseTransform = (m_transform * binding.poseTransform).inverse();
+				const Transform currentTransform = binding.entity->getTransform();
+				const Transform Tlocal = invPoseTransform * currentTransform;
+				const Transform Tworld = (m_transform * T) * Tlocal;
+				binding.entity->setTransform(Tworld);
+				binding.poseTransform = T;
+			}
 		}
 	}
 

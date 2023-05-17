@@ -35,6 +35,7 @@ public:
 	{
 		render::handle_t jointHandle;
 		Ref< world::Entity > entity;
+		Transform poseTransform;
 	};
 
 	explicit JointBindingComponent(const AlignedVector< Binding >& bindings);

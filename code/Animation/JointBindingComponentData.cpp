@@ -45,6 +45,17 @@ int32_t JointBindingComponentData::getOrdinal() const
 
 void JointBindingComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
 {
+	const Transform invTransform = owner->getTransform().inverse();
+	for (auto& binding : m_bindings)
+	{
+		if (binding.entityData != nullptr)
+		{
+			const Transform currentTransform = binding.entityData->getTransform();
+			const Transform Tlocal = invTransform * currentTransform;
+			const Transform Tworld = transform * Tlocal;
+			binding.entityData->setTransform(Tworld);
+		}
+	}
 }
 
 void JointBindingComponentData::serialize(ISerializer& s)
@@ -55,7 +66,7 @@ void JointBindingComponentData::serialize(ISerializer& s)
 void JointBindingComponentData::Binding::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"jointName", jointName);
-	s >> MemberRef< const world::EntityData >(L"entityData", entityData);
+	s >> MemberRef< world::EntityData >(L"entityData", entityData);
 }
 
 }
