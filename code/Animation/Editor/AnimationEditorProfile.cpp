@@ -12,7 +12,7 @@
 #include "Animation/Boids/BoidsRenderer.h"
 #include "Animation/Cloth/ClothRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
-#include "Animation/Editor/AnimatedMeshComponentEditorFactory.h"
+#include "Animation/Editor/AnimationComponentEditorFactory.h"
 #include "Animation/Editor/Cloth/ClothEntityEditorFactory.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -95,7 +95,7 @@ void AnimationEditorProfile::createComponentEditorFactories(
 	RefArray< const scene::IComponentEditorFactory >& outComponentEditorFactories
 ) const
 {
-	outComponentEditorFactories.push_back(new AnimatedMeshComponentEditorFactory());
+	outComponentEditorFactories.push_back(new AnimationComponentEditorFactory());
 }
 
 Ref< world::EntityData > AnimationEditorProfile::createEntityData(

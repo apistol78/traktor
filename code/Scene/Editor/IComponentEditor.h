@@ -28,6 +28,8 @@ class PrimitiveRenderer;
 namespace traktor::scene
 {
 
+class EntityAdapter;
+
 /*!
  * \ingroup Scene
  */
@@ -36,6 +38,8 @@ class T_DLLCLASS IComponentEditor : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual void transformModified(EntityAdapter* entityAdapter, EntityAdapter* modifiedEntityAdapter) = 0;
+
 	/*! Draw guide for component.
 	 *
 	 * A guide is the wire overlay

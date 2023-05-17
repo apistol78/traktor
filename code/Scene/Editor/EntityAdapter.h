@@ -120,12 +120,16 @@ public:
 	/*! \name Spatial accessors. */
 	//@{
 
+	//! Modify the transform of entity data only.
 	void setTransform0(const Transform& transform);
 
+	//! Get the transform from entity data.
 	Transform getTransform0() const;
 
+	//! Set transform of entity and entity data.
 	void setTransform(const Transform& transform);
 
+	//! Get transform from entity.
 	Transform getTransform() const;
 
 	Aabb3 getBoundingBox() const;

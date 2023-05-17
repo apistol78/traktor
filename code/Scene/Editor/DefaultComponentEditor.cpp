@@ -27,6 +27,10 @@ DefaultComponentEditor::DefaultComponentEditor(SceneEditorContext* context, Enti
 {
 }
 
+void DefaultComponentEditor::transformModified(EntityAdapter* entityAdapter, EntityAdapter* modifiedEntityAdapter)
+{
+}
+
 void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	const Transform transform = m_entityAdapter->getTransform();

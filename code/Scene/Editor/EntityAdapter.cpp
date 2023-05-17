@@ -149,6 +149,13 @@ void EntityAdapter::setTransform0(const Transform& transform)
 {
 	if (m_entityData)
 		m_entityData->setTransform(transform);
+
+	// Notify all ancestor component editors about the modified transform.
+	for (EntityAdapter* adapter = this; adapter != nullptr; adapter = adapter->getParent())
+	{
+		for (auto componentEditor : adapter->m_componentEditors)
+			componentEditor->transformModified(adapter, this);
+	}
 }
 
 Transform EntityAdapter::getTransform0() const
@@ -158,9 +165,17 @@ Transform EntityAdapter::getTransform0() const
 
 void EntityAdapter::setTransform(const Transform& transform)
 {
-	setTransform0(transform);
+	if (m_entityData)
+		m_entityData->setTransform(transform);
 	if (m_entity)
 		m_entity->setTransform(transform);
+
+	// Notify all ancestor component editors about the modified transform.
+	for (EntityAdapter* adapter = this; adapter != nullptr; adapter = adapter->getParent())
+	{
+		for (auto componentEditor : adapter->m_componentEditors)
+			componentEditor->transformModified(adapter, this);
+	}
 }
 
 Transform EntityAdapter::getTransform() const

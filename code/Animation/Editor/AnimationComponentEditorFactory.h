@@ -16,7 +16,7 @@ namespace traktor::animation
 /*!
  * \ingroup Animation
  */
-class AnimatedMeshComponentEditorFactory : public scene::IComponentEditorFactory
+class AnimationComponentEditorFactory : public scene::IComponentEditorFactory
 {
 	T_RTTI_CLASS;
 

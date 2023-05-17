@@ -33,6 +33,10 @@ PhysicsComponentEditor::PhysicsComponentEditor(scene::SceneEditorContext* contex
 {
 }
 
+void PhysicsComponentEditor::transformModified(scene::EntityAdapter* entityAdapter, scene::EntityAdapter* modifiedEntityAdapter)
+{
+}
+
 void PhysicsComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	if (m_context->shouldDrawGuide(L"Physics.Shapes"))
