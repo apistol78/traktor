@@ -34,7 +34,9 @@ class PhysicsComponentEditor : public scene::IComponentEditor
 	T_RTTI_CLASS;
 
 public:
-	PhysicsComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
+	explicit PhysicsComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
+
+	virtual void transformModified(scene::EntityAdapter* entityAdapter, scene::EntityAdapter* modifiedEntityAdapter) override final;
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 

@@ -41,6 +41,8 @@ class T_DLLCLASS DefaultComponentEditor : public IComponentEditor
 public:
 	explicit DefaultComponentEditor(SceneEditorContext* context, EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
+	virtual void transformModified(EntityAdapter* entityAdapter, EntityAdapter* modifiedEntityAdapter) override;
+
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override;
 
 protected:
