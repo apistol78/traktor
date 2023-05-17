@@ -343,6 +343,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
+	classWorldLayer->addMethod("createEntity", &WorldLayer::createEntity);
 	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod("isEntityAdded", &WorldLayer::isEntityAdded);

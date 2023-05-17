@@ -102,6 +102,8 @@ public:
 
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
+	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
+
 	void addEntity(world::Entity* entity);
 
 	void removeEntity(world::Entity* entity);
