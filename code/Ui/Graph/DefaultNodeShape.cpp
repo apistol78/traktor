@@ -288,7 +288,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			AnCenter
 		);
 
-		canvas->setFont(settings.getFont());
+		if (pin->isMandatory() || pin->isBold())
+			canvas->setFont(settings.getFont());
 	}
 
 	for (int32_t i = 0; i < int32_t(outputPins.size()); ++i)
@@ -316,7 +317,8 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			AnCenter
 		);
 
-		canvas->setFont(settings.getFont());
+		if (pin->isBold())
+			canvas->setFont(settings.getFont());
 	}
 }
 

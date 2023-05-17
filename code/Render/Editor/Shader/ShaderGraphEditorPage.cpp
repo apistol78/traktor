@@ -1204,7 +1204,11 @@ Ref< ui::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 
 Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
 {
-	Ref< ui::Group > editorGroup = m_editorGraph->createGroup(shaderGroup->getTitle(), shaderGroup->getPosition(), shaderGroup->getSize());
+	Ref< ui::Group > editorGroup = m_editorGraph->createGroup(
+		shaderGroup->getTitle(),
+		ui::Point(shaderGroup->getPosition()).dpi96(),
+		ui::Size(shaderGroup->getSize()).dpi96()
+	);
 	editorGroup->setData(L"SHADERGROUP", shaderGroup);
 	return editorGroup;
 
