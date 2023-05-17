@@ -45,7 +45,7 @@ public:
 	struct Binding
 	{
 		std::wstring jointName;
-		Ref< const world::EntityData > entityData;
+		Ref< world::EntityData > entityData;
 
 		void serialize(ISerializer& s);
 	};
