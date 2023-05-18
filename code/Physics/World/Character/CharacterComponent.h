@@ -88,6 +88,9 @@ public:
 	/*! Return true if character is grounded. */
 	bool grounded() const;
 
+	/*!*/
+	void setVelocity(const Vector4& velocity);
+
 	/*! Character current velocity. */
 	const Vector4& getVelocity() const;
 

@@ -198,6 +198,11 @@ bool CharacterComponent::grounded() const
 	return m_grounded;
 }
 
+void CharacterComponent::setVelocity(const Vector4& velocity)
+{
+	m_velocity = velocity;
+}
+
 const Vector4& CharacterComponent::getVelocity() const
 {
 	return m_velocity;
