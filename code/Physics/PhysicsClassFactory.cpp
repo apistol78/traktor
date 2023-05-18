@@ -346,7 +346,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classCharacterComponent = new AutoRuntimeClass< CharacterComponent >();
 	classCharacterComponent->addProperty("grounded", &CharacterComponent::grounded);
-	classCharacterComponent->addProperty("velocity", &CharacterComponent::getVelocity);
+	classCharacterComponent->addProperty("velocity", &CharacterComponent::setVelocity, &CharacterComponent::getVelocity);
 	classCharacterComponent->addProperty("headAngle", &CharacterComponent::setHeadAngle, &CharacterComponent::getHeadAngle);
 	classCharacterComponent->addMethod("move", &CharacterComponent::move);
 	classCharacterComponent->addMethod("jump", &CharacterComponent::jump);
