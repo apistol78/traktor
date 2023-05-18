@@ -44,103 +44,103 @@ class T_DLLCLASS ReplicatorProxy : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief
+	/*!
 	 */
 	net_handle_t getHandle() const;
 
-	/*! \brief
+	/*!
 	 */
 	const std::wstring& getName() const;
 
-	/*! \brief
+	/*!
 	 */
 	Object* getUser() const;
 
-	/*! \brief
+	/*!
 	 */
 	uint8_t getStatus() const;
 
-	/*! \brief
+	/*!
 	 */
 	bool isLatencyReliable() const;
 
-	/*! \brief
+	/*!
 	 */
 	double getLatency() const;
 
-	/*! \brief
+	/*!
 	 */
 	double getLatencySpread() const;
 
-	/*! \brief
+	/*!
 	 */
 	double getReverseLatency() const;
 
-	/*! \brief
+	/*!
 	 */
 	double getReverseLatencySpread() const;
 
-	/*! \brief
+	/*!
 	 */
 	void resetLatencies();
 
-	/*! \brief
+	/*!
 	 */
 	double getTimeRate() const;
 
-	/*! \brief
+	/*!
 	 */
 	bool isConnected() const;
 
-	/*! \brief
+	/*!
 	 */
 	bool setPrimary();
 
-	/*! \brief
+	/*!
 	 */
 	bool isPrimary() const;
 
-	/*! \brief
+	/*!
 	 */
 	bool isRelayed() const;
 
-	/*! \brief
+	/*!
 	 */
 	void setObject(Object* object);
 
-	/*! \brief
+	/*!
 	 */
 	Object* getObject() const;
 
-	/*! \brief
+	/*!
 	 */
 	void setOrigin(const Transform& origin);
 
-	/*! \brief
+	/*!
 	 */
 	const Transform& getOrigin() const;
 
-	/*! \brief
+	/*!
 	 */
 	void setStateTemplate(const StateTemplate* stateTemplate);
 
-	/*! \brief
+	/*!
 	 */
 	const StateTemplate* getStateTemplate() const;
 
-	/*! \brief
+	/*!
 	 */
 	Ref< const State > getState(double time, double limit) const;
 
-	/*! \brief
+	/*!
 	 */
 	Ref< const State > getFilteredState(double time, double limit, const State* currentState, float filterCoeff) const;
 
-	/*! \brief
+	/*!
 	 */
 	void resetStates();
 
-	/*! \brief
+	/*!
 	 */
 	void setSendState(bool sendState);
 
@@ -223,6 +223,7 @@ private:
 	double m_latencyStandardDeviation;
 	double m_latencyReverse;
 	double m_latencyReverseStandardDeviation;
+	
 	// @}
 
 	int32_t updateTxEventQueue();
