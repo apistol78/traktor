@@ -9,6 +9,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Io/IStream.h"
@@ -34,6 +35,8 @@
 #include "Jungle/State/StateTemplate.h"
 #include "Jungle/State/TransformTemplate.h"
 #include "Jungle/State/TransformValue.h"
+#include "Jungle/State/VectorTemplate.h"
+#include "Jungle/State/VectorValue.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
 #include "Physics/BoxedBodyState.h"
@@ -221,6 +224,11 @@ Transform TransformValue_get(TransformValue* self)
 	return *self;
 }
 
+Vector4 VectorValue_get(VectorValue* self)
+{
+	return *self;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.jungle.JungleClassFactory", 0, JungleClassFactory, IRuntimeClassFactory)
@@ -264,6 +272,15 @@ void JungleClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classTransformTemplate = new AutoRuntimeClass< TransformTemplate >();
 	classTransformTemplate->addConstructor< const std::wstring& >();
 	registrar->registerClass(classTransformTemplate);
+
+	auto classVectorValue = new AutoRuntimeClass< VectorValue >();
+	classVectorValue->addConstructor< const Vector4& >();
+	classVectorValue->addMethod("get", &VectorValue_get);
+	registrar->registerClass(classVectorValue);
+
+	auto classVectorTemplate = new AutoRuntimeClass< VectorTemplate >();
+	classVectorTemplate->addConstructor< const std::wstring& >();
+	registrar->registerClass(classVectorTemplate);
 
 	auto classIValue = new AutoRuntimeClass< IValue >();
 	registrar->registerClass(classIValue);
