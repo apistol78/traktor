@@ -117,7 +117,7 @@ bool ReplicatorProxy::isRelayed() const
 {
 	if (m_replicator)
 	{
-		int32_t nodeCount = m_replicator->m_topology->getNodeCount();
+		const int32_t nodeCount = m_replicator->m_topology->getNodeCount();
 		for (int32_t i = 0; i < nodeCount; ++i)
 		{
 			if (m_replicator->m_topology->getNodeHandle(i) == m_handle)
@@ -372,7 +372,7 @@ bool ReplicatorProxy::dispatchRxEvents(const SmallMap< const TypeInfo*, RefArray
 		bool processed = false;
 		uint32_t count = 0;
 
-		SmallMap< const TypeInfo*, RefArray< IReplicatorEventListener > >::const_iterator it = eventListeners.find(&type_of(rxEvent.eventObject));
+		const auto it = eventListeners.find(&type_of(rxEvent.eventObject));
 		if (it != eventListeners.end())
 		{
 			T_ANONYMOUS_VAR(Ref< const ISerializable >)(rxEvent.eventObject);
@@ -406,8 +406,8 @@ void ReplicatorProxy::updateLatency(double localTime, double remoteTime, double 
 		m_timeRate = 0.0;
 		for (uint32_t i = 0; i < m_remoteTimes.size() - 1; ++i)
 		{
-			double dLocalT = m_remoteTimes[i + 1].first - m_remoteTimes[i].first;
-			double dRemoteT = m_remoteTimes[i + 1].second - m_remoteTimes[i].second;
+			const double dLocalT = m_remoteTimes[i + 1].first - m_remoteTimes[i].first;
+			const double dRemoteT = m_remoteTimes[i + 1].second - m_remoteTimes[i].second;
 			m_timeRate += dRemoteT / dLocalT;
 		}
 		m_timeRate /= double(m_remoteTimes.size() - 1);
@@ -416,7 +416,7 @@ void ReplicatorProxy::updateLatency(double localTime, double remoteTime, double 
 	// Keep circular buffer of latest round trips.
 	m_roundTrips.push_back(roundTrip);
 
-	double denom = 1.0 / double(m_roundTrips.size());
+	const double denom = 1.0 / double(m_roundTrips.size());
 
 	// Calculate average latency.
 	double sum = 0;
@@ -428,7 +428,7 @@ void ReplicatorProxy::updateLatency(double localTime, double remoteTime, double 
 	double sumDiff = 0;
 	for (uint32_t i = 0; i < m_roundTrips.size(); ++i)
 	{
-		double diff = m_roundTrips[i] / 2.0 - m_latency;
+		const double diff = m_roundTrips[i] / 2.0 - m_latency;
 		sumDiff += diff * diff;
 	}
 	m_latencyStandardDeviation = std::sqrt(sumDiff * denom);

@@ -122,7 +122,7 @@ bool Replicator::update()
 	net_handle_t from;
 
 	// Need to use real-time delta; cannot use engine filtered and clamped delta.
-	double dT = m_timer.getDeltaTime();
+	const double dT = m_timer.getDeltaTime();
 	if (dT > c_catastrophicDeltaTime)
 	{
 		log::error << getLogPrefix() << L"Catastrophic delta time measured (" << dT << L" second(s)), cannot sustain reliable networking." << Endl;
@@ -156,8 +156,7 @@ bool Replicator::update()
 		msg.id = RmiState;
 		msg.time = time2net(m_time);
 
-		uint32_t stateDataSize = 0;
-		stateDataSize = m_stateTemplate->pack(
+		const uint32_t stateDataSize = m_stateTemplate->pack(
 			m_state,
 			msg.state.data,
 			RmiState_MaxStateSize()
@@ -171,10 +170,10 @@ bool Replicator::update()
 				{
 					m_topology->send(proxy->m_handle, &msg, RmiState_NetSize(stateDataSize));
 
-					Vector4 direction = proxy->m_origin.translation() - m_origin.translation();
-					Scalar distance = direction.length();
+					const Vector4 direction = proxy->m_origin.translation() - m_origin.translation();
+					const Scalar distance = direction.length();
 
-					float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
+					const float t = clamp((distance - m_configuration.nearDistance) / (m_configuration.farDistance - m_configuration.nearDistance), 0.0f, 1.0f);
 
 					proxy->m_distance = distance;
 					proxy->m_timeUntilTxState = lerp(m_configuration.timeUntilTxStateNear, m_configuration.timeUntilTxStateFar, t);
@@ -192,7 +191,7 @@ bool Replicator::update()
 		from = 0;
 
 		// Poll message from topology.
-		int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
+		const int32_t nrecv = m_topology->recv(&msg, sizeof(msg), from);
 		if (nrecv <= 0)
 			break;
 
@@ -215,8 +214,8 @@ bool Replicator::update()
 
 		if (fromProxy->isPrimary() && fromProxy->isLatencyReliable())
 		{
-			double latency = fromProxy->getReverseLatency();
-			double ghostOffset = net2time(msg.time) + latency - m_timeContinuousSync;
+			const double latency = fromProxy->getReverseLatency();
+			const double ghostOffset = net2time(msg.time) + latency - m_timeContinuousSync;
 
 			if (!timeOffsetReceived)
 				timeOffset = ghostOffset;
@@ -243,7 +242,7 @@ bool Replicator::update()
 						float(m_time),
 						IReplicatorStateListener::ReStatus,
 						fromProxy,
-						0
+						nullptr
 					);
 				}
 			}
@@ -259,16 +258,16 @@ bool Replicator::update()
 		}
 		else if (msg.id == RmiPong)
 		{
-			double pingTime = min(m_time0, net2time(msg.pong.time0));
-			double roundTrip = m_time0 - pingTime;
-			double latencyReverse = net2time(msg.pong.latency);
-			double latencyReverseSpread = net2time(msg.pong.latencySpread);
+			const double pingTime = min(m_time0, net2time(msg.pong.time0));
+			const double roundTrip = m_time0 - pingTime;
+			const double latencyReverse = net2time(msg.pong.latency);
+			const double latencyReverseSpread = net2time(msg.pong.latencySpread);
 
 			fromProxy->updateLatency(m_time0, net2time(msg.pong.rtime0), roundTrip, latencyReverse, latencyReverseSpread);
 		}
 		else if (msg.id == RmiState)
 		{
-			bool received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv));
+			const bool received = fromProxy->receivedState(m_time, net2time(msg.time), msg.state.data, RmiState_StateSize(nrecv));
 			if (received)
 				fromProxy->m_issueStateListeners = true;
 		}
@@ -361,7 +360,7 @@ bool Replicator::update()
 		}
 		else
 		{
-			double k = abs(timeOffset) / 0.06;
+			const double k = abs(timeOffset) / 0.06;
 			timeOffset *= 0.4 * k;
 		}
 

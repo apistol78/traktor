@@ -47,7 +47,7 @@ class T_DLLCLASS OnlinePeer2PeerProvider : public IPeer2PeerProvider
 	T_RTTI_CLASS;
 
 public:
-	OnlinePeer2PeerProvider(online::ISessionManager* sessionManager, online::ILobby* lobby, bool asyncTx, bool asyncRx);
+	explicit OnlinePeer2PeerProvider(online::ISessionManager* sessionManager, online::ILobby* lobby, bool asyncTx, bool asyncRx);
 
 	virtual ~OnlinePeer2PeerProvider();
 

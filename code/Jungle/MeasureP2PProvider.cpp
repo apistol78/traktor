@@ -33,12 +33,11 @@ MeasureP2PProvider::MeasureP2PProvider(IPeer2PeerProvider* provider)
 
 bool MeasureP2PProvider::update()
 {
-	double time = s_timer.getElapsedTime();
+	const double time = s_timer.getElapsedTime();
+	const double duration = time - m_time;
 
-	double duration = time - m_time;
-
-	double sentBps = (m_sentBytes * 8.0) / duration;
-	double recvBps = (m_recvBytes * 8.0) / duration;
+	const double sentBps = (m_sentBytes * 8.0) / duration;
+	const double recvBps = (m_recvBytes * 8.0) / duration;
 
 	if (m_sentBps > 0.0)
 		m_sentBps = (m_sentBps * 0.9 + sentBps * 0.1);
@@ -98,7 +97,7 @@ bool MeasureP2PProvider::send(net_handle_t node, const void* data, int32_t size)
 
 int32_t MeasureP2PProvider::recv(void* data, int32_t size, net_handle_t& outNode)
 {
-	int32_t nbytes = m_provider->recv(data, size, outNode);
+	const int32_t nbytes = m_provider->recv(data, size, outNode);
 	if (nbytes > 0)
 		m_recvBytes += nbytes;
 
