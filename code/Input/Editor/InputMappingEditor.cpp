@@ -80,12 +80,10 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, const std::map< const TypeInfo*, Ref< const InputNodeTraits > >& traits, const IInputNode* node, ui::Pin* parentInputPin)
 {
@@ -124,16 +122,16 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		Ref< ui::Node > graphNode = graph->createNode(
 			t->getHeader(node),
 			t->getDescription(node),
-			ui::Point(p.x, p.y),
+			ui::Point(p.x, p.y).dpi96(),
 			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape() : (ui::INodeShape*)new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
 		valuePin = graphNode->createOutputPin(L"Value", Guid());
 		graphNode->setData(L"DATA", const_cast< IInputNode* >(node));
 
-		for (std::map< const std::wstring, Ref< const IInputNode > >::const_iterator i = childNodes.begin(); i != childNodes.end(); ++i)
+		for (auto it : childNodes)
 		{
-			Ref< ui::Pin > pin = graphNode->createInputPin(i->first, Guid(), false, false);
-			createInputNodes(mappingAsset, graph, traits, i->second, pin);
+			Ref< ui::Pin > pin = graphNode->createInputPin(it.first, Guid(), false, false);
+			createInputNodes(mappingAsset, graph, traits, it.second, pin);
 		}
 	}
 
@@ -148,7 +146,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputMappingEditor", InputMappingEditor, editor::IEditorPage)
 
@@ -368,7 +366,7 @@ void InputMappingEditor::updateGraphView()
 		Ref< ui::Node > node = m_graph->createNode(
 			L"State",
 			it.first,
-			ui::Point(p.x, p.y),
+			ui::Point(p.x, p.y).dpi96(),
 			new ui::OutputNodeShape()
 		);
 		node->setData(L"NAME", new PropertyString(it.first));
@@ -421,11 +419,8 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 			if (!node)
 				return;
 
-			InputMappingAsset::Position position =
-			{
-				event->getPosition().x - m_graph->getOffset().cx,
-				event->getPosition().y - m_graph->getOffset().cy
-			};
+			const ui::Point pos = (event->getPosition() - m_graph->getOffset()).invdpi96();
+			const InputMappingAsset::Position position = { pos.x, pos.y };
 
 			m_mappingAsset->addInputNode(node);
 			m_mappingAsset->setPosition(node, position);
@@ -437,11 +432,8 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			Ref< InputStateData > sd = new InputStateData();
 
-			InputMappingAsset::Position position =
-			{
-				event->getPosition().x - m_graph->getOffset().cx,
-				event->getPosition().y - m_graph->getOffset().cy
-			};
+			const ui::Point pos = (event->getPosition() - m_graph->getOffset()).invdpi96();
+			const InputMappingAsset::Position position = { pos.x, pos.y };
 
 			m_mappingAsset->setPosition(sd, position);
 			stateData->setStateData(L"STATE_UNNAMED_" + toString(uint32_t(stateData->getStateData().size())), sd);
@@ -464,7 +456,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 					IInputNode* destinationInputNode = destinationNode->getData< IInputNode >(L"DATA");
 					if (destinationInputNode)
 					{
-						std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
+						const auto it = m_traits.find(&type_of(destinationInputNode));
 						T_ASSERT(it != m_traits.end());
 
 						const InputNodeTraits* destinationTraits = it->second;
@@ -489,7 +481,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 			Ref< InputStateData > stateData = selectedNode->getData< InputStateData >(L"DATA");
 			if (stateName && stateData)
 			{
-				std::wstring currentName = PropertyString::get(stateName);
+				const std::wstring currentName = PropertyString::get(stateName);
 				m_mappingAsset->getStateData()->setStateData(currentName, nullptr);
 			}
 		}
@@ -538,7 +530,7 @@ void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 	}
 	else if (event->getText().empty())	// Remove item.
 	{
-		std::wstring id = m_listValueSources->getItem(event->getIndex());
+		const std::wstring id = m_listValueSources->getItem(event->getIndex());
 		sourceData->setSourceData(id, nullptr);
 		event->consume();
 	}
@@ -549,7 +541,7 @@ void InputMappingEditor::eventListValueEdit(ui::EditListEditEvent* event)
 		if (sd.find(event->getText()) != sd.end())
 			return;
 
-		std::wstring fromId = m_listValueSources->getItem(event->getIndex());
+		const std::wstring fromId = m_listValueSources->getItem(event->getIndex());
 		Ref< IInputSourceData > inputSourceData = sourceData->getSourceData(fromId);
 		sourceData->setSourceData(fromId, nullptr);
 		sourceData->setSourceData(event->getText(), inputSourceData);
@@ -562,10 +554,11 @@ void InputMappingEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 	ui::Node* node = event->getNode();
 	T_ASSERT(node);
 
-	InputMappingAsset::Position p =
+	const ui::Point position = node->getPosition().invdpi96();
+	const InputMappingAsset::Position p =
 	{
-		node->getPosition().x,
-		node->getPosition().y
+		position.x,
+		position.y
 	};
 
 	m_mappingAsset->setPosition(node->getData(L"DATA"), p);
@@ -623,7 +616,7 @@ void InputMappingEditor::eventEdgeConnected(ui::EdgeConnectEvent* event)
 	IInputNode* destinationInputNode = destinationNode->getData< IInputNode >(L"DATA");
 	if (destinationInputNode)
 	{
-		std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
+		const auto it = m_traits.find(&type_of(destinationInputNode));
 		T_ASSERT(it != m_traits.end());
 
 		const InputNodeTraits* destinationTraits = it->second;
@@ -650,7 +643,7 @@ void InputMappingEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 	IInputNode* destinationInputNode = destinationNode->getData< IInputNode >(L"DATA");
 	if (destinationInputNode)
 	{
-		std::map< const TypeInfo*, Ref< const InputNodeTraits > >::const_iterator it = m_traits.find(&type_of(destinationInputNode));
+		const auto it = m_traits.find(&type_of(destinationInputNode));
 		T_ASSERT(it != m_traits.end());
 
 		const InputNodeTraits* destinationTraits = it->second;
@@ -662,7 +655,7 @@ void InputMappingEditor::eventEdgeDisconnected(ui::EdgeDisconnectEvent* event)
 	InputStateData* destinationStateData = destinationNode->getData< InputStateData >(L"DATA");
 	if (destinationStateData)
 	{
-		destinationStateData->setSource(0);
+		destinationStateData->setSource(nullptr);
 	}
 
 	updateGraphView();
@@ -678,5 +671,4 @@ void InputMappingEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	updateGraphView();
 }
 
-	}
 }
