@@ -44,7 +44,7 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	void raise(const std::wstring& name);
+	void raise(const std::wstring& name, const Transform& offset = Transform::identity());
 
 	const IEntityEvent* getEvent(const std::wstring& name) const;
 

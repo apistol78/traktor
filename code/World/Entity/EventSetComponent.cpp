@@ -41,13 +41,13 @@ void EventSetComponent::update(const UpdateParams& update)
 {
 }
 
-void EventSetComponent::raise(const std::wstring& name)
+void EventSetComponent::raise(const std::wstring& name, const Transform& offset)
 {
 	const IEntityEvent* event = getEvent(name);
 	if (!event)
 		return;
 
-	m_eventManager->raise(event, m_owner, Transform::identity());
+	m_eventManager->raise(event, m_owner, offset);
 }
 
 const IEntityEvent* EventSetComponent::getEvent(const std::wstring& name) const
