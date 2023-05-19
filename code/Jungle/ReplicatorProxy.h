@@ -142,7 +142,11 @@ public:
 
 	/*!
 	 */
-	void setSendState(bool sendState);
+	void setSendState(bool sendState) { m_sendState = sendState; }
+
+	/*!
+	 */
+	bool getSendState() const { return m_sendState; }
 
 	/*! Send high priority event to this ghost.
 	 */

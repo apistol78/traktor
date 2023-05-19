@@ -227,11 +227,6 @@ void ReplicatorProxy::resetStates()
 	m_stateTimeN2 = 0.0;
 }
 
-void ReplicatorProxy::setSendState(bool sendState)
-{
-	m_sendState = sendState;
-}
-
 void ReplicatorProxy::sendEvent(const ISerializable* eventObject, bool inOrder)
 {
 	T_FATAL_ASSERT (eventObject);

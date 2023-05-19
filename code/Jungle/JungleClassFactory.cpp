@@ -343,12 +343,12 @@ void JungleClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicatorProxy->addProperty("object", &ReplicatorProxy::setObject, &ReplicatorProxy::getObject);
 	classReplicatorProxy->addProperty("origin", &ReplicatorProxy::setOrigin, &ReplicatorProxy::getOrigin);
 	classReplicatorProxy->addProperty("stateTemplate", &ReplicatorProxy::setStateTemplate, &ReplicatorProxy::getStateTemplate);
+	classReplicatorProxy->addProperty("sendState", &ReplicatorProxy::setSendState, &ReplicatorProxy::getSendState);
 	classReplicatorProxy->addMethod("getState", &ReplicatorProxy::getState);
 	classReplicatorProxy->addMethod("getFilteredState", &ReplicatorProxy::getFilteredState);
 	classReplicatorProxy->addMethod("setPrimary", &ReplicatorProxy::setPrimary);
 	classReplicatorProxy->addMethod("resetLatencies", &ReplicatorProxy::resetLatencies);
 	classReplicatorProxy->addMethod("resetStates", &ReplicatorProxy::resetStates);
-	classReplicatorProxy->addMethod("setSendState", &ReplicatorProxy::setSendState);
 	classReplicatorProxy->addMethod("sendEvent", &ReplicatorProxy::sendEvent);
 	registrar->registerClass(classReplicatorProxy);
 
@@ -386,6 +386,7 @@ void JungleClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicator->addProperty("timeSynchronized", &Replicator::isTimeSynchronized);
 	classReplicator->addProperty("proxyCount", &Replicator::getProxyCount);
 	classReplicator->addProperty("primaryProxy", &Replicator::getPrimaryProxy);
+	classReplicator->addProperty("origin", &Replicator::setOrigin, &Replicator::getOrigin);
 	classReplicator->addMethod("create", &Replicator_create);
 	classReplicator->addMethod("destroy", &Replicator::destroy);
 	classReplicator->addMethod("setConfiguration", &Replicator_setConfiguration);
@@ -400,7 +401,6 @@ void JungleClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classReplicator->addMethod("removeAllEventListeners", &Replicator::removeAllEventListeners);
 	classReplicator->addMethod("update", &Replicator::update);
 	classReplicator->addMethod("flush", &Replicator::flush);
-	classReplicator->addMethod("setOrigin", &Replicator::setOrigin);
 	classReplicator->addMethod("setStateTemplate", &Replicator::setStateTemplate);
 	classReplicator->addMethod("setSendState", &Replicator::setSendState);
 	classReplicator->addMethod("getProxy", &Replicator::getProxy);
