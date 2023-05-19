@@ -116,6 +116,16 @@ int32_t CameraComponent_getProjection(CameraComponent* self)
 	return (int32_t)self->getProjection();
 }
 
+void EventSetComponent_raise_1(EventSetComponent* self, const std::wstring& name)
+{
+	self->raise(name);
+}
+
+void EventSetComponent_raise_2(EventSetComponent* self, const std::wstring& name, const Transform& offset)
+{
+	self->raise(name, offset);
+}
+
 void Entity_update(Entity* self, float totalTime, float deltaTime)
 {
 	UpdateParams up;
@@ -288,7 +298,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEventSetComponentData);
 
 	auto classEventSetComponent = new AutoRuntimeClass< EventSetComponent >();
-	classEventSetComponent->addMethod("raise", &EventSetComponent::raise);
+	classEventSetComponent->addMethod("raise", &EventSetComponent_raise_1);
+	classEventSetComponent->addMethod("raise", &EventSetComponent_raise_2);
 	classEventSetComponent->addMethod("getEvent", &EventSetComponent::getEvent);
 	registrar->registerClass(classEventSetComponent);
 
