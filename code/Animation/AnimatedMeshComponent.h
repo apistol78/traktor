@@ -76,6 +76,7 @@ private:
 	AlignedVector< int32_t > m_jointRemap;
 	AlignedVector< Vector4 > m_skinTransforms[2];
 	Ref< render::Buffer > m_jointBuffers[2];
+	Transform m_lastWorldTransform;
 	int32_t m_index;
 };
 

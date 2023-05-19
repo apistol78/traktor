@@ -145,7 +145,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
-	const Transform lastWorldTransform = m_transform.get(interval - 1.0_simd);
 
 	auto jointBufferLast = m_jointBuffers[0];
 	auto jointBufferCurrent = m_jointBuffers[1];
@@ -180,7 +179,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		m_mesh->build(
 			context.getRenderContext(),
 			worldRenderPass,
-			lastWorldTransform,
+			m_lastWorldTransform,
 			worldTransform,
 			jointBufferLast,
 			jointBufferCurrent,
@@ -194,6 +193,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	{
 		m_jointBuffers[0] = jointBufferCurrent;
 		m_jointBuffers[1] = jointBufferLast;
+		m_lastWorldTransform = worldTransform;
 	}
 }
 
