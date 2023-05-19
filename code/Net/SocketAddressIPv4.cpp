@@ -135,7 +135,7 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
 #if defined(_WIN32)
-	uint8_t buf[4096];
+	uint8_t buf[8192];
 
 	ULONG bufLen = 0;
 	GetAdaptersInfo(nullptr, &bufLen);
