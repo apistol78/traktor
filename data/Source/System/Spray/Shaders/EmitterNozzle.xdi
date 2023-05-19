@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{3BDBD78A-BE19-834D-9293-01C35F29B214}</id>
@@ -148,15 +148,15 @@ Extent
 			<comment/>
 			<position>
 				<first>-1598</first>
-				<second>-161</second>
+				<second>-180</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E3916C86-D762-2144-9FC9-653785B6EF3C}</id>
 			<comment/>
 			<position>
-				<first>-1803</first>
-				<second>-99</second>
+				<first>-1820</first>
+				<second>-117</second>
 			</position>
 			<value>0.5</value>
 		</item>
@@ -165,7 +165,7 @@ Extent
 			<comment/>
 			<position>
 				<first>-1372</first>
-				<second>-164</second>
+				<second>-181</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -368,7 +368,7 @@ Position
 			<comment/>
 			<position>
 				<first>-1372</first>
-				<second>-120</second>
+				<second>-137</second>
 			</position>
 			<name>L_TexCoord</name>
 			<global>false</global>
@@ -713,6 +713,15 @@ Particle extent
 				<second>77</second>
 			</position>
 		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{663E709F-535E-394E-97DF-DC71F8F44E0D}</id>
+			<comment/>
+			<position>
+				<first>-1878</first>
+				<second>-164</second>
+			</position>
+			<value>0.5, -0.5, 0, 0</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -743,16 +752,6 @@ Particle extent
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{BFBE8191-F6E6-4A4F-A2CC-6CBC1D19BF70}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1295,5 +1294,16 @@ Particle extent
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups/>
 </object>
