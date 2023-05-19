@@ -106,4 +106,28 @@ void JointBindingComponent::update(const world::UpdateParams& update)
 		binding.entity->update(update);
 }
 
+world::Entity* JointBindingComponent::getEntity(const std::wstring& name, int32_t index) const
+{
+	for (const auto& binding : m_bindings)
+	{
+		if (binding.entity->getName() == name)
+		{
+			if (index-- <= 0)
+				return binding.entity;
+		}
+	}
+	return nullptr;
+}
+
+RefArray< world::Entity > JointBindingComponent::getEntities(const std::wstring& name) const
+{
+	RefArray< world::Entity > entities;
+	for (const auto& binding : m_bindings)
+	{
+		if (binding.entity->getName() == name)
+			entities.push_back(binding.entity);
+	}
+	return entities;
+}
+
 }

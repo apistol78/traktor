@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
 #include "World/IEntityComponent.h"
@@ -49,6 +50,10 @@ public:
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
+
+	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
+
+	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
 	/*! Get all joint entity bindings. */
 	const AlignedVector< Binding >& getBindings() const { return m_bindings; }

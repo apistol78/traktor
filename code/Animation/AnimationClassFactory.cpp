@@ -8,6 +8,7 @@
  */
 #include "Animation/AnimationClassFactory.h"
 #include "Animation/AnimatedMeshComponent.h"
+#include "Animation/JointBindingComponent.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
@@ -25,6 +26,7 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
+#include "World/Entity.h"
 
 namespace traktor::animation
 {
@@ -86,6 +88,11 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();
 	classAnimatedMeshComponent->addMethod("getSkinTransform", &AnimatedMeshComponent_getSkinTransform);
 	registrar->registerClass(classAnimatedMeshComponent);
+
+	auto classJointBindingComponent = new AutoRuntimeClass< JointBindingComponent >();
+	classJointBindingComponent->addMethod("getEntity", &JointBindingComponent::getEntity);
+	classJointBindingComponent->addMethod("getEntities", &JointBindingComponent::getEntities);
+	registrar->registerClass(classJointBindingComponent);
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();
 	registrar->registerClass(classPoseController);
