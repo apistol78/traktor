@@ -178,7 +178,11 @@ public:
 	 *
 	 * \param origin World origin of caller peer.
 	 */
-	void setOrigin(const Transform& origin);
+	void setOrigin(const Transform& origin) { m_origin = origin; }
+
+	/*!
+	 */
+	const Transform& getOrigin() const { return m_origin; }
 
 	/*!
 	 */

@@ -385,15 +385,14 @@ bool Replicator::update()
 		{
 			if (!m_timeSynchronized)
 			{
-#if defined(_DEBUG)
-				log::info << getLogPrefix() << L"Time synchronized (" << (m_timeContinuousSync - m_time) * 1000.0 << L" ms)" << Endl;
-#endif
+				const double adjustStateTime = m_timeContinuousSync - m_time;
 
+				log::info << getLogPrefix() << L"Time synchronized, states adjusted by " << adjustStateTime * 1000.0 << L" ms." << Endl;
 				for (auto proxy : m_proxies)
 				{
-					proxy->m_stateTimeN2 += (m_timeContinuousSync - m_time);
-					proxy->m_stateTimeN1 += (m_timeContinuousSync - m_time);
-					proxy->m_stateTime0 += (m_timeContinuousSync - m_time);
+					proxy->m_stateTimeN2 -= adjustStateTime;
+					proxy->m_stateTimeN1 -= adjustStateTime;
+					proxy->m_stateTime0 -= adjustStateTime;
 				}
 
 				m_time = m_timeContinuousSync;
@@ -501,11 +500,6 @@ uint8_t Replicator::getStatus() const
 bool Replicator::isPrimary() const
 {
 	return m_topology->getPrimaryHandle() == m_topology->getLocalHandle();
-}
-
-void Replicator::setOrigin(const Transform& origin)
-{
-	m_origin = origin;
 }
 
 void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
