@@ -106,24 +106,24 @@ T_MATH_INLINE bool Matrix44::isOrtho() const
 
 T_MATH_INLINE Scalar Matrix44::determinant() const
 {
-	Vector4 c0_xxyz = m_c[0].shuffle< 0, 0, 1, 2 >();
-	Vector4 c0_ywzw = m_c[0].shuffle< 1, 3, 2, 3 >();
-	Vector4 c1_xxyz = m_c[1].shuffle< 0, 0, 1, 2 >();
-	Vector4 c1_ywzw = m_c[1].shuffle< 1, 3, 2, 3 >();
-	Vector4 c2_zyxx = m_c[2].shuffle< 2, 1, 0, 0 >();
-	Vector4 c2_wzwy = m_c[2].shuffle< 3, 2, 3, 1 >();
-	Vector4 c3_zyxx = m_c[3].shuffle< 2, 1, 0, 0 >();
-	Vector4 c3_wzwy = m_c[3].shuffle< 3, 2, 3, 1 >();
+	const Vector4 c0_xxyz = m_c[0].shuffle< 0, 0, 1, 2 >();
+	const Vector4 c0_ywzw = m_c[0].shuffle< 1, 3, 2, 3 >();
+	const Vector4 c1_xxyz = m_c[1].shuffle< 0, 0, 1, 2 >();
+	const Vector4 c1_ywzw = m_c[1].shuffle< 1, 3, 2, 3 >();
+	const Vector4 c2_zyxx = m_c[2].shuffle< 2, 1, 0, 0 >();
+	const Vector4 c2_wzwy = m_c[2].shuffle< 3, 2, 3, 1 >();
+	const Vector4 c3_zyxx = m_c[3].shuffle< 2, 1, 0, 0 >();
+	const Vector4 c3_wzwy = m_c[3].shuffle< 3, 2, 3, 1 >();
 
-	Vector4 c0_xy = m_c[0].shuffle< 0, 1, 0, 0 >();
-	Vector4 c0_zw = m_c[0].shuffle< 2, 3, 0, 0 >();
-	Vector4 c1_xy = m_c[1].shuffle< 0, 1, 0, 0 >();
-	Vector4 c1_zw = m_c[1].shuffle< 2, 3, 0, 0 >();
-	Vector4 c2_yx = m_c[2].shuffle< 1, 0, 0, 0 >();
-	Vector4 c3_yx = m_c[3].shuffle< 1, 0, 0, 0 >();
+	const Vector4 c0_xy = m_c[0].shuffle< 0, 1, 0, 0 >();
+	const Vector4 c0_zw = m_c[0].shuffle< 2, 3, 0, 0 >();
+	const Vector4 c1_xy = m_c[1].shuffle< 0, 1, 0, 0 >();
+	const Vector4 c1_zw = m_c[1].shuffle< 2, 3, 0, 0 >();
+	const Vector4 c2_yx = m_c[2].shuffle< 1, 0, 0, 0 >();
+	const Vector4 c3_yx = m_c[3].shuffle< 1, 0, 0, 0 >();
 
-	Vector4 pos = (c0_xxyz * c1_ywzw - c0_ywzw * c1_xxyz) * (c2_zyxx * c3_wzwy - c2_wzwy * c3_zyxx);
-	Vector4 neg = (c0_xy * c1_zw - c0_zw * c1_xy) * (c2_yx * c3_wzwy - c2_wzwy * c3_yx);
+	const Vector4 pos = (c0_xxyz * c1_ywzw - c0_ywzw * c1_xxyz) * (c2_zyxx * c3_wzwy - c2_wzwy * c3_zyxx);
+	const Vector4 neg = (c0_xy * c1_zw - c0_zw * c1_xy) * (c2_yx * c3_wzwy - c2_wzwy * c3_yx);
 
 	return pos.x() + pos.y() + pos.z() + pos.w() - neg.x() - neg.y();
 }
@@ -132,10 +132,10 @@ T_MATH_INLINE Matrix44 Matrix44::transpose() const
 {
 #if defined(T_MATH_USE_SSE2)
 
-	__m128 t0 = _mm_unpacklo_ps(m_c[0].m_data, m_c[1].m_data);	// c0x,c1x,c0y,c1y
-	__m128 t1 = _mm_unpackhi_ps(m_c[0].m_data, m_c[1].m_data);	// c0z,c1z,c0w,c1w
-	__m128 t2 = _mm_unpacklo_ps(m_c[2].m_data, m_c[3].m_data);	// c2x,c3x,c2y,c3y
-	__m128 t3 = _mm_unpackhi_ps(m_c[2].m_data, m_c[3].m_data);	// c2z,c3z,c2w,c3w
+	const __m128 t0 = _mm_unpacklo_ps(m_c[0].m_data, m_c[1].m_data);	// c0x,c1x,c0y,c1y
+	const __m128 t1 = _mm_unpackhi_ps(m_c[0].m_data, m_c[1].m_data);	// c0z,c1z,c0w,c1w
+	const __m128 t2 = _mm_unpacklo_ps(m_c[2].m_data, m_c[3].m_data);	// c2x,c3x,c2y,c3y
+	const __m128 t3 = _mm_unpackhi_ps(m_c[2].m_data, m_c[3].m_data);	// c2z,c3z,c2w,c3w
 
 	Matrix44 Mt;
 	Mt.m_c[0].m_data = _mm_movelh_ps(t0, t2);	// c0x,c1x,c2x,c3x
@@ -174,53 +174,53 @@ T_MATH_INLINE Matrix44 Matrix44::transpose() const
 
 T_MATH_INLINE Matrix44 Matrix44::inverse() const
 {
-	Matrix44 Mt = transpose();
+	const Matrix44 Mt = transpose();
 
 	Scalar s = Mt.determinant();
-	if (s == 0.0f)
+	if (s == 0.0_simd)
 		return identity();
 
-	s = Scalar(1.0f) / s;
+	s = 1.0_simd / s;
 
-	Vector4 c0_zxxz = Mt.m_c[0].shuffle< 2, 0, 0, 2 >();
-	Vector4 c0_wwyy = Mt.m_c[0].shuffle< 3, 3, 1, 1 >();
-	Vector4 c0_yxwz = Mt.m_c[0].shuffle< 1, 0, 3, 2 >();
-	Vector4 c0_wzyx = Mt.m_c[0].shuffle< 3, 2, 1, 0 >();
-	Vector4 c0_zzxx = Mt.m_c[0].shuffle< 2, 2, 0, 0 >();
-	Vector4 c0_ywwy = Mt.m_c[0].shuffle< 1, 3, 3, 1 >();
-	Vector4 c0_yzwx = Mt.m_c[0].shuffle< 1, 2, 3, 0 >();
-	Vector4 c0_zwxy = Mt.m_c[0].shuffle< 2, 3, 0, 1 >();
-	Vector4 c0_wxyz = Mt.m_c[0].shuffle< 3, 0, 1, 2 >();
+	const Vector4 c0_zxxz = Mt.m_c[0].shuffle< 2, 0, 0, 2 >();
+	const Vector4 c0_wwyy = Mt.m_c[0].shuffle< 3, 3, 1, 1 >();
+	const Vector4 c0_yxwz = Mt.m_c[0].shuffle< 1, 0, 3, 2 >();
+	const Vector4 c0_wzyx = Mt.m_c[0].shuffle< 3, 2, 1, 0 >();
+	const Vector4 c0_zzxx = Mt.m_c[0].shuffle< 2, 2, 0, 0 >();
+	const Vector4 c0_ywwy = Mt.m_c[0].shuffle< 1, 3, 3, 1 >();
+	const Vector4 c0_yzwx = Mt.m_c[0].shuffle< 1, 2, 3, 0 >();
+	const Vector4 c0_zwxy = Mt.m_c[0].shuffle< 2, 3, 0, 1 >();
+	const Vector4 c0_wxyz = Mt.m_c[0].shuffle< 3, 0, 1, 2 >();
 
-	Vector4 c1_zxxz = Mt.m_c[1].shuffle< 2, 0, 0, 2 >();
-	Vector4 c1_wwyy = Mt.m_c[1].shuffle< 3, 3, 1, 1 >();
-	Vector4 c1_yxwz = Mt.m_c[1].shuffle< 1, 0, 3, 2 >();
-	Vector4 c1_wzyx = Mt.m_c[1].shuffle< 3, 2, 1, 0 >();
-	Vector4 c1_zzxx = Mt.m_c[1].shuffle< 2, 2, 0, 0 >();
-	Vector4 c1_ywwy = Mt.m_c[1].shuffle< 1, 3, 3, 1 >();
-	Vector4 c1_yzwx = Mt.m_c[1].shuffle< 1, 2, 3, 0 >();
-	Vector4 c1_zwxy = Mt.m_c[1].shuffle< 2, 3, 0, 1 >();
-	Vector4 c1_wxyz = Mt.m_c[1].shuffle< 3, 0, 1, 2 >();
+	const Vector4 c1_zxxz = Mt.m_c[1].shuffle< 2, 0, 0, 2 >();
+	const Vector4 c1_wwyy = Mt.m_c[1].shuffle< 3, 3, 1, 1 >();
+	const Vector4 c1_yxwz = Mt.m_c[1].shuffle< 1, 0, 3, 2 >();
+	const Vector4 c1_wzyx = Mt.m_c[1].shuffle< 3, 2, 1, 0 >();
+	const Vector4 c1_zzxx = Mt.m_c[1].shuffle< 2, 2, 0, 0 >();
+	const Vector4 c1_ywwy = Mt.m_c[1].shuffle< 1, 3, 3, 1 >();
+	const Vector4 c1_yzwx = Mt.m_c[1].shuffle< 1, 2, 3, 0 >();
+	const Vector4 c1_zwxy = Mt.m_c[1].shuffle< 2, 3, 0, 1 >();
+	const Vector4 c1_wxyz = Mt.m_c[1].shuffle< 3, 0, 1, 2 >();
 
-	Vector4 c2_zxxz = Mt.m_c[2].shuffle< 2, 0, 0, 2 >();
-	Vector4 c2_wwyy = Mt.m_c[2].shuffle< 3, 3, 1, 1 >();
-	Vector4 c2_yxwz = Mt.m_c[2].shuffle< 1, 0, 3, 2 >();
-	Vector4 c2_wzyx = Mt.m_c[2].shuffle< 3, 2, 1, 0 >();
-	Vector4 c2_zzxx = Mt.m_c[2].shuffle< 2, 2, 0, 0 >();
-	Vector4 c2_ywwy = Mt.m_c[2].shuffle< 1, 3, 3, 1 >();
-	Vector4 c2_yzwx = Mt.m_c[2].shuffle< 1, 2, 3, 0 >();
-	Vector4 c2_zwxy = Mt.m_c[2].shuffle< 2, 3, 0, 1 >();
-	Vector4 c2_wxyz = Mt.m_c[2].shuffle< 3, 0, 1, 2 >();
+	const Vector4 c2_zxxz = Mt.m_c[2].shuffle< 2, 0, 0, 2 >();
+	const Vector4 c2_wwyy = Mt.m_c[2].shuffle< 3, 3, 1, 1 >();
+	const Vector4 c2_yxwz = Mt.m_c[2].shuffle< 1, 0, 3, 2 >();
+	const Vector4 c2_wzyx = Mt.m_c[2].shuffle< 3, 2, 1, 0 >();
+	const Vector4 c2_zzxx = Mt.m_c[2].shuffle< 2, 2, 0, 0 >();
+	const Vector4 c2_ywwy = Mt.m_c[2].shuffle< 1, 3, 3, 1 >();
+	const Vector4 c2_yzwx = Mt.m_c[2].shuffle< 1, 2, 3, 0 >();
+	const Vector4 c2_zwxy = Mt.m_c[2].shuffle< 2, 3, 0, 1 >();
+	const Vector4 c2_wxyz = Mt.m_c[2].shuffle< 3, 0, 1, 2 >();
 
-	Vector4 c3_zxxz = Mt.m_c[3].shuffle< 2, 0, 0, 2 >();
-	Vector4 c3_wwyy = Mt.m_c[3].shuffle< 3, 3, 1, 1 >();
-	Vector4 c3_yxwz = Mt.m_c[3].shuffle< 1, 0, 3, 2 >();
-	Vector4 c3_wzyx = Mt.m_c[3].shuffle< 3, 2, 1, 0 >();
-	Vector4 c3_zzxx = Mt.m_c[3].shuffle< 2, 2, 0, 0 >();
-	Vector4 c3_ywwy = Mt.m_c[3].shuffle< 1, 3, 3, 1 >();
-	Vector4 c3_yzwx = Mt.m_c[3].shuffle< 1, 2, 3, 0 >();
-	Vector4 c3_zwxy = Mt.m_c[3].shuffle< 2, 3, 0, 1 >();
-	Vector4 c3_wxyz = Mt.m_c[3].shuffle< 3, 0, 1, 2 >();
+	const Vector4 c3_zxxz = Mt.m_c[3].shuffle< 2, 0, 0, 2 >();
+	const Vector4 c3_wwyy = Mt.m_c[3].shuffle< 3, 3, 1, 1 >();
+	const Vector4 c3_yxwz = Mt.m_c[3].shuffle< 1, 0, 3, 2 >();
+	const Vector4 c3_wzyx = Mt.m_c[3].shuffle< 3, 2, 1, 0 >();
+	const Vector4 c3_zzxx = Mt.m_c[3].shuffle< 2, 2, 0, 0 >();
+	const Vector4 c3_ywwy = Mt.m_c[3].shuffle< 1, 3, 3, 1 >();
+	const Vector4 c3_yzwx = Mt.m_c[3].shuffle< 1, 2, 3, 0 >();
+	const Vector4 c3_zwxy = Mt.m_c[3].shuffle< 2, 3, 0, 1 >();
+	const Vector4 c3_wxyz = Mt.m_c[3].shuffle< 3, 0, 1, 2 >();
 
 	Vector4 xxxx = c1_yzwx * (c2_zxxz * c3_wwyy - c2_wwyy * c3_zxxz) + c1_zwxy * (c2_wzyx * c3_yxwz - c2_yxwz * c3_wzyx) + c1_wxyz * (c2_ywwy * c3_zzxx - c2_zzxx * c3_ywwy);
 	Vector4 yyyy = c2_yzwx * (c0_zxxz * c3_wwyy - c0_wwyy * c3_zxxz) + c2_zwxy * (c0_wzyx * c3_yxwz - c0_yxwz * c3_wzyx) + c2_wxyz * (c0_ywwy * c3_zzxx - c0_zzxx * c3_ywwy);
@@ -374,25 +374,25 @@ T_MATH_INLINE Vector4 operator * (const Vector4& v, const Matrix44& m)
 
 T_MATH_INLINE Matrix44 operator * (const Matrix44& lh, const Matrix44& rh)
 {
-	Vector4 c0_xxxx = rh.m_c[0].shuffle< 0, 0, 0, 0 >();
-	Vector4 c0_yyyy = rh.m_c[0].shuffle< 1, 1, 1, 1 >();
-	Vector4 c0_zzzz = rh.m_c[0].shuffle< 2, 2, 2, 2 >();
-	Vector4 c0_wwww = rh.m_c[0].shuffle< 3, 3, 3, 3 >();
+	const Vector4 c0_xxxx = rh.m_c[0].shuffle< 0, 0, 0, 0 >();
+	const Vector4 c0_yyyy = rh.m_c[0].shuffle< 1, 1, 1, 1 >();
+	const Vector4 c0_zzzz = rh.m_c[0].shuffle< 2, 2, 2, 2 >();
+	const Vector4 c0_wwww = rh.m_c[0].shuffle< 3, 3, 3, 3 >();
 
-	Vector4 c1_xxxx = rh.m_c[1].shuffle< 0, 0, 0, 0 >();
-	Vector4 c1_yyyy = rh.m_c[1].shuffle< 1, 1, 1, 1 >();
-	Vector4 c1_zzzz = rh.m_c[1].shuffle< 2, 2, 2, 2 >();
-	Vector4 c1_wwww = rh.m_c[1].shuffle< 3, 3, 3, 3 >();
+	const Vector4 c1_xxxx = rh.m_c[1].shuffle< 0, 0, 0, 0 >();
+	const Vector4 c1_yyyy = rh.m_c[1].shuffle< 1, 1, 1, 1 >();
+	const Vector4 c1_zzzz = rh.m_c[1].shuffle< 2, 2, 2, 2 >();
+	const Vector4 c1_wwww = rh.m_c[1].shuffle< 3, 3, 3, 3 >();
 
-	Vector4 c2_xxxx = rh.m_c[2].shuffle< 0, 0, 0, 0 >();
-	Vector4 c2_yyyy = rh.m_c[2].shuffle< 1, 1, 1, 1 >();
-	Vector4 c2_zzzz = rh.m_c[2].shuffle< 2, 2, 2, 2 >();
-	Vector4 c2_wwww = rh.m_c[2].shuffle< 3, 3, 3, 3 >();
+	const Vector4 c2_xxxx = rh.m_c[2].shuffle< 0, 0, 0, 0 >();
+	const Vector4 c2_yyyy = rh.m_c[2].shuffle< 1, 1, 1, 1 >();
+	const Vector4 c2_zzzz = rh.m_c[2].shuffle< 2, 2, 2, 2 >();
+	const Vector4 c2_wwww = rh.m_c[2].shuffle< 3, 3, 3, 3 >();
 
-	Vector4 c3_xxxx = rh.m_c[3].shuffle< 0, 0, 0, 0 >();
-	Vector4 c3_yyyy = rh.m_c[3].shuffle< 1, 1, 1, 1 >();
-	Vector4 c3_zzzz = rh.m_c[3].shuffle< 2, 2, 2, 2 >();
-	Vector4 c3_wwww = rh.m_c[3].shuffle< 3, 3, 3, 3 >();
+	const Vector4 c3_xxxx = rh.m_c[3].shuffle< 0, 0, 0, 0 >();
+	const Vector4 c3_yyyy = rh.m_c[3].shuffle< 1, 1, 1, 1 >();
+	const Vector4 c3_zzzz = rh.m_c[3].shuffle< 2, 2, 2, 2 >();
+	const Vector4 c3_wwww = rh.m_c[3].shuffle< 3, 3, 3, 3 >();
 
 	return Matrix44(
 		c0_xxxx * lh.m_c[0] + c0_yyyy * lh.m_c[1] + c0_zzzz * lh.m_c[2] + c0_wwww * lh.m_c[3],
@@ -434,9 +434,8 @@ T_MATH_INLINE Matrix44 orthoRh(float width, float height, float zn, float zf)
 
 T_MATH_INLINE Matrix44 perspectiveLh(float fov, float aspect, float zn, float zf)
 {
-	float h = cosf(fov / 2.0f) / sinf(fov / 2.0f);
-	float w = h / aspect;
-
+	const float h = cosf(fov / 2.0f) / sinf(fov / 2.0f);
+	const float w = h / aspect;
 	return Matrix44(
 		w,    0.0f, 0.0f,			0.0f,
 		0.0f, h,    0.0f,           0.0f,
@@ -447,9 +446,8 @@ T_MATH_INLINE Matrix44 perspectiveLh(float fov, float aspect, float zn, float zf
 
 T_MATH_INLINE Matrix44 perspectiveRh(float fov, float aspect, float zn, float zf)
 {
-	float h = cosf(fov / 2.0f) / sinf(fov / 2.0f);
-	float w = h / aspect;
-
+	const float h = cosf(fov / 2.0f) / sinf(fov / 2.0f);
+	const float w = h / aspect;
 	return Matrix44(
 		w,    0.0f, 0.0f,           0.0f,
 		0.0f, h,    0.0f,           0.0f,
@@ -480,8 +478,8 @@ T_MATH_INLINE Matrix44 translate(float x, float y, float z)
 
 T_MATH_INLINE Matrix44 rotateX(float angle)
 {
-	float c = cosf(angle);
-	float s = sinf(angle);
+	const float c = cosf(angle);
+	const float s = sinf(angle);
 	return Matrix44(
 		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f,    c,   -s, 0.0f,
@@ -492,8 +490,8 @@ T_MATH_INLINE Matrix44 rotateX(float angle)
 
 T_MATH_INLINE Matrix44 rotateY(float angle)
 {
-	float c = cosf(angle);
-	float s = sinf(angle);
+	const float c = cosf(angle);
+	const float s = sinf(angle);
 	return Matrix44(
 		   c, 0.0f,    s, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
@@ -504,8 +502,8 @@ T_MATH_INLINE Matrix44 rotateY(float angle)
 
 T_MATH_INLINE Matrix44 rotateZ(float angle)
 {
-	float c = cosf(angle);
-	float s = sinf(angle);
+	const float c = cosf(angle);
+	const float s = sinf(angle);
 	return Matrix44(
 		   c,   -s, 0.0f, 0.0f,
 		   s,    c, 0.0f, 0.0f,
@@ -516,13 +514,13 @@ T_MATH_INLINE Matrix44 rotateZ(float angle)
 
 T_MATH_INLINE Matrix44 rotate(const Vector4& axis, float angle)
 {
-	float cf = cosf(angle);
+	const float cf = cosf(angle);
 
-	Scalar c(cf);
-	Scalar s(sinf(angle));
-	Scalar t(1.0f - cf);
+	const Scalar c(cf);
+	const Scalar s(sinf(angle));
+	const Scalar t(1.0f - cf);
 
-	Vector4 txyz = t * axis;
+	const Vector4 txyz = t * axis;
 
 	return Matrix44(
 		txyz.x() * axis.x() + c,
@@ -566,9 +564,9 @@ T_MATH_INLINE Matrix44 scale(float x, float y, float z)
 
 T_MATH_INLINE Matrix44 lookAt(const Vector4& position, const Vector4& target, const Vector4& up)
 {
-	Vector4 z = (target - position).normalized();
-	Vector4 x = cross(up, z).normalized();
-	Vector4 y = cross(z, x).normalized();
+	const Vector4 z = (target - position).normalized();
+	const Vector4 x = cross(up, z).normalized();
+	const Vector4 y = cross(z, x).normalized();
 	return Matrix44(
 		x.x(), x.y(), x.z(), -dot3(x, position),
 		y.x(), y.y(), y.z(), -dot3(y, position),
