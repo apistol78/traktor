@@ -195,7 +195,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 
 		ComRef< IDWriteFontFamily > ffamily;
 		collection->GetFontFamily(findex, &ffamily.getAssign());
-		T_FATAL_ASSERT(ffamily != nullptr);
+		if (!ffamily)
+			return;
 
 		ComRef< IDWriteFont > dwFont;
 		ffamily->GetFirstMatchingFont(
