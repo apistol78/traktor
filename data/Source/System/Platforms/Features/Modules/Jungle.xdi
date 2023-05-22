@@ -298,6 +298,7 @@
 								<item>Traktor.Animation.dll</item>
 								<item>Traktor.Core.dll</item>
 								<item>Traktor.Database.dll</item>
+								<item>Traktor.Jungle.dll</item>
 								<item>Traktor.Mesh.dll</item>
 								<item>Traktor.Physics.dll</item>
 								<item>Traktor.Render.dll</item>
