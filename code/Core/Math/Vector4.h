@@ -88,8 +88,7 @@ public:
 	{
 #if defined(T_MATH_USE_SSE2)
 		const int mask = iX | (iY << 2) | (iZ << 4) | (iW << 6);
-		Vector4 tmp; tmp.m_data = _mm_shuffle_ps(m_data, m_data, mask);
-		return tmp;
+		return Vector4(_mm_shuffle_ps(m_data, m_data, mask));
 #elif defined(T_MATH_USE_ALTIVEC)
 		const static uint32_t c_xyzw[] = { 0x00010203, 0x04050607, 0x08090a0b, 0x0c0d0e0f };
 		Vector4 tmp; tmp.m_data = vec_perm(m_data, m_data, ((vec_uchar16)(vec_uint4){ c_xyzw[iX], c_xyzw[iY], c_xyzw[iZ], c_xyzw[iW] }));
