@@ -266,6 +266,7 @@ void WorldRendererDeferred::setup(
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	auto shadowMapCascadeTargetSetId = (int32_t)0;
 	// setupCascadeShadowMapPass(
@@ -296,8 +297,6 @@ void WorldRendererDeferred::setup(
 		shadowMapCascadeTargetSetId,
 		lightCascadeIndex
 	);
-
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	setupVisualPass(
 		worldRenderView,
@@ -741,11 +740,11 @@ void WorldRendererDeferred::setupVisualPass(
 				renderContext
 			);
 
-			auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
-			auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
-			auto shadowMaskTargetSet = renderGraph.getTargetSet(shadowMaskTargetSetId);
-			auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
+			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
+			const auto shadowMaskTargetSet = renderGraph.getTargetSet(shadowMaskTargetSetId);
+			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
 			const auto& view = worldRenderView.getView();
 			const auto& projection = worldRenderView.getProjection();
@@ -771,12 +770,16 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
 			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(3));
-			sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+
+			if (ambientOcclusionTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
+			else
+				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+
 			sharedParams->setTextureParameter(s_handleShadowMask, (shadowMaskTargetSet != nullptr) ? shadowMaskTargetSet->getColorTexture(0) : m_whiteTexture.ptr());
 			sharedParams->setTextureParameter(s_handleShadowMapAtlas, (shadowAtlasTargetSet != nullptr) ? shadowAtlasTargetSet->getDepthTexture() : m_whiteTexture.ptr());
 			sharedParams->setTextureParameter(s_handleReflectionMap, (reflectionsTargetSet != nullptr) ? reflectionsTargetSet->getColorTexture(0) : m_whiteTexture.ptr());
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+
 			if (m_irradianceGrid)
 			{
 				const auto size = m_irradianceGrid->getSize();
@@ -785,6 +788,10 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
 				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer()->getBufferView());
 			}
+			
+			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
 			sharedParams->endParameters(renderContext);
 
 			// Irradiance
