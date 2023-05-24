@@ -52,9 +52,13 @@ public:
 	virtual void destroy() override;
 
 protected:
+	friend class SliceOverlay;
+	friend class TilesOverlay;
+
 	WorldRenderSettings m_settings;
 
 	Quality m_shadowsQuality = Quality::Disabled;
+	float m_slicePositions[MaxSliceCount + 1];
 
 	int32_t m_count = 0;
 

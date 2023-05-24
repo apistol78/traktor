@@ -64,9 +64,6 @@ public:
 	) override final;
 
 private:
-	friend class TilesOverlay;
-	friend class SliceOverlay;
-
 #pragma pack(1)
 	struct LightShaderData
 	{
@@ -85,7 +82,6 @@ private:
 	Ref< render::Buffer > m_lightSBuffer;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< Packer > m_shadowAtlasPacker;
-	float m_slicePositions[MaxSliceCount + 1];
 
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,

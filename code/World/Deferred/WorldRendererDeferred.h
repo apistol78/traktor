@@ -32,6 +32,7 @@ namespace traktor::world
 {
 
 class IrradianceGrid;
+class Packer;
 class WorldEntityRenderers;
 
 /*! World renderer, using deferred rendering method.
@@ -81,51 +82,19 @@ private:
 	};
 #pragma pack()
 
-	WorldRenderSettings::ShadowSettings m_shadowSettings;
-
 	Ref< render::Buffer > m_lightSBuffer;
-
-	Ref< render::IRenderTargetSet > m_shadowMapCascadeTargetSet;
-	Ref< render::IRenderTargetSet > m_shadowMapAtlasTargetSet;
-
-	render::Handle m_handleShadowMapCascade;
-	render::Handle m_handleShadowMapAtlas;
-	render::Handle m_handleVisual[7];
-
+	Ref< Packer > m_shadowAtlasPacker;
 	resource::Proxy< render::Shader > m_lightShader;
 	resource::Proxy< render::Shader > m_fogShader;
-	resource::Proxy< render::ImageGraph > m_shadowMaskProject;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 
-	float m_slicePositions[MaxSliceCount + 1];
-
-	render::handle_t setupCascadeShadowMapPass(
+	void setupLightPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		int32_t lightCascadeIndex,
-		LightShaderData* lightShaderData
-	) const;
-
-	render::handle_t setupAtlasShadowMapPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		const StaticVector< int32_t, 16 >& lightAtlasIndices,
-		LightShaderData* lightShaderData
-	) const;
-
-	render::handle_t setupShadowMaskPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t gbufferTargetSetId,
-		render::handle_t shadowMapCascadeTargetSetId,
-		int32_t lightCascadeIndex
-	) const;
+		render::handle_t& outShadowMapAtlasTargetSetId
+	);
 
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
@@ -135,7 +104,6 @@ private:
 		render::handle_t gbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
-		render::handle_t shadowMaskTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId
 	) const;
 };

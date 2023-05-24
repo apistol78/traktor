@@ -771,7 +771,7 @@ Generated texture from surface cache.
 				<first>2431</first>
 				<second>274</second>
 			</position>
-			<value>0.5</value>
+			<value>0.25</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{FF129A59-01E5-AC44-9BAD-9FDC58095309}</id>

@@ -13,7 +13,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "World/Editor/Overlays/SliceOverlay.h"
-#include "World/Forward/WorldRendererForward.h"
+#include "World/Shared/WorldRendererShared.h"
 
 namespace traktor::world
 {
@@ -50,7 +50,7 @@ bool SliceOverlay::create(resource::IResourceManager* resourceManager)
 
 void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	auto wrf = dynamic_type_cast< WorldRendererForward* >(worldRenderer);
+	auto wrf = dynamic_type_cast< WorldRendererShared* >(worldRenderer);
 	if (!wrf)
 		return;
 

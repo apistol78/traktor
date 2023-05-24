@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
@@ -18,8 +18,8 @@
 			<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
 			<comment/>
 			<position>
-				<first>1546</first>
-				<second>146</second>
+				<first>1613</first>
+				<second>148</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -55,8 +55,8 @@
 			<id>{FD8EF879-3ABA-7C43-99D8-DE17D5DCDF86}</id>
 			<comment/>
 			<position>
-				<first>1022</first>
-				<second>65</second>
+				<first>1011</first>
+				<second>90</second>
 			</position>
 			<parameterName>World_NormalMap</parameterName>
 			<type>Texture2D</type>
@@ -95,4 +95,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

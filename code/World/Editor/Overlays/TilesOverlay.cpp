@@ -15,7 +15,7 @@
 #include "Resource/IResourceManager.h"
 #include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/TilesOverlay.h"
-#include "World/Forward/WorldRendererForward.h"
+#include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 
 namespace traktor::world
@@ -55,8 +55,8 @@ bool TilesOverlay::create(resource::IResourceManager* resourceManager)
 
 void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	WorldRendererForward* worldRendererForward = dynamic_type_cast< WorldRendererForward* >(worldRenderer);
-	if (!worldRendererForward)
+	WorldRendererShared* worldRendererShared = dynamic_type_cast<WorldRendererShared* >(worldRenderer);
+	if (!worldRendererShared)
 		return;
 
 	render::handle_t gbufferId = findTargetByName(renderGraph, L"GBuffer");
@@ -82,7 +82,7 @@ void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 		if (!gbufferTargetSet)
 			return;
 
-		render::Buffer* tileSBuffer = worldRendererForward->m_lightClusterPass->getTileSBuffer();
+		render::Buffer* tileSBuffer = worldRendererShared->m_lightClusterPass->getTileSBuffer();
 		if (!tileSBuffer)
 			return;
 
