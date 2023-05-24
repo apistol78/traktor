@@ -136,7 +136,6 @@ void WorldRendererForward::setup(
 	render::handle_t outputTargetSetId
 )
 {
-	//int32_t frame = m_count % (int32_t)m_frames.size();
 	WorldRenderView worldRenderView = immutableWorldRenderView;
 
 #if defined(T_WORLD_USE_TILE_JOB)
@@ -150,13 +149,13 @@ void WorldRendererForward::setup(
 #endif
 
 	// Jitter projection for TAA, calculate jitter in clip space.
-	 if (m_postProcessPass->needCameraJitter())
-	 {
-	 	const Vector2 ndc = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
-	 	Matrix44 proj = immutableWorldRenderView.getProjection();
-	 	proj = translate(ndc.x, ndc.y, 0.0f) * proj;
-	 	worldRenderView.setProjection(proj);
-	 }
+	if (m_postProcessPass->needCameraJitter())
+	{
+		const Vector2 ndc = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
+		Matrix44 proj = immutableWorldRenderView.getProjection();
+		proj = translate(ndc.x, ndc.y, 0.0f) * proj;
+		worldRenderView.setProjection(proj);
+	}
 
 	// Gather active renderables for this frame.
 	gather(const_cast< Entity* >(rootEntity));
@@ -186,7 +185,7 @@ void WorldRendererForward::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{520ED0D2-881F-D044-B213-28592C3F0C9C}</id>
 			<comment/>
 			<position>
-				<first>1337</first>
-				<second>180</second>
+				<first>1329</first>
+				<second>156</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -27,8 +27,8 @@
 			<id>{CCC7BC7D-BACE-7248-A77B-8CBA2B3715D6}</id>
 			<comment/>
 			<position>
-				<first>1331</first>
-				<second>73</second>
+				<first>1318</first>
+				<second>98</second>
 			</position>
 			<parameterName>World_MiscMap</parameterName>
 			<type>Texture2D</type>
@@ -38,8 +38,8 @@
 			<id>{387CCEF1-C339-2541-87DF-E7B88E0085FC}</id>
 			<comment/>
 			<position>
-				<first>1577</first>
-				<second>114</second>
+				<first>1569</first>
+				<second>105</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -59,14 +59,14 @@
 				<first>1814</first>
 				<second>158</second>
 			</position>
-			<swizzle>x</swizzle>
+			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AF4886C9-831A-8647-A366-7FCA92975987}</id>
 			<comment/>
 			<position>
-				<first>1755</first>
-				<second>230</second>
+				<first>1772</first>
+				<second>213</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -141,4 +141,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

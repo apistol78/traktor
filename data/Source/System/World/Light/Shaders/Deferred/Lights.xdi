@@ -5,8 +5,8 @@
 			<id>{7F42A76B-91D3-3B47-A39D-AC28EE6C30AE}</id>
 			<comment/>
 			<position>
-				<first>1156</first>
-				<second>-700</second>
+				<first>1389</first>
+				<second>-1402</second>
 			</position>
 			<fragmentGuid>{8FEDE215-7BFC-A248-97FE-BA4D10C043BE}</fragmentGuid>
 			<inputPins/>
@@ -63,7 +63,7 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>Never</cullMode>
-			<blendEnable>true</blendEnable>
+			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
 			<blendColorDestination>BfOne</blendColorDestination>
@@ -92,260 +92,7 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
-			<precisionHint>Undefined</precisionHint>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{94DD5FDC-A4A2-674D-BB3E-D6A9254AE063}</id>
-			<comment/>
-			<position>
-				<first>1480</first>
-				<second>756</second>
-			</position>
-			<name>L_AtlasTransform</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{8B622A30-D71F-0B4D-AC5C-80A9229278E2}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>760</second>
-			</position>
-			<name>AtlasTransform</name>
-		</item>
-		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
-			<id>{EA3F0282-065C-A342-A50F-44F98B02E767}</id>
-			<comment/>
-			<position>
-				<first>1484</first>
-				<second>516</second>
-			</position>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{9CEFF858-AD61-1148-96D5-8B65236D282F}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>652</second>
-			</position>
-			<name>ViewToLight3</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{B99237AC-EA3C-4846-A4C5-FB7E011C14CC}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>544</second>
-			</position>
-			<name>ViewToLight2</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{D21C5404-A229-654D-A11E-CEB12D89E691}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>436</second>
-			</position>
-			<name>ViewToLight1</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{D4787169-BBFD-6244-9950-9ABA6FDA464C}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>328</second>
-			</position>
-			<name>ViewToLight0</name>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{219B2EB4-5FCB-6D41-8765-C28B262D01BB}</id>
-			<comment/>
-			<position>
-				<first>1704</first>
-				<second>520</second>
-			</position>
-			<name>L_ViewToLight</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{9815A4F2-BB14-8941-A1C6-CC7B209E4210}</id>
-			<comment/>
-			<position>
-				<first>1480</first>
-				<second>-20</second>
-			</position>
-			<swizzle>z</swizzle>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{B2145C18-80F7-834A-90E0-B265095E7E89}</id>
-			<comment/>
-			<position>
-				<first>1656</first>
-				<second>12</second>
-			</position>
-			<name>L_Radius</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{D6E7DBED-411A-2C42-9C93-11F679423E61}</id>
-			<comment/>
-			<position>
-				<first>1480</first>
-				<second>-64</second>
-			</position>
-			<swizzle>y</swizzle>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{01D7AB21-B61C-DD4E-A7A0-B77664309C2B}</id>
-			<comment/>
-			<position>
-				<first>1480</first>
-				<second>-108</second>
-			</position>
-			<swizzle>x</swizzle>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{F5E4A604-B90C-DD42-89FA-54933916CA0D}</id>
-			<comment/>
-			<position>
-				<first>764</first>
-				<second>440</second>
-			</position>
-			<name>L_LightIndex</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{092D8AAE-E5B0-DC42-8604-82FC56DFA64C}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>-100</second>
-			</position>
-			<name>TypeRangeRadius</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{2BA938FA-1F71-3F41-A73F-908AB0E43B1A}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>4</second>
-			</position>
-			<name>Position</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{01B9868B-AE12-1C4C-8D1A-84416D6B2004}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>112</second>
-			</position>
-			<name>Direction</name>
-		</item>
-		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
-			<id>{3628BB60-0C8E-1B40-B2A7-FA941D8D47E0}</id>
-			<comment/>
-			<position>
-				<first>1228</first>
-				<second>220</second>
-			</position>
-			<name>Color</name>
-		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{3B66F807-CCDC-DE47-8BD9-12E817E81BC6}</id>
-			<comment/>
-			<position>
-				<first>700</first>
-				<second>612</second>
-			</position>
-			<parameterName>World_LightSBuffer</parameterName>
-			<elements>
-				<item>
-					<name>TypeRangeRadius</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>Position</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>Direction</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>Color</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>ViewToLight0</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>ViewToLight1</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>ViewToLight2</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>ViewToLight3</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>AtlasTransform</name>
-					<type>DtFloat4</type>
-				</item>
-			</elements>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{03717F26-FBBC-B342-B08E-D96C35655553}</id>
-			<comment/>
-			<position>
-				<first>1504</first>
-				<second>84</second>
-			</position>
-			<name>L_Position</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{DB4D7B8B-E01E-5A41-98CE-744D69B08524}</id>
-			<comment/>
-			<position>
-				<first>1504</first>
-				<second>168</second>
-			</position>
-			<name>L_Direction</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{9862A088-CC38-2F4D-8B23-3B8928D3B71C}</id>
-			<comment/>
-			<position>
-				<first>1656</first>
-				<second>-76</second>
-			</position>
-			<name>L_Range</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{A8492207-1673-DB47-A0A4-1ED711626B7E}</id>
-			<comment/>
-			<position>
-				<first>1656</first>
-				<second>-168</second>
-			</position>
-			<name>L_Type</name>
-			<global>false</global>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{D50DB023-978B-F243-A15F-537F50A9BFF8}</id>
-			<comment/>
-			<position>
-				<first>1504</first>
-				<second>252</second>
-			</position>
-			<name>L_Color</name>
-			<global>false</global>
+			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{4F196E5F-A327-A645-BDB5-E61D141956AF}</id>
@@ -421,8 +168,8 @@
 			<id>{DEAB230A-AF12-A24F-A076-16E4A51B25BB}</id>
 			<comment/>
 			<position>
-				<first>3256</first>
-				<second>-1180</second>
+				<first>3624</first>
+				<second>-978</second>
 			</position>
 			<parameterName>World_ShadowEnable</parameterName>
 		</item>
@@ -430,8 +177,8 @@
 			<id>{5352AC8C-57E2-194E-8AA6-966B24DF2FF0}</id>
 			<comment/>
 			<position>
-				<first>3064</first>
-				<second>-1104</second>
+				<first>3416</first>
+				<second>-873</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -439,8 +186,8 @@
 			<id>{22AE8966-986B-6845-BC41-5D09DA2F3C4C}</id>
 			<comment/>
 			<position>
-				<first>3648</first>
-				<second>1288</second>
+				<first>3271</first>
+				<second>1304</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -448,8 +195,8 @@
 			<id>{046C7688-D81C-A642-8902-38EC8103AC16}</id>
 			<comment/>
 			<position>
-				<first>3828</first>
-				<second>1220</second>
+				<first>3451</first>
+				<second>1236</second>
 			</position>
 			<parameterName>World_ShadowEnable</parameterName>
 		</item>
@@ -517,8 +264,8 @@
 			<id>{87E006FB-B6AF-3A40-B149-4B02D2BD9081}</id>
 			<comment/>
 			<position>
-				<first>2883</first>
-				<second>-1226</second>
+				<first>3270</first>
+				<second>-1211</second>
 			</position>
 			<name>L_ViewDirection</name>
 			<global>false</global>
@@ -527,8 +274,8 @@
 			<id>{23C6739E-572F-8A48-8AF4-A75BB3C3894F}</id>
 			<comment/>
 			<position>
-				<first>2899</first>
-				<second>-1274</second>
+				<first>3286</first>
+				<second>-1259</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -537,27 +284,18 @@
 			<id>{ED4DE7CE-1AC0-8F4C-824F-0F852AAD902B}</id>
 			<comment/>
 			<position>
-				<first>2899</first>
-				<second>-1326</second>
+				<first>3286</first>
+				<second>-1311</second>
 			</position>
 			<name>L_ViewNormal</name>
 			<global>false</global>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{5EC51859-A1A4-E54B-ADE3-5055436E1CA6}</id>
-			<comment/>
-			<position>
-				<first>3104</first>
-				<second>1184</second>
-			</position>
-			<value>0.0008</value>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0B0450C1-5C54-FD43-8CC2-8355E167593C}</id>
 			<comment/>
 			<position>
-				<first>3372</first>
-				<second>1212</second>
+				<first>2882</first>
+				<second>1219</second>
 			</position>
 			<fragmentGuid>{98E94923-B934-8E4E-ADDC-A5CF9CD1CB23}</fragmentGuid>
 			<inputPins>
@@ -599,8 +337,8 @@
 			<id>{F28165CC-3537-434A-853A-37914AF641E0}</id>
 			<comment/>
 			<position>
-				<first>3116</first>
-				<second>1144</second>
+				<first>2626</first>
+				<second>1151</second>
 			</position>
 			<name>L_AtlasTransform</name>
 			<global>false</global>
@@ -609,8 +347,8 @@
 			<id>{0BC833AD-387A-AF41-B378-CFF31CA4AEC2}</id>
 			<comment/>
 			<position>
-				<first>3132</first>
-				<second>1312</second>
+				<first>2642</first>
+				<second>1285</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -647,8 +385,8 @@
 			<id>{2D19A94E-1BDF-0249-A03C-DFCF7CD228EB}</id>
 			<comment/>
 			<position>
-				<first>3132</first>
-				<second>1356</second>
+				<first>2642</first>
+				<second>1331</second>
 			</position>
 			<name>L_ViewToLight</name>
 			<global>false</global>
@@ -657,8 +395,8 @@
 			<id>{62C3E795-63BE-6E49-AFCA-506CD8B7CC58}</id>
 			<comment/>
 			<position>
-				<first>3044</first>
-				<second>1228</second>
+				<first>2594</first>
+				<second>1241</second>
 			</position>
 			<parameterName>World_ShadowMapAtlas</parameterName>
 			<type>Texture2D</type>
@@ -702,43 +440,6 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Sub" version="traktor.render.Node:1">
-			<id>{0259C0A3-6780-3643-A662-480A41861EDB}</id>
-			<comment>
-			<![CDATA[
-Fall off
-			]]>
-			</comment>
-			<position>
-				<first>3516</first>
-				<second>892</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{C9423F22-3D44-0A48-BAD7-24DFE304653B}</id>
-			<comment/>
-			<position>
-				<first>3320</first>
-				<second>892</second>
-			</position>
-			<value>1</value>
-		</item>
-		<item type="traktor.render.Div" version="traktor.render.Node:1">
-			<id>{2957BCE8-F614-D740-AFEC-16E88D7A05A3}</id>
-			<comment/>
-			<position>
-				<first>3300</first>
-				<second>944</second>
-			</position>
-		</item>
-		<item type="traktor.render.ArcusCos" version="traktor.render.Node:1">
-			<id>{2D25825F-7A05-3F43-A57A-608A8DA160E8}</id>
-			<comment/>
-			<position>
-				<first>3076</first>
-				<second>916</second>
-			</position>
-		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{4323FA83-3622-864E-8B42-B32CEDC3A8BE}</id>
 			<comment/>
@@ -756,16 +457,6 @@ Fall off
 				<first>2836</first>
 				<second>896</second>
 			</position>
-		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
-			<id>{5969743D-F872-8F42-AEC6-C45232CC24FF}</id>
-			<comment/>
-			<position>
-				<first>3076</first>
-				<second>988</second>
-			</position>
-			<name>L_Radius</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{4EF53235-C4D8-8445-A3FD-4187C40E637B}</id>
@@ -1071,8 +762,8 @@ Fall off
 			<id>{D61C8AE8-6606-F443-8894-2E11D6B096D3}</id>
 			<comment/>
 			<position>
-				<first>2460</first>
-				<second>-288</second>
+				<first>2484</first>
+				<second>-246</second>
 			</position>
 			<name>L_Position</name>
 			<global>false</global>
@@ -1171,8 +862,8 @@ Fall off
 			<id>{324CA05B-A9AD-A047-8639-9FD11D34EF6E}</id>
 			<comment/>
 			<position>
-				<first>3884</first>
-				<second>-1241</second>
+				<first>4271</first>
+				<second>-1226</second>
 			</position>
 			<name>L_Specular_Directional</name>
 			<global>false</global>
@@ -1181,8 +872,8 @@ Fall off
 			<id>{4A284013-C5AF-4C47-BF9B-5ED56255D084}</id>
 			<comment/>
 			<position>
-				<first>3884</first>
-				<second>-1329</second>
+				<first>4271</first>
+				<second>-1314</second>
 			</position>
 			<name>L_Diffuse_Directional</name>
 			<global>false</global>
@@ -1191,8 +882,8 @@ Fall off
 			<id>{15C7C6B1-6472-ED47-B0A5-31DF2CF79B06}</id>
 			<comment/>
 			<position>
-				<first>2915</first>
-				<second>-1374</second>
+				<first>3302</first>
+				<second>-1359</second>
 			</position>
 			<name>L_Direction</name>
 			<global>false</global>
@@ -1201,24 +892,24 @@ Fall off
 			<id>{E3A0CA29-6768-414A-B038-621B5B4E2D63}</id>
 			<comment/>
 			<position>
-				<first>3628</first>
-				<second>-1304</second>
+				<first>4015</first>
+				<second>-1289</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{D836FA77-E82C-6F4A-9CC9-1B77F4E018D6}</id>
 			<comment/>
 			<position>
-				<first>3628</first>
-				<second>-1213</second>
+				<first>4015</first>
+				<second>-1198</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{C3E159BF-550F-674A-BE90-A66547493DCF}</id>
 			<comment/>
 			<position>
-				<first>3148</first>
-				<second>-1352</second>
+				<first>3535</first>
+				<second>-1337</second>
 			</position>
 			<fragmentGuid>{B2786933-9C69-4442-82C8-867F4F51A748}</fragmentGuid>
 			<inputPins>
@@ -1264,8 +955,8 @@ Fall off
 			<id>{AFECB62A-7E2B-7140-A585-5E53587DC089}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-503</second>
+				<first>1665</first>
+				<second>-1205</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -1274,8 +965,8 @@ Fall off
 			<id>{991302F9-096A-DF4B-92B1-2704A236DC2A}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-550</second>
+				<first>1665</first>
+				<second>-1252</second>
 			</position>
 			<name>L_ViewNormal</name>
 			<global>false</global>
@@ -1284,8 +975,8 @@ Fall off
 			<id>{A003C2B1-7DAD-6B46-8117-CC8EA9BD729A}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-644</second>
+				<first>1665</first>
+				<second>-1346</second>
 			</position>
 			<name>L_Roughness</name>
 			<global>false</global>
@@ -1294,8 +985,8 @@ Fall off
 			<id>{8466B5C7-92E8-B446-966D-C4D6A38F8497}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-738</second>
+				<first>1665</first>
+				<second>-1440</second>
 			</position>
 			<name>L_ViewDirection</name>
 			<global>false</global>
@@ -1304,8 +995,8 @@ Fall off
 			<id>{ED46BBB4-7143-1C45-BB50-47BD01BA4CE7}</id>
 			<comment/>
 			<position>
-				<first>2931</first>
-				<second>-1426</second>
+				<first>3318</first>
+				<second>-1411</second>
 			</position>
 			<name>L_Color</name>
 			<global>false</global>
@@ -1701,8 +1392,8 @@ Fall off
 			<id>{E979C720-90A9-0C42-AD6D-7F47067BD77E}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-785</second>
+				<first>1665</first>
+				<second>-1487</second>
 			</position>
 			<name>L_Albedo</name>
 			<global>false</global>
@@ -1751,8 +1442,8 @@ Fall off
 			<id>{AAA90027-70FF-0244-969E-9CC3D2B15529}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-691</second>
+				<first>1665</first>
+				<second>-1393</second>
 			</position>
 			<name>L_Metalness</name>
 			<global>false</global>
@@ -1857,23 +1548,6 @@ Fall off
 			<name>L_Range</name>
 			<global>false</global>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{DE327B31-64F9-4581-98BF-EB4DCB36C1DF}</id>
-			<comment/>
-			<position>
-				<first>3073</first>
-				<second>-1180</second>
-			</position>
-			<fragmentGuid>{BAFF9338-89FC-074F-ADB8-050FD2747021}</fragmentGuid>
-			<inputPins/>
-			<outputPins>
-				<item>
-					<id>{92C8DC39-D05A-3144-8E36-752006124284}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{B62498AB-4647-6540-A258-E15E343B0D90}</id>
 			<comment/>
@@ -1939,8 +1613,8 @@ Fall off
 			<id>{CFDA7657-EFD5-AB4F-B3AC-8994C073718B}</id>
 			<comment/>
 			<position>
-				<first>1432</first>
-				<second>-597</second>
+				<first>1665</first>
+				<second>-1299</second>
 			</position>
 			<name>L_SpecularG</name>
 			<global>false</global>
@@ -2260,8 +1934,8 @@ Fall off
 			<id>{9DA4A779-1376-E64A-8EDD-00C456404816}</id>
 			<comment/>
 			<position>
-				<first>1596</first>
-				<second>1298</second>
+				<first>599</first>
+				<second>-18</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -2269,16 +1943,16 @@ Fall off
 			<id>{259C9DC9-0152-1D45-90F1-68643C4FD6DB}</id>
 			<comment/>
 			<position>
-				<first>1191</first>
-				<second>1345</second>
+				<first>194</first>
+				<second>29</second>
 			</position>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
 			<id>{FCC634BD-F406-1342-A5F9-DAA7AD038A72}</id>
 			<comment/>
 			<position>
-				<first>1397</first>
-				<second>1278</second>
+				<first>400</first>
+				<second>-38</second>
 			</position>
 			<name>LightIndex</name>
 		</item>
@@ -2286,8 +1960,8 @@ Fall off
 			<id>{D496820C-CA50-9147-8BB5-0031B514E44E}</id>
 			<comment/>
 			<position>
-				<first>1060</first>
-				<second>1279</second>
+				<first>63</first>
+				<second>-37</second>
 			</position>
 			<parameterName>World_LightIndexSBuffer</parameterName>
 			<elements>
@@ -2301,8 +1975,8 @@ Fall off
 			<id>{BE346824-D693-2341-999A-8457403F4297}</id>
 			<comment/>
 			<position>
-				<first>735</first>
-				<second>1470</second>
+				<first>-262</first>
+				<second>154</second>
 			</position>
 			<fragmentGuid>{3A77B694-1267-9A46-84F5-F8D06EAC5771}</fragmentGuid>
 			<inputPins>
@@ -2328,8 +2002,8 @@ Fall off
 			<id>{E860E955-2C72-CB4E-8A7F-CED461BFE203}</id>
 			<comment/>
 			<position>
-				<first>547</first>
-				<second>1466</second>
+				<first>-450</first>
+				<second>150</second>
 			</position>
 			<name>L_ViewPosition</name>
 			<global>false</global>
@@ -2338,8 +2012,8 @@ Fall off
 			<id>{52488F24-D824-D742-BB02-A7C3BBD812B7}</id>
 			<comment/>
 			<position>
-				<first>1015</first>
-				<second>1466</second>
+				<first>18</first>
+				<second>150</second>
 			</position>
 			<name>L_Tile_LightCount</name>
 			<global>false</global>
@@ -2348,8 +2022,8 @@ Fall off
 			<id>{23FD4CD8-2CB2-C84D-B952-14E4E1E9D5E2}</id>
 			<comment/>
 			<position>
-				<first>1031</first>
-				<second>1352</second>
+				<first>34</first>
+				<second>36</second>
 			</position>
 			<name>L_Iteration</name>
 			<global>false</global>
@@ -2358,842 +2032,733 @@ Fall off
 			<id>{A53FDF14-A255-0841-91FD-077BC6B9DC23}</id>
 			<comment/>
 			<position>
-				<first>1760</first>
-				<second>1279</second>
+				<first>763</first>
+				<second>-37</second>
 			</position>
 			<name>L_LightIndex</name>
 			<global>false</global>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{3BDBDA20-ADB7-4140-8944-0C73D0E7404E}</id>
+			<comment/>
+			<position>
+				<first>252</first>
+				<second>-717</second>
+			</position>
+			<names>
+				<item>ViewToLight0</item>
+				<item>ViewToLight1</item>
+				<item>ViewToLight2</item>
+				<item>ViewToLight3</item>
+				<item>AtlasTransform</item>
+			</names>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{5AD6956C-DC13-8944-B2D9-611DAADB1305}</id>
+			<comment/>
+			<position>
+				<first>250</first>
+				<second>-1104</second>
+			</position>
+			<names>
+				<item>TypeRangeRadius</item>
+				<item>Position</item>
+				<item>Direction</item>
+				<item>Color</item>
+			</names>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{80881F0B-6386-8C44-A2CF-A38D49B53517}</id>
+			<comment/>
+			<position>
+				<first>-874</first>
+				<second>-490</second>
+			</position>
+			<parameterName>World_SlicePositions</parameterName>
+			<type>Vector</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{7BD0A878-4EBF-4740-B3A4-AE8BFBFC4E7F}</id>
+			<comment/>
+			<position>
+				<first>-58</first>
+				<second>-662</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{905F8D64-3794-1D4C-BFF0-FB7396E03282}</id>
+			<comment/>
+			<position>
+				<first>-284</first>
+				<second>-680</second>
+			</position>
+			<name>L_LightIndex</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{104CB90A-48DE-3D42-8EB2-57B8CBF0BE62}</id>
+			<comment/>
+			<position>
+				<first>-545</first>
+				<second>-580</second>
+			</position>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{0F3EC887-F237-644C-8C5E-1DBB0B0E9ACD}</id>
+			<comment/>
+			<position>
+				<first>-545</first>
+				<second>-458</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{08F0B0F5-5573-0346-9470-CA5CB0B5C8F4}</id>
+			<comment/>
+			<position>
+				<first>-340</first>
+				<second>-615</second>
+			</position>
+			<branch>BrAuto</branch>
+			<operator>CoEqual</operator>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{33AE7510-14A5-B34B-B35A-55A65C88A91C}</id>
+			<comment/>
+			<position>
+				<first>-513</first>
+				<second>-623</second>
+			</position>
+			<name>L_Type</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{DF12BC94-6B34-AF4C-82F0-0EAD6AEBE9B0}</id>
+			<comment/>
+			<position>
+				<first>-842</first>
+				<second>-553</second>
+			</position>
+			<name>L_ViewPosition</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+			<id>{E282ED40-06D6-2A40-8326-605F55D7EBA5}</id>
+			<comment/>
+			<position>
+				<first>-635</first>
+				<second>-539</second>
+			</position>
+			<name>GetSlice</name>
+			<technique/>
+			<inputPins>
+				<item>
+					<id>{1DF0A7F6-939F-4341-B9FA-5E76341B831F}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{2EBBD4FC-E7B9-4465-B180-870FE37214D1}</id>
+					<name>SlicePositions</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{EC60178B-E080-C149-A661-9C5B889EA38D}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+const vec4 sp = $SlicePositions;
+const float vz = $Input.z;
+
+if (vz >= sp.z)
+	$Output = 3;
+else if (vz >= sp.y)
+	$Output = 2;
+else if (vz >= sp.x)
+	$Output = 1;
+else
+	$Output = 0;
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{D382C4B6-C2BF-8A49-86F4-BD8B45E24C86}</id>
+			<comment/>
+			<position>
+				<first>595</first>
+				<second>-1122</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{812684CB-37DB-DF4E-87DC-567D3BDBF713}</id>
+			<comment/>
+			<position>
+				<first>774</first>
+				<second>-1113</second>
+			</position>
+			<name>L_RadiusFallOff</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{EC854AD8-5264-5D4C-83FF-8167663DA901}</id>
+			<comment/>
+			<position>
+				<first>601</first>
+				<second>-607</second>
+			</position>
+			<name>L_AtlasTransform</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.MatrixIn" version="traktor.render.Node:1">
+			<id>{263D4672-45AF-6343-9C19-EB96B45D6423}</id>
+			<comment/>
+			<position>
+				<first>597</first>
+				<second>-751</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{068CBD76-B11C-DD49-81F6-7C2733DCDE13}</id>
+			<comment/>
+			<position>
+				<first>817</first>
+				<second>-747</second>
+			</position>
+			<name>L_ViewToLight</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{7CB4F96C-9EEC-2849-98DC-504C00C07BA9}</id>
+			<comment/>
+			<position>
+				<first>595</first>
+				<second>-1167</second>
+			</position>
+			<swizzle>z</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{AD1B963F-4889-D949-AD4E-D1B9EE7CD931}</id>
+			<comment/>
+			<position>
+				<first>774</first>
+				<second>-1168</second>
+			</position>
+			<name>L_Radius</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A089CF82-85D3-3246-B603-DB22299D8403}</id>
+			<comment/>
+			<position>
+				<first>595</first>
+				<second>-1212</second>
+			</position>
+			<swizzle>y</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8124BE64-3B50-7442-A24F-CB45A4AD5630}</id>
+			<comment/>
+			<position>
+				<first>595</first>
+				<second>-1257</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{1EF5B261-29C8-7042-8503-1316EB0088B8}</id>
+			<comment/>
+			<position>
+				<first>-91</first>
+				<second>-1107</second>
+			</position>
+			<name>L_LightIndex</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{62585695-3E33-B249-A042-1C389460C742}</id>
+			<comment/>
+			<position>
+				<first>-213</first>
+				<second>-788</second>
+			</position>
+			<parameterName>World_LightSBuffer</parameterName>
+			<elements>
+				<item>
+					<name>TypeRangeRadius</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>Position</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>Direction</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>Color</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>ViewToLight0</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>ViewToLight1</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>ViewToLight2</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>ViewToLight3</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>AtlasTransform</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{19A74464-F6C9-064B-9155-E83DDF0B3704}</id>
+			<comment/>
+			<position>
+				<first>615</first>
+				<second>-997</second>
+			</position>
+			<name>L_Position</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{C183367B-F1E3-1145-8EC7-7178733A9BC5}</id>
+			<comment/>
+			<position>
+				<first>615</first>
+				<second>-947</second>
+			</position>
+			<name>L_Direction</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{8AF7269E-2DA3-8E4B-8D45-F2D78BBDBEF7}</id>
+			<comment/>
+			<position>
+				<first>774</first>
+				<second>-1223</second>
+			</position>
+			<name>L_Range</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{13570312-DC3D-AF47-8010-8A91AFDDAE13}</id>
+			<comment/>
+			<position>
+				<first>774</first>
+				<second>-1278</second>
+			</position>
+			<name>L_Type</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{82FE2940-C3E5-6749-A385-75761E739CAB}</id>
+			<comment/>
+			<position>
+				<first>615</first>
+				<second>-897</second>
+			</position>
+			<name>L_Color</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{0EB2A2B7-FD46-9F4F-966E-541E9DBAA61D}</id>
+			<comment/>
+			<position>
+				<first>3011</first>
+				<second>1056</second>
+			</position>
+			<name>L_RadiusFallOff</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{1E6865FD-DFF6-054D-9247-46DA34F5E736}</id>
+			<comment/>
+			<position>
+				<first>3263</first>
+				<second>982</second>
+			</position>
+		</item>
+		<item type="traktor.render.Sub" version="traktor.render.Node:1">
+			<id>{8BC54650-626E-9B49-9AB2-17EC3B2F1922}</id>
+			<comment/>
+			<position>
+				<first>3261</first>
+				<second>876</second>
+			</position>
+		</item>
+		<item type="traktor.render.Div" version="traktor.render.Node:1">
+			<id>{FC3416BF-FB8A-364F-8C68-A8A6BF4F1275}</id>
+			<comment/>
+			<position>
+				<first>3496</first>
+				<second>932</second>
+			</position>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{15A42144-1017-0040-A6ED-1E721F56DD65}</id>
+			<comment/>
+			<position>
+				<first>3035</first>
+				<second>954</second>
+			</position>
+			<name>L_Radius</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{C6CB774D-3022-B14F-A110-5B1864AB8EDB}</id>
+			<comment/>
+			<position>
+				<first>2610</first>
+				<second>1197</second>
+			</position>
+			<parameterName>World_ShadowBias</parameterName>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{F5EB0244-AC11-2146-85F4-6A420BC0D973}</id>
+			<comment/>
+			<position>
+				<first>3188</first>
+				<second>-918</second>
+			</position>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
+			<id>{DDC2ACF3-55C0-E842-B8E1-18B4B0EF057F}</id>
+			<comment>
+			<![CDATA[
+Check max shadow distance
+			]]>
+			</comment>
+			<position>
+				<first>3364</first>
+				<second>-1021</second>
+			</position>
+			<branch>BrAuto</branch>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{CC3FC416-5035-1742-9AFB-B8BD90E14CF6}</id>
+			<comment/>
+			<position>
+				<first>3194</first>
+				<second>-1016</second>
+			</position>
+			<swizzle>z</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{E234EA75-428B-7847-8CCE-40CBB14B7831}</id>
+			<comment/>
+			<position>
+				<first>3194</first>
+				<second>-978</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{D38268AE-18D9-D849-AD6B-4544E8E775D5}</id>
+			<comment/>
+			<position>
+				<first>3011</first>
+				<second>-1025</second>
+			</position>
+			<name>L_ViewPosition</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{47EA879F-9E2E-754E-93E9-39FD309B93B1}</id>
+			<comment/>
+			<position>
+				<first>2979</first>
+				<second>-978</second>
+			</position>
+			<parameterName>World_SlicePositions</parameterName>
+			<type>Vector</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{0FE951E8-049E-2548-8A51-A1C2F778E646}</id>
+			<comment/>
+			<position>
+				<first>2750</first>
+				<second>-909</second>
+			</position>
+			<fragmentGuid>{98E94923-B934-8E4E-ADDC-A5CF9CD1CB23}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{8C367FB2-DBCC-1646-8C1C-FB6B90C128EF}</id>
+					<name>AtlasTransform</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
+					<name>Bias</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
+					<name>ShadowMap</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{DFBE684D-C1FF-9644-9A8D-7E562F232CE9}</id>
+					<name>ViewPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{5AD1E6A5-CBF8-2642-A06D-D78DAD2D920C}</id>
+					<name>ViewToLight</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{45E460A6-B70D-6C48-927A-E8D765DE6FA2}</id>
+			<comment/>
+			<position>
+				<first>2535</first>
+				<second>-799</second>
+			</position>
+			<name>L_ViewToLight</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{67E8DFE2-011A-C34C-9FDF-9F6B740799F2}</id>
+			<comment/>
+			<position>
+				<first>2535</first>
+				<second>-837</second>
+			</position>
+			<name>L_ViewPosition</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+			<id>{BB0C4F1B-A800-F341-BE55-E4FC3B525402}</id>
+			<comment/>
+			<position>
+				<first>2519</first>
+				<second>-947</second>
+			</position>
+			<name>L_AtlasTransform</name>
+			<global>false</global>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{EEF7DC83-7641-1849-8FD6-EF32118EAFEB}</id>
+			<comment/>
+			<position>
+				<first>2487</first>
+				<second>-873</second>
+			</position>
+			<parameterName>World_ShadowMapAtlas</parameterName>
+			<type>Texture2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{697AF4A3-7B3C-7048-8C2D-6654F005090B}</id>
+			<comment/>
+			<position>
+				<first>2503</first>
+				<second>-910</second>
+			</position>
+			<parameterName>World_ShadowBias</parameterName>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[8]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{6A074E66-11A2-4867-A53C-8165AE05CB3B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{172A43BF-BADE-41A5-AF3B-3A88FBE9FA80}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{585541AA-7E7B-44C5-B872-328289FB4854}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{185EFF9F-C1A0-4090-B5A5-D1ECB2207C1D}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{1FEC3EA7-3529-4990-B0F5-A13751DF2DBA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[105]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[104]"/>
+				<node ref="/object/nodes/item[75]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[105]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[103]"/>
+				<node ref="/object/nodes/item[74]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[102]"/>
+				<node ref="/object/nodes/item[73]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[105]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[98]"/>
+				<node ref="/object/nodes/item[69]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{CFCF6CC7-6465-0F43-9743-44655C7AF145}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[95]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[94]"/>
-				<id>{AEFD686C-1E92-44B0-81E9-EA26CA3070F7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[96]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[95]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[95]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[97]"/>
-				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[94]"/>
-				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[97]"/>
-				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[93]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[96]"/>
-				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[97]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[86]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[85]"/>
-				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-8CD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[84]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-8DD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[83]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-8ED0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[82]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[81]"/>
-				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-8CD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[80]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-8DD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-8ED0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-90D0-0F315B985C8E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[78]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-90D0-0F315B985C8E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[77]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[91]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[92]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[92]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[90]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[91]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[89]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[70]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
 				<id>{CFCF6CC7-6465-0F43-9743-44655C7AF145}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[73]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{AEFD686C-1E92-44B0-81E9-EA26CA3070F7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[73]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[73]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[75]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[68]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[75]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[67]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[66]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
+				<node ref="/object/nodes/item[65]"/>
+				<id>{AEFD686C-1E92-44B0-81E9-EA26CA3070F7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[71]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{403E07EE-E6D1-4863-B70E-CF14F8CD623A}</id>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{91730BBC-BBE9-45F0-9C41-31141255F359}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{73A3DE7A-6D35-4844-BF53-55E239F553F1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[62]"/>
-				<id>{98592661-CD08-47A6-89FC-250FC6060922}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[62]"/>
-				<id>{BEF8F577-31CA-4C43-9B37-964EC60F06C3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[65]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[67]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[68]"/>
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
-				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[58]"/>
-				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[58]"/>
-				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[57]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[56]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{3BFF07B7-0B69-42D7-8FD0-0F315B985C8E}</id>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-8CD0-0F315B985C8E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3202,98 +2767,18 @@ Fall off
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[87]"/>
-				<id>{3BFF07B7-0B69-42D7-8FD0-0F315B985C8E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[75]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[96]"/>
-				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[103]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[101]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[104]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[100]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-8DD0-0F315B985C8E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[54]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{8C367FB2-DBCC-1646-8C1C-FB6B90C128EF}</id>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-8ED0-0F315B985C8E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3302,68 +2787,98 @@ Fall off
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{5AD1E6A5-CBF8-2642-A06D-D78DAD2D920C}</id>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-8BD0-0F315B985C8E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-8CD0-0F315B985C8E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-8DD0-0F315B985C8E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-8ED0-0F315B985C8E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-90D0-0F315B985C8E}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[49]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{DFBE684D-C1FF-9644-9A8D-7E562F232CE9}</id>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-90D0-0F315B985C8E}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[105]"/>
-				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[105]"/>
-				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[105]"/>
-				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3372,38 +2887,98 @@ Fall off
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{CFCF6CC7-6465-0F43-9743-44655C7AF145}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{AEFD686C-1E92-44B0-81E9-EA26CA3070F7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[40]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<id>{C6DE8FE3-9C49-904C-B74E-0DDC172CFFB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{65F5B4AC-8C99-4240-9D24-F84530B9E6C0}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[39]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3412,37 +2987,257 @@ Fall off
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[69]"/>
-				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
-				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+				<id>{403E07EE-E6D1-4863-B70E-CF14F8CD623A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[35]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
-				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+				<id>{91730BBC-BBE9-45F0-9C41-31141255F359}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[34]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[33]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{3BFF07B7-0B69-42D7-8FD0-0F315B985C8E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{3BFF07B7-0B69-42D7-8FD0-0F315B985C8E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{8C367FB2-DBCC-1646-8C1C-FB6B90C128EF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{5AD1E6A5-CBF8-2642-A06D-D78DAD2D920C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{DFBE684D-C1FF-9644-9A8D-7E562F232CE9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{D51A84EB-F2C1-BD43-A02A-D96C0E287721}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<id>{0B7F136F-35F1-1E48-B986-D08DC6D503F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
 			</destination>
 		</item>
@@ -3452,7 +3247,7 @@ Fall off
 				<id>{568AAF2D-6F5A-4449-B191-A0F65D964B18}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[106]"/>
+				<node ref="/object/nodes/item[77]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -3462,7 +3257,7 @@ Fall off
 				<id>{F26708F9-F91E-8E4F-9D47-3FCBAA6CE65A}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[107]"/>
+				<node ref="/object/nodes/item[78]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -3472,7 +3267,7 @@ Fall off
 				<id>{F4CC0B28-0DE2-BB4F-A6B3-5C7DBE57A96F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[108]"/>
+				<node ref="/object/nodes/item[79]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -3482,307 +3277,277 @@ Fall off
 				<id>{CBAF67A0-4CD2-D746-A1B5-4F585CAA3199}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[109]"/>
+				<node ref="/object/nodes/item[80]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[110]"/>
+				<node ref="/object/nodes/item[81]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[105]"/>
+				<node ref="/object/nodes/item[76]"/>
 				<id>{CFCF6CC7-6465-0F43-9743-44655C7AF145}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[94]"/>
+				<node ref="/object/nodes/item[65]"/>
 				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[111]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{8159BE48-C353-BC41-97A6-B8AA34887102}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[74]"/>
+				<node ref="/object/nodes/item[45]"/>
 				<id>{C55FBCBA-5E27-4B38-ACFE-831F8DB3CCA4}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[112]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{8159BE48-C353-BC41-97A6-B8AA34887102}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[112]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{F9B5DC90-8071-7449-AA2C-FE654A9A43D1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[111]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{F9B5DC90-8071-7449-AA2C-FE654A9A43D1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[92]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[111]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{F9B5DC90-8071-7449-AA2C-FE654A9A43D1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[91]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[104]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[103]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[144]"/>
+				<node ref="/object/nodes/item[115]"/>
 				<id>{73A3DE7A-6D35-4844-BF53-55E239F553F1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[113]"/>
 				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[113]"/>
 				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[145]"/>
+				<node ref="/object/nodes/item[116]"/>
 				<id>{1D98282A-5B5D-482C-8E82-34B0A6C706CA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[140]"/>
+				<node ref="/object/nodes/item[111]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[139]"/>
+				<node ref="/object/nodes/item[110]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[138]"/>
+				<node ref="/object/nodes/item[109]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[139]"/>
+				<node ref="/object/nodes/item[110]"/>
 				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[134]"/>
+				<node ref="/object/nodes/item[105]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[135]"/>
+				<node ref="/object/nodes/item[106]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[133]"/>
+				<node ref="/object/nodes/item[104]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[132]"/>
+				<node ref="/object/nodes/item[103]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[132]"/>
+				<node ref="/object/nodes/item[103]"/>
 				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[131]"/>
+				<node ref="/object/nodes/item[102]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[139]"/>
+				<node ref="/object/nodes/item[110]"/>
 				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[131]"/>
+				<node ref="/object/nodes/item[102]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[131]"/>
+				<node ref="/object/nodes/item[102]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[137]"/>
+				<node ref="/object/nodes/item[108]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[143]"/>
+				<node ref="/object/nodes/item[114]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[101]"/>
 				<id>{8760B263-C70C-46BA-9E97-A3D6B08941E9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[128]"/>
+				<node ref="/object/nodes/item[99]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[145]"/>
+				<node ref="/object/nodes/item[116]"/>
 				<id>{81F45953-5C15-4501-94B9-33A67B4475BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[135]"/>
+				<node ref="/object/nodes/item[106]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[126]"/>
+				<node ref="/object/nodes/item[97]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[142]"/>
+				<node ref="/object/nodes/item[113]"/>
 				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[123]"/>
+				<node ref="/object/nodes/item[94]"/>
 				<id>{AE1EB082-4A05-45B9-BA6A-7F85D78DCA70}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[123]"/>
+				<node ref="/object/nodes/item[94]"/>
 				<id>{28E6DBB6-876B-4DB2-9A84-4801CAE6A2C2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[124]"/>
+				<node ref="/object/nodes/item[95]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[125]"/>
+				<node ref="/object/nodes/item[96]"/>
 				<id>{FFE19E4E-24A8-47A4-AE80-307495E31066}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[124]"/>
+				<node ref="/object/nodes/item[95]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[122]"/>
+				<node ref="/object/nodes/item[93]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[121]"/>
+				<node ref="/object/nodes/item[92]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[120]"/>
+				<node ref="/object/nodes/item[91]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[119]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[118]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[116]"/>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[120]"/>
+				<node ref="/object/nodes/item[91]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[115]"/>
+				<node ref="/object/nodes/item[86]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[115]"/>
+				<node ref="/object/nodes/item[86]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[116]"/>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[119]"/>
+				<node ref="/object/nodes/item[90]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[118]"/>
+				<node ref="/object/nodes/item[89]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
@@ -3792,27 +3557,27 @@ Fall off
 				<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[146]"/>
+				<node ref="/object/nodes/item[117]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[147]"/>
+				<node ref="/object/nodes/item[118]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[136]"/>
+				<node ref="/object/nodes/item[107]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[150]"/>
+				<node ref="/object/nodes/item[121]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[101]"/>
 				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
 			</destination>
 		</item>
@@ -3822,247 +3587,237 @@ Fall off
 				<id>{E25BC49C-C55C-41F2-96B8-15E4C572AF23}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[151]"/>
+				<node ref="/object/nodes/item[122]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[152]"/>
+				<node ref="/object/nodes/item[123]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[101]"/>
 				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[153]"/>
+				<node ref="/object/nodes/item[124]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[144]"/>
+				<node ref="/object/nodes/item[115]"/>
 				<id>{403E07EE-E6D1-4863-B70E-CF14F8CD623A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[154]"/>
+				<node ref="/object/nodes/item[125]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[144]"/>
+				<node ref="/object/nodes/item[115]"/>
 				<id>{91730BBC-BBE9-45F0-9C41-31141255F359}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[155]"/>
+				<node ref="/object/nodes/item[126]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[123]"/>
+				<node ref="/object/nodes/item[94]"/>
 				<id>{64D2F72D-2607-4893-9F25-B1EA45BB8E7B}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[156]"/>
+				<node ref="/object/nodes/item[127]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[132]"/>
+				<node ref="/object/nodes/item[103]"/>
 				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[136]"/>
+				<node ref="/object/nodes/item[107]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[135]"/>
+				<node ref="/object/nodes/item[106]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[149]"/>
+				<node ref="/object/nodes/item[120]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[98]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[157]"/>
+				<node ref="/object/nodes/item[128]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[145]"/>
+				<node ref="/object/nodes/item[116]"/>
 				<id>{0C7A54F3-17B4-4D89-8CB6-C14D14579C4F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[158]"/>
+				<node ref="/object/nodes/item[129]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[30]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{36E29D75-02C6-405F-832D-B0A91528A58A}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[159]"/>
+				<node ref="/object/nodes/item[130]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[160]"/>
+				<node ref="/object/nodes/item[131]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[111]"/>
+				<node ref="/object/nodes/item[82]"/>
 				<id>{04D84585-4D76-5A49-AC65-7C0619D59949}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[161]"/>
+				<node ref="/object/nodes/item[132]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[112]"/>
+				<node ref="/object/nodes/item[83]"/>
 				<id>{04D84585-4D76-5A49-AC65-7C0619D59949}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[162]"/>
-				<id>{92C8DC39-D05A-3144-8E36-752006124284}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[33]"/>
-				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[165]"/>
+				<node ref="/object/nodes/item[135]"/>
 				<id>{C9223159-9DF2-46A9-B0F2-D0D7D5BEE6F7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[163]"/>
+				<node ref="/object/nodes/item[133]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[164]"/>
+				<node ref="/object/nodes/item[134]"/>
 				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[163]"/>
+				<node ref="/object/nodes/item[133]"/>
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[163]"/>
+				<node ref="/object/nodes/item[133]"/>
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[166]"/>
+				<node ref="/object/nodes/item[136]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[167]"/>
+				<node ref="/object/nodes/item[137]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[166]"/>
+				<node ref="/object/nodes/item[136]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[168]"/>
+				<node ref="/object/nodes/item[138]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[113]"/>
+				<node ref="/object/nodes/item[84]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{9DF821A1-CB26-483E-8CC8-C259352111E9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{48BD0EF3-A583-439B-84D6-00023498BD11}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{D1209320-B416-47D5-91BC-128FBB52BF93}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{D1209320-B416-47D5-91BC-128FBB52BF93}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[168]"/>
+				<node ref="/object/nodes/item[138]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[148]"/>
+				<node ref="/object/nodes/item[119]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[136]"/>
+				<node ref="/object/nodes/item[107]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
@@ -4072,363 +3827,463 @@ Fall off
 				<id>{421BCBCE-2DFA-664E-BE65-0E4297B45DD2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[169]"/>
+				<node ref="/object/nodes/item[139]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[170]"/>
+				<node ref="/object/nodes/item[140]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[171]"/>
+				<node ref="/object/nodes/item[141]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[166]"/>
+				<node ref="/object/nodes/item[136]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[171]"/>
+				<node ref="/object/nodes/item[141]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{48BD0EF3-A583-439B-84D6-00023498BD11}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[114]"/>
+				<node ref="/object/nodes/item[85]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[98]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[126]"/>
+				<node ref="/object/nodes/item[97]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[174]"/>
+				<node ref="/object/nodes/item[144]"/>
 				<id>{C9223159-9DF2-46A9-B0F2-D0D7D5BEE6F7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[176]"/>
+				<node ref="/object/nodes/item[146]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[175]"/>
+				<node ref="/object/nodes/item[145]"/>
 				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[176]"/>
+				<node ref="/object/nodes/item[146]"/>
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[176]"/>
+				<node ref="/object/nodes/item[146]"/>
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[173]"/>
+				<node ref="/object/nodes/item[143]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[172]"/>
+				<node ref="/object/nodes/item[142]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[173]"/>
+				<node ref="/object/nodes/item[143]"/>
 				<id>{32EB5230-1F0D-40B8-93F6-9C8E5469454E}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[173]"/>
+				<node ref="/object/nodes/item[143]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[177]"/>
+				<node ref="/object/nodes/item[147]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[177]"/>
+				<node ref="/object/nodes/item[147]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[178]"/>
+				<node ref="/object/nodes/item[148]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[179]"/>
+				<node ref="/object/nodes/item[149]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[180]"/>
+				<node ref="/object/nodes/item[150]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[192]"/>
+				<node ref="/object/nodes/item[162]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[193]"/>
+				<node ref="/object/nodes/item[163]"/>
 				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[190]"/>
+				<node ref="/object/nodes/item[160]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[191]"/>
+				<node ref="/object/nodes/item[161]"/>
 				<id>{71A0310C-3928-44C3-8D4F-7D9AFF9EAE70}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[189]"/>
+				<node ref="/object/nodes/item[159]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[191]"/>
+				<node ref="/object/nodes/item[161]"/>
 				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[188]"/>
+				<node ref="/object/nodes/item[158]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[193]"/>
+				<node ref="/object/nodes/item[163]"/>
 				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[193]"/>
+				<node ref="/object/nodes/item[163]"/>
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[187]"/>
+				<node ref="/object/nodes/item[157]"/>
 				<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[191]"/>
+				<node ref="/object/nodes/item[161]"/>
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[187]"/>
+				<node ref="/object/nodes/item[157]"/>
 				<id>{A30C6A23-2170-447A-A127-17A60A09574F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[185]"/>
+				<node ref="/object/nodes/item[155]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[188]"/>
+				<node ref="/object/nodes/item[158]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[186]"/>
+				<node ref="/object/nodes/item[156]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[189]"/>
+				<node ref="/object/nodes/item[159]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[184]"/>
+				<node ref="/object/nodes/item[154]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[183]"/>
+				<node ref="/object/nodes/item[153]"/>
 				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[182]"/>
+				<node ref="/object/nodes/item[152]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[183]"/>
+				<node ref="/object/nodes/item[153]"/>
 				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[183]"/>
+				<node ref="/object/nodes/item[153]"/>
 				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[181]"/>
+				<node ref="/object/nodes/item[151]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[187]"/>
+				<node ref="/object/nodes/item[157]"/>
 				<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[181]"/>
+				<node ref="/object/nodes/item[151]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[181]"/>
+				<node ref="/object/nodes/item[151]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[194]"/>
+				<node ref="/object/nodes/item[164]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[195]"/>
+				<node ref="/object/nodes/item[165]"/>
 				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[194]"/>
+				<node ref="/object/nodes/item[164]"/>
 				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[194]"/>
+				<node ref="/object/nodes/item[164]"/>
 				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[196]"/>
+				<node ref="/object/nodes/item[166]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[126]"/>
+				<node ref="/object/nodes/item[97]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[198]"/>
+				<node ref="/object/nodes/item[168]"/>
 				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[199]"/>
+				<node ref="/object/nodes/item[169]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[200]"/>
+				<node ref="/object/nodes/item[170]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[197]"/>
+				<node ref="/object/nodes/item[167]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[200]"/>
+				<node ref="/object/nodes/item[170]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[200]"/>
+				<node ref="/object/nodes/item[170]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[198]"/>
+				<node ref="/object/nodes/item[168]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[198]"/>
+				<node ref="/object/nodes/item[168]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[180]"/>
+				<node ref="/object/nodes/item[150]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[130]"/>
+				<node ref="/object/nodes/item[101]"/>
 				<id>{0D78442F-AA88-4B95-A497-E86A86E07FB8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[129]"/>
+				<node ref="/object/nodes/item[100]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[145]"/>
-				<id>{235CF902-4053-4B14-B9DA-9AF8F2CC030D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[141]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[117]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[118]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[116]"/>
+				<id>{235CF902-4053-4B14-B9DA-9AF8F2CC030D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[112]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[89]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[127]"/>
+				<node ref="/object/nodes/item[98]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[180]"/>
+				<node ref="/object/nodes/item[95]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[93]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[176]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[175]"/>
+				<id>{EC06D01B-0FD3-3E48-AC42-D62F99AC514F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[175]"/>
+				<id>{FEF9EF0E-8741-4E46-9DA9-8C2D1978CE9A}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[177]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[175]"/>
+				<id>{57041FCA-C50B-3A4B-816E-C1AFB4AE5AC1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[172]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[178]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[172]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[172]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[173]"/>
+				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[173]"/>
+				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[179]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[174]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[173]"/>
+				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[141]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[138]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[150]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
@@ -4438,102 +4293,552 @@ Fall off
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[124]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[122]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[206]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+				<node ref="/object/nodes/item[199]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[205]"/>
-				<id>{EC06D01B-0FD3-3E48-AC42-D62F99AC514F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[205]"/>
-				<id>{FEF9EF0E-8741-4E46-9DA9-8C2D1978CE9A}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[207]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[205]"/>
-				<id>{57041FCA-C50B-3A4B-816E-C1AFB4AE5AC1}</id>
+				<node ref="/object/nodes/item[198]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[202]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+				<node ref="/object/nodes/item[204]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[208]"/>
+				<node ref="/object/nodes/item[196]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[197]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[194]"/>
+				<id>{585541AA-7E7B-44C5-B872-328289FB4854}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[195]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[191]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[192]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[189]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[202]"/>
+				<node ref="/object/nodes/item[190]"/>
+				<id>{1DF0A7F6-939F-4341-B9FA-5E76341B831F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[188]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[187]"/>
+				<id>{70F5921B-7C4D-41E7-88F1-5A71903D2B34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[190]"/>
+				<id>{EC60178B-E080-C149-A661-9C5B889EA38D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[187]"/>
+				<id>{6BD21B41-32B3-4296-BE06-B5D7734CA0FB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[186]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[187]"/>
+				<id>{6DB78B3B-C272-4243-BCDA-E31CA159D644}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[185]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[187]"/>
+				<id>{E66A382E-EDDD-4790-B93E-5CA128757BCC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[184]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[183]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[202]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+				<node ref="/object/nodes/item[187]"/>
+				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[203]"/>
-				<id>{4FD10E49-F598-45AB-9E40-5ABA13905D14}</id>
+				<node ref="/object/nodes/item[183]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[203]"/>
-				<id>{DD079887-A171-407B-AD10-E0CE5B164BC1}</id>
+				<node ref="/object/nodes/item[182]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[190]"/>
+				<id>{2EBBD4FC-E7B9-4465-B180-870FE37214D1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[200]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[201]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[199]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[201]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[209]"/>
+				<node ref="/object/nodes/item[198]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[196]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[191]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[202]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[204]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[203]"/>
-				<id>{3B445686-9AD9-4A7E-8C09-C92EDB98EFEF}</id>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[171]"/>
+				<node ref="/object/nodes/item[181]"/>
+				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[206]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[201]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[183]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[194]"/>
+				<id>{06867C72-4921-4EB8-8806-EFCF09BD0C34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[194]"/>
+				<id>{6A074E66-11A2-4867-A53C-8165AE05CB3B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[194]"/>
+				<id>{CB2AD645-8548-45AA-8E8F-FB5226460883}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[194]"/>
+				<id>{172A43BF-BADE-41A5-AF3B-3A88FBE9FA80}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[180]"/>
+				<id>{0FF6511C-0293-41A8-890E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[193]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[211]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[209]"/>
+				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[209]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[210]"/>
+				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[208]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[210]"/>
+				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[207]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[208]"/>
+				<id>{8C41D88A-1D17-4237-B720-CCC0B7FF71B9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[211]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[208]"/>
+				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{73A3DE7A-6D35-4844-BF53-55E239F553F1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[209]"/>
+				<id>{AA571ACC-7699-4D10-BCD7-4E857EFB35EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[210]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[74]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[168]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+				<node ref="/object/nodes/item[72]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[75]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[71]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[75]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[74]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[212]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[221]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{DFBE684D-C1FF-9644-9A8D-7E562F232CE9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[220]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{5AD1E6A5-CBF8-2642-A06D-D78DAD2D920C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[223]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{4020E901-E457-6D4A-9CB8-7A8881B4D794}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[222]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{8C367FB2-DBCC-1646-8C1C-FB6B90C128EF}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[224]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{2A0E04B1-B1D0-3D45-91D5-559E94641FD0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[218]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[216]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[217]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[215]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[215]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{70F5921B-7C4D-41E7-88F1-5A71903D2B34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[216]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{E66A382E-EDDD-4790-B93E-5CA128757BCC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[219]"/>
+				<id>{A7D9AE88-308A-E842-AC54-BD1036B198BC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{6BD21B41-32B3-4296-BE06-B5D7734CA0FB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[213]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{6DB78B3B-C272-4243-BCDA-E31CA159D644}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 	</edges>
@@ -4542,12 +4847,12 @@ Fall off
 			<title>Directional</title>
 			<comment/>
 			<position>
-				<first>2686</first>
+				<first>2395</first>
 				<second>-1550</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>2109</first>
+				<second>886</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -4582,8 +4887,8 @@ Fall off
 				<second>2011</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>2161</first>
+				<second>570</second>
 			</size>
 		</item>
 	</groups>

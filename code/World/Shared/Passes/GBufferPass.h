@@ -37,13 +37,14 @@ public:
     explicit GBufferPass(
         const WorldRenderSettings& settings,
         WorldEntityRenderers* entityRenderers,
-        render::IRenderTargetSet* sharedDepthStencil)
-    ;
+        render::IRenderTargetSet* sharedDepthStencil
+    );
 
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) const;

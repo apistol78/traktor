@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{97DC9817-9348-4045-84D1-5E3E34942BEF}</id>
 			<comment/>
 			<position>
-				<first>1243</first>
-				<second>169</second>
+				<first>1249</first>
+				<second>152</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
 			<comment/>
 			<position>
-				<first>1860</first>
-				<second>146</second>
+				<first>1881</first>
+				<second>179</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,8 +27,8 @@
 			<id>{E179CA16-D5BD-8D4A-8F11-66ACD4341201}</id>
 			<comment/>
 			<position>
-				<first>1236</first>
-				<second>66</second>
+				<first>1242</first>
+				<second>94</second>
 			</position>
 			<parameterName>World_MiscMap</parameterName>
 			<type>Texture2D</type>
@@ -104,4 +104,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

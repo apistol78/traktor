@@ -38,6 +38,7 @@ render::handle_t GBufferPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
+	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 ) const
@@ -52,7 +53,7 @@ render::handle_t GBufferPass::setup(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Depth (R), Roughness (G), Metalness (B)
+	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Depth (R), Roughness (G), Metalness (B), Specular (A)
 	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
 	rgtd.targets[2].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGB)
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
@@ -62,7 +63,7 @@ render::handle_t GBufferPass::setup(
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.0f);
+	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.5f);
 	clear.colors[1] = Color4f(0.5f, 0.5f, 0.0f, 0.0f);
 	clear.colors[2] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
@@ -87,7 +88,7 @@ render::handle_t GBufferPass::setup(
 			sharedParams->endParameters(renderContext);
 
 			const WorldRenderPassShared gbufferPass(
-				s_techniqueForwardGBufferWrite,
+				gbufferWriteTechnique,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::First

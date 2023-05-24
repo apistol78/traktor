@@ -54,21 +54,12 @@ void GBufferMetalnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 	if (!gbufferId)
 		return;
 
-	// Metalness channel is in different attachments.
-	int32_t index = 0;
-	if (is_a< WorldRendererDeferred >(worldRenderer))
-		index = 2;
-	else if (is_a< WorldRendererForward >(worldRenderer))
-		index = 0;
-	else
-		return;
-
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer metalness overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);
-		if (!gbufferTargetSet || gbufferTargetSet->getColorTexture(index) == nullptr)
+		if (!gbufferTargetSet || gbufferTargetSet->getColorTexture(0) == nullptr)
 			return;
 
 		const render::Shader::Permutation perm(c_handleDebugTechnique);
@@ -76,7 +67,7 @@ void GBufferMetalnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
-		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(index));
+		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(0));
 		pp->endParameters(renderContext);
 
 		screenRenderer->draw(renderContext, m_shader, perm, pp);

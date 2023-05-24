@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{87F95874-19AD-C341-9810-BEA4004128A4}</id>
 			<comment/>
 			<position>
-				<first>813</first>
-				<second>286</second>
+				<first>985</first>
+				<second>127</second>
 			</position>
 			<name>UV</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{1EC4E04A-4CC5-074C-A796-97B89309F7D9}</id>
 			<comment/>
 			<position>
-				<first>1939</first>
-				<second>183</second>
+				<first>1745</first>
+				<second>138</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,8 +27,8 @@
 			<id>{1A9C31FE-41EF-4049-BD9F-3B4AB20C1E0E}</id>
 			<comment/>
 			<position>
-				<first>705</first>
-				<second>24</second>
+				<first>974</first>
+				<second>75</second>
 			</position>
 			<parameterName>World_ColorMap</parameterName>
 			<type>Texture2D</type>
@@ -56,8 +56,8 @@
 			<id>{ED1A7BF7-B736-2D42-A88A-C746782A15ED}</id>
 			<comment/>
 			<position>
-				<first>1699</first>
-				<second>160</second>
+				<first>1564</first>
+				<second>120</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -104,4 +104,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
