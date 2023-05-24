@@ -108,47 +108,6 @@ bool WorldRendererDeferred::create(
 		shadowSettings.resolution
 	);
 
-	//// Create shadow screen projection processes.
-	//if (!m_shadowSettings.maskProject.isNull() && m_shadowsQuality > Quality::Disabled)
-	//{
-	//	if (!resourceManager->bind(m_shadowSettings.maskProject, m_shadowMaskProject))
-	//	{
-	//		log::warning << L"Unable to create shadow project process; shadows disabled." << Endl;
-	//		m_shadowsQuality = Quality::Disabled;
-	//	}
-	//}
-	//else
-	//	m_shadowsQuality = Quality::Disabled;
-
-	// Create shadow maps.
-	//if (m_shadowsQuality > Quality::Disabled)
-	//{
-	//	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
-	//	render::RenderTargetSetCreateDesc rtscd;
-
-	//	// Cascading shadow map.
-	//	rtscd.count = 0;
-	//	rtscd.width = shadowSettings.resolution;
-	//	rtscd.height = shadowSettings.cascadingSlices * shadowSettings.resolution;
-	//	rtscd.multiSample = 0;
-	//	rtscd.createDepthStencil = true;
-	//	rtscd.usingDepthStencilAsTexture = true;
-	//	rtscd.usingPrimaryDepthStencil = false;
-	//	rtscd.ignoreStencil = true;
-	//	m_shadowMapCascadeTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
-
-	//	// Atlas shadow map.
-	//	rtscd.count = 0;
-	//	rtscd.width =
-	//	rtscd.height = 4096;
-	//	rtscd.multiSample = 0;
-	//	rtscd.createDepthStencil = true;
-	//	rtscd.usingDepthStencilAsTexture = true;
-	//	rtscd.usingPrimaryDepthStencil = false;
-	//	rtscd.ignoreStencil = true;
-	//	m_shadowMapAtlasTargetSet = renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
-	//}
-
 	// Create irradiance grid.
 	if (!m_settings.irradianceGrid.isNull())
 	{
@@ -729,14 +688,21 @@ void WorldRendererDeferred::setupVisualPass(
 			renderContext->mergeDraw(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
-			render::Shader::Permutation perm;
-			m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr), perm);
-			m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
-			m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
+			{
+				render::Shader::Permutation perm;
+				m_lightShader->setCombination(s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr), perm);
+				m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
+				m_lightShader->setCombination(s_handleVolumetricFogEnable, false, perm);
+				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
+			}
 
 			// Module with fog.
-			if (m_settings.fogDensity > FUZZY_EPSILON)
-				m_screenRenderer->draw(renderContext, m_fogShader, sharedParams);
+			//if (m_settings.fogDensity > FUZZY_EPSILON)
+			//{
+			//	render::Shader::Permutation perm;
+			//	m_fogShader->setCombination(s_handleVolumetricFogEnable, false, perm);
+			//	m_screenRenderer->draw(renderContext, m_fogShader, perm, sharedParams);
+			//}
 
 			// Forward visuals; not included in GBuffer.
 			const WorldRenderPassShared deferredColorPass(
