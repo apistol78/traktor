@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{817BA2A4-6056-994C-921D-4BE931CFA178}</id>
@@ -26,8 +26,8 @@
 			<id>{F8CF17CC-3D01-AC46-B709-19AD7FA90015}</id>
 			<comment/>
 			<position>
-				<first>3518</first>
-				<second>-294</second>
+				<first>3525</first>
+				<second>-370</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -39,7 +39,7 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>Never</cullMode>
-			<blendEnable>true</blendEnable>
+			<blendEnable>false</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfSourceAlpha</blendColorSource>
 			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
@@ -83,8 +83,8 @@
 			<id>{07BCF6B5-EF35-E342-9427-33173EF2C98C}</id>
 			<comment/>
 			<position>
-				<first>1320</first>
-				<second>-308</second>
+				<first>1337</first>
+				<second>-207</second>
 			</position>
 			<parameterName>World_MagicCoeffs</parameterName>
 			<type>Vector</type>
@@ -119,16 +119,16 @@
 			<id>{6181FE69-564E-714C-9199-CF5DFE7AD87C}</id>
 			<comment/>
 			<position>
-				<first>2212</first>
-				<second>-274</second>
+				<first>2319</first>
+				<second>-273</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{32FDEB40-D089-DA49-8563-43E8F75ECFFC}</id>
 			<comment/>
 			<position>
-				<first>2464</first>
-				<second>-316</second>
+				<first>2572</first>
+				<second>-318</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -182,8 +182,8 @@
 			<id>{A1FEDA28-49CB-FE4D-B8E8-717590ACAE0B}</id>
 			<comment/>
 			<position>
-				<first>3120</first>
-				<second>-192</second>
+				<first>3047</first>
+				<second>-321</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -191,8 +191,8 @@
 			<id>{DF0FE992-46EF-AE40-A5A0-1BBD1B5CE788}</id>
 			<comment/>
 			<position>
-				<first>2230</first>
-				<second>-362</second>
+				<first>2336</first>
+				<second>-332</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -200,8 +200,8 @@
 			<id>{1B6B1173-C8EA-2946-8744-AE1199A6B23D}</id>
 			<comment/>
 			<position>
-				<first>2854</first>
-				<second>-300</second>
+				<first>2800</first>
+				<second>-391</second>
 			</position>
 			<parameterName>World_FogColor</parameterName>
 			<type>Vector</type>
@@ -211,8 +211,8 @@
 			<id>{3BC7CEBC-8649-6146-803D-D14211E242EA}</id>
 			<comment/>
 			<position>
-				<first>3121</first>
-				<second>-236</second>
+				<first>3048</first>
+				<second>-365</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -220,37 +220,9 @@
 			<id>{6387D35E-36DA-2346-9A46-B601B6441330}</id>
 			<comment/>
 			<position>
-				<first>3265</first>
-				<second>-249</second>
+				<first>3251</first>
+				<second>-368</second>
 			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{FB47F0E5-377C-1847-AD57-0562DC2D2744}</id>
-			<comment/>
-			<position>
-				<first>2622</first>
-				<second>-120</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{255EE2C4-8167-EB44-99D9-61826A33450E}</id>
-			<comment/>
-			<position>
-				<first>2620</first>
-				<second>-78</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
-			<id>{7EC5E854-0D7C-A94F-BA9B-42C77FBC6EC4}</id>
-			<comment/>
-			<position>
-				<first>2858</first>
-				<second>-188</second>
-			</position>
-			<branch>BrAuto</branch>
-			<operator>CoLessEqual</operator>
 		</item>
 	</nodes>
 	<edges>
@@ -396,56 +368,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{E66A382E-EDDD-4790-B93E-5CA128757BCC}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{6BD21B41-32B3-4296-BE06-B5D7734CA0FB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{70F5921B-7C4D-41E7-88F1-5A71903D2B34}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{6DB78B3B-C272-4243-BCDA-E31CA159D644}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
@@ -454,5 +376,16 @@
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
 	</edges>
+	<groups/>
 </object>
