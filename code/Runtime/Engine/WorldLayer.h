@@ -102,6 +102,8 @@ public:
 
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
 
+	RefArray< world::Entity > getEntitiesWithinRange(const Vector4& position, float range) const;
+
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
 
 	void addEntity(world::Entity* entity);

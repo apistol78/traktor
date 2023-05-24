@@ -40,20 +40,20 @@ public:
 
 	bool getPause() const { return m_pause; }
 
-	void setTimeScale(float timeScale) { m_timeScale = timeScale; }
+	void setTimeScale(double timeScale) { m_timeScale = timeScale; }
 
-	float getTimeScale() const { return m_timeScale; }
+	double getTimeScale() const { return m_timeScale; }
 
-	void setSimulationFrequency(float simulationFrequency) { m_simulationFrequency = simulationFrequency; }
+	void setSimulationFrequency(double simulationFrequency) { m_simulationFrequency = simulationFrequency; }
 
-	float getSimulationFrequency() const { return m_simulationFrequency; }
+	double getSimulationFrequency() const { return m_simulationFrequency; }
 
 private:
 	friend class Application;
 
 	bool m_pause = false;
-	float m_timeScale = 1.0f;
-	float m_simulationFrequency = 60.0f;
+	double m_timeScale = 1.0;
+	double m_simulationFrequency = 60.0;
 };
 
 }

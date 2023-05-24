@@ -59,7 +59,7 @@ WorldLayer::WorldLayer(
 ,	m_environment(environment)
 ,	m_scene(scene)
 {
-	// Create managment entities.
+	// Create management entities.
 	m_rootGroup = new world::Entity();
 	m_rootGroup->setComponent(new world::GroupComponent());
 
@@ -197,12 +197,10 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		if (surroundEnvironment && (m_listenerEntity || m_cameraEntity))
 		{
 			Transform listenerTransform;
-
 			if (m_listenerEntity)
 				listenerTransform = m_listenerEntity->getTransform();
 			else
 				listenerTransform = m_cameraEntity->getTransform();
-
 			surroundEnvironment->setListenerTransform(listenerTransform);
 		}
 	}
@@ -371,8 +369,8 @@ void WorldLayer::hotReload()
 				if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
 					m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
 				return true;
-				});
-}
+			});
+		}
 		log::info << L"Captured " << m_entityTransforms.size() << L" entity transforms." << Endl;
 	}
 }
@@ -435,6 +433,36 @@ RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) cons
 		{
 			group->traverse([&](world::Entity* entity) {
 				if (entity->getName() == name)
+					entities.push_back(entity);
+				return true;
+			});
+		}
+	}
+	return entities;
+}
+
+RefArray< world::Entity > WorldLayer::getEntitiesWithinRange(const Vector4& position, float range) const
+{
+	RefArray< world::Entity > entities;
+	{
+		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			group->traverse([&](world::Entity* entity) {
+				const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+				if (distance <= range)
+					entities.push_back(entity);
+				return true;
+			});
+		}
+	}
+	{
+		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
+		if (group)
+		{
+			group->traverse([&](world::Entity* entity) {
+				const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+				if (distance <= range)
 					entities.push_back(entity);
 				return true;
 			});

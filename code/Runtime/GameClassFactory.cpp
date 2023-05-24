@@ -259,17 +259,17 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classUpdateControl = new AutoRuntimeClass< UpdateControl >();
 	classUpdateControl->addProperty< bool >("pause", &UpdateControl::setPause, &UpdateControl::getPause);
-	classUpdateControl->addProperty< float >("timeScale", &UpdateControl::setTimeScale, &UpdateControl::getTimeScale);
-	classUpdateControl->addProperty< float >("simulationFrequency", &UpdateControl::setSimulationFrequency, &UpdateControl::getSimulationFrequency);
+	classUpdateControl->addProperty< double >("timeScale", &UpdateControl::setTimeScale, &UpdateControl::getTimeScale);
+	classUpdateControl->addProperty< double >("simulationFrequency", &UpdateControl::setSimulationFrequency, &UpdateControl::getSimulationFrequency);
 	registrar->registerClass(classUpdateControl);
 
 	auto classUpdateInfo = new AutoRuntimeClass< UpdateInfo >();
-	classUpdateInfo->addProperty< float >("totalTime", 0, &UpdateInfo::getTotalTime);
-	classUpdateInfo->addProperty< float >("stateTime", 0, &UpdateInfo::getStateTime);
-	classUpdateInfo->addProperty< float >("simulationTime", 0, &UpdateInfo::getSimulationTime);
-	classUpdateInfo->addProperty< float >("simulationDeltaTime", 0, &UpdateInfo::getSimulationDeltaTime);
+	classUpdateInfo->addProperty< double >("totalTime", 0, &UpdateInfo::getTotalTime);
+	classUpdateInfo->addProperty< double >("stateTime", 0, &UpdateInfo::getStateTime);
+	classUpdateInfo->addProperty< double >("simulationTime", 0, &UpdateInfo::getSimulationTime);
+	classUpdateInfo->addProperty< double >("simulationDeltaTime", 0, &UpdateInfo::getSimulationDeltaTime);
 	classUpdateInfo->addProperty< int32_t >("simulationFrequency", 0, &UpdateInfo::getSimulationFrequency);
-	classUpdateInfo->addProperty< float >("frameDeltaTime", 0, &UpdateInfo::getFrameDeltaTime);
+	classUpdateInfo->addProperty< double >("frameDeltaTime", 0, &UpdateInfo::getFrameDeltaTime);
 	classUpdateInfo->addProperty< float >("interval", 0, &UpdateInfo::getInterval);
 	registrar->registerClass(classUpdateInfo);
 

@@ -178,11 +178,12 @@ void ProfilerDialog::receivedPerfSets()
 	m_performanceGrid->addRow(createPerformanceRow(L"Build", str(L"%.2f ms (%.2f ms, %.2f)", runtime.build * 1000.0f, m_varianceBuild.getMean() * 1000.0f, m_varianceBuild.getVariance() * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Render (CPU)", str(L"%.2f ms (%.2f ms, %.2f)", runtime.renderCPU * 1000.0f, m_varianceRenderCPU.getMean() * 1000.0f, m_varianceRenderCPU.getVariance() * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Render (GPU)", str(L"%.2f ms (%.2f ms, %.2f)", runtime.renderGPU * 1000.0f, m_varianceRenderGPU.getMean() * 1000.0f, m_varianceRenderGPU.getVariance() * 1000.0f)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Render Interval", str(L"%.1f", runtime.renderInterval)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Physics", str(L"%.2f ms", runtime.physics * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Input", str(L"%.2f ms", runtime.input * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Garbage Collect", str(L"%.2f ms", runtime.garbageCollect * 1000.0f)));
 	m_performanceGrid->addRow(createPerformanceRow(L"Simulation Steps", str(L"%d", runtime.steps)));
-	m_performanceGrid->addRow(createPerformanceRow(L"Simulation Interval", str(L"%.1f", runtime.interval)));
+	m_performanceGrid->addRow(createPerformanceRow(L"Simulation Interval", str(L"%.1f", runtime.simulationInterval)));
 
 	const TpsMemory& memory = m_connection->getPerformance< TpsMemory >();
 	m_performanceGrid->addRow(createPerformanceRow(L"Memory (Native)", str(L"%d KiB", memory.memInUse / 1024)));

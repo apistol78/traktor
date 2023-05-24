@@ -123,7 +123,7 @@ void VideoLayer::update(const UpdateInfo& info)
 
 	if (m_playing)
 	{
-		if (!m_video->update(info.getSimulationDeltaTime()))
+		if (!m_video->update((float)info.getSimulationDeltaTime()))
 		{
 			getStage()->invokeScript("videoFinished", 0, nullptr);
 
@@ -132,7 +132,7 @@ void VideoLayer::update(const UpdateInfo& info)
 			else
 			{
 				m_video->rewind();
-				m_video->update(info.getSimulationDeltaTime());
+				m_video->update((float)info.getSimulationDeltaTime());
 			}
 		}
 	}

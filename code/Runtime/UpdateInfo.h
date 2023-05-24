@@ -37,13 +37,13 @@ public:
 	 *
 	 * \return Time in seconds.
 	 */
-	float getTotalTime() const { return m_totalTime; }
+	double getTotalTime() const { return m_totalTime; }
 
 	/*! Get real time in current state.
 	 *
 	 * \return Time in seconds.
 	 */
-	float getStateTime() const { return m_stateTime; }
+	double getStateTime() const { return m_stateTime; }
 
 	/*! Get simulation time in current state.
 	 *
@@ -54,7 +54,7 @@ public:
 	 *
 	 * \return Time in seconds.
 	 */
-	float getSimulationTime() const { return m_simulationTime; }
+	double getSimulationTime() const { return m_simulationTime; }
 
 	/*! Get simulation delta time.
 	 *
@@ -63,13 +63,13 @@ public:
 	 *
 	 * \return Delta time in seconds.
 	 */
-	float getSimulationDeltaTime() const { return m_simulationDeltaTime; }
+	double getSimulationDeltaTime() const { return m_simulationDeltaTime; }
 
 	/*! Get simulation frequency.
 	 *
 	 * \return Frequency in hertz.
 	 */
-	float getSimulationFrequency() const { return m_simulationFrequency; }
+	double getSimulationFrequency() const { return m_simulationFrequency; }
 
 	/*! Get frame delta time.
 	 *
@@ -78,7 +78,7 @@ public:
 	 *
 	 * \return Delta time in seconds.
 	 */
-	float getFrameDeltaTime() const { return m_frameDeltaTime; }
+	double getFrameDeltaTime() const { return m_frameDeltaTime; }
 
 	/*! Get frame count.
 	 *
@@ -90,17 +90,18 @@ public:
 	 *
 	 * \return Interval fraction.
 	 */
-	float getInterval() const { return (m_stateTime - m_simulationTime) / m_simulationDeltaTime; }
+	float getInterval() const { return m_interval; }
 
 private:
 	friend class Application;
 
-	float m_totalTime = 0.0f;
-	float m_stateTime = 0.0f;
-	float m_simulationTime = 0.0f;
-	float m_simulationDeltaTime = 0.0f;
-	float m_simulationFrequency = 0.0f;
-	float m_frameDeltaTime = 0.0f;
+	double m_totalTime = 0.0;
+	double m_stateTime = 0.0;
+	double m_simulationTime = 0.0;
+	double m_simulationDeltaTime = 0.0;
+	double m_simulationFrequency = 0.0;
+	double m_frameDeltaTime = 0.0;
+	float m_interval = 0.0f;
 	uint64_t m_frame = 0;
 };
 
