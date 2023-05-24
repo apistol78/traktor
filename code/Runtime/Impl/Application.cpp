@@ -477,7 +477,7 @@ bool Application::update()
 		// Also ensure state are flushed before reconfiguring.
 		if ((currentState = m_stateManager->getCurrent()) != nullptr)
 		{
-			ReconfigureEvent configureEvent(false, 0);
+			const ReconfigureEvent configureEvent(false, 0);
 			currentState->take(&configureEvent);
 		}
 
@@ -492,7 +492,7 @@ bool Application::update()
 		// Emit action in current state as we've successfully reconfigured servers.
 		if ((currentState = m_stateManager->getCurrent()) != nullptr)
 		{
-			ReconfigureEvent configureEvent(true, result);
+			const ReconfigureEvent configureEvent(true, result);
 			currentState->take(&configureEvent);
 		}
 	}
@@ -550,9 +550,9 @@ bool Application::update()
 			m_resourceServer->performCleanup();
 
 			// Reset time data.
-			m_updateInfo.m_frameDeltaTime = 1.0f / m_updateControl.m_simulationFrequency;
-			m_updateInfo.m_simulationTime = 0.0f;
-			m_updateInfo.m_stateTime = 0.0f;
+			m_updateInfo.m_frameDeltaTime = 1.0 / m_updateControl.m_simulationFrequency;
+			m_updateInfo.m_simulationTime = 0.0;
+			m_updateInfo.m_stateTime = 0.0;
 
 			// Enter new state.
 			T_ASSERT_M (m_stateManager->getNext() && m_stateManager->getNext()->getReferenceCount() == 1, L"Next state must exist and have one reference only");
@@ -573,7 +573,7 @@ bool Application::update()
 	double updateDuration = 0.0;
 	double physicsDuration = 0.0;
 	double inputDuration = 0.0;
-	float updateInterval = 0.0f;
+	double updateInterval = 0.0;
 	int32_t updateCount = 0;
 
 	if ((currentState = m_stateManager->getCurrent()) != nullptr)
@@ -583,7 +583,7 @@ bool Application::update()
 		const bool renderViewActive = m_renderServer->getRenderView()->isActive() && !m_renderServer->getRenderView()->isMinimized();
 		if (renderViewActive != m_renderViewActive)
 		{
-			ActiveEvent activeEvent(renderViewActive);
+			const ActiveEvent activeEvent(renderViewActive);
 			currentState->take(&activeEvent);
 			m_renderViewActive = renderViewActive;
 
@@ -599,36 +599,36 @@ bool Application::update()
 			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
 		// Measure delta time.
-		const float deltaTime = float(m_timer.getDeltaTime());
+		const double deltaTime = m_timer.getDeltaTime();
 		m_updateInfo.m_frameDeltaTime = deltaTime;
 
 		// Update audio.
 		if (m_audioServer)
 		{
 			T_PROFILER_SCOPE(L"Application update - Audio server");
-			m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
+			m_audioServer->update((float)m_updateInfo.m_frameDeltaTime, m_renderViewActive);
 		}
 
 		// Update rumble.
 		if (m_inputServer)
 		{
 			T_PROFILER_SCOPE(L"Application update - Rumble");
-			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
+			m_inputServer->updateRumble((float)m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 		}
 
 		// Update active state; fixed time step if physics manager is available.
 		const physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : nullptr;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
-			const float dT = m_updateControl.m_timeScale / m_updateControl.m_simulationFrequency;
-			const float dFT = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
+			const double dT = m_updateControl.m_timeScale / m_updateControl.m_simulationFrequency;
+			const double dFT = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
 
 			m_updateInfo.m_simulationDeltaTime = dT;
-			m_updateInfo.m_simulationFrequency = 1.0f / dT;
+			m_updateInfo.m_simulationFrequency = 1.0 / dT;
 
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
-			const float simulationEndTime = (m_updateInfo.m_stateTime + dFT);
+			const double simulationEndTime = (m_updateInfo.m_stateTime + dFT);
 			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
 			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
@@ -642,11 +642,11 @@ bool Application::update()
 				if (m_threadRender && i > 0 && !renderCollision)
 				{
 					// Recalculate interval for each sub-step as some updates might spike.
-					const float excessTime = std::max(m_renderCpuDurations[1] - m_buildDuration - m_updateDuration * updateCount, 0.0f);
-					updateInterval = std::min(excessTime / updateCount, 0.03f);
+					const double excessTime = std::max(m_renderCpuDurations[1] - m_buildDuration - m_updateDuration * updateCount, 0.0);
+					updateInterval = std::min(excessTime / updateCount, 0.03);
 
 					// Need some wait margin as events, especially on Windows, have very low accuracy.
-					if (m_signalRenderFinish.wait(int32_t(updateInterval * 1000.0f)))
+					if (m_signalRenderFinish.wait(int32_t(updateInterval * 1000.0)))
 					{
 						// Rendering of last frame has already finished; do not wait further intervals during this
 						// update phase, just continue as fast as possible.
@@ -660,7 +660,7 @@ bool Application::update()
 				if (m_inputServer)
 				{
 					T_PROFILER_SCOPE(L"Application update - Input server");
-					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
+					m_inputServer->update((float)m_updateInfo.m_simulationDeltaTime, inputEnabled);
 				}
 				const double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
@@ -679,12 +679,12 @@ bool Application::update()
 				const double physicsTimeStart = m_timer.getElapsedTime();
 				{
 					T_PROFILER_SCOPE(L"Application update - Physics server");
-					m_physicsServer->update(m_updateInfo.m_simulationDeltaTime);
+					m_physicsServer->update((float)m_updateInfo.m_simulationDeltaTime);
 				}
 				const double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
-				m_updateDuration = (float)(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
+				m_updateDuration = physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart;
 				m_updateInfo.m_simulationTime += dT;
 
 				m_updateInfo.m_totalTime += (dFT / updateCount);
@@ -703,7 +703,6 @@ bool Application::update()
 					break;
 			}
 
-			// Update state times if no updates are performed this tick.
 			if (updateCount <= 0)
 			{
 				m_updateInfo.m_totalTime += dFT;
@@ -713,6 +712,12 @@ bool Application::update()
 			// Cannot allow time to drift even if number of updates are clamped,
 			// this is quite a bad situation.
 			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
+
+			// Calculate interval value; interval is only required if simulation runs slower than render framerate.
+			if (dT > dFT + 0.001f)
+				m_updateInfo.m_interval = (float)((m_updateInfo.m_stateTime - m_updateInfo.m_simulationTime) / m_updateInfo.m_simulationDeltaTime);
+			else
+				m_updateInfo.m_interval = 1.0f;
 		}
 		else
 		{
@@ -720,12 +725,12 @@ bool Application::update()
 			if (m_inputServer)
 			{
 				T_PROFILER_SCOPE(L"Application update - Input server");
-				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
+				m_inputServer->update((float)m_updateInfo.m_frameDeltaTime, inputEnabled);
 			}
 
 			// Update in same rate as rendering.
 			m_updateInfo.m_simulationDeltaTime = m_updateInfo.m_frameDeltaTime * m_updateControl.m_timeScale;
-			m_updateInfo.m_simulationFrequency = 1.0f / m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_simulationFrequency = 1.0 / m_updateInfo.m_frameDeltaTime;
 
 			const double updateTimeStart = m_timer.getElapsedTime();
 			IState::UpdateResult updateResult;
@@ -740,6 +745,7 @@ bool Application::update()
 			m_updateInfo.m_simulationTime += m_updateInfo.m_simulationDeltaTime;
 			m_updateInfo.m_totalTime += m_updateInfo.m_simulationDeltaTime;
 			m_updateInfo.m_stateTime += m_updateInfo.m_simulationDeltaTime;
+			m_updateInfo.m_interval = 1.0f;
 
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{
@@ -770,7 +776,7 @@ bool Application::update()
 			buildResult = currentState->build(m_frameBuild, m_updateInfo);
 		}
 		const double buildTimeEnd = m_timer.getElapsedTime();
-		m_buildDuration = float(buildTimeEnd - buildTimeStart);
+		m_buildDuration = buildTimeEnd - buildTimeStart;
 
 		// Update scripting language runtime.
 		const double gcTimeStart = m_timer.getElapsedTime();
@@ -840,7 +846,7 @@ bool Application::update()
 						T_PROFILER_END();
 
 						const double renderEnd = m_timer.getElapsedTime();
-						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
+						m_renderCpuDurations[0] = renderEnd - renderBegin;
 					}
 					
 					T_PROFILER_BEGIN(L"Application render present");
@@ -852,7 +858,7 @@ bool Application::update()
 						double start, end;
 						if (renderView->getTimeQuery(m_renderGpuDurationQuery, false, start, end))
 						{
-							m_renderGpuDuration = (float)(end - start);
+							m_renderGpuDuration = end - start;
 							m_renderGpuDurationQuery = -1;
 						}
 					}
@@ -868,9 +874,9 @@ bool Application::update()
 				}
 
 				const double renderEnd = m_timer.getElapsedTime();
-				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
+				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
+				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
 			}
 		}
 
@@ -908,7 +914,7 @@ bool Application::update()
 			// Runtime
 			{
 				TpsRuntime tp;
-				tp.fps = 1.0f / m_updateInfo.m_frameDeltaTime;
+				tp.fps = (float)(1.0 / m_updateInfo.m_frameDeltaTime);
 				if (updateCount > 0)
 				{
 					tp.update = (float)(updateDuration / updateCount);
@@ -916,11 +922,12 @@ bool Application::update()
 					tp.input = (float)(inputDuration / updateCount);
 				}		
 				tp.build = (float)(buildTimeEnd - buildTimeStart);
-				tp.renderCPU = m_renderCpuDurations[0];
-				tp.renderGPU = m_renderGpuDuration;
+				tp.renderCPU = (float)m_renderCpuDurations[0];
+				tp.renderGPU = (float)m_renderGpuDuration;
 				tp.garbageCollect = (float)gcDuration;
 				tp.steps = updateCount;
-				tp.interval = updateInterval;
+				tp.simulationInterval = (float)updateInterval;
+				tp.renderInterval = m_updateInfo.getInterval();
 				tp.collisions = m_renderCollisions;
 				m_targetPerformance.publish(m_targetManagerConnection->getTransport(), tp);
 			}
@@ -1037,7 +1044,7 @@ void Application::pollDatabase()
 
 		if (auto currentState = m_stateManager->getCurrent())
 		{
-			HotReloadEvent hotReloadEvent;
+			const HotReloadEvent hotReloadEvent;
 			currentState->take(&hotReloadEvent);
 		}
 
@@ -1116,7 +1123,7 @@ void Application::threadRender()
 						T_PROFILER_END();
 
 						const double renderEnd = m_timer.getElapsedTime();
-						m_renderCpuDurations[0] = float(renderEnd - renderBegin);
+						m_renderCpuDurations[0] = renderEnd - renderBegin;
 
 						T_PROFILER_BEGIN(L"Application render present");
 						renderView->present();
@@ -1128,7 +1135,7 @@ void Application::threadRender()
 						double start, end;
 						if (renderView->getTimeQuery(m_renderGpuDurationQuery, false, start, end))
 						{
-							m_renderGpuDuration = (float)(end - start);
+							m_renderGpuDuration = end - start;
 							m_renderGpuDurationQuery = -1;
 						}
 					}
@@ -1146,9 +1153,9 @@ void Application::threadRender()
 				}
 
 				const double renderEnd = m_timer.getElapsedTime();
-				m_renderCpuDurations[1] = (float)(renderEnd - renderBegin);
+				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
-				m_renderServer->setFrameRate(int32_t(1.0f / m_renderCpuDurations[1]));
+				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
 				m_stateRender = nullptr;
 			}
 

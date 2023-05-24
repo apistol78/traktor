@@ -350,7 +350,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.drawText(middleRect, str(L"Input: %.1f ms", runtime.input * 1000.0f), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += ui::dpi96(75);
-		canvas.drawText(middleRect, str(L"Simulate: %d, %.1f%%, %d", (int32_t)runtime.steps, runtime.interval * 100.0f, runtime.collisions), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, str(L"Simulate: %d, %.1f%%, %d", (int32_t)runtime.steps, runtime.simulationInterval * 100.0f, runtime.collisions), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += ui::dpi96(110);
 		canvas.drawText(middleRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);

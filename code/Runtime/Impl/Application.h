@@ -117,10 +117,10 @@ private:
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive = true;
 	Color4f m_backgroundColor = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	float m_updateDuration = 0.0f;
-	float m_buildDuration = 0.0f;
-	float m_renderCpuDurations[2] = { 0.0f, 0.0f };
-	float m_renderGpuDuration = 0.0f;
+	double m_updateDuration = 0.0;
+	double m_buildDuration = 0.0;
+	double m_renderCpuDurations[2] = { 0.0, 0.0 };
+	double m_renderGpuDuration = 0.0;
 	int32_t m_renderGpuDurationQuery = -1;
 	uint32_t m_renderCollisions = 0;
 	Semaphore m_lockRender;

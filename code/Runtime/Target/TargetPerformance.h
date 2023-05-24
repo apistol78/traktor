@@ -52,7 +52,8 @@ public:
 	float input = 0.0f;
 	float garbageCollect = 0.0f;
 	int32_t steps = 0;
-	float interval = 0.0f;
+	float simulationInterval = 0.0f;
+	float renderInterval = 0.0f;
 	uint32_t collisions = 0;	//!< Render collisions, when update and render threads collide.
 
 	virtual bool check(const TargetPerfSet& old) const override final;
