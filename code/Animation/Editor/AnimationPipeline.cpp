@@ -150,7 +150,12 @@ bool AnimationPipeline::buildOutput(
 	// Find animation take.
 	const std::wstring take = animationAsset->getTake();
 
-	Ref< const model::Animation > ma = modelAnimation->findAnimation(take);
+	Ref< const model::Animation > ma;
+	if (!take.empty())
+		ma = modelAnimation->findAnimation(take);
+	else if (modelAnimation->getAnimationCount() > 0)
+		ma = modelAnimation->getAnimation(0);
+
 	if (!ma)
 	{
 		log::error << L"Unable to build animation; no such animation \"" << take << L"\" in file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
