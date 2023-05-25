@@ -561,11 +561,11 @@ bool MeshPipeline::buildOutput(
 				external->setFragmentGuid(vertexShaderGuid);
 		}
 
-		// Resolve all local variables.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved(render::ShaderGraphStatic::VrtLocal);
+		// Resolve all variables.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to resolve local variables." << Endl;
+			log::error << L"MeshPipeline failed; unable to resolve variables." << Endl;
 			return false;
 		}
 
@@ -575,14 +575,6 @@ bool MeshPipeline::buildOutput(
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialPair.first << L"\"." << Endl;
-			return false;
-		}
-
-		// Resolve all global variables.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved(render::ShaderGraphStatic::VrtGlobal);
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to resolve global variables." << Endl;
 			return false;
 		}
 

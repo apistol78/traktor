@@ -305,8 +305,6 @@ public:
 		{
 			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
 			{
-				if (variableNode->isGlobal())
-					continue;
 				if (shaderGraph->findSourcePin(variableNode->findInputPin(L"Input")) == nullptr)
 					continue;
 
@@ -318,8 +316,6 @@ public:
 		{
 			if (const Variable * variableNode = dynamic_type_cast<const Variable*>(activeNode))
 			{
-				if (variableNode->isGlobal())
-					continue;
 				if (shaderGraph->getDestinationCount(variableNode->findOutputPin(L"Output")) > 0)
 				{
 					const auto& name = variableNode->getName();

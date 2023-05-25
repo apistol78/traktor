@@ -1280,15 +1280,12 @@ public:
 
 	const std::wstring& getName() const;
 
-	bool isGlobal() const;
-
 	virtual std::wstring getInformation() const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::wstring m_name;
-	bool m_global;
 };
 
 /*! Vector constant. */

@@ -359,7 +359,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_variablesGrid = new ui::GridView();
 	m_variablesGrid->create(tabPageVariables, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140), true));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE"), ui::dpi96(80), false));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80), false));
 	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80), false));
 	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
@@ -914,7 +913,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_document->push();
 
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved();
 		T_ASSERT(m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);
@@ -1252,8 +1251,7 @@ void ShaderGraphEditorPage::updateGraph()
 {
 	struct VariableInfo
 	{
-		uint32_t globalCount = 0;
-		uint32_t localCount = 0;
+		uint32_t count = 0;
 		uint32_t writeCount = 0;
 		uint32_t readCount = 0;
 		PinType type = PinType::Void;
@@ -1270,11 +1268,7 @@ void ShaderGraphEditorPage::updateGraph()
 	{
 		auto& vi = variables[variableNode->getName()];
 
-		if (variableNode->isGlobal())
-			++vi.globalCount;
-		else
-			++vi.localCount;
-
+		vi.count++;
 		vi.readCount += m_shaderGraph->getDestinationCount(variableNode->getOutputPin(0));
 
 		const Edge* sourceEdge = m_shaderGraph->findEdge(variableNode->getInputPin(0));
@@ -1292,17 +1286,7 @@ void ShaderGraphEditorPage::updateGraph()
 		Ref< ui::GridRow > row = new ui::GridRow();
 		row->add(new ui::GridItem(variable.first));
 
-		if (variable.second.globalCount > 0 && variable.second.localCount == 0)
-			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_GLOBAL")));
-		else if (variable.second.globalCount == 0 && variable.second.localCount > 0)
-			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_LOCAL")));
-		else
-		{
-			row->add(new ui::GridItem(i18n::Text(L"SHADERGRAPH_VARIABLES_SCOPE_ERROR")));
-			row->setBackground(Color4ub(255, 0, 0, 255));
-		}
-
-		if (variable.second.readCount > 0 && variable.second.writeCount == 0 && variable.second.localCount > 0)
+		if (variable.second.readCount > 0 && variable.second.writeCount == 0)
 			row->setBackground(Color4ub(255, 0, 0, 255));
 
 		row->add(new ui::GridItem(toString(variable.second.readCount)));

@@ -115,11 +115,11 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		}
 		T_VALIDATE_SHADERGRAPH(fragmentShaderGraph);
 
-		// Resolve local variables of each read fragment.
-		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved(ShaderGraphStatic::VrtLocal);
+		// Resolve variables of each read fragment.
+		fragmentShaderGraph = ShaderGraphStatic(fragmentShaderGraph, fragmentId).getVariableResolved();
 		if (!fragmentShaderGraph)
 		{
-			log::error << errorPrefix << L"unable to resolve local variables in fragment \"" << fragmentId.format() << L"\"" << Endl;
+			log::error << errorPrefix << L"unable to resolve variables in fragment \"" << fragmentId.format() << L"\"" << Endl;
 			return nullptr;
 		}
 

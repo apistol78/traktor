@@ -399,11 +399,11 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	const wchar_t* rendererSignature = compiler->getRendererSignature();
 	T_ASSERT(rendererSignature);
 
-	// Resolve all local variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	// Resolve all variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved();
 	if (!shaderGraph)
 	{
-		log::error << L"Shader viewer failed; unable to resolve local variables." << Endl;
+		log::error << L"Shader viewer failed; unable to resolve variables." << Endl;
 		return;
 	}
 
@@ -411,14 +411,6 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
-
-	// Resolve all global variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getVariableResolved(ShaderGraphStatic::VrtGlobal);
-	if (!shaderGraph)
-	{
-		log::error << L"Shader viewer failed; unable to resolve global variables." << Endl;
-		return;
-	}
 
 	// Resolve all bundles.
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, Guid()).getBundleResolved();

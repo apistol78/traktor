@@ -848,7 +848,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 	return shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType resolve) const
+Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
@@ -859,14 +859,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved(VariableResolveType re
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
 	// Get all variable nodes from shader graph.
-	const RefArray< Variable > variableNodes = shaderGraph->findNodesOf< Variable >([=](const Variable* variableNode) {
-		if (resolve == VrtLocal && !variableNode->isGlobal())
-			return true;
-		else if (resolve == VrtGlobal && variableNode->isGlobal())
-			return true;
-		else
-			return false;
-	});
+	const RefArray< Variable > variableNodes = shaderGraph->findNodesOf< Variable >();
 
 	// Join variable references.
 	for (const auto variableNode : variableNodes)

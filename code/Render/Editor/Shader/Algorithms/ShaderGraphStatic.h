@@ -34,12 +34,6 @@ class T_DLLCLASS ShaderGraphStatic : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum VariableResolveType
-	{
-		VrtLocal,
-		VrtGlobal
-	};
-
 	explicit ShaderGraphStatic(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
 	/*! Get permutation of shader graph for given platform. */
@@ -70,7 +64,7 @@ public:
 	Ref< ShaderGraph > getBundleResolved() const;
 
 	/*! Replace variable nodes with direct connections. */
-	Ref< ShaderGraph > getVariableResolved(VariableResolveType resolve) const;
+	Ref< ShaderGraph > getVariableResolved() const;
 
 	/*! Remove disabled outputs. */
 	Ref< ShaderGraph > removeDisabledOutputs() const;

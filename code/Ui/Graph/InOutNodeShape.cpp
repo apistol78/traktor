@@ -59,7 +59,7 @@ InOutNodeShape::InOutNodeShape(Style style)
 		m_imageNode[2] = new ui::StyleBitmap(L"UI.Graph.UniformError");
 		m_imageNode[3] = new ui::StyleBitmap(L"UI.Graph.UniformErrorSelected");
 	}
-	else if (style == StLocalVariable || style == StGlobalVariable)
+	else if (style == StVariable)
 	{
 		m_imageNode[0] = new ui::StyleBitmap(L"UI.Graph.Variable");
 		m_imageNode[1] = new ui::StyleBitmap(L"UI.Graph.VariableSelected");
@@ -166,7 +166,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	if (!info.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-info"));
-		canvas->setFont(m_style == StGlobalVariable ? graph->getPaintSettings().getFontBold() : graph->getPaintSettings().getFont());
+		canvas->setFont(graph->getPaintSettings().getFont());
 		canvas->drawText(
 			rc,
 			info,
