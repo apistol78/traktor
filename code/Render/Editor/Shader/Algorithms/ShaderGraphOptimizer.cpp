@@ -16,10 +16,10 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
-#include "Render/Editor/Shader/ShaderGraphHash.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
-#include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOrderEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor::render
 {

@@ -19,8 +19,8 @@
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphEvaluator.h"
-#include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor
 {

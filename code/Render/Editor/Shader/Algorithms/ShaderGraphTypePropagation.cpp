@@ -12,7 +12,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
-#include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
 
 namespace traktor
 {

@@ -11,7 +11,7 @@
 #include "Render/Editor/GraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 
 namespace traktor
 {

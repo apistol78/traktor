@@ -18,11 +18,11 @@
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
-#include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
-#include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypeEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor
 {
