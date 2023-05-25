@@ -12,9 +12,9 @@
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphCombinations.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 
 namespace traktor
 {

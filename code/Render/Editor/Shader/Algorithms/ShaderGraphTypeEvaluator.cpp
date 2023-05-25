@@ -10,7 +10,7 @@
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTypeEvaluator.h"
 
 namespace traktor
 {

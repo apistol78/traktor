@@ -15,9 +15,9 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/ShaderGraphTechniques.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 
 namespace traktor
 {

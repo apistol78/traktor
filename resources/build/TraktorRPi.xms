@@ -6817,6 +6817,16 @@
 													<items/>
 												</item>
 												<item type="Filter">
+													<name>Algorithms</name>
+													<items>
+														<item type="File" version="1">
+															<fileName>Shader/Algorithms/*.*</fileName>
+															<excludeFilter/>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
 													<name>Traits</name>
 													<items>
 														<item type="File" version="1">

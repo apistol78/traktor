@@ -11,11 +11,11 @@
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
-#include "Render/Editor/Shader/ShaderGraphStatic.h"
-#include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor::render
 {
