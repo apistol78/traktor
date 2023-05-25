@@ -37,8 +37,7 @@ public:
 	{
 		StDefault = 0,
 		StUniform = 1,
-		StLocalVariable = 2,
-		StGlobalVariable = 3
+		StVariable = 2
 	};
 
 	explicit InOutNodeShape(Style style);

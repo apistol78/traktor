@@ -63,7 +63,7 @@ public:
 	) override final;
 
 private:
-	Ref<ui::INodeShape > m_nodeShape[2];
+	Ref<ui::INodeShape > m_nodeShape;
 };
 
 	}

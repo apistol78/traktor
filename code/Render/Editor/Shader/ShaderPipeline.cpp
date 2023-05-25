@@ -246,11 +246,11 @@ bool ShaderPipeline::buildOutput(
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
-	// Resolve all local variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved(ShaderGraphStatic::VrtLocal);
+	// Resolve all variables.
+	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; unable to resolve local variables." << Endl;
+		log::error << L"ShaderPipeline failed; unable to resolve variables." << Endl;
 		return false;
 	}
 
@@ -260,14 +260,6 @@ bool ShaderPipeline::buildOutput(
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments." << Endl;
-		return false;
-	}
-
-	// Resolve all global variables.
-	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved(ShaderGraphStatic::VrtGlobal);
-	if (!shaderGraph)
-	{
-		log::error << L"ShaderPipeline failed; unable to resolve global variables." << Endl;
 		return false;
 	}
 
