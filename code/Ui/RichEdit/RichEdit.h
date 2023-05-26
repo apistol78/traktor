@@ -9,8 +9,7 @@
 #pragma once
 
 #include <functional>
-#include <list>
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -21,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IBitmap;
 class ScrollBar;
@@ -249,15 +246,15 @@ private:
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
 	Ref< SearchControl > m_searchControl;
-	std::vector< TextAttribute > m_textAttributes;
-	std::vector< BackgroundAttribute > m_backgroundAttributes;
+	AlignedVector< TextAttribute > m_textAttributes;
+	AlignedVector< BackgroundAttribute > m_backgroundAttributes;
 	Ref< IBitmap > m_image;
 	uint32_t m_imageWidth = 0;
 	uint32_t m_imageHeight = 0;
 	uint32_t m_imageCount = 0;
-	std::vector< Line > m_lines;
-	std::vector< Character > m_text;
-	std::map< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
+	AlignedVector< Line > m_lines;
+	AlignedVector< Character > m_text;
+	SmallMap< wchar_t, Ref< const ISpecialCharacter > > m_specialCharacters;
 	bool m_clipboard = true;
 	int32_t m_caret = 0;
 	bool m_caretBlink = true;
@@ -315,6 +312,4 @@ private:
 	void eventSearch(SearchEvent* event);
 };
 
-	}
 }
-

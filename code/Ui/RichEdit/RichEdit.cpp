@@ -21,12 +21,10 @@
 #include "Ui/RichEdit/SearchControl.h"
 #include "Ui/RichEdit/SearchEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_lineMarginMin = 40;
 const int32_t c_iconSize = 16;
@@ -43,7 +41,7 @@ bool isWordSeparator(wchar_t ch)
 	return !(std::iswalnum(ch) || ch == L'_');
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.RichEdit", RichEdit, Widget)
 
@@ -119,10 +117,9 @@ void RichEdit::setText(const std::wstring& text)
 			const size_t j = text.find(L'\n', i);
 			const std::wstring ln = (j != text.npos) ? text.substr(i, j - i) : text.substr(i);
 
-			Line line;
-			line.start = int32_t(m_text.size());
-			line.stop = line.start + int32_t(ln.length());
-			m_lines.push_back(line);
+			Line& line = m_lines.push_back();
+			line.start = (int32_t)m_text.size();
+			line.stop = line.start + (int32_t)ln.length();
 
 			for (auto ch : ln)
 				m_text.push_back(Character(ch));
@@ -141,10 +138,9 @@ void RichEdit::setText(const std::wstring& text)
 	}
 	else
 	{
-		Line line;
+		Line& line = m_lines.push_back();
 		line.start = 0;
 		line.stop = 0;
-		m_lines.push_back(line);
 		m_text.push_back(Character(L'\n'));
 	}
 
@@ -170,7 +166,7 @@ std::wstring RichEdit::getText() const
 {
 	if (!m_text.empty())
 	{
-		std::vector< wchar_t > text(m_text.size());
+		AlignedVector< wchar_t > text(m_text.size());
 		for (size_t i = 0; i < m_text.size(); ++i)
 			text[i] = m_text[i].ch;
 		return std::wstring(text.begin(), text.end());
@@ -205,21 +201,19 @@ void RichEdit::setFont(const Font& font)
 
 int32_t RichEdit::addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline)
 {
-	TextAttribute attr;
+	TextAttribute& attr = m_textAttributes.push_back();
 	attr.textColor = textColor;
 	attr.bold = bold;
 	attr.italic = italic;
 	attr.underline = underline;
-	m_textAttributes.push_back(attr);
-	return int32_t(m_textAttributes.size() - 1);
+	return (int32_t)(m_textAttributes.size() - 1);
 }
 
 int32_t RichEdit::addBackgroundAttribute(const Color4ub& backColor)
 {
-	BackgroundAttribute attr;
+	BackgroundAttribute& attr = m_backgroundAttributes.push_back();
 	attr.backColor = backColor;
-	m_backgroundAttributes.push_back(attr);
-	return int32_t(m_backgroundAttributes.size() - 1);
+	return (int32_t)(m_backgroundAttributes.size() - 1);
 }
 
 void RichEdit::setTextAttribute(int32_t start, int32_t length, int32_t attribute)
@@ -403,7 +397,7 @@ int32_t RichEdit::getOffsetFromPosition(const Point& position)
 
 	const Line& ln = m_lines[line];
 
-	std::vector< int32_t > stops;
+	AlignedVector< int32_t > stops;
 
 	int32_t x = 0;
 	for (int32_t i = ln.start; i < ln.stop; ++i)
@@ -493,7 +487,7 @@ std::wstring RichEdit::getLine(int32_t line) const
 {
 	if (line < int32_t(m_lines.size()))
 	{
-		std::vector< wchar_t > text;
+		AlignedVector< wchar_t > text;
 		for (int32_t i = m_lines[line].start; i <= m_lines[line].stop; ++i)
 			text.push_back(m_text[i].ch);
 		return std::wstring(text.begin(), text.end());
@@ -529,7 +523,7 @@ std::wstring RichEdit::getSelectedText() const
 	if (m_selectionStart < 0 || m_text.empty())
 		return L"";
 
-	std::vector< wchar_t > text;
+	AlignedVector< wchar_t > text;
 	text.reserve(m_selectionStop - m_selectionStart + 1);
 
 	for (int32_t i = m_selectionStart; i < m_selectionStop; ++i)
@@ -1133,11 +1127,11 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 					const Line ln0 = m_lines[i - 1];
 					const Line ln1 = m_lines[i];
 
-					std::vector< Character > tx0;
+					AlignedVector< Character > tx0;
 					for (int32_t i = ln0.start; i <= ln0.stop; ++i)
 						tx0.push_back(m_text[i]);
 
-					std::vector< Character > tx1;
+					AlignedVector< Character > tx1;
 					for (int32_t i = ln1.start; i <= ln1.stop; ++i)
 						tx1.push_back(m_text[i]);
 
@@ -1197,11 +1191,11 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 						const Line ln0 = m_lines[i];
 						const Line ln1 = m_lines[i + 1];
 
-						std::vector< Character > tx0;
+						AlignedVector< Character > tx0;
 						for (int32_t i = ln0.start; i <= ln0.stop; ++i)
 							tx0.push_back(m_text[i]);
 
-						std::vector< Character > tx1;
+						AlignedVector< Character > tx1;
 						for (int32_t i = ln1.start; i <= ln1.stop; ++i)
 							tx1.push_back(m_text[i]);
 
@@ -1801,5 +1795,4 @@ void RichEdit::eventSearch(SearchEvent* event)
 		updateFindPreview();
 }
 
-	}
 }
