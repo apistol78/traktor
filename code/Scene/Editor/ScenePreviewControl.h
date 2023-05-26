@@ -83,8 +83,8 @@ private:
 	Ref< IModifier > m_modifierScale;
 	Ref< SceneEditorContext > m_context;
 	Timer m_timer;
-	float m_lastTime;
-	float m_lastPhysicsTime;
+	double m_lastTime;
+	double m_lastPhysicsTime;
 
 	bool updateRenderControls();
 

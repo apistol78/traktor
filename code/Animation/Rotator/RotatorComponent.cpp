@@ -53,7 +53,7 @@ void RotatorComponent::update(const world::UpdateParams& update)
 		return;
 	}
 
-	const float angle = m_rate * update.totalTime;
+	const float angle = (float)(m_rate * update.totalTime);
 
 	switch (m_axis)
 	{

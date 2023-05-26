@@ -83,7 +83,7 @@ Aabb3 BoidsComponent::getBoundingBox() const
 
 void BoidsComponent::update(const world::UpdateParams& update)
 {
-	const Scalar deltaTime(min(update.deltaTime, 1.0f / 30.0f));
+	const Scalar deltaTime((float)min(update.deltaTime, 1.0 / 30.0));
 	const Vector4 attraction = m_transform.translation().xyz1();
 
 	// Calculate perceived center and velocity of all boids.

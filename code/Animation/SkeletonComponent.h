@@ -87,7 +87,7 @@ private:
 	AlignedVector< Transform > m_poseTransforms;
 	mutable Ref< Job > m_updatePoseControllerJob;
 
-	void updatePoseController(float time, float deltaTime);
+	void updatePoseController(double time, double deltaTime);
 };
 
 }

@@ -470,8 +470,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
+	double scaledTime = m_context->getTime();
+	float deltaTime = (float)m_timer.getDeltaTime();
 	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
@@ -480,8 +480,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	// need to manually update those.
 	world::UpdateParams update;
 	update.totalTime = scaledTime;
-	update.deltaTime = scaledDeltaTime;
 	update.alternateTime = scaledTime;
+	update.deltaTime = scaledDeltaTime;
 
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);

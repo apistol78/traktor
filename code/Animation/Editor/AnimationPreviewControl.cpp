@@ -327,7 +327,7 @@ void AnimationPreviewControl::eventSize(ui::SizeEvent* event)
 	if (!m_renderView)
 		return;
 
-	ui::Size sz = event->getSize();
+	const ui::Size sz = event->getSize();
 	m_renderView->reset(sz.cx, sz.cy);
 }
 
@@ -367,9 +367,9 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_dirtySize = sz;
 	}
 
-	const float time = (float)m_timer.getElapsedTime();
-	const float deltaTime = float(m_timer.getDeltaTime());
-	const float scaledTime = float(m_timer.getElapsedTime());
+	const double time = m_timer.getElapsedTime();
+	const double scaledTime = m_timer.getElapsedTime();
+	const double deltaTime = m_timer.getDeltaTime();
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
@@ -394,8 +394,8 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	// Update scene entities.
 	world::UpdateParams update;
 	update.totalTime = time;
-	update.deltaTime = deltaTime;
 	update.alternateTime = time;
+	update.deltaTime = deltaTime;
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
 
@@ -419,7 +419,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 		float(sz.cx),
 		float(sz.cy),
 		float(sz.cx) / sz.cy,
-		deg2rad(70.0f), // m_fieldOfView),
+		deg2rad(70.0f),
 		worldRenderSettings->viewNearZ,
 		worldRenderSettings->viewFarZ
 	);

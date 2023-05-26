@@ -62,9 +62,9 @@ enum class LightType
 struct UpdateParams
 {
 	Object* contextObject = nullptr;	/*!< Update context object; is Stage instance during runtime. */
-	float totalTime = 0.0f;				/*!< Total time since first update. */
-	float deltaTime = 0.0f;				/*!< Delta time since last update. */
-	float alternateTime = 0.0f;			/*!< Alternative absolute time. */
+	double totalTime = 0.0;				/*!< Total time since first update. */
+	double alternateTime = 0.0;			/*!< Alternative absolute time. */
+	double deltaTime = 0.0;				/*!< Delta time since last update. */
 };
 
 /*!

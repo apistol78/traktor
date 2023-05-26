@@ -97,7 +97,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 ,	m_angleHead(0.0f)
 ,	m_anglePitch(0.0f)
 ,	m_timeScale(1.0f)
-,	m_lastDeltaTime(1.0f / c_updateInterval)
+,	m_lastDeltaTime(1.0 / c_updateInterval)
 ,	m_guideVisible(true)
 ,	m_velocityVisible(false)
 ,	m_moveEmitter(false)
@@ -476,8 +476,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_dirtySize = sz;
 	}
 
-	const float time = (float)m_timer.getElapsedTime();
-	const float deltaTime = (float)(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
+	const double time = m_timer.getElapsedTime();
+	const double deltaTime = m_timer.getDeltaTime() * 0.9 + m_lastDeltaTime * 0.1;
+	m_lastDeltaTime = deltaTime;
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
@@ -487,8 +488,8 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	// Update scene entities.
 	world::UpdateParams update;
 	update.totalTime = time;
-	update.deltaTime = deltaTime * m_timeScale;
 	update.alternateTime = time;
+	update.deltaTime = deltaTime * m_timeScale;
 	m_sceneInstance->updateController(update);
 	m_sceneInstance->updateEntity(update);
 

@@ -146,7 +146,7 @@ private:
 	float m_anglePitch;
 	ui::Point m_lastMousePosition;
 	float m_timeScale;
-	float m_lastDeltaTime;
+	double m_lastDeltaTime;
 	bool m_guideVisible;
 	bool m_velocityVisible;
 	bool m_moveEmitter;
