@@ -266,7 +266,7 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 		return;
 
 	const Transform T = entityAdapter->getTransform();
-	const Scalar distance = boundingBox.getExtent().get(majorAxis3(boundingBox.getExtent())) * Scalar(3.0f);
+	const Scalar distance = boundingBox.getExtent().get(majorAxis3(boundingBox.getExtent())) * 3.0_simd;
 	const Vector4 center = T * boundingBox.getCenter().xyz1();
 
 	for (uint32_t i = 0; i < sizeof_array(m_cameras); ++i)
@@ -274,6 +274,8 @@ void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)
 		const Vector4 P = center - m_cameras[i]->getOrientation() * Vector4(0.0f, 0.0f, distance, 0.0f);
 		m_cameras[i]->place(P);
 	}
+
+	enqueueRedraw(nullptr);
 }
 
 void SceneEditorContext::setPlaying(bool playing)
