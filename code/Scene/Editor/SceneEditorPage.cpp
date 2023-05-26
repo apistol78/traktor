@@ -1261,6 +1261,7 @@ bool SceneEditorPage::addComponent()
 	else
 		return false;
 
+	updatePropertyObject();
 	return true;
 }
 

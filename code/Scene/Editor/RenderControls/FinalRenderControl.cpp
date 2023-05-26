@@ -453,7 +453,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	const ui::Size sz = m_renderWidget->getInnerRect().getSize().invdpi96();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
 	{
 		if (!m_renderView->reset(sz.cx, sz.cy))
