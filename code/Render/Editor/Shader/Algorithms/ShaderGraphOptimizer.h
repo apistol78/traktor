@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Node;
 class OutputPin;
@@ -80,6 +78,4 @@ private:
 	) const;
 };
 
-	}
 }
-

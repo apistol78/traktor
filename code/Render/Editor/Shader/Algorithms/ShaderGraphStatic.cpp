@@ -24,12 +24,10 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 #define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
 
@@ -118,7 +116,7 @@ struct ConstantFoldingVisitor
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphStatic", ShaderGraphStatic, Object)
 
@@ -661,11 +659,11 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 		}
 
 		// Merge swizzle patterns.
-		std::wstring swizzleRight = swizzleRightNode->get();
-		std::wstring swizzleLeft = swizzleLeftNode->get();
+		const std::wstring swizzleRight = swizzleRightNode->get();
+		const std::wstring swizzleLeft = swizzleLeftNode->get();
 
-		int32_t swizzleRightWidth = swizzleRight.length();
-		int32_t swizzleLeftWidth = swizzleLeft.length();
+		const int32_t swizzleRightWidth = (int32_t)swizzleRight.length();
+		const int32_t swizzleLeftWidth = (int32_t)swizzleLeft.length();
 
 		std::wstring swizzle = swizzleRight;
 
@@ -995,5 +993,4 @@ Ref< ShaderGraph > ShaderGraphStatic::propagateConstantExternalValues() const
 	return shaderGraph;
 }
 
-	}
 }

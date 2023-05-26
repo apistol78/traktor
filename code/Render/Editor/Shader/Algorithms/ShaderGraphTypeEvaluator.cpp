@@ -12,10 +12,8 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTypeEvaluator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTypeEvaluator", ShaderGraphTypeEvaluator, Object)
 
@@ -56,7 +54,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 
 	if (is_a< Type >(node))
 	{
-		PinType inputType = evaluate(node, L"Type");
+		const PinType inputType = evaluate(node, L"Type");
 
 		const InputPin* inputPin = nullptr;
 		if (isPinTypeScalar(inputType))
@@ -84,7 +82,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		T_ASSERT(nodeTraits);
 
-		uint32_t inputPinCount = node->getInputPinCount();
+		const uint32_t inputPinCount = node->getInputPinCount();
 
 		// Evaluate input pin types.
 		AlignedVector< PinType > inputPinTypes(inputPinCount);
@@ -104,5 +102,4 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	return outputPinType;
 }
 
-	}
 }

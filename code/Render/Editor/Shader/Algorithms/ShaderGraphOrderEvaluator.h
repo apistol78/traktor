@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderGraph;
 class Node;
@@ -37,7 +35,7 @@ class T_DLLCLASS ShaderGraphOrderEvaluator : public Object
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphOrderEvaluator(
+	explicit ShaderGraphOrderEvaluator(
 		const ShaderGraph* shaderGraph,
 		bool frequentUniformsAsLinear
 	);
@@ -52,6 +50,4 @@ private:
 	mutable SmallMap< const OutputPin*, PinOrder > m_evaluated;
 };
 
-	}
 }
-
