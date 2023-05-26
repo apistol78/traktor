@@ -539,14 +539,14 @@ void Edit::eventPaint(PaintEvent* event)
 
 	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
 
-	int32_t h = fm.getHeight();
+	const int32_t h = fm.getHeight();
+	const int32_t y = (rcInner.getHeight() - h) / 2;
 	int32_t x = dpi96(4);
-	int32_t y = (rcInner.getHeight() - h) / 2;
 	int32_t caretX = 0;
 
 	for (int32_t i = 0; i < text.length(); ++i)
 	{
-		int32_t w = fm.getAdvance(text[i], 0);
+		const int32_t w = fm.getAdvance(text[i], 0);
 
 		if (i >= m_selectionStart && i < m_selectionEnd)
 		{
@@ -557,7 +557,7 @@ void Edit::eventPaint(PaintEvent* event)
 			));
 		}
 
-		wchar_t chs[2] = { text[i], 0 };
+		const wchar_t chs[2] = { text[i], 0 };
 		canvas.drawText(Point(x, y), chs);
 
 		if (i == m_caret)
