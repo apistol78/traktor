@@ -18,16 +18,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Node;
 class ShaderGraph;
 
 /*! Shader graph hash.
  * \ingroup Render
+ * 
+ * Since shader graphs can be expressed in multiple ways
+ * but yield same result we cannot rely on data-only hash.
+ * This class is designed to calculate an analytical hash
+ * of the shader graph's function, i.e. handle commutative
+ * inputs etc.
  */
 class T_DLLCLASS ShaderGraphHash : public Object
 {
@@ -44,6 +48,4 @@ private:
 	bool m_includeTextures;	//!< Include texture node id in hash.
 };
 
-	}
 }
-

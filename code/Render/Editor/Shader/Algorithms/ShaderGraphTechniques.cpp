@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <stack>
 #include "Core/Misc/ImmutableCheck.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/Editor/Edge.h"
@@ -19,12 +18,10 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 struct CopyVisitor
 {
@@ -43,7 +40,7 @@ struct CopyVisitor
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechniques, Object)
 
@@ -163,5 +160,4 @@ ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 		return nullptr;
 }
 
-	}
 }

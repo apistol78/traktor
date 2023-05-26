@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <deque>
-#include <set>
 #include "Core/Log/Log.h"
 #include "Core/Misc/ImmutableCheck.h"
 #include "Render/Editor/Edge.h"
@@ -52,7 +51,7 @@ bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 		return false;
 
 	std::deque< const OutputPin* > scanOutputPins;
-	std::set< const OutputPin* > scannedOutputPins;
+	SmallSet< const OutputPin* > scannedOutputPins;
 
 	scanOutputPins.push_back(outputPin);
 	scannedOutputPins.insert(outputPin);
@@ -67,7 +66,7 @@ bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 		const Node* node = scanOutputPin->getNode();
 		T_ASSERT(node);
 
-		int32_t inputPinCount = node->getInputPinCount();
+		const int32_t inputPinCount = node->getInputPinCount();
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
@@ -216,7 +215,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 
 				T_ASSERT(inputPinCount == nodes[j]->getInputPinCount());
 
-				int32_t outputPinCount = nodes[i]->getOutputPinCount();
+				const int32_t outputPinCount = nodes[i]->getOutputPinCount();
 				T_ASSERT(outputPinCount == nodes[j]->getOutputPinCount());
 
 				// Are both nodes wired to same input nodes?

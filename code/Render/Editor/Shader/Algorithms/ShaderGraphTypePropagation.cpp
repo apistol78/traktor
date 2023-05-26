@@ -14,10 +14,8 @@
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphTypePropagation.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTypePropagation", ShaderGraphTypePropagation, Object)
 
@@ -43,7 +41,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 			PinType inputPinTypes[16];
 
-			uint32_t inputPinCount = node->getInputPinCount();
+			const uint32_t inputPinCount = node->getInputPinCount();
 			for (uint32_t i = 0; i < inputPinCount; ++i)
 			{
 				const InputPin* inputPin = node->getInputPin(i);
@@ -62,7 +60,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				inputPinTypes[i] = m_outputPinTypes[sourceOutputPin];
 			}
 
-			uint32_t outputPinCount = node->getOutputPinCount();
+			const uint32_t outputPinCount = node->getOutputPinCount();
 			for (uint32_t i = 0; i < outputPinCount; ++i)
 			{
 				const OutputPin* outputPin = node->getOutputPin(i);
@@ -93,10 +91,10 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			const INodeTraits* nodeTraits = INodeTraits::find(node);
 			T_ASSERT(nodeTraits);
 
-			uint32_t inputPinCount = node->getInputPinCount();
+			const uint32_t inputPinCount = node->getInputPinCount();
 			T_ASSERT(inputPinCount < sizeof_array(currentInputPinTypes));
 
-			uint32_t outputPinCount = node->getOutputPinCount();
+			const uint32_t outputPinCount = node->getOutputPinCount();
 			T_ASSERT(outputPinCount < sizeof_array(outputPinTypes));
 
 			// Get current set of types for node's inputs.
@@ -157,7 +155,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		// Propagate input types as new output types.
 		for (const auto node : nodeSetOutput)
 		{
-			uint32_t outputPinCount = node->getOutputPinCount();
+			const uint32_t outputPinCount = node->getOutputPinCount();
 			for (uint32_t i = 0; i < outputPinCount; ++i)
 			{
 				const OutputPin* outputPin = node->getOutputPin(i);
@@ -194,7 +192,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			const INodeTraits* nodeTraits = INodeTraits::find(node);
 			T_ASSERT(nodeTraits);
 
-			uint32_t outputPinCount = node->getOutputPinCount();
+			const uint32_t outputPinCount = node->getOutputPinCount();
 			for (uint32_t j = 0; j < outputPinCount; ++j)
 			{
 				const OutputPin* outputPin = node->getOutputPin(j);
@@ -232,5 +230,4 @@ void ShaderGraphTypePropagation::set(const OutputPin* outputPin, PinType outputP
 	m_outputPinTypes[outputPin] = outputPinType;
 }
 
-	}
 }

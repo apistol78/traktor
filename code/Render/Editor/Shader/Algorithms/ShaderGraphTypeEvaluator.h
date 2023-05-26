@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class InputPin;
 class Node;
@@ -39,7 +37,7 @@ class T_DLLCLASS ShaderGraphTypeEvaluator : public Object
 	T_RTTI_CLASS;
 
 public:
-	ShaderGraphTypeEvaluator(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphTypeEvaluator(const ShaderGraph* shaderGraph);
 
 	PinType evaluate(const InputPin* inputPin) const;
 
@@ -52,6 +50,4 @@ private:
 	mutable std::map< const OutputPin*, PinType > m_cache;
 };
 
-	}
 }
-

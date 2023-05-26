@@ -71,7 +71,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 	// Traverse graph nodes.
 	while (!nodeStack.empty())
 	{
-		std::pair< Ref< const Node >, int32_t > top = nodeStack.back();
+		const std::pair< Ref< const Node >, int32_t > top = nodeStack.back();
 		nodeStack.pop_back();
 
 		// Already visited this node?

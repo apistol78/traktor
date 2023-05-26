@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ShaderGraph;
 class Node;
@@ -46,6 +44,4 @@ private:
 	std::map< std::wstring, Ref< ShaderGraph > > m_techniques;
 };
 
-	}
 }
-

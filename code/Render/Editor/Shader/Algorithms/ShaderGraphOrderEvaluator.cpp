@@ -11,10 +11,8 @@
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOrderEvaluator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOrderEvaluator", ShaderGraphOrderEvaluator, Object)
 
@@ -52,7 +50,7 @@ PinOrder ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
 	const Node* node = outputPin->getNode();
 	T_ASSERT(node);
 
-	int32_t inputPinCount = node->getInputPinCount();
+	const int32_t inputPinCount = node->getInputPinCount();
 
 	// Evaluate order of input pins.
 	PinOrder inputPinOrders[32];
@@ -89,5 +87,4 @@ PinOrder ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
 	return order;
 }
 
-	}
 }
