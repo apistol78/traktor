@@ -134,9 +134,9 @@ public:
 
 	float getFieldOfView() const;
 
-	void setAlternateTime(float alternateTime);
+	void setAlternateTime(double alternateTime);
 
-	float getAlternateTime() const;
+	double getAlternateTime() const;
 
 	void setFeedbackScale(float feedbackScale);
 
@@ -165,9 +165,9 @@ private:
 	Ref< const world::Entity > m_listenerEntity;
 	IntervalTransform m_cameraTransform;
 	Transform m_cameraOffset;
-	float m_alternateTime = 0.0f;
-	float m_deltaTime = 0.0f;
-	float m_controllerTime = -1.0f;
+	double m_alternateTime = 0.0;
+	double m_deltaTime = 0.0;
+	double m_controllerTime = -1.0;
 	float m_fieldOfView = 70.0f;
 	float m_feedbackScale = 1.0f;
 	bool m_controllerEnable = true;

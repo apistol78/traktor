@@ -126,7 +126,7 @@ void EventSetComponent_raise_2(EventSetComponent* self, const std::wstring& name
 	self->raise(name, offset);
 }
 
-void Entity_update(Entity* self, float totalTime, float deltaTime)
+void Entity_update(Entity* self, double totalTime, double deltaTime)
 {
 	UpdateParams up;
 	up.totalTime = totalTime;

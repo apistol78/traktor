@@ -63,8 +63,8 @@ private:
 	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;
-	float m_time;
-	float m_timeTarget;
+	double m_time;
+	double m_timeTarget;
 };
 
 }

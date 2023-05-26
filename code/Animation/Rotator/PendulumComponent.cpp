@@ -55,7 +55,7 @@ void PendulumComponent::update(const world::UpdateParams& update)
 		return;
 	}
 
-	const float angle = sin(update.totalTime * m_rate) * m_amplitude;
+	const float angle = (float)sin(update.totalTime * m_rate) * m_amplitude;
 
 	switch (m_axis)
 	{

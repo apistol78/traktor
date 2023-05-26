@@ -175,7 +175,7 @@ bool SkeletonComponent::setPoseTransform(render::handle_t jointName, const Trans
 	return true;
 }
 
-void SkeletonComponent::updatePoseController(float time, float deltaTime)
+void SkeletonComponent::updatePoseController(double time, double deltaTime)
 {
 	// Calculate pose transforms and skinning transforms.
 	if (m_skeleton && m_poseController)

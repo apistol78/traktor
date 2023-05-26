@@ -76,7 +76,7 @@ void PathComponent::update(const world::UpdateParams& update)
 
 		case TimeMode::PingPong:
 			{
-				int32_t n = (int32_t)(m_time / m_path.getEndTime());
+				const int32_t n = (int32_t)(m_time / m_path.getEndTime());
 				m_time = std::fmod(m_time, m_path.getEndTime());
 				if ((n & 1) == 1)
 					m_time = m_path.getEndTime() - m_time;
@@ -95,7 +95,7 @@ void PathComponent::update(const world::UpdateParams& update)
 			m_time = std::max(m_time - update.deltaTime, m_timeTarget);
 	}
 
-	const Transform transform = m_path.evaluate(m_time, m_timeMode == TimeMode::Loop).transform();
+	const Transform transform = m_path.evaluate((float)m_time, m_timeMode == TimeMode::Loop).transform();
 	m_owner->setTransform(m_transform * transform);
 }
 

@@ -300,12 +300,12 @@ float SceneEditorContext::getTimeScale() const
 	return m_timeScale;
 }
 
-void SceneEditorContext::setTime(float time)
+void SceneEditorContext::setTime(double time)
 {
 	m_time = time;
 }
 
-float SceneEditorContext::getTime() const
+double SceneEditorContext::getTime() const
 {
 	return m_time;
 }

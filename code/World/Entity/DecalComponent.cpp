@@ -52,7 +52,7 @@ Aabb3 DecalComponent::getBoundingBox() const
 
 void DecalComponent::update(const UpdateParams& update)
 {
-	m_age += update.deltaTime;
+	m_age += (float)update.deltaTime;
 }
 
 }

@@ -201,9 +201,9 @@ public:
 
 	float getTimeScale() const;
 
-	void setTime(float time);
+	void setTime(double time);
 
-	float getTime() const;
+	double getTime() const;
 
 	void enqueueRedraw(ISceneRenderControl* renderControl);
 
@@ -344,7 +344,7 @@ private:
 	bool m_physicsEnable;
 	bool m_playing;
 	float m_timeScale;
-	float m_time;
+	double m_time;
 	int32_t m_redrawUntilStop;
 	uint32_t m_buildCount;
 	uint32_t m_entityCount;

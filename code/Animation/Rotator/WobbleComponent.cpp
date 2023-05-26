@@ -91,9 +91,9 @@ void WobbleComponent::update(const world::UpdateParams& update)
 	
 	if (m_magnitude > FUZZY_EPSILON && m_rate > FUZZY_EPSILON)
 	{
-		const float dx = convolve(update.totalTime * m_rate, c_wobbleX, sizeof_array(c_wobbleX)) * m_magnitude;
-		const float dy = convolve(update.totalTime * m_rate, c_wobbleY, sizeof_array(c_wobbleY)) * m_magnitude;
-		const float dz = convolve(update.totalTime * m_rate, c_wobbleZ, sizeof_array(c_wobbleZ)) * m_magnitude;
+		const float dx = convolve((float)update.totalTime * m_rate, c_wobbleX, sizeof_array(c_wobbleX)) * m_magnitude;
+		const float dy = convolve((float)update.totalTime * m_rate, c_wobbleY, sizeof_array(c_wobbleY)) * m_magnitude;
+		const float dz = convolve((float)update.totalTime * m_rate, c_wobbleZ, sizeof_array(c_wobbleZ)) * m_magnitude;
 		m_local = Transform(Vector4(dx, dy, dz));
 	}
 

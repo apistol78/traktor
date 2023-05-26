@@ -229,8 +229,8 @@ void WorldLayer::update(const UpdateInfo& info)
 		world::UpdateParams up;
 		up.contextObject = getStage();
 		up.totalTime = info.getSimulationTime() - m_controllerTime;
-		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;
+		up.deltaTime = info.getSimulationDeltaTime();
 
 		m_scene->updateController(up);
 	}
@@ -239,8 +239,8 @@ void WorldLayer::update(const UpdateInfo& info)
 		world::UpdateParams up;
 		up.contextObject = getStage();
 		up.totalTime = info.getSimulationTime();
-		up.deltaTime = info.getSimulationDeltaTime();
 		up.alternateTime = m_alternateTime;
+		up.deltaTime = info.getSimulationDeltaTime();
 
 		// Update all entities.
 		m_scene->updateEntity(up);
@@ -581,12 +581,12 @@ float WorldLayer::getFieldOfView() const
 	return m_fieldOfView;
 }
 
-void WorldLayer::setAlternateTime(float alternateTime)
+void WorldLayer::setAlternateTime(double alternateTime)
 {
 	m_alternateTime = alternateTime;
 }
 
-float WorldLayer::getAlternateTime() const
+double WorldLayer::getAlternateTime() const
 {
 	return m_alternateTime;
 }

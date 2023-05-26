@@ -469,9 +469,9 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 	{
 		Ref< Scene > scene = m_context->getScene();
 
-		const float deltaTime = std::min((float)m_timer.getDeltaTime(), 1.0f / 10.0f);
-		const float scaledTime = m_context->getTime();
-		const float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+		const double deltaTime = std::min(m_timer.getDeltaTime(), 1.0 / 10.0);
+		const double scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0;
+		const double scaledTime = m_context->getTime();
 
 		// Update scene controller editor.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
@@ -484,18 +484,18 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 			if (m_lastPhysicsTime > scaledTime)
 				m_lastPhysicsTime = scaledTime;
 
-			const float c_updateDeltaTime = 1.0f / 60.0f;
+			const double c_updateDeltaTime = 1.0 / 60.0;
 
 			// Prevent too many iterations in case time has changed too much.
-			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0f)
-				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * 10.0f;
+			if (scaledTime - m_lastPhysicsTime > c_updateDeltaTime * 10.0)
+				m_lastPhysicsTime = scaledTime - c_updateDeltaTime * 10.0;
 
 			while (m_lastPhysicsTime < scaledTime)
 			{
 				world::UpdateParams update;
 				update.totalTime = m_lastPhysicsTime;
-				update.deltaTime = c_updateDeltaTime;
 				update.alternateTime = m_lastPhysicsTime;
+				update.deltaTime = c_updateDeltaTime;
 
 				scene->updateController(update);
 				scene->updateEntity(update);
@@ -510,8 +510,8 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		{
 			world::UpdateParams update;
 			update.totalTime = scaledTime;
-			update.deltaTime = scaledDeltaTime;
 			update.alternateTime = scaledTime;
+			update.deltaTime = scaledDeltaTime;
 
 			scene->updateController(update);
 			scene->updateEntity(update);
