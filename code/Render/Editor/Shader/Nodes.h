@@ -1071,11 +1071,11 @@ class T_DLLCLASS Switch : public Node
 	T_RTTI_CLASS;
 
 public:
-	enum Branch
+	enum class Branch
 	{
-		BrAuto,
-		BrStatic,
-		BrDynamic
+		Auto,
+		Static,
+		Dynamic
 	};
 
 	Switch();

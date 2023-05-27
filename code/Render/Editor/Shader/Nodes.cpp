@@ -2725,10 +2725,10 @@ void Sum::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", 2, Switch, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", 3, Switch, Node)
 
 Switch::Switch()
-:	m_branch(BrAuto)
+:	m_branch(Branch::Auto)
 ,	m_width(1)
 {
 	updatePins();
@@ -2783,16 +2783,28 @@ void Switch::serialize(ISerializer& s)
 {
 	Node::serialize(s);
 
-	const MemberEnum< Branch >::Key kBranch[] =
+	if (s.getVersion< Switch >() >= 3)
 	{
-		{ L"BrAuto", BrAuto },
-		{ L"BrStatic", BrStatic },
-		{ L"BrDynamic", BrDynamic },
-		{ 0 }
-	};
-
-	if (s.getVersion() >= 1)
+		const MemberEnum< Branch >::Key kBranch[] =
+		{
+			{ L"Auto", Branch::Auto },
+			{ L"Static", Branch::Static },
+			{ L"Dynamic", Branch::Dynamic },
+			{ 0 }
+		};
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
+	}
+	else if (s.getVersion< Switch >() >= 1)
+	{
+		const MemberEnum< Branch >::Key kBranch[] =
+		{
+			{ L"BrAuto", Branch::Auto },
+			{ L"BrStatic", Branch::Static },
+			{ L"BrDynamic", Branch::Dynamic },
+			{ 0 }
+		};
+		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
+	}
 
 	if (s.getVersion< Switch >() >= 2)
 		s >> Member< int32_t >(L"width", m_width, AttributeRange(1));

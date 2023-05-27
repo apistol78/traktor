@@ -2604,9 +2604,9 @@ bool emitSwitch(GlslContext& cx, Switch* node)
 	const bool supportControlFlowAttributes = (cx.getSettings() != nullptr ? cx.getSettings()->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);
 	if (supportControlFlowAttributes)
 	{
-		if (node->getBranch() == Switch::BrStatic)
+		if (node->getBranch() == Switch::Branch::Static)
 			f << L"[[flatten]]" << Endl;
-		else if (node->getBranch() == Switch::BrDynamic)
+		else if (node->getBranch() == Switch::Branch::Dynamic)
 			f << L"[[branch]]" << Endl;
 	}
 
