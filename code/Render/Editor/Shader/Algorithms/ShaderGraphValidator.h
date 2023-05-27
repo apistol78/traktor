@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,7 +45,7 @@ public:
 
 	ShaderGraphType estimateType() const;
 
-	bool validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes = 0) const;
+	bool validate(ShaderGraphType type, AlignedVector< const Node* >* outErrorNodes = 0) const;
 
 	bool validateIntegrity() const;
 

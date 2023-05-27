@@ -1360,8 +1360,10 @@ void ShaderGraphEditorPage::updateGraph()
 	ShaderGraphValidator validator(m_shaderGraph);
 	const auto graphType = validator.estimateType();
 
+	m_editorGraph->setText(graphType == ShaderGraphValidator::SgtFragment ? L"FRAGMENT" : L"SHADER");
+
 	// Validate shader graph.
-	std::vector< const Node* > errorNodes;
+	AlignedVector< const Node* > errorNodes;
 	const bool validationResult = validator.validate(graphType, &errorNodes);
 
 	// Update validation indication of each node.

@@ -449,19 +449,18 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
-	ShaderGraphTechniques techniques(shaderGraph, Guid(), false);
-	std::set< std::wstring > techniqueNames = techniques.getNames();
-	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
+	ShaderGraphTechniques techniques(shaderGraph, Guid(), true);
+	for (auto techniqueName : techniques.getNames())
 	{
-		TechniqueInfo& ti = m_reflectedTechniques[*i];
+		TechniqueInfo& ti = m_reflectedTechniques[techniqueName];
 
-		Ref< const ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
+		Ref< const ShaderGraph > shaderGraphTechnique = techniques.generate(techniqueName);
 		T_ASSERT(shaderGraphTechnique);
 
 		ShaderGraphCombinations combinations(shaderGraphTechnique, Guid());
 		ti.parameters = combinations.getParameterNames();
 
-		uint32_t combinationCount = combinations.getCombinationCount();
+		const uint32_t combinationCount = combinations.getCombinationCount();
 		ti.combinations.resize(combinationCount);
 
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
@@ -505,7 +504,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					const Guid& textureGuid = textureNode->getExternal();
 					int32_t textureIndex;
 
-					auto it = std::find(textureIds.begin(), textureIds.end(), textureGuid);
+					const auto it = std::find(textureIds.begin(), textureIds.end(), textureGuid);
 					if (it != textureIds.end())
 						textureIndex = (int32_t)std::distance(textureIds.begin(), it);
 					else
@@ -532,7 +531,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 
 				// Finally ready to compile program graph.
 				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, settings, L"", vertexShader, pixelShader, computeShader))
+				if (compiler->generate(programGraph, settings, techniqueName, vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;

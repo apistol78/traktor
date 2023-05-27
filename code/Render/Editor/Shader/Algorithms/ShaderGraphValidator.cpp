@@ -47,27 +47,27 @@ struct CollectVisitor
 class Report
 {
 public:
-	Report(std::vector< const Node* >* outErrorNodes)
+	Report(AlignedVector< const Node* >* outErrorNodes)
 	:	m_errorCount(0)
 	,	m_outErrorNodes(outErrorNodes)
 	{
 	}
 
-	void addError(const std::wstring& errorStr, const Node* errorNode = 0)
+	void addError(const std::wstring& errorStr, const Node* errorNode = nullptr)
 	{
 		log::error << L"(" << ++m_errorCount << L") : " << errorStr << Endl;
 		if (m_outErrorNodes && errorNode)
 			m_outErrorNodes->push_back(errorNode);
 	}
 
-	int getErrorCount() const
+	int32_t getErrorCount() const
 	{
 		return m_errorCount;
 	}
 
 private:
 	int32_t m_errorCount;
-	std::vector< const Node* >* m_outErrorNodes;
+	AlignedVector< const Node* >* m_outErrorNodes;
 };
 
 class Specification
@@ -82,34 +82,32 @@ public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		const RefArray< Node >& nodes = shaderGraph->getNodes();
-
-		const RefArray< Edge >& edges = shaderGraph->getEdges();
-		for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+		for (auto edge : shaderGraph->getEdges())
 		{
-			if (!(*i)->getSource())
+			if (!edge->getSource())
 			{
 				outReport.addError(L"Edge referencing invalid node (no source)");
 				continue;
 			}
-			if (!(*i)->getSource()->getNode())
+			if (!edge->getSource()->getNode())
 			{
 				outReport.addError(L"Edge referencing invalid node (no source node)");
 				continue;
 			}
-			if (!(*i)->getDestination())
+			if (!edge->getDestination())
 			{
 				outReport.addError(L"Edge referencing invalid node (no destination)");
 				continue;
 			}
-			if (!(*i)->getDestination()->getNode())
+			if (!edge->getDestination()->getNode())
 			{
 				outReport.addError(L"Edge referencing invalid node (no destination node)");
 				continue;
 			}
-			if (std::find(nodes.begin(), nodes.end(), (*i)->getSource()->getNode()) == nodes.end())
-				outReport.addError(L"Edge referencing invalid node (source, " + std::wstring(type_name((*i)->getSource()->getNode())) + L")");
-			if (std::find(nodes.begin(), nodes.end(), (*i)->getDestination()->getNode()) == nodes.end())
-				outReport.addError(L"Edge referencing invalid node (destination, " + std::wstring(type_name((*i)->getDestination()->getNode())) + L")");
+			if (std::find(nodes.begin(), nodes.end(), edge->getSource()->getNode()) == nodes.end())
+				outReport.addError(L"Edge referencing invalid node (source, " + std::wstring(type_name(edge->getSource()->getNode())) + L")");
+			if (std::find(nodes.begin(), nodes.end(), edge->getDestination()->getNode()) == nodes.end())
+				outReport.addError(L"Edge referencing invalid node (destination, " + std::wstring(type_name(edge->getDestination()->getNode())) + L")");
 		}
 	}
 };
@@ -380,13 +378,11 @@ ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
 		return SgtFragment;
 	if (!m_shaderGraph->findNodesOf< OutputPort >().empty())
 		return SgtFragment;
-	if (!m_shaderGraph->findNodesOf< Branch >().empty())
-		return SgtFragment;
 
 	return SgtProgram;
 }
 
-bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes) const
+bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const Node* >* outErrorNodes) const
 {
 	// Collect root nodes.
 	RefArray< Node > roots;

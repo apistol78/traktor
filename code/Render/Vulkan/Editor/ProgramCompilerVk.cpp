@@ -713,7 +713,7 @@ bool ProgramCompilerVk::generate(
 			result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
 			if (!result)
 			{
-				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;
+				log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
 				return false;
 			}
 		}
@@ -726,13 +726,23 @@ bool ProgramCompilerVk::generate(
 				result &= cx.getEmitter().emit(cx, scriptOutput);
 			if (!result)
 			{
-				log::error << L"Unable to generate Vulkan GLSL shader; GLSL emitter failed." << Endl;
+				log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
 				return false;
 			}
 		}
 		else
 		{
-			log::error << L"Unable to generate Vulkan GLSL shader; incorrect number of outputs." << Endl;
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); incorrect number of outputs (" << 
+				vertexOutputs.size() << L", " <<
+				pixelOutputs.size() << L", " <<
+				computeOutputs.size() <<
+			L"):" << Endl;
+			for (auto pixelOutput : pixelOutputs)
+				log::error << L"P " << pixelOutput->getId().format() << Endl;
+			for (auto vertexOutput : vertexOutputs)
+				log::error << L"V " << vertexOutput->getId().format() << Endl;
+			for (auto computeOutput : computeOutputs)
+				log::error << L"C " << computeOutput->getId().format() << Endl;
 			return false;
 		}
 
