@@ -11,7 +11,6 @@
 #include <embree3/rtcore.h>
 #include "Model/Model.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
-#include "Shape/Editor/Bake/Embree/Grid3.h"
 
 namespace traktor
 {
@@ -79,7 +78,6 @@ private:
 	Ref< render::SHEngine > m_shEngine;
 	float m_maxDistance = 0.0f;
 	Aabb3 m_boundingBox;
-	mutable Grid3< Irradiance >* m_irradianceCache = nullptr;
 
 	Color4f tracePath0(
 		const Vector4& origin,

@@ -142,10 +142,6 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
-
-	if (m_irradianceCache)
-		delete m_irradianceCache;
-
 	for (auto buffer : m_buffers)
 		delete[] buffer;
 }
@@ -243,9 +239,6 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 void RayTracerEmbree::commit()
 {
 	rtcCommitScene(m_scene);
-
-	if (m_configuration->getIrradianceCache() && !m_boundingBox.empty())
-		m_irradianceCache = new Grid3< Irradiance >(m_boundingBox, 1.0f);
 }
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
@@ -395,13 +388,10 @@ Color4f RayTracerEmbree::tracePath0(
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; ++i)
 	{
-		Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-
-		Scalar cosPhi = dot3(direction, normal);
-
-		Color4f incoming = traceSinglePath(origin, direction, random, 1);
-
+		const Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
+		const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+		const Scalar cosPhi = dot3(direction, normal);
+		const Color4f incoming = traceSinglePath(origin, direction, random, 1);
 		color += incoming * BRDF * cosPhi / probability;
 	}
 #else
@@ -438,33 +428,6 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 			const Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
-
-			if (m_irradianceCache)
-			{
-				const Scalar maxDistance = Scalar(m_configuration->getIrradianceCacheMaxDistance());
-				Color4f output(0.0f, 0.0f, 0.0f, 0.0f);
-				Scalar weight = 0.0_simd;
-
-				m_irradianceCache->get(hitOrigin, [&](const Irradiance* irrv, int32_t count) {
-					for (int32_t i = 0; i < count; ++i)
-					{
-						const auto& irr = irrv[i];
-						if (dot3(irr.normal, hitNormal) < 0.9_simd)
-							continue;
-						if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
-							continue;
-						const Scalar k = max(1.0_simd - ((irr.position - hitOrigin).length() / maxDistance), 0.0_simd);
-						output += irr.irradiance * k;
-						weight += k;
-					}
-				});
-
-				if (weight > 0.0_simd)
-				{
-					color += output / weight;
-					continue;
-				}
-			}
 
 			const uint32_t offset = m_materialOffset[rh.hit.geomID];
 			const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
@@ -507,10 +470,6 @@ Color4f RayTracerEmbree::tracePath0(
 			);
 
 			const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
-
-			if (m_irradianceCache)
-				m_irradianceCache->insert({ hitOrigin, hitNormal, output });
-
 			color += output;
 		}
 	}
@@ -556,31 +515,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
-	Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
-	Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
-
-	if (m_irradianceCache)
-	{
-		Color4f output(0.0f, 0.0f, 0.0f, 0.0f);
-		Scalar weight = 0.0_simd;
-
-		m_irradianceCache->get(hitOrigin, [&](const Irradiance* irrv, int32_t count) {
-			for (int32_t i = 0; i < count; ++i)
-			{
-				const auto& irr = irrv[i];
-				if (dot3(irr.normal, hitNormal) < 0.9_simd)
-					continue;
-				if (dot3(irr.position, hitNormal) < dot3(hitOrigin, hitNormal) - FUZZY_EPSILON)
-					continue;
-				Scalar k = max(1.0_simd - (irr.position - hitOrigin).length(), 0.0_simd);
-				output += irr.irradiance * k;
-				weight += k;
-			}
-		});
-
-		if (weight > 0.0_simd)
-			return output / weight;
-	}
+	const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+	const Vector4 hitOrigin = (origin + direction * Scalar(rh.ray.tfar)).xyz1();
 
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
@@ -623,10 +559,6 @@ Color4f RayTracerEmbree::traceSinglePath(
 	);
 
 	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
-
-	if (m_irradianceCache)
-		m_irradianceCache->insert({ hitOrigin, hitNormal, output });
-
 	return output;
 }
 
