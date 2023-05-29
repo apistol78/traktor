@@ -34,8 +34,6 @@ class Transaction : public Object
 	T_RTTI_CLASS;
 
 public:
-	Transaction();
-
 	virtual ~Transaction();
 
 	bool create(const Guid& transactionGuid);
@@ -55,11 +53,11 @@ public:
 	}
 
 private:
-	Ref< Mutex > m_lock;
+	Mutex* m_lock = nullptr;
 	RefArray< Action > m_actions;
 	Guid m_transactionGuid;
 #if defined(_DEBUG)
-	bool m_locked;
+	bool m_locked = false;
 #endif
 };
 

@@ -9,10 +9,8 @@
 #include "Editor/App/ObjectEditor.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditor", ObjectEditor, Object)
 
@@ -137,6 +135,11 @@ bool ObjectEditor::openDefaultEditor(db::Instance* instance)
 	return m_editor->openDefaultEditor(instance);
 }
 
+bool ObjectEditor::openInNewEditor(db::Instance* instance)
+{
+	return m_editor->openInNewEditor(instance);
+}
+
 bool ObjectEditor::openTool(const std::wstring& toolType, const PropertyGroup* param)
 {
 	return m_editor->openTool(toolType, param);
@@ -192,5 +195,4 @@ Object* ObjectEditor::getStoreObject(const std::wstring& name) const
 	return m_editor->getStoreObject(name);
 }
 
-	}
 }

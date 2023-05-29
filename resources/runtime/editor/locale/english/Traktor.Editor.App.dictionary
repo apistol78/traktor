@@ -226,6 +226,10 @@
 			<second>Choose databas</second>
 		</item>
 		<item>
+			<first>DATABASE_OPEN_IN_NEW_EDITOR</first>
+			<second>Open in new editor...</second>
+		</item>
+		<item>
 			<first>DATABASE_PASTE</first>
 			<second>Paste</second>
 		</item>

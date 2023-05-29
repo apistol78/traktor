@@ -92,11 +92,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	XInitThreads();
 #endif
 
-#if defined(_DEBUG)
-	//CycleRefDebugger cycleDebugger;
-	//Object::setReferenceDebugger(&cycleDebugger);
-#endif
-
 	// Check if environment is already set, else set to current working directory.
 	std::wstring home;
 	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))

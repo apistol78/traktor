@@ -441,7 +441,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ILogTarget > defaultWarningLog = log::info.getGlobalTarget();
 	Ref< ILogTarget > defaultErrorLog = log::info.getGlobalTarget();
 
-	// Record logging occuring before log view has been propertly initialized.
+	// Record logging occurring before log view has been properly initialized.
 	Ref< LogRecordTarget > infoLog = new LogRecordTarget();
 	Ref< LogRecordTarget > warningLog = new LogRecordTarget();
 	Ref< LogRecordTarget > errorLog = new LogRecordTarget();
@@ -812,6 +812,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (maximized)
 		maximize();
 
+	startTimer(250);
+
+	// Show form.
+	update();
+	show();
+
 	// Open workspace specified on command line.
 	if (cmdLine.getCount() > 0)
 	{
@@ -827,11 +833,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			openWorkspace(workspacePath);
 	}
 
-	startTimer(250);
-
-	// Show form.
-	update();
-	show();
+	// Open editor.
+	if (cmdLine.getCount() > 1 && m_sourceDatabase != nullptr)
+	{
+		Ref< db::Instance > instance = m_sourceDatabase->getInstance(Guid(cmdLine.getString(1)));
+		if (instance)
+			openEditor(instance);
+	}
 
 	return true;
 }
@@ -1263,6 +1271,44 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 
 	objectEditorDialog->show();
 	return true;
+}
+
+bool EditorForm::openInNewEditor(db::Instance* instance)
+{
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[this]() { setCursor(ui::CrWait); },
+		[this]() { resetCursor(); }
+	);
+
+	T_ASSERT(instance);
+
+	// Activate page if already opened for this instance.
+	for (auto tab : m_tabGroups)
+	{
+		for (int i = 0; i < tab->getPageCount(); ++i)
+		{
+			Ref< ui::TabPage > tabPage = tab->getPage(i);
+			T_ASSERT(tabPage);
+
+			Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+			if (document && document->containInstance(instance))
+			{
+				Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+				setActiveEditorPage(editorPage);
+				tab->setActivePage(tabPage);
+				return true;
+			}
+		}
+	}
+
+	// Spawn another editor.
+	const Path executable = OS::getInstance().getExecutable();
+	return OS::getInstance().execute(
+		executable.getPathName() + L" -no-splash " + m_workspacePath.getPathName() + L" " + instance->getGuid().format(),
+		L"",
+		nullptr,
+		OS::EfDetach
+	) != nullptr;
 }
 
 bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* param)
