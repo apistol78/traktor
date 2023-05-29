@@ -45,7 +45,7 @@ Point IpolNodeShape::getPinPosition(GraphControl* graph, const Node* node, const
 {
 	Rect rc = node->calculateRect();
 
-	int32_t f = dpi96(0);
+	int32_t f = 0;
 	int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
 	int32_t y = rc.getHeight() / 2;
 
@@ -56,15 +56,15 @@ Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point&
 {
 	Rect rc = node->calculateRect();
 
-	int32_t f = dpi96(4);
+	int32_t f = 4;
 	int32_t x = pt.x - rc.left;
 	int32_t y = pt.y - rc.top;
 
 	if (y >= rc.getHeight() / 2 - f && y <= rc.getHeight() / 2 + f)
 	{
-		if (x >= -f && x <= dpi96(c_pinHitWidth))
+		if (x >= -f && x <= c_pinHitWidth)
 			return node->getInputPins()[0];
-		if (x >= rc.getWidth() - dpi96(c_pinHitWidth) && x <= rc.getWidth() + f)
+		if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() + f)
 			return node->getOutputPins()[0];
 	}
 
@@ -87,7 +87,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 		BlendMode::Alpha
 	);
 
-	int32_t f = dpi96(0);
+	int32_t f = 0;
 	Size pinSize = m_imagePin->getSize();
 
 	canvas->drawBitmap(

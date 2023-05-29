@@ -32,10 +32,9 @@ const int32_t c_textHeight = 16;
 const int32_t c_minExtent = 40;
 const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
-int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+int32_t getTextWidth(Widget* widget, const std::wstring& txt)
 {
-	int32_t x = widget->getFontMetric().getExtent(txt).cx;
-	return alignUp(x, dpi96(16));
+	return widget->getFontMetric().getExtent(txt).cx;
 }
 
 		}
@@ -77,9 +76,9 @@ Point InOutNodeShape::getPinPosition(GraphControl* graph, const Node* node, cons
 	Point pt;
 
 	if (pin->getDirection() == Pin::DrInput)
-		pt = Point(rc.left + ui::dpi96(c_marginWidth), rc.getCenter().y);
+		pt = Point(rc.left + c_marginWidth, rc.getCenter().y);
 	else // DrOutput
-		pt = Point(rc.right - ui::dpi96(c_marginWidth), rc.getCenter().y);
+		pt = Point(rc.right - c_marginWidth, rc.getCenter().y);
 
 	return pt;
 }
@@ -90,12 +89,12 @@ Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point
 
 	int32_t x = pt.x - rc.left;
 	int32_t y = pt.y - rc.top;
-	int32_t f = ui::dpi96(4);
+	int32_t f = 4;
 
-	if (x >= 0 && x <= ui::dpi96(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0 && x <= c_pinHitWidth && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
-	if (x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
 	return nullptr;
@@ -135,7 +134,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	canvas->setBackground(Color4ub(255, 255, 255));
 
 	Point inputPinPos(
-		rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth),
+		rc.left - pinSize.cx / 2 + c_marginWidth,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -149,7 +148,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	);
 
 	Point outputPinPos(
-		rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
+		rc.right - pinSize.cx / 2 - c_marginWidth,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -180,29 +179,29 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	if (!comment.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-comment"));
-		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - c_textHeight, rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
 Size InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	Font currentFont = graph->getFont();
+	const Font currentFont = graph->getFont();
 
-	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	Size sz = m_imageNode[imageIndex]->getSize();
+	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+	const Size sz = m_imageNode[imageIndex]->getSize();
 
-	int32_t width = ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;
+	int32_t width = c_marginWidth * 2 + c_textMargin * 2;
 
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		int32_t extent = getQuantizedTextWidth(graph, node->getInfo());
-		width += std::max(extent, ui::dpi96(c_minExtent));
+		const int32_t extent = getTextWidth(graph, node->getInfo());
+		width += std::max(extent, c_minExtent);
 	}
 
 	graph->setFont(currentFont);
 
-	return Size(width, sz.cy);
+	return Size(alignUp(width, 16), sz.cy);
 }
 
 	}
