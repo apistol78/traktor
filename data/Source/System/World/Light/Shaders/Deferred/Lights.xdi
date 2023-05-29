@@ -2411,7 +2411,6 @@ const vec3 specularCoeff = $kS.xyz * $BRDF.x + $BRDF.y;
 const vec3 emissive = $SurfaceColor.xyz * $Emissive.x;
 const vec3 combined = diffuse * diffuseCoeff + specular.xyz * specularCoeff + emissive;
 $Output = vec4(combined * $Occlusion, 1.0f);
-
 			]]>
 			</script>
 		</item>
@@ -2486,6 +2485,15 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{107238EC-EA39-D04E-920E-E0460CCBE3F3}</id>
+			<comment/>
+			<position>
+				<first>9129</first>
+				<second>1203</second>
+			</position>
+			<name>L_Irradiance</name>
 		</item>
 	</nodes>
 	<edges>
@@ -4581,16 +4589,6 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[205]"/>
-				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[85]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -4627,6 +4625,16 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 			<destination>
 				<node ref="/object/nodes/item[82]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[205]"/>
+				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>
@@ -4687,8 +4695,8 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 				<second>946</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1884</first>
+				<second>744</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -4699,8 +4707,8 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 				<second>2333</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1373</first>
+				<second>461</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

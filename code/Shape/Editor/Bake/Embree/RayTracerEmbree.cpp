@@ -55,25 +55,25 @@ private:
 
 Scalar attenuation(const Scalar& distance)
 {
-	return clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
+	return clamp(1.0_simd / (distance * distance), 0.0_simd, 1.0_simd);
 }
 
 Scalar attenuation(const Scalar& distance, const Scalar& range)
 {
-	Scalar k0 = clamp(Scalar(1.0f) / (distance * distance), Scalar(0.0f), Scalar(1.0f));
-	Scalar k1 = clamp(Scalar(1.0f) - (distance / range), Scalar(0.0f), Scalar(1.0f));
+	const Scalar k0 = clamp(1.0_simd / (distance * distance), 0.0_simd, 1.0_simd);
+	const Scalar k1 = clamp(1.0_simd - (distance / range), 0.0_simd, 1.0_simd);
 	return k0 * k1;
 }
 
 Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
 {
 	// Calculate random direction, with Gaussian probability distribution.
-	float sin2_theta = uv.x;
-	float cos2_theta = 1.0f - sin2_theta;
-	float sin_theta = std::sqrt(sin2_theta);
-	float cos_theta = std::sqrt(cos2_theta);
-	float orientation = uv.y * TWO_PI;
-	Vector4 dir(sin_theta * std::cos(orientation), cos_theta, sin_theta * std::sin(orientation), 0.0f);
+	const float sin2_theta = uv.x;
+	const float cos2_theta = 1.0f - sin2_theta;
+	const float sin_theta = std::sqrt(sin2_theta);
+	const float cos_theta = std::sqrt(cos2_theta);
+	const float orientation = uv.y * TWO_PI;
+	const Vector4 dir(sin_theta * std::cos(orientation), cos_theta, sin_theta * std::sin(orientation), 0.0f);
 
 	Vector4 u, v;
 	orthogonalFrame(direction, u, v);
@@ -120,7 +120,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
 	m_shEngine->generateSamplePoints(
-		1000 // configuration->getIrradianceSampleCount()
+		500 // configuration->getIrradianceSampleCount()
 	);
 
 	// Calculate sampling pattern of shadows, using uniform pattern within a disc.
@@ -131,8 +131,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	m_shadowSampleOffsets.push_back(Vector2(0.0f, 0.0f));
 	for (uint32_t i = 1; i < sampleCount; ++i)
 	{
-		Vector2 uv = Quasirandom::hammersley(i, sampleCount);
-		uv = uv * 2.0f - 1.0f;
+		const Vector2 uv = Quasirandom::hammersley(i, sampleCount) * 2.0f - 1.0f;
 		if (uv.length() <= 1.0f)
 			m_shadowSampleOffsets.push_back(uv);
 	}
@@ -284,7 +283,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			// Adjust gbuffer position to reduce shadowing issues.
 			{
 				const Scalar l = Scalar(elm.delta);
-				const Scalar hl = l * Scalar(1.0f);
+				const Scalar hl = l * 1.0_simd;
 
 				Vector4 normal = elm.normal;
 				Vector4 position = elm.position + normal * hl;
@@ -793,7 +792,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
-				contribution += light.color * phi * min(f, Scalar(1.0f)) * shadowAttenuate;
+				contribution += light.color * phi * min(f, 1.0_simd) * shadowAttenuate;
 			}
 			break;
 
