@@ -2214,7 +2214,11 @@ bool emitScript(GlslContext& cx, Script* node)
 	for (const auto& rep : reps)
 		script = replaceAll(script, rep.first, rep.second);
 
+	f << L"{" << Endl;
+	f << IncreaseIndent;
 	f << script << Endl;
+	f << DecreaseIndent;
+	f << L"}" << Endl;
 	return true;
 }
 
