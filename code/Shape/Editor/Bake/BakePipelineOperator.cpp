@@ -549,11 +549,10 @@ bool BakePipelineOperator::build(
 	);
 
 	Aabb3 irradianceBoundingBox(
-		Vector4(-10000.0f, -10000.0f, -10000.0f),
-		Vector4( 10000.0f,  10000.0f,  10000.0f)
+		Vector4(-100.0f, -100.0f, -100.0f),
+		Vector4( 100.0f,  100.0f,  100.0f)
 	);
 
-	if (configuration->getEnableLightmaps())
 	{
 		RefArray< world::LayerEntityData > layers;
 		SmallMap< Path, Ref< drawing::Image > > images;
@@ -599,12 +598,12 @@ bool BakePipelineOperator::build(
 					if (inoutEntityData->getId().isNull())
 						return scene::Traverser::VrContinue;
 
-					// Light and sky must be included.
+					// Light, sky and irradiance volume must be included.
 					if (
 						inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
 						inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
 						inoutEntityData->getName() == L"Irradiance"
-						)
+					)
 					{
 						bakeEntityData.push_back(inoutEntityData);
 						return scene::Traverser::VrContinue;
@@ -697,7 +696,7 @@ bool BakePipelineOperator::build(
 							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
 							return model;
 						}
-						);
+					);
 
 					Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 						Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
@@ -713,7 +712,7 @@ bool BakePipelineOperator::build(
 							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
 							return model;
 						}
-						);
+					);
 
 					// Add visual model to tracer task.
 					if (visualModel)
@@ -767,46 +766,49 @@ bool BakePipelineOperator::build(
 							}
 						}
 
-						Ref< db::Instance > lightmapDiffuseInstance;
-						if (lightmapDiffuseId.isNotNull())
-						{
-							lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
-							if (!lightmapDiffuseInstance)
-								return false;
-							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-								resource::Id< render::ITexture >(c_lightmapProxyId)
-							));
-							lightmapDiffuseInstance->commit();
-						}
-
-						Ref< db::Instance > lightmapDirectionalInstance;
-						if (needDirectionalMap && lightmapDirectionalId.isNotNull())
-						{
-							lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
-							if (!lightmapDirectionalInstance)
-								return false;
-							lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
-								resource::Id< render::ITexture >(c_lightmapProxyId)
-							));
-							lightmapDirectionalInstance->commit();
-						}
-
 						tracerTask->addTracerModel(new TracerModel(
 							visualModel,
 							inoutEntityData->getTransform()
 						));
 
-						tracerTask->addTracerOutput(new TracerOutput(
-							lightmapDiffuseInstance,
-							lightmapDirectionalInstance,
-							visualModel,
-							inoutEntityData->getTransform(),
-							lightmapSize
-						));
+						if (configuration->getEnableLightmaps())
+						{
+							Ref< db::Instance > lightmapDiffuseInstance;
+							if (lightmapDiffuseId.isNotNull())
+							{
+								lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+								if (!lightmapDiffuseInstance)
+									return false;
+								lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+									resource::Id< render::ITexture >(c_lightmapProxyId)
+								));
+								lightmapDiffuseInstance->commit();
+							}
+
+							Ref< db::Instance > lightmapDirectionalInstance;
+							if (needDirectionalMap && lightmapDirectionalId.isNotNull())
+							{
+								lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
+								if (!lightmapDirectionalInstance)
+									return false;
+								lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
+									resource::Id< render::ITexture >(c_lightmapProxyId)
+								));
+								lightmapDirectionalInstance->commit();
+							}
+
+							tracerTask->addTracerOutput(new TracerOutput(
+								lightmapDiffuseInstance,
+								lightmapDirectionalInstance,
+								visualModel,
+								inoutEntityData->getTransform(),
+								lightmapSize
+							));
+						}
 					}
 
 					// Modify entity.
-					if (visualModel || collisionModel)
+					if (configuration->getEnableLightmaps() && (visualModel || collisionModel))
 					{
 						Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
 						entityReplicator->transform(inoutEntityData, componentData, outputGroup);

@@ -488,7 +488,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	T_FATAL_ASSERT(configuration != nullptr);
 
 	// Update status.
-	m_status.description = L"Preparing...";
+	m_status.description = str(L"Preparing (%d models, %d lights)...", task->getTracerModels().size(), task->getTracerLights().size());
 
    	// Create raytracer implementation.
 	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
