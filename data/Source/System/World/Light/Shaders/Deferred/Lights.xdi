@@ -1539,8 +1539,8 @@
 			<id>{686C6883-5053-4947-AE74-F87869B06AD2}</id>
 			<comment/>
 			<position>
-				<first>2864</first>
-				<second>2177</second>
+				<first>2865</first>
+				<second>2172</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch" version="traktor.render.Node:1">
@@ -2494,6 +2494,31 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 				<second>1203</second>
 			</position>
 			<name>L_Irradiance</name>
+		</item>
+		<item type="traktor.render.Neg" version="traktor.render.Node:1">
+			<id>{E83BD890-5BFC-4393-B13F-3507442F4B3F}</id>
+			<comment/>
+			<position>
+				<first>3094</first>
+				<second>2121</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{D0380222-243D-4EDF-8857-D080819DB37C}</id>
+			<comment/>
+			<position>
+				<first>2950</first>
+				<second>2081</second>
+			</position>
+		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{BA3ACB5C-2ABC-40AA-AE5A-DAB0AF7C72CC}</id>
+			<comment/>
+			<position>
+				<first>2782</first>
+				<second>2077</second>
+			</position>
+			<value>1, 1, 1, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -3559,16 +3584,6 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[136]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[130]"/>
-				<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[134]"/>
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
@@ -3635,16 +3650,6 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 			<destination>
 				<node ref="/object/nodes/item[124]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[124]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[137]"/>
-				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -4625,6 +4630,56 @@ $Output = vec4(combined * $Occlusion, 1.0f);
 			<destination>
 				<node ref="/object/nodes/item[82]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[136]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[214]"/>
+				<id>{98BF7CC4-A80C-43DA-B7FD-21BA4C039E28}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[136]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[215]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[215]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[130]"/>
+				<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[216]"/>
+				<id>{D51E6077-37E9-4B1C-86D2-92DA544DC613}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[215]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[124]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[137]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">

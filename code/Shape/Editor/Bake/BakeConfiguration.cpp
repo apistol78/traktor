@@ -18,7 +18,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 28, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 29, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -75,11 +75,17 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion< BakeConfiguration >() >= 23)
 		s >> Member< float >(L"ambientOcclusionFactor", m_ambientOcclusionFactor, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 
-	if (s.getVersion< BakeConfiguration >() >= 25)
-		s >> Member< bool >(L"irradianceCache", m_irradianceCache);
+	if (s.getVersion< BakeConfiguration >() >= 25 && s.getVersion< BakeConfiguration >() < 29)
+	{
+		bool irradianceCache;
+		s >> Member< bool >(L"irradianceCache", irradianceCache);
+	}
 
-	if (s.getVersion< BakeConfiguration >() >= 27)
-		s >> Member< float >(L"irradianceCacheMaxDistance", m_irradianceCacheMaxDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	if (s.getVersion< BakeConfiguration >() >= 27 && s.getVersion< BakeConfiguration >() < 29)
+	{
+		float irradianceCacheMaxDistance;
+		s >> Member< float >(L"irradianceCacheMaxDistance", irradianceCacheMaxDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	}
 
 	if (s.getVersion< BakeConfiguration >() >= 26)
 		s >> Member< bool >(L"enableDirectionalMaps", m_enableDirectionalMaps);

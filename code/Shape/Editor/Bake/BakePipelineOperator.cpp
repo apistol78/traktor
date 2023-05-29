@@ -296,13 +296,13 @@ void addSky(
 			const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 			radiance->apply(&tform);
 
+			// Scale probe by user attenuation factor.
+			const drawing::TransformFilter tform2(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			radiance->apply(&tform2);
+
 			return new IblProbe(radiance);
 		}
 	);
-
-	// Scale probe by user attenuation factor.
-	const drawing::TransformFilter tform(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	probe->apply(&tform);
 
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(probe));
