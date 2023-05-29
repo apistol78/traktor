@@ -696,14 +696,6 @@ void WorldRendererDeferred::setupVisualPass(
 				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 			}
 
-			// Module with fog.
-			//if (m_settings.fogDensity > FUZZY_EPSILON)
-			//{
-			//	render::Shader::Permutation perm;
-			//	m_fogShader->setCombination(s_handleVolumetricFogEnable, false, perm);
-			//	m_screenRenderer->draw(renderContext, m_fogShader, perm, sharedParams);
-			//}
-
 			// Forward visuals; not included in GBuffer.
 			const WorldRenderPassShared deferredColorPass(
 				s_techniqueDeferredColor,
