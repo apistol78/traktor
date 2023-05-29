@@ -11,7 +11,7 @@
 #include "Core/Thread/Mutex.h"
 #include "Core/Log/Log.h"
 
-#define T_USE_TRANSACTION_LOCK 0
+#define T_USE_TRANSACTION_LOCK 1
 
 namespace traktor::db
 {
@@ -26,17 +26,13 @@ const int c_transactionTimeout = 100;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Transaction", Transaction, Object)
 
-Transaction::Transaction()
-#if defined(_DEBUG)
-:	m_locked(false)
-#endif
-{
-}
-
 Transaction::~Transaction()
 {
 #if defined(_DEBUG)
 	T_ASSERT_M (!m_locked, L"Transaction still locked");
+#endif
+#if T_USE_TRANSACTION_LOCK
+	T_ASSERT_M(m_lock == nullptr, L"Transaction not destroyed");
 #endif
 }
 
@@ -46,9 +42,9 @@ bool Transaction::create(const Guid& transactionGuid)
 
 #if T_USE_TRANSACTION_LOCK
 	m_lock = new Mutex(transactionGuid);
-	if (!m_lock->acquire(c_transactionTimeout))
+	if (!m_lock->wait(c_transactionTimeout))
 	{
-		T_DEBUG(L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked");
+		T_DEBUG(L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked.");
 		m_lock->release();
 		m_lock = nullptr;
 		return false;
@@ -60,7 +56,7 @@ bool Transaction::create(const Guid& transactionGuid)
 #endif
 
 	m_transactionGuid = transactionGuid;
-	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" created successfully");
+	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" created successfully.");
 
 	return true;
 }
@@ -81,7 +77,7 @@ void Transaction::destroy()
 	m_locked = false;
 #endif
 
-	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" destroyed");
+	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" destroyed.");
 }
 
 void Transaction::add(Action* action)
@@ -136,9 +132,9 @@ bool Transaction::commit(Context& context)
 		m_actions[i]->clean(context);
 
 	if (result)
-		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" commited successfully");
+		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" commited successfully.");
 	else
-		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" failed to commit");
+		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" failed to commit.");
 
 	m_actions.clear();
 	return result;

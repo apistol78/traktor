@@ -11,17 +11,15 @@
 #include "Core/Object.h"
 #include "Editor/IEditor.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Dialog;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class ObjectEditor
 :	public IEditor
@@ -30,7 +28,7 @@ class ObjectEditor
 	T_RTTI_CLASS;
 
 public:
-	ObjectEditor(IEditor* editor, ui::Dialog* parent);
+	explicit ObjectEditor(IEditor* editor, ui::Dialog* parent);
 
 	virtual Ref< const PropertyGroup > getSettings() const override final;
 
@@ -72,6 +70,8 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
+	virtual bool openInNewEditor(db::Instance* instance) override final;
+
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
 	virtual IEditorPage* getActiveEditorPage() override final;
@@ -99,5 +99,4 @@ private:
 	ui::Dialog* m_parent;
 };
 
-	}
 }

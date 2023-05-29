@@ -139,6 +139,8 @@ public:
 
 	virtual bool openDefaultEditor(db::Instance* instance) override final;
 
+	virtual bool openInNewEditor(db::Instance* instance) override final;
+
 	virtual bool openTool(const std::wstring& toolType, const PropertyGroup* param) override final;
 
 	virtual IEditorPage* getActiveEditorPage() override final;
