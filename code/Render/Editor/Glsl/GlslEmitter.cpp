@@ -56,7 +56,7 @@ std::wstring expandScalar(float v, GlslType type)
 {
 	if (type >= GlslType::Float && type <= GlslType::Float4)
 	{
-		std::wstring vs = formatFloat(v);
+		const std::wstring vs = formatFloat(v);
 		switch (type)
 		{
 		case GlslType::Float:
@@ -78,7 +78,7 @@ std::wstring expandScalar(float v, GlslType type)
 
 	if (type >= GlslType::Integer && type <= GlslType::Integer4)
 	{
-		std::wstring vs = toString((int32_t)v);
+		const std::wstring vs = toString((int32_t)v);
 		switch (type)
 		{
 		case GlslType::Integer:
@@ -146,7 +146,7 @@ bool emitAdd(GlslContext& cx, Add* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -241,7 +241,7 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 			return false;
 
 		// Check if image needs to be defined.
-		auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
+		const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
 		if (existing != nullptr)
 		{
 			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
@@ -2080,7 +2080,7 @@ bool emitScalar(GlslContext& cx, Scalar* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	comment(f, node);
 
-	float v = std::abs(node->get());
+	const float v = std::abs(node->get());
 	if ((v - std::floor(v)) < FUZZY_EPSILON)
 	{
 		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer);
@@ -2292,7 +2292,7 @@ bool emitStruct(GlslContext& cx, Struct* node)
 		GlslType::StructBuffer
 	);
 
-	auto existing = cx.getLayout().getByName(node->getParameterName());
+	const auto existing = cx.getLayout().getByName(node->getParameterName());
 	if (existing != nullptr)
 	{
 		if (auto existingStorageBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing))
@@ -2336,7 +2336,7 @@ bool emitSub(GlslContext& cx, Sub* node)
 	if (!in1 || !in2)
 		return false;
 
-	GlslType type = glsl_precedence(in1->getType(), in2->getType());
+	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
 
 	comment(f, node);
@@ -2417,7 +2417,7 @@ bool emitSwizzle(GlslContext& cx, Swizzle* node)
 {
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	std::wstring map = toLower(node->get());
+	const std::wstring map = toLower(node->get());
 	if (map.length() == 0)
 		return false;
 
@@ -2775,7 +2775,7 @@ bool emitTruncate(GlslContext& cx, Truncate* node)
 	if (!in)
 		return false;
 
-	GlslType type = glsl_degrade_to_integer(in->getType());
+	const GlslType type = glsl_degrade_to_integer(in->getType());
 	if (type == GlslType::Void)
 		return false;
 
@@ -2808,7 +2808,7 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	}
 	else if (out->getType() >= GlslType::Texture2D && out->getType() <= GlslType::TextureCube)
 	{
-		auto existing = cx.getLayout().getByName(node->getParameterName());
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
 		if (existing != nullptr)
 		{
 			if (auto existingTexture = dynamic_type_cast< GlslTexture* >(existing))
@@ -2914,8 +2914,8 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 	Ref< GlslVariable > out = cx.getShader().getInputVariable(node->getName());
 	if (!out)
 	{
-		GlslType type = glsl_from_data_type(node->getDataType());
-		std::wstring attributeName = glsl_vertex_attribute_name(node->getDataUsage(), node->getIndex());
+		const GlslType type = glsl_from_data_type(node->getDataType());
+		const std::wstring attributeName = glsl_vertex_attribute_name(node->getDataUsage(), node->getIndex());
 
 		auto& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
 		fi << L"layout (location = " << glsl_vertex_attribute_location(node->getDataUsage(), node->getIndex()) << L") in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
@@ -3095,7 +3095,7 @@ struct EmitterCast : public Emitter
 	virtual bool emit(GlslContext& c, Node* node) override final
 	{
 		T_ASSERT(is_a< NodeType >(node));
-		bool result = (*m_function)(c, static_cast< NodeType* >(node));
+		const bool result = (*m_function)(c, static_cast< NodeType* >(node));
 		return result;
 	}
 };
