@@ -25,13 +25,13 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_marginWidth = 2;	/*< Distance from image edge to "visual" edge. */
-const int32_t c_marginHeight = 4;
-const int32_t c_topMargin = 4;		/*< Distance from top to top of title. */
-const int32_t c_titlePad = 10;		/*< Padding between title (and info) from first pin. */
-const int32_t c_pinNamePad = 14;	/*< Distance between pin and pin's name. */
-const int32_t c_pinCenterPad = 16;	/*< Distance between input and output pin names. */
-const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
+const DPI96 c_marginWidth = 2;		/*< Distance from image edge to "visual" edge. */
+const DPI96 c_marginHeight = 4;
+const DPI96 c_topMargin = 4;		/*< Distance from top to top of title. */
+const DPI96 c_titlePad = 10;		/*< Padding between title (and info) from first pin. */
+const DPI96 c_pinNamePad = 14;		/*< Distance between pin and pin's name. */
+const DPI96 c_pinCenterPad = 16;	/*< Distance between input and output pin names. */
+const DPI96 c_pinHitWidth = 14;		/*< Width of pin hit area from visual edge. */
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
@@ -79,7 +79,7 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 	const Rect rc = node->calculateRect();
 
 	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
-	int32_t top = dpi96(c_marginHeight + c_topMargin + c_titlePad);
+	int32_t top = (int32_t)(c_marginHeight + c_topMargin + c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -88,13 +88,13 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 		top += node->getImage()->getSize().cy;
 
 	const int32_t x = pin->getDirection() == Pin::DrInput ?
-		rc.left + dpi96(c_marginWidth) - 1 :
-		rc.right - dpi96(c_marginWidth);
+		rc.left + c_marginWidth - 1 :
+		rc.right - c_marginWidth;
 
 	const RefArray< Pin >& pins = (pin->getDirection() == Pin::DrInput) ? node->getInputPins() : node->getOutputPins();
 	const auto i = std::find(pins.begin(), pins.end(), pin);
 
-	top += int32_t(std::distance(pins.begin(), i)) * textHeight;
+	top += (int32_t)std::distance(pins.begin(), i) * textHeight;
 
 	return Point(x, rc.top + top);
 }
@@ -108,7 +108,7 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 	const Point ptn(pt.x - rc.left, pt.y - rc.top);
 
 	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
-	int32_t top = dpi96(c_marginHeight) + dpi96(c_topMargin) + dpi96(c_titlePad);
+	int32_t top = (int32_t)(c_marginHeight + c_topMargin + c_titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
 	if (!node->getInfo().empty())
@@ -117,9 +117,9 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 		top += node->getImage()->getSize().cy;
 
 	const RefArray< Pin >* pins = nullptr;
-	if (ptn.x <= dpi96(c_pinHitWidth) + dpi96(c_marginWidth))
+	if (ptn.x <= c_pinHitWidth + c_marginWidth)
 		pins = &node->getInputPins();
-	else if (ptn.x >= rc.getWidth() - dpi96(c_pinHitWidth) - dpi96(c_marginWidth))
+	else if (ptn.x >= rc.getWidth() - c_pinHitWidth - c_marginWidth)
 		pins = &node->getOutputPins();
 
 	if (!pins)
@@ -153,7 +153,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
 		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
 
-		const int32_t dw = rc.getWidth() - dpi96(c_marginWidth) * 2;
+		const int32_t dw = rc.getWidth() - c_marginWidth * 2;
 		const int32_t dh = rc.getHeight();
 
 		const int32_t dx[] = { 0, tw, dw - tw, dw };
@@ -164,7 +164,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 			for (int32_t ix = 0; ix < 3; ++ix)
 			{
 				canvas->drawBitmap(
-					rc.getTopLeft() + Size(dpi96(c_marginWidth), 0) + Size(dx[ix], dy[iy]),
+					rc.getTopLeft() + Size(c_marginWidth, 0) + Size(dx[ix], dy[iy]),
 					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
 					Point(sx[ix], sy[iy]),
 					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
@@ -175,7 +175,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		}
 	}
 
-	int32_t top = rc.top + dpi96(c_marginHeight) + dpi96(c_topMargin);
+	int32_t top = rc.top + (int32_t)(c_marginHeight + c_topMargin);
 
 	const std::wstring& title = node->getTitle();
 	if (!title.empty())
@@ -217,7 +217,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		top += node->getImage()->getSize().cy;
 	}
 
-	top += dpi96(c_titlePad);
+	top += c_titlePad;
 
 	const RefArray< Pin >& inputPins = node->getInputPins();
 	const RefArray< Pin >& outputPins = node->getOutputPins();
@@ -280,7 +280,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
-				Point(pos.x + dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				Point(pos.x + c_pinNamePad, pos.y - extent.cy / 2),
 				extent
 			),
 			label,
@@ -309,7 +309,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 		canvas->setForeground((pin == hotPin) ? textColorHot : textColor);
 		canvas->drawText(
 			Rect(
-				Point(pos.x - extent.cx - dpi96(c_pinNamePad), pos.y - extent.cy / 2),
+				Point(pos.x - extent.cx - c_pinNamePad, pos.y - extent.cy / 2),
 				extent
 			),
 			label,
@@ -325,7 +325,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const int32_t textHeight = graph->getPaintSettings().getFont().getPixelSize() + dpi96(4);
-	int32_t height = dpi96(c_marginHeight * 2 + c_topMargin + c_titlePad);
+	int32_t height = (int32_t)(c_marginHeight * 2 + c_topMargin + c_titlePad);
 
 	if (!node->getTitle().empty())
 		height += textHeight;
@@ -373,7 +373,7 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 		width = std::max(width, imageExtent);
 	}
 
-	width += dpi96(c_marginWidth * 2 + c_pinCenterPad + c_pinNamePad * 2);
+	width += (int32_t)(c_marginWidth * 2 + c_pinCenterPad + c_pinNamePad * 2);
 
 	return Size(width, height);
 }

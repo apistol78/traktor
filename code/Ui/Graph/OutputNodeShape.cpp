@@ -27,12 +27,12 @@ namespace traktor
 		namespace
 		{
 
-const int c_marginWidth = 3;		//<! Distance from image edge to "visual" edge.
-const int c_textMargin = 16;
-const int c_textPad = 8;
-const int c_textHeight = 16;
-const int c_textWidthAlign = 10;	//<! Align width.
-const int c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
+const DPI96 c_marginWidth = 3;		//<! Distance from image edge to "visual" edge.
+const DPI96 c_textMargin = 16;
+const DPI96 c_textPad = 8;
+const DPI96 c_textHeight = 16;
+const DPI96 c_textWidthAlign = 10;	//<! Align width.
+const DPI96 c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
@@ -58,7 +58,7 @@ OutputNodeShape::OutputNodeShape()
 Point OutputNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	const Rect rc = node->calculateRect();
-	return Point(rc.left + ui::dpi96(c_marginWidth), rc.getCenter().y);
+	return Point(rc.left + c_marginWidth, rc.getCenter().y);
 }
 
 Pin* OutputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
@@ -69,7 +69,7 @@ Pin* OutputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poin
 	const int32_t y = pt.y - rc.top;
 	const int32_t f = ui::dpi96(4);
 
-	if (x >= 0 && x <= ui::dpi96(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0 && x <= c_pinHitWidth && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
 	return nullptr;
@@ -89,7 +89,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 
 		const int32_t tw = sz.cx / 3;
 
-		const int32_t dw = rc.getWidth() - ui::dpi96(c_marginWidth) * 2;
+		const int32_t dw = rc.getWidth() - c_marginWidth * 2;
 		const int32_t dh = rc.getHeight();
 
 		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
@@ -98,7 +98,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
 			canvas->drawBitmap(
-				rc.getTopLeft() + Size(ui::dpi96(c_marginWidth), 0) + Size(dx[ix], 0),
+				rc.getTopLeft() + Size(c_marginWidth, 0) + Size(dx[ix], 0),
 				Size(dx[ix + 1] - dx[ix], sz.cy),
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
@@ -126,7 +126,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 		BlendMode::Alpha
 	);
 
-	int32_t left = rc.left + ui::dpi96(c_marginWidth) + ui::dpi96(c_textMargin);
+	int32_t left = rc.left + c_marginWidth + c_textMargin;
 
 	const std::wstring title = node->getTitle();
 	if (!title.empty())
@@ -151,7 +151,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 		canvas->setFont(settings.getFont());
 	}
 
-	left += ui::dpi96(c_textPad);
+	left += c_textPad;
 
 	const std::wstring info = node->getInfo();
 	if (!info.empty())
@@ -174,7 +174,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 	if (!comment.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-comment"));
-		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - c_textHeight, rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
@@ -196,11 +196,11 @@ Size OutputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		width += dpi96(c_textPad);
+		width += c_textPad;
 		width += getQuantizedTextWidth(graph, node->getInfo());
 	}
 
-	width = alignUp(width, ui::dpi96(c_textWidthAlign)) + ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;
+	width = alignUp(width, c_textWidthAlign) + c_marginWidth * 2 + c_textMargin * 2;
 
 	graph->setFont(currentFont);
 

@@ -26,15 +26,15 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_marginWidth = 3;	/*< Distance from image edge to "visual" edge. */
-const int32_t c_textMargin = 16;
-const int32_t c_textHeight = 16;
-const int32_t c_minExtent = 40;
-const int32_t c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
+const DPI96 c_marginWidth = 3;	/*< Distance from image edge to "visual" edge. */
+const DPI96 c_textMargin = 16;
+const DPI96 c_textHeight = 16;
+const DPI96 c_minExtent = 40;
+const DPI96 c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
-	int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	const int32_t x = widget->getFontMetric().getExtent(txt).cx;
 	return alignUp(x, dpi96(16));
 }
 
@@ -73,29 +73,29 @@ InOutNodeShape::InOutNodeShape(Style style)
 
 Point InOutNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	Rect rc = node->calculateRect();
+	const Rect rc = node->calculateRect();
 	Point pt;
 
 	if (pin->getDirection() == Pin::DrInput)
-		pt = Point(rc.left + ui::dpi96(c_marginWidth), rc.getCenter().y);
+		pt = Point(rc.left + c_marginWidth, rc.getCenter().y);
 	else // DrOutput
-		pt = Point(rc.right - ui::dpi96(c_marginWidth), rc.getCenter().y);
+		pt = Point(rc.right - c_marginWidth, rc.getCenter().y);
 
 	return pt;
 }
 
 Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
 {
-	Rect rc = node->calculateRect();
+	const Rect rc = node->calculateRect();
 
-	int32_t x = pt.x - rc.left;
-	int32_t y = pt.y - rc.top;
-	int32_t f = ui::dpi96(4);
+	const int32_t x = pt.x - rc.left;
+	const int32_t y = pt.y - rc.top;
+	const int32_t f = ui::dpi96(4);
 
-	if (x >= 0 && x <= ui::dpi96(c_pinHitWidth) && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0 && x <= c_pinHitWidth && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
-	if (x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
 	return nullptr;
@@ -105,17 +105,17 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 {
 	const StyleSheet* ss = graph->getStyleSheet();
 
-	Rect rc = node->calculateRect().offset(offset);
+	const Rect rc = node->calculateRect().offset(offset);
 
 	// Draw node shape.
 	{
-		int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		Size sz = m_imageNode[imageIndex]->getSize();
+		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+		const Size sz = m_imageNode[imageIndex]->getSize();
 
-		int32_t tw = sz.cx / 3;
+		const int32_t tw = sz.cx / 3;
 
-		int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
+		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
+		const int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
 
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
@@ -130,12 +130,12 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		}
 	}
 
-	Size pinSize = m_imagePin->getSize();
+	const Size pinSize = m_imagePin->getSize();
 
 	canvas->setBackground(Color4ub(255, 255, 255));
 
-	Point inputPinPos(
-		rc.left - pinSize.cx / 2 + ui::dpi96(c_marginWidth),
+	const Point inputPinPos(
+		rc.left - pinSize.cx / 2 + c_marginWidth,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -148,8 +148,8 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		BlendMode::Alpha
 	);
 
-	Point outputPinPos(
-		rc.right - pinSize.cx / 2 - ui::dpi96(c_marginWidth),
+	const Point outputPinPos(
+		rc.right - pinSize.cx / 2 - c_marginWidth,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -180,24 +180,24 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	if (!comment.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-comment"));
-		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - c_textHeight, rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
 Size InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	Font currentFont = graph->getFont();
+	const Font currentFont = graph->getFont();
 
-	int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	Size sz = m_imageNode[imageIndex]->getSize();
+	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+	const Size sz = m_imageNode[imageIndex]->getSize();
 
-	int32_t width = ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMargin) * 2;
+	int32_t width = c_marginWidth * 2 + c_textMargin * 2;
 
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		int32_t extent = getQuantizedTextWidth(graph, node->getInfo());
-		width += std::max(extent, ui::dpi96(c_minExtent));
+		const int32_t extent = getQuantizedTextWidth(graph, node->getInfo());
+		width += std::max(extent, (int32_t)c_minExtent);
 	}
 
 	graph->setFont(currentFont);

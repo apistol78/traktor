@@ -27,13 +27,13 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_marginWidth = 3;		//<! Distance from image edge to "visual" edge.
-const int32_t c_textMarginLeft = 10;
-const int32_t c_textMarginRight = 14;
-const int32_t c_textPad = 8;
-const int32_t c_textHeight = 16;
-const int32_t c_textWidthAlign = 10;	//<! Align width.
-const int32_t c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
+const DPI96 c_marginWidth = 3;		//<! Distance from image edge to "visual" edge.
+const DPI96 c_textMarginLeft = 10;
+const DPI96 c_textMarginRight = 14;
+const DPI96 c_textPad = 8;
+const DPI96 c_textHeight = 16;
+const DPI96 c_textWidthAlign = 10;	//<! Align width.
+const DPI96 c_pinHitWidth = 14;		//<! Width of pin hit area from visual edge.
 
 int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
@@ -59,7 +59,7 @@ InputNodeShape::InputNodeShape()
 Point InputNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
 	Rect rc = node->calculateRect();
-	return Point(rc.right - ui::dpi96(c_marginWidth), rc.getCenter().y);
+	return Point(rc.right - c_marginWidth, rc.getCenter().y);
 }
 
 Pin* InputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
@@ -70,7 +70,7 @@ Pin* InputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point
 	int32_t y = pt.y - rc.top;
 	int32_t f = ui::dpi96(4);
 
-	if (x >= rc.getWidth() - ui::dpi96(c_pinHitWidth) && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
 	return nullptr;
@@ -90,7 +90,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 		const int32_t tw = sz.cx / 3;
 
-		const int32_t dw = rc.getWidth() - ui::dpi96(c_marginWidth) * 2;
+		const int32_t dw = rc.getWidth() - c_marginWidth * 2;
 		const int32_t dh = rc.getHeight();
 
 		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
@@ -99,7 +99,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
 			canvas->drawBitmap(
-				rc.getTopLeft() + Size(ui::dpi96(c_marginWidth), 0) + Size(dx[ix], 0),
+				rc.getTopLeft() + Size(c_marginWidth, 0) + Size(dx[ix], 0),
 				Size(dx[ix + 1] - dx[ix], sz.cy),
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
@@ -127,7 +127,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		BlendMode::Alpha
 	);
 
-	int32_t left = rc.left + ui::dpi96(c_marginWidth) + ui::dpi96(c_textMarginLeft);
+	int32_t left = rc.left + c_marginWidth + c_textMarginLeft;
 
 	const std::wstring title = node->getTitle();
 	if (!title.empty())
@@ -152,7 +152,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 		canvas->setFont(settings.getFont());
 	}
 
-	left += ui::dpi96(c_textPad);
+	left += c_textPad;
 
 	const std::wstring info = node->getInfo();
 	if (!info.empty())
@@ -175,7 +175,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	if (!comment.empty())
 	{
 		canvas->setForeground(ss->getColor(this, L"color-comment"));
-		canvas->drawText(Rect(rc.left, rc.top - ui::dpi96(c_textHeight), rc.right, rc.top), comment, AnCenter, AnCenter);
+		canvas->drawText(Rect(rc.left, rc.top - c_textHeight, rc.right, rc.top), comment, AnCenter, AnCenter);
 	}
 }
 
@@ -197,11 +197,11 @@ Size InputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		width += dpi96(c_textPad);
+		width += c_textPad;
 		width += getQuantizedTextWidth(graph, node->getInfo());
 	}
 
-	width = alignUp(width, ui::dpi96(c_textWidthAlign)) + ui::dpi96(c_marginWidth) * 2 + ui::dpi96(c_textMarginLeft) + ui::dpi96(c_textMarginRight) + ui::dpi96(c_textPad);
+	width = alignUp(width, c_textWidthAlign) + c_marginWidth * 2 + c_textMarginLeft + c_textMarginRight + c_textPad;
 
 	graph->setFont(currentFont);
 
