@@ -6,12 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Database/Local/Transaction.h"
-#include "Database/Local/Action.h"
-#include "Core/Thread/Mutex.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Mutex.h"
+#include "Database/Local/Action.h"
+#include "Database/Local/Transaction.h"
 
-#define T_USE_TRANSACTION_LOCK 1
+#define T_USE_TRANSACTION_LOCK 0
 
 namespace traktor::db
 {
