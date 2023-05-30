@@ -24,7 +24,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
+const DPI96 c_pinHitWidth = 14;	/*< Width of pin hit area from visual edge. */
 
 		}
 
@@ -62,9 +62,9 @@ Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point&
 
 	if (y >= rc.getHeight() / 2 - f && y <= rc.getHeight() / 2 + f)
 	{
-		if (x >= -f && x <= dpi96(c_pinHitWidth))
+		if (x >= -f && x <= c_pinHitWidth)
 			return node->getInputPins()[0];
-		if (x >= rc.getWidth() - dpi96(c_pinHitWidth) && x <= rc.getWidth() + f)
+		if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() + f)
 			return node->getOutputPins()[0];
 	}
 
