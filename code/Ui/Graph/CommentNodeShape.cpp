@@ -127,9 +127,9 @@ Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return Size(200, 200);
+		return Size(dpi96(200), dpi96(200));
 
-	const int32_t lineHeight = graph->getFontMetric().getExtent(L"W").cy;
+	int32_t lineHeight = graph->getFontMetric().getExtent(L"W").cy;
 
 	std::vector< std::wstring > lines;
 	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
@@ -137,12 +137,12 @@ Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	Size textSize(0, 0);
 	for (const auto& line : lines)
 	{
-		const Size lineExtent = graph->getFontMetric().getExtent(line);
+		Size lineExtent = graph->getFontMetric().getExtent(line);
 		textSize.cx = std::max(textSize.cx, lineExtent.cx);
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + Size(c_margin * 2, c_margin * 2);
+	return textSize + Size(dpi96(c_margin) * 2, dpi96(c_margin) * 2);
 }
 
 	}
