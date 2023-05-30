@@ -1890,7 +1890,19 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	{
 		if (auto sampler = dynamic_type_cast< GlslSampler* >(resource))
 		{
-			if (std::memcmp(&sampler->getState(), &samplerState, sizeof(SamplerState)) == 0)
+			const auto& rh = sampler->getState();
+			if (
+				rh.minFilter == samplerState.minFilter &&
+				rh.mipFilter == samplerState.mipFilter &&
+				rh.magFilter == samplerState.magFilter &&
+				rh.addressU == samplerState.addressU &&
+				rh.addressV == samplerState.addressV &&
+				rh.addressW == samplerState.addressW &&
+				rh.compare == samplerState.compare &&
+				abs(rh.mipBias - samplerState.mipBias) <= FUZZY_EPSILON &&
+				rh.ignoreMips == samplerState.ignoreMips &&
+				rh.useAnisotropic == samplerState.useAnisotropic
+			)
 			{
 				samplerName = sampler->getName();
 				sampler->addStage(getBindStage(cx));
