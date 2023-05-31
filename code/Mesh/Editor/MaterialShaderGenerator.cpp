@@ -28,19 +28,21 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_materialShader(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
+const Guid c_meshSurfaceTemplate(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
+const Guid c_meshShaderTemplate(L"{E657266C-4925-1A40-9225-0776ACC3B0E8}");
+
+const Guid c_meshVertexInterface(L"{4015ACBD-D998-6243-B379-21BB383B864E}");
+const Guid c_meshSurfaceInterface(L"{139CACBD-2A79-5644-B9BC-B113F66D50EA}");
 
 // Templates
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
 const Guid c_tplEmissiveParams(L"{1E35F0A7-23A9-EA49-A518-125A77BAD564}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
-const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
 const Guid c_tplTransparencyParams(L"{052265E6-233C-754C-A297-9369803ADB88}");
 const Guid c_tplLightMapParams(L"{2449B257-5B2A-5242-86F9-32105E1F1771}");
 const Guid c_tplRoughnessParams(L"{709A171A-6050-1249-AAA7-5AAE428B956C}");
 const Guid c_tplSpecularParams(L"{78C32C63-EE8D-AB4C-B2CF-E3FF242980DA}");
 const Guid c_tplMetalnessParams(L"{43E7FEE9-043B-A242-B031-BC274995A3A8}");
-const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_tplTexCoordSelect(L"{60640268-E70B-0540-A073-49DC82E734A2}");
 
 // Implementations
@@ -51,13 +53,6 @@ const Guid c_implEmissiveConst(L"{61A41113-D9F9-964A-9D90-B7A686058A26}");
 const Guid c_implEmissiveMap(L"{AA813CBA-5007-2F49-9254-153646162932}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
 const Guid c_implNormalMap(L"{8CA655BD-E17B-5A48-B6C6-3FDBC1D4F97D}");
-const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
-const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
-const Guid c_implOutputAlphaTest(L"{902D6E55-9B18-774A-874B-76F55CAC2E4C}");
-const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
-const Guid c_implOutputMultiply(L"{C635E09A-8DFD-BF40-A863-81301D2388AC}");
-const Guid c_implOutputLightMapDecal(L"{4FFCDA64-4B42-DA46-973E-63C740B06A16}");
-const Guid c_implOutputLightMapAlphaTest(L"{97914603-BA44-7942-B049-7AE3C3280421}");
 const Guid c_implTransparencyConst(L"{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}");
 const Guid c_implTransparencyMap(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implLightMapNull(L"{F8EAEDCD-67C6-B540-A9D0-40141A7FA267}");
@@ -69,7 +64,6 @@ const Guid c_implSpecularConst(L"{93DA7E24-5B2F-C24B-8589-FA3D4F025B51}");
 const Guid c_implSpecularMap(L"{2E084B99-F346-9E41-84A4-6FEDE3C065FF}");
 const Guid c_implMetalnessConst(L"{1760350E-1C62-6B42-B6AA-0D06146A1375}");
 const Guid c_implMetalnessMap(L"{FDC79CBC-D1EF-2844-9C17-47EE92A06713}");
-const Guid c_implVertex(L"{5CCADFD7-6421-9848-912E-205358848F37}");
 const Guid c_implTexCoordSelect0(L"{D235FD2F-5ED9-5B49-B3F0-14F03B6D8748}");
 const Guid c_implTexCoordSelect1(L"{0269F15C-2543-6D4A-ADC0-4DC584976AAF}");
 
@@ -107,21 +101,16 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
-Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
+Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 	const model::Model& model,
 	const model::Material& material,
-	const Guid& materialTemplate,
 	bool vertexColor
 ) const
 {
-	// Read material template shader.
-	Guid templateGuid = materialTemplate;
-	if (templateGuid.isNull() || !templateGuid.isValid())
-		templateGuid = c_materialShader;
-
-	Ref< render::ShaderGraph > materialShaderGraph = DeepClone(resolve(templateGuid)).create< render::ShaderGraph >();
-	if (!materialShaderGraph)
+	// Create a mutable material surface shader.
+	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(resolve(c_meshSurfaceTemplate)).create< render::ShaderGraph >();
+	if (!meshSurfaceShaderGraph)
 		return nullptr;
 
 	// Patch material template shader with concrete implementations of value fetching fragments.
@@ -144,8 +133,9 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			log::warning << L"Material \"" << material.getName() << L"\" has directional lightmap ID but no normal map associated." << Endl;
 	}
 
+	// Replace external fragments with implementations.
 	RefArray< render::External > resolveNodes;
-	for (auto externalNode : materialShaderGraph->findNodesOf< render::External >())
+	for (auto externalNode : meshSurfaceShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		T_ASSERT(fragmentGuid.isValid());
@@ -177,43 +167,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				externalNode->setFragmentGuid(c_implNormalConst);
 			else
 				externalNode->setFragmentGuid(c_implNormalMap);
-			resolveNodes.push_back(externalNode);
-		}
-		else if (fragmentGuid == c_tplOutput)
-		{
-			if (lightMapTexture.isNull())
-			{
-				switch (material.getBlendOperator())
-				{
-				default:
-				case model::Material::BoDecal:
-					externalNode->setFragmentGuid(c_implOutputDecal);
-					break;
-
-				case model::Material::BoAdd:
-					externalNode->setFragmentGuid(c_implOutputAdd);
-					break;
-
-				case model::Material::BoMultiply:
-					externalNode->setFragmentGuid(c_implOutputMultiply);
-					break;
-
-				case model::Material::BoAlpha:
-					externalNode->setFragmentGuid(c_implOutputAlpha);
-					break;
-
-				case model::Material::BoAlphaTest:
-					externalNode->setFragmentGuid(c_implOutputAlphaTest);
-					break;
-				}
-			}
-			else
-			{
-				if (material.getBlendOperator() != model::Material::BoAlphaTest)
-					externalNode->setFragmentGuid(c_implOutputLightMapDecal);
-				else
-					externalNode->setFragmentGuid(c_implOutputLightMapAlphaTest);
-			}
 			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplTransparencyParams)
@@ -261,15 +214,10 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 				externalNode->setFragmentGuid(c_implMetalnessMap);
 			resolveNodes.push_back(externalNode);
 		}
-		else if (fragmentGuid == c_tplVertexParams)
-		{
-			externalNode->setFragmentGuid(c_implVertex);
-			resolveNodes.push_back(externalNode);
-		}
 	}
 
 	// Determine texture channel fragments.
-	for (auto node : materialShaderGraph->getNodes())
+	for (auto node : meshSurfaceShaderGraph->getNodes())
 	{
 		const std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseTexCoord")
@@ -332,12 +280,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 
 	// Resolve material shader; load all patched fragments and merge into a complete shader.
 	FragmentReaderAdapter fragmentReader(resolve);
-	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, resolveNodes, false);
-	if (!materialShaderGraph)
+	meshSurfaceShaderGraph = render::FragmentLinker(fragmentReader).resolve(meshSurfaceShaderGraph, resolveNodes, false);
+	if (!meshSurfaceShaderGraph)
 		return nullptr;
 
 	// Patch constant values, such as colors, from materials into shader.
-	for (auto node : materialShaderGraph->getNodes())
+	for (auto node : meshSurfaceShaderGraph->getNodes())
 	{
 		const std::wstring comment = node->getComment();
 		if (comment == L"Tag_DiffuseColor")
@@ -351,7 +299,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* diffuseTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			diffuseTextureNode->setComment(L"");
 			diffuseTextureNode->setExternal(diffuseTexture);
-			propagateAnisotropic(materialShaderGraph, diffuseTextureNode, material.getDiffuseMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, diffuseTextureNode, material.getDiffuseMap().anisotropic);
 		}
 		else if (comment == L"Tag_Emissive")
 		{
@@ -364,14 +312,14 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* emissiveTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			emissiveTextureNode->setComment(L"");
 			emissiveTextureNode->setExternal(emissiveTexture);
-			propagateAnisotropic(materialShaderGraph, emissiveTextureNode, material.getEmissiveMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, emissiveTextureNode, material.getEmissiveMap().anisotropic);
 		}
 		else if (comment == L"Tag_NormalMap")
 		{
 			render::Texture* normalTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
-			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
 		}
 		else if (comment == L"Tag_Roughness")
 		{
@@ -384,7 +332,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* roughnessTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			roughnessTextureNode->setComment(L"");
 			roughnessTextureNode->setExternal(roughnessTexture);
-			propagateAnisotropic(materialShaderGraph, roughnessTextureNode, material.getRoughnessMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, roughnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Specular")
 		{
@@ -397,7 +345,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* specularTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			specularTextureNode->setComment(L"");
 			specularTextureNode->setExternal(specularTexture);
-			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
 		}
 		else if (comment == L"Tag_Metalness")
 		{
@@ -410,7 +358,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* metalnessTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			metalnessTextureNode->setComment(L"");
 			metalnessTextureNode->setExternal(metalnessTexture);
-			propagateAnisotropic(materialShaderGraph, metalnessTextureNode, material.getRoughnessMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, metalnessTextureNode, material.getRoughnessMap().anisotropic);
 		}
 		else if (comment == L"Tag_Transparency")
 		{
@@ -423,7 +371,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* transparencyTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 			transparencyTextureNode->setComment(L"");
 			transparencyTextureNode->setExternal(transparencyTexture);
-			propagateAnisotropic(materialShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
+			propagateAnisotropic(meshSurfaceShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
 		}
 		else if (comment == L"Tag_LightMapDiffuse")
 		{
@@ -442,27 +390,71 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 	}
 
 	// Validate integrity and then return complete mesh material shader.
-	if (!render::ShaderGraphValidator(materialShaderGraph, templateGuid).validateIntegrity())
+	if (!render::ShaderGraphValidator(meshSurfaceShaderGraph, c_meshSurfaceTemplate).validateIntegrity())
 		return nullptr;
 
-	return materialShaderGraph;
+	return meshSurfaceShaderGraph;
+}
+
+Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
+	const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
+	const render::ShaderGraph* meshSurfaceShaderGraph,
+	const Guid& vertexShaderGuid
+) const
+{
+	// Create a mutable material mesh shader.
+	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
+	if (!meshShaderGraph)
+		return nullptr;
+
+	// Insert surface shader into mesh shader.
+	{
+		RefArray< render::External > resolveNodes;
+		for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
+		{
+			if (externalNode->getFragmentGuid() == c_meshSurfaceInterface)
+				resolveNodes.push_back(externalNode);
+		}
+		T_FATAL_ASSERT(!resolveNodes.empty());
+
+		meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< render::ShaderGraph > {
+			T_FATAL_ASSERT(fragmentGuid == c_meshSurfaceInterface);
+			return DeepClone(meshSurfaceShaderGraph).create< render::ShaderGraph >();
+		}).resolve(meshShaderGraph, resolveNodes, false);
+	}
+
+	// Replace vertex interface with concrete implementation fragment.
+	RefArray< render::External > resolveNodes;
+	for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
+	{
+		const Guid& fragmentGuid = externalNode->getFragmentGuid();
+		if (fragmentGuid == c_meshVertexInterface)
+		{
+			externalNode->setFragmentGuid(vertexShaderGuid);
+			resolveNodes.push_back(externalNode);
+		}
+	}
+
+	return meshShaderGraph;
 }
 
 void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
-	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
+	pipelineDepends->addDependency(c_meshSurfaceTemplate, editor::PdfUse);
+	pipelineDepends->addDependency(c_meshShaderTemplate, editor::PdfUse);
+
+	pipelineDepends->addDependency(c_meshVertexInterface, editor::PdfUse);
+	pipelineDepends->addDependency(c_meshSurfaceInterface, editor::PdfUse);
 
 	// Templates
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
-	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplTransparencyParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplLightMapParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplRoughnessParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplSpecularParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplMetalnessParams, editor::PdfUse);
-	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplTexCoordSelect, editor::PdfUse);
 
 	// Implementations
@@ -473,13 +465,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implEmissiveMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalMap, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputAdd, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputAlphaTest, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputMultiply, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputLightMapDecal, editor::PdfUse);
-	pipelineDepends->addDependency(c_implOutputLightMapAlphaTest, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTransparencyMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implLightMapNull, editor::PdfUse);
@@ -491,7 +476,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implSpecularMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implMetalnessConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implMetalnessMap, editor::PdfUse);
-	pipelineDepends->addDependency(c_implVertex, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTexCoordSelect0, editor::PdfUse);
 	pipelineDepends->addDependency(c_implTexCoordSelect1, editor::PdfUse);
 }

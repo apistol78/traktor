@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7B5B03E8-DA14-FB4E-B761-E801FE9A0268}</id>
+			<comment/>
+			<position>
+				<first>-145</first>
+				<second>212</second>
+			</position>
+			<name>VertexAttributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{FC36C352-F0F8-0448-8453-A512A453938E}</id>
+			<comment/>
+			<position>
+				<first>931</first>
+				<second>217</second>
+			</position>
+			<name>SurfaceAttributes</name>
+		</item>
+		<item type="traktor.render.BundleUnite" version="traktor.render.Node:1">
+			<id>{A5542704-8F70-394F-BF43-08D375161742}</id>
+			<comment/>
+			<position>
+				<first>634</first>
+				<second>164</second>
+			</position>
+			<names>
+				<item>Albedo</item>
+				<item>Metalness</item>
+				<item>Roughness</item>
+				<item>Specular</item>
+				<item>Normal</item>
+				<item>Alpha</item>
+			</names>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

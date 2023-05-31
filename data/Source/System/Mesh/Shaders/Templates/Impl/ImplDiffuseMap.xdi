@@ -50,17 +50,6 @@ Tag_DiffuseMap
 				<second>230</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{011BBA32-3102-6A4D-9084-79107C12B18F}</id>
-			<comment/>
-			<position>
-				<first>794</first>
-				<second>300</second>
-			</position>
-			<parameterName>Mesh_DiffuseColor</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{F52B2FE5-339F-2444-B18D-F712CC49918B}</id>
 			<comment>
@@ -69,8 +58,8 @@ Tag_DiffuseColor
 			]]>
 			</comment>
 			<position>
-				<first>572</first>
-				<second>330</second>
+				<first>791</first>
+				<second>297</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -134,41 +123,31 @@ Tag_DiffuseColor
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 	</edges>

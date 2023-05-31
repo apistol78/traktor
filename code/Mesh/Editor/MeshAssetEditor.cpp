@@ -615,12 +615,12 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 	}
 
-	// Use material template if specified.
-	Guid materialTemplate;
-	const auto& materialTemplates = m_asset->getMaterialTemplates();
-	auto it2 = materialTemplates.find(materialName);
-	if (it2 != materialTemplates.end())
-		materialTemplate = it2->second;
+	//// Use material template if specified.
+	//Guid materialTemplate;
+	//const auto& materialTemplates = m_asset->getMaterialTemplates();
+	//auto it2 = materialTemplates.find(materialName);
+	//if (it2 != materialTemplates.end())
+	//	materialTemplate = it2->second;
 
 	// Set textures specified in MeshAsset into material maps.
 	const auto& materialTextures = m_asset->getMaterialTextures();
@@ -659,11 +659,10 @@ void MeshAssetEditor::createMaterialShader()
 	m_model->setMaterials(materials);
 
 	// Generate shader.
-	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generate(
+	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generateSurface(
 		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 		*m_model,
 		*it,
-		materialTemplate,
 		haveVertexColors(*m_model)
 	);
 	if (materialShader)

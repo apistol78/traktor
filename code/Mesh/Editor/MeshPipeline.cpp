@@ -62,8 +62,6 @@ namespace traktor::mesh
 	namespace
 	{
 
-const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}");
-
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
@@ -520,10 +518,21 @@ bool MeshPipeline::buildOutput(
 				continue;
 			}
 
-			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+			Ref< const render::ShaderGraph > meshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!meshSurfaceShaderGraph)
+			{
+				log::error << L"Mesh pipeline failed; unable to read material surface shader \"" << materialPair.first << L"\"." << Endl;
+				return false;
+			}
+
+			materialShaderGraph = generator.generateMesh(
+				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
+				meshSurfaceShaderGraph,
+				vertexShaderGuid
+			);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
 
@@ -531,34 +540,36 @@ bool MeshPipeline::buildOutput(
 		}
 		else
 		{
-			Guid materialTemplate;
+			//Guid materialTemplate;
+			//if (m_enableCustomTemplates)
+			//{
+			//	auto it = materialTemplates.find(materialPair.first);
+			//	if (it != materialTemplates.end())
+			//		materialTemplate = it->second;
+			//}
 
-			if (m_enableCustomTemplates)
-			{
-				auto it = materialTemplates.find(materialPair.first);
-				if (it != materialTemplates.end())
-					materialTemplate = it->second;
-			}
-
-			materialShaderGraph = generator.generate(
+			Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
 				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 				*models[0],
 				materialPair.second,
-				materialTemplate,
 				vertexColor
+			);
+			if (!meshSurfaceShaderGraph)
+			{
+				log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialPair.first << L"\"." << Endl;
+				return false;
+			}
+
+			materialShaderGraph = generator.generateMesh(
+				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
+				meshSurfaceShaderGraph,
+				vertexShaderGuid
 			);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << materialPair.first << L"\"." << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
-		}
-
-		// Set vertex fragment reference.
-		for (auto external : materialShaderGraph->findNodesOf< render::External >())
-		{
-			if (external->getFragmentGuid() == c_guidVertexInterfaceGuid)
-				external->setFragmentGuid(vertexShaderGuid);
 		}
 
 		// Resolve all variables.

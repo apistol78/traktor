@@ -19,49 +19,50 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IPipelineDepends;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class ShaderGraph;
 
-	}
+}
 
-	namespace model
-	{
+namespace traktor::model
+{
 
 class Material;
 class Model;
 
-	}
+}
 
-	namespace mesh
-	{
+namespace traktor::mesh
+{
 
 class T_DLLCLASS MaterialShaderGenerator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Ref< render::ShaderGraph > generate(
+	Ref< render::ShaderGraph > generateSurface(
 		const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 		const model::Model& model,
 		const model::Material& material,
-		const Guid& materialTemplate,
 		bool vertexColor
+	) const;
+
+	Ref< render::ShaderGraph > generateMesh(
+		const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
+		const render::ShaderGraph* meshSurfaceShaderGraph,
+		const Guid& vertexShaderGuid
 	) const;
 
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);
 };
 
-	}
 }
-

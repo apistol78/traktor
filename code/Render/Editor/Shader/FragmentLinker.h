@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Core/Guid.h"
 #include "Core/Object.h"
@@ -40,8 +41,6 @@ class T_DLLCLASS FragmentLinker : public Object
 public:
 	struct IFragmentReader
 	{
-		virtual ~IFragmentReader() {}
-
 		/*! Read callback.
 		 *
 		 * Read fragments from user defined source,
@@ -50,9 +49,13 @@ public:
 		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const = 0;
 	};
 
-	FragmentLinker();
+	FragmentLinker() = default;
 
-	FragmentLinker(const IFragmentReader& fragmentReader);
+	explicit FragmentLinker(const IFragmentReader& fragmentReader);
+
+	explicit FragmentLinker(const std::function< Ref< ShaderGraph >(const Guid&) >& fragmentReader);
+
+	virtual ~FragmentLinker();
 
 	/*! Resolve shader graph.
 	 *
@@ -80,7 +83,25 @@ public:
 	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph, const RefArray< External >& externalNodes, bool fullResolve, const Guid* optionalShaderGraphGuid = nullptr) const;
 
 private:
-	const IFragmentReader* m_fragmentReader;
+	class LambdaFragmentReader : public IFragmentReader
+	{
+	public:
+		explicit LambdaFragmentReader(const std::function< Ref< ShaderGraph >(const Guid&) >& lambda)
+		:	m_lambda(lambda)
+		{
+		}
+
+		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const override final
+		{
+			return m_lambda(fragmentGuid);
+		}
+
+	private:
+		std::function< Ref< ShaderGraph >(const Guid&) > m_lambda;
+	};
+
+	const IFragmentReader* m_fragmentReader = nullptr;
+	bool m_own = false;
 };
 
 }

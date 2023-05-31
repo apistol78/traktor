@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{40294FDA-C7A5-384C-8D3F-C306CEDCE4CB}</id>
+			<id>{5FA915B6-AF05-4E4C-ABAA-1FD3712D5D19}</id>
 			<comment/>
 			<position>
 				<first>279</first>
@@ -11,26 +11,26 @@
 			<value>0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{C739D5B9-A1B4-48AE-A304-8EE23E7330B7}</id>
+			<id>{E4CBD992-2855-5245-8159-F151DFE70FCD}</id>
 			<comment/>
 			<position>
 				<first>223</first>
 				<second>199</second>
 			</position>
-			<name>T_Position</name>
+			<name>Position</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{31857D74-FC58-274B-943B-ABD358A3E529}</id>
+			<id>{D576759A-1345-BE41-BE33-BA905A3DA2C0}</id>
 			<comment/>
 			<position>
 				<first>488</first>
 				<second>281</second>
 			</position>
-			<name>T_Output</name>
+			<name>Attributes</name>
 		</item>
 	</nodes>
 	<edges>
