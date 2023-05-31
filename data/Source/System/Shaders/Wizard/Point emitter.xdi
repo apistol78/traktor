@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5EA93E71-78A1-7C4D-9417-89EC17FA7424}</id>
@@ -179,10 +179,6 @@
 					<first>Transparent</first>
 					<second>1</second>
 				</item>
-				<item>
-					<first>Write velocity</first>
-					<second>1</second>
-				</item>
 			</values>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
@@ -208,4 +204,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

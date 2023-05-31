@@ -98,11 +98,6 @@
 					<name>View velocity</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<id>{E863FD25-4DB6-F44E-B51C-5EAE291EA5CF}</id>
-					<name>Write velocity</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -126,10 +121,6 @@
 				<item>
 					<first>Transparent</first>
 					<second>0</second>
-				</item>
-				<item>
-					<first>Write velocity</first>
-					<second>1</second>
 				</item>
 			</values>
 		</item>

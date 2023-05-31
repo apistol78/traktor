@@ -32,7 +32,6 @@
 				<item>Specular</item>
 				<item>Transparent</item>
 				<item>View normal</item>
-				<item>Write velocity</item>
 				<item>View position</item>
 				<item>View velocity</item>
 			</names>
@@ -60,7 +59,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>713</second>
+				<second>717</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -69,7 +68,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>760</second>
+				<second>768</second>
 			</position>
 			<name>Cast shadows</name>
 		</item>
@@ -78,7 +77,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>807</second>
+				<second>819</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -87,7 +86,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>854</second>
+				<second>870</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -96,7 +95,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>901</second>
+				<second>921</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -105,7 +104,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>948</second>
+				<second>972</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -114,7 +113,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>995</second>
+				<second>1023</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -123,7 +122,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1042</second>
+				<second>1074</second>
 			</position>
 			<name>Transparent</name>
 		</item>
@@ -132,25 +131,16 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1089</second>
+				<second>1125</second>
 			</position>
 			<name>View normal</name>
-		</item>
-		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{4A71CCE7-AC5C-AF4D-AC4D-21DE6B0ABB0A}</id>
-			<comment/>
-			<position>
-				<first>1187</first>
-				<second>1136</second>
-			</position>
-			<name>Write velocity</name>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{646BE047-05F9-2543-A6E5-DC7E7CB10239}</id>
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1183</second>
+				<second>1176</second>
 			</position>
 			<name>View position</name>
 		</item>
@@ -159,7 +149,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1230</second>
+				<second>1227</second>
 			</position>
 			<name>View velocity</name>
 		</item>
@@ -302,16 +292,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{D596E4E4-1A78-4D80-C96B-6DEEF934EDEC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
