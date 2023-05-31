@@ -72,14 +72,22 @@ const OutputPin* findExternalOutputPin(const External* externalNode, const Outpu
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker", FragmentLinker, Object)
 
-FragmentLinker::FragmentLinker()
-:	m_fragmentReader(nullptr)
+FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
+:	m_fragmentReader(&fragmentReader)
+,	m_own(false)
 {
 }
 
-FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
-:	m_fragmentReader(&fragmentReader)
+FragmentLinker::FragmentLinker(const std::function< Ref< ShaderGraph >(const Guid&) >& fragmentReader)
+:	m_fragmentReader(new LambdaFragmentReader(fragmentReader))
+,	m_own(true)
 {
+}
+
+FragmentLinker::~FragmentLinker()
+{
+	if (m_own)
+		delete m_fragmentReader;
 }
 
 Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve, const Guid* optionalShaderGraphGuid) const

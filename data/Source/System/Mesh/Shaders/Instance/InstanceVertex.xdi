@@ -469,7 +469,7 @@
 				<first>1821</first>
 				<second>344</second>
 			</position>
-			<name>Output</name>
+			<name>Attributes</name>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{A2702CCD-A40C-7B40-AEFB-AEDD9AD70506}</id>

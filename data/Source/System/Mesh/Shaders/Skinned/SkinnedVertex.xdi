@@ -396,7 +396,7 @@
 				<second>623</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{46D5CABD-84EB-4E4B-84AB-F276873F6122}</id>
 			<comment/>
 			<position>
@@ -404,7 +404,6 @@
 				<second>978</second>
 			</position>
 			<name>L_ViewVelocity</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{D035E21C-180E-4EAB-B5A4-8E62A583D135}</id>
@@ -518,7 +517,7 @@
 				<item>VertexColor</item>
 			</names>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7C1B612F-C2A3-F244-80F2-6ED9EF786B77}</id>
 			<comment/>
 			<position>
@@ -526,7 +525,6 @@
 				<second>197</second>
 			</position>
 			<name>L_ViewVelocity</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{EC304AD3-26FE-B24D-B7B8-6B10D68C3EE7}</id>
@@ -535,7 +533,7 @@
 				<first>2043</first>
 				<second>287</second>
 			</position>
-			<name>Output</name>
+			<name>Attributes</name>
 		</item>
 	</nodes>
 	<edges>

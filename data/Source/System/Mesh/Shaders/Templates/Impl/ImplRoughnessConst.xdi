@@ -23,17 +23,6 @@ Tag_Roughness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{A3854773-894F-B94F-8BC2-74AF668BAAEC}</id>
-			<comment/>
-			<position>
-				<first>641</first>
-				<second>376</second>
-			</position>
-			<parameterName>Mesh_Roughness</parameterName>
-			<type>Scalar</type>
-			<frequency>Draw</frequency>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{F40E8D07-44B3-A54D-8A02-31FA6447C6CC}</id>
 			<comment/>
@@ -51,22 +40,12 @@ Tag_Roughness
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>

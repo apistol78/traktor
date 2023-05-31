@@ -5,7 +5,7 @@
 			<id>{1C406491-8E2C-2B45-971D-00B1D72F0623}</id>
 			<comment/>
 			<position>
-				<first>951</first>
+				<first>875</first>
 				<second>295</second>
 			</position>
 			<name>T_DiffuseColor</name>
@@ -23,17 +23,6 @@ Tag_DiffuseColor
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>true</linear>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{D791ACB9-E455-A84F-BC76-EDAF8563412F}</id>
-			<comment/>
-			<position>
-				<first>730</first>
-				<second>278</second>
-			</position>
-			<parameterName>Mesh_DiffuseColor</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{D9396A62-A247-F44E-A7AD-78AB61AF07D5}</id>
@@ -54,16 +43,6 @@ Tag_DiffuseColor
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
