@@ -38,6 +38,7 @@ set VORBIS_SDK=%TRAKTOR_HOME%\3rdp\vorbis
 set XATLAS_SDK=%TRAKTOR_HOME%\3rdp\xatlas
 set ZLIB_SDK=%TRAKTOR_HOME%\3rdp\zlib
 set DOXYGEN_SDK=%TRAKTOR_HOME%\3rdp\doxygen
+set BC6H_ENC_SDK=%TRAKTOR_HOME%\3rdp\bc6h_enc
 
 :: Vulkan SDK
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\VulkanSDK-1.3.239.0

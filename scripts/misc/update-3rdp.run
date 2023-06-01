@@ -18,7 +18,7 @@ local function platform_select(default, windows)
 end
 
 -- External tools
-local GIT = platform_select("git", "git")
+local GIT = platform_select("git", "$(TRAKTOR_HOME)/bin/git/bin/git")
 local WGET = platform_select("wget", "$(TRAKTOR_HOME)/bin/win64/wget")
 local TAR = platform_select("tar", "tar")
 local UNZIP = platform_select("unzip", "$(TRAKTOR_HOME)/bin/win64/unzip")
@@ -503,6 +503,13 @@ local PACKAGES =
 		patch = function()
 			run:execute(UNZIP .. " -qq doxygen-1.9.6.windows.x64.bin.zip")
 		end
+	},
+
+	-- bc6h_enc
+	{
+		type = "GIT",
+		url = "https://github.com/0xc0de/bc6h_enc.git",
+		license = "MIT"
 	},
 }
 

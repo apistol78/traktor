@@ -50,6 +50,7 @@
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
+#include "Render/Editor/Texture/Bc6hCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/EtcCompressor.h"
 #include "Render/Editor/Texture/PvrtcCompressor.h"
@@ -135,7 +136,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 36, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 37, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -301,6 +302,12 @@ bool TextureOutputPipeline::buildOutput(
 		case TfDXT5:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
+		case TfBC6HU:
+			pixelFormat = drawing::PixelFormat::getRGBAF32();
+			break;
+		case TfBC6HS:
+			pixelFormat = drawing::PixelFormat::getRGBAF32();
+			break;
 		case TfPVRTC1:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
@@ -329,7 +336,7 @@ bool TextureOutputPipeline::buildOutput(
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
 		default:
-			log::error << L"TextureOutputPipeline failed; unsupported explicit texture format" << Endl;
+			log::error << L"TextureOutputPipeline failed; unsupported explicit texture format." << Endl;
 			return false;
 		}
 
@@ -366,7 +373,12 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			if (m_compressionMethod == CompressionMethod::DXTn)
 			{
-				if (textureOutput->m_enableNormalMapCompression || textureOutput->m_encodeAsRGBM)
+				if (textureOutput->m_enableNormalMapCompression)
+				{
+					log::info << L"Using BC6HU compression." << Endl;
+					textureFormat = TfBC6HU;
+				}
+				else if (textureOutput->m_encodeAsRGBM)
 				{
 					log::info << L"Using DXT5 compression." << Endl;
 					textureFormat = TfDXT5;
@@ -579,31 +591,31 @@ bool TextureOutputPipeline::buildOutput(
 	if (isNormalMap)
 		sRGB = false;
 
-#if defined(T_USE_MIP_SCALE_TASKS)
-	Ref< drawing::ChainFilter > mipFilters;
-
-	// Swizzle channels to prepare for DXT5nm compression.
-	if (
-		m_compressionMethod == CmDXTn &&
-		textureOutput->m_enableNormalMapCompression
-	)
-	{
-		log::info << L"Preparing for DXT5nm compression..." << Endl;
-
-		mipFilters = new drawing::ChainFilter();
-
-		// Inverse X axis; do it here instead of in shader.
-		mipFilters->add(new drawing::TransformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f)));
-
-		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)
-		mipFilters->add(new drawing::SwizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r"));
-
-		if (!textureOutput->m_ignoreAlpha)
-			log::warning << L"Kept source alpha in red channel; compressed normals might have severe artifacts" << Endl;
-
-		isNormalMap = true;
-	}
-#endif
+//#if defined(T_USE_MIP_SCALE_TASKS)
+//	Ref< drawing::ChainFilter > mipFilters;
+//
+//	// Swizzle channels to prepare for DXT5nm compression.
+//	if (
+//		m_compressionMethod == CmDXTn &&
+//		textureOutput->m_enableNormalMapCompression
+//	)
+//	{
+//		log::info << L"Preparing for DXT5nm compression..." << Endl;
+//
+//		mipFilters = new drawing::ChainFilter();
+//
+//		// Inverse X axis; do it here instead of in shader.
+//		mipFilters->add(new drawing::TransformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f)));
+//
+//		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)
+//		mipFilters->add(new drawing::SwizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r"));
+//
+//		if (!textureOutput->m_ignoreAlpha)
+//			log::warning << L"Kept source alpha in red channel; compressed normals might have severe artifacts" << Endl;
+//
+//		isNormalMap = true;
+//	}
+//#endif
 
 	// Rescale image.
 	if (textureOutput->m_scaleImage)
@@ -866,11 +878,9 @@ bool TextureOutputPipeline::buildOutput(
 				drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
 				mipImage->apply(&normalizeFilter);
 
-				if (textureOutput->m_enableNormalMapCompression)
+				// Prepare for DXT5nm compression, need to swizzle the channels around.
+				if (textureFormat == TfDXT5 && textureOutput->m_enableNormalMapCompression)
 				{
-					drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
-					mipImage->apply(&transformFilter);
-
 					drawing::SwizzleFilter swizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r");
 					mipImage->apply(&swizzleFilter);
 				}
@@ -892,9 +902,11 @@ bool TextureOutputPipeline::buildOutput(
 #endif
 
 		// Create compressor and use it to write mips to instance.
-		Ref< ICompressor > compressor;
+		Ref< const ICompressor > compressor;
 		if (textureFormat >= TfDXT1 && textureFormat <= TfDXT5)
 			compressor = new DxtnCompressor();
+		else if (textureFormat >= TfBC6HU && textureFormat <= TfBC6HS)
+			compressor = new Bc6hCompressor();
 		else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
 			compressor = new PvrtcCompressor();
 		else if (textureFormat == TfETC1)
