@@ -52,7 +52,7 @@ bool EtcCompressor::compress(Writer& writer, const RefArray< drawing::Image >& m
 					for (int32_t ix = 0; ix < 4; ++ix)
 					{
 						Color4f tmp;
-						mipImage->getPixel(x, y, tmp);
+						mipImage->getPixel(x + ix, y + iy, tmp);
 
 						*sp++ = uint8_t(tmp.getRed() * 255);
 						*sp++ = uint8_t(tmp.getGreen() * 255);

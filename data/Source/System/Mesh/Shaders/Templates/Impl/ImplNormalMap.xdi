@@ -69,8 +69,8 @@ Tag_NormalMap
 			]]>
 			</comment>
 			<position>
-				<first>673</first>
-				<second>-143</second>
+				<first>639</first>
+				<second>-136</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>Texture2D</type>

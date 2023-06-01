@@ -105,6 +105,8 @@ c_textureFormatInfo[] =
 	{ L"TfDXT3", 16, 4 },
 	{ L"TfDXT4", 16, 4 },
 	{ L"TfDXT5", 16, 4 },
+	{ L"TfBC6HU", 16, 4 },
+	{ L"TfBC6HS", 16, 4 },
 
 	{ L"TfInvalid", 0, 0 },
 	{ L"TfInvalid", 0, 0 },

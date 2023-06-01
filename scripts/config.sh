@@ -40,6 +40,7 @@ export TINYEXR_SDK=$TRAKTOR_HOME/3rdp/tinyexr
 export VORBIS_SDK=$TRAKTOR_HOME/3rdp/vorbis
 export XATLAS_SDK=$TRAKTOR_HOME/3rdp/xatlas
 export ZLIB_SDK=$TRAKTOR_HOME/3rdp/zlib
+export BC6H_ENC_SDK=$TRAKTOR_HOME/3rdp/bc6h_enc
 
 # Vulkan SDK
 # - cleanup Extern and add Extern.vulkan which contain all paths,

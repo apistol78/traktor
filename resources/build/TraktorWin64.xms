@@ -6010,7 +6010,9 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths/>
+														<includePaths>
+															<item>$(BC6H_ENC_SDK)</item>
+														</includePaths>
 														<definitions>
 															<item>T_RENDER_EDITOR_EXPORT</item>
 															<item>_DEBUG</item>
@@ -6045,7 +6047,9 @@
 														<targetFormat>TfSharedLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths/>
+														<includePaths>
+															<item>$(BC6H_ENC_SDK)</item>
+														</includePaths>
 														<definitions>
 															<item>T_RENDER_EDITOR_EXPORT</item>
 															<item>NDEBUG</item>
@@ -6080,7 +6084,9 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths/>
+														<includePaths>
+															<item>$(BC6H_ENC_SDK)</item>
+														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
@@ -6111,7 +6117,9 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths/>
+														<includePaths>
+															<item>$(BC6H_ENC_SDK)</item>
+														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
