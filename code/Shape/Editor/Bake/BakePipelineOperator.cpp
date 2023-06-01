@@ -14,6 +14,7 @@
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Polar.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/Range.h"
 #include "Core/Math/Winding3.h"
@@ -252,6 +253,26 @@ void addSky(
 			Ref< const drawing::CubeMap > sourceRadianceCube = drawing::CubeMap::createFromImage(skyImage);
 			T_FATAL_ASSERT(sourceRadianceCube);
 
+			// Figure out sun direction.
+			float sunIntensity = -1.0f;
+			Vector4 sunDirection;
+			for (int32_t y = 0; y <= 100; ++y)
+			{
+				const float phi = PI * ((y / 100.0f) * 2.0f - 1.0f);
+
+				for (int32_t x = 0; x < 100; ++x)
+				{
+					const float theta = TWO_PI * (x / 100.0f);
+					const Vector4 direction = Polar(phi, theta).toUnitCartesian();
+					const float intensity = dot3(sourceRadianceCube->get(direction), Vector4(1.0f, 1.0f, 1.0f));
+					if (intensity > sunIntensity)
+					{
+						sunIntensity = intensity;
+						sunDirection = direction;
+					}
+				}
+			}
+
 			Ref< drawing::CubeMap > radianceCube = new drawing::CubeMap(128, drawing::PixelFormat::getRGBAF32());
 
 			AlignedVector< Job::task_t > jobs;
@@ -266,12 +287,20 @@ void addSky(
 							const Vector4 d = headRotation * radianceCube->getDirection(side, x, y);
 							Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
 							Scalar totalWeight = 0.0_simd;
-							for (int32_t i = 0; i < 10000; ++i)
+							for (int32_t i = 0; i < 5000; ++i)
 							{
 								const Vector2 uv = Quasirandom::hammersley(i, 10000, random);
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 								direction = lerp(d, direction, 0.125_simd).normalized();
-								const Scalar weight = 1.0_simd; // dot3(d, direction);
+								Scalar weight = 1.0_simd; // dot3(d, direction);
+
+								// Reduce sun influence.
+								if (sunIntensity > 0.0f)
+								{
+									const Scalar f = clamp(dot3(direction, sunDirection), 0.0_simd, 1.0_simd);
+									weight *= 1.0_simd - f;
+								}
+
 								cl += sourceRadianceCube->get(direction) * weight;
 								totalWeight += weight;
 							}
