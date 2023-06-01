@@ -59,7 +59,7 @@ class T_DLLCLASS IrradianceGrid : public Object
 public:
 	typedef uint32_t gridSize_t [3];
 
-	IrradianceGrid(
+	explicit IrradianceGrid(
 		gridSize_t size,
 		const Aabb3& boundingBox,
 		render::Buffer* buffer
