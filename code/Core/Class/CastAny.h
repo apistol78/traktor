@@ -253,10 +253,10 @@ struct CastAny < double, false >
 		return value.isNumeric();
 	}
 	static Any set(double value) {
-		return Any::fromFloat(float(value));
+		return Any::fromDouble(value);
 	}
 	static double get(const Any& value) {
-		return double(value.getFloat());
+		return value.getDouble();
 	}
 };
 

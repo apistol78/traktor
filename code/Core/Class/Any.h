@@ -43,6 +43,7 @@ public:
 		Int32,
 		Int64,
 		Float,
+		Double,
 		String,
 		Object
 	};
@@ -66,6 +67,9 @@ public:
 
 	/*! Create Any from 32-bit float. */
 	static Any fromFloat(float value);
+
+	/*! Create Any from 64-bit float. */
+	static Any fromDouble(double value);
 
 	/*! Create Any from UTF-8 string. */
 	static Any fromString(const char* value);
@@ -93,6 +97,9 @@ public:
 
 	/*! Get 32-bit float from Any, cast if necessary. */
 	float getFloat() const;
+
+	/*! Get 64-bit float from Any, cast if necessary. */
+	double getDouble() const;
 
 	/*! Get UTF-8 string from Any, cast if necessary. */
 	std::string getString() const;
@@ -125,6 +132,9 @@ public:
 	/*! Check if contained value is 32-bit float. */
 	inline bool isFloat() const { return m_type == Type::Float; }
 
+	/*! Check if contained value is 64-bit float. */
+	inline bool isDouble() const { return m_type == Type::Double; }
+
 	/*! Check if contained value is string. */
 	inline bool isString() const { return m_type == Type::String; }
 
@@ -136,7 +146,7 @@ public:
 	inline bool isObject() const { return m_type == Type::Object && is_a< ObjectType >(m_data.m_object); }
 
 	/*! Check if contained value is numeric. */
-	inline bool isNumeric() const { return isInt32() || isInt64() || isFloat(); }
+	inline bool isNumeric() const { return isInt32() || isInt64() || isFloat() || isDouble(); }
 
 	// \name Unsafe accessors.
 	// \{
@@ -152,6 +162,9 @@ public:
 
 	/*! Get 32-bit float from Any, assuming correct type. */
 	inline float getFloatUnsafe() const { T_ASSERT(m_type == Type::Float); return m_data.m_float; }
+
+	/*! Get 64-bit double from Any, assuming correct type. */
+	inline double getDoubleUnsafe() const { T_ASSERT(m_type == Type::Double); return m_data.m_double; }
 
 	/*! Get string from Any, assuming correct type. */
 	inline std::string getStringUnsafe() const { T_ASSERT(m_type == Type::String); return m_data.m_string; }
@@ -181,6 +194,7 @@ private:
 		int32_t m_int32;
 		int64_t m_int64;
 		float m_float;
+		double m_double;
 		char* m_string;
 		ITypedObject* m_object;
 	};

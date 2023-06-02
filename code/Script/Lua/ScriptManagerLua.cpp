@@ -577,6 +577,8 @@ void ScriptManagerLua::pushAny(const Any& any)
 		lua_pushinteger(m_luaState, any.getInt64Unsafe());
 	else if (any.isFloat())
 		lua_pushnumber(m_luaState, any.getFloatUnsafe());
+	else if (any.isDouble())
+		lua_pushnumber(m_luaState, any.getDoubleUnsafe());
 	else if (any.isString())
 		lua_pushstring(m_luaState, any.getCStringUnsafe());
 	else if (any.isObject())
@@ -599,6 +601,8 @@ void ScriptManagerLua::pushAny(const Any* anys, int32_t count)
 			lua_pushinteger(m_luaState, any.getInt64Unsafe());
 		else if (any.isFloat())
 			lua_pushnumber(m_luaState, any.getFloatUnsafe());
+		else if (any.isDouble())
+			lua_pushnumber(m_luaState, any.getDoubleUnsafe());
 		else if (any.isString())
 			lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
 		else if (any.isObject())
@@ -620,7 +624,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 			return Any::fromInt64(lua_tointeger(m_luaState, index));
 		else
 #endif
-			return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+			return Any::fromDouble(lua_tonumber(m_luaState, index));
 	}
 	else if (type == LUA_TBOOLEAN)
 		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
@@ -681,7 +685,7 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 				outAnys[i] = Any::fromInt64(lua_tointeger(m_luaState, index));
 			else
 #endif
-				outAnys[i] = Any::fromFloat(float(lua_tonumber(m_luaState, index)));
+				outAnys[i] = Any::fromDouble(lua_tonumber(m_luaState, index));
 		}
 		else if (type == LUA_TBOOLEAN)
 			outAnys[i] = Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));

@@ -122,6 +122,13 @@ Any Any::fromFloat(float value)
 	return any;
 }
 
+Any Any::fromDouble(double value)
+{
+	Any any(Type::Double);
+	any.m_data.m_double = value;
+	return any;
+}
+
 Any Any::fromString(const char* value)
 {
 	Any any(Type::String);
@@ -170,6 +177,8 @@ bool Any::getBoolean() const
 		return m_data.m_int64 != 0;
 	case Type::Float:
 		return m_data.m_float != 0.0f;
+	case Type::Double:
+		return m_data.m_double != 0.0;
 	case Type::String:
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case Type::Object:
@@ -189,9 +198,11 @@ int32_t Any::getInt32() const
 	case Type::Int32:
 		return m_data.m_int32;
 	case Type::Int64:
-		return int32_t(m_data.m_int64);
+		return (int32_t)m_data.m_int64;
 	case Type::Float:
-		return int32_t(m_data.m_float);
+		return (int32_t)m_data.m_float;
+	case Type::Double:
+		return (int32_t)m_data.m_double;
 	case Type::String:
 		return parseString< int32_t >(m_data.m_string);
 	default:
@@ -211,7 +222,9 @@ int64_t Any::getInt64() const
 	case Type::Int64:
 		return m_data.m_int64;
 	case Type::Float:
-		return int64_t(m_data.m_float);
+		return (int64_t)m_data.m_float;
+	case Type::Double:
+		return (int64_t)m_data.m_double;
 	case Type::String:
 		return parseString< int64_t >(m_data.m_string);
 	default:
@@ -227,17 +240,41 @@ float Any::getFloat() const
 	case Type::Boolean:
 		return m_data.m_boolean ? 1.0f : 0.0f;
 	case Type::Int32:
-		return float(m_data.m_int32);
+		return (float)m_data.m_int32;
 	case Type::Int64:
-		return float(m_data.m_int64);
+		return (float)m_data.m_int64;
 	case Type::Float:
 		return m_data.m_float;
+	case Type::Double:
+		return (float)m_data.m_double;
 	case Type::String:
 		return parseString< float >(m_data.m_string);
 	default:
 		break;
 	}
 	return 0.0f;
+}
+
+double Any::getDouble() const
+{
+	switch (m_type)
+	{
+	case Type::Boolean:
+		return m_data.m_boolean ? 1.0 : 0.0;
+	case Type::Int32:
+		return (double)m_data.m_int32;
+	case Type::Int64:
+		return (double)m_data.m_int64;
+	case Type::Float:
+		return m_data.m_float;
+	case Type::Double:
+		return m_data.m_double;
+	case Type::String:
+		return parseString< double >(m_data.m_string);
+	default:
+		break;
+	}
+	return 0.0;
 }
 
 std::string Any::getString() const
@@ -252,6 +289,8 @@ std::string Any::getString() const
 		return wstombs(Utf8Encoding(), toString(m_data.m_int64));
 	case Type::Float:
 		return wstombs(Utf8Encoding(), toString(m_data.m_float));
+	case Type::Double:
+		return wstombs(Utf8Encoding(), toString(m_data.m_double));
 	case Type::String:
 		return m_data.m_string;
 	default:
@@ -272,6 +311,8 @@ std::wstring Any::getWideString() const
 		return toString(m_data.m_int64);
 	case Type::Float:
 		return toString(m_data.m_float);
+	case Type::Double:
+		return toString(m_data.m_double);
 	case Type::String:
 		return mbstows(Utf8Encoding(), m_data.m_string);
 	default:
@@ -340,6 +381,10 @@ std::wstring Any::format() const
 
 	case Type::Float:
 		ss << L"float";
+		break;
+
+	case Type::Double:
+		ss << L"double";
 		break;
 
 	case Type::String:
