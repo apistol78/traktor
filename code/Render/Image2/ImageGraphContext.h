@@ -12,7 +12,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
-#include "Render/Types.h"
+#include "Render/Image2/ImageGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,6 +25,7 @@
 namespace traktor::render
 {
 
+class Buffer;
 class ITexture;
 class RenderGraph;
 
@@ -33,22 +34,22 @@ class RenderGraph;
  */
 struct ImageGraphView
 {
-    Frustum viewFrustum;
-    Matrix44 view;
-    Matrix44 lastView;
-    Matrix44 viewToLight;
-    Matrix44 projection;
-    Vector4 godRayDirection = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-    Vector4 shadowMapUvTransform = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-    int32_t sliceCount = 0;
-    int32_t sliceIndex = 0;
-    float sliceNearZ = 0.0f;
-    float sliceFarZ = 0.0f;
-    float shadowFarZ = 0.0f;
-    float shadowMapBias = 0.0f;
-    float deltaTime = 0.0f;
-    float time = 0.0f;
-    int32_t frame = 0;
+	Frustum viewFrustum;
+	Matrix44 view;
+	Matrix44 lastView;
+	Matrix44 viewToLight;
+	Matrix44 projection;
+	Vector4 godRayDirection = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	Vector4 shadowMapUvTransform = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+	int32_t sliceCount = 0;
+	int32_t sliceIndex = 0;
+	float sliceNearZ = 0.0f;
+	float sliceFarZ = 0.0f;
+	float shadowFarZ = 0.0f;
+	float shadowMapBias = 0.0f;
+	float deltaTime = 0.0f;
+	float time = 0.0f;
+	int32_t frame = 0;
 };
 
 /*!
@@ -56,36 +57,48 @@ struct ImageGraphView
  */
 class T_DLLCLASS ImageGraphContext : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    void associateTexture(handle_t textureId, ITexture* texture);
+	void associateTexture(img_handle_t textureId, ITexture* texture);
 
-	void associateTextureTargetSet(handle_t textureId, handle_t targetSetId, int32_t colorIndex);
+	void associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex);
 
-    void associateTextureTargetSetDepth(handle_t textureId, handle_t targetSetId);
+	void associateTextureTargetSetDepth(img_handle_t textureId, handle_t targetSetId);
 
-    handle_t findTextureTargetSetId(handle_t textureId) const;
+	handle_t findTextureTargetSetId(img_handle_t textureId) const;
 
-    ITexture* findTexture(const RenderGraph& renderGraph, handle_t textureId) const;
+	ITexture* findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const;
+
+	void associateSBuffer(img_handle_t sbufferId, handle_t frameSbufferId);
+
+	handle_t findSBufferId(img_handle_t sbufferId) const;
+
+	Buffer* findSBuffer(const RenderGraph& renderGraph, img_handle_t sbufferId) const;
+
+	/*! Shader pameters */
+	//@{
 
 	void setFloatParameter(handle_t handle, float value);
 
-    const SmallMap< handle_t, float >& getFloatParameters() const { return m_scalarParameters; }
+	const SmallMap< handle_t, float >& getFloatParameters() const { return m_scalarParameters; }
 
 	void setVectorParameter(handle_t handle, const Vector4& value);
 
-    const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
+	const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
+
+	//@}
 
 private:
 	struct TextureTargetSet
 	{
 		handle_t targetSetId;
 		int32_t colorIndex;
-        ITexture* texture;
+		ITexture* texture;
 	};
 
-	SmallMap< handle_t, TextureTargetSet > m_textureTargetSet;
+	SmallMap< img_handle_t, TextureTargetSet > m_textureTargetSet;
+	SmallMap< img_handle_t, handle_t > m_sbufferHandles;
 	SmallMap< handle_t, float > m_scalarParameters;
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
 };

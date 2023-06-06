@@ -93,7 +93,7 @@ void WorldRenderView::setViewSize(const Vector2& viewSize)
 	m_viewSize = viewSize;
 }
 
-void WorldRenderView::setTimes(float time, float deltaTime, float interval)
+void WorldRenderView::setTimes(double time, double deltaTime, float interval)
 {
 	m_time = time;
 	m_deltaTime = deltaTime;

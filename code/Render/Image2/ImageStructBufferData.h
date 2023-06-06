@@ -38,6 +38,7 @@ public:
 private:
 	friend class ImageGraphPipeline;
 
+	std::wstring m_id;
 	std::wstring m_persistentHandle;
 	uint32_t m_elementCount = 0;
 	uint32_t m_elementSize = 0;

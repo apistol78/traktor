@@ -57,7 +57,7 @@ private:
     friend class ImageGraphData;
 
     std::wstring m_name;
-    RefArray< const ImageStructBuffer > m_structBuffers;
+    RefArray< const ImageStructBuffer > m_sbuffers;
     RefArray< const ImageTexture > m_textures;
     RefArray< const ImageTargetSet > m_targetSets;
     RefArray< const ImagePass > m_passes;

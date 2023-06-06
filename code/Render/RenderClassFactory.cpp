@@ -49,7 +49,7 @@ public:
 
 	uint32_t getHeight() const { return m_displayMode.height; }
 
-	uint16_t getRefreshRate() const { return m_displayMode.refreshRate; }
+	float getRefreshRate() const { return m_displayMode.refreshRate; }
 
 	uint16_t getColorBits() const { return m_displayMode.colorBits; }
 

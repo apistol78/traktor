@@ -19,18 +19,18 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 4, ImageGraphData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 5, ImageGraphData, ISerializable)
 
 Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const
 {
     Ref< ImageGraph > instance = new ImageGraph(m_name);
 
-    for (auto structBufferData : m_structBuffers)
+    for (auto sbufferData : m_sbuffers)
     {
-        Ref< const ImageStructBuffer > structBuffer = structBufferData->createInstance();
-        if (!structBuffer)
+        Ref< const ImageStructBuffer > sbuffer = sbufferData->createInstance();
+        if (!sbuffer)
             return nullptr;
-        instance->m_structBuffers.push_back(structBuffer);
+        instance->m_sbuffers.push_back(sbuffer);
     }
 
     for (auto textureData : m_textures)
@@ -70,10 +70,10 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
 void ImageGraphData::serialize(ISerializer& s)
 {
-    T_FATAL_ASSERT(s.getVersion< ImageGraphData >() >= 4);
+    T_FATAL_ASSERT(s.getVersion< ImageGraphData >() >= 5);
 
     s >> Member< std::wstring >(L"name", m_name);
-    s >> MemberRefArray< ImageStructBufferData >(L"structBuffers", m_structBuffers);
+    s >> MemberRefArray< ImageStructBufferData >(L"sbuffers", m_sbuffers);
     s >> MemberRefArray< ImageTextureData >(L"textures", m_textures);
     s >> MemberRefArray< ImageTargetSetData >(L"targetSets", m_targetSets);
     s >> MemberRefArray< ImagePassData >(L"passes", m_passes);

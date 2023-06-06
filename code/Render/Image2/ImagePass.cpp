@@ -31,6 +31,7 @@ void ImagePass::addRenderGraphPasses(
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
 	const targetSetVector_t& targetSetIds,
+	const targetSetVector_t& sbufferIds,
 	ScreenRenderer* screenRenderer,
 	RenderGraph& renderGraph
 ) const
@@ -49,6 +50,9 @@ void ImagePass::addRenderGraphPasses(
 
 		rp->setOutput(targetSetIds[m_outputTargetSet], m_clear, load, render::TfColor);
 	}
+
+	if (m_outputSBuffer >= 0)
+		rp->setOutput(sbufferIds[m_outputSBuffer]);
 
 	rp->addBuild(
 		[=](const RenderGraph& renderGraph, RenderContext* renderContext)

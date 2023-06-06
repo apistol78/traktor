@@ -54,14 +54,7 @@ public:
 private:
 	friend class ShadowProjectData;
 
-	struct Source
-	{
-		handle_t textureId;
-		handle_t parameter;
-	};
-
 	mutable resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Source > m_sources;
 	Ref< ITexture > m_shadowMapDiscRotation[2];
 };
 

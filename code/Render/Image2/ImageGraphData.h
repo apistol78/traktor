@@ -54,7 +54,7 @@ private:
     friend class ImageGraphPipeline;
 
     std::wstring m_name;
-    RefArray< ImageStructBufferData > m_structBuffers;
+    RefArray< ImageStructBufferData > m_sbuffers;
     RefArray< ImageTextureData > m_textures;
     RefArray< ImageTargetSetData > m_targetSets;
     RefArray< ImagePassData > m_passes;

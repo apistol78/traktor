@@ -52,14 +52,7 @@ public:
 private:
 	friend class SimpleData;
 
-	struct Source
-	{
-		handle_t textureId;
-		handle_t parameter;
-	};
-
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Source > m_sources;
 };
 
 }

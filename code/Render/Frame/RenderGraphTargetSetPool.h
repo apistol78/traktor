@@ -27,6 +27,8 @@ class RenderGraphTargetSetPool : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef struct { uint32_t index; uint32_t handle; } persistentKey_t;
+
 	explicit RenderGraphTargetSetPool(IRenderSystem* renderSystem);
 
 	void destroy();
@@ -47,11 +49,11 @@ public:
 		int32_t referenceWidth,
 		int32_t referenceHeight,
 		uint32_t multiSample,
-		handle_t persistentHandle
+		persistentKey_t persistentHandle
 	);
 
 	/*! */
-	void release(IRenderTargetSet* targetSet);
+	void release(Ref< IRenderTargetSet >& targetSet);
 
 	/*! */
 	void cleanup();
@@ -68,7 +70,7 @@ private:
 		// Pool identification.
 		RenderTargetSetCreateDesc rtscd;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		handle_t persistentHandle;
+		persistentKey_t persistentHandle;
 
 		// Pool targets.
 		AlignedVector< Target > free;

@@ -13,8 +13,9 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageStructBuffer", ImageStructBuffer, Object)
 
-ImageStructBuffer::ImageStructBuffer(const std::wstring& name, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize)
+ImageStructBuffer::ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize)
 :	m_name(name)
+,	m_id(id)
 ,	m_persistentHandle(persistentHandle)
 ,	m_elementCount(elementCount)
 ,   m_elementSize(elementSize)
@@ -24,6 +25,11 @@ ImageStructBuffer::ImageStructBuffer(const std::wstring& name, handle_t persiste
 const std::wstring& ImageStructBuffer::getName() const
 {
 	return m_name;
+}
+
+img_handle_t ImageStructBuffer::getId() const
+{
+	return m_id;
 }
 
 handle_t ImageStructBuffer::getPersistentHandle() const

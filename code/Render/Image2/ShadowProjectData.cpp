@@ -68,13 +68,7 @@ Ref< const ImagePassStep > ShadowProjectData::createInstance(resource::IResource
 		return nullptr;
 
 	// Get handles of sources.
-	for (const auto& source : m_textureSources)
-	{
-		instance->m_sources.push_back({
-			getParameterHandle(source.id),
-			getParameterHandle(source.parameter)
-		});
-	}
+	setSourceHandles(instance);
 
 	// Generate screen-space random rotation textures.
 	if ((instance->m_shadowMapDiscRotation[0] = createRandomRotationTexture(renderSystem)) == nullptr)

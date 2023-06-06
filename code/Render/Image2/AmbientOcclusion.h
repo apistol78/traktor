@@ -53,14 +53,7 @@ public:
 private:
 	friend class AmbientOcclusionData;
 
-	struct Source
-	{
-		handle_t textureId;
-		handle_t parameter;
-	};
-
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Source > m_sources;
 	Vector4 m_offsets[64];
 	Vector4 m_directions[8];
 	Ref< ITexture > m_randomNormals;

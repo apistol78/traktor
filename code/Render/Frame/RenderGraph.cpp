@@ -54,7 +54,9 @@ RenderGraph::RenderGraph(
 	uint32_t multiSample,
 	const fn_profiler_t& profiler
 )
-:	m_pool(new RenderGraphTargetSetPool(renderSystem))
+:	m_targetSetPool(new RenderGraphTargetSetPool(renderSystem))
+,	m_bufferPool(new RenderGraphBufferPool(renderSystem))
+,	m_counter(0)
 ,	m_multiSample(multiSample)
 ,	m_nextResourceId(1)
 ,	m_profiler(profiler)
@@ -63,7 +65,8 @@ RenderGraph::RenderGraph(
 
 RenderGraph::~RenderGraph()
 {
-	T_FATAL_ASSERT_M(m_pool == nullptr, L"Forgot to destroy RenderGraph instance.");
+	T_FATAL_ASSERT_M(m_targetSetPool == nullptr, L"Forgot to destroy RenderGraph instance.");
+	T_FATAL_ASSERT_M(m_bufferPool == nullptr, L"Forgot to destroy RenderGraph instance.");
 }
 
 void RenderGraph::destroy()
@@ -73,7 +76,8 @@ void RenderGraph::destroy()
 	m_passes.clear();
 	for (int32_t i = 0; i < sizeof_array(m_order); ++i)
 		m_order[i].clear();
-	safeDestroy(m_pool);
+	safeDestroy(m_targetSetPool);
+	safeDestroy(m_bufferPool);
 }
 
 handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
@@ -83,7 +87,9 @@ handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* 
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
 	tr.persistentHandle = 0;
-	tr.rts = targetSet;
+	tr.doubleBuffered = false;
+	tr.readTargetSet = targetSet;
+	tr.writeTargetSet = targetSet;
 	tr.sizeReferenceTargetSetId = 0;
 	tr.inputRefCount = 0;
 	tr.outputRefCount = 0;
@@ -104,6 +110,7 @@ handle_t RenderGraph::addTransientTargetSet(
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
 	tr.persistentHandle = 0;
+	tr.doubleBuffered = false;
 	tr.targetSetDesc = targetSetDesc;
 	tr.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
@@ -117,6 +124,7 @@ handle_t RenderGraph::addTransientTargetSet(
 handle_t RenderGraph::addPersistentTargetSet(
 	const wchar_t* const name,
 	handle_t persistentHandle,
+	bool doubleBuffered,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
 	handle_t sizeReferenceTargetSetId
@@ -127,6 +135,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	auto& tr = m_targets[resourceId];
 	tr.name = name;
 	tr.persistentHandle = persistentHandle;
+	tr.doubleBuffered = doubleBuffered;
 	tr.targetSetDesc = targetSetDesc;
 	tr.sharedDepthStencilTargetSet = sharedDepthStencilTargetSet;
 	tr.sizeReferenceTargetSetId = sizeReferenceTargetSetId;
@@ -164,7 +173,7 @@ handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t pe
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
 	auto it = m_targets.find(resource);
-	return (it != m_targets.end()) ? it->second.rts : nullptr;
+	return (it != m_targets.end()) ? it->second.readTargetSet : nullptr;
 }
 
 Buffer* RenderGraph::getBuffer(handle_t resource) const
@@ -267,7 +276,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	{
 		auto& target = it.second;
 		if (
-			target.rts == nullptr &&
+			target.writeTargetSet == nullptr &&
 			target.persistentHandle != 0 &&
 			(target.inputRefCount != 0 || target.outputRefCount != 0)
 		)
@@ -277,6 +286,20 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				cleanup();
 				return false;
 			}
+		}
+	}
+
+	for (auto& it : m_buffers)
+	{
+		auto& sbuffer = it.second;
+		if (sbuffer.buffer == nullptr)
+		{
+			sbuffer.buffer = m_renderSystem->createBuffer(
+				render::BuStructured,
+				sbuffer.elementCount,
+				sbuffer.elementSize,
+				false
+			);
 		}
 	}
 
@@ -336,7 +359,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 						if (it != m_targets.end())
 						{
 							auto& target = it->second;
-							if (target.rts == nullptr)
+							if (target.writeTargetSet == nullptr)
 							{
 								T_ASSERT(!target.external);
 								if (!acquire(width, height, target))
@@ -347,7 +370,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							}
 
 							auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
-							tb->renderTargetSet = target.rts;
+							tb->renderTargetSet = target.writeTargetSet;
 							tb->clear = output.clear;
 							tb->load = output.load;
 							tb->store = output.store;
@@ -432,8 +455,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (--target.inputRefCount <= 0)
 				{
 					if (!target.external)
-						m_pool->release(target.rts);
-					target.rts = nullptr;
+					{
+						if (target.writeTargetSet != target.readTargetSet)
+						{
+							m_targetSetPool->release(target.writeTargetSet);
+							m_targetSetPool->release(target.readTargetSet);
+						}
+						else
+							m_targetSetPool->release(target.writeTargetSet);
+					}
+					target.writeTargetSet = nullptr;
 				}
 			}
 		}
@@ -487,20 +518,27 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	for (auto& it : m_targets)
 	{
 		auto& target = it.second;
-		if (target.rts != nullptr && target.persistentHandle != 0)
+		if (target.persistentHandle != 0)
 		{
-			m_pool->release(target.rts);
-			target.rts = nullptr;
+			if (target.readTargetSet != target.writeTargetSet)
+			{
+				m_targetSetPool->release(target.writeTargetSet);
+				m_targetSetPool->release(target.readTargetSet);
+			}
+			else
+				m_targetSetPool->release(target.readTargetSet);
 		}
 	}
 
 	// Cleanup pool data structure.
-	m_pool->cleanup();
+	m_targetSetPool->cleanup();
 
 	// Remove all data; keeps memory allocated for arrays
 	// since it's very likely this will be identically
 	// re-populated next frame.
 	cleanup();
+
+	m_counter++;
 	return true;
 }
 
@@ -524,16 +562,42 @@ bool RenderGraph::acquire(int32_t width, int32_t height, TargetResource& inoutTa
 		height = inoutTarget.sharedDepthStencilTargetSet->getHeight();
 	}
 
-	inoutTarget.rts = m_pool->acquire(
-		inoutTarget.name,
-		inoutTarget.targetSetDesc,
-		inoutTarget.sharedDepthStencilTargetSet,
-		width,
-		height,
-		m_multiSample,
-		inoutTarget.persistentHandle
-	);
-	if (!inoutTarget.rts)
+	if (inoutTarget.doubleBuffered)
+	{
+		inoutTarget.readTargetSet = m_targetSetPool->acquire(
+			inoutTarget.name,
+			inoutTarget.targetSetDesc,
+			inoutTarget.sharedDepthStencilTargetSet,
+			width,
+			height,
+			m_multiSample,
+			{ m_counter & 1, inoutTarget.persistentHandle }
+		);
+		inoutTarget.writeTargetSet = m_targetSetPool->acquire(
+			inoutTarget.name,
+			inoutTarget.targetSetDesc,
+			inoutTarget.sharedDepthStencilTargetSet,
+			width,
+			height,
+			m_multiSample,
+			{ (m_counter + 1) & 1, inoutTarget.persistentHandle }
+		);
+	}
+	else
+	{
+		inoutTarget.readTargetSet =
+		inoutTarget.writeTargetSet = m_targetSetPool->acquire(
+			inoutTarget.name,
+			inoutTarget.targetSetDesc,
+			inoutTarget.sharedDepthStencilTargetSet,
+			width,
+			height,
+			m_multiSample,
+			{ 0, inoutTarget.persistentHandle }
+		);
+	}
+
+	if (!inoutTarget.readTargetSet || !inoutTarget.writeTargetSet)
 		return false;
 
 	return true;

@@ -71,7 +71,7 @@ public:
 
 	void setViewSize(const Vector2& viewSize);
 
-	void setTimes(float time, float deltaTime, float interval);
+	void setTimes(double time, double deltaTime, float interval);
 
 	/*!
 	 */
@@ -115,11 +115,11 @@ public:
 		return m_viewSize;
 	}
 
-	T_FORCE_INLINE float getTime() const {
+	T_FORCE_INLINE double getTime() const {
 		return m_time;
 	}
 
-	T_FORCE_INLINE float getDeltaTime() const {
+	T_FORCE_INLINE double getDeltaTime() const {
 		return m_deltaTime;
 	}
 
@@ -144,8 +144,8 @@ private:
 	Matrix44 m_lastView;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
-	float m_time;
-	float m_deltaTime;
+	double m_time;
+	double m_deltaTime;
 	float m_interval;
 	Vector4 m_eyePosition;
 	Vector4 m_eyeDirection;

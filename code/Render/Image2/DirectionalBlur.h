@@ -54,8 +54,8 @@ private:
 
 	struct Source
 	{
-		handle_t textureId;
-		handle_t parameter;
+		img_handle_t textureId;
+		handle_t shaderParameter;
 	};
 
 	resource::Proxy< render::Shader > m_shader;

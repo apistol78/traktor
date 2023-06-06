@@ -99,7 +99,7 @@ render::handle_t VelocityPass::setup(
 		view.viewFrustum = worldRenderView.getViewFrustum();
 		view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
 		view.projection = worldRenderView.getProjection();
-		view.deltaTime = worldRenderView.getDeltaTime();
+		view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 		render::ImageGraphContext igctx;
 		igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
@@ -126,7 +126,7 @@ render::handle_t VelocityPass::setup(
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

@@ -50,6 +50,7 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 
 	instance->m_name = m_name;
 	instance->m_outputTargetSet = m_outputTargetSet;
+	instance->m_outputSBuffer = m_outputSBuffer;
 	instance->m_clear = m_clear;
 
 	for (auto stepData : m_steps)
@@ -68,6 +69,7 @@ void ImagePassData::serialize(ISerializer& s)
 	T_FATAL_ASSERT(s.getVersion< ImagePassData >() >= 1);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< int32_t >(L"outputTargetSet", m_outputTargetSet);
+	s >> Member< int32_t >(L"outputSBuffer", m_outputSBuffer);
 	s >> MemberClear(L"clear", m_clear);
 	s >> MemberRefArray< ImagePassStepData >(L"steps", m_steps);
 }

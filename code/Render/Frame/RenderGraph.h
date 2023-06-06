@@ -32,6 +32,7 @@ namespace traktor::render
 class Buffer;
 class IRenderSystem;
 class RenderContext;
+class RenderGraphBufferPool;
 class RenderGraphTargetSetPool;
 
 /*! Render graph.
@@ -56,9 +57,11 @@ public:
 	{
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
+		bool doubleBuffered = false;
 		RenderGraphTargetSetDesc targetSetDesc;
 		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
-		Ref< IRenderTargetSet > rts;
+		Ref< IRenderTargetSet > writeTargetSet;
+		Ref< IRenderTargetSet > readTargetSet;
 		handle_t sizeReferenceTargetSetId = 0;
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
@@ -121,6 +124,7 @@ public:
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \param persistentHandle Unique handle to track persistent targets.
+	 * \param doubleBuffered Double buffered target.
 	 * \param targetSetDesc Render target set create description.
 	 * \param sharedDepthStencil Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
@@ -129,6 +133,7 @@ public:
 	handle_t addPersistentTargetSet(
 		const wchar_t* const name,
 		handle_t persistentHandle,
+		bool doubleBuffered,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencil = nullptr,
 		handle_t sizeReferenceTargetSetId = 0
@@ -199,11 +204,13 @@ public:
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
 
 private:
-	Ref< RenderGraphTargetSetPool > m_pool;
+	Ref< RenderGraphTargetSetPool > m_targetSetPool;
+	Ref< RenderGraphBufferPool > m_bufferPool;
 	SmallMap< handle_t, TargetResource > m_targets;
 	SmallMap< handle_t, BufferResource > m_buffers;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];
+	uint32_t m_counter;
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;

@@ -191,8 +191,8 @@ void PostProcessPass::setup(
 	view.viewToLight = Matrix44::identity();
 	view.view = worldRenderView.getView();
 	view.projection = worldRenderView.getProjection();
-	view.deltaTime = worldRenderView.getDeltaTime();
-	view.time = worldRenderView.getTime();
+	view.deltaTime = (float)worldRenderView.getDeltaTime();
+	view.time = (float)worldRenderView.getTime();
 
 	// Calculate a "rotation" value based on view transform; useful
 	// for some post process effects.

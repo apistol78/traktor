@@ -51,7 +51,8 @@ private:
     friend class ImageGraphPipeline;
 
     std::wstring m_name;
-    int32_t m_outputTargetSet;
+    int32_t m_outputTargetSet = -1;
+    int32_t m_outputSBuffer = -1;
     Clear m_clear;
     RefArray< ImagePassStepData > m_steps;
 };
