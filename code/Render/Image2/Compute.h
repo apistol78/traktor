@@ -23,7 +23,6 @@
 namespace traktor::render
 {
 
-class Buffer;
 class Shader;
 
 /*!
@@ -53,17 +52,7 @@ public:
 private:
 	friend class ComputeData;
 
-	struct Source
-	{
-		handle_t textureId;
-		handle_t parameter;
-	};
-
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Source > m_sources;
-
-	// \hack Eye adaption.
-	Ref< render::Buffer > m_bufferCurrentIllumination;
 };
 
 }

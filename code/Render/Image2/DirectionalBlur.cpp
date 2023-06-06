@@ -46,12 +46,7 @@ void DirectionalBlur::addRenderPassInputs(
 	RenderPass& pass
 ) const
 {
-	for (const auto& source : m_sources)
-	{
-		auto targetSetId = context.findTextureTargetSetId(source.textureId);
-		if (targetSetId != 0)
-			pass.addInput(targetSetId);
-	}
+	addInputs(context, pass);
 }
 
 void DirectionalBlur::build(
@@ -89,11 +84,7 @@ void DirectionalBlur::build(
 	pp->setMatrixParameter(s_handleView, view.view);
 	pp->setMatrixParameter(s_handleViewInverse, view.view.inverse());
 
-	for (const auto& source : m_sources)
-	{
-		auto texture = context.findTexture(renderGraph, source.textureId);
-		pp->setTextureParameter(source.parameter, texture);
-	}
+	bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 

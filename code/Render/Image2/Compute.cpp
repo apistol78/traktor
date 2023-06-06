@@ -46,12 +46,7 @@ void Compute::addRenderPassInputs(
 	RenderPass& pass
 ) const
 {
-	for (const auto& source : m_sources)
-	{
-		auto targetSetId = context.findTextureTargetSetId(source.textureId);
-		if (targetSetId != 0)
-			pass.addInput(targetSetId);
-	}
+	addInputs(context, pass);
 }
 
 void Compute::build(
@@ -88,20 +83,11 @@ void Compute::build(
 	pp->setMatrixParameter(s_handleLastView, view.lastView);
 	pp->setMatrixParameter(s_handleLastViewInverse, view.lastView.inverse());
 
-	// \hack Eye adaption.
-	pp->setBufferViewParameter(getParameterHandle(L"CurrentIllumination"), m_bufferCurrentIllumination->getBufferView());
-
-	for (const auto& source : m_sources)
-	{
-		auto texture = context.findTexture(renderGraph, source.textureId);
-		//pp->setImageViewParameter(source.parameter, texture);
-		pp->setTextureParameter(source.parameter, texture);
-	}
+	bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 
-	const Shader::Permutation perm(getParameterHandle(L"Adapt"));
-	IProgram* program = m_shader->getProgram(perm).program;
+	IProgram* program = m_shader->getProgram().program;
 	if (!program)
 		return;
 

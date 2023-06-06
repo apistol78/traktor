@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Render/Frame/RenderGraphTypes.h"
+#include "Render/Image2/ImageGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,20 +31,20 @@ class T_DLLCLASS ImageTargetSet : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ImageTargetSet(const std::wstring& name, handle_t persistentHandle, handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
+	explicit ImageTargetSet(const std::wstring& name, handle_t persistentHandle, img_handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets], const RenderGraphTargetSetDesc& targetSetDesc);
 
 	const std::wstring& getName() const;
 
 	handle_t getPersistentHandle() const;
 
-	handle_t getTextureId(int32_t colorIndex) const;
+	img_handle_t getTextureId(int32_t colorIndex) const;
 
 	const RenderGraphTargetSetDesc& getTargetSetDesc() const;
 
 private:
 	std::wstring m_name;
 	handle_t m_persistentHandle;
-	handle_t m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
+	img_handle_t m_textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	RenderGraphTargetSetDesc m_targetSetDesc;
 };
 

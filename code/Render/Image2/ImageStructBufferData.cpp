@@ -20,6 +20,7 @@ Ref< const ImageStructBuffer > ImageStructBufferData::createInstance() const
 {
 	return new ImageStructBuffer(
 		T_FILE_LINE_W,
+		getParameterHandle(m_id),
 		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle) : 0,
 		m_elementCount,
 		m_elementSize
@@ -28,6 +29,7 @@ Ref< const ImageStructBuffer > ImageStructBufferData::createInstance() const
 
 void ImageStructBufferData::serialize(ISerializer& s)
 {
+	s >> Member< std::wstring >(L"id", m_id);
 	s >> Member< std::wstring >(L"persistentHandle", m_persistentHandle);
 	s >> Member< uint32_t >(L"elementCount", m_elementCount);
 	s >> Member< uint32_t >(L"elementSize", m_elementSize);

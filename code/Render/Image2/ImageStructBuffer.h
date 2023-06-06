@@ -10,7 +10,7 @@
 
 #include <string>
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Image2/ImageGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,9 +31,11 @@ class T_DLLCLASS ImageStructBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ImageStructBuffer(const std::wstring& name, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize);
+	explicit ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize);
 
 	const std::wstring& getName() const;
+
+	img_handle_t getId() const;
 
 	handle_t getPersistentHandle() const;
 
@@ -43,6 +45,7 @@ public:
 
 private:
 	std::wstring m_name;
+	img_handle_t m_id;
 	handle_t m_persistentHandle;
 	uint32_t m_elementCount;
 	uint32_t m_elementSize;

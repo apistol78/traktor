@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -68,12 +68,17 @@ protected:
 
 	struct Source
 	{
-		handle_t textureId;
-		handle_t parameter;
+		img_handle_t id;
+		handle_t shaderParameter;
 	};
 
 	resource::Proxy< render::Shader > m_shader;
-	AlignedVector< Source > m_sources;    
+	AlignedVector< Source > m_textureSources;
+	AlignedVector< Source > m_sbufferSources;
+
+	void addInputs(const ImageGraphContext& context, RenderPass& pass) const;
+
+	void bindSources(const ImageGraphContext& context, const RenderGraph& renderGraph, ProgramParameters* programParameters) const;
 };
 
 }

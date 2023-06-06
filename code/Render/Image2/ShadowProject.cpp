@@ -55,12 +55,7 @@ void ShadowProject::addRenderPassInputs(
 	RenderPass& pass
 ) const
 {
-	for (const auto& source : m_sources)
-	{
-		auto targetSetId = context.findTextureTargetSetId(source.textureId);
-		if (targetSetId != 0)
-			pass.addInput(targetSetId);
-	}
+	addInputs(context, pass);
 }
 
 void ShadowProject::build(
@@ -113,11 +108,7 @@ void ShadowProject::build(
 	pp->setMatrixParameter(s_handleViewToLight, view.viewToLight);
 	pp->setTextureParameter(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation[view.frame & 1]);
 
-	for (const auto& source : m_sources)
-	{
-		auto texture = context.findTexture(renderGraph, source.textureId);
-		pp->setTextureParameter(source.parameter, texture);
-	}
+	bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 

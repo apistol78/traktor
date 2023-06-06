@@ -23,8 +23,8 @@
 			<id>{303B7F48-264B-CB44-B04B-F46878E210FA}</id>
 			<comment/>
 			<position>
-				<first>464</first>
-				<second>-494</second>
+				<first>491</first>
+				<second>-440</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -32,7 +32,7 @@
 			<id>{A04B14D0-B28D-A347-AB91-477153FDC48B}</id>
 			<comment/>
 			<position>
-				<first>13</first>
+				<first>-31</first>
 				<second>-495</second>
 			</position>
 			<parameterName>SourceTexture</parameterName>
@@ -43,7 +43,7 @@
 			<id>{BA718513-F7A0-E94D-9035-5BC47F510859}</id>
 			<comment/>
 			<position>
-				<first>15</first>
+				<first>-29</first>
 				<second>-450</second>
 			</position>
 			<value>0</value>
@@ -52,10 +52,10 @@
 			<id>{C22838E6-D4D4-CD4A-87E7-3AE7C65E1DAE}</id>
 			<comment/>
 			<position>
-				<first>219</first>
-				<second>-328</second>
+				<first>370</first>
+				<second>-607</second>
 			</position>
-			<parameterName>CurrentIllumination</parameterName>
+			<parameterName>CurrentIllum</parameterName>
 			<elements>
 				<item>
 					<name>value</name>
@@ -67,11 +67,11 @@
 			<id>{1EE7F2FC-7358-654E-9DF8-1A7634AA03D4}</id>
 			<comment/>
 			<position>
-				<first>843</first>
-				<second>-420</second>
+				<first>788</first>
+				<second>-598</second>
 			</position>
 			<name>Adaptation</name>
-			<technique>Adapt</technique>
+			<technique>Default</technique>
 			<inputPins>
 				<item>
 					<id>{3431FA8A-C973-3D4F-AD62-5E993405B4DD}</id>
@@ -89,104 +89,6 @@ const float last = $Buffer[0].value.x;
 $Buffer[0].value.x = $Current * 0.01f + last * 0.99f;
 			]]>
 			</script>
-		</item>
-		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
-			<id>{26EE95AE-6507-B44B-86B7-B393E9160AF9}</id>
-			<comment/>
-			<position>
-				<first>603</first>
-				<second>-188</second>
-			</position>
-			<names>
-				<item>value</item>
-			</names>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{196ABF8D-AEAA-304A-8F91-9AE2E4FFA4E2}</id>
-			<comment/>
-			<position>
-				<first>390</first>
-				<second>-124</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
-			<id>{6D764414-E647-A547-8A19-623996696B00}</id>
-			<comment/>
-			<position>
-				<first>991</first>
-				<second>-184</second>
-			</position>
-			<technique>Default</technique>
-			<priority>
-				<setup>false</setup>
-				<opaque>false</opaque>
-				<postOpaque>false</postOpaque>
-				<alphaBlend>false</alphaBlend>
-				<postAlphaBlend>false</postAlphaBlend>
-				<overlay>false</overlay>
-			</priority>
-			<cullMode>CounterClockWise</cullMode>
-			<blendEnable>false</blendEnable>
-			<blendColorOperation>BoAdd</blendColorOperation>
-			<blendColorSource>BfOne</blendColorSource>
-			<blendColorDestination>BfZero</blendColorDestination>
-			<blendAlphaOperation>BoAdd</blendAlphaOperation>
-			<blendAlphaSource>BfOne</blendAlphaSource>
-			<blendAlphaDestination>BfOne</blendAlphaDestination>
-			<colorWriteMask>
-				<red>true</red>
-				<green>true</green>
-				<blue>true</blue>
-				<alpha>true</alpha>
-			</colorWriteMask>
-			<depthEnable>true</depthEnable>
-			<depthWriteEnable>true</depthWriteEnable>
-			<depthFunction>CfLessEqual</depthFunction>
-			<alphaTestEnable>false</alphaTestEnable>
-			<alphaTestFunction>CfLess</alphaTestFunction>
-			<alphaTestReference>128</alphaTestReference>
-			<alphaToCoverageEnable>false</alphaToCoverageEnable>
-			<wireframe>false</wireframe>
-			<stencilEnable>false</stencilEnable>
-			<stencilFail>SoKeep</stencilFail>
-			<stencilZFail>SoKeep</stencilZFail>
-			<stencilPass>SoKeep</stencilPass>
-			<stencilFunction>CfAlways</stencilFunction>
-			<stencilReference>0</stencilReference>
-			<stencilMask>4294967295</stencilMask>
-			<registerCount>0</registerCount>
-			<precisionHint>Undefined</precisionHint>
-		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{994E2B1A-BC15-5143-BCE5-A6B25E4C86EC}</id>
-			<comment/>
-			<position>
-				<first>-196</first>
-				<second>-4</second>
-			</position>
-			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
-			<inputPins/>
-			<outputPins>
-				<item>
-					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
-					<name>Position</name>
-				</item>
-				<item>
-					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
-					<name>TexCoord</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{B1E43A48-B4C1-564F-8DEE-A3A3D9065012}</id>
-			<comment/>
-			<position>
-				<first>811</first>
-				<second>-152</second>
-			</position>
-			<swizzle>xxxx</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -238,46 +140,6 @@ $Buffer[0].value.x = $Current * 0.01f + last * 0.99f;
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{3431FA8A-C973-3D4F-AD62-5E993405B4DD}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>

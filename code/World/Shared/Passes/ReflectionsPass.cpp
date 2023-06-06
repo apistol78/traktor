@@ -175,7 +175,7 @@ render::handle_t ReflectionsPass::setup(
 	view.view = worldRenderView.getView();
 	view.lastView = worldRenderView.getLastView();
 	view.projection = worldRenderView.getProjection();
-	view.deltaTime = worldRenderView.getDeltaTime();
+	view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);

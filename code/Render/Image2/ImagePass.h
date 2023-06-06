@@ -52,6 +52,7 @@ public:
 		const ImageGraphContext& context,
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
+		const targetSetVector_t& sbufferIds,
 		ScreenRenderer* screenRenderer,
 		RenderGraph& renderGraph
 	) const;
@@ -61,6 +62,7 @@ private:
 
 	std::wstring m_name;
 	int32_t m_outputTargetSet;
+	int32_t m_outputSBuffer;
 	Clear m_clear;
 	RefArray< const ImagePassStep > m_steps;
 };

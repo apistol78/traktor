@@ -37,21 +37,25 @@ void ImageGraph::addPasses(
 	const ImageGraphView& view
 ) const
 {
-	ImagePass::targetSetVector_t structBufferIds;
+	ImagePass::targetSetVector_t sbufferIds;
 	ImagePass::targetSetVector_t targetSetIds;
 
 	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
 	ImageGraphContext context = cx;
 
-	structBufferIds.resize(m_structBuffers.size());
-	for (int32_t i = 0; i < (int32_t)m_structBuffers.size(); ++i)
+	sbufferIds.resize(m_sbuffers.size());
+	for (int32_t i = 0; i < (int32_t)m_sbuffers.size(); ++i)
 	{
-		structBufferIds[i] = renderGraph.addPersistentBuffer(
-			m_structBuffers[i]->getName().c_str(),
-			m_structBuffers[i]->getPersistentHandle(),
-			m_structBuffers[i]->getElementCount(),
-			m_structBuffers[i]->getElementSize()
+		sbufferIds[i] = renderGraph.addPersistentBuffer(
+			m_sbuffers[i]->getName().c_str(),
+			m_sbuffers[i]->getPersistentHandle(),
+			m_sbuffers[i]->getElementCount(),
+			m_sbuffers[i]->getElementSize()
+		);
+		context.associateSBuffer(
+			m_sbuffers[i]->getId(),
+			sbufferIds[i]
 		);
 	}
 
@@ -71,6 +75,7 @@ void ImageGraph::addPasses(
 			targetSetIds[i] = renderGraph.addPersistentTargetSet(
 				m_targetSets[i]->getName().c_str(),
 				m_targetSets[i]->getPersistentHandle(),
+				true,
 				m_targetSets[i]->getTargetSetDesc()
 			);
 		}
@@ -82,6 +87,7 @@ void ImageGraph::addPasses(
 			);
 		}
 
+		// Associate each target in the set.
 		const auto& desc = m_targetSets[i]->getTargetSetDesc();
 		for (int32_t j = 0; j < desc.count; ++j)
 		{
@@ -95,7 +101,7 @@ void ImageGraph::addPasses(
 
 	// Add all steps to render graph.
 	for (auto imagePass : m_passes)
-		imagePass->addRenderGraphPasses(this, context, view, targetSetIds, screenRenderer, renderGraph);
+		imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, screenRenderer, renderGraph);
 
 	// Override pass name with our root node's name.
 	pass->setName(m_name);

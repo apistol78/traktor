@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -33,14 +33,14 @@ class T_DLLCLASS ImageTexture : public Object
 	T_RTTI_CLASS;
 
 public:
-	ImageTexture(handle_t textureId, const resource::Proxy< ITexture >& texture);
+	explicit ImageTexture(img_handle_t textureId, const resource::Proxy< ITexture >& texture);
 
-	handle_t getTextureId() const;
+	img_handle_t getTextureId() const;
 
 	const resource::Proxy< ITexture >& getTexture() const;
 
 private:
-	handle_t m_textureId;
+	img_handle_t m_textureId;
 	resource::Proxy< ITexture > m_texture;
 };
 

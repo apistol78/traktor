@@ -26,16 +26,7 @@ Ref< const ImagePassStep > ComputeData::createInstance(resource::IResourceManage
 		return nullptr;
 
 	// Get handles of sources.
-	for (const auto& source : m_textureSources)
-	{
-		instance->m_sources.push_back({
-			getParameterHandle(source.id),
-			getParameterHandle(source.parameter)
-		});
-	}
-
-	// \hack Eye adaption.
-	instance->m_bufferCurrentIllumination = renderSystem->createBuffer(render::BuStructured, 1, 4 * sizeof(float), false);
+	setSourceHandles(instance);
 
 	return instance; 
 }

@@ -39,7 +39,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 9, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 13, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -164,13 +164,15 @@ bool ImageGraphPipeline::buildOutput(
 		{
 			Ref< ImageStructBufferData > sbd = new ImageStructBufferData();
 
+			sbd->m_id = sbufferNode->getId().format();
+
 			if (sbufferNode->getPersistent())
 				sbd->m_persistentHandle = Guid::create().format();
 
 			sbd->m_elementCount = sbufferNode->m_elementCount;
 			sbd->m_elementSize = sbufferNode->m_elementSize;
 
-			data->m_structBuffers.push_back(sbd);
+			data->m_sbuffers.push_back(sbd);
 		}
 		else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(nodes[i]))
 		{
@@ -211,12 +213,10 @@ bool ImageGraphPipeline::buildOutput(
 				return false;
 			}
 
-			auto targetSet = dynamic_type_cast< const ImgTargetSet* >(destinationPins[0]->getNode());
-			if (targetSet)
+			if (auto targetSet = dynamic_type_cast< const ImgTargetSet* >(destinationPins[0]->getNode()))
 			{
 				Ref< ImagePassData > passData = new ImagePassData();
 				passData->m_name = pass->getName();
-				passData->m_outputTargetSet = -1;
 				passData->m_clear = pass->getClear();
 
 				// Find index of output target set.
@@ -233,6 +233,33 @@ bool ImageGraphPipeline::buildOutput(
 					}
 					else
 						++targetSetIndex;
+				}
+
+				// Convert pass's steps.
+				convertAssetPassToSteps(asset, pass, passData->m_steps);
+
+				data->m_passes.push_back(passData);
+			}
+			else if (auto sbuffer = dynamic_type_cast< const ImgStructBuffer* >(destinationPins[0]->getNode()))
+			{
+				Ref< ImagePassData > passData = new ImagePassData();
+				passData->m_name = pass->getName();
+				passData->m_clear = pass->getClear();
+
+				// Find index of output sbuffer.
+				int32_t sbufferIndex = 0;
+				for (size_t i = 1; i < nodes.size(); ++i)
+				{
+					if (!is_a< ImgStructBuffer >(nodes[i]))
+						continue;
+
+					if (sbuffer == nodes[i])
+					{
+						passData->m_outputSBuffer = sbufferIndex;
+						break;
+					}
+					else
+						++sbufferIndex;
 				}
 
 				// Convert pass's steps.
@@ -313,14 +340,14 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		}
 		T_FATAL_ASSERT(opData);
 
-		log::info << L"\tPass \"" << type_name(opData) << L"\", shader = \"" << Guid(opData->m_shader).format() << L"\"." << Endl;
+		log::info << L"\tPass \"" << pass->getName() << L"/" << type_name(opData) << L"\", shader = \"" << Guid(opData->m_shader).format() << L"\"." << Endl;
 
 		// Log output.
 		{
 			const OutputPin* outputPin = pass->getOutputPin(0);
 			T_FATAL_ASSERT(outputPin != nullptr);
 
-			AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(outputPin);
+			const AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(outputPin);
 			if (destinationPins.size() != 1)
 			{
 				log::error << L"Image graph pipeline failed; pass output not connected properly." << Endl;
@@ -329,11 +356,19 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 
 			if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
 			{
-				std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
+				const std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
 				if (!targetSetNode->getPersistent())
 					log::info << L"\t\tOutput into transient target \"" << textureId << L"\"." << Endl;
 				else
 					log::info << L"\t\tOutput into persistent target \"" << textureId << L"\"." << Endl;
+			}
+			else if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(destinationPins.front()->getNode()))
+			{
+				const std::wstring sbufferId = sbufferNode->getId().format() + L"/" + outputPin->getName();
+				if (!sbufferNode->getPersistent())
+					log::info << L"\t\tOutput into transient sbuffer \"" << sbufferId << L"\"." << Endl;
+				else
+					log::info << L"\t\tOutput into persistent sbuffer \"" << sbufferId << L"\"." << Endl;
 			}
 			else if (auto outputNode = dynamic_type_cast< const ImgOutput* >(destinationPins.front()->getNode()))
 			{
@@ -366,38 +401,38 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 				// Reading texture from input texture.
 				auto& sourceData = opData->m_textureSources.push_back();
 				sourceData.id = inputNode->getTextureId();
-				sourceData.parameter = input;
-				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = input \"" << sourceData.id << L"\"." << Endl;
+				sourceData.shaderParameter = input;
+				log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = input \"" << sourceData.id << L"\"." << Endl;
 			}
 			else if (auto structBufferNode = dynamic_type_cast< const ImgStructBuffer* >(sourcePin->getNode()))
 			{
 				// Reading struct buffer.
-				auto& sourceData = opData->m_structBufferSources.push_back();
+				auto& sourceData = opData->m_sbufferSources.push_back();
 				sourceData.id = structBufferNode->getId().format();
-				sourceData.parameter = input;
+				sourceData.shaderParameter = input;
 				if (!structBufferNode->getPersistent())
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient sbuffer \"" << sourceData.id << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = transient sbuffer \"" << sourceData.id << L"\"." << Endl;
 				else
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent sbuffer \"" << sourceData.id << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = persistent sbuffer \"" << sourceData.id << L"\"." << Endl;
 			}
 			else if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(sourcePin->getNode()))
 			{
 				// Reading texture from transient target set.
 				auto& sourceData = opData->m_textureSources.push_back();
 				sourceData.id = targetSetNode->getTargetSetId() + L"/" + sourcePin->getName();
-				sourceData.parameter = input;
+				sourceData.shaderParameter = input;
 				if (!targetSetNode->getPersistent())
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = transient target \"" << sourceData.id << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = transient target \"" << sourceData.id << L"\"." << Endl;
 				else
-					log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = persistent target \"" << sourceData.id << L"\"." << Endl;
+					log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = persistent target \"" << sourceData.id << L"\"." << Endl;
 			}
 			else if (auto textureNode = dynamic_type_cast< const ImgTexture* >(sourcePin->getNode()))
 			{
 				// Reading texture resource.
 				auto& sourceData = opData->m_textureSources.push_back();
 				sourceData.id = textureNode->getId().format();
-				sourceData.parameter = input;
-				log::info << L"\t\tParameter \"" << sourceData.parameter << L"\" = texture resource \"" << sourceData.id << L"\"." << Endl;
+				sourceData.shaderParameter = input;
+				log::info << L"\t\tParameter \"" << sourceData.shaderParameter << L"\" = texture resource \"" << sourceData.id << L"\"." << Endl;
 			}
 			else
 			{

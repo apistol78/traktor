@@ -54,14 +54,16 @@ protected:
 	struct Source
 	{
 		std::wstring id;
-		std::wstring parameter;
+		std::wstring shaderParameter;
 
 		void serialize(ISerializer& s);
 	};
 
 	resource::Id< Shader > m_shader;
 	AlignedVector< Source > m_textureSources;
-	AlignedVector< Source > m_structBufferSources;
+	AlignedVector< Source > m_sbufferSources;
+
+	void setSourceHandles(ImagePassStep* instance) const;
 };
 
 }

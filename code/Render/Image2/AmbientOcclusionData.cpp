@@ -30,13 +30,7 @@ Ref< const ImagePassStep > AmbientOcclusionData::createInstance(resource::IResou
 		return nullptr;
 
 	// Get handles of sources.
-	for (const auto& source : m_textureSources)
-	{
-		instance->m_sources.push_back({
-			getParameterHandle(source.id),
-			getParameterHandle(source.parameter)
-		});
-	}
+	setSourceHandles(instance);
 
 	// Create offsets.
 	for (int i = 0; i < sizeof_array(instance->m_offsets); ++i)

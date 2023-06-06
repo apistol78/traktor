@@ -179,8 +179,8 @@ void WorldRendererDeferred::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
-	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId);
 	
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
@@ -424,7 +424,7 @@ void WorldRendererDeferred::setupLightPass(
 						// Render entities into shadow map.
 						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 						sharedParams->beginParameters(renderContext);
-						sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+						sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 						sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 						sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
@@ -538,7 +538,7 @@ void WorldRendererDeferred::setupLightPass(
 					// Render entities into shadow map.
 					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 					sharedParams->beginParameters(renderContext);
-					sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+					sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
 					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
 					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
@@ -621,7 +621,7 @@ void WorldRendererDeferred::setupVisualPass(
 
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
 			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 			sharedParams->setMatrixParameter(s_handleProjection, projection);

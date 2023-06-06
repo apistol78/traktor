@@ -13,13 +13,13 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageTexture", ImageTexture, Object)
 
-ImageTexture::ImageTexture(handle_t textureId, const resource::Proxy< ITexture >& texture)
+ImageTexture::ImageTexture(img_handle_t textureId, const resource::Proxy< ITexture >& texture)
 :   m_textureId(textureId)
 ,   m_texture(texture)
 {
 }
 
-handle_t ImageTexture::getTextureId() const
+img_handle_t ImageTexture::getTextureId() const
 {
 	return m_textureId;
 }

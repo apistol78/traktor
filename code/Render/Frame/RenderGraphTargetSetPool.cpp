@@ -20,6 +20,11 @@ namespace traktor::render
 
 const int32_t c_maxUnusuedFrames = 8;
 
+bool operator != (const RenderGraphTargetSetPool::persistentKey_t& a, const RenderGraphTargetSetPool::persistentKey_t& b)
+{
+	return a.index != b.index || a.handle != b.handle;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderGraphTargetSetPool", RenderGraphTargetSetPool, Object)
@@ -48,7 +53,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	int32_t referenceWidth,
 	int32_t referenceHeight,
 	uint32_t multiSample,
-	handle_t persistentHandle
+	persistentKey_t persistentHandle
 )
 {
 	// Create descriptor for given reference size.
@@ -160,7 +165,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	}
 }
 
-void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
+void RenderGraphTargetSetPool::release(Ref< IRenderTargetSet >& targetSet)
 {
 	T_ANONYMOUS_VAR(Ref< IRenderTargetSet >)(targetSet);
 	for (auto& pool : m_pool)
@@ -175,6 +180,7 @@ void RenderGraphTargetSetPool::release(IRenderTargetSet* targetSet)
 			break;
 		}
 	}
+	targetSet = nullptr;
 }
 
 void RenderGraphTargetSetPool::cleanup()

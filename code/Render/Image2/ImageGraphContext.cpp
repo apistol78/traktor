@@ -15,7 +15,7 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphContext", ImageGraphContext, Object)
 
-void ImageGraphContext::associateTexture(handle_t textureId, ITexture* texture)
+void ImageGraphContext::associateTexture(img_handle_t textureId, ITexture* texture)
 {
 	auto& txts = m_textureTargetSet[textureId];
 	txts.targetSetId = 0;
@@ -23,7 +23,7 @@ void ImageGraphContext::associateTexture(handle_t textureId, ITexture* texture)
 	txts.texture = texture;
 }
 
-void ImageGraphContext::associateTextureTargetSet(handle_t textureId, handle_t targetSetId, int32_t colorIndex)
+void ImageGraphContext::associateTextureTargetSet(img_handle_t textureId, handle_t targetSetId, int32_t colorIndex)
 {
 	auto& txts = m_textureTargetSet[textureId];
 	txts.targetSetId = targetSetId;
@@ -31,7 +31,7 @@ void ImageGraphContext::associateTextureTargetSet(handle_t textureId, handle_t t
 	txts.texture = nullptr;
 }
 
-void ImageGraphContext::associateTextureTargetSetDepth(handle_t textureId, handle_t targetSetId)
+void ImageGraphContext::associateTextureTargetSetDepth(img_handle_t textureId, handle_t targetSetId)
 {
 	auto& txts = m_textureTargetSet[textureId];
 	txts.targetSetId = targetSetId;
@@ -39,7 +39,7 @@ void ImageGraphContext::associateTextureTargetSetDepth(handle_t textureId, handl
 	txts.texture = nullptr;
 }
 
-handle_t ImageGraphContext::findTextureTargetSetId(handle_t textureId) const
+handle_t ImageGraphContext::findTextureTargetSetId(img_handle_t textureId) const
 {
 	auto it = m_textureTargetSet.find(textureId);
 	if (it != m_textureTargetSet.end())
@@ -48,7 +48,7 @@ handle_t ImageGraphContext::findTextureTargetSetId(handle_t textureId) const
 		return 0;
 }
 
-ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, handle_t textureId) const
+ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, img_handle_t textureId) const
 {
 	auto it = m_textureTargetSet.find(textureId);
 	if (it == m_textureTargetSet.end())
@@ -65,6 +65,29 @@ ITexture* ImageGraphContext::findTexture(const RenderGraph& renderGraph, handle_
 		return targetSet->getColorTexture(it->second.colorIndex);
 	else
 		return targetSet->getDepthTexture();
+}
+
+void ImageGraphContext::associateSBuffer(img_handle_t sbufferId, handle_t frameSbufferId)
+{
+	m_sbufferHandles[sbufferId] = frameSbufferId;
+}
+
+handle_t ImageGraphContext::findSBufferId(img_handle_t sbufferId) const
+{
+	auto it = m_sbufferHandles.find(sbufferId);
+	if (it != m_sbufferHandles.end())
+		return it->second;
+	else
+		return 0;
+}
+
+Buffer* ImageGraphContext::findSBuffer(const RenderGraph& renderGraph, img_handle_t sbufferId) const
+{
+	auto it = m_sbufferHandles.find(sbufferId);
+	if (it == m_sbufferHandles.end())
+		return nullptr;
+
+	return renderGraph.getBuffer(it->second);
 }
 
 void ImageGraphContext::setFloatParameter(handle_t handle, float value)

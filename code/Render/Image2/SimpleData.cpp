@@ -25,13 +25,7 @@ Ref< const ImagePassStep > SimpleData::createInstance(resource::IResourceManager
 		return nullptr;
 
 	// Get handles of sources.
-	for (const auto& source : m_textureSources)
-	{
-		instance->m_sources.push_back({
-			getParameterHandle(source.id),
-			getParameterHandle(source.parameter)
-		});
-	}
+	setSourceHandles(instance);
 
 	return instance; 
 }

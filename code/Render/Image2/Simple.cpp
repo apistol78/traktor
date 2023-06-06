@@ -45,12 +45,7 @@ void Simple::addRenderPassInputs(
 	RenderPass& pass
 ) const
 {
-	for (const auto& source : m_sources)
-	{
-		auto targetSetId = context.findTextureTargetSetId(source.textureId);
-		if (targetSetId != 0)
-			pass.addInput(targetSetId);
-	}
+	addInputs(context, pass);
 }
 
 void Simple::build(
@@ -87,11 +82,7 @@ void Simple::build(
 	pp->setMatrixParameter(s_handleLastView, view.lastView);
 	pp->setMatrixParameter(s_handleLastViewInverse, view.lastView.inverse());
 
-	for (const auto& source : m_sources)
-	{
-		auto texture = context.findTexture(renderGraph, source.textureId);
-		pp->setTextureParameter(source.parameter, texture);
-	}
+	bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
 
