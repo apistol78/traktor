@@ -1074,7 +1074,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 bool EditorForm::openEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::CrWait); },
+		[this](){ setCursor(ui::Cursor::Wait); },
 		[this](){ resetCursor(); }
 	);
 
@@ -1236,7 +1236,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 bool EditorForm::openDefaultEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::CrWait); },
+		[this](){ setCursor(ui::Cursor::Wait); },
 		[this](){ resetCursor(); }
 	);
 
@@ -1276,7 +1276,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 bool EditorForm::openInNewEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this]() { setCursor(ui::CrWait); },
+		[this]() { setCursor(ui::Cursor::Wait); },
 		[this]() { resetCursor(); }
 	);
 
@@ -1887,7 +1887,7 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 void EditorForm::buildAssets(bool rebuild)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::CrWait); },
+		[this](){ setCursor(ui::Cursor::Wait); },
 		[this](){ resetCursor(); }
 	);
 
@@ -2098,7 +2098,7 @@ void EditorForm::moveNewTabGroup()
 void EditorForm::saveCurrentDocument()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::CrWait); },
+		[this](){ setCursor(ui::Cursor::Wait); },
 		[this](){ resetCursor(); }
 	);
 
@@ -2213,7 +2213,7 @@ void EditorForm::saveAsCurrentDocument()
 void EditorForm::saveAllDocuments()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::CrWait); },
+		[this](){ setCursor(ui::Cursor::Wait); },
 		[this](){ resetCursor(); }
 	);
 

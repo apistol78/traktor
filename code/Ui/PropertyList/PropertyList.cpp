@@ -463,7 +463,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
 	{
 		m_mode = MdMoveSeparator;
-		setCursor(CrSizeWE);
+		setCursor(Cursor::SizeWE);
 		setCapture();
 		event->consume();
 	}
@@ -569,13 +569,13 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 {
 	const Point p = event->getPosition();
 
-	setCursor(CrArrow);
+	setCursor(Cursor::Arrow);
 
 	if (m_mode == MdMoveSeparator)
 	{
 		m_separator = p.x;
 
-		setCursor(CrSizeWE);
+		setCursor(Cursor::SizeWE);
 
 		placeItems();
 		update();
@@ -586,7 +586,7 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 	{
 		if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
 		{
-			setCursor(CrSizeWE);
+			setCursor(Cursor::SizeWE);
 			event->consume();
 		}
 		else if (m_mousePropertyItem)

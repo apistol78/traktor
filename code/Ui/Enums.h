@@ -10,6 +10,10 @@
 
 #include "Core/Config.h"
 
+#if defined(None)
+#undef None
+#endif
+
 namespace traktor::ui
 {
 
@@ -68,21 +72,21 @@ enum class ClipboardContent
 	Image
 };
 
-enum Cursor
+enum class Cursor
 {
-	CrNone,
-	CrArrow,
-	CrArrowRight,
-	CrArrowWait,
-	CrCross,
-	CrHand,
-	CrIBeam,
-	CrSizeNESW,
-	CrSizeNS,
-	CrSizeNWSE,
-	CrSizeWE,
-	CrSizing,
-	CrWait
+	None,
+	Arrow,
+	ArrowRight,
+	ArrowWait,
+	Cross,
+	Hand,
+	IBeam,
+	SizeNESW,
+	SizeNS,
+	SizeNWSE,
+	SizeWE,
+	Sizing,
+	Wait
 };
 
 enum Align
