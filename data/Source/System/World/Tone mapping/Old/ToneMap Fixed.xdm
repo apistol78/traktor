@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta" version="1">
-	<guid>{838922A0-49CE-6645-8A9C-BA0E71081033}</guid>
-	<primaryType>traktor.render.ImageProcessData</primaryType>
-	<blobs/>
-</object>
