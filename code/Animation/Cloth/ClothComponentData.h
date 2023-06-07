@@ -78,6 +78,7 @@ private:
 	uint32_t m_resolutionX = 10;
 	uint32_t m_resolutionY = 10;
 	float m_scale = 1.0f;
+	float m_jointRadius = 0.1f;
 	AlignedVector< Anchor > m_anchors;
 	uint32_t m_solverIterations = 4;
 	float m_damping = 0.01f;

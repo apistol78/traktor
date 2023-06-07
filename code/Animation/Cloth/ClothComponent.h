@@ -76,6 +76,7 @@ public:
 		uint32_t resolutionX,
 		uint32_t resolutionY,
 		float scale,
+		float jointRadius,
 		float damping,
 		uint32_t solverIterations
 	);
@@ -113,6 +114,7 @@ private:
 	float m_updateTime;
 	float m_scale;
 	Scalar m_damping;
+	Scalar m_jointRadius;
 	uint32_t m_solverIterations;
 	uint32_t m_resolutionX;
 	uint32_t m_resolutionY;
