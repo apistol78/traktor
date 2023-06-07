@@ -1874,7 +1874,7 @@ Platform::Platform()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 9, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 10, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] =
 {
@@ -1891,7 +1891,6 @@ PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, nullptr)
 ,	m_technique(L"Default")
 ,	m_priority(0)
-,	m_registerCount(0)
 ,	m_precisionHint(PrecisionHint::Undefined)
 {
 }
@@ -1924,16 +1923,6 @@ void PixelOutput::setRenderState(const RenderState& renderState)
 const RenderState& PixelOutput::getRenderState() const
 {
 	return m_renderState;
-}
-
-void PixelOutput::setRegisterCount(uint32_t registerCount)
-{
-	m_registerCount = registerCount;
-}
-
-uint32_t PixelOutput::getRegisterCount() const
-{
-	return m_registerCount;
 }
 
 void PixelOutput::setPrecisionHint(PrecisionHint precisionHint)
@@ -1974,8 +1963,11 @@ void PixelOutput::serialize(ISerializer& s)
 
 	s >> MemberRenderState(m_renderState, s.getVersion());
 
-	if (s.getVersion() >= 3)
-		s >> Member< uint32_t >(L"registerCount", m_registerCount);
+	if (s.getVersion() >= 3 && s.getVersion() < 10)
+	{
+		uint32_t registerCount;
+		s >> Member< uint32_t >(L"registerCount", registerCount);
+	}
 
 	if (s.getVersion() >= 6)
 	{
