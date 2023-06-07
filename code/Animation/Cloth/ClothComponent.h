@@ -66,10 +66,6 @@ public:
 		Scalar length;
 	};
 
-	ClothComponent();
-
-	virtual ~ClothComponent();
-
 	bool create(
 		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& shader,
@@ -110,21 +106,22 @@ private:
 	AlignedVector< Node > m_nodes;
 	AlignedVector< Edge > m_edges;
 	Transform m_transform;
-	float m_time;
-	float m_updateTime;
-	float m_scale;
-	Scalar m_damping;
-	Scalar m_jointRadius;
-	uint32_t m_solverIterations;
-	uint32_t m_resolutionX;
-	uint32_t m_resolutionY;
-	uint32_t m_triangleCount;
+	float m_time = 4.0f;
+	float m_updateTime = 0.0f;
+	float m_scale = 1.0f;
+	Scalar m_damping = 0.1_simd;
+	Scalar m_jointRadius = 0.1_simd;
+	uint32_t m_solverIterations = 4;
+	uint32_t m_resolutionX = 10;
+	uint32_t m_resolutionY = 10;
+	uint32_t m_triangleCount = 0;
 	traktor::Aabb3 m_aabb;
-	bool m_updateRequired;
+	bool m_updateRequired = true;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	resource::Proxy< render::Shader > m_shader;
+	Vector4 m_lastPosition = Vector4::zero();
 	mutable Ref< Job > m_updateClothJob;
 
 	void synchronize() const;
