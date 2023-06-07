@@ -1038,29 +1038,6 @@ Dynamic surface normal
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{EDD44D30-DF1F-461B-A4F5-200F67D73D49}</id>
-			<comment/>
-			<position>
-				<first>1601</first>
-				<second>1684</second>
-			</position>
-			<fragmentGuid>{52A8E934-3180-45C9-A5A4-D4295A1F3D6B}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{C34F0994-7EB8-4400-AA03-09F70BF54859}</id>
-					<name>Input</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{73512119-562B-4AE5-B66D-AFC1FCE9B7B9}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1941,16 +1918,6 @@ Dynamic surface normal
 			<destination>
 				<node ref="/object/nodes/item[97]"/>
 				<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[99]"/>
-				<id>{73512119-562B-4AE5-B66D-AFC1FCE9B7B9}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[98]"/>
-				<id>{91FF0666-4296-9248-8DED-8DFE98C8F815}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">

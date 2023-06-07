@@ -204,29 +204,6 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{2F51AC63-558A-442F-A6DA-0B221C6FBB44}</id>
-			<comment/>
-			<position>
-				<first>297</first>
-				<second>217</second>
-			</position>
-			<fragmentGuid>{52A8E934-3180-45C9-A5A4-D4295A1F3D6B}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{C34F0994-7EB8-4400-AA03-09F70BF54859}</id>
-					<name>Input</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{73512119-562B-4AE5-B66D-AFC1FCE9B7B9}</id>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -307,16 +284,6 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{73512119-562B-4AE5-B66D-AFC1FCE9B7B9}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{91FF0666-4296-9248-8DED-8DFE98C8F815}</id>
 			</destination>
 		</item>
 	</edges>
