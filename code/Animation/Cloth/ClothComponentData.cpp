@@ -8,6 +8,8 @@
  */
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -19,7 +21,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 0, ClothComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothComponentData", 1, ClothComponentData, world::IEntityComponentData)
 
 Ref< ClothComponent > ClothComponentData::createComponent(
 	resource::IResourceManager* resourceManager,
@@ -37,6 +39,7 @@ Ref< ClothComponent > ClothComponentData::createComponent(
 		m_resolutionX,
 		m_resolutionY,
 		m_scale,
+		m_jointRadius,
 		m_damping,
 		m_solverIterations
 	))
@@ -70,10 +73,12 @@ void ClothComponentData::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
 	s >> Member< uint32_t >(L"resolutionY", m_resolutionY);
-	s >> Member< float >(L"scale", m_scale);
+	s >> Member< float >(L"scale", m_scale, AttributeRange(0.0f));
+	if (s.getVersion< ClothComponentData >() >= 1)
+		s >> Member< float >(L"jointRadius", m_jointRadius, AttributeRange(0.0f));
 	s >> MemberAlignedVector< Anchor, MemberComposite< Anchor > >(L"anchors", m_anchors);
-	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
-	s >> Member< float >(L"damping", m_damping);
+	s >> Member< uint32_t >(L"solverIterations", m_solverIterations, AttributeRange(0));
+	s >> Member< float >(L"damping", m_damping, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }
 
 void ClothComponentData::Anchor::serialize(ISerializer& s)

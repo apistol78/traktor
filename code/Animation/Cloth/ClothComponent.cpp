@@ -38,6 +38,7 @@ ClothComponent::ClothComponent()
 :	m_time(4.0f)
 ,	m_updateTime(0.0f)
 ,	m_scale(0.0f)
+,	m_jointRadius(0.1f)
 ,	m_damping(1.0f)
 ,	m_solverIterations(0)
 ,	m_resolutionX(0)
@@ -57,12 +58,13 @@ bool ClothComponent::create(
 	uint32_t resolutionX,
 	uint32_t resolutionY,
 	float scale,
+	float jointRadius,
 	float damping,
 	uint32_t solverIterations
 )
 {
-	const Vector4 positionBase(-scale / 2.0f, scale / 2.0f, 0.0f, 1.0f);
-	const Vector4 positionScale(scale / resolutionX, -scale / resolutionX, 0.0f, 0.0f);
+	const Vector4 positionBase(-scale / 2.0f, 0.0f, 0.0f, 1.0f);
+	const Vector4 positionScale(scale / resolutionX, 0.0f, -scale / resolutionX, 0.0f);
 
 	m_nodes.resize(resolutionX * resolutionY);
 	for (uint32_t y = 0; y < resolutionY; ++y)
@@ -71,7 +73,7 @@ bool ClothComponent::create(
 		{
 			m_nodes[x + y * resolutionX].jointName = 0;
 			m_nodes[x + y * resolutionX].position[0] =
-			m_nodes[x + y * resolutionX].position[1] = Vector4(float(x), float(y), 0.0f, 0.0f) * positionScale + positionBase;
+			m_nodes[x + y * resolutionX].position[1] = Vector4(float(x), 0.0f, float(y), 0.0f) * positionScale + positionBase;
 			m_nodes[x + y * resolutionX].texCoord = Vector2(float(x) / (resolutionX - 1), float(y) / (resolutionY - 1));
 			m_nodes[x + y * resolutionX].invMass = 1.0_simd;
 		}
@@ -171,6 +173,7 @@ bool ClothComponent::create(
 
 	m_scale = scale;
 	m_damping = Scalar(1.0f - damping);
+	m_jointRadius = Scalar(jointRadius);
 	m_shader = shader;
 	return true;
 }
@@ -342,7 +345,7 @@ void ClothComponent::update(const world::UpdateParams& update)
 					for (const auto& poseTransform : poseTransforms)
 					{
 						const Vector4 sphereCenter = poseTransform.translation();
-						const Scalar sphereRadius = 0.4_simd;
+						const Scalar sphereRadius = m_jointRadius;
 						const Vector4 d = (node.position[0] - sphereCenter).xyz0();
 						if (dot3(d, d) <= sphereRadius * sphereRadius)
 						{
