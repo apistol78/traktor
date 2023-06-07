@@ -782,10 +782,6 @@ public:
 
 	const RenderState& getRenderState() const;
 
-	void setRegisterCount(uint32_t registerCount);
-
-	uint32_t getRegisterCount() const;
-
 	void setPrecisionHint(PrecisionHint precisionHint);
 
 	PrecisionHint getPrecisionHint() const;
@@ -798,7 +794,6 @@ private:
 	std::wstring m_technique;
 	uint32_t m_priority;
 	RenderState m_renderState;
-	uint32_t m_registerCount;
 	PrecisionHint m_precisionHint;
 };
 
