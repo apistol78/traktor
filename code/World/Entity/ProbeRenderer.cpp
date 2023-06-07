@@ -134,8 +134,8 @@ ProbeRenderer::ProbeRenderer(
 	m_indexBuffer->unlock();
 
 	// Create screen renderer used for filtering each cube surface.
-    m_screenRenderer = new render::ScreenRenderer();
-    m_screenRenderer->create(m_renderSystem);
+	m_screenRenderer = new render::ScreenRenderer();
+	m_screenRenderer->create(m_renderSystem);
 
 	// Create depth/stencil target which is used as "primary" depth
 	// for world renderer since otherwise the world renderer
@@ -227,7 +227,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		world::WorldRenderSettings wrs;
 		wrs.viewNearZ = 0.01f;
 		wrs.viewFarZ = 10000.0f;
-		wrs.exposureMode = world::WorldRenderSettings::EmFixed;
+		wrs.exposureMode = world::WorldRenderSettings::Fixed;
 		wrs.exposure = 0.0f;
 
 		world::WorldCreateDesc wcd;

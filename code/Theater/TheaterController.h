@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
 class Act;
 
@@ -39,18 +37,16 @@ public:
 
 	bool play(const std::wstring& actName);
 
-	virtual void update(scene::Scene* scene, float time, float deltaTime) override final;
+	virtual void update(scene::Scene* scene, double time, double deltaTime) override final;
 
 private:
 	friend class TheaterControllerEditor;
 
 	RefArray< const Act > m_acts;
-	float m_totalDuration = 0.0f;
+	double m_totalDuration = 0.0f;
 	const Act* m_act = nullptr;
-	float m_timeStart = -1.0f;
-	float m_timeLast = -1.0f;
+	double m_timeStart = -1.0;
+	double m_timeLast = -1.0;
 };
 
-	}
 }
-

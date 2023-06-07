@@ -49,25 +49,15 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 public:
 	enum ExposureMode
 	{
-		EmFixed,
-		EmAdaptive
-	};
-
-	enum ShadowProjection
-	{
-		SpBox,
-		SpLiSP,
-		SpTrapezoid,
-		SpUniform
+		Fixed,
+		Adaptive
 	};
 
 	struct ShadowSettings
 	{
-		ShadowProjection projection = SpUniform;
 		float farZ = 100.0f;
 		int32_t resolution = 1024;
 		float bias = 0.01f;
-		float biasCoeff = 0.8f;
 		int32_t cascadingSlices = 4;
 		float cascadingLambda = 1.0f;
 		bool quantizeProjection = true;
@@ -79,7 +69,7 @@ public:
 
 	float viewNearZ = 1.0f;
 	float viewFarZ = 100.0f;
-	ExposureMode exposureMode = EmFixed;
+	ExposureMode exposureMode = Fixed;
 	float exposure = 1.0f;
 	ShadowSettings shadowSettings[(int)Quality::Last];
 	float fogDistance = 90.0f;

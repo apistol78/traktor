@@ -55,7 +55,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 		entity->setTransform(transform);
 	}
 
-	// Fixup orientation of "looking" entities.
+	// Fix-up orientation of "looking" entities.
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
 		world::Entity* entity = m_tracks[i]->getEntity();
@@ -67,7 +67,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 		if (lookAtEntity)
 		{
 			lookAtTransform = lookAtEntity->getTransform();
-			Matrix44 m = lookAt(
+			const Matrix44 m = lookAt(
 				transform.translation().xyz1(),
 				lookAtTransform.translation().xyz1()
 			);

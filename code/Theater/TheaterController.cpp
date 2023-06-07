@@ -12,10 +12,8 @@
 #include "Theater/Act.h"
 #include "Theater/TheaterController.h"
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, scene::ISceneController)
 
@@ -39,22 +37,22 @@ bool TheaterController::play(const std::wstring& actName)
 	if (*it != m_act)
 	{
 		m_act = *it;
-		m_timeLast = -1.0f;
+		m_timeLast = -1.0;
 	}
 
-	m_timeStart = -1.0f;
+	m_timeStart = -1.0;
 	return true;
 }
 
-void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
+void TheaterController::update(scene::Scene* scene, double time, double deltaTime)
 {
 	if (m_timeStart < 0.0f)
 		m_timeStart = time;
 
 	if (m_act != nullptr)
 	{
-		float timeAct = time - m_timeStart;
-		float duration = m_act->getEnd() - m_act->getStart();
+		double timeAct = time - m_timeStart;
+		double duration = m_act->getEnd() - m_act->getStart();
 		if (timeAct < -FUZZY_EPSILON || timeAct > duration + FUZZY_EPSILON)
 			m_act = nullptr;
 	}
@@ -72,5 +70,4 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	m_timeLast = time;
 }
 
-	}
 }
