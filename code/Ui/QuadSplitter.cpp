@@ -298,11 +298,11 @@ void QuadSplitter::eventMouseMove(MouseMoveEvent* event)
 		if (rangeX || rangeY)
 		{
 			if (rangeX && !rangeY)
-				setCursor(CrSizeWE);
+				setCursor(Cursor::SizeWE);
 			else if (!rangeX && rangeY)
-				setCursor(CrSizeNS);
+				setCursor(Cursor::SizeNS);
 			else
-				setCursor(CrSizing);
+				setCursor(Cursor::Sizing);
 
 			setCapture();
 		}
@@ -327,11 +327,11 @@ void QuadSplitter::eventButtonDown(MouseButtonDownEvent* event)
 	if (rangeX || rangeY)
 	{
 		if (rangeX && !rangeY)
-			setCursor(CrSizeWE);
+			setCursor(Cursor::SizeWE);
 		else if (!rangeX && rangeY)
-			setCursor(CrSizeNS);
+			setCursor(Cursor::SizeNS);
 		else
-			setCursor(CrSizing);
+			setCursor(Cursor::Sizing);
 
 		setCapture();
 		m_drag = (rangeX ? 1 : 0) | (rangeY ? 2 : 0);

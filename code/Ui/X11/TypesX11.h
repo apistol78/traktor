@@ -18,7 +18,7 @@ namespace traktor
 struct WidgetData
 {
 	WidgetData* parent = nullptr;
-	Window window = None;
+	Window window = 0;
 	bool topLevel = false;
 	bool mapped = false;
 	bool visible = false;

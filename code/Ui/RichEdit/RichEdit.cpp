@@ -1447,7 +1447,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 	if (position.x < m_lineMargin)
 		return;
 
-	setCursor(CrIBeam);
+	setCursor(Cursor::IBeam);
 
 	if (event->getButton() == MbtLeft)
 	{
@@ -1484,7 +1484,7 @@ void RichEdit::eventButtonDown(MouseButtonDownEvent* event)
 
 void RichEdit::eventButtonUp(MouseButtonUpEvent* event)
 {
-	setCursor(CrIBeam);
+	setCursor(Cursor::IBeam);
 
 	if (!hasCapture())
 		return;
@@ -1500,9 +1500,9 @@ void RichEdit::eventMouseMove(MouseMoveEvent* event)
 {
 	const Point position = event->getPosition();
 	if (position.x >= m_lineMargin)
-		setCursor(CrIBeam);
+		setCursor(Cursor::IBeam);
 	else
-		setCursor(CrArrow);
+		setCursor(Cursor::Arrow);
 
 	if (!hasCapture())
 		return;

@@ -9,6 +9,7 @@
 #pragma once
 
 #include <map>
+#include <X11/cursorfont.h> 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <cairo.h>
@@ -44,13 +45,6 @@ public:
 	explicit WidgetX11Impl(Context* context, EventSubject* owner)
 	:	m_context(context)
 	,	m_owner(owner)
-	,	m_xic(0)
-	,	m_surface(nullptr)
-	,	m_cairo(nullptr)
-	,	m_timer(-1)
-	,	m_lastMousePress(0)
-	,	m_lastMouseButton(0)
-	,	m_pendingExposure(false)
 	{
 	}
 
@@ -93,7 +87,7 @@ public:
 
 			m_context = nullptr;
 
-			m_data.window = None;
+			m_data.window = 0;
 			m_data.parent = nullptr;
 
 			delete this;
@@ -313,6 +307,51 @@ public:
 
 	virtual void setCursor(Cursor cursor) override
 	{
+		int shape = -1;
+		switch (cursor)
+		{
+		default:
+		case Cursor::None:
+		case Cursor::Arrow:
+			break;
+		case Cursor::ArrowRight:
+			break;
+		case Cursor::ArrowWait:
+			break;
+		case Cursor::Cross:
+			break;
+		case Cursor::Hand:
+			break;
+		case Cursor::IBeam:
+			break;
+		case Cursor::SizeNESW:
+			break;
+		case Cursor::SizeNS:
+			shape = XC_sb_v_double_arrow;
+			break;
+		case Cursor::SizeNWSE:
+			break;
+		case Cursor::SizeWE:
+			shape = XC_sb_h_double_arrow;
+			break;
+		case Cursor::Sizing:
+			break;
+		case Cursor::Wait:
+			break;
+		}
+
+		if (shape == m_currentShape)
+			return;
+
+		if (shape >= 0)
+		{
+			XID xc = XCreateFontCursor(m_context->getDisplay(), shape);
+			XDefineCursor(m_context->getDisplay(), m_data.window, xc);
+		}
+		else
+			XUndefineCursor(m_context->getDisplay(), m_data.window);
+
+		m_currentShape = shape;
 	}
 
 	virtual Point getMousePosition(bool relative) const override
@@ -471,27 +510,28 @@ protected:
 	};
 
 	Ref< Context > m_context;
-	EventSubject* m_owner;
+	EventSubject* m_owner = nullptr;
 
 	WidgetData m_data;
-	XIC m_xic;
+	XIC m_xic = 0;
 
 	Rect m_rect;
 	Font m_font;
+	int32_t m_currentShape = -1;
 
-	cairo_surface_t* m_surface;
-	cairo_t* m_cairo;
+	cairo_surface_t* m_surface = nullptr;
+	cairo_t* m_cairo = nullptr;
 
 	std::wstring m_text;
-	int32_t m_timer;
+	int32_t m_timer = -1;
 
-	int32_t m_lastMousePress;
-	int32_t m_lastMouseButton;
-	bool m_pendingExposure;
+	int32_t m_lastMousePress = 0;
+	int32_t m_lastMouseButton = 0;
+	bool m_pendingExposure = false;
 
 	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible, bool topLevel)
 	{
-		if (window == None)
+		if (window == 0)
 			return false;
 
 		m_data.window = window;

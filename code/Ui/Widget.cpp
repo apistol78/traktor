@@ -242,7 +242,7 @@ void Widget::setCursor(Cursor cursor)
 void Widget::resetCursor()
 {
 	T_ASSERT(m_widget);
-	m_widget->setCursor(CrArrow);
+	m_widget->setCursor(Cursor::Arrow);
 }
 
 void Widget::update(const Rect* rc, bool immediate)

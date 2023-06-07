@@ -310,7 +310,7 @@ void Splitter::eventMouseMove(MouseMoveEvent* event)
 			pos <= position + ui::dpi96(c_splitterSize) / 2
 		)
 		{
-			setCursor(m_vertical ? CrSizeWE : CrSizeNS);
+			setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
 			setCapture();
 		}
 		else
@@ -332,7 +332,7 @@ void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 		pos <= position + ui::dpi96(c_splitterSize) / 2
 	)
 	{
-		setCursor(m_vertical ? CrSizeWE : CrSizeNS);
+		setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
 		setCapture();
 		m_drag = true;
 	}

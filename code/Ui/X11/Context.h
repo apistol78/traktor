@@ -16,10 +16,8 @@
 #include "Core/Object.h"
 #include "Ui/X11/TypesX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-    namespace ui
-    {
 
 struct WidgetData;
 
@@ -28,13 +26,13 @@ class Context : public Object
 	T_RTTI_CLASS;
 
 public:
-    explicit Context(Display* display, int screen, XIM xim);
+	explicit Context(Display* display, int screen, XIM xim);
 
 	//! Bind callback for specified event with given window target.
-    void bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn);
+	void bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn);
 
 	//! Unbind all callbacks for specified window.
-    void unbind(WidgetData* widget);
+	void unbind(WidgetData* widget);
 
 	//! Push modal widget.
 	void pushModal(WidgetData* widget);
@@ -52,7 +50,7 @@ public:
 	void setFocus(WidgetData* widget);
 
 	//! Dispatch event to callbacks.
-    void dispatch(XEvent& xe);
+	void dispatch(XEvent& xe);
 
 	//@{
 
@@ -78,13 +76,12 @@ private:
 	Display* m_display;
 	int m_screen;
 	XIM m_xim;
-    std::map< Window, Binding > m_bindings;
+	std::map< Window, Binding > m_bindings;
 	std::vector< WidgetData* > m_modal;
 	WidgetData* m_grabbed;
 	WidgetData* m_focused;
 
-    void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
+	void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
 };
 
-    }
 }
