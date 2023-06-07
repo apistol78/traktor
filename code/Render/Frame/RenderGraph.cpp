@@ -328,7 +328,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	// Since we don't want to load/store render passes, esp when using MSAA,
 	// we track current output target and automatically merge render passes.
 	//
-	handle_t currentOutputTargetSetId = ~0U;
+	RenderPass::Output currentOutput;
 	for (int32_t i = sizeof_array(m_order) - 1; i >= 0; --i)
 	{
 		const auto& order = m_order[i];
@@ -344,9 +344,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				if (output.resourceId != 0)
 				{
 					// Continue rendering to same target if possible; else start another pass.
-					if (currentOutputTargetSetId != output.resourceId)
+					if (currentOutput != output)
 					{
-						if (currentOutputTargetSetId != ~0U)
+						if (currentOutput.resourceId != ~0U)
 						{
 							auto te = renderContext->alloc< EndPassRenderBlock >();
 							renderContext->enqueue(te);
@@ -375,17 +375,17 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 							tb->store = output.store;
 							renderContext->enqueue(tb);
 
-							currentOutputTargetSetId = output.resourceId;
+							currentOutput = output;
 						}
 						else
-							currentOutputTargetSetId = ~0U;
+							currentOutput = RenderPass::Output();
 					}
 				}
 				else // Output to framebuffer; implicit as target 0.
 				{
-					if (currentOutputTargetSetId != 0)
+					if (currentOutput.resourceId != 0)
 					{
-						if (currentOutputTargetSetId != ~0U)
+						if (currentOutput.resourceId != ~0U)
 						{
 							auto te = renderContext->alloc< EndPassRenderBlock >();
 							renderContext->enqueue(te);
@@ -399,16 +399,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 						renderContext->enqueue(tb);
 
-						currentOutputTargetSetId = 0;
+						currentOutput = output;
 					}	
 				}
 			}
-			else if (currentOutputTargetSetId != ~0U)
+			else if (currentOutput.resourceId != ~0U)
 			{
 				auto te = renderContext->alloc< EndPassRenderBlock >();
 				renderContext->enqueue(te);
 				renderContext->mergeCompute();
-				currentOutputTargetSetId = ~0U;
+				currentOutput = RenderPass::Output();
 			}
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
@@ -469,7 +469,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 	}
 
-	if (currentOutputTargetSetId != ~0U)
+	if (currentOutput.resourceId != ~0U)
 	{
 		auto te = renderContext->alloc< EndPassRenderBlock >();
 		renderContext->enqueue(te);
