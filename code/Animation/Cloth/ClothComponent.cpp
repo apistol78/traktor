@@ -34,24 +34,6 @@ struct ClothVertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothComponent", ClothComponent, world::IEntityComponent)
 
-ClothComponent::ClothComponent()
-:	m_time(4.0f)
-,	m_updateTime(0.0f)
-,	m_scale(0.0f)
-,	m_jointRadius(0.1f)
-,	m_damping(1.0f)
-,	m_solverIterations(0)
-,	m_resolutionX(0)
-,	m_resolutionY(0)
-,	m_triangleCount(0)
-,	m_updateRequired(true)
-{
-}
-
-ClothComponent::~ClothComponent()
-{
-}
-
 bool ClothComponent::create(
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& shader,
@@ -291,6 +273,11 @@ Aabb3 ClothComponent::getBoundingBox() const
 
 void ClothComponent::update(const world::UpdateParams& update)
 {
+	const Transform transformInv = m_transform.inverse();
+	const Vector4 gravity = transformInv * Vector4(0.0f, -1.0f, 0.0f, 0.0f);
+	const Vector4 movement = m_lastPosition.w() > 0.0f ? transformInv * (m_transform.translation() - m_lastPosition).xyz0() : Vector4::zero();
+	m_lastPosition = m_transform.translation().xyz1();
+
 	m_updateClothJob = JobManager::getInstance().add([=](){
 #if !defined(__IOS__)
 		const float c_updateDeltaTime = 1.0f / 30.0f;
@@ -301,9 +288,6 @@ void ClothComponent::update(const world::UpdateParams& update)
 		const Scalar c_stiffness = 0.001_simd;
 
 		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
-
-		const Transform transformInv = m_transform.inverse();
-		const Vector4 gravity = transformInv * Vector4(0.0f, -1.0f, 0.0f, 0.0f);
 
 		for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 		{
@@ -317,7 +301,7 @@ void ClothComponent::update(const world::UpdateParams& update)
 				const Vector4 current = node.position[0];
 				const Vector4 velocity = current - node.position[1];
 
-				node.position[0] += velocity * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
+				node.position[0] += -movement * Scalar(c_updateDeltaTime) + velocity * m_damping + force * node.invMass * Scalar(c_updateDeltaTime * c_updateDeltaTime);
 				node.position[1] = current;
 
 				m_aabb.contain(node.position[0]);
