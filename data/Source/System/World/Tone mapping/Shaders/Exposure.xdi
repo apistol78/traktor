@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{4F257A94-BC66-BA48-8547-1A25C1E18957}</id>
 			<comment/>
 			<position>
-				<first>982</first>
-				<second>32</second>
+				<first>1062</first>
+				<second>39</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -39,8 +39,8 @@
 			<id>{747ECD24-A611-CD4D-845B-F9C0DA4C7DB1}</id>
 			<comment/>
 			<position>
-				<first>193</first>
-				<second>112</second>
+				<first>143</first>
+				<second>103</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -48,8 +48,8 @@
 			<id>{15D97393-3E2F-2C4D-B7FD-1058659D2674}</id>
 			<comment/>
 			<position>
-				<first>-66</first>
-				<second>108</second>
+				<first>-139</first>
+				<second>98</second>
 			</position>
 			<name>Current luminance</name>
 			<connectable>true</connectable>
@@ -68,7 +68,7 @@ Middle gray
 				<first>392</first>
 				<second>53</second>
 			</position>
-			<value>0.35</value>
+			<value>0.4</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{B6AA73FC-EA74-FF40-BD7B-71298F0FBA85}</id>
@@ -174,4 +174,5 @@ Middle gray
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

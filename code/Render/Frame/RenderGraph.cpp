@@ -16,6 +16,7 @@
 #include "Render/Context/RenderBlock.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
+#include "Render/Frame/RenderGraphBufferPool.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
 
 namespace traktor::render
@@ -294,11 +295,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer == nullptr)
 		{
-			sbuffer.buffer = m_renderSystem->createBuffer(
-				render::BuStructured,
+			sbuffer.buffer = m_bufferPool->acquire(
 				sbuffer.elementCount,
-				sbuffer.elementSize,
-				false
+				sbuffer.elementSize
 			);
 		}
 	}
@@ -530,6 +529,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		}
 	}
 
+	for (auto& it : m_buffers)
+	{
+		auto& sbuffer = it.second;
+		if (sbuffer.buffer != nullptr)
+			m_bufferPool->release(sbuffer.buffer);
+	}
+
 	// Cleanup pool data structure.
 	m_targetSetPool->cleanup();
 
@@ -562,7 +568,7 @@ bool RenderGraph::acquire(int32_t width, int32_t height, TargetResource& inoutTa
 		height = inoutTarget.sharedDepthStencilTargetSet->getHeight();
 	}
 
-	if (inoutTarget.doubleBuffered)
+	if (inoutTarget.persistentHandle != 0 && inoutTarget.doubleBuffered)
 	{
 		inoutTarget.readTargetSet = m_targetSetPool->acquire(
 			inoutTarget.name,

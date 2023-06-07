@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 37, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 38, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -71,19 +71,31 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	{
 		if (s.getVersion() >= 33)
 		{
-			const MemberEnum< ExposureMode >::Key c_ExposureMode_Keys[] =
+			if (s.getVersion() >= 38)
 			{
-				{ L"EmFixed", EmFixed },
-				{ L"EmAdaptive", EmAdaptive },
-				{ 0 }
-			};
-
-			s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
+				const MemberEnum< ExposureMode >::Key c_ExposureMode_Keys[] =
+				{
+					{ L"Fixed", Fixed },
+					{ L"Adaptive", Adaptive },
+					{ 0 }
+				};
+				s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
+			}
+			else
+			{
+				const MemberEnum< ExposureMode >::Key c_ExposureMode_Keys[] =
+				{
+					{ L"EmFixed", Fixed },
+					{ L"EmAdaptive", Adaptive },
+					{ 0 }
+				};
+				s >> MemberEnum< ExposureMode >(L"exposureMode", exposureMode, c_ExposureMode_Keys);
+			}
 			s >> Member< float >(L"exposure", exposure, AttributeUnit(UnitType::EV));
 		}
 		else
 		{
-			exposureMode = EmAdaptive;
+			exposureMode = Adaptive;
 			s >> Member< float >(L"exposureBias", exposure, AttributeRange(0.0f));
 		}
 	}
@@ -192,22 +204,34 @@ void WorldRenderSettings::serialize(ISerializer& s)
 
 void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 {
-	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
+	if (s.getVersion() >= 18 && s.getVersion() < 38)
 	{
-		{ L"SpBox", SpBox },
-		{ L"SpLiSP", SpLiSP },
-		{ L"SpTrapezoid", SpTrapezoid },
-		{ L"SpUniform", SpUniform },
-		{ 0 }
-	};
-
-	if (s.getVersion() >= 18)
+		enum ShadowProjection
+		{
+			Unused
+		};
+		const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
+		{
+			{ L"SpBox", Unused },
+			{ L"SpLiSP", Unused },
+			{ L"SpTrapezoid", Unused },
+			{ L"SpUniform", Unused },
+			{ 0 }
+		};
+		ShadowProjection projection;
 		s >> MemberEnum< ShadowProjection >(L"projection", projection, c_ShadowProjection_Keys);
+	}
 
 	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< int32_t >(L"resolution", resolution, AttributeRange(1));
 	s >> Member< float >(L"bias", bias, AttributeRange(0.0f, 8.0f));
-	s >> Member< float >(L"biasCoeff", biasCoeff, AttributeRange(0.0f, 8.0f));
+
+	if (s.getVersion() < 38)
+	{
+		float biasCoeff;
+		s >> Member< float >(L"biasCoeff", biasCoeff);
+	}
+
 	s >> Member< int32_t >(L"cascadingSlices", cascadingSlices, AttributeRange(1, MaxSliceCount));
 	s >> Member< float >(L"cascadingLambda", cascadingLambda, AttributeRange(0.0f, 10.0f));
 	s >> Member< bool >(L"quantizeProjection", quantizeProjection);

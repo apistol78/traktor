@@ -43,9 +43,9 @@ resource::Id< render::ImageGraph > getToneMapId(WorldRenderSettings::ExposureMod
 	switch (exposureMode)
 	{
 	default:
-	case WorldRenderSettings::EmFixed:
+	case WorldRenderSettings::Fixed:
 		return c_toneMapFixed;
-	case WorldRenderSettings::EmAdaptive:
+	case WorldRenderSettings::Adaptive:
 		return c_toneMapAdaptive;
 	}
 }

@@ -432,7 +432,7 @@ void TheaterControllerEditor::captureEntities()
 	TheaterControllerData* controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	ActData* act = controllerData->getActs().at(selected);
 
-	const float time = m_context->getTime();
+	const double time = m_context->getTime();
 
 	RefArray< TrackData >& tracks = act->getTracks();
 	for (auto selectedEntity : selectedEntities)
@@ -612,8 +612,8 @@ void TheaterControllerEditor::gotoPreviousKey()
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	Ref< ActData > act = controllerData->getActs().at(selected);
 
-	float time = m_context->getTime();
-	float previousTime = 0.0f;
+	double time = m_context->getTime();
+	double previousTime = 0.0;
 
 	for (auto track : act->getTracks())
 	{
@@ -626,7 +626,7 @@ void TheaterControllerEditor::gotoPreviousKey()
 		}
 	}
 
-	const int32_t cursorTick = (int32_t)(previousTime * 1000.0f);
+	const int32_t cursorTick = (int32_t)(previousTime * 1000.0);
 
 	m_trackSequencer->setCursor(cursorTick);
 	m_trackSequencer->update();
@@ -649,8 +649,8 @@ void TheaterControllerEditor::gotoNextKey()
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 	Ref< ActData > act = controllerData->getActs().at(selected);
 
-	const float time = m_context->getTime();
-	float nextTime = act->getDuration();
+	const double time = m_context->getTime();
+	double nextTime = act->getDuration();
 
 	for (auto track : act->getTracks())
 	{
@@ -663,7 +663,7 @@ void TheaterControllerEditor::gotoNextKey()
 		}
 	}
 
-	const int32_t cursorTick = int32_t(nextTime * 1000.0f);
+	const int32_t cursorTick = int32_t(nextTime * 1000.0);
 
 	m_trackSequencer->setCursor(cursorTick);
 	m_trackSequencer->update();
@@ -799,8 +799,8 @@ void TheaterControllerEditor::eventSequencerKeyMove(ui::KeyMoveEvent* event)
 
 void TheaterControllerEditor::eventContextPostFrame(scene::PostFrameEvent* event)
 {
-	const float cursorTime = m_context->getTime();
-	const int32_t cursorTick = (int32_t)(cursorTime * 1000.0f);
+	const double cursorTime = m_context->getTime();
+	const int32_t cursorTick = (int32_t)(cursorTime * 1000.0);
 	if (m_trackSequencer->getCursor() != cursorTick)
 	{
 		m_trackSequencer->setCursor(cursorTick);

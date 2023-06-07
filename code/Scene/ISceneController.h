@@ -38,7 +38,7 @@ class T_DLLCLASS ISceneController : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void update(Scene* scene, float time, float deltaTime) = 0;
+	virtual void update(Scene* scene, double time, double deltaTime) = 0;
 };
 
 }

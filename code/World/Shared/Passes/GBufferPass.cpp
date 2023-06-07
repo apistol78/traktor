@@ -81,7 +81,7 @@ render::handle_t GBufferPass::setup(
 
 			auto sharedParams = wc.getRenderContext()->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
-			sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());

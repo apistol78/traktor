@@ -113,7 +113,7 @@ void WorldRendererSimple::setup(
 			// Default visual parameters.
 			auto globalProgramParams = renderContext->alloc< render::ProgramParameters >();
 			globalProgramParams->beginParameters(renderContext);
-			globalProgramParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
+			globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			globalProgramParams->setTextureParameter(s_handleDepthMap, m_depthTexture);
 			globalProgramParams->endParameters(renderContext);
