@@ -280,54 +280,54 @@ public:
 		HCURSOR hCursor = NULL;
 		switch (cursor)
 		{
-		case CrArrow:
+		case Cursor::Arrow:
 			hCursor = LoadCursor(NULL, IDC_ARROW);
 			break;
 
-		case CrArrowRight:
+		case Cursor::ArrowRight:
 			break;
 
-		case CrArrowWait:
+		case Cursor::ArrowWait:
 			hCursor = LoadCursor(NULL, IDC_WAIT);
 			break;
 
-		case CrCross:
+		case Cursor::Cross:
 			hCursor = LoadCursor(NULL, IDC_CROSS);
 			break;
 
-		case CrHand:
+		case Cursor::Hand:
 			hCursor = LoadCursor(NULL, IDC_HAND);
 			break;
 
-		case CrIBeam:
+		case Cursor::IBeam:
 			hCursor = LoadCursor(NULL, IDC_IBEAM);
 			break;
 
-		case CrSizeNESW:
+		case Cursor::SizeNESW:
 			hCursor = LoadCursor(NULL, IDC_SIZENESW);
 			break;
 
-		case CrSizeNS:
+		case Cursor::SizeNS:
 			hCursor = LoadCursor(NULL, IDC_SIZENS);
 			break;
 
-		case CrSizeNWSE:
+		case Cursor::SizeNWSE:
 			hCursor = LoadCursor(NULL, IDC_SIZENWSE);
 			break;
 
-		case CrSizeWE:
+		case Cursor::SizeWE:
 			hCursor = LoadCursor(NULL, IDC_SIZEWE);
 			break;
 
-		case CrSizing:
+		case Cursor::Sizing:
 			hCursor = LoadCursor(NULL, IDC_SIZEALL);
 			break;
 
-		case CrWait:
+		case Cursor::Wait:
 			hCursor = LoadCursor(NULL, IDC_WAIT);
 			break;
 
-		case CrNone:
+		case Cursor::None:
 		default:
 			break;
 		};
@@ -570,7 +570,7 @@ protected:
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
 
-		setCursor(CrArrow);
+		setCursor(Cursor::Arrow);
 		return true;
 	}
 
