@@ -13,10 +13,8 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! Script outline parser interface.
  * \ingroup Script
@@ -81,6 +79,4 @@ public:
 	virtual Ref< Node > parse(const std::wstring& text) const = 0;
 };
 
-	}
 }
-

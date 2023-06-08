@@ -22,12 +22,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
-/*! \brief
+/*!
  * \ingroup script
  */
 class T_DLLCLASS ScriptDebuggerSessions : public IScriptDebuggerSessions
@@ -62,7 +60,4 @@ private:
 	std::list< IListener* > m_listeners;
 };
 
-	}
 }
-
-

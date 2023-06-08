@@ -14,12 +14,10 @@
 #include "Core/Misc/StringSplit.h"
 #include "Script/Editor/Preprocessor.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 enum PreprocessorKeyword
 {
@@ -454,5 +452,4 @@ int32_t Preprocessor::evaluateExpression(const std::wstring& expression) const
 	return result;
 }
 
-	}
 }

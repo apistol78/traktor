@@ -19,12 +19,10 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/InputDialog.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 class ClassValueEnumerator : public RefCountImpl< ui::InputDialog::IValueEnumerator >
 {
@@ -55,7 +53,7 @@ private:
 	const RefArray< db::Instance >& m_instances;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptClassWizardTool", 0, ScriptClassWizardTool, editor::IWizardTool)
 
@@ -165,5 +163,4 @@ bool ScriptClassWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, 
 	return true;
 }
 
-	}
 }

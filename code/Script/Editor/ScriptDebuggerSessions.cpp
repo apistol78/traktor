@@ -11,10 +11,8 @@
 #include "Script/IScriptProfiler.h"
 #include "Script/Editor/ScriptDebuggerSessions.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerSessions", ScriptDebuggerSessions, IScriptDebuggerSessions)
 
@@ -143,5 +141,4 @@ void ScriptDebuggerSessions::removeListener(IListener* listener)
 
 }
 
-	}
 }

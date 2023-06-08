@@ -10,10 +10,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class Lexer : public Object
 {
@@ -55,6 +53,4 @@ private:
 	wchar_t peekChar();
 };
 
-	}
 }
-

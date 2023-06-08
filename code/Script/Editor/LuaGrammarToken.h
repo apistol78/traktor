@@ -12,10 +12,8 @@
 #include "Core/Ref.h"
 #include "Script/Editor/IScriptOutline.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 struct LuaGrammarToken
 {
@@ -48,6 +46,4 @@ struct LuaGrammarToken
 	}
 };
 
-	}
 }
-

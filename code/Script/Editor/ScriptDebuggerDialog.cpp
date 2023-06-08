@@ -18,10 +18,8 @@
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerDialog", ScriptDebuggerDialog, ui::Dialog)
 
@@ -105,5 +103,4 @@ void ScriptDebuggerDialog::notifyRemoveBreakpoint(const Guid& scriptId, int32_t 
 {
 }
 
-	}
 }

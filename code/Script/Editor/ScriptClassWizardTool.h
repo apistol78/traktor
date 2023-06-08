@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 class T_DLLCLASS ScriptClassWizardTool : public editor::IWizardTool
 {
@@ -35,6 +33,4 @@ public:
 	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) override final;
 };
 
-	}
 }
-
