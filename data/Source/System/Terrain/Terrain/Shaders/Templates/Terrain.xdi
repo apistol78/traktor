@@ -1327,15 +1327,6 @@ $Output = gl_DrawID;
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{84FA2AF2-5CEB-6146-B9BD-1E2DCE6F66C1}</id>
-			<comment/>
-			<position>
-				<first>2432</first>
-				<second>406</second>
-			</position>
-			<value>0</value>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -2466,16 +2457,6 @@ $Output = gl_DrawID;
 			<destination>
 				<node ref="/object/nodes/item[114]"/>
 				<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[118]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[114]"/>
-				<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
 			</destination>
 		</item>
 	</edges>
