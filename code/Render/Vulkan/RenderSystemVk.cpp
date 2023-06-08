@@ -327,6 +327,22 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	f16.pNext = &di;
 #endif
 
+	VkPhysicalDeviceVulkan11Features v11 = {};
+	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
+	v11.storageBuffer16BitAccess = VK_FALSE;
+	v11.uniformAndStorageBuffer16BitAccess = VK_FALSE;
+	v11.storagePushConstant16 = VK_FALSE;
+	v11.storageInputOutput16 = VK_FALSE;
+	v11.multiview = VK_FALSE;
+	v11.multiviewGeometryShader = VK_FALSE;
+	v11.multiviewTessellationShader = VK_FALSE;
+	v11.variablePointersStorageBuffer = VK_FALSE;
+	v11.variablePointers = VK_FALSE;
+	v11.protectedMemory = VK_FALSE;
+	v11.samplerYcbcrConversion = VK_FALSE;
+	v11.shaderDrawParameters = VK_TRUE;
+	di.pNext = &v11;
+
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
 		log::error << L"Failed to create Vulkan; unable to create logical device (" << getHumanResult(result) << L")." << Endl;
