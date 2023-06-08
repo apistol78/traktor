@@ -10,17 +10,15 @@
 
 #include "Editor/IEditorTool.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class CloseEvent;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class ScriptDebuggerDialog;
 
@@ -43,6 +41,4 @@ private:
 	void eventCloseDialog(ui::CloseEvent* event);
 };
 
-	}
 }
-

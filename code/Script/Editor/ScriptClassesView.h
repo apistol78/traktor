@@ -10,17 +10,15 @@
 
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class TreeView;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 /*! Runtime classes view.
  * \ingroup Script
@@ -38,6 +36,4 @@ private:
 	Ref< ui::TreeView > m_treeClasses;
 };
 
-	}
 }
-

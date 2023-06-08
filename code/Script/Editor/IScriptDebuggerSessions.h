@@ -23,8 +23,10 @@ namespace traktor
 
 class Guid;
 
-	namespace script
-	{
+}
+
+namespace traktor::script
+{
 
 class IScriptDebugger;
 class IScriptProfiler;
@@ -106,6 +108,4 @@ public:
 	virtual void removeListener(IListener* listener) = 0;
 };
 
-	}
 }
-

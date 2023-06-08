@@ -15,10 +15,8 @@
 #include "Script/IScriptContext.h"
 #include "Script/Editor/Script.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", 2, Script, ISerializable)
 
@@ -93,5 +91,4 @@ void Script::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

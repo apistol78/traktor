@@ -12,12 +12,10 @@
 #include <set>
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class Preprocessor : public Object
@@ -37,6 +35,4 @@ private:
 	int32_t evaluateExpression(const std::wstring& expression) const;
 };
 
-	}
 }
-

@@ -8,10 +8,8 @@
  */
 #include "Script/Editor/IScriptOutline.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.IScriptOutline", IScriptOutline, Object)
 
@@ -83,5 +81,4 @@ IScriptOutline::Node* IScriptOutline::FunctionNode::getBody() const
 	return m_body;
 }
 
-	}
 }

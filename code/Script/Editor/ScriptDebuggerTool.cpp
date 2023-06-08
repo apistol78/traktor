@@ -12,11 +12,8 @@
 #include "I18N/Text.h"
 #include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
-
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerTool", 0, ScriptDebuggerTool, IEditorTool)
 
@@ -62,5 +59,4 @@ void ScriptDebuggerTool::eventCloseDialog(ui::CloseEvent* event)
 	safeDestroy(m_debuggerDialog);
 }
 
-	}
 }

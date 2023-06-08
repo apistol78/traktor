@@ -11,24 +11,22 @@
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Tab;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptDebuggerSessions;
 
@@ -39,7 +37,7 @@ class ScriptDebuggerDialog
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerDialog(editor::IEditor* editor);
+	explicit ScriptDebuggerDialog(editor::IEditor* editor);
 
 	virtual void destroy() override final;
 
@@ -64,6 +62,4 @@ private:
 	/*! \} */
 };
 
-	}
 }
-

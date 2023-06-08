@@ -9,12 +9,10 @@
 #include "Core/Misc/String.h"
 #include "Script/Editor/Lexer.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 enum CharacterType
 {
@@ -46,7 +44,7 @@ int32_t characterType(wchar_t ch)
 		return CtUnknown;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Lexer", Lexer, Object)
 
@@ -245,5 +243,4 @@ wchar_t Lexer::peekChar()
 	return m_peek;
 }
 
-	}
 }

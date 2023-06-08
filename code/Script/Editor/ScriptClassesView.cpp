@@ -21,12 +21,10 @@
 #include "Ui/TreeView/TreeView.h"
 #include "Ui/TreeView/TreeViewItem.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 class CollectClassRegistrar : public IRuntimeClassRegistrar
 {
@@ -173,7 +171,7 @@ private:
 	std::map< std::wstring, Ref< ui::TreeViewItem > > m_namespaceItems;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptClassesView", ScriptClassesView, ui::Container)
 
@@ -212,5 +210,4 @@ void ScriptClassesView::destroy()
 	ui::Container::destroy();
 }
 
-	}
 }
