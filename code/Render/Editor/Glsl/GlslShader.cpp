@@ -157,7 +157,6 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	ss << L"#extension GL_ARB_separate_shader_objects : enable" << Endl;
 	ss << L"#extension GL_ARB_shading_language_420pack : enable" << Endl;
 	ss << L"#extension GL_EXT_samplerless_texture_functions : enable" << Endl;
-
 	ss << L"#extension GL_EXT_nonuniform_qualifier : enable" << Endl;
 
 	const bool supportControlFlowAttributes = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ControlFlowAttributes", true) : true);

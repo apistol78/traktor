@@ -70,7 +70,6 @@ bool Image::createSimple(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
@@ -90,6 +89,7 @@ bool Image::createSimple(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
@@ -135,7 +135,6 @@ bool Image::createCube(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
@@ -155,6 +154,7 @@ bool Image::createCube(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_mipCount = mipLevels;
 	m_layerCount = 6;
@@ -201,7 +201,6 @@ bool Image::createVolume(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
@@ -221,6 +220,7 @@ bool Image::createVolume(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
@@ -267,7 +267,6 @@ bool Image::createTarget(
 			log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 			return false;
 		}
-
 		setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 	}
 	else
@@ -292,6 +291,7 @@ bool Image::createTarget(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_mipCount = 1;
 	m_layerCount = 1;
@@ -341,7 +341,6 @@ bool Image::createDepthTarget(
 		log::error << L"Failed to create image; unable to allocate image memory." << Endl;
 		return false;
 	}
-
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_image, VK_OBJECT_TYPE_IMAGE);
 
 	// Create image view.
@@ -361,6 +360,7 @@ bool Image::createDepthTarget(
 		log::error << L"Failed to create image view; unable to create image view." << Endl;
 		return false;
 	}
+	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
 	m_mipCount = 1;
 	m_layerCount = 1;
