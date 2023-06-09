@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <cstring>
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Frame/RenderGraphBufferPool.h"
@@ -43,6 +44,13 @@ Ref< Buffer > RenderGraphBufferPool::acquire(uint32_t elementCount, uint32_t ele
 	);
 	if (!buffer)
 		return nullptr;
+
+	void* ptr = buffer->lock();
+	if (!ptr)
+		return nullptr;
+
+	std::memset(ptr, 0, elementCount * elementSize);
+	buffer->unlock();
 
 	return buffer;
 }
