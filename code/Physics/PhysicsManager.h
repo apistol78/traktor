@@ -101,21 +101,20 @@ struct PhysicsStatistics
  */
 struct QueryFilter
 {
-	uint32_t includeGroup;
-	uint32_t ignoreGroup;
-	uint32_t ignoreClusterId;
+	uint32_t includeGroup = ~0U;
+	uint32_t ignoreGroup = 0;
+	uint32_t ignoreClusterId = 0;
+
+	QueryFilter() = default;
 
 	explicit QueryFilter(uint32_t includeGroup_)
 	:	includeGroup(includeGroup_)
-	,	ignoreGroup(0)
-	,	ignoreClusterId(0)
 	{
 	}
 
 	explicit QueryFilter(uint32_t includeGroup_, uint32_t ignoreGroup_)
 	:	includeGroup(includeGroup_)
 	,	ignoreGroup(ignoreGroup_)
-	,	ignoreClusterId(0)
 	{
 	}
 
