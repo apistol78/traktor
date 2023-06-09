@@ -71,6 +71,12 @@ public:
 	 */
 	Thread* getCurrentThread();
 
+	/*! Get main thread.
+	 * 
+	 * \return Thread object.
+	 */
+	Thread* getMainThread();
+
 protected:
 	virtual void destroy();
 

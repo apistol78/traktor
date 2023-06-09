@@ -75,6 +75,11 @@ Thread* ThreadManager::getCurrentThread()
 	return current;
 }
 
+Thread* ThreadManager::getMainThread()
+{
+	return m_threadBase;
+}
+
 void ThreadManager::destroy()
 {
 	delete this;
