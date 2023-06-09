@@ -103,17 +103,19 @@ class QueryFilterWrapper : public Object
 	T_RTTI_CLASS;
 
 public:
-	QueryFilterWrapper(uint32_t includeGroup)
+	QueryFilterWrapper() = default;
+
+	explicit QueryFilterWrapper(uint32_t includeGroup)
 	:	m_queryFilter(includeGroup)
 	{
 	}
 
-	QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup)
+	explicit QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup)
 	:	m_queryFilter(includeGroup, ignoreGroup)
 	{
 	}
 
-	QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup, uint32_t ignoreClusterId)
+	explicit QueryFilterWrapper(uint32_t includeGroup, uint32_t ignoreGroup, uint32_t ignoreClusterId)
 	:	m_queryFilter(includeGroup, ignoreGroup, ignoreClusterId)
 	{
 	}
@@ -265,6 +267,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsClassFactory", 0, Physic
 void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classQueryFilter = new AutoRuntimeClass< QueryFilterWrapper >();
+	classQueryFilter->addConstructor();
 	classQueryFilter->addConstructor< uint32_t >();
 	classQueryFilter->addConstructor< uint32_t, uint32_t >();
 	classQueryFilter->addConstructor< uint32_t, uint32_t, uint32_t >();
