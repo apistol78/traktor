@@ -339,9 +339,9 @@ bool Application::create(
 	if (m_renderServer)
 	{
 		const float refreshRate = m_renderServer->getRefreshRate();
-		if (refreshRate > 0)
+		if (refreshRate > 0 && refreshRate < 60)
 		{
-			const int32_t k = (int32_t)(60.0f / refreshRate + 0.5f);
+			const float k = (int32_t)(60.0f / refreshRate + 0.5f);
 			m_updateControl.m_simulationFrequency = refreshRate * k;
 			log::info << L"Display refresh rate " << refreshRate << L" Hz; using " << m_updateControl.m_simulationFrequency << L" Hz simulation rate." << Endl;
 		}
