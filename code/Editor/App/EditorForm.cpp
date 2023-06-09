@@ -1942,11 +1942,20 @@ void EditorForm::buildWaitUntilFinished()
 	if (!m_threadBuild)
 		return;
 
-	// Show a dialog if processing seems to take more than N second(s).
-	ui::BackgroundWorkerDialog dialog;
-	dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-	dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage, m_buildStepMessageLock));
-	dialog.destroy();
+	if (ThreadManager::getInstance().getCurrentThread() == ThreadManager::getInstance().getMainThread())
+	{
+		// Show a dialog if processing seems to take more than N second(s).
+		ui::BackgroundWorkerDialog dialog;
+		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
+		dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage, m_buildStepMessageLock));
+		dialog.destroy();
+	}
+	else
+	{
+		// Since we cannot show a dialog from other than main thread we just wait for the
+		// build thread to finish.
+		m_threadBuild->wait();
+	}
 
 	// As build thread is no longer in use we can safely release it's resources.
 	ThreadManager::getInstance().destroy(m_threadBuild);
