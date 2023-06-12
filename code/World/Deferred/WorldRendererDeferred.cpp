@@ -130,11 +130,9 @@ bool WorldRendererDeferred::create(
 void WorldRendererDeferred::destroy()
 {
 	WorldRendererShared::destroy();
-
-	//safeDestroy(m_shadowMapCascadeTargetSet);
-	//safeDestroy(m_shadowMapAtlasTargetSet);
 	safeDestroy(m_lightSBuffer);
-
+	m_lightShader.clear();
+	m_fogShader.clear();
 	m_irradianceGrid.clear();
 }
 
@@ -584,7 +582,18 @@ void WorldRendererDeferred::setupVisualPass(
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
-	// Add visual[0] render pass.
+	// Find first, non-local, probe.
+	const ProbeComponent* probe = nullptr;
+	for (auto p : m_gatheredView.probes)
+	{
+		if (!p->getLocal() && p->getTexture() != nullptr)
+		{
+			probe = p;
+			break;
+		}
+	}
+
+	// Add visual render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(ambientOcclusionTargetSetId);
@@ -665,6 +674,19 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));
 			else
 				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
+
+			if (probe)
+			{
+				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
+				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+			}
+			else
+			{
+				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
+				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
+				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
+			}
 
 			sharedParams->endParameters(renderContext);
 
