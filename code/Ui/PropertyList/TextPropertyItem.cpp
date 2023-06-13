@@ -120,7 +120,7 @@ void TextPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	}
 }
 
-void TextPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void TextPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	if (!m_multiLine)
 		canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);

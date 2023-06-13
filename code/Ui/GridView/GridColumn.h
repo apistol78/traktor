@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Ui/Associative.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Grid column.
  * \ingroup UI
@@ -34,17 +33,17 @@ class T_DLLCLASS GridColumn
 	T_RTTI_CLASS;
 
 public:
-	GridColumn(const std::wstring& title, uint32_t width);
+	explicit GridColumn(const std::wstring& title, Unit width);
 
-	GridColumn(const std::wstring& title, uint32_t width, bool editable);
+	explicit GridColumn(const std::wstring& title, Unit width, bool editable);
 
 	void setTitle(const std::wstring& title);
 
 	const std::wstring& getTitle() const;
 
-	void setWidth(uint32_t width);
+	void setWidth(Unit width);
 
-	uint32_t getWidth() const;
+	Unit getWidth() const;
 
 	void setEditable(bool editable);
 
@@ -52,10 +51,8 @@ public:
 
 private:
 	std::wstring m_title;
-	uint32_t m_width;
+	Unit m_width;
 	bool m_editable;
 };
 
-	}
 }
-

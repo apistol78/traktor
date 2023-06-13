@@ -44,8 +44,8 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 	const bool linearGamma = textureAsset->m_output.m_linearGamma;
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
-		ui::dpi96(64),
-		ui::dpi96(64),
+		64,
+		64,
 		visibleAlpha ? editor::IThumbnailGenerator::Alpha::WithAlpha : editor::IThumbnailGenerator::Alpha::NoAlpha,
 		linearGamma ? editor::IThumbnailGenerator::Gamma::Linear : editor::IThumbnailGenerator::Gamma::SRGB
 	);

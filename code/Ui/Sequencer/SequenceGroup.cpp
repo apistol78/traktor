@@ -139,7 +139,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	Size ext = canvas.getFontMetric().getExtent(getName());
 	canvas.drawText(
 		Point(
-			rc.left + ui::dpi96(32 + getDepth() * 16),
+			rc.left + sequencer->pixel(Unit(32 + getDepth() * 16)),
 			rc.top + (rc.getHeight() - ext.cy) / 2
 		),
 		getName()
@@ -150,7 +150,7 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 	{
 		canvas.drawBitmap(
 			Point(
-				rc.left + ui::dpi96(4 + getDepth() * 16),
+				rc.left + sequencer->pixel(Unit(4 + getDepth() * 16)),
 				rc.top + (rc.getHeight() - imageExpand->getSize().cy) / 2
 			),
 			Point(0, 0),

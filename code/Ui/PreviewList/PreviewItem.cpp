@@ -65,7 +65,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getWidget()->getStyleSheet();
 
-	int32_t frameDim = rect.getWidth() - dpi96(120 - 64);
+	int32_t frameDim = rect.getWidth() - getWidget()->pixel(120_ut - 64_ut);
 	Size frameSize(frameDim, frameDim);
 
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);

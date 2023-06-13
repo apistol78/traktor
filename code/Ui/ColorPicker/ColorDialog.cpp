@@ -64,15 +64,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorDialog", ColorDialog, ConfigDialog)
 
 bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style, const Color4f& initialColor)
 {
-	const int32_t margin = ui::dpi96(4);
-
 	if (!ConfigDialog::create(
 		parent,
 		text,
-		dpi96(500),
-		dpi96(400),
+		500_ut,
+		400_ut,
 		style,
-		new TableLayout(L"*,*,*,*", L"*", margin, margin)
+		new TableLayout(L"*,*,*,*", L"*", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -109,7 +107,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 	}
 
 	Ref< Container > container = new Container();
-	container->create(this, WsNone, new TableLayout(L"*,100", L"*,*,*,*,*", 0, margin));
+	container->create(this, WsNone, new TableLayout(L"*,100", L"*,*,*,*,*", 0_ut, 4_ut));
 
 	Ref< Static > labelR = new Static();
 	labelR->create(container, L"R:");

@@ -10,6 +10,7 @@
 
 #include "Ui/Command.h"
 #include "Ui/Point.h"
+#include "Ui/Unit.h"
 #include "Ui/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
@@ -33,7 +34,7 @@ class T_DLLCLASS ToolBarDropDown : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	explicit ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip);
+	explicit ToolBarDropDown(const Command& command, Unit width, const std::wstring& toolTip);
 
 	int32_t add(const std::wstring& item, Object* data = nullptr);
 
@@ -78,7 +79,7 @@ private:
 	};
 
 	Command m_command;
-	int32_t m_width;
+	Unit m_width;
 	std::wstring m_toolTip;
 	std::vector< Item > m_items;
 	int32_t m_selected;

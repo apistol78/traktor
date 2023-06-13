@@ -27,14 +27,20 @@ bool InputDialog::create(
 	uint32_t outFieldsCount
 )
 {
-	if (!ConfigDialog::create(parent, title, dpi96(1280), dpi96(720), ConfigDialog::WsCenterParent| ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
+	if (!ConfigDialog::create(
+		parent,
+		title,
+		1280_ut, 720_ut,
+		ConfigDialog::WsCenterParent| ConfigDialog::WsDefaultFixed,
+		new TableLayout(L"100%", L"*,*", 4_ut, 4_ut)
+	))
 		return false;
 
 	Ref< Static > labelMessage = new Static();
 	labelMessage->create(this, message);
 
 	Ref< Container > container = new Container();
-	container->create(this, WsNone, new TableLayout(L"*,*", L"*", 0, 4));
+	container->create(this, WsNone, new TableLayout(L"*,*", L"*", 0_ut, 4_ut));
 
 	m_outFields = outFields;
 	for (uint32_t i = 0; i < outFieldsCount; ++i)
@@ -53,7 +59,7 @@ bool InputDialog::create(
 			else
 			{
 				Ref< Container > fieldContainer = new Container();
-				fieldContainer->create(container, WsNone, new TableLayout(L"100%,*", L"*", 0, 4));
+				fieldContainer->create(container, WsNone, new TableLayout(L"100%,*", L"*", 0_ut, 4_ut));
 
 				Ref< Edit > edit = new Edit();
 				edit->create(fieldContainer, m_outFields[i].value, WsTabStop, m_outFields[i].validator);
@@ -78,7 +84,6 @@ bool InputDialog::create(
 	}
 
 	fit(Container::Both);
-
 	return true;
 }
 

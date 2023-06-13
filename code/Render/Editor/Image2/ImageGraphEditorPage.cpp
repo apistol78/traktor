@@ -70,7 +70,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
@@ -100,7 +100,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ImageGraphEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ImageGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"IMAGEGRAPH_CREATE"));
@@ -220,8 +220,8 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		 		// Place node in view.
 		 		std::pair< int, int > position = node->getPosition();
-		 		position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
-		 		position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
+		 		position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
+		 		position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
 		 		node->setPosition(position);
 
 		 		// Add node to graph.
@@ -400,7 +400,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	Ref< ui::Node > editorNode;
 
 	const std::pair< int, int >& p = node->getPosition();
-	const ui::Point position(ui::dpi96(p.first), ui::dpi96(p.second));
+	const ui::Point position(p.first, p.second);
 
 	if (auto input = dynamic_type_cast< ImgInput* >(node))
 	{
@@ -596,10 +596,7 @@ void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	const ui::Node* editorNode = event->getNode();
 	Node* node = editorNode->getData< Node >(L"IMGNODE");
 
-	// Get dpi agnostic position.
-	ui::Point position = editorNode->getPosition();
-	position.x = ui::invdpi96(position.x);
-	position.y = ui::invdpi96(position.y);
+	const ui::Point position = editorNode->getPosition();
 
 	// Save position in node.
 	node->setPosition(std::make_pair(

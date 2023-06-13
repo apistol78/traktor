@@ -67,7 +67,7 @@ bool SongEditor::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 	container->addEventHandler< ui::TimerEvent >(this, &SongEditor::eventTimer);
 	container->startTimer(10);
 
@@ -81,9 +81,9 @@ bool SongEditor::create(ui::Container* parent)
 
 	m_patternGrid = new ui::GridView();
 	m_patternGrid->create(container, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_patternGrid->addColumn(new ui::GridColumn(L"#", ui::dpi96(100)));
+	m_patternGrid->addColumn(new ui::GridColumn(L"#", 100_ut));
 	for (uint32_t i = 0; i < 16; ++i)
-		m_patternGrid->addColumn(new ui::GridColumn(L"Channel " + toString(i), ui::dpi96(100)));
+		m_patternGrid->addColumn(new ui::GridColumn(L"Channel " + toString(i), 100_ut));
 
 	// Get audio system for preview.
 	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");

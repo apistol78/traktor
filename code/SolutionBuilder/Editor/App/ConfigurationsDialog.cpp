@@ -29,10 +29,10 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	if (!ui::ConfigDialog::create(
 		parent,
 		L"Edit configurations",
-		ui::dpi96(400),
-		ui::dpi96(300),
+		400_ut,
+		300_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -42,7 +42,7 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 	m_listConfigurations->create(this, ui::ListBox::WsSingle);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Button > buttonNew = new ui::Button();
 	buttonNew->create(container, L"New...");

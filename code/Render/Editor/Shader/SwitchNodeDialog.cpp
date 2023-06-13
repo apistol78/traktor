@@ -28,16 +28,16 @@ bool SwitchNodeDialog::create(ui::Widget* parent, Switch* switchNode)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"SHADERGRAPH_SWITCH_EDIT_TITLE"),
-		400,
-		300,
+		400_ut,
+		300_ut,
 		ui::Dialog::WsDefaultResizable | ui::Dialog::WsCenterParent,
-		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
 	))
 		return false;
 
 	m_caseList = new ui::GridView();
 	m_caseList->create(this, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_caseList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SWITCH_CASES"), 300));
+	m_caseList->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_SWITCH_CASES"), 300_ut));
 
 	for (const auto c : switchNode->getCases())
 	{

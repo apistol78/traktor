@@ -10,6 +10,7 @@
 #include "Ui/Canvas.h"
 #include "Ui/Sequencer/Marker.h"
 #include "Ui/Sequencer/Sequence.h"
+#include "Ui/Sequencer/SequencerControl.h"
 
 namespace traktor
 {
@@ -18,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 25;
+const Unit c_sequenceHeight = 25_ut;
 
 		}
 
@@ -46,9 +47,9 @@ void Marker::move(int offset)
 		m_time += offset;
 }
 
-void Marker::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
+void Marker::getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	const int32_t x = sequence->clientFromTime(m_time);
 
 	outRect.left = x - 3;
@@ -59,7 +60,7 @@ void Marker::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRe
 
 void Marker::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	const int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
 
 	Rect rc(

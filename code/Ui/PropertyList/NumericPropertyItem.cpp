@@ -179,7 +179,7 @@ void NumericPropertyItem::mouseMove(MouseMoveEvent* event)
 	}
 }
 
-void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	std::wstringstream ss;
 
@@ -226,7 +226,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	auto upDown = m_upDown[index];
 	auto upDownSize = upDown->getSize();
 
-	const int32_t x = rc.right - upDownSize.cx - dpi96(2);
+	const int32_t x = rc.right - upDownSize.cx - parent->pixel(2_ut);
 	const int32_t y = rc.top + (rc.getHeight() - upDownSize.cy) / 2;
 
 	canvas.drawBitmap(

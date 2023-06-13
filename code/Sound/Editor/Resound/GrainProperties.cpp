@@ -39,7 +39,7 @@ bool GrainProperties::create(ui::Widget* parent)
 	m_propertyList->create(parent, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &GrainProperties::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &GrainProperties::eventPropertyChange);
-	m_propertyList->setSeparator(150);
+	m_propertyList->setSeparator(150_ut);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	return true;

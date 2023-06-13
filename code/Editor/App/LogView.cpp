@@ -66,7 +66,7 @@ LogView::LogView(IEditor* editor)
 
 bool LogView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_toolToggleInfo = new ui::ToolBarButton(

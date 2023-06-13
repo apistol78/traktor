@@ -27,7 +27,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 25;
+const Unit c_sequenceHeight = 25_ut;
 const int c_endWidth = 200;
 
 		}
@@ -36,7 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SequencerControl", SequencerControl, Widget)
 
 SequencerControl::SequencerControl()
 :	m_allowDragTracks(false)
-,	m_separator(ui::dpi96(200))
+,	m_separator(0)
 ,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)
@@ -70,6 +70,7 @@ bool SequencerControl::create(Widget* parent, int style)
 	addEventHandler< PaintEvent >(this, &SequencerControl::eventPaint);
 
 	m_allowDragTracks = bool((style & WsDragTrack) == WsDragTrack);
+	m_separator = pixel(200_ut);
 	return true;
 }
 
@@ -237,7 +238,7 @@ void SequencerControl::eventSize(SizeEvent* event)
 
 void SequencerControl::updateScrollBars()
 {
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t sequenceHeight = pixel(c_sequenceHeight);
 
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
@@ -268,7 +269,7 @@ void SequencerControl::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t sequenceHeight = pixel(c_sequenceHeight);
 	Point position = event->getPosition();
 	Rect rc = getInnerRect();
 
@@ -417,7 +418,7 @@ void SequencerControl::eventMouseMove(MouseMoveEvent* event)
 
 	event->consume();
 
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t sequenceHeight = pixel(c_sequenceHeight);
 	Point position = event->getPosition();
 
 	// Check if begin moving.
@@ -502,7 +503,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
 	const StyleSheet* ss = getStyleSheet();
-	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t sequenceHeight = pixel(c_sequenceHeight);
 
 	// Get all items, including descendants.
 	RefArray< SequenceItem > sequenceItems = getSequenceItems(GfDescendants | GfExpandedOnly);
@@ -569,7 +570,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	// Draw time information.
 	const Rect rcTime(
 		rc.left,
-		rc.bottom - dpi96(23),
+		rc.bottom - pixel(23_ut),
 		rc.left + m_separator,
 		rc.bottom
 	);
@@ -583,7 +584,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.setForeground(ss->getColor(this, L"info-color"));
 	canvas.drawText(
 		Point(
-			rcTime.left + dpi96(8),
+			rcTime.left + pixel(8_ut),
 			rcTime.top + (rcTime.getHeight() - ext.cy) / 2
 		),
 		ws

@@ -333,7 +333,7 @@ Edge* GraphControl::getEdgeAt(const Point& p) const
 {
 	for (auto edge : m_edges)
 	{
-		if (edge->hit(p))
+		if (edge->hit(this, p))
 			return edge;
 	}
 	return nullptr;
@@ -1082,7 +1082,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 
 	if (m_scale > 0.20f)
 	{
-		const int32_t gridSpacing = m_scale * dpi96(32);
+		const int32_t gridSpacing = m_scale * pixel(32_ut);
 
 		const int32_t ox = int32_t(m_offset.cx * m_scale) % gridSpacing;
 		const int32_t oy = int32_t(m_offset.cy * m_scale) % gridSpacing;
@@ -1104,7 +1104,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 		fn.setSize(40);
 		canvas.setFont(fn);
 		canvas.setForeground(ss->getColor(this, L"color-label"));
-		canvas.drawText(rc.inflate(-dpi96(8), -dpi96(8)), text, ui::AnRight, ui::AnBottom);
+		canvas.drawText(rc.inflate(-pixel(8_ut), -pixel(8_ut)), text, ui::AnRight, ui::AnBottom);
 		canvas.setFont(m_paintSettings.getFont());
 	}
 

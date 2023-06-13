@@ -272,13 +272,11 @@ void SearchToolDialog::destroy()
 
 bool SearchToolDialog::create(ui::Widget* parent)
 {
-	const int32_t f = ui::dpi96(4);
-
 	if (!ui::Dialog::create(
 		parent,
 		i18n::Text(L"EDITOR_SEARCH_TOOL_TITLE"),
-		ui::dpi96(1100),
-		ui::dpi96(600),
+		1100_ut,
+		600_ut,
 		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
@@ -287,10 +285,10 @@ bool SearchToolDialog::create(ui::Widget* parent)
 	setIcon(new ui::StyleBitmap(L"Editor.Icon"));
 
 	Ref< ui::Splitter > splitterV = new ui::Splitter();
-	splitterV->create(this, true, ui::dpi96(220), false);
+	splitterV->create(this, true, 220_ut, false);
 
 	Ref< ui::Container > containerSearch = new ui::Container();
-	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", f, f));
+	containerSearch->create(splitterV, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4_ut, 4_ut));
 
 	m_editSearch = new ui::Edit();
 	m_editSearch->create(containerSearch, L"", ui::WsWantAllInput);
@@ -316,10 +314,10 @@ bool SearchToolDialog::create(ui::Widget* parent)
 
 	m_gridResults = new ui::GridView();
 	m_gridResults->create(splitterV, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), ui::dpi96(320)));
-	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), ui::dpi96(200)));
-	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), ui::dpi96(200)));
-	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), ui::dpi96(200)));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_INSTANCE"), 320_ut));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_TYPE"), 200_ut));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_MEMBER"), 200_ut));
+	m_gridResults->addColumn(new ui::GridColumn(i18n::Text(L"EDITOR_SEARCH_TOOL_VALUE"), 200_ut));
 	m_gridResults->addEventHandler< ui::MouseDoubleClickEvent >(this, &SearchToolDialog::eventGridResultDoubleClick);
 	m_gridResults->addEventHandler< ui::MouseButtonUpEvent >(this, &SearchToolDialog::eventGridResultButtonUp);
 

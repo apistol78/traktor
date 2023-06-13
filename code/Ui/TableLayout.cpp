@@ -142,9 +142,9 @@ void calculate(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TableLayout", TableLayout, Layout)
 
-TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, int margin, int pad)
-:	m_margin(margin, margin)
-,	m_pad(pad, pad)
+TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, Unit margin, Unit pad)
+:	m_margin(margin)
+,	m_pad(pad)
 {
 	parseDefinition(cdef, m_cdef);
 	parseDefinition(rdef, m_rdef);
@@ -152,7 +152,9 @@ TableLayout::TableLayout(const std::wstring& cdef, const std::wstring& rdef, int
 
 bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
-	Rect inner = widget->getInnerRect();
+	const Rect inner = widget->getInnerRect();
+	const Size margin = { widget->pixel(m_margin), widget->pixel(m_margin) };
+	const Size pad = { widget->pixel(m_pad), widget->pixel(m_pad) };
 
 	result = Size(0, 0);
 
@@ -171,7 +173,7 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 	dimensionVector_t h;
 	calculate(bounds, m_cdef, m_rdef, children, w, h);
 
-	Point tl = inner.getTopLeft() + m_margin;
+	Point tl = inner.getTopLeft() + margin;
 	for (int32_t i = 0; i < (int32_t)children.size(); ++i)
 	{
 		int32_t c = i % std::max(nc, 1);
@@ -188,23 +190,25 @@ bool TableLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 		if (c < nc - 1)
 		{
-			tl.x += w[c] + m_pad.cx;
+			tl.x += w[c] + pad.cx;
 		}
 		else
 		{
-			tl.x = inner.left + m_margin.cx;
-			tl.y += h[r] + m_pad.cy;
+			tl.x = inner.left + margin.cx;
+			tl.y += h[r] + pad.cy;
 		}
 	}
 
-	result.cx += m_margin.cx;
-	result.cy += m_margin.cy;
+	result.cx += margin.cx;
+	result.cy += margin.cy;
 	return true;
 }
 
 void TableLayout::update(Widget* widget)
 {
-	Rect inner = widget->getInnerRect();
+	const Rect inner = widget->getInnerRect();
+	const Size margin = { widget->pixel(m_margin), widget->pixel(m_margin) };
+	const Size pad = { widget->pixel(m_pad), widget->pixel(m_pad) };
 
 	childrenVector_t children;
 	for (Widget* child = widget->getFirstChild(); child != nullptr; child = child->getNextSibling())
@@ -218,7 +222,7 @@ void TableLayout::update(Widget* widget)
 	int32_t nc = (int32_t)m_cdef.size();
 	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
-	Size avail = inner.getSize() - m_margin - m_margin - Size(m_pad.cx * (nc - 1), m_pad.cy * (nr - 1));
+	Size avail = inner.getSize() - margin - margin - Size(pad.cx * (nc - 1), pad.cy * (nr - 1));
 
 	dimensionVector_t w;
 	dimensionVector_t h;
@@ -226,7 +230,7 @@ void TableLayout::update(Widget* widget)
 
 	StaticVector< WidgetRect, 32 > rects(children.size());
 
-	Point tl = inner.getTopLeft() + m_margin;
+	Point tl = inner.getTopLeft() + margin;
 	for (int32_t i = 0; i < (int32_t)children.size(); ++i)
 	{
 		int32_t c = i % std::max(nc, 1);
@@ -275,12 +279,12 @@ void TableLayout::update(Widget* widget)
 
 		if (c < nc - 1)
 		{
-			tl.x += w[c] + m_pad.cx;
+			tl.x += w[c] + pad.cx;
 		}
 		else
 		{
-			tl.x = inner.left + m_margin.cx;
-			tl.y += h[r] + m_pad.cy;
+			tl.x = inner.left + margin.cx;
+			tl.y += h[r] + pad.cy;
 		}
 	}
 

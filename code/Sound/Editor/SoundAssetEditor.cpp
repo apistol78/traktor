@@ -59,7 +59,7 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_asset = mandatory_non_null_type_cast< SoundAsset* >(object);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
@@ -70,7 +70,7 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(container, ui::WsDoubleBuffer | ui::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &SoundAssetEditor::eventPropertyCommand);
-	m_propertyList->setSeparator(200);
+	m_propertyList->setSeparator(200_ut);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_asset);
@@ -123,8 +123,8 @@ void SoundAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& e
 ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(500),
-		ui::dpi96(400)
+		500,
+		400
 	);
 }
 

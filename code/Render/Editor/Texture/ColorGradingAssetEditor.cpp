@@ -44,10 +44,10 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,100%,*", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,100%,*", 0_ut, 0_ut));
 
 	Ref< ui::Container > containerPreview = new ui::Container();
-	containerPreview->create(container, ui::WsNone, new ui::TableLayout(L"100%,100%", L"100%", 0, 0));
+	containerPreview->create(container, ui::WsNone, new ui::TableLayout(L"100%,100%", L"100%", 0_ut, 0_ut));
 
 	m_imageOriginal = new ui::Image();
 	m_imageOriginal->create(containerPreview, new ui::Bitmap(m_referenceImage), ui::Image::WsScaleKeepAspect);
@@ -56,7 +56,7 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 	m_imageResult->create(containerPreview, new ui::Bitmap(m_referenceImage), ui::Image::WsScaleKeepAspect);
 
 	Ref< ui::Container > containerEnvelopes = new ui::Container();
-	containerEnvelopes->create(container, ui::WsNone, new ui::TableLayout(L"100%,100%,100%", L"100%", 0, 0));
+	containerEnvelopes->create(container, ui::WsNone, new ui::TableLayout(L"100%,100%,100%", L"100%", 0_ut, 0_ut));
 
 	m_envelopeRed = new ui::EnvelopeControl();
 	m_envelopeRed->create(containerEnvelopes, new ui::DefaultEnvelopeEvaluator< HermiteEvaluator >());
@@ -78,7 +78,7 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 		m_envelopeBlue->insertKey(new ui::EnvelopeKey(kv.first, kv.second, (kv.first <= 0.0f || kv.first >= 1.0f), false));
 
 	Ref< ui::Container > containerSliders = new ui::Container();
-	containerSliders->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 0));
+	containerSliders->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 0_ut));
 
 	Ref< ui::Static > staticBrightness = new ui::Static();
 	staticBrightness->create(containerSliders, L"Brightness");
@@ -140,8 +140,8 @@ void ColorGradingAssetEditor::handleDatabaseEvent(db::Database* database, const 
 ui::Size ColorGradingAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(700),
-		ui::dpi96(700)
+		700,
+		700
 	);
 }
 

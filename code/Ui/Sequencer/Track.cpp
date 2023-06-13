@@ -55,7 +55,7 @@ void Track::move(int offset)
 	}
 }
 
-void Track::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
+void Track::getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
 	outRect.left = sequence->clientFromTime(m_start);
 	outRect.top = rcClient.top;

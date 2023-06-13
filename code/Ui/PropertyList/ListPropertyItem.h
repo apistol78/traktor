@@ -63,7 +63,7 @@ protected:
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects) override;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
+	virtual void paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc) override;
 
 private:
 	std::vector< std::wstring > m_items;

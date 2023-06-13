@@ -54,7 +54,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
-	m_tabHeight = getFont().getPixelSize() + dpi96(9);
+	m_tabHeight = pixel(Unit(getFont().getPixelSize96() + 9));
 	return true;
 }
 
@@ -324,7 +324,7 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 		bool closed = false;
 		if (m_closeButton && selectedPageState)
 		{
-			if (pnt.x >= selectedPageState->right - dpi96(16) && pnt.x < selectedPageState->right)
+			if (pnt.x >= selectedPageState->right - pixel(16_ut) && pnt.x < selectedPageState->right)
 			{
 				TabCloseEvent closeEvent(this, selectedPageState->page);
 				raiseEvent(&closeEvent);
@@ -425,10 +425,10 @@ void Tab::eventPaint(PaintEvent* event)
 			if (m_closeButton)
 			{
 				const Size closeSize = m_bitmapClose->getSize();
-				tabWidthNoMargin += closeSize.cx + dpi96(4);
+				tabWidthNoMargin += closeSize.cx + pixel(4_ut);
 			}
 
-			const int32_t tabWidth = tabWidthNoMargin + dpi96(4 * 2);
+			const int32_t tabWidth = tabWidthNoMargin + pixel(8_ut);
 
 			// Save right separator position in vector.
 			ps.right = left + tabWidth;
@@ -469,7 +469,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size bitmapSize = m_bitmapImages->getSize();
 					canvas.drawBitmap(
-						Point(left + dpi96(4), rcTab.getCenter().y - bitmapSize.cy / 2 + dpi96(1)),
+						Point(left + pixel(4_ut), rcTab.getCenter().y - bitmapSize.cy / 2 + pixel(1_ut)),
 						Point(page->getImageIndex() * bitmapSize.cy, 0),
 						Size(bitmapSize.cy, bitmapSize.cy),
 						m_bitmapImages,
@@ -483,7 +483,7 @@ void Tab::eventPaint(PaintEvent* event)
 				{
 					const Size closeSize = m_bitmapClose->getSize();
 					canvas.drawBitmap(
-						Point(rcTab.right - closeSize.cx - dpi96(4), rcTab.getCenter().y - closeSize.cy / 2 + dpi96(1)),
+						Point(rcTab.right - closeSize.cx - pixel(4_ut), rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
 						Point(0, 0),
 						closeSize,
 						m_bitmapClose,
@@ -493,9 +493,9 @@ void Tab::eventPaint(PaintEvent* event)
 
 				// Draw text.
 				const Rect rcTabText(
-					left + textOffset + dpi96(4),
+					left + textOffset + pixel(4_ut),
 					rcTab.top,
-					left + textOffset + dpi96(4) + sizText.cx,
+					left + textOffset + pixel(4_ut) + sizText.cx,
 					rcTab.bottom
 				);
 				if (isEnable())

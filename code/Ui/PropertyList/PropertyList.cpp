@@ -31,7 +31,7 @@ enum Modes
 	MdMoveSeparator
 };
 
-const int c_columnsHeight = 25;
+const Unit c_columnsHeight = 25_ut;
 const int c_wheelRotationFactor = 2;
 
 std::wstring buildPath(const PropertyItem* item)
@@ -113,7 +113,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PropertyList", PropertyList, Widget)
 
 PropertyList::PropertyList()
 :	m_guidResolver(0)
-,	m_separator(dpi96(80))
+,	m_separator(0)
 ,	m_mode(MdNone)
 ,	m_columnHeader(true)
 {
@@ -141,7 +141,8 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	addEventHandler< SizeEvent >(this, &PropertyList::eventSize);
 	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
-	m_propertyItemHeight = getFont().getPixelSize() + dpi96(10);
+	m_separator = 80_ut;
+	m_propertyItemHeight = pixel(Unit(getFont().getPixelSize96() + 10));
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
 
@@ -261,12 +262,12 @@ int PropertyList::getPropertyItems(RefArray< PropertyItem >& propertyItems, int 
 	return int(propertyItems.size());
 }
 
-void PropertyList::setSeparator(int separator)
+void PropertyList::setSeparator(Unit separator)
 {
 	m_separator = separator;
 }
 
-int PropertyList::getSeparator() const
+Unit PropertyList::getSeparator() const
 {
 	return m_separator;
 }
@@ -287,7 +288,7 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 	int32_t y = position.y;
 	if (m_columnHeader)
 	{
-		y -= dpi96(c_columnsHeight);
+		y -= pixel(c_columnsHeight);
 		if (y < 0)
 			return 0;
 	}
@@ -401,7 +402,7 @@ void PropertyList::updateScrollBar()
 
 	int32_t height = rc.getHeight();
 	if (m_columnHeader)
-		height -= dpi96(c_columnsHeight);
+		height -= pixel(c_columnsHeight);
 
 	const int32_t itemCount = (int32_t)propertyItems.size();
 	const int32_t pageCount = height / m_propertyItemHeight;
@@ -422,7 +423,7 @@ void PropertyList::placeItems()
 
 	const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
 	const int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
-	const int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
+	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
@@ -436,7 +437,7 @@ void PropertyList::placeItems()
 	);
 	for (auto item : propertyItems)
 	{
-		const Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
+		const Rect rcValue(rcItem.left + pixel(m_separator) + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		item->resizeInPlaceControls(rcValue, childRects);
 		rcItem = rcItem.offset(0, m_propertyItemHeight);
 	}
@@ -460,7 +461,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	setFocus();
 
 	m_mousePropertyItem = 0;
-	if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
+	if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
 	{
 		m_mode = MdMoveSeparator;
 		setCursor(Cursor::SizeWE);
@@ -474,7 +475,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		int32_t y = event->getPosition().y;
 		if (m_columnHeader)
 		{
-			if ((y -= dpi96(c_columnsHeight)) < 0)
+			if ((y -= pixel(c_columnsHeight)) < 0)
 				return;
 		}
 
@@ -486,12 +487,12 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
 			{
-				if (p.x >= m_separator + dpi96(2))
+				if (p.x >= pixel(m_separator + 2_ut))
 				{
 					m_mousePropertyItem = *i;
 					m_mousePropertyItem->mouseButtonDown(event);
 				}
-				else if (p.x >= (*i)->getDepth() * dpi96(8) && p.x <= (*i)->getDepth() * dpi96(8) + dpi96(12))
+				else if (p.x >= (*i)->getDepth() * pixel(8_ut) && p.x <= (*i)->getDepth() * pixel(8_ut) + pixel(12_ut))
 				{
 					if ((*i)->isExpanded())
 						(*i)->collapse();
@@ -573,7 +574,7 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 
 	if (m_mode == MdMoveSeparator)
 	{
-		m_separator = p.x;
+		m_separator = unit(p.x);
 
 		setCursor(Cursor::SizeWE);
 
@@ -584,7 +585,7 @@ void PropertyList::eventMouseMove(MouseMoveEvent* event)
 	}
 	else
 	{
-		if (p.x >= m_separator - dpi96(2) && p.x <= m_separator + dpi96(2))
+		if (p.x >= pixel(m_separator - 2_ut) && p.x <= pixel(m_separator + 2_ut))
 		{
 			setCursor(Cursor::SizeWE);
 			event->consume();
@@ -611,7 +612,7 @@ void PropertyList::eventSize(SizeEvent* event)
 	const Rect rc = getInnerRect();
 
 	const int32_t scrollWidth = m_scrollBar->getPreferredSize(rc.getSize()).cx;
-	const int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
+	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
 	m_scrollBar->setRect(Rect(
 		rc.right - scrollWidth,
@@ -634,7 +635,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 	const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
 	const int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
-	const int32_t top = m_columnHeader ? dpi96(c_columnsHeight) : 0;
+	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
 	// Clear widget background.
 	canvas.setBackground(ss->getColor(this, L"background-color"));
@@ -644,13 +645,13 @@ void PropertyList::eventPaint(PaintEvent* event)
 	if (m_columnHeader)
 	{
 		canvas.setBackground(ss->getColor(this, L"header-background-color"));
-		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + dpi96(c_columnsHeight)));
+		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + pixel(c_columnsHeight)));
 
 		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + 2, rcInner.top,
-				rcInner.left + m_separator - 2, rcInner.top + dpi96(c_columnsHeight)
+				rcInner.left + pixel(m_separator) - 2, rcInner.top + pixel(c_columnsHeight)
 			),
 			m_columnNames[0],
 			AnLeft,
@@ -660,8 +661,8 @@ void PropertyList::eventPaint(PaintEvent* event)
 		canvas.setForeground(ss->getColor(this, this->isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
-				rcInner.left + m_separator + 2, rcInner.top,
-				rcInner.right, rcInner.top + dpi96(c_columnsHeight)
+				rcInner.left + pixel(m_separator) + 2, rcInner.top,
+				rcInner.right, rcInner.top + pixel(c_columnsHeight)
 			),
 			m_columnNames[1],
 			AnLeft,
@@ -686,8 +687,8 @@ void PropertyList::eventPaint(PaintEvent* event)
 	}
 	while (rcItem.top < rcInner.bottom && i != propertyItems.end())
 	{
-		const Rect rcText(rcItem.left, rcItem.top, rcItem.left + m_separator, rcItem.bottom);
-		const Rect rcValue(rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
+		const Rect rcText(rcItem.left, rcItem.top, rcItem.left + pixel(m_separator), rcItem.bottom);
+		const Rect rcValue(rcItem.left + pixel(m_separator) + 1, rcItem.top, rcItem.right, rcItem.bottom);
 
 		// Draw item background.
 		canvas.setForeground(ss->getColor((*i), (*i)->isSelected() ? L"color-selected" : L"color"));
@@ -702,7 +703,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		// Draw item value.
 		canvas.setClipRect(rcValue);
 		canvas.setForeground(ss->getColor((*i), (*i)->isSelected() ? L"color-selected" : L"color"));
-		(*i)->paintValue(canvas, rcValue);
+		(*i)->paintValue(this, canvas, rcValue);
 		canvas.resetClipRect();
 
 		// Draw horizontal item separator.
@@ -711,8 +712,8 @@ void PropertyList::eventPaint(PaintEvent* event)
 
 		// Draw vertical item separator.
 		canvas.drawLine(
-			Point(rcItem.left + m_separator, rcItem.top),
-			Point(rcItem.left + m_separator, rcItem.bottom)
+			Point(rcItem.left + pixel(m_separator), rcItem.top),
+			Point(rcItem.left + pixel(m_separator), rcItem.bottom)
 		);
 
 		rcItem = rcItem.offset(0, m_propertyItemHeight);

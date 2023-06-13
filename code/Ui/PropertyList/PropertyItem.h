@@ -108,7 +108,7 @@ protected:
 
 	virtual void paintText(Canvas& canvas, const Rect& rc);
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc);
+	virtual void paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc);
 
 	virtual bool copy();
 

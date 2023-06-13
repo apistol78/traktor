@@ -48,7 +48,7 @@ void CheckPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	notifyChange();
 }
 
-void CheckPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void CheckPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);

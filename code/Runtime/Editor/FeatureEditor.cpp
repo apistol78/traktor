@@ -44,16 +44,14 @@ FeatureEditor::FeatureEditor(editor::IEditor* editor)
 
 bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	const int32_t f = ui::dpi96(4);
-
 	m_instance = instance;
 	m_feature = mandatory_non_null_type_cast< Feature* >(object);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", f, f));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 4_ut, 4_ut));
 
 	Ref< ui::Panel > containerName = new ui::Panel();
-	containerName->create(container, i18n::Text(L"RUNTIME_FEATURE"), new ui::TableLayout(L"*,100%", L"*", 2 * f, f));
+	containerName->create(container, i18n::Text(L"RUNTIME_FEATURE"), new ui::TableLayout(L"*,100%", L"*", 8_ut, 4_ut));
 
 	Ref< ui::Static > staticName = new ui::Static();
 	staticName->create(containerName, i18n::Text(L"RUNTIME_FEATURE_DESCRIPTION"));
@@ -74,10 +72,10 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Splitter > splitterInner = new ui::Splitter();
-	splitterInner->create(container, true, ui::dpi96(200));
+	splitterInner->create(container, true, 200_ut);
 
 	Ref< ui::Container > containerPlatforms = new ui::Container();
-	containerPlatforms->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
+	containerPlatforms->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 4_ut));
 
 	m_listPlatforms = new ui::ListBox();
 	m_listPlatforms->create(containerPlatforms, ui::ListBox::WsSort);
@@ -97,7 +95,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	}
 
 	Ref< ui::Container > containerPlatformsAddRemove = new ui::Container();
-	containerPlatformsAddRemove->create(containerPlatforms, ui::WsNone, new ui::FlowLayout(0, 0, f, f));
+	containerPlatformsAddRemove->create(containerPlatforms, ui::WsNone, new ui::FlowLayout(0_ut, 4_ut));
 
 	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerPlatformsAddRemove, i18n::Text(L"RUNTIME_FEATURE_ADD"));
@@ -155,10 +153,10 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Panel > containerEdit = new ui::Panel();
-	containerEdit->create(splitterInner, i18n::Text(L"RUNTIME_FEATURE_PLATFORM"), new ui::TableLayout(L"100%", L"*,100%", 2 * f, f));
+	containerEdit->create(splitterInner, i18n::Text(L"RUNTIME_FEATURE_PLATFORM"), new ui::TableLayout(L"100%", L"*,100%", 8_ut, 4_ut));
 
 	Ref< ui::Container > containerExecutable = new ui::Container();
-	containerExecutable->create(containerEdit, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, f));
+	containerExecutable->create(containerEdit, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticExecutable = new ui::Static();
 	staticExecutable->create(containerExecutable, i18n::Text(L"RUNTIME_FEATURE_EXECUTABLE"));
@@ -171,7 +169,7 @@ bool FeatureEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	});
 
 	Ref< ui::Splitter > splitterEnvironment = new ui::Splitter();
-	splitterEnvironment->create(containerEdit, true, ui::dpi96(220));
+	splitterEnvironment->create(containerEdit, true, 220_ut);
 
 	m_listKeys = new ui::EditList();
 	m_listKeys->create(splitterEnvironment, ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
@@ -276,8 +274,8 @@ void FeatureEditor::handleDatabaseEvent(db::Database* database, const Guid& even
 ui::Size FeatureEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(900),
-		ui::dpi96(600)
+		900,
+		600
 	);
 }
 

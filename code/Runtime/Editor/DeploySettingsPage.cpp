@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.DeploySettingsPage", 0, DeployS
 bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*,*,100%", 0_ut, 4_ut)))
 		return false;
 
 	m_checkInheritCache = new ui::CheckBox();
@@ -65,7 +65,7 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkAutoBuildRunningTargets->setChecked(autoBuildRunningTargets);
 
 	Ref< ui::Container > containerAndroid = new ui::Container();
-	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
+	containerAndroid->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticAndroidHome = new ui::Static();
 	staticAndroidHome->create(containerAndroid, i18n::Text(L"RUNTIME_SETTINGS_ANDROID_SDK_HOME"));
@@ -92,15 +92,15 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_editAndroidApiLevel->create(containerAndroid, settings->getProperty< std::wstring >(L"Runtime.AndroidApiLevel", L""));
 
 	Ref< ui::Container > containerEnvironment = new ui::Container();
-	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 4));
+	containerEnvironment->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticEnvironment = new ui::Static();
 	staticEnvironment->create(containerEnvironment, i18n::Text(L"RUNTIME_SETTINGS_ENVIRONMENT"));
 
 	Ref< ui::GridView > gridEnvironment = new ui::GridView();
 	gridEnvironment->create(containerEnvironment, ui::WsDoubleBuffer);
-	gridEnvironment->addColumn(new ui::GridColumn(L"Name", ui::dpi96(200)));
-	gridEnvironment->addColumn(new ui::GridColumn(L"Value", ui::dpi96(400)));
+	gridEnvironment->addColumn(new ui::GridColumn(L"Name", 200_ut));
+	gridEnvironment->addColumn(new ui::GridColumn(L"Value", 400_ut));
 
 	Ref< PropertyGroup > settingsEnvironment = settings->getProperty< PropertyGroup >(L"Runtime.Environment");
 	if (settingsEnvironment)

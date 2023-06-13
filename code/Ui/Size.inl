@@ -37,16 +37,6 @@ inline Size::Size(const Size& size)
 {
 }
 
-inline Size Size::dpi96() const
-{
-	return Size(ui::dpi96(cx), ui::dpi96(cy));
-}
-
-inline Size Size::invdpi96() const
-{
-	return Size(ui::invdpi96(cx), ui::invdpi96(cy));
-}
-
 inline Size Size::operator - () const
 {
 	return Size(-cx, -cy);

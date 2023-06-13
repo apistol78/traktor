@@ -181,8 +181,8 @@ Size DropDown::getMaximumSize() const
 
 void DropDown::updatePreferedSize()
 {
-	const int32_t marginX = dpi96(16);
-	const int32_t marginY = dpi96(4);
+	const int32_t marginX = pixel(16_ut);
+	const int32_t marginY = pixel(4_ut);
 
 	const FontMetric fm = getFontMetric();
 
@@ -273,11 +273,11 @@ void DropDown::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const Point at = rcInner.getTopLeft();
 	const Size size = rcInner.getSize();
-	const int32_t sep = ui::dpi96(14);
+	const int32_t sep = pixel(14_ut);
 	bool hover = isEnable() && m_hover;
 
 	const Rect rcText(
-		at.x + dpi96(4),
+		at.x + pixel(4_ut),
 		at.y + 2,
 		at.x + size.cx - sep - 2,
 		at.y + size.cy - 2
@@ -305,9 +305,9 @@ void DropDown::eventPaint(PaintEvent* event)
 	const Point center = rcButton.getCenter();
 	const Point pnts[] =
 	{
-		Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
-		Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
-		Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
+		Point(center.x - pixel(3_ut), center.y - pixel(1_ut)),
+		Point(center.x + pixel(2_ut), center.y - pixel(1_ut)),
+		Point(center.x - pixel(1_ut), center.y + pixel(2_ut))
 	};
 
 	canvas.setBackground(ss->getColor(this, L"color-arrow"));

@@ -30,19 +30,19 @@ Widget* findVisibleSibling(Widget* widget)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Splitter", Splitter, Widget)
 
-const int c_splitterSize = 2;
+const Unit c_splitterSize = 2_ut;
 
 Splitter::Splitter()
 :	m_vertical(true)
-,	m_position(0)
+,	m_position(0_ut)
 ,	m_negative(false)
 ,	m_relative(false)
-,	m_border(0)
+,	m_border(0_ut)
 ,	m_drag(false)
 {
 }
 
-bool Splitter::create(Widget* parent, bool vertical, int32_t position, bool relative, int32_t border)
+bool Splitter::create(Widget* parent, bool vertical, Unit position, bool relative, Unit border)
 {
 	if (!Widget::create(parent))
 		return false;
@@ -68,7 +68,7 @@ Size Splitter::getMinimumSize() const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = ui::dpi96(c_splitterSize);
+		size.cx = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -88,7 +88,7 @@ Size Splitter::getMinimumSize() const
 	}
 	else
 	{
-		size.cy = ui::dpi96(c_splitterSize);
+		size.cy = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -114,7 +114,7 @@ Size Splitter::getPreferredSize(const Size& hint) const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = ui::dpi96(c_splitterSize);
+		size.cx = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -134,7 +134,7 @@ Size Splitter::getPreferredSize(const Size& hint) const
 	}
 	else
 	{
-		size.cy = ui::dpi96(c_splitterSize);
+		size.cy = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -160,7 +160,7 @@ Size Splitter::getMaximumSize() const
 	Size size(0, 0);
 	if (m_vertical == true)
 	{
-		size.cx = ui::dpi96(c_splitterSize);
+		size.cx = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -180,7 +180,7 @@ Size Splitter::getMaximumSize() const
 	}
 	else
 	{
-		size.cy = ui::dpi96(c_splitterSize);
+		size.cy = pixel(c_splitterSize);
 
 		const Widget* left = getLeftWidget();
 		if (left != nullptr)
@@ -213,21 +213,21 @@ void Splitter::update(const Rect* rc, bool immediate)
 
 		Rect rcLeft(0, 0, 0, 0);
 		if (m_vertical == true)
-			rcLeft.setSize(Size(position - ui::dpi96(c_splitterSize) / 2, inner.getHeight()));
+			rcLeft.setSize(Size(position - pixel(c_splitterSize) / 2, inner.getHeight()));
 		else
-			rcLeft.setSize(Size(inner.getWidth(), position - ui::dpi96(c_splitterSize) / 2));
+			rcLeft.setSize(Size(inner.getWidth(), position - pixel(c_splitterSize) / 2));
 		left->setRect(rcLeft);
 
 		Rect rcRight(0, 0, 0, 0);
 		if (m_vertical == true)
 		{
-			rcRight.left = position + ui::dpi96(c_splitterSize);
-			rcRight.setSize(Size(inner.getWidth() - (position + ui::dpi96(c_splitterSize) / 2) - 1, inner.getHeight()));
+			rcRight.left = position + pixel(c_splitterSize);
+			rcRight.setSize(Size(inner.getWidth() - (position + pixel(c_splitterSize) / 2) - 1, inner.getHeight()));
 		}
 		else
 		{
-			rcRight.top = position + ui::dpi96(c_splitterSize);
-			rcRight.setSize(Size(inner.getWidth(), inner.getHeight() - (position + ui::dpi96(c_splitterSize) / 2) - 1));
+			rcRight.top = position + pixel(c_splitterSize);
+			rcRight.setSize(Size(inner.getWidth(), inner.getHeight() - (position + pixel(c_splitterSize) / 2) - 1));
 		}
 		right->setRect(rcRight);
 	}
@@ -243,16 +243,13 @@ void Splitter::setOrientation(bool vertical)
 	update();
 }
 
-void Splitter::setPosition(int32_t position)
+void Splitter::setPosition(Unit position)
 {
-	if (position >= 0)
-	{
-		m_position = position;
-		update();
-	}
+	m_position = position;
+	update();
 }
 
-int32_t Splitter::getPosition() const
+Unit Splitter::getPosition() const
 {
 	return m_position;
 }
@@ -273,23 +270,23 @@ Ref< Widget > Splitter::getRightWidget() const
 
 int Splitter::getAbsolutePosition() const
 {
-	int position = m_position;
-	if (m_relative)
-		position = (m_position * (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight())) / 100;
-	if (m_negative)
-		position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - position;
+	int position = pixel(m_position);
+	//if (m_relative)
+	//	position = (m_position * (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight())) / 100;
+	//if (m_negative)
+	//	position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - position;
 	return position;
 }
 
 void Splitter::setAbsolutePosition(int position)
 {
-	m_position = position;
-	m_position = std::max< int32_t >(m_position, m_border);
-	m_position = std::min< int32_t >(m_position, (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_border);
-	if (m_negative)
-		m_position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_position;
-	if (m_relative)
-		m_position = (m_position * 100) / (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight());
+	m_position = unit(position);
+	//m_position = std::max< int32_t >(m_position, m_border);
+	//m_position = std::min< int32_t >(m_position, (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_border);
+	//if (m_negative)
+	//	m_position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_position;
+	//if (m_relative)
+	//	m_position = (m_position * 100) / (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight());
 }
 
 void Splitter::eventMouseMove(MouseMoveEvent* event)
@@ -306,8 +303,8 @@ void Splitter::eventMouseMove(MouseMoveEvent* event)
 	else
 	{
 		if (
-			pos >= position - ui::dpi96(c_splitterSize) / 2 &&
-			pos <= position + ui::dpi96(c_splitterSize) / 2
+			pos >= position - pixel(c_splitterSize) / 2 &&
+			pos <= position + pixel(c_splitterSize) / 2
 		)
 		{
 			setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);
@@ -328,8 +325,8 @@ void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 	const int32_t position = getAbsolutePosition();
 
 	if (
-		pos >= position - ui::dpi96(c_splitterSize) / 2 &&
-		pos <= position + ui::dpi96(c_splitterSize) / 2
+		pos >= position - pixel(c_splitterSize) / 2 &&
+		pos <= position + pixel(c_splitterSize) / 2
 	)
 	{
 		setCursor(m_vertical ? Cursor::SizeWE : Cursor::SizeNS);

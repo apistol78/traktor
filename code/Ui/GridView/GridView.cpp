@@ -26,7 +26,7 @@ namespace traktor::ui
 	namespace
 	{
 
-const int32_t c_headerSize = 24;
+const Unit c_headerSize = 24_ut;
 
 struct SortRowPredicateLexical
 {
@@ -167,7 +167,7 @@ int32_t GridView::getColumnIndex(int32_t x) const
 	int32_t left = 0;
 	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 	{
-		int32_t right = left + (*i)->getWidth();
+		int32_t right = left + pixel((*i)->getWidth());
 		if (x >= left && x <= right)
 			return int32_t(std::distance(m_columns.begin(), i));
 		left = right;
@@ -280,7 +280,7 @@ Ref< HierarchicalState > GridView::captureState() const
 	Ref< HierarchicalState > state = new HierarchicalState();
 
 	for (uint32_t i = 0; i < (uint32_t)m_columns.size(); ++i)
-		state->setValue(i, m_columns[i]->getWidth());
+		state->setValue(i, m_columns[i]->getWidth().get());
 
 	for (auto row : getRows(GfDescendants))
 	{
@@ -298,8 +298,8 @@ void GridView::applyState(const HierarchicalState* state)
 {
 	for (uint32_t i = 0; i < (uint32_t)m_columns.size(); ++i)
 	{
-		const int32_t width = state->getValue(i, m_columns[i]->getWidth());
-		m_columns[i]->setWidth(width);
+		const int32_t width = state->getValue(i, m_columns[i]->getWidth().get());
+		m_columns[i]->setWidth(Unit(width));
 	}
 
 	for (auto row : getRows(GfDescendants))
@@ -319,8 +319,8 @@ void GridView::layoutCells(const Rect& rc)
 	if (m_header)
 	{
 		m_header->setColumns(m_columns);
-		placeHeaderCell(m_header, dpi96(c_headerSize));
-		rcLayout.top += dpi96(c_headerSize);
+		placeHeaderCell(m_header, pixel(c_headerSize));
+		rcLayout.top += pixel(c_headerSize);
 	}
 
 	RefArray< GridRow > rows = getRows(GfDescendants | GfExpandedOnly);
@@ -345,9 +345,9 @@ void GridView::layoutCells(const Rect& rc)
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
 	for (auto row : rows)
 	{
-		int32_t rowHeight = row->getHeight();
-		rcRow.bottom = rcRow.top + rowHeight;
 		placeCell(row, rcRow);
+		const int32_t rowHeight = row->getHeight();
+		rcRow.bottom = rcRow.top + rowHeight;
 		rcRow.top = rcRow.bottom;
 	}
 }

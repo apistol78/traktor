@@ -39,7 +39,7 @@ public:
 
 	virtual void move(int offset) override;
 
-	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
+	virtual void getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const override;
 
 	virtual void paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) override;
 

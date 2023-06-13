@@ -17,8 +17,8 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_preferedWidth = 100;
-const int32_t c_preferedHeight = 18;
+const Unit c_preferedWidth = 100_ut;
+const Unit c_preferedHeight = 18_ut;
 
 		}
 
@@ -74,8 +74,8 @@ std::wstring ShortcutEdit::getText() const
 Size ShortcutEdit::getPreferredSize(const Size& hint) const
 {
 	return Size(
-		ui::dpi96(c_preferedWidth),
-		ui::dpi96(c_preferedHeight)
+		pixel(c_preferedWidth),
+		pixel(c_preferedHeight)
 	);
 }
 
@@ -134,7 +134,7 @@ void ShortcutEdit::eventPaint(PaintEvent* event)
 	else
 		canvas.setForeground(ss->getColor(this, L"color-focus"));
 
-	canvas.drawText(rc.inflate(dpi96(-8), 0), getText(), AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(pixel(-8_ut), 0), getText(), AnLeft, AnCenter);
 
 	event->consume();
 }

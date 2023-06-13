@@ -76,7 +76,7 @@ bool PreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 
 	m_container = new ui::Container();
-	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut));
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(m_container);
@@ -138,8 +138,8 @@ void PreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& even
 ui::Size PreviewEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(1280),
-		ui::dpi96(720)
+		1280,
+		720
 	);
 }
 

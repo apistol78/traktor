@@ -24,7 +24,7 @@ ToolForm::ToolForm()
 {
 }
 
-bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout)
+bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout)
 {
 	IToolForm* toolForm = Application::getInstance()->getWidgetFactory()->createToolForm(this);
 	if (!toolForm)
@@ -35,14 +35,13 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int h
 
 	Ref< Layout > refLayout = layout;
 
-	if (!toolForm->create(parent ? parent->getIWidget() : 0, text, width, height, style))
+	if (!toolForm->create(parent ? parent->getIWidget() : 0, text, width.get(), height.get(), style))
 	{
 		toolForm->destroy();
 		return false;
 	}
 
 	m_widget = toolForm;
-
 	return Container::create(parent, style, refLayout);
 }
 

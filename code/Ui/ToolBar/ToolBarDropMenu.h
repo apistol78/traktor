@@ -11,6 +11,7 @@
 #include "Core/RefArray.h"
 #include "Ui/Command.h"
 #include "Ui/Point.h"
+#include "Ui/Unit.h"
 #include "Ui/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
@@ -36,7 +37,7 @@ class T_DLLCLASS ToolBarDropMenu : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarDropMenu(int32_t width, const std::wstring& text, bool arrow, const std::wstring& toolTip);
+	explicit ToolBarDropMenu(Unit width, const std::wstring& text, bool arrow, const std::wstring& toolTip);
 
 	int32_t add(MenuItem* item);
 
@@ -65,7 +66,7 @@ protected:
 
 private:
 	Command m_command;
-	int32_t m_width;
+	Unit m_width;
 	std::wstring m_text;
 	bool m_arrow;
 	std::wstring m_toolTip;

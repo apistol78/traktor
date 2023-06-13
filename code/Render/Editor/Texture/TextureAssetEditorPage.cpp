@@ -51,7 +51,7 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(container);
@@ -61,20 +61,20 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	toolBar->addItem(new ui::ToolBarButton(L"A", ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled));
 
 	Ref< ui::Container > imageContainer = new ui::Container();
-	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
+	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
 
 	m_textureControl = new TextureControl();
 	m_textureControl->create(imageContainer);
 
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(imageContainer);
-	m_statusBar->addColumn(ui::dpi96(1000));
+	m_statusBar->addColumn(1000);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->setPropertyObject(m_asset);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &TextureAssetEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	updatePreview();
 	return true;

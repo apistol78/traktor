@@ -36,7 +36,7 @@ namespace traktor
 #define WM_REFLECTED_CTLCOLORBTN		(WM_USER + 1006)
 #define WM_REFLECTED_CTLCOLORLISTBOX	(WM_USER + 1007)
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 struct IMessageHandler : public Object
@@ -44,7 +44,7 @@ struct IMessageHandler : public Object
 	virtual LRESULT handle(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass) = 0;
 };
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 template < typename ClassType >
@@ -55,9 +55,9 @@ struct MethodMessageHandler : public IMessageHandler
 	ClassType* m_object;
 	MethodType m_method;
 
-	MethodMessageHandler(ClassType* object, MethodType method) :
-		m_object(object),
-		m_method(method)
+	MethodMessageHandler(ClassType* object, MethodType method)
+	:	m_object(object)
+	,	m_method(method)
 	{
 	}
 
@@ -67,7 +67,7 @@ struct MethodMessageHandler : public IMessageHandler
 	}
 };
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class Window
@@ -97,7 +97,11 @@ public:
 
 	HFONT getFont() const;
 
-	int32_t getSystemDPI() const;
+	int32_t dpi() const;
+
+	int32_t dpi96(int32_t measure) const;
+
+	int32_t invdpi96(int32_t measure) const;
 
 	LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const;
 

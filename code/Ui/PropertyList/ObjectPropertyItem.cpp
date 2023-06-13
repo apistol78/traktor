@@ -98,7 +98,7 @@ void ObjectPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 		));
 }
 
-void ObjectPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void ObjectPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	StringOutputStream ss;
 	ss << L"{ " << type_name(m_object) << L" }";

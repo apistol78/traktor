@@ -13,10 +13,14 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const Unit c_splitterSize = 2_ut;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MultiSplitter", MultiSplitter, Widget)
-
-const int c_splitterSize = 2;
 
 MultiSplitter::MultiSplitter()
 :	m_vertical(true)
@@ -71,8 +75,8 @@ void MultiSplitter::update(const Rect* rc, bool immediate)
 	{
 		T_ASSERT(index < positions.size());
 
-		int32_t ssl = dpi96(c_splitterSize);
-		int32_t ssr = dpi96(c_splitterSize);
+		int32_t ssl = pixel(c_splitterSize);
+		int32_t ssr = pixel(c_splitterSize);
 
 		if (child == getFirstChild())
 			ssl = 0;

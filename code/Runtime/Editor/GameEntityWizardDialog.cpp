@@ -63,16 +63,16 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"GAMEENTITY_WIZARD_DIALOG_TITLE"),
-		ui::dpi96(700),
-		ui::dpi96(400),
+		700_ut,
+		400_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8))
+		new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut)
 	))
 		return false;
 
 	// Name
 	Ref< ui::Container > containerName = new ui::Container();
-	containerName->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::dpi96(8)));
+	containerName->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticName = new ui::Static();
 	staticName->create(containerName, i18n::Text(L"GAMEENTITY_WIZARD_ENTITY_NAME"));
@@ -83,7 +83,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Visual mesh
 	Ref< ui::Container > containerVisualMesh = new ui::Container();
-	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
+	containerVisualMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticVisualMesh = new ui::Static();
 	staticVisualMesh->create(containerVisualMesh, i18n::Text(L"GAMEENTITY_WIZARD_VISUAL_MESH"));
@@ -101,7 +101,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Skeleton mesh
 	Ref< ui::Container > containerSkeletonMesh = new ui::Container();
-	containerSkeletonMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
+	containerSkeletonMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticSkeletonMesh = new ui::Static();
 	staticSkeletonMesh->create(containerSkeletonMesh, i18n::Text(L"GAMEENTITY_WIZARD_SKELETON_MESH"));
@@ -119,7 +119,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Animation mesh
 	Ref< ui::Container > containerAnimationMesh = new ui::Container();
-	containerAnimationMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
+	containerAnimationMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticAnimationMesh = new ui::Static();
 	staticAnimationMesh->create(containerAnimationMesh, i18n::Text(L"GAMEENTITY_WIZARD_ANIMATION_MESH"));
@@ -137,7 +137,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Collision mesh
 	Ref< ui::Container > containerCollisionMesh = new ui::Container();
-	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0, ui::dpi96(8)));
+	containerCollisionMesh->create(this, ui::WsNone, new ui::TableLayout(L"*,100%,*,*", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticCollisionMesh = new ui::Static();
 	staticCollisionMesh->create(containerCollisionMesh, i18n::Text(L"GAMEENTITY_WIZARD_COLLISION_MESH"));
@@ -155,7 +155,7 @@ bool GameEntityWizardDialog::create(ui::Widget* parent)
 
 	// Type of entity.
 	Ref< ui::Container > containerType = new ui::Container();
-	containerType->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, ui::dpi96(8)));
+	containerType->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 8_ut));
 
 	Ref< ui::Static > staticType = new ui::Static();
 	staticType->create(containerType, i18n::Text(L"GAMEENTITY_WIZARD_TYPE"));

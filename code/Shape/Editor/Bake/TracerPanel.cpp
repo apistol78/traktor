@@ -36,7 +36,7 @@ TracerPanel::TracerPanel(editor::IEditor* editor)
 
 bool TracerPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*", ui::dpi96(8), ui::dpi96(4))))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*", 8_ut, 4_ut)))
 		return false;
 
 	setText(i18n::Text(L"SHAPE_EDITOR_TRACER_PANEL"));
@@ -52,7 +52,7 @@ bool TracerPanel::create(ui::Widget* parent)
 	});
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, ui::dpi96(8)));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 8_ut));
 
 	m_progressBar = new ui::ProgressBar();
 	m_progressBar->create(container, ui::WsDoubleBuffer, 0, 100);

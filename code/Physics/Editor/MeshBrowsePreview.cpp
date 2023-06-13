@@ -34,16 +34,16 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		ui::dpi96(128),
-		ui::dpi96(128)
+		128,
+		128
 	);
 	meshThumb->clear(Color4f(0.4f, 0.6f, 0.4f, 0.0f));
 
 	MeshAssetRasterizer().generate(editor, asset, meshThumb);
 
 	drawing::ScaleFilter scaleFilter(
-		ui::dpi96(64),
-		ui::dpi96(64),
+		64,
+		64,
 		drawing::ScaleFilter::MnAverage,
 		drawing::ScaleFilter::MgLinear
 	);

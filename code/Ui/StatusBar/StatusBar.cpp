@@ -18,7 +18,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_preferedHeight = 23;
+const Unit c_preferedHeight = 23_ut;
 
 		}
 
@@ -64,7 +64,7 @@ void StatusBar::setText(int32_t column, const std::wstring& text)
 
 Size StatusBar::getPreferredSize(const Size& hint) const
 {
-	Size preferedSize(0, dpi96(c_preferedHeight));
+	Size preferedSize(0, pixel(c_preferedHeight));
 	if (getParent())
 		preferedSize.cx = getParent()->getInnerRect().getWidth();
 	return preferedSize;
@@ -78,9 +78,9 @@ void StatusBar::eventSize(SizeEvent* event)
 		Rect rc = getInnerRect();
 		Size preferedSize = child->getPreferredSize(rc.getSize());
 
-		rc.top += dpi96(3);
-		rc.bottom -= dpi96(3);
-		rc.right -= dpi96(20);
+		rc.top += pixel(3_ut);
+		rc.bottom -= pixel(3_ut);
+		rc.right -= pixel(20_ut);
 		rc.left = rc.right - preferedSize.cx;
 
 		child->setRect(rc);
@@ -108,12 +108,12 @@ void StatusBar::eventPaint(PaintEvent* event)
 			if (w < 0 || i >= nc - 1)
 				w = rc.getWidth() - x;
 			else if (w == 0)
-				w = canvas.getFontMetric().getExtent(m_columns[i].text).cx + ui::dpi96(8);
+				w = canvas.getFontMetric().getExtent(m_columns[i].text).cx + pixel(8_ut);
 
 			Rect rcText = rc;
 			rcText.left = x;
 			rcText.right = x + w;
-			canvas.drawText(rcText.inflate(dpi96(-8), 0), m_columns[i].text, AnLeft, AnCenter);
+			canvas.drawText(rcText.inflate(pixel(-8_ut), 0), m_columns[i].text, AnLeft, AnCenter);
 
 			x += w;
 		}
@@ -123,15 +123,15 @@ void StatusBar::eventPaint(PaintEvent* event)
 	Form* parentForm = dynamic_type_cast< Form* >(getParent());
 	if (parentForm && !parentForm->isMaximized())
 	{
-		rc = rc.inflate(-dpi96(2), -dpi96(2));
+		rc = rc.inflate(-pixel(2_ut), -pixel(2_ut));
 		for (int i = 0; i <= 2; ++i)
 		{
 			canvas.setForeground(Color4ub(180, 180, 180));
-			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 1), rc.right - dpi96(i * 4 - 1), rc.bottom);
-			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 2), rc.right - dpi96(i * 4 - 2), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 1), rc.right - pixel(4_ut * i - 1), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 2), rc.right - pixel(4_ut * i - 2), rc.bottom);
 
 			canvas.setForeground(Color4ub(255, 255, 255));
-			canvas.drawLine(rc.right, rc.bottom - dpi96(i * 4 - 3), rc.right - dpi96(i * 4 - 3), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 3), rc.right - pixel(4_ut * i - 3), rc.bottom);
 		}
 	}
 

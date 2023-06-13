@@ -54,9 +54,9 @@ void MiniButton::setImage(IBitmap* image)
 Size MiniButton::getPreferredSize(const Size& hint) const
 {
 	if (m_image)
-		return m_image->getSize() + Size(ui::dpi96(6), ui::dpi96(6));
+		return m_image->getSize() + Size(pixel(6_ut), pixel(6_ut));
 	else
-		return Size(getFontMetric().getExtent(getText()).cx + ui::dpi96(10), ui::dpi96(16));
+		return Size(getFontMetric().getExtent(getText()).cx + pixel(10_ut), pixel(16_ut));
 }
 
 Size MiniButton::getMaximumSize() const

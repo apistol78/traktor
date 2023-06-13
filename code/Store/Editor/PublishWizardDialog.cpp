@@ -31,15 +31,15 @@ bool PublishWizardDialog::create(ui::Widget* parent, const std::wstring& instanc
     if (!ui::ConfigDialog::create(
         parent,
         L"Publish package",
-        ui::dpi96(600),
-        ui::dpi96(600),
+        600_ut,
+        600_ut,
         ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
-        new ui::TableLayout(L"100%", L"100%", 0, 0)
+        new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut)
     ))
         return false;
 
     Ref< ui::Container > containerMeta = new ui::Container();
-    containerMeta->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*,*,*,*,100%,100%", ui::dpi96(8), ui::dpi96(8)));
+    containerMeta->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*,*,*,*,100%,100%", 8_ut, 8_ut));
 
     // Package name
     Ref< ui::Static > staticName = new ui::Static();

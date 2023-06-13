@@ -84,22 +84,22 @@ bool ToolBarButton::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	int width = dpi96(8);
+	int width = toolBar->pixel(8_ut);
 	int height = width;
 
 	if (m_style & BsIcon)
 	{
 		width += imageWidth;
-		height = max(imageHeight + dpi96(8), height);
+		height = max(imageHeight + toolBar->pixel(8_ut), height);
 	}
 	if (m_style & BsText)
 	{
 		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		width += textExtent.cx;
-		height = max(textExtent.cy + dpi96(8), height);
+		height = max(textExtent.cy + toolBar->pixel(8_ut), height);
 	}
 	if ((m_style & (BsIcon | BsText)) == (BsIcon | BsText))
-		width += dpi96(4);
+		width += toolBar->pixel(4_ut);
 
 	return Size(width, height);
 }
@@ -127,7 +127,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 		}
 	}
 
-	int centerOffsetX = dpi96(4);
+	int centerOffsetX = toolBar->pixel(4_ut);
 	if (m_style & BsIcon)
 	{
 		int centerOffsetY = (size.cy - imageHeight) / 2;
@@ -138,7 +138,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 			images,
 			BlendMode::Alpha
 		);
-		centerOffsetX += imageWidth + dpi96(4);
+		centerOffsetX += imageWidth + toolBar->pixel(4_ut);
 	}
 	if (m_style & BsText)
 	{

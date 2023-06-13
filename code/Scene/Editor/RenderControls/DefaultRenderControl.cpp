@@ -107,7 +107,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	bool guideEnable = settings->getProperty< bool >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
 
 	m_container = new ui::Container();
-	if (!m_container->create(parent, ui::WsNoCanvas, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!m_container->create(parent, ui::WsNoCanvas, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_toolBar = new ui::ToolBar();
@@ -117,7 +117,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"), 1);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"), 1);
 
-	m_toolView = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), ui::dpi96(100), i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
+	m_toolView = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100_ut, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
@@ -143,7 +143,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 130_ut, i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
 	m_toolAspect->add(L"1:1");
 	m_toolAspect->add(L"4:3");
@@ -155,7 +155,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"9:16");
 	m_toolAspect->select(0);
 
-	m_toolQualityMenu = new ui::ToolBarDropMenu(ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
+	m_toolQualityMenu = new ui::ToolBarDropMenu(130_ut, i18n::Text(L"SCENE_EDITOR_QUALITY"), true, i18n::Text(L"SCENE_EDITOR_QUALITY_TOOLTIP"));
 
 	m_menuPostProcess = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(0, L"Scene.Editor.PostProcessQuality"), L"Disabled", true, 0));
@@ -205,7 +205,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AntiAliasQuality"), L"Ultra", true, 0));
 	m_toolQualityMenu->add(m_menuAA);
 
-	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), ui::dpi96(130), i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
+	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), 130_ut, i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
 	m_toolWorldRenderer->add(L"Simple");
 	m_toolWorldRenderer->add(L"Forward");
 	m_toolWorldRenderer->add(L"Deferred");
@@ -217,7 +217,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 			m_toolWorldRenderer->select(i);
 	}
 
-	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), ui::dpi96(140), i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
+	m_toolDebugOverlay = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.DebugOverlay"), 140_ut, i18n::Text(L"SCENE_EDITOR_DEBUG_OVERLAY"));
 	m_toolDebugOverlay->add(L"None");
 	
 	for (const auto overlayType : type_of< world::IDebugOverlay >().findAllOf(false))
@@ -241,7 +241,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolDebugOverlay);
-	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, ui::dpi96(50)));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, 50_ut));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 

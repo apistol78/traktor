@@ -20,7 +20,7 @@ NullPropertyItem::NullPropertyItem()
 {
 }
 
-void NullPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void NullPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 }
 

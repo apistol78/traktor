@@ -12,6 +12,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -58,15 +59,15 @@ public:
 
 	const std::wstring& getText() const;
 
-	void setThickness(int32_t thickness);
+	void setThickness(Unit thickness);
 
-	int32_t getThickness() const;
+	Unit getThickness() const;
 
 	void setSelected(bool selected);
 
 	bool isSelected() const;
 
-	bool hit(const Point& p) const;
+	bool hit(const GraphControl* graph, const Point& p) const;
 
 	void paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const;
 
@@ -74,7 +75,7 @@ private:
 	Ref< Pin > m_source;
 	Ref< Pin > m_destination;
 	std::wstring m_text;
-	int32_t m_thickness = 2;
+	Unit m_thickness = Unit(2);
 	bool m_selected = false;
 	SmallMap< std::wstring, Ref< Object > > m_data;
 	mutable AlignedVector< Point > m_spline;

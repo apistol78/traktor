@@ -37,7 +37,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.QuickMenuTool", QuickMenuTool, ui::Dialo
 
 bool QuickMenuTool::create(ui::Widget* parent)
 {
-	if (!ui::Dialog::create(parent, L"Quick menu", ui::dpi96(100), ui::dpi96(200), ui::Dialog::WsCenterParent, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Dialog::create(parent, L"Quick menu", 100_ut, 200_ut, ui::Dialog::WsCenterParent, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_editFilter = new ui::Edit();

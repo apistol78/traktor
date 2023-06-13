@@ -149,7 +149,7 @@ bool ThemeForm::create()
 
 	Application::getInstance()->setStyleSheet(styleSheet);
 
-	if (!Form::create(L"Theme Editor", dpi96(1000), dpi96(800), Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!Form::create(L"Theme Editor", 1000_ut, 800_ut, Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
@@ -180,10 +180,10 @@ bool ThemeForm::create()
 	m_menuBar->addItem(menuTools);
 
 	Ref< Splitter > splitter = new Splitter();
-	splitter->create(this, true, dpi96(300));
+	splitter->create(this, true, 300_ut);
 
 	Ref< Splitter > splitter2 = new Splitter();
-	splitter2->create(splitter, false, -dpi96(250));
+	splitter2->create(splitter, false, -250_ut);
 
 	m_treeTheme = new TreeView();
 	m_treeTheme->create(
@@ -200,12 +200,12 @@ bool ThemeForm::create()
 
 	m_gridPalette = new GridView();
 	m_gridPalette->create(splitter2, WsDoubleBuffer | GridView::WsColumnHeader);
-	m_gridPalette->addColumn(new GridColumn(L"Color", dpi96(70)));
-	m_gridPalette->addColumn(new GridColumn(L"Hex", dpi96(150)));
+	m_gridPalette->addColumn(new GridColumn(L"Color", 70_ut));
+	m_gridPalette->addColumn(new GridColumn(L"Hex", 150_ut));
 	m_gridPalette->addEventHandler< MouseDoubleClickEvent >(this, &ThemeForm::eventPaletteDoubleClick);
 
 	m_containerPreview = new Container();
-	m_containerPreview->create(splitter, WsAccelerated, new TableLayout(L"100%", L"100%", 16, 0));
+	m_containerPreview->create(splitter, WsAccelerated, new TableLayout(L"100%", L"100%", 16_ut, 0_ut));
 
 	update();
 	show();
@@ -287,7 +287,7 @@ void ThemeForm::updatePreview()
 	auto entity = static_cast< Wrapper< StyleSheet::Entity >* >( selectedEntityItem->getData(L"ENTITY") )->unwrap();
 
 	Ref< Container > container = new Container();
-	container->create(m_containerPreview, 0, new TableLayout(L"100%", L"100%,100%", 0, 4));
+	container->create(m_containerPreview, 0, new TableLayout(L"100%", L"100%,100%", 0_ut, 4_ut));
 
 	Ref< Widget > widget1 = PreviewWidgetFactory().create(container, m_styleSheet, entity->typeName);
 	if (widget1)

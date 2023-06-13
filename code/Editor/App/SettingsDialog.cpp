@@ -54,8 +54,8 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"EDITOR_SETTINGS_TITLE"),
-		ui::dpi96(700),
-		ui::dpi96(600),
+		700_ut,
+		600_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
@@ -75,7 +75,6 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 		types.push_back(settingPageType);
 	std::sort(types.begin(), types.end(), SettingsPagePredicate());
 
-	int32_t four = ui::dpi96(4);
 	for (std::vector< const TypeInfo* >::const_iterator i = types.begin(); i != types.end(); ++i)
 	{
 		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());
@@ -83,7 +82,7 @@ bool SettingsDialog::create(ui::Widget* parent, const PropertyGroup* originalSet
 			continue;
 
 		Ref< ui::TabPage > tabPage = new ui::TabPage();
-		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(four, four))))
+		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(4, 4))))
 			continue;
 
 		if (!settingsPage->create(tabPage, originalSettings, settings, shortcutCommands))

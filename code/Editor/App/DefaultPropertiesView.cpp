@@ -58,7 +58,7 @@ bool DefaultPropertiesView::create(ui::Widget* parent)
 
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(this, ui::WsAccelerated | ui::WsTabStop, this);
-	m_propertyList->setSeparator(ui::dpi96(separator));
+	m_propertyList->setSeparator(ui::Unit(separator));
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultPropertiesView::eventPropertyCommand);
 	m_propertyList->addEventHandler< ui::PropertyContentChangeEvent >(this, &DefaultPropertiesView::eventPropertyChange);
 	return true;
@@ -71,7 +71,7 @@ void DefaultPropertiesView::destroy()
 		Ref< PropertyGroup > settings = m_editor->checkoutGlobalSettings();
 		if (settings)
 		{
-			const int32_t separator = ui::invdpi96(m_propertyList->getSeparator());
+			const int32_t separator = m_propertyList->getSeparator().get();
 			settings->setProperty< PropertyInteger >(L"Editor.DefaultPropertiesView.Separator", separator);
 			m_editor->commitGlobalSettings();
 		}

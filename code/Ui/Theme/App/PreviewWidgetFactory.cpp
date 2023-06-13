@@ -150,9 +150,9 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		Ref< GridView > gridView = new GridView();
 		gridView->setStyleSheet(styleSheet);
 		gridView->create(parent, ui::WsAccelerated | ui::GridView::WsColumnHeader);
-		gridView->addColumn(new GridColumn(L"First", 100));
-		gridView->addColumn(new GridColumn(L"Second", 100));
-		gridView->addColumn(new GridColumn(L"Third", 100));
+		gridView->addColumn(new GridColumn(L"First", 100_ut));
+		gridView->addColumn(new GridColumn(L"Second", 100_ut));
+		gridView->addColumn(new GridColumn(L"Third", 100_ut));
 
 		Ref< GridRow > row1 = new GridRow();
 		row1->add(new GridItem(L"A1"));
@@ -314,7 +314,7 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 	{
 		Ref< Container > container = new Container();
 		container->setStyleSheet(styleSheet);
-		container->create(parent, WsNone, new TableLayout(L"100%", L"*", 0, 16));
+		container->create(parent, WsNone, new TableLayout(L"100%", L"*", 0_ut, 16_ut));
 
 		Ref< StatusBar > statusBar1 = new StatusBar();
 		statusBar1->create(container);
@@ -363,8 +363,8 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		toolBar->create(parent);
 
 		toolBar->addItem(new ToolBarButton(L"Button", Command()));
-		toolBar->addItem(new ToolBarDropDown(Command(), 100, L"DropDown"));
-		toolBar->addItem(new ToolBarDropMenu(100, L"DropMenu", true, L"DropMenu"));
+		toolBar->addItem(new ToolBarDropDown(Command(), 100_ut, L"DropDown"));
+		toolBar->addItem(new ToolBarDropMenu(100_ut, L"DropMenu", true, L"DropMenu"));
 		toolBar->addItem(new ToolBarSeparator());
 
 		return toolBar;

@@ -61,10 +61,10 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	if (!ui::Dialog::create(
 		parent,
 		L"Profiler",
-		ui::dpi96(900),
-		ui::dpi96(700),
+		900_ut,
+		700_ut,
 		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
+		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -75,12 +75,12 @@ bool ProfilerDialog::create(ui::Widget* parent)
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ProfilerDialog::eventToolClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, 30, true);
+	splitter->create(this, true, 30_ut, true);
 
 	m_performanceGrid = new ui::GridView();
 	m_performanceGrid->create(splitter, ui::GridView::WsColumnHeader | ui::WsAccelerated);
-	m_performanceGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(150)));
-	m_performanceGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(150)));
+	m_performanceGrid->addColumn(new ui::GridColumn(L"Name", 150_ut));
+	m_performanceGrid->addColumn(new ui::GridColumn(L"Value", 150_ut));
 
 	m_chart = new ui::BuildChartControl();
 	m_chart->create(splitter, 4 * 8, ui::WsAccelerated);

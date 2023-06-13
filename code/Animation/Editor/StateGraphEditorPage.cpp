@@ -67,7 +67,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	// Create state graph container.
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	// Create our custom toolbar.
 	m_toolBarGraph = new ui::ToolBar();
@@ -102,11 +102,11 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &StateGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	// Create preview panel.
 	m_containerPreview = new ui::Container();
-	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0));
+	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut));
 	m_containerPreview->setText(L"Animation Preview");
 
 	m_toolBarPreview = new ui::ToolBar();
@@ -120,9 +120,9 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_previewControl->setPoseController(m_statePreviewController);
 
 	m_previewConditions = new ui::Container();
-	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
+	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
 
-	m_site->createAdditionalPanel(m_containerPreview, ui::dpi96(450), false);
+	m_site->createAdditionalPanel(m_containerPreview, 450, false);
 
 	createEditorNodes(
 		m_stateGraph->getStates(),

@@ -38,11 +38,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, Scen
 bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	m_container = new ui::Container();
-	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Container > containerSliders = new ui::Container();
-	containerSliders->create(m_container, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0, 4));
+	containerSliders->create(m_container, ui::WsNone, new ui::TableLayout(L"*,100%,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticWorldRenderer = new ui::Static();
 	staticWorldRenderer->create(containerSliders, i18n::Text(L"SCENE_EDITOR_SETTINGS_WORLD_RENDERER"));

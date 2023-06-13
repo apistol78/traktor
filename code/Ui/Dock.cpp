@@ -41,7 +41,7 @@ bool Dock::create(Widget* parent)
 		return false;
 
 	m_hint = new ToolForm();
-	m_hint->create(this, L"Hint", 0, 0, WsNone);
+	m_hint->create(this, L"Hint", 0_ut, 0_ut, WsNone);
 	m_hint->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
 	const int xy[] = { 0, 32, 32 + 29, 32 + 29 + 32 };
@@ -206,8 +206,8 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 		form->create(
 			this,
 			widget ? widget->getText() : L"",
-			formSize.cx,
-			formSize.cy,
+			Unit(formSize.cx),
+			Unit(formSize.cy),
 			ToolForm::WsDefault,
 			new FloodLayout()
 		);

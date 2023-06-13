@@ -348,14 +348,14 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		primitiveRenderer->drawLine(
 			Vector4(c1, 0.0f, s1, 1.0f),
 			Vector4(c2, 0.0f, s2, 1.0f),
-			(float)ui::dpi96((m_axisEnable & 1) ? 3 : 1),
+			(float)((m_axisEnable & 1) ? 3 : 1),
 			Color4ub(255, 0, 0)
 		);
 	}
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, radius, 1.0f),
-		(float)ui::dpi96((m_axisEnable & 1) ? 3 : 1),
+		(float)((m_axisEnable & 1) ? 3 : 1),
 		Color4ub(255, 0, 0)
 	);
 	primitiveRenderer->popWorld();
@@ -372,14 +372,14 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, c1, s1, 1.0f),
 			Vector4(0.0f, c2, s2, 1.0f),
-			(float)ui::dpi96((m_axisEnable & 2) ? 3 : 1),
+			(float)((m_axisEnable & 2) ? 3 : 1),
 			Color4ub(0, 255, 0)
 		);
 	}
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, radius, 1.0f),
-		(float)ui::dpi96((m_axisEnable & 2) ? 3 : 1),
+		(float)((m_axisEnable & 2) ? 3 : 1),
 		Color4ub(0, 255, 0)
 	);
 	primitiveRenderer->popWorld();
@@ -396,14 +396,14 @@ void RotateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		primitiveRenderer->drawLine(
 			Vector4(c1, s1, 0.0f, 1.0f),
 			Vector4(c2, s2, 0.0f, 1.0f),
-			(float)ui::dpi96((m_axisEnable & 4) ? 3 : 1),
+			(float)((m_axisEnable & 4) ? 3 : 1),
 			Color4ub(0, 0, 255)
 		);
 	}
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, radius, 0.0f, 1.0f),
-		(float)ui::dpi96((m_axisEnable & 4) ? 3 : 1),
+		(float)((m_axisEnable & 4) ? 3 : 1),
 		Color4ub(0, 0, 255)
 	);
 	primitiveRenderer->popWorld();

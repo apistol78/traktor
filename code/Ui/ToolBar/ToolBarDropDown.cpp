@@ -22,7 +22,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarDropDown", ToolBarDropDown, ToolBarItem)
 
-ToolBarDropDown::ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip)
+ToolBarDropDown::ToolBarDropDown(const Command& command, Unit width, const std::wstring& toolTip)
 :	m_command(command)
 ,	m_width(width)
 ,	m_toolTip(toolTip)
@@ -108,7 +108,7 @@ bool ToolBarDropDown::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarDropDown::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	return Size(m_width, imageHeight + 4);
+	return Size(toolBar->pixel(m_width), imageHeight + 4);
 }
 
 void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
@@ -116,7 +116,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	const int32_t sep = ui::dpi96(14);
+	const int32_t sep = toolBar->pixel(14_ut);
 
 	const Rect rcText(
 		at.x + 4,
@@ -147,9 +147,9 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const Point center = rcButton.getCenter();
 	const Point pnts[] =
 	{
-		Point(center.x - ui::dpi96(3), center.y - ui::dpi96(1)),
-		Point(center.x + ui::dpi96(2), center.y - ui::dpi96(1)),
-		Point(center.x - ui::dpi96(1), center.y + ui::dpi96(2))
+		Point(center.x - toolBar->pixel(3_ut), center.y - toolBar->pixel(1_ut)),
+		Point(center.x + toolBar->pixel(2_ut), center.y - toolBar->pixel(1_ut)),
+		Point(center.x - toolBar->pixel(1_ut), center.y + toolBar->pixel(2_ut))
 	};
 
 	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));

@@ -57,8 +57,8 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 		i18n::Text(L"SHADERGRAPH_NODE_TEXTURE"),
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::dpi96(shaderNode->getPosition().first),
-			ui::dpi96(shaderNode->getPosition().second)
+			shaderNode->getPosition().first,
+			shaderNode->getPosition().second
 		),
 		m_nodeShape
 	);
@@ -142,8 +142,8 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 				const bool linearGamma = textureAsset->m_output.m_linearGamma;
 				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(
 					fileName,
-					ui::dpi96(64),
-					ui::dpi96(64),
+					64,
+					64,
 					visibleAlpha ? editor::IThumbnailGenerator::Alpha::WithAlpha : editor::IThumbnailGenerator::Alpha::NoAlpha,
 					linearGamma ? editor::IThumbnailGenerator::Gamma::Linear : editor::IThumbnailGenerator::Gamma::SRGB
 				);

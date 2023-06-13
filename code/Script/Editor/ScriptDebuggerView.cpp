@@ -70,7 +70,7 @@ ScriptDebuggerView::~ScriptDebuggerView()
 
 bool ScriptDebuggerView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut)))
 		return false;
 
 	m_debuggerTools = new ui::ToolBar();
@@ -88,21 +88,21 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_debuggerTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScriptDebuggerView::eventDebuggerToolClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, 50, true);
+	splitter->create(this, true, 50_ut, true);
 
 	m_callStackGrid = new ui::GridView();
 	m_callStackGrid->create(splitter, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), ui::dpi96(180)));
-	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), ui::dpi96(100)));
-	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), ui::dpi96(200)));
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_FUNCTION"), 180_ut));
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LINE"), 100_ut));
+	m_callStackGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_SCRIPT"), 200_ut));
 	m_callStackGrid->setEnable(false);
 	m_callStackGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptDebuggerView::eventCallStackGridDoubleClick);
 
 	m_localsGrid = new ui::GridView();
 	m_localsGrid->create(splitter, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), ui::dpi96(180)));
-	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), ui::dpi96(150)));
-	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), ui::dpi96(150)));
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_NAME"), 180_ut));
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_VALUE"), 150_ut));
+	m_localsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_DEBUG_LOCAL_TYPE"), 150_ut));
 	m_localsGrid->setEnable(false);
 	m_localsGrid->addEventHandler< ui::GridRowStateChangeEvent >(this, &ScriptDebuggerView::eventLocalsGridStateChange);
 	m_localsGrid->addEventHandler< ui::MouseButtonDownEvent >(this, &ScriptDebuggerView::eventLocalsGridButtonDown);
@@ -119,7 +119,7 @@ void ScriptDebuggerView::destroy()
 	if (m_scriptDebugger)
 	{
 		m_scriptDebugger->removeListener(this);
-		m_scriptDebugger = 0;
+		m_scriptDebugger = nullptr;
 	}
 	ui::Container::destroy();
 }

@@ -122,7 +122,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		Ref< ui::Node > graphNode = graph->createNode(
 			t->getHeader(node),
 			t->getDescription(node),
-			ui::Point(p.x, p.y).dpi96(),
+			ui::Point(p.x, p.y),
 			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape() : (ui::INodeShape*)new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
 		valuePin = graphNode->createOutputPin(L"Value", Guid());
@@ -188,7 +188,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	T_ASSERT(stateData);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolBarGraph = new ui::ToolBar();
 	m_toolBarGraph->create(container);
@@ -203,7 +203,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &InputMappingEditor::eventToolBarGraphClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, true, 20, true);
+	splitter->create(container, true, 20_ut, true);
 
 	m_listValueSources = new ui::EditList();
 	m_listValueSources->create(splitter, ui::ListBox::WsSingle | ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
@@ -231,7 +231,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();
@@ -366,7 +366,7 @@ void InputMappingEditor::updateGraphView()
 		Ref< ui::Node > node = m_graph->createNode(
 			L"State",
 			it.first,
-			ui::Point(p.x, p.y).dpi96(),
+			ui::Point(p.x, p.y),
 			new ui::OutputNodeShape()
 		);
 		node->setData(L"NAME", new PropertyString(it.first));
@@ -419,7 +419,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 			if (!node)
 				return;
 
-			const ui::Point pos = (event->getPosition() - m_graph->getOffset()).invdpi96();
+			const ui::Point pos = (event->getPosition() - m_graph->getOffset());
 			const InputMappingAsset::Position position = { pos.x, pos.y };
 
 			m_mappingAsset->addInputNode(node);
@@ -432,7 +432,7 @@ void InputMappingEditor::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			Ref< InputStateData > sd = new InputStateData();
 
-			const ui::Point pos = (event->getPosition() - m_graph->getOffset()).invdpi96();
+			const ui::Point pos = (event->getPosition() - m_graph->getOffset());
 			const InputMappingAsset::Position position = { pos.x, pos.y };
 
 			m_mappingAsset->setPosition(sd, position);
@@ -554,7 +554,7 @@ void InputMappingEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 	ui::Node* node = event->getNode();
 	T_ASSERT(node);
 
-	const ui::Point position = node->getPosition().invdpi96();
+	const ui::Point position = node->getPosition();
 	const InputMappingAsset::Position p =
 	{
 		position.x,

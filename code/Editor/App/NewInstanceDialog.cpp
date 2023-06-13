@@ -69,10 +69,10 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"NEW_INSTANCE_TITLE"),
-		ui::dpi96(640),
-		ui::dpi96(500),
+		640_ut,
+		500_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -81,10 +81,10 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 	addEventHandler< ui::ButtonClickEvent >(this, &NewInstanceDialog::eventDialogClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, ui::dpi96(200));
+	splitter->create(this, true, 200_ut);
 
 	Ref< ui::Container > left = new ui::Container();
-	left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	Ref< ui::Static > treeLabel = new ui::Static();
 	treeLabel->create(left, i18n::Text(L"NEW_INSTANCE_CATEGORY"));
@@ -95,7 +95,7 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
-	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	Ref< ui::Static > listLabel = new ui::Static();
 	listLabel->create(right, i18n::Text(L"NEW_INSTANCE_TYPES"));
@@ -105,7 +105,7 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 		return false;
 
 	Ref< ui::Container > bottom = new ui::Container();
-	bottom->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
+	bottom->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticInstanceName = new ui::Static();
 	staticInstanceName->create(bottom, i18n::Text(L"NEW_INSTANCE_NAME"));

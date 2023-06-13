@@ -34,7 +34,7 @@ const std::wstring& StaticPropertyItem::getValue() const
 	return m_value;
 }
 
-void StaticPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void StaticPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	canvas.drawText(rc.inflate(-2, 0), m_value, AnLeft, AnCenter);
 }

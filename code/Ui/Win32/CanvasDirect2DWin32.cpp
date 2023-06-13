@@ -108,7 +108,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	else
 		logical = -lf.lfHeight;
 
-	const float inches = float(logical) / getSystemDPI();
+	const float inches = float(logical) / hWnd.dpi();
 	const float dip = inches * 96.0f;
 
 	setFont(Font(
@@ -120,6 +120,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	));
 
 	m_inPaint = true;
+	m_dpi = hWnd.dpi();
 	return true;
 }
 
@@ -166,7 +167,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 		else
 			logical = -lf.lfHeight;
 
-		float inches = float(logical) / getSystemDPI();
+		float inches = float(logical) / hWnd.dpi();
 		float dip = inches * 96.0f;
 
 		ComRef< IDWriteTextFormat > dwTextFormat;
@@ -176,7 +177,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
+			int32_t(dip + 0.5f) * hWnd.dpi() / 96.0f,
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -255,7 +256,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 		else
 			logical = -lf.lfHeight;
 
-		float inches = float(logical) / getSystemDPI();
+		float inches = float(logical) / hWnd.dpi();
 		float dip = inches * 96.0f;
 
 		ComRef< IDWriteTextFormat > dwTextFormat;
@@ -265,7 +266,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			int32_t(dip + 0.5f) * getSystemDPI() / 96.0f,
+			int32_t(dip + 0.5f) * hWnd.dpi() / 96.0f,
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -863,7 +864,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 		m_font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		m_font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		m_font.getSize() * getSystemDPI() / 96.0f,
+		m_font.getSize() * m_dpi / 96.0f,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);

@@ -55,7 +55,7 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 
 	if (cursor)
 	{
-		float pixelsPerSecond = ui::dpi96(1000) / 1.0f;
+		float pixelsPerSecond = pixel(1000_ut) / 1.0f;
 		AudioMixer mixer;
 
 		struct Span

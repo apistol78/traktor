@@ -93,10 +93,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterContro
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
-	m_dropDownActs = new ui::ToolBarDropDown(ui::Command(L"Theater.SelectAct"), ui::dpi96(150), i18n::Text(L"THEATER_EDITOR_ACTS"));
+	m_dropDownActs = new ui::ToolBarDropDown(ui::Command(L"Theater.SelectAct"), 150_ut, i18n::Text(L"THEATER_EDITOR_ACTS"));
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);

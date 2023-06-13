@@ -92,13 +92,13 @@ void ShaderViewer::destroy()
 
 bool ShaderViewer::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,100%", 0_ut, 0_ut)))
 		return false;
 
 	setText(i18n::Text(L"SHADERGRAPH_VIEWER"));
 
 	Ref< ui::Container > containerDrops = new ui::Container();
-	containerDrops->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), ui::dpi96(4)));
+	containerDrops->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut));
 
 	Ref< ui::Static > staticCompiler = new ui::Static();
 	staticCompiler->create(containerDrops, i18n::Text(L"SHADERGRAPH_VIEWER_COMPILER"));

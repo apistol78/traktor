@@ -12,6 +12,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Ui/Layout.h"
 #include "Ui/Size.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,15 +35,15 @@ class T_DLLCLASS TableLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
-	TableLayout(const std::wstring& cdef, const std::wstring& rdef, int margin, int pad);
+	explicit TableLayout(const std::wstring& cdef, const std::wstring& rdef, Unit margin, Unit pad);
 
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 
 	virtual void update(Widget* widget) override;
 
 private:
-	Size m_margin;
-	Size m_pad;
+	Unit m_margin;
+	Unit m_pad;
 	AlignedVector< int32_t > m_cdef;
 	AlignedVector< int32_t > m_rdef;
 };

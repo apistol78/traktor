@@ -54,7 +54,7 @@ namespace traktor
 
 bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* transport)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_toolBar = new ui::ToolBar();
@@ -72,7 +72,7 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_editFrame = new ui::Edit();
 	m_editFrame->create(m_toolBar, L"0", ui::WsNone, new ui::NumericEditValidator(false, 0));
 	m_editFrame->addEventHandler< ui::ContentChangeEvent >(this, &ClientPage::eventFrameChange);
-	m_toolBar->addItem(new ui::ToolBarEmbed(m_editFrame, ui::dpi96(30)));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_editFrame, 30_ut));
 
 	m_toolBar->addItem(new ui::ToolBarButton(L"Next Frame", 1, ui::Command(L"Traktor.Flash.NextFrame")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -84,10 +84,10 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ClientPage::eventToolBarClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, 30, true);
+	splitter->create(this, true, 30_ut, true);
 
 	Ref< ui::Splitter > splitter2 = new ui::Splitter();
-	splitter2->create(splitter, false, 50, true);
+	splitter2->create(splitter, false, 50_ut, true);
 
 	m_debugTree = new ui::TreeView();
 	m_debugTree->create(splitter2, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsAccelerated);
@@ -102,11 +102,11 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 
 	m_debugGrid = new ui::GridView();
 	m_debugGrid->create(splitter2, ui::WsDoubleBuffer);
-	m_debugGrid->addColumn(new ui::GridColumn(L"Name", ui::dpi96(150)));
-	m_debugGrid->addColumn(new ui::GridColumn(L"Value", ui::dpi96(300)));
+	m_debugGrid->addColumn(new ui::GridColumn(L"Name", 150_ut));
+	m_debugGrid->addColumn(new ui::GridColumn(L"Value", 300_ut));
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
+	container->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
 
 	m_debugView = new DebugView();
 	m_debugView->create(container);

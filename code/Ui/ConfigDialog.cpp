@@ -16,7 +16,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ConfigDialog", ConfigDialog, Dialog)
 
-bool ConfigDialog::create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout)
+bool ConfigDialog::create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout)
 {
 	if (!Dialog::create(parent, text, width, height, style, layout))
 		return false;
@@ -66,7 +66,7 @@ void ConfigDialog::update(const Rect* rc, bool immediate)
 	const Size ok = m_ok->getPreferredSize(rcInner.getSize());
 	const Size cancel = m_cancel->getPreferredSize(rcInner.getSize());
 
-	const int32_t four = dpi96(4);
+	const int32_t four = pixel(4_ut);
 	if (m_apply)
 	{
 		const Size apply = m_apply->getPreferredSize(rcInner.getSize());
@@ -89,7 +89,7 @@ Rect ConfigDialog::getInnerRect() const
 	Rect rc = Dialog::getInnerRect();
 	if (m_ok)
 	{
-		const int32_t four = dpi96(4);
+		const int32_t four = pixel(4_ut);
 		rc.bottom -= m_ok->getPreferredSize(rc.getSize()).cy + 2 * four + four;
 	}
 	return rc;
@@ -101,7 +101,7 @@ Size ConfigDialog::getMinimumSize() const
 	if (m_ok)
 	{
 		const Rect rc = Dialog::getInnerRect();
-		const int32_t four = dpi96(4);
+		const int32_t four = pixel(4_ut);
 
 		const Size ok = m_ok->getPreferredSize(rc.getSize());
 		const Size cancel = m_cancel->getPreferredSize(rc.getSize());

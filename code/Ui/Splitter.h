@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Horizontal or vertical splitter.
  * \ingroup UI
@@ -41,7 +39,7 @@ public:
 	 * \param relative If position is scaled relatively when Splitter is resized.
 	 * \param border Clamping border, distance from extents in pixels.
 	 */
-	bool create(Widget* parent, bool vertical = true, int32_t position = 100, bool relative = false, int32_t border = 16);
+	bool create(Widget* parent, bool vertical = true, Unit position = 100_ut, bool relative = false, Unit border = 16_ut);
 
 	virtual void update(const Rect* rc = 0, bool immediate = false) override;
 
@@ -53,9 +51,9 @@ public:
 
 	void setOrientation(bool vertical);
 
-	void setPosition(int32_t position);
+	void setPosition(Unit position);
 
-	int32_t getPosition() const;
+	Unit getPosition() const;
 
 	Ref< Widget > getLeftWidget() const;
 
@@ -63,10 +61,10 @@ public:
 
 private:
 	bool m_vertical;
-	int32_t m_position;
+	Unit m_position;
 	bool m_negative;
 	bool m_relative;
-	int32_t m_border;
+	Unit m_border;
 	bool m_drag;
 
 	int getAbsolutePosition() const;
@@ -84,6 +82,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

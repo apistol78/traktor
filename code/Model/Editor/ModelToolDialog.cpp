@@ -131,10 +131,10 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	if (!ui::Dialog::create(
 		parent,
 		i18n::Text(L"MODEL_TOOL_TITLE"),
-		ui::dpi96(1000),
-		ui::dpi96(800),
+		1000_ut,
+		800_ut,
 		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"*,100%", 0, 0)
+		new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -171,7 +171,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_toolUV = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_TEXCOORDS"), ui::Command(L"ModelTool.ToggleUV"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	toolBar->addItem(m_toolUV);
 
-	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), ui::dpi96(100), i18n::Text(L"MODEL_TOOL_TEXCOORD_CHANNELS"));
+	m_toolChannel = new ui::ToolBarDropDown(ui::Command(L"ModelTool.Channel"), 100_ut, i18n::Text(L"MODEL_TOOL_TEXCOORD_CHANNELS"));
 	toolBar->addItem(m_toolChannel);
 
 	m_toolWeight = new ui::ToolBarButton(i18n::Text(L"MODEL_TOOL_WEIGHTS"), ui::Command(L"ModelTool.ToggleWeights"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
@@ -186,10 +186,10 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ModelToolDialog::eventToolBarClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, ui::dpi96(300), false);
+	splitter->create(this, true, 300_ut, false);
 
 	Ref< ui::Splitter > splitterH = new ui::Splitter();
-	splitterH->create(splitter, false, 30, true);
+	splitterH->create(splitter, false, 30_ut, true);
 
 	m_modelTree = new ui::TreeView();
 	m_modelTree->create(splitterH, ui::WsDoubleBuffer);
@@ -206,26 +206,26 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	m_materialGrid = new ui::GridView();
 	m_materialGrid->create(tabPageMaterial, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NAME"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NORMAL_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_LIGHT_MAP"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_COLOR"), ui::dpi96(110)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_TERM"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_TERM"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_BLEND_OPERATOR"), ui::dpi96(100)));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DOUBLE_SIDED"), ui::dpi96(100)));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NAME"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NORMAL_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_LIGHT_MAP"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_COLOR"), 110_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_TERM"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_TERM"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_ROUGHNESS"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_METALNESS"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_TRANSPARENCY"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_BLEND_OPERATOR"), 100_ut));
+	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DOUBLE_SIDED"), 100_ut));
 	m_materialGrid->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventMaterialSelect);
 
 	// Skeleton tab.
@@ -245,8 +245,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	m_statisticGrid = new ui::GridView();
 	m_statisticGrid->create(tabPageStatistics, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_NAME"), ui::dpi96(120)));
-	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_VALUE"), ui::dpi96(400)));
+	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_NAME"), 120_ut));
+	m_statisticGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_STATISTIC_VALUE"), 400_ut));
 
 	tab->setActivePage(tabPageMaterial);
 

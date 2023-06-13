@@ -18,7 +18,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.QuadSplitter", QuadSplitter, Widget)
 
-const int c_splitterSize = 2;
+const Unit c_splitterSize = 2_ut;
 const int c_relativeScale = 100000;
 
 QuadSplitter::QuadSplitter()
@@ -64,7 +64,7 @@ Size QuadSplitter::getMinimumSize() const
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
-	Size size(c_splitterSize, c_splitterSize);
+	Size size(pixel(c_splitterSize), pixel(c_splitterSize));
 	size.cx += std::max(
 		widgets[0] ? widgets[0]->getMinimumSize().cx : 0,
 		widgets[3] ? widgets[3]->getMinimumSize().cx : 0
@@ -90,7 +90,7 @@ Size QuadSplitter::getPreferredSize(const Size& hint) const
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
-	Size size(c_splitterSize, c_splitterSize);
+	Size size(pixel(c_splitterSize), pixel(c_splitterSize));
 	size.cx += std::max(
 		widgets[0] ? widgets[0]->getPreferredSize(hint).cx : 0,
 		widgets[3] ? widgets[3]->getPreferredSize(hint).cx : 0
@@ -116,7 +116,7 @@ Size QuadSplitter::getMaximumSize() const
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
-	Size size(c_splitterSize, c_splitterSize);
+	Size size(pixel(c_splitterSize), pixel(c_splitterSize));
 	size.cx += std::max(
 		widgets[0] ? widgets[0]->getMaximumSize().cx : 0,
 		widgets[3] ? widgets[3]->getMaximumSize().cx : 0
@@ -145,7 +145,7 @@ void QuadSplitter::update(const Rect* rc, bool immediate)
 	Ref< Widget > widgets[4];
 	getWidgets(widgets);
 
-	const int32_t splitterSize = dpi96(c_splitterSize);
+	const int32_t splitterSize = pixel(c_splitterSize);
 	const Rect widgetRects[] =
 	{
 		Rect(
@@ -290,7 +290,7 @@ void QuadSplitter::eventMouseMove(MouseMoveEvent* event)
 	}
 	else
 	{
-		const int32_t splitterSize = dpi96(c_splitterSize);
+		const int32_t splitterSize = pixel(c_splitterSize);
 
 		const bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= splitterSize / 2;
 		const bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= splitterSize / 2;
@@ -318,8 +318,7 @@ void QuadSplitter::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point mousePosition = event->getPosition();
 	const Point splitterPosition = getAbsolutePosition();
-
-	const int32_t splitterSize = dpi96(c_splitterSize);
+	const int32_t splitterSize = pixel(c_splitterSize);
 
 	const bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= splitterSize / 2;
 	const bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= splitterSize / 2;

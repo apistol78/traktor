@@ -71,7 +71,7 @@ bool ToolBarMenu::getToolTip(std::wstring& outToolTip) const
 Size ToolBarMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
-	return Size(sz.cx + dpi96(16), std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
+	return Size(sz.cx + toolBar->pixel(16_ut), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
 }
 
 void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)

@@ -491,10 +491,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	if (!ui::Form::create(
 		c_title,
-		ui::dpi96(1280),
-		ui::dpi96(900),
+		1280_ut,
+		900_ut,
 		ui::Form::WsDefault | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)
+		new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -567,10 +567,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", 350);
 	const int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
 
-	pane->split(false, ui::dpi96(ww), m_paneWest, paneCenter);
-	paneCenter->split(false, ui::dpi96(-250), paneCenter, m_paneEast);
-	paneCenter->split(true, ui::dpi96(-200), paneCenter, paneLog);
-	paneCenter->split(true, ui::dpi96(-200), paneCenter, m_paneSouth);
+	pane->split(false, ww, m_paneWest, paneCenter);
+	paneCenter->split(false, -250, paneCenter, m_paneEast);
+	paneCenter->split(true, -200, paneCenter, paneLog);
+	paneCenter->split(true, -200, paneCenter, m_paneSouth);
 
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -792,7 +792,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings, if desktop size still match.
-	int32_t x = 0, y = 0, width = ui::dpi96(1280), height = ui::dpi96(900);
+	int32_t x = 0, y = 0, width = 1280, height = 900;
 	bool maximized = false;
 
 	const auto desktopSize = getDesktopSizeEstimate();
@@ -803,8 +803,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		x = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionX");
 		y = m_mergedSettings->getProperty< int32_t >(L"Editor.PositionY");
-		width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", ui::dpi96(1280));
-		height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", ui::dpi96(900));
+		width = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeWidth", 1280);
+		height = m_mergedSettings->getProperty< int32_t >(L"Editor.SizeHeight", 900);
 		maximized = m_mergedSettings->getProperty< bool >(L"Editor.Maximized");
 	}
 
@@ -2935,8 +2935,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	}
 
 	// Save docking pane sizes.
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", (m_paneWest->getPaneRect().getWidth() + 3) / ui::dpi96(1));
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", (m_paneEast->getPaneRect().getWidth() + 3) / ui::dpi96(1));
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", m_paneWest->getPaneRect().getWidth());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", m_paneEast->getPaneRect().getWidth());
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));

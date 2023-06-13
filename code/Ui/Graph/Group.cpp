@@ -57,14 +57,14 @@ bool Group::hit(const Point& p) const
 
 bool Group::hitTitle(const Point& p) const
 {
-	const int32_t titleHeight = m_owner->getPaintSettings().getFontGroup().getPixelSize();
-	return Rect(m_position, Size(m_size.cx, titleHeight + dpi96(8))).inside(p);
+	const int32_t titleHeight = m_owner->getPaintSettings().getFontGroup().getPixelSize96();
+	return Rect(m_position, Size(m_size.cx, m_owner->pixel(Unit(titleHeight + 8)))).inside(p);
 }
 
 int32_t Group::hitAnchor(const Point& p) const
 {
 	const Rect rc = calculateRect();
-	const Size sz(dpi96(16), dpi96(16));
+	const Size sz(m_owner->pixel(16_ut), m_owner->pixel(16_ut));
 
 	if (Rect(rc.getTopLeft(), sz).inside(p))
 		return 0;
@@ -141,7 +141,7 @@ bool Group::isSelected() const
 void Group::paint(GraphCanvas* canvas, const Size& offset) const
 {
 	const Rect rc = calculateRect().offset(offset);
-	const Rect rcTitle = rc.inflate(-dpi96(16), -dpi96(4));
+	const Rect rcTitle = rc.inflate(-m_owner->pixel(16_ut), -m_owner->pixel(4_ut));
 
 	// Draw group shape.
 	{

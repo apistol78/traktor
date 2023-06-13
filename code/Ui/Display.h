@@ -19,31 +19,31 @@
 namespace traktor::ui
 {
 
-int32_t T_DLLCLASS getSystemDPI();
-
-inline int32_t dpi96(int32_t referenceMeasure)
-{
-	return (getSystemDPI() * referenceMeasure) / 96;
-}
-
-inline int32_t invdpi96(int32_t measure)
-{
-	return (measure * 96) / getSystemDPI();
-}
-
-class T_DLLCLASS DPI96
-{
-public:
-	DPI96(int32_t value) : m_value(value) {}
-
-	DPI96 operator + (const DPI96& rh) { return DPI96(m_value + rh.m_value); }
-
-	DPI96 operator - (const DPI96& rh) { return DPI96(m_value - rh.m_value); }
-
-	operator int32_t () const { return dpi96(m_value); }
-
-private:
-	int32_t m_value;
-};
+//int32_t T_DLLCLASS getSystemDPI();
+//
+//inline int32_t dpi96(int32_t referenceMeasure)
+//{
+//	return (getSystemDPI() * referenceMeasure) / 96;
+//}
+//
+//inline int32_t invdpi96(int32_t measure)
+//{
+//	return (measure * 96) / getSystemDPI();
+//}
+//
+//class T_DLLCLASS DPI96
+//{
+//public:
+//	DPI96(int32_t value) : m_value(value) {}
+//
+//	DPI96 operator + (const DPI96& rh) { return DPI96(m_value + rh.m_value); }
+//
+//	DPI96 operator - (const DPI96& rh) { return DPI96(m_value - rh.m_value); }
+//
+//	operator int32_t () const { return dpi96(m_value); }
+//
+//private:
+//	int32_t m_value;
+//};
 
 }

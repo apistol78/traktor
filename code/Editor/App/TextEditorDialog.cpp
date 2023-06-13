@@ -25,8 +25,8 @@ bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialTex
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"TEXT_EDIT"),
-		ui::dpi96(500),
-		ui::dpi96(400),
+		500_ut,
+		400_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))

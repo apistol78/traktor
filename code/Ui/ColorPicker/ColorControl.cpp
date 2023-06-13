@@ -19,8 +19,8 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_width = 32;
-const uint32_t c_height = 24;
+const Unit c_width = 32_ut;
+const Unit c_height = 24_ut;
 
 		}
 
@@ -33,8 +33,8 @@ bool ColorControl::create(Widget* parent, int style)
 
 	addEventHandler< PaintEvent >(this, &ColorControl::eventPaint);
 
-	const int32_t width = dpi96(c_width);
-	const int32_t height = dpi96(c_height);
+	const int32_t width = pixel(c_width);
+	const int32_t height = pixel(c_height);
 
 	m_previewImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), width, height);
 	m_previewBitmap = new ui::Bitmap(width, height);
@@ -45,8 +45,8 @@ bool ColorControl::create(Widget* parent, int style)
 
 void ColorControl::setColor(const Color4ub& color)
 {
-	const int32_t width = dpi96(c_width);
-	const int32_t height = dpi96(c_height);
+	const int32_t width = pixel(c_width);
+	const int32_t height = pixel(c_height);
 
 	m_color = color;
 	for (int32_t y = 0; y < height; ++y)
@@ -74,8 +74,8 @@ Color4ub ColorControl::getColor() const
 
 Size ColorControl::getPreferredSize(const Size& hint) const
 {
-	const int32_t width = dpi96(c_width);
-	const int32_t height = dpi96(c_height);
+	const int32_t width = pixel(c_width);
+	const int32_t height = pixel(c_height);
 	return Size(width, height);
 }
 

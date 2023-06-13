@@ -17,9 +17,9 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_margin = 16;
-const int32_t c_knobWidth = 6;
-const int32_t c_knobMarginY = 3;
+const Unit c_margin = 16_ut;
+const Unit c_knobWidth = 6_ut;
+const Unit c_knobMarginY = 3_ut;
 
 		}
 
@@ -64,12 +64,12 @@ int32_t Slider::getValue() const
 
 Size Slider::getPreferredSize(const Size& hint) const
 {
-	return Size(dpi96(200), dpi96(20));
+	return Size(pixel(200_ut), pixel(20_ut));
 }
 
 Size Slider::getMaximumSize() const
 {
-	return Size(65535, dpi96(20));
+	return Size(65535, pixel(20_ut));
 }
 
 void Slider::eventButtonDown(MouseButtonDownEvent* event)
@@ -81,10 +81,10 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 	const auto& pt = event->getPosition();
 
 	const int32_t value = m_range.clamp(m_value);
-	const int32_t dist = sz.cx - dpi96(c_margin) * 2;
-	const int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
-	const int32_t knobL = knob - dpi96(c_knobWidth) / 2;
-	const int32_t knobR = knob + dpi96(c_knobWidth) / 2;
+	const int32_t dist = sz.cx - pixel(c_margin) * 2;
+	const int32_t knob = pixel(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knobL = knob - pixel(c_knobWidth) / 2;
+	const int32_t knobR = knob + pixel(c_knobWidth) / 2;
 
 	if (pt.x >= knobL && pt.x <= knobR)
 	{
@@ -114,8 +114,8 @@ void Slider::eventMouseMove(MouseMoveEvent* event)
 	auto sz = getInnerRect().getSize();
 	const auto& pt = event->getPosition();
 
-	const int32_t x = pt.x - dpi96(c_margin);
-	const int32_t dist = sz.cx - dpi96(c_margin) * 2;
+	const int32_t x = pt.x - pixel(c_margin);
+	const int32_t dist = sz.cx - pixel(c_margin) * 2;
 	const int32_t value = int32_t(m_range.delta() * float(x) / dist);
 
 	m_value = m_range.clamp(value);
@@ -136,19 +136,19 @@ void Slider::eventPaint(PaintEvent* event)
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawLine(
-		Point(rcInner.left + dpi96(c_margin), rcInner.getCenter().y),
-		Point(rcInner.right - dpi96(c_margin), rcInner.getCenter().y)
+		Point(rcInner.left + pixel(c_margin), rcInner.getCenter().y),
+		Point(rcInner.right - pixel(c_margin), rcInner.getCenter().y)
 	);
 
 	const int32_t value = m_range.clamp(m_value);
-	const int32_t dist = rcInner.getSize().cx - dpi96(c_margin) * 2;
-	const int32_t knob = dpi96(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
-	const int32_t knobL = knob - dpi96(c_knobWidth) / 2;
-	const int32_t knobR = knob + dpi96(c_knobWidth) / 2;
+	const int32_t dist = rcInner.getSize().cx - pixel(c_margin) * 2;
+	const int32_t knob = pixel(c_margin) + int32_t(dist * float(value - m_range.min) / m_range.delta());
+	const int32_t knobL = knob - pixel(c_knobWidth) / 2;
+	const int32_t knobR = knob + pixel(c_knobWidth) / 2;
 
 	const Rect rcKnob(
-		Point(knobL, rcInner.top + dpi96(c_knobMarginY)),
-		Point(knobR, rcInner.bottom - dpi96(c_knobMarginY))
+		Point(knobL, rcInner.top + pixel(c_knobMarginY)),
+		Point(knobR, rcInner.bottom - pixel(c_knobMarginY))
 	);
 
 	canvas.setBackground(ss->getColor(this, L"knob-color"));

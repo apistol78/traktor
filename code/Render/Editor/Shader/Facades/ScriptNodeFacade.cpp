@@ -58,8 +58,8 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 		scriptNode->getName(),
 		L"",
 		ui::Point(
-			ui::dpi96(scriptNode->getPosition().first),
-			ui::dpi96(scriptNode->getPosition().second)
+			scriptNode->getPosition().first,
+			scriptNode->getPosition().second
 		),
 		m_nodeShape
 	);

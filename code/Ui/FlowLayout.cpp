@@ -14,15 +14,15 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.FlowLayout", FlowLayout, Layout)
 
-FlowLayout::FlowLayout()
-:	m_margin(4, 4)
-,	m_pad(4, 4)
+FlowLayout::FlowLayout(Unit margin, Unit pad)
+:	m_margin(margin.get(), margin.get())
+,	m_pad(pad.get(), pad.get())
 {
 }
 
-FlowLayout::FlowLayout(int32_t marginX, int32_t marginY, int32_t padX, int32_t padY)
-:	m_margin(marginX, marginY)
-,	m_pad(padX, padY)
+FlowLayout::FlowLayout(Unit marginX, Unit marginY, Unit padX, Unit padY)
+:	m_margin(marginX.get(), marginY.get())
+,	m_pad(padX.get(), padY.get())
 {
 }
 

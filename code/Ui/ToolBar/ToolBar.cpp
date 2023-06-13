@@ -26,8 +26,8 @@ namespace traktor
 		namespace
 		{
 
-const int c_marginWidth = 1;
-const int c_marginHeight = 1;
+const Unit c_marginWidth = 1_ut;
+const Unit c_marginHeight = 1_ut;
 const int c_itemPad = 2;
 
 		}
@@ -36,8 +36,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBar", ToolBar, Widget)
 
 ToolBar::ToolBar()
 :	m_style(WsNone)
-,	m_imageWidth(dpi96(16))
-,	m_imageHeight(dpi96(16))
+,	m_imageWidth(0)
+,	m_imageHeight(0)
 ,	m_imageCount(0)
 ,	m_offsetX(0)
 {
@@ -60,6 +60,8 @@ bool ToolBar::create(Widget* parent, int32_t style)
 	m_toolTip->create(this);
 	m_toolTip->addEventHandler< ToolTipEvent >(this, &ToolBar::eventShowTip);
 
+	m_imageWidth = pixel(16_ut);
+	m_imageHeight = pixel(16_ut);
 	m_style = style;
 	return true;
 }
@@ -142,15 +144,15 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
 	const Rect rc = getInnerRect();
 
-	int32_t x = dpi96(c_marginWidth) + m_offsetX;
-	int32_t y = dpi96(c_marginHeight);
+	int32_t x = pixel(c_marginWidth) + m_offsetX;
+	int32_t y = pixel(c_marginHeight);
 
 	for (auto item : m_items)
 	{
 		const Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate item rectangle.
-		const int32_t offset = (rc.getHeight() - dpi96(c_marginHeight * 2) - size.cy) / 2;
+		const int32_t offset = (rc.getHeight() - pixel(c_marginHeight * 2) - size.cy) / 2;
 		const Rect rc(
 			Point(x, y + offset),
 			size
@@ -177,7 +179,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 		height = std::max(height, size.cy);
 	}
 
-	return Size(width + dpi96(c_marginWidth * 2), height + dpi96(c_marginHeight * 2 + 1));
+	return Size(width + pixel(c_marginWidth * 2), height + pixel(c_marginHeight * 2 + 1));
 }
 
 Size ToolBar::getMaximumSize() const
@@ -279,7 +281,7 @@ void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 
 void ToolBar::eventWheel(MouseWheelEvent* event)
 {
-	m_offsetX += event->getRotation() * dpi96(32);
+	m_offsetX += event->getRotation() * pixel(32_ut);
 	clampOffset();
 	update();
 }
@@ -293,15 +295,15 @@ void ToolBar::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));
 
-	int32_t x = rc.left + dpi96(c_marginWidth) + m_offsetX;
-	int32_t y = rc.top + dpi96(c_marginHeight);
+	int32_t x = rc.left + pixel(c_marginWidth) + m_offsetX;
+	int32_t y = rc.top + pixel(c_marginHeight);
 
 	for (auto item : m_items)
 	{
 		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
 
 		// Calculate top-left position of item, center vertically.
-		int32_t offset = (rc.getHeight() - dpi96(c_marginHeight) * 2 - size.cy) / 2;
+		int32_t offset = (rc.getHeight() - pixel(c_marginHeight) * 2 - size.cy) / 2;
 		Point at(x, y + offset);
 
 		item->paint(

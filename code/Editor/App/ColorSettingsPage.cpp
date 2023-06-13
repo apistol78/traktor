@@ -51,7 +51,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ColorSettingsPage", 0, ColorSett
 bool ColorSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 4_ut)))
 		return false;
 
 	m_colorList = new ui::PropertyList();
@@ -59,7 +59,7 @@ bool ColorSettingsPage::create(ui::Container* parent, const PropertyGroup* origi
 		return false;
 
 	m_colorList->addEventHandler< ui::PropertyCommandEvent >(this, &ColorSettingsPage::eventPropertyCommand);
-	m_colorList->setSeparator(ui::dpi96(200));
+	m_colorList->setSeparator(200_ut);
 
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
 	T_ASSERT(colorGroup);

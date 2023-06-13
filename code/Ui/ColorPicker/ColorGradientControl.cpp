@@ -42,7 +42,7 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 
 Size ColorGradientControl::getPreferredSize(const Size& hint) const
 {
-	const int32_t size = dpi96(256);
+	const int32_t size = pixel(256_ut);
 	return Size(size, size);
 }
 
@@ -118,7 +118,7 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 
 	m_cursor = event->getPosition();
 
-	const int32_t size = dpi96(256);
+	const int32_t size = pixel(256_ut);
 	m_cursor.x = (m_cursor.x * 256) / size;
 	m_cursor.y = (m_cursor.y * 256) / size;
 
@@ -139,7 +139,7 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 
 void ColorGradientControl::eventPaint(PaintEvent* event)
 {
-	const int32_t size = dpi96(256);
+	const int32_t size = pixel(256_ut);
 	Canvas& canvas = event->getCanvas();
 
 	canvas.drawBitmap(
@@ -158,7 +158,7 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 	else
 		canvas.setForeground(Color4ub(0, 0, 0));
 
-	Point cursor(dpi96(m_cursor.x), dpi96(m_cursor.y));
+	Point cursor(m_cursor.x, m_cursor.y);
 	canvas.drawCircle(cursor, 5);
 
 	event->consume();

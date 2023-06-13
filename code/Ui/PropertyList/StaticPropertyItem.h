@@ -38,7 +38,7 @@ public:
 	const std::wstring& getValue() const;
 
 protected:
-	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
+	virtual void paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc) override;
 
 	virtual bool copy() override;
 

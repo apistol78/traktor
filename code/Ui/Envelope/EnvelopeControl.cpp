@@ -80,8 +80,8 @@ void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 
 	if (event->getButton() == MbtLeft)
 	{
-		const int32_t sx = dpi96(2);
-		const int32_t sy = dpi96(2);
+		const int32_t sx = pixel(2_ut);
+		const int32_t sy = pixel(2_ut);
 
 		for (auto key : m_keys)
 		{

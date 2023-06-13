@@ -25,7 +25,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_valueWidth = 200;
+const Unit c_valueWidth = 200_ut;
 
 		}
 
@@ -89,9 +89,9 @@ void AnglesPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 			continue;
 
 		Rect rcSub(
-			rc.left + (dpi96(c_valueWidth) * i) / 3,
+			rc.left + (m_editors[i]->pixel(c_valueWidth) * i) / 3,
 			rc.top,
-			rc.left + (dpi96(c_valueWidth) * (i + 1)) / 3,
+			rc.left + (m_editors[i]->pixel(c_valueWidth) * (i + 1)) / 3,
 			rc.bottom
 		);
 
@@ -118,7 +118,7 @@ void AnglesPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	}
 }
 
-void AnglesPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void AnglesPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	float hpb[4];
 	m_value.storeUnaligned(hpb);
@@ -126,9 +126,9 @@ void AnglesPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	for (int i = 0; i < 3; ++i)
 	{
 		Rect rcSub(
-			rc.left + (dpi96(c_valueWidth) * i) / 3,
+			rc.left + (parent->pixel(c_valueWidth) * i) / 3,
 			rc.top,
-			rc.left + (dpi96(c_valueWidth) * (i + 1)) / 3,
+			rc.left + (parent->pixel(c_valueWidth) * (i + 1)) / 3,
 			rc.bottom
 		);
 

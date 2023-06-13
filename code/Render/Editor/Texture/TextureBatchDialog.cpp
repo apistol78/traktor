@@ -40,18 +40,18 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"TEXTURE_BATCH_DIALOG_TITLE"),
-		ui::dpi96(900),
-		ui::dpi96(500),
+		900_ut,
+		500_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(this, true, ui::dpi96(200));
+	splitter->create(this, true, 200_ut);
 
 	Ref< ui::Container > textureListContainer = new ui::Container();
-	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	textureListContainer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	Ref< ui::ToolBar > textureListTools = new ui::ToolBar();
 	if (!textureListTools->create(textureListContainer))
@@ -68,7 +68,7 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 
 	m_texturePropertyList = new ui::AutoPropertyList();
 	m_texturePropertyList->create(splitter, ui::WsAccelerated | ui::AutoPropertyList::WsColumnHeader);
-	m_texturePropertyList->setSeparator(ui::dpi96(200));
+	m_texturePropertyList->setSeparator(200_ut);
 	m_texturePropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_texturePropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 

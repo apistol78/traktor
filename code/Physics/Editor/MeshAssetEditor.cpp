@@ -69,11 +69,11 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	Ref< ui::Container > containerFile = new ui::Container();
-	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), ui::dpi96(4))))
+	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticFileName = new ui::Static();
@@ -81,7 +81,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFileName = new ui::Container();
-	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, ui::dpi96(4))))
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0_ut, 4_ut)))
 		return false;
 
 	m_editFileName = new ui::Edit();
@@ -107,17 +107,17 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticDummy->create(containerFile, L"");
 
 	Ref< ui::Container > containerOptions = new ui::Container();
-	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0, 0));
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
-	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
+	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0_ut, 4_ut));
 
 	m_checkHull = new ui::CheckBox();
 	if (!m_checkHull->create(containerLeft, i18n::Text(L"PHYSICS_MESHASSET_EDITOR_HULL")))
 		return false;
 
 	Ref< ui::Container > containerRight = new ui::Container();
-	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, 4));
+	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticMargin = new ui::Static();
 	staticMargin->create(containerRight, i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MARGIN"));
@@ -126,7 +126,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_editMargin->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	m_containerMaterials = new ui::Container();
-	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
+	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0_ut, 0_ut)))
 		return false;
 
 	Ref< ui::ToolBar > materialTools = new ui::ToolBar();
@@ -141,8 +141,8 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_materialList->create(m_containerMaterials, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialList->addColumn(new ui::GridColumn(i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MATERIAL_NAME"), ui::dpi96(180)));
-	m_materialList->addColumn(new ui::GridColumn(i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MATERIAL_INSTANCE"), ui::dpi96(350)));
+	m_materialList->addColumn(new ui::GridColumn(i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MATERIAL_NAME"), 180_ut));
+	m_materialList->addColumn(new ui::GridColumn(i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MATERIAL_INSTANCE"), 350_ut));
 	m_materialList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialListDoubleClick);
 
 	updateModel();
@@ -189,8 +189,8 @@ void MeshAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& ev
 ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(800),
-		ui::dpi96(600)
+		800,
+		600
 	);
 }
 
