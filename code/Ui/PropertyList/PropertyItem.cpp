@@ -18,10 +18,6 @@
 #include "Ui/PropertyList/PropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-// Resources
-#include "Resources/PropertyList.h"
-#include "Resources/SmallCross.h"
-
 namespace traktor
 {
 	namespace ui
@@ -45,9 +41,9 @@ PropertyItem::PropertyItem(const std::wstring& text)
 ,	m_parent(0)
 {
 	if (!s_imageExpand)
-		s_imageExpand = new StyleBitmap(L"UI.PropertyList", c_ResourcePropertyList, sizeof(c_ResourcePropertyList));
+		s_imageExpand = new StyleBitmap(L"UI.PropertyList");
 	if (!s_imageCross)
-		s_imageCross = new StyleBitmap(L"UI.SmallCross", c_ResourceSmallCross, sizeof(c_ResourceSmallCross));
+		s_imageCross = new StyleBitmap(L"UI.SmallCross");
 }
 
 void PropertyItem::setText(const std::wstring& text)
@@ -256,7 +252,7 @@ void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 
 	if (!m_childItems.empty())
 	{
-		int32_t size = s_imageExpand->getSize().cy;
+		int32_t size = s_imageExpand->getSize(m_propertyList->dpi()).cy;
 		int32_t c = (rc.getHeight() - size) / 2;
 
 		canvas.drawBitmap(

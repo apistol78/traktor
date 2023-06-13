@@ -33,13 +33,13 @@ StyleBitmap::StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap)
 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Default bitmap is null.");
 }
 
-StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
-:	m_name(name)
-,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
-,	m_ownDefaultBitmap(true)
-{
-	T_FATAL_ASSERT_M(m_defaultBitmap, L"Unable to load default bitmap resource.");
-}
+// StyleBitmap::StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+// :	m_name(name)
+// ,	m_defaultBitmap(Bitmap::load(defaultBitmapResource, defaultBitmapResourceSize, L"image"))
+// ,	m_ownDefaultBitmap(true)
+// {
+// 	T_FATAL_ASSERT_M(m_defaultBitmap, L"Unable to load default bitmap resource.");
+// }
 
 StyleBitmap::~StyleBitmap()
 {
@@ -56,22 +56,22 @@ void StyleBitmap::destroy()
 	safeDestroy(m_bitmap);
 }
 
-Size StyleBitmap::getSize() const
+Size StyleBitmap::getSize(int32_t dpi) const
 {
-	return resolve() ? m_bitmap->getSize() : Size();
+	return resolve(dpi) ? m_bitmap->getSize(dpi) : Size();
 }
 
-Ref< drawing::Image > StyleBitmap::getImage() const
+Ref< drawing::Image > StyleBitmap::getImage(int32_t dpi) const
 {
-	return resolve() ? m_bitmap->getImage() : nullptr;
+	return resolve(dpi) ? m_bitmap->getImage(dpi) : nullptr;
 }
 
-ISystemBitmap* StyleBitmap::getSystemBitmap() const
+ISystemBitmap* StyleBitmap::getSystemBitmap(int32_t dpi) const
 {
-	return resolve() ? m_bitmap->getSystemBitmap() : nullptr;
+	return resolve(dpi) ? m_bitmap->getSystemBitmap(dpi) : nullptr;
 }
 
-bool StyleBitmap::resolve() const
+bool StyleBitmap::resolve(int32_t dpi) const
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	if (!ss)
@@ -86,7 +86,7 @@ bool StyleBitmap::resolve() const
 
 	safeDestroy(m_bitmap);
 
-	if ((m_bitmap = Bitmap::load(bmp)) == nullptr)
+	if ((m_bitmap = Bitmap::load(bmp, dpi)) == nullptr)
 		m_bitmap = m_defaultBitmap;
 
 	m_path = bmp;

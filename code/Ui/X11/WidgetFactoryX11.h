@@ -6,8 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_ui_WidgetFactoryX11_H
-#define traktor_ui_WidgetFactoryX11_H
+#pragma once
 
 #include <X11/Xlib.h>
 #include "Ui/Itf/IWidgetFactory.h"
@@ -20,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Context;
 
@@ -54,19 +51,12 @@ public:
 
 	virtual IClipboard* createClipboard() override final;
 
-	virtual int32_t getSystemDPI() const override final;
-
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) override final;
 
 	virtual void getDesktopRects(std::list< Rect >& outRects) const override final;
 
 private:
 	Ref< Context > m_context;
-	int32_t m_dpi;
 };
 
-	}
 }
-
-#endif	// traktor_ui_WidgetFactoryX11_H
-

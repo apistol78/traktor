@@ -396,7 +396,7 @@ bool CanvasX11::realizeFont() const
 	);
 	cairo_set_font_size(
 		m_cr,
-		dpi96(m_font.getSize())
+		/*dpi96*/(m_font.getSize())
 	);
 
 	m_fontDirty = false;

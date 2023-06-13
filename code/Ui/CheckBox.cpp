@@ -12,10 +12,6 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 
-// Resources
-#include "Resources/Unchecked.h"
-#include "Resources/Checked.h"
-
 namespace traktor::ui
 {
 
@@ -24,8 +20,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CheckBox", CheckBox, Widget)
 CheckBox::CheckBox()
 :	m_checked(false)
 {
-	m_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	m_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+	m_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
+	m_imageChecked = new StyleBitmap(L"UI.Checked");
 }
 
 bool CheckBox::create(Widget* parent, const std::wstring& text, bool checked)
@@ -61,8 +57,8 @@ void CheckBox::setText(const std::wstring& text)
 	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	const int32_t width = getFontMetric().getExtent(getText()).cx;
 	m_preferedSize = Size(
-		width + m_imageUnchecked->getSize().cx + pixel(4_ut),
-		std::max(height, m_imageUnchecked->getSize().cy)
+		width + m_imageUnchecked->getSize(dpi()).cx + pixel(4_ut),
+		std::max(height, m_imageUnchecked->getSize(dpi()).cy)
 	);
 }
 
@@ -83,18 +79,18 @@ void CheckBox::eventPaint(PaintEvent* event)
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);
 
-	const int32_t y = (rcInner.getHeight() - image->getSize().cy) / 2;
+	const int32_t y = (rcInner.getHeight() - image->getSize(dpi()).cy) / 2;
 
 	canvas.drawBitmap(
 		Point(0, y),
 		Point(0, 0),
-		image->getSize(),
+		image->getSize(dpi()),
 		image,
 		BlendMode::Alpha
 	);
 
 	Rect rcText = rcInner;
-	rcText.left += image->getSize().cx + pixel(4_ut);
+	rcText.left += image->getSize(dpi()).cx + pixel(4_ut);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rcText, getText(), AnLeft, AnCenter);

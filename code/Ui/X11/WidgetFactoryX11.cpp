@@ -21,12 +21,10 @@
 #include "Ui/X11/UserWidgetX11.h"
 #include "Ui/X11/WidgetFactoryX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 int xerrorHandler(Display* display, XErrorEvent* ee)
 {
@@ -36,32 +34,9 @@ int xerrorHandler(Display* display, XErrorEvent* ee)
 	return 0;
 }
 
-double getSystemDpi(Display* display)
-{
-    char* resourceString = XResourceManagerString(display);
-	if (!resourceString)
-		return 96.0;
-
-    XrmValue value;
-    char* type = nullptr;
-    double dpi = 96.0;
-
-    XrmInitialize();
-    XrmDatabase db = XrmGetStringDatabase(resourceString);
-
-	if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
-	{
-		if (value.addr)
-			dpi = atof(value.addr);
 	}
 
-	return dpi;
-}
-
-		}
-
 WidgetFactoryX11::WidgetFactoryX11()
-:	m_dpi(96)
 {
 	XIM xim;
 
@@ -73,9 +48,6 @@ WidgetFactoryX11::WidgetFactoryX11()
 
 	// Use our own X error handler.
 	XSetErrorHandler(xerrorHandler);
-
-	// Get system dpi.
-	m_dpi = (int32_t)getSystemDpi(display);
 
 	// Open input method.
 	XSetLocaleModifiers("");
@@ -157,11 +129,6 @@ ISystemBitmap* WidgetFactoryX11::createBitmap()
 IClipboard* WidgetFactoryX11::createClipboard()
 {
 	return new ClipboardX11();
-}
-
-int32_t WidgetFactoryX11::getSystemDPI() const
-{
-    return m_dpi;
 }
 
 void WidgetFactoryX11::getSystemFonts(std::list< std::wstring >& outFonts)
@@ -247,6 +214,4 @@ void WidgetFactoryX11::getDesktopRects(std::list< Rect >& outRects) const
 	}
 }
 
-	}
 }
-

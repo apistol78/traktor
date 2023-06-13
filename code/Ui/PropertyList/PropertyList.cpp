@@ -385,11 +385,11 @@ Size PropertyList::getPreferredSize(const Size& hint) const
 	return Size(256, 256);
 }
 
-IBitmap* PropertyList::getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+IBitmap* PropertyList::getBitmap(const wchar_t* const name)
 {
 	auto it = m_bitmaps.find(name);
 	if (it == m_bitmaps.end())
-		m_bitmaps[name] = new ui::StyleBitmap(name, defaultBitmapResource, defaultBitmapResourceSize);
+		m_bitmaps[name] = new ui::StyleBitmap(name);
 	return m_bitmaps[name];
 }
 

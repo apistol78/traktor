@@ -37,7 +37,7 @@ Size Image::getMinimumSize() const
 		return Size(0, 0);
 
 	if (!m_scale)
-		return m_image->getSize();
+		return m_image->getSize(dpi());
 	else
 		return Size(0, 0);
 }
@@ -50,7 +50,7 @@ Size Image::getPreferredSize(const Size& hint) const
 	if (m_scale && m_keepAspect)
 	{
 		Size csz = getInnerRect().getSize();
-		Size isz = m_image->getSize();
+		Size isz = m_image->getSize(dpi());
 
 		if (csz.cx < isz.cx)
 		{
@@ -67,12 +67,12 @@ Size Image::getPreferredSize(const Size& hint) const
 		return isz;
 	}
 	else
-		return m_image->getSize();
+		return m_image->getSize(dpi());
 }
 
 Size Image::getMaximumSize() const
 {
-	return m_image ? m_image->getSize() : Size(0, 0);
+	return m_image ? m_image->getSize(dpi()) : Size(0, 0);
 }
 
 bool Image::setImage(IBitmap* image, bool transparent)
@@ -113,7 +113,7 @@ void Image::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
-	const Size imageSize = m_image->getSize();
+	const Size imageSize = m_image->getSize(dpi());
 	const Size clientSize = getInnerRect().getSize();
 	Size drawSize = clientSize;
 

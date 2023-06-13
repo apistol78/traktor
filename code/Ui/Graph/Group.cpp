@@ -146,7 +146,7 @@ void Group::paint(GraphCanvas* canvas, const Size& offset) const
 	// Draw group shape.
 	{
 		const int32_t imageIndex = isSelected() ? 1 : 0;
-		const Size sz = m_image[imageIndex]->getSize();
+		const Size sz = m_image[imageIndex]->getSize(m_owner->dpi());
 
 		const int32_t tw = sz.cx / 3;
 		const int32_t th = sz.cy / 3;

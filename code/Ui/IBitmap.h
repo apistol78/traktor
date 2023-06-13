@@ -42,11 +42,11 @@ class T_DLLCLASS IBitmap : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual Size getSize() const = 0;
+	virtual Size getSize(int32_t dpi) const = 0;
 
-	virtual Ref< drawing::Image > getImage() const = 0;
+	virtual Ref< drawing::Image > getImage(int32_t dpi) const = 0;
 
-	virtual ISystemBitmap* getSystemBitmap() const = 0;
+	virtual ISystemBitmap* getSystemBitmap(int32_t dpi) const = 0;
 };
 
 }

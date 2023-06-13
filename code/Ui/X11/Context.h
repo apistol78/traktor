@@ -66,6 +66,12 @@ public:
 
 	//@}
 
+	//@{
+
+	int32_t getSystemDPI() const;
+
+	//@}
+
 private:
 	struct Binding
 	{
@@ -76,6 +82,7 @@ private:
 	Display* m_display;
 	int m_screen;
 	XIM m_xim;
+	int32_t m_dpi;
 	std::map< Window, Binding > m_bindings;
 	std::vector< WidgetData* > m_modal;
 	WidgetData* m_grabbed;

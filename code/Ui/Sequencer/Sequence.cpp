@@ -224,7 +224,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		auto image = m_buttons[i].state ? m_buttons[i].imageDown.ptr() : m_buttons[i].imageUp.ptr();
 		if (image)
 		{
-			const Size size = image->getSize();
+			const Size size = image->getSize(sequencer->dpi());
 			const Size offset(
 				(buttonSize - size.cx) / 2,
 				(buttonSize - size.cy) / 2

@@ -15,9 +15,6 @@
 #include "Ui/PropertyList/ListPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-// Resources
-#include "Resources/SmallDots.h"
-
 namespace traktor
 {
 	namespace ui
@@ -102,7 +99,7 @@ void ListPropertyItem::createInPlaceControls(PropertyList* parent)
 {
 	T_ASSERT(!m_buttonDrop);
 	m_buttonDrop = new MiniButton();
-	m_buttonDrop->create(parent, parent->getBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots)));
+	m_buttonDrop->create(parent, parent->getBitmap(L"UI.SmallDots"));
 	m_buttonDrop->addEventHandler< ButtonClickEvent >(this, &ListPropertyItem::eventDropClick);
 
 	T_ASSERT(!m_listForm);

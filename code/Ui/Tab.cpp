@@ -15,8 +15,6 @@
 #include "Ui/TabPage.h"
 #include "Ui/Font.h"
 
-#include "Resources/TabClose.h"
-
 namespace traktor
 {
 	namespace ui
@@ -53,7 +51,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_drawLine = bool((style & WsLine) == WsLine);
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
-	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
+	m_bitmapClose = new StyleBitmap(L"UI.TabClose");
 	m_tabHeight = getFont().getUnitSize() + 9_ut;
 	return true;
 }
@@ -70,19 +68,19 @@ int32_t Tab::addImage(IBitmap* image, int32_t imageCount)
 	// Resize existing image.
 	if (m_bitmapImages)
 	{
-		width = m_bitmapImages->getSize().cx + image->getSize().cx;
-		height = std::max(m_bitmapImages->getSize().cy, image->getSize().cy);
+		width = m_bitmapImages->getSize(dpi()).cx + image->getSize(dpi()).cx;
+		height = std::max(m_bitmapImages->getSize(dpi()).cy, image->getSize(dpi()).cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_bitmapImages->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_bitmapImages->getSize().cx, 0));
+		newImage->copyImage(m_bitmapImages->getImage(dpi()));
+		newImage->copySubImage(image->getImage(dpi()), Rect(Point(0, 0), image->getSize(dpi())), Point(m_bitmapImages->getSize(dpi()).cx, 0));
 		m_bitmapImages = newImage;
 	}
 	else
 	{
 		m_bitmapImages = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_bitmapImages->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_bitmapImages->getSize().cy);
+		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_bitmapImages->getSize(dpi()).cx / imageCount);
+		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_bitmapImages->getSize(dpi()).cy);
 	}
 
 	return 0;
@@ -419,12 +417,12 @@ void Tab::eventPaint(PaintEvent* event)
 			int32_t tabWidthNoMargin = sizText.cx;
 			if (m_bitmapImages != nullptr && page->getImageIndex() >= 0)
 			{
-				const Size bitmapSize = m_bitmapImages->getSize();
+				const Size bitmapSize = m_bitmapImages->getSize(dpi());
 				tabWidthNoMargin += bitmapSize.cy;
 			}
 			if (m_closeButton)
 			{
-				const Size closeSize = m_bitmapClose->getSize();
+				const Size closeSize = m_bitmapClose->getSize(dpi());
 				tabWidthNoMargin += closeSize.cx + pixel(4_ut);
 			}
 
@@ -467,7 +465,7 @@ void Tab::eventPaint(PaintEvent* event)
 				int32_t textOffset = 0;
 				if (m_bitmapImages != nullptr && page->getImageIndex() >= 0)
 				{
-					const Size bitmapSize = m_bitmapImages->getSize();
+					const Size bitmapSize = m_bitmapImages->getSize(dpi());
 					canvas.drawBitmap(
 						Point(left + pixel(4_ut), rcTab.getCenter().y - bitmapSize.cy / 2 + pixel(1_ut)),
 						Point(page->getImageIndex() * bitmapSize.cy, 0),
@@ -481,7 +479,7 @@ void Tab::eventPaint(PaintEvent* event)
 				// Draw close button.
 				if (m_closeButton && (page == m_selectedPage || page == m_hoverPage))
 				{
-					const Size closeSize = m_bitmapClose->getSize();
+					const Size closeSize = m_bitmapClose->getSize(dpi());
 					canvas.drawBitmap(
 						Point(rcTab.right - closeSize.cx - pixel(4_ut), rcTab.getCenter().y - closeSize.cy / 2 + pixel(1_ut)),
 						Point(0, 0),
