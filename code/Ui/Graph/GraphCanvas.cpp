@@ -158,7 +158,7 @@ void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 
 void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	if (m_scaledFont.getPixelSize96() <= 4)
+	if (m_scaledFont.getUnitSize().get() <= 4)
 		return;
 
 	m_canvas->drawText(

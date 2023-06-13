@@ -142,7 +142,7 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
 	m_separator = 80_ut;
-	m_propertyItemHeight = pixel(Unit(getFont().getPixelSize96() + 10));
+	m_propertyItemHeight = getFont().getUnitSize() + 10_ut;
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
 
@@ -280,7 +280,7 @@ void PropertyList::setColumnName(int column, const std::wstring& name)
 
 Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& position)
 {
-	const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
+	const int32_t scrollBarOffset = m_scrollBar->getPosition() * pixel(m_propertyItemHeight);
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
@@ -293,7 +293,7 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 			return 0;
 	}
 
-	int32_t id = (y + scrollBarOffset) / m_propertyItemHeight;
+	int32_t id = (y + scrollBarOffset) / pixel(m_propertyItemHeight);
 	for (const auto item : propertyItems)
 	{
 		if (id-- <= 0)
@@ -405,7 +405,7 @@ void PropertyList::updateScrollBar()
 		height -= pixel(c_columnsHeight);
 
 	const int32_t itemCount = (int32_t)propertyItems.size();
-	const int32_t pageCount = height / m_propertyItemHeight;
+	const int32_t pageCount = height / pixel(m_propertyItemHeight);
 
 	int32_t position = m_scrollBar->getPosition();
 	if (position > itemCount)
@@ -421,7 +421,7 @@ void PropertyList::placeItems()
 {
 	const Rect rcInner = getInnerRect();
 
-	const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
+	const int32_t scrollBarOffset = m_scrollBar->getPosition() * pixel(m_propertyItemHeight);
 	const int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
 	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
@@ -433,13 +433,13 @@ void PropertyList::placeItems()
 	// Issue resize of in-place controls on expanded items.
 	Rect rcItem(
 		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + m_propertyItemHeight - 1
+		rcInner.right - scrollBarWidth, -scrollBarOffset + top + pixel(m_propertyItemHeight) - 1
 	);
 	for (auto item : propertyItems)
 	{
 		const Rect rcValue(rcItem.left + pixel(m_separator) + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		item->resizeInPlaceControls(rcValue, childRects);
-		rcItem = rcItem.offset(0, m_propertyItemHeight);
+		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 	}
 
 	// Move all children at once.
@@ -470,7 +470,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 	}
 	else
 	{
-		const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
+		const int32_t scrollBarOffset = m_scrollBar->getPosition() * pixel(m_propertyItemHeight);
 
 		int32_t y = event->getPosition().y;
 		if (m_columnHeader)
@@ -482,7 +482,7 @@ void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 		RefArray< PropertyItem > propertyItems;
 		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly | GfVisibleOnly);
 
-		const int32_t id = (y + scrollBarOffset) / m_propertyItemHeight;
+		const int32_t id = (y + scrollBarOffset) / pixel(m_propertyItemHeight);
 		for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
@@ -633,7 +633,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	const int32_t scrollBarOffset = m_scrollBar->getPosition() * m_propertyItemHeight;
+	const int32_t scrollBarOffset = m_scrollBar->getPosition() * pixel(m_propertyItemHeight);
 	const int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
 	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
@@ -677,12 +677,12 @@ void PropertyList::eventPaint(PaintEvent* event)
 	// Draw property items.
 	Rect rcItem(
 		rcInner.left, -scrollBarOffset + top,
-		rcInner.right - scrollBarWidth, -scrollBarOffset + top + m_propertyItemHeight - 1
+		rcInner.right - scrollBarWidth, -scrollBarOffset + top + pixel(m_propertyItemHeight) - 1
 	);
 	RefArray< PropertyItem >::iterator i = propertyItems.begin();
 	while (rcItem.bottom < top && i != propertyItems.end())
 	{
-		rcItem = rcItem.offset(0, m_propertyItemHeight);
+		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 		++i;
 	}
 	while (rcItem.top < rcInner.bottom && i != propertyItems.end())
@@ -716,7 +716,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 			Point(rcItem.left + pixel(m_separator), rcItem.bottom)
 		);
 
-		rcItem = rcItem.offset(0, m_propertyItemHeight);
+		rcItem = rcItem.offset(0, pixel(m_propertyItemHeight));
 		++i;
 	}
 

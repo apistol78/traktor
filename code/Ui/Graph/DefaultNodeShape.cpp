@@ -93,7 +93,7 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 	const Dim dim(graph);
 	const Rect rc = node->calculateRect();
 
-	const int32_t textHeight = graph->pixel(Unit(graph->getPaintSettings().getFont().getPixelSize96() + 4));
+	const int32_t textHeight = graph->pixel(graph->getPaintSettings().getFont().getUnitSize() + 4_ut);
 	int32_t top = (int32_t)(dim.marginHeight + dim.topMargin + dim.titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -123,7 +123,7 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 	const Dim dim(graph);
 	const Point ptn(pt.x - rc.left, pt.y - rc.top);
 
-	const int32_t textHeight = graph->pixel(Unit(graph->getPaintSettings().getFont().getPixelSize96() + 4));
+	const int32_t textHeight = graph->pixel(graph->getPaintSettings().getFont().getUnitSize() + 4_ut);
 	int32_t top = (int32_t)(dim.marginHeight + dim.topMargin + dim.titlePad);
 	if (!node->getTitle().empty())
 		top += textHeight;
@@ -158,7 +158,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const PaintSettings& settings = canvas->getPaintSettings();
 
 	const Rect rc = node->calculateRect().offset(offset);
-	const int32_t textHeight = graph->pixel(Unit(settings.getFont().getPixelSize96() + 4));
+	const int32_t textHeight = graph->pixel(settings.getFont().getUnitSize() + 4_ut);
 
 	// Draw node shape.
 	{
@@ -343,7 +343,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const Dim dim(graph);
-	const int32_t textHeight = graph->pixel(Unit(graph->getPaintSettings().getFont().getPixelSize96() + 4));
+	const int32_t textHeight = graph->pixel(graph->getPaintSettings().getFont().getUnitSize() + 4_ut);
 	int32_t height = (int32_t)(dim.marginHeight * 2 + dim.topMargin + dim.titlePad);
 
 	if (!node->getTitle().empty())

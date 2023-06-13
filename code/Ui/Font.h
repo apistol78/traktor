@@ -10,6 +10,7 @@
 
 #include <string>
 #include "Core/Object.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,9 +48,9 @@ public:
 
 	int32_t getSize() const;
 
-	void setPixelSize96(int32_t size);
+	void setUnitSize(Unit size);
 
-	int32_t getPixelSize96() const;
+	Unit getUnitSize() const;
 
 	void setBold(bool bold);
 

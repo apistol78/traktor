@@ -63,19 +63,18 @@ int32_t Font::getSize() const
 	return m_params.size;
 }
 
-void Font::setPixelSize96(int32_t size)
+void Font::setUnitSize(Unit size)
 {
-	T_FATAL_ASSERT (size >= 0);
 	const int32_t dpi = 96;
-	const float inches = float(size) / dpi;
+	const float inches = float(size.get()) / dpi;
 	m_params.size = int32_t(inches * 96.0f);
 }
 
-int32_t Font::getPixelSize96() const
+Unit Font::getUnitSize() const
 {
 	const int32_t dpi = 96;
 	const float inches = m_params.size / 96.0f;
-	return int32_t(inches * dpi + 0.5f);
+	return Unit(int32_t(inches * dpi + 0.5f));
 }
 
 void Font::setBold(bool bold)
