@@ -15,10 +15,6 @@
 #include "Ui/Widget.h"
 #include "Ui/Events/MenuClickEvent.h"
 
-// Resources
-#include "Resources/Unchecked.h"
-#include "Resources/Checked.h"
-
 namespace traktor::ui
 {
 	namespace
@@ -107,8 +103,8 @@ void MenuItem::setCheckBox(bool checkBox)
 {
 	if ((m_checkBox = checkBox) == true)
 	{
-		m_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-		m_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+		m_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
+		m_imageChecked = new StyleBitmap(L"UI.Checked");
 	}
 	else
 	{
@@ -194,7 +190,7 @@ Size MenuItem::getSize(const Widget* shell) const
 
 		if (m_checkBox)
 		{
-			const Size sz = m_imageUnchecked->getSize();
+			const Size sz = m_imageUnchecked->getSize(shell->dpi());
 			cw += shell->pixel(c_itemMarginX) + sz.cx;
 			ch = std::max< int32_t >(ch, sz.cy);
 		}
@@ -226,7 +222,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 	if (m_checkBox)
 	{
 		IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
-		const Size sz = image->getSize();
+		const Size sz = image->getSize(shell->dpi());
 
 		canvas.drawBitmap(
 			Point(rcLabel.right - sz.cx, rcLabel.top + (rcLabel.getHeight() - sz.cy) / 2),

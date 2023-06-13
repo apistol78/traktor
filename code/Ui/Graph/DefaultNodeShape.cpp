@@ -100,7 +100,7 @@ Point DefaultNodeShape::getPinPosition(GraphControl* graph, const Node* node, co
 	if (!node->getInfo().empty())
 		top += textHeight;
 	if (node->getImage())
-		top += node->getImage()->getSize().cy;
+		top += node->getImage()->getSize(graph->dpi()).cy;
 
 	const int32_t x = pin->getDirection() == Pin::DrInput ?
 		rc.left + dim.marginWidth - 1 :
@@ -130,7 +130,7 @@ Pin* DefaultNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 	if (!node->getInfo().empty())
 		top += textHeight;
 	if (node->getImage())
-		top += node->getImage()->getSize().cy;
+		top += node->getImage()->getSize(graph->dpi()).cy;
 
 	const RefArray< Pin >* pins = nullptr;
 	if (ptn.x <= dim.pinHitWidth + dim.marginWidth)
@@ -163,7 +163,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	// Draw node shape.
 	{
 		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		const Size sz = m_imageNode[imageIndex]->getSize();
+		const Size sz = m_imageNode[imageIndex]->getSize(graph->dpi());
 
 		const int32_t tw = sz.cx / 3;
 		const int32_t th = sz.cy / 3;
@@ -225,14 +225,14 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	if (node->getImage())
 	{
 		canvas->drawBitmap(
-			Point(rc.getCenter().x - node->getImage()->getSize().cx / 2, top),
-			node->getImage()->getSize(),
+			Point(rc.getCenter().x - node->getImage()->getSize(graph->dpi()).cx / 2, top),
+			node->getImage()->getSize(graph->dpi()),
 			Point(0, 0),
-			node->getImage()->getSize(),
+			node->getImage()->getSize(graph->dpi()),
 			node->getImage(),
 			BlendMode::Opaque
 		);
-		top += node->getImage()->getSize().cy;
+		top += node->getImage()->getSize(graph->dpi()).cy;
 	}
 
 	top += dim.titlePad;
@@ -240,7 +240,7 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const RefArray< Pin >& inputPins = node->getInputPins();
 	const RefArray< Pin >& outputPins = node->getOutputPins();
 
-	const Size pinSize = m_imagePin->getSize();
+	const Size pinSize = m_imagePin->getSize(graph->dpi());
 
 	for (int32_t i = 0; i < int32_t(inputPins.size()); ++i)
 	{
@@ -352,7 +352,7 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 		height += textHeight;
 
 	if (node->getImage())
-		height += node->getImage()->getSize().cy;
+		height += node->getImage()->getSize(graph->dpi()).cy;
 
 	const int32_t pins = std::max< int32_t >(
 		int32_t(node->getInputPins().size()),
@@ -388,7 +388,7 @@ Size DefaultNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 	}
 	if (node->getImage())
 	{
-		const int32_t imageExtent = node->getImage()->getSize().cx;
+		const int32_t imageExtent = node->getImage()->getSize(graph->dpi()).cx;
 		width = std::max(width, imageExtent);
 	}
 

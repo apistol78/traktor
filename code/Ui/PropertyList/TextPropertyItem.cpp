@@ -16,9 +16,6 @@
 #include "Ui/Events/ButtonClickEvent.h"
 #include "Ui/Events/FocusEvent.h"
 
-// Resources
-#include "Resources/SmallPen.h"
-
 namespace traktor
 {
 	namespace ui
@@ -62,7 +59,7 @@ void TextPropertyItem::createInPlaceControls(PropertyList* parent)
 	{
 		T_FATAL_ASSERT(!m_buttonEdit);
 		m_buttonEdit = new MiniButton();
-		m_buttonEdit->create(parent, parent->getBitmap(L"UI.SmallPen", c_ResourceSmallPen, sizeof(c_ResourceSmallPen)));
+		m_buttonEdit->create(parent, parent->getBitmap(L"UI.SmallPen"));
 		m_buttonEdit->addEventHandler< ButtonClickEvent >(this, &TextPropertyItem::eventClick);
 	}
 }

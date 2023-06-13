@@ -86,7 +86,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 	const Rect rc = node->calculateRect().offset(offset);
 
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	const Size sz = m_imageNode[imageIndex]->getSize();
+	const Size sz = m_imageNode[imageIndex]->getSize(graph->dpi());
 
 	canvas->drawBitmap(
 		rc.getTopLeft(),
@@ -98,7 +98,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 	);
 
 	const int32_t f = graph->pixel(0_ut);
-	const Size pinSize = m_imagePin->getSize();
+	const Size pinSize = m_imagePin->getSize(graph->dpi());
 
 	canvas->drawBitmap(
 		Point(rc.left - f - pinSize.cx / 2, rc.getCenter().y - pinSize.cy / 2),
@@ -122,7 +122,7 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 Size IpolNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	return m_imageNode[imageIndex]->getSize();
+	return m_imageNode[imageIndex]->getSize(graph->dpi());
 }
 
 	}

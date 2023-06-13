@@ -148,7 +148,7 @@ void Bitmap::copySubImage(drawing::Image* image, const Rect& srcRect, const Poin
 		m_bitmap->copySubImage(image, srcRect, destPos);
 }
 
-Ref< drawing::Image > Bitmap::getImage() const
+Ref< drawing::Image > Bitmap::getImage(int32_t dpi) const
 {
 	if (m_bitmap)
 		return m_bitmap->getImage();
@@ -156,7 +156,7 @@ Ref< drawing::Image > Bitmap::getImage() const
 		return nullptr;
 }
 
-Size Bitmap::getSize() const
+Size Bitmap::getSize(int32_t dpi) const
 {
 	if (m_bitmap)
 		return m_bitmap->getSize();
@@ -164,7 +164,7 @@ Size Bitmap::getSize() const
 		return Size(0, 0);
 }
 
-ISystemBitmap* Bitmap::getSystemBitmap() const
+ISystemBitmap* Bitmap::getSystemBitmap(int32_t dpi) const
 {
 	return m_bitmap;
 }
@@ -186,16 +186,15 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName, int32_t dpi)
 		const void* resource = &dms.getBuffer()[0];
 		uint32_t size = (uint32_t)dms.getBuffer().size();
 
-		int32_t systemDPI = /* dpi <= 0 ? getSystemDPI() : */ dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 
 		const ImageHeader* h = static_cast< const ImageHeader* >(resource);
 		for (uint32_t i = 0; i < h->count; ++i)
 		{
-			if (abs(systemDPI - h->entry[i].dpi) < bestFit)
+			if (abs(dpi - h->entry[i].dpi) < bestFit)
 			{
-				bestFit = abs(systemDPI - h->entry[i].dpi);
+				bestFit = abs(dpi - h->entry[i].dpi);
 				bestFitIndex = i;
 			}
 		}
@@ -230,16 +229,15 @@ Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstri
 	Ref< Bitmap > bitmap = new Bitmap();
 	if (extension == L"image")
 	{
-		int32_t systemDPI = /* dpi <= 0 ? getSystemDPI() : */ dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 
 		const ImageHeader* h = static_cast< const ImageHeader* >(resource);
 		for (uint32_t i = 0; i < h->count; ++i)
 		{
-			if (abs(systemDPI - h->entry[i].dpi) < bestFit)
+			if (abs(dpi - h->entry[i].dpi) < bestFit)
 			{
-				bestFit = abs(systemDPI - h->entry[i].dpi);
+				bestFit = abs(dpi - h->entry[i].dpi);
 				bestFitIndex = i;
 			}
 		}

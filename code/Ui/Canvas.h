@@ -33,7 +33,7 @@ class T_DLLCLASS Canvas : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit Canvas(ICanvas* canvas);
+	explicit Canvas(ICanvas* canvas, int32_t dpi);
 
 	void setForeground(const Color4ub& foreground);
 
@@ -107,6 +107,7 @@ public:
 
 private:
 	ICanvas* m_canvas;
+	int32_t m_dpi;
 	Color4ub m_foreground;
 	Color4ub m_background;
 };

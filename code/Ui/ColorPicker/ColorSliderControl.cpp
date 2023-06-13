@@ -119,7 +119,7 @@ void ColorSliderControl::eventPaint(PaintEvent* event)
 	canvas.drawBitmap(
 		Point(0, 0),
 		Point(0, 0),
-		m_gradientBitmap->getSize(),
+		m_gradientBitmap->getSize(dpi()),
 		m_gradientBitmap
 	);
 

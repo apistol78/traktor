@@ -15,8 +15,9 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Canvas", Canvas, Object)
 
-Canvas::Canvas(ICanvas* canvas)
+Canvas::Canvas(ICanvas* canvas, int32_t dpi)
 :	m_canvas(canvas)
+,	m_dpi(dpi)
 {
 }
 
@@ -174,14 +175,14 @@ void Canvas::fillPolygon(const Point* pnts, int count)
 
 void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
-	if (bitmap && bitmap->getSystemBitmap())
-		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getSystemBitmap(), blendMode, filter);
+	if (bitmap && bitmap->getSystemBitmap(m_dpi))
+		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getSystemBitmap(m_dpi), blendMode, filter);
 }
 
 void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
-	if (bitmap && bitmap->getSystemBitmap())
-		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getSystemBitmap(), blendMode, filter);
+	if (bitmap && bitmap->getSystemBitmap(m_dpi))
+		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getSystemBitmap(m_dpi), blendMode, filter);
 }
 
 void Canvas::drawText(const Point& at, const std::wstring& text)

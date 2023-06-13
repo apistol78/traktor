@@ -111,9 +111,11 @@ public:
 
 	virtual void hide();
 
-	virtual int32_t pixel(Unit measure) const;
+	int32_t dpi() const;
 
-	virtual Unit unit(int32_t measure) const;
+	int32_t pixel(Unit measure) const;
+
+	Unit unit(int32_t measure) const;
 
 	bool hasCapture() const;
 

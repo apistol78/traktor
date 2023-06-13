@@ -24,6 +24,7 @@ const wchar_t* c_glslKeywords[] =
 	L"layout",
 	L"centroid",
 	L"flat",
+	L"fract",
 	L"smooth",
 	L"noperspective",
 	L"break",
@@ -50,6 +51,7 @@ const wchar_t* c_glslKeywords[] =
 	L"precision",
 	L"struct",
 	L"readonly",
+	L"textureLod",
 	nullptr
 };
 

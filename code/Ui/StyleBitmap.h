@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Styled bitmap.
  * \ingroup UI
@@ -36,17 +34,17 @@ public:
 
 	explicit StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap);
 
-	explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
+	// explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
 
 	virtual ~StyleBitmap();
 
 	virtual void destroy() override final;
 
-	virtual Size getSize() const override final;
+	virtual Size getSize(int32_t dpi) const override final;
 
-	virtual Ref< drawing::Image > getImage() const override final;
+	virtual Ref< drawing::Image > getImage(int32_t dpi) const override final;
 
-	virtual ISystemBitmap* getSystemBitmap() const override final;
+	virtual ISystemBitmap* getSystemBitmap(int32_t dpi) const override final;
 
 private:
 	const wchar_t* const m_name;
@@ -55,9 +53,7 @@ private:
 	mutable std::wstring m_path;
 	mutable Ref< IBitmap > m_bitmap;
 
-	bool resolve() const;
+	bool resolve(int32_t dpi) const;
 };
 
-	}
 }
-

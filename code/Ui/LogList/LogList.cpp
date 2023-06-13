@@ -22,9 +22,6 @@
 #include "Ui/Events/LogActivateEvent.h"
 #include "Ui/LogList/LogList.h"
 
-// Resources
-#include "Resources/Log.h"
-
 namespace traktor
 {
 	namespace ui
@@ -50,10 +47,10 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
 
-	m_icons = new StyleBitmap(L"UI.Log", c_ResourceLog, sizeof(c_ResourceLog));
+	m_icons = new StyleBitmap(L"UI.Log");
 
 	m_itemHeight = getFontMetric().getHeight() + pixel(2_ut);
-	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
+	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize(dpi()).cy);
 
 	m_lookup = lookup;
     
@@ -246,7 +243,7 @@ void LogList::eventPaint(PaintEvent* event)
 		const auto& entry = m_logFiltered[row];
 		const uint32_t threadIndex = m_threadIndices[entry.threadId];
 
-		Size iconSize(m_icons->getSize().cy, m_icons->getSize().cy);
+		Size iconSize(m_icons->getSize(dpi()).cy, m_icons->getSize(dpi()).cy);
 		Point iconPos = rc.getTopLeft() + Size(0, (rc.getHeight() - iconSize.cy) / 2);
 
 		Color4ub fg(0, 0, 0, 0);

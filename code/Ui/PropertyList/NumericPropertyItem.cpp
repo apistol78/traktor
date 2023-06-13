@@ -224,7 +224,7 @@ void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const
 		index |= 2;
 
 	auto upDown = m_upDown[index];
-	auto upDownSize = upDown->getSize();
+	auto upDownSize = upDown->getSize(parent->dpi());
 
 	const int32_t x = rc.right - upDownSize.cx - parent->pixel(2_ut);
 	const int32_t y = rc.top + (rc.getHeight() - upDownSize.cy) / 2;
@@ -232,7 +232,7 @@ void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const
 	canvas.drawBitmap(
 		Point(x, y),
 		Point(0, 0),
-		upDown->getSize(),
+		upDown->getSize(parent->dpi()),
 		upDown
 	);
 }

@@ -14,12 +14,6 @@
 #include "Ui/Sequencer/SequenceGroup.h"
 #include "Ui/Sequencer/SequencerControl.h"
 
-// Resources
-#include "Resources/SequenceExpand.h"
-#include "Resources/SequenceCollapse.h"
-#include "Resources/SequenceVisible.h"
-#include "Resources/SequenceHidden.h"
-
 namespace traktor
 {
 	namespace ui
@@ -39,8 +33,8 @@ SequenceGroup::SequenceGroup(const std::wstring& name)
 ,	m_start(0)
 ,	m_end(100)
 {
-	m_imageExpand = new StyleBitmap(L"UI.SequenceExpand", c_ResourceSequenceExpand, sizeof(c_ResourceSequenceExpand));
-	m_imageCollapse = new StyleBitmap(L"UI.SequenceCollapse", c_ResourceSequenceCollapse, sizeof(c_ResourceSequenceCollapse));
+	m_imageExpand = new StyleBitmap(L"UI.SequenceExpand");
+	m_imageCollapse = new StyleBitmap(L"UI.SequenceCollapse");
 }
 
 void SequenceGroup::expand()
@@ -86,13 +80,13 @@ void SequenceGroup::mouseDown(SequencerControl* sequencer, const Point& at, cons
 
 	// Calculate left edges.
 	int32_t expandLeft = rc.left + 4 + getDepth() * 16;
-	int32_t visibleLeft = expandLeft + imageExpand->getSize().cx + 4;
+	int32_t visibleLeft = expandLeft + imageExpand->getSize(sequencer->dpi()).cx + 4;
 
 	// Check which icon user pressed, if any.
-	if (at.x >= expandLeft && at.x <= expandLeft + int(imageExpand->getSize().cx))
+	if (at.x >= expandLeft && at.x <= expandLeft + int(imageExpand->getSize(sequencer->dpi()).cx))
 	{
-		int32_t top = (rc.getHeight() - imageExpand->getSize().cy) / 2;
-		if (at.y >= top && at.y <= top + int(imageExpand->getSize().cy))
+		int32_t top = (rc.getHeight() - imageExpand->getSize(sequencer->dpi()).cy) / 2;
+		if (at.y >= top && at.y <= top + int(imageExpand->getSize(sequencer->dpi()).cy))
 			m_expanded = !m_expanded;
 	}
 }
@@ -151,10 +145,10 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 		canvas.drawBitmap(
 			Point(
 				rc.left + sequencer->pixel(Unit(4 + getDepth() * 16)),
-				rc.top + (rc.getHeight() - imageExpand->getSize().cy) / 2
+				rc.top + (rc.getHeight() - imageExpand->getSize(sequencer->dpi()).cy) / 2
 			),
 			Point(0, 0),
-			imageExpand->getSize(),
+			imageExpand->getSize(sequencer->dpi()),
 			imageExpand
 		);
 	}

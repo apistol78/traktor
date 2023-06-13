@@ -95,19 +95,19 @@ public:
 	void copySubImage(drawing::Image* image, const ui::Rect& srcRect, const ui::Point& destPos);
 
 	/*! Get image from bitmap. */
-	virtual Ref< drawing::Image > getImage() const override final;
+	virtual Ref< drawing::Image > getImage(int32_t dpi) const override final;
 
 	/*! Get size of bitmap in pixels. */
-	virtual Size getSize() const override final;
+	virtual Size getSize(int32_t dpi) const override final;
 
 	/*! Get system bitmap. */
-	virtual ISystemBitmap* getSystemBitmap() const override final;
+	virtual ISystemBitmap* getSystemBitmap(int32_t dpi) const override final;
 
 	/*! Load bitmap from file. */
-	static Ref< Bitmap > load(const std::wstring& fileName, int32_t dpi = -1);
+	static Ref< Bitmap > load(const std::wstring& fileName, int32_t dpi);
 
 	/*! Load bitmap from resource. */
-	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension, int32_t dpi = -1);
+	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension, int32_t dpi);
 
 private:
 	ISystemBitmap* m_bitmap;

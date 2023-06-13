@@ -13,10 +13,6 @@
 #include "Ui/PropertyList/CheckPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-// Resources
-#include "Resources/Unchecked.h"
-#include "Resources/Checked.h"
-
 namespace traktor
 {
 	namespace ui
@@ -28,8 +24,8 @@ CheckPropertyItem::CheckPropertyItem(const std::wstring& text, bool checked)
 :	PropertyItem(text)
 ,	m_checked(checked)
 {
-	m_imageUnchecked = new StyleBitmap(L"UI.Unchecked", c_ResourceUnchecked, sizeof(c_ResourceUnchecked));
-	m_imageChecked = new StyleBitmap(L"UI.Checked", c_ResourceChecked, sizeof(c_ResourceChecked));
+	m_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
+	m_imageChecked = new StyleBitmap(L"UI.Checked");
 }
 
 void CheckPropertyItem::setChecked(bool checked)
@@ -53,11 +49,11 @@ void CheckPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const R
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);
 
-	int c = (rc.getHeight() - image->getSize().cy) / 2;
+	int c = (rc.getHeight() - image->getSize(parent->dpi()).cy) / 2;
 	canvas.drawBitmap(
 		ui::Point(rc.left + 2, rc.top + c),
 		ui::Point(0, 0),
-		image->getSize(),
+		image->getSize(parent->dpi()),
 		image
 	);
 }

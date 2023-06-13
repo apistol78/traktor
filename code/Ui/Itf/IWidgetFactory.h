@@ -60,8 +60,6 @@ public:
 
 	virtual IClipboard* createClipboard() = 0;
 
-	virtual int32_t getSystemDPI() const = 0;
-
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) = 0;
 
 	virtual void getDesktopRects(std::list< Rect >& outRects) const = 0;

@@ -7,13 +7,38 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <X11/Xresource.h>
 #include "Core/Assert.h"
 #include "Ui/X11/Context.h"
 
-namespace traktor
+namespace traktor::ui
 {
-    namespace ui
+    namespace
     {
+
+double getSystemDpi(Display* display)
+{
+    char* resourceString = XResourceManagerString(display);
+	if (!resourceString)
+		return 96.0;
+
+    XrmValue value;
+    char* type = nullptr;
+    double dpi = 96.0;
+
+    XrmInitialize();
+    XrmDatabase db = XrmGetStringDatabase(resourceString);
+
+	if (XrmGetResource(db, "Xft.dpi", "String", &type, &value) == True)
+	{
+		if (value.addr)
+			dpi = atof(value.addr);
+	}
+
+	return dpi;
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Context", Context, Object)
 
@@ -24,6 +49,7 @@ Context::Context(Display* display, int screen, XIM xim)
 ,	m_grabbed(nullptr)
 ,	m_focused(nullptr)
 {
+	m_dpi = (int32_t)getSystemDpi(display);
 }
 
 void Context::bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn)
@@ -220,6 +246,11 @@ void Context::dispatch(XEvent& xe)
     }
 }
 
+int32_t Context::getSystemDPI() const
+{
+	return m_dpi;
+}
+
 void Context::dispatch(Window window, int32_t eventType, bool always, XEvent& xe)
 {
 	// Find event listener binding.
@@ -270,5 +301,4 @@ Window Context::getRootWindow() const
 	return RootWindow(m_display, m_screen);
 }
 
-    }
 }

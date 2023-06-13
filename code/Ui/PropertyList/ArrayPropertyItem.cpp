@@ -17,10 +17,6 @@
 #include "Ui/PropertyList/NullPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-// Resources
-#include "Resources/SmallDots.h"
-#include "Resources/SmallPlus.h"
-
 namespace traktor
 {
 	namespace ui
@@ -56,9 +52,9 @@ void ArrayPropertyItem::createInPlaceControls(PropertyList* parent)
 	{
 		Ref< ui::IBitmap > img;
 		if (m_elementType)
-			img = parent->getBitmap(L"UI.SmallDots", c_ResourceSmallDots, sizeof(c_ResourceSmallDots));
+			img = parent->getBitmap(L"UI.SmallDots");
 		else
-			img = parent->getBitmap(L"UI.SmallPlus", c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus));
+			img = parent->getBitmap(L"UI.SmallPlus");
 
 		m_buttonEdit = new MiniButton();
 		m_buttonEdit->create(parent, img);
