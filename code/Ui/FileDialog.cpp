@@ -40,22 +40,22 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	if (!ConfigDialog::create(
 		parent,
 		title,
-		dpi96(700),
-		dpi96(500),
+		700_ut,
+		500_ut,
 		ConfigDialog::WsCenterParent | ConfigDialog::WsDefaultResizable,
-		new TableLayout(L"100%", save ? L"*,100%,*" : L"*,100%", 0, 0)
+		new TableLayout(L"100%", save ? L"*,100%,*" : L"*,100%", 0_ut, 0_ut)
 	))
 		return false;
 
 	m_containerPath = new Container();
-	m_containerPath->create(this, WsNone, new FlowLayout(dpi96(4), dpi96(4), dpi96(4), dpi96(4)));
+	m_containerPath->create(this, WsNone, new FlowLayout(4_ut, 4_ut));
 
 	m_gridFiles = new GridView();
 	m_gridFiles->create(this, GridView::WsColumnHeader | WsDoubleBuffer);
-	m_gridFiles->addColumn(new GridColumn(L"", dpi96(20)));
-	m_gridFiles->addColumn(new GridColumn(L"Filename", dpi96(300)));
-	m_gridFiles->addColumn(new GridColumn(L"Size", dpi96(100)));
-	m_gridFiles->addColumn(new GridColumn(L"Modified", dpi96(180)));
+	m_gridFiles->addColumn(new GridColumn(L"", 20_ut));
+	m_gridFiles->addColumn(new GridColumn(L"Filename", 300_ut));
+	m_gridFiles->addColumn(new GridColumn(L"Size", 100_ut));
+	m_gridFiles->addColumn(new GridColumn(L"Modified", 180_ut));
 
 	// Sort by directory first then name.
 	m_gridFiles->setSort([](const GridRow* r1, const GridRow* r2) -> bool {

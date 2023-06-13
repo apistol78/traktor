@@ -107,7 +107,7 @@ void ListPropertyItem::createInPlaceControls(PropertyList* parent)
 
 	T_ASSERT(!m_listForm);
 	m_listForm = new ToolForm();
-	m_listForm->create(parent, L"", 0, 0, WsNone, new ui::FloodLayout());
+	m_listForm->create(parent, L"", 0_ut, 0_ut, WsNone, new ui::FloodLayout());
 	m_listForm->setVisible(false);
 
 	T_ASSERT(!m_listBox);
@@ -158,15 +158,18 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 			)
 		));
 
-	m_listRect = Rect(
-		rc.left,
-		rc.top + rc.getHeight(),
-		rc.right,
-		rc.top + rc.getHeight() + dpi96(16) * 4
-	);
+	if (m_listForm)
+	{
+		m_listRect = Rect(
+			rc.left,
+			rc.top + rc.getHeight(),
+			rc.right,
+			rc.top + rc.getHeight() + m_listForm->pixel(16_ut) * 4
+		);
+	}
 }
 
-void ListPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void ListPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	std::wstring value = getSelectedItem();
 	canvas.drawText(rc.inflate(-2, 0), value, AnLeft, AnCenter);

@@ -36,12 +36,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ConfigurationPropertyPage", ConfigurationPro
 
 bool ConfigurationPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::dpi96(4);
-
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"100%", L"100%", f, f)
+		new ui::TableLayout(L"100%", L"100%", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -49,15 +47,15 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	tab->create(this, ui::Tab::WsLine | ui::WsDoubleBuffer);
 
 	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
-	tabPageBuild->create(tab, L"Build", new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*,*", f, f));
+	tabPageBuild->create(tab, L"Build", new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%,*,*,*", 4_ut, 4_ut));
 	tab->addPage(tabPageBuild);
 
 	Ref< ui::TabPage > tabPageDebug = new ui::TabPage();
-	tabPageDebug->create(tab, L"Debug", new ui::TableLayout(L"*,100%", L"*", f, f));
+	tabPageDebug->create(tab, L"Debug", new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut));
 	tab->addPage(tabPageDebug);
 
 	Ref< ui::TabPage > tabPageConsumer = new ui::TabPage();
-	tabPageConsumer->create(tab, L"Consumer", new ui::TableLayout(L"*,100%", L"*", f, f));
+	tabPageConsumer->create(tab, L"Consumer", new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut));
 	tab->addPage(tabPageConsumer);
 
 	tab->setActivePage(tabPageBuild);

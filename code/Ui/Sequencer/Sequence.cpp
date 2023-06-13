@@ -137,7 +137,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 			Key* key = m_keys[j - 1];
 
 			Rect rcKey;
-			key->getRect(this, rcClient, rcKey);
+			key->getRect(sequencer, this, rcClient, rcKey);
 
 			rcKey.left += separator - scrollOffset;
 			rcKey.right += separator - scrollOffset;
@@ -202,7 +202,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(
 		Point(
-			rc.left + ui::dpi96(32 + getDepth() * 16),
+			rc.left + sequencer->pixel(Unit(32 + getDepth() * 16)),
 			rc.top + (rc.getHeight() - ext.cy) / 2
 		),
 		getName()
@@ -258,7 +258,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		if (cx > rc.right)
 			break;
 		const int32_t cya = (i % 1000 == 0) ? 4 : 0;
-		canvas.drawLine(cx, cy - dpi96(2 + cya), cx, cy + dpi96(2 + cya));
+		canvas.drawLine(cx, cy - sequencer->pixel(Unit(2 + cya)), cx, cy + sequencer->pixel(Unit(2 + cya)));
 	}
 
 	for (auto key : m_keys)

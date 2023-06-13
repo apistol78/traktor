@@ -43,10 +43,10 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"EDITOR_NEW_WORKSPACE_TITLE"),
-		ui::dpi96(500),
-		ui::dpi96(400),
+		500_ut,
+		400_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -58,7 +58,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	m_templateList->create(this, ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
+	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticName = new ui::Static();
@@ -74,7 +74,7 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	staticPath->create(containerInner, i18n::Text(L"EDITOR_NEW_WORKSPACE_PATH"));
 
 	Ref< ui::Container > containerPath = new ui::Container();
-	containerPath->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 0));
+	containerPath->create(containerInner, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 0_ut));
 
 	m_editPath = new ui::Edit();
 	m_editPath->create(containerPath, L"");

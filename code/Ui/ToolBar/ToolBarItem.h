@@ -43,8 +43,6 @@ class T_DLLCLASS ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarItem();
-
 	void setEnable(bool enable);
 
 	bool isEnable() const;
@@ -71,7 +69,7 @@ protected:
 	virtual void buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent) = 0;
 
 private:
-	bool m_enable;
+	bool m_enable = true;
 };
 
 	}

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Ui/Unit.h"
 #include "Ui/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
@@ -33,7 +34,7 @@ class T_DLLCLASS ToolBarEmbed : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarEmbed(Widget* widget, int width);
+	ToolBarEmbed(Widget* widget, Unit width);
 
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const override final;
@@ -52,7 +53,7 @@ protected:
 
 private:
 	Ref< Widget > m_widget;
-	int m_width;
+	Unit m_width;
 };
 
 	}

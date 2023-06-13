@@ -63,7 +63,7 @@ ScenePreviewControl::ScenePreviewControl()
 
 bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_toolTogglePick = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), 0, ui::Command(1, L"Scene.Editor.TogglePick"), ui::ToolBarButton::BsDefaultToggle);
@@ -72,7 +72,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleScale = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_SCALE"), 3, ui::Command(L"Scene.Editor.Scale"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), 4, ui::Command(1, L"Scene.Editor.ToggleSnap"), ui::ToolBarButton::BsDefaultToggle);
 
-	m_toolSnapSpacing = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), ui::dpi96(60), i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
+	m_toolSnapSpacing = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), 60_ut, i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
 	m_toolSnapSpacing->add(L"None");
 	m_toolSnapSpacing->add(L"1/8");
 	m_toolSnapSpacing->add(L"1/4");
@@ -379,7 +379,7 @@ bool ScenePreviewControl::updateRenderControls()
 	else if (m_splitCount == StDouble)
 	{
 		Ref< ui::Splitter > doubleSplitter = new ui::Splitter();
-		doubleSplitter->create(this, true, 50, true);
+		doubleSplitter->create(this, true, 50_ut, true);
 
 		m_renderControls.resize(2);
 		for (int32_t i = 0; i < 2; ++i)

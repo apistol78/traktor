@@ -72,7 +72,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleFallOffImage = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_IMAGE"), image + 15, ui::Command(L"Terrain.Editor.ImageFallOff"), ui::ToolBarButton::BsDefaultToggle);
 
 	Ref< ui::Container > containerStrength = new ui::Container();
-	containerStrength->create(toolBar, ui::WsNone, new ui::TableLayout(L"100,35", L"24", 2, 2));
+	containerStrength->create(toolBar, ui::WsNone, new ui::TableLayout(L"100,35", L"24", 2_ut, 2_ut));
 
 	m_sliderStrength = new ui::Slider();
 	m_sliderStrength->create(containerStrength);
@@ -83,30 +83,30 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_staticStrength = new ui::Static();
 	m_staticStrength->create(containerStrength, L"50%");
 
-	m_toolStrength = new ui::ToolBarEmbed(containerStrength, ui::dpi96(135));
+	m_toolStrength = new ui::ToolBarEmbed(containerStrength, 135_ut);
 
 	m_colorControl = new ui::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
 	m_colorControl->setColor(Color4ub(128, 128, 128, 255));
 	m_colorControl->addEventHandler< ui::MouseButtonUpEvent >(this, &TerrainEditorPlugin::eventColorClick);
 
-	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 32);
+	m_toolColor = new ui::ToolBarEmbed(m_colorControl, 32_ut);
 
-	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
+	m_toolMaterial = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectMaterial"), 80_ut, i18n::Text(L"TERRAIN_EDITOR_MATERIAL"));
 	m_toolMaterial->add(L"1");
 	m_toolMaterial->add(L"2");
 	m_toolMaterial->add(L"3");
 	m_toolMaterial->add(L"4");
 	m_toolMaterial->select(0);
 
-	m_toolAttribute = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectAttribute"), ui::dpi96(80), i18n::Text(L"TERRAIN_EDITOR_ATTRIBUTE"));
+	m_toolAttribute = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectAttribute"), 80_ut, i18n::Text(L"TERRAIN_EDITOR_ATTRIBUTE"));
 	m_toolAttribute->add(L"1");
 	m_toolAttribute->add(L"2");
 	m_toolAttribute->add(L"3");
 	m_toolAttribute->add(L"4");
 	m_toolAttribute->select(0);
 
-	m_toolVisualize = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), ui::dpi96(100), i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
+	m_toolVisualize = new ui::ToolBarDropDown(ui::Command(L"Terrain.Editor.SelectVisualize"), 100_ut, i18n::Text(L"TERRAIN_EDITOR_VISUALIZE"));
 	m_toolVisualize->add(L"Default");
 	m_toolVisualize->add(L"Surface LOD");
 	m_toolVisualize->add(L"Patch LOD");

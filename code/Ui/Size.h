@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Core/Config.h"
-#include "Ui/Display.h"
 
 #if defined(max)
 #	undef max
@@ -34,10 +33,6 @@ public:
 	inline Size(const std::pair< int32_t, int32_t >& pr);
 
 	inline Size(const Size& size);
-
-	inline Size dpi96() const;
-
-	inline Size invdpi96() const;
 
 	inline Size operator - () const;
 

@@ -30,10 +30,9 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	if (!ConfigDialog::create(
 		parent,
 		caption,
-		dpi96(200),
-		dpi96(100),
+		200_ut, 100_ut,
 		dialogStyle,
-		new TableLayout(haveIcon ? L"*,*" : L"*", L"100%", dpi96(16), dpi96(16))
+		new TableLayout(haveIcon ? L"*,*" : L"*", L"100%", 16_ut, 16_ut)
 	))
 		return false;
 

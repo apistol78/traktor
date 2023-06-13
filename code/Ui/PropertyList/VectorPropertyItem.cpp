@@ -20,14 +20,12 @@
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseButtonDownEvent.h"
 
-#include "Core/Log/Log.h"
-
 namespace traktor::ui
 {
 	namespace
 	{
 
-const int c_valueWidth = 200;
+const Unit c_valueWidth = 200_ut;
 
 	}
 
@@ -95,9 +93,9 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 			continue;
 
 		Rect rcSub(
-			rc.left + (dpi96(c_valueWidth) * i) / m_dimension,
+			rc.left + (getPropertyList()->pixel(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (dpi96(c_valueWidth) * (i + 1)) / m_dimension,
+			rc.left + (getPropertyList()->pixel(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 
@@ -121,14 +119,14 @@ void VectorPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	}
 }
 
-void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void VectorPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{
 		Rect rcSub(
-			rc.left + (dpi96(c_valueWidth) * i) / m_dimension,
+			rc.left + (getPropertyList()->pixel(c_valueWidth) * i) / m_dimension,
 			rc.top,
-			rc.left + (dpi96(c_valueWidth) * (i + 1)) / m_dimension,
+			rc.left + (getPropertyList()->pixel(c_valueWidth) * (i + 1)) / m_dimension,
 			rc.bottom
 		);
 

@@ -89,10 +89,10 @@ bool SHEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_container = new ui::Container();
-	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(m_container, true, 50, true);
+	splitter->create(m_container, true, 50_ut, true);
 
 	for (uint32_t i = 0; i < 2; ++i)
 	{

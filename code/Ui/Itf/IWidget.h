@@ -107,6 +107,10 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate) = 0;
 
+	virtual int32_t dpi96(int32_t measure) const = 0;
+
+	virtual int32_t invdpi96(int32_t measure) const = 0;
+
 	virtual void* getInternalHandle() = 0;
 
 	virtual SystemWindow getSystemWindow() = 0;

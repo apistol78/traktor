@@ -52,9 +52,9 @@ void ColorPropertyItem::mouseButtonUp(MouseButtonUpEvent* event)
 		notifyCommand(Command(L"Property.Edit"));
 }
 
-void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void ColorPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
-	m_rcColor = Rect(rc.left + 2, rc.top + 2, rc.left + dpi96(22), rc.bottom - 2);
+	m_rcColor = Rect(rc.left + 2, rc.top + 2, rc.left + parent->pixel(22_ut), rc.bottom - 2);
 
 	if (m_hdr)
 	{
@@ -75,7 +75,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 		std::wstringstream ss;
 		ss << ir << L", " << ig << L", " << ib << L", " << ia << L" (EV " << (ev > 0.0f ? L"+" : L"") << ev << L")";
-		canvas.drawText(rc.inflate(-2, 0).offset(dpi96(22), 0), ss.str(), AnLeft, AnCenter);
+		canvas.drawText(rc.inflate(-2, 0).offset(parent->pixel(22_ut), 0), ss.str(), AnLeft, AnCenter);
 
 		// Ignore alpha when drawing color preview.
 		canvas.setBackground(Color4ub(ir, ig, ib, 255));
@@ -99,7 +99,7 @@ void ColorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 		std::wstringstream ss;
 		ss << ir << L", " << ig << L", " << ib << L", " << ia;
-		canvas.drawText(rc.inflate(-2, 0).offset(dpi96(22), 0), ss.str(), AnLeft, AnCenter);
+		canvas.drawText(rc.inflate(-2, 0).offset(parent->pixel(22_ut), 0), ss.str(), AnLeft, AnCenter);
 
 		// Ignore alpha when drawing color preview.
 		canvas.setBackground(Color4ub(ir, ig, ib, 255));

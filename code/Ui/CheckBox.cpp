@@ -58,10 +58,10 @@ void CheckBox::setText(const std::wstring& text)
 	Widget::setText(text);
 
 	// Calculate prefered size from new text.
-	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
+	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	const int32_t width = getFontMetric().getExtent(getText()).cx;
 	m_preferedSize = Size(
-		width + m_imageUnchecked->getSize().cx + dpi96(4),
+		width + m_imageUnchecked->getSize().cx + pixel(4_ut),
 		std::max(height, m_imageUnchecked->getSize().cy)
 	);
 }
@@ -94,7 +94,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	);
 
 	Rect rcText = rcInner;
-	rcText.left += image->getSize().cx + dpi96(4);
+	rcText.left += image->getSize().cx + pixel(4_ut);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rcText, getText(), AnLeft, AnCenter);

@@ -80,7 +80,7 @@ protected:
 
 	virtual void mouseMove(MouseMoveEvent* event) override;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) override;
+	virtual void paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc) override;
 
 	virtual bool copy() override;
 

@@ -19,10 +19,10 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_marginX = 10;
-const int32_t c_marginY = 10;
-const int32_t c_itemWidth[] = { 120, 240 };
-const int32_t c_itemHeight[] = { 100, 200 };
+const Unit c_marginX = 10_ut;
+const Unit c_marginY = 10_ut;
+const Unit c_itemWidth[] = { 120_ut, 240_ut };
+const Unit c_itemHeight[] = { 100_ut, 200_ut };
 
 		}
 
@@ -97,10 +97,10 @@ void PreviewList::layoutCells(const Rect& rc)
 	if (nitems <= 0)
 		return;
 
-	int32_t width = dpi96(c_itemWidth[m_itemSize]);
-	int32_t height = dpi96(c_itemHeight[m_itemSize]);
+	int32_t width = pixel(c_itemWidth[m_itemSize]);
+	int32_t height = pixel(c_itemHeight[m_itemSize]);
 
-	int32_t ncolumns = (rc.getWidth() - dpi96(c_marginX * 2)) / width;
+	int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2)) / width;
 	if (ncolumns <= 0)
 		return;
 
@@ -114,10 +114,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX) + column * width,
-			dpi96(c_marginY) + row * height,
-			dpi96(c_marginX) + column * width + width,
-			dpi96(c_marginY) + row * height + height
+			pixel(c_marginX) + column * width,
+			pixel(c_marginY) + row * height,
+			pixel(c_marginX) + column * width + width,
+			pixel(c_marginY) + row * height + height
 		);
 
 		placeCell(m_items->get(i), rcItem);
@@ -133,10 +133,10 @@ void PreviewList::layoutCells(const Rect& rc)
 		int32_t row = i / ncolumns;
 
 		Rect rcItem(
-			dpi96(c_marginX) + column * width,
-			dpi96(c_marginY) + row * height,
-			dpi96(c_marginX) + column * width + width,
-			dpi96(c_marginY) + row * height + height
+			pixel(c_marginX) + column * width,
+			pixel(c_marginY) + row * height,
+			pixel(c_marginX) + column * width + width,
+			pixel(c_marginY) + row * height + height
 		);
 
 		placeCell(m_items->get(i), rcItem);

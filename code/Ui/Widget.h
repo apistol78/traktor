@@ -15,6 +15,7 @@
 #include "Ui/Font.h"
 #include "Ui/FontMetric.h"
 #include "Ui/Rect.h"
+#include "Ui/Unit.h"
 #include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
@@ -25,10 +26,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IWidget;
 class StyleSheet;
@@ -111,6 +110,10 @@ public:
 	virtual void show();
 
 	virtual void hide();
+
+	virtual int32_t pixel(Unit measure) const;
+
+	virtual Unit unit(int32_t measure) const;
 
 	bool hasCapture() const;
 
@@ -199,6 +202,4 @@ protected:
 	Align m_valign;
 };
 
-	}
 }
-

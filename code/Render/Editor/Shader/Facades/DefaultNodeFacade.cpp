@@ -65,8 +65,8 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::dpi96(shaderNode->getPosition().first),
-			ui::dpi96(shaderNode->getPosition().second)
+			shaderNode->getPosition().first,
+			shaderNode->getPosition().second
 		),
 		shape
 	);

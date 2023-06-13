@@ -119,6 +119,7 @@ private:
 	};
 
 	bool m_inPaint = false;
+	int32_t m_dpi = 0;
 	ComRef< ID2D1HwndRenderTarget > m_d2dRenderTarget;
 	ComRef< ID2D1SolidColorBrush > m_d2dForegroundBrush;
 	ComRef< ID2D1SolidColorBrush > m_d2dBackgroundBrush;

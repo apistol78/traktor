@@ -22,7 +22,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarDropMenu", ToolBarDropMenu, ToolBarItem)
 
-ToolBarDropMenu::ToolBarDropMenu(int32_t width, const std::wstring& text, bool arrow, const std::wstring& toolTip)
+ToolBarDropMenu::ToolBarDropMenu(Unit width, const std::wstring& text, bool arrow, const std::wstring& toolTip)
 :	m_width(width)
 ,	m_text(text)
 ,	m_arrow(arrow)
@@ -75,9 +75,9 @@ Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageH
 {
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
 	if (m_width > 0)
-		return Size(m_width, std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
+		return Size(toolBar->pixel(m_width), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
 	else
-		return Size(sz.cx + dpi96(32), std::max< int32_t >(sz.cy, imageHeight) + dpi96(4));
+		return Size(sz.cx + toolBar->pixel(32_ut), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
 }
 
 void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
@@ -85,12 +85,12 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar, imageWidth, imageHeight);
 
-	const int32_t sep = dpi96(14);
+	const int32_t sep = toolBar->pixel(14_ut);
 
 	Rect rcText;
 	if (m_arrow)
 		rcText = Rect(
-			at.x + dpi96(4),
+			at.x + toolBar->pixel(4_ut),
 			at.y + 2,
 			at.x + size.cx - sep - 2,
 			at.y + size.cy - 2
@@ -128,9 +128,9 @@ void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, I
 		const Point center = rcButton.getCenter();
 		const Point pnts[] =
 		{
-			ui::Point(center.x - dpi96(3), center.y - dpi96(1)),
-			ui::Point(center.x + dpi96(2), center.y - dpi96(1)),
-			ui::Point(center.x - dpi96(1), center.y + dpi96(2))
+			ui::Point(center.x - toolBar->pixel(3_ut), center.y - toolBar->pixel(1_ut)),
+			ui::Point(center.x + toolBar->pixel(2_ut), center.y - toolBar->pixel(1_ut)),
+			ui::Point(center.x - toolBar->pixel(1_ut), center.y + toolBar->pixel(2_ut))
 		};
 
 		canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));

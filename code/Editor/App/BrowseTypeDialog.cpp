@@ -77,10 +77,10 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"BROWSE_TYPE_TITLE"),
-		ui::dpi96(640),
-		ui::dpi96(500),
+		640_ut,
+		500_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
-		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -89,11 +89,11 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	addEventHandler< ui::ButtonClickEvent >(this, &BrowseTypeDialog::eventDialogClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	if (!splitter->create(this, true, ui::dpi96(200)))
+	if (!splitter->create(this, true, 200_ut))
 		return false;
 
 	Ref< ui::Container > left = new ui::Container();
-	if (!left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	Ref< ui::Static > treeLabel = new ui::Static();
@@ -107,7 +107,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseTypeDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();
-	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	Ref< ui::Static > listLabel = new ui::Static();

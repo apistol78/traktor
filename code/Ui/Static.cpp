@@ -42,7 +42,7 @@ void Static::setText(const std::wstring& text)
 		extent.cx = std::max(sz.cx, extent.cx);
 		extent.cy += sz.cy;
 	}
-	m_preferedSize = extent + Size(dpi96(1), dpi96(1));
+	m_preferedSize = extent + Size(pixel(1_ut), pixel(1_ut));
 }
 
 Size Static::getPreferredSize(const Size& hint) const

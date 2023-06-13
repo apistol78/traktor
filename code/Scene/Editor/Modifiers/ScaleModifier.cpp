@@ -104,7 +104,7 @@ IModifier::CursorMovedResult ScaleModifier::cursorMoved(
 	const uint32_t lastAxisHot = m_axisHot;
 	m_axisHot = 0;
 
-	const float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
+	const float guideThickness = c_guideThickness;
 	if (Line2(axis0[0], axis1[0]).classify(cursorPosition, guideThickness))
 		m_axisHot |= 1;
 	if (Line2(axis0[1], axis1[1]).classify(cursorPosition, guideThickness))

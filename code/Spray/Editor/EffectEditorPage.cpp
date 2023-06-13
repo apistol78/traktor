@@ -157,7 +157,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolToggleGuide = new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), 6, ui::Command(L"Effect.Editor.ToggleGuide"), ui::ToolBarButton::BsDefaultToggle);
 
@@ -187,7 +187,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_previewControl->showGuide(m_guideVisible);
 
 	m_containerSequencer = new ui::Container();
-	m_containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_containerSequencer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 	m_containerSequencer->setText(i18n::Text(L"EFFECT_EDITOR_TIMELINE"));
 
 	m_toolBarLayers = new ui::ToolBar();
@@ -206,14 +206,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(m_containerSequencer, ui::dpi96(280), true);
+	m_site->createAdditionalPanel(m_containerSequencer, 280, true);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &EffectEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPropertiesChanged);
 	m_propertiesView->setPropertyObject(m_effectData);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	// Create popup menu.
 	m_popupMenu = new ui::Menu();

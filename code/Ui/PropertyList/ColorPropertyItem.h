@@ -43,7 +43,7 @@ public:
 protected:
 	virtual void mouseButtonUp(MouseButtonUpEvent* event) override final;
 
-	virtual void paintValue(Canvas& canvas, const Rect& rc) override final;
+	virtual void paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc) override final;
 
 	virtual bool copy() override final;
 

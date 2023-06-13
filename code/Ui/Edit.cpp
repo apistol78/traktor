@@ -240,13 +240,13 @@ void Edit::setText(const std::wstring& text)
 
 Size Edit::getPreferredSize(const Size& hint) const
 {
-	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
-	return Size(dpi96(100), height);
+	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
+	return Size(pixel(100_ut), height);
 }
 
 Size Edit::getMaximumSize() const
 {
-	const int32_t height = getFontMetric().getHeight() + dpi96(4) * 2;
+	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	return Size(65535, height);
 }
 
@@ -278,7 +278,7 @@ void Edit::eventMouseTrack(MouseTrackEvent* event)
 void Edit::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const int32_t mx = event->getPosition().x;
-	int32_t x = dpi96(4);
+	int32_t x = pixel(4_ut);
 
 	int32_t caret = m_caret;
 	if (mx >= x)
@@ -541,7 +541,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 	const int32_t h = fm.getHeight();
 	const int32_t y = (rcInner.getHeight() - h) / 2;
-	int32_t x = dpi96(4);
+	int32_t x = pixel(4_ut);
 	int32_t caretX = 0;
 
 	for (int32_t i = 0; i < text.length(); ++i)

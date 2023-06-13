@@ -30,7 +30,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundSettingsPage", 0, SoundSetti
 bool SoundSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticSounder = new ui::Static();

@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorPageForm", EditorPageForm, ui::For
 
 bool EditorPageForm::create(ui::Widget* parent)
 {
-	if (!ui::Form::create(L"Editor Page", 1000, 1000, ui::Form::WsDefault, new ui::FloodLayout())) //, parent))
+	if (!ui::Form::create(L"Editor Page", 1000_ut, 1000_ut, ui::Form::WsDefault, new ui::FloodLayout()))
 		return false;
 
 	return true;

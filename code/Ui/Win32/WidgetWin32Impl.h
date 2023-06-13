@@ -216,7 +216,7 @@ public:
 
 		int32_t dip = font.getSize();
 		float inches = dip / 96.0f;
-		float logical = inches * getSystemDPI();
+		float logical = inches * m_hWnd.dpi();
 
 		std::memset(&lf, 0, sizeof(lf));
 		lf.lfHeight = -int32_t(logical + 0.5f);
@@ -258,7 +258,7 @@ public:
 
 		ReleaseDC(m_hWnd, hDC);
 
-		float inches = float(logical) / getSystemDPI();
+		float inches = float(logical) / m_hWnd.dpi();
 		float dip = inches * 96.0f;
 
 		return Font(
@@ -437,6 +437,16 @@ public:
 		{
 			RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | (immediate ? RDW_UPDATENOW : 0));
 		}
+	}
+
+	virtual int32_t dpi96(int32_t measure) const
+	{
+		return m_hWnd.dpi96(measure);
+	}
+
+	virtual int32_t invdpi96(int32_t measure) const
+	{
+		return m_hWnd.invdpi96(measure);
 	}
 
 	virtual void* getInternalHandle() override

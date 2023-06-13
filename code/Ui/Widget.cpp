@@ -263,6 +263,23 @@ void Widget::hide()
 	m_widget->setVisible(false);
 }
 
+int32_t Widget::pixel(Unit measure) const
+{
+	T_ASSERT(m_widget);
+	return m_widget->dpi96(measure.get());
+}
+
+Unit Widget::unit(int32_t measure) const
+{
+	T_ASSERT(m_widget);
+	return Unit(m_widget->invdpi96(measure));
+}
+
+//Size Widget::dpi96(const Size& sz) const
+//{
+//	return Size(dpi96(sz.cx), dpi96(sz.cy));
+//}
+
 bool Widget::hasCapture() const
 {
 	T_ASSERT(m_widget);

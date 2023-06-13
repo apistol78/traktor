@@ -105,7 +105,7 @@ void FilePropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	m_editor->selectAll();
 }
 
-void FilePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void FilePropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	canvas.drawText(rc.inflate(-2, 0), m_path.getOriginal(), AnLeft, AnCenter);
 }

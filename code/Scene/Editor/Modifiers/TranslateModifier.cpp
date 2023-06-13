@@ -163,7 +163,7 @@ hit:;
 	// Check each line.
 	if (m_axisHot == 0)
 	{
-		const float guideThickness = ui::getSystemDPI() * c_guideThickness / 96.0f;
+		const float guideThickness = c_guideThickness;
 		if (Line2(axis0[0], axis1[0]).classify(cursorPosition, guideThickness))
 			m_axisHot |= 1;
 		if (Line2(axis0[1], axis1[1]).classify(cursorPosition, guideThickness))
@@ -329,21 +329,21 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Vector4(axisLength + arrowLength * 3.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(1.0f, 0.0f, 0.0f, 0.0f),
 		0.2f,
-		(float)ui::dpi96((m_axisHot & 1) ? 3 : 1),
+		(float)((m_axisHot & 1) ? 3 : 1),
 		Color4ub(255, 0, 0, 255)
 	);
 	primitiveRenderer->drawWireCircle(
 		Vector4(0.0f, axisLength + arrowLength * 3.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 1.0f, 0.0f, 0.0f),
 		0.2f,
-		(float)ui::dpi96((m_axisHot & 2) ? 3 : 1),
+		(float)((m_axisHot & 2) ? 3 : 1),
 		Color4ub(0, 255, 0, 255)
 	);
 	primitiveRenderer->drawWireCircle(
 		Vector4(0.0f, 0.0f, axisLength + arrowLength * 3.0f, 1.0f),
 		Vector4(0.0f, 0.0f, 1.0f, 0.0f),
 		0.2f,
-		(float)ui::dpi96((m_axisHot & 4) ? 3 : 1),
+		(float)((m_axisHot & 4) ? 3 : 1),
 		Color4ub(0, 0, 255, 255)
 	);
 
@@ -380,17 +380,17 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	// Guide square lines.
 	// XY
-	const float awxy = (float)ui::dpi96(((m_axisHot & (1 | 2)) == (1 | 2)) ? 3 : 1);
+	const float awxy = (float)(((m_axisHot & (1 | 2)) == (1 | 2)) ? 3 : 1);
 	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(0, 255, 0, 255));
 
 	// XZ
-	const float awxz = (float)ui::dpi96(((m_axisHot & (1 | 4)) == (1 | 4)) ? 3 : 1);
+	const float awxz = (float)(((m_axisHot & (1 | 4)) == (1 | 4)) ? 3 : 1);
 	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(0, 0, 255, 255));
 
 	// YZ
-	const float awyz = (float)ui::dpi96(((m_axisHot & (2 | 4)) == (2 | 4)) ? 3 : 1);
+	const float awyz = (float)(((m_axisHot & (2 | 4)) == (2 | 4)) ? 3 : 1);
 	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 255, 0, 255));
 	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 0, 255, 255));
 
@@ -398,19 +398,19 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->drawLine(
 		Vector4(-axisLength, 0.0f, 0.0f, 1.0f),
 		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
-		(float)ui::dpi96((m_axisHot & 1) ? 3 : 1),
+		(float)((m_axisHot & 1) ? 3 : 1),
 		Color4ub(255, 0, 0, 255)
 	);
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, -axisLength, 0.0f, 1.0f),
 		Vector4(0.0f, axisLength, 0.0f, 1.0f),
-		(float)ui::dpi96((m_axisHot & 2) ? 3 : 1),
+		(float)((m_axisHot & 2) ? 3 : 1),
 		Color4ub(0, 255, 0, 255)
 	);
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, -axisLength, 1.0f),
 		Vector4(0.0f, 0.0f, axisLength, 1.0f),
-		(float)ui::dpi96((m_axisHot & 4) ? 3 : 1),
+		(float)((m_axisHot & 4) ? 3 : 1),
 		Color4ub(0, 0, 255, 255)
 	);
 

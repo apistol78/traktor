@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 25;
+const Unit c_sequenceHeight = 25_ut;
 
 		}
 
@@ -62,9 +62,9 @@ void Range::move(int offset)
 	}
 }
 
-void Range::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
+void Range::getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	outRect.left = sequence->clientFromTime(m_start);
 	outRect.top = rcClient.top + 2;
 	outRect.right = sequence->clientFromTime(m_end);
@@ -75,7 +75,7 @@ void Range::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequenc
 {
 	const StyleSheet* ss = sequencer->getStyleSheet();
 
-	int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	int32_t x1 = sequence->clientFromTime(m_start) - scrollOffset;
 	int32_t x2 = sequence->clientFromTime(m_end) - scrollOffset;
 	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.top + sequenceHeight - 3);

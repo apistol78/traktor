@@ -29,15 +29,15 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"NEW_HEIGHTFIELD_TITLE"),
-		ui::dpi96(600),
-		ui::dpi96(200),
+		600_ut,
+		200_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8, 4)))
+	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticGridSize = new ui::Static();
@@ -50,7 +50,7 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	staticExtent->create(containerInner, i18n::Text(L"NEW_HEIGHTFIELD_EXTENT"));
 
 	Ref< ui::Container > containerExtent = new ui::Container();
-	containerExtent->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	containerExtent->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
 	m_editExtent[0] = new ui::Edit();
 	m_editExtent[0]->create(containerExtent, L"1024", ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
@@ -65,7 +65,7 @@ bool NewHeightfieldDialog::create(ui::Widget* parent)
 	staticPlane->create(containerInner, i18n::Text(L"NEW_HEIGHTFIELD_PLANE"));
 
 	Ref< ui::Container > containerPlane = new ui::Container();
-	containerPlane->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	containerPlane->create(containerInner, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
 	m_editPlane[0] = new ui::Edit();
 	m_editPlane[0]->create(containerPlane, L"0", ui::WsNone, new ui::NumericEditValidator(true, -45.0f, 45.0f));

@@ -50,15 +50,15 @@ bool BrowseAssetDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		L"Browse assets",
-		ui::dpi96(1024),
-		ui::dpi96(600),
+		1024_ut,
+		600_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsOkCancelButtons,
-		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
+		new ui::TableLayout(L"*,100%", L"100%", 0_ut, 0_ut)
 	))
 		return false;
 
 	Ref< ui::Container > containerTags = new ui::Container();
-	containerTags->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(8), ui::dpi96(8)));
+	containerTags->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"*", 8_ut, 8_ut));
 
 	m_listAssets = new ui::PreviewList();
 	m_listAssets->create(this, ui::PreviewList::WsMultiple | ui::WsDoubleBuffer);

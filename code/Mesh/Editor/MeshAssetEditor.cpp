@@ -93,11 +93,11 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	Ref< ui::Container > containerFile = new ui::Container();
-	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), ui::dpi96(4))))
+	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticFileName = new ui::Static();
@@ -105,7 +105,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerFileName = new ui::Container();
-	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, ui::dpi96(4))))
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0_ut, 4_ut)))
 		return false;
 
 	m_editFileName = new ui::Edit();
@@ -156,10 +156,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticDummy->create(containerFile, L"");
 
 	Ref< ui::Container > containerOptions = new ui::Container();
-	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0, 0));
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0_ut, 0_ut));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
-	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0, 4));
+	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0_ut, 4_ut));
 
 	m_checkRenormalize = new ui::CheckBox();
 	if (!m_checkRenormalize->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_RENORMALIZE")))
@@ -174,7 +174,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Container > containerRight = new ui::Container();
-	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0, 4));
+	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0_ut, 4_ut));
 
 	m_staticLodSteps = new ui::Static();
 	m_staticLodSteps->create(containerRight, i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", 1));
@@ -214,7 +214,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_imagePreview->create(containerOptions, nullptr, ui::WsDoubleBuffer);
 
 	m_containerMaterials = new ui::Container();
-	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
+	if (!m_containerMaterials->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0_ut, 0_ut)))
 		return false;
 
 	// Material shaders.
@@ -233,9 +233,9 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_materialShaderList->create(m_containerMaterials, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), ui::dpi96(180)));
-	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), ui::dpi96(180)));
-	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), ui::dpi96(300)));
+	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_MATERIAL"), 180_ut));
+	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEMPLATE"), 180_ut));
+	m_materialShaderList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_SHADER"), 300_ut));
 	m_materialShaderList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialShaderListDoubleClick);
 
 	// Material textures.
@@ -253,9 +253,9 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_materialTextureList->create(m_containerMaterials, ui::GridView::WsColumnHeader | ui::WsDoubleBuffer))
 		return false;
 
-	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), ui::dpi96(180)));
-	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), ui::dpi96(300)));
-	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_USAGE"), ui::dpi96(300)));
+	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_NAME"), 180_ut));
+	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_ASSET"), 300_ut));
+	m_materialTextureList->addColumn(new ui::GridColumn(i18n::Text(L"MESHASSET_EDITOR_TEXTURE_USAGE"), 300_ut));
 	m_materialTextureList->addEventHandler< ui::MouseDoubleClickEvent >(this, &MeshAssetEditor::eventMaterialTextureListDoubleClick);
 
 	updateModel();
@@ -332,8 +332,8 @@ void MeshAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& ev
 ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(800),
-		ui::dpi96(600)
+		800,
+		600
 	);
 }
 
@@ -385,16 +385,16 @@ void MeshAssetEditor::updatePreview()
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),
-		ui::dpi96(256),
-		ui::dpi96(256)
+		m_imagePreview->pixel(256_ut),
+		m_imagePreview->pixel(256_ut)
 	);
 	meshThumb->clear(Color4f(0.6f, 0.6f, 0.6f, 1.0f));	
 
 	if (MeshAssetRasterizer().generate(m_editor, m_asset, meshThumb))
 	{
 		drawing::ScaleFilter scaleFilter(
-			ui::dpi96(128),
-			ui::dpi96(128),
+			m_imagePreview->pixel(128_ut),
+			m_imagePreview->pixel(128_ut),
 			drawing::ScaleFilter::MnAverage,
 			drawing::ScaleFilter::MgLinear
 		);

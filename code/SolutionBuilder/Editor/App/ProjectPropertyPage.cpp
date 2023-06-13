@@ -54,12 +54,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ProjectPropertyPage", ProjectPropertyPage, u
 
 bool ProjectPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::dpi96(4);
-
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"100%", L"*,100%", f, f)
+		new ui::TableLayout(L"100%", L"*,100%", 4_ut, 4_ut)
 	))
 		return false;
 
@@ -68,7 +66,7 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	m_checkEnable->addEventHandler< ui::ButtonClickEvent >(this, &ProjectPropertyPage::eventEnableClick);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0, f));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticSourcePath = new ui::Static();
 	staticSourcePath->create(container, L"Source path");
@@ -82,17 +80,17 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	m_listDependencies = new ui::GridView();
 	m_listDependencies->create(container, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsMultiSelect);
-	m_listDependencies->addColumn(new ui::GridColumn(L"Dependency", ui::dpi96(160)));
-	m_listDependencies->addColumn(new ui::GridColumn(L"Location", ui::dpi96(200)));
-	m_listDependencies->addColumn(new ui::GridColumn(L"Inherit include paths", ui::dpi96(130)));
-	m_listDependencies->addColumn(new ui::GridColumn(L"Link", ui::dpi96(50)));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Dependency", 160_ut));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Location", 200_ut));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Inherit include paths", 130_ut));
+	m_listDependencies->addColumn(new ui::GridColumn(L"Link", 50_ut));
 	m_listDependencies->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ProjectPropertyPage::eventDependencyDoubleClick);
 
 	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
 
 	Ref< ui::Container > containerAvailable = new ui::Container();
-	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, f));
+	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0_ut, 4_ut));
 
 	m_dropAvailable = new ui::DropDown();
 	m_dropAvailable->create(containerAvailable);

@@ -47,7 +47,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_propertyList = new ui::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsAccelerated | ui::WsTabStop | ui::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addEventHandler< ui::PropertyCommandEvent >(this, &DefaultObjectEditor::eventPropertyCommand);
-	m_propertyList->setSeparator(ui::dpi96(200));
+	m_propertyList->setSeparator(200_ut);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_object);
@@ -92,7 +92,7 @@ void DefaultObjectEditor::handleDatabaseEvent(db::Database* database, const Guid
 
 ui::Size DefaultObjectEditor::getPreferredSize() const
 {
-	return ui::Size(ui::dpi96(600), ui::dpi96(500));
+	return ui::Size(600, 500);
 }
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

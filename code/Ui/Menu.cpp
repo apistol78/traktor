@@ -47,7 +47,7 @@ Ref< Widget > Menu::show(Widget* parent, const Point& at) const
 		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
-	if (!form->create(parent, L"", 0, 0, WsTop, new FloodLayout()))
+	if (!form->create(parent, L"", 0_ut, 0_ut, WsTop, new FloodLayout()))
 		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();
@@ -105,7 +105,7 @@ const MenuItem* Menu::showModal(Widget* parent, const Point& at, int32_t width, 
 		return nullptr;
 
 	Ref< ToolForm > form = new ToolForm();
-	if (!form->create(parent, L"", 0, 0, WsTop, new FloodLayout()))
+	if (!form->create(parent, L"", 0_ut, 0_ut, WsTop, new FloodLayout()))
 		return nullptr;
 
 	Ref< MenuShell > shell = new MenuShell();

@@ -146,7 +146,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	// Create panel.
 	m_container = new ui::Container();
-	m_container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 	m_container->setText(i18n::Text(L"RUNTIME_TARGETS_TITLE"));
 
 	// Create toolbar; add all targets as drop down items.
@@ -155,12 +155,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->setEnable(false);
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), ui::dpi96(120), i18n::Text(L"RUNTIME_TARGETS"));
+	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), 120_ut, i18n::Text(L"RUNTIME_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolTweaks = new ui::ToolBarDropMenu(ui::dpi96(70), i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
+	m_toolTweaks = new ui::ToolBarDropMenu(70_ut, i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
@@ -175,7 +175,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
 	m_toolBar->addItem(m_toolTweaks);
 
-	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), ui::dpi96(85), i18n::Text(L"RUNTIME_LANGUAGE"));
+	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
 	m_toolLanguage->add(i18n::Text(L"RUNTIME_LANGUAGE_DEFAULT"));
 	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
 		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
@@ -192,7 +192,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
 	m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
 
-	m_site->createAdditionalPanel(m_container, ui::dpi96(200), false);
+	m_site->createAdditionalPanel(m_container, 200, false);
 
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create([this](){ threadHostEnumerator(); }, L"Host enumerator");

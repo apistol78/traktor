@@ -179,7 +179,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
 	{
-		int32_t width = columns[i]->getWidth();
+		int32_t width = widget->pixel(columns[i]->getWidth());
 		if (columns.size() == 1)
 			width = rect.getWidth();
 
@@ -276,7 +276,7 @@ void GridRow::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& positi
 void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	const Size d = position - m_mouseDownPosition;
-	if (abs(d.cx) > dpi96(2) || abs(d.cy) > dpi96(2))
+	if (abs(d.cx) > getWidget()->pixel(2_ut) || abs(d.cy) > getWidget()->pixel(2_ut))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
 		m_editMode = 0;
@@ -335,7 +335,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 		int32_t left = rect.left;
 		for (auto column : columns)
 		{
-			left += column->getWidth();
+			left += view->pixel(column->getWidth());
 			canvas.drawLine(left, rect.top, left, rect.bottom - 1);
 		}
 	}

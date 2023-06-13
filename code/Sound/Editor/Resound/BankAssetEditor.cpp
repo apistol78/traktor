@@ -132,19 +132,19 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		return false;
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(parent, true, ui::dpi96(180));
+	splitter->create(parent, true, 180_ut);
 
 	splitter->addEventHandler< ui::TimerEvent >(this, &BankAssetEditor::eventTimer);
 	splitter->startTimer(30);
 
 	Ref< ui::Splitter > splitterLeftH = new ui::Splitter();
-	splitterLeftH->create(splitter, false, ui::dpi96(-150));
+	splitterLeftH->create(splitter, false, -150_ut);
 
 	Ref< ui::Splitter > splitterRightH = new ui::Splitter();
-	splitterRightH->create(splitter, false, ui::dpi96(-150));
+	splitterRightH->create(splitter, false, -150_ut);
 
 	Ref< ui::Panel > containerBank = new ui::Panel();
-	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolBarItemPlay = new ui::ToolBarButton(L"Play", 0, ui::Command(L"Bank.PlayGrain"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
 	m_toolBarItemRepeat = new ui::ToolBarButton(L"Repeat", 0, ui::Command(L"Bank.RepeatGrain"), ui::ToolBarButton::BsText | ui::ToolBarButton::BsToggle);
@@ -161,17 +161,17 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_bankControl->addEventHandler< ui::MouseButtonUpEvent >(this, &BankAssetEditor::eventGrainButtonUp);
 
 	m_containerParameters = new ui::Panel();
-	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", ui::dpi96(4), 0));
+	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", 4_ut, 0_ut));
 
 	Ref< ui::Panel > m_containerGrainProperties = new ui::Panel();
-	m_containerGrainProperties->create(splitterRightH, L"Properties", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_containerGrainProperties->create(splitterRightH, L"Properties", new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 
 	m_grainProperties = new GrainProperties(m_editor);
 	m_grainProperties->create(m_containerGrainProperties);
 	m_grainProperties->addEventHandler< ui::ContentChangeEvent >(this, &BankAssetEditor::eventGrainPropertiesChange);
 
 	m_containerGrainView = new ui::Panel();
-	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 
 	m_menuGrains = new ui::Menu();
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.AddGrain"), L"Add grain..."));
@@ -368,7 +368,7 @@ void BankAssetEditor::handleDatabaseEvent(db::Database* database, const Guid& ev
 
 ui::Size BankAssetEditor::getPreferredSize() const
 {
-	return ui::Size(ui::dpi96(800), ui::dpi96(600));
+	return ui::Size(800, 600);
 }
 
 void BankAssetEditor::updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains)

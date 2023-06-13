@@ -28,16 +28,27 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_sourcePinOffset = 10;
-const int32_t c_destPinOffset = 16;
-const int32_t c_sourceLabelOffset = 10;
-
-void calculateLinearSpline(Point s1, Point d1, AlignedVector< Point >& outSpline)
+struct Dim
 {
+	int32_t sourcePinOffset = 10;
+	int32_t destPinOffset = 16;
+	int32_t sourceLabelOffset = 10;
+
+	Dim(const Widget* widget)
+	{
+		sourcePinOffset = widget->pixel(Unit(sourcePinOffset));
+		destPinOffset = widget->pixel(Unit(destPinOffset));
+		sourceLabelOffset = widget->pixel(Unit(sourceLabelOffset));
+	}
+};
+
+void calculateLinearSpline(const GraphControl* graph, Point s1, Point d1, AlignedVector< Point >& outSpline)
+{
+	const Dim dim(graph);
 	Point s = s1, d = d1;
 
-	s.x += dpi96(c_sourcePinOffset);
-	d.x -= dpi96(c_destPinOffset);
+	s.x += dim.sourcePinOffset;
+	d.x -= dim.destPinOffset;
 
 	const Point r(d.x - s.x, d.y - s.y);
 	const Point ar(traktor::abs(r.x), traktor::abs(r.y));
@@ -94,7 +105,7 @@ void calculateLinearSpline(Point s1, Point d1, AlignedVector< Point >& outSpline
 	outSpline[2] = m1;
 	outSpline[3] = m2;
 	outSpline[4] = d;
-	outSpline[5] = Point(d1.x - dpi96(6), d1.y);
+	outSpline[5] = Point(d1.x - graph->pixel(6_ut), d1.y);
 }
 
 		}
@@ -137,12 +148,12 @@ const std::wstring& Edge::getText() const
 	return m_text;
 }
 
-void Edge::setThickness(int32_t thickness)
+void Edge::setThickness(Unit thickness)
 {
 	m_thickness = thickness;
 }
 
-int32_t Edge::getThickness() const
+Unit Edge::getThickness() const
 {
 	return m_thickness;
 }
@@ -157,14 +168,13 @@ bool Edge::isSelected() const
 	return m_selected;
 }
 
-bool Edge::hit(const Point& p) const
+bool Edge::hit(const GraphControl* graph, const Point& p) const
 {
 	Vector2 P(float(p.x), float(p.y));
 
-	calculateLinearSpline(m_source->getPosition(), m_destination->getPosition(), m_spline);
+	calculateLinearSpline(graph, m_source->getPosition(), m_destination->getPosition(), m_spline);
 
-	const float c_hitWidth = float(dpi96(4));
-
+	const float c_hitWidth = (float)graph->pixel(4_ut);
 	for (int32_t i = 1; i < (int32_t)(m_spline.size() - 2); ++i)
 	{
 		const Point& s = m_spline[i];
@@ -199,6 +209,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 
 	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings& settings = canvas->getPaintSettings();
+	const Dim dim(graph);
 
 	auto color = ss->getColor(this, m_selected ? L"color-selected" : L"color");
 	canvas->setForeground(color);
@@ -207,7 +218,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	const Point s = m_source->getPosition() + offset;
 	const Point d = m_destination->getPosition() + offset;
 
-	calculateLinearSpline(s, d, m_spline);
+	calculateLinearSpline(graph, s, d, m_spline);
 
 #if defined(_DEBUG)
 	canvas->setBackground(Color4ub(255, 255, 255, 255));
@@ -223,28 +234,28 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setBackground(color);
 #endif
 
-	canvas->drawLines(m_spline, dpi96(m_thickness));
-	//canvas->drawLine(m_spline[0], m_spline[1], dpi96(m_thickness));
+	canvas->drawLines(m_spline, graph->pixel(m_thickness));
+	//canvas->drawLine(m_spline[0], m_spline[1], pixel(m_thickness));
 	//canvas->drawCurve(
 	//	m_spline[1],
 	//	m_spline[2],
 	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
-	//	dpi96(m_thickness)
+	//	pixel(m_thickness)
 	//);
 	//canvas->drawCurve(
 	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
 	//	m_spline[3],
 	//	m_spline[4],
-	//	dpi96(m_thickness)
+	//	pixel(m_thickness)
 	//);
-	//canvas->drawLine(m_spline[4], m_spline[5], dpi96(m_thickness));
+	//canvas->drawLine(m_spline[4], m_spline[5], pixel(m_thickness));
 
 	const Point at = m_destination->getPosition() + offset;
 	const Point arrow[] =
 	{
-		Point(at.x - dpi96(12), at.y - dpi96(5)),
-		Point(at.x - dpi96(2) , at.y),
-		Point(at.x - dpi96(12), at.y + dpi96(5))
+		Point(at.x - graph->pixel(12_ut), at.y - graph->pixel(5_ut)),
+		Point(at.x - graph->pixel(2_ut) , at.y),
+		Point(at.x - graph->pixel(12_ut), at.y + graph->pixel(5_ut))
 	};
 	canvas->fillPolygon(arrow, 3);
 
@@ -257,7 +268,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 		const Size szLabel = canvas->getTextExtent(m_text);
 
 		const Point lpt(
-			s.x + dpi96(c_sourceLabelOffset),
+			s.x + dim.sourceLabelOffset,
 			s.y - sz.cy / 2
 		);
 

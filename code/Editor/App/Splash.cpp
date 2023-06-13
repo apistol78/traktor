@@ -24,7 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Splash", Splash, ui::Dialog)
 
 bool Splash::create()
 {
-	if (!ui::Dialog::create(nullptr, L"", 0, 0, ui::WsTop | ui::Dialog::WsCenterDesktop, new ui::FloodLayout()))
+	if (!ui::Dialog::create(nullptr, L"", 0_ut, 0_ut, ui::WsTop | ui::Dialog::WsCenterDesktop, new ui::FloodLayout()))
 		return false;
 
 	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
@@ -33,9 +33,8 @@ bool Splash::create()
 	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, ui::Image::WsScale);
 
-	const int32_t scale = ui::dpi96(1);
 	const ui::Size sz = splash->getSize();
-	setRect({ 0, 0, sz.cx * scale, sz.cy * scale });
+	setRect({ 0, 0, sz.cx, sz.cy });
 
 	show();
 

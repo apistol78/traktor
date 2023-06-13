@@ -177,7 +177,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptClassesView", ScriptClassesView, u
 
 bool ScriptClassesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut)))
 		return false;
 
 	m_treeClasses = new ui::TreeView();

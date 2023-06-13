@@ -77,10 +77,6 @@ public:
 
 	inline bool intersect(const Rect& rc) const;
 
-	inline Rect dpi96() const;
-
-	inline Rect invdpi96() const;
-
 	inline Rect& operator = (const Rect& rc);
 
 	inline bool operator == (const Rect& rc) const;

@@ -186,7 +186,7 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName, int32_t dpi)
 		const void* resource = &dms.getBuffer()[0];
 		uint32_t size = (uint32_t)dms.getBuffer().size();
 
-		int32_t systemDPI = dpi <= 0 ? getSystemDPI() : dpi;
+		int32_t systemDPI = /* dpi <= 0 ? getSystemDPI() : */ dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 
@@ -230,7 +230,7 @@ Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstri
 	Ref< Bitmap > bitmap = new Bitmap();
 	if (extension == L"image")
 	{
-		int32_t systemDPI = dpi <= 0 ? getSystemDPI() : dpi;
+		int32_t systemDPI = /* dpi <= 0 ? getSystemDPI() : */ dpi;
 		int32_t bestFit = std::numeric_limits< int32_t >::max();
 		int32_t bestFitIndex = 0;
 

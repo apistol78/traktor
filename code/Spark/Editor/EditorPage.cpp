@@ -85,7 +85,7 @@ bool EditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	m_toolBarPlay = new ui::ToolBar();
 	m_toolBarPlay->create(container);
@@ -99,7 +99,7 @@ bool EditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPage::eventToolClick);
 
 	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, true, ui::dpi96(300));
+	splitter->create(container, true, 300_ut);
 
 	m_treeMovie = new ui::TreeView();
 	m_treeMovie->create(splitter, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsDoubleBuffer);

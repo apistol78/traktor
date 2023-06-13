@@ -48,7 +48,7 @@ ScriptProfilerView::~ScriptProfilerView()
 
 bool ScriptProfilerView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_profilerTools = new ui::ToolBar();
@@ -61,13 +61,13 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 
 	m_profileGrid = new ui::GridView();
 	m_profileGrid->create(this, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader);
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), ui::dpi96(160)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), ui::dpi96(180)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), ui::dpi96(100)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), ui::dpi96(100)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), ui::dpi96(80)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), ui::dpi96(80)));
-	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), ui::dpi96(100)));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_FUNCTION"), 160_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_SCRIPT"), 180_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_TIME"), 100_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_TIME"), 100_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_INCLUSIVE_PERCENT"), 80_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_EXCLUSIVE_PERCENT"), 80_ut));
+	m_profileGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_PROFILER_COLUMN_COUNT"), 100_ut));
 	m_profileGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptProfilerView::eventProfileGridDoubleClick);
 
 	return true;

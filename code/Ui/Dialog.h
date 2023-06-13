@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Ui/Container.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +41,7 @@ public:
 		WsDefaultResizable = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
 	};
 
-	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefaultResizable, Layout* layout = 0);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style = WsDefaultResizable, Layout* layout = 0);
 
 	void setIcon(IBitmap* icon);
 

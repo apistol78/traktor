@@ -133,7 +133,7 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(container);
@@ -146,9 +146,9 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 
 	m_gridDictionary = new ui::GridView();
 	m_gridDictionary->create(container, ui::GridView::WsColumnHeader | ui::GridView::WsMultiSelect | ui::WsDoubleBuffer);
-	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_ID"), ui::dpi96(300)));
-	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), ui::dpi96(600)));
-	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), ui::dpi96(600)));
+	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_ID"), 300_ut));
+	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_TEXT"), 600_ut));
+	m_gridDictionary->addColumn(new ui::GridColumn(Text(L"DICTIONARY_EDITOR_COLUMN_REFERENCE"), 600_ut));
 	m_gridDictionary->addEventHandler< ui::GridRowDoubleClickEvent >(this, &DictionaryEditorPage::eventGridRowDoubleClick);
 	m_gridDictionary->addEventHandler< ui::GridItemContentChangeEvent >(this, &DictionaryEditorPage::eventGridItemChange);
 

@@ -22,7 +22,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.BackgroundWorkerDialog", BackgroundWorkerDia
 
 bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, bool abortButton)
 {
-	if (!ui::Dialog::create(parent, title, dpi96(380), dpi96(150), WsCenterParent, new ui::TableLayout(L"100%", L"*,*,*", dpi96(4), dpi96(4))))
+	if (!ui::Dialog::create(
+		parent,
+		title,
+		380_ut, 150_ut,
+		WsCenterParent,
+		new ui::TableLayout(L"100%", L"*,*,*", 4_ut, 4_ut)
+	))
 		return false;
 
 	addEventHandler< TimerEvent >(this, &BackgroundWorkerDialog::eventTimer);

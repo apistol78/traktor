@@ -58,19 +58,17 @@ TargetEditor::TargetEditor(editor::IEditor* editor)
 
 bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	const int32_t f = ui::dpi96(4);
-
 	m_editInstance = instance;
 	m_editTarget = checked_type_cast< Target* >(object);
 
 	m_containerOuter = new ui::Container();
-	m_containerOuter->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", f, f));
+	m_containerOuter->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 4_ut, 4_ut));
 
 	Ref< ui::Splitter > splitterInner = new ui::Splitter();
-	splitterInner->create(m_containerOuter, true, ui::dpi96(200), false, ui::dpi96(100));
+	splitterInner->create(m_containerOuter, true, 200_ut, false, 100_ut);
 
 	Ref< ui::Container > containerTargetConfigurations = new ui::Container();
-	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, f));
+	containerTargetConfigurations->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 4_ut));
 
 	m_listBoxTargetConfigurations = new ui::EditList();
 	m_listBoxTargetConfigurations->create(containerTargetConfigurations, ui::ListBox::WsSingle);
@@ -78,7 +76,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_listBoxTargetConfigurations->addEventHandler< ui::SelectionChangeEvent >(this, &TargetEditor::eventListBoxTargetConfigurationsSelect);
 
 	Ref< ui::Container > containerManageTargetConfigurations = new ui::Container();
-	containerManageTargetConfigurations->create(containerTargetConfigurations, ui::WsNone, new ui::FlowLayout(0, 0, f, f));
+	containerManageTargetConfigurations->create(containerTargetConfigurations, ui::WsNone, new ui::FlowLayout(0_ut, 4_ut));
 
 	Ref< ui::Button > buttonNewTargetConfiguration = new ui::Button();
 	buttonNewTargetConfiguration->create(containerManageTargetConfigurations, L"New...");
@@ -93,13 +91,13 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	buttonRemoveTargetConfiguration->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonRemoveTargetConfigurationClick);
 
 	Ref< ui::Container > containerEditTargetConfiguration = new ui::Container();
-	containerEditTargetConfiguration->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
+	containerEditTargetConfiguration->create(splitterInner, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 4_ut));
 
 	Ref< ui::Panel > panelGeneral = new ui::Panel();
-	panelGeneral->create(containerEditTargetConfiguration, L"General", new ui::TableLayout(L"100%,128", L"*", 2 * f, f));
+	panelGeneral->create(containerEditTargetConfiguration, L"General", new ui::TableLayout(L"100%,128", L"*", 8_ut, 4_ut));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
-	containerLeft->create(panelGeneral, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, f));
+	containerLeft->create(panelGeneral, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticPlatform = new ui::Static();
 	staticPlatform->create(containerLeft, L"Platform");
@@ -112,7 +110,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticBuildRoot->create(containerLeft, L"Build root");
 
 	Ref< ui::Container > container1 = new ui::Container();
-	container1->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
+	container1->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 4_ut));
 
 	m_editBuildRootInstance = new ui::Edit();
 	m_editBuildRootInstance->create(container1, L"", ui::Edit::WsReadOnly);
@@ -126,7 +124,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticStartup->create(containerLeft, L"Startup");
 
 	Ref< ui::Container > container2 = new ui::Container();
-	container2->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
+	container2->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 4_ut));
 
 	m_editStartupInstance = new ui::Edit();
 	m_editStartupInstance->create(container2, L"", ui::Edit::WsReadOnly);
@@ -140,7 +138,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticDefaultInput->create(containerLeft, L"Default input");
 
 	Ref< ui::Container > container3 = new ui::Container();
-	container3->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
+	container3->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 4_ut));
 
 	m_editDefaultInputInstance = new ui::Edit();
 	m_editDefaultInputInstance->create(container3, L"", ui::Edit::WsReadOnly);
@@ -154,7 +152,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	staticOnlineConfig->create(containerLeft, L"Online configuration");
 
 	Ref< ui::Container > container4 = new ui::Container();
-	container4->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, f));
+	container4->create(containerLeft, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 4_ut));
 
 	m_editOnlineConfigInstance = new ui::Edit();
 	m_editOnlineConfigInstance->create(container4, L"", ui::Edit::WsReadOnly);
@@ -171,10 +169,10 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_imageIcon->addEventHandler< ui::MouseButtonDownEvent >(this, &TargetEditor::eventBrowseIconClick);
 
 	Ref< ui::Panel > panelFeatures = new ui::Panel();
-	panelFeatures->create(containerEditTargetConfiguration, L"Features", new ui::TableLayout(L"100%,*,100%", L"100%", 2 * f, f));
+	panelFeatures->create(containerEditTargetConfiguration, L"Features", new ui::TableLayout(L"100%,*,100%", L"100%", 8_ut, 4_ut));
 
 	Ref< ui::Container > containerAvailFeatures = new ui::Container();
-	containerAvailFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
+	containerAvailFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticAvailFeatures = new ui::Static();
 	staticAvailFeatures->create(containerAvailFeatures, L"Available");
@@ -183,7 +181,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_listBoxAvailFeatures->create(containerAvailFeatures, ui::ListBox::WsMultiple | ui::WsDoubleBuffer);
 
 	Ref< ui::Container > containerManageFeatures = new ui::Container();
-	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0, f));
+	containerManageFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"*", L"*,*", 0_ut, 4_ut));
 	containerManageFeatures->setVerticalAlign(ui::AnCenter);
 
 	Ref< ui::Button > buttonAddFeature = new ui::Button();
@@ -195,7 +193,7 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	buttonRemoveFeature->addEventHandler< ui::ButtonClickEvent >(this, &TargetEditor::eventButtonRemoveFeatureClick);
 
 	Ref< ui::Container > containerUsedFeatures = new ui::Container();
-	containerUsedFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
+	containerUsedFeatures->create(panelFeatures, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticUsedFeatures = new ui::Static();
 	staticUsedFeatures->create(containerUsedFeatures, L"Using");
@@ -272,8 +270,8 @@ void TargetEditor::handleDatabaseEvent(db::Database* database, const Guid& event
 ui::Size TargetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(1000),
-		ui::dpi96(600)
+		1000,
+		600
 	);
 }
 

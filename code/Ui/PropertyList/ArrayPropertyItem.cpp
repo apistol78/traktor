@@ -86,7 +86,7 @@ void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widge
 		));
 }
 
-void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void ArrayPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	StringOutputStream ss;
 

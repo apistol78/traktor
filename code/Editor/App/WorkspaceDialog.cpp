@@ -29,8 +29,8 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"EDITOR_WORKSPACE_TITLE"),
-		ui::dpi96(500),
-		ui::dpi96(200),
+		500_ut,
+		200_ut,
 		ui::ConfigDialog::WsCenterParent | ui::ConfigDialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))
@@ -41,7 +41,7 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	addEventHandler< ui::ButtonClickEvent >(this, &WorkspaceDialog::eventDialogClick);
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8, 4)))
+	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Static > staticSystemRoot = new ui::Static();

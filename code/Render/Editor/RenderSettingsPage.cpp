@@ -32,11 +32,11 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSettingsPage", 0, RenderSe
 bool RenderSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Container > containerTop = new ui::Container();
-	containerTop->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4));
+	containerTop->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticRenderer = new ui::Static();
 	staticRenderer->create(containerTop, i18n::Text(L"EDITOR_SETTINGS_RENDERER_TYPE"));

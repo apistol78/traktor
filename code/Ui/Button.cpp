@@ -36,8 +36,8 @@ void Button::setText(const std::wstring& text)
 	Widget::setText(text);
 
 	// Calculate prefered size from new text.
-	const int32_t marginX = dpi96(16);
-	const int32_t marginY = dpi96(4);
+	const int32_t marginX = pixel(16_ut);
+	const int32_t marginY = pixel(4_ut);
 
 	FontMetric fm = getFontMetric();
 	int32_t w = fm.getExtent(getText()).cx;
@@ -107,7 +107,7 @@ void Button::eventPaint(PaintEvent* event)
 
 	if (m_pushed)
 	{
-		const int32_t offset = dpi96(1);
+		const int32_t offset = pixel(1_ut);
 		rcInner = rcInner.offset(offset, offset);
 	}
 

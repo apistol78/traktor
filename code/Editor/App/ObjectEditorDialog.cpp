@@ -64,8 +64,8 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 	if (!ui::ConfigDialog::create(
 		parent,
 		ss.str(),
-		width,
-		height,
+		ui::Unit(width),
+		ui::Unit(height),
 		style,
 		new ui::FloodLayout()
 	))
@@ -106,10 +106,10 @@ void ObjectEditorDialog::destroy()
 	if (settings)
 	{
 		ui::Rect rc = getRect();
-		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/X", rc.left);
-		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Y", rc.top);
-		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", rc.getWidth());
-		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", rc.getHeight());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/X", unit(rc.left).get());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Y", unit(rc.top).get());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Width", unit(rc.getWidth()).get());
+		settings->setProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + m_instanceGuid.format() + L"/Height", unit(rc.getHeight()).get());
 		m_editor->commitGlobalSettings();
 	}
 

@@ -47,9 +47,9 @@ public:
 
 	int32_t getSize() const;
 
-	void setPixelSize(int32_t size);
+	void setPixelSize96(int32_t size);
 
-	int32_t getPixelSize() const;
+	int32_t getPixelSize96() const;
 
 	void setBold(bool bold);
 

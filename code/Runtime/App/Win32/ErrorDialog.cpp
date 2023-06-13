@@ -26,15 +26,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.ErrorDialog", ErrorDialog, ui::Dialog)
 
 bool ErrorDialog::create()
 {
-	const int32_t f = ui::dpi96(4);
-
 	if (!ui::Dialog::create(
 		nullptr,
 		L"Error",
-		ui::dpi96(700),
-		ui::dpi96(450),
+		700_ut,
+		450_ut,
 		ui::Dialog::WsDefaultResizable | ui::Dialog::WsCenterDesktop,
-		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
+		new ui::TableLayout(L"*,100%", L"100%", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -42,10 +40,10 @@ bool ErrorDialog::create()
 	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"image"), ui::Image::WsTransparent);
 
 	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", f, f));
+	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 4_ut, 4_ut));
 
 	Ref< ui::Container > containerText = new ui::Container();
-	containerText->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, f));
+	containerText->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticText = new ui::Static();
 	staticText->create(containerText, L"Unfortunately there has been an error");
@@ -54,7 +52,7 @@ bool ErrorDialog::create()
 	m_listLog->create(containerText, ui::WsNone, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
-	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, f));
+	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticDummy = new ui::Static();
 	staticDummy->create(containerButtons, L"");

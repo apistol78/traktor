@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Ui/Display.h"
 #include "Ui/Size.h"
 
 namespace traktor::ui
@@ -30,10 +29,6 @@ public:
 	inline Point(const std::pair< int32_t, int32_t >& pr);
 
 	inline Point(int32_t x_, int32_t y_);
-
-	inline Point dpi96() const;
-
-	inline Point invdpi96() const;
 
 	inline Point operator + (const Size& s) const;
 

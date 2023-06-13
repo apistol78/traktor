@@ -37,11 +37,11 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	if (!shaderGraph)
 		return nullptr;
 
-	const int32_t w = ui::dpi96(64);
-	const int32_t h = ui::dpi96(64);
-	const int32_t m = ui::dpi96(4);
-	const float sw = (float)ui::dpi96(100) / 100.0f;
-	const float ns = (float)ui::dpi96(200) / 100.0f;
+	const int32_t w = 64;
+	const int32_t h = 64;
+	const int32_t m = 4;
+	const float sw = (float)100 / 100.0f;
+	const float ns = (float)200 / 100.0f;
 
 	Ref< drawing::Image > shaderGraphThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8A8(),

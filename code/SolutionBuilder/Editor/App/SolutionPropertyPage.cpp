@@ -21,12 +21,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionPropertyPage", SolutionPropertyPage,
 
 bool SolutionPropertyPage::create(ui::Widget* parent)
 {
-	const int32_t f = ui::dpi96(4);
-
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		new ui::TableLayout(L"*,100%", L"*", f, f)
+		new ui::TableLayout(L"*,100%", L"*", 4_ut, 4_ut)
 	))
 		return false;
 

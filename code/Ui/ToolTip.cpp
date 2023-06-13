@@ -19,8 +19,8 @@ namespace traktor
 		namespace
 		{
 
-const int c_margin = 4;
-const int c_cursorHeight = 16;
+const Unit c_margin = 4_ut;
+const Unit c_cursorHeight = 16_ut;
 
 		}
 
@@ -34,7 +34,7 @@ ToolTip::ToolTip()
 
 bool ToolTip::create(Widget* parent)
 {
-	if (!ToolForm::create(parent, L"", 0, 0, WsTop))
+	if (!ToolForm::create(parent, L"", 0_ut, 0_ut, WsTop))
 		return false;
 
 	addEventHandler< TimerEvent >(this, &ToolTip::eventTimer);
@@ -53,11 +53,11 @@ void ToolTip::show(const Point& at, const std::wstring& text)
 	setText(text);
 
 	Size extent = getFontMetric().getExtent(text);
-	extent.cx += ui::dpi96(c_margin) * 2;
-	extent.cy += ui::dpi96(c_margin) * 2;
+	extent.cx += pixel(c_margin) * 2;
+	extent.cy += pixel(c_margin) * 2;
 
 	Point tipPosition = getParent()->clientToScreen(at);
-	tipPosition.y += ui::dpi96(c_cursorHeight);
+	tipPosition.y += pixel(c_cursorHeight);
 
 	setRect(Rect(tipPosition, extent));
 
@@ -122,7 +122,7 @@ void ToolTip::eventPaint(PaintEvent* event)
 	canvas.fillRect(innerRect);
 	canvas.drawRect(innerRect);
 
-	innerRect = innerRect.inflate(-ui::dpi96(c_margin), 0);
+	innerRect = innerRect.inflate(-pixel(c_margin), 0);
 	canvas.drawText(innerRect, getText(), AnLeft, AnCenter);
 
 	event->consume();

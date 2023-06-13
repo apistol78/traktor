@@ -79,10 +79,10 @@ int32_t BuildChartControl::timeToPosition(double time) const
 const BuildChartControl::Task* BuildChartControl::getTaskFromPosition(const Point& position) const
 {
 	const Rect rc = getInnerRect();
-	const int32_t c_two = dpi96(2);
-	const int32_t c_four = dpi96(4);
+	const int32_t c_two = pixel(2_ut);
+	const int32_t c_four = pixel(4_ut);
 
-	Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
+	Rect rcLane(rc.left, rc.top, rc.right, rc.top + pixel(24_ut));
 	for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 	{
 		if (rcLane.inside(position))
@@ -108,7 +108,7 @@ const BuildChartControl::Task* BuildChartControl::getTaskFromPosition(const Poin
 					return &task;
 			}
 		}
-		rcLane = rcLane.offset(0, dpi96(24));
+		rcLane = rcLane.offset(0, pixel(24_ut));
 	}
 
 	return nullptr;
@@ -204,9 +204,9 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	Rect rcUpdate = event->getUpdateRect();
 	Rect rc = getInnerRect();
 
-	const int32_t c_two = dpi96(2);
-	const int32_t c_four = dpi96(4);
-	const int32_t c_twenty = dpi96(20);
+	const int32_t c_two = pixel(2_ut);
+	const int32_t c_four = pixel(4_ut);
+	const int32_t c_twenty = pixel(20_ut);
 
 	// Clear background.
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
@@ -214,7 +214,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 
 	// Draw tasks.
 	{
-		Rect rcLane(rc.left, rc.top, rc.right, rc.top + dpi96(24));
+		Rect rcLane(rc.left, rc.top, rc.right, rc.top + pixel(24_ut));
 		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
 			canvas.setForeground(Color4ub(0, 0, 0, 40));
@@ -253,12 +253,12 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 				}
 			}
 
-			rcLane = rcLane.offset(0, dpi96(24));
+			rcLane = rcLane.offset(0, pixel(24_ut));
 		}
 	}
 
 	// Draw time axis.
-	Rect rcTime(rc.left, rc.bottom - dpi96(16), rc.right, rc.bottom);
+	Rect rcTime(rc.left, rc.bottom - pixel(16_ut), rc.right, rc.bottom);
 
 	canvas.setBackground(Color4ub(255, 255, 255, 255));
 	canvas.fillRect(rcTime);
@@ -277,7 +277,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 		for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
 		{
 			int32_t x = timeToPosition(t);
-			canvas.drawLine(x, rcTime.bottom - dpi96(8), x, rcTime.bottom);
+			canvas.drawLine(x, rcTime.bottom - pixel(8_ut), x, rcTime.bottom);
 		}
 	}
 

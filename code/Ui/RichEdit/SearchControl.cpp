@@ -28,7 +28,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SearchControl", SearchControl, ui::Container
 
 bool SearchControl::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", ui::dpi96(4), ui::dpi96(4))))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4_ut, 4_ut)))
 		return false;
 
 	m_editSearch = new ui::Edit();
@@ -111,7 +111,7 @@ void SearchControl::show()
 ui::Size SearchControl::getPreferredSize(const Size& hint) const
 {
 	ui::Size preferedSize = ui::Container::getPreferredSize(hint);
-	return ui::Size(ui::dpi96(250), preferedSize.cy);
+	return ui::Size(pixel(250_ut), preferedSize.cy);
 }
 
 void SearchControl::eventEditSearchKeyDown(ui::KeyDownEvent* event)

@@ -39,7 +39,7 @@ public:
 		WsApplyButton = (WsUser << 2)
 	};
 
-	bool create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout);
 
 	virtual void destroy() override;
 

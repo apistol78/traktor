@@ -23,8 +23,8 @@ bool MainForm::create()
 {
 	if (!ui::Form::create(
 		L"Traktor - Remote Flash debugger",
-		ui::dpi96(1000),
-		ui::dpi96(500),
+		1000_ut,
+		500_ut,
 		ui::Form::WsDefault,
 		new ui::FloodLayout()
 	))

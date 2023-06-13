@@ -241,7 +241,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	}
 
 	m_container = new ui::Container();
-	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
@@ -272,7 +272,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
+	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), 100_ut, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"Android");
 	m_toolPlatform->add(L"iOS");
 	m_toolPlatform->add(L"Linux");
@@ -284,21 +284,21 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolRenderer = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(100), i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
+	m_toolRenderer = new ui::ToolBarDropDown(ui::Command(), 100_ut, i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"));
 	m_toolRenderer->add(L"Vulkan");
 	m_toolBar->addItem(m_toolRenderer);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_PERMUTATION"), 10, ui::Command(L"ShaderGraph.Editor.RendererPermutation")));
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolTechniques = new ui::ToolBarDropDown(ui::Command(), ui::dpi96(200), i18n::Text(L"SHADERGRAPH_RENDERER_TECHNIQUE"));
+	m_toolTechniques = new ui::ToolBarDropDown(ui::Command(), 200_ut, i18n::Text(L"SHADERGRAPH_RENDERER_TECHNIQUE"));
 	m_toolBar->addItem(m_toolTechniques);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RENDERER_TECHNIQUE"), 10, ui::Command(L"ShaderGraph.Editor.Technique")));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderGraphEditorPage::eventToolClick);
 
 	m_scriptSplitter = new ui::Splitter();
-	m_scriptSplitter->create(m_container, true, ui::dpi96(-350), false);
+	m_scriptSplitter->create(m_container, true, -350_ut, false);
 
 	// Create shader graph editor control.
 	m_editorGraph = new ui::GraphControl();
@@ -329,25 +329,25 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_propertiesView, 400, false);
 
 	// Create shader graph referee view.
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
 	m_dependencyPane->create(parent);
 	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
-	m_site->createAdditionalPanel(m_dependencyPane, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_dependencyPane, 400, false);
 
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
-	m_site->createAdditionalPanel(m_shaderViewer, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
 
 	// Create "data" view.
 	m_dataContainer = new ui::Container();
 	m_dataContainer->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_dataContainer->setText(i18n::Text(L"SHADERGRAPH_DATA"));
-	m_site->createAdditionalPanel(m_dataContainer, ui::dpi96(400), false);
+	m_site->createAdditionalPanel(m_dataContainer, 400, false);
 
 	Ref< ui::Tab > tab = new ui::Tab();
 	tab->create(m_dataContainer, ui::Tab::WsBottom);
@@ -358,9 +358,9 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 	m_variablesGrid = new ui::GridView();
 	m_variablesGrid->create(tabPageVariables, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), ui::dpi96(140), true));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), ui::dpi96(80), false));
-	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), ui::dpi96(80), false));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_NAME"), 140_ut, true));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_N_READ"), 80_ut, false));
+	m_variablesGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_VARIABLES_TYPE"), 80_ut, false));
 	m_variablesGrid->addEventHandler< ui::GridItemContentChangeEvent >(this, &ShaderGraphEditorPage::eventVariableEdit);
 	m_variablesGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventVariableDoubleClick);
 
@@ -373,9 +373,9 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_uniformsGrid = new ui::GridView();
 	m_uniformsGrid->create(tabPageUniforms, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_uniformsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), ui::dpi96(190), false));
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_TYPE"), ui::dpi96(80), false));
-	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_FREQUENCY"), ui::dpi96(80), false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_NAME"), 190_ut, false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_TYPE"), 80_ut, false));
+	m_uniformsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_UNIFORMS_FREQUENCY"), 80_ut, false));
 	m_uniformsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
 
 	tab->addPage(tabPageUniforms);
@@ -387,8 +387,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_portsGrid = new ui::GridView();
 	m_portsGrid->create(tabPagePorts, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_portsGrid->setSortColumn(0, false, ui::GridView::SmLexical);
-	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_NAME"), ui::dpi96(140), false));
-	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_DIRECTION"), ui::dpi96(80), false));
+	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_NAME"), 140_ut, false));
+	m_portsGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_PORTS_DIRECTION"), 80_ut, false));
 	m_portsGrid->addEventHandler< ui::GridRowDoubleClickEvent >(this, &ShaderGraphEditorPage::eventUniformOrPortDoubleClick);
 
 	tab->addPage(tabPagePorts);
@@ -400,8 +400,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeCountGrid = new ui::GridView();
 	m_nodeCountGrid->create(tabPageNodeCount, ui::WsDoubleBuffer | ui::GridView::WsColumnHeader | ui::GridView::WsAutoEdit);
 	m_nodeCountGrid->setSortColumn(0, false, ui::GridView::SmLexical);
-	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_TYPE"), ui::dpi96(140), false));
-	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_COUNT"), ui::dpi96(80), false));
+	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_TYPE"), 140_ut, false));
+	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_COUNT"), 80_ut, false));
 
 	tab->addPage(tabPageNodeCount);
 
@@ -668,8 +668,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 					// Place node in view.
 					std::pair< int, int > position = node->getPosition();
-					position.first = ui::invdpi96(center.x + ui::dpi96(position.first) - bounds.left - bounds.getWidth() / 2);
-					position.second = ui::invdpi96(center.y + ui::dpi96(position.second) - bounds.top - bounds.getHeight() / 2);
+					position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
+					position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
 					node->setPosition(position);
 
 					// Add node to graph.
@@ -1205,8 +1205,8 @@ Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
 {
 	Ref< ui::Group > editorGroup = m_editorGraph->createGroup(
 		shaderGroup->getTitle(),
-		ui::Point(shaderGroup->getPosition()).dpi96(),
-		ui::Size(shaderGroup->getSize()).dpi96()
+		ui::Point(shaderGroup->getPosition()),
+		ui::Size(shaderGroup->getSize())
 	);
 	editorGroup->setData(L"SHADERGROUP", shaderGroup);
 	return editorGroup;
@@ -1221,7 +1221,7 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 
 	// Add to shader graph.
 	shaderNode->setId(Guid::create());
-	shaderNode->setPosition({ ui::invdpi96(at.x), ui::invdpi96(at.y) });
+	shaderNode->setPosition({ at.x, at.y });
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
@@ -1394,7 +1394,7 @@ void ShaderGraphEditorPage::updateGraph()
 			T_ASSERT(shaderEdge);
 
 			// Set default thickness first; override below for "fat" types.
-			editorEdge->setThickness(2);
+			editorEdge->setThickness(2_ut);
 
 			StringOutputStream ss;
 			const Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
@@ -1426,47 +1426,47 @@ void ShaderGraphEditorPage::updateGraph()
 
 			case PinType::Texture2D:
 				ss << L"Texture2d";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::Texture3D:
 				ss << L"Texture3d";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::TextureCube:
 				ss << L"TextureCube";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::StructBuffer:
 				ss << L"StructBuffer";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::Image2D:
 				ss << L"Image2d";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::Image3D:
 				ss << L"Image3d";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::ImageCube:
 				ss << L"ImageCube";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::State:
 				ss << L"State";
-				editorEdge->setThickness(4);
+				editorEdge->setThickness(4_ut);
 				break;
 
 			case PinType::Bundle:
 				ss << L"Bundle";
-				editorEdge->setThickness(6);
+				editorEdge->setThickness(6_ut);
 				break;
 			}
 
@@ -1478,7 +1478,7 @@ void ShaderGraphEditorPage::updateGraph()
 		for (auto editorEdge : m_editorGraph->getEdges())
 		{
 			editorEdge->setText(L"");
-			editorEdge->setThickness(2);
+			editorEdge->setThickness(2_ut);
 		}
 	}
 
@@ -1677,7 +1677,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 
 			// Add to shader graph.
 			Ref< Group > shaderGroup = new Group();
-			shaderGroup->setPosition({ ui::invdpi96(position.x), ui::invdpi96(position.y) });
+			shaderGroup->setPosition({ position.x, position.y });
 			shaderGroup->setSize({ 200, 200 });
 			m_shaderGraph->addGroup(shaderGroup);
 
@@ -1703,7 +1703,7 @@ void ShaderGraphEditorPage::eventButtonDown(ui::MouseButtonDownEvent* event)
 					fragmentGraph
 				);
 				shaderNode->setId(Guid::create());
-				shaderNode->setPosition({ ui::invdpi96(position.x), ui::invdpi96(position.y) });
+				shaderNode->setPosition({ position.x, position.y });
 				m_shaderGraph->addNode(shaderNode);
 
 				// Create editor node from shader node.
@@ -1752,7 +1752,7 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 	Ref< Group > shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
 	T_ASSERT(shaderGroup);
 
-	const ui::Rect rc = editorGroup->calculateRect().invdpi96();
+	const ui::Rect rc = editorGroup->calculateRect();
 
 	//if (
 	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second ||
@@ -1774,7 +1774,7 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 	T_ASSERT(shaderNode);
 
-	const ui::Point position = editorNode->getPosition().invdpi96();
+	const ui::Point position = editorNode->getPosition();
 
 	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
 	{

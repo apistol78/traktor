@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_sequenceHeight = 25;
+const Unit c_sequenceHeight = 25_ut;
 
 		}
 
@@ -48,12 +48,12 @@ void Tick::move(int offset)
 		m_time += offset;
 }
 
-void Tick::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
+void Tick::getRect(SequencerControl* sequencer, const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	const int32_t x = sequence->clientFromTime(m_time);
-	const int32_t hw = dpi96(3);
-	const int32_t hh = dpi96(2);
+	const int32_t hw = sequencer->pixel(3_ut);
+	const int32_t hh = sequencer->pixel(2_ut);
 
 	outRect.left = x - hw;
 	outRect.top = rcClient.top + hh;
@@ -65,10 +65,10 @@ void Tick::paint(SequencerControl* sequencer, ui::Canvas& canvas, const Sequence
 {
 	const StyleSheet* ss = sequencer->getStyleSheet();
 
-	const int32_t sequenceHeight = dpi96(c_sequenceHeight);
+	const int32_t sequenceHeight = sequencer->pixel(c_sequenceHeight);
 	const int32_t x = sequence->clientFromTime(m_time) - scrollOffset;
-	const int32_t hw = dpi96(3);
-	const int32_t hh = dpi96(2);
+	const int32_t hw = sequencer->pixel(3_ut);
+	const int32_t hh = sequencer->pixel(2_ut);
 
 	Rect rc(
 		rcClient.left + x - hw,

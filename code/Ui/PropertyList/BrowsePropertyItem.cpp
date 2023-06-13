@@ -109,7 +109,7 @@ void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 		));
 }
 
-void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
+void BrowsePropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const Rect& rc)
 {
 	std::wstring text;
 

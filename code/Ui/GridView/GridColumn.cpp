@@ -8,21 +8,19 @@
  */
 #include "Ui/GridView/GridColumn.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridColumn", GridColumn, Object)
 
-GridColumn::GridColumn(const std::wstring& title, uint32_t width)
+GridColumn::GridColumn(const std::wstring& title, Unit width)
 :	m_title(title)
 ,	m_width(width)
 ,	m_editable(false)
 {
 }
 
-GridColumn::GridColumn(const std::wstring& title, uint32_t width, bool editable)
+GridColumn::GridColumn(const std::wstring& title, Unit width, bool editable)
 :	m_title(title)
 ,	m_width(width)
 ,	m_editable(editable)
@@ -39,12 +37,12 @@ const std::wstring& GridColumn::getTitle() const
 	return m_title;
 }
 
-void GridColumn::setWidth(uint32_t width)
+void GridColumn::setWidth(Unit width)
 {
 	m_width = width;
 }
 
-uint32_t GridColumn::getWidth() const
+Unit GridColumn::getWidth() const
 {
 	return m_width;
 }
@@ -59,5 +57,4 @@ bool GridColumn::isEditable() const
 	return m_editable;
 }
 
-	}
 }

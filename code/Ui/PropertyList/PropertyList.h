@@ -23,8 +23,10 @@ namespace traktor
 
 class Guid;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class HierarchicalState;
 class PropertyItem;
@@ -75,9 +77,9 @@ public:
 
 	int getPropertyItems(RefArray< PropertyItem >& propertyItems, int flags);
 
-	void setSeparator(int separator);
+	void setSeparator(Unit separator);
 
-	int getSeparator() const;
+	Unit getSeparator() const;
 
 	void setColumnName(int column, const std::wstring& name);
 
@@ -113,7 +115,7 @@ private:
 	RefArray< PropertyItem > m_propertyItems;
 	Ref< PropertyItem > m_mousePropertyItem;
 	int32_t m_propertyItemHeight;
-	int32_t m_separator;
+	Unit m_separator;
 	int32_t m_mode;
 	bool m_columnHeader;
 	std::wstring m_columnNames[2];
@@ -140,6 +142,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

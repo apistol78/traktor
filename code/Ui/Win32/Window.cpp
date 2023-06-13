@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <Windows.h>
 #include "Core/Log/Log.h"
 #include "Ui/Win32/Window.h"
 
@@ -150,16 +151,21 @@ HFONT Window::getFont() const
 	return m_hFont.getHandle();
 }
 
-int32_t Window::getSystemDPI() const
+int32_t Window::dpi() const
 {
-	int32_t dpi = 96;
-	HDC hDC = GetDC(m_hWnd);
-	if (hDC != NULL)
-	{
-		dpi = GetDeviceCaps(hDC, LOGPIXELSX);
-		ReleaseDC(m_hWnd, hDC);
-	}
-	return dpi;
+	return GetDpiForWindow(m_hWnd);
+}
+
+int32_t Window::dpi96(int32_t measure) const
+{
+	const uint32_t dpiw = GetDpiForWindow(m_hWnd);
+	return (dpiw * measure) / 96;
+}
+
+int32_t Window::invdpi96(int32_t measure) const
+{
+	const uint32_t dpiw = GetDpiForWindow(m_hWnd);
+	return (96 * measure) / (dpiw > 0 ? dpiw : 96);
 }
 
 LRESULT Window::sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const

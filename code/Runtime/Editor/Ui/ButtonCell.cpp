@@ -57,8 +57,8 @@ void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	if (m_down)
 	{
-		position.x += ui::dpi96(1);
-		position.y += ui::dpi96(1);
+		position.x += 1;
+		position.y += 1;
 	}
 
 	canvas.drawBitmap(

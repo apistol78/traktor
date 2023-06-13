@@ -106,16 +106,16 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	sourceData = nullptr;
 
 	m_container = new ui::Container();
-	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 4, 4));
+	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 4_ut, 4_ut));
 
 	Ref< ui::Container > containerFields = new ui::Container();
-	containerFields->create(m_container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	containerFields->create(m_container, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Static > staticExtent = new ui::Static();
 	staticExtent->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT"));
 
 	Ref< ui::Container > containerExtent = new ui::Container();
-	containerExtent->create(containerFields, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
+	containerExtent->create(containerFields, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0_ut, 4_ut));
 
 	m_editExtent[0] = new ui::Edit();
 	m_editExtent[0]->create(containerExtent, toString(m_asset->getWorldExtent().x()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
@@ -392,8 +392,8 @@ void HeightfieldAssetEditor::handleDatabaseEvent(db::Database* database, const G
 ui::Size HeightfieldAssetEditor::getPreferredSize() const
 {
 	return ui::Size(
-		ui::dpi96(850),
-		ui::dpi96(550)
+		850,
+		550
 	);
 }
 

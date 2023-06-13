@@ -298,7 +298,7 @@ DatabaseView::DatabaseView(IEditor* editor)
 
 bool DatabaseView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
 	m_toolSelection = new ui::ToolBar();
@@ -346,11 +346,11 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_editFilter = new ui::Edit();
 	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
 	m_editFilter->addEventHandler< ui::KeyUpEvent >(this, &DatabaseView::eventFilterKey);
-	m_toolSelection->addItem(new ui::ToolBarEmbed(m_editFilter, ui::dpi96(80)));
+	m_toolSelection->addItem(new ui::ToolBarEmbed(m_editFilter, 80_ut));
 
 	m_toolSelection->addItem(new ui::ToolBarSeparator());
 
-	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Database.ViewModes"), ui::dpi96(80), i18n::Text(L"DATABASE_VIEW_MODE"));
+	m_toolViewMode = new ui::ToolBarDropDown(ui::Command(L"Database.ViewModes"), 80_ut, i18n::Text(L"DATABASE_VIEW_MODE"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(
@@ -361,7 +361,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_splitter = new ui::Splitter();
-	m_splitter->create(this, false, 50, true);
+	m_splitter->create(this, false, 50_ut, true);
 
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(m_splitter, (ui::TreeView::WsDefault | ui::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))

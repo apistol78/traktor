@@ -11,6 +11,7 @@
 #include <utility>
 #include <vector>
 #include "Ui/Layout.h"
+#include "Ui/Unit.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -32,9 +33,9 @@ class T_DLLCLASS FlowLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
-	FlowLayout();
+	explicit FlowLayout(Unit margin, Unit pad);
 
-	explicit FlowLayout(int32_t marginX, int32_t marginY, int32_t padX, int32_t padY);
+	explicit FlowLayout(Unit marginX, Unit marginY, Unit padX, Unit padY);
 
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 

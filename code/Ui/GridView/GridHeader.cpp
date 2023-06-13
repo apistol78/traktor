@@ -30,17 +30,17 @@ void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 	if (m_columns.size() < 2)
 		return;
 
-	int32_t dx = dpi96(2);
+	int32_t dx = getWidget()->pixel(2_ut);
 	int32_t x = 0;
 
 	for (uint32_t i = 0; i < m_columns.size(); ++i)
 	{
 		GridColumn* column = m_columns[i];
-		x += column->getWidth();
+		x += getWidget()->pixel(column->getWidth());
 		if (position.x >= x - dx && position.x <= x + dx)
 		{
 			m_resizeColumn = column;
-			m_resizeWidth = column->getWidth();
+			m_resizeWidth = getWidget()->pixel(column->getWidth());
 			m_resizePosition = x;
 			break;
 		}
@@ -61,7 +61,7 @@ void GridHeader::mouseMove(MouseMoveEvent* event, const Point& position)
 	if (width < 16)
 		width = 16;
 
-	m_resizeColumn->setWidth(width);
+	m_resizeColumn->setWidth(getWidget()->unit(width));
 	getWidget< AutoWidget >()->requestUpdate();
 }
 
@@ -77,7 +77,7 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 	{
 		GridColumn* column = m_columns[i];
 
-		int32_t width = column->getWidth();
+		int32_t width = getWidget()->pixel(column->getWidth());
 		if (m_columns.size() == 1)
 			width = rect.getWidth();
 

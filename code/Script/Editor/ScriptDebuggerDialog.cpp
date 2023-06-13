@@ -41,8 +41,8 @@ bool ScriptDebuggerDialog::create(ui::Widget* parent)
 	if (!ui::Dialog::create(
 		parent,
 		i18n::Text(L"SCRIPT_DEBUGGER_TOOL"),
-		ui::dpi96(1024),
-		ui::dpi96(800),
+		1024_ut,
+		800_ut,
 		ui::Dialog::WsCenterParent | ui::Dialog::WsDefaultResizable,
 		new ui::FloodLayout()
 	))

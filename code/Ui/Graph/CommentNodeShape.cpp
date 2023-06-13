@@ -27,7 +27,15 @@ namespace traktor
 		namespace
 		{
 
-const DPI96 c_margin = 16;
+struct Dim
+{
+	int32_t margin = 16;
+
+	Dim(const Widget* widget)
+	{
+		margin = widget->pixel(Unit(margin));
+	}
+};
 
 		}
 
@@ -126,8 +134,9 @@ Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return Size(dpi96(200), dpi96(200));
+		return Size(graph->pixel(200_ut), graph->pixel(200_ut));
 
+	const Dim dim(graph);
 	const int32_t lineHeight = graph->getFontMetric().getExtent(L"W").cy;
 
 	std::vector< std::wstring > lines;
@@ -141,7 +150,7 @@ Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) cons
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + Size(c_margin * 2, c_margin * 2);
+	return textSize + Size(dim.margin * 2, dim.margin * 2);
 }
 
 	}

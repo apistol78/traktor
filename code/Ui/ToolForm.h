@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Ui/Container.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +41,7 @@ public:
 
 	ToolForm();
 
-	bool create(Widget* parent, const std::wstring& text, int width, int height, int style = WsDefault, Layout* layout = 0);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style = WsDefault, Layout* layout = 0);
 
 	void setIcon(IBitmap* icon);
 

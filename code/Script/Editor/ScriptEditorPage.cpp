@@ -83,7 +83,7 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 
 	virtual void draw(ui::Canvas& canvas, const ui::Rect& rc) const override final
 	{
-		int32_t h = ui::dpi96(1);
+		const int32_t h = 1;
 		canvas.setBackground(canvas.getForeground());
 		canvas.fillRect(ui::Rect(rc.left, rc.bottom - h, rc.right, rc.bottom));
 		canvas.drawText(rc, path, ui::AnCenter, ui::AnCenter);
@@ -131,7 +131,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Explorer panel container.
 	m_containerExplorer = new ui::Container();
-	m_containerExplorer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_containerExplorer->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
 	m_containerExplorer->setText(i18n::Text(L"SCRIPT_EDITOR_EXPLORER"));
 
 	Ref< ui::Tab > tab = new ui::Tab();
@@ -139,19 +139,19 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		return false;
 
 	Ref< ui::TabPage > tabOutline = new ui::TabPage();
-	if (!tabOutline->create(tab, i18n::Text(L"SCRIPT_EDITOR_OUTLINE"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!tabOutline->create(tab, i18n::Text(L"SCRIPT_EDITOR_OUTLINE"), new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut)))
 		return false;
 
 	m_outlineGrid = new ui::GridView();
 	if (!m_outlineGrid->create(tabOutline, ui::GridView::WsColumnHeader |ui::WsDoubleBuffer))
 		return false;
-	m_outlineGrid->addColumn(new ui::GridColumn(L"", ui::dpi96(30)));
-	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), ui::dpi96(165)));
-	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), ui::dpi96(45)));
+	m_outlineGrid->addColumn(new ui::GridColumn(L"", 30_ut));
+	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 165_ut));
+	m_outlineGrid->addColumn(new ui::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 45_ut));
 	m_outlineGrid->addEventHandler< ui::MouseDoubleClickEvent >(this, &ScriptEditorPage::eventOutlineDoubleClick);
 
 	Ref< ui::TabPage > tabClasses = new ui::TabPage();
-	if (!tabClasses->create(tab, i18n::Text(L"SCRIPT_EDITOR_CLASSES"), new ui::TableLayout(L"100%", L"100%", 0, 0)))
+	if (!tabClasses->create(tab, i18n::Text(L"SCRIPT_EDITOR_CLASSES"), new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut)))
 		return false;
 
 	m_classesView = new ScriptClassesView();
@@ -162,11 +162,11 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	tab->addPage(tabClasses);
 	tab->setActivePage(tabOutline);
 
-	m_site->createAdditionalPanel(m_containerExplorer, ui::dpi96(300), false);
+	m_site->createAdditionalPanel(m_containerExplorer, 300, false);
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
+	if (!containerEdit->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut)))
 		return false;
 
 	m_edit = new ui::SyntaxRichEdit();

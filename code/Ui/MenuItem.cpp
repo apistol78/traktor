@@ -24,8 +24,8 @@ namespace traktor::ui
 	namespace
 	{
 
-const int32_t c_itemMarginX = 12;
-const int32_t c_itemMarginY = 6;
+const Unit c_itemMarginX = 12_ut;
+const Unit c_itemMarginY = 6_ut;
 
 	}
 
@@ -195,11 +195,11 @@ Size MenuItem::getSize(const Widget* shell) const
 		if (m_checkBox)
 		{
 			const Size sz = m_imageUnchecked->getSize();
-			cw += dpi96(c_itemMarginX) + sz.cx;
+			cw += shell->pixel(c_itemMarginX) + sz.cx;
 			ch = std::max< int32_t >(ch, sz.cy);
 		}
 
-		return Size(cw + dpi96(c_itemMarginX) * 2, ch + dpi96(c_itemMarginY) * 2);
+		return Size(cw + shell->pixel(c_itemMarginX) * 2, ch + shell->pixel(c_itemMarginY) * 2);
 	//}
 	//else
 	//	return Size(0, 1 + dpi96(c_itemMarginY) * 2);
@@ -208,7 +208,7 @@ Size MenuItem::getSize(const Widget* shell) const
 void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool tracking) const
 {
 	const StyleSheet* ss = shell->getStyleSheet();
-	const Rect rcLabel = rc.inflate(-dpi96(c_itemMarginX), 0);
+	const Rect rcLabel = rc.inflate(-shell->pixel(c_itemMarginX), 0);
 
 	canvas.setBackground(ss->getColor(this, tracking ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rc);

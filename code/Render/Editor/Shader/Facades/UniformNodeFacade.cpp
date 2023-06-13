@@ -46,8 +46,8 @@ Ref< ui::Node > UniformNodeFacade::createEditorNode(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(
-			ui::dpi96(shaderNode->getPosition().first),
-			ui::dpi96(shaderNode->getPosition().second)
+			shaderNode->getPosition().first,
+			shaderNode->getPosition().second
 		),
 		m_nodeShape
 	);
