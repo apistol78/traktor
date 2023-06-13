@@ -106,7 +106,7 @@ int32_t GridItem::getHeight()
 	if (m_font)
 	{
 		int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
-		height = std::max(height, lines * getWidget()->pixel(Unit(m_font->getPixelSize96() + 10)));
+		height = std::max(height, lines * getWidget()->pixel(m_font->getUnitSize() + 10_ut));
 	}
 	else if (getWidget< GridView >())
 		height = std::max(height, getWidget< GridView >()->getFontMetric().getHeight());

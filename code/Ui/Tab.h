@@ -92,7 +92,7 @@ private:
 	Ref< IBitmap > m_bitmapImages;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
-	int32_t m_tabHeight;
+	Unit m_tabHeight;
 	Rect m_innerRect;
 	Font m_fontBold;
 	AlignedVector< PageState > m_pages;

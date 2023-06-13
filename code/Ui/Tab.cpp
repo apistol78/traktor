@@ -54,7 +54,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose", c_ResourceTabClose, sizeof(c_ResourceTabClose));
-	m_tabHeight = pixel(Unit(getFont().getPixelSize96() + 9));
+	m_tabHeight = getFont().getUnitSize() + 9_ut;
 	return true;
 }
 
@@ -125,9 +125,9 @@ TabPage* Tab::getPage(int32_t index) const
 TabPage* Tab::getPageAt(const Point& position) const
 {
 	const auto rc = getInnerRect();
-	if (!m_bottom && position.y >= rc.top + m_tabHeight)
+	if (!m_bottom && position.y >= rc.top + pixel(m_tabHeight))
 		return nullptr;
-	else if (m_bottom && position.y <= rc.bottom - m_tabHeight)
+	else if (m_bottom && position.y <= rc.bottom - pixel(m_tabHeight))
 		return nullptr;
 
 	for (const auto& ps : m_pages)
@@ -273,11 +273,11 @@ void Tab::eventMouseMove(MouseMoveEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + m_tabHeight;
+		y1 = inner.top + pixel(m_tabHeight);
 	}
 	else
 	{
-		y0 = inner.bottom - m_tabHeight;
+		y0 = inner.bottom - pixel(m_tabHeight);
 		y1 = inner.bottom;
 	}
 
@@ -301,11 +301,11 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 	if (!m_bottom)
 	{
 		y0 = inner.top;
-		y1 = inner.top + m_tabHeight;
+		y1 = inner.top + pixel(m_tabHeight);
 	}
 	else
 	{
-		y0 = inner.bottom - m_tabHeight;
+		y0 = inner.bottom - pixel(m_tabHeight);
 		y1 = inner.bottom;
 	}
 
@@ -366,9 +366,9 @@ void Tab::eventSize(SizeEvent* event)
 {
 	m_innerRect = Widget::getInnerRect();
 	if (!m_bottom)
-		m_innerRect.top += m_tabHeight;
+		m_innerRect.top += pixel(m_tabHeight);
 	else
-		m_innerRect.bottom -= m_tabHeight;
+		m_innerRect.bottom -= pixel(m_tabHeight);
 
 	if (m_drawBorder)
 		m_innerRect = m_innerRect.inflate(-1, -1);
@@ -392,11 +392,11 @@ void Tab::eventPaint(PaintEvent* event)
 	if (!m_bottom)
 	{
 		y0 = rcInner.top;
-		y1 = rcInner.top + m_tabHeight;
+		y1 = rcInner.top + pixel(m_tabHeight);
 	}
 	else
 	{
-		y0 = rcInner.bottom - m_tabHeight;
+		y0 = rcInner.bottom - pixel(m_tabHeight);
 		y1 = rcInner.bottom;
 	}
 
@@ -518,9 +518,9 @@ void Tab::eventPaint(PaintEvent* event)
 		// No tab pages, fill solid background.
 		const Rect rcTabItem(
 			rcInner.left,
-			m_bottom ? rcInner.top : rcInner.top + m_tabHeight,
+			m_bottom ? rcInner.top : rcInner.top + pixel(m_tabHeight),
 			rcInner.right,
-			m_bottom ? rcInner.bottom - m_tabHeight : rcInner.bottom
+			m_bottom ? rcInner.bottom - pixel(m_tabHeight) : rcInner.bottom
 		);
 		canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
 		canvas.fillRect(rcTabItem);

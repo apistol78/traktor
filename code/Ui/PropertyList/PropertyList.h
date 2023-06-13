@@ -114,7 +114,7 @@ private:
 	Ref< ScrollBar > m_scrollBar;
 	RefArray< PropertyItem > m_propertyItems;
 	Ref< PropertyItem > m_mousePropertyItem;
-	int32_t m_propertyItemHeight;
+	Unit m_propertyItemHeight;
 	Unit m_separator;
 	int32_t m_mode;
 	bool m_columnHeader;

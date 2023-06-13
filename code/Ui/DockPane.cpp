@@ -72,7 +72,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
 
-	m_gripperDim = owner->pixel(Unit(owner->getFont().getPixelSize96() + 9));
+	m_gripperDim = owner->pixel(owner->getFont().getUnitSize() + 9_ut);
 }
 
 DockPane::~DockPane()
