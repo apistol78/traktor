@@ -23,6 +23,10 @@ namespace traktor::ui
 {
 
 /*! Styled bitmap.
+ * 
+ * Styled bitmaps are automatically resolved
+ * through stylesheet when referenced.
+ * 
  * \ingroup UI
  */
 class T_DLLCLASS StyleBitmap : public IBitmap
@@ -32,26 +36,20 @@ class T_DLLCLASS StyleBitmap : public IBitmap
 public:
 	explicit StyleBitmap(const wchar_t* const name);
 
-	explicit StyleBitmap(const wchar_t* const name, IBitmap* defaultBitmap);
-
-	// explicit StyleBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
-
 	virtual ~StyleBitmap();
 
 	virtual void destroy() override final;
 
-	virtual Size getSize(int32_t dpi) const override final;
+	virtual Size getSize(const Widget* reference) const override final;
 
-	virtual Ref< drawing::Image > getImage(int32_t dpi) const override final;
+	virtual Ref< drawing::Image > getImage(const Widget* reference) const override final;
 
-	virtual ISystemBitmap* getSystemBitmap(int32_t dpi) const override final;
+	virtual ISystemBitmap* getSystemBitmap(const Widget* reference) const override final;
 
 private:
 	const wchar_t* const m_name;
-	Ref< IBitmap > m_defaultBitmap;
-	bool m_ownDefaultBitmap;
-	mutable std::wstring m_path;
-	mutable Ref< IBitmap > m_bitmap;
+	mutable ISystemBitmap* m_bitmap = nullptr;
+	mutable int32_t m_dpi = -1;
 
 	bool resolve(int32_t dpi) const;
 };

@@ -71,10 +71,10 @@ void Dialog::setIcon(IBitmap* icon)
 {
 	T_ASSERT(m_widget);
 
-	if (!icon || !icon->getSystemBitmap(dpi()))
+	if (!icon || !icon->getSystemBitmap(this))
 		return;
 
-	static_cast< IDialog* >(m_widget)->setIcon(icon->getSystemBitmap(dpi()));
+	static_cast< IDialog* >(m_widget)->setIcon(icon->getSystemBitmap(this));
 }
 
 DialogResult Dialog::showModal()

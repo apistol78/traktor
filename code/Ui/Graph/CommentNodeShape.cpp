@@ -63,7 +63,7 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 	// Draw node shape.
 	{
-		const Size sz = m_imageNode->getSize(graph->dpi());
+		const Size sz = m_imageNode->getSize(graph);
 
 		const int32_t tw = sz.cx / 3;
 		const int32_t th = sz.cy / 3;

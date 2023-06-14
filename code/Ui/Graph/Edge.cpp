@@ -264,7 +264,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 		canvas->setForeground(ss->getColor(this, L"color-label"));
 		canvas->setFont(settings.getFontLabel());
 
-		const auto sz = imageLabel->getSize(graph->dpi());
+		const auto sz = imageLabel->getSize(graph);
 		const Size szLabel = canvas->getTextExtent(m_text);
 
 		const Point lpt(

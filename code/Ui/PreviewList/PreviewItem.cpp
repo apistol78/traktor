@@ -63,9 +63,9 @@ bool PreviewItem::isSelected() const
 
 void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = getWidget()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 
-	int32_t frameDim = rect.getWidth() - getWidget()->pixel(120_ut - 64_ut);
+	int32_t frameDim = rect.getWidth() - pixel(120_ut - 64_ut);
 	Size frameSize(frameDim, frameDim);
 
 	Point framePosition(rect.left + (rect.getWidth() - frameSize.cx) / 2, rect.top);
@@ -75,7 +75,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (m_bitmapImage)
 	{
-		Size thumbSize = m_bitmapImage->getSize();
+		Size thumbSize = m_bitmapImage->getSize(getWidget());
 		Point thumbPosition = framePosition;
 
 		canvas.drawBitmap(

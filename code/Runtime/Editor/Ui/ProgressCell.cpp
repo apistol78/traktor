@@ -50,7 +50,7 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.fillRect(rect2);
 
 		ui::Rect rect3 = rect;
-		rect3.left += getWidget()->pixel(2_ut);
+		rect3.left += pixel(2_ut);
 
 		canvas.setForeground(Color4ub(0, 0, 0, 255));
 		canvas.drawText(rect3, m_text, ui::AnLeft, ui::AnCenter);
@@ -63,7 +63,7 @@ void ProgressCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	else if (!m_text.empty())
 	{
 		ui::Rect rect2 = rect;
-		rect2.left += getWidget()->pixel(2_ut);
+		rect2.left += pixel(2_ut);
 
 		canvas.setForeground(Color4ub(0, 0, 0, 255));
 		canvas.drawText(rect2, m_text, ui::AnLeft, ui::AnCenter);

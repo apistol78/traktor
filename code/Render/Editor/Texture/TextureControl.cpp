@@ -56,12 +56,12 @@ bool TextureControl::create(ui::Widget* parent)
 
 ui::Size TextureControl::getMinimumSize() const
 {
-	return m_imageSource ? m_imageSource->getSize() : ui::Size(0, 0);
+	return m_imageSource ? m_imageSource->getSize(this) : ui::Size(0, 0);
 }
 
 ui::Size TextureControl::getPreferredSize(const ui::Size& hint) const
 {
-	return m_imageSource ? m_imageSource->getSize() : ui::Size(0, 0);
+	return m_imageSource ? m_imageSource->getSize(this) : ui::Size(0, 0);
 }
 
 bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output)
@@ -265,7 +265,7 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 	if (m_imageSource)
 	{
 		const ui::Size clientSize = getInnerRect().getSize();
-		const ui::Size imageSize = m_imageSource->getSize();
+		const ui::Size imageSize = m_imageSource->getSize(this);
 
 		const ui::Point center =
 		{
@@ -276,9 +276,9 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 		canvas.setClipRect(ui::Rect(0, 0, clientSize.cx / 2, clientSize.cy));
 		canvas.drawBitmap(
 			center + m_offset,
-			m_imageSource->getSize() * m_scale,
+			m_imageSource->getSize(this) * m_scale,
 			ui::Point(0, 0),
-			m_imageSource->getSize(),
+			m_imageSource->getSize(this),
 			m_imageSource,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest
@@ -287,9 +287,9 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 		canvas.setClipRect(ui::Rect(clientSize.cx / 2, 0, clientSize.cx, clientSize.cy));
 		canvas.drawBitmap(
 			center + m_offset,
-			m_imageOutput->getSize() * m_scale,
+			m_imageOutput->getSize(this) * m_scale,
 			ui::Point(0, 0),
-			m_imageOutput->getSize(),
+			m_imageOutput->getSize(this),
 			m_imageOutput,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest

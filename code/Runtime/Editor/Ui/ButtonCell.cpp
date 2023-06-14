@@ -50,7 +50,7 @@ void ButtonCell::mouseUp(ui::MouseButtonUpEvent* event, const ui::Point& positio
 
 void ButtonCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	ui::Size bitmapSize = m_bitmap->getSize();
+	ui::Size bitmapSize = m_bitmap->getSize(getWidget());
 
 	ui::Point position = rect.getTopLeft();
 	position.y += (rect.getHeight() - bitmapSize.cy) / 2;

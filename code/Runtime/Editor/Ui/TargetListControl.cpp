@@ -26,6 +26,7 @@ bool TargetListControl::create(ui::Widget* parent)
 
 void TargetListControl::add(TargetInstanceListItem* item)
 {
+	item->placeCells(this, ui::Rect());
 	m_items.push_back(item);
 	requestUpdate();
 }

@@ -79,25 +79,25 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 	T_ASSERT(image);
 	T_ASSERT(imageCount > 0);
 
-	const Size imageSize = image->getSize(dpi());
+	const Size imageSize = image->getSize(this);
 	if (imageSize.cx <= 0 || imageSize.cy <= 0)
 		return 0;
 
 	if (m_imageEnabled)
 	{
-		uint32_t width = m_imageEnabled->getSize(dpi()).cx + imageSize.cx;
-		uint32_t height = std::max(m_imageEnabled->getSize(dpi()).cy, imageSize.cy);
+		uint32_t width = m_imageEnabled->getSize(this).cx + imageSize.cx;
+		uint32_t height = std::max(m_imageEnabled->getSize(this).cy, imageSize.cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_imageEnabled->getImage(dpi()));
-		newImage->copySubImage(image->getImage(dpi()), Rect(Point(0, 0), imageSize), Point(m_imageEnabled->getSize(dpi()).cx, 0));
+		newImage->copyImage(m_imageEnabled->getImage(this));
+		newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), imageSize), Point(m_imageEnabled->getSize(this).cx, 0));
 		m_imageEnabled = newImage;
 	}
 	else
 	{
 		m_imageEnabled = image;
-		m_imageWidth = m_imageEnabled->getSize(dpi()).cx / imageCount;
-		m_imageHeight = m_imageEnabled->getSize(dpi()).cy;
+		m_imageWidth = m_imageEnabled->getSize(this).cx / imageCount;
+		m_imageHeight = m_imageEnabled->getSize(this).cy;
 	}
 
 	const uint32_t imageBase = m_imageCount;
@@ -105,7 +105,7 @@ uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
 
 	// Create disabled image
 	{
-		Ref< drawing::Image > image = m_imageEnabled->getImage(dpi());
+		Ref< drawing::Image > image = m_imageEnabled->getImage(this);
 		T_FATAL_ASSERT(image != nullptr);
 
 		image = image->clone();

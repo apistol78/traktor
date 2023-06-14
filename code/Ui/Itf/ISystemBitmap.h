@@ -34,7 +34,7 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) = 0;
+	virtual void copySubImage(const drawing::Image* image, const Rect& srcRect, const Point& destPos) = 0;
 
 	virtual Ref< drawing::Image > getImage() const = 0;
 

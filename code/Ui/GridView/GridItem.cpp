@@ -101,18 +101,18 @@ const RefArray< IBitmap >& GridItem::getImages() const
 
 int32_t GridItem::getHeight()
 {
-	int32_t height = getWidget()->pixel(19_ut);
+	int32_t height = pixel(19_ut);
 
 	if (m_font)
 	{
 		int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
-		height = std::max(height, lines * getWidget()->pixel(m_font->getUnitSize() + 10_ut));
+		height = std::max(height, lines * pixel(m_font->getUnitSize() + 10_ut));
 	}
 	else if (getWidget< GridView >())
 		height = std::max(height, getWidget< GridView >()->getFontMetric().getHeight());
 
 	for (auto image : m_images)
-		height = std::max(height, image->getSize().cy + getWidget()->pixel(4_ut));
+		height = std::max(height, image->getSize(getWidget()).cy + pixel(4_ut));
 
 	return height;
 }
@@ -131,20 +131,20 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 
 void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
-	const StyleSheet* ss = getWidget< GridView >()->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
 
 	if (m_text.empty())
 	{
 		int32_t w = 0;
 		for (auto image : m_images)
-			w += image->getSize().cx + 2;
+			w += image->getSize(getWidget()).cx + 2;
 		rcText.left += (rcText.getWidth() - w) / 2;
 	}
 
 	for (auto image : m_images)
 	{
-		Size szImage = image->getSize();
+		Size szImage = image->getSize(getWidget());
 		Point pntImage(
 			rcText.left,
 			rcText.top + (rcText.getHeight() - szImage.cy) / 2

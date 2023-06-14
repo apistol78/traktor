@@ -20,8 +20,6 @@
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 
-#include "Resources/Tree.h"
-
 namespace traktor
 {
 	namespace ui
@@ -48,7 +46,7 @@ bool TreeView::create(Widget* parent, int32_t style)
 	m_itemEditor->addEventHandler< FocusEvent >(this, &TreeView::eventEditFocus);
 	m_itemEditor->addEventHandler< KeyDownEvent >(this, &TreeView::eventEditKeyDownEvent);
 
-	m_imageState = new ui::StyleBitmap(L"UI.Tree", c_ResourceTree, sizeof(c_ResourceTree));
+	m_imageState = new ui::StyleBitmap(L"UI.Tree");
 
 	m_font = getFont();
 
@@ -64,14 +62,14 @@ int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
 {
 	if (m_image)
 	{
-		uint32_t width = m_image->getSize().cx + image->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
+		uint32_t width = m_image->getSize(this).cx + image->getSize(this).cx;
+		uint32_t height = std::max(m_image->getSize(this).cy, image->getSize(this).cy);
 		if (width == 0 || height == 0)
 			return 0;
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
+		newImage->copyImage(m_image->getImage(this));
+		newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), image->getSize(this)), Point(m_image->getSize(this).cx, 0));
 		m_image = newImage;
 	}
 	else
@@ -86,12 +84,12 @@ bool TreeView::setImage(int32_t imageIndex, IBitmap* image)
 	if (!m_image)
 		return false;
 
-	Size dim = m_image->getSize();
+	Size dim = m_image->getSize(this);
 	int32_t x = imageIndex * dim.cy;
 
 	Ref< ui::Bitmap > newImage = new ui::Bitmap(dim.cx, dim.cy);
-	newImage->copyImage(m_image->getImage());
-	newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(x, 0));
+	newImage->copyImage(m_image->getImage(this));
+	newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), image->getSize(this)), Point(x, 0));
 	m_image = newImage;
 
 	return true;

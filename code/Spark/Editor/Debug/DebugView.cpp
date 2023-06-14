@@ -559,7 +559,7 @@ void DebugView::eventPaint(ui::PaintEvent* event)
 		{
 			Vector2 p = rasterTransform * (m_highlightInstance->getGlobalTransform() * Vector2(0.0f, 0.0f));
 			ui::Point pivot = targetRect.getTopLeft() + ui::Size(p.x, p.y);
-			ui::Size sz = m_bitmapPivot->getSize();
+			ui::Size sz = m_bitmapPivot->getSize(this);
 			canvas.drawBitmap(pivot + ui::Size(-sz.cx / 2, -sz.cy / 2), ui::Point(0, 0), sz, m_bitmapPivot);
 		}
 

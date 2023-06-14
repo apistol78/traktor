@@ -49,12 +49,12 @@ void ToolForm::setIcon(IBitmap* icon)
 {
 	T_ASSERT(m_widget);
 
-	if (!icon || !icon->getSystemBitmap(dpi()))
+	if (!icon || !icon->getSystemBitmap(this))
 		return;
 
 	m_icon = icon;
 
-	static_cast< IToolForm* >(m_widget)->setIcon(icon->getSystemBitmap(dpi()));
+	static_cast< IToolForm* >(m_widget)->setIcon(icon->getSystemBitmap(this));
 }
 
 IBitmap* ToolForm::getIcon()

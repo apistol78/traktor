@@ -122,7 +122,7 @@ private:
 
 	virtual void layoutCells(const Rect& rc) override final;
 
-	IBitmap* getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize);
+	IBitmap* getBitmap(const wchar_t* const name);
 
 	void beginEdit(GridItem* item);
 

@@ -54,7 +54,7 @@ void MiniButton::setImage(IBitmap* image)
 Size MiniButton::getPreferredSize(const Size& hint) const
 {
 	if (m_image)
-		return m_image->getSize(dpi()) + Size(pixel(6_ut), pixel(6_ut));
+		return m_image->getSize(this) + Size(pixel(6_ut), pixel(6_ut));
 	else
 		return Size(getFontMetric().getExtent(getText()).cx + pixel(10_ut), pixel(16_ut));
 }
@@ -117,7 +117,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 
 	if (m_image)
 	{
-		const Size size = m_image->getSize(dpi());
+		const Size size = m_image->getSize(this);
 		const Size margin = rcInner.getSize() - size;
 		const Point at(rcInner.left + margin.cx / 2, rcInner.top + margin.cy / 2);
 

@@ -345,7 +345,7 @@ int32_t TreeViewItem::calculateDepth() const
 
 Rect TreeViewItem::calculateExpandRect() const
 {
-	int32_t d = m_view->m_imageState->getSize().cy;
+	int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = getClientRect();
@@ -361,7 +361,7 @@ Rect TreeViewItem::calculateExpandRect() const
 
 Rect TreeViewItem::calculateImageRect() const
 {
-	const int32_t d = m_view->m_image->getSize().cy;
+	const int32_t d = m_view->m_image->getSize(getWidget()).cy;
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
@@ -378,7 +378,7 @@ Rect TreeViewItem::calculateImageRect() const
 
 Rect TreeViewItem::calculateLabelRect() const
 {
-	const int32_t d = m_view->m_imageState->getSize().cy;
+	const int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
@@ -394,7 +394,7 @@ Rect TreeViewItem::calculateLabelRect() const
 int32_t TreeViewItem::calculateWidth() const
 {
 	Size extent = m_view->getFontMetric().getExtent(m_text);
-	int32_t d = m_view->m_imageState->getSize().cy;
+	int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
 	return m_view->pixel(4_ut + calculateDepth() * 20 + 28) + extent.cx + d;
 }
 
@@ -537,7 +537,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 	if (m_view->m_imageState && hasChildren())
 	{
 		Rect rcExpand = calculateExpandRect();
-		int32_t d = m_view->m_imageState->getSize().cy;
+		int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
 		canvas.drawBitmap(
 			rcExpand.getTopLeft(),
 			Point(isExpanded() ? d : 0, 0),
@@ -549,7 +549,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (m_view->m_image)
 	{
-		const int32_t d = m_view->m_image->getSize().cy;
+		const int32_t d = m_view->m_image->getSize(getWidget()).cy;
 
 		for (int32_t i = 0; i < getImageCount(); ++i)
 		{

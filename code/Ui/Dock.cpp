@@ -47,22 +47,22 @@ bool Dock::create(Widget* parent)
 	const int xy[] = { 0, 32, 32 + 29, 32 + 29 + 32 };
 
 	m_hintLeft = new ui::Image();
-	m_hintLeft->create(m_hint, Bitmap::load(c_ResourceDockLeft, sizeof(c_ResourceDockLeft), L"png", dpi()), false);
+	m_hintLeft->create(m_hint, Bitmap::load(c_ResourceDockLeft, sizeof(c_ResourceDockLeft), L"png"), false);
 	m_hintLeft->setRect(Rect(xy[0], xy[1], xy[0] + 32, xy[1] + 29));
 	m_hintLeft->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
 	m_hintRight = new ui::Image();
-	m_hintRight->create(m_hint, Bitmap::load(c_ResourceDockRight, sizeof(c_ResourceDockRight), L"png", dpi()), false);
+	m_hintRight->create(m_hint, Bitmap::load(c_ResourceDockRight, sizeof(c_ResourceDockRight), L"png"), false);
 	m_hintRight->setRect(Rect(xy[2], xy[1], xy[2] + 32, xy[1] + 29));
 	m_hintRight->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
 	m_hintTop = new ui::Image();
-	m_hintTop->create(m_hint, Bitmap::load(c_ResourceDockTop, sizeof(c_ResourceDockTop), L"png", dpi()), false);
+	m_hintTop->create(m_hint, Bitmap::load(c_ResourceDockTop, sizeof(c_ResourceDockTop), L"png"), false);
 	m_hintTop->setRect(Rect(xy[1], xy[0], xy[1] + 29, xy[0] + 32));
 	m_hintTop->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 
 	m_hintBottom = new ui::Image();
-	m_hintBottom->create(m_hint, Bitmap::load(c_ResourceDockBottom, sizeof(c_ResourceDockBottom), L"png", dpi()), false);
+	m_hintBottom->create(m_hint, Bitmap::load(c_ResourceDockBottom, sizeof(c_ResourceDockBottom), L"png"), false);
 	m_hintBottom->setRect(Rect(xy[1], xy[2], xy[1] + 29, xy[2] + 32));
 	m_hintBottom->addEventHandler< MouseButtonUpEvent >(this, &Dock::eventHintButtonUp);
 

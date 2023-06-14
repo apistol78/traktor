@@ -401,7 +401,7 @@ void DockPane::draw(Canvas& canvas)
 
 		canvas.setForeground(ss->getColor(m_owner, m_focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 
-		const int32_t closeWidth = m_bitmapClose->getSize(m_owner->dpi()).cx;
+		const int32_t closeWidth = m_bitmapClose->getSize(m_owner).cx;
 
 		Rect titleRect = captionRect.offset(0, -1);
 		titleRect.left += m_owner->pixel(4_ut);
@@ -424,8 +424,8 @@ void DockPane::draw(Canvas& canvas)
 
 		int32_t gx = titleRect.left + titleExtent.cx + m_owner->pixel(4_ut);
 		int32_t gx1 = captionRect.right - closeWidth - m_owner->pixel(4_ut);
-		const int32_t gw = m_bitmapGripper->getSize(m_owner->dpi()).cx;
-		const int32_t gh = m_bitmapGripper->getSize(m_owner->dpi()).cy;
+		const int32_t gw = m_bitmapGripper->getSize(m_owner).cx;
+		const int32_t gh = m_bitmapGripper->getSize(m_owner).cy;
 		while (gx < gx1)
 		{
 			const int32_t w = min(gw, gx1 - gx);
@@ -441,9 +441,9 @@ void DockPane::draw(Canvas& canvas)
 
 		// \fixme White when focus
 		canvas.drawBitmap(
-			Point(captionRect.right - closeWidth - m_owner->pixel(4_ut), captionRect.getCenter().y - m_bitmapClose->getSize(m_owner->dpi()).cy / 2),
+			Point(captionRect.right - closeWidth - m_owner->pixel(4_ut), captionRect.getCenter().y - m_bitmapClose->getSize(m_owner).cy / 2),
 			Point(0, 0),
-			m_bitmapClose->getSize(m_owner->dpi()),
+			m_bitmapClose->getSize(m_owner),
 			m_bitmapClose,
 			BlendMode::Alpha
 		);
@@ -532,7 +532,7 @@ bool DockPane::hitGripperClose(const Point& position) const
 	if (isSplitter() || !hitGripper(position))
 		return false;
 
-	int32_t closeWidth = m_bitmapClose->getSize(m_owner->dpi()).cx;
+	const int32_t closeWidth = m_bitmapClose->getSize(m_owner).cx;
 	return position.x >= m_rect.right - closeWidth - m_owner->pixel(4_ut);
 }
 

@@ -33,7 +33,7 @@ bool Splash::create()
 	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, ui::Image::WsScale);
 
-	const ui::Size sz = splash->getSize();
+	const ui::Size sz = splash->getSize(this);
 	setRect({ 0, 0, sz.cx, sz.cy });
 
 	show();

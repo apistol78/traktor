@@ -100,7 +100,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 	// Draw node shape.
 	{
 		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		const Size sz = m_imageNode[imageIndex]->getSize(graph->dpi());
+		const Size sz = m_imageNode[imageIndex]->getSize(graph);
 
 		const int32_t tw = sz.cx / 3;
 
@@ -123,7 +123,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 		}
 	}
 
-	const Size pinSize = m_imagePin->getSize(graph->dpi());
+	const Size pinSize = m_imagePin->getSize(graph);
 
 	canvas->setBackground(Color4ub(255, 255, 255));
 
@@ -198,7 +198,7 @@ Size OutputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 	const Dim dim(graph);
 	const Font currentFont = graph->getFont();
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	const Size sz = m_imageNode[imageIndex]->getSize(graph->dpi());
+	const Size sz = m_imageNode[imageIndex]->getSize(graph);
 
 	int32_t width = 0;
 
