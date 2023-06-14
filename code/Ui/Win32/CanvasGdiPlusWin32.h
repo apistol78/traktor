@@ -9,7 +9,8 @@
 #pragma once
 
 #if defined(T_USE_GDI_PLUS)
-
+#define WINVER 0x0A00
+#define _WIN32_WINNT 0x0A00
 #include <windows.h>
 // \hack As we don't want min/max defined but gdiplus.h require them
 // we temporarily define them first.

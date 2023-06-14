@@ -16,12 +16,10 @@
 #include "Core/Misc/ComRef.h"
 #include "Ui/Win32/CanvasWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class CanvasDirect2DWin32 : public CanvasWin32
@@ -140,7 +138,6 @@ private:
 	bool realizeFont() const;
 };
 
-	}
 }
 
 #endif	// T_USE_DIRECT2D
