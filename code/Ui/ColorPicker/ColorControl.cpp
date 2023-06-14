@@ -86,7 +86,7 @@ void ColorControl::eventPaint(PaintEvent* event)
 	canvas.drawBitmap(
 		Point(0, 0),
 		Point(0, 0),
-		m_previewBitmap->getSize(dpi()),
+		m_previewBitmap->getSize(this),
 		m_previewBitmap
 	);
 

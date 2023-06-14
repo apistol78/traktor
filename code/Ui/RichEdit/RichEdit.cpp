@@ -281,19 +281,19 @@ int32_t RichEdit::addImage(IBitmap* image, uint32_t imageCount)
 
 	if (m_image)
 	{
-		const uint32_t width = m_image->getSize().cx + image->getSize().cx;
-		const uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
+		const uint32_t width = m_image->getSize(this).cx + image->getSize(this).cx;
+		const uint32_t height = std::max(m_image->getSize(this).cy, image->getSize(this).cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
+		newImage->copyImage(m_image->getImage(this));
+		newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), image->getSize(this)), Point(m_image->getSize(this).cx, 0));
 		m_image = newImage;
 	}
 	else
 	{
 		m_image = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
+		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize(this).cx / imageCount);
+		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize(this).cy);
 	}
 
 	const uint32_t imageBase = m_imageCount;

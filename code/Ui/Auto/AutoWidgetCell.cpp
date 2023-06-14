@@ -86,6 +86,21 @@ void AutoWidgetCell::paint(Canvas& canvas, const Rect& rect)
 {
 }
 
+const StyleSheet* AutoWidgetCell::getStyleSheet() const
+{
+	return m_widget ? m_widget->getStyleSheet() : nullptr;
+}
+
+int32_t AutoWidgetCell::pixel(Unit measure) const
+{
+	return m_widget ? m_widget->pixel(measure) : 0;
+}
+
+Unit AutoWidgetCell::unit(int32_t measure) const
+{
+	return m_widget ? m_widget->unit(measure) : 0_ut;
+}
+
 void AutoWidgetCell::requestWidgetUpdate()
 {
 	if (m_widget)

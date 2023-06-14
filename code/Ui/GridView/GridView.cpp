@@ -177,6 +177,7 @@ int32_t GridView::getColumnIndex(int32_t x) const
 
 void GridView::addRow(GridRow* row)
 {
+	row->placeCells(this, Rect());
 	m_rows.push_back(row);
 	requestUpdate();
 }
@@ -345,18 +346,18 @@ void GridView::layoutCells(const Rect& rc)
 	Rect rcRow(rcLayout.left, rcLayout.top, rcLayout.right, rcLayout.top);
 	for (auto row : rows)
 	{
-		placeCell(row, rcRow);
 		const int32_t rowHeight = row->getHeight();
 		rcRow.bottom = rcRow.top + rowHeight;
+		placeCell(row, rcRow);
 		rcRow.top = rcRow.bottom;
 	}
 }
 
-IBitmap* GridView::getBitmap(const wchar_t* const name, const void* defaultBitmapResource, uint32_t defaultBitmapResourceSize)
+IBitmap* GridView::getBitmap(const wchar_t* const name)
 {
 	auto it = m_bitmaps.find(name);
 	if (it == m_bitmaps.end())
-		m_bitmaps[name] = new ui::StyleBitmap(name, defaultBitmapResource, defaultBitmapResourceSize);
+		m_bitmaps[name] = new ui::StyleBitmap(name);
 	return m_bitmaps[name];
 }
 

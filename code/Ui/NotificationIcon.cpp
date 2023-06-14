@@ -31,7 +31,7 @@ NotificationIcon::~NotificationIcon()
 
 bool NotificationIcon::create(const std::wstring& text, IBitmap* image)
 {
-	if (!image || !image->getSystemBitmap(96))
+	if (!image || !image->getSystemBitmap(nullptr))
 		return false;
 
 	m_ni = Application::getInstance()->getWidgetFactory()->createNotificationIcon(this);
@@ -41,7 +41,7 @@ bool NotificationIcon::create(const std::wstring& text, IBitmap* image)
 		return false;
 	}
 
-	if (!m_ni->create(text, image->getSystemBitmap(96)))
+	if (!m_ni->create(text, image->getSystemBitmap(nullptr)))
 		return false;
 
 	return true;
@@ -54,7 +54,7 @@ void NotificationIcon::destroy()
 
 void NotificationIcon::setImage(IBitmap* image)
 {
-	m_ni->setImage(image->getSystemBitmap(96));
+	m_ni->setImage(image->getSystemBitmap(nullptr));
 }
 
 }

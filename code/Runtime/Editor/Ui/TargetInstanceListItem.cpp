@@ -34,9 +34,9 @@ namespace traktor::runtime
 	namespace
 	{
 
-const int32_t c_performanceLineHeight = 18;
-const int32_t c_performanceHeight = 3 * c_performanceLineHeight;
-const int32_t c_commandHeight = 22;
+const ui::Unit c_performanceLineHeight = 18_ut;
+const ui::Unit c_performanceHeight = c_performanceLineHeight * 3;
+const ui::Unit c_commandHeight = 22_ut;
 
 const struct
 {
@@ -91,7 +91,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, 28 + connections.size() * (c_performanceHeight + c_commandHeight));
+	return ui::Size(128, pixel(28_ut) + connections.size() * pixel(c_performanceHeight + c_commandHeight));
 }
 
 void TargetInstanceListItem::setSelected(bool selected)
@@ -104,19 +104,19 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect;
-	controlRect.bottom = rect.top + 28;
+	controlRect.bottom = rect.top + pixel(28_ut);
 
-	int32_t logoSize = m_bitmapLogos->getSize().cy;
+	const int32_t logoSize = m_bitmapLogos->getSize(widget).cy;
 
 	if (m_instance->getState() == TsIdle)
 	{
 		widget->placeCell(
 			m_hostsCell,
 			ui::Rect(
-				controlRect.left + 130,
-				controlRect.getCenter().y - 10,
-				controlRect.right - 24 * 3 - 12,
-				controlRect.getCenter().y + 10
+				controlRect.left + pixel(130_ut),
+				controlRect.getCenter().y - pixel(10_ut),
+				controlRect.right - pixel(24_ut * 3 - 12),
+				controlRect.getCenter().y + pixel(10_ut)
 			)
 		);
 	}
@@ -125,10 +125,10 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		widget->placeCell(
 			m_progressCell,
 			ui::Rect(
-				controlRect.left + logoSize + 10,
-				controlRect.getCenter().y - 8,
-				controlRect.right - 24 * 3 - 8,
-				controlRect.getCenter().y + 8
+				controlRect.left + logoSize + pixel(10_ut),
+				controlRect.getCenter().y - pixel(8_ut),
+				controlRect.right - pixel(24_ut * 3 - 8_ut),
+				controlRect.getCenter().y + pixel(8_ut)
 			)
 		);
 	}
@@ -136,33 +136,33 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 	widget->placeCell(
 		m_playCell,
 		ui::Rect(
-			controlRect.right - 24 * 3 - 4,
+			controlRect.right - pixel(24_ut * 3 - 4_ut),
 			controlRect.top,
-			controlRect.right - 24 * 2 - 4,
+			controlRect.right - pixel(24_ut * 2 - 4_ut),
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_buildCell,
 		ui::Rect(
-			controlRect.right - 24 * 2 - 4,
+			controlRect.right - pixel(24_ut * 2 - 4_ut),
 			controlRect.top,
-			controlRect.right - 24 * 1 - 4,
+			controlRect.right - pixel(24_ut * 1 - 4_ut),
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_migrateCell,
 		ui::Rect(
-			controlRect.right - 24 * 1 - 4,
+			controlRect.right - pixel(24_ut * 1 - 4_ut),
 			controlRect.top,
-			controlRect.right - 24 * 0 - 4,
+			controlRect.right - pixel(24_ut * 0 - 4_ut),
 			controlRect.bottom
 		)
 	);
 
 	controlRect.top = controlRect.bottom;
-	controlRect.bottom = controlRect.top + c_performanceHeight;
+	controlRect.bottom = controlRect.top + pixel(c_performanceHeight);
 
 	m_stopCells.resize(connections.size());
 	m_captureCells.resize(connections.size());
@@ -185,7 +185,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		if (!m_editCells[i])
 		{
 			Ref< ui::Edit > edit = new ui::Edit();
-			edit->create(getWidget< ui::AutoWidget >(), L"", ui::WsNone | ui::WsWantAllInput);
+			edit->create(widget, L"", ui::WsNone | ui::WsWantAllInput);
 			edit->addEventHandler< ui::KeyDownEvent >(this, &TargetInstanceListItem::eventCommandEditKeyDown);
 			m_editCells[i] = new ui::ChildWidgetCell(edit);
 		}
@@ -193,9 +193,9 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		widget->placeCell(
 			m_stopCells[i],
 			ui::Rect(
-				controlRect.right - 24 * 1 - 4,
+				controlRect.right - pixel(24_ut * 1 - 4_ut),
 				controlRect.top,
-				controlRect.right - 24 * 0 - 4,
+				controlRect.right - pixel(24_ut * 0 - 4_ut),
 				(controlRect.top + controlRect.bottom) / 2
 			)
 		);
@@ -203,9 +203,9 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		widget->placeCell(
 			m_captureCells[i],
 			ui::Rect(
-				controlRect.right - 24 * 1 - 4,
+				controlRect.right - pixel(24_ut * 1 - 4_ut),
 				(controlRect.top + controlRect.bottom) / 2,
-				controlRect.right - 24 * 0 - 4,
+				controlRect.right - pixel(24_ut * 0 - 4_ut),
 				controlRect.bottom
 			)
 		);
@@ -216,11 +216,11 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 				controlRect.left,
 				controlRect.bottom,
 				controlRect.right,
-				controlRect.bottom + c_commandHeight
+				controlRect.bottom + pixel(c_commandHeight)
 			)
 		);
 
-		controlRect = controlRect.offset(0, controlRect.getHeight() + c_commandHeight);
+		controlRect = controlRect.offset(0, controlRect.getHeight() + pixel(c_commandHeight));
 	}
 
 	AutoWidgetCell::placeCells(widget, rect);
@@ -228,28 +228,29 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 
 void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	const ui::StyleSheet* ss = getWidget()->getStyleSheet();
+	const auto widget = getWidget();
+	const ui::StyleSheet* ss = getStyleSheet();
 	const Platform* platform = m_instance->getPlatform();
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
 	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect;
-	controlRect.bottom = rect.top + 28;
+	controlRect.bottom = rect.top + pixel(28_ut);
 
-	canvas.setBackground(ss->getColor(getWidget(), m_selected ? L"item-background-color-selected" : L"item-background-color"));
+	canvas.setBackground(ss->getColor(widget, m_selected ? L"item-background-color-selected" : L"item-background-color"));
 	canvas.fillRect(controlRect);
 
 	ui::Rect performanceRect = rect;
-	performanceRect.top = rect.top + 28;
-	performanceRect.bottom = performanceRect.top + c_performanceHeight + c_commandHeight;
+	performanceRect.top = rect.top + pixel(28_ut);
+	performanceRect.bottom = performanceRect.top + pixel(c_performanceHeight + c_commandHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
-		canvas.setBackground(ss->getColor(getWidget(), L"item-connection-background-color"));
+		canvas.setBackground(ss->getColor(widget, L"item-connection-background-color"));
 		canvas.fillRect(performanceRect);
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
-	canvas.setForeground(ss->getColor(getWidget(), L"item-seperator-color"));
+	canvas.setForeground(ss->getColor(widget, L"item-seperator-color"));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
 	if (m_instance->getState() != m_lastInstanceState)
@@ -270,13 +271,13 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	if (m_instance->getState() != TsIdle)
 	{
-		int32_t progress = m_instance->getBuildProgress();
+		const int32_t progress = m_instance->getBuildProgress();
 		m_progressCell->setProgress(progress);
 	}
 	else
 		m_progressCell->setProgress(-1);
 
-	int32_t logoSize = m_bitmapLogos->getSize().cy;
+	const int32_t logoSize = m_bitmapLogos->getSize(widget).cy;
 	canvas.drawBitmap(
 		ui::Point(controlRect.left + 2, controlRect.getCenter().y - logoSize / 2),
 		ui::Point(platform->getIconIndex() * logoSize, 0),
@@ -288,24 +289,24 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	if (m_instance->getState() == TsIdle)
 	{
 		ui::Rect textRect = controlRect;
-		textRect.left += logoSize + 10;
-		textRect.right -= 24 * 3 - 8;
+		textRect.left += logoSize + pixel(10_ut);
+		textRect.right -= pixel(24_ut * 3 - 8);
 
-		canvas.setForeground(ss->getColor(getWidget(), L"color"));
+		canvas.setForeground(ss->getColor(widget, L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
 	}
 
-	ui::Font widgetFont = getWidget()->getFont();
+	ui::Font widgetFont = widget->getFont();
 	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
 	ui::Font markerFont = widgetFont; markerFont.setSize(7);
 
 	performanceRect = rect;
-	performanceRect.right -= 34;
-	performanceRect.top = rect.top + 28;
-	performanceRect.bottom = performanceRect.top + c_performanceHeight;
+	performanceRect.right -= pixel(34_ut);
+	performanceRect.top = rect.top + pixel(28_ut);
+	performanceRect.bottom = performanceRect.top + pixel(c_performanceHeight);
 
-	canvas.setForeground(ss->getColor(getWidget(), L"color"));
+	canvas.setForeground(ss->getColor(widget, L"color"));
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TpsRuntime& runtime = connections[i]->getPerformance< TpsRuntime >();
@@ -313,49 +314,49 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		canvas.setClipRect(performanceRect);
 
 		ui::Rect nameRect = performanceRect;
-		nameRect.bottom = nameRect.top + c_performanceLineHeight;
+		nameRect.bottom = nameRect.top + pixel(c_performanceLineHeight);
 
-		nameRect.left += 6;
+		nameRect.left += pixel(6_ut);
 		canvas.setFont(performanceBoldFont);
 		canvas.drawText(nameRect, connections[i]->getName(), ui::AnLeft, ui::AnCenter);
 		canvas.setFont(performanceFont);
 
 		ui::Rect topRect = performanceRect;
-		topRect.top = performanceRect.top + c_performanceLineHeight;
-		topRect.bottom = topRect.top + c_performanceLineHeight;
+		topRect.top = performanceRect.top + pixel(c_performanceLineHeight);
+		topRect.bottom = topRect.top + pixel(c_performanceLineHeight);
 
-		topRect.left += 6;
+		topRect.left += pixel(6_ut);
 		canvas.drawText(topRect, str(L"%.1f", runtime.fps), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 40;
+		topRect.left += pixel(40_ut);
 		canvas.drawText(topRect, str(L"Update: %.1f ms", runtime.update * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 80;
+		topRect.left += pixel(80_ut);
 		canvas.drawText(topRect, str(L"Build: %.1f ms", runtime.build * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 75;
+		topRect.left += pixel(75_ut);
 		canvas.drawText(topRect, str(L"Render (CPU): %.1f ms", runtime.renderCPU * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		topRect.left += 110;
+		topRect.left += pixel(110_ut);
 		canvas.drawText(topRect, str(L"Render (GPU): %.1f ms", runtime.renderGPU * 1000.0f), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
-		middleRect.top = performanceRect.top + c_performanceLineHeight * 2;
-		middleRect.bottom = middleRect.top + c_performanceLineHeight;
+		middleRect.top = performanceRect.top + pixel(c_performanceLineHeight) * 2;
+		middleRect.bottom = middleRect.top + pixel(c_performanceLineHeight);
 
-		middleRect.left += 46;
+		middleRect.left += pixel(46_ut);
 		canvas.drawText(middleRect, str(L"Physics: %.1f ms", runtime.physics * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += 80;
+		middleRect.left += pixel(80_ut);
 		canvas.drawText(middleRect, str(L"Input: %.1f ms", runtime.input * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += 75;
+		middleRect.left += pixel(75_ut);
 		canvas.drawText(middleRect, str(L"Simulate: %d, %.1f%%, %d", (int32_t)runtime.steps, runtime.simulationInterval * 100.0f, runtime.collisions), ui::AnLeft, ui::AnCenter);
 
-		middleRect.left += 110;
+		middleRect.left += pixel(110_ut);
 		canvas.drawText(middleRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		performanceRect = performanceRect.offset(0, c_performanceHeight + c_commandHeight);
+		performanceRect = performanceRect.offset(0, pixel(c_performanceHeight + c_commandHeight));
 	}
 
 	canvas.resetClipRect();

@@ -42,17 +42,6 @@ BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
 
 		}
 
-WidgetFactoryWin32::WidgetFactoryWin32()
-:	m_systemDPI(96)
-{
-	HDC hDC = GetDC(NULL);
-	if (hDC != NULL)
-	{
-		m_systemDPI = GetDeviceCaps(hDC, LOGPIXELSX);
-		ReleaseDC(NULL, hDC);
-	}
-}
-
 IEventLoop* WidgetFactoryWin32::createEventLoop(EventSubject* owner)
 {
 	return new EventLoopWin32();
@@ -101,11 +90,6 @@ ISystemBitmap* WidgetFactoryWin32::createBitmap()
 IClipboard* WidgetFactoryWin32::createClipboard()
 {
 	return new ClipboardWin32();
-}
-
-int32_t WidgetFactoryWin32::getSystemDPI() const
-{
-	return m_systemDPI;
 }
 
 void WidgetFactoryWin32::getSystemFonts(std::list< std::wstring >& outFonts)

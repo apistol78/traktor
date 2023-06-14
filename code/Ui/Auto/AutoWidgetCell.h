@@ -11,6 +11,7 @@
 #include "Ui/Associative.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Rect.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +32,7 @@ class MouseButtonDownEvent;
 class MouseButtonUpEvent;
 class MouseDoubleClickEvent;
 class MouseMoveEvent;
+class StyleSheet;
 
 /*! Auto widget cell.
  * \ingroup UI
@@ -72,14 +74,20 @@ public:
 
 	virtual void paint(Canvas& canvas, const Rect& rect);
 
+	const StyleSheet* getStyleSheet() const;
+
+	int32_t pixel(Unit measure) const;
+
+	Unit unit(int32_t measure) const;
+
 protected:
-	AutoWidget* getWidget()
+	AutoWidget* getWidget() const
 	{
 		return m_widget;
 	}
 
 	template < typename WidgetType >
-	WidgetType* getWidget()
+	WidgetType* getWidget() const
 	{
 		return dynamic_type_cast< WidgetType* >(m_widget);
 	}

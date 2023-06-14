@@ -252,7 +252,7 @@ void PropertyItem::paintText(Canvas& canvas, const Rect& rc)
 
 	if (!m_childItems.empty())
 	{
-		int32_t size = s_imageExpand->getSize(m_propertyList->dpi()).cy;
+		int32_t size = s_imageExpand->getSize(m_propertyList).cy;
 		int32_t c = (rc.getHeight() - size) / 2;
 
 		canvas.drawBitmap(

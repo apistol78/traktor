@@ -20,9 +20,6 @@
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridView.h"
 
-// Resources
-#include "Resources/GridView.h"
-
 namespace traktor
 {
 	namespace ui
@@ -173,8 +170,8 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 	if (!m_children.empty())
 		++depth;
 
-	auto expand = gridView->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
-	const int32_t size = expand->getSize().cy;
+	auto expand = gridView->getBitmap(L"UI.GridView");
+	const int32_t size = expand->getSize(gridView).cy;
 
 	Rect rcCell(rect.left, rect.top, rect.left, rect.bottom);
 	for (uint32_t i = 0; i < columns.size(); ++i)
@@ -209,13 +206,13 @@ void GridRow::interval()
 
 void GridRow::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
-	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
+	auto expand = getWidget< GridView >()->getBitmap(L"UI.GridView");
 
 	// Handle expand/collapse.
 	if (!m_children.empty())
 	{
 		const int32_t depth = getDepth();
-		const int32_t size = expand->getSize().cy;
+		const int32_t size = expand->getSize(getWidget()).cy;
 		const int32_t rx = depth * size + size;
 		if (position.x <= rx)
 		{
@@ -276,7 +273,7 @@ void GridRow::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& positi
 void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 {
 	const Size d = position - m_mouseDownPosition;
-	if (abs(d.cx) > getWidget()->pixel(2_ut) || abs(d.cy) > getWidget()->pixel(2_ut))
+	if (abs(d.cx) > pixel(2_ut) || abs(d.cy) > pixel(2_ut))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
 		m_editMode = 0;
@@ -286,7 +283,7 @@ void GridRow::mouseMove(MouseMoveEvent* event, const Point& position)
 void GridRow::paint(Canvas& canvas, const Rect& rect)
 {
 	GridView* view = getWidget< GridView >();
-	const StyleSheet* ss = view->getStyleSheet();
+	const StyleSheet* ss = getStyleSheet();
 	const RefArray< GridColumn >& columns = view->getColumns();
 	const int32_t depth = getDepth();
 
@@ -317,8 +314,8 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 
 	if (!m_children.empty())
 	{
-		auto expand = view->getBitmap(L"UI.GridView", c_ResourceGridView, sizeof(c_ResourceGridView));
-		const int32_t size = expand->getSize().cy;
+		auto expand = view->getBitmap(L"UI.GridView");
+		const int32_t size = expand->getSize(view).cy;
 		canvas.drawBitmap(
 			Point(rect.left + 2 + depth * size, rect.top + (rect.getHeight() - size) / 2),
 			Point((m_state & GridRow::Expanded) ? size : 0, 0),

@@ -80,13 +80,13 @@ void SequenceGroup::mouseDown(SequencerControl* sequencer, const Point& at, cons
 
 	// Calculate left edges.
 	int32_t expandLeft = rc.left + 4 + getDepth() * 16;
-	int32_t visibleLeft = expandLeft + imageExpand->getSize(sequencer->dpi()).cx + 4;
+	int32_t visibleLeft = expandLeft + imageExpand->getSize(sequencer).cx + 4;
 
 	// Check which icon user pressed, if any.
-	if (at.x >= expandLeft && at.x <= expandLeft + int(imageExpand->getSize(sequencer->dpi()).cx))
+	if (at.x >= expandLeft && at.x <= expandLeft + int(imageExpand->getSize(sequencer).cx))
 	{
-		int32_t top = (rc.getHeight() - imageExpand->getSize(sequencer->dpi()).cy) / 2;
-		if (at.y >= top && at.y <= top + int(imageExpand->getSize(sequencer->dpi()).cy))
+		int32_t top = (rc.getHeight() - imageExpand->getSize(sequencer).cy) / 2;
+		if (at.y >= top && at.y <= top + int(imageExpand->getSize(sequencer).cy))
 			m_expanded = !m_expanded;
 	}
 }
@@ -145,10 +145,10 @@ void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rec
 		canvas.drawBitmap(
 			Point(
 				rc.left + sequencer->pixel(Unit(4 + getDepth() * 16)),
-				rc.top + (rc.getHeight() - imageExpand->getSize(sequencer->dpi()).cy) / 2
+				rc.top + (rc.getHeight() - imageExpand->getSize(sequencer).cy) / 2
 			),
 			Point(0, 0),
-			imageExpand->getSize(sequencer->dpi()),
+			imageExpand->getSize(sequencer),
 			imageExpand
 		);
 	}

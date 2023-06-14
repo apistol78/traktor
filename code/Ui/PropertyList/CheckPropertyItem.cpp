@@ -49,11 +49,11 @@ void CheckPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const R
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);
 
-	int c = (rc.getHeight() - image->getSize(parent->dpi()).cy) / 2;
+	int c = (rc.getHeight() - image->getSize(parent).cy) / 2;
 	canvas.drawBitmap(
 		ui::Point(rc.left + 2, rc.top + c),
 		ui::Point(0, 0),
-		image->getSize(parent->dpi()),
+		image->getSize(parent),
 		image
 	);
 }

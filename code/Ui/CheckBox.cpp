@@ -57,8 +57,8 @@ void CheckBox::setText(const std::wstring& text)
 	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	const int32_t width = getFontMetric().getExtent(getText()).cx;
 	m_preferedSize = Size(
-		width + m_imageUnchecked->getSize(dpi()).cx + pixel(4_ut),
-		std::max(height, m_imageUnchecked->getSize(dpi()).cy)
+		width + m_imageUnchecked->getSize(this).cx + pixel(4_ut),
+		std::max(height, m_imageUnchecked->getSize(this).cy)
 	);
 }
 
@@ -79,18 +79,18 @@ void CheckBox::eventPaint(PaintEvent* event)
 	IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
 	T_ASSERT(image);
 
-	const int32_t y = (rcInner.getHeight() - image->getSize(dpi()).cy) / 2;
+	const int32_t y = (rcInner.getHeight() - image->getSize(this).cy) / 2;
 
 	canvas.drawBitmap(
 		Point(0, y),
 		Point(0, 0),
-		image->getSize(dpi()),
+		image->getSize(this),
 		image,
 		BlendMode::Alpha
 	);
 
 	Rect rcText = rcInner;
-	rcText.left += image->getSize(dpi()).cx + pixel(4_ut);
+	rcText.left += image->getSize(this).cx + pixel(4_ut);
 
 	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rcText, getText(), AnLeft, AnCenter);

@@ -803,7 +803,7 @@ protected:
 
 			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
 			{
-				Canvas canvas(m_canvasImpl);
+				Canvas canvas(m_canvasImpl, reinterpret_cast< Widget* >(m_owner));
 				PaintEvent p(
 					m_owner,
 					canvas,
@@ -815,7 +815,7 @@ protected:
 			}
 			else if (m_canvasImpl == nullptr)
 			{
-				Canvas canvas(nullptr);
+				Canvas canvas(nullptr, reinterpret_cast< Widget* >(m_owner));
 				PaintEvent p(
 					m_owner,
 					canvas,

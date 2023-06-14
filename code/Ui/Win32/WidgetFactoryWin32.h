@@ -18,19 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class T_DLLCLASS WidgetFactoryWin32 : public IWidgetFactory
 {
 public:
-	WidgetFactoryWin32();
-
 	virtual IEventLoop* createEventLoop(EventSubject* owner) override final;
 
 	virtual IContainer* createContainer(EventSubject* owner) override final;
@@ -51,16 +47,10 @@ public:
 
 	virtual IClipboard* createClipboard() override final;
 
-	virtual int32_t getSystemDPI() const override final;
-
 	virtual void getSystemFonts(std::list< std::wstring >& outFonts) override final;
 
 	virtual void getDesktopRects(std::list< Rect >& outRects) const override final;
-
-private:
-	int32_t m_systemDPI;
 };
 
-	}
 }
 

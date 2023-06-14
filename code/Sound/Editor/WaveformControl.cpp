@@ -155,7 +155,7 @@ void WaveformControl::eventPaint(ui::PaintEvent* event)
 		canvas.drawBitmap(
 			ui::Point(0, 0),
 			ui::Point(0, 0),
-			m_waveform->getSize(),
+			m_waveform->getSize(this),
 			m_waveform
 		);
 

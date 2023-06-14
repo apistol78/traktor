@@ -9,15 +9,16 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/IBitmap.h"
+#include "Ui/Widget.h"
 
 namespace traktor::ui
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Canvas", Canvas, Object)
 
-Canvas::Canvas(ICanvas* canvas, int32_t dpi)
+Canvas::Canvas(ICanvas* canvas, Widget* widget)
 :	m_canvas(canvas)
-,	m_dpi(dpi)
+,	m_widget(widget)
 {
 }
 
@@ -175,14 +176,22 @@ void Canvas::fillPolygon(const Point* pnts, int count)
 
 void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
-	if (bitmap && bitmap->getSystemBitmap(m_dpi))
-		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getSystemBitmap(m_dpi), blendMode, filter);
+	if (!bitmap)
+		return;
+
+	ISystemBitmap* sbm = bitmap->getSystemBitmap(m_widget);
+	if (sbm)
+		m_canvas->drawBitmap(dstAt, srcAt, size, sbm, blendMode, filter);
 }
 
 void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
-	if (bitmap && bitmap->getSystemBitmap(m_dpi))
-		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getSystemBitmap(m_dpi), blendMode, filter);
+	if (!bitmap)
+		return;
+
+	ISystemBitmap* sbm = bitmap->getSystemBitmap(m_widget);
+	if (sbm)
+		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, sbm, blendMode, filter);
 }
 
 void Canvas::drawText(const Point& at, const std::wstring& text)

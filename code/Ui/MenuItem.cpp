@@ -190,7 +190,7 @@ Size MenuItem::getSize(const Widget* shell) const
 
 		if (m_checkBox)
 		{
-			const Size sz = m_imageUnchecked->getSize(shell->dpi());
+			const Size sz = m_imageUnchecked->getSize(shell);
 			cw += shell->pixel(c_itemMarginX) + sz.cx;
 			ch = std::max< int32_t >(ch, sz.cy);
 		}
@@ -222,7 +222,7 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 	if (m_checkBox)
 	{
 		IBitmap* image = m_checked ? m_imageChecked : m_imageUnchecked;
-		const Size sz = image->getSize(shell->dpi());
+		const Size sz = image->getSize(shell);
 
 		canvas.drawBitmap(
 			Point(rcLabel.right - sz.cx, rcLabel.top + (rcLabel.getHeight() - sz.cy) / 2),

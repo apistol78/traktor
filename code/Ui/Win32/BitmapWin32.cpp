@@ -79,7 +79,7 @@ void BitmapWin32::destroy()
 	delete this;
 }
 
-void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos)
+void BitmapWin32::copySubImage(const drawing::Image* image, const Rect& srcRect, const Point& destPos)
 {
 	if (srcRect.left >= image->getWidth() || srcRect.top >= image->getHeight())
 		return;

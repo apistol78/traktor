@@ -51,7 +51,7 @@ void DropListCell::mouseDown(ui::MouseButtonDownEvent* event, const ui::Point& p
 
 void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	const ui::StyleSheet* ss = getWidget()->getStyleSheet();
+	const ui::StyleSheet* ss = getStyleSheet();
 	const ui::Rect& rcInner = rect;
 	const ui::Point at = rcInner.getTopLeft();
 	const ui::Size size = rcInner.getSize();
@@ -59,7 +59,7 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	bool hover = false; //isEnable() && hasCapture();
 
 	const ui::Rect rcText(
-		at.x + getWidget()->pixel(4_ut),
+		at.x + pixel(4_ut),
 		at.y + 2,
 		at.x + size.cx - sep - 2,
 		at.y + size.cy - 2
@@ -87,9 +87,9 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	const ui::Point center = rcButton.getCenter();
 	const ui::Point pnts[] =
 	{
-		ui::Point(center.x - getWidget()->pixel(3_ut), center.y - getWidget()->pixel(1_ut)),
-		ui::Point(center.x + getWidget()->pixel(2_ut), center.y - getWidget()->pixel(1_ut)),
-		ui::Point(center.x - getWidget()->pixel(1_ut), center.y + getWidget()->pixel(2_ut))
+		ui::Point(center.x - pixel(3_ut), center.y - pixel(1_ut)),
+		ui::Point(center.x + pixel(2_ut), center.y - pixel(1_ut)),
+		ui::Point(center.x - pixel(1_ut), center.y + pixel(2_ut))
 	};
 
 	canvas.setBackground(ss->getColor(this, L"color-arrow"));
