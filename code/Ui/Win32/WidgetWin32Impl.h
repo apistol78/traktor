@@ -212,14 +212,8 @@ public:
 
 	virtual void setFont(const Font& font) override
 	{
-		LOGFONT lf;
-
-		int32_t dip = font.getSize();
-		float inches = dip / 96.0f;
-		float logical = inches * m_hWnd.dpi();
-
-		std::memset(&lf, 0, sizeof(lf));
-		lf.lfHeight = -int32_t(logical + 0.5f);
+		LOGFONT lf = {};
+		lf.lfHeight = -font.getSize();
 		lf.lfWidth = 0;
 		lf.lfEscapement = 0;
 		lf.lfOrientation = 0;
@@ -240,30 +234,11 @@ public:
 	virtual Font getFont() const override
 	{
 		LOGFONT lf;
-
 		BOOL result = GetObject(m_hWnd.getFont(), sizeof(lf), &lf);
-		T_ASSERT_M (result, L"Unable to get device font");
-
-		HDC hDC = GetDC(m_hWnd);
-
-		int32_t logical = 0;
-		if (lf.lfHeight >= 0)
-		{
-			TEXTMETRIC tm = { 0 };
-			GetTextMetrics(hDC, &tm);
-			logical = lf.lfHeight - tm.tmInternalLeading;
-		}
-		else
-			logical = -lf.lfHeight;
-
-		ReleaseDC(m_hWnd, hDC);
-
-		float inches = float(logical) / m_hWnd.dpi();
-		float dip = inches * 96.0f;
-
+		T_FATAL_ASSERT_M (result, L"Unable to get device font");
 		return Font(
 			tstows(lf.lfFaceName),
-			int32_t(dip + 0.5f),
+			abs(lf.lfHeight),
 			bool(lf.lfWeight == FW_BOLD),
 			bool(lf.lfItalic == TRUE),
 			bool(lf.lfUnderline == TRUE)
@@ -495,6 +470,7 @@ protected:
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
+	int32_t m_dpi;
 
 	static
 	void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
@@ -576,11 +552,14 @@ protected:
 		m_hWnd.registerMessageHandler(WM_ERASEBKGND,    new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventEraseBkGnd));
 		m_hWnd.registerMessageHandler(WM_TIMER,         new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventTimer));
 		m_hWnd.registerMessageHandler(WM_DROPFILES,		new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDropFiles));
+		m_hWnd.registerMessageHandler(WM_DPICHANGED_BEFOREPARENT,	new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventDpiChanged));
 
 		if (style & WsWantAllInput)
 			m_hWnd.registerMessageHandler(WM_GETDLGCODE, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventGetDlgCode));
 
 		setCursor(Cursor::Arrow);
+
+		m_dpi = m_hWnd.dpi();
 		return true;
 	}
 
@@ -896,6 +875,19 @@ protected:
 
 		DragFinish(hDrop);
 		return FALSE;
+	}
+
+	LRESULT eventDpiChanged(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
+	{
+		//Font f = getFont();
+		//f.setSize((f.getSize() * m_dpi) / m_hWnd.dpi());
+		//setFont(f);
+		//m_dpi = m_hWnd.dpi();
+
+		SizeEvent s(m_owner, Size(0, 0));
+		m_owner->raiseEvent(&s);
+
+		return 0;
 	}
 
 	LRESULT eventGetDlgCode(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)

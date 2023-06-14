@@ -9,6 +9,7 @@
 #if defined(T_USE_DIRECT2D)
 
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Thread/Atomic.h"
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
@@ -94,33 +95,26 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	m_strokeWidth = 1.0f;
 
 	LOGFONT lf;
-
 	const BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
-	T_ASSERT_M (result, L"Unable to get device font");
-
-	int32_t logical = 0;
-	if (lf.lfHeight >= 0)
-	{
-		TEXTMETRIC tm = { 0 };
-		GetTextMetrics(hDC, &tm);
-		logical = lf.lfHeight - tm.tmInternalLeading;
-	}
-	else
-		logical = -lf.lfHeight;
-
-	const float inches = float(logical) / hWnd.dpi();
-	const float dip = inches * 96.0f;
-
+	T_FATAL_ASSERT_M (result, L"Unable to get device font");
 	setFont(Font(
 		lf.lfFaceName,
-		(int32_t)(dip + 0.5f),
+		abs(lf.lfHeight),
 		(bool)(lf.lfWeight == FW_BOLD),
 		(bool)(lf.lfItalic == TRUE),
 		(bool)(lf.lfUnderline == TRUE)
 	));
 
 	m_inPaint = true;
-	m_dpi = hWnd.dpi();
+
+	// Ensure font is recreated when dpi change.
+	if (hWnd.dpi() != m_dpi)
+	{
+		m_dwFont.release();
+		m_dwTextFormat.release();
+		m_dpi = hWnd.dpi();
+	}
+
 	return true;
 }
 
@@ -244,20 +238,9 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
 			return Size(0, 0);
 
-		int32_t logical = 0;
-		if (lf.lfHeight >= 0)
-		{
-			TEXTMETRIC tm = { 0 };
-			HDC hDC = GetDC(hWnd);
-			GetTextMetrics(hDC, &tm);
-			ReleaseDC(hWnd, hDC);
-			logical = lf.lfHeight - tm.tmInternalLeading;
-		}
-		else
-			logical = -lf.lfHeight;
-
-		float inches = float(logical) / hWnd.dpi();
-		float dip = inches * 96.0f;
+		int32_t logical = abs(lf.lfHeight);
+		float inches = float(logical) / 96.0f;
+		float dip = inches * hWnd.dpi();
 
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
@@ -266,7 +249,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			int32_t(dip + 0.5f) * hWnd.dpi() / 96.0f,
+			dip,
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -864,7 +847,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 		m_font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		m_font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		m_font.getSize() * m_dpi / 96.0f,
+		(m_font.getSize() * m_dpi) / 96.0f,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);

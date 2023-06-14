@@ -793,7 +793,7 @@ void RichEdit::deleteCharacters()
 	if (start >= m_text.size() - 1)
 		return;
 
-	// Naiive implementation, delete each character
+	// Naive implementation, delete each character
 	// individually as we don't have to intersect selection with lines etc.
 
 	for (int32_t i = stop; i >= start; --i)
@@ -1755,6 +1755,8 @@ void RichEdit::eventSize(SizeEvent* event)
 		ui::Point(getEditRect().getWidth() - searchControlSize.cx, 0),
 		searchControlSize
 	));
+
+	updateCharacterWidths();
 }
 
 void RichEdit::eventTimer(TimerEvent* event)

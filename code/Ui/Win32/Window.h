@@ -9,9 +9,8 @@
 #pragma once
 
 #define _WIN32_LEAN_AND_MEAN
-#ifndef _WIN32_WINNT
-#	define _WIN32_WINNT 0x0501
-#endif
+#define WINVER 0x0A00
+#define _WIN32_WINNT 0x0A00
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>

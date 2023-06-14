@@ -42,6 +42,7 @@ EventLoopWin32::EventLoopWin32()
 #endif
 
 	OleInitialize(NULL);
+	SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
 
 #if defined(T_USE_DIRECT2D)
 	CanvasDirect2DWin32::startup();

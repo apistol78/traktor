@@ -117,8 +117,7 @@ bool Window::create(
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 	}
 
-	ICONMETRICS im;
-	memset(&im, 0, sizeof(im));
+	ICONMETRICS im = {};
 	im.cbSize = sizeof(im);
 	SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
 	m_hFont = CreateFontIndirect(&im.lfFont);
