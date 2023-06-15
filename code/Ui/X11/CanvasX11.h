@@ -12,19 +12,15 @@
 #include "Ui/Itf/ICanvas.h"
 #include "Ui/Itf/IFontMetric.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class CanvasX11
 :	public ICanvas
 ,	public IFontMetric
 {
 public:
-	explicit CanvasX11(cairo_t* cr);
-
-	virtual ~CanvasX11();
+	explicit CanvasX11(cairo_t* cr, int32_t dpi);
 
 	virtual void setForeground(const Color4ub& foreground) override final;
 
@@ -90,6 +86,7 @@ public:
 
 private:
 	cairo_t* m_cr;
+	int32_t m_dpi;
 	Color4ub m_currentSourceColor;
 	Color4ub m_foreground;
 	Color4ub m_background;
@@ -102,5 +99,4 @@ private:
 	bool realizeFont() const;
 };
 
-	}
 }

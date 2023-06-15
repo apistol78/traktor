@@ -16,13 +16,12 @@
 #include "Ui/X11/BitmapX11.h"
 #include "Ui/X11/CanvasX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-CanvasX11::CanvasX11(cairo_t* cr)
+CanvasX11::CanvasX11(cairo_t* cr, int32_t dpi)
 :	m_cr(cr)
+,	m_dpi(dpi)
 ,	m_currentSourceColor(255, 255, 255, 255)
 ,	m_foreground(255, 255, 255, 255)
 ,	m_background(255, 255, 255, 255)
@@ -32,10 +31,6 @@ CanvasX11::CanvasX11(cairo_t* cr)
 	cairo_reset_clip(m_cr);
 	cairo_set_line_width(m_cr, 1);
 	cairo_set_source_rgba(m_cr, 1.0f, 1.0f, 1.0f, 1.0f);
-}
-
-CanvasX11::~CanvasX11()
-{
 }
 
 void CanvasX11::setForeground(const Color4ub& foreground)
@@ -396,12 +391,11 @@ bool CanvasX11::realizeFont() const
 	);
 	cairo_set_font_size(
 		m_cr,
-		/*dpi96*/(m_font.getSize())
+		(m_font.getSize().get() * m_dpi) / 96
 	);
 
 	m_fontDirty = false;
 	return true;
 }
 
-	}
 }
