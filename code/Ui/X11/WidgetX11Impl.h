@@ -871,7 +871,7 @@ protected:
 			cairo_push_group_with_content(m_cairo, CAIRO_CONTENT_COLOR);
 
 			CanvasX11 canvasImpl(m_cairo);
-			Canvas canvas(&canvasImpl);
+			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
 			PaintEvent paintEvent(
 				m_owner,
 				canvas,
@@ -885,7 +885,7 @@ protected:
 		}
 		else
 		{
-			Canvas canvas(nullptr);
+			Canvas canvas(nullptr, reinterpret_cast< Widget* >(m_owner));
 			PaintEvent p(
 				m_owner,
 				canvas,

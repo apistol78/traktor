@@ -94,7 +94,7 @@ bool StyleBitmap::resolve(int32_t dpi) const
 
 	Ref< IStream > s = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!s)
-		return nullptr;
+		return false;
 
 	DynamicMemoryStream dms(false, true);
 	StreamCopy(&dms, s).execute();
@@ -123,7 +123,7 @@ bool StyleBitmap::resolve(int32_t dpi) const
 	);
 	Ref< drawing::Image > image = drawing::Image::load(&ms, L"png");
 	if (!image)
-		return nullptr;
+		return false;
 
 	ISystemBitmap* bm;
 	if (!(bm = Application::getInstance()->getWidgetFactory()->createBitmap()))
