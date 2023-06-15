@@ -62,12 +62,12 @@ bool Widget::create(Widget* parent, int style)
 	const std::wstring fontName = ss->getValue(L"font-name");
 	if (!fontName.empty())
 	{
-		const int32_t defaultSize = getFont().getSize();
+		const Unit defaultSize = getFont().getSize();
 		Font font(fontName, defaultSize);
 
 		const std::wstring fontSize = ss->getValue(L"font-size");
 		if (!fontSize.empty())
-			font.setSize(parseString< int32_t >(fontSize, defaultSize));
+			font.setSize(Unit(parseString< int32_t >(fontSize, defaultSize.get())));
 
 		setFont(font);
 	}

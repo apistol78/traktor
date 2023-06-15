@@ -68,16 +68,17 @@ bool ToolBarMenu::getToolTip(std::wstring& outToolTip) const
 	return !outToolTip.empty();
 }
 
-Size ToolBarMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarMenu::getSize(const ToolBar* toolBar) const
 {
+	const Size imageSize = toolBar->getImageSize();
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
-	return Size(sz.cx + toolBar->pixel(16_ut), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
+	return Size(sz.cx + toolBar->pixel(16_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
 }
 
-void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
-	const Size size = getSize(toolBar, imageWidth, imageHeight);
+	const Size size = getSize(toolBar);
 
 	const Rect rcText(
 		at.x + 2,

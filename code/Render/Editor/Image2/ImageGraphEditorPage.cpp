@@ -75,7 +75,8 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 18);
+	for (int32_t i = 0; i < 18; ++i)
+		m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools", i));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_CENTER"), 7, ui::Command(L"ImageGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"IMAGEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ImageGraph.Editor.AlignLeft")));
@@ -100,7 +101,7 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ImageGraphEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ImageGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, 400, false);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	m_menuPopup = new ui::Menu();
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"IMAGEGRAPH_CREATE"));

@@ -83,7 +83,9 @@ void GraphCanvas::setFont(const Font& font)
 	m_originalFont = font;
 
 	m_scaledFont = font;
-	m_scaledFont.setSize((int32_t)std::ceil(font.getSize() * m_scale));
+	m_scaledFont.setSize(
+		Unit((int32_t)std::ceil(font.getSize().get() * m_scale))
+	);
 
 	m_canvas->setFont(m_scaledFont);
 }
@@ -158,7 +160,7 @@ void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 
 void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	if (m_scaledFont.getUnitSize().get() <= 4)
+	if (m_scaledFont.getSize() < 4)
 		return;
 
 	m_canvas->drawText(

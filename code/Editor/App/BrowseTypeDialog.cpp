@@ -103,7 +103,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	m_categoryTree = new ui::TreeView();
 	if (!m_categoryTree->create(left, ui::WsDoubleBuffer))
 		return false;
-	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
+	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 0));
+	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 1));
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &BrowseTypeDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

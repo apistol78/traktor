@@ -34,7 +34,6 @@ bool Form::create(const std::wstring& text, Unit width, Unit height, int style, 
 
 	m_widget = form;
 	m_icon = nullptr;
-
 	return Container::create(parent, style, layout);
 }
 

@@ -38,9 +38,9 @@ bool SearchControl::create(ui::Widget* parent)
 
 	m_toolBarMode = new ui::ToolBar();
 	m_toolBarMode->create(this);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchCaseSensitive"), 1);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWholeWord"), 1);
-	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWildCard"), 1);
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchCaseSensitive"));
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWholeWord"));
+	m_toolBarMode->addImage(new ui::StyleBitmap(L"UI.SearchWildCard"));
 	m_toolBarMode->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SearchControl::eventToolClick);
 
 	m_toolCaseSensitive = new ui::ToolBarButton(L"Toggle case sensitive search", 0, ui::Command(L"Script.Editor.ToggleCaseSensitive"), ui::ToolBarButton::BsDefaultToggle);

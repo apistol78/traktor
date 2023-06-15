@@ -233,7 +233,7 @@ void ThemeForm::updateTree()
 				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 				imageColor->clear(Color4f::fromColor4ub(it.second).rgb1());
 
-				int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor), 1);
+				const int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor));
 
 				Ref< TreeViewItem > itemElement = m_treeTheme->createItem(itemEntity, it.first, 1);
 				itemElement->setImage(0, imageIndex);
@@ -540,7 +540,7 @@ void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
 				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 				imageColor->clear(Color4f::fromColor4ub(defaultColor).rgb1());
 
-				int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor), 1);
+				const int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor));
 
 				Ref< TreeViewItem > itemElement = m_treeTheme->createItem(selectedItem, L"unnamed", 1);
 				itemElement->setImage(0, imageIndex);

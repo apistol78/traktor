@@ -304,10 +304,10 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection = new ui::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
-	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.NameFilter"), 1);
-	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.TypeFilter"), 1);
-	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.ShowFiltered"), 1);
-	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.Favorites"), 1);
+	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.NameFilter"));
+	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.TypeFilter"));
+	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.ShowFiltered"));
+	m_toolSelection->addImage(new ui::StyleBitmap(L"Editor.Database.Favorites"));
 
 	m_toolFilterType = new ui::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
@@ -366,9 +366,12 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(m_splitter, (ui::TreeView::WsDefault | ui::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))
 		return false;
-	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
-	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types"), 23);
-	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden"), 23);
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 0));
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 1));
+	for (int32_t i = 0; i < 23; ++i)
+		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Types", i));
+	for (int32_t i = 0; i < 23; ++i)
+		m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.TypesHidden", i));
 	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);

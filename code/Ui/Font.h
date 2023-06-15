@@ -38,19 +38,15 @@ public:
 
 	Font(const Font& font);
 
-	explicit Font(const std::wstring& face, int32_t size, bool bold = false, bool italic = false, bool underline = false);
+	explicit Font(const std::wstring& face, Unit size, bool bold = false, bool italic = false, bool underline = false);
 
 	void setFace(const std::wstring& face);
 
 	std::wstring getFace() const;
 
-	void setSize(int32_t size);
+	void setSize(Unit size);
 
-	int32_t getSize() const;
-
-	void setUnitSize(Unit size);
-
-	Unit getUnitSize() const;
+	Unit getSize() const;
 
 	void setBold(bool bold);
 
@@ -73,7 +69,7 @@ public:
 private:
 	struct FontParameters
 	{
-		int32_t size;
+		Unit size;
 		bool bold;
 		bool italic;
 		bool underline;

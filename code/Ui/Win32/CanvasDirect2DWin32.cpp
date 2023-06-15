@@ -14,6 +14,7 @@
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/CanvasDirect2DWin32.h"
+#include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Win32/Window.h"
 
 #undef max
@@ -97,13 +98,7 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	LOGFONT lf;
 	const BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
 	T_FATAL_ASSERT_M (result, L"Unable to get device font");
-	setFont(Font(
-		lf.lfFaceName,
-		abs(lf.lfHeight),
-		(bool)(lf.lfWeight == FW_BOLD),
-		(bool)(lf.lfItalic == TRUE),
-		(bool)(lf.lfUnderline == TRUE)
-	));
+	setFont(logFontToFont(lf));
 
 	m_inPaint = true;
 
@@ -847,7 +842,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 		m_font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		m_font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		(m_font.getSize() * m_dpi) / 96.0f,
+		(m_font.getSize().get() * m_dpi) / 96.0f,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);

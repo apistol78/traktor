@@ -64,7 +64,7 @@ Ref< PropertiesView > EditorPluginSite::createPropertiesView(ui::Widget* parent)
 	return nullptr;
 }
 
-void EditorPluginSite::createAdditionalPanel(ui::Widget* widget, int size, bool south)
+void EditorPluginSite::createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south)
 {
 	m_editor->createAdditionalPanel(widget, size, south ? 0 : -1);
 }

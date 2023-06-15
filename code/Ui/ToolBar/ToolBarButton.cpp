@@ -21,7 +21,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarButton", ToolBarButton, ToolBarItem)
 
-ToolBarButton::ToolBarButton(const std::wstring& text, uint32_t imageIndex, const Command& command, int32_t style)
+ToolBarButton::ToolBarButton(const std::wstring& text, int32_t imageIndex, const Command& command, int32_t style)
 :	m_text(text)
 ,	m_command(command)
 ,	m_imageIndex(imageIndex)
@@ -53,12 +53,12 @@ const std::wstring& ToolBarButton::getText() const
 	return m_text;
 }
 
-void ToolBarButton::setImage(uint32_t imageIndex)
+void ToolBarButton::setImage(int32_t imageIndex)
 {
 	m_imageIndex = imageIndex;
 }
 
-uint32_t ToolBarButton::getImage() const
+int32_t ToolBarButton::getImage() const
 {
 	return m_imageIndex;
 }
@@ -82,15 +82,17 @@ bool ToolBarButton::getToolTip(std::wstring& outToolTip) const
 	return true;
 }
 
-Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarButton::getSize(const ToolBar* toolBar) const
 {
-	int width = toolBar->pixel(8_ut);
-	int height = width;
+	const Size imageSize = toolBar->getImageSize();
+
+	int32_t width = toolBar->pixel(8_ut);
+	int32_t height = width;
 
 	if (m_style & BsIcon)
 	{
-		width += imageWidth;
-		height = max(imageHeight + toolBar->pixel(8_ut), height);
+		width += imageSize.cx;
+		height = max(imageSize.cy + toolBar->pixel(8_ut), height);
 	}
 	if (m_style & BsText)
 	{
@@ -104,10 +106,11 @@ Size ToolBarButton::getSize(const ToolBar* toolBar, int imageWidth, int imageHei
 	return Size(width, height);
 }
 
-void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
-	const Size size = getSize(toolBar, imageWidth, imageHeight);
+	const Size imageSize = toolBar->getImageSize();
+	const Size size = getSize(toolBar);
 
 	if (isEnable())
 	{
@@ -127,23 +130,23 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBi
 		}
 	}
 
-	int centerOffsetX = toolBar->pixel(4_ut);
-	if (m_style & BsIcon)
+	int32_t centerOffsetX = toolBar->pixel(4_ut);
+	if (m_imageIndex >= 0 && m_imageIndex < (int32_t)images.size() && (m_style & BsIcon) != 0)
 	{
-		int centerOffsetY = (size.cy - imageHeight) / 2;
+		const int32_t centerOffsetY = (size.cy - imageSize.cy) / 2;
 		canvas.drawBitmap(
 			at + Size(centerOffsetX, centerOffsetY),
-			Point(m_imageIndex * imageWidth, 0),
-			Size(imageWidth, imageHeight),
-			images,
+			Point(0, 0),
+			imageSize,
+			images[m_imageIndex],
 			BlendMode::Alpha
 		);
-		centerOffsetX += imageWidth + toolBar->pixel(4_ut);
+		centerOffsetX += imageSize.cx + toolBar->pixel(4_ut);
 	}
-	if (m_style & BsText)
+	if ((m_style & BsText) != 0)
 	{
-		Size textExtent = toolBar->getFontMetric().getExtent(m_text);
-		int centerOffsetY = (size.cy - textExtent.cy) / 2;
+		const Size textExtent = toolBar->getFontMetric().getExtent(m_text);
+		const int32_t centerOffsetY = (size.cy - textExtent.cy) / 2;
 		canvas.setForeground(ss->getColor(toolBar, isEnable() ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),

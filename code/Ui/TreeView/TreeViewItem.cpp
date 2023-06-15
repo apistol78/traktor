@@ -361,7 +361,7 @@ Rect TreeViewItem::calculateExpandRect() const
 
 Rect TreeViewItem::calculateImageRect() const
 {
-	const int32_t d = m_view->m_image->getSize(getWidget()).cy;
+	const int32_t d = m_view->getMaxImageHeight();
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
@@ -547,36 +547,33 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		);
 	}
 
-	if (m_view->m_image)
+	const int32_t d = m_view->getMaxImageHeight();
+	for (int32_t i = 0; i < getImageCount(); ++i)
 	{
-		const int32_t d = m_view->m_image->getSize(getWidget()).cy;
+		int32_t imageIndex = (hasChildren() && isExpanded()) ? getExpandedImage(i) : getImage(i);
+		if (imageIndex < 0)
+			imageIndex = getImage(i);
 
-		for (int32_t i = 0; i < getImageCount(); ++i)
-		{
-			int32_t image = (hasChildren() && isExpanded()) ? getExpandedImage(i) : getImage(i);
-			if (image < 0)
-				image = getImage(i);
+		if (imageIndex < 0 || imageIndex >= (int32_t)m_view->m_images.size())
+			continue;
 
-			Rect rcImage = calculateImageRect();
+		const Rect rcImage = calculateImageRect();
+		canvas.drawBitmap(
+			rcImage.getTopLeft() + Size(i * d, 0),
+			Point(0, 0),
+			m_view->m_images[imageIndex]->getSize(m_view),
+			m_view->m_images[imageIndex],
+			BlendMode::Alpha
+		);
 
-			if (image >= 0)
-				canvas.drawBitmap(
-					rcImage.getTopLeft() + Size(i * d, 0),
-					Point(image * d, 0),
-					Size(d, d),
-					m_view->m_image,
-					BlendMode::Alpha
-				);
-
-			if (getOverlayImage(i) >= 0)
-				canvas.drawBitmap(
-					rcImage.getTopLeft() + Size(i * d, 0),
-					Point(getOverlayImage(i) * d, 0),
-					Size(d, d),
-					m_view->m_image,
-					BlendMode::Alpha
-				);
-		}
+		//if (getOverlayImage(i) >= 0)
+		//	canvas.drawBitmap(
+		//		rcImage.getTopLeft() + Size(i * d, 0),
+		//		Point(getOverlayImage(i) * d, 0),
+		//		Size(d, d),
+		//		m_view->m_image,
+		//		BlendMode::Alpha
+		//	);
 	}
 
 	if (!m_text.empty())

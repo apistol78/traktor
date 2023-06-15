@@ -110,6 +110,7 @@ bool GraphControl::create(Widget* parent, int style)
 	addEventHandler< MouseDoubleClickEvent >(this, &GraphControl::eventDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &GraphControl::eventMouseWheel);
 	addEventHandler< PaintEvent >(this, &GraphControl::eventPaint);
+	addEventHandler< SizeEvent >(this, &GraphControl::eventSize);
 
 	m_scale = 1.0f;
 	m_offset.cx =
@@ -1101,7 +1102,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	{
 		auto fn = m_paintSettings.getFont();
 		fn.setBold(true);
-		fn.setSize(40);
+		fn.setSize(40_ut);
 		canvas.setFont(fn);
 		canvas.setForeground(ss->getColor(this, L"color-label"));
 		canvas.drawText(rc.inflate(-pixel(8_ut), -pixel(8_ut)), text, ui::AnRight, ui::AnBottom);
@@ -1232,6 +1233,14 @@ void GraphControl::eventPaint(PaintEvent* event)
 		graphCanvas.drawRect(Rect(m_moveOrigin, m_cursor));
 	}
 
+	event->consume();
+}
+
+void GraphControl::eventSize(SizeEvent* event)
+{
+	for (auto node : m_nodes)
+		node->updateSize();
+	update();
 	event->consume();
 }
 

@@ -89,8 +89,10 @@ bool EditorPage::create(ui::Container* parent)
 
 	m_toolBarPlay = new ui::ToolBar();
 	m_toolBarPlay->create(container);
-	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Playback"), 6);
-	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash"), 2);
+	for (int32_t i = 0; i < 6; ++i)
+		m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Playback", i));
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash", 0));
+	m_toolBarPlay->addImage(new ui::StyleBitmap(L"Flash.Flash", 1));
 	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_REWIND"), 0, ui::Command(L"Flash.Editor.Rewind")));
 	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_PLAY"), 1, ui::Command(L"Flash.Editor.Play")));
 	m_toolBarPlay->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_EDITOR_STOP"), 2, ui::Command(L"Flash.Editor.Stop")));

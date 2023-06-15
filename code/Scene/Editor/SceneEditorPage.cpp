@@ -332,12 +332,12 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_entityToolBar = new ui::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveUpEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveDownEntity"), 1);
-	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.LayerAdd"), 1);
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.RemoveEntity"));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveToEntity"));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.FilterEntity"));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveUpEntity"));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.MoveDownEntity"));
+	m_entityToolBar->addImage(new ui::StyleBitmap(L"Scene.LayerAdd"));
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), 0, ui::Command(L"Editor.Delete")));
 	m_entityToolBar->addItem(new ui::ToolBarSeparator());
 	m_entityToolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), 1, ui::Command(L"Scene.Editor.MoveToEntity")));
@@ -370,9 +370,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontBold->setBold(true);
 
 	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
-	m_instanceGridFontHuge->setSize(12);
+	m_instanceGridFontHuge->setSize(12_ut);
 
-	m_site->createAdditionalPanel(m_entityPanel, 400, false);
+	m_site->createAdditionalPanel(m_entityPanel, 400_ut, false);
 
 	m_tabMisc = new ui::Tab();
 	m_tabMisc->create(parent, ui::Tab::WsLine);
@@ -432,14 +432,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_tabMisc->addPage(tabPageMeasurements);
 	m_tabMisc->setActivePage(tabPageProperties);
 
-	m_site->createAdditionalPanel(m_tabMisc, 400, false);
+	m_site->createAdditionalPanel(m_tabMisc, 400_ut, false);
 
 	// Create controller panel.
 	m_controllerPanel = new ui::Container();
 	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, 280, true);
+	m_site->createAdditionalPanel(m_controllerPanel, 280_ut, true);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {

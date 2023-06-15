@@ -60,7 +60,7 @@ Ref< PropertiesView > EditorPageSite::createPropertiesView(ui::Widget* parent)
 		return nullptr;
 }
 
-void EditorPageSite::createAdditionalPanel(ui::Widget* widget, int size, bool south)
+void EditorPageSite::createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south)
 {
 	m_panelWidgets.insert(std::make_pair(widget, widget->isVisible(true)));
 

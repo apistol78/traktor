@@ -72,7 +72,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBarGraph = new ui::ToolBar();
 	m_toolBarGraph->create(container);
-	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Animation.Alignment"), 6);
+	for (int32_t i = 0; i < 6; ++i)
+		m_toolBarGraph->addImage(new ui::StyleBitmap(L"Animation.Alignment", i));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));
@@ -102,7 +103,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &StateGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, 400, false);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	// Create preview panel.
 	m_containerPreview = new ui::Container();
@@ -122,7 +123,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_previewConditions = new ui::Container();
 	m_previewConditions->create(m_containerPreview, ui::WsNone, new ui::TableLayout(L"50%,50%", L"*", 0_ut, 0_ut));
 
-	m_site->createAdditionalPanel(m_containerPreview, 450, false);
+	m_site->createAdditionalPanel(m_containerPreview, 450_ut, false);
 
 	createEditorNodes(
 		m_stateGraph->getStates(),

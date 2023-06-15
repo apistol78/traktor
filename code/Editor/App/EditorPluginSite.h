@@ -52,7 +52,7 @@ public:
 
 	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) override final;
 
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) override final;
+	virtual void createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south) override final;
 
 	virtual void destroyAdditionalPanel(ui::Widget* widget) override final;
 

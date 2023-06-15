@@ -49,8 +49,8 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_icons = new StyleBitmap(L"UI.Log");
 
-	m_itemHeight = getFontMetric().getHeight() + pixel(2_ut);
-	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize(this).cy);
+	m_itemHeight = getFont().getSize() + 2_ut;
+	//m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize(this).cy);
 
 	m_lookup = lookup;
     
@@ -166,10 +166,10 @@ Size LogList::getPreferredSize(const Size& hint) const
 
 void LogList::updateScrollBar()
 {
-	Rect inner = getInnerRect();
+	const Rect inner = getInnerRect();
 
-	int32_t logCount = (int32_t)m_logFiltered.size();
-	int32_t pageCount = inner.getHeight() / m_itemHeight;
+	const int32_t logCount = (int32_t)m_logFiltered.size();
+	const int32_t pageCount = inner.getHeight() / pixel(m_itemHeight);
 
 	m_scrollBar->setRange(logCount);
 	m_scrollBar->setPage(pageCount);
@@ -228,7 +228,7 @@ void LogList::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(inner);
 
-	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), m_itemHeight));
+	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), pixel(m_itemHeight)));
 
 	// Determine "max width" of thread identifier.
 	const int32_t threadIdWidth = canvas.getFontMetric().getExtent(L"000>").cx;
@@ -328,7 +328,7 @@ void LogList::eventPaint(PaintEvent* event)
 			s = e2;
 		}
 
-		rc = rc.offset(0, m_itemHeight);
+		rc = rc.offset(0, pixel(m_itemHeight));
 	}
 
 	// Draw number of warnings or errors.
@@ -345,7 +345,7 @@ void LogList::eventPaint(PaintEvent* event)
 		w += pixel(16_ut);
 
 		Rect rcCount = inner;
-		rcCount.top = rcCount.bottom - m_itemHeight;
+		rcCount.top = rcCount.bottom - pixel(m_itemHeight);
 
 		int32_t x = inner.right;
 		if (m_logCount[2] > 0)
@@ -380,7 +380,7 @@ void LogList::eventPaint(PaintEvent* event)
 void LogList::eventSize(SizeEvent* event)
 {
 	const Rect inner = getInnerRect();
-	int32_t width = m_scrollBar->getPreferredSize(inner.getSize()).cx;
+	const int32_t width = m_scrollBar->getPreferredSize(inner.getSize()).cx;
 
 	Rect rc(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
 	m_scrollBar->setRect(rc);
@@ -394,7 +394,7 @@ void LogList::eventMouseButtonDown(MouseButtonDownEvent* event)
 	advanceCount = std::max(0, advanceCount);
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 
-	int32_t row = advanceCount + event->getPosition().y / m_itemHeight;
+	const int32_t row = advanceCount + event->getPosition().y / pixel(m_itemHeight);
 	m_selectedEntry = row;
 
 	update();

@@ -192,7 +192,8 @@ bool InputMappingEditor::create(ui::Container* parent)
 
 	m_toolBarGraph = new ui::ToolBar();
 	m_toolBarGraph->create(container);
-	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Input.Alignment"), 6);
+	for (int32_t i = 0; i < 6; ++i)
+		m_toolBarGraph->addImage(new ui::StyleBitmap(L"Input.Alignment", i));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_LEFT"), 0, ui::Command(L"Input.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_RIGHT"), 1, ui::Command(L"Input.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"INPUT_EDITOR_ALIGN_TOP"), 2, ui::Command(L"Input.Editor.AlignTop")));
@@ -231,7 +232,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, 400, false);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	// Build popup menu.
 	m_menuPopup = new ui::Menu();

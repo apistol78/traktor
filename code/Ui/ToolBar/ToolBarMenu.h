@@ -51,9 +51,9 @@ public:
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const override final;
 
-	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const override final;
+	virtual Size getSize(const ToolBar* toolBar) const override final;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) override final;
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images) override final;
 
 	virtual bool mouseEnter(ToolBar* toolBar) override final;
 

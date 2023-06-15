@@ -77,10 +77,10 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	if (!m_debuggerTools->create(this))
 		return false;
 
-	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugContinue"), 1);
-	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepInto"), 1);
-	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepOver"), 1);
-	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStop"), 1);
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugContinue"));
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepInto"));
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStepOver"));
+	m_debuggerTools->addImage(new ui::StyleBitmap(L"Script.DebugStop"));
 	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 0, ui::Command(L"Script.Editor.Continue")));
 	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 3, ui::Command(L"Script.Editor.Break")));
 	m_debuggerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 1, ui::Command(L"Script.Editor.StepInto")));

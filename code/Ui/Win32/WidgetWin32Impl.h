@@ -212,21 +212,7 @@ public:
 
 	virtual void setFont(const Font& font) override
 	{
-		LOGFONT lf = {};
-		lf.lfHeight = -font.getSize();
-		lf.lfWidth = 0;
-		lf.lfEscapement = 0;
-		lf.lfOrientation = 0;
-		lf.lfWeight = font.isBold() ? FW_BOLD : FW_NORMAL;
-		lf.lfItalic = font.isItalic() ? TRUE : FALSE;
-		lf.lfUnderline = font.isUnderline() ? TRUE : FALSE;
-		lf.lfCharSet = DEFAULT_CHARSET;
-		lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
-		lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
-		lf.lfQuality = DEFAULT_QUALITY;
-		lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
-		_tcscpy_s(lf.lfFaceName, LF_FACESIZE, wstots(font.getFace()).c_str());
-
+		const LOGFONT lf = fontToLogFont(font);
 		m_hFont = CreateFontIndirect(&lf);
 		m_hWnd.setFont(m_hFont);
 	}
@@ -235,14 +221,7 @@ public:
 	{
 		LOGFONT lf;
 		BOOL result = GetObject(m_hWnd.getFont(), sizeof(lf), &lf);
-		T_FATAL_ASSERT_M (result, L"Unable to get device font");
-		return Font(
-			tstows(lf.lfFaceName),
-			abs(lf.lfHeight),
-			bool(lf.lfWeight == FW_BOLD),
-			bool(lf.lfItalic == TRUE),
-			bool(lf.lfUnderline == TRUE)
-		);
+		return logFontToFont(lf);
 	}
 
 	virtual const IFontMetric* getFontMetric() const override

@@ -39,11 +39,10 @@ void Button::setText(const std::wstring& text)
 	const int32_t marginX = pixel(16_ut);
 	const int32_t marginY = pixel(4_ut);
 
-	FontMetric fm = getFontMetric();
-	int32_t w = fm.getExtent(getText()).cx;
-	int32_t h = fm.getHeight();
+	const FontMetric fm = getFontMetric();
+	const Size xt = fm.getExtent(getText());
 
-	m_preferedSize = Size(w + marginX * 2, h + marginY * 2);
+	m_preferedSize = Size(xt.cx + marginX * 2, xt.cy + marginY * 2);
 }
 
 Size Button::getPreferredSize(const Size& hint) const

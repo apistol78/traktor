@@ -10,6 +10,8 @@
 
 #include "Core/Config.h"
 #include "Ui/Enums.h"
+#include "Ui/Font.h"
+#include "Ui/Win32/Window.h"
 
 namespace traktor
 {
@@ -31,6 +33,14 @@ VirtualKey translateToVirtualKey(uint32_t keyCode);
  * \return Key code.
  */
 uint32_t translateToKeyCode(VirtualKey vk);
+
+/*!
+ */
+Font logFontToFont(const LOGFONT& lf);
+
+/*!
+ */
+LOGFONT fontToLogFont(const Font& fnt);
 
 	}
 }

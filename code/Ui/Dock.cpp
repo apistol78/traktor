@@ -331,7 +331,7 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 			widget,
 			true,
 			direction,
-			size
+			unit(size)
 		);
 
 		update();
@@ -388,7 +388,7 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 		widget,
 		true,
 		direction,
-		size
+		unit(size)
 	);
 
 	update();

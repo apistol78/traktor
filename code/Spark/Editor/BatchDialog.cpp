@@ -60,7 +60,8 @@ bool BatchDialog::create(ui::Widget* parent)
 	if (!movieListTools->create(textureListContainer))
 		return false;
 
-	movieListTools->addImage(new ui::StyleBitmap(L"Flash.PlusMinus"), 2);
+	movieListTools->addImage(new ui::StyleBitmap(L"Flash.PlusMinus", 0));
+	movieListTools->addImage(new ui::StyleBitmap(L"Flash.PlusMinus", 1));
 	movieListTools->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_BATCH_ADD"), 0, ui::Command(L"FlashBatch.Add")));
 	movieListTools->addItem(new ui::ToolBarButton(i18n::Text(L"FLASH_BATCH_REMOVE"), 1, ui::Command(L"FlashBatch.Remove")));
 	movieListTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &BatchDialog::eventTextureListToolClick);

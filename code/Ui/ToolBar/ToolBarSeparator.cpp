@@ -24,16 +24,18 @@ bool ToolBarSeparator::getToolTip(std::wstring& outToolTip) const
 	return false;
 }
 
-Size ToolBarSeparator::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarSeparator::getSize(const ToolBar* toolBar) const
 {
-	return Size(1, imageHeight);
+	const Size imageSize = toolBar->getImageSize();
+	return Size(1, imageSize.cy);
 }
 
-void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
+	const Size imageSize = toolBar->getImageSize();
 	canvas.setForeground(ss->getColor(toolBar, L"item-color-seperator"));
-	canvas.drawLine(at, at + Size(0, imageHeight));
+	canvas.drawLine(at, at + Size(0, imageSize.cy));
 }
 
 bool ToolBarSeparator::mouseEnter(ToolBar* toolBar)

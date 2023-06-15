@@ -91,7 +91,8 @@ bool NewInstanceDialog::create(ui::Widget* parent, const std::wstring& initialGr
 
 	m_categoryTree = new ui::TreeView();
 	m_categoryTree->create(left, ui::WsDoubleBuffer);
-	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
+	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 0));
+	m_categoryTree->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 1));
 	m_categoryTree->addEventHandler< ui::SelectionChangeEvent >(this, &NewInstanceDialog::eventTreeItemSelected);
 
 	Ref< ui::Container > right = new ui::Container();

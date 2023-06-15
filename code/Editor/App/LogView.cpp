@@ -92,10 +92,10 @@ bool LogView::create(ui::Widget* parent)
 
 	m_toolFilter = new ui::ToolBar();
 	m_toolFilter->create(this);
-	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
-	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Error"), 1);
-	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Info"), 1);
-	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Warning"), 1);
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"));
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Error"));
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Info"));
+	m_toolFilter->addImage(new ui::StyleBitmap(L"Editor.Log.Warning"));
 	m_toolFilter->addItem(m_toolToggleInfo);
 	m_toolFilter->addItem(m_toolToggleWarning);
 	m_toolFilter->addItem(m_toolToggleError);
@@ -108,8 +108,8 @@ bool LogView::create(ui::Widget* parent)
 	m_log->addEventHandler< ui::MouseButtonDownEvent >(this, &LogView::eventButtonDown);
 	m_log->addEventHandler< ui::LogActivateEvent >(this, &LogView::eventLogActivate);
 
-	std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	int32_t fontSize = m_log->getFont().getSize();
+	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+	const ui::Unit fontSize = m_log->getFont().getSize();
 	m_log->setFont(ui::Font(font, fontSize));
 
 	m_popup = new ui::Menu();

@@ -170,13 +170,14 @@ bool SolutionForm::create(const CommandLine& cmdLine)
 		ui::TreeView::WsTreeButtons |
 		ui::TreeView::WsTreeLines
 	);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Solution"), 1);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Project"), 1);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Folders"), 2);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.File"), 1);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Configuration"), 1);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Aggregation"), 1);
-	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.AggregationRule"), 1);
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Solution"));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Project"));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Folders", 0));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Folders", 1));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.File"));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Configuration"));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.Aggregation"));
+	m_treeSolution->addImage(new ui::StyleBitmap(L"SolutionBuilder.AggregationRule"));
 
 	m_treeSolution->addEventHandler< ui::MouseButtonDownEvent >(this, &SolutionForm::eventTreeButtonDown);
 	m_treeSolution->addEventHandler< ui::SelectionChangeEvent >(this, &SolutionForm::eventTreeSelect);

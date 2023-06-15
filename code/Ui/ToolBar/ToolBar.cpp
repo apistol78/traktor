@@ -7,10 +7,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-#include "Drawing/Image.h"
-#include "Drawing/Filters/BrightnessContrastFilter.h"
-#include "Drawing/Filters/GrayscaleFilter.h"
-#include "Drawing/Filters/TransformFilter.h"
+//#include "Drawing/Image.h"
+//#include "Drawing/Filters/BrightnessContrastFilter.h"
+//#include "Drawing/Filters/GrayscaleFilter.h"
+//#include "Drawing/Filters/TransformFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/StyleSheet.h"
@@ -19,26 +19,21 @@
 #include "Ui/ToolTip.h"
 #include "Ui/ToolTipEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_marginWidth = 1_ut;
 const Unit c_marginHeight = 1_ut;
 const int c_itemPad = 2;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBar", ToolBar, Widget)
 
 ToolBar::ToolBar()
 :	m_style(WsNone)
-,	m_imageWidth(0)
-,	m_imageHeight(0)
-,	m_imageCount(0)
 ,	m_offsetX(0)
 {
 }
@@ -60,8 +55,6 @@ bool ToolBar::create(Widget* parent, int32_t style)
 	m_toolTip->create(this);
 	m_toolTip->addEventHandler< ToolTipEvent >(this, &ToolBar::eventShowTip);
 
-	m_imageWidth = pixel(16_ut);
-	m_imageHeight = pixel(16_ut);
 	m_style = style;
 	return true;
 }
@@ -72,54 +65,31 @@ void ToolBar::destroy()
 	Widget::destroy();
 }
 
-uint32_t ToolBar::addImage(IBitmap* image, uint32_t imageCount)
+uint32_t ToolBar::addImage(IBitmap* image)
 {
-	T_ANONYMOUS_VAR(Ref< IBitmap >)(image);
+	const int32_t base = (int32_t)m_images.size();
+	m_images.push_back(image);
+	return base;
+}
 
-	T_ASSERT(image);
-	T_ASSERT(imageCount > 0);
-
-	const Size imageSize = image->getSize(this);
-	if (imageSize.cx <= 0 || imageSize.cy <= 0)
-		return 0;
-
-	if (m_imageEnabled)
+Size ToolBar::getImageSize() const
+{
+	if (!m_images.empty())
 	{
-		uint32_t width = m_imageEnabled->getSize(this).cx + imageSize.cx;
-		uint32_t height = std::max(m_imageEnabled->getSize(this).cy, imageSize.cy);
-
-		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_imageEnabled->getImage(this));
-		newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), imageSize), Point(m_imageEnabled->getSize(this).cx, 0));
-		m_imageEnabled = newImage;
+		Size sz(0, 0);
+		for (auto image : m_images)
+		{
+			Size imageSize = image->getSize(this);
+			sz.cx = std::max(sz.cx, imageSize.cx);
+			sz.cy = std::max(sz.cy, imageSize.cy);
+		}
+		return sz;
 	}
 	else
 	{
-		m_imageEnabled = image;
-		m_imageWidth = m_imageEnabled->getSize(this).cx / imageCount;
-		m_imageHeight = m_imageEnabled->getSize(this).cy;
+		const int32_t sz = pixel(16_ut);
+		return Size(sz, sz);
 	}
-
-	const uint32_t imageBase = m_imageCount;
-	m_imageCount += imageCount;
-
-	// Create disabled image
-	{
-		Ref< drawing::Image > image = m_imageEnabled->getImage(this);
-		T_FATAL_ASSERT(image != nullptr);
-
-		image = image->clone();
-
-		drawing::GrayscaleFilter grayscaleFilter;
-		image->apply(&grayscaleFilter);
-
-		drawing::TransformFilter blurFilter(Color4f(1.0f, 1.0f, 1.0f, 0.25f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-		image->apply(&blurFilter);
-
-		m_imageDisabled = new ui::Bitmap(image);
-	}
-
-	return imageBase;
 }
 
 uint32_t ToolBar::addItem(ToolBarItem* item)
@@ -149,7 +119,7 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 
 	for (auto item : m_items)
 	{
-		const Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		const Size size = item->getSize(this);
 
 		// Calculate item rectangle.
 		const int32_t offset = (rc.getHeight() - pixel(c_marginHeight * 2) - size.cy) / 2;
@@ -174,7 +144,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 
 	for (auto item : m_items)
 	{
-		const Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		const Size size = item->getSize(this);
 		width += size.cx + c_itemPad;
 		height = std::max(height, size.cy);
 	}
@@ -300,7 +270,7 @@ void ToolBar::eventPaint(PaintEvent* event)
 
 	for (auto item : m_items)
 	{
-		Size size = item->getSize(this, m_imageWidth, m_imageHeight);
+		Size size = item->getSize(this);
 
 		// Calculate top-left position of item, center vertically.
 		int32_t offset = (rc.getHeight() - pixel(c_marginHeight) * 2 - size.cy) / 2;
@@ -310,9 +280,7 @@ void ToolBar::eventPaint(PaintEvent* event)
 			this,
 			canvas,
 			at,
-			(isEnable() && item->isEnable()) ? m_imageEnabled : m_imageDisabled,
-			m_imageWidth,
-			m_imageHeight
+			m_images
 		);
 
 		x += size.cx + c_itemPad;
@@ -340,5 +308,4 @@ void ToolBar::eventShowTip(ToolTipEvent* event)
 	}
 }
 
-	}
 }

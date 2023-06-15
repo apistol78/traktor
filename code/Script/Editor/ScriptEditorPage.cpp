@@ -162,7 +162,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	tab->addPage(tabClasses);
 	tab->setActivePage(tabOutline);
 
-	m_site->createAdditionalPanel(m_containerExplorer, 300, false);
+	m_site->createAdditionalPanel(m_containerExplorer, 300_ut, false);
 
 	// Edit area panel.
 	Ref< ui::Container > containerEdit = new ui::Container();
@@ -179,7 +179,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
-	m_edit->setFont(ui::Font(font, fontSize));
+	m_edit->setFont(ui::Font(font, ui::Unit(fontSize)));
 
 	if (m_script)
 	{
@@ -443,14 +443,14 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.SettingsChanged")
 	{
-		std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-		int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
-		m_edit->setFont(ui::Font(font, fontSize));
+		const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
+		const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+		m_edit->setFont(ui::Font(font, ui::Unit(fontSize)));
 		m_edit->update();
 	}
 	else if (command == L"Script.Editor.GotoLine")
 	{
-		int32_t lineOffset = m_edit->getLineOffset(command.getId());
+		const int32_t lineOffset = m_edit->getLineOffset(command.getId());
 		m_edit->placeCaret(lineOffset);
 		m_edit->showLine(command.getId());
 	}

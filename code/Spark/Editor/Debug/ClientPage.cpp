@@ -60,8 +60,8 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(this);
 
-	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.PreviousFrame"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.NextFrame"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.PreviousFrame"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Flash.NextFrame"));
 
 	m_toolBar->addItem(new ui::ToolBarButton(L"Load", ui::Command(L"Traktor.Flash.Load")));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Save", ui::Command(L"Traktor.Flash.Save")));
@@ -93,12 +93,12 @@ bool ClientPage::create(ui::Widget* parent, net::BidirectionalObjectTransport* t
 	m_debugTree->create(splitter2, ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines | ui::WsAccelerated);
 	m_debugTree->addEventHandler< ui::SelectionChangeEvent >(this, &ClientPage::eventDebugTreeSelectionChange);
 
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MovieClip"), 1);
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Shape"), 1);
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MorphShape"), 1);
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Text"), 1);
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Edit"), 1);
-	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Button"), 1);
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MovieClip"));
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Shape"));
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.MorphShape"));
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Text"));
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Edit"));
+	m_debugTree->addImage(new ui::StyleBitmap(L"Flash.Button"));
 
 	m_debugGrid = new ui::GridView();
 	m_debugGrid->create(splitter2, ui::WsDoubleBuffer);

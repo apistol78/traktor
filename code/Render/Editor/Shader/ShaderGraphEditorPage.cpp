@@ -246,7 +246,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(m_container);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools"), 18);
+	for (int32_t i = 0; i < 18; ++i)
+		m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools", i));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_ALIGN_LEFT"), 0, ui::Command(L"ShaderGraph.Editor.AlignLeft")));
@@ -323,31 +324,31 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Load default script editor font from settings.
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
-	m_scriptEditor->setFont(ui::Font(font, fontSize));
+	m_scriptEditor->setFont(ui::Font(font, ui::Unit(fontSize)));
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, 400, false);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	// Create shader graph referee view.
 	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
 	m_dependencyPane->create(parent);
 	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
-	m_site->createAdditionalPanel(m_dependencyPane, 400, false);
+	m_site->createAdditionalPanel(m_dependencyPane, 400_ut, false);
 
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
-	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
+	m_site->createAdditionalPanel(m_shaderViewer, 400_ut, false);
 
 	// Create "data" view.
 	m_dataContainer = new ui::Container();
 	m_dataContainer->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_dataContainer->setText(i18n::Text(L"SHADERGRAPH_DATA"));
-	m_site->createAdditionalPanel(m_dataContainer, 400, false);
+	m_site->createAdditionalPanel(m_dataContainer, 400_ut, false);
 
 	Ref< ui::Tab > tab = new ui::Tab();
 	tab->create(m_dataContainer, ui::Tab::WsBottom);
