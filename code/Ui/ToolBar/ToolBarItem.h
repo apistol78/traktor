@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 #include "Ui/Associative.h"
 #include "Ui/Size.h"
 
@@ -52,9 +53,9 @@ protected:
 
 	virtual bool getToolTip(std::wstring& outToolTip) const = 0;
 
-	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const = 0;
+	virtual Size getSize(const ToolBar* toolBar) const = 0;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) = 0;
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images) = 0;
 
 	/*! Mouse enter item.
 	 *

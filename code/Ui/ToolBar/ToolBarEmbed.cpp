@@ -29,18 +29,19 @@ bool ToolBarEmbed::getToolTip(std::wstring& outToolTip) const
 	return false;
 }
 
-Size ToolBarEmbed::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarEmbed::getSize(const ToolBar* toolBar) const
 {
-	const Size preferedSize = m_widget->getPreferredSize(Size(toolBar->pixel(m_width), imageHeight));
+	const Size imageSize = toolBar->getImageSize();
+	const Size preferedSize = m_widget->getPreferredSize(Size(toolBar->pixel(m_width), imageSize.cy));
 	return Size(
 		max(preferedSize.cx, toolBar->pixel(m_width)),
-		max(preferedSize.cy, imageHeight)
+		max(preferedSize.cy, imageSize.cy)
 	);
 }
 
-void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
-	const Rect rc(at, getSize(toolBar, imageWidth, imageHeight));
+	const Rect rc(at, getSize(toolBar));
 	m_widget->setRect(rc);
 }
 

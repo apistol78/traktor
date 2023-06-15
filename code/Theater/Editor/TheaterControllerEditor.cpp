@@ -100,7 +100,8 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Theater.Theater"), 8);
+	for (int32_t i = 0; i < 8; ++i)
+		m_toolBar->addImage(new ui::StyleBitmap(L"Theater.Theater", i));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"THEATER_EDITOR_ADD_ACT"), 6, ui::Command(L"Theater.AddAct")));
 	m_toolBar->addItem(m_dropDownActs);
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"THEATER_EDITOR_RENAME_ACT"), 6, ui::Command(L"Theater.RenameAct")));

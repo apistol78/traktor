@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
-#include "Ui/Application.h"
 #include "Ui/Font.h"
 
 namespace traktor::ui
@@ -17,7 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Font", Font, Object)
 
 Font::Font()
 {
-	m_params.size = 0;
+	m_params.size = 0_ut;
 	m_params.bold = false;
 	m_params.italic = false;
 	m_params.underline = false;
@@ -32,10 +31,9 @@ Font::Font(const Font& font)
 	m_params.underline = font.m_params.underline;
 }
 
-Font::Font(const std::wstring& face, int32_t size, bool bold, bool italic, bool underline)
+Font::Font(const std::wstring& face, Unit size, bool bold, bool italic, bool underline)
 :	m_face(face)
 {
-	T_FATAL_ASSERT (size >= 0);
 	m_params.size = size;
 	m_params.bold = bold;
 	m_params.italic = italic;
@@ -52,29 +50,14 @@ std::wstring Font::getFace() const
 	return m_face;
 }
 
-void Font::setSize(int32_t size)
+void Font::setSize(Unit size)
 {
-	T_FATAL_ASSERT (size >= 0);
 	m_params.size = size;
 }
 
-int32_t Font::getSize() const
+Unit Font::getSize() const
 {
 	return m_params.size;
-}
-
-void Font::setUnitSize(Unit size)
-{
-	const int32_t dpi = 96;
-	const float inches = float(size.get()) / dpi;
-	m_params.size = int32_t(inches * 96.0f);
-}
-
-Unit Font::getUnitSize() const
-{
-	const int32_t dpi = 96;
-	const float inches = m_params.size / 96.0f;
-	return Unit(int32_t(inches * dpi + 0.5f));
 }
 
 void Font::setBold(bool bold)

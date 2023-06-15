@@ -96,17 +96,17 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolBarActions = new ui::ToolBar();
 	m_toolBarActions->create(this, ui::WsBorder);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Pointer"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Translate"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rotate"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Scale"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Snap"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Play"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rewind"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Stop"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.SingleView"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.DualView"), 1);
-	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.QuadView"), 1);
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Pointer"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Translate"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rotate"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Scale"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Snap"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Play"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Rewind"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.Stop"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.SingleView"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.DualView"));
+	m_toolBarActions->addImage(new ui::StyleBitmap(L"Scene.QuadView"));
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(new ui::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleTranslate);

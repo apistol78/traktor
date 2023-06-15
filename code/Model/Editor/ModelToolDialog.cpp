@@ -235,7 +235,8 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 	m_skeletonTree = new ui::TreeView();
 	m_skeletonTree->create(tabPageSkeleton, ui::WsDoubleBuffer);
-	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones"), 2);
+	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones", 0));
+	m_skeletonTree->addImage(new ui::StyleBitmap(L"Animation.Bones", 1));
 	m_skeletonTree->addEventHandler< ui::SelectionChangeEvent >(this, &ModelToolDialog::eventSkeletonSelect);
 
 	// Statistic tab.

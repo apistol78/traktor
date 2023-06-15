@@ -169,11 +169,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Playback"), 6);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleMoveEmitter"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGroundClip"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Randomize"), 1);
+	for (int32_t i = 0; i < 6; ++i)
+		m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Playback", i));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGuideLines"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleMoveEmitter"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.ToggleGroundClip"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Spray.Randomize"));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), 0, ui::Command(L"Effect.Editor.Rewind")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), 1, ui::Command(L"Effect.Editor.Play")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), 2, ui::Command(L"Effect.Editor.Stop")));
@@ -192,7 +193,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_toolBarLayers = new ui::ToolBar();
 	m_toolBarLayers->create(m_containerSequencer);
-	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerAdd"), 1);
+	m_toolBarLayers->addImage(new ui::StyleBitmap(L"Spray.LayerAdd"));
 	m_toolBarLayers->addItem(new ui::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_ADD_LAYER"), 0, ui::Command(L"Effect.Editor.AddLayer")));
 	m_toolBarLayers->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EffectEditorPage::eventToolBarLayersClick);
 
@@ -206,14 +207,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(m_containerSequencer, 280, true);
+	m_site->createAdditionalPanel(m_containerSequencer, 280_ut, true);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
 	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &EffectEditorPage::eventPropertiesChanging);
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &EffectEditorPage::eventPropertiesChanged);
 	m_propertiesView->setPropertyObject(m_effectData);
-	m_site->createAdditionalPanel(m_propertiesView, 400, false);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
 	// Create popup menu.
 	m_popupMenu = new ui::Menu();

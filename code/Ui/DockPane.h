@@ -46,11 +46,11 @@ public:
 
 	virtual ~DockPane();
 
-	void split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
+	void split(bool vertical, Unit split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
 
 	void dock(Widget* widget, bool detachable);
 
-	void dock(Widget* widget, bool detachable, Direction direction, int split);
+	void dock(Widget* widget, bool detachable, Direction direction, Unit split);
 
 	void undock(Widget* widget);
 
@@ -88,7 +88,7 @@ private:
 	bool m_detachable;
 	Ref< DockPane > m_child[2];
 	bool m_vertical;
-	int32_t m_split;
+	Unit m_split;
 	int32_t m_gripperDim;
 	Rect m_rect;
 	bool m_focus;

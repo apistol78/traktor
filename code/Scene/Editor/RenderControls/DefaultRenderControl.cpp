@@ -114,8 +114,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	if (!m_toolBar->create(m_container))
 		return false;
 
-	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"), 1);
-	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"), 1);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGrid"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Scene.ToggleGuide"));
 
 	m_toolView = new ui::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100_ut, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));

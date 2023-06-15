@@ -153,8 +153,8 @@ bool ShaderViewer::create(ui::Widget* parent)
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(this);
-	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"), 1);
-	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"), 1);
+	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"));
+	toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"));
 	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Shader.Editor.Preview.Save")));
 	toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 1, ui::Command(L"Shader.Editor.Preview.Copy")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ShaderViewer::eventToolBarClick);
@@ -205,7 +205,7 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEditCompute->setLanguage(new ui::SyntaxLanguageGlsl());
 
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-	const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+	const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 	m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 	m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 	m_shaderEditCompute->setFont(ui::Font(font, fontSize));
@@ -226,7 +226,7 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 	if (command == L"Editor.SettingsChanged")
 	{
 		const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
-		const int32_t fontSize = m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11);
+		const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
 		m_shaderEditVertex->setFont(ui::Font(font, fontSize));
 		m_shaderEditPixel->setFont(ui::Font(font, fontSize));
 		m_shaderEditVertex->update();

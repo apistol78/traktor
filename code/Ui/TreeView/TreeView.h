@@ -53,11 +53,9 @@ public:
 		GfSelectedOnly = 4
 	};
 
-	TreeView();
-
 	bool create(Widget* parent, int32_t style);
 
-	int32_t addImage(IBitmap* image, int32_t imageCount);
+	int32_t addImage(IBitmap* image);
 
 	bool setImage(int32_t imageIndex, IBitmap* image);
 
@@ -82,13 +80,14 @@ private:
 
 	RefArray< TreeViewItem > m_roots;
 	Ref< IBitmap > m_imageState;
-	Ref< IBitmap > m_image;
-	int32_t m_imageCount;
+	RefArray< IBitmap > m_images;
 	Font m_font;
 	Font m_fontBold;
 	Ref< Edit > m_itemEditor;
 	Ref< TreeViewItem > m_editItem;
-	bool m_autoEdit;
+	bool m_autoEdit = false;
+
+	int32_t getMaxImageHeight() const;
 
 	virtual void layoutCells(const Rect& rc) override;
 

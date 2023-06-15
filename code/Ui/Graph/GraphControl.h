@@ -206,6 +206,8 @@ private:
 	void eventMouseWheel(MouseWheelEvent* event);
 
 	void eventPaint(PaintEvent* event);
+
+	void eventSize(SizeEvent* event);
 };
 
 }

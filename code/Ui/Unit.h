@@ -27,6 +27,8 @@ namespace traktor::ui
  * Values using unit type are used for device independent (dpi etc)
  * positions, sizes etc.
  * 
+ * A unit size is defined being 1/96 of an inch.
+ * 
  * Having a special type help guide user to use correct
  * values when setting up user interface which
  * are properly DPI aware.
@@ -54,6 +56,8 @@ public:
 	Unit operator - (const Unit& rh) const { return Unit(m_value - rh.m_value); }
 
 	Unit operator * (int32_t value) const { return Unit(m_value * value); }
+
+	Unit operator / (int32_t value) const { return Unit(m_value / value); }
 
 	bool operator > (int32_t value) const { return m_value > value; }
 

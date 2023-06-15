@@ -38,7 +38,7 @@ bool TextEditorDialog::create(ui::Widget* parent, const std::wstring& initialTex
 	if (!m_edit->create(this, initialText, ui::WsDoubleBuffer))
 		return false;
 
-	m_edit->setFont(ui::Font(L"Courier New", 14));
+	m_edit->setFont(ui::Font(L"Courier New", 14_ut));
 
 	update();
 

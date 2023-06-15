@@ -10,6 +10,7 @@
 
 #include "Ui/Associative.h"
 #include "Ui/EventSubject.h"
+#include "Ui/FontMetric.h"
 #include "Ui/Rect.h"
 #include "Ui/Unit.h"
 
@@ -75,6 +76,8 @@ public:
 	virtual void paint(Canvas& canvas, const Rect& rect);
 
 	const StyleSheet* getStyleSheet() const;
+
+	FontMetric getFontMetric() const;
 
 	int32_t pixel(Unit measure) const;
 

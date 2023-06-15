@@ -71,19 +71,20 @@ bool ToolBarDropMenu::getToolTip(std::wstring& outToolTip) const
 	return !outToolTip.empty();
 }
 
-Size ToolBarDropMenu::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarDropMenu::getSize(const ToolBar* toolBar) const
 {
+	const Size imageSize = toolBar->getImageSize();
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
 	if (m_width > 0)
-		return Size(toolBar->pixel(m_width), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
+		return Size(toolBar->pixel(m_width), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
 	else
-		return Size(sz.cx + toolBar->pixel(32_ut), std::max< int32_t >(sz.cy, imageHeight) + toolBar->pixel(4_ut));
+		return Size(sz.cx + toolBar->pixel(32_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
 }
 
-void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarDropMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
-	const Size size = getSize(toolBar, imageWidth, imageHeight);
+	const Size size = getSize(toolBar);
 
 	const int32_t sep = toolBar->pixel(14_ut);
 

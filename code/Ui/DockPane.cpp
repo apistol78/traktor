@@ -69,7 +69,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 
 	m_focusEventHandler = new EventSubject::MethodEventHandler< DockPane, FocusEvent >(this, &DockPane::eventFocus);
 
-	m_gripperDim = owner->pixel(owner->getFont().getUnitSize() + 9_ut);
+	m_gripperDim = owner->pixel(owner->getFont().getSize() + 9_ut);
 }
 
 DockPane::~DockPane()
@@ -78,7 +78,7 @@ DockPane::~DockPane()
 		removeEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 }
 
-void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
+void DockPane::split(bool vertical, Unit split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
 {
 	outLeftPane = new DockPane(m_owner, this);
 	outRightPane = new DockPane(m_owner, this);
@@ -112,7 +112,7 @@ void DockPane::dock(Widget* widget, bool detachable)
 	addEventHandlers< FocusEvent >(m_widget, m_focusEventHandler);
 }
 
-void DockPane::dock(Widget* widget, bool detachable, Direction direction, int split)
+void DockPane::dock(Widget* widget, bool detachable, Direction direction, Unit split)
 {
 	if (m_widget)
 	{
@@ -331,13 +331,13 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 			Rect childRects[2] = { rect, rect };
 			if (m_vertical)
 			{
-				const int32_t split = calculateRealSplit(m_owner, m_gripperDim, rect, m_split, true);
+				const int32_t split = calculateRealSplit(m_owner, m_gripperDim, rect, m_owner->pixel(m_split), true);
 				childRects[0].bottom = split - c_splitterDim / 2;
 				childRects[1].top = split + c_splitterDim / 2;
 			}
 			else
 			{
-				const int32_t split = calculateRealSplit(m_owner, m_gripperDim, rect, m_split, false);
+				const int32_t split = calculateRealSplit(m_owner, m_gripperDim, rect, m_owner->pixel(m_split), false);
 				childRects[0].right = split - c_splitterDim / 2;
 				childRects[1].left = split + c_splitterDim / 2;
 			}
@@ -366,7 +366,7 @@ void DockPane::draw(Canvas& canvas)
 		Rect splitterRect = m_rect;
 		if (m_vertical)
 		{
-			const int32_t split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_split, true);
+			const int32_t split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_owner->pixel(m_split), true);
 			splitterRect.left += 2;
 			splitterRect.right -= 2;
 			splitterRect.top = split - c_splitterDim / 2;
@@ -376,7 +376,7 @@ void DockPane::draw(Canvas& canvas)
 		}
 		else
 		{
-			const int32_t split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_split, false);
+			const int32_t split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_owner->pixel(m_split), false);
 			splitterRect.left = split - 1;
 			splitterRect.right = split + 1;
 			splitterRect.top += 2;
@@ -547,12 +547,12 @@ bool DockPane::hitSplitter(const Point& position) const
 	if (m_vertical)
 	{
 		pos = position.y;
-		split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_split, true);
+		split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_owner->pixel(m_split), true);
 	}
 	else
 	{
 		pos = position.x;
-		split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_split, false);
+		split = calculateRealSplit(m_owner, m_gripperDim, m_rect, m_owner->pixel(m_split), false);
 	}
 
 	return pos >= split - c_splitterDim / 2 && pos <= split + c_splitterDim / 2;
@@ -567,9 +567,9 @@ void DockPane::setSplitterPosition(const Point& position)
 	pos = std::min(extent, pos);
 
 	if (m_split < 0)
-		m_split = -(extent - pos);
+		m_split = m_owner->unit(-(extent - pos));
 	else
-		m_split = pos;
+		m_split = m_owner->unit(pos);
 }
 
 bool DockPane::isVisible() const

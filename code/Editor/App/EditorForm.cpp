@@ -567,10 +567,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", 350);
 	const int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
 
-	pane->split(false, ww, m_paneWest, paneCenter);
-	paneCenter->split(false, -250, paneCenter, m_paneEast);
-	paneCenter->split(true, -200, paneCenter, paneLog);
-	paneCenter->split(true, -200, paneCenter, m_paneSouth);
+	pane->split(false, ui::Unit(ww), m_paneWest, paneCenter);
+	paneCenter->split(false, -250_ut, paneCenter, m_paneEast);
+	paneCenter->split(true, -200_ut, paneCenter, paneLog);
+	paneCenter->split(true, -200_ut, paneCenter, m_paneSouth);
 
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -1634,7 +1634,7 @@ void EditorForm::closeWorkspace()
 	m_dataBaseView->setDatabase(nullptr);
 }
 
-void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
+void EditorForm::createAdditionalPanel(ui::Widget* widget, ui::Unit size, int32_t direction)
 {
 	T_ASSERT(widget);
 
@@ -2935,8 +2935,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	}
 
 	// Save docking pane sizes.
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", m_paneWest->getPaneRect().getWidth());
-	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", m_paneEast->getPaneRect().getWidth());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", unit(m_paneWest->getPaneRect().getWidth()).get());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", unit(m_paneEast->getPaneRect().getWidth()).get());
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));

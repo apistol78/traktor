@@ -57,7 +57,8 @@ bool TextureBatchDialog::create(ui::Widget* parent)
 	if (!textureListTools->create(textureListContainer))
 		return false;
 
-	textureListTools->addImage(new ui::StyleBitmap(L"Texture.PlusMinus"), 2);
+	textureListTools->addImage(new ui::StyleBitmap(L"Texture.PlusMinus", 0));
+	textureListTools->addImage(new ui::StyleBitmap(L"Texture.PlusMinus", 1));
 	textureListTools->addItem(new ui::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_ADD"), 0, ui::Command(L"TextureBatch.Add")));
 	textureListTools->addItem(new ui::ToolBarButton(i18n::Text(L"TEXTURE_BATCH_REMOVE"), 1, ui::Command(L"TextureBatch.Remove")));
 	textureListTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &TextureBatchDialog::eventTextureListToolClick);

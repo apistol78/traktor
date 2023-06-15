@@ -142,7 +142,7 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	addEventHandler< PaintEvent >(this, &PropertyList::eventPaint);
 
 	m_separator = 80_ut;
-	m_propertyItemHeight = getFont().getUnitSize() + 10_ut;
+	m_propertyItemHeight = getFont().getSize() + 10_ut;
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_guidResolver = guidResolver;
 

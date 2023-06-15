@@ -57,7 +57,7 @@ bool Group::hit(const Point& p) const
 
 bool Group::hitTitle(const Point& p) const
 {
-	const Unit titleHeight = m_owner->getPaintSettings().getFontGroup().getUnitSize();
+	const Unit titleHeight = m_owner->getPaintSettings().getFontGroup().getSize();
 	return Rect(m_position, Size(m_size.cx, m_owner->pixel(titleHeight + 8_ut))).inside(p);
 }
 

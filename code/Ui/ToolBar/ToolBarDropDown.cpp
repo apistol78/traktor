@@ -106,15 +106,16 @@ bool ToolBarDropDown::getToolTip(std::wstring& outToolTip) const
 	return !outToolTip.empty();
 }
 
-Size ToolBarDropDown::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
+Size ToolBarDropDown::getSize(const ToolBar* toolBar) const
 {
-	return Size(toolBar->pixel(m_width), imageHeight + 4);
+	const Size imageSize = toolBar->getImageSize();
+	return Size(toolBar->pixel(m_width), imageSize.cy + toolBar->pixel(4_ut));
 }
 
-void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight)
+void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
-	const Size size = getSize(toolBar, imageWidth, imageHeight);
+	const Size size = getSize(toolBar);
 
 	const int32_t sep = toolBar->pixel(14_ut);
 

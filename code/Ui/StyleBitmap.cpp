@@ -43,8 +43,9 @@ struct ImageHeader
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StyleBitmap", StyleBitmap, IBitmap)
 
-StyleBitmap::StyleBitmap(const wchar_t* const name)
+StyleBitmap::StyleBitmap(const wchar_t* const name, int32_t index)
 :	m_name(name)
+,	m_index(index)
 {
 }
 
@@ -78,17 +79,19 @@ ISystemBitmap* StyleBitmap::getSystemBitmap(const Widget* reference) const
 
 bool StyleBitmap::resolve(int32_t dpi) const
 {
-	if (m_bitmap != nullptr && dpi == m_dpi)
-		return true;
-
-	safeDestroy(m_bitmap);
-	m_dpi = -1;
-
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	if (!ss)
 		return false;
 
 	const Path fileName = ss->getValue(m_name);
+
+	if (m_bitmap != nullptr && dpi == m_dpi && fileName.getPathName() == m_fileName)
+		return true;
+
+	safeDestroy(m_bitmap);
+	m_fileName = L"";
+	m_dpi = -1;
+
 	if (fileName.empty() || fileName.getExtension() != L"image")
 		return false;
 
@@ -129,19 +132,39 @@ bool StyleBitmap::resolve(int32_t dpi) const
 	if (!(bm = Application::getInstance()->getWidgetFactory()->createBitmap()))
 		return false;
 
-	if (!bm->create(image->getWidth(), image->getHeight()))
+	const int32_t iw = image->getWidth();
+	const int32_t ih = image->getHeight();
+
+	if (m_index < 0)
 	{
-		safeDestroy(bm);
-		return false;
+		if (!bm->create(iw, ih))
+		{
+			safeDestroy(bm);
+			return false;
+		}
+		bm->copySubImage(
+			image,
+			Rect(0, 0, iw, ih),
+			Point(0, 0)
+		);
+	}
+	else
+	{
+		if (!bm->create(ih, ih))
+		{
+			safeDestroy(bm);
+			return false;
+		}
+		bm->copySubImage(
+			image,
+			Rect(Point(m_index * ih, 0), Size(ih, ih)),
+			Point(0, 0)
+		);
 	}
 
-	bm->copySubImage(
-		image,
-		Rect(0, 0, image->getWidth(), image->getHeight()),
-		Point(0, 0)
-	);
-
 	m_bitmap = bm;
+	m_fileName = fileName.getPathName();
+	m_dpi = dpi;
 	return true;
 }
 

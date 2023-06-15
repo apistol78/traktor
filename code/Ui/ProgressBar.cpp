@@ -60,13 +60,13 @@ int32_t ProgressBar::getProgress() const
 
 Size ProgressBar::getPreferredSize(const Size& hint) const
 {
-	const Unit fontSize = getFont().getUnitSize();
+	const Unit fontSize = getFont().getSize();
 	return Size(pixel(256_ut), pixel(fontSize + 4_ut));
 }
 
 Size ProgressBar::getMaximumSize() const
 {
-	const Unit fontSize = getFont().getUnitSize();
+	const Unit fontSize = getFont().getSize();
 	return Size(65535, pixel(fontSize + 4_ut));
 }
 

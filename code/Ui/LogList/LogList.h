@@ -85,7 +85,7 @@ private:
 	log_list_t m_logFiltered;
 	uint32_t m_logCount[3] = { 0, 0, 0 };
 	StaticMap< uint32_t, uint32_t, 128 > m_threadIndices;
-	int32_t m_itemHeight = 0;
+	Unit m_itemHeight = 0_ut;
 	uint8_t m_filter = LvInfo | LvWarning | LvError;
 	uint32_t m_nextThreadIndex = 0;
 	int32_t m_selectedEntry = -1;

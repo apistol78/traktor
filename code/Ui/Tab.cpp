@@ -52,7 +52,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose");
-	m_tabHeight = getFont().getUnitSize() + 9_ut;
+	m_tabHeight = getFont().getSize() + 9_ut;
 	return true;
 }
 

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/TString.h"
 #include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Win32/Window.h"
 
@@ -102,6 +103,36 @@ uint32_t translateToKeyCode(VirtualKey vk)
 			return c_translateTable[i].keyCode;
 	}
 	return 0;
+}
+
+Font logFontToFont(const LOGFONT& lf)
+{
+	return Font(
+		lf.lfFaceName,
+		Unit(abs(lf.lfHeight)),
+		(bool)(lf.lfWeight == FW_BOLD),
+		(bool)(lf.lfItalic == TRUE),
+		(bool)(lf.lfUnderline == TRUE)
+	);
+}
+
+LOGFONT fontToLogFont(const Font& fnt)
+{
+	LOGFONT lf = {};
+	lf.lfHeight = -fnt.getSize().get();
+	lf.lfWidth = 0;
+	lf.lfEscapement = 0;
+	lf.lfOrientation = 0;
+	lf.lfWeight = fnt.isBold() ? FW_BOLD : FW_NORMAL;
+	lf.lfItalic = fnt.isItalic() ? TRUE : FALSE;
+	lf.lfUnderline = fnt.isUnderline() ? TRUE : FALSE;
+	lf.lfCharSet = DEFAULT_CHARSET;
+	lf.lfOutPrecision = OUT_DEFAULT_PRECIS;
+	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+	lf.lfQuality = DEFAULT_QUALITY;
+	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+	_tcscpy_s(lf.lfFaceName, LF_FACESIZE, wstots(fnt.getFace()).c_str());
+	return lf;
 }
 
 	}

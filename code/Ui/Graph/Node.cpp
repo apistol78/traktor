@@ -266,5 +266,10 @@ Rect Node::calculateRect() const
 	return Rect(m_position, m_size);
 }
 
+void Node::updateSize()
+{
+	m_size = m_shape->calculateSize(m_owner, this);
+}
+
 	}
 }

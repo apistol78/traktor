@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Ui/Unit.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,7 +44,7 @@ public:
 	virtual Ref< PropertiesView > createPropertiesView(ui::Widget* parent) = 0;
 
 	/*! Create additional docking panel. */
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) = 0;
+	virtual void createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south) = 0;
 
 	/*! Destroy additional docking panel. */
 	virtual void destroyAdditionalPanel(ui::Widget* widget) = 0;

@@ -44,7 +44,9 @@ public:
 
 	virtual void destroy() override;
 
-	uint32_t addImage(IBitmap* image, uint32_t imageCount);
+	uint32_t addImage(IBitmap* image);
+
+	Size getImageSize() const;
 
 	uint32_t addItem(ToolBarItem* item);
 
@@ -61,11 +63,7 @@ public:
 private:
 	Ref< ToolTip > m_toolTip;
 	int32_t m_style;
-	Ref< IBitmap > m_imageEnabled;
-	Ref< IBitmap > m_imageDisabled;
-	uint32_t m_imageWidth;
-	uint32_t m_imageHeight;
-	uint32_t m_imageCount;
+	RefArray< IBitmap > m_images;
 	RefArray< ToolBarItem > m_items;
 	Ref< ToolBarItem > m_trackItem;
 	int32_t m_offsetX;

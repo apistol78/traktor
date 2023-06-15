@@ -58,7 +58,8 @@ bool SaveAsDialog::create(ui::Widget* parent, db::Database* database)
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(this, ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
-	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders"), 2);
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 0));
+	m_treeDatabase->addImage(new ui::StyleBitmap(L"Editor.Database.Folders", 1));
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &SaveAsDialog::eventTreeItemSelected);
 
 	m_editInstanceName = new ui::Edit();

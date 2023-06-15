@@ -55,7 +55,7 @@ bool ScriptProfilerView::create(ui::Widget* parent)
 	if (!m_profilerTools->create(this))
 		return false;
 
-	m_profilerTools->addImage(new ui::StyleBitmap(L"Script.ProfilerClear"), 1);
+	m_profilerTools->addImage(new ui::StyleBitmap(L"Script.ProfilerClear"));
 	m_profilerTools->addItem(new ui::ToolBarButton(i18n::Text(L"SCRIPT_PROFILER_CLEAR_SAMPLES"), 0, ui::Command(L"Script.Editor.ClearProfile")));
 	m_profilerTools->addEventHandler< ui::ToolBarButtonClickEvent >(this, &ScriptProfilerView::eventProfilerToolClick);
 

@@ -91,6 +91,11 @@ const StyleSheet* AutoWidgetCell::getStyleSheet() const
 	return m_widget ? m_widget->getStyleSheet() : nullptr;
 }
 
+FontMetric AutoWidgetCell::getFontMetric() const
+{
+	return m_widget ? m_widget->getFontMetric() : FontMetric(nullptr);
+}
+
 int32_t AutoWidgetCell::pixel(Unit measure) const
 {
 	return m_widget ? m_widget->pixel(measure) : 0;

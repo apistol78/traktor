@@ -43,17 +43,17 @@ public:
 		BsDefaultToggled = BsDefault | BsToggled
 	};
 
-	ToolBarButton(const std::wstring& text, uint32_t imageIndex, const Command& command, int32_t style = BsIcon);
+	explicit ToolBarButton(const std::wstring& text, int32_t imageIndex, const Command& command, int32_t style = BsIcon);
 
-	ToolBarButton(const std::wstring& text, const Command& command, int32_t style = BsText);
+	explicit ToolBarButton(const std::wstring& text, const Command& command, int32_t style = BsText);
 
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const;
 
-	void setImage(uint32_t imageIndex);
+	void setImage(int32_t imageIndex);
 
-	uint32_t getImage() const;
+	int32_t getImage() const;
 
 	void setToggled(bool toggled);
 
@@ -62,9 +62,9 @@ public:
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const override final;
 
-	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const override final;
+	virtual Size getSize(const ToolBar* toolBar) const override final;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, IBitmap* images, int imageWidth, int imageHeight) override final;
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images) override final;
 
 	virtual bool mouseEnter(ToolBar* toolBar) override final;
 
@@ -85,7 +85,7 @@ private:
 
 	std::wstring m_text;
 	Command m_command;
-	uint32_t m_imageIndex;
+	int32_t m_imageIndex;
 	int32_t m_style;
 	int32_t m_state;
 };

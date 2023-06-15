@@ -297,9 +297,9 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	}
 
 	ui::Font widgetFont = widget->getFont();
-	ui::Font performanceFont = widgetFont; performanceFont.setSize(10);
+	ui::Font performanceFont = widgetFont; performanceFont.setSize(10_ut);
 	ui::Font performanceBoldFont = performanceFont; performanceBoldFont.setBold(true);
-	ui::Font markerFont = widgetFont; markerFont.setSize(7);
+	ui::Font markerFont = widgetFont; markerFont.setSize(7_ut);
 
 	performanceRect = rect;
 	performanceRect.right -= pixel(34_ut);

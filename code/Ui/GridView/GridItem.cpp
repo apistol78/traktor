@@ -17,10 +17,8 @@
 #include "Ui/GridView/GridRow.h"
 #include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridItem", GridItem, AutoWidgetCell)
 
@@ -106,10 +104,10 @@ int32_t GridItem::getHeight()
 	if (m_font)
 	{
 		int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
-		height = std::max(height, lines * pixel(m_font->getUnitSize() + 10_ut));
+		height = std::max(height, lines * pixel(m_font->getSize() + 10_ut));
 	}
-	else if (getWidget< GridView >())
-		height = std::max(height, getWidget< GridView >()->getFontMetric().getHeight());
+	else if (getWidget() != nullptr)
+		height = std::max(height, getFontMetric().getHeight());
 
 	for (auto image : m_images)
 		height = std::max(height, image->getSize(getWidget()).cy + pixel(4_ut));
@@ -144,8 +142,8 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 
 	for (auto image : m_images)
 	{
-		Size szImage = image->getSize(getWidget());
-		Point pntImage(
+		const Size szImage = image->getSize(getWidget());
+		const Point pntImage(
 			rcText.left,
 			rcText.top + (rcText.getHeight() - szImage.cy) / 2
 		);
@@ -185,5 +183,4 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 	}
 }
 
-	}
 }

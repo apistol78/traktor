@@ -72,8 +72,10 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 	m_dependencyTree = new ui::TreeView();
 	m_dependencyTree->create(this, (ui::TreeView::WsDefault & ~(ui::TreeView::WsAutoEdit | ui::WsClientBorder)) | ui::WsDoubleBuffer);
-	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Folders"), 2);
-	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Types"), 23);
+	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Folders", 0));
+	m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Folders", 1));
+	for (int32_t i = 0; i < 23; ++i)
+		m_dependencyTree->addImage(new ui::StyleBitmap(L"Editor.Types", i));
 	m_dependencyTree->addEventHandler< ui::MouseButtonDownEvent >(this, &EntityDependencyInvestigator::eventDependencyButtonDown);
 	m_dependencyTree->addEventHandler< ui::TreeViewItemActivateEvent >(this, &EntityDependencyInvestigator::eventDependencyActivate);
 

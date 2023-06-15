@@ -157,13 +157,13 @@ int32_t Window::dpi() const
 
 int32_t Window::dpi96(int32_t measure) const
 {
-	const uint32_t dpiw = GetDpiForWindow(m_hWnd);
+	const int32_t dpiw = GetDpiForWindow(m_hWnd);
 	return (dpiw * measure) / 96;
 }
 
 int32_t Window::invdpi96(int32_t measure) const
 {
-	const uint32_t dpiw = GetDpiForWindow(m_hWnd);
+	const int32_t dpiw = GetDpiForWindow(m_hWnd);
 	return (96 * measure) / (dpiw > 0 ? dpiw : 96);
 }
 

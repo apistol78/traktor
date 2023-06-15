@@ -9,8 +9,6 @@
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
-#include "Ui/Application.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/StyleBitmap.h"
@@ -20,18 +18,10 @@
 #include "Ui/TreeView/TreeViewItem.h"
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeView", TreeView, AutoWidget)
-
-TreeView::TreeView()
-:	m_imageCount(0)
-,	m_autoEdit(false)
-{
-}
 
 bool TreeView::create(Widget* parent, int32_t style)
 {
@@ -58,47 +48,25 @@ bool TreeView::create(Widget* parent, int32_t style)
 	return true;
 }
 
-int32_t TreeView::addImage(IBitmap* image, int32_t imageCount)
+int32_t TreeView::addImage(IBitmap* image)
 {
-	if (m_image)
-	{
-		uint32_t width = m_image->getSize(this).cx + image->getSize(this).cx;
-		uint32_t height = std::max(m_image->getSize(this).cy, image->getSize(this).cy);
-		if (width == 0 || height == 0)
-			return 0;
-
-		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
-		newImage->copyImage(m_image->getImage(this));
-		newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), image->getSize(this)), Point(m_image->getSize(this).cx, 0));
-		m_image = newImage;
-	}
-	else
-		m_image = image;
-
-	m_imageCount += imageCount;
-	return m_imageCount - imageCount;
+	const int32_t base = (int32_t)m_images.size();
+	m_images.push_back(image);
+	return base;
 }
 
 bool TreeView::setImage(int32_t imageIndex, IBitmap* image)
 {
-	if (!m_image)
+	if (imageIndex < 0 || imageIndex >= (int32_t)m_images.size())
 		return false;
 
-	Size dim = m_image->getSize(this);
-	int32_t x = imageIndex * dim.cy;
-
-	Ref< ui::Bitmap > newImage = new ui::Bitmap(dim.cx, dim.cy);
-	newImage->copyImage(m_image->getImage(this));
-	newImage->copySubImage(image->getImage(this), Rect(Point(0, 0), image->getSize(this)), Point(x, 0));
-	m_image = newImage;
-
+	m_images[imageIndex] = image;
 	return true;
 }
 
 void TreeView::removeAllImages()
 {
-	m_image = nullptr;
-	m_imageCount = 0;
+	m_images.clear();
 }
 
 Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int32_t imageColumns)
@@ -217,6 +185,14 @@ void TreeView::applyState(const HierarchicalState* state)
 		else
 			item->unselect();
 	}
+}
+
+int32_t TreeView::getMaxImageHeight() const
+{
+	int32_t maxImageHeight = 0;
+	for (auto image : m_images)
+		maxImageHeight = std::max(maxImageHeight, image->getSize(this).cy);
+	return maxImageHeight;
 }
 
 void TreeView::layoutCells(const Rect& rc)
@@ -373,5 +349,4 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 	requestUpdate();
 }
 
-	}
 }

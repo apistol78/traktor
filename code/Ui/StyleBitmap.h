@@ -34,7 +34,7 @@ class T_DLLCLASS StyleBitmap : public IBitmap
 	T_RTTI_CLASS;
 
 public:
-	explicit StyleBitmap(const wchar_t* const name);
+	explicit StyleBitmap(const wchar_t* const name, int32_t index = -1);
 
 	virtual ~StyleBitmap();
 
@@ -48,7 +48,9 @@ public:
 
 private:
 	const wchar_t* const m_name;
+	int32_t m_index = -1;
 	mutable ISystemBitmap* m_bitmap = nullptr;
+	mutable std::wstring m_fileName;
 	mutable int32_t m_dpi = -1;
 
 	bool resolve(int32_t dpi) const;

@@ -242,7 +242,7 @@ private:
 
 	void closeWorkspace();
 
-	void createAdditionalPanel(ui::Widget* widget, int size, int32_t direction);
+	void createAdditionalPanel(ui::Widget* widget, ui::Unit size, int32_t direction);
 
 	void destroyAdditionalPanel(ui::Widget* widget);
 
