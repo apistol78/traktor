@@ -89,7 +89,7 @@ private:
 	Ref< DockPane > m_child[2];
 	bool m_vertical;
 	Unit m_split;
-	int32_t m_gripperDim;
+	Unit m_gripperDim;
 	Rect m_rect;
 	bool m_focus;
 

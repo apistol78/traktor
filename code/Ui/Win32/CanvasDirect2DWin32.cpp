@@ -144,20 +144,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
 			return;
 
-		int32_t logical = 0;
-		if (lf.lfHeight >= 0)
-		{
-			TEXTMETRIC tm = { 0 };
-			HDC hDC = GetDC(hWnd);
-			GetTextMetrics(hDC, &tm);
-			ReleaseDC(hWnd, hDC);
-			logical = lf.lfHeight - tm.tmInternalLeading;
-		}
-		else
-			logical = -lf.lfHeight;
-
-		float inches = float(logical) / hWnd.dpi();
-		float dip = inches * 96.0f;
+		int32_t logical = abs(lf.lfHeight);
 
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
@@ -166,7 +153,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			int32_t(dip + 0.5f) * hWnd.dpi() / 96.0f,
+			float(logical) * (hWnd.dpi() / 96.0f),
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -199,8 +186,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 		DWRITE_FONT_METRICS fontMetrics;
 		dwFont->GetMetrics(&fontMetrics);
 
-		outAscent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm);
-		outDescent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm);
+		outAscent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.ascent / fontMetrics.designUnitsPerEm + 0.5f);
+		outDescent = (int32_t)(dwTextFormat->GetFontSize() * fontMetrics.descent / fontMetrics.designUnitsPerEm + 0.5f);
 	}
 	else	// Inside begin/end thus use current paint context.
 	{
@@ -234,8 +221,6 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 			return Size(0, 0);
 
 		int32_t logical = abs(lf.lfHeight);
-		float inches = float(logical) / 96.0f;
-		float dip = inches * hWnd.dpi();
 
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
@@ -244,7 +229,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) cons
 			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			dip,
+			float(logical) * (hWnd.dpi() / 96.0f),
 			L"",
 			&dwTextFormat.getAssign()
 		);

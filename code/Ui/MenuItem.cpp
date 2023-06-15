@@ -185,8 +185,9 @@ Size MenuItem::getSize(const Widget* shell) const
 {
 	//if (m_text != L"-")
 	//{
-		int32_t cw = shell->getFontMetric().getExtent(m_text).cx;
-		int32_t ch = shell->getFontMetric().getHeight();
+		const auto fontMetric = shell->getFontMetric();
+		int32_t cw = fontMetric.getExtent(m_text).cx;
+		int32_t ch = fontMetric.getHeight();
 
 		if (m_checkBox)
 		{
