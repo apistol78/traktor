@@ -420,6 +420,14 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 void SparkLayer::preSetup(const runtime::UpdateInfo& info)
 {
+	if (m_movie.changed())
+	{
+		m_moviePlayer = nullptr;
+		m_movie.consume();
+	}
+
+	// Re-create if necessary movie player.
+	createMoviePlayer();
 }
 
 void SparkLayer::setup(const runtime::UpdateInfo& info, render::RenderGraph& renderGraph)
