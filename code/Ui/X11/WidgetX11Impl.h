@@ -291,7 +291,7 @@ public:
 
 		cairo_set_font_size(
 			m_cairo,
-			dpi96(m_font.getSize())
+			dpi96(m_font.getSize().get())
 		);
 	}
 
@@ -618,7 +618,7 @@ protected:
 			);
 
 			m_cairo = cairo_create(m_surface);
-			setFont(Font(L"Ubuntu Regular", 11));
+			setFont(Font(L"Ubuntu Regular", 11_ut));
 		}
 
 		// Focus in.
@@ -870,7 +870,7 @@ protected:
 
 			cairo_push_group_with_content(m_cairo, CAIRO_CONTENT_COLOR);
 
-			CanvasX11 canvasImpl(m_cairo);
+			CanvasX11 canvasImpl(m_cairo, m_context->getSystemDPI());
 			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
 			PaintEvent paintEvent(
 				m_owner,
