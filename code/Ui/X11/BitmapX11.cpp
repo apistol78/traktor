@@ -32,7 +32,7 @@ void BitmapX11::destroy()
 	}
 }
 
-void BitmapX11::copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos)
+void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, const Point& destPos)
 {
 	if (!image)
 		return;

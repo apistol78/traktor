@@ -23,7 +23,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) override final;
+	virtual void copySubImage(const drawing::Image* image, const Rect& srcRect, const Point& destPos) override final;
 
 	virtual Ref< drawing::Image > getImage() const override final;
 
