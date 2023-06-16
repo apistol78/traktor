@@ -103,10 +103,10 @@ int32_t GridItem::getHeight()
 
 	if (m_font)
 	{
-		int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
+		const int32_t lines = std::max< int32_t >(1, (int32_t)std::count(m_text.begin(), m_text.end(), L'\n'));
 		height = std::max(height, lines * pixel(m_font->getSize() + 10_ut));
 	}
-	else if (getWidget() != nullptr)
+	else
 		height = std::max(height, getFontMetric().getHeight());
 
 	for (auto image : m_images)
@@ -118,6 +118,11 @@ int32_t GridItem::getHeight()
 GridRow* GridItem::getRow() const
 {
 	return m_row;
+}
+
+void GridItem::setOwner(AutoWidget* owner)
+{
+	setWidget(owner);
 }
 
 AutoWidgetCell* GridItem::hitTest(const Point& position)

@@ -84,6 +84,12 @@ public:
 	Unit unit(int32_t measure) const;
 
 protected:
+	void setWidget(AutoWidget* widget)
+	{
+		T_ASSERT(m_widget == nullptr);
+		m_widget = widget;
+	}
+
 	AutoWidget* getWidget() const
 	{
 		return m_widget;
