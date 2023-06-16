@@ -349,7 +349,7 @@ Rect TreeViewItem::calculateExpandRect() const
 	int32_t depth = calculateDepth();
 
 	Rect rcItem = getClientRect();
-	rcItem.left += m_view->pixel(4_ut + depth * 20);
+	rcItem.left += m_view->pixel(4_ut + Unit(depth) * 20_ut);
 	rcItem.right = rcItem.left + d;
 
 	int32_t dy = (rcItem.getHeight() - d) / 2;
@@ -366,10 +366,10 @@ Rect TreeViewItem::calculateImageRect() const
 	const int32_t imageCount = getImageCount();
 
 	Rect rcItem = getClientRect();
-	rcItem.left += m_view->pixel(4_ut + depth * 20) + d;
+	rcItem.left += m_view->pixel(4_ut + Unit(depth) * 20_ut) + d;
 	rcItem.right = rcItem.left + imageCount * d;
 
-	int32_t dy = (rcItem.getHeight() - d) / 2;
+	const int32_t dy = (rcItem.getHeight() - d) / 2;
 	rcItem.top += dy;
 	rcItem.bottom = rcItem.top + d;
 
@@ -382,10 +382,10 @@ Rect TreeViewItem::calculateLabelRect() const
 	const int32_t depth = calculateDepth();
 	const int32_t imageCount = getImageCount();
 
-	Size extent = m_view->getFontMetric().getExtent(m_text);
+	const Size extent = m_view->getFontMetric().getExtent(m_text);
 
 	Rect rcItem = getClientRect();
-	rcItem.left += m_view->pixel(4_ut + depth * 20) + d + imageCount * d + (imageCount > 0 ? m_view->pixel(4_ut) : 0);
+	rcItem.left += m_view->pixel(4_ut + Unit(depth) * 20_ut) + d + imageCount * d + (imageCount > 0 ? m_view->pixel(4_ut) : 0);
 	rcItem.right = rcItem.left + extent.cx + d;
 
 	return rcItem;
@@ -393,9 +393,9 @@ Rect TreeViewItem::calculateLabelRect() const
 
 int32_t TreeViewItem::calculateWidth() const
 {
-	Size extent = m_view->getFontMetric().getExtent(m_text);
-	int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
-	return m_view->pixel(4_ut + calculateDepth() * 20 + 28) + extent.cx + d;
+	const Size extent = m_view->getFontMetric().getExtent(m_text);
+	const int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
+	return m_view->pixel(4_ut + Unit(calculateDepth()) * 20_ut + 28_ut) + extent.cx + d;
 }
 
 void TreeViewItem::interval()

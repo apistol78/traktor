@@ -122,7 +122,7 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 		const Size size = item->getSize(this);
 
 		// Calculate item rectangle.
-		const int32_t offset = (rc.getHeight() - pixel(c_marginHeight * 2) - size.cy) / 2;
+		const int32_t offset = (rc.getHeight() - pixel(c_marginHeight * 2_ut) - size.cy) / 2;
 		const Rect rc(
 			Point(x, y + offset),
 			size
@@ -149,7 +149,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 		height = std::max(height, size.cy);
 	}
 
-	return Size(width + pixel(c_marginWidth * 2), height + pixel(c_marginHeight * 2 + 1));
+	return Size(width + pixel(c_marginWidth * 2_ut), height + pixel(c_marginHeight * 2_ut + 1_ut));
 }
 
 Size ToolBar::getMaximumSize() const

@@ -313,16 +313,16 @@ void LogList::eventPaint(PaintEvent* event)
 			if (e1 == entry.text.npos)
 				break;
 
-			textRect.left += int32_t(e1 - s) * pixel(8_ut * 4);
+			textRect.left += int32_t(e1 - s) * pixel(8_ut * 4_ut);
 
 			size_t e2 = entry.text.find_first_of('\t', e1);
 			if (e2 == entry.text.npos)
 				e2 = entry.text.length();
 
-			std::wstring text = entry.text.substr(e1, e2 - e1);
+			const std::wstring text = entry.text.substr(e1, e2 - e1);
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
-			Size extent = canvas.getFontMetric().getExtent(text);
+			const Size extent = canvas.getFontMetric().getExtent(text);
 			textRect.left += extent.cx;
 
 			s = e2;

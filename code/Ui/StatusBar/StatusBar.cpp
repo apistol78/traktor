@@ -126,12 +126,14 @@ void StatusBar::eventPaint(PaintEvent* event)
 		rc = rc.inflate(-pixel(2_ut), -pixel(2_ut));
 		for (int i = 0; i <= 2; ++i)
 		{
+			const Unit ii(i);
+
 			canvas.setForeground(Color4ub(180, 180, 180));
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 1), rc.right - pixel(4_ut * i - 1), rc.bottom);
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 2), rc.right - pixel(4_ut * i - 2), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 1_ut), rc.right - pixel(4_ut * ii - 1_ut), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 2_ut), rc.right - pixel(4_ut * ii - 2_ut), rc.bottom);
 
 			canvas.setForeground(Color4ub(255, 255, 255));
-			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * i - 3), rc.right - pixel(4_ut * i - 3), rc.bottom);
+			canvas.drawLine(rc.right, rc.bottom - pixel(4_ut * ii - 3_ut), rc.right - pixel(4_ut * ii - 3_ut), rc.bottom);
 		}
 	}
 

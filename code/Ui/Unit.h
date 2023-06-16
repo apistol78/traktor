@@ -47,17 +47,13 @@ public:
 
 	Unit operator - () const { return Unit(-m_value); }
 
-	Unit operator + (int32_t value) const { return Unit(m_value + value); }
-
 	Unit operator + (const Unit& rh) const { return Unit(m_value + rh.m_value); }
-
-	Unit operator - (int32_t value) const { return Unit(m_value - value); }
 
 	Unit operator - (const Unit& rh) const { return Unit(m_value - rh.m_value); }
 
-	Unit operator * (int32_t value) const { return Unit(m_value * value); }
+	Unit operator * (const Unit& rh) const { return Unit(m_value * rh.m_value); }
 
-	Unit operator / (int32_t value) const { return Unit(m_value / value); }
+	Unit operator / (const Unit& rh) const { return Unit(m_value / rh.m_value); }
 
 	bool operator > (int32_t value) const { return m_value > value; }
 

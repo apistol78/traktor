@@ -35,7 +35,7 @@ namespace traktor::runtime
 	{
 
 const ui::Unit c_performanceLineHeight = 18_ut;
-const ui::Unit c_performanceHeight = c_performanceLineHeight * 3;
+const ui::Unit c_performanceHeight = c_performanceLineHeight * 3_ut;
 const ui::Unit c_commandHeight = 22_ut;
 
 const struct
@@ -115,7 +115,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 			ui::Rect(
 				controlRect.left + pixel(130_ut),
 				controlRect.getCenter().y - pixel(10_ut),
-				controlRect.right - pixel(24_ut * 3 - 12),
+				controlRect.right - pixel(24_ut * 3_ut + 12_ut),
 				controlRect.getCenter().y + pixel(10_ut)
 			)
 		);
@@ -127,7 +127,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 			ui::Rect(
 				controlRect.left + logoSize + pixel(10_ut),
 				controlRect.getCenter().y - pixel(8_ut),
-				controlRect.right - pixel(24_ut * 3 - 8_ut),
+				controlRect.right - pixel(24_ut * 3_ut + 8_ut),
 				controlRect.getCenter().y + pixel(8_ut)
 			)
 		);
@@ -136,27 +136,27 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 	widget->placeCell(
 		m_playCell,
 		ui::Rect(
-			controlRect.right - pixel(24_ut * 3 - 4_ut),
+			controlRect.right - pixel(24_ut * 3_ut + 4_ut),
 			controlRect.top,
-			controlRect.right - pixel(24_ut * 2 - 4_ut),
+			controlRect.right - pixel(24_ut * 2_ut + 4_ut),
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_buildCell,
 		ui::Rect(
-			controlRect.right - pixel(24_ut * 2 - 4_ut),
+			controlRect.right - pixel(24_ut * 2_ut + 4_ut),
 			controlRect.top,
-			controlRect.right - pixel(24_ut * 1 - 4_ut),
+			controlRect.right - pixel(24_ut * 1_ut + 4_ut),
 			controlRect.bottom
 		)
 	);
 	widget->placeCell(
 		m_migrateCell,
 		ui::Rect(
-			controlRect.right - pixel(24_ut * 1 - 4_ut),
+			controlRect.right - pixel(24_ut * 1_ut + 4_ut),
 			controlRect.top,
-			controlRect.right - pixel(24_ut * 0 - 4_ut),
+			controlRect.right - pixel(24_ut * 0_ut + 4_ut),
 			controlRect.bottom
 		)
 	);
@@ -193,9 +193,9 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		widget->placeCell(
 			m_stopCells[i],
 			ui::Rect(
-				controlRect.right - pixel(24_ut * 1 - 4_ut),
+				controlRect.right - pixel(24_ut * 1_ut + 4_ut),
 				controlRect.top,
-				controlRect.right - pixel(24_ut * 0 - 4_ut),
+				controlRect.right - pixel(24_ut * 0_ut + 4_ut),
 				(controlRect.top + controlRect.bottom) / 2
 			)
 		);
@@ -203,9 +203,9 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		widget->placeCell(
 			m_captureCells[i],
 			ui::Rect(
-				controlRect.right - pixel(24_ut * 1 - 4_ut),
+				controlRect.right - pixel(24_ut * 1_ut + 4_ut),
 				(controlRect.top + controlRect.bottom) / 2,
-				controlRect.right - pixel(24_ut * 0 - 4_ut),
+				controlRect.right - pixel(24_ut * 0_ut + 4_ut),
 				controlRect.bottom
 			)
 		);
@@ -290,7 +290,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	{
 		ui::Rect textRect = controlRect;
 		textRect.left += logoSize + pixel(10_ut);
-		textRect.right -= pixel(24_ut * 3 - 8);
+		textRect.right -= pixel(24_ut * 3_ut - 8_ut);
 
 		canvas.setForeground(ss->getColor(widget, L"color"));
 		canvas.drawText(textRect, targetConfiguration->getName(), ui::AnLeft, ui::AnCenter);
