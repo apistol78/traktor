@@ -100,7 +100,7 @@ void PreviewList::layoutCells(const Rect& rc)
 	int32_t width = pixel(c_itemWidth[m_itemSize]);
 	int32_t height = pixel(c_itemHeight[m_itemSize]);
 
-	int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2)) / width;
+	int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
 	if (ncolumns <= 0)
 		return;
 
