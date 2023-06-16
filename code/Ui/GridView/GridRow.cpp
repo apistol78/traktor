@@ -81,7 +81,7 @@ uint32_t GridRow::add(GridItem* item)
 {
 	T_ASSERT(item->m_row == nullptr);
 	item->m_row = this;
-	item->placeCells(getWidget< GridView >(), Rect());
+	item->setOwner(getWidget());
 	m_items.push_back(item);
 	return uint32_t(m_items.size() - 1);
 }
@@ -96,6 +96,7 @@ void GridRow::set(uint32_t index, GridItem* item)
 	}
 	T_ASSERT(item->m_row == nullptr);
 	item->m_row = this;
+	item->setOwner(getWidget());
 	m_items[index] = item;
 }
 
@@ -114,6 +115,7 @@ void GridRow::addChild(GridRow* row)
 {
 	T_ASSERT(!row->m_parent);
 	m_children.push_back(row);
+	row->setOwner(getWidget());
 	row->m_parent = this;
 }
 
@@ -124,6 +126,7 @@ void GridRow::insertChildBefore(GridRow* insertBefore, GridRow* row)
 	RefArray< GridRow >::iterator i = std::find(m_children.begin(), m_children.end(), insertBefore);
 	T_ASSERT(i != m_children.end());
 	m_children.insert(i, row);
+	row->setOwner(getWidget());
 	row->m_parent = this;
 }
 
@@ -134,6 +137,7 @@ void GridRow::insertChildAfter(GridRow* insertAfter, GridRow* row)
 	auto it = std::find(m_children.begin(), m_children.end(), insertAfter);
 	T_ASSERT(it != m_children.end());
 	m_children.insert(++it, row);
+	row->setOwner(getWidget());
 	row->m_parent = this;
 }
 
@@ -150,6 +154,17 @@ void GridRow::removeAllChildren()
 	for (auto child : m_children)
 		child->m_parent = nullptr;
 	m_children.clear();
+}
+
+void GridRow::setOwner(AutoWidget* owner)
+{
+	setWidget(owner);
+
+	for (auto item : m_items)
+		item->setOwner(owner);
+
+	for (auto child : m_children)
+		child->setOwner(owner);
 }
 
 int32_t GridRow::getDepth() const
@@ -193,7 +208,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 		rcCell.left = rcCell.right;
 	}
 
-	Rect rcRow(rect.left, rect.top, std::max(rcCell.right, rect.right), rect.bottom);
+	const Rect rcRow(rect.left, rect.top, std::max(rcCell.right, rect.right), rect.bottom);
 	AutoWidgetCell::placeCells(widget, rcRow);
 }
 

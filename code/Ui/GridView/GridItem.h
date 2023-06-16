@@ -78,6 +78,8 @@ private:
 	Ref< Font > m_font;
 	RefArray< IBitmap > m_images;
 
+	void setOwner(AutoWidget* owner);
+
 	virtual AutoWidgetCell* hitTest(const Point& position) override final;
 
 	virtual void paint(Canvas& canvas, const Rect& rect) override final;

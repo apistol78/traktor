@@ -100,6 +100,8 @@ private:
 	Point m_mouseDownPosition;
 	int32_t m_editMode;
 
+	void setOwner(AutoWidget* owner);
+
 	int32_t getDepth() const;
 
 	virtual void placeCells(AutoWidget* widget, const Rect& rect) override final;

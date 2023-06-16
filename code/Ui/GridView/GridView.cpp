@@ -165,7 +165,7 @@ void GridView::setSort(const sort_fn_t& sortFn)
 int32_t GridView::getColumnIndex(int32_t x) const
 {
 	int32_t left = 0;
-	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+	for (auto i = m_columns.begin(); i != m_columns.end(); ++i)
 	{
 		int32_t right = left + pixel((*i)->getWidth());
 		if (x >= left && x <= right)
@@ -177,7 +177,7 @@ int32_t GridView::getColumnIndex(int32_t x) const
 
 void GridView::addRow(GridRow* row)
 {
-	row->placeCells(this, Rect());
+	row->setOwner(this);
 	m_rows.push_back(row);
 	requestUpdate();
 }
