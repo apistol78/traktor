@@ -253,15 +253,8 @@ void AnimationPreviewControl::updateWorldRenderer()
 		type_of< world::WorldRendererForward >()
 	));
 
-	world::WorldRenderSettings wrs;
-	wrs.viewNearZ = 0.1f;
-	wrs.viewFarZ = 1000.0f;
-	wrs.colorGrading = resource::Id< render::ITexture >(Guid(
-		L"{3DEEC673-EDF5-364A-B796-BAC7EF575258}"
-	));
-
 	world::WorldCreateDesc wcd;
-	wcd.worldRenderSettings = &wrs;
+	wcd.worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
 	wcd.entityRenderers = worldEntityRenderers;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
@@ -291,30 +284,27 @@ void AnimationPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	if ((event->getKeyState() & ui::KsMenu) != 0)
+	if (event->getButton() == ui::MbtLeft)
 	{
-		if (event->getButton() == ui::MbtRight)
+		if ((event->getKeyState() & ui::KsControl) == 0)
 		{
-			if ((event->getKeyState() & ui::KsControl) == 0)
-			{
-				// Move X/Z direction.
-				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-				m_position += Vector4(dx, 0.0f, dz, 0.0f);
-			}
-			else
-			{
-				// Move X/Y direction.
-				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-				m_position += Vector4(dx, dy, 0.0f, 0.0f);
-			}
+			// Move X/Z direction.
+			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+			const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			m_position += Vector4(dx, 0.0f, dz, 0.0f);
 		}
-		else if (event->getButton() == ui::MbtLeft)
+		else
 		{
-			m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
-			m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
+			// Move X/Y direction.
+			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+			const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			m_position += Vector4(dx, dy, 0.0f, 0.0f);
 		}
+	}
+	else if (event->getButton() == ui::MbtRight)
+	{
+		m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
+		m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
 	}
 
 	m_lastMousePosition = event->getPosition();
