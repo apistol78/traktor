@@ -64,7 +64,7 @@ struct AtlasBucket
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 9, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 10, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)
