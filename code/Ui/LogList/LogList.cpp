@@ -49,7 +49,7 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 
 	m_icons = new StyleBitmap(L"UI.Log");
 
-	m_itemHeight = getFont().getSize() + 2_ut;
+	m_itemHeight = getFont().getSize() + 4_ut;
 	//m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize(this).cy);
 
 	m_lookup = lookup;
