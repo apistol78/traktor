@@ -33,7 +33,6 @@ extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
 extern const render::Handle T_DLLCLASS s_techniqueShadow;
 
 // Permutations
-extern const render::Handle s_handleShadowEnable;
 extern const render::Handle s_handleIrradianceEnable;
 extern const render::Handle s_handleVolumetricFogEnable;
 

@@ -683,13 +683,18 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
 			}
 
-			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, 0.0f, 0.0f));
+			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, m_settings.fogDensityMax, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
 
 			if (shadowAtlasTargetSet != nullptr)
 			{
 				sharedParams->setFloatParameter(s_handleShadowBias, shadowSettings.bias);
 				sharedParams->setTextureParameter(s_handleShadowMapAtlas, shadowAtlasTargetSet->getDepthTexture());
+			}
+			else
+			{
+				sharedParams->setFloatParameter(s_handleShadowBias, 0.0f);
+				sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
 			}
 
 			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
@@ -713,7 +718,6 @@ void WorldRendererForward::setupVisualPass(
 				IWorldRenderPass::Last,
 				{
 					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
-					{ s_handleShadowEnable, (bool)(shadowAtlasTargetSet != nullptr) },
 					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr )}
 				}
 			);
