@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
-/*! Layer atttribute base class.
+/*! Layer attribute base class.
  * \ingroup World
  */
 class T_DLLCLASS ILayerAttribute : public ISerializable
@@ -31,6 +29,4 @@ class T_DLLCLASS ILayerAttribute : public ISerializable
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

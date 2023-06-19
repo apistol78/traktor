@@ -26,10 +26,12 @@ namespace traktor
 
 class ISerializable;
 
-	namespace world
-	{
+}
 
-/*! Resolve external entities, ie flatten scene without external references. */
+namespace traktor::world
+{
+
+/*! Resolve external entities, i.e. flatten scene without external references. */
 Ref< ISerializable > T_DLLCLASS resolveExternal(
 	const std::function< Ref< const ISerializable >(const Guid& objectId) >& getObjectFn,
 	const ISerializable* object,
@@ -37,5 +39,4 @@ Ref< ISerializable > T_DLLCLASS resolveExternal(
 	AlignedVector< Guid >* outExternalEntities
 );
 
-	}
 }

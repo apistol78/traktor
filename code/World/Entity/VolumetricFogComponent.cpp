@@ -99,7 +99,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
-	if (worldRenderPass.getTechnique() == s_techniqueForwardColor)
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
 		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
 

@@ -18,11 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
+/*!
+ * \ingroup World
+ */
 class T_DLLCLASS EntityPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
@@ -69,6 +70,4 @@ private:
 	bool m_editor = false;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/VolumetricFogComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityPipeline", 0, WorldEntityPipeline, EntityPipeline)
 
@@ -86,5 +84,4 @@ bool WorldEntityPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

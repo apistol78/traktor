@@ -18,11 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
+/*!
+ * \ingroup World
+ */
 class T_DLLCLASS WorldEntityPipeline : public EntityPipeline
 {
 	T_RTTI_CLASS;
@@ -38,6 +39,5 @@ public:
 		const Guid& outputGuid
 	) const override final;
 };
-	}
-}
 
+}

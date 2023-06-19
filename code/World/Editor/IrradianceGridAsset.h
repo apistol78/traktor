@@ -21,6 +21,9 @@
 namespace traktor::world
 {
 	
+/*!
+ * \ingroup World
+ */
 class T_DLLCLASS IrradianceGridAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
