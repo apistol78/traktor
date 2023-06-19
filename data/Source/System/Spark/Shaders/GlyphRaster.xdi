@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+<object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{F3E3A20D-9A33-5647-ACB8-48585F5D2823}</id>
@@ -13,8 +13,8 @@
 			<id>{3F41DE16-ED47-0847-9516-A10AA8A41698}</id>
 			<comment/>
 			<position>
-				<first>1463</first>
-				<second>308</second>
+				<first>1401</first>
+				<second>361</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -100,7 +100,7 @@
 				<second>526</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{DEAEADA3-B617-E546-9D71-1B081A881D6C}</id>
 			<comment/>
 			<position>
@@ -108,6 +108,7 @@
 				<second>68</second>
 			</position>
 			<name>L_XY</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.MixIn" version="traktor.render.Node:1">
 			<id>{0552218B-83B6-E049-9DE3-326D331C8922}</id>
@@ -117,7 +118,7 @@
 				<second>72</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
 			<id>{567A39EB-5F29-C143-B7DD-BFF5EAD72853}</id>
 			<comment/>
 			<position>
@@ -125,6 +126,7 @@
 				<second>527</second>
 			</position>
 			<name>L_XY</name>
+			<global>false</global>
 		</item>
 		<item type="traktor.render.Pow" version="traktor.render.Node:1">
 			<id>{B6452895-22EC-E744-B663-47EDCAC36099}</id>
@@ -296,5 +298,4 @@
 			</destination>
 		</item>
 	</edges>
-	<groups/>
 </object>
