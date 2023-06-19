@@ -13,10 +13,8 @@
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 Ref< ISerializable > resolveExternal(
 	const std::function< Ref< const ISerializable >(const Guid& objectId) >& getObjectFn,
@@ -44,7 +42,7 @@ Ref< ISerializable > resolveExternal(
 			if (outExternalEntities)
 				outExternalEntities->push_back(externalEntityDataRef->getEntityData());
 
-			Guid entityDataId = externalEntityDataRef->getId().permutation(seed);
+			const Guid entityDataId = externalEntityDataRef->getId().permutation(seed);
 
 			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(getObjectFn, externalEntityData, entityDataId, outExternalEntities));
 			if (!resolvedEntityData)
@@ -61,7 +59,7 @@ Ref< ISerializable > resolveExternal(
 		}
 		else if (auto entityDataRef = dynamic_type_cast< const world::EntityData* >(objectMember->get()))
 		{
-			Guid entityDataId = entityDataRef->getId().permutation(seed);
+			const Guid entityDataId = entityDataRef->getId().permutation(seed);
 
 			Ref< world::EntityData > resolvedEntityData = dynamic_type_cast< world::EntityData* >(resolveExternal(getObjectFn, entityDataRef, entityDataId, outExternalEntities));
 			if (!resolvedEntityData)
@@ -79,5 +77,4 @@ Ref< ISerializable > resolveExternal(
 	return reflection->clone();
 }
 
-	}
 }

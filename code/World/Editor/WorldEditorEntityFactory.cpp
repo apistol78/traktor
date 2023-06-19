@@ -9,10 +9,8 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/WorldEditorEntityFactory.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEditorEntityFactory", WorldEditorEntityFactory, IEntityFactory)
 
@@ -46,5 +44,4 @@ Ref< IEntityComponent > WorldEditorEntityFactory::createEntityComponent(const wo
 	return nullptr;
 }
 
-	}
 }

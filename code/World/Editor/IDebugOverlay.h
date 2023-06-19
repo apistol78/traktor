@@ -18,29 +18,30 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-    namespace render
-    {
 
 class RenderGraph;
 class ScreenRenderer;
 
-    }
+}
 
-    namespace resource
-    {
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-    }
+}
 
-    namespace world
-    {
+namespace traktor::world
+{
 
 class IWorldRenderer;
 class WorldRenderView;
 
+/*!
+ * \ingroup World
+ */
 class T_DLLCLASS IDebugOverlay : public Object
 {
     T_RTTI_CLASS;
@@ -51,5 +52,4 @@ public:
     virtual void setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const = 0;
 };
 
-    }
 }

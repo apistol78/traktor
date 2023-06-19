@@ -30,17 +30,15 @@
 #include "World/Editor/IrradianceGridPipeline.h"
 #include "World/IrradianceGridResource.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 class WrappedSHFunction : public render::SHFunction
 {
 public:
-	WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
+	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
 	:	m_fn(fn)
 	{
 	}
@@ -54,7 +52,7 @@ private:
 	std::function< Vector4 (const Vector4&) > m_fn;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceGridPipeline", 1, IrradianceGridPipeline, editor::IPipeline)
 
@@ -252,5 +250,4 @@ Ref< ISerializable > IrradianceGridPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

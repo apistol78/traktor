@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class ILayerAttribute;
 
@@ -54,6 +52,4 @@ private:
 	RefArray< const ILayerAttribute > m_attributes;
 };
 
-	}
 }
-

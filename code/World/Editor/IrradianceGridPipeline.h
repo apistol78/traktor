@@ -18,11 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
+/*!
+ * \ingroup World
+ */
 class T_DLLCLASS IrradianceGridPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS;
@@ -69,6 +70,4 @@ private:
 	std::wstring m_assetPath;
 };
 
-	}
 }
-

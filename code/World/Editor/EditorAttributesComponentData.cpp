@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EditorAttributesComponentData", 0, EditorAttributesComponentData, IEntityComponentData)
 
@@ -34,5 +32,4 @@ void EditorAttributesComponentData::serialize(ISerializer& s)
 	s >> Member< bool >(L"dynamic", dynamic);
 }
 
-	}
 }

@@ -23,12 +23,10 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/EntityPipeline.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
+	namespace
 	{
-		namespace
-		{
 
 bool removeMember(RfmCompound* owner, ReflectionMember* member)
 {
@@ -48,7 +46,7 @@ bool removeMember(RfmCompound* owner, ReflectionMember* member)
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipeline, editor::IPipeline)
 
@@ -225,5 +223,4 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 	return reflection->clone();
 }
 
-	}
 }

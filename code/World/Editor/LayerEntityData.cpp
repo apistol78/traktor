@@ -15,10 +15,8 @@
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.LayerEntityData", 3, LayerEntityData, EntityData)
 
@@ -79,5 +77,4 @@ void LayerEntityData::serialize(ISerializer& s)
 		s >> MemberRefArray< const ILayerAttribute >(L"attributes", m_attributes);
 }
 
-	}
 }
