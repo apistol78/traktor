@@ -9,10 +9,8 @@
 #include "Spark/BitmapTexture.h"
 #include "Render/ITexture.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapTexture", 0, BitmapTexture, Bitmap)
 
@@ -25,5 +23,4 @@ BitmapTexture::BitmapTexture(render::ITexture* texture)
 	m_height = (uint32_t)sz.y;
 }
 
-	}
 }

@@ -23,8 +23,10 @@ namespace traktor
 
 class Matrix33;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 /*!
  * \ingroup Spark
@@ -47,5 +49,4 @@ public:
 	virtual void removeInstance(CharacterInstance* instance, int32_t depth) const override final;
 };
 
-	}
 }

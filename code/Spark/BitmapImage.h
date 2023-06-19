@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 /*! Image bitmap container.
  * \ingroup Spark
@@ -53,6 +51,4 @@ private:
 	Ref< drawing::Image > m_image;
 };
 
-	}
 }
-

@@ -14,10 +14,8 @@
 #include "Spark/Stage.h"
 #include "Spark/SpriteInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Context", Context, Object)
 
@@ -58,5 +56,4 @@ void Context::setRolledOver(CharacterInstance* rolledOver)
 	m_rolledOver = rolledOver;
 }
 
-	}
 }

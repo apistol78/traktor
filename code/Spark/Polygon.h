@@ -28,17 +28,17 @@ struct Segment
 	uint16_t lineStyle;
 };
 
-enum TriangleType
+enum class TriangleType : uint8_t
 {
-	TcFill = 0,
-	TcIn = 1,
-	TcOut = 2
+	Fill = 0,
+	In = 1,
+	Out = 2
 };
 
 struct Triangle
 {
 	Vector2 v[3];
-	uint8_t type;	//!< \sa TriangleType
+	TriangleType type;
 	uint16_t fillStyle;
 };
 

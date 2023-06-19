@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class CharacterInstance;
 class Key;
@@ -89,6 +87,4 @@ private:
 	CharacterInstance* m_rolledOver = nullptr;
 };
 
-	}
 }
-

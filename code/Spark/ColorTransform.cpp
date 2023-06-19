@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Spark/ColorTransform.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ColorTransform", ColorTransform, Object)
 
@@ -47,5 +45,4 @@ void ColorTransform::serialize(ISerializer& s)
 	s >> Member< Color4f >(L"add", add);
 }
 
-	}
 }

@@ -24,10 +24,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Context;
 class Dictionary;
@@ -288,6 +286,4 @@ private:
 #	pragma warning( default:4324 )
 #endif
 
-	}
 }
-

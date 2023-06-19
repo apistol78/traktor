@@ -11,10 +11,8 @@
 #include "Spark/Types.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.CharacterInstance", CharacterInstance, Object)
 
@@ -230,5 +228,4 @@ void CharacterInstance::eventKillFocus()
 	m_eventKillFocus.issue();
 }
 
-	}
 }

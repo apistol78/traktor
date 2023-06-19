@@ -24,8 +24,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 /*! Color transform wrapper.
  * \ingroup Spark
@@ -64,6 +66,4 @@ public:
 	}
 };
 
-	}
 }
-

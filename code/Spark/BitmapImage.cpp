@@ -12,10 +12,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Spark/BitmapImage.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapImage", 0, BitmapImage, Bitmap)
 
@@ -49,5 +47,4 @@ void BitmapImage::serialize(ISerializer& s)
 	s >> MemberRef< drawing::Image >(L"image", m_image);
 }
 
-	}
 }

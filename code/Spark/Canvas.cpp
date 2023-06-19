@@ -11,10 +11,8 @@
 #include "Spark/Triangulator.h"
 #include "Spark/Types.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Canvas", Canvas, Object)
 
@@ -207,5 +205,4 @@ void Canvas::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, 
 	}
 }
 
-	}
 }

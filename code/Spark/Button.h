@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Flash button character.
  * \ingroup Spark
@@ -81,6 +79,4 @@ private:
 	button_layers_t m_layers;
 };
 
-	}
 }
-

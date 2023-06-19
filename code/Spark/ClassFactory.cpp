@@ -53,12 +53,10 @@
 #include "Spark/Swf/SwfReader.h"
 #include "Render/ITexture.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 void ColorTransform_setMul(ColorTransform* self, const Color4f& mul)
 {
@@ -192,7 +190,7 @@ int32_t TextFormat_getAlign(TextFormat* self)
 	return (int32_t)self->getAlign();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.ClassFactory", 0, ClassFactory, IRuntimeClassFactory)
 
@@ -666,5 +664,4 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classTextInstance);
 }
 
-	}
 }

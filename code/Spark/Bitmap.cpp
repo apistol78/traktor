@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Spark/Bitmap.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Bitmap", Bitmap, ISerializable)
 
@@ -38,5 +36,4 @@ void Bitmap::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"height", m_height);
 }
 
-	}
 }
