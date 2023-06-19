@@ -163,7 +163,7 @@
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{A6CF4D34-4EFC-A646-AE57-A51459495761}</id>
 			<comment/>
 			<position>
@@ -208,7 +208,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -326,7 +325,7 @@
 			<stencilMask>2147483648</stencilMask>
 			<precisionHint>Undefined</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{69A59CB0-54FF-E348-8D14-4F7974EF3EF4}</id>
 			<comment/>
 			<position>
@@ -371,10 +370,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>High</precisionHint>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{3D7D4539-5904-EC42-B481-B5E9A947DE3E}</id>
 			<comment/>
 			<position>
@@ -419,7 +417,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>High</precisionHint>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
@@ -480,8 +477,8 @@
 			<id>{F08A0687-57E2-E842-A729-E807709FD534}</id>
 			<comment/>
 			<position>
-				<first>-225</first>
-				<second>908</second>
+				<first>-293</first>
+				<second>913</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -530,6 +527,11 @@
 				<item>
 					<id>{498DB440-34E8-DE45-8D94-5F7E53F4147C}</id>
 					<name>Distance</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{4CF2DFFD-4DD0-1E4D-B24D-577A751BB6ED}</id>
+					<name>MaxDensity</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -722,6 +724,15 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{39EA02F7-09CB-534C-8F8F-A9036E6852F5}</id>
+			<comment/>
+			<position>
+				<first>-281</first>
+				<second>839</second>
+			</position>
+			<swizzle>z</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1293,6 +1304,26 @@
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{4CF2DFFD-4DD0-1E4D-B24D-577A751BB6ED}</id>
 			</destination>
 		</item>
 	</edges>

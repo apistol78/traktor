@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 38, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 39, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -166,6 +166,8 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		{
 			s >> Member< float >(L"fogDistance", fogDistance, AttributeUnit(UnitType::Metres));
 			s >> Member< float >(L"fogDensity", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+			if (s.getVersion() >= 39)
+				s >> Member< float >(L"fogDensityMax", fogDensityMax, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 		}
 		else
 		{
