@@ -150,7 +150,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 35, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 37, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -640,6 +640,22 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
+		// Constant fold.
+		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConstantFolded();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to constant fold shader, material shader \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
+		// Cleanup unused branches.
+		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
 		// Update bone count from model.
 		for (auto node : materialShaderGraph->getNodes())
 		{
@@ -740,18 +756,38 @@ bool MeshPipeline::buildOutput(
 				render::VertexElement element(
 					vertexInputNode->getDataUsage(),
 					elementDataType,
-					vertexElementOffset,
+					0,
 					vertexInputNode->getIndex()
 				);
 				vertexElements.push_back(element);
-				vertexElementOffset += element.getSize();
 			}
 		}
 	}
 
+	// Sort vertex declaration and calculate offsets.
+	std::stable_sort(vertexElements.begin(), vertexElements.end(), [](const render::VertexElement& lh, const render::VertexElement& rh) {
+		return lh.getSize() > rh.getSize();
+	});
+	std::stable_sort(vertexElements.begin(), vertexElements.end(), [](const render::VertexElement& lh, const render::VertexElement& rh) {
+		return lh.getIndex() < rh.getIndex();
+	});
+	std::stable_sort(vertexElements.begin(), vertexElements.end(), [](const render::VertexElement& lh, const render::VertexElement& rh) {
+		return lh.getDataUsage() < rh.getDataUsage();
+	});
+	for (auto& vertexElement : vertexElements)
+	{
+		vertexElement = render::VertexElement(
+			vertexElement.getDataUsage(),
+			vertexElement.getDataType(),
+			vertexElementOffset,
+			vertexElement.getIndex()
+		);
+		vertexElementOffset += vertexElement.getSize();
+	}
+
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
-	for (std::map< uint32_t, Ref< render::ShaderGraph > >::iterator i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
+	for (auto i = materialTechniqueShaderGraphs.begin(); i != materialTechniqueShaderGraphs.end(); ++i)
 	{
 		Ref< render::ShaderGraph > materialTechniqueShaderGraph = i->second;
 		for (auto node : materialTechniqueShaderGraph->getNodes())
