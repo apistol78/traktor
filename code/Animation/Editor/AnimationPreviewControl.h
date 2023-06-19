@@ -93,7 +93,7 @@ public:
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
 private:
-	editor::IEditor* m_editor;
+	editor::IEditor* m_editor = nullptr;
 	Ref< ui::EventSubject::IEventHandler > m_idleEventHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
@@ -111,10 +111,10 @@ private:
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Timer m_timer;
-	Vector4 m_position;
-	float m_angleHead;
-	float m_anglePitch;
-	ui::Point m_lastMousePosition;
+	Vector4 m_position = Vector4::origo();
+	float m_angleHead = 0.0f;
+	float m_anglePitch = 0.0f;
+	ui::Point m_lastMousePosition = ui::Point(0, 0);
 	ui::Size m_dirtySize = ui::Size(0, 0);
 
 	void updatePreview();
