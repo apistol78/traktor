@@ -10,10 +10,8 @@
 #include "Spark/Character.h"
 #include "Spark/CharacterInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DefaultCharacterFactory", DefaultCharacterFactory, ICharacterFactory)
 
@@ -40,5 +38,4 @@ void DefaultCharacterFactory::removeInstance(CharacterInstance* instance, int32_
 {
 }
 
-	}
 }

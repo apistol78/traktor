@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Context;
 class Movie;
@@ -232,6 +230,4 @@ private:
 	mutable RefArray< CharacterInstance > m_gather;
 };
 
-	}
 }
-

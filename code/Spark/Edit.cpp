@@ -13,10 +13,8 @@
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Edit", 0, Edit, Character)
 
@@ -202,5 +200,4 @@ void Edit::serialize(ISerializer& s)
 	s >> Member< bool >(L"renderHtml", m_renderHtml);
 }
 
-	}
 }

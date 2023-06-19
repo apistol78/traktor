@@ -12,6 +12,7 @@
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Shape.h"
@@ -38,7 +39,7 @@ public:
 	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> MemberStaticArray< Vector2, 3 >(L"v", m_ref.v);
-		s >> Member< uint8_t >(L"type", m_ref.type);
+		s >> MemberEnumByValue< TriangleType >(L"type", m_ref.type);
 		s >> Member< uint16_t >(L"fillStyle", m_ref.fillStyle);
 	}
 
@@ -460,12 +461,12 @@ void Shape::triangulate(bool oddEven, AlignedVector< Triangle >& outTriangles, A
 
 			if (!segments.empty())
 			{
-				uint32_t from = outTriangles.size();
+				const uint32_t from = outTriangles.size();
 
 				triangulator.triangulate(segments, *ii, oddEven, outTriangles);
 				segments.resize(0);
 
-				uint32_t to = outTriangles.size();
+				const uint32_t to = outTriangles.size();
 
 				// Transform each new triangle with path's transform.
 				for (uint32_t ti = from; ti < to; ++ti)

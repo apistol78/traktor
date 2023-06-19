@@ -113,7 +113,7 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 
 		il = bool(Line2(t.v[0], t.v[2]).distance(sl.c) >= 0.0f);
 
-		t.type = il ? TcOut : TcIn;
+		t.type = il ? TriangleType::Out : TriangleType::In;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -126,7 +126,7 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 
 		ir = bool(Line2(t.v[0], t.v[2]).distance(sr.c) < 0.0f);
 
-		t.type = ir ? TcOut : TcIn;
+		t.type = ir ? TriangleType::Out : TriangleType::In;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -136,14 +136,14 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 		t.v[0] = Vector2(sl.v[0].x, y0);
 		t.v[1] = Vector2(sr.v[0].x, y0);
 		t.v[2] = Vector2(sl.v[1].x, y1);
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[1].x, y1);
 		t.v[1] = Vector2(sl.v[1].x, y1);
 		t.v[2] = Vector2(sr.v[0].x, y0);
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -152,21 +152,21 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 		t.v[0] = Vector2(sl.v[0].x, y0);
 		t.v[1] = Vector2(sr.v[0].x, y0);
 		t.v[2] = sl.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[0].x, y0);
 		t.v[1] = Vector2(sr.v[1].x, y1);
 		t.v[2] = sl.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[1].x, y1);
 		t.v[1] = Vector2(sl.v[1].x, y1);
 		t.v[2] = sl.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -175,21 +175,21 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 		t.v[0] = Vector2(sl.v[0].x, y0);
 		t.v[1] = Vector2(sr.v[0].x, y0);
 		t.v[2] = sr.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sl.v[1].x, y1);
 		t.v[1] = Vector2(sl.v[0].x, y0);
 		t.v[2] = sr.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[1].x, y1);
 		t.v[1] = Vector2(sl.v[1].x, y1);
 		t.v[2] = sr.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -198,28 +198,28 @@ void segmentsToTriangles_2(const Segment& sl, const Segment& sr, AlignedVector< 
 		t.v[0] = Vector2(sl.v[0].x, y0);
 		t.v[1] = Vector2(sr.v[0].x, y0);
 		t.v[2] = sl.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[0].x, y0);
 		t.v[1] = sr.c;
 		t.v[2] = sl.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sr.v[1].x, y1);
 		t.v[1] = Vector2(sl.v[1].x, y1);
 		t.v[2] = sr.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 
 		t.v[0] = Vector2(sl.v[1].x, y1);
 		t.v[1] = sl.c;
 		t.v[2] = sr.c;
-		t.type = TcFill;
+		t.type = TriangleType::Fill;
 		t.fillStyle = sl.fillStyle0;
 		outTriangles.push_back(t);
 	}
@@ -279,19 +279,19 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 	m_segments.resize(0);
 
 	// Create vertical segments.
-	for (AlignedVector< Segment >::const_iterator i = segments.begin(); i != segments.end(); ++i)
+	for (const auto& segment : segments)
 	{
-		T_ASSERT(i->fillStyle0 || i->fillStyle1);
+		T_ASSERT(segment.fillStyle0 || segment.fillStyle1);
 
-		if (!i->curve)
+		if (!segment.curve)
 		{
-			if (abs< float >(i->v[0].y - i->v[1].y) > 0.0f)
+			if (abs< float >(segment.v[0].y - segment.v[1].y) > 0.0f)
 			{
-				s.v[0] = i->v[0];
-				s.v[1] = i->v[1];
+				s.v[0] = segment.v[0];
+				s.v[1] = segment.v[1];
 				s.curve = false;
-				s.fillStyle0 = i->fillStyle0;
-				s.fillStyle1 = i->fillStyle1;
+				s.fillStyle0 = segment.fillStyle0;
+				s.fillStyle1 = segment.fillStyle1;
 				m_segments.push_back(s);
 
 				pys.insert(std::floor(s.v[0].y));
@@ -300,9 +300,9 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 		}
 		else
 		{
-			const Vector2& cp0 = i->v[0];
-			const Vector2& cp1 = i->c;
-			const Vector2& cp2 = i->v[1];
+			const Vector2& cp0 = segment.v[0];
+			const Vector2& cp1 = segment.c;
+			const Vector2& cp2 = segment.v[1];
 
 			Bezier2nd b(cp0, cp1, cp2);
 
@@ -327,8 +327,8 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 					s.v[1] = b0.cp2;
 					s.c = b0.cp1;
 					s.curve = true;
-					s.fillStyle0 = i->fillStyle0;
-					s.fillStyle1 = i->fillStyle1;
+					s.fillStyle0 = segment.fillStyle0;
+					s.fillStyle1 = segment.fillStyle1;
 					m_segments.push_back(s);
 
 					pys.insert(std::floor(s.v[0].y));
@@ -341,8 +341,8 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 					s.v[1] = b1.cp2;
 					s.c = b1.cp1;
 					s.curve = true;
-					s.fillStyle0 = i->fillStyle0;
-					s.fillStyle1 = i->fillStyle1;
+					s.fillStyle0 = segment.fillStyle0;
+					s.fillStyle1 = segment.fillStyle1;
 					m_segments.push_back(s);
 
 					pys.insert(std::floor(s.v[0].y));
@@ -357,8 +357,8 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 					s.v[1] = cp2;
 					s.c = cp1;
 					s.curve = true;
-					s.fillStyle0 = i->fillStyle0;
-					s.fillStyle1 = i->fillStyle1;
+					s.fillStyle0 = segment.fillStyle0;
+					s.fillStyle1 = segment.fillStyle1;
 					m_segments.push_back(s);
 
 					pys.insert(std::floor(s.v[0].y));
@@ -372,13 +372,13 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 		return;
 
 	// Ensure all segments are top to bottom.
-	for (AlignedVector< Segment >::iterator i = m_segments.begin(); i != m_segments.end(); ++i)
+	for (auto& segment : m_segments)
 	{
-		if (i->v[0].y > i->v[1].y)
+		if (segment.v[0].y > segment.v[1].y)
 		{
-			std::swap(i->v[0], i->v[1]);
+			std::swap(segment.v[0], segment.v[1]);
 			if (!oddEven)
-				std::swap(i->fillStyle0, i->fillStyle1);
+				std::swap(segment.fillStyle0, segment.fillStyle1);
 		}
 	}
 

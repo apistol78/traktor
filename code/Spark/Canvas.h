@@ -24,10 +24,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Bitmap;
 
@@ -97,6 +95,4 @@ private:
 	bool m_drawing;
 };
 
-	}
 }
-

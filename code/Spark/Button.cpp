@@ -12,10 +12,8 @@
 #include "Spark/Button.h"
 #include "Spark/ButtonInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Button", 0, Button, Character)
 
@@ -56,5 +54,4 @@ void Button::ButtonLayer::serialize(ISerializer& s)
 	s >> MemberComposite< ColorTransform >(L"cxform", cxform);
 }
 
-	}
 }

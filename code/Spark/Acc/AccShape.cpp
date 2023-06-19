@@ -364,9 +364,9 @@ bool AccShape::createFromTriangles(
 			T_ASSERT(triangle.fillStyle);
 
 			uint8_t curveSign = c_cpZero;
-			if (triangle.type == TcIn)
+			if (triangle.type == TriangleType::In)
 				curveSign = c_cpOne;
-			else if (triangle.type == TcOut)
+			else if (triangle.type == TriangleType::Out)
 				curveSign = c_cpNegOne;
 
 			if (

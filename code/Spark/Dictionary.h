@@ -13,10 +13,8 @@
 #include "Core/Ref.h"
 #include "Core/Containers/SmallMap.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Bitmap;
 class Character;
@@ -65,6 +63,4 @@ private:
 	SmallMap< std::string, uint16_t > m_exports;
 };
 
-	}
 }
-

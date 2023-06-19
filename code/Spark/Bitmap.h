@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! \Bitmap container.
  * \ingroup Spark
@@ -62,6 +60,4 @@ protected:
 	uint32_t m_height = 0;
 };
 
-	}
 }
-

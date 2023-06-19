@@ -15,16 +15,14 @@
 #include "Spark/Frame.h"
 #include "Spark/ICharacterFactory.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_depthOffset = -16384;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.DisplayList", DisplayList, Object)
 
@@ -323,5 +321,4 @@ void DisplayList::getObjects(RefArray< CharacterInstance >& outCharacterInstance
 	}
 }
 
-	}
 }

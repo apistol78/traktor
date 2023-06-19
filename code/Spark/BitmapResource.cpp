@@ -9,10 +9,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Spark/BitmapResource.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.BitmapResource", 0, BitmapResource, Bitmap)
 
@@ -32,5 +30,4 @@ void BitmapResource::serialize(ISerializer& s)
 	s >> Member< Guid >(L"resourceId", m_resourceId);
 }
 
-	}
 }

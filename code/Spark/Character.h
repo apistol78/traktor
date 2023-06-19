@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class CharacterInstance;
 class Context;
@@ -74,6 +72,4 @@ private:
 	int32_t m_tag;
 };
 
-	}
 }
-

@@ -13,10 +13,8 @@
 #include "Spark/Context.h"
 #include "Spark/Dictionary.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ButtonInstance", ButtonInstance, CharacterInstance)
 
@@ -159,5 +157,4 @@ Aabb2 ButtonInstance::getBounds() const
 	return getTransform() * getLocalBounds();
 }
 
-	}
 }

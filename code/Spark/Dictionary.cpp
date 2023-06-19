@@ -9,12 +9,10 @@
 #include <algorithm>
 #include "Spark/Dictionary.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 template < typename ContainerType >
 typename ContainerType::pair_t::first_type getMaximumKey(const ContainerType& container)
@@ -25,7 +23,7 @@ typename ContainerType::pair_t::first_type getMaximumKey(const ContainerType& co
 	return mx;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Dictionary", Dictionary, Object)
 
@@ -105,5 +103,4 @@ bool Dictionary::getExportName(uint16_t exportId, std::string& outName) const
 	return false;
 }
 
-	}
 }

@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 /*! Bitmap texture container.
  * \ingroup Spark
@@ -49,6 +47,4 @@ private:
 	Ref< render::ITexture > m_texture;
 };
 
-	}
 }
-
