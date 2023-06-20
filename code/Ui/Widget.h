@@ -117,6 +117,14 @@ public:
 
 	Unit unit(int32_t measure) const;
 
+	Point pixel(const Point& measure) const;
+
+	Point unit(const Point& pt) const;
+
+	Size pixel(const Size& measure) const;
+
+	Size unit(const Size& sz) const;
+
 	bool hasCapture() const;
 
 	void setCapture();
