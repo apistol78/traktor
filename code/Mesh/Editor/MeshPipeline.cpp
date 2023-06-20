@@ -640,14 +640,6 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Constant fold.
-		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConstantFolded();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to constant fold shader, material shader \"" << materialPair.first << L"\"." << Endl;
-			return false;
-		}
-
 		// Cleanup unused branches.
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
 		if (!materialShaderGraph)
@@ -784,6 +776,7 @@ bool MeshPipeline::buildOutput(
 		);
 		vertexElementOffset += vertexElement.getSize();
 	}
+	log::info << L"Mesh using " << vertexElements.size() << L" vertex elements." << Endl;
 
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();
