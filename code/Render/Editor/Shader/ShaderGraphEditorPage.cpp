@@ -568,86 +568,75 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	if (m_propertiesView->handleCommand(command))
 		return true;
 
-	if (command == L"Editor.Cut" || command == L"Editor.Copy")
+	if (!m_scriptEditor->containFocus())
 	{
-		if (m_scriptEditor->containFocus())
+		if (command == L"Editor.Cut" || command == L"Editor.Copy")
 		{
-			if (command == L"Editor.Copy")
-				m_scriptEditor->copy();
-			else
-				m_scriptEditor->cut();
-		}
-		else if (m_editorGraph->containFocus() && !selectedNodes.empty())
-		{
-			// Also copy edges which are affected by selected nodes.
-			RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
-
-			Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
-
-			ui::Rect bounds(0, 0, 0, 0);
-			for (auto node : selectedNodes)
+			if (!selectedNodes.empty())
 			{
-				Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
-				T_ASSERT(shaderNode);
-				data->addNode(shaderNode);
+				// Also copy edges which are affected by selected nodes.
+				RefArray< ui::Edge > selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, true);
 
-				if (node != selectedNodes.front())
+				Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
+
+				ui::Rect bounds(0, 0, 0, 0);
+				for (auto node : selectedNodes)
 				{
-					ui::Rect rc = node->calculateRect();
-					bounds.left = std::min(bounds.left, rc.left);
-					bounds.top = std::min(bounds.top, rc.top);
-					bounds.right = std::max(bounds.right, rc.right);
-					bounds.bottom = std::max(bounds.bottom, rc.bottom);
+					Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
+					T_ASSERT(shaderNode);
+					data->addNode(shaderNode);
+
+					if (node != selectedNodes.front())
+					{
+						ui::Rect rc = node->calculateRect();
+						bounds.left = std::min(bounds.left, rc.left);
+						bounds.top = std::min(bounds.top, rc.top);
+						bounds.right = std::max(bounds.right, rc.right);
+						bounds.bottom = std::max(bounds.bottom, rc.bottom);
+					}
+					else
+						bounds = node->calculateRect();
 				}
-				else
-					bounds = node->calculateRect();
-			}
 
-			data->setBounds(bounds);
-
-			for (auto selectedEdge : selectedEdges)
-			{
-				Ref< Edge > shaderEdge = selectedEdge->getData< Edge >(L"SHADEREDGE");
-				T_ASSERT(shaderEdge);
-				data->addEdge(shaderEdge);
-			}
-
-			ui::Application::getInstance()->getClipboard()->setObject(data);
-
-			// Remove edges and nodes from graphs if user cuts.
-			if (command == L"Editor.Cut")
-			{
-				// Save undo state.
-				m_document->push();
-
-				// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
-				selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, false);
+				data->setBounds(bounds);
 
 				for (auto selectedEdge : selectedEdges)
 				{
-					m_shaderGraph->removeEdge(selectedEdge->getData< Edge >(L"SHADEREDGE"));
-					m_editorGraph->removeEdge(selectedEdge);
+					Ref< Edge > shaderEdge = selectedEdge->getData< Edge >(L"SHADEREDGE");
+					T_ASSERT(shaderEdge);
+					data->addEdge(shaderEdge);
 				}
 
-				for (auto selectedNode : selectedNodes)
-				{
-					m_shaderGraph->removeNode(selectedNode->getData< Node >(L"SHADERNODE"));
-					m_editorGraph->removeNode(selectedNode);
+				ui::Application::getInstance()->getClipboard()->setObject(data);
 
-					// Ensure script editor is hidden if script node is being cut.
-					if (selectedNode->getData< Node >(L"SHADERNODE") == m_script)
-						editScript(nullptr);
+				// Remove edges and nodes from graphs if user cuts.
+				if (command == L"Editor.Cut")
+				{
+					// Save undo state.
+					m_document->push();
+
+					// Remove edges which are connected to any selected node, not only those who connects to both selected end nodes.
+					selectedEdges = m_editorGraph->getConnectedEdges(selectedNodes, false);
+
+					for (auto selectedEdge : selectedEdges)
+					{
+						m_shaderGraph->removeEdge(selectedEdge->getData< Edge >(L"SHADEREDGE"));
+						m_editorGraph->removeEdge(selectedEdge);
+					}
+
+					for (auto selectedNode : selectedNodes)
+					{
+						m_shaderGraph->removeNode(selectedNode->getData< Node >(L"SHADERNODE"));
+						m_editorGraph->removeNode(selectedNode);
+
+						// Ensure script editor is hidden if script node is being cut.
+						if (selectedNode->getData< Node >(L"SHADERNODE") == m_script)
+							editScript(nullptr);
+					}
 				}
 			}
 		}
-	}
-	else if (command == L"Editor.Paste")
-	{
-		if (m_scriptEditor->containFocus())
-		{
-			m_scriptEditor->paste();
-		}
-		else if (m_editorGraph->containFocus())
+		else if (command == L"Editor.Paste")
 		{
 			Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
 				ui::Application::getInstance()->getClipboard()->getObject()
@@ -687,365 +676,390 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				updateGraph();
 			}
 		}
-	}
-	else if (command == L"Editor.SelectAll")
-	{
-		m_editorGraph->selectAllNodes();
-		updateGraph();
-	}
-	else if (command == L"Editor.Unselect")
-	{
-		m_editorGraph->deselectAllNodes();
-		updateGraph();
-	}
-	else if (command == L"Editor.Delete")
-	{
-		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
-		const RefArray< ui::Group > groups = m_editorGraph->getSelectedGroups();
-
-		if (nodes.empty() && groups.empty())
-			return false;
-
-		// Save undo state.
-		m_document->push();
-
-		// Remove edges first which are connected to selected nodes.
-		const RefArray< ui::Edge > edges = m_editorGraph->getConnectedEdges(nodes, false);
-
-		for (auto edge : edges)
+		else if (command == L"Editor.SelectAll")
 		{
-			Ref< Edge > shaderEdge = edge->getData< Edge >(L"SHADEREDGE");
-			m_editorGraph->removeEdge(edge);
-			m_shaderGraph->removeEdge(shaderEdge);
+			m_editorGraph->selectAllNodes();
+			updateGraph();
 		}
-
-		for (auto node : nodes)
+		else if (command == L"Editor.Unselect")
 		{
-			Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
-			m_editorGraph->removeNode(node);
-			m_shaderGraph->removeNode(shaderNode);
-
-			// Ensure script editor is hidden if script node is being deleted.
-			if (shaderNode == m_script)
-				editScript(nullptr);
+			m_editorGraph->deselectAllNodes();
+			updateGraph();
 		}
-
-		for (auto group : groups)
+		else if (command == L"Editor.Delete")
 		{
-			Ref< Group > shaderGroup = group->getData< Group >(L"SHADERGROUP");
-			m_editorGraph->removeGroup(group);
-			m_shaderGraph->removeGroup(shaderGroup);
-		}
+			const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+			const RefArray< ui::Group > groups = m_editorGraph->getSelectedGroups();
 
-		updateGraph();
-	}
-	else if (command == L"Editor.Undo")
-	{
-		if (m_document->undo())
-		{
-			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
-			T_ASSERT(m_shaderGraph);
+			if (nodes.empty() && groups.empty())
+				return false;
 
-			createEditorGraph();
-		}
-	}
-	else if (command == L"Editor.Redo")
-	{
-		if (m_document->redo())
-		{
-			m_shaderGraph = m_document->getObject< ShaderGraph >(0);
-			T_ASSERT(m_shaderGraph);
-
-			createEditorGraph();
-		}
-	}
-	else if (command == L"ShaderGraph.Editor.Center")
-	{
-		m_editorGraph->center();
-	}
-	else if (command == L"ShaderGraph.Editor.AlignLeft")
-	{
-		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
-	}
-	else if (command == L"ShaderGraph.Editor.AlignRight")
-	{
-		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnRight);
-	}
-	else if (command == L"ShaderGraph.Editor.AlignTop")
-	{
-		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnTop);
-	}
-	else if (command == L"ShaderGraph.Editor.AlignBottom")
-	{
-		m_document->push();
-		m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
-	}
-	else if (command == L"ShaderGraph.Editor.EvenSpaceVertically")
-	{
-		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
-	}
-	else if (command == L"ShaderGraph.Editor.EvenSpaceHorizontally")
-	{
-		m_document->push();
-		m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
-	}
-	else if (command == L"ShaderGraph.Editor.EvaluateConnected")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.EvaluateType")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches(true);
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.AutoMergeBranches")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).mergeBranches();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.UpdateFragments")
-	{
-		const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
-
-		// Get selected external nodes; ie fragments.
-		RefArray< External > selectedExternals;
-		for (RefArray< ui::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
-		{
-			Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
-			if (selectedExternal)
-				selectedExternals.push_back(selectedExternal);
-		}
-
-		if (!selectedExternals.empty())
-		{
+			// Save undo state.
 			m_document->push();
 
-			for (RefArray< External >::const_iterator i = selectedExternals.begin(); i != selectedExternals.end(); ++i)
-				updateExternalNode(*i);
+			// Remove edges first which are connected to selected nodes.
+			const RefArray< ui::Edge > edges = m_editorGraph->getConnectedEdges(nodes, false);
 
-			createEditorGraph();
-		}
-	}
-	else if (command == L"ShaderGraph.Editor.ConstantFold")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
-		T_ASSERT(m_shaderGraph);
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
-		T_ASSERT(m_shaderGraph);
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConstantFolded();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.SwizzledPermutation")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getSwizzledPermutation();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.CleanupSwizzles")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).cleanupRedundantSwizzles();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.InsertInterpolators")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).insertInterpolators(false);
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.ResolveVariables")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.ResolveBundles")
-	{
-		m_document->push();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getBundleResolved();
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.ResolveExternals")
-	{
-		FragmentReaderAdapter reader(m_editor->getSourceDatabase());
-		Ref< ShaderGraph > shaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, false);
-		if (shaderGraph)
-		{
-			m_document->push();
-			m_shaderGraph = shaderGraph;
-			m_document->setObject(0, m_shaderGraph);
-			createEditorGraph();
-		}
-		else
-			log::error << L"Fragment linker failed." << Endl;
-	}
-	else if (command == L"ShaderGraph.Editor.PlatformPermutation")
-	{
-		m_document->push();
-
-		const std::wstring platformSignature = m_toolPlatform->getSelectedItem();
-
-		m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches(true);
-		T_ASSERT(m_shaderGraph);
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getPlatformPermutation(platformSignature);
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.RendererPermutation")
-	{
-		m_document->push();
-
-		const std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getRendererPermutation(rendererSignature);
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.Technique")
-	{
-		m_document->push();
-
-		const std::wstring technique = m_toolTechniques->getSelectedItem();
-		m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid()).generate(technique);
-		T_ASSERT(m_shaderGraph);
-
-		m_document->setObject(0, m_shaderGraph);
-
-		createEditorGraph();
-	}
-	else if (command == L"ShaderGraph.Editor.QuickMenu")
-	{
-		const TypeInfo* typeInfo = m_menuQuick->showMenu();
-		if (typeInfo)
-		{
-			m_document->push();
-
-			createNode(
-				typeInfo,
-				m_editorGraph->clientToVirtual(m_editorGraph->getInnerRect().getCenter())
-			);
-		}
-		m_editorGraph->setFocus();
-	}
-	else if (command == L"ShaderGraph.Editor.FindInDatabase")
-	{
-		const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
-		if (nodes.size() != 1)
-			return false;
-
-		if (auto selectedExternal = nodes[0]->getData< External >(L"SHADERNODE"))
-		{
-			Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
-			if (fragmentInstance)
-				m_editor->highlightInstance(fragmentInstance);
-		}
-		else if (auto selectedTexture = nodes[0]->getData< Texture >(L"SHADERNODE"))
-		{
-			Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
-			if (textureInstance)
-				m_editor->highlightInstance(textureInstance);
-		}
-		else if (auto selectedNode = nodes[0]->getData< Node >(L"SHADERNODE"))
-		{
-			const Guid selectedNodeId = selectedNode->getId();
-			if (selectedNodeId.isNotNull())
+			for (auto edge : edges)
 			{
-				RefArray< db::Instance > shaderGraphInstances;
-				db::recursiveFindChildInstances(
-					m_editor->getSourceDatabase()->getRootGroup(),
-					db::FindInstanceByType(type_of< ShaderGraph >()),
-					shaderGraphInstances
-				);
-				for (auto shaderGraphInstance : shaderGraphInstances)
-				{
-					auto shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
-					if (!shaderGraph)
-						continue;
+				Ref< Edge > shaderEdge = edge->getData< Edge >(L"SHADEREDGE");
+				m_editorGraph->removeEdge(edge);
+				m_shaderGraph->removeEdge(shaderEdge);
+			}
 
-					for (auto node : shaderGraph->getNodes())
+			for (auto node : nodes)
+			{
+				Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
+				m_editorGraph->removeNode(node);
+				m_shaderGraph->removeNode(shaderNode);
+
+				// Ensure script editor is hidden if script node is being deleted.
+				if (shaderNode == m_script)
+					editScript(nullptr);
+			}
+
+			for (auto group : groups)
+			{
+				Ref< Group > shaderGroup = group->getData< Group >(L"SHADERGROUP");
+				m_editorGraph->removeGroup(group);
+				m_shaderGraph->removeGroup(shaderGroup);
+			}
+
+			updateGraph();
+		}
+		else if (command == L"Editor.Undo")
+		{
+			if (m_document->undo())
+			{
+				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+				T_ASSERT(m_shaderGraph);
+
+				createEditorGraph();
+			}
+		}
+		else if (command == L"Editor.Redo")
+		{
+			if (m_document->redo())
+			{
+				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+				T_ASSERT(m_shaderGraph);
+
+				createEditorGraph();
+			}
+		}
+		else if (command == L"ShaderGraph.Editor.Center")
+		{
+			m_editorGraph->center();
+		}
+		else if (command == L"ShaderGraph.Editor.AlignLeft")
+		{
+			m_document->push();
+			m_editorGraph->alignNodes(ui::GraphControl::AnLeft);
+		}
+		else if (command == L"ShaderGraph.Editor.AlignRight")
+		{
+			m_document->push();
+			m_editorGraph->alignNodes(ui::GraphControl::AnRight);
+		}
+		else if (command == L"ShaderGraph.Editor.AlignTop")
+		{
+			m_document->push();
+			m_editorGraph->alignNodes(ui::GraphControl::AnTop);
+		}
+		else if (command == L"ShaderGraph.Editor.AlignBottom")
+		{
+			m_document->push();
+			m_editorGraph->alignNodes(ui::GraphControl::AnBottom);
+		}
+		else if (command == L"ShaderGraph.Editor.EvenSpaceVertically")
+		{
+			m_document->push();
+			m_editorGraph->evenSpace(ui::GraphControl::EsVertically);
+		}
+		else if (command == L"ShaderGraph.Editor.EvenSpaceHorizontally")
+		{
+			m_document->push();
+			m_editorGraph->evenSpace(ui::GraphControl::EsHorizontally);
+		}
+		else if (command == L"ShaderGraph.Editor.EvaluateConnected")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.EvaluateType")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.RemoveUnusedNodes")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches(true);
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.AutoMergeBranches")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).mergeBranches();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.UpdateFragments")
+		{
+			const RefArray< ui::Node > selectedNodes = m_editorGraph->getSelectedNodes();
+
+			// Get selected external nodes; ie fragments.
+			RefArray< External > selectedExternals;
+			for (RefArray< ui::Node >::const_iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
+			{
+				Ref< External > selectedExternal = (*i)->getData< External >(L"SHADERNODE");
+				if (selectedExternal)
+					selectedExternals.push_back(selectedExternal);
+			}
+
+			if (!selectedExternals.empty())
+			{
+				m_document->push();
+
+				for (RefArray< External >::const_iterator i = selectedExternals.begin(); i != selectedExternals.end(); ++i)
+					updateExternalNode(*i);
+
+				createEditorGraph();
+			}
+		}
+		else if (command == L"ShaderGraph.Editor.ConstantFold")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConnectedPermutation();
+			T_ASSERT(m_shaderGraph);
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getTypePermutation();
+			T_ASSERT(m_shaderGraph);
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getConstantFolded();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.SwizzledPermutation")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getSwizzledPermutation();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.CleanupSwizzles")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).cleanupRedundantSwizzles();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.InsertInterpolators")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).insertInterpolators(false);
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.ResolveVariables")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getVariableResolved();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.ResolveBundles")
+		{
+			m_document->push();
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getBundleResolved();
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.ResolveExternals")
+		{
+			FragmentReaderAdapter reader(m_editor->getSourceDatabase());
+			Ref< ShaderGraph > shaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, false);
+			if (shaderGraph)
+			{
+				m_document->push();
+				m_shaderGraph = shaderGraph;
+				m_document->setObject(0, m_shaderGraph);
+				createEditorGraph();
+			}
+			else
+				log::error << L"Fragment linker failed." << Endl;
+		}
+		else if (command == L"ShaderGraph.Editor.PlatformPermutation")
+		{
+			m_document->push();
+
+			const std::wstring platformSignature = m_toolPlatform->getSelectedItem();
+
+			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).removeUnusedBranches(true);
+			T_ASSERT(m_shaderGraph);
+
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getPlatformPermutation(platformSignature);
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.RendererPermutation")
+		{
+			m_document->push();
+
+			const std::wstring rendererSignature = m_toolRenderer->getSelectedItem();
+			m_shaderGraph = ShaderGraphStatic(m_shaderGraph, Guid()).getRendererPermutation(rendererSignature);
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.Technique")
+		{
+			m_document->push();
+
+			const std::wstring technique = m_toolTechniques->getSelectedItem();
+			m_shaderGraph = ShaderGraphTechniques(m_shaderGraph, Guid()).generate(technique);
+			T_ASSERT(m_shaderGraph);
+
+			m_document->setObject(0, m_shaderGraph);
+
+			createEditorGraph();
+		}
+		else if (command == L"ShaderGraph.Editor.QuickMenu")
+		{
+			const TypeInfo* typeInfo = m_menuQuick->showMenu();
+			if (typeInfo)
+			{
+				m_document->push();
+
+				createNode(
+					typeInfo,
+					m_editorGraph->clientToVirtual(m_editorGraph->getInnerRect().getCenter())
+				);
+			}
+			m_editorGraph->setFocus();
+		}
+		else if (command == L"ShaderGraph.Editor.FindInDatabase")
+		{
+			const RefArray< ui::Node > nodes = m_editorGraph->getSelectedNodes();
+			if (nodes.size() != 1)
+				return false;
+
+			if (auto selectedExternal = nodes[0]->getData< External >(L"SHADERNODE"))
+			{
+				Ref< db::Instance > fragmentInstance = m_editor->getSourceDatabase()->getInstance(selectedExternal->getFragmentGuid());
+				if (fragmentInstance)
+					m_editor->highlightInstance(fragmentInstance);
+			}
+			else if (auto selectedTexture = nodes[0]->getData< Texture >(L"SHADERNODE"))
+			{
+				Ref< db::Instance > textureInstance = m_editor->getSourceDatabase()->getInstance(selectedTexture->getExternal());
+				if (textureInstance)
+					m_editor->highlightInstance(textureInstance);
+			}
+			else if (auto selectedNode = nodes[0]->getData< Node >(L"SHADERNODE"))
+			{
+				const Guid selectedNodeId = selectedNode->getId();
+				if (selectedNodeId.isNotNull())
+				{
+					RefArray< db::Instance > shaderGraphInstances;
+					db::recursiveFindChildInstances(
+						m_editor->getSourceDatabase()->getRootGroup(),
+						db::FindInstanceByType(type_of< ShaderGraph >()),
+						shaderGraphInstances
+					);
+					for (auto shaderGraphInstance : shaderGraphInstances)
 					{
-						if (node->getId() == selectedNodeId)
-							log::info << L"Found node in " << shaderGraphInstance->getGuid().format() << Endl;
+						auto shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
+						if (!shaderGraph)
+							continue;
+
+						for (auto node : shaderGraph->getNodes())
+						{
+							if (node->getId() == selectedNodeId)
+								log::info << L"Found node in " << shaderGraphInstance->getGuid().format() << Endl;
+						}
 					}
 				}
 			}
 		}
+		else
+			return false;
 	}
 	else
-		return false;
+	{
+		if (command == L"Editor.Undo")
+		{
+			if (m_document->undo())
+			{
+				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+				T_ASSERT(m_shaderGraph);
+
+				createEditorGraph();
+			}
+		}
+		else if (command == L"Editor.Redo")
+		{
+			if (m_document->redo())
+			{
+				m_shaderGraph = m_document->getObject< ShaderGraph >(0);
+				T_ASSERT(m_shaderGraph);
+
+				createEditorGraph();
+			}
+		}
+		else
+			return false;
+	}
 
 	m_editorGraph->update();
 	return true;
@@ -1867,6 +1881,8 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 {
 	T_FATAL_ASSERT(m_script);
 
+	m_document->push();
+
 	// Transform editor text into "escaped" text.
 	std::wstring text = m_scriptEditor->getText(
 		[&] (wchar_t ch) -> std::wstring {
@@ -1879,8 +1895,6 @@ void ShaderGraphEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 	);
 
 	m_script->setScript(text);
-
-	m_document->push();
 }
 
 void ShaderGraphEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)

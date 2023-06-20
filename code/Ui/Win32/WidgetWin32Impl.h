@@ -544,8 +544,11 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
+		const bool kctrl = (GetAsyncKeyState(VK_CONTROL) & 1) == 1;
+		const bool kalt = (GetAsyncKeyState(VK_MENU) & 1) == 1;
+
 		// Seems weird but Windows send Nth character in alphabet when holding down CTRL.
-		if (wParam < L'A' && GetAsyncKeyState(VK_CONTROL))
+		if (wParam < L'A' && kctrl && !kalt)
 			wParam = L'A' - 1 + wParam;
 
 		KeyEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), wchar_t(wParam));
