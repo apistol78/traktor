@@ -281,6 +281,26 @@ Unit Widget::unit(int32_t measure) const
 	return Unit(m_widget->invdpi96(measure));
 }
 
+Point Widget::pixel(const Point& measure) const
+{
+	return Point(pixel(Unit(measure.x)), pixel(Unit(measure.y)));
+}
+
+Point Widget::unit(const Point& pt) const
+{
+	return Point(unit(pt.x).get(), unit(pt.y).get());
+}
+
+Size Widget::pixel(const Size& measure) const
+{
+	return Size(pixel(Unit(measure.cx)), pixel(Unit(measure.cy)));
+}
+
+Size Widget::unit(const Size& sz) const
+{
+	return Size(unit(sz.cx).get(), unit(sz.cy).get());
+}
+
 bool Widget::hasCapture() const
 {
 	T_ASSERT(m_widget);
