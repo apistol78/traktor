@@ -233,7 +233,7 @@ void MenuShell::eventGlobalButtonUp(MouseButtonUpEvent* event)
 	MenuItem* item = getItem(clientPosition);
 	if (item == m_activeItem)
 	{
-		// Toggle if check box item selected.
+		// Toggle if checkbox item selected.
 		if (item->getCheckBox())
 			item->setChecked(!item->isChecked());
 
@@ -264,7 +264,7 @@ void MenuShell::eventPaint(PaintEvent* e)
 	{
 		const Size itemSize(itemWidth, item->getSize(this).cy);
 		item->paint(this, canvas, Rect(itemTopLeft, itemSize), bool(item == m_trackItem));
-		itemTopLeft.y += itemSize.cy + 1;
+		itemTopLeft.y += itemSize.cy;
 	}
 
 	canvas.setForeground(ss->getColor(this, L"border-color"));
