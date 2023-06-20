@@ -19,18 +19,16 @@
 
 #undef max
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 ComRef< ID2D1Factory > s_d2dFactory;
 ComRef< IDWriteFactory > s_dwFactory;
 int32_t s_instanceCount = 0;
 
-		}
+	}
 
 CanvasDirect2DWin32::CanvasDirect2DWin32()
 {
@@ -268,8 +266,8 @@ void CanvasDirect2DWin32::getAscentAndDescent(int32_t& outAscent, int32_t& outDe
 {
 	if (realizeFont())
 	{
-		outAscent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm);
-		outDescent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm);
+		outAscent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.ascent / m_fontMetrics.designUnitsPerEm + 0.5f);
+		outDescent = (int32_t)(m_dwTextFormat->GetFontSize() * m_fontMetrics.descent / m_fontMetrics.designUnitsPerEm + 0.5f);
 	}
 	else
 	{
@@ -865,7 +863,6 @@ bool CanvasDirect2DWin32::realizeFont() const
 	return m_dwFont != nullptr;
 }
 
-	}
 }
 
 #endif
