@@ -15,6 +15,7 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
@@ -91,7 +92,32 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 {
 	if (pCallbackData && pCallbackData->pMessage)
 	{
-		log::info << mbstows(pCallbackData->pMessage) << Endl;
+		std::wstring message = mbstows(pCallbackData->pMessage);
+		std::wstring spec;
+
+		const size_t s = message.find(L"The Vulkan spec states: ");
+		if (s != message.npos)
+		{
+			spec = message.substr(s);
+			message = message.substr(0, s);
+		}
+
+		LogStream* ls = &log::info;
+		if ((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0)
+			ls = &log::warning;
+		if ((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0)
+			ls = &log::error;
+
+		(*ls) << L"-------------------------------------------------------------------------------" << Endl;
+		for (auto s : StringSplit< std::wstring >(message, L";"))
+			(*ls) << s << Endl;
+		if (!spec.empty())
+		{
+			(*ls) << Endl;
+			for (auto s : StringSplit< std::wstring >(spec, L";"))
+				(*ls) << s << Endl;
+		}
+		(*ls) << L"-------------------------------------------------------------------------------" << Endl;
 	}
 	return VK_FALSE;
 }
@@ -166,7 +192,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	ai.pApplicationName = "Traktor";
 	ai.pEngineName = "Traktor";
 	ai.engineVersion = 1;
-	ai.apiVersion = VK_MAKE_VERSION(1, 1, 0);
+	ai.apiVersion = VK_MAKE_VERSION(1, 2, 0);
 
 	VkInstanceCreateInfo ii = {};
 	ii.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
@@ -304,33 +330,28 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	s8.storagePushConstant8 = VK_FALSE;
 	dci.pNext = &s8;
 
-	VkPhysicalDevice16BitStorageFeatures s16 = {};
-	s16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_16BIT_STORAGE_FEATURES;
-	s16.pNext = nullptr;
-	s16.storageBuffer16BitAccess = VK_FALSE;
-	s16.uniformAndStorageBuffer16BitAccess = VK_TRUE;
-	s16.storagePushConstant16 = VK_FALSE;
-	s16.storageInputOutput16 = VK_FALSE;
-	s8.pNext = &s16;
-
 	VkPhysicalDeviceFloat16Int8FeaturesKHR f16 = {};
 	f16.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR;
 	f16.pNext = nullptr;
 	f16.shaderFloat16 = VK_FALSE;
 	f16.shaderInt8 = VK_TRUE;
-	s16.pNext = &f16;
+	s8.pNext = &f16;
 
 	// Bindless textures.
 	VkPhysicalDeviceDescriptorIndexingFeatures di = {};
 	di.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES;
 	di.runtimeDescriptorArray = VK_TRUE;
+	di.descriptorBindingSampledImageUpdateAfterBind = VK_TRUE;
+	di.descriptorBindingStorageImageUpdateAfterBind = VK_TRUE;
+	di.descriptorBindingPartiallyBound = VK_TRUE;
+	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
 	f16.pNext = &di;
 #endif
 
 	VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 	v11.storageBuffer16BitAccess = VK_FALSE;
-	v11.uniformAndStorageBuffer16BitAccess = VK_FALSE;
+	v11.uniformAndStorageBuffer16BitAccess = VK_TRUE;
 	v11.storagePushConstant16 = VK_FALSE;
 	v11.storageInputOutput16 = VK_FALSE;
 	v11.multiview = VK_FALSE;
