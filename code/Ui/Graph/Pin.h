@@ -9,12 +9,10 @@
 #pragma once
 
 #include <string>
-#include <map>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
-#include "Ui/Rect.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,7 +59,7 @@ public:
 
 	bool isBold() const;
 
-	Point getPosition() const;
+	UnitPoint getPosition() const;
 
 private:
 	Node* m_node;

@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include <map>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -440,8 +441,8 @@ void GraphEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 	T_ASSERT(node != nullptr);
 
 	node->setPosition(std::make_pair(
-		un->getPosition().x,
-		un->getPosition().y
+		un->getPosition().x.get(),
+		un->getPosition().y.get()
 	));
 }
 

@@ -27,6 +27,13 @@ namespace traktor
 		namespace
 		{
 
+const Unit c_marginWidth = 3_ut;		//<! Distance from image edge to "visual" edge.
+const Unit c_textMargin = 16_ut;
+const Unit c_textPad = 8_ut;
+const Unit c_textHeight = 16_ut;
+const Unit c_textWidthAlign = 10_ut;	//<! Align width.
+const Unit c_pinHitWidth = 14_ut;		//<! Width of pin hit area from visual edge.
+
 struct Dim
 {
 	int32_t marginWidth = 3;		//<! Distance from image edge to "visual" edge.
@@ -47,10 +54,12 @@ struct Dim
 	}
 };
 
-int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+Unit getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
-	int32_t x = widget->getFontMetric().getExtent(txt).cx;
-	return alignUp(x, widget->pixel(16_ut));
+	const int32_t x = widget->getFontMetric().getExtent(txt).cx;
+	return widget->unit(
+		alignUp(x, widget->pixel(16_ut))
+	);
 }
 
 		}
@@ -68,23 +77,21 @@ OutputNodeShape::OutputNodeShape()
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point OutputNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
+UnitPoint OutputNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	const Dim dim(graph);
-	const Rect rc = node->calculateRect();
-	return Point(rc.left + dim.marginWidth, rc.getCenter().y);
+	const UnitRect rc = node->calculateRect();
+	return UnitPoint(rc.left + c_marginWidth, rc.getCenter().y);
 }
 
-Pin* OutputNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
+Pin* OutputNodeShape::getPinAt(GraphControl* graph, const Node* node, const UnitPoint& pt) const
 {
-	const Dim dim(graph);
-	const Rect rc = node->calculateRect();
+	const UnitRect rc = node->calculateRect();
 
-	const int32_t x = pt.x - rc.left;
-	const int32_t y = pt.y - rc.top;
-	const int32_t f = graph->pixel(4_ut);
+	const Unit x = pt.x - rc.left;
+	const Unit y = pt.y - rc.top;
+	const Unit f = 4_ut;
 
-	if (x >= 0 && x <= dim.pinHitWidth && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0_ut && x <= c_pinHitWidth && y >= rc.getHeight() / 2_ut - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
 	return nullptr;
@@ -95,7 +102,7 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 	const Dim dim(graph);
 	const StyleSheet* ss = graph->getStyleSheet();
 	const PaintSettings& settings = canvas->getPaintSettings();
-	const Rect rc = node->calculateRect().offset(offset);
+	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	// Draw node shape.
 	{
@@ -193,14 +200,13 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 	}
 }
 
-Size OutputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
+UnitSize OutputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	const Dim dim(graph);
 	const Font currentFont = graph->getFont();
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	const Size sz = m_imageNode[imageIndex]->getSize(graph);
 
-	int32_t width = 0;
+	Unit width = 0_ut;
 
 	if (!node->getTitle().empty())
 	{
@@ -211,15 +217,15 @@ Size OutputNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		width += dim.textPad;
+		width += c_textPad;
 		width += getQuantizedTextWidth(graph, node->getInfo());
 	}
 
-	width = alignUp(width, dim.textWidthAlign) + dim.marginWidth * 2 + dim.textMargin * 2;
+	width = width + c_marginWidth * 2_ut + c_textMargin * 2_ut;
 
 	graph->setFont(currentFont);
 
-	return Size(width, sz.cy);
+	return UnitSize(width, graph->unit(sz.cy));
 }
 
 	}

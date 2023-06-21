@@ -108,7 +108,7 @@ public:
 
 	size_t getSize() const
 	{
-		return size_t(getWidth(), getHeight());
+		return size_t(right - left, bottom - top);
 	}
 
 	point_t getTopLeft() const
@@ -133,7 +133,7 @@ public:
 
 	point_t getCenter() const
 	{
-		return point_t((left + right) / 2, (top + bottom) / 2);
+		return point_t((left + right) / ValueType(2), (top + bottom) / ValueType(2));
 	}
 
 	RectBase< ValueType > getUnified() const

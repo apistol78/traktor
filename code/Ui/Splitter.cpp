@@ -48,8 +48,8 @@ bool Splitter::create(Widget* parent, bool vertical, Unit position, bool relativ
 		return false;
 
 	m_vertical = vertical;
-	m_position = (position < 0) ? -position : position;
-	m_negative = (position < 0) ? true : false;
+	m_position = (position < 0_ut) ? -position : position;
+	m_negative = (position < 0_ut) ? true : false;
 	m_relative = relative;
 	m_border = border;
 	m_drag = false;

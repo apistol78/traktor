@@ -30,58 +30,58 @@ const std::wstring& Group::getTitle() const
 	return m_title;
 }
 
-void Group::setPosition(const Point& position)
+void Group::setPosition(const UnitPoint& position)
 {
 	m_position = position;
 }
 
-const Point& Group::getPosition() const
+const UnitPoint& Group::getPosition() const
 {
 	return m_position;
 }
 
-void Group::setSize(const Size& size)
+void Group::setSize(const UnitSize& size)
 {
 	m_size = size;
 }
 
-const Size& Group::getSize() const
+const UnitSize& Group::getSize() const
 {
 	return m_size;
 }
 
-bool Group::hit(const Point& p) const
+bool Group::hit(const UnitPoint& p) const
 {
 	return calculateRect().inside(p);
 }
 
-bool Group::hitTitle(const Point& p) const
+bool Group::hitTitle(const UnitPoint& p) const
 {
 	const Unit titleHeight = m_owner->getPaintSettings().getFontGroup().getSize();
-	return Rect(m_position, Size(m_size.cx, m_owner->pixel(titleHeight + 8_ut))).inside(p);
+	return UnitRect(m_position, UnitSize(m_size.cx, titleHeight + 8_ut)).inside(p);
 }
 
-int32_t Group::hitAnchor(const Point& p) const
+int32_t Group::hitAnchor(const UnitPoint& p) const
 {
-	const Rect rc = calculateRect();
-	const Size sz(m_owner->pixel(16_ut), m_owner->pixel(16_ut));
+	const UnitRect rc = calculateRect();
+	const UnitSize sz(16_ut, 16_ut);
 
-	if (Rect(rc.getTopLeft(), sz).inside(p))
+	if (UnitRect(rc.getTopLeft(), sz).inside(p))
 		return 0;
 
-	if (Rect(rc.getTopRight() - Size(sz.cx, 0), sz).inside(p))
+	if (UnitRect(rc.getTopRight() - UnitSize(sz.cx, 0_ut), sz).inside(p))
 		return 1;
 
-	if (Rect(rc.getBottomRight() - Size(sz.cx, sz.cy), sz).inside(p))
+	if (UnitRect(rc.getBottomRight() - UnitSize(sz.cx, sz.cy), sz).inside(p))
 		return 2;
 
-	if (Rect(rc.getBottomLeft() - Size(0, sz.cy), sz).inside(p))
+	if (UnitRect(rc.getBottomLeft() - UnitSize(0_ut, sz.cy), sz).inside(p))
 		return 3;
 
 	return -1;
 }
 
-void Group::setAnchorPosition(int32_t anchor, const Point& position)
+void Group::setAnchorPosition(int32_t anchor, const UnitPoint& position)
 {
 	switch (anchor)
 	{
@@ -106,9 +106,9 @@ void Group::setAnchorPosition(int32_t anchor, const Point& position)
 	}
 }
 
-Point Group::getAnchorPosition(int32_t anchor) const
+UnitPoint Group::getAnchorPosition(int32_t anchor) const
 {
-	const Rect rc = calculateRect();
+	const UnitRect rc = calculateRect();
 	switch (anchor)
 	{
 	default:
@@ -123,9 +123,9 @@ Point Group::getAnchorPosition(int32_t anchor) const
 	}
 }
 
-Rect Group::calculateRect() const
+UnitRect Group::calculateRect() const
 {
-	return Rect(m_position, m_size);
+	return UnitRect(m_position, m_size);
 }
 
 void Group::setSelected(bool selected)
@@ -140,7 +140,7 @@ bool Group::isSelected() const
 
 void Group::paint(GraphCanvas* canvas, const Size& offset) const
 {
-	const Rect rc = calculateRect().offset(offset);
+	const Rect rc = m_owner->pixel(calculateRect()).offset(offset);
 	const Rect rcTitle = rc.inflate(-m_owner->pixel(16_ut), -m_owner->pixel(4_ut));
 
 	// Draw group shape.
@@ -183,7 +183,7 @@ void Group::paint(GraphCanvas* canvas, const Size& offset) const
 	canvas->setFont(canvas->getPaintSettings().getFont());
 }
 
-Group::Group(GraphControl* owner, const std::wstring& title, const Point& position, const Size& size)
+Group::Group(GraphControl* owner, const std::wstring& title, const UnitPoint& position, const UnitSize& size)
 :	m_owner(owner)
 ,	m_title(title)
 ,	m_position(position)

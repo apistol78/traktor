@@ -643,12 +643,12 @@ void StateGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	StateNode* state = node->getData< StateNode >(L"STATE");
 	T_ASSERT(state);
 
-	ui::Point position = node->getPosition();
-	if (position.x != state->getPosition().first || position.y != state->getPosition().second)
+	ui::UnitPoint position = node->getPosition();
+	if (position.x.get() != state->getPosition().first || position.y.get() != state->getPosition().second)
 	{
 		state->setPosition(std::pair< int, int >(
-			node->getPosition().x,
-			node->getPosition().y
+			node->getPosition().x.get(),
+			node->getPosition().y.get()
 		));
 	}
 
@@ -701,9 +701,9 @@ void StateGraphEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 		node->setTitle(state->getName());
 
 		const auto& position = state->getPosition();
-		node->setPosition(ui::Point(
-			position.first,
-			position.second
+		node->setPosition(ui::UnitPoint(
+			ui::Unit(position.first),
+			ui::Unit(position.second)
 		));
 	}
 

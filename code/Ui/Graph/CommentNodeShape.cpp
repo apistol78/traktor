@@ -27,6 +27,8 @@ namespace traktor
 		namespace
 		{
 
+const Unit c_margin = 16_ut;
+
 struct Dim
 {
 	int32_t margin = 16;
@@ -46,12 +48,12 @@ CommentNodeShape::CommentNodeShape()
 	m_imageNode = new ui::StyleBitmap(L"UI.Graph.Comment");
 }
 
-Point CommentNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
+UnitPoint CommentNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	return Point(0, 0);
+	return UnitPoint(0_ut, 0_ut);
 }
 
-Pin* CommentNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
+Pin* CommentNodeShape::getPinAt(GraphControl* graph, const Node* node, const UnitPoint& pt) const
 {
 	return nullptr;
 }
@@ -59,7 +61,7 @@ Pin* CommentNodeShape::getPinAt(GraphControl* graph, const Node* node, const Poi
 void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
 	const StyleSheet* ss = graph->getStyleSheet();
-	const Rect rc = node->calculateRect().offset(offset);
+	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	// Draw node shape.
 	{
@@ -130,27 +132,27 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	}
 }
 
-Size CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) const
+UnitSize CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return Size(graph->pixel(200_ut), graph->pixel(200_ut));
+		return UnitSize(200_ut, 200_ut);
 
 	const Dim dim(graph);
-	const int32_t lineHeight = graph->getFontMetric().getExtent(L"W").cy;
+	const Unit lineHeight = graph->unit(graph->getFontMetric().getExtent(L"W").cy);
 
 	std::vector< std::wstring > lines;
 	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
-	Size textSize(0, 0);
+	UnitSize textSize(0_ut, 0_ut);
 	for (const auto& line : lines)
 	{
-		const Size lineExtent = graph->getFontMetric().getExtent(line);
+		const UnitSize lineExtent = graph->unit(graph->getFontMetric().getExtent(line));
 		textSize.cx = std::max(textSize.cx, lineExtent.cx);
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + Size(dim.margin * 2, dim.margin * 2);
+	return textSize + UnitSize(c_margin * 2_ut, c_margin * 2_ut);
 }
 
 	}

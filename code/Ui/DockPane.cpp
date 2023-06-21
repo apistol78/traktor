@@ -197,10 +197,10 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, Unit s
 
 			if (m_parent)
 			{
-				if (m_parent->m_split < 0)
-					m_parent->m_split = -traktor::abs(split);
+				if (m_parent->m_split < 0_ut)
+					m_parent->m_split = Unit(-traktor::abs(split.get()));
 				else
-					m_parent->m_split = traktor::abs(split);
+					m_parent->m_split = Unit(traktor::abs(split.get()));
 			}
 		}
 	}
@@ -566,7 +566,7 @@ void DockPane::setSplitterPosition(const Point& position)
 	pos = std::max(0, pos);
 	pos = std::min(extent, pos);
 
-	if (m_split < 0)
+	if (m_split < 0_ut)
 		m_split = m_owner->unit(-(extent - pos));
 	else
 		m_split = m_owner->unit(pos);

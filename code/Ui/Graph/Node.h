@@ -70,9 +70,9 @@ public:
 
 	int32_t getState() const;
 
-	void setPosition(const Point& position);
+	void setPosition(const UnitPoint& position);
 
-	Point getPosition() const;
+	UnitPoint getPosition() const;
 
 	void setSelected(bool selected);
 
@@ -106,15 +106,15 @@ public:
 
 	Pin* findOutputPin(const Guid& id) const;
 
-	bool hit(const Point& p) const;
+	bool hit(const UnitPoint& p) const;
 
-	Point getPinPosition(const Pin* pin) const;
+	UnitPoint getPinPosition(const Pin* pin) const;
 
-	Pin* getPinAt(const Point& p) const;
+	Pin* getPinAt(const UnitPoint& p) const;
 
 	void paint(GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const;
 
-	Rect calculateRect() const;
+	UnitRect calculateRect() const;
 
 private:
 	friend class GraphControl;
@@ -125,14 +125,14 @@ private:
 	std::wstring m_comment;
 	Ref< IBitmap > m_image;
 	int32_t m_state;
-	Point m_position;
-	Size m_size;
+	UnitPoint m_position;
+	UnitSize m_size;
 	bool m_selected;
 	RefArray< Pin > m_inputPins;
 	RefArray< Pin > m_outputPins;
 	Ref< const INodeShape > m_shape;
 
-	explicit Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
+	explicit Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const UnitPoint& position, const INodeShape* shape);
 
 	void updateSize();
 };

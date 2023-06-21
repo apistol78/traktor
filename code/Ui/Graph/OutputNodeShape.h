@@ -35,13 +35,13 @@ class T_DLLCLASS OutputNodeShape : public INodeShape
 public:
 	OutputNodeShape();
 
-	virtual Point getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const override final;
+	virtual UnitPoint getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const override final;
 
-	virtual Pin* getPinAt(GraphControl* graph, const Node* node, const Point& pt) const override final;
+	virtual Pin* getPinAt(GraphControl* graph, const Node* node, const UnitPoint& pt) const override final;
 
 	virtual void paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const override final;
 
-	virtual Size calculateSize(GraphControl* graph, const Node* node) const override final;
+	virtual UnitSize calculateSize(GraphControl* graph, const Node* node) const override final;
 
 private:
 	Ref< IBitmap > m_imageNode[4];

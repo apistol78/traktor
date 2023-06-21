@@ -41,25 +41,25 @@ public:
 
 	const std::wstring& getTitle() const;
 
-	void setPosition(const Point& position);
+	void setPosition(const UnitPoint& position);
 
-	const Point& getPosition() const;
+	const UnitPoint& getPosition() const;
 
-	void setSize(const Size& size);
+	void setSize(const UnitSize& size);
 
-	const Size& getSize() const;
+	const UnitSize& getSize() const;
 
-	void setAnchorPosition(int32_t anchor, const Point& position);
+	void setAnchorPosition(int32_t anchor, const UnitPoint& position);
 
-	Point getAnchorPosition(int32_t anchor) const;
+	UnitPoint getAnchorPosition(int32_t anchor) const;
 
-	Rect calculateRect() const;
+	UnitRect calculateRect() const;
 
-	bool hit(const Point& p) const;
+	bool hit(const UnitPoint& p) const;
 
-	bool hitTitle(const Point& p) const;
+	bool hitTitle(const UnitPoint& p) const;
 
-	int32_t hitAnchor(const Point& p) const;
+	int32_t hitAnchor(const UnitPoint& p) const;
 
 	void setSelected(bool selected);
 
@@ -73,11 +73,11 @@ private:
 	GraphControl* m_owner = nullptr;
 	Ref< IBitmap > m_image[2];
 	std::wstring m_title;
-	Point m_position;
-	Size m_size;
+	UnitPoint m_position;
+	UnitSize m_size;
 	bool m_selected = false;
 
-	explicit Group(GraphControl* owner, const std::wstring& title, const Point& position, const Size& size);
+	explicit Group(GraphControl* owner, const std::wstring& title, const UnitPoint& position, const UnitSize& size);
 };
 
 }

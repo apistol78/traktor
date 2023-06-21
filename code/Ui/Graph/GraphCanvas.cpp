@@ -160,7 +160,7 @@ void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 
 void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
-	if (m_scaledFont.getSize() < 4)
+	if (m_scaledFont.getSize() < 4_ut)
 		return;
 
 	m_canvas->drawText(

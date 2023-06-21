@@ -59,7 +59,7 @@ bool Pin::isBold() const
 	return m_bold;
 }
 
-Point Pin::getPosition() const
+UnitPoint Pin::getPosition() const
 {
 	return m_node->getPinPosition(this);
 }
