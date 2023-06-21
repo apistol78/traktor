@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <X11/Xresource.h>
 #include "Core/Assert.h"
+#include "Core/Log/Log.h"
 #include "Ui/X11/Context.h"
 
 namespace traktor::ui
@@ -50,6 +51,7 @@ Context::Context(Display* display, int screen, XIM xim)
 ,	m_focused(nullptr)
 {
 	m_dpi = (int32_t)getSystemDpi(display);
+	log::info << L"System DPI " << m_dpi << Endl;
 }
 
 void Context::bind(WidgetData* widget, int32_t eventType, const std::function< void(XEvent& xe) >& fn)
@@ -66,7 +68,7 @@ void Context::unbind(WidgetData* widget)
 	if (it != m_modal.end())
 		m_modal.erase(it);
 
-	size_t nerased = m_bindings.erase(widget->window);
+	const size_t nerased = m_bindings.erase(widget->window);
 	T_FATAL_ASSERT(nerased > 0);
 
 	if (m_grabbed == widget)

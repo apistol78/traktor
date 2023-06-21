@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Assoc;
 
@@ -60,5 +58,4 @@ private:
 	bool preTranslateEvent(EventSubject* owner, XEvent& e);
 };
 
-	}
 }
