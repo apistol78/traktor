@@ -443,13 +443,13 @@ public:
 
 	virtual int32_t dpi96(int32_t measure) const override
 	{
-		const uint32_t dpiw = m_context->getSystemDPI();
+		const int32_t dpiw = m_context->getSystemDPI();
 		return (dpiw * measure) / 96;
 	}
 
 	virtual int32_t invdpi96(int32_t measure) const override
 	{
-		const uint32_t dpiw = m_context->getSystemDPI();
+		const int32_t dpiw = m_context->getSystemDPI();
 		return (96 * measure) / (dpiw > 0 ? dpiw : 96);
 	}
 

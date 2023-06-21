@@ -21,10 +21,8 @@
 #include "Ui/X11/Timers.h"
 #include "Ui/X11/UtilitiesX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 EventLoopX11::EventLoopX11(Context* context)
 :	m_context(context)
@@ -332,6 +330,4 @@ bool EventLoopX11::preTranslateEvent(EventSubject* owner, XEvent& e)
 	return consumed;
 }
 
-	}
 }
-
