@@ -45,9 +45,9 @@ Ref< ui::Node > InterpolatorNodeFacade::createEditorNode(
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		L"",
-		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(shaderNode->getPosition().first),
+			ui::Unit(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

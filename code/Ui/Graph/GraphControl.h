@@ -65,7 +65,7 @@ public:
 
 	virtual void destroy() override;
 
-	Group* createGroup(const std::wstring& title, const Point& position, const Size& size);
+	Group* createGroup(const std::wstring& title, const UnitPoint& position, const UnitSize& size);
 
 	void removeGroup(Group* group);
 
@@ -75,7 +75,7 @@ public:
 
 	const RefArray< Group >& getGroups() const;
 
-	Node* createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape);
+	Node* createNode(const std::wstring& title, const std::wstring& info, const UnitPoint& position, const INodeShape* shape);
 
 	void removeNode(Node* node);
 

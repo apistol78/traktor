@@ -45,9 +45,9 @@ Ref< ui::Node > SwizzleNodeFacade::createEditorNode(
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		L"",
 		shaderNode->getInformation(),
-		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(shaderNode->getPosition().first),
+			ui::Unit(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

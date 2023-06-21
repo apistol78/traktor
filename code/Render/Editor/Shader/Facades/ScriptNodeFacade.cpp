@@ -57,9 +57,9 @@ Ref< ui::Node > ScriptNodeFacade::createEditorNode(
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		scriptNode->getName(),
 		L"",
-		ui::Point(
-			scriptNode->getPosition().first,
-			scriptNode->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(scriptNode->getPosition().first),
+			ui::Unit(scriptNode->getPosition().second)
 		),
 		m_nodeShape
 	);

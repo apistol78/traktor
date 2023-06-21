@@ -10,7 +10,6 @@
 
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Ui/Rect.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Node;
 class Edge;
@@ -40,22 +37,15 @@ public:
 
 	void addEdge(Edge* edge);
 
-	void setBounds(const ui::UnitRect& bounds);
-
 	const RefArray< Node >& getNodes() const;
 
 	const RefArray< Edge >& getEdges() const;
-
-	const ui::UnitRect& getBounds() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
-	ui::UnitRect m_bounds;
 };
 
-	}
 }
-
