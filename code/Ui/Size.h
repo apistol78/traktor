@@ -14,45 +14,86 @@
 #	undef max
 #endif
 
+ // import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor::ui
 {
 
 /*! Size
  * \ingroup UI
  */
-class Size
+class T_DLLCLASS Size
 {
 public:
-	int32_t cx;
-	int32_t cy;
+	int32_t cx = 0;
+	int32_t cy = 0;
 
-	inline Size();
+	Size() = default;
 
-	inline Size(int32_t x, int32_t y);
+	Size(int32_t x, int32_t y)
+	:	cx(x)
+	,	cy(y)
+	{
+	}
 
-	inline Size(const std::pair< int32_t, int32_t >& pr);
+	Size(const std::pair< int32_t, int32_t >& pr)
+	:	cx(pr.first)
+	,	cy(pr.second)
+	{
+	}
 
-	inline Size(const Size& size);
+	Size(const Size& size)
+	:	cx(size.cx)
+	,	cy(size.cy)
+	{
+	}
 
-	inline Size operator - () const;
+	Size operator - () const
+	{
+		return Size(-cx, -cy);
+	}
 
-	inline Size operator + (const Size& r) const;
+	Size operator + (const Size& r) const
+	{
+		return Size(cx + r.cx, cy + r.cy);
+	}
 
-	inline Size& operator += (const Size& r);
+	Size& operator += (const Size& r)
+	{
+		cx += r.cx;
+		cy += r.cy;
+		return *this;
+	}
 
-	inline Size operator - (const Size& r) const;
+	Size operator - (const Size& r) const
+	{
+		return Size(cx - r.cx, cy - r.cy);
+	}
 
-	inline Size& operator -= (const Size& r);
+	Size& operator -= (const Size& r)
+	{
+		cx -= r.cx;
+		cy -= r.cy;
+		return *this;
+	}
 
-	inline bool operator == (const Size& r) const;
+	bool operator == (const Size& r) const
+	{
+		return cx == r.cx && cy == r.cy;
+	}
 
-	inline bool operator != (const Size& r) const;
+	bool operator != (const Size& r) const
+	{
+		return cx != r.cx || cy != r.cy;
+	}
 
-	inline operator std::pair< int32_t, int32_t >() const;
-
-	inline static Size max() { return Size(65535, 65535); }
+	static Size max() { return Size(65535, 65535); }
 };
 
 }
-
-#include "Ui/Size.inl"
