@@ -297,7 +297,8 @@ bool Image::createTarget(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	if (swapChainImage == 0)
+		updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	return true;
 }
 
@@ -366,7 +367,8 @@ bool Image::createDepthTarget(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
+	if (usedAsTexture)
+		updateBindlessResource(VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
 	return true;
 }
 
