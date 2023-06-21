@@ -401,7 +401,7 @@ Ref< ui::Node > ImageGraphEditorPage::createEditorNode(Node* node) const
 	Ref< ui::Node > editorNode;
 
 	const std::pair< int, int >& p = node->getPosition();
-	const ui::Point position(p.first, p.second);
+	const ui::UnitPoint position(ui::Unit(p.first), ui::Unit(p.second));
 
 	if (auto input = dynamic_type_cast< ImgInput* >(node))
 	{

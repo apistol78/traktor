@@ -138,9 +138,9 @@ void GraphControl::destroy()
 	Widget::destroy();
 }
 
-Group* GraphControl::createGroup(const std::wstring& title, const Point& position, const Size& size)
+Group* GraphControl::createGroup(const std::wstring& title, const UnitPoint& position, const UnitSize& size)
 {
-	Ref< Group > group = new Group(this, title, unit(position), unit(size));
+	Ref< Group > group = new Group(this, title, position, size);
 	m_groups.push_back(group);
 	return group;
 }
@@ -165,9 +165,9 @@ const RefArray< Group >& GraphControl::getGroups() const
 	return m_groups;
 }
 
-Node* GraphControl::createNode(const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
+Node* GraphControl::createNode(const std::wstring& title, const std::wstring& info, const UnitPoint& position, const INodeShape* shape)
 {
-	Ref< Node > node = new Node(this, title, info, unit(position), shape);
+	Ref< Node > node = new Node(this, title, info, position, shape);
 	m_nodes.insert(m_nodes.begin(), node);
 	return node;
 }

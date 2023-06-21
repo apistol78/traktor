@@ -294,7 +294,7 @@ void GraphEditor::updateView()
 			un = m_graph->createNode(
 				L"Scalar",
 				toString(scalar->getValue()),
-				ui::Point(position.first, position.second),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
 				new ui::InputNodeShape()
 			);
 		}
@@ -303,7 +303,7 @@ void GraphEditor::updateView()
 			un = m_graph->createNode(
 				L"Output",
 				L"",
-				ui::Point(position.first, position.second),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
 				new ui::OutputNodeShape()
 			);
 		}
@@ -312,7 +312,7 @@ void GraphEditor::updateView()
 			un = m_graph->createNode(
 				getLocalizedName(&type_of(node)),
 				L"",
-				ui::Point(position.first, position.second),
+				ui::UnitPoint(ui::Unit(position.first), ui::Unit(position.second)),
 				new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 			);
 		}

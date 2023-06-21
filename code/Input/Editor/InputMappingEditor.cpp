@@ -122,7 +122,7 @@ void createInputNodes(InputMappingAsset* mappingAsset, ui::GraphControl* graph, 
 		Ref< ui::Node > graphNode = graph->createNode(
 			t->getHeader(node),
 			t->getDescription(node),
-			ui::Point(p.x, p.y),
+			ui::UnitPoint(ui::Unit(p.x), ui::Unit(p.y)),
 			childNodes.empty() ? (ui::INodeShape*)new ui::InputNodeShape() : (ui::INodeShape*)new ui::DefaultNodeShape(ui::DefaultNodeShape::StDefault)
 		);
 		valuePin = graphNode->createOutputPin(L"Value", Guid());
@@ -367,7 +367,7 @@ void InputMappingEditor::updateGraphView()
 		Ref< ui::Node > node = m_graph->createNode(
 			L"State",
 			it.first,
-			ui::Point(p.x, p.y),
+			ui::UnitPoint(ui::Unit(p.x), ui::Unit(p.y)),
 			new ui::OutputNodeShape()
 		);
 		node->setData(L"NAME", new PropertyString(it.first));

@@ -503,9 +503,9 @@ Ref< ui::Node > StateGraphEditorPage::createEditorNode(StateNode* state)
 	Ref< ui::Node > node = m_editorGraph->createNode(
 		state->getName(),
 		L"",
-		ui::Point(
-			state->getPosition().first,
-			state->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(state->getPosition().first),
+			ui::Unit(state->getPosition().second)
 		),
 		shape
 	);

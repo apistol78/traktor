@@ -119,7 +119,7 @@ private:
 	std::map< const TypeInfo*, Ref< INodeFacade > > m_nodeFacades;
 	Ref< Script > m_script;
 
-	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
+	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges, RefArray< ui::Node >* outEditorNodes);
 
 	Ref< ui::Node > createEditorNode(Node* shaderNode);
 

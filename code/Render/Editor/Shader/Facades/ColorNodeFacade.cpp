@@ -45,9 +45,9 @@ Ref< ui::Node > ColorNodeFacade::createEditorNode(
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
-		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(shaderNode->getPosition().first),
+			ui::Unit(shaderNode->getPosition().second)
 		),
 		m_nodeShape
 	);

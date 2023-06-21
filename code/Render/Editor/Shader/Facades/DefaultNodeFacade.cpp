@@ -64,9 +64,9 @@ Ref< ui::Node > DefaultNodeFacade::createEditorNode(
 	Ref< ui::Node > editorNode = graphControl->createNode(
 		title,
 		shaderNode->getInformation(),
-		ui::Point(
-			shaderNode->getPosition().first,
-			shaderNode->getPosition().second
+		ui::UnitPoint(
+			ui::Unit(shaderNode->getPosition().first),
+			ui::Unit(shaderNode->getPosition().second)
 		),
 		shape
 	);
