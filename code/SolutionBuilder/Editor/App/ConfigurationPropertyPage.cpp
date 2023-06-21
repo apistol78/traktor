@@ -184,19 +184,23 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 	m_dropProfile->select(int(m_configuration->getTargetProfile()));
 
 	std::vector< std::wstring > includePaths = m_configuration->getIncludePaths();
-	std::remove_if(includePaths.begin(), includePaths.end(), EmptyString());
+	auto it1 = std::remove_if(includePaths.begin(), includePaths.end(), EmptyString());
+	includePaths.erase(it1, includePaths.end());
 	m_configuration->setIncludePaths(includePaths);
 
 	std::vector< std::wstring > definitions = m_configuration->getDefinitions();
-	std::remove_if(definitions.begin(), definitions.end(), EmptyString());
+	auto it2 = std::remove_if(definitions.begin(), definitions.end(), EmptyString());
+	definitions.erase(it2, definitions.end());
 	m_configuration->setDefinitions(definitions);
 
 	std::vector< std::wstring > libraryPaths = m_configuration->getLibraryPaths();
-	std::remove_if(libraryPaths.begin(), libraryPaths.end(), EmptyString());
+	auto it3 = std::remove_if(libraryPaths.begin(), libraryPaths.end(), EmptyString());
+	libraryPaths.erase(it3, libraryPaths.end());
 	m_configuration->setLibraryPaths(libraryPaths);
 
 	std::vector< std::wstring > libraries = m_configuration->getLibraries();
-	std::remove_if(libraries.begin(), libraries.end(), EmptyString());
+	auto it4 = std::remove_if(libraries.begin(), libraries.end(), EmptyString());
+	libraries.erase(it4, libraries.end());
 	m_configuration->setLibraries(libraries);
 
 	m_listIncludePaths->removeAll();

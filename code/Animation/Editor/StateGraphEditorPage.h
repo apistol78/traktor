@@ -11,6 +11,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
+#include "Ui/Point.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,7 +44,6 @@ class Menu;
 class MouseButtonDownEvent;
 class Node;
 class NodeMovedEvent;
-class Point;
 class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;

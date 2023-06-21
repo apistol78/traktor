@@ -11,6 +11,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
+#include "Ui/Point.h"
 #include "Ui/Events/AllEvents.h"
 
 // import/export mechanism.
@@ -49,7 +50,6 @@ class Menu;
 class Node;
 class NodeActivateEvent;
 class NodeMovedEvent;
-class Point;
 class SelectEvent;
 class Splitter;
 class SyntaxRichEdit;

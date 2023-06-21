@@ -141,12 +141,12 @@ void GraphCanvas::fillPolygon(const Point* pnts, int count)
 void GraphCanvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
 {
 	const Point sdstAt(
-		std::floor(dstAt.x * m_scale),
-		std::floor(dstAt.y * m_scale)
+		(int32_t)std::floor(dstAt.x * m_scale),
+		(int32_t)std::floor(dstAt.y * m_scale)
 	);
 	const Size sdstSize(
-		std::floor(dstSize.cx * m_scale + 1.0f),
-		std::floor(dstSize.cy * m_scale + 1.0f)
+		(int32_t)std::floor(dstSize.cx * m_scale + 1.0f),
+		(int32_t)std::floor(dstSize.cy * m_scale + 1.0f)
 	);
 	m_canvas->drawBitmap(
 		sdstAt,

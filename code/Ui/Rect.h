@@ -25,17 +25,21 @@ namespace traktor::ui
 /*! Rectangle
  * \ingroup UI
  */
-class T_DLLCLASS Rect
+template < typename ValueType >
+class T_DLLCLASS RectBase
 {
 public:
-	int32_t left = 0;
-	int32_t top = 0;
-	int32_t right = 0;
-	int32_t bottom = 0;
+	typedef PointBase< ValueType > point_t;
+	typedef SizeBase< ValueType > size_t;
 
-	Rect() = default;
+	ValueType left = ValueType(0);
+	ValueType top = ValueType(0);
+	ValueType right = ValueType(0);
+	ValueType bottom = ValueType(0);
 
-	Rect(int32_t l, int32_t t, int32_t r, int32_t b)
+	RectBase() = default;
+
+	RectBase(ValueType l, ValueType t, ValueType r, ValueType b)
 	:	left(l)
 	,	top(t)
 	,	right(r)
@@ -43,7 +47,7 @@ public:
 	{
 	}
 
-	Rect(const Point& tl, const Point& br)
+	RectBase(const point_t& tl, const point_t& br)
 	:	left(tl.x)
 	,	top(tl.y)
 	,	right(br.x)
@@ -51,7 +55,7 @@ public:
 	{
 	}
 
-	Rect(const Point& tl, const Size& wh)
+	RectBase(const point_t& tl, const size_t& wh)
 	:	left(tl.x)
 	,	top(tl.y)
 	,	right(tl.x + wh.cx)
@@ -59,7 +63,7 @@ public:
 	{
 	}
 
-	Rect(const Rect& rc)
+	RectBase(const RectBase< ValueType >& rc)
 	:	left(rc.left)
 	,	top(rc.top)
 	,	right(rc.right)
@@ -67,74 +71,74 @@ public:
 	{
 	}
 
-	void moveTo(const Point& pnt)
+	void moveTo(const point_t& pnt)
 	{
-		const Size size = getSize();
+		const size_t size = getSize();
 		left = pnt.x;
 		top = pnt.y;
 		right = pnt.x + size.cx;
 		bottom = pnt.y + size.cy;
 	}
 
-	void setWidth(int32_t width)
+	void setWidth(ValueType width)
 	{
 		right = left + width;
 	}
 
-	int32_t getWidth() const
+	ValueType getWidth() const
 	{
 		return right - left;
 	}
 
-	void setHeight(int32_t height)
+	void setHeight(ValueType height)
 	{
 		bottom = top + height;
 	}
 
-	int32_t getHeight() const
+	ValueType getHeight() const
 	{
 		return bottom - top;
 	}
 
-	void setSize(const Size& size)
+	void setSize(const size_t& size)
 	{
 		setWidth(size.cx);
 		setHeight(size.cy);
 	}
 
-	Size getSize() const
+	size_t getSize() const
 	{
-		return Size(getWidth(), getHeight());
+		return size_t(getWidth(), getHeight());
 	}
 
-	Point getTopLeft() const
+	point_t getTopLeft() const
 	{
-		return Point(left, top);
+		return point_t(left, top);
 	}
 
-	Point getTopRight() const
+	point_t getTopRight() const
 	{
-		return Point(right, top);
+		return point_t(right, top);
 	}
 
-	Point getBottomLeft() const
+	point_t getBottomLeft() const
 	{
-		return Point(left, bottom);
+		return point_t(left, bottom);
 	}
 
-	Point getBottomRight() const
+	point_t getBottomRight() const
 	{
-		return Point(right, bottom);
+		return point_t(right, bottom);
 	}
 
-	Point getCenter() const
+	point_t getCenter() const
 	{
-		return Point((left + right) / 2, (top + bottom) / 2);
+		return point_t((left + right) / 2, (top + bottom) / 2);
 	}
 
-	Rect getUnified() const
+	RectBase< ValueType > getUnified() const
 	{
-		Rect rc = *this;
+		RectBase< ValueType > rc = *this;
 		if (rc.left > rc.right)
 			std::swap(rc.left, rc.right);
 		if (rc.top > rc.bottom)
@@ -142,34 +146,34 @@ public:
 		return rc;
 	}
 
-	Rect offset(const Size& sz) const
+	RectBase< ValueType > offset(const size_t& sz) const
 	{
 		return offset(sz.cx, sz.cy);
 	}
 
-	Rect offset(int32_t x, int32_t y) const
+	RectBase< ValueType > offset(ValueType x, ValueType y) const
 	{
-		return Rect(left + x, top + y, right + x, bottom + y);
+		return RectBase< ValueType >(left + x, top + y, right + x, bottom + y);
 	}
 
-	Rect inflate(const Size& sz) const
+	RectBase< ValueType > inflate(const size_t& sz) const
 	{
 		return inflate(sz.cx, sz.cy);
 	}
 
-	Rect inflate(int32_t x, int32_t y) const
+	RectBase< ValueType > inflate(ValueType x, ValueType y) const
 	{
-		return Rect(left - x, top - y, right + x, bottom + y);
+		return RectBase< ValueType >(left - x, top - y, right + x, bottom + y);
 	}
 
-	int32_t area() const
+	ValueType area() const
 	{
 		return getWidth() * getHeight();
 	}
 
-	Rect contain(const Point& pnt) const
+	RectBase< ValueType > contain(const point_t& pnt) const
 	{
-		Rect rc = *this;
+		RectBase< ValueType > rc = *this;
 		if (pnt.x < rc.left)
 			rc.left = pnt.x;
 		if (pnt.y < rc.top)
@@ -181,7 +185,7 @@ public:
 		return rc;
 	}
 
-	bool inside(const Point& pnt, bool inclusive = true) const
+	bool inside(const point_t& pnt, bool inclusive = true) const
 	{
 		return
 			inclusive ?
@@ -189,12 +193,12 @@ public:
 			bool(pnt.x > left && pnt.x < right && pnt.y > top && pnt.y < bottom);
 	}
 
-	bool intersect(const Rect& rc) const
+	bool intersect(const RectBase< ValueType >& rc) const
 	{
 		return (left < rc.right) && (top < rc.bottom) && (right > rc.left) && (bottom > rc.top);
 	}
 
-	Rect& operator = (const Rect& rc)
+	RectBase< ValueType >& operator = (const RectBase< ValueType >& rc)
 	{
 		left = rc.left;
 		top = rc.top;
@@ -203,7 +207,7 @@ public:
 		return *this;
 	}
 
-	bool operator == (const Rect& rc) const
+	bool operator == (const RectBase< ValueType >& rc) const
 	{
 		return
 			left == rc.left &&
@@ -212,11 +216,14 @@ public:
 			bottom == rc.bottom;
 	}
 
-	bool operator != (const Rect& rc) const
+	bool operator != (const RectBase< ValueType >& rc) const
 	{
 		return !(*this == rc);
 	}
 };
+
+typedef RectBase< int32_t > Rect;
+typedef RectBase< Unit > UnitRect;
 
 }
 

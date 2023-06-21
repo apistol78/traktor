@@ -76,7 +76,7 @@ void AnglesPropertyItem::destroyInPlaceControls()
 		if (m_editors[i])
 		{
 			m_editors[i]->destroy();
-			m_editors[i] = 0;
+			m_editors[i] = nullptr;
 		}
 	}
 }

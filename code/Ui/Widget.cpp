@@ -281,24 +281,34 @@ Unit Widget::unit(int32_t measure) const
 	return Unit(m_widget->invdpi96(measure));
 }
 
-Point Widget::pixel(const Point& measure) const
+Point Widget::pixel(const UnitPoint& measure) const
 {
-	return Point(pixel(Unit(measure.x)), pixel(Unit(measure.y)));
+	return Point(pixel(measure.x), pixel(measure.y));
 }
 
-Point Widget::unit(const Point& pt) const
+UnitPoint Widget::unit(const Point& pt) const
 {
-	return Point(unit(pt.x).get(), unit(pt.y).get());
+	return UnitPoint(unit(pt.x), unit(pt.y));
 }
 
-Size Widget::pixel(const Size& measure) const
+Size Widget::pixel(const UnitSize& measure) const
 {
-	return Size(pixel(Unit(measure.cx)), pixel(Unit(measure.cy)));
+	return Size(pixel(measure.cx), pixel(measure.cy));
 }
 
-Size Widget::unit(const Size& sz) const
+UnitSize Widget::unit(const Size& sz) const
 {
-	return Size(unit(sz.cx).get(), unit(sz.cy).get());
+	return UnitSize(unit(sz.cx), unit(sz.cy));
+}
+
+Rect Widget::pixel(const UnitRect& measure) const
+{
+	return Rect(pixel(measure.getTopLeft()), pixel(measure.getBottomRight()));
+}
+
+UnitRect Widget::unit(const Rect& rc) const
+{
+	return UnitRect(unit(rc.getTopLeft()), unit(rc.getBottomRight()));
 }
 
 bool Widget::hasCapture() const

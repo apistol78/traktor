@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Ui/Associative.h"
+#include "Ui/Rect.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,8 +26,6 @@ namespace traktor
 	{
 
 class Canvas;
-class Point;
-class Rect;
 class Sequence;
 class SequencerControl;
 

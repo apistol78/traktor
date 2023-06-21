@@ -12,14 +12,13 @@
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
 #include "Render/Types.h"
+#include "Ui/Rect.h"
 #include "World/WorldTypes.h"
 
 namespace traktor::ui
 {
 
 class Command;
-class Point;
-class Rect;
 
 }
 

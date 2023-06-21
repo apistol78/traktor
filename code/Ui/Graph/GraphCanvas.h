@@ -12,6 +12,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Ui/Enums.h"
 #include "Ui/Font.h"
+#include "Ui/Rect.h"
 
 namespace traktor
 {
@@ -24,9 +25,6 @@ class Color4ub;
 class Canvas;
 class IBitmap;
 class PaintSettings;
-class Point;
-class Rect;
-class Size;
 
 class GraphCanvas : public Object
 {

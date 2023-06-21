@@ -52,7 +52,7 @@ Size Static::getPreferredSize(const Size& hint) const
 
 Size Static::getMaximumSize() const
 {
-	return Size::max();
+	return Size(65535, 65535);
 }
 
 void Static::eventPaint(PaintEvent* event)
