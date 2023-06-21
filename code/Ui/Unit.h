@@ -49,15 +49,27 @@ public:
 
 	Unit operator + (const Unit& rh) const { return Unit(m_value + rh.m_value); }
 
+	Unit& operator += (const Unit& rh) { m_value += rh.m_value; return *this; }
+
 	Unit operator - (const Unit& rh) const { return Unit(m_value - rh.m_value); }
+
+	Unit& operator -= (const Unit& rh) { m_value -= rh.m_value; return *this; }
 
 	Unit operator * (const Unit& rh) const { return Unit(m_value * rh.m_value); }
 
 	Unit operator / (const Unit& rh) const { return Unit(m_value / rh.m_value); }
 
-	bool operator > (int32_t value) const { return m_value > value; }
+	bool operator == (const Unit& rh) const { return m_value == rh.m_value; }
 
-	bool operator < (int32_t value) const { return m_value < value; }
+	bool operator != (const Unit& rh) const { return m_value != rh.m_value; }
+
+	bool operator > (const Unit& rh) const { return m_value > rh.m_value; }
+
+	bool operator >= (const Unit& rh) const { return m_value >= rh.m_value; }
+
+	bool operator < (const Unit& rh) const { return m_value < rh.m_value; }
+
+	bool operator <= (const Unit& rh) const { return m_value <= rh.m_value; }
 
 private:
 	int32_t m_value;

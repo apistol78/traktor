@@ -579,7 +579,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 				Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 
-				ui::Rect bounds(0, 0, 0, 0);
+				ui::UnitRect bounds(0_ut, 0_ut, 0_ut, 0_ut);
 				for (auto node : selectedNodes)
 				{
 					Ref< Node > shaderNode = node->getData< Node >(L"SHADERNODE");
@@ -588,7 +588,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 					if (node != selectedNodes.front())
 					{
-						ui::Rect rc = node->calculateRect();
+						ui::UnitRect rc = node->calculateRect();
 						bounds.left = std::min(bounds.left, rc.left);
 						bounds.top = std::min(bounds.top, rc.top);
 						bounds.right = std::max(bounds.right, rc.right);
@@ -646,7 +646,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				// Save undo state.
 				m_document->push();
 
-				const ui::Rect& bounds = data->getBounds();
+				const ui::UnitRect& bounds = data->getBounds();
 
 				ui::Rect rcClient = m_editorGraph->getInnerRect();
 				ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
@@ -656,11 +656,11 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 					// Create new unique instance ID.
 					node->setId(Guid::create());
 
-					// Place node in view.
-					std::pair< int, int > position = node->getPosition();
-					position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
-					position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
-					node->setPosition(position);
+					//// Place node in view.
+					//std::pair< int, int > position = node->getPosition();
+					//position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
+					//position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
+					//node->setPosition(position);
 
 					// Add node to graph.
 					m_shaderGraph->addNode(node);
@@ -1767,7 +1767,7 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 	Ref< Group > shaderGroup = editorGroup->getData< Group >(L"SHADERGROUP");
 	T_ASSERT(shaderGroup);
 
-	const ui::Rect rc = editorGroup->calculateRect();
+	const ui::UnitRect rc = editorGroup->calculateRect();
 
 	//if (
 	//	rc.left != shaderGroup->getPosition().first || rc.top != shaderGroup->getPosition().second ||
@@ -1775,8 +1775,8 @@ void ShaderGraphEditorPage::eventGroupMoved(ui::GroupMovedEvent* event)
 	//)
 	{
 		//m_document->push();
-		shaderGroup->setPosition({ rc.left, rc.top });
-		shaderGroup->setSize({ rc.getSize().cx, rc.getSize().cy });
+		shaderGroup->setPosition({ rc.left.get(), rc.top.get() });
+		shaderGroup->setSize({ rc.getSize().cx.get(), rc.getSize().cy.get() });
 	}
 }
 
@@ -1789,12 +1789,12 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
 	T_ASSERT(shaderNode);
 
-	const ui::Point position = editorNode->getPosition();
+	const ui::UnitPoint position = editorNode->getPosition();
 
-	if (position.x != shaderNode->getPosition().first || position.y != shaderNode->getPosition().second)
+	if (position.x.get() != shaderNode->getPosition().first || position.y.get() != shaderNode->getPosition().second)
 	{
 		m_document->push();
-		shaderNode->setPosition({ position.x, position.y });
+		shaderNode->setPosition({ position.x.get(), position.y.get() });
 	}
 }
 

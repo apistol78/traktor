@@ -62,7 +62,7 @@ public:
 
 	SizeBase< ValueType > operator + (const SizeBase< ValueType >& r) const
 	{
-		return Size(cx + r.cx, cy + r.cy);
+		return SizeBase< ValueType >(cx + r.cx, cy + r.cy);
 	}
 
 	SizeBase< ValueType >& operator += (const SizeBase< ValueType >& r)
@@ -74,7 +74,7 @@ public:
 
 	SizeBase< ValueType > operator - (const SizeBase< ValueType >& r) const
 	{
-		return Size(cx - r.cx, cy - r.cy);
+		return SizeBase< ValueType >(cx - r.cx, cy - r.cy);
 	}
 
 	SizeBase< ValueType >& operator -= (const SizeBase< ValueType >& r)

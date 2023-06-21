@@ -38,20 +38,20 @@ public:
 
 	void addEdge(Edge* edge);
 
-	void setBounds(const ui::Rect& bounds);
+	void setBounds(const ui::UnitRect& bounds);
 
 	const RefArray< Node >& getNodes() const;
 
 	const RefArray< Edge >& getEdges() const;
 
-	const ui::Rect& getBounds() const;
+	const ui::UnitRect& getBounds() const;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
-	ui::Rect m_bounds;
+	ui::UnitRect m_bounds;
 };
 
 }

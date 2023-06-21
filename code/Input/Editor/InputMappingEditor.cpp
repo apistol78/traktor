@@ -555,11 +555,11 @@ void InputMappingEditor::eventNodeMoved(ui::NodeMovedEvent* event)
 	ui::Node* node = event->getNode();
 	T_ASSERT(node);
 
-	const ui::Point position = node->getPosition();
+	const ui::UnitPoint position = node->getPosition();
 	const InputMappingAsset::Position p =
 	{
-		position.x,
-		position.y
+		position.x.get(),
+		position.y.get()
 	};
 
 	m_mappingAsset->setPosition(node->getData(L"DATA"), p);

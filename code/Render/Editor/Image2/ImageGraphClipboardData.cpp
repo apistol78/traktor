@@ -27,7 +27,7 @@ void ImageGraphClipboardData::addEdge(Edge* edge)
 	m_edges.push_back(edge);
 }
 
-void ImageGraphClipboardData::setBounds(const ui::Rect& bounds)
+void ImageGraphClipboardData::setBounds(const ui::UnitRect& bounds)
 {
 	m_bounds = bounds;
 }
@@ -42,7 +42,7 @@ const RefArray< Edge >& ImageGraphClipboardData::getEdges() const
 	return m_edges;
 }
 
-const ui::Rect& ImageGraphClipboardData::getBounds() const
+const ui::UnitRect& ImageGraphClipboardData::getBounds() const
 {
 	return m_bounds;
 }
@@ -51,10 +51,10 @@ void ImageGraphClipboardData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
-	s >> Member< int32_t >(L"boundsLeft", m_bounds.left);
-	s >> Member< int32_t >(L"boundsTop", m_bounds.top);
-	s >> Member< int32_t >(L"boundsRight", m_bounds.right);
-	s >> Member< int32_t >(L"boundsBottom", m_bounds.bottom);
+	//s >> Member< int32_t >(L"boundsLeft", m_bounds.left);
+	//s >> Member< int32_t >(L"boundsTop", m_bounds.top);
+	//s >> Member< int32_t >(L"boundsRight", m_bounds.right);
+	//s >> Member< int32_t >(L"boundsBottom", m_bounds.bottom);
 }
 
 }

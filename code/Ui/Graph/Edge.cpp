@@ -172,7 +172,12 @@ bool Edge::hit(const GraphControl* graph, const Point& p) const
 {
 	Vector2 P(float(p.x), float(p.y));
 
-	calculateLinearSpline(graph, m_source->getPosition(), m_destination->getPosition(), m_spline);
+	calculateLinearSpline(
+		graph,
+		graph->pixel(m_source->getPosition()),
+		graph->pixel(m_destination->getPosition()),
+		m_spline
+	);
 
 	const float c_hitWidth = (float)graph->pixel(4_ut);
 	for (int32_t i = 1; i < (int32_t)(m_spline.size() - 2); ++i)
@@ -215,8 +220,8 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setForeground(color);
 	canvas->setBackground(color);
 
-	const Point s = m_source->getPosition() + offset;
-	const Point d = m_destination->getPosition() + offset;
+	const Point s = graph->pixel(m_source->getPosition()) + offset;
+	const Point d = graph->pixel(m_destination->getPosition()) + offset;
 
 	calculateLinearSpline(graph, s, d, m_spline);
 
@@ -250,7 +255,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	//);
 	//canvas->drawLine(m_spline[4], m_spline[5], pixel(m_thickness));
 
-	const Point at = m_destination->getPosition() + offset;
+	const Point at = graph->pixel(m_destination->getPosition()) + offset;
 	const Point arrow[] =
 	{
 		Point(at.x - graph->pixel(12_ut), at.y - graph->pixel(5_ut)),

@@ -26,6 +26,12 @@ namespace traktor
 		namespace
 		{
 
+const Unit c_marginWidth = 3_ut;	/*< Distance from image edge to "visual" edge. */
+const Unit c_textMargin = 16_ut;
+const Unit c_textHeight = 16_ut;
+const Unit c_minExtent = 40_ut;
+const Unit c_pinHitWidth = 14_ut;	/*< Width of pin hit area from visual edge. */
+
 struct Dim
 {
 	int32_t marginWidth = 3;	/*< Distance from image edge to "visual" edge. */
@@ -44,12 +50,13 @@ struct Dim
 	}
 };
 
-int32_t getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
+Unit getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 {
 	const int32_t x = widget->getFontMetric().getExtent(txt).cx;
-	return alignUp(x, widget->pixel(16_ut));
+	return widget->unit(
+		alignUp(x, widget->pixel(16_ut))
+	);
 }
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
@@ -83,33 +90,31 @@ InOutNodeShape::InOutNodeShape(Style style)
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point InOutNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
+UnitPoint InOutNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	const Dim dim(graph);
-	const Rect rc = node->calculateRect();
-	Point pt;
+	const UnitRect rc = node->calculateRect();
+	UnitPoint pt;
 
 	if (pin->getDirection() == Pin::DrInput)
-		pt = Point(rc.left + dim.marginWidth, rc.getCenter().y);
+		pt = UnitPoint(rc.left + c_marginWidth, rc.getCenter().y);
 	else // DrOutput
-		pt = Point(rc.right - dim.marginWidth, rc.getCenter().y);
+		pt = UnitPoint(rc.right - c_marginWidth, rc.getCenter().y);
 
 	return pt;
 }
 
-Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
+Pin* InOutNodeShape::getPinAt(GraphControl* graph, const Node* node, const UnitPoint& pt) const
 {
-	const Dim dim(graph);
-	const Rect rc = node->calculateRect();
+	const UnitRect rc = node->calculateRect();
 
-	const int32_t x = pt.x - rc.left;
-	const int32_t y = pt.y - rc.top;
-	const int32_t f = graph->pixel(4_ut);
+	const Unit x = pt.x - rc.left;
+	const Unit y = pt.y - rc.top;
+	const Unit f = 4_ut;
 
-	if (x >= 0 && x <= dim.pinHitWidth && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= 0_ut && x <= c_pinHitWidth && y >= rc.getHeight() / 2_ut - f && y <= rc.getHeight() + f)
 		return node->getInputPins()[0];
 
-	if (x >= rc.getWidth() - dim.pinHitWidth && x <= rc.getWidth() && y >= rc.getHeight() / 2 - f && y <= rc.getHeight() + f)
+	if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() && y >= rc.getHeight() / 2_ut - f && y <= rc.getHeight() + f)
 		return node->getOutputPins()[0];
 
 	return nullptr;
@@ -119,7 +124,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 {
 	const Dim dim(graph);
 	const StyleSheet* ss = graph->getStyleSheet();
-	const Rect rc = node->calculateRect().offset(offset);
+	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	// Draw node shape.
 	{
@@ -198,25 +203,24 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	}
 }
 
-Size InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) const
+UnitSize InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
-	const Dim dim(graph);
 	const Font currentFont = graph->getFont();
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	const Size sz = m_imageNode[imageIndex]->getSize(graph);
 
-	int32_t width = dim.marginWidth * 2 + dim.textMargin * 2;
+	Unit width = c_marginWidth * 2_ut + c_textMargin * 2_ut;
 
 	if (!node->getInfo().empty())
 	{
 		graph->setFont(graph->getPaintSettings().getFont());
-		const int32_t extent = getQuantizedTextWidth(graph, node->getInfo());
-		width += std::max(extent, (int32_t)dim.minExtent);
+		const Unit extent = getQuantizedTextWidth(graph, node->getInfo());
+		width += std::max(extent, c_minExtent);
 	}
 
 	graph->setFont(currentFont);
 
-	return Size(width, sz.cy);
+	return UnitSize(width, graph->unit(sz.cy));
 }
 
 	}

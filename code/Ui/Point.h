@@ -53,12 +53,12 @@ public:
 
 	PointBase< ValueType > operator + (const SizeBase< ValueType >& s) const
 	{
-		return Point(x + s.cx, y + s.cy);
+		return PointBase< ValueType >(x + s.cx, y + s.cy);
 	}
 
 	PointBase< ValueType > operator - (const SizeBase< ValueType >& s) const
 	{
-		return Point(x - s.cx, y - s.cy);
+		return PointBase< ValueType >(x - s.cx, y - s.cy);
 	}
 
 	const PointBase< ValueType >& operator += (const SizeBase< ValueType >& s)
@@ -75,7 +75,7 @@ public:
 
 	SizeBase< ValueType > operator - (const PointBase< ValueType >& p) const
 	{
-		return Size(x - p.x, y - p.y);
+		return SizeBase< ValueType >(x - p.x, y - p.y);
 	}
 
 	bool operator == (const PointBase< ValueType >& p) const

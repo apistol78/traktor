@@ -12,10 +12,8 @@
 #include "Ui/Graph/INodeShape.h"
 #include "Ui/Graph/Pin.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Node", Node, Object)
 
@@ -85,7 +83,7 @@ int32_t Node::getState() const
 	return m_state;
 }
 
-void Node::setPosition(const Point& position)
+void Node::setPosition(const UnitPoint& position)
 {
 	T_ASSERT(m_shape);
 	if (m_position != position)
@@ -95,7 +93,7 @@ void Node::setPosition(const Point& position)
 	}
 }
 
-Point Node::getPosition() const
+UnitPoint Node::getPosition() const
 {
 	return m_position;
 }
@@ -226,18 +224,18 @@ Pin* Node::findOutputPin(const Guid& id) const
 	return nullptr;
 }
 
-bool Node::hit(const Point& p) const
+bool Node::hit(const UnitPoint& p) const
 {
 	return calculateRect().inside(p);
 }
 
-Point Node::getPinPosition(const Pin* pin) const
+UnitPoint Node::getPinPosition(const Pin* pin) const
 {
 	T_ASSERT(m_shape);
 	return m_shape->getPinPosition(m_owner, this, pin);
 }
 
-Pin* Node::getPinAt(const Point& p) const
+Pin* Node::getPinAt(const UnitPoint& p) const
 {
 	T_ASSERT(m_shape);
 	return m_shape->getPinAt(m_owner, this, p);
@@ -249,21 +247,21 @@ void Node::paint(GraphCanvas* canvas, const Pin* hotPin, const Size& offset) con
 	m_shape->paint(m_owner, this, canvas, hotPin, offset);
 }
 
-Node::Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const Point& position, const INodeShape* shape)
+Node::Node(GraphControl* owner, const std::wstring& title, const std::wstring& info, const UnitPoint& position, const INodeShape* shape)
 :	m_owner(owner)
 ,	m_title(title)
 ,	m_info(info)
 ,	m_state(0)
 ,	m_position(position)
-,	m_size(0, 0)
+,	m_size(0_ut, 0_ut)
 ,	m_selected(false)
 ,	m_shape(shape)
 {
 }
 
-Rect Node::calculateRect() const
+UnitRect Node::calculateRect() const
 {
-	return Rect(m_position, m_size);
+	return UnitRect(m_position, m_size);
 }
 
 void Node::updateSize()
@@ -271,5 +269,4 @@ void Node::updateSize()
 	m_size = m_shape->calculateSize(m_owner, this);
 }
 
-	}
 }

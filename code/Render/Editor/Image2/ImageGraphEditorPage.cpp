@@ -146,7 +146,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		 	Ref< ImageGraphClipboardData > data = new ImageGraphClipboardData();
 
-		 	ui::Rect bounds(0, 0, 0, 0);
+		 	ui::UnitRect bounds(0_ut, 0_ut, 0_ut, 0_ut);
 		 	for (auto i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
 		 	{
 		 		Ref< Node > shaderNode = (*i)->getData< Node >(L"IMGNODE");
@@ -155,7 +155,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 
 		 		if (i != selectedNodes.begin())
 		 		{
-		 			const ui::Rect rc = (*i)->calculateRect();
+		 			const ui::UnitRect rc = (*i)->calculateRect();
 		 			bounds.left = std::min(bounds.left, rc.left);
 		 			bounds.top = std::min(bounds.top, rc.top);
 		 			bounds.right = std::max(bounds.right, rc.right);
@@ -209,7 +209,7 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		 	// Save undo state.
 		 	m_document->push();
 
-		 	const ui::Rect& bounds = data->getBounds();
+		 	const ui::UnitRect& bounds = data->getBounds();
 
 		 	ui::Rect rcClient = m_editorGraph->getInnerRect();
 		 	ui::Point center = m_editorGraph->clientToVirtual(rcClient.getCenter());
@@ -220,10 +220,10 @@ bool ImageGraphEditorPage::handleCommand(const ui::Command& command)
 		 		node->setId(Guid::create());
 
 		 		// Place node in view.
-		 		std::pair< int, int > position = node->getPosition();
-		 		position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
-		 		position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
-		 		node->setPosition(position);
+		 		//std::pair< int, int > position = node->getPosition();
+		 		//position.first = center.x + position.first - bounds.left - bounds.getWidth() / 2;
+		 		//position.second = center.y + position.second - bounds.top - bounds.getHeight() / 2;
+		 		//node->setPosition(position);
 
 		 		// Add node to graph.
 		 		m_imageGraph->addNode(node);
@@ -597,12 +597,12 @@ void ImageGraphEditorPage::eventNodeMoved(ui::NodeMovedEvent* event)
 	const ui::Node* editorNode = event->getNode();
 	Node* node = editorNode->getData< Node >(L"IMGNODE");
 
-	const ui::Point position = editorNode->getPosition();
+	const ui::UnitPoint position = editorNode->getPosition();
 
 	// Save position in node.
 	node->setPosition(std::make_pair(
-		position.x,
-		position.y
+		position.x.get(),
+		position.y.get()
 	));
 }
 

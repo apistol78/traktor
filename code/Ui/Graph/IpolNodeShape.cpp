@@ -25,6 +25,8 @@ namespace traktor
 		namespace
 		{
 
+const Unit c_pinHitWidth = 14_ut;
+
 struct Dim
 {
 	int32_t pinHitWidth = 14;
@@ -50,31 +52,31 @@ IpolNodeShape::IpolNodeShape()
 	m_imagePinHot = new ui::StyleBitmap(L"UI.Graph.PinHot");
 }
 
-Point IpolNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
+UnitPoint IpolNodeShape::getPinPosition(GraphControl* graph, const Node* node, const Pin* pin) const
 {
-	const Rect rc = node->calculateRect();
+	const UnitRect rc = node->calculateRect();
 
-	const int32_t f = graph->pixel(0_ut);
-	const int32_t x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
-	const int32_t y = rc.getHeight() / 2;
+	const Unit f = 0_ut;
+	const Unit x = pin->getDirection() == Pin::DrInput ? -f : rc.getWidth() + f;
+	const Unit y = rc.getHeight() / 2_ut;
 
-	return Point(rc.left + x, rc.top + y);
+	return UnitPoint(rc.left + x, rc.top + y);
 }
 
-Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point& pt) const
+Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const UnitPoint& pt) const
 {
 	const Dim dim(graph);
-	const Rect rc = node->calculateRect();
+	const UnitRect rc = node->calculateRect();
 
-	const int32_t f = graph->pixel(4_ut);
-	const int32_t x = pt.x - rc.left;
-	const int32_t y = pt.y - rc.top;
+	const Unit f = 4_ut;
+	const Unit x = pt.x - rc.left;
+	const Unit y = pt.y - rc.top;
 
-	if (y >= rc.getHeight() / 2 - f && y <= rc.getHeight() / 2 + f)
+	if (y >= rc.getHeight() / 2_ut - f && y <= rc.getHeight() / 2_ut + f)
 	{
-		if (x >= -f && x <= dim.pinHitWidth)
+		if (x >= -f && x <= c_pinHitWidth)
 			return node->getInputPins()[0];
-		if (x >= rc.getWidth() - dim.pinHitWidth && x <= rc.getWidth() + f)
+		if (x >= rc.getWidth() - c_pinHitWidth && x <= rc.getWidth() + f)
 			return node->getOutputPins()[0];
 	}
 
@@ -83,7 +85,7 @@ Pin* IpolNodeShape::getPinAt(GraphControl* graph, const Node* node, const Point&
 
 void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* canvas, const Pin* hotPin, const Size& offset) const
 {
-	const Rect rc = node->calculateRect().offset(offset);
+	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
 	const Size sz = m_imageNode[imageIndex]->getSize(graph);
@@ -119,10 +121,10 @@ void IpolNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* ca
 	);
 }
 
-Size IpolNodeShape::calculateSize(GraphControl* graph, const Node* node) const
+UnitSize IpolNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
 	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-	return m_imageNode[imageIndex]->getSize(graph);
+	return graph->unit(m_imageNode[imageIndex]->getSize(graph));
 }
 
 	}

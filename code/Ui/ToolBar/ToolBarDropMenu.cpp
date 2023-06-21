@@ -75,7 +75,7 @@ Size ToolBarDropMenu::getSize(const ToolBar* toolBar) const
 {
 	const Size imageSize = toolBar->getImageSize();
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
-	if (m_width > 0)
+	if (m_width > 0_ut)
 		return Size(toolBar->pixel(m_width), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
 	else
 		return Size(sz.cx + toolBar->pixel(32_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
