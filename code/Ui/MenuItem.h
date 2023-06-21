@@ -13,7 +13,7 @@
 #include "Core/RefArray.h"
 #include "Ui/Associative.h"
 #include "Ui/Command.h"
-#include "Ui/Size.h"
+#include "Ui/Rect.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +31,6 @@ class IBitmap;
 class MouseButtonDownEvent;
 class MouseButtonUpEvent;
 class MouseMoveEvent;
-class Rect;
 class Widget;
 
 /*! Menu item.

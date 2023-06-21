@@ -24,68 +24,72 @@ namespace traktor::ui
 /*! 2D point.
  * \ingroup UI
  */
-class T_DLLCLASS Point
+template < typename ValueType >
+class T_DLLCLASS PointBase
 {
 public:
-	int32_t x = 0;
-	int32_t y = 0;
+	ValueType x = ValueType(0);
+	ValueType y = ValueType(0);
 
-	Point() = default;
+	PointBase() = default;
 
-	Point(const Point& pnt)
+	PointBase(const PointBase< ValueType >& pnt)
 	:	x(pnt.x)
 	,	y(pnt.y)
 	{
 	}
 
-	Point(const std::pair< int32_t, int32_t >& pr)
+	PointBase(const std::pair< ValueType, ValueType >& pr)
 	:	x(pr.first)
 	,	y(pr.second)
 	{
 	}
 
-	Point(int32_t x_, int32_t y_)
+	PointBase(ValueType x_, ValueType y_)
 	:	x(x_)
 	,	y(y_)
 	{
 	}
 
-	Point operator + (const Size& s) const
+	PointBase< ValueType > operator + (const SizeBase< ValueType >& s) const
 	{
 		return Point(x + s.cx, y + s.cy);
 	}
 
-	Point operator - (const Size& s) const
+	PointBase< ValueType > operator - (const SizeBase< ValueType >& s) const
 	{
 		return Point(x - s.cx, y - s.cy);
 	}
 
-	const Point& operator += (const Size& s)
+	const PointBase< ValueType >& operator += (const SizeBase< ValueType >& s)
 	{
 		x += s.cx; y += s.cy;
 		return *this;
 	}
 
-	const Point& operator -= (const Size& s)
+	const PointBase< ValueType >& operator -= (const SizeBase< ValueType >& s)
 	{
 		x -= s.cx; y -= s.cy;
 		return *this;
 	}
 
-	Size operator - (const Point& p) const
+	SizeBase< ValueType > operator - (const PointBase< ValueType >& p) const
 	{
 		return Size(x - p.x, y - p.y);
 	}
 
-	bool operator == (const Point& p) const
+	bool operator == (const PointBase< ValueType >& p) const
 	{
 		return bool(x == p.x && y == p.y);
 	}
 
-	bool operator != (const Point& p) const
+	bool operator != (const PointBase< ValueType >& p) const
 	{
 		return bool(x != p.x || y != p.y);
 	}
 };
+
+typedef PointBase< int32_t > Point;
+typedef PointBase< Unit > UnitPoint;
 
 }

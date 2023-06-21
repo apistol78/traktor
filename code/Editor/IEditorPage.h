@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Ui/Point.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +33,6 @@ namespace traktor::ui
 {
 
 class Container;
-class Point;
 class Command;
 
 }

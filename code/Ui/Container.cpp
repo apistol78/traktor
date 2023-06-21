@@ -62,7 +62,7 @@ void Container::fit(uint32_t axis)
 
 	// Use layout to calculate size of container.
 	Size bounds;
-	if (m_layout->fit(this, Size::max(), bounds))
+	if (m_layout->fit(this, Size(65535, 65535), bounds))
 	{
 		Rect outer = getRect();
 		const Size nc = outer.getSize() - getInnerRect().getSize();

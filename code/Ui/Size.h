@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Config.h"
+#include "Ui/Unit.h"
 
 #if defined(max)
 #	undef max
@@ -28,72 +28,74 @@ namespace traktor::ui
 /*! Size
  * \ingroup UI
  */
-class T_DLLCLASS Size
+template < typename ValueType >
+class T_DLLCLASS SizeBase
 {
 public:
-	int32_t cx = 0;
-	int32_t cy = 0;
+	ValueType cx = ValueType(0);
+	ValueType cy = ValueType(0);
 
-	Size() = default;
+	SizeBase() = default;
 
-	Size(int32_t x, int32_t y)
+	SizeBase(ValueType x, ValueType y)
 	:	cx(x)
 	,	cy(y)
 	{
 	}
 
-	Size(const std::pair< int32_t, int32_t >& pr)
+	SizeBase(const std::pair< ValueType, ValueType >& pr)
 	:	cx(pr.first)
 	,	cy(pr.second)
 	{
 	}
 
-	Size(const Size& size)
+	SizeBase(const SizeBase< ValueType >& size)
 	:	cx(size.cx)
 	,	cy(size.cy)
 	{
 	}
 
-	Size operator - () const
+	SizeBase< ValueType > operator - () const
 	{
-		return Size(-cx, -cy);
+		return SizeBase< ValueType >(-cx, -cy);
 	}
 
-	Size operator + (const Size& r) const
+	SizeBase< ValueType > operator + (const SizeBase< ValueType >& r) const
 	{
 		return Size(cx + r.cx, cy + r.cy);
 	}
 
-	Size& operator += (const Size& r)
+	SizeBase< ValueType >& operator += (const SizeBase< ValueType >& r)
 	{
 		cx += r.cx;
 		cy += r.cy;
 		return *this;
 	}
 
-	Size operator - (const Size& r) const
+	SizeBase< ValueType > operator - (const SizeBase< ValueType >& r) const
 	{
 		return Size(cx - r.cx, cy - r.cy);
 	}
 
-	Size& operator -= (const Size& r)
+	SizeBase< ValueType >& operator -= (const SizeBase< ValueType >& r)
 	{
 		cx -= r.cx;
 		cy -= r.cy;
 		return *this;
 	}
 
-	bool operator == (const Size& r) const
+	bool operator == (const SizeBase< ValueType >& r) const
 	{
 		return cx == r.cx && cy == r.cy;
 	}
 
-	bool operator != (const Size& r) const
+	bool operator != (const SizeBase< ValueType >& r) const
 	{
 		return cx != r.cx || cy != r.cy;
 	}
-
-	static Size max() { return Size(65535, 65535); }
 };
+
+typedef SizeBase< int32_t > Size;
+typedef SizeBase< Unit > UnitSize;
 
 }

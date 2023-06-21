@@ -39,7 +39,6 @@ class GraphControl;
 class IBitmap;
 class INodeShape;
 class Pin;
-class Size;
 
 /*! Graph node.
  * \ingroup UI

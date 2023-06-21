@@ -26,7 +26,6 @@ namespace traktor
 	{
 
 class Canvas;
-class Rect;
 class Command;
 class MiniButton;
 class MouseEvent;

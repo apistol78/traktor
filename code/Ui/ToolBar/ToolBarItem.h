@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Ui/Associative.h"
+#include "Ui/Point.h"
 #include "Ui/Size.h"
 
 // import/export mechanism.
@@ -28,7 +29,6 @@ namespace traktor
 
 class Canvas;
 class IBitmap;
-class Point;
 class MouseButtonDownEvent;
 class MouseButtonUpEvent;
 class MouseTrackEvent;

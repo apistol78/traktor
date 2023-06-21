@@ -12,6 +12,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
+#include "Ui/Size.h"
 #include "Ui/Unit.h"
 
 // import/export mechanism.
@@ -31,7 +32,6 @@ class GraphCanvas;
 class GraphControl;
 class IBitmap;
 class Pin;
-class Size;
 
 /*! Graph edge.
  * \ingroup UI
