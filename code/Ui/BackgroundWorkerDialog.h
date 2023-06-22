@@ -40,11 +40,6 @@ class T_DLLCLASS BackgroundWorkerDialog : public Dialog
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsAbortButton = WsUser << 1
-	};
-
 	struct IWorkerStatus : public IRefCount
 	{
 		virtual bool read(int32_t& outStep, std::wstring& outStatus) = 0;
