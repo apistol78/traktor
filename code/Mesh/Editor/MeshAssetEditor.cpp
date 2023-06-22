@@ -659,8 +659,9 @@ void MeshAssetEditor::createMaterialShader()
 	m_model->setMaterials(materials);
 
 	// Generate shader.
-	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator().generateSurface(
-		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
+	Ref< render::ShaderGraph > materialShader = MaterialShaderGenerator(
+		[&](const Guid& fragmentId) { return m_editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(fragmentId); }
+	).generateSurface(
 		*m_model,
 		*it,
 		haveVertexColors(*m_model)

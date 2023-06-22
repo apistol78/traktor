@@ -49,20 +49,23 @@ class T_DLLCLASS MaterialShaderGenerator : public Object
 	T_RTTI_CLASS;
 
 public:
+	explicit MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve);
+
 	Ref< render::ShaderGraph > generateSurface(
-		const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 		const model::Model& model,
 		const model::Material& material,
 		bool vertexColor
 	) const;
 
 	Ref< render::ShaderGraph > generateMesh(
-		const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 		const render::ShaderGraph* meshSurfaceShaderGraph,
 		const Guid& vertexShaderGuid
 	) const;
 
-	void addDependencies(editor::IPipelineDepends* pipelineDepends);
+	static void addDependencies(editor::IPipelineDepends* pipelineDepends);
+
+private:
+	std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) > m_resolve;
 };
 
 }

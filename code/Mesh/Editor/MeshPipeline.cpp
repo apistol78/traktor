@@ -221,7 +221,7 @@ bool MeshPipeline::buildDependencies(
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 
 	// Add dependencies to generator fragments.
-	MaterialShaderGenerator().addDependencies(pipelineDepends);
+	MaterialShaderGenerator::addDependencies(pipelineDepends);
 
 	// Add dependencies to material templates.
 	if (m_enableCustomTemplates)
@@ -495,7 +495,7 @@ bool MeshPipeline::buildOutput(
 	const Guid materialGuid = vertexShaderGuid.permutation(outputGuid);
 	T_ASSERT(materialGuid.isValid());
 
-	MaterialShaderGenerator generator;
+	MaterialShaderGenerator generator([&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); });
 
 	const int32_t jointCount = models[0]->getJointCount();
 	const bool vertexColor = haveVertexColors(*models[0]);
@@ -526,7 +526,6 @@ bool MeshPipeline::buildOutput(
 			}
 
 			materialShaderGraph = generator.generateMesh(
-				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
@@ -549,7 +548,6 @@ bool MeshPipeline::buildOutput(
 			//}
 
 			Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
-				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 				*models[0],
 				materialPair.second,
 				vertexColor
@@ -561,7 +559,6 @@ bool MeshPipeline::buildOutput(
 			}
 
 			materialShaderGraph = generator.generateMesh(
-				[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); },
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
