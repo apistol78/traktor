@@ -53,7 +53,7 @@ public:
 
 	explicit FragmentLinker(const IFragmentReader& fragmentReader);
 
-	explicit FragmentLinker(const std::function< Ref< ShaderGraph >(const Guid&) >& fragmentReader);
+	explicit FragmentLinker(const std::function< Ref< const ShaderGraph >(const Guid&) >& fragmentReader);
 
 	virtual ~FragmentLinker();
 
@@ -86,7 +86,7 @@ private:
 	class LambdaFragmentReader : public IFragmentReader
 	{
 	public:
-		explicit LambdaFragmentReader(const std::function< Ref< ShaderGraph >(const Guid&) >& lambda)
+		explicit LambdaFragmentReader(const std::function< Ref< const ShaderGraph >(const Guid&) >& lambda)
 		:	m_lambda(lambda)
 		{
 		}
@@ -97,7 +97,7 @@ private:
 		}
 
 	private:
-		std::function< Ref< ShaderGraph >(const Guid&) > m_lambda;
+		std::function< Ref< const ShaderGraph >(const Guid&) > m_lambda;
 	};
 
 	const IFragmentReader* m_fragmentReader = nullptr;

@@ -78,7 +78,7 @@ FragmentLinker::FragmentLinker(const IFragmentReader& fragmentReader)
 {
 }
 
-FragmentLinker::FragmentLinker(const std::function< Ref< ShaderGraph >(const Guid&) >& fragmentReader)
+FragmentLinker::FragmentLinker(const std::function< Ref< const ShaderGraph >(const Guid&) >& fragmentReader)
 :	m_fragmentReader(new LambdaFragmentReader(fragmentReader))
 ,	m_own(true)
 {

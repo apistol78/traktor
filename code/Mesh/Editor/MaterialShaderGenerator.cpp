@@ -124,7 +124,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	const Guid& transparencyTexture = material.getTransparencyMap().texture;
 	const Guid& emissiveTexture = material.getEmissiveMap().texture;
 	const Guid& normalTexture = material.getNormalMap().texture;
-	const Guid& lightMapTexture = material.getLightMap().texture;
 
 	// Replace external fragments with implementations.
 	RefArray< render::External > resolveNodes;
@@ -168,14 +167,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 				externalNode->setFragmentGuid(c_implTransparencyConst);
 			else
 				externalNode->setFragmentGuid(c_implTransparencyMap);
-			resolveNodes.push_back(externalNode);
-		}
-		else if (fragmentGuid == c_tplLightMapParams)
-		{
-			if (lightMapTexture.isNull())
-				externalNode->setFragmentGuid(c_implLightMapNull);
-			else
-				externalNode->setFragmentGuid(c_implLightMap);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
@@ -254,13 +245,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 		{
 			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
 			const uint32_t channel = model.getTexCoordChannel(material.getTransparencyMap().channel);
-			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
-			resolveNodes.push_back(externalNode);
-		}
-		else if (comment == L"Tag_LightmapTexCoord")
-		{
-			render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-			const uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
 			externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 			resolveNodes.push_back(externalNode);
 		}
@@ -361,13 +345,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 			transparencyTextureNode->setExternal(transparencyTexture);
 			propagateAnisotropic(meshSurfaceShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
 		}
-		else if (comment == L"Tag_LightMapDiffuse")
-		{
-			T_FATAL_ASSERT(lightMapTexture.isNotNull());
-			render::Texture* lightMapTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
-			lightMapTextureNode->setComment(L"");
-			lightMapTextureNode->setExternal(lightMapTexture);
-		}
 	}
 
 	// Validate integrity and then return complete mesh material shader.
@@ -378,6 +355,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 }
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
+	const model::Model& model,
+	const model::Material& material,
 	const render::ShaderGraph* meshSurfaceShaderGraph,
 	const Guid& vertexShaderGuid
 ) const
@@ -387,20 +366,65 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 	if (!meshShaderGraph)
 		return nullptr;
 
+	// Patch material template shader with concrete implementations of value fetching fragments.
+	const Guid& lightMapTexture = material.getLightMap().texture;
+
 	// Insert surface shader into mesh shader.
 	{
 		RefArray< render::External > resolveNodes;
 		for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
 		{
-			if (externalNode->getFragmentGuid() == c_meshSurfaceInterface)
+			const Guid& fragmentGuid = externalNode->getFragmentGuid();
+			T_ASSERT(fragmentGuid.isValid());
+
+			if (fragmentGuid == c_meshSurfaceInterface)
 				resolveNodes.push_back(externalNode);
+			else if (fragmentGuid == c_tplLightMapParams)
+			{
+				if (lightMapTexture.isNull())
+					externalNode->setFragmentGuid(c_implLightMapNull);
+				else
+					externalNode->setFragmentGuid(c_implLightMap);
+				resolveNodes.push_back(externalNode);
+			}
 		}
 		T_FATAL_ASSERT(!resolveNodes.empty());
 
-		meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< render::ShaderGraph > {
-			T_FATAL_ASSERT(fragmentGuid == c_meshSurfaceInterface);
-			return DeepClone(meshSurfaceShaderGraph).create< render::ShaderGraph >();
+		// Determine texture channel fragments.
+		for (auto node : meshShaderGraph->getNodes())
+		{
+			const std::wstring comment = node->getComment();
+			if (comment == L"Tag_LightmapTexCoord")
+			{
+				render::External* externalNode = mandatory_non_null_type_cast<render::External*>(node);
+				const uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
+				externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+				resolveNodes.push_back(externalNode);
+			}
+		}
+
+		// Resolve mesh shader; load all patched fragments and merge into a complete shader.
+		meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< const render::ShaderGraph > {
+			if (fragmentGuid == c_meshSurfaceInterface)
+				return DeepClone(meshSurfaceShaderGraph).create< render::ShaderGraph >();
+			else
+				return m_resolve(fragmentGuid);
 		}).resolve(meshShaderGraph, resolveNodes, false);
+		if (!meshShaderGraph)
+			return nullptr;
+
+		// Patch constant values, such as colors, from materials into shader.
+		for (auto node : meshShaderGraph->getNodes())
+		{
+			const std::wstring comment = node->getComment();
+			if (comment == L"Tag_LightMapDiffuse")
+			{
+				T_FATAL_ASSERT(lightMapTexture.isNotNull());
+				render::Texture* lightMapTextureNode = mandatory_non_null_type_cast<render::Texture*>(node);
+				lightMapTextureNode->setComment(L"");
+				lightMapTextureNode->setExternal(lightMapTexture);
+			}
+		}
 	}
 
 	// Replace vertex interface with concrete implementation fragment.

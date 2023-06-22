@@ -28,8 +28,8 @@
 			<id>{FA64CB58-5298-2547-8D18-DA2514FD5E94}</id>
 			<comment/>
 			<position>
-				<first>2278</first>
-				<second>169</second>
+				<first>2289</first>
+				<second>151</second>
 			</position>
 			<fragmentGuid>{78B269D7-7546-FB42-8539-BAC518A5A174}</fragmentGuid>
 			<inputPins>
@@ -128,8 +128,8 @@
 			<id>{2C6FCD7B-A9EC-3844-9DCC-D07CCD7B6A38}</id>
 			<comment/>
 			<position>
-				<first>2637</first>
-				<second>149</second>
+				<first>2621</first>
+				<second>132</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -413,7 +413,7 @@
 			<id>{BFC530DE-6DE2-2B4C-A4A7-0F4CA291C84D}</id>
 			<comment/>
 			<position>
-				<first>2051</first>
+				<first>2052</first>
 				<second>328</second>
 			</position>
 			<name>Albedo</name>
@@ -422,8 +422,8 @@
 			<id>{E82A3FCC-B49B-F949-8460-397FA7A319CF}</id>
 			<comment/>
 			<position>
-				<first>2035</first>
-				<second>178</second>
+				<first>2036</first>
+				<second>181</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -431,8 +431,8 @@
 			<id>{389F0ADE-2A3C-B74B-8986-205F7DFBA69A}</id>
 			<comment/>
 			<position>
-				<first>2035</first>
-				<second>228</second>
+				<first>2036</first>
+				<second>230</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -585,8 +585,8 @@
 			<id>{022E4295-684C-AE48-B510-8DAAADADC3CA}</id>
 			<comment/>
 			<position>
-				<first>2051</first>
-				<second>378</second>
+				<first>2052</first>
+				<second>377</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -656,8 +656,8 @@
 			<id>{80D90961-6B94-8648-BF31-494072A15B7A}</id>
 			<comment/>
 			<position>
-				<first>2051</first>
-				<second>278</second>
+				<first>2052</first>
+				<second>279</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -674,8 +674,8 @@
 			<id>{F15A971B-B5D2-8048-967F-F856D9C4EE7C}</id>
 			<comment/>
 			<position>
-				<first>2019</first>
-				<second>428</second>
+				<first>2020</first>
+				<second>426</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -692,8 +692,8 @@
 			<id>{0EB7CD19-65D4-654F-B973-3A4639A1EF6E}</id>
 			<comment/>
 			<position>
-				<first>2019</first>
-				<second>478</second>
+				<first>2020</first>
+				<second>475</second>
 			</position>
 			<name>ViewVelocity</name>
 		</item>
@@ -742,6 +742,83 @@ on type of mesh.
 				<first>-969</first>
 				<second>125</second>
 			</position>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{15E3D590-DC47-1D42-A70C-6CA4C3ECC220}</id>
+			<comment>
+			<![CDATA[
+Tag_LightmapTexCoord
+			]]>
+			</comment>
+			<position>
+				<first>524</first>
+				<second>1985</second>
+			</position>
+			<fragmentGuid>{60640268-E70B-0540-A073-49DC82E734A2}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{977D82F5-B2B5-6C43-881A-F996D4AA0F37}</id>
+					<name>T_Attributes</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{7A7AE80A-128F-314F-A512-46C7BFF4450A}</id>
+					<name>T_TexCoord</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{91B7907E-8A31-954E-93BE-7A8A2351608B}</id>
+			<comment/>
+			<position>
+				<first>786</first>
+				<second>1985</second>
+			</position>
+			<fragmentGuid>{2449B257-5B2A-5242-86F9-32105E1F1771}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{311BDC2F-8863-FB45-B45F-E0912B253CEE}</id>
+					<name>T_Attributes</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{A5352BEE-ABAF-0045-96F8-0D340D11ED4A}</id>
+					<name>T_Irradiance</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{E03BECA2-B818-EB44-8CC3-29CA3B383DBA}</id>
+			<comment/>
+			<position>
+				<first>273</first>
+				<second>1990</second>
+			</position>
+			<name>VertexAttributes</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{46FA3D9D-B243-4444-A558-B9FF11B6C586}</id>
+			<comment/>
+			<position>
+				<first>1072</first>
+				<second>1988</second>
+			</position>
+			<name>Irradiance</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{612C2732-C24F-B746-BC76-B705FD62BF4C}</id>
+			<comment/>
+			<position>
+				<first>2036</first>
+				<second>132</second>
+			</position>
+			<name>Irradiance</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1405,6 +1482,46 @@ on type of mesh.
 				<id>{EF748FE9-7B56-4008-AA99-483F5AAD8F91}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{7A7AE80A-128F-314F-A512-46C7BFF4450A}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{311BDC2F-8863-FB45-B45F-E0912B253CEE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<id>{977D82F5-B2B5-6C43-881A-F996D4AA0F37}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<id>{A5352BEE-ABAF-0045-96F8-0D340D11ED4A}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{17DB9995-C5C3-824C-9CDA-5D3A524A7346}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1451,8 +1568,20 @@ on type of mesh.
 				<second>10</second>
 			</position>
 			<size>
-				<first>861</first>
-				<second>621</second>
+				<first>863</first>
+				<second>568</second>
+			</size>
+		</item>
+		<item type="traktor.render.Group">
+			<title>Lightmap</title>
+			<comment/>
+			<position>
+				<first>145</first>
+				<second>1840</second>
+			</position>
+			<size>
+				<first>1144</first>
+				<second>317</second>
 			</size>
 		</item>
 	</groups>
