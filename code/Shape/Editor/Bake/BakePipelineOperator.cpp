@@ -97,7 +97,6 @@ namespace traktor
 
 const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
-const Guid c_lightmapDirectionalIdSeed(L"{BBCB9EFD-F519-49BE-A47A-66B7F1F0F5D1}");
 const Guid c_outputIdSeed(L"{043B98C3-F93B-4510-8B73-1B5EEF2323E5}");
 const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
@@ -676,7 +675,6 @@ bool BakePipelineOperator::build(
 				// Calculate synthesized ids.
 				const Guid entityId = inoutEntityData->getId();
 				Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
-				Guid lightmapDirectionalId = entityId.permutation(c_lightmapDirectionalIdSeed);
 				Guid outputId = entityId.permutation(c_outputIdSeed);
 
 				// Find model synthesizer which can generate from components.
@@ -749,18 +747,10 @@ bool BakePipelineOperator::build(
 						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
 
 						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
-						bool needDirectionalMap = false;
 
 						// Modify all materials to contain reference to lightmap channel.
 						for (auto& material : visualModel->getMaterials())
-						{
 							material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
-							if (configuration->getEnableDirectionalMaps() && !material.getNormalMap().name.empty())
-							{
-								material.setProperty< PropertyString >(L"LightMapDirectionalId", lightmapDirectionalId.format());
-								needDirectionalMap = true;
-							}
-						}
 
 						// Load texture images and attach to materials.
 						for (auto& material : visualModel->getMaterials())
@@ -814,21 +804,8 @@ bool BakePipelineOperator::build(
 								lightmapDiffuseInstance->commit();
 							}
 
-							Ref< db::Instance > lightmapDirectionalInstance;
-							if (needDirectionalMap && lightmapDirectionalId.isNotNull())
-							{
-								lightmapDirectionalInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDirectionalId.format(), lightmapDirectionalId);
-								if (!lightmapDirectionalInstance)
-									return false;
-								lightmapDirectionalInstance->setObject(new render::AliasTextureResource(
-									resource::Id< render::ITexture >(c_lightmapProxyId)
-								));
-								lightmapDirectionalInstance->commit();
-							}
-
 							tracerTask->addTracerOutput(new TracerOutput(
 								lightmapDiffuseInstance,
-								lightmapDirectionalInstance,
 								visualModel,
 								inoutEntityData->getTransform(),
 								lightmapSize
@@ -923,7 +900,6 @@ bool BakePipelineOperator::build(
 					}
 
 					lightmapDiffuseId.permutate();
-					lightmapDirectionalId.permutate();
 					outputId.permutate();
 				}
 			}

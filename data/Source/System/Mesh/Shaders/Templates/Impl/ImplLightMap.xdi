@@ -125,19 +125,6 @@ Tag_LightMapDiffuse
 				<item>TexCoord</item>
 			</names>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{2FBACD29-D607-3D4A-A4C7-64DE1DAE4F3C}</id>
-			<comment/>
-			<position>
-				<first>-54</first>
-				<second>108</second>
-			</position>
-			<name>T_AttributesNormalMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">

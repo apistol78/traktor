@@ -157,7 +157,7 @@ Ref< render::SHCoeffs > RayTracerLocal::traceProbe(const Vector4& position) cons
 	return nullptr;
 }
 
-void RayTracerLocal::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, drawing::Image* lightmapDirectional, const int32_t region[4]) const
+void RayTracerLocal::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const
 {
 }
 

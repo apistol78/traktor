@@ -11,19 +11,6 @@
 			<name>T_Irradiance</name>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{BF772F81-A5B6-5C46-9995-B505DD41619D}</id>
-			<comment/>
-			<position>
-				<first>272</first>
-				<second>128</second>
-			</position>
-			<name>T_AttributesNormalMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{311BDC2F-8863-FB45-B45F-E0912B253CEE}</id>
 			<comment/>
 			<position>

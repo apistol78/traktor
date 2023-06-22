@@ -18,7 +18,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 29, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 30, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -87,8 +87,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 		s >> Member< float >(L"irradianceCacheMaxDistance", irradianceCacheMaxDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	}
 
-	if (s.getVersion< BakeConfiguration >() >= 26)
-		s >> Member< bool >(L"enableDirectionalMaps", m_enableDirectionalMaps);
+	if (s.getVersion< BakeConfiguration >() >= 26 && s.getVersion< BakeConfiguration >() < 30)
+	{
+		bool enableDirectionalMaps;
+		s >> Member< bool >(L"enableDirectionalMaps", enableDirectionalMaps);
+	}
 }
 
 	}
