@@ -63,7 +63,7 @@
 				<overlay>false</overlay>
 			</priority>
 			<cullMode>Never</cullMode>
-			<blendEnable>false</blendEnable>
+			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
 			<blendColorSource>BfOne</blendColorSource>
 			<blendColorDestination>BfOne</blendColorDestination>

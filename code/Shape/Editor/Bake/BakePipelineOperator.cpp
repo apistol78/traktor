@@ -821,16 +821,19 @@ bool BakePipelineOperator::build(
 
 						if (visualModel)
 						{
-							//Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(visualModel->getProperty< ISerializable >(world::IEntityReplicator::VisualMesh));
+							Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(
+								visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >())
+							);
 
 							// Create and build a new mesh asset referencing the modified model.
 							Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 							outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-							//if (meshAsset)
-							//{
-							//	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
-							//	outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
-							//}
+							if (meshAsset)
+							{
+								outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
+								outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
+								outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+							}
 
 							Ref< world::EntityData > outputMeshEntity = new world::EntityData();
 							outputMeshEntity->setId(Guid::create());
@@ -851,29 +854,37 @@ bool BakePipelineOperator::build(
 						{
 							const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
 
-							//Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionMesh));
-							//Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionShape));
-							//Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(collisionModel->getProperty< ISerializable >(world::IEntityReplicator::CollisionBody));
+							Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
+								collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())
+							);
+
+							Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(
+								collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >())
+							);
+
+							Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(
+								collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >())
+							);
 
 							// Build collision shape mesh.
 							Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
 							outputMeshAsset->setCalculateConvexHull(false);
-							//if (meshAsset)
-							//	outputMeshAsset->setMaterials(meshAsset->getMaterials());
+							if (meshAsset)
+								outputMeshAsset->setMaterials(meshAsset->getMaterials());
 
 							Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
-							//if (shapeDesc)
-							//{
-							//	outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
-							//	outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
-							//}
+							if (shapeDesc)
+							{
+								outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
+								outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
+							}
 
 							Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
-							//if (bodyDesc)
-							//{
-							//	outputBodyDesc->setFriction(bodyDesc->getFriction());
-							//	outputBodyDesc->setRestitution(bodyDesc->getRestitution());
-							//}
+							if (bodyDesc)
+							{
+								outputBodyDesc->setFriction(bodyDesc->getFriction());
+								outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+							}
 
 							Ref< world::EntityData > outputShapeEntity = new world::EntityData();
 							outputShapeEntity->setId(Guid::create());
