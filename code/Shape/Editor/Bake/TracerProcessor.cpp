@@ -540,17 +540,6 @@ bool TracerProcessor::process(const TracerTask* task)
 		);
 		lightmapDiffuse->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		Ref< drawing::Image > lightmapDirectional;
-		if (tracerOutput->getLightmapDirectionalInstance() != nullptr)
-		{
-			lightmapDirectional = new drawing::Image(
-				drawing::PixelFormat::getRGBAF32(),
-				width,
-				height
-			);
-			lightmapDirectional->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-		}
-
 		// Update status.
 		m_status.description = str(L"%d/%d (tracing)...", i + 1, (int32_t)tracerOutputs.size(), width);
 
@@ -560,8 +549,8 @@ bool TracerProcessor::process(const TracerTask* task)
 			Ref< Job > job = m_queue->add([&, ty](){
 				for (int32_t tx = 0; tx < width; tx += 16)
 				{
-					int32_t region[] = { tx, ty, std::min(tx + 16, width), std::min(ty + 16, height) };
-					rayTracer->traceLightmap(renderModel, &gbuffer, lightmapDiffuse, lightmapDirectional, region);
+					const int32_t region[] = { tx, ty, std::min(tx + 16, width), std::min(ty + 16, height) };
+					rayTracer->traceLightmap(renderModel, &gbuffer, lightmapDiffuse, region);
 					++m_status.current;
 				}
 			});
@@ -601,26 +590,6 @@ bool TracerProcessor::process(const TracerTask* task)
 				return false;
 			}
 		}
-
-		if (lightmapDirectional != nullptr)
-		{
-			if (configuration->getEnableDenoise())
-				lightmapDirectional = denoise(gbuffer, lightmapDirectional, true);
-
-			lightmapDirectional->clearAlpha(1.0f);
-
-			bool result = writeTexture(
-				tracerOutput->getLightmapDirectionalInstance(),
-				m_compressionMethod,
-				false,
-				lightmapDirectional
-			);
-			if (!result)
-			{
-				log::error << L"Trace failed; unable to create output lightmap texture for \"" << tracerOutput->getLightmapDirectionalInstance()->getName() << L"\"." << Endl;
-				return false;
-			}
-		}
 	}
 
 	// Trace irradiance grids.
@@ -642,54 +611,39 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Shrink a tiny bit so we can easily align volume to walls etc in editor.
 		boundingBox.expand(0.025_simd);
 
-		Vector4 worldSize = boundingBox.getExtent() * Scalar(2.0f);
+		const Vector4 worldSize = boundingBox.getExtent() * 2.0_simd;
 
-		int32_t gridX = std::max((int32_t)(worldSize.x() * gridDensity + 0.5f), 2);
-		int32_t gridY = std::max((int32_t)(worldSize.y() * gridDensity + 0.5f), 2);
-		int32_t gridZ = std::max((int32_t)(worldSize.z() * gridDensity + 0.5f), 2);
+		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity + 0.5f), 2, 64);
+		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity + 0.5f), 2, 64);
+		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity + 0.5f), 2, 64);
 
 		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
 		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;
 
 		m_status.description = str(L"Irradiance grid (%d, %d, %d)", gridX, gridY, gridZ);
+		m_status.current = 0;
+		m_status.total = gridX * gridY * gridZ;
 
-		RefArray< Job > jobs;
 		RefArray< render::SHCoeffs > shs(gridX * gridY * gridZ);
 
 		for (int32_t x = 0; x < gridX; ++x)
 		{
-			float fx = x / (float)(gridX - 1.0f);
+			const float fx = x / (float)(gridX - 1.0f);
 			for (int32_t y = 0; y < gridY; ++y)
 			{
-				float fy = y / (float)(gridY - 1.0f);
+				const float fy = y / (float)(gridY - 1.0f);
 				for (int32_t z = 0; z < gridZ; ++z)
 				{
-					float fz = z / (float)(gridZ - 1.0f);
+					const float fz = z / (float)(gridZ - 1.0f);
 
-					Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
+					const Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
 					const uint32_t index = x * gridY * gridZ + y * gridZ + z;
 
-					Ref< Job > job = m_queue->add([&, position, index]() {
-						shs[index] = rayTracer->traceProbe(position.xyz1());
-					});
-					jobs.push_back(job);
+					shs[index] = rayTracer->traceProbe(position.xyz1());
+
+					m_status.current++;
 				}
 			}
-		}
-
-		m_status.current = 0;
-		m_status.total = gridX * gridY * gridZ;
-
-		while (!jobs.empty())
-		{
-			m_queue->waitCurrent();
-
-			auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {
-				return job->wait(0);
-			});
-			jobs.erase(it, jobs.end());
-
-			m_status.current = m_status.total - (int32_t)jobs.size();
 		}
 
 		if (m_cancelled)

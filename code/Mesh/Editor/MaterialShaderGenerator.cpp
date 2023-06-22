@@ -57,7 +57,6 @@ const Guid c_implTransparencyConst(L"{FD6737C4-582B-0C41-B1C8-9D4E91B93DD2}");
 const Guid c_implTransparencyMap(L"{F7F9394F-912A-9243-A38D-0A1527920FEF}");
 const Guid c_implLightMapNull(L"{F8EAEDCD-67C6-B540-A9D0-40141A7FA267}");
 const Guid c_implLightMap(L"{DD1F6C98-F5E2-D34B-A5FB-B21CCE3034A2}");
-const Guid c_implLightMapDirectional(L"{13B36DED-A778-B846-A2F8-A45E574E4A8C}");
 const Guid c_implRoughnessConst(L"{361EE108-403F-C740-B0DF-8B0EAF3155EE}");
 const Guid c_implRoughnessMap(L"{2D117E15-90B9-6C4C-B28C-DA18B2AF7B4F}");
 const Guid c_implSpecularConst(L"{93DA7E24-5B2F-C24B-8589-FA3D4F025B51}");
@@ -123,16 +122,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	const Guid& normalTexture = material.getNormalMap().texture;
 	const Guid& lightMapTexture = material.getLightMap().texture;
 
-	Guid lightMapDirectionalTexture;
-	const std::wstring tmp = material.getProperty< std::wstring >(L"LightMapDirectionalId");
-	if (!tmp.empty())
-	{
-		if (normalTexture.isNotNull())
-			lightMapDirectionalTexture = Guid(tmp);
-		else
-			log::warning << L"Material \"" << material.getName() << L"\" has directional lightmap ID but no normal map associated." << Endl;
-	}
-
 	// Replace external fragments with implementations.
 	RefArray< render::External > resolveNodes;
 	for (auto externalNode : meshSurfaceShaderGraph->findNodesOf< render::External >())
@@ -182,12 +171,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 			if (lightMapTexture.isNull())
 				externalNode->setFragmentGuid(c_implLightMapNull);
 			else
-			{
-				if (lightMapDirectionalTexture.isNotNull())
-					externalNode->setFragmentGuid(c_implLightMapDirectional);
-				else
-					externalNode->setFragmentGuid(c_implLightMap);
-			}
+				externalNode->setFragmentGuid(c_implLightMap);
 			resolveNodes.push_back(externalNode);
 		}
 		else if (fragmentGuid == c_tplRoughnessParams)
@@ -380,13 +364,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 			lightMapTextureNode->setComment(L"");
 			lightMapTextureNode->setExternal(lightMapTexture);
 		}
-		else if (comment == L"Tag_LightMapDirectional")
-		{
-			T_FATAL_ASSERT(lightMapDirectionalTexture.isNotNull());
-			render::Texture* lightMapDirectionalTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
-			lightMapDirectionalTextureNode->setComment(L"");
-			lightMapDirectionalTextureNode->setExternal(lightMapDirectionalTexture);
-		}
 	}
 
 	// Validate integrity and then return complete mesh material shader.
@@ -469,7 +446,6 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implTransparencyMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implLightMapNull, editor::PdfUse);
 	pipelineDepends->addDependency(c_implLightMap, editor::PdfUse);
-	pipelineDepends->addDependency(c_implLightMapDirectional, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRoughnessConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRoughnessMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implSpecularConst, editor::PdfUse);

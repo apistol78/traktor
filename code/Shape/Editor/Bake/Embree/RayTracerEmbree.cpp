@@ -254,7 +254,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	return shCoeffs;
 }
 
-void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, drawing::Image* lightmapDirectional, const int32_t region[4]) const
+void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const
 {
 	RTCRayHit T_MATH_ALIGN16 rh;
 	RandomGeometry random;
@@ -278,7 +278,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				const Scalar l = Scalar(elm.delta);
 				const Scalar hl = l * 1.0_simd;
 
-				Vector4 normal = elm.normal;
+				const Vector4 normal = elm.normal;
 				Vector4 position = elm.position + normal * hl;
 
 				Vector4 u, v;
@@ -286,10 +286,10 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 				for (int32_t i = 0; i < 16; ++i)
 				{
-					float a = TWO_PI * i / 16.0f;
-					float s = sin(a), c = cos(a);
+					const float a = TWO_PI * i / 16.0f;
+					const float s = sin(a), c = cos(a);
 
-					Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
+					const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
 					constructRay(position, traceDirection, hl, rh);
 
 					RTCIntersectContext context;
@@ -299,27 +299,26 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 					if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 						continue;
 
-					Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+					const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
 					if (dot3(hitNormal, traceDirection) < 0.0f)
 						continue;
 
 					// Offset position.
-					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * Scalar(0.001f);
+					position += traceDirection * Scalar(rh.ray.tfar - 0.001f) + hitNormal * 0.001_simd;
 				}
 
 				elm.position = position;
 			}
 
 			// Trace lightmap.
-			Color4f incoming;
 			{
 				const auto& originPolygon = polygons[elm.polygon];
 				const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-				Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
+				const Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
 
 				// Trace IBL and indirect illumination.
-				incoming = tracePath0(elm.position, elm.normal, random);
+				const Color4f incoming = tracePath0(elm.position, elm.normal, random);
 
 				// Trace ambient occlusion.
 				Scalar occlusion = 1.0_simd;
@@ -328,41 +327,6 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 				// Combine and write final lumel.
 				lightmapDiffuse->setPixel(x, y, (emittance + incoming * occlusion).rgb1());
-			}
-
-			Scalar intensity = horizontalAdd3(incoming) / 3.0_simd;
-
-			// Trace directional map.
-			if (lightmapDirectional != nullptr && intensity > FUZZY_EPSILON)
-			{
-				const Scalar z(1.0f / std::sqrt(3.0f));
-				const Vector4 basisX(std::sqrt(2.0f / 3.0f), 0.0f, z);
-				const Vector4 basisY(-1.0f / std::sqrt(6.0f), 1.0f / std::sqrt(2.0f), z);
-				const Vector4 basisZ(-1.0f / std::sqrt(6.0f), -1.0f / std::sqrt(2.0f), z);
-
-				const Vector4 binormal = -cross(elm.normal, elm.tangent);
-
-				const Matrix44 frame(
-					elm.tangent,
-					binormal,
-					elm.normal,
-					Vector4::zero()
-				);
-
-				const Color4f incomingX = tracePath0(elm.position, frame * basisX, random);
-				const Color4f incomingY = tracePath0(elm.position, frame * basisY, random);
-				const Color4f incomingZ = tracePath0(elm.position, frame * basisZ, random);
-
-				const Scalar intensityX = horizontalAdd3(incomingX) / 3.0_simd;
-				const Scalar intensityY = horizontalAdd3(incomingY) / 3.0_simd;
-				const Scalar intensityZ = horizontalAdd3(incomingZ) / 3.0_simd;
-
-				lightmapDirectional->setPixel(x, y, Color4f(
-					0.5_simd * (intensityX / intensity) * (1.0_simd / z),
-					0.5_simd * (intensityY / intensity) * (1.0_simd / z),
-					0.5_simd * (intensityZ / intensity) * (1.0_simd / z),
-					1.0f
-				));
 			}
 		}
 	}

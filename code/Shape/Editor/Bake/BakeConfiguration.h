@@ -55,8 +55,6 @@ public:
 
 	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
 
-	bool getEnableDirectionalMaps() const { return m_enableDirectionalMaps; }
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
@@ -67,13 +65,12 @@ private:
 	float m_maxPathDistance = 1.0f;
 	float m_pointLightShadowRadius = 0.1f;
 	float m_lumelDensity = 16.0f;
-	float m_irradianceGridDensity = 1.0f;
+	float m_irradianceGridDensity = 0.1f;
 	int32_t m_minimumLightMapSize = 16;
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;
 	float m_skyAttenuation = 1.0f;
 	float m_ambientOcclusionFactor = 0.5f;
-	bool m_enableDirectionalMaps = true;
 };
 
 	}

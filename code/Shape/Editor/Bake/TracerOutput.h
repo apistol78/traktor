@@ -47,15 +47,12 @@ class T_DLLCLASS TracerOutput : public Object
 public:
     TracerOutput(
 		db::Instance* lightmapDiffuseInstance,
-		db::Instance* lightmapDirectionalInstance,
         const model::Model* model,
 		const Transform& transform,
 		int32_t lightmapSize
     );
 
 	db::Instance* getLightmapDiffuseInstance() const { return m_lightmapDiffuseInstance; }
-
-	db::Instance* getLightmapDirectionalInstance() const { return m_lightmapDirectionalInstance; }
 
     const model::Model* getModel() const { return m_model; }
 
@@ -65,7 +62,6 @@ public:
 
 private:
 	Ref< db::Instance > m_lightmapDiffuseInstance;
-	Ref< db::Instance > m_lightmapDirectionalInstance;
 	Ref< const model::Model > m_model;
 	Transform m_transform;
 	int32_t m_lightmapSize;
