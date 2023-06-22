@@ -49,9 +49,7 @@ public:
 
 	bool create(ShaderModuleCache* shaderModuleCache, PipelineLayoutCache* pipelineLayoutCache, const ProgramResourceVk* resource, int32_t maxAnistropy, float mipBias, const wchar_t* const tag);
 
-	bool validateGraphics(CommandBuffer* commandBuffer, const float targetSize[2]);
-
-	bool validateCompute(CommandBuffer* commandBuffer);
+	bool validate(CommandBuffer* commandBuffer, VkPipelineBindPoint bindPoint, const float* targetSize);
 
 	virtual void destroy() override final;
 

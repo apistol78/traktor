@@ -956,7 +956,7 @@ void RenderViewVk::draw(const IBufferView* vertexBuffer, const IVertexLayout* ve
 	validateGraphicsPipeline(vlv, p, primitives.type);
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
-	if (!p->validateGraphics(frame.graphicsCommandBuffer, targetSize))
+	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, targetSize))
 		return;
 
 	if (frame.boundVertexBuffer != *vbv)
@@ -1019,7 +1019,7 @@ void RenderViewVk::drawIndirect(const IBufferView* vertexBuffer, const IVertexLa
 	validateGraphicsPipeline(vlv, p, primitiveType);
 
 	const float targetSize[] = { (float)m_targetSet->getWidth(), (float)m_targetSet->getHeight() };
-	if (!p->validateGraphics(frame.graphicsCommandBuffer, targetSize))
+	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,  targetSize))
 		return;
 
 	if (frame.boundVertexBuffer != *vbv)
@@ -1075,7 +1075,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 
 	validateComputePipeline(p);
 
-	p->validateCompute(frame.graphicsCommandBuffer);
+	p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr);
 	vkCmdDispatch(*frame.graphicsCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
