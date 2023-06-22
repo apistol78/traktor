@@ -97,11 +97,11 @@ int64_t ChunkMemoryStream::read(void* block, int64_t nbytes)
 
 	while (nread < nbytes)
 	{
-		auto chunk = m_memory->getChunk(m_position);
+		const auto chunk = m_memory->getChunk(m_position);
 		if (!chunk.ptr)
 			break;
 
-		int64_t chunkRead = std::min< int64_t >(nbytes - nread, chunk.avail);
+		const int64_t chunkRead = std::min< int64_t >(nbytes - nread, chunk.avail);
 		if (chunkRead <= 0)
 			break;
 
@@ -122,7 +122,7 @@ int64_t ChunkMemoryStream::write(const void* block, int64_t nbytes)
 	if (nbytes <= 0)
 		return 0;
 
-	size_t newSize = std::max< size_t >(m_memory->size(), m_position + nbytes);
+	const size_t newSize = std::max< size_t >(m_memory->size(), m_position + nbytes);
 	if (!m_memory->resize(newSize))
 		return 0;
 
@@ -135,7 +135,7 @@ int64_t ChunkMemoryStream::write(const void* block, int64_t nbytes)
 		if (!chunk.ptr)
 			break;
 
-		int64_t chunkWrite = std::min< int64_t >(nbytes - nwritten, chunk.avail);
+		const int64_t chunkWrite = std::min< int64_t >(nbytes - nwritten, chunk.avail);
 		std::memcpy(chunk.ptr, blockPtr, chunkWrite);
 
 		blockPtr += chunkWrite;
