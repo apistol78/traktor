@@ -36,7 +36,7 @@ class T_DLLCLASS DeepClone : public Object
 	T_RTTI_CLASS;
 
 public:
-	DeepClone(const ISerializable* source);
+	explicit DeepClone(const ISerializable* source);
 
 	/*! Create new instance of source object. */
 	Ref< ISerializable > create() const;

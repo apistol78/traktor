@@ -14,7 +14,6 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Semaphore.h"
-#include "Core/Thread/ThreadLocal.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -81,7 +80,6 @@ public:
 private:
 	Ref< Socket > m_socket;
 	SmallMap< const TypeInfo*, RefArray< ISerializable > > m_inQueue;
-	ThreadLocal m_threadBuffer;
 	Semaphore m_lock;
 };
 
