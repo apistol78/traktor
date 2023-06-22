@@ -308,16 +308,21 @@ bool ProgramVk::create(
 	return true;
 }
 
-bool ProgramVk::validateGraphics(
+bool ProgramVk::validate(
 	CommandBuffer* commandBuffer,
-	const float targetSize[2]
+	VkPipelineBindPoint bindPoint,
+	const float* targetSize
 )
 {
-	// Set implicit parameters.
-	setVectorParameter(
-		s_handleTargetSize,
-		Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
-	);
+	// Set implicit parameters; only valid for graphic programs.
+	if (bindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS)
+	{
+		T_ASSERT(targetSize != nullptr);
+		setVectorParameter(
+			s_handleTargetSize,
+			Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
+		);
+	}
 
 	// Set resource indices.
 	for (auto it : m_parameterMap)
@@ -404,7 +409,7 @@ bool ProgramVk::validateGraphics(
 		return false;
 
 	// Get offsets into buffers.
-	StaticVector< uint32_t, 3+8 > bufferOffsets;
+	StaticVector< uint32_t, 3+32 > bufferOffsets;
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (!m_uniformBuffers[i].size)
@@ -421,7 +426,7 @@ bool ProgramVk::validateGraphics(
 
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		bindPoint,
 		m_pipelineLayout,
 		1,
 		1, &m_descriptorSet,
@@ -431,143 +436,19 @@ bool ProgramVk::validateGraphics(
 	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
+		bindPoint,
 		m_pipelineLayout,
 		0,
 		1, &bindlessDescriptorSet,
 		0, nullptr
 	);
 
-	if (m_renderState.stencilEnable)
+	if (bindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS && m_renderState.stencilEnable)
 		vkCmdSetStencilReference(
 			*commandBuffer,
 			VK_STENCIL_FRONT_AND_BACK,
 			m_stencilReference
 		);
-
-	return true;
-}
-
-bool ProgramVk::validateCompute(CommandBuffer* commandBuffer)
-{
-	// Set texture resource indices.
-	for (auto it : m_parameterMap)
-	{
-		const ParameterMap& pm = it.second;
-		if (pm.ubuffer < 0)
-			continue;
-
-		if (pm.textureIndex >= 0)
-		{
-			ITexture* texture = m_textures[pm.textureIndex].texture;
-			if (!texture)
-				return false;
-
-			ITexture* resolved = texture->resolve();
-			T_ASSERT(resolved);
-
-			uint32_t resourceIndex = ~0U;
-			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
-
-			T_FATAL_ASSERT(resourceIndex != ~0U);
-
-			auto& ub = m_uniformBuffers[pm.ubuffer];
-			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.ubufferOffset]))
-				ub.dirty = true;
-		}
-		else if (pm.imageIndex >= 0)
-		{
-			ITexture* texture = m_images[pm.imageIndex].texture;
-			if (!texture)
-				return false;
-
-			ITexture* resolved = texture->resolve();
-			T_ASSERT(resolved);
-
-			uint32_t resourceIndex = ~0U;
-			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
-			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
-			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
-
-			T_FATAL_ASSERT(resourceIndex != ~0U);
-
-			auto& ub = m_uniformBuffers[pm.ubuffer];
-			if (storeIfNotEqual((const float*)&resourceIndex, 1, &ub.data[pm.ubufferOffset]))
-				ub.dirty = true;			
-		}
-	}
-
-	// Update content of uniform buffers.
-	for (uint32_t i = 0; i < 3; ++i)
-	{
-		if (!m_uniformBuffers[i].size || !m_uniformBuffers[i].dirty)
-			continue;
-
-		auto pool = m_context->getUniformBufferPool(i);
-
-		if (m_uniformBuffers[i].range.ptr)
-			pool->free(m_uniformBuffers[i].range);
-
-		if (!pool->allocate(m_uniformBuffers[i].alignedSize, m_uniformBuffers[i].range))
-		{
-			log::error << L"Out of uniform buffer pool memory (" << m_tag << L")!" << Endl;
-			return false;
-		}
-
-		std::memcpy(
-			m_uniformBuffers[i].range.ptr,
-			m_uniformBuffers[i].data.c_ptr(),
-			m_uniformBuffers[i].size
-		);
-
-		m_uniformBuffers[i].dirty = false;
-	}
-
-	if (!validateDescriptorSet())
-		return false;
-
-	// Get offsets into buffers.
-	StaticVector< uint32_t, 3+8 > bufferOffsets;
-	for (uint32_t i = 0; i < 3; ++i)
-	{
-		if (!m_uniformBuffers[i].size)
-			continue;
-		bufferOffsets.push_back(m_uniformBuffers[i].range.offset);
-	}
-	for (const auto& sbuffer : m_sbuffers)
-	{
-		if (!sbuffer.bufferView)
-			continue;
-		auto bvvk = sbuffer.bufferView;
-		bufferOffsets.push_back(bvvk->getVkBufferOffset());
-	}
-
-	vkCmdBindDescriptorSets(
-		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_COMPUTE,
-		m_pipelineLayout,
-		1,
-		1, &m_descriptorSet,
-		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
-	);
-
-	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
-	vkCmdBindDescriptorSets(
-		*commandBuffer,
-		VK_PIPELINE_BIND_POINT_COMPUTE,
-		m_pipelineLayout,
-		0,
-		1, &bindlessDescriptorSet,
-		0, nullptr
-	);
 
 	return true;
 }
