@@ -526,6 +526,8 @@ bool MeshPipeline::buildOutput(
 			}
 
 			materialShaderGraph = generator.generateMesh(
+				*models[0],
+				materialPair.second,
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
@@ -559,6 +561,8 @@ bool MeshPipeline::buildOutput(
 			}
 
 			materialShaderGraph = generator.generateMesh(
+				*models[0],
+				materialPair.second,
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
 			);

@@ -58,6 +58,8 @@ public:
 	) const;
 
 	Ref< render::ShaderGraph > generateMesh(
+		const model::Model& model,
+		const model::Material& material,
 		const render::ShaderGraph* meshSurfaceShaderGraph,
 		const Guid& vertexShaderGuid
 	) const;
