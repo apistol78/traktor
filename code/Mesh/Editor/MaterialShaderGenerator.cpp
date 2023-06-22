@@ -100,15 +100,19 @@ void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* tex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
+MaterialShaderGenerator::MaterialShaderGenerator(const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve)
+:	m_resolve(resolve)
+{
+}
+
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
-	const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 	const model::Model& model,
 	const model::Material& material,
 	bool vertexColor
 ) const
 {
 	// Create a mutable material surface shader.
-	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(resolve(c_meshSurfaceTemplate)).create< render::ShaderGraph >();
+	Ref< render::ShaderGraph > meshSurfaceShaderGraph = DeepClone(m_resolve(c_meshSurfaceTemplate)).create< render::ShaderGraph >();
 	if (!meshSurfaceShaderGraph)
 		return nullptr;
 
@@ -263,7 +267,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	}
 
 	// Resolve material shader; load all patched fragments and merge into a complete shader.
-	FragmentReaderAdapter fragmentReader(resolve);
+	FragmentReaderAdapter fragmentReader(m_resolve);
 	meshSurfaceShaderGraph = render::FragmentLinker(fragmentReader).resolve(meshSurfaceShaderGraph, resolveNodes, false);
 	if (!meshSurfaceShaderGraph)
 		return nullptr;
@@ -374,13 +378,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 }
 
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
-	const std::function< Ref< const render::ShaderGraph >(const Guid& fragmentId) >& resolve,
 	const render::ShaderGraph* meshSurfaceShaderGraph,
 	const Guid& vertexShaderGuid
 ) const
 {
 	// Create a mutable material mesh shader.
-	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
+	Ref< render::ShaderGraph > meshShaderGraph = DeepClone(m_resolve(c_meshShaderTemplate)).create< render::ShaderGraph >();
 	if (!meshShaderGraph)
 		return nullptr;
 
@@ -401,15 +404,11 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 	}
 
 	// Replace vertex interface with concrete implementation fragment.
-	RefArray< render::External > resolveNodes;
 	for (auto externalNode : meshShaderGraph->findNodesOf< render::External >())
 	{
 		const Guid& fragmentGuid = externalNode->getFragmentGuid();
 		if (fragmentGuid == c_meshVertexInterface)
-		{
 			externalNode->setFragmentGuid(vertexShaderGuid);
-			resolveNodes.push_back(externalNode);
-		}
 	}
 
 	return meshShaderGraph;
