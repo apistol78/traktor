@@ -69,6 +69,7 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
+#include "Shape/Editor/Bake/TracerCamera.h"
 #include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
@@ -82,6 +83,7 @@
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Editor/ResolveExternal.h"
+#include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/LightComponentData.h"
@@ -630,6 +632,7 @@ bool BakePipelineOperator::build(
 					if (
 						inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
 						inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
+						inoutEntityData->getComponent< world::CameraComponentData >() != nullptr ||
 						inoutEntityData->getName() == L"Irradiance"
 					)
 					{
@@ -664,6 +667,17 @@ bool BakePipelineOperator::build(
 				// Add sky source.
 				if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
 					addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), configuration->getSkyAttenuation(), tracerTask);
+
+				// Add camera.
+				if (auto cameraComponentData = inoutEntityData->getComponent< world::CameraComponentData >())
+				{
+					tracerTask->addTracerCamera(new TracerCamera(
+						inoutEntityData->getTransform(),
+						cameraComponentData->getFieldOfView(),
+						1280,
+						720
+					));
+				}
 
 				// Get volume for irradiance grid.
 				if (inoutEntityData->getName() == L"Irradiance")

@@ -46,5 +46,10 @@ void TracerTask::addTracerIrradiance(const TracerIrradiance* tracerIrradiance)
     m_tracerIrradiances.push_back(tracerIrradiance);
 }
 
+void TracerTask::addTracerCamera(const TracerCamera* tracerCamera)
+{
+    m_tracerCameras.push_back(tracerCamera);
+}
+
     }
 }

@@ -25,6 +25,8 @@
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
 #include "Shape/Editor/Bake/Embree/SplitModel.h"
 
+#define USE_LAMBERTIAN_DIRECTION
+
 namespace traktor
 {
 	namespace shape
@@ -73,7 +75,7 @@ Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
 	const float sin_theta = std::sqrt(sin2_theta);
 	const float cos_theta = std::sqrt(cos2_theta);
 	const float orientation = uv.y * TWO_PI;
-	const Vector4 dir(sin_theta * std::cos(orientation), cos_theta, sin_theta * std::sin(orientation), 0.0f);
+	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
 
 	Vector4 u, v;
 	orthogonalFrame(direction, u, v);
@@ -167,14 +169,12 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	{
 		const auto& vertex = model->getVertex(i);
 
-		Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
+		const Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
 		*pp++ = p.x();
 		*pp++ = p.y();
 		*pp++ = p.z();
 
-		Vector2 uv(0.0f, 0.0f);
-		if (vertex.getTexCoord(0) != model::c_InvalidIndex)
-			uv = model->getTexCoord(vertex.getTexCoord(0));
+		const Vector2 uv = (vertex.getTexCoord(0) != model::c_InvalidIndex) ? model->getTexCoord(vertex.getTexCoord(0)) : Vector2::zero();
 		*pt++ = uv.x;
 		*pt++ = uv.y;
 
@@ -332,16 +332,70 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	}
 }
 
+Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direction) const
+{
+	RTCRayHit T_MATH_ALIGN16 rh;
+	constructRay(position, direction, 10000.0_simd, rh);
+
+	RTCIntersectContext context;
+	rtcInitIntersectContext(&context);
+	rtcIntersect1(m_scene, &context, &rh);	
+
+	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+	{
+		// Nothing hit, sample sky if available else it's all black.
+		if (m_environment)
+			return m_environment->sampleRadiance(direction);
+		else
+			return Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	}
+
+	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
+	const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+
+	const uint32_t offset = m_materialOffset[rh.hit.geomID];
+	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
+
+	Color4f hitMaterialColor = hitMaterial.getColor();
+	const auto& image = hitMaterial.getDiffuseMap().image;
+	if (image)
+	{
+		const uint32_t slot = 0;
+		float texCoord[2] = { 0.0f, 0.0f };
+
+		RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+
+		image->getPixel(
+			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+			hitMaterialColor
+		);
+	}
+	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
+	const Color4f BRDF = hitMaterialColor / Scalar(PI);
+	const Scalar cosPhi = clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
+	const Scalar probability = 1.0_simd / Scalar(PI);
+
+	static RandomGeometry random;
+	const Color4f incoming = tracePath0(hitPosition, hitNormal, random);
+
+	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability);
+	return output;
+}
+
 Color4f RayTracerEmbree::tracePath0(
 	const Vector4& origin,
 	const Vector4& normal,
 	RandomGeometry& random
 ) const
 {
+	constexpr int SampleBatch = 32;
+
 	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	sampleCount = alignUp(sampleCount, 16);
+	sampleCount = alignUp(sampleCount, SampleBatch);
 
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -359,25 +413,25 @@ Color4f RayTracerEmbree::tracePath0(
 		color += incoming * BRDF * cosPhi / probability;
 	}
 #else
-	RTCRayHit T_MATH_ALIGN16 rhv[16];
-	Vector4 directions[16];
+	RTCRayHit T_MATH_ALIGN16 rhv[SampleBatch];
+	Vector4 directions[SampleBatch];
 
 	RTCIntersectContext context;
 	rtcInitIntersectContext(&context);
 
 	// Sample across hemisphere.
-	for (int32_t i = 0; i < sampleCount; i += 16)
+	for (int32_t i = 0; i < sampleCount; i += SampleBatch)
 	{
-		for (int32_t j = 0; j < 16; ++j)
+		for (int32_t j = 0; j < SampleBatch; ++j)
 		{
 			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			directions[j] = Quasirandom::uniformHemiSphere(uv, normal);
 			constructRay(origin, directions[j], m_configuration->getMaxPathDistance(), rhv[j]);
 		}
 
-		rtcIntersect1M(m_scene, &context, rhv, 16, sizeof(RTCRayHit));
+		rtcIntersect1M(m_scene, &context, rhv, SampleBatch, sizeof(RTCRayHit));
 
-		for (int32_t j = 0; j < 16; ++j)
+		for (int32_t j = 0; j < SampleBatch; ++j)
 		{
 			const auto& rh = rhv[j];
 			const auto& direction = directions[j];
@@ -417,11 +471,13 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const Vector2 uv(random.nextFloat(), random.nextFloat());
 
+#if !defined(USE_LAMBERTIAN_DIRECTION)
 			const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 			const Scalar probability = 1.0_simd;
-
-			//Vector4 newDirection = lambertianDirection(uv, hitNormal);
-			//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+#else
+			const Vector4 newDirection = lambertianDirection(uv, hitNormal);
+			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+#endif
 
 			const Scalar cosPhi = dot3(newDirection, hitNormal);
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
@@ -455,13 +511,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 ) const
 {
 	if (depth > 2)
-	{
-		// Terminate, sample sky if available else it's all black.
-		if (m_environment)
-			return m_environment->sampleRadiance(direction);
-		else
-			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
-	}
+		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	RTCRayHit T_MATH_ALIGN16 rh;
 	constructRay(origin, direction, m_configuration->getMaxPathDistance(), rh);
@@ -506,11 +556,13 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	const Vector2 uv(random.nextFloat(), random.nextFloat());
 
+#if !defined(USE_LAMBERTIAN_DIRECTION)
 	const Vector4 newDirection = Quasirandom::uniformHemiSphere(uv, hitNormal);
 	const Scalar probability = 1.0_simd;
-
-	//Vector4 newDirection = lambertianDirection(uv, hitNormal);
-	//const Scalar probability = 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+#else
+	const Vector4 newDirection = lambertianDirection(uv, hitNormal);
+	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
+#endif
 
 	const Scalar cosPhi = dot3(newDirection, hitNormal);
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
@@ -541,8 +593,8 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 	{
 		for (int32_t j = 0; j < 16; ++j)
 		{
-			Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
-			Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
+			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 			constructRay(origin, direction, maxOcclusionDistance, rv[j]);
 		}
 
@@ -643,14 +695,14 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					break;
 
 				const Scalar phi = dot3(normal, lightDirection);
-				if (phi <= 0.0f)
+				if (phi <= 0.0_simd)
 					break;
 
 				const Scalar f = attenuation(lightDistance, light.range);
-				if (f <= 0.0f)
+				if (f <= 0.0_simd)
 					break;
 
-				Scalar shadowAttenuate(1.0f);
+				Scalar shadowAttenuate = 1.0_simd;
 
 				if (shadowSampleCount > 0)
 				{
@@ -701,18 +753,18 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 				const float alpha = clamp< float >(dot3(light.direction, lightToPoint), -1.0f, 1.0f);
 				const Scalar k0 = Scalar(1.0f - std::acos(alpha) / (light.radius / 2.0f));
-				if (k0 <= 0.0f)
+				if (k0 <= 0.0_simd)
 					break;
 
 				const Scalar k1 = dot3(normal, -lightToPoint);
-				if (k1 <= 0.0f)
+				if (k1 <= 0.0_simd)
 					break;
 
 				const Scalar k2 = attenuation(lightDistance, light.range);
-				if (k2 <= 0.0f)
+				if (k2 <= 0.0_simd)
 					break;
 
-				Scalar shadowAttenuate(1.0f);
+				Scalar shadowAttenuate = 1.0_simd;
 
 				if (shadowSampleCount > 0)
 				{
@@ -800,7 +852,7 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 				color
 			))
 			{
-				if (color.getAlpha() <= 0.5f)
+				if (color.getAlpha() <= 0.5_simd)
 					args->valid[i] = 0;
 			}
 		}

@@ -8,6 +8,8 @@
  */
 #include <cmath>
 #include <functional>
+#include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Quasirandom.h"
@@ -17,6 +19,25 @@
 
 namespace traktor::test
 {
+	namespace
+	{
+
+Vector4 lambertianDirection(const Vector2& uv, const Vector4& direction)
+{
+	// Calculate random direction, with Gaussian probability distribution.
+	const float sin2_theta = uv.x;
+	const float cos2_theta = 1.0f - sin2_theta;
+	const float sin_theta = std::sqrt(sin2_theta);
+	const float cos_theta = std::sqrt(cos2_theta);
+	const float orientation = uv.y * TWO_PI;
+	const Vector4 dir(sin_theta * std::cos(orientation), sin_theta * std::sin(orientation), cos_theta, 0.0f);
+
+	Vector4 u, v;
+	orthogonalFrame(direction, u, v);
+	return (Matrix44(u, v, direction, Vector4::zero()) * dir).xyz0().normalized();
+}
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.test.CaseMath", 0, CaseMath, Case)
 
@@ -216,6 +237,37 @@ void CaseMath::run()
 		CASE_ASSERT(uv.y >= 0.0f);
 		CASE_ASSERT(uv.y <= 1.0f);
 	}
+
+	// Check orthogonal frame.
+	for (int32_t i = 0; i < 1000; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, 1000);
+		Vector4 dir = Quasirandom::uniformSphere(uv);
+
+		Vector4 u, v;
+		orthogonalFrame(dir, u, v);
+		Vector4 chk = (Matrix44(u, v, dir, Vector4::zero()) * Vector4(0.0f, 0.0f, 1.0f)).xyz0();
+
+		CASE_ASSERT(dot3(dir, chk) >= 1.0f - FUZZY_EPSILON);
+	}
+
+	// Check lambertian direction.
+	double phi1 = 0.0;
+	double phi2 = 0.0;
+	for (int32_t i = 0; i < 10000; ++i)
+	{
+		Vector2 uv = Quasirandom::hammersley(i, 10000);
+		Vector4 dir1 = lambertianDirection(uv, Vector4(0.0f, 0.0f, 1.0f));
+		Vector4 dir2 = Quasirandom::uniformHemiSphere(uv, Vector4(0.0f, 0.0f, 1.0f));
+
+		CASE_ASSERT(dir1.z() >= 0.0f);
+		phi1 += acos(dot3(dir1, Vector4(0.0f, 0.0f, 1.0f)));
+
+		CASE_ASSERT(dir2.z() >= 0.0f);
+		phi2 += acos(dot3(dir2, Vector4(0.0f, 0.0f, 1.0f)));
+	}
+	log::info << phi1 / 10000.0 << L" (" << (2.0f / PI) << L")" << Endl;
+	log::info << phi2 / 10000.0 << L" (" << (1.0f) << L")" << Endl;
 
 /*
 	RandomGeometry rnd;

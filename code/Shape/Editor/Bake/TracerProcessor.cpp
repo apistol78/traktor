@@ -29,6 +29,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
+#include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Functions/BlendFunction.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
@@ -41,6 +43,7 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
+#include "Shape/Editor/Bake/TracerCamera.h"
 #include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
 #include "Shape/Editor/Bake/TracerLight.h"
@@ -506,7 +509,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	rayTracer->commit();
 
 	// Get output tasks and sort them by priority.
-	auto tracerOutputs = task->getTracerOutputs();
+	const auto& tracerOutputs = task->getTracerOutputs();
 
 	// Calculate total progress.
 	m_status.total = std::accumulate(tracerOutputs.begin(), tracerOutputs.end(), (int32_t)0, [](int32_t acc, const TracerOutput* iter) {
@@ -593,7 +596,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	}
 
 	// Trace irradiance grids.
-	auto tracerIrradiances = task->getTracerIrradiances();
+	const auto& tracerIrradiances = task->getTracerIrradiances();
 	for (uint32_t i = 0; !m_cancelled && i < tracerIrradiances.size(); ++i)
 	{
 		auto tracerIrradiance = tracerIrradiances[i];
@@ -705,6 +708,56 @@ bool TracerProcessor::process(const TracerTask* task)
 			log::error << L"Trace failed; unable to commit output instance." << Endl;
 			return false;
 		}
+	}
+
+	// Trace camera views.
+	const auto& tracerCameras = task->getTracerCameras();
+	for (uint32_t i = 0; !m_cancelled && i < tracerCameras.size(); ++i)
+	{
+		auto tracerCamera = tracerCameras[i];
+
+		Ref< drawing::Image > image = new drawing::Image(
+			drawing::PixelFormat::getR8G8B8A8(),
+			tracerCamera->getWidth(),
+			tracerCamera->getHeight()
+		);
+
+		const Transform transform = tracerCamera->getTransform();
+		const float fov = tracerCamera->getFieldOfView();
+		const float aspect = ((float)image->getWidth()) / image->getHeight();
+
+		m_status.description = str(L"Image %d", i);
+		m_status.current = 0;
+		m_status.total = image->getHeight();
+
+		for (int32_t y = 0; y < image->getHeight(); ++y)
+		{
+			const float fy = 1.0f - 2.0f * ((float)y / image->getHeight());
+
+			m_status.current = y;
+
+			for (int32_t x = 0; x < image->getWidth(); ++x)
+			{
+				const float fx = 2.0f * ((float)x / image->getWidth()) - 1.0f;
+
+				const float Px = fx * tan(fov / 2.0f) * aspect;
+				const float Py = fy * tan(fov / 2.0f);
+				
+				const Vector4 origin = transform.translation().xyz1();
+				const Vector4 direction = transform * Vector4(Px, Py, 1.0f, 0.0f).normalized();
+
+				const Color4f color = rayTracer->traceRay(origin, direction);
+				image->setPixel(x, y, color);
+			}
+		}
+
+		drawing::TonemapFilter tonemapFilter;
+		image->apply(&tonemapFilter);
+
+		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+		image->apply(&gammaFilter);
+
+		image->save(str(L"Preview%04d.png", i));
 	}
 
 	return true;
