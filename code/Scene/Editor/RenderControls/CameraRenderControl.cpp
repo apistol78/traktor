@@ -318,6 +318,14 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	if (!m_context->findAdaptersOfType(type_of< world::CameraComponent >(), m_cameraEntities))
 		return;
 
+	auto it = std::find_if(m_cameraEntities.begin(), m_cameraEntities.end(), [](EntityAdapter* entityAdapter) {
+		return entityAdapter->isVisible();
+	});
+	if (it == m_cameraEntities.end())
+		return;
+
+	auto cameraEntity = *it;
+
 	// Render view events; reset view if it has become lost.
 	bool lost = false;
 	for (render::RenderEvent re = {}; m_renderView->nextEvent(re); )
@@ -335,7 +343,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 		m_dirtySize = sz;
 	}
 
-	world::CameraComponent* cameraComponent = m_cameraEntities[0]->getComponent< world::CameraComponent >();
+	world::CameraComponent* cameraComponent = cameraEntity->getComponent< world::CameraComponent >();
 	T_ASSERT(cameraComponent);
 
 	// Lazy create world renderer.
@@ -347,10 +355,10 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-	Matrix44 projection = m_worldRenderView.getProjection();
-	Matrix44 view = m_cameraEntities[0]->getTransform().inverse().toMatrix44();
+	const float deltaTime = float(m_timer.getDeltaTime());
+	const float scaledTime = m_context->getTime();
+	const Matrix44 projection = m_worldRenderView.getProjection();
+	const Matrix44 view = cameraEntity->getTransform().inverse().toMatrix44();
 
 	// Build a root entity by gathering entities from containers.
 	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
