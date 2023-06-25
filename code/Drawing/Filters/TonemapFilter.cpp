@@ -20,13 +20,13 @@ void TonemapFilter::apply(Image* image) const
 {
 	Color4f in;
 
-	Scalar intensity(0.0f);
+	Scalar intensity = 0.0_simd;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, in);
-			intensity += in.getRed() + in.getGreen() + in.getBlue();
+			intensity += (in.getRed() + in.getGreen() + in.getBlue()) / 3.0_simd;
 		}
 	}
 	intensity /= Scalar(float(image->getWidth() * image->getHeight()));
