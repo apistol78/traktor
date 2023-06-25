@@ -161,6 +161,11 @@ void RayTracerLocal::traceLightmap(const model::Model* model, const GBuffer* gbu
 {
 }
 
+Color4f RayTracerLocal::traceRay(const Vector4& position, const Vector4& direction) const
+{
+	return Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
 /*
 Ref< drawing::Image > RayTracerLocal::traceDirect(const GBuffer* gbuffer) const
 {

@@ -535,14 +535,14 @@ T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 {
 	VALIDATE(v);
 	VALIDATE(at);
-	Vector4 N = at.normalized();
-	Vector4 V = N * (dot3(N, v) * Scalar(2.0f));
+	const Vector4 N = at.normalized();
+	const Vector4 V = N * (dot3(N, v) * Scalar(2.0f));
 	return V - v;
 }
 
 T_MATH_INLINE int32_t minorAxis3(const Vector4& v)
 {
-	Vector4 a = v.absolute();
+	const Vector4 a = v.absolute();
 	if (a._x < a._y && a._x < a._z)
 		return 0;
 	else if (a._y < a._x && a._y < a._z)
@@ -554,7 +554,7 @@ T_MATH_INLINE int32_t minorAxis3(const Vector4& v)
 T_MATH_INLINE int majorAxis3(const Vector4& v)
 {
 	VALIDATE(v);
-	Vector4 a = v.absolute();
+	const Vector4 a = v.absolute();
 	return (a._x > a._y) ? ((a._x > a._z) ? 0 : 2) : ((a._y > a._z) ? 1 : 2);
 }
 
@@ -566,7 +566,7 @@ T_MATH_INLINE void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& out
 		Vector4(0.0f, 0.0f, 1.0f, 0.0f),
 		Vector4(1.0f, 0.0f, 0.0f, 0.0f)
 	};
-	int m = majorAxis3(d);
+	const int m = majorAxis3(d);
 	outU = cross(d, c_axises[m]).normalized();
 	outV = cross(outU, d).normalized();
 }
