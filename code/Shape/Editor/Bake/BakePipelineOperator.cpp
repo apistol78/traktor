@@ -759,7 +759,12 @@ bool BakePipelineOperator::build(
 					if (visualModel)
 					{
 						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
+						log::info << L"Using lightmap ID " << lightmapDiffuseId.format() << Endl;
 
+						// Register lightmap ID as being built.
+						pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
+
+						// Get calculated lightmap size.
 						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
 
 						// Modify all materials to contain reference to lightmap channel.
@@ -806,17 +811,13 @@ bool BakePipelineOperator::build(
 
 						if (configuration->getEnableLightmaps())
 						{
-							Ref< db::Instance > lightmapDiffuseInstance;
-							if (lightmapDiffuseId.isNotNull())
-							{
-								lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
-								if (!lightmapDiffuseInstance)
-									return false;
-								lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-									resource::Id< render::ITexture >(c_lightmapProxyId)
-								));
-								lightmapDiffuseInstance->commit();
-							}
+							Ref< db::Instance > lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
+							if (!lightmapDiffuseInstance)
+								return false;
+							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
+								resource::Id< render::ITexture >(c_lightmapProxyId)
+							));
+							lightmapDiffuseInstance->commit();
 
 							tracerTask->addTracerOutput(new TracerOutput(
 								lightmapDiffuseInstance,

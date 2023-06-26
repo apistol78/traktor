@@ -421,6 +421,12 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	return product;
 }
 
+bool PipelineBuilder::buildAdHocOutput(const Guid& outputGuid)
+{
+	m_adHocBuilds.insert(outputGuid);
+	return true;
+}
+
 bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams)
 {
 	const std::wstring outputPath = L"Generated/" + outputGuid.format();
