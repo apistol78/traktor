@@ -87,6 +87,11 @@ public:
 	 */
 	virtual Ref< ISerializable > buildProduct(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams = nullptr) = 0;
 
+	/*! Fake build ad-hoc output, only register ad-hoc build. */
+	virtual bool buildAdHocOutput(
+		const Guid& outputGuid
+	) = 0;
+
 	/*! Build ad-hoc output instance from source asset. */
 	virtual bool buildAdHocOutput(
 		const ISerializable* sourceAsset,

@@ -69,6 +69,8 @@ public:
 
 	virtual Ref< ISerializable > buildProduct(const db::Instance* sourceInstance, const ISerializable* sourceAsset, const Object* buildParams) override final;
 
+	virtual bool buildAdHocOutput(const Guid& outputGuid) override final;
+
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const Guid& outputGuid, const Object* buildParams) override final;
 
 	virtual bool buildAdHocOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams) override final;
