@@ -379,10 +379,6 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
 		break;
 	}
-
-	//m_context->raiseCameraMoved();
-	//m_context->enqueueRedraw(this);
-	//update();
 }
 
 void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
