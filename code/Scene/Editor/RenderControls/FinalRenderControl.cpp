@@ -56,6 +56,7 @@ namespace traktor
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
 const int32_t c_defaultMultiSample = 0;
+const float c_defaultMovementSpeed = 40.0f;
 const float c_minFieldOfView = 4.0f;
 const float c_maxFieldOfView = 160.0f;
 const float c_cameraTranslateDeltaScale = 0.025f;
@@ -95,6 +96,7 @@ bool FinalRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 	m_multiSample = settings->getProperty< int32_t >(L"Editor.MultiSample", c_defaultMultiSample);
+	m_model.setMovementSpeed(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed));
 
 	m_containerAspect = new ui::Container();
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
@@ -226,7 +228,7 @@ bool FinalRenderControl::handleCommand(const ui::Command& command)
 		if (!sceneInstance)
 			return false;
 
-		uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
+		const uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
 		if (m_worldRendererHash == hash)
 			return false;
 
@@ -360,6 +362,7 @@ void FinalRenderControl::updateSettings()
 	m_invertPanY = settings->getProperty< bool >(L"SceneEditor.InvertPanY");
 	m_fieldOfView = std::max< float >(settings->getProperty< float >(L"SceneEditor.FieldOfView", c_defaultFieldOfView), c_minFieldOfView);
 	m_mouseWheelRate = settings->getProperty< float >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+	m_model.setMovementSpeed(settings->getProperty< float >(L"SceneEditor.MovementSpeed", c_defaultMovementSpeed));
 }
 
 Matrix44 FinalRenderControl::getProjectionTransform() const
