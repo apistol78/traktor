@@ -32,6 +32,13 @@ bool Form::create(const std::wstring& text, Unit width, Unit height, int style, 
 		return false;
 	}
 
+	// Ensure size are converted to display DPI.
+	const int32_t w = form->dpi96(width.get());
+	const int32_t h = form->dpi96(height.get());
+	Rect rc = form->getRect();
+	rc.setSize(ui::Size(w, h));
+	form->setRect(rc);
+
 	m_widget = form;
 	m_icon = nullptr;
 	return Container::create(parent, style, layout);
