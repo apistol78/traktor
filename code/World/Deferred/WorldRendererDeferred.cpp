@@ -669,6 +669,7 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
 
 			if (ambientOcclusionTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
@@ -694,25 +695,6 @@ void WorldRendererDeferred::setupVisualPass(
 			}
 
 			sharedParams->endParameters(renderContext);
-
-			// Irradiance
-			const WorldRenderPassShared irradiancePass(
-				s_techniqueIrradianceWrite,
-				sharedParams,
-				worldRenderView,
-				IWorldRenderPass::None
-			);
-
-			T_ASSERT(!renderContext->havePendingDraws());
-
-			for (auto r : m_gatheredView.renderables)
-				r.renderer->build(wc, worldRenderView, irradiancePass, r.renderable);
-	
-			for (auto entityRenderer : m_entityRenderers->get())
-				entityRenderer->build(wc, worldRenderView, irradiancePass);
-
-			// Do a manual merge so irradiance is written always.
-			renderContext->mergeDraw(render::RpAll);
 
 			// Analytical lights; resolve with gbuffer.
 			{
