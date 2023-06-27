@@ -53,6 +53,13 @@ bool Dialog::create(Widget* parent, const std::wstring& text, Unit width, Unit h
 		return false;
 	}
 
+	// Ensure size are converted to display DPI.
+	const int32_t w = dialog->dpi96(width.get());
+	const int32_t h = dialog->dpi96(height.get());
+	Rect rc = dialog->getRect();
+	rc.setSize(ui::Size(w, h));
+	dialog->setRect(rc);
+
 	m_widget = dialog;
 
 	if (!Container::create(parent, WsNone, layout))
