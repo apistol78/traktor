@@ -28,7 +28,6 @@ extern const render::Handle T_DLLCLASS s_techniqueForwardColor;
 extern const render::Handle T_DLLCLASS s_techniqueForwardGBufferWrite;
 extern const render::Handle T_DLLCLASS s_techniqueSimpleColor;
 extern const render::Handle T_DLLCLASS s_techniqueReflectionWrite;
-extern const render::Handle T_DLLCLASS s_techniqueIrradianceWrite;
 extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
 extern const render::Handle T_DLLCLASS s_techniqueShadow;
 
@@ -37,6 +36,7 @@ extern const render::Handle s_handleIrradianceEnable;
 extern const render::Handle s_handleVolumetricFogEnable;
 
 // Shader parameters.
+extern const render::Handle s_handleIrradianceMap;
 extern const render::Handle s_handleColorMap;
 extern const render::Handle s_handleDecalParams;
 extern const render::Handle s_handleDepthMap;

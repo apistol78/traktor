@@ -18,7 +18,6 @@ const render::Handle s_techniqueForwardColor(L"World_ForwardColor");
 const render::Handle s_techniqueForwardGBufferWrite(L"World_ForwardGBufferWrite");
 const render::Handle s_techniqueSimpleColor(L"World_SimpleColor");
 const render::Handle s_techniqueReflectionWrite(L"World_ReflectionWrite");
-const render::Handle s_techniqueIrradianceWrite(L"World_IrradianceWrite");
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_techniqueShadow(L"World_ShadowWrite");
 
@@ -27,6 +26,7 @@ const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
 const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 
 // Shader parameters.
+const render::Handle s_handleIrradianceMap(L"World_IrradianceMap");
 const render::Handle s_handleColorMap(L"World_ColorMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
 const render::Handle s_handleDepthMap(L"World_DepthMap");
