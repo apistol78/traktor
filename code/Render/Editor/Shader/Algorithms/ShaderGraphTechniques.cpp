@@ -117,9 +117,7 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, con
 				else
 				{
 					const INodeTraits* traits = INodeTraits::find(node);
-					T_FATAL_ASSERT (traits);
-
-					if (traits->isRoot(shaderGraphOpt, node))
+					if (traits != nullptr && traits->isRoot(shaderGraphOpt, node))
 						roots.push_back(node);
 				}
 			}

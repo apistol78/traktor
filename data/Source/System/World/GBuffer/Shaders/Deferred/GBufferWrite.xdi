@@ -11,7 +11,7 @@
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -24,7 +24,7 @@
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -32,12 +32,12 @@
 			<comment/>
 			<position>
 				<first>463</first>
-				<second>244</second>
+				<second>246</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -136,8 +136,8 @@
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -175,8 +175,8 @@
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -192,20 +192,20 @@
 			<id>{0533A842-649E-41EB-848E-C14E9F7A6DF9}</id>
 			<comment/>
 			<position>
-				<first>908</first>
+				<first>909</first>
 				<second>147</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
+			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
 			<comment/>
 			<position>
-				<first>297</first>
+				<first>299</first>
 				<second>50</second>
 			</position>
 			<name>Alpha</name>
@@ -250,13 +250,18 @@
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9683DC6F-70FC-415A-9DDC-1B2F2F71F954}</id>
-			<comment/>
+			<comment>
+			<![CDATA[
+Ensure only RGB is written.
+
+			]]>
+			</comment>
 			<position>
 				<first>789</first>
 				<second>559</second>
@@ -272,8 +277,8 @@
 			</position>
 			<name>Irradiance</name>
 			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>

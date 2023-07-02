@@ -16,19 +16,17 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 uint32_t rotateLeft(uint32_t value, uint32_t count)
 {
 	return (value << count) | (value >> (32 - count));
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Object)
 
@@ -60,7 +58,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 	SmallSet< std::pair< Ref< const Node >, int32_t > > nodeVisited;
 	uint32_t hash = 0;
 
-	// Collect root nodes; assume all nodes with no output pins to be roots.
+	// Collect root nodes.
 	for (auto node : shaderGraph->getNodes())
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
@@ -111,5 +109,4 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 	return hash;
 }
 
-	}
 }
