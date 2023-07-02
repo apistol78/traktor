@@ -693,6 +693,8 @@ bool MeshPipeline::buildOutput(
 			materialTechniqueNames = keepTechniqueNames;
 		}
 
+		// Generate graph for each technique.
+		log::info << L"Mesh material techniques:" << Endl;
 		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();
@@ -715,6 +717,8 @@ bool MeshPipeline::buildOutput(
 			mt.shaderTechnique = shaderTechniqueName;
 			mt.hash = hash;
 			materialTechniqueMap[materialPair.first].push_back(mt);
+
+			log::info << L"\t\"" << materialTechniqueName << L"\"\t\t(" << shaderTechniqueName << L")" << Endl;
 		}
 
 		// Build vertex declaration from shader vertex inputs.

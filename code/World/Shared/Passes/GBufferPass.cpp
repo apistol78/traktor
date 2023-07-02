@@ -7,9 +7,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Timer/Profiler.h"
+#include "Render/Buffer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
@@ -38,6 +40,7 @@ render::handle_t GBufferPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
+	const IrradianceGrid* irradianceGrid,
 	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
@@ -87,13 +90,26 @@ render::handle_t GBufferPass::setup(
 			sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+
+			if (irradianceGrid)
+			{
+				const auto size = irradianceGrid->getSize();
+				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, irradianceGrid->getBoundingBox().mn);
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, irradianceGrid->getBoundingBox().mx);
+				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, irradianceGrid->getBuffer()->getBufferView());
+			}
+
 			sharedParams->endParameters(renderContext);
 
 			const WorldRenderPassShared gbufferPass(
 				gbufferWriteTechnique,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::First
+				IWorldRenderPass::First,
+				{
+					{ s_handleIrradianceEnable, (bool)(irradianceGrid != nullptr) }
+				}
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());

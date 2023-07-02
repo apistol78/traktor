@@ -36,7 +36,7 @@ struct ConstantFoldingVisitor
 	Ref< ShaderGraph > m_shaderGraph;
 	const SmallMap< const OutputPin*, Constant >& m_outputConstants;
 
-	ConstantFoldingVisitor(ShaderGraph* shaderGraph, const SmallMap< const OutputPin*, Constant >& outputConstants)
+	explicit ConstantFoldingVisitor(ShaderGraph* shaderGraph, const SmallMap< const OutputPin*, Constant >& outputConstants)
 	:	m_shaderGraph(shaderGraph)
 	,	m_outputConstants(outputConstants)
 	{
@@ -610,9 +610,7 @@ restart_iteration:
 	for (const auto node : nodes)
 	{
 		const INodeTraits* traits = INodeTraits::find(node);
-		T_FATAL_ASSERT (traits);
-
-		if (traits->isRoot(shaderGraph, node))
+		if (traits != nullptr && traits->isRoot(shaderGraph, node))
 			roots.push_back(node);
 	}
 

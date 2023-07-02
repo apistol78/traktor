@@ -16,12 +16,10 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch, bool path)
 {
@@ -123,7 +121,7 @@ void buildCombinations(
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCombinations, Object)
 
@@ -136,7 +134,7 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph,
 	std::set< std::wstring > parameterNames;
 	for (auto branchNode : branchNodes)
 	{
-		std::wstring name = branchNode->getParameterName();
+		const std::wstring name = branchNode->getParameterName();
 		if (parameterNames.find(name) != parameterNames.end())
 			continue;
 
@@ -186,5 +184,4 @@ Ref< const ShaderGraph > ShaderGraphCombinations::getCombinationShaderGraph(uint
 	return m_combinations[index].shaderGraph;
 }
 
-	}
 }

@@ -24,6 +24,7 @@ namespace traktor::world
 {
 
 class Entity;
+class IrradianceGrid;
 class WorldEntityRenderers;
 class WorldRenderView;
 
@@ -44,6 +45,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        const IrradianceGrid* irradianceGrid,
         render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId

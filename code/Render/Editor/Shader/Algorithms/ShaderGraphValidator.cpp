@@ -22,12 +22,10 @@
 #include "Render/Editor/Shader/Algorithms/ShaderGraphEvaluator.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 struct CollectVisitor
 {
@@ -357,7 +355,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphValidator", ShaderGraphValidator, Object)
 
@@ -390,7 +388,8 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const N
 	RefArray< Node > roots;
 	for (auto node : m_shaderGraph->getNodes())
 	{
-		if (node->getOutputPinCount() <= 0 && node->getInputPinCount() > 0)
+		const INodeTraits* traits = INodeTraits::find(node);
+		if (traits != nullptr && traits->isRoot(m_shaderGraph, node))
 			roots.push_back(node);
 		else if (is_a< InputPort >(node) || is_a< OutputPort >(node))
 			roots.push_back(node);
@@ -494,5 +493,4 @@ bool ShaderGraphValidator::validateIntegrity() const
 	return true;
 }
 
-	}
 }

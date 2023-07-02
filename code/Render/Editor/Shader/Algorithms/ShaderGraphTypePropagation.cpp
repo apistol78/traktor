@@ -29,7 +29,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		RefArray< Node > roots;
 		for (auto node : nodes)
 		{
-			if (node->getOutputPinCount() <= 0 && node->getInputPinCount() > 0)
+			const INodeTraits* traits = INodeTraits::find(node);
+			if (traits != nullptr && traits->isRoot(m_shaderGraph, node))
 				roots.push_back(node);
 		}
 

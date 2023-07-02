@@ -86,7 +86,7 @@
 			<script>
 			<![CDATA[
 const float last = $Buffer[0].value.x;
-$Buffer[0].value.x = $Current * 0.03f + last * 0.97f;
+$Buffer[0].value.x = max($Current * 0.03f + last * 0.97f, 0.1f);
 
 			]]>
 			</script>
