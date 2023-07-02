@@ -17,10 +17,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.UnCompressor", UnCompressor, ICompressor
 
 bool UnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mipImages, TextureFormat textureFormat, bool needAlpha, int32_t compressionQuality) const
 {
-	for (RefArray< drawing::Image >::const_iterator i = mipImages.begin(); i != mipImages.end(); ++i)
+	for (auto image : mipImages)
 	{
-		const int32_t width = (*i)->getWidth();
-		const int32_t height = (*i)->getHeight();
+		const int32_t width = image->getWidth();
+		const int32_t height = image->getHeight();
 
 		const uint32_t outputSize = getTextureMipPitch(
 			textureFormat,
@@ -28,7 +28,7 @@ bool UnCompressor::compress(Writer& writer, const RefArray< drawing::Image >& mi
 			height
 		);
 
-		const uint8_t* data = static_cast< const uint8_t* >((*i)->getData());
+		const uint8_t* data = static_cast< const uint8_t* >(image->getData());
 		if (writer.write(data, outputSize, 1) != outputSize)
 			return false;
 	}

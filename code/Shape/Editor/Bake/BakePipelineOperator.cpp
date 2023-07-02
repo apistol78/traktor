@@ -293,7 +293,7 @@ void addSky(
 								const Vector2 uv = Quasirandom::hammersley(i, 10000, random);
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 								direction = lerp(d, direction, 0.125_simd).normalized();
-								Scalar weight = 1.0_simd; // dot3(d, direction);
+								Scalar weight = dot3(d, direction);
 
 								// Reduce sun influence.
 								if (sunIntensity > 0.0f)
@@ -322,9 +322,9 @@ void addSky(
 			radiance->clearAlpha(1.0f);
 
 			// Attenuate images; imperically measured using Blender as reference.
-			const float c_refScale = 5.0f / 4.0f;
-			const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-			radiance->apply(&tform);
+			//const float c_refScale = 5.0f / 4.0f;
+			//const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			//radiance->apply(&tform);
 
 			// Scale probe by user attenuation factor.
 			const drawing::TransformFilter tform2(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -402,7 +402,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	// Read all settings first so pipeline hash is consistent.
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
-	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
+	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.CompressionMethod", L"FP16");
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
 
 	// Instantiate raytracer implementation.

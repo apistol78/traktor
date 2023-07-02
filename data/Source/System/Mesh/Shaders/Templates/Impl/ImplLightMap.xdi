@@ -5,8 +5,8 @@
 			<id>{0EC917A5-AD89-A845-9A20-61D3507ED907}</id>
 			<comment/>
 			<position>
-				<first>1316</first>
-				<second>8</second>
+				<first>1011</first>
+				<second>-103</second>
 			</position>
 			<name>T_Irradiance</name>
 		</item>
@@ -199,16 +199,6 @@ Tag_LightMapDiffuse
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{DF6B63C8-1558-4EDE-8619-C3C0D1BB38BA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
 			</source>
@@ -235,6 +225,16 @@ Tag_LightMapDiffuse
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{EBDEF8BE-3369-8449-ADF0-B56DC2E37011}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 	</edges>
