@@ -36,6 +36,7 @@
 #include "Model/ModelAdjacency.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
+#include "Render/Editor/Texture/Bc6hCompressor.h"
 #include "Render/Editor/Texture/DxtnCompressor.h"
 #include "Render/Editor/Texture/UnCompressor.h"
 #include "Render/Resource/TextureResource.h"
@@ -269,7 +270,13 @@ bool writeTexture(
 	bool needAlpha;
 
 	// Convert image to match texture format.
-	if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
+	if (compareIgnoreCase(compressionMethod, L"BC6H") == 0)
+	{
+		textureFormat = render::TfBC6HU;
+		compressor = new render::Bc6hCompressor();
+		needAlpha = false;
+	}
+	else if (compareIgnoreCase(compressionMethod, L"DXTn") == 0)
 	{
 		if (encodeHDR)
 		{
@@ -291,6 +298,18 @@ bool writeTexture(
 		textureFormat = render::TfASTC4x4;
 		compressor = new render::AstcCompressor();
 		needAlpha = true;
+	}
+	else if (compareIgnoreCase(compressionMethod, L"FP16") == 0)
+	{
+		//if (encodeHDR)
+		//{
+		//	const drawing::EncodeRGBM encodeRGBM(5.0f);
+		//	lightmapFormat->apply(&encodeRGBM);
+		//}
+		lightmapFormat->convert(drawing::PixelFormat::getABGRF16().endianSwapped());
+		textureFormat = render::TfR16G16B16A16F;
+		compressor = new render::UnCompressor();
+		needAlpha = false;
 	}
 	else
 	{
@@ -628,6 +647,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		m_status.total = gridX * gridY * gridZ;
 
 		RefArray< render::SHCoeffs > shs(gridX * gridY * gridZ);
+		RefArray< Job > jobs;
 
 		for (int32_t x = 0; x < gridX; ++x)
 		{
@@ -638,15 +658,37 @@ bool TracerProcessor::process(const TracerTask* task)
 				for (int32_t z = 0; z < gridZ; ++z)
 				{
 					const float fz = z / (float)(gridZ - 1.0f);
-
+			
 					const Vector4 position = boundingBox.mn + (boundingBox.mx - boundingBox.mn) * Vector4(fx, fy, fz);
 					const uint32_t index = x * gridY * gridZ + y * gridZ + z;
 
-					shs[index] = rayTracer->traceProbe(position.xyz1());
+					Ref< Job > job = m_queue->add([&, position, index]() {
+						shs[index] = rayTracer->traceProbe(position.xyz1());
+					});
+					jobs.push_back(job);
+
+					// Keep number of pending jobs at a reasonable level.
+					while (jobs.size() > 128)
+					{
+						m_queue->waitCurrent();
+						auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {
+							return job->wait(0);
+						});
+						jobs.erase(it, jobs.end());
+					}
 
 					m_status.current++;
 				}
 			}
+		}
+
+		while (!jobs.empty())
+		{
+			m_queue->waitCurrent();
+			auto it = std::remove_if(jobs.begin(), jobs.end(), [](Job* job) {
+				return job->wait(0);
+			});
+			jobs.erase(it, jobs.end());
 		}
 
 		if (m_cancelled)

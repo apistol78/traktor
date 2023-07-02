@@ -62,19 +62,17 @@ void TracerEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid&
 
 void TracerEditorPlugin::handleWorkspaceOpened()
 {
-	std::wstring tracerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
+	const std::wstring tracerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
 	if (tracerTypeName.empty())
 		return;
 
-	auto tracerType = TypeInfo::find(tracerTypeName.c_str());
+	const auto tracerType = TypeInfo::find(tracerTypeName.c_str());
 	if (!tracerType)
 		return;
 
-	std::wstring compressionMethod = L""; // m_editor->getSettings()->getProperty< std::wstring >(L"TexturePipeline.CompressionMethod", L"DXTn");
-
     BakePipelineOperator::setTracerProcessor(new TracerProcessor(
 		tracerType,
-		compressionMethod,
+		L"FP16",
 		true
 	));
 }

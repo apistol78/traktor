@@ -479,7 +479,8 @@ Color4f RayTracerEmbree::tracePath0(
 			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-			const Scalar cosPhi = dot3(newDirection, hitNormal);
+			//const Scalar cosPhi = dot3(newDirection, hitNormal);
+			const Scalar cosPhi = dot3(-direction, hitNormal);
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 2);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
@@ -491,6 +492,9 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 			color += output;
+
+			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 1);
+			//color += incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 		}
 	}
 #endif
@@ -564,7 +568,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-	const Scalar cosPhi = dot3(newDirection, hitNormal);
+	//const Scalar cosPhi = dot3(newDirection, hitNormal);
+	const Scalar cosPhi = dot3(-direction, hitNormal);
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
 		random,
@@ -576,6 +581,10 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 	return output;
+
+	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, random, depth + 1);
+	//const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
+	//return color;
 }
 
 Scalar RayTracerEmbree::traceAmbientOcclusion(
