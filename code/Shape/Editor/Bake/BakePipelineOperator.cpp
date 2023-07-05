@@ -290,7 +290,7 @@ void addSky(
 							Scalar totalWeight = 0.0_simd;
 							for (int32_t i = 0; i < 5000; ++i)
 							{
-								const Vector2 uv = Quasirandom::hammersley(i, 10000, random);
+								const Vector2 uv = Quasirandom::hammersley(i, 5000, random);
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
 								direction = lerp(d, direction, 0.125_simd).normalized();
 								Scalar weight = dot3(d, direction);
@@ -710,7 +710,7 @@ bool BakePipelineOperator::build(
 						[=](const model::Model* model, IStream* stream) -> bool {
 							return BinarySerializer(stream).writeObject(model);
 						},
-							[&]() -> Ref< model::Model > {
+						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
 							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
@@ -747,7 +747,7 @@ bool BakePipelineOperator::build(
 						[=](const model::Model* model, IStream* stream) -> bool {
 							return BinarySerializer(stream).writeObject(model);
 						},
-							[&]() -> Ref< model::Model > {
+						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
 							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
@@ -775,7 +775,7 @@ bool BakePipelineOperator::build(
 						for (auto& material : visualModel->getMaterials())
 						{
 							auto diffuseMap = material.getDiffuseMap();
-							if (diffuseMap.texture.isNotNull())
+							if (diffuseMap.image == nullptr && diffuseMap.texture.isNotNull())
 							{
 								Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
 								if (!textureAsset)
@@ -789,12 +789,12 @@ bool BakePipelineOperator::build(
 									if (file)
 									{
 										image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-										if (image && !textureAsset->m_output.m_linearGamma)
-										{
-											// Convert to linear color space.
-											const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-											image->apply(&gammaFilter);
-										}
+										// if (image && !textureAsset->m_output.m_linearGamma)
+										// {
+										// 	// Convert to linear color space.
+										// 	const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+										// 	image->apply(&gammaFilter);
+										// }
 										images[filePath] = image;
 									}
 								}
