@@ -250,7 +250,7 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 	QueryResult result;
 
 	Scalar motionLength = totalMotionLength;
-	for (int32_t i = 0; i < 8 && motionLength > FUZZY_EPSILON; ++i)
+	for (int32_t i = 0; i < 16 && motionLength > FUZZY_EPSILON; ++i)
 	{
 		if (m_physicsManager->querySweep(
 			m_bodyWide,
@@ -265,13 +265,14 @@ bool CharacterComponent::step(Vector4 motion, Vector4& inoutPosition) const
 			const Scalar move = Scalar(motionLength * result.fraction);
 			inoutPosition += motion * move;
 
-			// Adjust movement vector.
-			const Scalar k = abs(dot3(-motion, result.normal)) + 0.0001_simd;
+			// Adjust movement vector; this contain a couple of magic constants
+			// which is to compensate for unwanted jitter when unable to solve movement.
+			const Scalar k = abs(dot3(-motion, result.normal)) * 1.01_simd;
 			motion += result.normal * k;
 			if (motion.normalize() <= FUZZY_EPSILON)
 				break;
 
-			motionLength -= move;
+			motionLength -= move + 0.01_simd;
 			anyCollision = true;
 		}
 		else
