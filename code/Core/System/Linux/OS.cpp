@@ -134,12 +134,12 @@ std::wstring OS::getWritableFolderPath() const
 
 bool OS::openFile(const std::wstring& file) const
 {
-	return system(("xdg-open " + wstombs(file)).c_str()) != 0;
+	return system(("xdg-open \"" + wstombs(file) + "\"").c_str()) != 0;
 }
 
 bool OS::editFile(const std::wstring& file) const
 {
-	return system(("xdg-open " + wstombs(file)).c_str()) != 0;
+	return system(("xdg-open \"" + wstombs(file) + "\"").c_str()) != 0;
 }
 
 bool OS::exploreFile(const std::wstring& file) const
