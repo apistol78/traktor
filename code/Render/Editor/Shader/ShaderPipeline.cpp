@@ -544,7 +544,7 @@ bool ShaderPipeline::buildOutput(
 					[&](const ProgramResource* object, IStream* stream) {
 						return BinarySerializer(stream).writeObject(object);
 					},
-						[&]() {
+					[&]() {
 						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
 
 						std::list< IProgramCompiler::Error > jobErrors;
