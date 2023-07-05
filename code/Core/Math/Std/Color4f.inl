@@ -304,4 +304,9 @@ T_MATH_INLINE Color4f max(const Color4f& l, const Color4f& r)
 	return Color4f(max((Vector4)l, (Vector4)r));
 }
 
+T_MATH_INLINE Color4f lerp(const Color4f& a, const Color4f& b, Scalar c)
+{
+	return Color4f(lerp((Vector4)a, (Vector4)b, c));
+}
+
 }
