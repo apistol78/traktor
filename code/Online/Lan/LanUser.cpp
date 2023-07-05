@@ -39,7 +39,7 @@ const wchar_t* c_keyUserPort = L"UP";
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalUser", LanUser, IUserProvider)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LanUser", LanUser, IUserProvider)
 
 LanUser::LanUser(net::DiscoveryManager* discoveryManager, net::UdpSocket* socket)
 :	m_discoveryManager(discoveryManager)
