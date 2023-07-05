@@ -27,7 +27,6 @@
 #include "Core/Timer/Timer.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
-#include "Drawing/Filters/DilateFilter.h"
 #include "Drawing/Filters/EncodeRGBM.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/TonemapFilter.h"
@@ -222,10 +221,10 @@ void seamFilter(const model::Model* model, uint32_t channel, drawing::Image* lig
 				line(Auv0, Auv1, [&](const Vector2& Auv, float fraction) {
 					Vector2 Buv = lerp(Buv0, Buv1, fraction);
 
-					int32_t Ax = (int32_t)(Auv.x + 0.5f);
-					int32_t Ay = (int32_t)(Auv.y + 0.5f);
-					int32_t Bx = (int32_t)(Buv.x + 0.5f);
-					int32_t By = (int32_t)(Buv.y + 0.5f);
+					const int32_t Ax = (int32_t)(Auv.x + 0.5f);
+					const int32_t Ay = (int32_t)(Auv.y + 0.5f);
+					const int32_t Bx = (int32_t)(Buv.x + 0.5f);
+					const int32_t By = (int32_t)(Buv.y + 0.5f);
 
 					Color4f Aclr, Bclr;
 					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
@@ -240,10 +239,10 @@ void seamFilter(const model::Model* model, uint32_t channel, drawing::Image* lig
 				line(Buv0, Buv1, [&](const Vector2& Buv, float fraction) {
 					Vector2 Auv = lerp(Auv0, Auv1, fraction);
 
-					int32_t Ax = (int32_t)(Auv.x + 0.5f);
-					int32_t Ay = (int32_t)(Auv.y + 0.5f);
-					int32_t Bx = (int32_t)(Buv.x + 0.5f);
-					int32_t By = (int32_t)(Buv.y + 0.5f);
+					const int32_t Ax = (int32_t)(Auv.x + 0.5f);
+					const int32_t Ay = (int32_t)(Auv.y + 0.5f);
+					const int32_t Bx = (int32_t)(Buv.x + 0.5f);
+					const int32_t By = (int32_t)(Buv.y + 0.5f);
 
 					Color4f Aclr, Bclr;
 					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
@@ -593,6 +592,7 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Create final output instance.
 		if (lightmapDiffuse)
 		{
+			// Denoise lightmap.
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 

@@ -105,7 +105,7 @@ bool UnwrapUV::apply(Model& model) const
 
 	xatlas::PackOptions po;
 	po.blockAlign = true;
-	po.padding = 1;
+	po.padding = 2;
 	po.resolution = m_textureSize;
 
 	xatlas::Generate(atlas, co, po);

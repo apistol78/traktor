@@ -180,10 +180,11 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			bbox.contain(texCoords[i1]);
 			bbox.contain(texCoords[i2]);
 
-			const int32_t sx = (int32_t)(bbox.mn.x - 4);
-			const int32_t ex = (int32_t)(bbox.mx.x + 4);
-			const int32_t sy = (int32_t)(bbox.mn.y - 4);
-			const int32_t ey = (int32_t)(bbox.mx.y + 4);
+			const int32_t pad = 8;
+			const int32_t sx = (int32_t)(bbox.mn.x - pad);
+			const int32_t ex = (int32_t)(bbox.mx.x + pad);
+			const int32_t sy = (int32_t)(bbox.mn.y - pad);
+			const int32_t ey = (int32_t)(bbox.mx.y + pad);
 
 			for (int32_t x = sx; x <= ex; ++x)
 			{
@@ -192,7 +193,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					const Vector2 pt((float)x, (float)y);
+					Vector2 pt((float)x, (float)y);
 
 					float distance = std::numeric_limits< float >::max();
 					if (bary.inside(pt))
@@ -201,8 +202,11 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					{
 						const Vector2 cpt = texCoords.closest(pt);
 						const float fd = (pt - cpt).length();
-						if (fd < 4.0f)
+						if (fd < 8.0f)
+						{
+							pt = texCoords.closest(cpt + (cpt - pt) * 8.0f);
 							distance = fd + 1.0f;
+						}
 						else
 							continue;
 					}
