@@ -140,6 +140,8 @@ T_MATH_INLINE T_DLLCLASS Color4f min(const Color4f &l, const Color4f &r);
 #endif
 T_MATH_INLINE T_DLLCLASS Color4f max(const Color4f &l, const Color4f &r);
 
+T_MATH_INLINE T_DLLCLASS Color4f lerp(const Color4f& a, const Color4f& b, Scalar c);
+
 } // namespace traktor
 
 #if defined(T_MATH_USE_INLINE)
