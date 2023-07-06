@@ -22,9 +22,6 @@
 
 namespace traktor
 {
-
-class TransformPath;
-
 	namespace db
 	{
 	
@@ -35,7 +32,6 @@ class Database;
 	namespace model
 	{
 	
-class Model;
 class ModelCache;
 	
 	}
@@ -50,9 +46,7 @@ class T_DLLCLASS SplineLayerComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< SplineLayerComponent > createComponent(db::Database* database) const = 0;
-
-	virtual Ref< model::Model > createModel(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath, const TransformPath& path) const = 0;
+	virtual Ref< SplineLayerComponent > createComponent(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath) const = 0;
 
 	virtual int32_t getOrdinal() const override final;
 

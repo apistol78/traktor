@@ -12,7 +12,7 @@
 #include "Core/Math/TransformPath.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity.h"
+#include "World/IEntityComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,20 +24,6 @@
 
 namespace traktor
 {
-	namespace db
-	{
-	
-class Database;
-
-	}
-
-	namespace model
-	{
-
-class ModelCache;
-
-	}
-
 	namespace render
 	{
 
@@ -60,24 +46,26 @@ class WorldRenderView;
 	namespace shape
 	{
 
-class SplineEntityData;
-
 /*! Spline entity.
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntity : public world::Entity
+class T_DLLCLASS SplineComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	SplineEntity(
-		const SplineEntityData* data,
-		db::Database* database,
+	explicit SplineComponent(
 		render::IRenderSystem* renderSystem,
-		model::ModelCache* modelCache,
-		const std::wstring& assetPath,
 		const resource::Proxy< render::Shader >& shader
 	);
+
+	virtual void destroy() override final;
+
+	virtual void setOwner(world::Entity* owner) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
+
+	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
 
@@ -95,12 +83,10 @@ private:
 		render::Primitives primitives;
 	};
 
-	Ref< const SplineEntityData > m_data;
-	Ref< db::Database > m_database;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< model::ModelCache > m_modelCache;
-	std::wstring m_assetPath;
 	resource::Proxy< render::Shader > m_shader;
+
+	world::Entity* m_owner = nullptr;
 
 	TransformPath m_path;
 	bool m_dirty;

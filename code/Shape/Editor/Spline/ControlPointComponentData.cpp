@@ -12,12 +12,10 @@
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ControlPointComponentData", 1, ControlPointComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ControlPointComponentData", 0, ControlPointComponentData, world::IEntityComponentData)
 
 Ref< ControlPointComponent > ControlPointComponentData::createComponent() const
 {
@@ -35,9 +33,7 @@ void ControlPointComponentData::setTransform(const world::EntityData* owner, con
 
 void ControlPointComponentData::serialize(ISerializer& s)
 {
-	if (s.getVersion< ControlPointComponentData >() >= 1)
-		s >> Member< float >(L"scale", m_scale, AttributeUnit(UnitType::Percent));
+	s >> Member< float >(L"scale", m_scale, AttributeUnit(UnitType::Percent));
 }
 
-	}
 }

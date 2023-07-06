@@ -10,58 +10,60 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Physics/CollisionSpecification.h"
 #include "Resource/Member.h"
-#include "Shape/Editor/Spline/SplineEntityData.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 		
 const resource::Id< physics::CollisionSpecification > c_defaultCollision(Guid(L"{F9805131-50C2-504C-9421-13C99E44616C}"));
 const resource::Id< physics::CollisionSpecification > c_interactableCollision(Guid(L"{09CB1141-1924-3349-934A-CEB9728D7A61}"));
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineEntityData", 2, SplineEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineComponentData", 0, SplineComponentData, world::IEntityComponentData)
 
-SplineEntityData::SplineEntityData()
+SplineComponentData::SplineComponentData()
 {
 	m_collisionGroup.insert(c_defaultCollision);
 	m_collisionMask.insert(c_defaultCollision);
 	m_collisionMask.insert(c_interactableCollision);
 }
 
-void SplineEntityData::setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup)
+void SplineComponentData::setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup)
 {
 	m_collisionGroup = collisionGroup;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SplineEntityData::getCollisionGroup() const
+const std::set< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionGroup() const
 {
 	return m_collisionGroup;
 }
 
-void SplineEntityData::setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask)
+void SplineComponentData::setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask)
 {
 	m_collisionMask = collisionMask;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SplineEntityData::getCollisionMask() const
+const std::set< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionMask() const
 {
 	return m_collisionMask;
 }
 
-void SplineEntityData::serialize(ISerializer& s)
+int32_t SplineComponentData::getOrdinal() const
 {
-	T_FATAL_ASSERT(s.getVersion() >= 2);
+	return 0;
+}
 
-	world::EntityData::serialize(s);
+void SplineComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
 
+void SplineComponentData::serialize(ISerializer& s)
+{
 	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
 	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }
 
-	}
 }

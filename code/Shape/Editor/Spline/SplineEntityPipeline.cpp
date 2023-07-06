@@ -23,7 +23,7 @@
 #include "Physics/World/RigidBodyComponentData.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
-#include "Shape/Editor/Spline/SplineEntityData.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineEntityPipeline.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
 
@@ -63,7 +63,7 @@ TypeInfoSet SplineEntityPipeline::getAssetTypes() const
 	return makeTypeInfoSet<
 		ControlPointComponentData,
 		ExtrudeShapeLayerData,
-		SplineEntityData
+		SplineComponentData
 	>();
 }
 
@@ -78,11 +78,11 @@ bool SplineEntityPipeline::buildDependencies(
 	if (m_targetEditor)
 		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
 
-	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
+	if (auto splineComponentData = dynamic_type_cast< const SplineComponentData* >(sourceAsset))
 	{
-		for (auto id : splineEntityData->getCollisionGroup())
+		for (auto id : splineComponentData->getCollisionGroup())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
-		for (auto id : splineEntityData->getCollisionMask())
+		for (auto id : splineComponentData->getCollisionMask())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
 	}
 
@@ -110,74 +110,74 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 		return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 	}
 
-	if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
-	{
-		// Create model from spline.
-		Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, splineEntityData, nullptr, world::IEntityReplicator::Usage::Visual);
-		if (!outputModel)
-		{
-			log::warning << L"Unable to create model from spline \"" << splineEntityData->getName() << L"\"." << Endl;
-			return nullptr;
-		}
+	// if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(sourceAsset))
+	// {
+	// 	// Create model from spline.
+	// 	Ref< model::Model > outputModel = SplineEntityReplicator().createModel(pipelineBuilder, splineEntityData, nullptr, world::IEntityReplicator::Usage::Visual);
+	// 	if (!outputModel)
+	// 	{
+	// 		log::warning << L"Unable to create model from spline \"" << splineEntityData->getName() << L"\"." << Endl;
+	// 		return nullptr;
+	// 	}
 
-		const Guid& entityId = splineEntityData->getId();
-		if (entityId.isNull())
-			return nullptr;
+	// 	const Guid& entityId = splineEntityData->getId();
+	// 	if (entityId.isNull())
+	// 		return nullptr;
 
-		Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
-		Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
+	// 	Guid outputRenderMeshGuid = entityId.permutation(c_renderMeshIdSeed);
+	// 	Guid outputCollisionShapeGuid = entityId.permutation(c_collisionShapeIdSeed);
 
-		std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
-		std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
+	// 	std::wstring outputRenderMeshPath = L"Generated/" + outputRenderMeshGuid.format();
+	// 	std::wstring outputCollisionShapePath = L"Generated/" + outputCollisionShapeGuid.format();
 
-		// Create our output entity which will only contain the merged meshes.
-		Ref< world::EntityData > outputEntityData = new world::EntityData();
-		outputEntityData->setId(splineEntityData->getId());
-		outputEntityData->setName(splineEntityData->getName());
-		outputEntityData->setTransform(splineEntityData->getTransform());
+	// 	// Create our output entity which will only contain the merged meshes.
+	// 	Ref< world::EntityData > outputEntityData = new world::EntityData();
+	// 	outputEntityData->setId(splineEntityData->getId());
+	// 	outputEntityData->setName(splineEntityData->getName());
+	// 	outputEntityData->setTransform(splineEntityData->getTransform());
 
-		// Build output mesh from merged model.
-		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
-		visualMeshAsset->setMeshType(mesh::MeshAsset::MtPartition);
-		pipelineBuilder->buildAdHocOutput(
-			visualMeshAsset,
-			outputRenderMeshPath,
-			outputRenderMeshGuid,
-			outputModel
-		);
+	// 	// Build output mesh from merged model.
+	// 	Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
+	// 	visualMeshAsset->setMeshType(mesh::MeshAsset::MtPartition);
+	// 	pipelineBuilder->buildAdHocOutput(
+	// 		visualMeshAsset,
+	// 		outputRenderMeshPath,
+	// 		outputRenderMeshGuid,
+	// 		outputModel
+	// 	);
 
-		// Replace mesh component referencing our merged mesh.
-		outputEntityData->setComponent(new mesh::MeshComponentData(
-			resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-		));
+	// 	// Replace mesh component referencing our merged mesh.
+	// 	outputEntityData->setComponent(new mesh::MeshComponentData(
+	// 		resource::Id< mesh::IMesh >(outputRenderMeshGuid)
+	// 	));
 
-		// Build output mesh from merged model.
-		Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
-		physicsMeshAsset->setMargin(0.0f);
-		physicsMeshAsset->setCalculateConvexHull(false);
-		pipelineBuilder->buildAdHocOutput(
-			physicsMeshAsset,
-			outputCollisionShapePath,
-			outputCollisionShapeGuid,
-			outputModel
-		);
+	// 	// Build output mesh from merged model.
+	// 	Ref< physics::MeshAsset > physicsMeshAsset = new physics::MeshAsset();
+	// 	physicsMeshAsset->setMargin(0.0f);
+	// 	physicsMeshAsset->setCalculateConvexHull(false);
+	// 	pipelineBuilder->buildAdHocOutput(
+	// 		physicsMeshAsset,
+	// 		outputCollisionShapePath,
+	// 		outputCollisionShapeGuid,
+	// 		outputModel
+	// 	);
 
-		// Replace mesh component referencing our merged physics mesh.
-		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
-		outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
-		outputShapeDesc->setCollisionGroup(splineEntityData->getCollisionGroup());
-		outputShapeDesc->setCollisionMask(splineEntityData->getCollisionMask());
+	// 	// Replace mesh component referencing our merged physics mesh.
+	// 	Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc();
+	// 	outputShapeDesc->setMesh(resource::Id< physics::Mesh >(outputCollisionShapeGuid));
+	// 	outputShapeDesc->setCollisionGroup(splineEntityData->getCollisionGroup());
+	// 	outputShapeDesc->setCollisionMask(splineEntityData->getCollisionMask());
 
-		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-		outputBodyDesc->setShape(outputShapeDesc);
+	// 	Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+	// 	outputBodyDesc->setShape(outputShapeDesc);
 
-		outputEntityData->setComponent(new physics::RigidBodyComponentData(
-			outputBodyDesc
-		));
+	// 	outputEntityData->setComponent(new physics::RigidBodyComponentData(
+	// 		outputBodyDesc
+	// 	));
 
-		return outputEntityData;
-	}
-	else
+	// 	return outputEntityData;
+	// }
+	// else
 		return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 

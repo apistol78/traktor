@@ -17,8 +17,8 @@
 #include "Shape/Editor/Solid/SolidEntityData.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
-#include "Shape/Editor/Spline/SplineEntity.h"
-#include "Shape/Editor/Spline/SplineEntityData.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
 #include "Shape/Editor/Spline/SplineLayerComponentData.h"
 #include "World/IEntityBuilder.h"
@@ -55,8 +55,7 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 {
 	return makeTypeInfoSet<
 		PrimitiveEntityData,
-		SolidEntityData,
-		SplineEntityData
+		SolidEntityData
 	>();
 }
 
@@ -69,6 +68,7 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
 		ControlPointComponentData,
+		SplineComponentData,
 		SplineLayerComponentData
 	>();
 }
@@ -79,36 +79,6 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		return primitiveEntityData->createEntity();
 	else if (auto solidEntityData = dynamic_type_cast< const SolidEntityData* >(&entityData))
 		return solidEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
-	else if (auto splineEntityData = dynamic_type_cast< const SplineEntityData* >(&entityData))
-	{
-		resource::Proxy< render::Shader > shader;
-		if (!m_resourceManager->bind(c_defaultShader, shader))
-			return nullptr;
-
-		Ref< model::ModelCache > modelCache = new model::ModelCache(m_modelCachePath);
-		Ref< SplineEntity > entity = new SplineEntity(
-			splineEntityData,
-			m_database,
-			m_renderSystem,
-			modelCache,
-			m_assetPath,
-			shader
-		);
-
-		entity->setTransform(entityData.getTransform());
-
-		// Instantiate all components.
-		RefArray< world::IEntityComponent > components;
-		for (auto componentData : entityData.getComponents())
-		{
-			Ref< world::IEntityComponent > component = builder->create(componentData);
-			if (!component)
-				continue;
-			entity->setComponent(component);
-		}
-
-		return entity;
-	}
 	else
 		return nullptr;
 }
@@ -123,7 +93,25 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 	if (auto controlPointData = dynamic_type_cast< const ControlPointComponentData* >(&entityComponentData))
 		return controlPointData->createComponent();
 	else if (auto splineLayerData = dynamic_type_cast< const SplineLayerComponentData* >(&entityComponentData))
-		return splineLayerData->createComponent(m_database);
+	{
+		Ref< model::ModelCache > modelCache = new model::ModelCache(m_modelCachePath);
+		return splineLayerData->createComponent(
+			m_database,
+			modelCache,
+			m_assetPath
+		);
+	}
+	else if (auto splineComponentData = dynamic_type_cast< const SplineComponentData* >(&entityComponentData))
+	{
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(c_defaultShader, shader))
+			return nullptr;
+
+		return new SplineComponent(
+			m_renderSystem,
+			shader
+		);
+	}
 	else
 		return nullptr;
 }
