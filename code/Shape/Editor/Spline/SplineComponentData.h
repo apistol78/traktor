@@ -20,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::physics
 {
-    namespace physics
-    {
 
 class CollisionSpecification;
 
-    }
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 /*!
  * \ingroup Shape
@@ -54,12 +52,11 @@ public:
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
-    virtual void serialize(ISerializer& s) override final;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
 	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };
 
-	}
 }

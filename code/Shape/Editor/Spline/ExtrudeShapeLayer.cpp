@@ -8,6 +8,7 @@
  */
 #include "Core/Math/TransformPath.h"
 #include "Model/Model.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
 
@@ -64,7 +65,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 	{
 		steps.insert(position.z());
 		stepMin = std::min< float >(stepMin, position.z());
-		stepMax = std::max< float >(stepMin, position.z());
+		stepMax = std::max< float >(stepMax, position.z());
 	}
 	if (steps.empty())
 		return nullptr;
@@ -139,6 +140,9 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 			outputModel->addPolygon(outputPolygon);
 		}
 	}
+
+	// Cleanup since there are probably a lot of duplicates.
+	model::CleanDuplicates(0.01f).apply(*outputModel);
 
 	return outputModel;
 }

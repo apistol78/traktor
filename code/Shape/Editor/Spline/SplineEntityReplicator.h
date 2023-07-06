@@ -44,6 +44,10 @@ public:
 		world::IEntityComponentData* componentData,
 		world::GroupComponentData* outputGroup
 	) const override final;
+
+private:
+	std::wstring m_assetPath;
+	std::wstring m_modelCachePath;
 };
 
 	}
