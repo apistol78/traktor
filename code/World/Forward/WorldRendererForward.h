@@ -21,10 +21,6 @@
 namespace traktor::world
 {
 
-class IrradianceGrid;
-class Packer;
-class WorldEntityRenderers;
-
 /*! World renderer implementation.
  * \ingroup World
  *
@@ -54,8 +50,6 @@ public:
 		const WorldCreateDesc& desc
 	) override final;
 
-	virtual void destroy() override final;
-
 	virtual void setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
@@ -64,33 +58,6 @@ public:
 	) override final;
 
 private:
-#pragma pack(1)
-	struct LightShaderData
-	{
-		float typeRangeRadius[4];
-		float position[4];
-		float direction[4];
-		float color[4];
-		float viewToLight0[4];
-		float viewToLight1[4];
-		float viewToLight2[4];
-		float viewToLight3[4];
-		float atlasTransform[4];
-	};
-#pragma pack()
-
-	Ref< render::Buffer > m_lightSBuffer;
-	resource::Proxy< IrradianceGrid > m_irradianceGrid;
-	Ref< Packer > m_shadowAtlasPacker;
-
-	void setupLightPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t& outShadowMapAtlasTargetSetId
-	);
-
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,

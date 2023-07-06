@@ -22,7 +22,6 @@
 namespace traktor::render
 {
 
-class Buffer;
 class ImageGraph;
 class Shader;
 
@@ -30,10 +29,6 @@ class Shader;
 
 namespace traktor::world
 {
-
-class IrradianceGrid;
-class Packer;
-class WorldEntityRenderers;
 
 /*! World renderer, using deferred rendering method.
  * \ingroup World
@@ -67,34 +62,8 @@ public:
 	) override final;
 
 private:
-#pragma pack(1)
-	struct LightShaderData
-	{
-		float typeRangeRadius[4];
-		float position[4];
-		float direction[4];
-		float color[4];
-		float viewToLight0[4];
-		float viewToLight1[4];
-		float viewToLight2[4];
-		float viewToLight3[4];
-		float atlasTransform[4];
-	};
-#pragma pack()
-
-	Ref< render::Buffer > m_lightSBuffer;
-	Ref< Packer > m_shadowAtlasPacker;
 	resource::Proxy< render::Shader > m_lightShader;
 	resource::Proxy< render::Shader > m_fogShader;
-	resource::Proxy< IrradianceGrid > m_irradianceGrid;
-
-	void setupLightPass(
-		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
-		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId,
-		render::handle_t& outShadowMapAtlasTargetSetId
-	);
 
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
