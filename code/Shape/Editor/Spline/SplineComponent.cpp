@@ -143,9 +143,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 			return;
 		}
 
-		//// Create runtime render mesh from model.
-		//model::Triangulate().apply(*outputModel);
-
+		// Create runtime render mesh from model.
 		m_batches.resize(0);
 
 		const uint32_t nvertices = outputModel->getVertexCount();
