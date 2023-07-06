@@ -8,10 +8,8 @@
  */
 #include "Shape/Editor/Bake/TracerLight.h"
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerLight", TracerLight, Object)
 
@@ -20,5 +18,4 @@ TracerLight::TracerLight(const Light& light)
 {
 }
 
-    }
 }

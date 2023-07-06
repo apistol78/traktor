@@ -14,31 +14,22 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class IProbe;
 
 struct Surface
 {
-	int32_t count;
+	int32_t count = 0;
 	Vector4 points[16];
 	Vector2 texCoords[16];
 	Vector4 normals[16];
 	Vector4 normal;
 	Color4f color;
-	Scalar emissive;
-	Scalar translucency;
+	Scalar emissive = 0.0_simd;
+	Scalar translucency = 0.0_simd;
 	AlignedVector< uint32_t > shared[16];
-
-	Surface()
-	:	count(0)
-	,	emissive(0.0f)
-	,	translucency(0.0f)
-	{
-	}
 };
 
 struct Light
@@ -56,27 +47,14 @@ struct Light
 		LmIndirect = 0x02
 	};
 
-	LightType type;
-	Vector4 position;
-	Vector4 direction;
-	Color4f color;
-	Scalar range;
-	Scalar radius;
-	int32_t surface;
-	uint8_t mask;
-
-	Light()
-	:	type(LtDirectional)
-	,	position(Vector4::origo())
-	,	direction(Vector4::zero())
-	,	color(0.0f, 0.0f, 0.0f, 1.0f)
-	,	range(0.0f)
-	,	radius(0.0f)
-	,	surface(0)
-	,	mask(0)
-	{
-	}
+	LightType type = LtDirectional;
+	Vector4 position = Vector4::origo();
+	Vector4 direction = Vector4::zero();
+	Color4f color = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	Scalar range = 0.0_simd;
+	Scalar radius = 0.0_simd;
+	int32_t surface = 0;
+	uint8_t mask = 0;
 };
 
-	}
 }

@@ -19,23 +19,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 class T_DLLCLASS TracerLight : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    explicit TracerLight(const Light& light);
+	explicit TracerLight(const Light& light);
 
-    const Light& getLight() const { return m_light; }
+	const Light& getLight() const { return m_light; }
 
 private:
-    Light m_light;
+	Light m_light;
 };
 
-    }
 }

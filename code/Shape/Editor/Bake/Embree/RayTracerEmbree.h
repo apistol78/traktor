@@ -84,13 +84,15 @@ private:
 	Color4f tracePath0(
 		const Vector4& origin,
 		const Vector4& normal,
-		RandomGeometry& random
+		RandomGeometry& random,
+		uint32_t extraLightMask
 	) const;
 
 	Color4f traceSinglePath(
 		const Vector4& origin,
 		const Vector4& direction,
 		RandomGeometry& random,
+		uint32_t extraLightMask,
 		int32_t depth
 	) const;
 
