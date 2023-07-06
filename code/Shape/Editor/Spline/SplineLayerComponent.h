@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
@@ -23,16 +24,24 @@ namespace traktor
 
 class TransformPath;
 
-	namespace shape
-	{
+}
+
+namespace traktor::model
+{
+
+class Model;
+
+}
+
+namespace traktor::shape
+{
 
 class T_DLLCLASS SplineLayerComponent : public world::IEntityComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void pathChanged(const TransformPath& path) = 0;
+	virtual Ref< model::Model > createModel(const TransformPath& path) const = 0;
 };
 
-	}
 }

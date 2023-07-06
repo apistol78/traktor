@@ -8,7 +8,7 @@
  */
 #include "Shape/Editor/EntityRenderer.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
-#include "Shape/Editor/Spline/SplineEntity.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "World/WorldGatherContext.h"
 
 namespace traktor
@@ -22,7 +22,7 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet<
 		SolidEntity,
-		SplineEntity
+		SplineComponent
 	>();
 }
 
@@ -63,9 +63,9 @@ void EntityRenderer::build(
 			worldRenderPass
 		);
 	}
-	else if (auto splineEntity = dynamic_type_cast< SplineEntity* >(renderable))
+	else if (auto splineComponent = dynamic_type_cast< SplineComponent* >(renderable))
 	{
-		splineEntity->build(
+		splineComponent->build(
 			context,
 			worldRenderView,
 			worldRenderPass

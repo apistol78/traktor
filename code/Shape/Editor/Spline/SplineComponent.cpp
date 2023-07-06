@@ -17,20 +17,17 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
-#include "Shape/Editor/Spline/SplineEntity.h"
-#include "Shape/Editor/Spline/SplineEntityData.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
-#include "Shape/Editor/Spline/SplineLayerComponentData.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-        namespace
-        {
 
 #pragma pack(1)
 struct Vertex
@@ -41,34 +38,43 @@ struct Vertex
 };
 #pragma pack()
 
-        }
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntity", SplineEntity, world::Entity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineComponent", SplineComponent, world::IEntityComponent)
 
-SplineEntity::SplineEntity(
-	const SplineEntityData* data,
-	db::Database* database,
-    render::IRenderSystem* renderSystem,
-	model::ModelCache* modelCache,
-	const std::wstring& assetPath,
-    const resource::Proxy< render::Shader >& shader
+SplineComponent::SplineComponent(
+	render::IRenderSystem* renderSystem,
+	const resource::Proxy< render::Shader >& shader
 )
-:	m_data(data)
-,	m_database(database)
-,	m_renderSystem(renderSystem)
-,	m_modelCache(modelCache)
-,	m_assetPath(assetPath)
+:	m_renderSystem(renderSystem)
 ,	m_shader(shader)
 ,	m_dirty(true)
 {
 }
 
-void SplineEntity::update(const world::UpdateParams& update)
+void SplineComponent::destroy()
 {
-	world::Entity::update(update);
+}
 
+void SplineComponent::setOwner(world::Entity* owner)
+{
+	m_owner = owner;
+	m_dirty = true;
+}
+
+void SplineComponent::setTransform(const Transform& transform)
+{
+}
+
+Aabb3 SplineComponent::getBoundingBox() const
+{
+	return Aabb3();
+}
+
+void SplineComponent::update(const world::UpdateParams& update)
+{
 	// Fetch group component; contain all control point entities.
-	auto group = getComponent< world::GroupComponent >();
+	auto group = m_owner->getComponent< world::GroupComponent >();
 	if (!group)
 		return;
 
@@ -98,7 +104,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 		m_path = TransformPath();
 		for (uint32_t i = 0; i < controlPoints.size(); ++i)
 		{
-			Transform T = controlPoints[i]->getTransform();
+			const Transform T = controlPoints[i]->getTransform();
 
 			TransformPath::Key k;
 			k.T = (float)i / (controlPoints.size() - 1);
@@ -110,11 +116,11 @@ void SplineEntity::update(const world::UpdateParams& update)
 
 		// Generate geometry from path.
 		Ref< model::Model > outputModel;
-		for (auto component : m_data->getComponents())
+		for (auto component : m_owner->getComponents())
 		{
-			if (const auto layerData = dynamic_type_cast< const SplineLayerComponentData* >(component))
+			if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
 			{
-				Ref< model::Model > layerModel = layerData->createModel(m_database, m_modelCache, m_assetPath, m_path);
+				Ref< model::Model > layerModel = layer->createModel(m_path);
 				if (!layerModel)
 					continue;
 
@@ -142,11 +148,11 @@ void SplineEntity::update(const world::UpdateParams& update)
 
 		m_batches.resize(0);
 
-        const uint32_t nvertices = outputModel->getVertexCount();
+		const uint32_t nvertices = outputModel->getVertexCount();
 		const uint32_t nindices = outputModel->getPolygonCount() * 3;
 
-        if (nvertices > 0 && nindices > 0)
-        {
+		if (nvertices > 0 && nindices > 0)
+		{
 			if (m_vertexBuffer == nullptr || m_vertexBuffer->getBufferSize() < nvertices * sizeof(Vertex))
 			{
 				safeDestroy(m_vertexBuffer);
@@ -165,9 +171,9 @@ void SplineEntity::update(const world::UpdateParams& update)
 				);
 			}
 
-            Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
+			Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
 			for (const auto& v : outputModel->getVertices())
-            {
+			{
 				Vector4 p = outputModel->getPosition(v.getPosition());
 				Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()) : Vector4::zero();
 				Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
@@ -177,19 +183,19 @@ void SplineEntity::update(const world::UpdateParams& update)
 
 				vertex->texCoord[0] = uv.x;
 				vertex->texCoord[1] = uv.y;
-                    
+					
 				++vertex;
-            }
-            m_vertexBuffer->unlock();
+			}
+			m_vertexBuffer->unlock();
 
-            // Create indices and material batches.
-			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint16_t))
+			// Create indices and material batches.
+			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint32_t))
 			{
 				safeDestroy(m_indexBuffer);
-            	m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, nindices + 3 * 128, sizeof(uint16_t), false);
+				m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, nindices + 3 * 128, sizeof(uint32_t), false);
 			}
 
-            uint16_t* index = (uint16_t*)m_indexBuffer->lock();
+			uint32_t* index = (uint32_t*)m_indexBuffer->lock();
 			uint32_t offset = 0;
 			for (uint32_t i = 0; i < outputModel->getMaterialCount(); ++i)
 			{
@@ -198,9 +204,9 @@ void SplineEntity::update(const world::UpdateParams& update)
 				{
 					if (p.getMaterial() == i)
 					{
-						*index++ = (uint16_t)p.getVertex(0);
-						*index++ = (uint16_t)p.getVertex(1);
-						*index++ = (uint16_t)p.getVertex(2);
+						*index++ = (uint32_t)p.getVertex(0);
+						*index++ = (uint32_t)p.getVertex(1);
+						*index++ = (uint32_t)p.getVertex(2);
 						++count;
 					}
 				}
@@ -219,8 +225,8 @@ void SplineEntity::update(const world::UpdateParams& update)
 
 				offset += count * 3;
 			}
-            m_indexBuffer->unlock();
-        }
+			m_indexBuffer->unlock();
+		}
 		else
 		{
 			safeDestroy(m_vertexBuffer);
@@ -231,7 +237,7 @@ void SplineEntity::update(const world::UpdateParams& update)
 	}
 }
 
-void SplineEntity::build(
+void SplineComponent::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass
@@ -251,7 +257,7 @@ void SplineEntity::build(
 		renderBlock->distance = std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-		renderBlock->indexType = render::IndexType::UInt16;
+		renderBlock->indexType = render::IndexType::UInt32;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
 		renderBlock->primitives = batch.primitives;
@@ -272,5 +278,4 @@ void SplineEntity::build(
 	}
 }
 
-	}
 }

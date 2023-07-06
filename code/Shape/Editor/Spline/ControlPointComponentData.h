@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class ControlPointComponent;
 
@@ -34,8 +32,6 @@ class T_DLLCLASS ControlPointComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	ControlPointComponentData() = default;
-
 	Ref< ControlPointComponent > createComponent() const;
 
 	virtual int32_t getOrdinal() const override final;
@@ -50,5 +46,4 @@ private:
 	float m_scale = 1.0f;
 };
 
-	}
 }

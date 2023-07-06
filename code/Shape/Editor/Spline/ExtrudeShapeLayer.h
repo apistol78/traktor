@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class ExtrudeShapeLayerData;
 
@@ -34,7 +32,12 @@ class T_DLLCLASS ExtrudeShapeLayer : public SplineLayerComponent
 	T_RTTI_CLASS;
 
 public:
-	ExtrudeShapeLayer(const ExtrudeShapeLayerData* data);
+	explicit ExtrudeShapeLayer(
+		const model::Model* modelStart,
+		const model::Model* modelRepeat,
+		const model::Model* modelEnd,
+		bool automaticOrientation
+	);
 
 	virtual void destroy() override final;
 
@@ -46,11 +49,13 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void pathChanged(const TransformPath& path) override final;
+	virtual Ref< model::Model > createModel(const TransformPath& path) const override final;
 
 private:
-	Ref< const ExtrudeShapeLayerData > m_data;
+	Ref< const model::Model > m_modelStart;
+	Ref< const model::Model > m_modelRepeat;
+	Ref< const model::Model > m_modelEnd;
+	bool m_automaticOrientation;
 };
 
-	}
 }

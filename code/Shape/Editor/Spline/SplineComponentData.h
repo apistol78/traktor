@@ -10,7 +10,7 @@
 
 #include <set>
 #include "Resource/Id.h"
-#include "World/EntityData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,12 +35,12 @@ class CollisionSpecification;
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS SplineEntityData : public world::EntityData
+class T_DLLCLASS SplineComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	SplineEntityData();
+	SplineComponentData();
 
 	void setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
@@ -49,6 +49,10 @@ public:
 	void setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask);
 
 	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
     virtual void serialize(ISerializer& s) override final;
 

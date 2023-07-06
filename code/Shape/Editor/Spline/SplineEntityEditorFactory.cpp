@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Shape/Editor/Spline/SplineEntityData.h"
+#include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineEntityEditor.h"
 #include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
 
@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntityEditorFactory", SplineEntityE
 
 const TypeInfoSet SplineEntityEditorFactory::getEntityDataTypes() const
 {
-	return makeTypeInfoSet< SplineEntityData >();
+	return makeTypeInfoSet< SplineComponentData >();
 }
 
 Ref< scene::IEntityEditor > SplineEntityEditorFactory::createEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter) const 
