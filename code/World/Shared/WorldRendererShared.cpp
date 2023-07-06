@@ -10,23 +10,34 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ScreenRenderer.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/Image2/ImageGraphContext.h"
 #include "Resource/IResourceManager.h"
 #include "World/Entity.h"
 #include "World/IEntityRenderer.h"
+#include "World/IrradianceGrid.h"
+#include "World/Packer.h"
+#include "World/WorldBuildContext.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/WorldGatherContext.h"
+#include "World/WorldHandles.h"
+#include "World/WorldRenderView.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/VolumetricFogComponent.h"
 #include "World/Shared/WorldRendererShared.h"
+#include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 #include "World/Shared/Passes/VelocityPass.h"
+#include "World/SMProj/UniformShadowProjection.h"
 
 namespace traktor::world
 {
@@ -97,6 +108,40 @@ bool WorldRendererShared::create(
 	m_whiteTexture = create1x1Texture(renderSystem, 0xffffffff);
 	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
 
+	// Lights struct buffer.
+	m_lightSBuffer = renderSystem->createBuffer(
+		render::BuStructured,
+		LightClusterPass::c_maxLightCount,
+		sizeof(LightShaderData),
+		true
+	);
+	if (!m_lightSBuffer)
+		return false;
+
+	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
+	m_shadowAtlasPacker = new Packer(
+		shadowSettings.resolution,
+		shadowSettings.resolution
+	);
+
+	// Create irradiance grid.
+	if (desc.irradianceGrid != nullptr)
+		m_irradianceGrid = resource::Proxy< IrradianceGrid >(const_cast< IrradianceGrid* >(desc.irradianceGrid));
+	else if (!m_settings.irradianceGrid.isNull())
+	{
+		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
+			return false;
+	}
+
+	// Determine slice distances.
+	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
+	{
+		const float ii = float(i) / shadowSettings.cascadingSlices;
+		const float log = powf(ii, shadowSettings.cascadingLambda);
+		m_slicePositions[i] = lerp(m_settings.viewNearZ, shadowSettings.farZ, log);
+	}
+	m_slicePositions[shadowSettings.cascadingSlices] = shadowSettings.farZ;
+
 	// Create shared passes.
 	m_lightClusterPass = new LightClusterPass(m_settings);
 	if (!m_lightClusterPass->create(renderSystem))
@@ -128,6 +173,7 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_screenRenderer);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
+	safeDestroy(m_lightSBuffer);
 
 	m_postProcessPass = nullptr;
 	m_reflectionsPass = nullptr;
@@ -136,6 +182,8 @@ void WorldRendererShared::destroy()
 	m_gbufferPass = nullptr;
 
 	safeDestroy(m_lightClusterPass);
+
+	m_irradianceGrid.clear();
 }
 
 void WorldRendererShared::gather(Entity* rootEntity)
@@ -200,6 +248,360 @@ void WorldRendererShared::gather(Entity* rootEntity)
 				m_gatheredView.lights.push_back(light);
 		}
 	}
+}
+
+void WorldRendererShared::setupLightPass(
+	const WorldRenderView& worldRenderView,
+	const Entity* rootEntity,
+	render::RenderGraph& renderGraph,
+	render::handle_t outputTargetSetId,
+	render::handle_t& outShadowMapAtlasTargetSetId
+)
+{
+	T_PROFILER_SCOPE(L"WorldRendererShared setupLightPass");
+
+	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
+	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
+	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
+
+	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBuffer->lock();
+	if (!lightShaderData)
+		return;
+
+	// Reset this frame's atlas packer.
+	auto shadowAtlasPacker = m_shadowAtlasPacker;
+	shadowAtlasPacker->reset();
+
+	const Matrix44 view = worldRenderView.getView();
+	const Matrix44 viewInverse = worldRenderView.getView().inverse();
+	const Frustum viewFrustum = worldRenderView.getViewFrustum();
+
+	// Find atlas shadow lights.
+	StaticVector< int32_t, 32 > lightAtlasIndices;
+	if (shadowsEnable)
+	{
+		for (int32_t i = 0; i < (int32_t)m_gatheredView.lights.size(); ++i)
+		{
+			const auto& light = m_gatheredView.lights[i];
+			if (
+				light != nullptr &&
+				light->getCastShadow() &&
+				light->getLightType() == LightType::Spot
+			)
+				lightAtlasIndices.push_back(i);
+		}
+	}
+
+	// Write all lights to sbuffer; without shadow map information.
+	{
+		// First 4 entires are cascading shadow light.
+		if (m_gatheredView.lights[0] != nullptr)
+		{
+			const auto& light = m_gatheredView.lights[0];
+			auto* lsd = lightShaderData;
+
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			{
+				lsd->typeRangeRadius[0] = (float)light->getLightType();
+				lsd->typeRangeRadius[1] = light->getRange();
+				lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+				lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+
+				const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+				lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+				lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+				(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
+
+				Vector4::zero().storeUnaligned(lsd->viewToLight0);
+				Vector4::zero().storeUnaligned(lsd->viewToLight1);
+				Vector4::zero().storeUnaligned(lsd->viewToLight2);
+				Vector4::zero().storeUnaligned(lsd->viewToLight3);
+
+				++lsd;
+			}
+		}
+
+		// Append all other lights.
+		for (int32_t i = 4; i < (int32_t)m_gatheredView.lights.size(); ++i)
+		{
+			const auto& light = m_gatheredView.lights[i];
+			auto* lsd = &lightShaderData[i];
+
+			lsd->typeRangeRadius[0] = (float)light->getLightType();
+			lsd->typeRangeRadius[1] = light->getRange();
+			lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+			lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+
+			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
+			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
+			lightTransform.axisY().xyz0().storeUnaligned(lsd->direction);
+			(light->getColor() * light->getFlickerCoeff()).storeUnaligned(lsd->color);
+
+			Vector4::zero().storeUnaligned(lsd->viewToLight0);
+			Vector4::zero().storeUnaligned(lsd->viewToLight1);
+			Vector4::zero().storeUnaligned(lsd->viewToLight2);
+			Vector4::zero().storeUnaligned(lsd->viewToLight3);
+		}
+	}
+
+	// If shadow casting directional light found add cascade shadow map pass
+	// and update light sbuffer.
+	if (shadowsEnable)
+	{
+		const int32_t cascadingSlices = (m_gatheredView.lights[0] != nullptr) ? shadowSettings.cascadingSlices : 0;
+		const int32_t shmw = shadowSettings.resolution * (cascadingSlices + 1);
+		const int32_t shmh = shadowSettings.resolution;
+		const int32_t sliceDim = shadowSettings.resolution;
+		const int32_t atlasOffset = shadowSettings.resolution * cascadingSlices;
+
+		// Add shadow map target.
+		render::RenderGraphTargetSetDesc rgtd;
+		rgtd.count = 0;
+		rgtd.width = shmw;
+		rgtd.height = shmh;
+		rgtd.createDepthStencil = true;
+		rgtd.usingPrimaryDepthStencil = false;
+		rgtd.usingDepthStencilAsTexture = true;
+		rgtd.ignoreStencil = true;
+		outShadowMapAtlasTargetSetId = renderGraph.addTransientTargetSet(L"Shadow map atlas", rgtd);
+
+		// Add shadow map render passes.
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
+
+		render::Clear clear;
+		clear.mask = render::CfDepth;
+		clear.depth = 1.0f;
+		rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfNone, render::TfDepth);
+
+		if (m_gatheredView.lights[0] != nullptr)
+		{
+			const auto& light = m_gatheredView.lights[0];
+			const Transform lightTransform = light->getTransform();
+			const Vector4 lightPosition = lightTransform.translation().xyz1();
+			const Vector4 lightDirection = lightTransform.axisY().xyz0();
+
+			// First 4 entries are allocated to cascading shadow light.
+			auto* lsd = lightShaderData;
+
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			{
+				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
+				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
+
+				// Create sliced view frustum.
+				Frustum sliceViewFrustum = viewFrustum;
+				sliceViewFrustum.setNearZ(zn);
+				sliceViewFrustum.setFarZ(zf);
+
+				// Calculate shadow map projection.
+				Matrix44 shadowLightView;
+				Matrix44 shadowLightProjection;
+				Frustum shadowFrustum;
+
+				shadowProjection.calculate(
+					viewInverse,
+					lightPosition,
+					lightDirection,
+					sliceViewFrustum,
+					shadowSettings.farZ,
+					shadowSettings.quantizeProjection,
+					shadowLightView,
+					shadowLightProjection,
+					shadowFrustum
+				);
+
+				const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+				viewToLightSpace.axisX().storeUnaligned(lsd[slice].viewToLight0);
+				viewToLightSpace.axisY().storeUnaligned(lsd[slice].viewToLight1);
+				viewToLightSpace.axisZ().storeUnaligned(lsd[slice].viewToLight2);
+				viewToLightSpace.translation().storeUnaligned(lsd[slice].viewToLight3);
+
+				// Write slice coordinates to shaders.
+				Vector4(
+					(float)(slice * sliceDim) / shmw,
+					0.0f,
+					(float)sliceDim / shmw,
+					1.0f
+				).storeUnaligned(lsd[slice].atlasTransform);
+
+				rp->addBuild(
+					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+					{
+						WorldBuildContext wc(
+							m_entityRenderers,
+							rootEntity,
+							renderContext
+						);
+
+						// Render shadow map.
+						WorldRenderView shadowRenderView;
+						shadowRenderView.setProjection(shadowLightProjection);
+						shadowRenderView.setView(shadowLightView, shadowLightView);
+						shadowRenderView.setViewFrustum(shadowFrustum);
+						shadowRenderView.setCullFrustum(shadowFrustum);
+						shadowRenderView.setTimes(
+							worldRenderView.getTime(),
+							worldRenderView.getDeltaTime(),
+							worldRenderView.getInterval()
+						);
+
+						// Set viewport to current cascade.
+						auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+						svrb->viewport = render::Viewport(
+							slice * sliceDim,
+							0,
+							sliceDim,
+							sliceDim,
+							0.0f,
+							1.0f
+						);
+						renderContext->enqueue(svrb);	
+
+						// Render entities into shadow map.
+						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+						sharedParams->beginParameters(renderContext);
+						sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+						sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+						sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+						sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+						sharedParams->endParameters(renderContext);
+
+						const WorldRenderPassShared shadowPass(
+							s_techniqueShadow,
+							sharedParams,
+							shadowRenderView,
+							IWorldRenderPass::None
+						);
+
+						T_ASSERT(!renderContext->havePendingDraws());
+
+						for (auto r : m_gatheredView.renderables)
+							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+	
+						for (auto entityRenderer : m_entityRenderers->get())
+							entityRenderer->build(wc, shadowRenderView, shadowPass);
+					}
+				);
+			}
+		}
+
+		for (int32_t lightAtlasIndex : lightAtlasIndices)
+		{
+			const auto& light = m_gatheredView.lights[lightAtlasIndex];
+			const Transform lightTransform = light->getTransform();
+			const Vector4 lightPosition = lightTransform.translation().xyz1();
+			const Vector4 lightDirection = lightTransform.axisY().xyz0();
+
+			auto* lsd = &lightShaderData[lightAtlasIndex];
+
+			// Calculate shadow map projection.
+			Matrix44 shadowLightView;
+			Matrix44 shadowLightProjection;
+			Frustum shadowFrustum;
+
+			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
+			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
+
+			Vector4 lightAxisX, lightAxisY, lightAxisZ;
+			lightAxisZ = -lightDirection;
+			lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
+			lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+
+			shadowLightView = Matrix44(
+				lightAxisX,
+				lightAxisY,
+				lightAxisZ,
+				lightPosition
+			);
+			shadowLightView = shadowLightView.inverse();
+
+			const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
+			viewToLightSpace.axisX().storeUnaligned(lsd->viewToLight0);
+			viewToLightSpace.axisY().storeUnaligned(lsd->viewToLight1);
+			viewToLightSpace.axisZ().storeUnaligned(lsd->viewToLight2);
+			viewToLightSpace.translation().storeUnaligned(lsd->viewToLight3);
+
+			// Calculate size of shadow region based on distance from eye.
+			const float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
+			const int32_t denom = (int32_t)std::floor(distance / 4.0f);
+			const int32_t atlasSize = 128 >> std::min(denom, 4);
+					
+			Packer::Rectangle atlasRect;
+			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))
+				return;
+
+			// Write atlas coordinates to shaders.
+			Vector4(
+				(float)(atlasOffset + atlasRect.x) / shmw,
+				(float)atlasRect.y / shmh,
+				(float)atlasRect.width / shmw,
+				(float)atlasRect.height / shmh
+			).storeUnaligned(lsd->atlasTransform);	
+
+			rp->addBuild(
+				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+				{
+					const WorldBuildContext wc(
+						m_entityRenderers,
+						rootEntity,
+						renderContext
+					);
+
+					// Render shadow map.
+					WorldRenderView shadowRenderView;
+					shadowRenderView.setProjection(shadowLightProjection);
+					shadowRenderView.setView(shadowLightView, shadowLightView);
+					shadowRenderView.setViewFrustum(shadowFrustum);
+					shadowRenderView.setCullFrustum(shadowFrustum);
+					shadowRenderView.setTimes(
+						worldRenderView.getTime(),
+						worldRenderView.getDeltaTime(),
+						worldRenderView.getInterval()
+					);
+
+					// Set viewport to light atlas slot.
+					auto svrb = renderContext->alloc< render::SetViewportRenderBlock >();
+					svrb->viewport = render::Viewport(
+						atlasOffset + atlasRect.x,
+						atlasRect.y,
+						atlasRect.width,
+						atlasRect.height,
+						0.0f,
+						1.0f
+					);
+					renderContext->enqueue(svrb);	
+
+					// Render entities into shadow map.
+					auto sharedParams = renderContext->alloc< render::ProgramParameters >();
+					sharedParams->beginParameters(renderContext);
+					sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
+					sharedParams->setMatrixParameter(s_handleProjection, shadowLightProjection);
+					sharedParams->setMatrixParameter(s_handleView, shadowLightView);
+					sharedParams->setMatrixParameter(s_handleViewInverse, shadowLightView.inverse());
+					sharedParams->endParameters(renderContext);
+
+					const WorldRenderPassShared shadowPass(
+						s_techniqueShadow,
+						sharedParams,
+						shadowRenderView,
+						IWorldRenderPass::None
+					);
+
+					T_ASSERT(!renderContext->havePendingDraws());
+
+					for (auto r : m_gatheredView.renderables)
+						r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+	
+					for (auto entityRenderer : m_entityRenderers->get())
+						entityRenderer->build(wc, shadowRenderView, shadowPass);
+				}
+			);
+		}
+
+		renderGraph.addPass(rp);
+	}
+
+	m_lightSBuffer->unlock();
 }
 
 }

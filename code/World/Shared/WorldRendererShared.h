@@ -16,6 +16,7 @@
 namespace traktor::render
 {
 
+class Buffer;
 class IRenderTargetSet;
 class ITexture;
 class ScreenRenderer;
@@ -28,12 +29,15 @@ namespace traktor::world
 class AmbientOcclusionPass;
 class GBufferPass;
 class IEntityRenderer;
+class IrradianceGrid;
 class LightClusterPass;
 class LightComponent;
+class Packer;
 class PostProcessPass;
 class ProbeComponent;
 class ReflectionsPass;
 class VelocityPass;
+class WorldEntityRenderers;
 
 /*! World renderer shared implementation.
  * \ingroup World
@@ -54,6 +58,21 @@ public:
 protected:
 	friend class SliceOverlay;
 	friend class TilesOverlay;
+
+#pragma pack(1)
+	struct LightShaderData
+	{
+		float typeRangeRadius[4];
+		float position[4];
+		float direction[4];
+		float color[4];
+		float viewToLight0[4];
+		float viewToLight1[4];
+		float viewToLight2[4];
+		float viewToLight3[4];
+		float atlasTransform[4];
+	};
+#pragma pack()
 
 	WorldRenderSettings m_settings;
 
@@ -78,9 +97,21 @@ protected:
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
 
+	Ref< render::Buffer > m_lightSBuffer;
+	resource::Proxy< IrradianceGrid > m_irradianceGrid;
+	Ref< Packer > m_shadowAtlasPacker;
+
 	GatherView m_gatheredView;
 
 	void gather(Entity* rootEntity);
+
+	void setupLightPass(
+		const WorldRenderView& worldRenderView,
+		const Entity* rootEntity,
+		render::RenderGraph& renderGraph,
+		render::handle_t outputTargetSetId,
+		render::handle_t& outShadowMapAtlasTargetSetId
+	);
 };
 
 }
