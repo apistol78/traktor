@@ -246,7 +246,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 	static thread_local RandomGeometry random;
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-		return tracePath0(position, unit, random);
+		return tracePath0(position, unit, random, 0);
 	});
 
 	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
@@ -331,7 +331,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				const Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
 
 				// Trace IBL and indirect illumination.
-				const Color4f incoming = tracePath0(elm.position, elm.normal, random);
+				const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
 
 				// Trace ambient occlusion.
 				Scalar occlusion = 1.0_simd;
@@ -391,7 +391,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	const Scalar probability = 1.0_simd / Scalar(PI);
 
 	static RandomGeometry random;
-	const Color4f incoming = tracePath0(hitPosition, hitNormal, random);
+	const Color4f incoming = tracePath0(hitPosition, hitNormal, random, Light::LmDirect | Light::LmIndirect);
 
 	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability);
 	return output;
@@ -400,7 +400,8 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 Color4f RayTracerEmbree::tracePath0(
 	const Vector4& origin,
 	const Vector4& normal,
-	RandomGeometry& random
+	RandomGeometry& random,
+	uint32_t extraLightMask
 ) const
 {
 	constexpr int SampleBatch = 32;
@@ -422,7 +423,7 @@ Color4f RayTracerEmbree::tracePath0(
 		const Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 		const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 		const Scalar cosPhi = dot3(direction, normal);
-		const Color4f incoming = traceSinglePath(origin, direction, random, 1);
+		const Color4f incoming = traceSinglePath(origin, direction, random, extraLightMask, 1);
 		color += incoming * BRDF * cosPhi / probability;
 	}
 #else
@@ -496,19 +497,19 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const Scalar cosPhi = dot3(newDirection, hitNormal);
 			// const Scalar cosPhi = dot3(-direction, hitNormal);
-			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 1);
+			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, 1);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
 				hitOrigin,
 				hitNormal,
-				Light::LmIndirect,
+				Light::LmIndirect | extraLightMask,
 				true
 			);
 
 			const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 			color += output;
 
-			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, 1);
+			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, 1);
 			//color += incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 		}
 	}
@@ -517,7 +518,7 @@ Color4f RayTracerEmbree::tracePath0(
 	color /= Scalar(sampleCount);
 
 	// Sample direct lighting from analytical lights.
-	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect, false);
+	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect | extraLightMask, false);
 
 	return color;
 }
@@ -526,6 +527,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Vector4& origin,
 	const Vector4& direction,
 	RandomGeometry& random,
+	uint32_t extraLightMask,
 	int32_t depth
 ) const
 {
@@ -587,19 +589,19 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	const Scalar cosPhi = dot3(newDirection, hitNormal);
 	// const Scalar cosPhi = dot3(-direction, hitNormal);
-	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, depth + 1);
+	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
 		random,
 		hitOrigin,
 		hitNormal,
-		Light::LmIndirect,
+		Light::LmIndirect | extraLightMask,
 		true
 	);
 
 	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 	return output;
 
-	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, random, depth + 1);
+	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, random, extraLightMask, depth + 1);
 	//const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 	//return color;
 }
