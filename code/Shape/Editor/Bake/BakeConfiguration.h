@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Guid.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -43,7 +44,7 @@ public:
 
 	float getLumelDensity() const { return m_lumelDensity; }
 
-	float getIrradianceGridDensity() const { return m_irradianceGridDensity; }
+	Vector4 getIrradianceGridDensity() const { return m_irradianceGridDensity; }
 
 	int32_t getMinimumLightMapSize() const { return m_minimumLightMapSize; }
 
@@ -65,7 +66,7 @@ private:
 	float m_maxPathDistance = 1.0f;
 	float m_pointLightShadowRadius = 0.1f;
 	float m_lumelDensity = 16.0f;
-	float m_irradianceGridDensity = 0.1f;
+	Vector4 m_irradianceGridDensity = Vector4(0.1f, 0.1f, 0.1f, 0.0f);
 	int32_t m_minimumLightMapSize = 16;
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;

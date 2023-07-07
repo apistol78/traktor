@@ -78,7 +78,6 @@ private:
 	AlignedVector< uint32_t > m_materialOffset;
 	AlignedVector< const model::Material* > m_materials;
 	Ref< render::SHEngine > m_shEngine;
-	float m_maxDistance = 0.0f;
 	Aabb3 m_boundingBox;
 
 	Color4f tracePath0(
@@ -91,6 +90,7 @@ private:
 	Color4f traceSinglePath(
 		const Vector4& origin,
 		const Vector4& direction,
+		float maxDistance,
 		RandomGeometry& random,
 		uint32_t extraLightMask,
 		int32_t depth
