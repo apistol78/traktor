@@ -596,7 +596,7 @@ bool TracerProcessor::process(const TracerTask* task)
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
 
-			//seamFilter(renderModel, channel, lightmapDiffuse);
+			seamFilter(renderModel, channel, lightmapDiffuse);
 
 			lightmapDiffuse->clearAlpha(1.0f);
 

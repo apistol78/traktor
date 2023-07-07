@@ -116,6 +116,8 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		m_data[i].distance = 0.0f;
 	}
 
+	const Vector2 wh((float)width - 1, (float)height - 1);
+
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
 		const auto& polygon = model.getPolygon(i);
@@ -125,7 +127,6 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		normals.resize(0);
 		tangents.resize(0);
 		texCoords.resize(0);
-		Aabb2 texBounds;
 
 		for (const auto index : polygon.getVertices())
 		{
@@ -141,10 +142,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			tangents.push_back((transform * model.getNormal(tangentIndex).xyz0()).normalized());
 
 			const uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
-			texCoords.push(
-				model.getTexCoord(texCoordIndex) * Vector2((float)width, (float)height) - Vector2(0.5f, 0.5f)
-			);
-			texBounds.contain(texCoords.get().back());
+			texCoords.push(model.getTexCoord(texCoordIndex) * wh);
 
 			m_boundingBox.contain(positions.back());
 		}
