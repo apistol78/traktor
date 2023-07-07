@@ -619,7 +619,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	for (uint32_t i = 0; !m_cancelled && i < tracerIrradiances.size(); ++i)
 	{
 		auto tracerIrradiance = tracerIrradiances[i];
-		const Scalar gridDensity(configuration->getIrradianceGridDensity());
+		const Vector4 gridDensity = configuration->getIrradianceGridDensity();
 
 		// Determine bounding box from all trace models if no one is already provided.
 		Aabb3 boundingBox = tracerIrradiance->getBoundingBox();
@@ -627,7 +627,6 @@ bool TracerProcessor::process(const TracerTask* task)
 		{
 			for (auto tracerModel : task->getTracerModels())
 				boundingBox.contain(tracerModel->getModel()->getBoundingBox().transform(tracerModel->getTransform()));
-			boundingBox.expand(gridDensity);
 		}
 
 		// Shrink a tiny bit so we can easily align volume to walls etc in editor.
@@ -635,9 +634,9 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		const Vector4 worldSize = boundingBox.getExtent() * 2.0_simd;
 
-		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity + 0.5f), 2, 64);
-		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity + 0.5f), 2, 64);
-		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity + 0.5f), 2, 64);
+		const int32_t gridX = clamp((int32_t)(worldSize.x() * gridDensity.x() + 0.5f), 2, 64);
+		const int32_t gridY = clamp((int32_t)(worldSize.y() * gridDensity.y() + 0.5f), 2, 64);
+		const int32_t gridZ = clamp((int32_t)(worldSize.z() * gridDensity.z() + 0.5f), 2, 64);
 
 		log::debug << L"Irradiance bounding box " << boundingBox.mn << L" -> " << boundingBox.mx << Endl;
 		log::debug << L"Grid size " << gridX << L", " << gridY << L", " << gridZ << Endl;

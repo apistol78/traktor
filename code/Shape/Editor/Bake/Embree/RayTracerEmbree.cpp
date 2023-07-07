@@ -113,7 +113,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.RayTracerEmbree", 0, RayTracerEmb
 bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 {
 	m_configuration = configuration;
-	m_maxDistance = 100.0f;
 
 	m_device = rtcNewDevice(nullptr);
 	m_scene = rtcNewScene(m_device);
@@ -122,7 +121,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
 	m_shEngine->generateSamplePoints(
-		500 // configuration->getIrradianceSampleCount()
+		100 // configuration->getIrradianceSampleCount()
 	);
 
 	// Calculate sampling pattern of shadows, using uniform pattern within a disc.
@@ -423,7 +422,7 @@ Color4f RayTracerEmbree::tracePath0(
 		const Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
 		const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
 		const Scalar cosPhi = dot3(direction, normal);
-		const Color4f incoming = traceSinglePath(origin, direction, random, extraLightMask, 1);
+		const Color4f incoming = traceSinglePath(origin, direction, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 		color += incoming * BRDF * cosPhi / probability;
 	}
 #else
@@ -497,7 +496,7 @@ Color4f RayTracerEmbree::tracePath0(
 
 			const Scalar cosPhi = dot3(newDirection, hitNormal);
 			// const Scalar cosPhi = dot3(-direction, hitNormal);
-			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, 1);
+			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
 				hitOrigin,
@@ -509,7 +508,7 @@ Color4f RayTracerEmbree::tracePath0(
 			const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 			color += output;
 
-			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, 1);
+			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			//color += incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 		}
 	}
@@ -526,16 +525,17 @@ Color4f RayTracerEmbree::tracePath0(
 Color4f RayTracerEmbree::traceSinglePath(
 	const Vector4& origin,
 	const Vector4& direction,
+	float maxDistance,
 	RandomGeometry& random,
 	uint32_t extraLightMask,
 	int32_t depth
 ) const
 {
-	if (depth > 2)
+	if (depth > 2 || maxDistance <= 0.0f)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	RTCRayHit T_MATH_ALIGN16 rh;
-	constructRay(origin, direction, m_configuration->getMaxPathDistance(), rh);
+	constructRay(origin, direction, maxDistance /*m_configuration->getMaxPathDistance()*/, rh);
 
 	RTCIntersectContext context;
 	rtcInitIntersectContext(&context);
@@ -589,7 +589,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	const Scalar cosPhi = dot3(newDirection, hitNormal);
 	// const Scalar cosPhi = dot3(-direction, hitNormal);
-	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, random, extraLightMask, depth + 1);
+	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
 		random,
 		hitOrigin,
@@ -601,7 +601,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
 	return output;
 
-	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, random, extraLightMask, depth + 1);
+	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
 	//const Color4f color = incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 	//return color;
 }
@@ -697,7 +697,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 
 						r.tnear = c_epsilonOffset;
 						r.time = 0.0f;
-						r.tfar = m_maxDistance;
+						r.tfar = 1000.0f;
 
 						r.mask = 0;
 						r.id = 0;

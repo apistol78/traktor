@@ -18,7 +18,7 @@ namespace traktor
 	namespace shape
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 30, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 31, BakeConfiguration, ISerializable)
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -51,7 +51,16 @@ void BakeConfiguration::serialize(ISerializer& s)
 
 	s >> Member< float >(L"pointLightShadowRadius", m_pointLightShadowRadius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"lumelDensity", m_lumelDensity, AttributeRange(0.0f));
-	s >> Member< float >(L"irradianceGridDensity", m_irradianceGridDensity, AttributeRange(0.0f));
+
+	if (s.getVersion< BakeConfiguration >() >= 31)
+		s >> Member< Vector4 >(L"irradianceGridDensity", m_irradianceGridDensity, AttributeRange(0.0f));
+	else
+	{
+		float value;
+		s >> Member< float >(L"irradianceGridDensity", value, AttributeRange(0.0f));
+		m_irradianceGridDensity = Vector4(value, value, value, 0.0f);
+	}
+
 	s >> Member< int32_t >(L"minimumLightMapSize", m_minimumLightMapSize, AttributeRange(0));
 	s >> Member< int32_t >(L"maximumLightMapSize", m_maximumLightMapSize, AttributeRange(0));
 
