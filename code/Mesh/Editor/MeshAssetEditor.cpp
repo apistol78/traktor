@@ -284,8 +284,8 @@ void MeshAssetEditor::apply()
 	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
 	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
-	std::map< std::wstring, Guid > materialTemplates;
-	std::map< std::wstring, Guid > materialShaders;
+	SmallMap< std::wstring, Guid > materialTemplates;
+	SmallMap< std::wstring, Guid > materialShaders;
 
 	const RefArray< ui::GridRow >& shaderItems = m_materialShaderList->getRows();
 	for (auto shaderItem : shaderItems)
@@ -303,7 +303,7 @@ void MeshAssetEditor::apply()
 	m_asset->setMaterialTemplates(materialTemplates);
 	m_asset->setMaterialShaders(materialShaders);
 
-	std::map< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, Guid > materialTextures;
 
 	const RefArray< ui::GridRow >& textureItems = m_materialTextureList->getRows();
 	for (auto textureItem : textureItems)
@@ -414,8 +414,8 @@ void MeshAssetEditor::updateMaterialList()
 	{
 		const AlignedVector< model::Material >& materials = m_model->getMaterials();
 
-		const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
-		const std::map< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
+		const SmallMap< std::wstring, Guid >& materialTemplates = m_asset->getMaterialTemplates();
+		const SmallMap< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
 
 		for (const auto& material : materials)
 		{
@@ -470,7 +470,7 @@ void MeshAssetEditor::updateMaterialList()
 		}
 
 		std::set< std::wstring > textureNames;
-		const std::map< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
+		const SmallMap< std::wstring, Guid >& materialTextures = m_asset->getMaterialTextures();
 		for (const auto& material : materials)
 		{
 			struct { std::wstring name; drawing::Image* embedded; } modelTextures[] =

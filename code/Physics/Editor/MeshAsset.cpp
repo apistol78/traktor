@@ -9,7 +9,7 @@
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Physics/Editor/Material.h"
 #include "Physics/Editor/MeshAsset.h"
 
@@ -41,7 +41,7 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"grounded", m_grounded);
 
 	if (s.getVersion< MeshAsset >() >= 3)
-		s >> MemberStlMap< std::wstring, Guid >(L"materials", m_materials, AttributeType(type_of< Material >()));
+		s >> MemberSmallMap< std::wstring, Guid >(L"materials", m_materials, AttributeType(type_of< Material >()));
 }
 
 }

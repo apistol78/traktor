@@ -75,7 +75,7 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 
 	// Create list of texture references.
-	std::map< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, Guid > materialTextures;
 
 	// First use textures from texture set.
 	const auto& textureSetId = meshAsset->getTextureSet();

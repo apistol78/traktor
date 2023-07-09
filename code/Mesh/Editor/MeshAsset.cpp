@@ -11,7 +11,7 @@
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
@@ -44,13 +44,13 @@ void MeshAsset::serialize(ISerializer& s)
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
 
 	if (s.getVersion() >= 6)
-		s >> MemberStlMap< std::wstring, Guid >(L"materialTemplates", m_materialTemplates);
+		s >> MemberSmallMap< std::wstring, Guid >(L"materialTemplates", m_materialTemplates);
 
 	if (s.getVersion() >= 1)
-		s >> MemberStlMap< std::wstring, Guid >(L"materialShaders", m_materialShaders);
+		s >> MemberSmallMap< std::wstring, Guid >(L"materialShaders", m_materialShaders);
 
 	if (s.getVersion() >= 4)
-		s >> MemberStlMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
+		s >> MemberSmallMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
 
 	if (s.getVersion() >= 18)
 		s >> Member< Guid >(L"textureSet", m_textureSet, AttributeType(type_of< render::TextureSet >()));
