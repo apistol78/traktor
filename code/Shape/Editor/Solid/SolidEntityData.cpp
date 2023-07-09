@@ -8,7 +8,7 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Physics/CollisionSpecification.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
@@ -61,22 +61,22 @@ Ref< SolidEntity > SolidEntityData::createEntity(const world::IEntityBuilder* bu
 	return solidEntity;
 }
 
-void SolidEntityData::setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup)
+void SolidEntityData::setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup)
 {
 	m_collisionGroup = collisionGroup;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionGroup() const
+const SmallSet< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionGroup() const
 {
 	return m_collisionGroup;
 }
 
-void SolidEntityData::setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask)
+void SolidEntityData::setCollisionMask(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask)
 {
 	m_collisionMask = collisionMask;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionMask() const
+const SmallSet< resource::Id< physics::CollisionSpecification > >& SolidEntityData::getCollisionMask() const
 {
 	return m_collisionMask;
 }
@@ -87,8 +87,8 @@ void SolidEntityData::serialize(ISerializer& s)
 
 	world::EntityData::serialize(s);
 
-    s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
-    s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
+    s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+    s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }
 
     }

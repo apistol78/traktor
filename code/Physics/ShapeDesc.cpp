@@ -8,7 +8,7 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Physics/CollisionSpecification.h"
 #include "Physics/ShapeDesc.h"
 #include "Resource/Member.h"
@@ -28,22 +28,22 @@ const Transform& ShapeDesc::getLocalTransform() const
 	return m_localTransform;
 }
 
-void ShapeDesc::setCollisionGroup(const std::set< resource::Id< CollisionSpecification > >& collisionGroup)
+void ShapeDesc::setCollisionGroup(const SmallSet< resource::Id< CollisionSpecification > >& collisionGroup)
 {
 	m_collisionGroup = collisionGroup;
 }
 
-const std::set< resource::Id< CollisionSpecification > >& ShapeDesc::getCollisionGroup() const
+const SmallSet< resource::Id< CollisionSpecification > >& ShapeDesc::getCollisionGroup() const
 {
 	return m_collisionGroup;
 }
 
-void ShapeDesc::setCollisionMask(const std::set< resource::Id< CollisionSpecification > >& collisionMask)
+void ShapeDesc::setCollisionMask(const SmallSet< resource::Id< CollisionSpecification > >& collisionMask)
 {
 	m_collisionMask = collisionMask;
 }
 
-const std::set< resource::Id< CollisionSpecification > >& ShapeDesc::getCollisionMask() const
+const SmallSet< resource::Id< CollisionSpecification > >& ShapeDesc::getCollisionMask() const
 {
 	return m_collisionMask;
 }
@@ -62,8 +62,8 @@ void ShapeDesc::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT(s.getVersion() >= 5);
 	s >> MemberComposite< Transform >(L"localTransform", m_localTransform);
-	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
-	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionMask", m_collisionMask);
+	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionMask", m_collisionMask);
 	s >> Member< int32_t >(L"material", m_material);
 }
 

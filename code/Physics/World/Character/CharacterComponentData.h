@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -59,11 +59,11 @@ public:
 
 	Ref< ShapeDesc > getShapeDesc(float epsilon) const;
 
-	const std::set< resource::Id< CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
 
-	const std::set< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
+	const SmallSet< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
 
-	const std::set< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
+	const SmallSet< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
 
 	/*! Get character radius. */
 	float getRadius() const { return m_radius; }
@@ -90,9 +90,9 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::set< resource::Id< CollisionSpecification > > m_collisionGroup;
-	std::set< resource::Id< CollisionSpecification > > m_traceInclude;
-	std::set< resource::Id< CollisionSpecification > > m_traceIgnore;
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< CollisionSpecification > > m_traceInclude;
+	SmallSet< resource::Id< CollisionSpecification > > m_traceIgnore;
 	float m_radius = 1.0f;
 	float m_height = 2.0f;
 	float m_step = 0.5f;

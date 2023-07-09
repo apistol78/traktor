@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <map>
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
@@ -60,22 +60,22 @@ public:
 	MeshType getMeshType() const { return m_meshType; }
 
 	/*! Set material shader templates. */
-	void setMaterialTemplates(const std::map< std::wstring, Guid >& materialTemplates) { m_materialTemplates = materialTemplates; }
+	void setMaterialTemplates(const SmallMap< std::wstring, Guid >& materialTemplates) { m_materialTemplates = materialTemplates; }
 
 	/*! Get material shader templates. */
-	const std::map< std::wstring, Guid >& getMaterialTemplates() const { return m_materialTemplates; }
+	const SmallMap< std::wstring, Guid >& getMaterialTemplates() const { return m_materialTemplates; }
 
 	/*! Set explicit material shaders. */
-	void setMaterialShaders(const std::map< std::wstring, Guid >& materialShaders) { m_materialShaders = materialShaders; }
+	void setMaterialShaders(const SmallMap< std::wstring, Guid >& materialShaders) { m_materialShaders = materialShaders; }
 
 	/*! Get explicit material shaders. */
-	const std::map< std::wstring, Guid >& getMaterialShaders() const { return m_materialShaders; }
+	const SmallMap< std::wstring, Guid >& getMaterialShaders() const { return m_materialShaders; }
 
 	/*! Set material textures. */
-	void setMaterialTextures(const std::map< std::wstring, Guid >& materialTextures) { m_materialTextures = materialTextures; }
+	void setMaterialTextures(const SmallMap< std::wstring, Guid >& materialTextures) { m_materialTextures = materialTextures; }
 
 	/*! Get material textures. */
-	const std::map< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
+	const SmallMap< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
 
 	/*! Set texture set. */
 	void setTextureSet(const Guid& textureSet) { m_textureSet = textureSet; }
@@ -140,9 +140,9 @@ public:
 private:
 	std::wstring m_importFilter;
 	MeshType m_meshType = MtStatic;
-	std::map< std::wstring, Guid > m_materialTemplates;
-	std::map< std::wstring, Guid > m_materialShaders;
-	std::map< std::wstring, Guid > m_materialTextures;
+	SmallMap< std::wstring, Guid > m_materialTemplates;
+	SmallMap< std::wstring, Guid > m_materialShaders;
+	SmallMap< std::wstring, Guid > m_materialTextures;
 	Guid m_textureSet;
 	float m_scaleFactor = 1.0f;
 	Vector4 m_offset = Vector4::zero();

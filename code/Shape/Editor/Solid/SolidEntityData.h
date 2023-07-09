@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include <set>
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallSet.h"
 #include "Resource/Id.h"
 #include "World/EntityData.h"
 
@@ -74,17 +74,17 @@ public:
 
     virtual void serialize(ISerializer& s) override final;
 
-	void setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup);
+	void setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
 
-	void setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask);
+	void setCollisionMask(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask);
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
 
 private:
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };
 
     }

@@ -259,8 +259,8 @@ bool MeshPipeline::buildOutput(
 	uint32_t /*reason*/
 ) const
 {
-	std::map< std::wstring, Guid > materialTextures;
-	std::map< std::wstring, model::Material > materials;
+	SmallMap< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
 	Aabb3 boundingBox;

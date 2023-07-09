@@ -479,8 +479,8 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			}
 			else if (entityType == 4)
 			{
-				std::set< resource::Id< physics::CollisionSpecification > > group;
-				std::set< resource::Id< physics::CollisionSpecification > > mask;
+				SmallSet< resource::Id< physics::CollisionSpecification > > group;
+				SmallSet< resource::Id< physics::CollisionSpecification > > mask;
 
 				auto groupInstance = m_dropCollisionGroup->getSelectedData< db::Instance >();
 				if (groupInstance)
@@ -542,12 +542,12 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 			auto groupInstance = m_dropCollisionGroup->getSelectedData< db::Instance >();
 			if (groupInstance)
 			{
-				std::set< resource::Id< physics::CollisionSpecification > > group;
+				SmallSet< resource::Id< physics::CollisionSpecification > > group;
 				group.insert(resource::Id< physics::CollisionSpecification >(groupInstance->getGuid()));
 				meshShapeDesc->setCollisionGroup(group);
 			}
 
-			std::set< resource::Id< physics::CollisionSpecification > > mask;
+			SmallSet< resource::Id< physics::CollisionSpecification > > mask;
 			std::vector< int32_t > selectedMasks;
 			m_dropCollisionMask->getSelected(selectedMasks);
 			for (auto selectedMask : selectedMasks)

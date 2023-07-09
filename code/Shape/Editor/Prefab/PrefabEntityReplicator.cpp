@@ -114,8 +114,8 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
-	std::map< std::wstring, Guid > materialTemplates;
-	std::map< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, Guid > materialTemplates;
+	SmallMap< std::wstring, Guid > materialTextures;
 
 	// Collect all models from prefab component.
 	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
@@ -190,11 +190,11 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
-	//Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
-	//outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	//outputMeshAsset->setMaterialTemplates(materialTemplates);
-	//outputMeshAsset->setMaterialTextures(materialTextures);
-	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::VisualMesh, outputMeshAsset);
+	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	outputMeshAsset->setMaterialTemplates(materialTemplates);
+	outputMeshAsset->setMaterialTextures(materialTextures);
+	outputModel->setProperty< PropertyObject >(type_name(outputMeshAsset), outputMeshAsset);
 
 	return outputModel;
 }
@@ -209,9 +209,9 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
-	std::map< std::wstring, Guid > materialPhysics;
-	std::set< resource::Id< physics::CollisionSpecification > > collisionGroup;
-	std::set< resource::Id< physics::CollisionSpecification > > collisionMask;
+	SmallMap< std::wstring, Guid > materialPhysics;
+	SmallSet< resource::Id< physics::CollisionSpecification > > collisionGroup;
+	SmallSet< resource::Id< physics::CollisionSpecification > > collisionMask;
 	float friction = 0.0f;
 	float restitution = 0.0f;
 
@@ -282,20 +282,20 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
 
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
- //	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
- //	outputShapeMeshAsset->setCalculateConvexHull(false);
- //	outputShapeMeshAsset->setMaterials(materialPhysics);
-	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionMesh, outputShapeMeshAsset);
+ 	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+ 	outputShapeMeshAsset->setCalculateConvexHull(false);
+ 	outputShapeMeshAsset->setMaterials(materialPhysics);
+	outputModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
 
-	//Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
-	//outputShapeDesc->setCollisionGroup(collisionGroup);
-	//outputShapeDesc->setCollisionMask(collisionMask);
-	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionShape, outputShapeDesc);
+	Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
+	outputShapeDesc->setCollisionGroup(collisionGroup);
+	outputShapeDesc->setCollisionMask(collisionMask);
+	outputModel->setProperty< PropertyObject >(type_name(outputShapeDesc), outputShapeDesc);
 
-	//Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
-	//outputBodyDesc->setFriction(friction);
-	//outputBodyDesc->setRestitution(restitution);
-	//outputModel->setProperty< PropertyObject >(world::IEntityReplicator::CollisionBody, outputBodyDesc);
+	Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+	outputBodyDesc->setFriction(friction);
+	outputBodyDesc->setRestitution(restitution);
+	outputModel->setProperty< PropertyObject >(type_name(outputBodyDesc), outputBodyDesc);
 
 	return outputModel;
 }

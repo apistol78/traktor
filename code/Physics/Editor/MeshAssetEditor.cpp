@@ -163,7 +163,7 @@ void MeshAssetEditor::apply()
 	m_asset->setCalculateConvexHull(m_checkHull->isChecked());
 	m_asset->setMargin(parseString< float >(m_editMargin->getText()));
 
-	std::map< std::wstring, Guid > materials;
+	SmallMap< std::wstring, Guid > materials;
 	for (auto materialItem : m_materialList->getRows())
 	{
 		std::wstring materialName = materialItem->get(0)->getText();
@@ -220,7 +220,7 @@ void MeshAssetEditor::updateMaterialList()
 
 	if (m_model)
 	{
-		const std::map< std::wstring, Guid >& materialTemplates = m_asset->getMaterials();
+		const auto& materialTemplates = m_asset->getMaterials();
 		for (const auto& material : m_model->getMaterials())
 		{
 			Ref< ui::GridRow > shaderItem = new ui::GridRow();

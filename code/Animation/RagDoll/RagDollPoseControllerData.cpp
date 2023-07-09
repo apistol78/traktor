@@ -14,7 +14,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Physics/CollisionSpecification.h"
 #include "Resource/Member.h"
 
@@ -38,8 +38,8 @@ RagDollPoseControllerData::RagDollPoseControllerData()
 }
 
 RagDollPoseControllerData::RagDollPoseControllerData(
-	const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup,
-	const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup,
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask
 )
 :	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
@@ -103,8 +103,8 @@ void RagDollPoseControllerData::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT(s.getVersion< RagDollPoseControllerData >() >= 5);
 
-	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
-	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
+	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
 	s >> Member< bool >(L"enabled", m_enabled);
 

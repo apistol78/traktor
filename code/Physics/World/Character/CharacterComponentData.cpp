@@ -10,7 +10,7 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Physics/Body.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CollisionSpecification.h"
@@ -107,10 +107,10 @@ void CharacterComponentData::setTransform(const world::EntityData* owner, const 
 void CharacterComponentData::serialize(ISerializer& s)
 {
 	if (s.getVersion< CharacterComponentData >() >= 3)
-		s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+		s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
 
-	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
-	s >> MemberStlSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
+	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
+	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"height", m_height, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 	s >> Member< float >(L"step", m_step, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));

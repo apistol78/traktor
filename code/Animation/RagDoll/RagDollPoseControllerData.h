@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Animation/IPoseControllerData.h"
 #include "Resource/Id.h"
 
@@ -41,8 +41,8 @@ public:
 	RagDollPoseControllerData();
 
 	explicit RagDollPoseControllerData(
-		const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup,
-		const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask
+		const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup,
+		const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask
 	);
 
 	virtual Ref< IPoseController > createInstance(
@@ -54,17 +54,17 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const { return m_collisionMask; }
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const { return m_collisionMask; }
 
 	const IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
 
 private:
 	friend class RagDollPoseController;
 
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 	bool m_autoDeactivate = false;
 	bool m_enabled = true;
 	float m_limbMass = 1.0f;

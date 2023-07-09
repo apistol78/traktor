@@ -56,7 +56,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 		return false;
 
 	// Create list of texture references.
-	std::map< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, Guid > materialTextures;
 
 	// First use textures from texture set.
 	const auto& textureSetId = asset->getTextureSet();

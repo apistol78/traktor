@@ -177,7 +177,7 @@ bool MeshPipeline::buildOutput(
 
 	// Add materials defined in asset, build map from
 	// model material to resource materials.
-	std::map< uint32_t, uint32_t > materialMap;
+	SmallMap< uint32_t, uint32_t > materialMap;
 	for (auto it : meshAsset->getMaterials())
 	{
 		const auto& materials = model->getMaterials();

@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <map>
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -60,9 +60,9 @@ public:
 	/*! */
 	bool getGrounded() const { return m_grounded; }
 
-	void setMaterials(const std::map< std::wstring, Guid >& materials) { m_materials = materials; }
+	void setMaterials(const SmallMap< std::wstring, Guid >& materials) { m_materials = materials; }
 
-	const std::map< std::wstring, Guid >& getMaterials() const { return m_materials; }
+	const SmallMap< std::wstring, Guid >& getMaterials() const { return m_materials; }
 
 private:
 	friend class MeshPipeline;
@@ -73,7 +73,7 @@ private:
 	float m_scaleFactor = 1.0f;
 	bool m_center = false;
 	bool m_grounded = false;
-	std::map< std::wstring, Guid > m_materials;	//!< References to Material instances.
+	SmallMap< std::wstring, Guid > m_materials;	//!< References to Material instances.
 };
 
 }

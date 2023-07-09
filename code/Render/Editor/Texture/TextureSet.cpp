@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
 namespace traktor::render
@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureSet", 0, TextureSet, ISerial
 
 void TextureSet::serialize(ISerializer& s)
 {
-	s >> MemberStlMap< std::wstring, Guid >(L"textures", m_textures);
+	s >> MemberSmallMap< std::wstring, Guid >(L"textures", m_textures);
 }
 
 }

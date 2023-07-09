@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include <map>
 #include <string>
 #include "Core/Guid.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -32,12 +32,12 @@ class T_DLLCLASS TextureSet : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	const std::map< std::wstring, Guid >& get() const { return m_textures; }
+	const SmallMap< std::wstring, Guid >& get() const { return m_textures; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::map< std::wstring, Guid > m_textures;
+	SmallMap< std::wstring, Guid > m_textures;
 };
 
 }
