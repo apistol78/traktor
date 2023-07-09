@@ -101,7 +101,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -120,7 +120,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -139,7 +139,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (pair.first < m_data[i].first)
 				ie = i;
 			else if (pair.first > m_data[i].first)
@@ -213,7 +213,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
@@ -233,7 +233,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (key < m_data[i].first)
 				ie = i;
 			else if (key > m_data[i].first)
