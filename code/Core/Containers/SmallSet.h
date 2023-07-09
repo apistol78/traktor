@@ -87,7 +87,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -106,7 +106,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -125,7 +125,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
@@ -162,7 +162,7 @@ public:
 
 		while (is < ie)
 		{
-			size_t i = (is + ie) >> 1;
+			const size_t i = (is + ie) >> 1;
 			if (value < m_data[i])
 				ie = i;
 			else if (value > m_data[i])
