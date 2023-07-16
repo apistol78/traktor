@@ -10,10 +10,10 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/AnimationGraph.h"
+#include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Animation/ITransformTime.h"
-#include "Animation/Animation/StateNodeAnimation.h"
-#include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/StatePoseController.h"
+#include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Transition.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
@@ -27,10 +27,10 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StatePoseController", StatePoseController, IPoseController)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationGraphPoseController", AnimationGraphPoseController, IPoseController)
 
-StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& stateGraph, ITransformTime* transformTime)
-:	m_stateGraph(stateGraph)
+AnimationGraphPoseController::AnimationGraphPoseController(const resource::Proxy< AnimationGraph >& stateGraph, ITransformTime* transformTime)
+:	m_animationGraph(stateGraph)
 ,	m_transformTime(transformTime)
 ,	m_blendState(0.0f)
 ,	m_blendDuration(0.0f)
@@ -38,15 +38,15 @@ StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& st
 {
 }
 
-bool StatePoseController::setState(const std::wstring& stateName)
+bool AnimationGraphPoseController::setState(const std::wstring& stateName)
 {
-	if (!m_stateGraph)
+	if (!m_animationGraph)
 		return false;
 
 	if (m_currentState && m_currentState->getName() == stateName)
 		return true;
 
-	for (auto state : m_stateGraph->getStates())
+	for (auto state : m_animationGraph->getStates())
 	{
 		if (state->getName() == stateName)
 		{
@@ -62,43 +62,43 @@ bool StatePoseController::setState(const std::wstring& stateName)
 	return false;
 }
 
-void StatePoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
+void AnimationGraphPoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
 {
 	m_conditions[condition].first = enabled;
 	m_conditions[condition].second = reset;
 }
 
-void StatePoseController::setTime(float time)
+void AnimationGraphPoseController::setTime(float time)
 {
 	T_FATAL_ASSERT (m_currentState);
 	m_currentStateContext.setTime(time);
 	m_currentStateContext.setIndexHint(-1);
 }
 
-float StatePoseController::getTime() const
+float AnimationGraphPoseController::getTime() const
 {
 	return m_currentStateContext.getTime();
 }
 
-void StatePoseController::setTimeFactor(float timeFactor)
+void AnimationGraphPoseController::setTimeFactor(float timeFactor)
 {
 	m_timeFactor = timeFactor;
 }
 
-float StatePoseController::getTimeFactor() const
+float AnimationGraphPoseController::getTimeFactor() const
 {
 	return m_timeFactor;
 }
 
-void StatePoseController::destroy()
+void AnimationGraphPoseController::destroy()
 {
 }
 
-void StatePoseController::setTransform(const Transform& transform)
+void AnimationGraphPoseController::setTransform(const Transform& transform)
 {
 }
 
-bool StatePoseController::evaluate(
+bool AnimationGraphPoseController::evaluate(
 	float time,
 	float deltaTime,
 	const Transform& worldTransform,
@@ -113,16 +113,16 @@ bool StatePoseController::evaluate(
 	if (!skeleton)
 		return false;
 
-	if (m_stateGraph.changed())
+	if (m_animationGraph.changed())
 	{
 		m_currentState = nullptr;
-		m_stateGraph.consume();
+		m_animationGraph.consume();
 	}
 
 	// Prepare graph evaluation context.
 	if (!m_currentState)
 	{
-		m_currentState = m_stateGraph->getRootState();
+		m_currentState = m_animationGraph->getRootState();
 		if (m_currentState)
 		{
 			if (!m_currentState->prepareContext(m_currentStateContext))
@@ -137,9 +137,9 @@ bool StatePoseController::evaluate(
 		return false;
 
 	// Transform, or remap, time.
-	if (m_transformTime && is_a< StateNodeAnimation >(m_currentState))
+	if (m_transformTime && m_currentState)
 	{
-		const Animation* animation = static_cast< const StateNodeAnimation* >(m_currentState.c_ptr())->getAnimation();
+		const Animation* animation = m_currentState->getAnimation();
 		if (animation)
 			m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
 	}
@@ -160,9 +160,9 @@ bool StatePoseController::evaluate(
 			Pose nextPose, blendPose;
 
 			// Transform, or remap, time.
-			if (m_transformTime && is_a< StateNodeAnimation >(m_nextState))
+			if (m_transformTime && m_nextState)
 			{
-				const Animation* animation = static_cast< const StateNodeAnimation* >(m_nextState.c_ptr())->getAnimation();
+				const Animation* animation = m_nextState->getAnimation();
 				if (animation)
 					m_transformTime->calculateTime(animation, worldTransform, time, deltaTime);
 			}
@@ -221,7 +221,7 @@ bool StatePoseController::evaluate(
 	// Execute transition to another state.
 	if (!m_nextState)
 	{
-		const RefArray< Transition >& transitions = m_stateGraph->getTransitions();
+		const RefArray< Transition >& transitions = m_animationGraph->getTransitions();
 		Transition* selectedTransition = nullptr;
 
 		// First try all transitions with explicit condition.
@@ -340,7 +340,7 @@ bool StatePoseController::evaluate(
 	return continous;
 }
 
-void StatePoseController::estimateVelocities(
+void AnimationGraphPoseController::estimateVelocities(
 	const Skeleton* skeleton,
 	AlignedVector< Velocity >& outVelocities
 )

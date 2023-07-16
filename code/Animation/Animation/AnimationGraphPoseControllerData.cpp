@@ -7,11 +7,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/Animation.h"
+#include "Animation/Animation/AnimationGraph.h"
+#include "Animation/Animation/AnimationGraphPoseController.h"
+#include "Animation/Animation/AnimationGraphPoseControllerData.h"
 #include "Animation/Animation/ITransformTimeData.h"
 #include "Animation/Animation/StateNode.h"
-#include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/StatePoseController.h"
-#include "Animation/Animation/StatePoseControllerData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
@@ -28,18 +28,18 @@ Random s_random;
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePoseControllerData", 2, StatePoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationGraphPoseControllerData", 3, AnimationGraphPoseControllerData, IPoseControllerData)
 
-StatePoseControllerData::StatePoseControllerData()
+AnimationGraphPoseControllerData::AnimationGraphPoseControllerData()
 :	m_randomTimeOffset(0.0f, 0.0f)
 {
 }
 
-Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
+Ref< IPoseController > AnimationGraphPoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
 	// Load state graph through resource manager.
-	resource::Proxy< StateGraph > stateGraph;
-	if (!resourceManager->bind(m_stateGraph, stateGraph))
+	resource::Proxy< AnimationGraph > stateGraph;
+	if (!resourceManager->bind(m_animationGraph, stateGraph))
 		return nullptr;
 
 	Ref< ITransformTime > transformTime;
@@ -49,7 +49,7 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 			return nullptr;
 	}
 
-	Ref< StatePoseController > poseController = new StatePoseController(stateGraph, transformTime);
+	Ref< AnimationGraphPoseController > poseController = new AnimationGraphPoseController(stateGraph, transformTime);
 
 	// Randomize time offset; pre-evaluate controller until offset reached.
 	const float timeOffset = m_randomTimeOffset.random(s_random);
@@ -69,12 +69,18 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	return poseController;
 }
 
-void StatePoseControllerData::serialize(ISerializer& s)
+void AnimationGraphPoseControllerData::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion< StatePoseControllerData >() >= 1);
-	s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
+	T_FATAL_ASSERT(s.getVersion< AnimationGraphPoseControllerData >() >= 1);
+	
+	if (s.getVersion< AnimationGraphPoseControllerData >() >= 3)
+		s >> resource::Member< AnimationGraph >(L"animationGraph", m_animationGraph);
+	else
+		s >> resource::Member< AnimationGraph >(L"stateGraph", m_animationGraph);
+
 	s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
-	if (s.getVersion< StatePoseControllerData >() >= 2)
+	
+	if (s.getVersion< AnimationGraphPoseControllerData >() >= 2)
 		s >> MemberRef< const ITransformTimeData >(L"transformTime", m_transformTime);
 }
 

@@ -11,6 +11,7 @@
 #include <string>
 #include "Animation/Pose.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/IdProxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,6 +31,7 @@ class IResourceManager;
 namespace traktor::animation
 {
 
+class Animation;
 class StateContext;
 
 /*! Animation state node.
@@ -42,7 +44,7 @@ class T_DLLCLASS StateNode : public ISerializable
 public:
 	StateNode() = default;
 
-	explicit StateNode(const std::wstring& name);
+	explicit StateNode(const std::wstring& name, const resource::IdProxy< Animation >& animation);
 
 	const std::wstring& getName() const;
 
@@ -50,17 +52,20 @@ public:
 
 	const std::pair< int, int >& getPosition() const;
 
-	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
+	bool bind(resource::IResourceManager* resourceManager);
 
-	virtual bool prepareContext(StateContext& outContext) const = 0;
+	bool prepareContext(StateContext& outContext) const;
 
-	virtual void evaluate(StateContext& context, Pose& outPose) const = 0;
+	void evaluate(StateContext& context, Pose& outPose) const;
 
 	virtual void serialize(ISerializer& s) override;
+
+	const resource::IdProxy< Animation >& getAnimation() const { return m_animation; }
 
 private:
 	std::wstring m_name;
 	std::pair< int, int > m_position = { 0, 0 };
+	resource::IdProxy< Animation > m_animation;
 };
 
 }

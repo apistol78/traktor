@@ -26,20 +26,20 @@
 namespace traktor::animation
 {
 
+class AnimationGraph;
 class ITransformTime;
-class StateGraph;
 class StateNode;
 class StateContext;
 
 /*! Animation pose evaluation controller.
  * \ingroup Animation
  */
-class T_DLLCLASS StatePoseController : public IPoseController
+class T_DLLCLASS AnimationGraphPoseController : public IPoseController
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit StatePoseController(const resource::Proxy< StateGraph >& stateGraph, ITransformTime* transformTime);
+	explicit AnimationGraphPoseController(const resource::Proxy< AnimationGraph >& stateGraph, ITransformTime* transformTime);
 
 	bool setState(const std::wstring& stateName);
 
@@ -72,7 +72,7 @@ public:
 	) override final;
 
 private:
-	resource::Proxy< StateGraph > m_stateGraph;
+	resource::Proxy< AnimationGraph > m_animationGraph;
 	Ref< ITransformTime > m_transformTime;
 	Ref< StateNode > m_currentState;
 	StateContext m_currentStateContext;

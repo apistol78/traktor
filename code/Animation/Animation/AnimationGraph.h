@@ -29,7 +29,7 @@ class Transition;
 /*! Animation state graph.
  * \ingroup Animation
  */
-class T_DLLCLASS StateGraph : public ISerializable
+class T_DLLCLASS AnimationGraph : public ISerializable
 {
 	T_RTTI_CLASS;
 

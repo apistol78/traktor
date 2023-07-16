@@ -24,7 +24,7 @@ namespace traktor::animation
 /*!
  * \ingroup Animation
  */
-class T_DLLCLASS StateGraphEditorPageFactory : public editor::IEditorPageFactory
+class T_DLLCLASS AnimationGraphEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS;
 

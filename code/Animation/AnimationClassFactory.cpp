@@ -10,7 +10,7 @@
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/JointBindingComponent.h"
 #include "Animation/SkeletonComponent.h"
-#include "Animation/Animation/StatePoseController.h"
+#include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKPoseController.h"
@@ -107,11 +107,11 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classRagDollPoseController->addProperty("limbs", &RagDollPoseController::getLimbs);
 	registrar->registerClass(classRagDollPoseController);
 
-	auto classStatePoseController = new AutoRuntimeClass< StatePoseController >();
-	classStatePoseController->addProperty("time", &StatePoseController::setTime, &StatePoseController::getTime);
-	classStatePoseController->addProperty("timeFactor", &StatePoseController::setTimeFactor, &StatePoseController::getTimeFactor);
-	classStatePoseController->addMethod("setState", &StatePoseController::setState);
-	classStatePoseController->addMethod("setCondition", &StatePoseController::setCondition);
+	auto classStatePoseController = new AutoRuntimeClass< AnimationGraphPoseController >();
+	classStatePoseController->addProperty("time", &AnimationGraphPoseController::setTime, &AnimationGraphPoseController::getTime);
+	classStatePoseController->addProperty("timeFactor", &AnimationGraphPoseController::setTimeFactor, &AnimationGraphPoseController::getTimeFactor);
+	classStatePoseController->addMethod("setState", &AnimationGraphPoseController::setState);
+	classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
 	registrar->registerClass(classStatePoseController);
 
 	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
