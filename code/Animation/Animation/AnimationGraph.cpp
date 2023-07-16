@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/Animation/StateGraph.h"
+#include "Animation/Animation/AnimationGraph.h"
 #include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Transition.h"
 #include "Core/Serialization/ISerializer.h"
@@ -16,49 +16,49 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", 0, StateGraph, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationGraph", 0, AnimationGraph, ISerializable)
 
-void StateGraph::addState(StateNode* state)
+void AnimationGraph::addState(StateNode* state)
 {
 	m_states.push_back(state);
 }
 
-void StateGraph::removeState(StateNode* state)
+void AnimationGraph::removeState(StateNode* state)
 {
 	m_states.remove(state);
 }
 
-const RefArray< StateNode >& StateGraph::getStates() const
+const RefArray< StateNode >& AnimationGraph::getStates() const
 {
 	return m_states;
 }
 
-void StateGraph::addTransition(Transition* transition)
+void AnimationGraph::addTransition(Transition* transition)
 {
 	m_transitions.push_back(transition);
 }
 
-void StateGraph::removeTransition(Transition* transition)
+void AnimationGraph::removeTransition(Transition* transition)
 {
 	m_transitions.remove(transition);
 }
 
-const RefArray< Transition >& StateGraph::getTransitions() const
+const RefArray< Transition >& AnimationGraph::getTransitions() const
 {
 	return m_transitions;
 }
 
-void StateGraph::setRootState(StateNode* rootState)
+void AnimationGraph::setRootState(StateNode* rootState)
 {
 	m_rootState = rootState;
 }
 
-Ref< StateNode > StateGraph::getRootState() const
+Ref< StateNode > AnimationGraph::getRootState() const
 {
 	return m_rootState;
 }
 
-void StateGraph::serialize(ISerializer& s)
+void AnimationGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< StateNode >(L"states", m_states);
 	s >> MemberRefArray< Transition >(L"transitions", m_transitions);

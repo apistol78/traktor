@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Animation/Animation/StatePoseControllerData.h"
+#include "Animation/Animation/AnimationGraphPoseControllerData.h"
 #include "Animation/IK/IKPoseControllerData.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Animation/Editor/PoseControllerPipeline.h"
@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PoseControllerPipeline", 0, P
 TypeInfoSet PoseControllerPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
-		StatePoseControllerData,
+		AnimationGraphPoseControllerData,
 		IKPoseControllerData,
 		RagDollPoseControllerData
 	>();
@@ -34,7 +34,7 @@ bool PoseControllerPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const StatePoseControllerData* statePoseControllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
+	if (const AnimationGraphPoseControllerData* statePoseControllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild | editor::PdfResource);
 	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());

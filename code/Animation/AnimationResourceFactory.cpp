@@ -9,7 +9,7 @@
 #include "Animation/AnimationResourceFactory.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Pose.h"
-#include "Animation/Animation/StateGraph.h"
+#include "Animation/Animation/AnimationGraph.h"
 #include "Animation/Animation/StateNode.h"
 #include "Animation/Animation/Animation.h"
 #include "Database/Instance.h"
@@ -22,7 +22,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationResourceFactory", AnimationR
 const TypeInfoSet AnimationResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert< StateGraph >();
+	typeSet.insert< AnimationGraph >();
 	typeSet.insert< Animation >();
 	typeSet.insert< Skeleton >();
 	typeSet.insert< Pose >();
@@ -42,7 +42,7 @@ bool AnimationResourceFactory::isCacheable(const TypeInfo& productType) const
 Ref< Object > AnimationResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
 	Ref< Object > object = instance->getObject();
-	if (StateGraph* stateGraph = dynamic_type_cast< StateGraph* >(object))
+	if (AnimationGraph* stateGraph = dynamic_type_cast< AnimationGraph* >(object))
 	{
 		// Ensure state node resources are loaded as well.
 		const RefArray< StateNode >& states = stateGraph->getStates();

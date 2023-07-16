@@ -6,10 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Animation/Animation/AnimationGraph.h"
+#include "Animation/Animation/AnimationGraphPoseControllerData.h"
 #include "Animation/Animation/SimpleAnimationControllerData.h"
-#include "Animation/Animation/StateNodeAnimation.h"
-#include "Animation/Animation/StateGraph.h"
-#include "Animation/Animation/StatePoseControllerData.h"
+#include "Animation/Animation/StateNode.h"
 #include "Animation/Editor/StatePipeline.h"
 #include "Editor/IPipelineDepends.h"
 
@@ -23,9 +23,8 @@ TypeInfoSet StatePipeline::getAssetTypes() const
 	return makeTypeInfoSet<
 		SimpleAnimationControllerData,
 		StateNode,
-		StateNodeAnimation,
-		StateGraph,
-		StatePoseControllerData
+		AnimationGraph,
+		AnimationGraphPoseControllerData
 	>();
 }
 
@@ -39,14 +38,14 @@ bool StatePipeline::buildDependencies(
 {
 	if (auto simpleControllerData = dynamic_type_cast< const SimpleAnimationControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(simpleControllerData->getAnimation(), editor::PdfBuild | editor::PdfResource);
-	else if (auto state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
+	else if (auto state = dynamic_type_cast< const StateNode* >(sourceAsset))
 		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild | editor::PdfResource);
-	else if (auto stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
+	else if (auto stateGraph = dynamic_type_cast< const AnimationGraph* >(sourceAsset))
 	{
 		for (auto state : stateGraph->getStates())
 			pipelineDepends->addDependency(state);
 	}
-	else if (auto controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
+	else if (auto controllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(controllerData->getStateGraph(), editor::PdfBuild);
 
 	return true;

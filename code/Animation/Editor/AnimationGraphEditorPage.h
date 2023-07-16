@@ -54,20 +54,20 @@ namespace traktor::animation
 {
 
 class AnimationPreviewControl;
-class StateGraph;
+class AnimationGraph;
 class StateNode;
-class StatePoseController;
+class AnimationGraphPoseController;
 class Transition;
 
 /*!
  * \ingroup Animation
  */
-class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
+class T_DLLEXPORT AnimationGraphEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit StateGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit AnimationGraphEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -83,8 +83,8 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< StateGraph > m_stateGraph;
-	Ref< StatePoseController > m_statePreviewController;
+	Ref< AnimationGraph > m_animationGraph;
+	Ref< AnimationGraphPoseController > m_statePreviewController;
 	Ref< ui::ToolBar > m_toolBarGraph;
 	Ref< ui::GraphControl > m_editorGraph;
 	Ref< ui::Menu > m_menuPopup;
