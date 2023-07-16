@@ -19,17 +19,15 @@
 #include "Drawing/PixelFormat.h"
 #include "Shape/Editor/Bake/GBuffer.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 
 class Barycentric
 {
 public:
-	Barycentric(
+	explicit Barycentric(
 		const Vector2& v0,
 		const Vector2& v1,
 		const Vector2& v2
@@ -66,7 +64,7 @@ template < typename ValueType >
 class Interpolants
 {
 public:
-	Interpolants(
+	explicit Interpolants(
 		const ValueType& v0,
 		const ValueType& v1,
 		const ValueType& v2
@@ -89,7 +87,7 @@ private:
 	ValueType m_v2;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.GBuffer", GBuffer, Object)
 
@@ -327,5 +325,4 @@ void GBuffer::saveAsImages(const std::wstring& outputPath) const
 	image->save(outputPath + L"_Polygons.png");
 }
 
-	}
 }

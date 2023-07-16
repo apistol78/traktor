@@ -8,16 +8,14 @@
  */
 #include "Shape/Editor/Bake/TracerOutput.h"
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerOutput", TracerOutput, Object)
 
 TracerOutput::TracerOutput(
 	db::Instance* lightmapDiffuseInstance,
-    const model::Model* model,
+	const model::Model* model,
 	const Transform& transform,
 	int32_t lightmapSize
 )
@@ -28,5 +26,4 @@ TracerOutput::TracerOutput(
 {
 }
 
-    }
 }

@@ -19,8 +19,10 @@ namespace traktor
 
 class Transform;
 
-	namespace shape
-	{
+}
+
+namespace traktor::shape
+{
 
 class GBuffer : public Object
 {
@@ -61,6 +63,4 @@ private:
 	Aabb3 m_boundingBox;
 };
 
-	}
 }
-
