@@ -80,6 +80,9 @@ bool convertSkeleton(
 		}
 	}
 
+	if (!bindPose)
+		log::warning << L"No bind pose in FBX; skeleton might not be correct." << Endl;
+
 	const bool result = traverse(nullptr, skeletonNode, [&](FbxNode* parent, FbxNode* node) {
 		const std::wstring jointName = getJointName(node);
 
