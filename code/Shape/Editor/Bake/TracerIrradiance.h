@@ -21,37 +21,33 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-    namespace db
-    {
 
 class Instance;
 
-    }
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
 class T_DLLCLASS TracerIrradiance : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    TracerIrradiance(
-        db::Instance* irradianceInstance,
+	explicit TracerIrradiance(
+		db::Instance* irradianceInstance,
 		const Aabb3& boundingBox
-    );
+	);
 
-
-    db::Instance* getIrradianceInstance() const { return m_irradianceInstance; }
+	db::Instance* getIrradianceInstance() const { return m_irradianceInstance; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
-    Ref< db::Instance > m_irradianceInstance;
+	Ref< db::Instance > m_irradianceInstance;
 	Aabb3 m_boundingBox;
 };
 
-    }
 }

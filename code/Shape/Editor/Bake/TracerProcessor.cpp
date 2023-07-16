@@ -487,11 +487,11 @@ void TracerProcessor::processorThread()
 			else
 				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" started." << Endl;
 
-			double Tstart = timer.getElapsedTime();
+			const double Tstart = timer.getElapsedTime();
 
 			process(m_activeTask);
 
-			double Tend = timer.getElapsedTime();
+			const double Tend = timer.getElapsedTime();
 			if (!m_cancelled)
 				log::info << L"Lightmap task " << m_activeTask->getSceneId().format() << L" finished in " << formatDuration(Tend - Tstart) << L"." << Endl;
 
@@ -512,7 +512,7 @@ bool TracerProcessor::process(const TracerTask* task)
 	m_status.description = str(L"Preparing (%d models, %d lights)...", task->getTracerModels().size(), task->getTracerLights().size());
 
    	// Create raytracer implementation.
-	Ref< IRayTracer > rayTracer = checked_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
+	Ref< IRayTracer > rayTracer = mandatory_non_null_type_cast< IRayTracer* >(m_rayTracerType->createInstance());
 	if (!rayTracer->create(configuration))
 		return false;
 
@@ -600,7 +600,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 			lightmapDiffuse->clearAlpha(1.0f);
 
-			bool result = writeTexture(
+			const bool result = writeTexture(
 				tracerOutput->getLightmapDiffuseInstance(),
 				m_compressionMethod,
 				true,

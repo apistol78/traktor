@@ -20,33 +20,30 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-    namespace model
-    {
 
 class Model;
 
-    }
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
 class T_DLLCLASS TracerModel : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    TracerModel(const model::Model* model, const Transform& transform);
+	explicit TracerModel(const model::Model* model, const Transform& transform);
 
-    const model::Model* getModel() const { return m_model; }
+	const model::Model* getModel() const { return m_model; }
 
 	const Transform& getTransform() const { return m_transform; }
 
 private:
-    Ref< const model::Model > m_model;
+	Ref< const model::Model > m_model;
 	Transform m_transform;
 };
 
-    }
 }

@@ -21,31 +21,29 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-    namespace model
-    {
+namespace traktor::model
+{
 
 class Model;
 
-    }
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
 class T_DLLCLASS TracerOutput : public Object
 {
     T_RTTI_CLASS;
 
 public:
-    TracerOutput(
+    explicit TracerOutput(
 		db::Instance* lightmapDiffuseInstance,
         const model::Model* model,
 		const Transform& transform,
@@ -67,5 +65,4 @@ private:
 	int32_t m_lightmapSize;
 };
 
-    }
 }
