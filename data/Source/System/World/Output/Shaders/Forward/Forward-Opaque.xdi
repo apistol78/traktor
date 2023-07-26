@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{E6FE72A5-B871-0A4C-AC4A-A2FD90779FF0}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Neg" version="traktor.render.Node:1">
@@ -215,7 +214,7 @@ Eye direction
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{89E1CDA2-8640-461E-8677-775630A147CB}</id>
 			<comment/>
 			<position>
@@ -223,7 +222,6 @@ Eye direction
 				<second>1572</second>
 			</position>
 			<name>F0</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{E814BC8D-DC8E-41F9-8AD3-A2E8F28C3B37}</id>
@@ -242,7 +240,7 @@ Eye direction
 				<second>1564</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{AD00EC4D-533C-4F99-90F6-20F925463AE9}</id>
 			<comment/>
 			<position>
@@ -250,9 +248,8 @@ Eye direction
 				<second>1193</second>
 			</position>
 			<name>kS</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CD6AE713-E5F4-49AA-B73F-E50B34F6A711}</id>
 			<comment/>
 			<position>
@@ -260,9 +257,8 @@ Eye direction
 				<second>1231</second>
 			</position>
 			<name>BRDF</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2D7E85C3-B38E-4177-B5AE-575F7976F1B6}</id>
 			<comment/>
 			<position>
@@ -270,7 +266,6 @@ Eye direction
 				<second>1271</second>
 			</position>
 			<name>BRDF</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{B1B8C9CA-87C6-4A33-AD49-D72E7C94DE7D}</id>
@@ -317,7 +312,7 @@ Eye direction
 			<external>{934F1D92-C961-485A-A5B8-6703A51266D8}</external>
 			<type>Texture2D</type>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4BAD39E7-54DA-45EA-B095-7D8699ECBB16}</id>
 			<comment/>
 			<position>
@@ -325,9 +320,8 @@ Eye direction
 				<second>1155</second>
 			</position>
 			<name>L_Specular</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D8E55AD1-4E5B-4926-AA3D-9CD45B9F38E8}</id>
 			<comment/>
 			<position>
@@ -335,7 +329,6 @@ Eye direction
 				<second>1523</second>
 			</position>
 			<name>F0</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{62B11440-436C-4FA4-8262-9031BB911E4C}</id>
@@ -345,7 +338,7 @@ Eye direction
 				<second>1165</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1A89549B-E637-46FF-98AF-B83C4F0E346F}</id>
 			<comment/>
 			<position>
@@ -353,9 +346,8 @@ Eye direction
 				<second>1117</second>
 			</position>
 			<name>kD</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4398B2E5-9279-4C58-A0EF-FD27648150C4}</id>
 			<comment/>
 			<position>
@@ -363,9 +355,8 @@ Eye direction
 				<second>1079</second>
 			</position>
 			<name>L_Diffuse</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B065C46B-7687-4F8D-AD4E-2EADE6527B75}</id>
 			<comment/>
 			<position>
@@ -373,9 +364,8 @@ Eye direction
 				<second>1192</second>
 			</position>
 			<name>kD</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F576288F-1517-48E0-BB9F-E880F3536EB0}</id>
 			<comment/>
 			<position>
@@ -383,9 +373,8 @@ Eye direction
 				<second>1238</second>
 			</position>
 			<name>kS</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6F39E350-B6CE-429E-A2FE-92C3D97AF145}</id>
 			<comment/>
 			<position>
@@ -393,7 +382,6 @@ Eye direction
 				<second>1504</second>
 			</position>
 			<name>kS</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{B770A0B1-3336-4E79-8541-541B6806ED42}</id>
@@ -446,7 +434,7 @@ Eye direction
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FCB3ED1B-2235-4740-93D0-866EB7F74FC1}</id>
 			<comment/>
 			<position>
@@ -454,9 +442,8 @@ Eye direction
 				<second>290</second>
 			</position>
 			<name>L_EyeDirection</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A6B5D9E5-5700-49CE-AFBC-625D5D23283F}</id>
 			<comment/>
 			<position>
@@ -464,9 +451,8 @@ Eye direction
 				<second>1369</second>
 			</position>
 			<name>L_EyeDirection</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{56D10940-03F3-410C-82C8-4701B4D3A5EE}</id>
 			<comment/>
 			<position>
@@ -474,9 +460,8 @@ Eye direction
 				<second>370</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A6716D93-BCE9-4467-94B8-D6BB9E0BEA55}</id>
 			<comment/>
 			<position>
@@ -484,9 +469,8 @@ Eye direction
 				<second>1422</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{07A5ADCA-D0DC-42A1-86D4-D75F0E6AFB43}</id>
 			<comment/>
 			<position>
@@ -494,9 +478,8 @@ Eye direction
 				<second>476</second>
 			</position>
 			<name>L_Specular</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9949DA8D-D8EB-4ABC-A734-455E538642CE}</id>
 			<comment/>
 			<position>
@@ -504,7 +487,6 @@ Eye direction
 				<second>225</second>
 			</position>
 			<name>L_Diffuse</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{5C0A78D5-5B32-4F58-99B1-0452EEDB5D3F}</id>
@@ -594,7 +576,7 @@ Eye direction
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5FF0897F-0A11-2E41-A05B-674C94077CC3}</id>
 			<comment/>
 			<position>
@@ -602,14 +584,13 @@ Eye direction
 				<second>-959</second>
 			</position>
 			<name>L_Occlusion</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EA858AF2-B41E-4B2E-9E23-3D2FD34828DC}</id>
 			<comment/>
 			<position>
-				<first>-147</first>
-				<second>-458</second>
+				<first>-146</first>
+				<second>-454</second>
 			</position>
 			<fragmentGuid>{55898E80-6B69-4F55-A40C-138A23496B50}</fragmentGuid>
 			<inputPins>
@@ -650,22 +631,9 @@ Eye direction
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Metalness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Roughness</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{10790711-A620-41B4-9872-DAD870F1B693}</id>
 			<comment/>
 			<position>
@@ -673,7 +641,6 @@ Eye direction
 				<second>-481</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{DA9AEFAB-8EB8-EE43-8FB3-AC4C4B40083E}</id>
@@ -688,7 +655,7 @@ Eye direction
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E3FF4346-2F4F-534C-941C-14797D532ADB}</id>
 			<comment/>
 			<position>
@@ -696,7 +663,6 @@ Eye direction
 				<second>1269</second>
 			</position>
 			<name>L_Occlusion</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
 			<id>{D3EB98B7-1713-0D40-9398-59E2C998A2B9}</id>
@@ -716,7 +682,7 @@ Eye direction
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E8C3655D-0D60-224C-9007-F982B52BED7A}</id>
 			<comment/>
 			<position>
@@ -724,9 +690,8 @@ Eye direction
 				<second>-444</second>
 			</position>
 			<name>L_ViewNormalGeometry</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{BB547C26-DFE8-3C43-8FF3-751BDA97DCFC}</id>
 			<comment/>
 			<position>
@@ -734,7 +699,6 @@ Eye direction
 				<second>-284</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{EE807C59-1E0B-E04B-8A36-8FFC84C0BD1E}</id>
@@ -829,7 +793,7 @@ Eye direction
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{38A7D038-BD22-A844-8A39-D24E1799B677}</id>
 			<comment/>
 			<position>
@@ -837,9 +801,8 @@ Eye direction
 				<second>-388</second>
 			</position>
 			<name>L_Irradiance</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C45D2BBA-550B-6A43-8EFE-93A302BBF653}</id>
 			<comment/>
 			<position>
@@ -847,7 +810,6 @@ Eye direction
 				<second>293</second>
 			</position>
 			<name>L_Irradiance</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{84C899F4-B857-024D-B4CC-1B0E5B9F79F8}</id>
@@ -857,7 +819,7 @@ Eye direction
 				<second>307</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{01240D19-A0B2-B040-B4AB-4787CAE81EA5}</id>
 			<comment/>
 			<position>
@@ -865,9 +827,8 @@ Eye direction
 				<second>204</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D9CA157E-44A4-6940-871F-B050C16705C9}</id>
 			<comment/>
 			<position>
@@ -875,7 +836,6 @@ Eye direction
 				<second>-437</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{9F55ED10-02DC-DC49-AB39-59A7D00322D5}</id>
@@ -898,7 +858,7 @@ Eye direction
 				<second>-435</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5D8681BA-80B0-FC4A-B648-0B75E2AFDF2E}</id>
 			<comment/>
 			<position>
@@ -906,9 +866,8 @@ Eye direction
 				<second>484</second>
 			</position>
 			<name>L_EyeDirection</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D56E3FA7-E8B2-0742-A7F5-B33F1400A029}</id>
 			<comment/>
 			<position>
@@ -916,9 +875,8 @@ Eye direction
 				<second>176</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EC114A98-BA84-AC4A-A2AC-8C9BDE431A38}</id>
 			<comment/>
 			<position>
@@ -926,9 +884,8 @@ Eye direction
 				<second>441</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9A86486C-DD5D-6A42-A2E4-E654085E5265}</id>
 			<comment/>
 			<position>
@@ -936,9 +893,8 @@ Eye direction
 				<second>1365</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C9AB5079-0DE8-F349-AD91-A756DF1E384A}</id>
 			<comment/>
 			<position>
@@ -946,9 +902,8 @@ Eye direction
 				<second>1567</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2EE305A4-C691-0248-AE78-F7DBDB4697EA}</id>
 			<comment/>
 			<position>
@@ -956,9 +911,8 @@ Eye direction
 				<second>595</second>
 			</position>
 			<name>L_Metalness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D24082C6-8D45-0B49-83D2-D8DBF49C7B74}</id>
 			<comment/>
 			<position>
@@ -966,9 +920,8 @@ Eye direction
 				<second>1653</second>
 			</position>
 			<name>L_Metalness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E01114DF-99D3-FE44-A771-23C27F793AE6}</id>
 			<comment/>
 			<position>
@@ -976,9 +929,8 @@ Eye direction
 				<second>1165</second>
 			</position>
 			<name>L_Metalness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4CDEEAB5-76C4-2F45-A50C-FB3288EBFDCD}</id>
 			<comment/>
 			<position>
@@ -986,9 +938,8 @@ Eye direction
 				<second>116</second>
 			</position>
 			<name>L_SurfaceColor</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{1BFBABF5-1CB4-F046-B8C7-9D3712C90D5B}</id>
 			<comment/>
 			<position>
@@ -996,9 +947,8 @@ Eye direction
 				<second>1600</second>
 			</position>
 			<name>L_SurfaceColor</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A18E7D8A-918D-F044-964B-1D7151D13B5D}</id>
 			<comment/>
 			<position>
@@ -1006,9 +956,8 @@ Eye direction
 				<second>233</second>
 			</position>
 			<name>L_SurfaceColor</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{337A6046-D5ED-7745-B4F9-2084E9E4A493}</id>
 			<comment/>
 			<position>
@@ -1016,9 +965,8 @@ Eye direction
 				<second>56</second>
 			</position>
 			<name>L_Enable</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9A706E51-B954-6C42-9CDC-FD27CCA085F2}</id>
 			<comment/>
 			<position>
@@ -1026,9 +974,8 @@ Eye direction
 				<second>971</second>
 			</position>
 			<name>L_Enable</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2421E9E3-07E6-114E-84CD-5FE488248544}</id>
 			<comment/>
 			<position>
@@ -1036,9 +983,8 @@ Eye direction
 				<second>-349</second>
 			</position>
 			<name>L_Enable</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{21E1D8D4-1BF3-DB4D-A7F4-ABE6BEB0E6C9}</id>
 			<comment/>
 			<position>
@@ -1046,9 +992,8 @@ Eye direction
 				<second>-4</second>
 			</position>
 			<name>L_Alpha</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D3FEC089-5DDC-1548-A514-B67998C090A4}</id>
 			<comment/>
 			<position>
@@ -1056,9 +1001,8 @@ Eye direction
 				<second>-393</second>
 			</position>
 			<name>L_Alpha</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A91E0D2C-F7E8-1A40-8ECA-CA1E5A8671E1}</id>
 			<comment/>
 			<position>
@@ -1066,7 +1010,6 @@ Eye direction
 				<second>-261</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B0F0CD6B-58B8-6A48-AE9B-8D29F122F7D8}</id>
@@ -1076,7 +1019,7 @@ Eye direction
 				<second>-300</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3BB24261-439C-B541-8371-757516091D9B}</id>
 			<comment/>
 			<position>
@@ -1084,9 +1027,8 @@ Eye direction
 				<second>-234</second>
 			</position>
 			<name>L_SpecularG</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{499274E6-02F1-5340-A455-BDC5ECCF3EC3}</id>
 			<comment/>
 			<position>
@@ -1094,9 +1036,8 @@ Eye direction
 				<second>653</second>
 			</position>
 			<name>L_SpecularG</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5ADBD1B4-3A4C-BE48-8780-349630FF199F}</id>
 			<comment/>
 			<position>
@@ -1104,9 +1045,8 @@ Eye direction
 				<second>-251</second>
 			</position>
 			<name>L_Reflections</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9BCE3437-5A6E-0340-B5B2-CFCADCAFF928}</id>
 			<comment/>
 			<position>
@@ -1114,7 +1054,6 @@ Eye direction
 				<second>532</second>
 			</position>
 			<name>L_Reflections</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{DE634EFD-CEEF-3749-AFBD-DFEB27B19FF1}</id>
@@ -1150,7 +1089,7 @@ Eye direction
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9D1F4C59-3878-4B49-987B-F76A79D81B5B}</id>
 			<comment/>
 			<position>
@@ -1158,9 +1097,8 @@ Eye direction
 				<second>711</second>
 			</position>
 			<name>L_Emissive</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B2B4BBE3-F2EF-F344-8862-189E4A89410E}</id>
 			<comment/>
 			<position>
@@ -1168,9 +1106,8 @@ Eye direction
 				<second>1003</second>
 			</position>
 			<name>L_Emissive</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{32C2041C-85A8-F64F-8F94-FC284AF4341B}</id>
 			<comment/>
 			<position>
@@ -1178,7 +1115,6 @@ Eye direction
 				<second>1041</second>
 			</position>
 			<name>L_SurfaceColor</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{0EBC4690-DCF0-450E-BF96-8AB97BF09A8B}</id>
@@ -1212,7 +1148,7 @@ Eye direction
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CAC18849-EBED-488C-ABE3-92646976BF8D}</id>
 			<comment/>
 			<position>
@@ -1220,7 +1156,6 @@ Eye direction
 				<second>1147</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Discard" version="traktor.render.Node:1">
 			<id>{780EAAFE-CB16-0545-B3D9-713C4C5E6EE5}</id>
@@ -1240,7 +1175,7 @@ Eye direction
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DA5E1C63-BE33-9348-8D0D-229C383A91C6}</id>
 			<comment/>
 			<position>
@@ -1248,7 +1183,6 @@ Eye direction
 				<second>995</second>
 			</position>
 			<name>L_Alpha</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{234E4422-3085-6C43-8C91-DD3821BCE5B1}</id>
@@ -1284,7 +1218,7 @@ Eye direction
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CAFF03E4-A2F7-FD43-9D18-419ECD8697B4}</id>
 			<comment/>
 			<position>
@@ -1292,7 +1226,6 @@ Eye direction
 				<second>-114</second>
 			</position>
 			<name>L_Metalness</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{3A825DF0-414E-5B40-A746-47426E43780E}</id>
@@ -1349,7 +1282,7 @@ Eye direction
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{341016E0-D9D9-5F41-ABEF-0B0FF2BCB81B}</id>
 			<comment/>
 			<position>
@@ -1357,9 +1290,8 @@ Eye direction
 				<second>-589</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{27AEF5E0-2310-134F-8751-A50AD2BA0D6E}</id>
 			<comment/>
 			<position>
@@ -1367,9 +1299,8 @@ Eye direction
 				<second>-526</second>
 			</position>
 			<name>L_EyeDirection</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{8D8A9056-E94C-A04E-8EBE-AD1AC45D04B8}</id>
 			<comment/>
 			<position>
@@ -1377,7 +1308,6 @@ Eye direction
 				<second>-421</second>
 			</position>
 			<name>L_Roughness</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{95CFFD0E-0AD5-9E46-A54C-27F64B57F7FD}</id>
@@ -1396,7 +1326,7 @@ Eye direction
 				<second>-540</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D2EBE885-3AB2-4C81-8E46-CA3DA580B54F}</id>
 			<comment/>
 			<position>
@@ -1404,7 +1334,6 @@ Eye direction
 				<second>360</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{64E274DD-42A5-4EBB-99AF-628FE6B9D74B}</id>
@@ -1428,7 +1357,7 @@ Eye direction
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{43975828-F944-4701-9A5C-A03CAAAF3430}</id>
 			<comment/>
 			<position>
@@ -1436,7 +1365,6 @@ Eye direction
 				<second>456</second>
 			</position>
 			<name>L_ViewNormalGeometry</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{8A729959-A886-459E-ACE7-9790A135CFAD}</id>
@@ -1499,7 +1427,7 @@ Eye direction
 				<second>-420</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{5CD34CAA-A866-9646-B555-7640BE7A1A5B}</id>
 			<comment/>
 			<position>
@@ -1507,9 +1435,8 @@ Eye direction
 				<second>-305</second>
 			</position>
 			<name>L_Metalness</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{493F0EF8-AA4C-704B-8AE1-DFD675345422}</id>
 			<comment/>
 			<position>
@@ -1517,7 +1444,6 @@ Eye direction
 				<second>-525</second>
 			</position>
 			<name>L_SurfaceColor</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{24A3BDF6-F3FF-0E47-8193-D202728C0FB7}</id>
@@ -1576,7 +1502,6 @@ const vec3 specularCoeff = $kS.xyz * $BRDF.x + $BRDF.y;
 const vec3 emissive = $SurfaceColor.xyz * $Emissive.x;
 const vec3 combined = $Diffuse.xyz * diffuseCoeff + $Specular.xyz * specularCoeff + emissive;
 $Output = vec4(combined * $Occlusion, 0.0f);
-
 			]]>
 			</script>
 		</item>

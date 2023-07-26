@@ -183,7 +183,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 					}
 					else
 					{
-						log::error << errorPrefix << L"mandatory input \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
+						log::error << errorPrefix << L"mandatory input port \"" << inputPort->getName() << L"\" of fragment \"" << fragmentId.format() << L"\" not connected." << Endl;
 						return nullptr;
 					}
 				}
@@ -246,7 +246,6 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		}
 
 		// Remove external node.
-		mutableShaderGraph->detach(externalNode);
 		mutableShaderGraph->removeNode(externalNode);
 		T_VALIDATE_SHADERGRAPH(mutableShaderGraph);
 	}
@@ -257,7 +256,6 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		const OutputPin* sourcePin = mutableShaderGraph->findSourcePin(connector->getInputPin(0));
 		if (!sourcePin)
 		{
-			mutableShaderGraph->detach(connector);
 			mutableShaderGraph->removeNode(connector);
 			continue;
 		}
@@ -272,7 +270,6 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 			));
 		}
 
-		mutableShaderGraph->detach(connector);
 		mutableShaderGraph->removeNode(connector);
 	}
 

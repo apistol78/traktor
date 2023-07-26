@@ -602,6 +602,7 @@ bool ProgramVk::validateDescriptorSet()
 		auto resolved = texture.texture->resolve();
 		if (!resolved)
 			return false;
+		T_FATAL_ASSERT(!key.full());
 		key.push_back((intptr_t)resolved);
 	}
 	 for (const auto& image : m_images)
@@ -613,12 +614,14 @@ bool ProgramVk::validateDescriptorSet()
 	 	auto resolved = image.texture->resolve();
 	 	if (!resolved)
 	 		return false;
+		T_FATAL_ASSERT(!key.full());
 	 	key.push_back((intptr_t)resolved);
 	 }
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.bufferView)
 			return false;
+		T_FATAL_ASSERT(!key.full());
 		key.push_back((intptr_t)sbuffer.bufferView->getVkBuffer());
 	}
 

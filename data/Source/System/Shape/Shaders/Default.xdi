@@ -243,6 +243,16 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
+			<id>{22FF3404-A64F-489A-911B-27A0E3C5A623}</id>
+			<comment/>
+			<position>
+				<first>1119</first>
+				<second>-171</second>
+			</position>
+			<color>0.384314, 0.384314, 0.384314, 1</color>
+			<linear>false</linear>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -317,16 +327,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{11847877-E3BA-4043-9A6C-85800E0116BB}</id>
 			</source>
@@ -353,6 +353,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 			</destination>
 		</item>
 	</edges>

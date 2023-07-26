@@ -34,14 +34,17 @@ class T_DLLCLASS ShaderGraphTechniques : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId, bool optimize = true);
+	explicit ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
 	std::set< std::wstring > getNames() const;
 
 	ShaderGraph* generate(const std::wstring& name) const;
 
+	bool valid() const { return m_valid; }
+
 private:
 	std::map< std::wstring, Ref< ShaderGraph > > m_techniques;
+	bool m_valid;
 };
 
 }

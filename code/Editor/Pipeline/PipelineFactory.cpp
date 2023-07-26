@@ -56,7 +56,7 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 		if (verbose)
 		{
-			log::info << L"Pipeline \"" << type_name(pipeline) << L" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
+			log::info << L"Pipeline \"" << type_name(pipeline) << L"\" created successfully (" << str(L"0x%08x", pipelineHash) << L"):" << Endl;
 			log::info << IncreaseIndent;
 			log::info << pipelineSettings.getLog();
 			log::info << DecreaseIndent;

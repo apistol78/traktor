@@ -41,7 +41,11 @@ void Graph::addNode(Node* node)
 
 void Graph::removeNode(Node* node)
 {
-	m_nodes.remove(node);
+	if (detach(node))
+	{
+		const bool removed = m_nodes.remove(node);
+		T_FATAL_ASSERT(removed);
+	}
 }
 
 void Graph::addEdge(Edge* edge)
@@ -146,9 +150,10 @@ uint32_t Graph::getDestinationCount(const OutputPin* outputPin) const
 	return it != m_outputPinDestinationCount.end() ? it->second : 0;
 }
 
-void Graph::detach(const Node* node)
+bool Graph::detach(const Node* node)
 {
-	T_FATAL_ASSERT(std::find(m_nodes.begin(), m_nodes.end(), node) != m_nodes.end());
+	if (std::find(m_nodes.begin(), m_nodes.end(), node) == m_nodes.end())
+		return false;
 
 	int32_t removed = 0;
 	for (;;)
@@ -170,6 +175,8 @@ void Graph::detach(const Node* node)
 		updateInputPinToEdge();
 		updateOutputPinDestinationCount();
 	}
+
+	return true;
 }
 
 void Graph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)

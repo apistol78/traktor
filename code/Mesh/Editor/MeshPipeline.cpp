@@ -590,14 +590,6 @@ bool MeshPipeline::buildOutput(
 			return false;
 		}
 
-		// Cleanup unused branches.
-		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialPair.first << L"\"." << Endl;
-			return false;
-		}
-
 		// Resolve all bundles.
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getBundleResolved();
 		if (!materialShaderGraph)
@@ -677,6 +669,12 @@ bool MeshPipeline::buildOutput(
 
 		// Extract each material technique.
 		render::ShaderGraphTechniques techniques(materialShaderGraph, materialShaderGraphId);
+		if (!techniques.valid())
+		{
+			log::error << L"MeshPipeline failed; unable to generate techniques, material \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
 		std::set< std::wstring > materialTechniqueNames = techniques.getNames();
 		if (!m_includeOnlyTechniques.empty())
 		{
