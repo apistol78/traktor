@@ -42,7 +42,7 @@ class T_DLLCLASS ShaderGraphTypePropagation : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ShaderGraphTypePropagation(const ShaderGraph* shaderGraph);
+	explicit ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const Guid& shaderGraphId);
 
 	PinType evaluate(const InputPin* inputPin) const;
 
@@ -52,10 +52,13 @@ public:
 
 	void set(const OutputPin* outputPin, PinType outputPinType);
 
+	bool valid() const { return m_valid; }
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	SmallMap< const InputPin*, PinType > m_inputPinTypes;
 	SmallMap< const OutputPin*, PinType > m_outputPinTypes;
+	bool m_valid;
 };
 
 }

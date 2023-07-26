@@ -449,7 +449,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	T_ASSERT(shaderGraph);
 
 	// Get all techniques.
-	ShaderGraphTechniques techniques(shaderGraph, Guid(), true);
+	ShaderGraphTechniques techniques(shaderGraph, Guid());
 	for (auto techniqueName : techniques.getNames())
 	{
 		TechniqueInfo& ti = m_reflectedTechniques[techniqueName];

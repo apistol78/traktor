@@ -308,6 +308,8 @@ bool ShaderPipeline::buildOutput(
 
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph, shaderGraphId);
+	if (!techniques.valid())
+		return false;
 
 	std::set< std::wstring > techniqueNames = techniques.getNames();
 	if (!m_includeOnlyTechniques.empty())

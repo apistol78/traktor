@@ -159,8 +159,9 @@ public:
 	/*! Detach node from all input and output edges.
 	 *
 	 * \param node Node to be detached.
+	 * \return True if node was successfully detached.
 	 */
-	void detach(const Node* node);
+	bool detach(const Node* node);
 
 	/*! Rewire all edges from one output to another output.
 	 *

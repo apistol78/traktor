@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{AD201E1C-2252-DD4A-A92C-177D6ED35838}</id>
@@ -36,7 +36,7 @@
 			<name>Color1</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
@@ -88,7 +88,7 @@
 			<name>WorldTexCoord</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
@@ -109,7 +109,7 @@
 			<name>Color2</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
@@ -130,7 +130,7 @@
 			<name>Color3</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
@@ -151,7 +151,7 @@
 			<name>Color4</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
@@ -180,7 +180,7 @@
 			<name>OcclusionMap</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -237,7 +237,7 @@
 			<name>CavityMap</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
@@ -321,7 +321,7 @@
 			<name>Normal1</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Vector" version="traktor.render.Node:1">
@@ -351,7 +351,7 @@
 			<name>Normal2</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
@@ -372,7 +372,7 @@
 			<name>Normal3</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Type" version="traktor.render.Node:1">
@@ -393,7 +393,7 @@
 			<name>Normal4</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -439,7 +439,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D056F968-432B-784B-944D-2D39AFCE18E6}</id>
 			<comment/>
 			<position>
@@ -447,9 +447,8 @@
 				<second>1697</second>
 			</position>
 			<name>V_Weights</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4EAC96B4-7905-AE4F-A988-73CA8502EA3D}</id>
 			<comment/>
 			<position>
@@ -457,9 +456,8 @@
 				<second>-360</second>
 			</position>
 			<name>V_Weights</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B3EA82F0-ACDF-3C4C-817B-4E3508544329}</id>
 			<comment/>
 			<position>
@@ -467,7 +465,6 @@
 				<second>1270</second>
 			</position>
 			<name>V_Weights</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{65537E67-F53A-A94C-8E37-5FBF305753B2}</id>
@@ -512,7 +509,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FD95A39A-87D7-AB40-8EA7-19547B990019}</id>
 			<comment/>
 			<position>
@@ -520,9 +517,8 @@
 				<second>2010</second>
 			</position>
 			<name>V_Modulate</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E345C0D7-B0E9-DC4D-8DC8-374440C0EA83}</id>
 			<comment/>
 			<position>
@@ -530,7 +526,6 @@
 				<second>-420</second>
 			</position>
 			<name>V_Modulate</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{A117C3FC-8299-F549-8A19-BC6209609223}</id>
@@ -542,7 +537,7 @@
 			<name>Roughness4</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -555,7 +550,7 @@
 			<name>Roughness3</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -568,7 +563,7 @@
 			<name>Roughness2</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -581,7 +576,7 @@
 			<name>Roughness1</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
-			<haveDefaultValue>true</haveDefaultValue>
+			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0.8</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -625,7 +620,7 @@
 				<second>484</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DC29B204-E922-174A-BE0D-6422A40EEDC3}</id>
 			<comment/>
 			<position>
@@ -633,7 +628,6 @@
 				<second>402</second>
 			</position>
 			<name>V_Weights</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{CFF1FFD2-1FC5-E242-BF29-DAF40D01752D}</id>
@@ -1450,4 +1444,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

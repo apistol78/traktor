@@ -19,8 +19,9 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTypePropagation", ShaderGraphTypePropagation, Object)
 
-ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shaderGraph)
+ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
 :	m_shaderGraph(shaderGraph)
+,	m_valid(true)
 {
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 
@@ -52,7 +53,10 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				if (!sourceOutputPin)
 				{
 					if (!inputPin->isOptional())
-						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L") not connected." << Endl;
+					{
+						log::warning << L"Mandatory input pin \"" << inputPin->getName() << L"\" of node " << node->getId().format() << L" (" << type_name(node) << L") not connected in fragment " << shaderGraphId.format() << L"." << Endl;
+						m_valid = false;
+					}
 
 					inputPinTypes[i] = PinType::Void;
 					continue;
@@ -110,7 +114,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 				else
 				{
 					if (!inputPin->isOptional() && inputPin->getNode() != nullptr)
-						log::debug << L"No type for mandatory input pin \"" << inputPin->getName() << L"\" of node " << type_name(inputPin->getNode()) << L" " << inputPin->getNode()->getId().format() << L"." << Endl;
+						log::debug << L"No type for mandatory input pin \"" << inputPin->getName() << L"\" of node " << type_name(inputPin->getNode()) << L" " << inputPin->getNode()->getId().format() << L" in fragment " << shaderGraphId.format() << L"." << Endl;
 					currentInputPinTypes[i] = PinType::Void;
 				}
 			}

@@ -1276,7 +1276,7 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Extract techniques.
 	m_toolTechniques->removeAll();	
-	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid(), false).getNames())
+	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
 		m_toolTechniques->add(technique);
 
 	// Update variables grid.
@@ -1608,11 +1608,7 @@ void ShaderGraphEditorPage::updateExternalNode(External* external)
 
 	// Add new pins for new ports.
 	for (const auto& inputPort : fragmentInputs)
-	{
 		external->createInputPin(inputPort->getId(), inputPort->getName(), inputPort->isOptional());
-		if (inputPort->isOptional() && inputPort->haveDefaultValue())
-			external->setValue(inputPort->getName(), inputPort->getDefaultValue());
-	}
 	for (const auto& outputPort : fragmentOutputs)
 		external->createOutputPin(outputPort->getId(), outputPort->getName());
 }

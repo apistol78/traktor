@@ -44,7 +44,8 @@ struct CopyVisitor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechniques, Object)
 
-ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId, bool optimize)
+ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, const Guid& shaderGraphId)
+:	m_valid(true)
 {
 	T_IMMUTABLE_CHECK(shaderGraph);
 
@@ -54,13 +55,10 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, con
 	);
 
 	// Constant fold entire graph so disabled outputs can be efficiently evaluated.
-	if (optimize)
-	{
-		if (shaderGraphOpt)
-			shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).getConstantFolded();
-		if (shaderGraphOpt)
-			shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).removeDisabledOutputs();
-	}
+	if (shaderGraphOpt)
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).getConstantFolded();
+	if (shaderGraphOpt)
+		shaderGraphOpt = ShaderGraphStatic(shaderGraphOpt, shaderGraphId).removeDisabledOutputs();
 
 	// Get all technique names.
 	if (shaderGraphOpt)
@@ -139,6 +137,8 @@ ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph, con
 			m_techniques[name] = visitor.m_shaderGraph;
 		}
 	}
+	else
+		m_valid = false;
 }
 
 std::set< std::wstring > ShaderGraphTechniques::getNames() const

@@ -168,7 +168,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 			));
 		}
 
-		shaderGraph->detach(node);
 		shaderGraph->removeNode(node);
 	}
 
@@ -217,7 +216,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getRendererPermutation(const std::wstring&
 			));
 		}
 
-		shaderGraph->detach(node);
 		shaderGraph->removeNode(node);
 	}
 
@@ -276,7 +274,6 @@ Ref< ShaderGraph > ShaderGraphStatic::getConnectedPermutation() const
 			));
 		}
 
-		shaderGraph->detach(connectedNode);
 		shaderGraph->removeNode(connectedNode);
 	}
 
@@ -373,7 +370,9 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	);
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
-	ShaderGraphTypePropagation typePropagation(shaderGraph);
+	ShaderGraphTypePropagation typePropagation(shaderGraph, m_shaderGraphId);
+	if (!typePropagation.valid())
+		return nullptr;
 
 	// Each output are now assigned a required output width.
 	// Replace all edges with a "o--[swizzle]--o" pattern.
@@ -431,7 +430,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	);
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
-	ShaderGraphTypePropagation typePropagation(shaderGraph);
+	ShaderGraphTypePropagation typePropagation(shaderGraph, m_shaderGraphId);
+	if (!typePropagation.valid())
+		return nullptr;
+
 	const RefArray< Node >& nodes = shaderGraph->getNodes();
 
 	// Setup map of all output pin "constants"; each such constant has proper width and
@@ -776,11 +778,17 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 	{
 		const OutputPin* sourcePin = shaderGraph->findSourcePin(splitNode->getInputPin(0));
 		if (!sourcePin)
+		{
+			log::error << L"No bundle connected to split node." << Endl;
 			return nullptr;
-
+		}
+		
 		BundleUnite* uniteNode = dynamic_type_cast< BundleUnite* >(sourcePin->getNode());
 		if (!uniteNode)
+		{
+			log::error << L"Incorrect input connected to split node, must be a bundle (is \"" << type_name(sourcePin->getNode()) << L"\")." << Endl;
 			return nullptr;
+		}
 
 		const int32_t outputPinCount = splitNode->getOutputPinCount();
 		for (int32_t i = 0; i < outputPinCount; ++i)
@@ -810,7 +818,14 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 
 				const OutputPin* parentBundleSourcePin = shaderGraph->findSourcePin(parentBundleInputPin);
 				if (parentBundleSourcePin)
+				{
 					uniteNodeIt = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
+					if (uniteNodeIt == nullptr)
+					{
+						log::error << L"Input \"Input\" into a bundle unite node must be a bundle itself." << Endl;
+						return nullptr;
+					}
+				}
 				else
 					uniteNodeIt = nullptr;
 			}
@@ -828,16 +843,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 
 	// Remove resolved bundle unite/split.
 	for (const auto splitNode : splitNodes)
-	{
-		shaderGraph->detach(splitNode);
 		shaderGraph->removeNode(splitNode);
-	}
 
 	for (const auto uniteNode : uniteNodes)
-	{
-		shaderGraph->detach(uniteNode);
 		shaderGraph->removeNode(uniteNode);
-	}
 
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 	return shaderGraph;
@@ -890,10 +899,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getVariableResolved() const
 
 	// Remove all variables.
 	for (const auto variableNode : variableNodes)
-	{
-		shaderGraph->detach(variableNode);
 		shaderGraph->removeNode(variableNode);
-	};
 
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 	return shaderGraph;
@@ -924,11 +930,10 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			if (scalar->get() < FUZZY_EPSILON)
 			{
 				// Zero as input to "Enable" pin, remove output.
-				shaderGraph->detach(pixelOutputNode);
 				shaderGraph->removeNode(pixelOutputNode);
 			}
 		}
-		else if (!is_a< InputPort >(enableSource->getNode()))
+		else // if (!is_a< InputPort >(enableSource->getNode()))
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.PixelOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
@@ -947,11 +952,10 @@ Ref< ShaderGraph > ShaderGraphStatic::removeDisabledOutputs() const
 			if (scalar->get() < FUZZY_EPSILON)
 			{
 				// Zero as input to "Enable" pin, remove output.
-				shaderGraph->detach(computeOutputNode);
 				shaderGraph->removeNode(computeOutputNode);
 			}
 		}
-		else if (!is_a< InputPort >(enableSource->getNode()))
+		else // if (!is_a< InputPort >(enableSource->getNode()))
 			log::warning << L"Unsupported node type of input; Only Scalar nodes can be connected to \"Enable\" of \"traktor.render.ComputeOutput\". " << type_name(enableSource->getNode()) << L" not supported." << Endl;
 	}
 
