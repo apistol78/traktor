@@ -14,7 +14,7 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Job.h"
-#include "Core/Thread/SpinLock.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Thread/Thread.h"
 
@@ -87,7 +87,7 @@ public:
 private:
 	AlignedVector< Thread* > m_workerThreads;
 	CircularVector< Ref< Job >, 16384 > m_jobQueue;
-	SpinLock m_jobQueueLock;
+	Semaphore m_jobQueueLock;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
 	std::atomic< int32_t > m_pending;

@@ -60,7 +60,7 @@ Job* JobQueue::add(const Job::task_t& task)
 {
 	Ref< Job > job = new Job(m_jobFinishedEvent, task);
 	{
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		m_jobQueue.push_back(job);
 		m_pending++;
 	}
@@ -78,7 +78,7 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 	// Create jobs for given functors.
 	if (ntasks > 1)
 	{
-		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		jobs.resize(ntasks);
 		for (size_t i = 1; i < ntasks; ++i)
 		{
@@ -135,7 +135,7 @@ void JobQueue::threadWorker()
 
 		// Pop job from queue.
 		{
-			T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_jobQueueLock);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 			if (!m_jobQueue.empty())
 			{
 				job = m_jobQueue.front();
