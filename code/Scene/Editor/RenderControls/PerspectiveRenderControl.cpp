@@ -554,8 +554,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	const float deltaTime = float(m_timer.getDeltaTime());
-	const float scaledTime = m_context->getTime();
+	const double deltaTime = m_timer.getDeltaTime();
+	const double scaledTime = m_context->getTime();
 	const Matrix44 projection = getProjectionTransform();
 	const Matrix44 view = getViewTransform();
 
