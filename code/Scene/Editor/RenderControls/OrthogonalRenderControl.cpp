@@ -514,12 +514,12 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	float deltaTime = float(m_timer.getDeltaTime());
-	float scaledTime = m_context->getTime();
-	float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
-	float width = m_magnification;
-	float height = m_magnification / ratio;
-	Matrix44 view = getViewTransform();
+	const double deltaTime = m_timer.getDeltaTime();
+	const double scaledTime = m_context->getTime();
+	const float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
+	const float width = m_magnification;
+	const float height = m_magnification / ratio;
+	const Matrix44 view = getViewTransform();
 
 	// Build a root entity by gathering entities from containers.
 	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
