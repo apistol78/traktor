@@ -497,13 +497,21 @@ void PerspectiveRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 void PerspectiveRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
 	int32_t rotation = event->getRotation();
+	if (!m_model.isMovingCamera())
+	{
+		if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
+			rotation = -rotation;
 
-	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
-		rotation = -rotation;
-
-	m_camera->move(Vector4(0.0f, 0.0f, rotation * -m_mouseWheelRate, 0.0f));
-	m_context->raiseCameraMoved();
-	m_context->enqueueRedraw(this);
+		m_camera->move(Vector4(0.0f, 0.0f, rotation * -m_mouseWheelRate, 0.0f));
+		m_context->raiseCameraMoved();
+		m_context->enqueueRedraw(this);
+	}
+	else
+	{
+		float movementSpeed = m_model.getMovementSpeed();
+		movementSpeed = std::max(movementSpeed + rotation * 20.0f, 1.0f);
+		m_model.setMovementSpeed(movementSpeed);
+	}
 }
 
 void PerspectiveRenderControl::eventKeyDown(ui::KeyDownEvent* event)

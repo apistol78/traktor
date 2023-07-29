@@ -51,6 +51,10 @@ public:
 
 	void setMovementSpeed(float movementSpeed) { m_movementSpeed = movementSpeed; }
 
+	float getMovementSpeed() const { return m_movementSpeed; }
+
+	bool isMovingCamera() const { return m_modify == MtCamera; }
+
 private:
 	enum ModifyType
 	{
