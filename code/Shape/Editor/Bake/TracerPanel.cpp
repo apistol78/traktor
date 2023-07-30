@@ -36,7 +36,7 @@ TracerPanel::TracerPanel(editor::IEditor* editor)
 
 bool TracerPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*", 8_ut, 4_ut)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*", 8_ut, 4_ut)))
 		return false;
 
 	setText(i18n::Text(L"SHAPE_EDITOR_TRACER_PANEL"));
@@ -47,8 +47,18 @@ bool TracerPanel::create(ui::Widget* parent)
 		auto settings = m_editor->checkoutGlobalSettings();
 		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", m_checkEnable->isChecked());
 		m_editor->commitGlobalSettings();
+
 		m_progressBar->setEnable(m_checkEnable->isChecked());
-		m_progressBar->update();
+		m_checkTraceImages->setEnable(m_checkEnable->isChecked());
+		update();
+	});
+
+	m_checkTraceImages = new ui::CheckBox();
+	m_checkTraceImages->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_IMAGES"), m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.TraceImages", false));
+	m_checkTraceImages->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
+		auto settings = m_editor->checkoutGlobalSettings();
+		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.TraceImages", m_checkTraceImages->isChecked());
+		m_editor->commitGlobalSettings();
 	});
 
 	Ref< ui::Container > container = new ui::Container();

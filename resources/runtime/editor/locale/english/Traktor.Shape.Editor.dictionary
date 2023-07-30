@@ -20,6 +20,10 @@
 		<item>
 			<first>SHAPE_EDITOR_TRACER_ABORT</first>
 			<second>Abort</second>
-		</item>		
+		</item>
+		<item>
+			<first>SHAPE_EDITOR_TRACER_IMAGES</first>
+			<second>Trace camera images</second>
+		</item>	
 	</map>
 </object>

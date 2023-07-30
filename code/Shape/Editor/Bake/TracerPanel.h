@@ -43,6 +43,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::CheckBox > m_checkEnable;
+	Ref< ui::CheckBox > m_checkTraceImages;
 	Ref< ui::ProgressBar > m_progressBar;
 	Ref< ui::Button > m_buttonAbort;
 	bool m_idle;

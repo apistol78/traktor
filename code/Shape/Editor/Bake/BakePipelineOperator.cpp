@@ -404,6 +404,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.CompressionMethod", L"FP16");
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
+	m_traceCameras = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceImages", false);
 
 	// Instantiate raytracer implementation.
 	const std::wstring tracerTypeName = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.RayTracerType", L"traktor.shape.RayTracerEmbree");
@@ -671,12 +672,13 @@ bool BakePipelineOperator::build(
 				// Add camera.
 				if (auto cameraComponentData = inoutEntityData->getComponent< world::CameraComponentData >())
 				{
-					tracerTask->addTracerCamera(new TracerCamera(
-						inoutEntityData->getTransform(),
-						cameraComponentData->getFieldOfView(),
-						1280,
-						720
-					));
+					if (m_traceCameras)
+						tracerTask->addTracerCamera(new TracerCamera(
+							inoutEntityData->getTransform(),
+							cameraComponentData->getFieldOfView(),
+							1280,
+							720
+						));
 				}
 
 				// Get volume for irradiance grid.

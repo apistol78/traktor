@@ -77,6 +77,7 @@ private:
 	const TypeInfo* m_tracerType;
 	std::wstring m_compressionMethod;
 	bool m_asynchronous;
+	bool m_traceCameras;
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 
