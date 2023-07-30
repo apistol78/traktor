@@ -403,7 +403,7 @@ Color4f RayTracerEmbree::tracePath0(
 	uint32_t extraLightMask
 ) const
 {
-	constexpr int SampleBatch = 32;
+	constexpr int SampleBatch = 64;
 
 	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
