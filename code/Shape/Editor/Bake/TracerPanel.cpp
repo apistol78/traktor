@@ -16,7 +16,6 @@
 #include "Shape/Editor/Bake/TracerTask.h"
 #include "Ui/Application.h"
 #include "Ui/Button.h"
-#include "Ui/CheckBox.h"
 #include "Ui/ProgressBar.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
@@ -36,41 +35,18 @@ TracerPanel::TracerPanel(editor::IEditor* editor)
 
 bool TracerPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,*,*", 8_ut, 4_ut)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%,*", L"100%", 8_ut, 8_ut)))
 		return false;
 
 	setText(i18n::Text(L"SHAPE_EDITOR_TRACER_PANEL"));
 
-	m_checkEnable = new ui::CheckBox();
-	m_checkEnable->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_ENABLE"), m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.Enable", true));
-	m_checkEnable->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
-		auto settings = m_editor->checkoutGlobalSettings();
-		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", m_checkEnable->isChecked());
-		m_editor->commitGlobalSettings();
-
-		m_progressBar->setEnable(m_checkEnable->isChecked());
-		m_checkTraceImages->setEnable(m_checkEnable->isChecked());
-		update();
-	});
-
-	m_checkTraceImages = new ui::CheckBox();
-	m_checkTraceImages->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_IMAGES"), m_editor->getSettings()->getProperty< bool >(L"BakePipelineOperator.TraceImages", false));
-	m_checkTraceImages->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
-		auto settings = m_editor->checkoutGlobalSettings();
-		settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.TraceImages", m_checkTraceImages->isChecked());
-		m_editor->commitGlobalSettings();
-	});
-
-	Ref< ui::Container > container = new ui::Container();
-	container->create(this, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0_ut, 8_ut));
-
 	m_progressBar = new ui::ProgressBar();
-	m_progressBar->create(container, ui::WsDoubleBuffer, 0, 100);
+	m_progressBar->create(this, ui::WsDoubleBuffer, 0, 100);
 	m_progressBar->setText(i18n::Text(L"SHAPE_EDITOR_TRACER_IDLE"));
-	m_progressBar->setEnable(m_checkEnable->isChecked());
-
+	m_progressBar->setVerticalAlign(ui::Align::AnCenter);
+	
 	m_buttonAbort = new ui::Button();
-	m_buttonAbort->create(container, i18n::Text(L"SHAPE_EDITOR_TRACER_ABORT"));
+	m_buttonAbort->create(this, i18n::Text(L"SHAPE_EDITOR_TRACER_ABORT"));
 	m_buttonAbort->addEventHandler< ui::ButtonClickEvent >([&](ui::ButtonClickEvent* event) {
 		auto processor = BakePipelineOperator::getTracerProcessor();
 		if (processor)

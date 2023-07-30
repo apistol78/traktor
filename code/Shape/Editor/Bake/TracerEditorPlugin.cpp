@@ -37,7 +37,7 @@ bool TracerEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	m_tracerPanel = new TracerPanel(m_editor);
 	m_tracerPanel->create(parent);
 
-	m_site->createAdditionalPanel(m_tracerPanel, 120_ut, false);
+	m_site->createAdditionalPanel(m_tracerPanel, 60_ut, false);
     return true;
 }
 
