@@ -524,7 +524,7 @@ void WorldRendererShared::setupLightPass(
 			// Calculate size of shadow region based on distance from eye.
 			const float distance = (worldRenderView.getEyePosition() - lightPosition).xyz0().length();
 			const int32_t denom = (int32_t)std::floor(distance / 4.0f);
-			const int32_t atlasSize = 128 >> std::min(denom, 4);
+			const int32_t atlasSize = 256 >> std::min(denom, 8);
 					
 			Packer::Rectangle atlasRect;
 			if (!shadowAtlasPacker->insert(atlasSize, atlasSize, atlasRect))

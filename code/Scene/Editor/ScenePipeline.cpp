@@ -34,16 +34,6 @@ namespace traktor::scene
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 18, ScenePipeline, editor::IPipeline)
 
-ScenePipeline::ScenePipeline()
-:	m_targetEditor(false)
-,	m_suppressShadows(false)
-,	m_suppressDepthPass(false)
-,	m_suppressImageProcess(false)
-,	m_shadowMapSizeDenom(1)
-,	m_shadowMapMaxSlices(0)
-{
-}
-
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);

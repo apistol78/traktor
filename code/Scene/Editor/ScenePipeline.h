@@ -29,8 +29,6 @@ class T_DLLCLASS ScenePipeline : public editor::IPipeline
 	T_RTTI_CLASS;
 
 public:
-	ScenePipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual void destroy() override final;
@@ -69,12 +67,12 @@ public:
 	) const override final;
 
 private:
-	bool m_targetEditor;
-	bool m_suppressShadows;
-	bool m_suppressDepthPass;
-	bool m_suppressImageProcess;
-	int32_t m_shadowMapSizeDenom;
-	int32_t m_shadowMapMaxSlices;
+	bool m_targetEditor = false;
+	bool m_suppressShadows = false;
+	bool m_suppressDepthPass = false;
+	bool m_suppressImageProcess = false;
+	int32_t m_shadowMapSizeDenom = 1;
+	int32_t m_shadowMapMaxSlices = 0;
 	RefArray< IScenePipelineOperator > m_operators;
 
 	const IScenePipelineOperator* findOperator(const TypeInfo& operationType) const;

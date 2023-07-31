@@ -28,6 +28,9 @@ bool TracerSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkEnable = new ui::CheckBox();
 	m_checkEnable->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_ENABLE"), settings->getProperty< bool >(L"BakePipelineOperator.Enable", true));
 
+	m_checkTraceIrradianceGrid = new ui::CheckBox();
+	m_checkTraceIrradianceGrid->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_IRRADIANCEGRID"), settings->getProperty< bool >(L"BakePipelineOperator.TraceIrradianceGrid", false));
+
 	m_checkTraceImages = new ui::CheckBox();
 	m_checkTraceImages->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_IMAGES"), settings->getProperty< bool >(L"BakePipelineOperator.TraceImages", false));
 
@@ -42,6 +45,7 @@ void TracerSettingsPage::destroy()
 bool TracerSettingsPage::apply(PropertyGroup* settings)
 {
     settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.Enable", m_checkEnable->isChecked());
+	settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.TraceIrradianceGrid", m_checkTraceIrradianceGrid->isChecked());
     settings->setProperty< PropertyBoolean >(L"BakePipelineOperator.TraceImages", m_checkTraceImages->isChecked());
 	return true;
 }
