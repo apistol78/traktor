@@ -41,8 +41,6 @@ class T_DLLCLASS BakePipelineOperator : public scene::IScenePipelineOperator
 	T_RTTI_CLASS;
 
 public:
-	BakePipelineOperator();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual void destroy() override final;
@@ -74,10 +72,11 @@ private:
 
 	std::wstring m_assetPath;
 	std::wstring m_modelCachePath;
-	const TypeInfo* m_tracerType;
+	const TypeInfo* m_tracerType = nullptr;
 	std::wstring m_compressionMethod;
-	bool m_asynchronous;
-	bool m_traceCameras;
+	bool m_asynchronous = false;
+	bool m_traceIrradianceGrid = false;
+	bool m_traceCameras = false;
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 

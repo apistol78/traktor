@@ -188,22 +188,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetPerformance", TargetPerformance, 
 void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, const TargetPerfSet& performance)
 {
 	const TypeInfo& performanceType = type_of(&performance);
+	const double time = m_timer.getElapsedTime();
 
 	// Check how long since last this performance set has been sent.
 	const auto it = m_last.find(&performanceType);
-	if (
-		it != m_last.end() &&
-		(m_timer.getElapsedTime() - it->second.sent) < 4.0 &&
-		performance.check(*it->second.perfSet) == false
-	)
-		return;
+	if (it != m_last.end())
+	{
+		if ((time - it->second.sent) < 1.0 / 10.0)
+			return;
+		if ((time - it->second.sent) < 4.0 && performance.check(*it->second.perfSet) == false)
+			return;
+	}
 
 	if (!transport->send(&performance))
 		return;
 
 	// Save time and copy of performance set as a reference.
 	auto& snapshot = m_last[&performanceType];
-	snapshot.sent = m_timer.getElapsedTime();
+	snapshot.sent = time;
 	snapshot.perfSet = DeepClone(&performance).create< TargetPerfSet >();
 }
 

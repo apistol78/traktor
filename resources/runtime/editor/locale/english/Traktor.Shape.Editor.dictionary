@@ -26,6 +26,10 @@
 			<second>Abort</second>
 		</item>
 		<item>
+			<first>SHAPE_EDITOR_TRACER_IRRADIANCEGRID</first>
+			<second>Trace irradiance grid</second>
+		</item>
+		<item>
 			<first>SHAPE_EDITOR_TRACER_IMAGES</first>
 			<second>Trace camera images</second>
 		</item>	

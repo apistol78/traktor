@@ -45,7 +45,7 @@ Ref< IStream > FilePipelineCache::get(const Guid& guid, const PipelineDependency
 	const std::wstring fa = gs.substr(1, 2);
 	const std::wstring fb = gs.substr(3, 2);
 
-	// Concate output path name.
+	// Concatenate output path name.
 	StringOutputStream ss;
 	ss << m_path << L"/" << fa << L"/" << fb << L"/" << gs << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 
@@ -71,7 +71,7 @@ Ref< IStream > FilePipelineCache::put(const Guid& guid, const PipelineDependency
 	const std::wstring fa = gs.substr(1, 2);
 	const std::wstring fb = gs.substr(3, 2);
 
-	// Concate output path name.
+	// Concatenate output path name.
 	StringOutputStream ss;
 	ss << m_path << L"/" << fa << L"/" << fb << L"/" << gs << L"_" << hash.pipelineHash << L"_" << hash.sourceAssetHash << L"_" << hash.sourceDataHash << L"_" << hash.filesHash << L".cache";
 	Path p(ss.str());
@@ -102,13 +102,6 @@ Ref< IStream > FilePipelineCache::get(const Key& key)
 	StringOutputStream ss;
 	ss << m_path << L"/" << key.format() << L".cache";
 	const Path p(ss.str());
-
-	// Ensure output path exists.
-	if (!FileSystem::getInstance().makeAllDirectories(p.getPathOnly()))
-	{
-		log::error << L"File pipeline cache failed; unable to create cache directory for " << p.getPathName() << L"." << Endl;
-		return nullptr;
-	}
 
 	// Open cached file.
 	return FileSystem::getInstance().open(p.getPathName(), File::FmRead);

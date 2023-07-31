@@ -46,6 +46,7 @@ public:
 private:
 	Ref< ui::Container > m_container;
 	Ref< ui::CheckBox > m_checkEnable;
+	Ref< ui::CheckBox > m_checkTraceIrradianceGrid;
 	Ref< ui::CheckBox > m_checkTraceImages;
 };
 

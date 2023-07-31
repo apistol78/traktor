@@ -391,12 +391,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePip
 
 Ref< TracerProcessor > BakePipelineOperator::ms_tracerProcessor = nullptr;
 
-BakePipelineOperator::BakePipelineOperator()
-:	m_tracerType(nullptr)
-,	m_asynchronous(false)
-{
-}
-
 bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 {
 	// Read all settings first so pipeline hash is consistent.
@@ -404,6 +398,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.CompressionMethod", L"FP16");
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
+	m_traceIrradianceGrid = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceIrradianceGrid", false);
 	m_traceCameras = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceImages", false);
 
 	// Instantiate raytracer implementation.
@@ -466,7 +461,7 @@ bool BakePipelineOperator::transform(
 {
 	const auto configuration = mandatory_non_null_type_cast< const BakeConfiguration* >(operatorData);
 
-	// Skip transforming all to gether if no tracer type specified.
+	// Skip transforming all together if no tracer type specified.
 	if (!m_tracerType || !ms_tracerProcessor)
 		return true;
 
@@ -477,7 +472,7 @@ bool BakePipelineOperator::transform(
 	RefArray< world::LayerEntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
-		// Resolve all external entities, inital seed is null since we don't want to modify entity ID on those
+		// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
 		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
 			[&](const Guid& objectId) -> Ref< const ISerializable > {
@@ -617,43 +612,43 @@ bool BakePipelineOperator::build(
 			// Collect all entities from layer which we will include in bake.
 			RefArray< world::EntityData > bakeEntityData;
 			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+			{
+				// Check editor attributes component if we should include entity.
+				if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 				{
-					// Check editor attributes component if we should include entity.
-					if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-					{
-						if (!editorAttributes->include || editorAttributes->dynamic)
-							return scene::Traverser::VrSkip;
-					}
+					if (!editorAttributes->include || editorAttributes->dynamic)
+						return scene::Traverser::VrSkip;
+				}
 
-					// We only bake "named" entities.
-					if (inoutEntityData->getId().isNull())
-						return scene::Traverser::VrContinue;
+				// We only bake "named" entities.
+				if (inoutEntityData->getId().isNull())
+					return scene::Traverser::VrContinue;
 
-					// Light, sky and irradiance volume must be included.
-					if (
-						inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
-						inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
-						inoutEntityData->getComponent< world::CameraComponentData >() != nullptr ||
-						inoutEntityData->getName() == L"Irradiance"
-					)
+				// Light, sky and irradiance volume must be included.
+				if (
+					inoutEntityData->getComponent< world::LightComponentData >() != nullptr ||
+					inoutEntityData->getComponent< weather::SkyComponentData >() != nullptr ||
+					inoutEntityData->getComponent< world::CameraComponentData >() != nullptr ||
+					inoutEntityData->getName() == L"Irradiance"
+				)
+				{
+					bakeEntityData.push_back(inoutEntityData);
+					return scene::Traverser::VrContinue;
+				}
+
+				// Include in bake.
+				auto componentDatas = inoutEntityData->getComponents();
+				for (auto componentData : componentDatas)
+				{
+					if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
 					{
 						bakeEntityData.push_back(inoutEntityData);
-						return scene::Traverser::VrContinue;
+						return scene::Traverser::VrSkip;
 					}
+				}
 
-					// Include in bake.
-					auto componentDatas = inoutEntityData->getComponents();
-					for (auto componentData : componentDatas)
-					{
-						if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
-						{
-							bakeEntityData.push_back(inoutEntityData);
-							return scene::Traverser::VrSkip;
-						}
-					}
-
-					return scene::Traverser::VrContinue;
-				});
+				return scene::Traverser::VrContinue;
+			});
 
 			// Traverse and visit all entities in layer.
 			for (auto inoutEntityData : bakeEntityData)
@@ -760,18 +755,20 @@ bool BakePipelineOperator::build(
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L") to tracer task..." << Endl;
-						log::info << L"Using lightmap ID " << lightmapDiffuseId.format() << Endl;
-
-						// Register lightmap ID as being built.
-						pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
+						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), lightmap ID " << lightmapDiffuseId.format() << L" (" << str(L"%08x", modelHash) << L")..." << Endl;
 
 						// Get calculated lightmap size.
 						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
 
-						// Modify all materials to contain reference to lightmap channel.
-						for (auto& material : visualModel->getMaterials())
-							material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
+						if (configuration->getEnableLightmaps())
+						{
+							// Register lightmap ID as being built.
+							pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
+
+							// Modify all materials to contain reference to lightmap channel.
+							for (auto& material : visualModel->getMaterials())
+								material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
+						}
 
 						// Load texture images and attach to materials.
 						for (auto& material : visualModel->getMaterials())
@@ -940,6 +937,7 @@ bool BakePipelineOperator::build(
 	}
 
 	// Create irradiance grid task.
+	if (m_traceIrradianceGrid)
 	{
 		const Guid c_irradianceGridIdSeed(L"{714D9AF6-EF62-4E15-B372-7CEBB090417B}");
 		Guid irradianceGridId = sourceInstance->getGuid().permutation(c_irradianceGridIdSeed);
