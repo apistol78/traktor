@@ -110,6 +110,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	if (!m_container->create(parent, ui::WsNoCanvas, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
 
+	m_container->addEventHandler< ui::SizeEvent >(this, &DefaultRenderControl::eventResize);
+
 	m_toolBar = new ui::ToolBar();
 	if (!m_toolBar->create(m_container))
 		return false;
@@ -496,6 +498,11 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 	}
 
 	return true;
+}
+
+void DefaultRenderControl::eventResize(ui::SizeEvent* event)
+{
+	m_context->enqueueRedraw(nullptr);
 }
 
 void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)

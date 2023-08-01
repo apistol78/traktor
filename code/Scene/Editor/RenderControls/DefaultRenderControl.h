@@ -91,6 +91,8 @@ private:
 
 	bool createRenderControl(int32_t type);
 
+	void eventResize(ui::SizeEvent* event);
+
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };
 
