@@ -41,6 +41,21 @@ TypeInfoSet SplineEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< SplineComponentData >();
 }
 
+RefArray< const world::IEntityComponentData > SplineEntityReplicator::getDependentComponents(
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
+) const
+{
+	auto group = entityData->getComponent< world::GroupComponentData >();
+	if (!group)
+		return RefArray< const world::IEntityComponentData >();
+
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	dependentComponentData.push_back(group);
+	return dependentComponentData;
+}
+
 Ref< model::Model > SplineEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,

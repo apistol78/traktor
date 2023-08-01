@@ -71,6 +71,16 @@ TypeInfoSet SolidEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< SolidEntityData >();
 }
 
+RefArray< const world::IEntityComponentData > SolidEntityReplicator::getDependentComponents(
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
+) const
+{
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	return dependentComponentData;
+}
+
 Ref< model::Model > SolidEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
     const world::EntityData* entityData,

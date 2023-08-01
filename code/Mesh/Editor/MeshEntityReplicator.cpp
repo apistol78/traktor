@@ -40,6 +40,16 @@ TypeInfoSet MeshEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< MeshComponentData >();
 }
 
+RefArray< const world::IEntityComponentData > MeshEntityReplicator::getDependentComponents(
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
+) const
+{
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	return dependentComponentData;
+}
+
 Ref< model::Model > MeshEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,

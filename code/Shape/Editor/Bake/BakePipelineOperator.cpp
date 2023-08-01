@@ -684,7 +684,14 @@ bool BakePipelineOperator::build(
 					if (!entityReplicator)
 						continue;
 
-					const uint32_t componentDataHash = pipelineBuilder->calculateInclusiveHash(componentData);
+					const RefArray< const world::IEntityComponentData > dependentComponentData = entityReplicator->getDependentComponents(inoutEntityData, componentData);
+					if (dependentComponentData.empty())
+						continue;
+
+					uint32_t componentDataHash = 0;
+					for (auto cd : dependentComponentData)
+						componentDataHash += pipelineBuilder->calculateInclusiveHash(cd);
+
 					const uint32_t modelHash = configurationHash + componentDataHash;
 
 					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(

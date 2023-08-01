@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/Entity/GroupComponentData.h"
+#include "World/IEntityComponentData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,9 +26,16 @@ class EntityData;
 /*! Prefab component data.
  * \ingroup Shape
  */
-class T_DLLCLASS PrefabComponentData : public world::GroupComponentData
+class T_DLLCLASS PrefabComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
+
+	virtual void serialize(ISerializer& s) override final;
 };
 
 }

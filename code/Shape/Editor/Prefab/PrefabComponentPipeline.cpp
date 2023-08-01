@@ -40,24 +40,26 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 {
 	// Do not build prefab in editor since it's time consuming and not
 	// strictly necessary for editing purposes.
-	if (m_editor)
-	{
-		return world::EntityPipeline::buildProduct(
-			pipelineBuilder,
-			sourceInstance,
-			sourceAsset,
-			buildParams
-		);
-	}
+	//if (m_editor)
+	//{
+	//	return world::EntityPipeline::buildProduct(
+	//		pipelineBuilder,
+	//		sourceInstance,
+	//		sourceAsset,
+	//		buildParams
+	//	);
+	//}
 
 	// Transform component into a plain group component.
-	const PrefabComponentData* prefabComponent = mandatory_non_null_type_cast< const PrefabComponentData* >(sourceAsset);
-	return world::EntityPipeline::buildProduct(
-		pipelineBuilder,
-		sourceInstance,
-		new world::GroupComponentData(prefabComponent->getEntityData()),
-		buildParams
-	);
+	//const PrefabComponentData* prefabComponent = mandatory_non_null_type_cast< const PrefabComponentData* >(sourceAsset);
+	//return world::EntityPipeline::buildProduct(
+	//	pipelineBuilder,
+	//	sourceInstance,
+	//	new world::GroupComponentData(prefabComponent->getEntityData()),
+	//	buildParams
+	//);
+
+	return nullptr;
 }
 
 }
