@@ -128,7 +128,10 @@ Ref< IStream > FilePipelineCache::put(const Key& key)
 		return nullptr;
 	}
 
-	return fileStream;
+	return new FilePipelinePutStream(
+		new BufferedStream(fileStream),
+		ss.str()
+	);
 }
 
 void FilePipelineCache::getInformation(OutputStream& os)

@@ -540,12 +540,6 @@ bool ShaderPipeline::buildOutput(
 				const uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
-					[&](IStream* stream) {
-						return BinarySerializer(stream).readObject< ProgramResource >();
-					},
-					[&](const ProgramResource* object, IStream* stream) {
-						return BinarySerializer(stream).writeObject(object);
-					},
 					[&]() {
 						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
 

@@ -213,18 +213,6 @@ void addSky(
 
 	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
 		Key(0x00000001, 0x00000000, 0x00000000, textureAssetHash),
-		[&](IStream* stream) -> Ref< IblProbe > {
-			Ref< drawing::Image > radiance = drawing::Image::load(stream, L"tri");
-			if (radiance)
-				return new IblProbe(radiance);
-			else
-				return nullptr;
-		},
-		[=](const IblProbe* probe, IStream* stream) -> bool {
-			if (!probe->getRadianceImage()->save(stream, L"tri"))
-				return false;
-			return true;
-		},
 		[&]() -> Ref< IblProbe > {
 			// Read sky image from texture asset.
 			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
@@ -701,12 +689,6 @@ bool BakePipelineOperator::build(
 
 					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 						Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-						[&](IStream* stream) -> Ref< model::Model > {
-							return BinarySerializer(stream).readObject< model::Model >();
-						},
-						[=](const model::Model* model, IStream* stream) -> bool {
-							return BinarySerializer(stream).writeObject(model);
-						},
 						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
@@ -738,12 +720,6 @@ bool BakePipelineOperator::build(
 
 					Ref< model::Model > collisionModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 						Key(0x00000030, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
-						[&](IStream* stream) -> Ref< model::Model > {
-							return BinarySerializer(stream).readObject< model::Model >();
-						},
-						[=](const model::Model* model, IStream* stream) -> bool {
-							return BinarySerializer(stream).writeObject(model);
-						},
 						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);

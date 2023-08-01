@@ -9,9 +9,9 @@
 #pragma once
 
 #include <functional>
-#include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Misc/Key.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -49,16 +49,12 @@ public:
 	template< typename ObjectType >
 	Ref< ObjectType > read(
 		const Key& key,
-		const std::function< Ref< ObjectType > (IStream* stream) >& read,
-		const std::function< bool (const ObjectType* object, IStream* stream) >& write,
 		const std::function< Ref< ObjectType > () >& create
 	)
 	{
 		return dynamic_type_cast< ObjectType* >(readObject(
 			key,
-			[&](IStream* stream) -> Ref< Object > { return read(stream); },
-			[=](const Object* object, IStream* stream) -> bool { return write(mandatory_non_null_type_cast< const ObjectType* >(object), stream); },
-			[&]() -> Ref< Object > { return dynamic_type_cast< ObjectType* >(create()); }
+			[&]() -> Ref< ISerializable > { return dynamic_type_cast< ObjectType* >(create()); }
 		));
 	}
 
@@ -66,11 +62,9 @@ private:
 	Ref< PipelineProfiler > m_profiler;
 	IPipelineCache* m_cache;
 
-	Ref< Object > readObject(
+	Ref< ISerializable > readObject(
 		const Key& key,
-		const std::function< Ref< Object > (IStream* stream) >& read,
-		const std::function< bool (const Object* object, IStream* stream) >& write,
-		const std::function< Ref< Object > () >& create
+		const std::function< Ref< ISerializable > () >& create
 	);
 };
 
