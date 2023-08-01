@@ -30,6 +30,7 @@
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/EntityData.h"
+#include "World/Entity/GroupComponentData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor::shape
@@ -55,6 +56,16 @@ TypeInfoSet PrefabEntityReplicator::getSupportedTypes() const
 	return makeTypeInfoSet< PrefabComponentData >();
 }
 
+RefArray< const world::IEntityComponentData > PrefabEntityReplicator::getDependentComponents(
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
+) const
+{
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	return dependentComponentData;
+}
+
 Ref< model::Model > PrefabEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
@@ -76,32 +87,37 @@ void PrefabEntityReplicator::transform(
 	world::GroupComponentData* outputGroup
 ) const
 {
-	PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast<PrefabComponentData*>(componentData);
+	world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
+	if (!groupComponentData)
+	{
+		log::warning << L"No group component associated with entity " << entityData->getName() << L"; required by prefab entity replicator." << Endl;
+		return;
+	}
 
 	// Remove "consumed" components from prefab.
-	scene::Traverser::visit(prefabComponentData, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(groupComponentData, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+	{
+		if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 		{
-			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-			{
-				if (!editorAttributes->include || editorAttributes->dynamic)
-					return scene::Traverser::VrSkip;
-			}
+			if (!editorAttributes->include || editorAttributes->dynamic)
+				return scene::Traverser::VrSkip;
+		}
 
-			if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
-				inoutEntityData->removeComponent(meshComponentData);
+		if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
+			inoutEntityData->removeComponent(meshComponentData);
 
-			if (auto rigidBodyComponentData = inoutEntityData->getComponent< physics::RigidBodyComponentData >())
-				inoutEntityData->removeComponent(rigidBodyComponentData);
+		if (auto rigidBodyComponentData = inoutEntityData->getComponent< physics::RigidBodyComponentData >())
+			inoutEntityData->removeComponent(rigidBodyComponentData);
 
-			return scene::Traverser::VrContinue;
-		});
+		return scene::Traverser::VrContinue;
+	});
 
 	// Move "non-consumed" entities from prefab into output group.
-	for (auto entityData : prefabComponentData->getEntityData())
+	for (auto entityData : groupComponentData->getEntityData())
 		outputGroup->addEntityData(entityData);
 
 	// Remove prefab component.
-	entityData->removeComponent(prefabComponentData);
+	entityData->removeComponent(componentData);
 }
 
 Ref< model::Model > PrefabEntityReplicator::createVisualModel(
@@ -110,15 +126,18 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	const world::IEntityComponentData* componentData
 ) const
 {
-	const PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< const PrefabComponentData* >(componentData);
-	Transform worldInv = entityData->getTransform().inverse();
+	const world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
+	if (!groupComponentData)
+		return nullptr;
+
+	const Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
 	SmallMap< std::wstring, Guid > materialTemplates;
 	SmallMap< std::wstring, Guid > materialTextures;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
 	{
 		// Check editor attributes component if we should include entity.
 		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
@@ -183,6 +202,9 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 
 		return scene::Traverser::VrContinue;
 	});
+
+
+	log::info << L"Prefab replicator collected " << models.size() << L" models to be merged." << Endl;
 
 	// Create merged model.
 	Ref< model::Model > outputModel = new model::Model();

@@ -11,6 +11,7 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -73,6 +74,17 @@ public:
 
 	/*! */
 	virtual TypeInfoSet getSupportedTypes() const = 0;
+
+	/*! Get all components from the entity which the component depend upon to generate geometry.
+	 *
+	 * \param entityData Owner entity data.
+	 * \param componentData Component data which we want to represent as a model.
+	 * \return Dependent components.
+	 */
+	virtual RefArray< const world::IEntityComponentData > getDependentComponents(
+		const world::EntityData* entityData,
+		const world::IEntityComponentData* componentData
+	) const = 0;
 
 	/*! Create model replica from entity or component data.
 	 *

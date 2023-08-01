@@ -45,6 +45,16 @@ TypeInfoSet PhysicsEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< RigidBodyComponentData >();
 }
 
+RefArray< const world::IEntityComponentData > PhysicsEntityReplicator::getDependentComponents(
+	const world::EntityData* entityData,
+	const world::IEntityComponentData* componentData
+) const
+{
+	RefArray< const world::IEntityComponentData > dependentComponentData;
+	dependentComponentData.push_back(componentData);
+	return dependentComponentData;
+}
+
 Ref< model::Model > PhysicsEntityReplicator::createModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,

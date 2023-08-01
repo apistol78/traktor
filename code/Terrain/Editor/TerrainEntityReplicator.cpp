@@ -37,6 +37,16 @@ TypeInfoSet TerrainEntityReplicator::getSupportedTypes() const
     return makeTypeInfoSet< TerrainComponentData >();
 }
 
+RefArray< const world::IEntityComponentData > TerrainEntityReplicator::getDependentComponents(
+    const world::EntityData* entityData,
+    const world::IEntityComponentData* componentData
+) const
+{
+    RefArray< const world::IEntityComponentData > dependentComponentData;
+    dependentComponentData.push_back(componentData);
+    return dependentComponentData;
+}
+
 Ref< model::Model > TerrainEntityReplicator::createModel(
     editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,

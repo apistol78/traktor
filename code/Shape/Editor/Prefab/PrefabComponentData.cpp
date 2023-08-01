@@ -11,6 +11,19 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrefabComponentData", 0, PrefabComponentData, world::GroupComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.PrefabComponentData", 0, PrefabComponentData, world::IEntityComponentData)
+
+int32_t PrefabComponentData::getOrdinal() const
+{
+	return 0;
+}
+
+void PrefabComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
+{
+}
+
+void PrefabComponentData::serialize(ISerializer& s)
+{
+}
 
 }

@@ -30,6 +30,11 @@ public:
 
 	virtual TypeInfoSet getSupportedTypes() const override final;
 
+	virtual RefArray< const world::IEntityComponentData > getDependentComponents(
+		const world::EntityData* entityData,
+		const world::IEntityComponentData* componentData
+	) const override final;
+
 	virtual Ref< model::Model > createModel(
 		editor::IPipelineCommon* pipelineCommon,
 		const world::EntityData* entityData,
