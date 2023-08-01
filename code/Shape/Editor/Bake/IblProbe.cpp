@@ -8,6 +8,8 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Drawing/Image.h"
 #include "Shape/Editor/Bake/IblProbe.h"
 
@@ -25,7 +27,7 @@ Vector2 toEquirectangular(const Vector4& direction)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.IblProbe", IblProbe, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.IblProbe", 0, IblProbe, Object)
 
 IblProbe::IblProbe(const drawing::Image* radiance)
 :	m_radiance(radiance)
@@ -47,6 +49,11 @@ Color4f IblProbe::sampleRadiance(const Vector4& direction) const
 	Color4f cl;
 	m_radiance->getPixel(u, v, cl);
 	return cl;
+}
+
+void IblProbe::serialize(ISerializer& s)
+{
+	s >> MemberRef< const drawing::Image >(L"radiance", m_radiance);
 }
 
 }

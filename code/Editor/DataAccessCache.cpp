@@ -9,6 +9,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Editor/DataAccessCache.h"
 #include "Editor/IPipelineCache.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
@@ -24,11 +25,9 @@ DataAccessCache::DataAccessCache(PipelineProfiler* profiler, IPipelineCache* cac
 {
 }
 
-Ref< Object > DataAccessCache::readObject(
+Ref< ISerializable > DataAccessCache::readObject(
 	const Key& key,
-	const std::function< Ref< Object > (IStream* stream) >& read,
-	const std::function< bool (const Object* object, IStream* stream) >& write,
-	const std::function< Ref< Object > () >& create
+	const std::function< Ref< ISerializable > () >& create
 )
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
@@ -44,7 +43,8 @@ Ref< Object > DataAccessCache::readObject(
 		if ((s = m_cache->get(key)) != nullptr)
 		{
 			m_profiler->begin(L"DataAccessCache read");
-			Ref< Object > object = read(s);
+			//Ref< Object > object = read(s);
+			Ref< ISerializable > object = BinarySerializer(s).readObject();
 			m_profiler->end(L"DataAccessCache read");
 			s->close();
 			return object;
@@ -53,7 +53,7 @@ Ref< Object > DataAccessCache::readObject(
 
 	// No cached entry; need to fabricate object.
 	m_profiler->begin(L"DataAccessCache create");
-	Ref< Object > object = create();
+	Ref< ISerializable > object = create();
 	m_profiler->end(L"DataAccessCache create");
 	if (!object)
 		return nullptr;
@@ -64,7 +64,8 @@ Ref< Object > DataAccessCache::readObject(
 		if ((s = m_cache->put(key)) != nullptr)
 		{
 			m_profiler->begin(L"DataAccessCache write");
-			const bool result = write(object, s);
+			//const bool result = write(object, s);
+			const bool result = BinarySerializer(s).writeObject(object);
 			m_profiler->end(L"DataAccessCache write");
 			if (result)
 				s->close();

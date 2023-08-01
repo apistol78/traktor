@@ -9,35 +9,36 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class IImageFilter;
 class Image;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 	
-class IblProbe : public Object
+class IblProbe : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
+	IblProbe() = default;
+
 	explicit IblProbe(const drawing::Image* radiance);
 
 	Color4f sampleRadiance(const Vector4& direction) const;
 
 	const drawing::Image* getRadianceImage() const { return m_radiance; }
 
+	virtual void serialize(ISerializer& s) override final;
+
 private:
 	Ref< const drawing::Image > m_radiance;
 };
 	
-	}
 }
