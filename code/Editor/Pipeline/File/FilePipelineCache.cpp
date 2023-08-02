@@ -104,7 +104,7 @@ Ref< IStream > FilePipelineCache::get(const Key& key)
 	const Path p(ss.str());
 
 	// Open cached file.
-	return FileSystem::getInstance().open(p.getPathName(), File::FmRead);
+	return FileSystem::getInstance().open(p.getPathName(), File::FmRead | File::FmMapped);
 }
 
 Ref< IStream > FilePipelineCache::put(const Key& key)

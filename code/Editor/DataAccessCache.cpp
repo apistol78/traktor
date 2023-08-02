@@ -43,7 +43,6 @@ Ref< ISerializable > DataAccessCache::readObject(
 		if ((s = m_cache->get(key)) != nullptr)
 		{
 			m_profiler->begin(L"DataAccessCache read");
-			//Ref< Object > object = read(s);
 			Ref< ISerializable > object = BinarySerializer(s).readObject();
 			m_profiler->end(L"DataAccessCache read");
 			s->close();
@@ -64,7 +63,6 @@ Ref< ISerializable > DataAccessCache::readObject(
 		if ((s = m_cache->put(key)) != nullptr)
 		{
 			m_profiler->begin(L"DataAccessCache write");
-			//const bool result = write(object, s);
 			const bool result = BinarySerializer(s).writeObject(object);
 			m_profiler->end(L"DataAccessCache write");
 			if (result)
