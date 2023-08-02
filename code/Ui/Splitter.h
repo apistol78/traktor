@@ -67,9 +67,9 @@ private:
 	Unit m_border;
 	bool m_drag;
 
-	int getAbsolutePosition() const;
+	int32_t getAbsolutePosition() const;
 
-	void setAbsolutePosition(int position);
+	void setAbsolutePosition(int32_t position);
 
 	void eventMouseMove(MouseMoveEvent* event);
 

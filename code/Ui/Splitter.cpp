@@ -268,25 +268,30 @@ Ref< Widget > Splitter::getRightWidget() const
 		return nullptr;
 }
 
-int Splitter::getAbsolutePosition() const
+int32_t Splitter::getAbsolutePosition() const
 {
-	int position = pixel(m_position);
-	//if (m_relative)
-	//	position = (m_position * (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight())) / 100;
-	//if (m_negative)
-	//	position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - position;
+	int32_t position = pixel(m_position);
+	if (m_relative || m_negative)
+	{
+		const int32_t dim = m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight();
+		if (m_relative)
+			position = (position * dim) / 100;
+		if (m_negative)
+			position = dim - position;
+	}
 	return position;
 }
 
-void Splitter::setAbsolutePosition(int position)
+void Splitter::setAbsolutePosition(int32_t position)
 {
+	const int32_t border = pixel(m_border);
+	position = std::max< int32_t >(position, border);
+	position = std::min< int32_t >(position, (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - border);
+	if (m_negative)
+		position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - position;
+	if (m_relative)
+		position = (position * 100) / (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight());
 	m_position = unit(position);
-	//m_position = std::max< int32_t >(m_position, m_border);
-	//m_position = std::min< int32_t >(m_position, (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_border);
-	//if (m_negative)
-	//	m_position = (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight()) - m_position;
-	//if (m_relative)
-	//	m_position = (m_position * 100) / (m_vertical ? getInnerRect().getWidth() : getInnerRect().getHeight());
 }
 
 void Splitter::eventMouseMove(MouseMoveEvent* event)
