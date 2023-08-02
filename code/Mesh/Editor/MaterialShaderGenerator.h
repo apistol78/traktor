@@ -57,6 +57,11 @@ public:
 		bool vertexColor
 	) const;
 
+	Ref< render::ShaderGraph > combineSurface(
+		const render::ShaderGraph* customSurfaceShaderGraph,
+		const render::ShaderGraph* materialSurfaceShaderGraph
+	) const;
+
 	Ref< render::ShaderGraph > generateMesh(
 		const model::Model& model,
 		const model::Material& material,

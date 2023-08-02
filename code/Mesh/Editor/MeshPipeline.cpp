@@ -506,6 +506,17 @@ bool MeshPipeline::buildOutput(
 		Ref< const render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
+		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
+			*models[0],
+			materialPair.second,
+			vertexColor
+		);
+		if (!meshSurfaceShaderGraph)
+		{
+			log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialPair.first << L"\"." << Endl;
+			return false;
+		}
+
 		auto it = materialShaders.find(materialPair.first);
 		if (
 			m_enableCustomShaders &&
@@ -518,17 +529,24 @@ bool MeshPipeline::buildOutput(
 				continue;
 			}
 
-			Ref< const render::ShaderGraph > meshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
-			if (!meshSurfaceShaderGraph)
+			Ref< const render::ShaderGraph > customMeshSurfaceShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!customMeshSurfaceShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to read material surface shader \"" << materialPair.first << L"\"." << Endl;
+				return false;
+			}
+
+			customMeshSurfaceShaderGraph = generator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
+			if (!customMeshSurfaceShaderGraph)
+			{
+				log::error << L"Mesh pipeline failed; unable to combine material surface shaders \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
 
 			materialShaderGraph = generator.generateMesh(
 				*models[0],
 				materialPair.second,
-				meshSurfaceShaderGraph,
+				customMeshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
 			if (!materialShaderGraph)
@@ -548,17 +566,6 @@ bool MeshPipeline::buildOutput(
 			//	if (it != materialTemplates.end())
 			//		materialTemplate = it->second;
 			//}
-
-			Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
-				*models[0],
-				materialPair.second,
-				vertexColor
-			);
-			if (!meshSurfaceShaderGraph)
-			{
-				log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialPair.first << L"\"." << Endl;
-				return false;
-			}
 
 			materialShaderGraph = generator.generateMesh(
 				*models[0],

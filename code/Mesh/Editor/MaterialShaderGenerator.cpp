@@ -354,6 +354,31 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	return meshSurfaceShaderGraph;
 }
 
+Ref< render::ShaderGraph >  MaterialShaderGenerator::combineSurface(
+	const render::ShaderGraph* customSurfaceShaderGraph,
+	const render::ShaderGraph* materialSurfaceShaderGraph
+) const
+{
+	// Resolve custom surface shader; merge in the generated material surface shader.
+
+	// Find all references to mesh surface interface fragment.
+	RefArray< render::External > resolveNodes;
+	for (auto externalNode : customSurfaceShaderGraph->findNodesOf< render::External >())
+	{
+		const Guid& fragmentGuid = externalNode->getFragmentGuid();
+		if (fragmentGuid == c_meshSurfaceInterface)
+			resolveNodes.push_back(externalNode);
+	}
+
+	// Link all found fragments.
+	Ref< render::ShaderGraph > meshShaderGraph = render::FragmentLinker([&](const Guid& fragmentGuid) -> Ref< const render::ShaderGraph > {
+		T_FATAL_ASSERT(fragmentGuid == c_meshSurfaceInterface);
+		return DeepClone(materialSurfaceShaderGraph).create< render::ShaderGraph >();
+	}).resolve(customSurfaceShaderGraph, resolveNodes, false);
+
+	return meshShaderGraph;
+}
+
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 	const model::Model& model,
 	const model::Material& material,
