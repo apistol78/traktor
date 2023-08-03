@@ -61,14 +61,12 @@ public:
 	 * in order to split calculations into vertex and pixel
 	 * shaders.
 	 *
-	 * \param frequentUniformsAsLinear Treat uniforms with high update frequency with linear complexity.
 	 * \return Shader graph with inserted interpolators.
 	 */
-	Ref< ShaderGraph > insertInterpolators(bool frequentUniformsAsLinear) const;
+	Ref< ShaderGraph > insertInterpolators() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	mutable bool m_frequentUniformsAsLinear;
 
 	void insertInterpolators(
 		SmallSet< const Node* >& visited,

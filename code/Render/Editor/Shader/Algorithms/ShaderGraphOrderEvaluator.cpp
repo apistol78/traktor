@@ -16,12 +16,8 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOrderEvaluator", ShaderGraphOrderEvaluator, Object)
 
-ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(
-	const ShaderGraph* shaderGraph,
-	bool frequentUniformsAsLinear
-)
+ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_frequentUniformsAsLinear(frequentUniformsAsLinear)
 {
 }
 
@@ -78,8 +74,7 @@ PinOrder ShaderGraphOrderEvaluator::evaluate(const OutputPin* outputPin) const
 			m_shaderGraph,
 			node,
 			outputPin,
-			inputPinCount > 0 ? inputPinOrders : nullptr,
-			m_frequentUniformsAsLinear
+			inputPinCount > 0 ? inputPinOrders : nullptr
 		);
 	}
 

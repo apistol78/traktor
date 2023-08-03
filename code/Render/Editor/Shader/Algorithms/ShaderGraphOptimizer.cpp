@@ -96,7 +96,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimi
 
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_frequentUniformsAsLinear(false)
 {
 }
 
@@ -275,7 +274,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 	return shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUniformsAsLinear) const
+Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators() const
 {
 	T_IMMUTABLE_CHECK(m_shaderGraph);
 
@@ -285,9 +284,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	);
 	T_VALIDATE_SHADERGRAPH(shaderGraph);
 
-	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
-
-	Ref< ShaderGraphOrderEvaluator > orderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear);
+	Ref< ShaderGraphOrderEvaluator > orderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph);
 	SmallSet< const Node* > visited;
 
 	for (auto pixelOutputNode : shaderGraph->findNodesOf< PixelOutput >())
@@ -332,9 +329,9 @@ void ShaderGraphOptimizer::insertInterpolators(
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
 		T_ASSERT(sourceNode);
 
-		bool isSwizzle = is_a< Swizzle >(sourceNode);
-		bool vertexMandatory = is_a< VertexInput >(sourceNode);
-		bool inCycle = insideCycle(shaderGraph, sourceOutputPin);
+		const bool isSwizzle = is_a< Swizzle >(sourceNode);
+		const bool vertexMandatory = is_a< VertexInput >(sourceNode);
+		const bool inCycle = insideCycle(shaderGraph, sourceOutputPin);
 
 		PinOrder inputOrder = PinOrder::Constant;
 		if (!vertexMandatory)
@@ -382,7 +379,7 @@ void ShaderGraphOptimizer::insertInterpolators(
 				}
 
 				// Re-create order evaluator since we've modified the shader graph.
-				inoutOrderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear);
+				inoutOrderEvaluator = new ShaderGraphOrderEvaluator(shaderGraph);
 			}
 		}
 		else

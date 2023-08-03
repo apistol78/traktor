@@ -886,7 +886,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		{
 			m_document->push();
 
-			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).insertInterpolators(false);
+			m_shaderGraph = ShaderGraphOptimizer(m_shaderGraph).insertInterpolators();
 			T_ASSERT(m_shaderGraph);
 
 			m_document->setObject(0, m_shaderGraph);

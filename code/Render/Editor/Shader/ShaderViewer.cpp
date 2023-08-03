@@ -488,7 +488,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 
 			if (programGraph)
-				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(false);
+				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
 
 			if (programGraph)
 				programGraph = ShaderGraphStatic(programGraph, Guid()).getSwizzledPermutation();

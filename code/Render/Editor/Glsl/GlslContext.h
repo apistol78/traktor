@@ -156,6 +156,15 @@ public:
 
 	/*! \} */
 
+	/*! \name Error reporting */
+	/*! \{ */
+
+	void pushError(const std::wstring& errorMessage);
+
+	std::wstring getErrorReport() const;
+
+	/*! \} */
+
 private:
 	struct Scope
 	{
@@ -171,6 +180,12 @@ private:
 		}
 	};
 
+	struct Error
+	{
+		std::wstring message;
+		std::wstring scope;
+	};
+
 	Ref< const ShaderGraph > m_shaderGraph;
 	Ref< const PropertyGroup > m_settings;
 	GlslShader m_vertexShader;
@@ -184,7 +199,10 @@ private:
 	AlignedVector< Parameter > m_parameters;
 	RenderState m_renderState;
 	std::list< Scope > m_emitScope;
+	std::list< Error > m_errorMessages;
 	std::wstring m_error;
+
+	std::wstring getCurrentScope() const;
 };
 
 }

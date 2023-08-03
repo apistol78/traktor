@@ -699,7 +699,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Generate graph for each technique.
-		log::info << L"Mesh material techniques:" << Endl;
+		log::info << L"Mesh material \"" << materialPair.first << L"\" techniques:" << Endl;
 		for (const auto& materialTechniqueName : materialTechniqueNames)
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = DeepClone(techniques.generate(materialTechniqueName)).create< render::ShaderGraph >();

@@ -109,8 +109,7 @@ private:
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 94, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
-:	m_frequentUniformsAsLinear(false)
-,	m_optimize(4)
+:	m_optimize(4)
 ,	m_validate(true)
 ,	m_debugCompleteGraphs(false)
 ,	m_editor(false)
@@ -123,7 +122,6 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	m_compilerSettings = settings->getPropertyIncludeHash< PropertyGroup >(L"ShaderPipeline.ProgramCompilerSettings");
 	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform", L"");
 	m_includeOnlyTechniques = settings->getPropertyIncludeHash< SmallSet< std::wstring > >(L"ShaderPipeline.IncludeOnlyTechniques");
-	m_frequentUniformsAsLinear = settings->getPropertyIncludeHash< bool >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
 	m_optimize = settings->getPropertyIncludeHash< int32_t >(L"ShaderPipeline.Optimize", m_optimize);
 	m_validate = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.Validate", m_validate);
 	m_debugCompleteGraphs = settings->getPropertyExcludeHash< bool >(L"ShaderPipeline.DebugCompleteGraphs", false);
@@ -433,7 +431,7 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Insert interpolation nodes at optimal locations.
-				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(m_frequentUniformsAsLinear);
+				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"." << Endl;
