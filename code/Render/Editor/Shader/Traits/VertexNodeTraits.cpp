@@ -132,8 +132,7 @@ PinOrder VertexNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders,
-	bool frequentAsLinear
+	const PinOrder* inputPinOrders
 ) const
 {
 	return PinOrder::Linear;

@@ -35,10 +35,7 @@ class T_DLLCLASS ShaderGraphOrderEvaluator : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ShaderGraphOrderEvaluator(
-		const ShaderGraph* shaderGraph,
-		bool frequentUniformsAsLinear
-	);
+	explicit ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph);
 
 	PinOrder evaluate(const Node* node, const std::wstring& inputPinName) const;
 
@@ -46,7 +43,6 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	bool m_frequentUniformsAsLinear;
 	mutable SmallMap< const OutputPin*, PinOrder > m_evaluated;
 };
 

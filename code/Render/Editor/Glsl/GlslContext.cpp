@@ -100,14 +100,7 @@ bool GlslContext::emit(Node* node)
 	{
 		// Only log first failure point; all recursions will also fail.
 		if (m_error.empty())
-		{
-			// Format chain to properly indicate source of error.
-			StringOutputStream ss;
-			for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
-				ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
-			ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
-			m_error = ss.str();
-		}
+			m_error = getCurrentScope();
 	}
 
 	return result;
@@ -302,6 +295,31 @@ GlslLayout& GlslContext::getLayout()
 void GlslContext::setRenderState(const RenderState& renderState)
 {
 	m_renderState = renderState;
+}
+
+void GlslContext::pushError(const std::wstring& errorMessage)
+{
+	m_errorMessages.push_back({ errorMessage, getCurrentScope() });
+}
+
+std::wstring GlslContext::getErrorReport() const
+{
+	StringOutputStream ss;
+	for (auto errorMessage : m_errorMessages)
+		ss << errorMessage.message << L" (" << errorMessage.scope << L")" << Endl;
+	return ss.str();
+}
+
+std::wstring GlslContext::getCurrentScope() const
+{
+	StringOutputStream ss;
+	if (!m_emitScope.empty())
+	{
+		for (std::list< Scope >::const_reverse_iterator i = m_emitScope.rbegin(); i != m_emitScope.rend(); ++i)
+			ss << getClassNameOnly(i->outputPin->getNode()) << L"[" << i->outputPin->getName() << L"] <-- [" << i->inputPin->getName() << L"]";
+		ss << getClassNameOnly(m_emitScope.front().inputPin->getNode());
+	}
+	return ss.str();
 }
 
 }

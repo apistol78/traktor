@@ -181,36 +181,19 @@ PinOrder UniformNodeTraits::evaluateOrder(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const OutputPin* nodeOutputPin,
-	const PinOrder* inputPinOrders,
-	bool frequentAsLinear
+	const PinOrder* inputPinOrders
 ) const
 {
 	if (const IndexedUniform* indexedUniform = dynamic_type_cast< const IndexedUniform* >(node))
 	{
 		if (inputPinOrders[0] == PinOrder::Constant)
-		{
-			if (
-				frequentAsLinear &&
-				indexedUniform->getParameterType() < ParameterType::Texture2D &&
-				indexedUniform->getFrequency() >= UpdateFrequency::Draw
-			)
-				return PinOrder::Linear;
-			else
-				return PinOrder::Constant;
-		}
+			return PinOrder::Constant;
 		else
 			return PinOrder::NonLinear;
 	}
 	else if (const Uniform* uniform = dynamic_type_cast< const Uniform* >(node))
 	{
-		if (
-			frequentAsLinear &&
-			uniform->getParameterType() < ParameterType::Texture2D &&
-			uniform->getFrequency() >= UpdateFrequency::Draw
-		)
-			return PinOrder::Linear;
-		else
-			return PinOrder::Constant;
+		return PinOrder::Constant;
 	}
 	else
 		return PinOrder::Constant;

@@ -127,7 +127,10 @@ bool emitAbs(GlslContext& cx, Abs* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -144,7 +147,10 @@ bool emitAdd(GlslContext& cx, Add* node)
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
 	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
+	{
+		cx.pushError(L"Inputs not connected.");
 		return false;
+	}
 
 	const GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", type);
@@ -161,7 +167,10 @@ bool emitArcusCos(GlslContext& cx, ArcusCos* node)
 
 	Ref< GlslVariable > theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected or incorrect type.");
 		return false;
+	}
 	
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 	
@@ -177,7 +186,10 @@ bool emitArcusTan(GlslContext& cx, ArcusTan* node)
 
 	Ref< GlslVariable > xy = cx.emitInput(node, L"XY");
 	if (!xy || glsl_type_width(xy->getType()) < 2)
+	{
+		cx.pushError(L"XY not connected or incorrect width.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -193,7 +205,10 @@ bool emitClamp(GlslContext& cx, Clamp* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -225,20 +240,32 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 
 	const GlslVariable* offset = cx.emitInput(node, L"Offset");
 	if (!offset)
+	{
+		cx.pushError(L"Offset not connected.");
 		return false;
+	}
 
 	const GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	const Node* storage = cx.getInputNode(node, L"Storage");
 	if (!storage)
+	{
+		cx.pushError(L"Storage not connected.");
 		return false;
+	}
 
 	if (const Uniform* storageUniformNode = dynamic_type_cast< const Uniform* >(storage))
 	{
 		if (!(storageUniformNode->getParameterType() >= ParameterType::Image2D && storageUniformNode->getParameterType() <= ParameterType::ImageCube))
+		{
+			cx.pushError(L"Incorrect parameter type.");
 			return false;
+		}
 
 		// Check if image needs to be defined.
 		const auto existing = cx.getLayout().getByName(storageUniformNode->getParameterName());
@@ -246,7 +273,11 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		{
 			auto existingImage = dynamic_type_cast< GlslImage* >(existing);
 			if (!existingImage)
+			{
+				cx.pushError(L"Image do not exist.");
 				return false;
+			}
+
 			existingImage->addStage(GlslResource::BsCompute);
 		}
 		else
@@ -267,7 +298,10 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
 		ub->addStage(getBindStage(cx));
 		if (!ub->add(storageUniformNode->getParameterName(), GlslType::Integer, 1))
+		{
+			cx.pushError(L"Failed to register uniform.");
 			return false;
+		}
 
 		// Define parameter in context.
 		cx.addParameter(
@@ -285,7 +319,11 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		{
 			auto existingBuffer = dynamic_type_cast< GlslStorageBuffer* >(existing);
 			if (!existingBuffer)
+			{
+				cx.pushError(L"Buffer do not exist.");
 				return false;
+			}
+
 			existingBuffer->addStage(getBindStage(cx));
 		}
 		else
@@ -309,7 +347,10 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		}
 	}
 	else
+	{
+		cx.pushError(L"Unsupported storage type.");
 		return false;
+	}
 
 	return true;
 }
@@ -322,7 +363,10 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	const GlslVariable* in = cx.emitInput(node, L"Input");
 	const GlslVariable* ref = cx.emitInput(node, L"Reference");
 	if (!in || !ref)
+	{
+		cx.pushError(L"Input or Reference not connected.");
 		return false;
+	}
 
 	GlslVariable caseTrue, caseFalse;
 	std::wstring caseTrueBranch, caseFalseBranch;
@@ -343,7 +387,10 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 		const GlslVariable* ct = cx.emitInput(node, L"CaseTrue");
 		if (!ct)
+		{
+			cx.pushError(L"CaseTrue not connected.");
 			return false;
+		}
 
 		caseTrue = *ct;
 		caseTrueBranch = fs.str();
@@ -359,7 +406,10 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 
 		const GlslVariable* cf = cx.emitInput(node, L"CaseFalse");
 		if (!cf)
+		{
+			cx.pushError(L"CaseFalse not connected.");
 			return false;
+		}
 
 		caseFalse = *cf;
 		caseFalseBranch = fs.str();
@@ -435,7 +485,10 @@ bool emitCos(GlslContext& cx, Cos* node)
 
 	const GlslVariable* theta = cx.emitInput(node, L"Theta");
 	if (!theta || theta->getType() != GlslType::Float)
+	{
+		cx.pushError(L"Theta not connected or incorrect type.");
 		return false;
+	}
 
 	const GlslVariable* out = cx.emitOutput(node, L"Output", GlslType::Float);
 
@@ -452,7 +505,10 @@ bool emitCross(GlslContext& cx, Cross* node)
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
 	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
+	{
+		cx.pushError(L"Input1 or Input2 not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float3);
 
@@ -468,7 +524,10 @@ bool emitDerivative(GlslContext& cx, Derivative* node)
 
 	Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 	if (!input)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", input->getType());
 
@@ -498,7 +557,10 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	Ref< GlslVariable > ref = cx.emitInput(node, L"Reference");
 	if (!in || !ref)
+	{
+		cx.pushError(L"Input or Reference not connected.");
 		return false;
+	}
 
 	// Create condition statement.
 	comment(f, node);
@@ -530,7 +592,10 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 
 	Ref< GlslVariable > pass = cx.emitInput(node, L"Pass");
 	if (!pass)
+	{
+		cx.pushError(L"Pass not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", pass->getType());
 	assign(f, out) << pass->getName() << L";" << Endl;
@@ -541,7 +606,10 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
 {
 	if (!cx.inCompute())
+	{
+		cx.pushError(L"DispatchIndex must be emitted in compute scope.");
 		return false;
+	}
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -560,7 +628,10 @@ bool emitDiv(GlslContext& cx, Div* node)
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
 	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
+	{
+		cx.pushError(L"Input1 or Input2 not connected.");
 		return false;
+	}
 
 	GlslType type = glsl_promote_to_float(glsl_precedence(in1->getType(), in2->getType()));
 	
@@ -579,7 +650,10 @@ bool emitDot(GlslContext& cx, Dot* node)
 	Ref< GlslVariable > in1 = cx.emitInput(node, L"Input1");
 	Ref< GlslVariable > in2 = cx.emitInput(node, L"Input2");
 	if (!in1 || !in2)
+	{
+		cx.pushError(L"Input1 or Input2 not connected.");
 		return false;
+	}
 
 	GlslType type = glsl_precedence(in1->getType(), in2->getType());
 	if (type >= GlslType::Float && type <= GlslType::Float4)
@@ -619,7 +693,10 @@ bool emitDot(GlslContext& cx, Dot* node)
 		f << L"}" << Endl;
 	}
 	else
+	{
+		cx.pushError(L"Incorrect type.");
 		return false;
+	}
 
 	return true;
 }
@@ -630,7 +707,10 @@ bool emitExp(GlslContext& cx, Exp* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -646,7 +726,10 @@ bool emitFraction(GlslContext& cx, Fraction* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -659,7 +742,10 @@ bool emitFraction(GlslContext& cx, Fraction* node)
 bool emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 {
 	if (!cx.inFragment())
+	{
+		cx.pushError(L"FragmentPosition must be emitted in pixel scope.");
 		return false;
+	}
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -674,7 +760,10 @@ bool emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 bool emitFrontFace(GlslContext& cx, FrontFace* node)
 {
 	if (!cx.inFragment())
+	{
+		cx.pushError(L"FrontFace must be emitted in pixel scope.");
 		return false;
+	}
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
@@ -690,7 +779,10 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 {
 	const Node* indexNode = cx.getInputNode(node, L"Index");
 	if (!indexNode)
+	{
+		cx.pushError(L"Index not connected.");
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.getShader().createTemporaryVariable(
 		node->findOutputPin(L"Output"),
@@ -708,7 +800,10 @@ bool emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	{
 		Ref< GlslVariable > index = cx.emitInput(node, L"Index");
 		if (!index)
+		{
+			cx.pushError(L"Index not connected.");
 			return false;
+		}
 
 		comment(f, node);
 		assign(f, out) << node->getParameterName() << L"[" << index->cast(GlslType::Integer) << L"];" << Endl;
@@ -781,7 +876,10 @@ bool emitInstance(GlslContext& cx, Instance* node)
 		return true;
 	}
 	else
+	{
+		cx.pushError(L"Instance must be emitted in either vertex or pixel scope.");
 		return false;
+	}
 }
 
 bool emitInterpolator(GlslContext& cx, Interpolator* node)
@@ -791,7 +889,10 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 		// We're already in vertex state; skip interpolation.
 		Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 		if (!in)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		Ref< GlslVariable > out = cx.emitOutput(node, L"Output", in->getType());
 
@@ -807,13 +908,19 @@ bool emitInterpolator(GlslContext& cx, Interpolator* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	cx.enterFragment();
 
 	const int32_t interpolatorWidth = glsl_type_width(in->getType());
 	if (!interpolatorWidth)
+	{
+		cx.pushError(L"Incorrect type.");
 		return false;
+	}
 
 	int32_t interpolatorId;
 	int32_t interpolatorOffset;
@@ -877,7 +984,10 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	{
 		Ref< GlslVariable > input = cx.emitInput(node, L"Input");
 		if (!input)
+		{
+			cx.pushError(L"Input not connected.");
 			return false;
+		}
 
 		// Emit post condition if connected; break iteration if condition is false.
 		Ref< GlslVariable > condition = cx.emitInput(node, L"Condition");
@@ -2909,7 +3019,10 @@ bool emitVector(GlslContext& cx, Vector* node)
 bool emitVertexInput(GlslContext& cx, VertexInput* node)
 {
 	if (!cx.inVertex())
+	{
+		cx.pushError(str(L"VertexInput \"%s\" must be emitted in vertex scope.", node->getName().c_str()));
 		return false;
+	}
 
 	Ref< GlslVariable > out = cx.getShader().getInputVariable(node->getName());
 	if (!out)
@@ -3038,7 +3151,10 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 
 	Ref< GlslVariable > in = cx.emitInput(node, L"Input");
 	if (!in)
+	{
+		cx.pushError(L"Input not connected.");
 		return false;
+	}
 
 	auto& f = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
 	switch (in->getType())
@@ -3087,7 +3203,7 @@ struct EmitterCast : public Emitter
 
 	function_t m_function;
 
-	EmitterCast(function_t function)
+	explicit EmitterCast(function_t function)
 	:	m_function(function)
 	{
 	}
@@ -3179,6 +3295,8 @@ GlslEmitter::~GlslEmitter()
 		delete emitter.second;
 }
 
+#pragma optimize( "", off )
+
 bool GlslEmitter::emit(GlslContext& c, Node* node)
 {
 	auto i = m_emitters.find(&type_of(node));
@@ -3187,7 +3305,12 @@ bool GlslEmitter::emit(GlslContext& c, Node* node)
 		log::error << L"No emitter for node " << type_name(node) << L"." << Endl;
 		return false;
 	}
-	return i->second->emit(c, node);
+	const bool result = i->second->emit(c, node);
+	if (!result)
+		log::debug << L"Emitter " << type_name(node) << L" failed." << Endl;
+	return result;
 }
+
+#pragma optimize ( "", on )
 
 }

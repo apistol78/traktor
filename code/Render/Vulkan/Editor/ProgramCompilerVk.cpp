@@ -289,6 +289,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		cx.getEmitter().emit(cx, pixelOutputs[0]);
 		cx.getEmitter().emit(cx, vertexOutputs[0]);
 
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
+
 		const GlslRequirements vertexRequirements = cx.requirements();
 		const GlslRequirements fragmentRequirements = cx.requirements();
 
@@ -349,6 +356,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 			cx.getEmitter().emit(cx, computeOutput);
 		for (auto scriptOutput : scriptOutputs)
 			cx.getEmitter().emit(cx, scriptOutput);
+
+		const std::wstring errorReport = cx.getErrorReport();
+		if (!errorReport.empty())
+		{
+			log::error << errorReport;
+			return nullptr;
+		}
 
 		const GlslRequirements computeRequirements = cx.requirements();
 
