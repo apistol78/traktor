@@ -335,7 +335,10 @@ bool ProgramVk::validate(
 		{
 			ITexture* texture = m_textures[pm.textureIndex].texture;
 			if (!texture)
+			{
+				log::error << L"No bound texture for parameter \"" << pm.name << L"\"." << Endl;
 				return false;
+			}
 
 			ITexture* resolved = texture->resolve();
 			T_ASSERT(resolved);
@@ -358,7 +361,10 @@ bool ProgramVk::validate(
 		{
 			ITexture* texture = m_images[pm.imageIndex].texture;
 			if (!texture)
+			{
+				log::error << L"No bound texture for parameter \"" << pm.name << L"\"." << Endl;
 				return false;
+			}
 
 			ITexture* resolved = texture->resolve();
 			T_ASSERT(resolved);

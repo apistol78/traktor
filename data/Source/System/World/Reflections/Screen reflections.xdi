@@ -5,16 +5,16 @@
 			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
 			<comment/>
 			<position>
-				<first>1115</first>
-				<second>207</second>
+				<first>1143</first>
+				<second>211</second>
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
 			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
 			<comment/>
 			<position>
-				<first>549</first>
-				<second>202</second>
+				<first>495</first>
+				<second>211</second>
 			</position>
 			<textureId>InputDepth</textureId>
 		</item>
@@ -22,8 +22,8 @@
 			<id>{F45C816F-6B0C-2443-9179-2D3DDD6225CD}</id>
 			<comment/>
 			<position>
-				<first>545</first>
-				<second>286</second>
+				<first>479</first>
+				<second>291</second>
 			</position>
 			<textureId>InputNormal</textureId>
 		</item>
@@ -31,8 +31,8 @@
 			<id>{86DABBE0-B5B7-A947-8CFC-DEBB4F93249F}</id>
 			<comment/>
 			<position>
-				<first>515</first>
-				<second>355</second>
+				<first>463</first>
+				<second>371</second>
 			</position>
 			<textureId>InputRoughness</textureId>
 		</item>
@@ -40,8 +40,8 @@
 			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
 			<comment/>
 			<position>
-				<first>557</first>
-				<second>115</second>
+				<first>479</first>
+				<second>131</second>
 			</position>
 			<textureId>InputColorLast</textureId>
 		</item>
@@ -49,10 +49,10 @@
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
 			<position>
-				<first>800</first>
+				<first>799</first>
 				<second>187</second>
 			</position>
-			<name>Screen reflections</name>
+			<name>Reflections</name>
 			<clear>
 				<mask>
 					<Color>true</Color>
@@ -73,7 +73,17 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple">
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
+					<name>Probe reflections</name>
+					<shader>{D44B17A5-5BA5-714B-AD7C-7DDFE6C7D6C6}</shader>
+					<parameters>
+						<item>Depth</item>
+						<item>InputNormal</item>
+						<item>InputRoughness</item>
+					</parameters>
+				</item>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
+					<name>Screenspace reflections</name>
 					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
 					<parameters>
 						<item>Depth</item>
@@ -86,54 +96,54 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Depth</name>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>InputNormal</name>
+				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>InputRoughness</name>
+				<id>{FDFF30DE-F467-419B-BE66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Color</name>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 	</edges>

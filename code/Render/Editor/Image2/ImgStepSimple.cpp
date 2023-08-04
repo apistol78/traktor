@@ -27,6 +27,8 @@ void ImgStepSimple::getInputs(std::set< std::wstring >& outInputs) const
 
 void ImgStepSimple::serialize(ISerializer& s)
 {
+    IImgStep::serialize(s);
+
     s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlList< std::wstring >(L"parameters", m_parameters);
 }

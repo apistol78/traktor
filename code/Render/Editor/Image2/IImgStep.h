@@ -29,6 +29,11 @@ class T_DLLCLASS IImgStep : public ISerializable
 
 public:
     virtual void getInputs(std::set< std::wstring >& outInputs) const = 0;
+
+    virtual void serialize(ISerializer& s) override;
+
+private:
+    std::wstring m_name;
 };
 
 }

@@ -35,6 +35,7 @@
 #include "World/WorldSetupContext.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
+#include "World/Entity/VolumetricFogComponent.h"
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
@@ -149,7 +150,7 @@ void WorldRendererDeferred::setup(
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_blackCubeTexture, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -192,16 +193,8 @@ void WorldRendererDeferred::setupVisualPass(
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 
-	// Find first, non-local, probe.
-	const ProbeComponent* probe = nullptr;
-	for (auto p : m_gatheredView.probes)
-	{
-		if (!p->getLocal() && p->getTexture() != nullptr)
-		{
-			probe = p;
-			break;
-		}
-	}
+	// Use first volumetric fog volume, only support one in forward.
+	const VolumetricFogComponent* fog = (!worldRenderView.getSnapshot() && !m_gatheredView.fogs.empty()) ? m_gatheredView.fogs.front() : nullptr;
 
 	// Add visual render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
@@ -261,6 +254,20 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
 
+			if (fog)
+			{
+				const Vector4 fogRange(
+					viewNearZ,
+					std::min< float >(viewFarZ, fog->getMaxDistance()),
+					0.0f,
+					0.0f
+				);
+
+				sharedParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)fog->getSliceCount());
+				sharedParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
+				sharedParams->setTextureParameter(s_handleFogVolumeTexture, fog->getFogVolumeTexture());
+			}
+
 			sharedParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_settings.fogDistance, m_settings.fogDensity, m_settings.fogDensityMax, 0.0f));
 			sharedParams->setVectorParameter(s_handleFogColor, m_settings.fogColor);
 
@@ -291,26 +298,13 @@ void WorldRendererDeferred::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleReflectionMap, m_blackTexture);
 
-			if (probe)
-			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
-			}
-			else
-			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
-			}
-
 			sharedParams->endParameters(renderContext);
 
 			// Analytical lights; resolve with gbuffer.
 			{
 				render::Shader::Permutation perm;
 				m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
-				m_lightShader->setCombination(s_handleVolumetricFogEnable, false, perm);
+				m_lightShader->setCombination(s_handleVolumetricFogEnable, (bool)(fog != nullptr), perm);
 				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 			}
 

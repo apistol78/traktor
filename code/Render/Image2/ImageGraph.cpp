@@ -119,6 +119,8 @@ void ImageGraph::addPasses(
 				sharedParams->setFloatParameter(it.first, it.second);
 			for (const auto& it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
+			for (const auto& it : context.getTextureParameters())
+				sharedParams->setTextureParameter(it.first, it.second);
 			sharedParams->endParameters(renderContext);
 
 			for (auto step : m_steps)
