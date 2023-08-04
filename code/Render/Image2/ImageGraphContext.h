@@ -87,6 +87,10 @@ public:
 
 	const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
 
+	void setTextureParameter(handle_t handle, ITexture* texture);
+
+	const SmallMap< handle_t, ITexture* >& getTextureParameters() const { return m_textureParameters; }
+
 	//@}
 
 private:
@@ -101,6 +105,7 @@ private:
 	SmallMap< img_handle_t, handle_t > m_sbufferHandles;
 	SmallMap< handle_t, float > m_scalarParameters;
 	SmallMap< handle_t, Vector4 > m_vectorParameters;
+	SmallMap< handle_t, ITexture* > m_textureParameters;
 };
 
 }

@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -20,6 +21,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/ProbeComponent.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
 
@@ -70,6 +72,7 @@ render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
+	render::ITexture* blackCubeTexture,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t visualReadTargetSetId,
@@ -81,13 +84,24 @@ render::handle_t ReflectionsPass::setup(
 	if (m_reflectionsQuality == Quality::Disabled)
 		return 0;
 
+	// Find first, non-local, probe.
+	const ProbeComponent* probe = nullptr;
+	for (auto p : gatheredView.probes)
+	{
+		if (!p->getLocal() && p->getTexture() != nullptr)
+		{
+			probe = p;
+			break;
+		}
+	}
+
 	// Add reflections target.
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
-	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
+	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
 
 	switch (m_reflectionsQuality)
 	{
@@ -130,46 +144,6 @@ render::handle_t ReflectionsPass::setup(
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	rp->setOutput(reflectionsTargetSetId, clear, render::TfNone, render::TfColor);
 
-	// rp->addBuild(
-	// 	[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
-	// 	{
-	// 		WorldBuildContext wc(
-	// 			m_entityRenderers,
-	// 			rootEntity,
-	// 			renderContext
-	// 		);
-
-	// 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-
-	// 		auto sharedParams = renderContext->alloc< render::ProgramParameters >();
-	// 		sharedParams->beginParameters(renderContext);
-	// 		sharedParams->setFloatParameter(s_handleTime, worldRenderView.getTime());
-	// 		sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-	// 		sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
-	// 		sharedParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-	// 		sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-	// 		sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-	// 		sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(2));
-	// 		sharedParams->endParameters(renderContext);
-
-	// 		WorldRenderPassShared reflectionsPass(
-	// 			s_techniqueReflectionWrite,
-	// 			sharedParams,
-	// 			worldRenderView,
-	// 			IWorldRenderPass::PfNone
-	// 		);
-
-	// 		T_ASSERT(!renderContext->havePendingDraws());
-
-	// 		for (auto gathered : m_gathered)
-	// 			gathered.entityRenderer->build(wc, worldRenderView, reflectionsPass, gathered.renderable);
-
-	// 		for (auto entityRenderer : m_entityRenderers->get())
-	// 			entityRenderer->build(wc, worldRenderView, reflectionsPass);
-	// 	}
-	// );
-
-	 // Render screen space reflections.
 	render::ImageGraphView view;
 	view.viewFrustum = worldRenderView.getViewFrustum();
 	view.view = worldRenderView.getView();
@@ -182,6 +156,19 @@ render::handle_t ReflectionsPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
+
+	if (probe)
+	{
+		igctx.setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
+		igctx.setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+		igctx.setTextureParameter(s_handleProbeTexture, probe->getTexture());
+	}
+	else
+	{
+		igctx.setFloatParameter(s_handleProbeIntensity, 0.0f);
+		igctx.setFloatParameter(s_handleProbeTextureMips, 0.0f);
+		igctx.setTextureParameter(s_handleProbeTexture, blackCubeTexture);
+	}
 
 	m_screenReflections->addPasses(
 		m_screenRenderer,

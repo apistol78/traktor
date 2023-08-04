@@ -45,6 +45,8 @@ void ImgStepDirectionalBlur::serialize(ISerializer& s)
 		{ 0 }
 	};
 
+	IImgStep::serialize(s);
+
 	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
 	s >> Member< Vector2 >(L"direction", m_direction);
 	s >> Member< int32_t >(L"taps", m_taps);

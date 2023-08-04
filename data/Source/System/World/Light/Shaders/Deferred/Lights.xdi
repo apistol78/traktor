@@ -2437,23 +2437,6 @@ Eye direction
 			<name>L_ProbeReflection</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
-			<id>{B110CC13-FAC7-EF4F-ABEE-F8CCCDDFBFAD}</id>
-			<comment/>
-			<position>
-				<first>6079</first>
-				<second>2016</second>
-			</position>
-			<name>L_ProbeReflection</name>
-		</item>
-		<item type="traktor.render.Add" version="traktor.render.Node:1">
-			<id>{FBA6A844-3F92-C540-967C-E1BE0C6F049A}</id>
-			<comment/>
-			<position>
-				<first>6301</first>
-				<second>1954</second>
-			</position>
-		</item>
-		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{208D3CC8-C76F-4FD0-BCF4-F76D00A34DC1}</id>
 			<comment/>
 			<position>
@@ -4505,26 +4488,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[207]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[208]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[111]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[208]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[163]"/>
 				<id>{E6DBE5B6-98AA-419A-92EA-B7D3E76D207C}</id>
 			</source>
@@ -4549,7 +4512,7 @@ Eye direction
 				<id>{160D6BFC-45BE-46F5-B37F-C88F6D2FABB8}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[209]"/>
+				<node ref="/object/nodes/item[207]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
@@ -4565,7 +4528,7 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[210]"/>
+				<node ref="/object/nodes/item[208]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
@@ -4648,7 +4611,7 @@ Eye direction
 			</size>
 		</item>
 		<item type="traktor.render.Group">
-			<title>Reflection probe</title>
+			<title>Reflection probe (not used)</title>
 			<comment/>
 			<position>
 				<first>2632</first>

@@ -67,6 +67,8 @@ void ImagePass::addRenderGraphPasses(
 				sharedParams->setFloatParameter(it.first, it.second);
 			for (auto it : context.getVectorParameters())
 				sharedParams->setVectorParameter(it.first, it.second);
+			for (auto it : context.getTextureParameters())
+				sharedParams->setTextureParameter(it.first, it.second);
 
 			sharedParams->endParameters(renderContext);
 				

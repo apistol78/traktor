@@ -145,7 +145,7 @@ void WorldRendererForward::setup(
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_blackCubeTexture, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -187,17 +187,6 @@ void WorldRendererForward::setupVisualPass(
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
-
-	// Find first, non-local, probe.
-	const ProbeComponent* probe = nullptr;
-	for (auto p : m_gatheredView.probes)
-	{
-		if (!p->getLocal() && p->getTexture() != nullptr)
-		{
-			probe = p;
-			break;
-		}
-	}
 
 	// Use first volumetric fog volume, only support one in forward.
 	const VolumetricFogComponent* fog = (!worldRenderView.getSnapshot() && !m_gatheredView.fogs.empty()) ? m_gatheredView.fogs.front() : nullptr;
@@ -258,19 +247,6 @@ void WorldRendererForward::setupVisualPass(
 			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
-
-			if (probe)
-			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-				sharedParams->setTextureParameter(s_handleProbeTexture, probe->getTexture());
-			}
-			else
-			{
-				sharedParams->setFloatParameter(s_handleProbeIntensity, 0.0f);
-				sharedParams->setFloatParameter(s_handleProbeTextureMips, 0.0f);
-				sharedParams->setTextureParameter(s_handleProbeTexture, m_blackCubeTexture);
-			}
 
 			if (fog)
 			{

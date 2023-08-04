@@ -19,6 +19,7 @@ namespace traktor::render
 class ImageGraph;
 class IRenderSystem;
 class IRenderTargetSet;
+class ITexture;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -52,6 +53,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        render::ITexture* blackCubeTexture,
 		render::RenderGraph& renderGraph,
         render::handle_t gbufferTargetSetId,
         render::handle_t visualReadTargetSetId,

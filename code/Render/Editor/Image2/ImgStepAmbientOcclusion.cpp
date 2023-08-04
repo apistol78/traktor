@@ -27,6 +27,8 @@ void ImgStepAmbientOcclusion::getInputs(std::set< std::wstring >& outInputs) con
 
 void ImgStepAmbientOcclusion::serialize(ISerializer& s)
 {
+    IImgStep::serialize(s);
+
     s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlList< std::wstring >(L"parameters", m_parameters);
 }

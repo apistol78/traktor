@@ -100,4 +100,9 @@ void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value
 	m_vectorParameters[handle] = value;
 }
 
+void ImageGraphContext::setTextureParameter(handle_t handle, ITexture* texture)
+{
+	m_textureParameters[handle] = texture;
+}
+
 }
