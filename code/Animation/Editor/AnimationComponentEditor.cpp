@@ -37,21 +37,18 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 	const SkeletonComponentData* skeletonComponentData = checked_type_cast< const SkeletonComponentData* >(m_componentData);
 	const SkeletonComponent* skeletonComponent = dynamic_type_cast< const SkeletonComponent* >(m_entityAdapter->getComponent< SkeletonComponent >());
 
-	if (
-		m_context->shouldDrawGuide(L"Animation.Skeleton.Bind") ||
-		m_context->shouldDrawGuide(L"Animation.Skeleton.Pose")
-	)
+	if (skeletonComponent)
 	{
-		if (skeletonComponent)
-		{
-			const resource::Proxy< Skeleton >& skeleton = skeletonComponent->getSkeleton();
-			const auto& jointTransforms = skeletonComponent->getJointTransforms();
+		const resource::Proxy< Skeleton >& skeleton = skeletonComponent->getSkeleton();
+		const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
-			// Draw pose controllers.
+		// Draw pose controllers.
+		if (m_context->shouldDrawGuide(L"Animation.Controller"))
+		{
 			primitiveRenderer->pushWorld(Matrix44::identity());
 			primitiveRenderer->pushDepthState(false, false, false);
 
-			if (auto ragDollPoseController = dynamic_type_cast< const RagDollPoseController* >(skeletonComponent->getPoseController()))
+			if (auto ragDollPoseController = dynamic_type_cast<const RagDollPoseController*>(skeletonComponent->getPoseController()))
 			{
 				const auto& limbs = ragDollPoseController->getLimbs();
 
@@ -75,7 +72,7 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 					if (!limbs[i])
 						continue;
 
-					const Transform limbTransform[] { limbs[i]->getTransform(), limbs[i]->getTransform() };
+					const Transform limbTransform[]{ limbs[i]->getTransform(), limbs[i]->getTransform() };
 
 					physics::CapsuleShapeDesc shapeDesc;
 					shapeDesc.setRadius(radius);
@@ -106,82 +103,82 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 			primitiveRenderer->popDepthState();
 			primitiveRenderer->popWorld();
-
-			primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
-			primitiveRenderer->pushDepthState(false, false, false);
-
-			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Bind"))
-			{
-				// Draw bind skeleton.
-				const auto& jointTransforms = skeletonComponent->getJointTransforms();
-				if (jointTransforms.size() == skeleton->getJointCount())
-				{
-					const Color4ub color(0, 255, 0, 255);
-					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-					{
-						const Joint* joint = skeleton->getJoint(i);
-						primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
-						if (joint->getParent() >= 0)
-						{
-							const Joint* parent = skeleton->getJoint(joint->getParent());
-							T_ASSERT(parent != nullptr);
-
-							primitiveRenderer->drawLine(
-								jointTransforms[joint->getParent()].translation(),
-								jointTransforms[i].translation(),
-								2.0f,
-								color
-							);
-						}
-					}
-				}
-			}
-
-			if (m_context->shouldDrawGuide(L"Animation.Skeleton.Pose"))
-			{
-				const bool bindVisible = m_context->shouldDrawGuide(L"Animation.Skeleton.Bind");
-
-				// Draw current pose.
-				AlignedVector< Transform > poseTransforms = skeletonComponent->getPoseTransforms();
-				if (poseTransforms.size() == skeleton->getJointCount())
-				{
-					const Color4ub color(255, 255, 0, 255);
-					const Color4ub colorAlpha(255, 255, 0, 140);
-
-					for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
-					{
-						const Joint* joint = skeleton->getJoint(i);
-
-						if (bindVisible)
-						{
-							primitiveRenderer->drawLine(
-								jointTransforms[i].translation(),
-								poseTransforms[i].translation(),
-								colorAlpha
-							);
-						}
-
-						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
-
-						if (joint->getParent() >= 0)
-						{
-							const Joint* parent = skeleton->getJoint(joint->getParent());
-							T_ASSERT(parent != nullptr);
-
-							primitiveRenderer->drawLine(
-								poseTransforms[joint->getParent()].translation(),
-								poseTransforms[i].translation(),
-								2.0f,
-								color
-							);
-						}
-					}
-				}
-			}
-
-			primitiveRenderer->popDepthState();
-			primitiveRenderer->popWorld();
 		}
+
+		primitiveRenderer->pushWorld(m_entityAdapter->getTransform().toMatrix44());
+		primitiveRenderer->pushDepthState(false, false, false);
+
+		if (m_context->shouldDrawGuide(L"Animation.Skeleton.Bind"))
+		{
+			// Draw bind skeleton.
+			const auto& jointTransforms = skeletonComponent->getJointTransforms();
+			if (jointTransforms.size() == skeleton->getJointCount())
+			{
+				const Color4ub color(0, 255, 0, 255);
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				{
+					const Joint* joint = skeleton->getJoint(i);
+					primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+					if (joint->getParent() >= 0)
+					{
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT(parent != nullptr);
+
+						primitiveRenderer->drawLine(
+							jointTransforms[joint->getParent()].translation(),
+							jointTransforms[i].translation(),
+							2.0f,
+							color
+						);
+					}
+				}
+			}
+		}
+
+		if (m_context->shouldDrawGuide(L"Animation.Skeleton.Pose"))
+		{
+			const bool bindVisible = m_context->shouldDrawGuide(L"Animation.Skeleton.Bind");
+
+			// Draw current pose.
+			AlignedVector< Transform > poseTransforms = skeletonComponent->getPoseTransforms();
+			if (poseTransforms.size() == skeleton->getJointCount())
+			{
+				const Color4ub color(255, 255, 0, 255);
+				const Color4ub colorAlpha(255, 255, 0, 140);
+
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				{
+					const Joint* joint = skeleton->getJoint(i);
+
+					if (bindVisible)
+					{
+						primitiveRenderer->drawLine(
+							jointTransforms[i].translation(),
+							poseTransforms[i].translation(),
+							colorAlpha
+						);
+					}
+
+					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+
+					if (joint->getParent() >= 0)
+					{
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT(parent != nullptr);
+
+						primitiveRenderer->drawLine(
+							poseTransforms[joint->getParent()].translation(),
+							poseTransforms[i].translation(),
+							2.0f,
+							color
+						);
+					}
+				}
+			}
+		}
+
+		primitiveRenderer->popDepthState();
+		primitiveRenderer->popWorld();
 	}
 
 	scene::DefaultComponentEditor::drawGuide(primitiveRenderer);
