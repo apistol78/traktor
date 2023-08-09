@@ -33,8 +33,6 @@ namespace traktor::render
 	namespace
 	{
 
-render::Handle s_handleTargetSize(L"_vk_targetSize");
-
 VkShaderStageFlags getShaderStageFlags(uint8_t resourceStages)
 {
 	VkShaderStageFlags flags = 0;
@@ -121,6 +119,7 @@ bool ProgramVk::create(
 	m_tag = tag;
 	m_renderState = resource->m_renderState;
 	m_shaderHash = resource->m_shaderHash;
+	m_useTargetSize = resource->m_useTargetSize;
 
 	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())
@@ -230,7 +229,13 @@ bool ProgramVk::create(
 	dlci.bindingCount = (uint32_t)dslb.size();
 	dlci.pBindings = dslb.c_ptr();
 
-	if (!pipelineLayoutCache->get(resource->m_layoutHash, dlci, m_descriptorSetLayout, m_pipelineLayout))
+	if (!pipelineLayoutCache->get(
+		resource->m_layoutHash,
+		resource->m_useTargetSize,
+		dlci,
+		m_descriptorSetLayout,
+		m_pipelineLayout
+	))
 		return false;
 
 	// Create uniform buffer CPU side shadow data.
@@ -314,13 +319,17 @@ bool ProgramVk::validate(
 	const float* targetSize
 )
 {
-	// Set implicit parameters; only valid for graphic programs.
-	if (bindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS)
+	// Set implicit parameters.
+	if (m_useTargetSize)
 	{
-		T_ASSERT(targetSize != nullptr);
-		setVectorParameter(
-			s_handleTargetSize,
-			Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f)
+		const float value[4] = { targetSize[0], targetSize[1], 0.0f, 0.0f };
+		vkCmdPushConstants(
+			*commandBuffer,
+			m_pipelineLayout,
+			VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+			0,
+			4 * sizeof(float),
+			value
 		);
 	}
 

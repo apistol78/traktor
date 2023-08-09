@@ -51,6 +51,7 @@ struct GlslRequirements
 {
 	PrecisionHint vertexPrecisionHint = PrecisionHint::Undefined;
 	PrecisionHint fragmentPrecisionHint = PrecisionHint::Undefined;
+	bool useTargetSize = false;
 };
 
 std::wstring T_DLLCLASS glsl_type_name(GlslType type);

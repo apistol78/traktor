@@ -22,7 +22,13 @@ public:
 
 	virtual ~PipelineLayoutCache();
 
-	bool get(uint32_t pipelineHash, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout);
+	bool get(
+		uint32_t pipelineHash,
+		bool useTargetSize,
+		const VkDescriptorSetLayoutCreateInfo& dlci,
+		VkDescriptorSetLayout& outDescriptorSetLayout,
+		VkPipelineLayout& outPipelineLayout
+	);
 
 	VkSampler getSampler(const VkSamplerCreateInfo& sci);
 

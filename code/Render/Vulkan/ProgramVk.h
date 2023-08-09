@@ -157,6 +157,7 @@ private:
 	AlignedVector< SBuffer > m_sbuffers;
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
+	bool m_useTargetSize = false;
 
 	bool validateDescriptorSet();
 

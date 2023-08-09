@@ -315,7 +315,7 @@ public:
 				if (shaderGraph->getDestinationCount(variableNode->findOutputPin(L"Output")) > 0)
 				{
 					const auto& name = variableNode->getName();
-					if (written.find(name) != written.end())
+					if (written.find(name) == written.end())
 						outReport.addError(L"Cannot read local variable \"" + name + L"\" as it's not being written to.");
 				}
 			}

@@ -113,6 +113,8 @@ private:
 	uint32_t m_computeShaderHash = 0;
 	uint32_t m_shaderHash = 0;
 	uint32_t m_layoutHash = 0;
+
+	bool m_useTargetSize = false;
 };
 
 }

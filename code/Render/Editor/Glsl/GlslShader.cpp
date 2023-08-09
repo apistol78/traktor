@@ -231,6 +231,18 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 	else if (m_shaderType == StCompute)
 		stageMask = GlslResource::BsCompute;
 
+	if (requirements.useTargetSize)
+	{
+		ss << L"// Push constants." << Endl;
+		ss << L"layout( push_constant ) uniform constants" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+		ss << L"vec4 _vk_targetSize;" << Endl;
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
 	if (layout.count< GlslUniformBuffer >(stageMask) > 0)
 	{
 		ss << L"// Uniform buffers." << Endl;

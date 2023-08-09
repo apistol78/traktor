@@ -2795,12 +2795,7 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Float2);
 
-	auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbOnce");
-	ub->addStage(getBindStage(cx));
-	if (!ub->add(L"_vk_targetSize", GlslType::Float4, 1))
-		return false;
-
-	cx.addParameter(L"_vk_targetSize", ParameterType::Vector, 1, UpdateFrequency::Once);
+	cx.requirements().useTargetSize = true;
 
 	comment(f, node);
 	assign(f, out) << L"_vk_targetSize.xy;" << Endl;
