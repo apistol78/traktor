@@ -50,7 +50,7 @@ public:
 	explicit Scene(
 		ISceneController* controller,
 		world::Entity* rootEntity,
-		world::WorldRenderSettings* worldRenderSettings
+		const world::WorldRenderSettings* worldRenderSettings
 	);
 
 	explicit Scene(ISceneController* controller, Scene* scene);
@@ -67,12 +67,12 @@ public:
 
 	ISceneController* getController() const;
 
-	world::WorldRenderSettings* getWorldRenderSettings() const;
+	const world::WorldRenderSettings* getWorldRenderSettings() const;
 
 private:
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
-	Ref< world::WorldRenderSettings > m_worldRenderSettings;
+	Ref< const world::WorldRenderSettings > m_worldRenderSettings;
 };
 
 }

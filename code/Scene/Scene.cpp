@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 Scene::Scene(
 	ISceneController* controller,
 	world::Entity* rootEntity,
-	world::WorldRenderSettings* worldRenderSettings
+	const world::WorldRenderSettings* worldRenderSettings
 )
 :	m_rootEntity(rootEntity)
 ,	m_controller(controller)
@@ -72,7 +72,7 @@ ISceneController* Scene::getController() const
 	return m_controller;
 }
 
-world::WorldRenderSettings* Scene::getWorldRenderSettings() const
+const world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
 }
