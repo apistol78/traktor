@@ -720,7 +720,6 @@ void RichEdit::updateScrollBars()
 
 	m_scrollBarV->setRange(lineCount + pageLines);
 	m_scrollBarV->setPage(pageLines);
-	m_scrollBarV->update();
 
 	if (m_widestLineWidth >= rc.getWidth() - m_lineMargin)
 	{
@@ -734,7 +733,7 @@ void RichEdit::updateScrollBars()
 		m_scrollBarH->setVisible(false);
 	}
 
-	m_scrollBarH->update();
+	update();
 }
 
 void RichEdit::updateCharacterWidths()
