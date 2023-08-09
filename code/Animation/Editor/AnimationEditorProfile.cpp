@@ -37,6 +37,7 @@ void AnimationEditorProfile::getGuideDrawIds(
 	outIds.insert(L"Animation.Path");
 	outIds.insert(L"Animation.Skeleton.Bind");
 	outIds.insert(L"Animation.Skeleton.Pose");
+	outIds.insert(L"Animation.Controller");
 }
 
 void AnimationEditorProfile::createEditorPlugins(
