@@ -19,10 +19,8 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SearchControl", SearchControl, ui::Container)
 
@@ -169,5 +167,4 @@ void SearchControl::eventContentChange(ui::ContentChangeEvent* event)
 	}
 }
 
-	}
 }

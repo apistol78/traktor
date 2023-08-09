@@ -1572,13 +1572,26 @@ void RichEdit::eventDoubleClick(MouseDoubleClickEvent* event)
 
 void RichEdit::eventMouseWheel(MouseWheelEvent* event)
 {
-	if (m_scrollBarV->isVisible(false))
+	if ((event->getKeyState() & KsControl) == 0)
 	{
-		int32_t position = m_scrollBarV->getPosition();
-		position -= event->getRotation() * 4;
-		m_scrollBarV->setPosition(position);
-		m_scrollBarV->update();
-		update();
+		if (m_scrollBarV->isVisible(false))
+		{
+			int32_t position = m_scrollBarV->getPosition();
+			position -= event->getRotation() * 4;
+			m_scrollBarV->setPosition(position);
+			m_scrollBarV->update();
+			update();
+		}
+	}
+	else
+	{
+		Font font = getFont();
+		const Unit newSize = font.getSize() + Unit(event->getRotation());
+		if (newSize > 0_ut)
+		{
+			font.setSize(newSize);
+			setFont(font);
+		}
 	}
 }
 

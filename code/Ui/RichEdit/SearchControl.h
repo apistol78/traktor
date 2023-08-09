@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 class ToolBar;
@@ -69,6 +67,4 @@ private:
 	void eventContentChange(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-
