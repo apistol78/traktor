@@ -123,6 +123,7 @@ T_DEFINE_VK(vkGetPipelineCacheData);
 T_DEFINE_VK(vkFreeDescriptorSets);
 T_DEFINE_VK(vkCmdDrawIndirect);
 T_DEFINE_VK(vkCmdDrawIndexedIndirect);
+T_DEFINE_VK(vkCmdPushConstants);
 
 T_DEFINE_VK(vkCreateWin32SurfaceKHR);
 T_DEFINE_VK(vkDestroySurfaceKHR);
@@ -258,6 +259,7 @@ bool initializeVulkanApi()
 	T_RESOLVE_VK(vkFreeDescriptorSets);
 	T_RESOLVE_VK(vkCmdDrawIndirect);
 	T_RESOLVE_VK(vkCmdDrawIndexedIndirect);
+	T_RESOLVE_VK(vkCmdPushConstants);
 	return true;
 }
 

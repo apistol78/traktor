@@ -73,7 +73,7 @@ PipelineLayoutCache::~PipelineLayoutCache()
 		vkDestroySampler(m_logicalDevice, it.second, 0);
 }
 
-bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout)
+bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout)
 {
 	auto it = m_entries.find(pipelineHash);
 	if (it != m_entries.end())
@@ -102,12 +102,24 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, const VkDescriptorSetLayout
 
 		const VkDescriptorSetLayout setLayouts[] = { m_bindlessDescriptorLayout, outDescriptorSetLayout };
 
+		VkPushConstantRange pcr = {};
+		pcr.offset = 0;
+		pcr.size = 4 * sizeof(float);
+		pcr.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
+
 		VkPipelineLayoutCreateInfo lci = {};
 		lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 		lci.setLayoutCount = 2;
 		lci.pSetLayouts = setLayouts;
 		lci.pushConstantRangeCount = 0;
 		lci.pPushConstantRanges = nullptr;
+
+		if (useTargetSize)
+		{
+			lci.pushConstantRangeCount = 1;
+			lci.pPushConstantRanges = &pcr;
+		}
+
 		if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)
 			return false;
 

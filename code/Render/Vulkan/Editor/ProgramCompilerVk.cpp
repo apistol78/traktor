@@ -406,6 +406,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	// Create output resource.
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 	programResource->m_renderState = cx.getRenderState();
+	programResource->m_useTargetSize = cx.requirements().useTargetSize;
 
 	// Generate SPIR-V from program AST.
 	auto vsi = program->getIntermediate(EShLangVertex);
@@ -626,6 +627,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	{
 		Murmur3 checksum;
 		checksum.begin();
+
+		checksum.feed(L"PC");
+		checksum.feed(programResource->m_useTargetSize ? 1 : 0);
 
 		for (int32_t i = 0; i < 3; ++i)
 		{

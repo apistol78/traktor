@@ -108,6 +108,7 @@ extern PFN_vkGetPipelineCacheData vkGetPipelineCacheData;
 extern PFN_vkFreeDescriptorSets vkFreeDescriptorSets;
 extern PFN_vkCmdDrawIndirect vkCmdDrawIndirect;
 extern PFN_vkCmdDrawIndexedIndirect vkCmdDrawIndexedIndirect;
+extern PFN_vkCmdPushConstants vkCmdPushConstants;
 
 // Win32 Vulkan extensions.
 extern PFN_vkCreateWin32SurfaceKHR vkCreateWin32SurfaceKHR;
