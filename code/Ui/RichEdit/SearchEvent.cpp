@@ -8,10 +8,8 @@
  */
 #include "Ui/RichEdit/SearchEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SearchEvent", SearchEvent, ui::Event)
 
@@ -24,5 +22,4 @@ SearchEvent::SearchEvent(
 {
 }
 
-	}
 }

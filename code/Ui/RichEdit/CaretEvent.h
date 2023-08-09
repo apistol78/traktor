@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Move event.
  * \ingroup UI
@@ -31,9 +29,7 @@ class T_DLLCLASS CaretEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	CaretEvent(EventSubject* sender);
+	explicit CaretEvent(EventSubject* sender);
 };
 
-	}
 }
-

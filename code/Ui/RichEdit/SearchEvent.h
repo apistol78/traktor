@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class T_DLLCLASS SearchEvent : public ui::Event
 {
 	T_RTTI_CLASS;
 
 public:
-	SearchEvent(
+	explicit SearchEvent(
 		ui::EventSubject* sender,
 		bool preview
 	);
@@ -41,6 +39,4 @@ private:
 	bool m_preview;
 };
 
-	}
 }
-
