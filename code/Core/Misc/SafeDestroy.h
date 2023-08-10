@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include "Core/RefArray.h"
+
 namespace traktor
 {
 
@@ -24,6 +26,22 @@ void safeDestroy(T& tv)
 		T ttv = tv; tv = nullptr;
 		ttv->destroy();
 	}
+}
+
+/*! Safe destroy call.
+ *
+ * Helper function to reduce code bloat
+ * in common pattern.
+ */
+template < typename T >
+void safeDestroy(RefArray< T >& tvs)
+{
+	for (auto tv : tvs)
+	{
+		if (tv)
+			tv->destroy();
+	}
+	tvs.clear();
 }
 
 /*! Safe close call.
