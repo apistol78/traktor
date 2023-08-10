@@ -78,6 +78,7 @@ bool RagDollPoseController::create(
 	const uint32_t jointCount = skeleton->getJointCount();
 
 	// Create limb dynamic bodies.
+	m_limbs.resize(jointCount);
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
 		Joint* joint = skeleton->getJoint(i);
@@ -86,7 +87,7 @@ bool RagDollPoseController::create(
 		const int32_t parent = joint->getParent();
 		if (parent < 0)
 		{
-			m_limbs.push_back(nullptr);
+			m_limbs[i] = nullptr;
 			continue;
 		}
 
@@ -136,7 +137,7 @@ bool RagDollPoseController::create(
 		}
 		limb->setClusterId(s_clusterId);
 
-		m_limbs.push_back(limb);
+		m_limbs[i] = limb;
 	}
 	T_FATAL_ASSERT(m_limbs.size() == jointCount);
 
@@ -243,20 +244,8 @@ bool RagDollPoseController::create(
 void RagDollPoseController::destroy()
 {
 	safeDestroy(m_trackPoseController);
-
-	for (auto joint : m_joints)
-	{
-		if (joint)
-			joint->destroy();
-	}
-	m_joints.resize(0);
-
-	for (auto limb : m_limbs)
-	{
-		if (limb)
-			limb->destroy();
-	}
-	m_limbs.resize(0);
+	safeDestroy(m_joints);
+	safeDestroy(m_limbs);
 
 	m_deltaLimbs.resize(0);
 	m_deltaTransforms.resize(0);
@@ -265,14 +254,14 @@ void RagDollPoseController::destroy()
 void RagDollPoseController::setTransform(const Transform& transform)
 {
 	// Calculate delta transform since last setTransform.
-	Transform deltaTransform = transform * m_worldTransform.inverse();
+	const Transform deltaTransform = transform * m_worldTransform.inverse();
 
 	// Update all limbs with delta transform.
 	for (auto limb : m_limbs)
 	{
 		if (limb)
 		{
-			Transform limbTransform = limb->getTransform();
+			const Transform limbTransform = limb->getTransform();
 			limb->setTransform(deltaTransform * limbTransform);
 		}
 	}
@@ -318,14 +307,10 @@ bool RagDollPoseController::evaluate(
 	const Transform worldTransformInv = worldTransform.inverse();
 	const uint32_t jointCount = skeleton->getJointCount();
 
-	outPoseTransforms.resize(jointCount);
-
 	// Build pose transforms from limb bodies.
+	outPoseTransforms.resize(jointCount);
 	for (uint32_t i = 0; i < jointCount; ++i)
 	{
-		Joint* joint = skeleton->getJoint(i);
-		T_ASSERT(joint);
-
 		const Transform limbTransform = worldTransformInv * m_deltaLimbs[i]->getTransform();
 		outPoseTransforms[i] = limbTransform * m_deltaTransforms[i];
 	}
