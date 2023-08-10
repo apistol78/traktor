@@ -231,14 +231,25 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 		return false;
 
 	// Sanitize shader graph; remove broken edges etc.
+	int32_t sanitizedCount = 0;
 	RefArray< Edge > edges = m_shaderGraph->getEdges();
 	for (auto edge : edges)
 	{
 		const OutputPin* sourcePin = edge->getSource();
 		const InputPin* destinationPin = edge->getDestination();
 		if (!sourcePin || !destinationPin)
+		{
 			m_shaderGraph->removeEdge(edge);
+			++sanitizedCount;
+		}
+		else if (sourcePin->getNode() == destinationPin->getNode())
+		{
+			m_shaderGraph->removeEdge(edge);
+			++sanitizedCount;
+		}
 	}
+	if (sanitizedCount > 0)
+		log::info << L"Sanitized " << sanitizedCount << L" incorrect data in shader." << Endl;
 
 	m_container = new ui::Container();
 	m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
