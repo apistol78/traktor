@@ -76,7 +76,7 @@ NDC
 			</position>
 			<value>-1, 1, 0, 1</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FA765C2E-6E2C-9645-A6BB-97D6E650073C}</id>
 			<comment/>
 			<position>
@@ -84,9 +84,8 @@ NDC
 				<second>660</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{00395931-E529-AB4E-8200-B1708892049A}</id>
 			<comment/>
 			<position>
@@ -94,14 +93,13 @@ NDC
 				<second>474</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{08CCEE66-2163-D54A-B653-C605FB935C34}</id>
 			<comment/>
 			<position>
-				<first>-1475</first>
-				<second>391</second>
+				<first>-1501</first>
+				<second>429</second>
 			</position>
 			<fragmentGuid>{83C1284E-627A-5E4D-81DD-0C2E5C34EC17}</fragmentGuid>
 			<inputPins>
@@ -208,7 +206,7 @@ NDC
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{BAAF68C0-C43B-5E49-B40B-C8A1302B274F}</id>
 			<comment/>
 			<position>
@@ -216,9 +214,8 @@ NDC
 				<second>906</second>
 			</position>
 			<name>L_NearZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{995EAE16-B2C6-D848-A513-64580950F127}</id>
 			<comment/>
 			<position>
@@ -226,7 +223,6 @@ NDC
 				<second>999</second>
 			</position>
 			<name>L_FarZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{A64A2737-59E9-C445-AAF5-DE3FACC46DCA}</id>
@@ -245,7 +241,7 @@ NDC
 				<second>182</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A780AD98-CCC4-A145-B43D-A8EC3AE3257B}</id>
 			<comment/>
 			<position>
@@ -253,9 +249,8 @@ NDC
 				<second>179</second>
 			</position>
 			<name>L_NearZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D6A9D952-309E-1640-B092-7156698A32D4}</id>
 			<comment/>
 			<position>
@@ -263,9 +258,8 @@ NDC
 				<second>218</second>
 			</position>
 			<name>L_FarZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{50AAA77B-E51F-024C-890A-A611348684D6}</id>
 			<comment/>
 			<position>
@@ -273,9 +267,8 @@ NDC
 				<second>184</second>
 			</position>
 			<name>L_ViewZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{45DEC843-E4BC-C745-A4C0-90E4B61E7D5E}</id>
 			<comment/>
 			<position>
@@ -283,7 +276,6 @@ NDC
 				<second>774</second>
 			</position>
 			<name>L_ViewZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{516466F9-A3BC-DF41-A49A-58FC0FAA9FAF}</id>
@@ -294,7 +286,7 @@ NDC
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4FDE6A56-EE2B-964E-A767-C23C1EA2FFB4}</id>
 			<comment/>
 			<position>
@@ -302,7 +294,6 @@ NDC
 				<second>664</second>
 			</position>
 			<name>L_ViewZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{8ACDF35F-F6A6-BD4D-A0A0-8223C87A9242}</id>
@@ -313,7 +304,7 @@ NDC
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C33C2B0B-8329-0E41-A649-9F00E4FF9D88}</id>
 			<comment/>
 			<position>
@@ -321,7 +312,6 @@ NDC
 				<second>-718</second>
 			</position>
 			<name>L_SliceDistributionExponent</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Pow" version="traktor.render.Node:1">
 			<id>{C548BCE8-C52C-3941-914E-77CB3875059D}</id>
@@ -331,7 +321,7 @@ NDC
 				<second>287</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{69458AA9-E114-414F-BE03-BEC6752B6A5B}</id>
 			<comment/>
 			<position>
@@ -339,7 +329,6 @@ NDC
 				<second>286</second>
 			</position>
 			<name>L_SliceDistributionExponent</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{620D4273-184F-CA46-B90B-0DE4E6BAA5CB}</id>
@@ -360,7 +349,7 @@ NDC
 				<second>-595</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{72062744-61C8-C54F-B4E5-140A44DB6878}</id>
 			<comment/>
 			<position>
@@ -368,9 +357,8 @@ NDC
 				<second>-613</second>
 			</position>
 			<name>L_FogVolumeSize</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F49BD6B5-4658-D942-B3D0-BDE9CBC71668}</id>
 			<comment/>
 			<position>
@@ -378,7 +366,6 @@ NDC
 				<second>464</second>
 			</position>
 			<name>L_FogVolumeSize</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{7A92A631-7E62-D345-9BBB-81EE22D1AF92}</id>
@@ -494,7 +481,7 @@ $Output = fract(sin(sn) * c);
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{75E1712E-1B95-4EF4-BD9D-9C73A64BA49E}</id>
 			<comment/>
 			<position>
@@ -502,22 +489,21 @@ $Output = fract(sin(sn) * c);
 				<second>-12</second>
 			</position>
 			<name>L_ViewPosition</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Iterate2" version="traktor.render.Node:1">
 			<id>{B83ECC7D-0C67-4D95-B530-F22B3097C7FD}</id>
 			<comment/>
 			<position>
-				<first>-936</first>
-				<second>131</second>
+				<first>-950</first>
+				<second>135</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{A55AC5C9-28F5-44E0-B423-DBD582A7A855}</id>
 			<comment/>
 			<position>
-				<first>-1157</first>
-				<second>128</second>
+				<first>-1182</first>
+				<second>131</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -525,8 +511,8 @@ $Output = fract(sin(sn) * c);
 			<id>{542CF808-CD67-044F-A00E-7EDC425F4820}</id>
 			<comment/>
 			<position>
-				<first>-1163</first>
-				<second>176</second>
+				<first>-1187</first>
+				<second>222</second>
 			</position>
 			<fragmentGuid>{AA010A65-F78F-7447-A6BB-8FBE0A238745}</fragmentGuid>
 			<inputPins>
@@ -556,8 +542,8 @@ $Output = fract(sin(sn) * c);
 			<id>{72045BE2-2E7E-D34D-8F47-9195D2959A4C}</id>
 			<comment/>
 			<position>
-				<first>-926</first>
-				<second>407</second>
+				<first>-885</first>
+				<second>532</second>
 			</position>
 		</item>
 		<item type="traktor.render.Normalize" version="traktor.render.Node:1">
@@ -580,8 +566,8 @@ $Output = fract(sin(sn) * c);
 			<id>{16309785-86FE-244B-AD45-C049B74151F2}</id>
 			<comment/>
 			<position>
-				<first>-914</first>
-				<second>620</second>
+				<first>-931</first>
+				<second>750</second>
 			</position>
 		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
@@ -630,18 +616,18 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{F92CF708-FD69-DF40-B1A2-0ED69FE06B53}</id>
 			<comment/>
 			<position>
-				<first>-895</first>
-				<second>517</second>
+				<first>-1096</first>
+				<second>573</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{AE52034D-E4C2-BC4B-A021-78F61C769837}</id>
 			<comment/>
 			<position>
-				<first>-1093</first>
-				<second>521</second>
+				<first>-1295</first>
+				<second>639</second>
 			</position>
-			<value>0.1</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A1E3DF67-45D5-8544-919B-A61DE8D94B16}</id>
@@ -653,6 +639,24 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<parameterName>World_FogVolumeRange</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{CABCE1C2-435F-E146-B2BF-C205562C9359}</id>
+			<comment/>
+			<position>
+				<first>-1132</first>
+				<second>365</second>
+			</position>
+			<swizzle>xyzw</swizzle>
+		</item>
+		<item type="traktor.render.Vector" version="traktor.render.Node:1">
+			<id>{39AEB781-3B7D-AA42-B871-7FF5FA2973BF}</id>
+			<comment/>
+			<position>
+				<first>-1327</first>
+				<second>710</second>
+			</position>
+			<value>1, 1, 1, 1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1058,16 +1062,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[46]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1084,16 +1078,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<destination>
 				<node ref="/object/nodes/item[47]"/>
 				<id>{185EFF9F-C1A0-4090-B5A5-D1ECB2207C1D}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{8994214F-DDF0-9442-82B0-D2970079A48D}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{1FEC3EA7-3529-4990-B0F5-A13751DF2DBA}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1144,16 +1128,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<destination>
 				<node ref="/object/nodes/item[51]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1218,16 +1192,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[51]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[58]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
@@ -1274,6 +1238,56 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{8994214F-DDF0-9442-82B0-D2970079A48D}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{1FEC3EA7-3529-4990-B0F5-A13751DF2DBA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
 			</destination>
 		</item>
 	</edges>
