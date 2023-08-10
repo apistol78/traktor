@@ -76,6 +76,11 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 {
 	if (worldRenderView.getSnapshot())
 		return;
+	if (
+		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_ForwardColor") &&
+		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_DeferredColor")
+	)
+		return;
 
 	auto renderContext = context.getRenderContext();
 
@@ -99,7 +104,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 	const Scalar p11 = worldRenderView.getProjection().get(0, 0);
 	const Scalar p22 = worldRenderView.getProjection().get(1, 1);
 
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
+	//if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
 		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
 

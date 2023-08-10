@@ -144,7 +144,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{42B21C22-F01A-0040-BE9F-72F413A5A080}</id>
 			<comment/>
 			<position>
@@ -152,7 +152,6 @@
 				<second>-825</second>
 			</position>
 			<name>L_ClusterDimXY</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D11D5077-FAAC-994B-AE8D-B5125773359C}</id>
@@ -163,7 +162,7 @@
 			</position>
 			<value>16</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{B9E9CC89-1DD4-2A48-9EEC-811250B99C71}</id>
 			<comment/>
 			<position>
@@ -171,9 +170,8 @@
 				<second>-252</second>
 			</position>
 			<name>L_ClusterDimXY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{19993698-2D43-0040-9B0E-2CBACFA68E10}</id>
 			<comment/>
 			<position>
@@ -181,9 +179,8 @@
 				<second>410</second>
 			</position>
 			<name>L_ClusterDimXY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{68082B6F-7A1A-C943-B47C-34942DB7563C}</id>
 			<comment/>
 			<position>
@@ -191,7 +188,6 @@
 				<second>-753</second>
 			</position>
 			<name>L_ClusterDimZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{15275BC7-F4B3-B84E-BEA2-38190264363C}</id>
@@ -251,7 +247,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{81DA6EA5-52B2-824C-A514-C50EBF594661}</id>
 			<comment/>
 			<position>
@@ -259,9 +255,8 @@
 				<second>-345</second>
 			</position>
 			<name>L_ClusterX</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2E60EA11-A4BD-394E-A6EF-495341F5187D}</id>
 			<comment/>
 			<position>
@@ -269,9 +264,8 @@
 				<second>-263</second>
 			</position>
 			<name>L_ClusterY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{25AF46D2-6E25-7047-9E2F-D904E603EB1D}</id>
 			<comment/>
 			<position>
@@ -279,9 +273,8 @@
 				<second>36</second>
 			</position>
 			<name>L_ClusterZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{291F1147-95D3-C34C-8C7B-590708F46A5B}</id>
 			<comment/>
 			<position>
@@ -289,9 +282,8 @@
 				<second>507</second>
 			</position>
 			<name>L_ClusterZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{8937B69E-EC1D-2847-8582-AD18DC6B4302}</id>
 			<comment/>
 			<position>
@@ -299,9 +291,8 @@
 				<second>329</second>
 			</position>
 			<name>L_ClusterY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A348443F-EE7F-2744-8035-43F42FD6667A}</id>
 			<comment/>
 			<position>
@@ -309,7 +300,6 @@
 				<second>247</second>
 			</position>
 			<name>L_ClusterX</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{A61CBC07-CBC4-A74A-91D4-0E0C39056B9F}</id>
@@ -343,7 +333,7 @@
 				<second>576</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7A798908-363B-5D45-90AB-E885773CB9BA}</id>
 			<comment/>
 			<position>
@@ -351,7 +341,6 @@
 				<second>601</second>
 			</position>
 			<name>L_ClusterDimXY</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{3ED8CC9A-3367-1749-8CD1-3FF2A70EE26F}</id>
@@ -361,7 +350,7 @@
 				<second>340</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0588E91D-EF76-7145-9DDA-5D85862D2AFD}</id>
 			<comment/>
 			<position>
@@ -369,9 +358,8 @@
 				<second>381</second>
 			</position>
 			<name>L_TileOffset</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6397F183-85BA-8240-91AF-4262ED77AC3F}</id>
 			<comment/>
 			<position>
@@ -379,9 +367,8 @@
 				<second>787</second>
 			</position>
 			<name>L_TileOffset</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{909B9727-50F4-47D3-921A-61BB5516CFEC}</id>
 			<comment/>
 			<position>
@@ -389,9 +376,8 @@
 				<second>843</second>
 			</position>
 			<name>L_ClusterDimXY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7ABFD8FD-94D1-4407-8B3D-C1747E7E80C0}</id>
 			<comment/>
 			<position>
@@ -399,7 +385,6 @@
 				<second>886</second>
 			</position>
 			<name>L_ClusterDimZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{AD44F68E-F9D5-4E59-8F5E-D937BF2B3378}</id>
@@ -1053,16 +1038,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1099,6 +1074,16 @@
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 	</edges>
