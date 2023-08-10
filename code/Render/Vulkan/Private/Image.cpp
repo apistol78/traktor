@@ -20,6 +20,7 @@ namespace traktor::render
 	{
 
 static const uint32_t k_bindless_texture_binding = 0;
+static const uint32_t k_bindless_image_binding = 1;
 
 	}
 
@@ -95,8 +96,10 @@ bool Image::createSimple(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	// \fixme shaderStorage
-	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+
 	return true;
 }
 
@@ -160,8 +163,10 @@ bool Image::createCube(
 	m_layerCount = 6;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	// \fixme shaderStorage
-	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+
 	return true;
 }
 
@@ -226,8 +231,10 @@ bool Image::createVolume(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	// \fixme shaderStorage
-	updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+
 	return true;
 }
 
@@ -298,7 +305,7 @@ bool Image::createTarget(
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (swapChainImage == 0)
-		updateBindlessResource(VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	return true;
 }
 
@@ -368,7 +375,7 @@ bool Image::createDepthTarget(
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (usedAsTexture)
-		updateBindlessResource(VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL);
+		updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 	return true;
 }
 
@@ -479,7 +486,7 @@ bool Image::changeLayout(
 	return true;
 }
 
-bool Image::updateBindlessResource(VkImageLayout imageLayout)
+bool Image::updateBindlessResource(int32_t binding, VkImageLayout imageLayout, VkDescriptorType imageType)
 {
 	if (m_resourceIndex == ~0U)
 	{
@@ -501,10 +508,10 @@ bool Image::updateBindlessResource(VkImageLayout imageLayout)
 	write.pNext = nullptr;
 	write.dstSet = m_context->getBindlessDescriptorSet();
 	write.descriptorCount = 1;
-	write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+	write.descriptorType = imageType;
 	write.pImageInfo = &imageInfo;
 	write.dstArrayElement = m_resourceIndex;
-	write.dstBinding = k_bindless_texture_binding;
+	write.dstBinding = binding;
 
 	vkUpdateDescriptorSets(
 		m_context->getLogicalDevice(),

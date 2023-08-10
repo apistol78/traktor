@@ -112,7 +112,7 @@ private:
 	uint32_t m_resourceIndex = ~0U;
 	void* m_locked = nullptr;
 
-	bool updateBindlessResource(VkImageLayout imageLayout);
+	bool updateBindlessResource(int32_t binding, VkImageLayout imageLayout, VkDescriptorType imageType);
 };
 		
 }
