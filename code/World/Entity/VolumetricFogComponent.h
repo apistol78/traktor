@@ -35,6 +35,7 @@ namespace traktor::world
 {
 
 class IWorldRenderPass;
+class VolumetricFogComponentData;
 class WorldBuildContext;
 class WorldRenderView;
 class WorldSetupContext;
@@ -46,7 +47,7 @@ class T_DLLCLASS VolumetricFogComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor, float mediumDensity);
+	explicit VolumetricFogComponent(const VolumetricFogComponentData* data, const resource::Proxy< render::Shader >& shader);
 
 	bool create(render::IRenderSystem* renderSystem);
 
@@ -66,6 +67,8 @@ public:
 
 	float getMaxDistance() const { return m_maxDistance; }
 
+	float getMaxScattering() const { return m_maxScattering; }
+
 	int32_t getSliceCount() const { return m_sliceCount; }
 
 private:
@@ -73,6 +76,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_fogVolumeTexture;
 	float m_maxDistance;
+	float m_maxScattering;
 	int32_t m_sliceCount;
 	Color4f m_mediumColor;
 	float m_mediumDensity;

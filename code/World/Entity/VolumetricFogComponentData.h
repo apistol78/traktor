@@ -61,8 +61,11 @@ public:
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
+	friend class VolumetricFogComponent;
+
 	resource::Id< render::Shader > m_shader;
 	float m_maxDistance = 100.0f;
+	float m_maxScattering = 10.0f;
 	int32_t m_sliceCount = 128;
 	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_mediumDensity = 0.2f;
