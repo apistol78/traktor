@@ -17,19 +17,27 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 #include "World/Entity/VolumetricFogComponent.h"
+#include "World/Entity/VolumetricFogComponentData.h"
 
 namespace traktor::world
 {
+	namespace
+	{
+
+const render::Handle s_techniqueDefault(L"Default");
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogComponent", VolumetricFogComponent, IEntityComponent)
 
-VolumetricFogComponent::VolumetricFogComponent(const resource::Proxy< render::Shader >& shader, float maxDistance, int32_t sliceCount, const Color4f& mediumColor, float mediumDensity)
+VolumetricFogComponent::VolumetricFogComponent(const VolumetricFogComponentData* data, const resource::Proxy< render::Shader >& shader)
 :	m_shader(shader)
-,	m_maxDistance(maxDistance)
-,	m_sliceCount(sliceCount)
-,	m_mediumColor(mediumColor)
-,	m_mediumDensity(mediumDensity)
 {
+	m_maxDistance = data->m_maxDistance;
+	m_maxScattering = data->m_maxScattering;
+	m_sliceCount = data->m_sliceCount;
+	m_mediumColor = data->m_mediumColor;
+	m_mediumDensity = data->m_mediumDensity;
 }
 
 bool VolumetricFogComponent::create(render::IRenderSystem* renderSystem)
@@ -77,8 +85,8 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 	if (worldRenderView.getSnapshot())
 		return;
 	if (
-		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_ForwardColor") &&
-		worldRenderPass.getTechnique() != render::getParameterHandle(L"World_DeferredColor")
+		worldRenderPass.getTechnique() != s_techniqueDeferredColor &&
+		worldRenderPass.getTechnique() != s_techniqueForwardColor
 	)
 		return;
 
@@ -88,7 +96,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		return;
 
 	auto permutation = worldRenderPass.getPermutation(m_shader);
-	permutation.technique = render::getParameterHandle(L"InjectLights");
+	permutation.technique = s_techniqueDefault;
 	auto injectLightsProgram = m_shader->getProgram(permutation);
 	if (!injectLightsProgram)
 		return;

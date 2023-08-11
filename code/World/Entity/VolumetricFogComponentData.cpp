@@ -25,7 +25,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FEDA90CE-25C6-BC4D-
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumetricFogComponentData", 1, VolumetricFogComponentData, IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.VolumetricFogComponentData", 2, VolumetricFogComponentData, IEntityComponentData)
 
 VolumetricFogComponentData::VolumetricFogComponentData()
 :	m_shader(c_defaultShader)
@@ -38,7 +38,7 @@ Ref< VolumetricFogComponent > VolumetricFogComponentData::createComponent(resour
 	if (!resourceManager->bind(m_shader, shader))
 		return nullptr;
 
-	Ref< VolumetricFogComponent > component = new VolumetricFogComponent(shader, m_maxDistance, m_sliceCount, m_mediumColor, m_mediumDensity);
+	Ref< VolumetricFogComponent > component = new VolumetricFogComponent(this, shader);
 	if (component->create(renderSystem))
 		return component;
 	else
@@ -58,8 +58,13 @@ void VolumetricFogComponentData::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"maxDistance", m_maxDistance, AttributeRange(0.0f));
+
+	if (s.getVersion< VolumetricFogComponentData >() >= 2)
+		s >> Member< float >(L"maxScattering", m_maxScattering, AttributeRange(0.0f));
+
 	s >> Member< int32_t >(L"sliceCount", m_sliceCount, AttributeRange(1));
 	s >> Member< Color4f >(L"mediumColor", m_mediumColor);
+
 	if (s.getVersion< VolumetricFogComponentData >() >= 1)
 		s >> Member< float >(L"mediumDensity", m_mediumDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }

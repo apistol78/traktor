@@ -253,7 +253,7 @@ void WorldRendererForward::setupVisualPass(
 				const Vector4 fogRange(
 					viewNearZ,
 					std::min< float >(viewFarZ, fog->getMaxDistance()),
-					0.0f,
+					fog->getMaxScattering(),
 					0.0f
 				);
 
