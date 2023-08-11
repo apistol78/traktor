@@ -18,10 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
+
+class SplineEntityReplicator;
 
 /*!
  * \ingroup Shape
@@ -31,8 +31,6 @@ class T_DLLCLASS SplineEntityPipeline : public world::EntityPipeline
 	T_RTTI_CLASS;
 
 public:
-	SplineEntityPipeline();
-
 	virtual bool create(const editor::IPipelineSettings* settings) override final;
 
 	virtual TypeInfoSet getAssetTypes() const override final;
@@ -54,8 +52,8 @@ public:
 
 private:
 	std::wstring m_assetPath;
-	bool m_targetEditor;
+	bool m_targetEditor = false;
+	Ref< SplineEntityReplicator > m_replicator;
 };
 
-	}
 }
