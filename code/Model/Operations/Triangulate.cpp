@@ -21,6 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Triangulate", Triangulate, IModelOperatio
 bool Triangulate::apply(Model& model) const
 {
 	AlignedVector< Polygon > triangulatedPolygons;
+	Winding3 polygonWinding;
 
 	const auto& polygons = model.getPolygons();
 	triangulatedPolygons.reserve(polygons.size());
@@ -30,8 +31,7 @@ bool Triangulate::apply(Model& model) const
 		const auto& vertices = polygon.getVertices();
 		if (vertices.size() > 3)
 		{
-			Winding3 polygonWinding;
-
+			polygonWinding.resize(0);
 			for (size_t vertex : vertices)
 				polygonWinding.push(model.getVertexPosition((uint32_t)vertex));
 

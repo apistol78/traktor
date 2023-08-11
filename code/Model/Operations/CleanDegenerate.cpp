@@ -29,8 +29,8 @@ bool CleanDegenerate::apply(Model& model) const
 		{
 			for (size_t j = 0; j < vertices.size(); )
 			{
-				uint32_t p0 = model.getVertex(vertices[j]).getPosition();
-				uint32_t p1 = model.getVertex(vertices[(j + 1) % vertices.size()]).getPosition();
+				const uint32_t p0 = model.getVertex(vertices[j]).getPosition();
+				const uint32_t p1 = model.getVertex(vertices[(j + 1) % vertices.size()]).getPosition();
 				if (p0 == p1)
 					vertices.erase(vertices.begin() + j);
 				else
