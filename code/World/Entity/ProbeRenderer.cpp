@@ -314,7 +314,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.createDepthStencil = true;
 		rgtsd.usingPrimaryDepthStencil = false;
 #if !defined(__ANDROID__)
-		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
+		rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
 #else
 		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
 #endif
@@ -376,7 +376,11 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.height = c_faceSize >> mip;
 		rgtsd.createDepthStencil = false;
 		rgtsd.usingPrimaryDepthStencil = false;
-		rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
+#if !defined(__ANDROID__)
+		rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
+#else
+		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
+#endif
 		auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
 
 		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
