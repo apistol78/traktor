@@ -254,7 +254,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 #endif
 			ctcd.mipCount = (int32_t)(log2(ctcd.side ) + 1.0f);
 #if !defined(__ANDROID__)
-			ctcd.format = render::TfR11G11B10F;
+			ctcd.format = render::TfR16G16B16A16F;
 #else
 			ctcd.format = render::TfR8G8B8A8;
 #endif
