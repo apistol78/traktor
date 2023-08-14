@@ -17,12 +17,10 @@
 #include "Json/JsonMember.h"
 #include "Json/JsonObject.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
+	namespace
 	{
-		namespace
-		{
 
 template < typename Encoding >
 class JsonReaderHandler
@@ -30,7 +28,7 @@ class JsonReaderHandler
 public:
 	typedef typename Encoding::Ch Ch;
 
-	JsonReaderHandler(JsonDocument* document)
+	explicit JsonReaderHandler(JsonDocument* document)
 	:	m_document(document)
 	{
 	}
@@ -201,7 +199,7 @@ class JsonStreamStream
 public:
 	typedef typename Encoding::Ch Ch;
 
-	JsonStreamStream(IStream* stream)
+	explicit JsonStreamStream(IStream* stream)
 	:	m_stream(stream)
 	,	m_origin(stream->tell())
 	{
@@ -251,7 +249,7 @@ private:
 	Ch m_peek;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonDocument", JsonDocument, JsonArray)
 
@@ -363,5 +361,4 @@ bool JsonDocument::saveToStream(IStream* stream)
 	return true;
 }
 
-	}
 }

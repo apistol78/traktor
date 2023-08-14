@@ -12,10 +12,8 @@
 #	include "Json/JsonClassFactory.h"
 #	include "Json/JsonDocument.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 extern "C" void __module__Traktor_Json()
 {
@@ -23,7 +21,6 @@ extern "C" void __module__Traktor_Json()
 	T_FORCE_LINK_REF(JsonDocument);
 }
 
-	}
 }
 
 #endif

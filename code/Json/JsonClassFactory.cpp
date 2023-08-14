@@ -15,12 +15,10 @@
 #include "Json/JsonMember.h"
 #include "Json/JsonObject.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
+	namespace
 	{
-		namespace
-		{
 
 const Any& JsonArray_get_1(JsonArray* self, uint32_t index)
 {
@@ -37,7 +35,7 @@ const RefArray< JsonMember >& JsonObject_get_0(JsonObject* self)
 	return self->get();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.json.JsonClassFactory", 0, JsonClassFactory, IRuntimeClassFactory)
 
@@ -86,5 +84,4 @@ void JsonClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classJsonObject);
 }
 
-	}
 }

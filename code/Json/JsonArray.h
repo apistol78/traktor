@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 /*! JSON Array node
  * \ingroup JSON
@@ -63,7 +61,7 @@ public:
 	 *
 	 * \return Number of elements.
 	 */
-	uint32_t size() const { return uint32_t(m_array.size()); }
+	uint32_t size() const { return (uint32_t)m_array.size(); }
 
 	/*! Get value of element at a specified location.
 	 *
@@ -84,6 +82,4 @@ private:
 	AlignedVector< Any > m_array;
 };
 
-	}
 }
-

@@ -13,10 +13,8 @@
 #include "Json/JsonMember.h"
 #include "Json/JsonObject.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonObject", JsonObject, JsonNode)
 
@@ -99,5 +97,4 @@ bool JsonObject::write(OutputStream& os) const
 	return true;
 }
 
-	}
 }
