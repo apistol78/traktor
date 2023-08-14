@@ -64,33 +64,7 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	// Draw node shape.
-	{
-		const Size sz = m_imageNode->getSize(graph);
-
-		const int32_t tw = sz.cx / 3;
-		const int32_t th = sz.cy / 3;
-
-		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
-
-		const int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
-		const int32_t dy[] = { 0, th, rc.getHeight() - th, rc.getHeight() };
-
-		for (int32_t iy = 0; iy < 3; ++iy)
-		{
-			for (int32_t ix = 0; ix < 3; ++ix)
-			{
-				canvas->drawBitmap(
-					rc.getTopLeft() + Size(dx[ix], dy[iy]),
-					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
-					Point(sx[ix], sy[iy]),
-					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
-					m_imageNode,
-					ui::BlendMode::Alpha
-				);
-			}
-		}
-	}
+	canvas->draw9gridBitmap(rc.getTopLeft(), rc.getSize(), m_imageNode, BlendMode::Alpha);
 
 	const std::wstring& comment = node->getComment();
 	if (!comment.empty())

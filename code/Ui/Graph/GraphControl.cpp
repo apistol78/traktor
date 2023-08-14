@@ -1167,6 +1167,7 @@ void GraphControl::eventPaint(PaintEvent* event)
 	}
 
 	GraphCanvas graphCanvas(
+		this,
 		&canvas,
 		m_paintSettings,
 		m_scale
