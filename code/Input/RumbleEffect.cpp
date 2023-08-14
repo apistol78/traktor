@@ -12,12 +12,10 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 struct LF { static float value(const InputRumble& rumble) { return rumble.lowFrequencyRumble; } };
 struct HF { static float value(const InputRumble& rumble) { return rumble.highFrequencyRumble; } };
@@ -68,7 +66,7 @@ private:
 	value_type& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.RumbleEffect", 0, RumbleEffect, ISerializable)
 
@@ -98,5 +96,4 @@ void RumbleEffect::serialize(ISerializer& s)
 		(L"rumbleKeys", m_rumbleKeys);
 }
 
-	}
 }

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Rumble effect.
  * \ingroup Input
@@ -45,6 +43,4 @@ private:
 	std::vector< std::pair< float, InputRumble > > m_rumbleKeys;
 };
 
-	}
 }
-

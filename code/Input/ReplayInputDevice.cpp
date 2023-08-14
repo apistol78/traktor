@@ -9,10 +9,8 @@
 #include "Input/ReplayInputDevice.h"
 #include "Input/RecordInputScript.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ReplayInputDevice", ReplayInputDevice, IInputDevice)
 
@@ -95,5 +93,4 @@ void ReplayInputDevice::setRumble(const InputRumble& rumble)
 {
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Input/RecordInputScript.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RecordInputScript", 0, RecordInputScript, ISerializable)
 
@@ -73,5 +71,4 @@ void RecordInputScript::Input::serialize(ISerializer& s)
 	s >> Member< float >(L"value", value);
 }
 
-	}
 }

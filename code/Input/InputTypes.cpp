@@ -11,21 +11,14 @@
 #include "Core/Thread/CriticalSection.h"
 #include "Input/InputTypes.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 class HandleRegistry
 {
 public:
-	HandleRegistry()
-	:	m_nextUnusedHandle(1)
-	{
-	}
-
 	handle_t getHandle(const std::wstring& name)
 	{
 		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
@@ -46,17 +39,16 @@ public:
 private:
 	CriticalSection m_lock;
 	SmallMap< std::wstring, handle_t > m_handles;
-	handle_t m_nextUnusedHandle;
+	handle_t m_nextUnusedHandle = 1;
 };
 
 HandleRegistry s_handleRegistry;
 
-		}
+	}
 
 handle_t getParameterHandle(const std::wstring& name)
 {
 	return s_handleRegistry.getHandle(name);
 }
 
-	}
 }
