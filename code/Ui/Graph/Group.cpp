@@ -144,37 +144,8 @@ void Group::paint(GraphCanvas* canvas, const Size& offset) const
 	const Rect rcTitle = rc.inflate(-m_owner->pixel(16_ut), -m_owner->pixel(4_ut));
 
 	// Draw group shape.
-	{
-		const int32_t imageIndex = isSelected() ? 1 : 0;
-		const Size sz = m_image[imageIndex]->getSize(m_owner);
-
-		const int32_t tw = sz.cx / 3;
-		const int32_t th = sz.cy / 3;
-
-		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
-
-		const int32_t dw = rc.getWidth();
-		const int32_t dh = rc.getHeight();
-
-		const int32_t dx[] = { 0, tw, dw - tw, dw };
-		const int32_t dy[] = { 0, th, dh - th, dh };
-
-		for (int32_t iy = 0; iy < 3; ++iy)
-		{
-			for (int32_t ix = 0; ix < 3; ++ix)
-			{
-				canvas->drawBitmap(
-					rc.getTopLeft() + Size(dx[ix], dy[iy]),
-					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
-					Point(sx[ix], sy[iy]),
-					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
-					m_image[imageIndex],
-					BlendMode::Alpha
-				);
-			}
-		}
-	}
+	const int32_t imageIndex = isSelected() ? 1 : 0;
+	canvas->draw9gridBitmap(rc.getTopLeft(), rc.getSize(), m_image[imageIndex], BlendMode::Alpha);
 
 	// Draw title.
 	canvas->setFont(canvas->getPaintSettings().getFontGroup());

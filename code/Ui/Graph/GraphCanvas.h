@@ -31,7 +31,7 @@ class GraphCanvas : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit GraphCanvas(Canvas* canvas, const PaintSettings& paintSettings, float scale);
+	explicit GraphCanvas(Widget* owner, Canvas* canvas, const PaintSettings& paintSettings, float scale);
 
 	void setForeground(const Color4ub& foreground);
 
@@ -59,7 +59,10 @@ public:
 
 	const PaintSettings& getPaintSettings() const { return m_paintSettings; }
 
+	void draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitmap* bitmap, BlendMode blendMode);
+
 private:
+	Widget* m_owner;
 	Canvas* m_canvas;
 	const PaintSettings& m_paintSettings;
 	float m_scale;

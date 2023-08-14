@@ -171,38 +171,10 @@ void DefaultNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	const int32_t textHeight = graph->pixel(settings.getFont().getSize() + 4_ut);
 
 	// Draw node shape.
-	{
-		const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
-		const Size sz = m_imageNode[imageIndex]->getSize(graph);
+	const int32_t imageIndex = (node->isSelected() ? 1 : 0) + (node->getState() ? 2 : 0);
+	canvas->draw9gridBitmap(rc.getTopLeft(), rc.getSize(), m_imageNode[imageIndex], BlendMode::Alpha);
 
-		const int32_t tw = sz.cx / 3;
-		const int32_t th = sz.cy / 3;
-
-		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
-
-		const int32_t dw = rc.getWidth() - dim.marginWidth * 2;
-		const int32_t dh = rc.getHeight();
-
-		const int32_t dx[] = { 0, tw, dw - tw, dw };
-		const int32_t dy[] = { 0, th, dh - th, dh };
-
-		for (int32_t iy = 0; iy < 3; ++iy)
-		{
-			for (int32_t ix = 0; ix < 3; ++ix)
-			{
-				canvas->drawBitmap(
-					rc.getTopLeft() + Size(dim.marginWidth, 0) + Size(dx[ix], dy[iy]),
-					Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
-					Point(sx[ix], sy[iy]),
-					Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
-					m_imageNode[imageIndex],
-					BlendMode::Alpha
-				);
-			}
-		}
-	}
-
+	// Draw text.
 	int32_t top = rc.top + (int32_t)(dim.marginHeight + dim.topMargin);
 
 	const std::wstring& title = node->getTitle();

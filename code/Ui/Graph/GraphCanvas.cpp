@@ -9,6 +9,7 @@
 #include <cmath>
 #include "Core/Math/Const.h"
 #include "Ui/Canvas.h"
+#include "Ui/IBitmap.h"
 #include "Ui/Graph/GraphCanvas.h"
 
 namespace traktor
@@ -61,8 +62,9 @@ Rect operator * (const Rect& rc, float scale)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GraphCanvas", GraphCanvas, Object)
 
-GraphCanvas::GraphCanvas(Canvas* canvas, const PaintSettings& paintSettings, float scale)
-:	m_canvas(canvas)
+GraphCanvas::GraphCanvas(Widget* owner, Canvas* canvas, const PaintSettings& paintSettings, float scale)
+:	m_owner(owner)
+,	m_canvas(canvas)
 ,	m_paintSettings(paintSettings)
 ,	m_scale(scale)
 {
@@ -174,6 +176,50 @@ void GraphCanvas::drawText(const Rect& rc, const std::wstring& text, Align halig
 Size GraphCanvas::getTextExtent(const std::wstring& text) const
 {
 	return m_canvas->getFontMetric().getExtent(text) / m_scale;
+}
+
+void GraphCanvas::draw9gridBitmap(const Point& dstAt, const Size& dstSize, IBitmap* bitmap, BlendMode blendMode)
+{
+	const Size sz = bitmap->getSize(m_owner);
+
+	const Point sdstAt(
+		(int32_t)std::floor(dstAt.x * m_scale),
+		(int32_t)std::floor(dstAt.y * m_scale)
+	);
+	const Size sdstSize(
+		(int32_t)std::floor(dstSize.cx * m_scale + 1.0f),
+		(int32_t)std::floor(dstSize.cy * m_scale + 1.0f)
+	);
+
+	const int32_t tw = sz.cx / 3;
+	const int32_t th = sz.cy / 3;
+
+	const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
+	const int32_t sy[] = { 0, th, sz.cy - th, sz.cy };
+
+	const int32_t dw = sdstSize.cx;
+	const int32_t dh = sdstSize.cy;
+
+	const int32_t stw = (int32_t)std::floor(tw * m_scale);
+	const int32_t sth = (int32_t)std::floor(th * m_scale);
+
+	const int32_t dx[] = { 0, stw, dw - stw, dw };
+	const int32_t dy[] = { 0, sth, dh - sth, dh };
+
+	for (int32_t iy = 0; iy < 3; ++iy)
+	{
+		for (int32_t ix = 0; ix < 3; ++ix)
+		{
+			m_canvas->drawBitmap(
+				sdstAt + Size(dx[ix], dy[iy]),
+				Size(dx[ix + 1] - dx[ix], dy[iy + 1] - dy[iy]),
+				Point(sx[ix], sy[iy]),
+				Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
+				bitmap,
+				BlendMode::Alpha
+			);
+		}
+	}
 }
 
 	}
