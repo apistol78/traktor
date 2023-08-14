@@ -8,8 +8,9 @@
  */
 #include "Core/Math/MathUtils.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Input/RecordInputScript.h"
 
 namespace traktor::input
@@ -19,7 +20,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RecordInputScript", 0, RecordInpu
 
 void RecordInputScript::addInputValue(uint32_t frame, int control, float value)
 {
-	std::vector< Input >& data = m_data[control];
+	AlignedVector< Input >& data = m_data[control];
 	if (!data.empty() && data.back().value == value)
 	{
 		data.back().end = frame;
@@ -29,13 +30,12 @@ void RecordInputScript::addInputValue(uint32_t frame, int control, float value)
 	data.push_back(input);
 }
 
-float RecordInputScript::getInputValue(uint32_t frame, int control)
+float RecordInputScript::getInputValue(uint32_t frame, int control) const
 {
-	std::vector< Input >& data = m_data[control];
-	for (std::vector< Input >::iterator i = data.begin(); i != data.end(); ++i)
+	for (const auto& data : m_data[control])
 	{
-		if (frame >= i->start && frame <= i->end)
-			return i->value;
+		if (frame >= data.start && frame <= data.end)
+			return data.value;
 	}
 	return 0.0f;
 }
@@ -43,21 +43,21 @@ float RecordInputScript::getInputValue(uint32_t frame, int control)
 uint32_t RecordInputScript::getLastFrame() const
 {
 	uint32_t last = 0;
-	for (std::map< int, std::vector< Input > >::const_iterator i = m_data.begin(); i != m_data.end(); ++i)
+	for (auto it : m_data)
 	{
-		if (!i->second.empty())
-			last = max(last, i->second.back().end);
+		if (!it.second.empty())
+			last = max(last, it.second.back().end);
 	}
 	return last;
 }
 
 void RecordInputScript::serialize(ISerializer& s)
 {
-	s >> MemberStlMap<
+	s >> MemberSmallMap<
 		int,
-		std::vector< Input >,
+		AlignedVector< Input >,
 		Member< int >,
-		MemberStlVector<
+		MemberAlignedVector<
 			Input,
 			MemberComposite< Input >
 		>

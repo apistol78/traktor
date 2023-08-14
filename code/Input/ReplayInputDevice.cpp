@@ -14,7 +14,7 @@ namespace traktor::input
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.ReplayInputDevice", ReplayInputDevice, IInputDevice)
 
-ReplayInputDevice::ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop)
+ReplayInputDevice::ReplayInputDevice(IInputDevice* inputDevice, const RecordInputScript* inputScript, bool loop)
 :	m_inputDevice(inputDevice)
 ,	m_inputScript(inputScript)
 ,	m_loop(loop)

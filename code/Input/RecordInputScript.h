@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include <map>
-#include <vector>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -33,7 +32,7 @@ class T_DLLCLASS RecordInputScript : public ISerializable
 public:
 	void addInputValue(uint32_t frame, int control, float value);
 
-	float getInputValue(uint32_t frame, int control);
+	float getInputValue(uint32_t frame, int control) const;
 
 	uint32_t getLastFrame() const;
 
@@ -49,7 +48,7 @@ private:
 		void serialize(ISerializer& s);
 	};
 
-	std::map< int, std::vector< Input > > m_data;
+	SmallMap< int, AlignedVector< Input > > m_data;
 };
 
 }

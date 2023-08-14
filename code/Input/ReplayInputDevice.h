@@ -33,7 +33,7 @@ class T_DLLCLASS ReplayInputDevice : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	explicit ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
+	explicit ReplayInputDevice(IInputDevice* inputDevice, const RecordInputScript* inputScript, bool loop);
 
 	virtual std::wstring getName() const override final;
 
@@ -65,7 +65,7 @@ public:
 
 private:
 	Ref< IInputDevice > m_inputDevice;
-	Ref< RecordInputScript > m_inputScript;
+	Ref< const RecordInputScript > m_inputScript;
 	bool m_loop;
 	uint32_t m_frame;
 };
