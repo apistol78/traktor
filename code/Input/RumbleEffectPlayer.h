@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class RumbleEffect;
 class IInputDevice;
@@ -37,8 +35,6 @@ class T_DLLCLASS RumbleEffectPlayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	RumbleEffectPlayer();
-
 	virtual void play(RumbleEffect* effect, IInputDevice* targetDevice);
 
 	virtual void stop(RumbleEffect* effect, IInputDevice* targetDevice);
@@ -59,10 +55,8 @@ private:
 		bool operator == (const PlayingEffect& other) const;
 	};
 
-	float m_totalTime;
+	float m_totalTime = 0.0f;
 	std::list< PlayingEffect > m_playingEffects;
 };
 
-	}
 }
-

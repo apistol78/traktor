@@ -35,10 +35,8 @@
 #	include "Input/Binding/InTrigger.h"
 #	include "Input/Binding/KeyboardInputSourceData.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 extern "C" void __module__Traktor_Input()
 {
@@ -69,7 +67,6 @@ extern "C" void __module__Traktor_Input()
 	T_FORCE_LINK_REF(KeyboardInputSourceData);
 }
 
-	}
 }
 
 #endif

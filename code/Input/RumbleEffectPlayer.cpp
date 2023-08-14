@@ -11,17 +11,10 @@
 #include "Input/RumbleEffect.h"
 #include "Input/IInputDevice.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RumbleEffectPlayer", RumbleEffectPlayer, Object)
-
-RumbleEffectPlayer::RumbleEffectPlayer()
-:	m_totalTime(0.0f)
-{
-}
 
 void RumbleEffectPlayer::play(RumbleEffect* effect, IInputDevice* targetDevice)
 {
@@ -78,5 +71,4 @@ bool RumbleEffectPlayer::PlayingEffect::operator == (const PlayingEffect& other)
 	return effect == other.effect && targetDevice == other.targetDevice;
 }
 
-	}
 }

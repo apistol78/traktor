@@ -10,10 +10,8 @@
 #include "Input/RumbleEffect.h"
 #include "Input/RumbleEffectFactory.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RumbleEffectFactory", RumbleEffectFactory, resource::IResourceFactory)
 
@@ -37,5 +35,4 @@ Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceMa
 	return instance->getObject< RumbleEffect >();
 }
 
-	}
 }

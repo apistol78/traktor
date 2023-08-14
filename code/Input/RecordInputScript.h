@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*!
  * \ingroup Input
@@ -54,6 +52,4 @@ private:
 	std::map< int, std::vector< Input > > m_data;
 };
 
-	}
 }
-

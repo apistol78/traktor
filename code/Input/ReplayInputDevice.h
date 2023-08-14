@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class RecordInputScript;
 
@@ -35,7 +33,7 @@ class T_DLLCLASS ReplayInputDevice : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
+	explicit ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
 
 	virtual std::wstring getName() const override final;
 
@@ -72,6 +70,4 @@ private:
 	uint32_t m_frame;
 };
 
-	}
 }
-

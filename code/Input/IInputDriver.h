@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class IInputDevice;
 
@@ -80,6 +78,4 @@ public:
 	virtual UpdateResult update() = 0;
 };
 
-	}
 }
-

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Input control type.
  * \ingroup Input
@@ -266,6 +264,4 @@ typedef uint32_t handle_t;
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
-	}
 }
-

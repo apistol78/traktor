@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 /*! Input device base.
  * \ingroup Input
@@ -179,6 +177,4 @@ public:
 	virtual void setExclusive(bool exclusive) = 0;
 };
 
-	}
 }
-

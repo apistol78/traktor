@@ -18,12 +18,10 @@
 #include "Input/Binding/InputMapping.h"
 #include "Input/Binding/InputState.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 handle_t anyHandle(const Any& id)
 {
@@ -35,7 +33,7 @@ handle_t anyHandle(const Any& id)
 
 int32_t input_IInputDevice_getCategory(IInputDevice* self)
 {
-	return int32_t(self->getCategory());
+	return (int32_t)self->getCategory();
 }
 
 std::vector< float > input_IInputDevice_getControlRange(IInputDevice* self, int32_t control)
@@ -150,7 +148,7 @@ bool input_InputMapping_hasStateChanged(InputMapping* self, const Any& id)
 	return self->hasStateChanged(anyHandle(id));
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputClassFactory", 0, InputClassFactory, IRuntimeClassFactory)
 
@@ -231,5 +229,4 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classInputState);
 }
 
-	}
 }
