@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 class JsonMember;
 
@@ -140,6 +138,4 @@ private:
 	RefArray< JsonMember > m_members;
 };
 
-	}
 }
-

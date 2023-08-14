@@ -9,10 +9,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Json/JsonMember.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonMember", JsonMember, JsonNode)
 
@@ -63,5 +61,4 @@ bool JsonMember::write(OutputStream& os) const
 	return true;
 }
 
-	}
 }

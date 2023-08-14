@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 /*! JSON named member.
  * \ingroup JSON
@@ -58,6 +56,4 @@ private:
 	Any m_value;
 };
 
-	}
 }
-

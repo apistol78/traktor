@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 /*! JSON document.
  * \ingroup JSON
@@ -69,6 +67,4 @@ public:
 	bool saveToStream(IStream* stream);
 };
 
-	}
 }
-

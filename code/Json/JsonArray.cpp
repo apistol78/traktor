@@ -9,10 +9,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Json/JsonArray.h"
 
-namespace traktor
+namespace traktor::json
 {
-	namespace json
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.json.JsonArray", JsonArray, JsonNode)
 
@@ -75,5 +73,4 @@ bool JsonArray::write(OutputStream& os) const
 	return true;
 }
 
-	}
 }

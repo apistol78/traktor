@@ -23,8 +23,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace json
-	{
+}
+
+namespace traktor::json
+{
 
 /*! JSON abstract node.
  * \ingroup JSON
@@ -42,6 +44,4 @@ public:
 	virtual bool write(OutputStream& os) const = 0;
 };
 
-	}
 }
-
