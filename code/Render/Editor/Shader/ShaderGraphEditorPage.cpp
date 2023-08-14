@@ -147,7 +147,7 @@ const wchar_t* c_uniformFrequencyNames[] =
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(db::Database* db)
+	explicit FragmentReaderAdapter(db::Database* db)
 	:	m_db(db)
 	{
 	}
@@ -655,7 +655,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 				);
 
 				// Move all new nodes to center of view.
-				ui::UnitRect bounds(0_ut, 0_ut, 0_ut, 0_ut);
+				ui::UnitRect bounds(65535_ut, 65535_ut, -65535_ut, -65535_ut);
 				for (auto node : editorNodes)
 				{
 					ui::UnitRect rc = node->calculateRect();
@@ -665,14 +665,14 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 					bounds.bottom = std::max(bounds.bottom, rc.bottom);
 				}
 
-				const ui::Rect rcClient = m_editorGraph->getInnerRect();
-				const ui::UnitPoint center = m_editorGraph->unit(m_editorGraph->clientToVirtual(rcClient.getCenter()));
+				const ui::Point mousePosition = m_editorGraph->clientToVirtual(m_editorGraph->getMousePosition());
+				const ui::UnitPoint pastePosition = m_editorGraph->unit(mousePosition);
 
 				for (auto node : editorNodes)
 				{
 					ui::UnitPoint position = node->getPosition();
-					position.x = center.x + position.x - bounds.left - bounds.getWidth() / 2_ut;
-					position.y = center.y + position.y - bounds.top - bounds.getHeight() / 2_ut;
+					position.x = position.x - bounds.left + pastePosition.x - bounds.getWidth() / 2_ut;
+					position.y = position.y - bounds.top + pastePosition.y - bounds.getHeight() / 2_ut;
 					node->setPosition(position);
 
 					Node* shaderNode = node->getData< Node >(L"SHADERNODE");
@@ -1104,10 +1104,7 @@ void ShaderGraphEditorPage::editScript(Script* script)
 
 void ShaderGraphEditorPage::createEditorGraph()
 {
-	Guid scriptId;
-
-	if (m_script)
-		scriptId = m_script->getId();
+	const Guid scriptId = m_script ? m_script->getId() : Guid();
 
 	editScript(nullptr);
 
@@ -1323,7 +1320,6 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Update uniforms grid.
 	m_uniformsGrid->removeAllRows();
-
 	for (auto node : m_shaderGraph->getNodes())
 	{
 		if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
@@ -1348,7 +1344,6 @@ void ShaderGraphEditorPage::updateGraph()
 
 	// Update ports grid.
 	m_portsGrid->removeAllRows();
-
 	for (auto node : m_shaderGraph->getNodes())
 	{
 		if (InputPort* inputPortNode = dynamic_type_cast< InputPort* >(node))
@@ -1384,6 +1379,7 @@ void ShaderGraphEditorPage::updateGraph()
 		m_nodeCountGrid->addRow(row);
 	}
 
+	// Determine type of shader graph.
 	ShaderGraphValidator validator(m_shaderGraph);
 	const auto graphType = validator.estimateType();
 
