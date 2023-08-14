@@ -207,7 +207,7 @@ bool ScenePipeline::buildOutput(
 
 		pipelineBuilder->getProfiler()->begin(type_of(spo));
 		bool result = spo->build(pipelineBuilder, operationData, sourceInstance, sceneAsset, rebuild);
-		pipelineBuilder->getProfiler()->end(type_of(spo));
+		pipelineBuilder->getProfiler()->end();
 
 		if (!result)
 			return false;

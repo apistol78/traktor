@@ -552,7 +552,7 @@ bool ShaderPipeline::buildOutput(
 								errors.push_back({ jobError, techniqueName, combination, resolvedGraph, combinationGraph, programGraph });
 						}
 
-						pipelineBuilder->getProfiler()->end(type_of(programCompiler));
+						pipelineBuilder->getProfiler()->end();
 						return programResource;
 					}
 				);

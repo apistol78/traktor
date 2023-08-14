@@ -919,7 +919,7 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Compressing texture..." << Endl;
 		pipelineBuilder->getProfiler()->begin(type_of(compressor));
 		compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
-		pipelineBuilder->getProfiler()->end(type_of(compressor));
+		pipelineBuilder->getProfiler()->end();
 
 		streamData->close();
 
@@ -1087,7 +1087,7 @@ bool TextureOutputPipeline::buildOutput(
 			log::info << L"Compressing texture..." << Endl;
 			pipelineBuilder->getProfiler()->begin(type_of(compressor));
 			compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
-			pipelineBuilder->getProfiler()->end(type_of(compressor));
+			pipelineBuilder->getProfiler()->end();
 		}
 
 		streamData->close();

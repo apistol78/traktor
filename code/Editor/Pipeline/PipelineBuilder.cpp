@@ -413,7 +413,7 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 
 	m_profiler->begin(*pipelineType);
 	Ref< ISerializable > product = pipeline->buildProduct(this, sourceInstance, sourceAsset, buildParams);
-	m_profiler->end(*pipelineType);
+	m_profiler->end();
 	if (!product)
 		return nullptr;
 
@@ -466,7 +466,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 		PdfBuild | PdfForceAdd
 	);
 	pipelineDepends.waitUntilFinished();
-	m_profiler->end(type_of< PipelineDependsIncremental >());
+	m_profiler->end();
 
 	// Get ad-hoc asset dependency.
 	const uint32_t index = dependencySet.get(outputGuid);
@@ -575,7 +575,7 @@ bool PipelineBuilder::buildAdHocOutput(const ISerializable* sourceAsset, const s
 			(index == i) ? buildParams : nullptr,
 			PbrSourceModified
 		);
-		m_profiler->end(*dependency->pipelineType);
+		m_profiler->end();
 		m_adHocDepth--;
 
 		if (result && m_cache && pipeline->shouldCache() && cachePermitted)
@@ -716,10 +716,14 @@ db::Database* PipelineBuilder::getSourceDatabase() const
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
+	Ref< const ISerializable > object;
 	if (instanceGuid.isNotNull())
-		return m_instanceCache->getObjectReadOnly(instanceGuid);
-	else
-		return nullptr;
+	{
+		m_profiler->begin(L"PipelineBuilder::getObjectReadOnly");
+		object = m_instanceCache->getObjectReadOnly(instanceGuid);
+		m_profiler->end();
+	}
+	return object;
 }
 
 DataAccessCache* PipelineBuilder::getDataAccessCache() const
@@ -830,7 +834,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(
 		buildParams,
 		reason
 	);
-	m_profiler->end(*dependency->pipelineType);
+	m_profiler->end();
 
 	if (result)
 		m_succeededBuilt++;
@@ -881,8 +885,8 @@ bool PipelineBuilder::putInstancesInCache(
 ) const
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=]() { m_profiler->begin(type_of(cache)); },
-		[=]() { m_profiler->end(type_of(cache)); }
+		[=]() { m_profiler->begin(L"PipelineBuilder::putInstancesInCache"); },
+		[=]() { m_profiler->end(); }
 	);
 
 	Ref< IStream > stream = cache->put(key.guid, key.hash);
@@ -941,8 +945,8 @@ bool PipelineBuilder::getInstancesFromCache(
 ) const
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[=]() { m_profiler->begin(type_of(cache)); },
-		[=]() { m_profiler->end(type_of(cache)); }
+		[=]() { m_profiler->begin(L"PipelineBuilder::getInstancesFromCache"); },
+		[=]() { m_profiler->end(); }
 	);
 
 	struct DirectoryEntry
