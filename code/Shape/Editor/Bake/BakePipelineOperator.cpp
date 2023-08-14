@@ -699,7 +699,7 @@ bool BakePipelineOperator::build(
 						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Visual);
-							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
+							pipelineBuilder->getProfiler()->end();
 							if (!model)
 								return nullptr;
 
@@ -730,7 +730,7 @@ bool BakePipelineOperator::build(
 						[&]() -> Ref< model::Model > {
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
-							pipelineBuilder->getProfiler()->end(type_of(entityReplicator));
+							pipelineBuilder->getProfiler()->end();
 							return model;
 						}
 					);

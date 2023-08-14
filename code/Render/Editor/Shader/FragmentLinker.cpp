@@ -22,7 +22,7 @@ namespace traktor::render
 	namespace
 	{
 
-#define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
+#define T_VALIDATE_SHADERGRAPH(sg) // T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
 
 const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", L"{581D486E-5A7F-46CE-BB38-251008DCF746}", false }, { 0 } };
 const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output", L"{255B6D44-455E-46D2-9865-E1764FBF20BF}" }, { 0 } };

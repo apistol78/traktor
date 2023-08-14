@@ -68,20 +68,18 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	const std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
 
 	// Read from cache; discard cached item if not matching time stamp.
-	Ref< IStream > stream = FileSystem::getInstance().open(cachedPathName, File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(cachedPathName, File::FmRead | File::FmMapped);
 	if (stream)
 	{
 		uint64_t cachedLastModifyDate = 0;
 		uint32_t cachedHash = 0;
 
-		BufferedStream bufferedStream(stream);
-
-		Reader(&bufferedStream) >> cachedLastModifyDate;
-		Reader(&bufferedStream) >> cachedHash;
+		Reader(stream) >> cachedLastModifyDate;
+		Reader(stream) >> cachedHash;
 
 		if (cachedLastModifyDate == lastModifyDate)
 		{
-			Ref< ISerializable > object = BinarySerializer(&bufferedStream).readObject();
+			Ref< ISerializable > object = BinarySerializer(stream).readObject();
 			if (object)
 			{
 				m_readCache[instanceGuid].object = object;
@@ -90,7 +88,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 			}
 		}
 
-		bufferedStream.close();
+		stream->close();
 		stream = nullptr;
 	}
 

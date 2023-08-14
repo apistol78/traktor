@@ -32,7 +32,7 @@ void PipelineProfiler::begin(const wchar_t* const id)
 	m_scope.set(current);
 }
 
-void PipelineProfiler::end(const wchar_t* const id)
+void PipelineProfiler::end()
 {
 	Scope* current = (Scope*)m_scope.get();
 	m_scope.set(current->parent);
@@ -46,14 +46,14 @@ void PipelineProfiler::end(const wchar_t* const id)
 
 	{
 		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
-		auto it = m_durations.find(id);
+		auto it = m_durations.find(current->id);
 		if (it != m_durations.end())
 		{
 			it->second.count++;
 			it->second.seconds += exclusive;
 		}
 		else
-			m_durations.insert(id, { 1, exclusive });
+			m_durations.insert(current->id, { 1, exclusive });
 	}
 
 	s_allocScope.free(current);

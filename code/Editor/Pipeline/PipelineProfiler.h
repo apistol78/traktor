@@ -46,11 +46,9 @@ public:
 
 	void begin(const wchar_t* const id);
 
-	void end(const wchar_t* const id);
-
 	void begin(const TypeInfo& pipelineType) { begin(pipelineType.getName()); }
 
-	void end(const TypeInfo& pipelineType) { end(pipelineType.getName()); }
+	void end();
 
 	const SmallMap< const wchar_t*, Duration >& getDurations() const { return m_durations; }
 

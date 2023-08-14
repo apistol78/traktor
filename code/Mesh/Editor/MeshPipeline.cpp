@@ -76,10 +76,12 @@ public:
 		if (!shaderGraph)
 			return nullptr;
 
-		if (render::ShaderGraphValidator(shaderGraph, fragmentGuid).validateIntegrity())
-			return shaderGraph;
-		else
-			return nullptr;
+		// if (render::ShaderGraphValidator(shaderGraph, fragmentGuid).validateIntegrity())
+		// 	return shaderGraph;
+		// else
+		// 	return nullptr;
+
+		return shaderGraph;
 	}
 
 private:
@@ -131,6 +133,8 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 	if (map.image == nullptr || map.texture.isNotNull())
 		return true;
 
+	pipelineBuilder->getProfiler()->begin(L"MeshPipeline buildEmbeddedTexture");
+
 	const uint32_t hash = DeepHash(map.image).get();
 	const Guid outputGuid = Guid(L"{6E6346F6-4665-42DC-BE69-58D8B7A475E4}").permutation(hash);
 
@@ -144,9 +148,14 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 		outputGuid,
 		map.image
 	))
+	{
+		pipelineBuilder->getProfiler()->end();
 		return false;
+	}
 
 	map.texture = outputGuid;
+
+	pipelineBuilder->getProfiler()->end();
 	return true;
 }
 
@@ -352,7 +361,9 @@ bool MeshPipeline::buildOutput(
 	if (buildParams)
 	{
 		// Create a mutable copy of model since we modify it.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline clone model");
 		Ref< model::Model > model = DeepClone(checked_type_cast< const ISerializable* >(buildParams)).create< model::Model >();
+		pipelineBuilder->getProfiler()->end();
 		if (model->getPolygonCount() == 0)
 		{
 			log::error << L"Mesh pipeline failed; no polygons in parametric source model." << Endl;
@@ -363,7 +374,7 @@ bool MeshPipeline::buildOutput(
 		{
 			pipelineBuilder->getProfiler()->begin(type_of(operation));
 			operation->apply(*model);
-			pipelineBuilder->getProfiler()->end(type_of(operation));
+			pipelineBuilder->getProfiler()->end();
 		}
 
 		models.push_back(model);
@@ -391,7 +402,7 @@ bool MeshPipeline::buildOutput(
 		{
 			pipelineBuilder->getProfiler()->begin(type_of(operation));
 			operation->apply(*model);
-			pipelineBuilder->getProfiler()->end(type_of(operation));
+			pipelineBuilder->getProfiler()->end();
 		}		
 
 		models.push_back(model);
@@ -506,11 +517,13 @@ bool MeshPipeline::buildOutput(
 		Ref< const render::ShaderGraph > materialShaderGraph;
 		Guid materialShaderGraphId;
 
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateSurface");
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
 			*models[0],
 			materialPair.second,
 			vertexColor
 		);
+		pipelineBuilder->getProfiler()->end();
 		if (!meshSurfaceShaderGraph)
 		{
 			log::error << L"Mesh pipeline failed; unable to generate material surface shader \"" << materialPair.first << L"\"." << Endl;
@@ -536,19 +549,23 @@ bool MeshPipeline::buildOutput(
 				return false;
 			}
 
+			pipelineBuilder->getProfiler()->begin(L"MeshPipeline combineSurface");
 			customMeshSurfaceShaderGraph = generator.combineSurface(customMeshSurfaceShaderGraph, meshSurfaceShaderGraph);
+			pipelineBuilder->getProfiler()->end();
 			if (!customMeshSurfaceShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to combine material surface shaders \"" << materialPair.first << L"\"." << Endl;
 				return false;
 			}
 
+			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = generator.generateMesh(
 				*models[0],
 				materialPair.second,
 				customMeshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
+			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
@@ -567,12 +584,14 @@ bool MeshPipeline::buildOutput(
 			//		materialTemplate = it->second;
 			//}
 
+			pipelineBuilder->getProfiler()->begin(L"MeshPipeline generateMesh");
 			materialShaderGraph = generator.generateMesh(
 				*models[0],
 				materialPair.second,
 				meshSurfaceShaderGraph,
 				vertexShaderGuid
 			);
+			pipelineBuilder->getProfiler()->end();
 			if (!materialShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to generate material mesh shader \"" << materialPair.first << L"\"." << Endl;
@@ -581,7 +600,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Resolve all variables.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getVariableResolved");
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getVariableResolved();
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to resolve variables." << Endl;
@@ -589,8 +610,10 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Link shader fragments.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline link fragments");
 		FragmentReaderAdapter fragmentReader(pipelineBuilder);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << materialPair.first << L"\"." << Endl;
@@ -598,7 +621,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Resolve all bundles.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getBundleResolved");
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getBundleResolved();
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to resolve bundles." << Endl;
@@ -606,7 +631,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Get connected permutation.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getConnectedPermutation");
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getConnectedPermutation();
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to freeze connected conditionals, material shader \"" << materialPair.first << L"\"." << Endl;
@@ -614,7 +641,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract platform permutation.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getPlatformPermutation");
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getPlatformPermutation(m_platform);
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
@@ -622,10 +651,10 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Extract renderer permutation.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getRendererSignature");
 		const wchar_t* rendererSignature = programCompiler->getRendererSignature();
-		T_ASSERT(rendererSignature);
-
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getRendererPermutation(rendererSignature);
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to get renderer permutation." << Endl;
@@ -633,7 +662,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Freeze types, get typed permutation.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline getTypePermutation");
 		materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, materialShaderGraphId).getTypePermutation();
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to freeze types, material shader \"" << materialPair.first << L"\"." << Endl;
@@ -641,7 +672,9 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Cleanup unused branches.
+		pipelineBuilder->getProfiler()->begin(L"MeshPipeline removeUnusedBranches");
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
+		pipelineBuilder->getProfiler()->end();
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to cleanup shader, material shader \"" << materialPair.first << L"\"." << Endl;

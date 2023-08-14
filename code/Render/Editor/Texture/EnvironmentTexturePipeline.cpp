@@ -271,7 +271,7 @@ bool EnvironmentTexturePipeline::buildOutput(
 		log::info << L"Compressing texture..." << Endl;
 		pipelineBuilder->getProfiler()->begin(type_of(compressor));
 		compressor->compress(writerData, mipImages, textureFormat, false, m_compressionQuality);
-		pipelineBuilder->getProfiler()->end(type_of(compressor));
+		pipelineBuilder->getProfiler()->end();
 	}
 
 	streamData->close();

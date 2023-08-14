@@ -31,8 +31,8 @@ Ref< ISerializable > DataAccessCache::readObject(
 )
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[&](){ m_profiler->begin(type_of< DataAccessCache >()); },
-		[&](){ m_profiler->end(type_of< DataAccessCache >()); }
+		[&](){ m_profiler->begin(L"DataAccessCache::readObject"); },
+		[&](){ m_profiler->end(); }
 	);
 
 	Ref< IStream > s;
@@ -44,7 +44,7 @@ Ref< ISerializable > DataAccessCache::readObject(
 		{
 			m_profiler->begin(L"DataAccessCache read");
 			Ref< ISerializable > object = BinarySerializer(s).readObject();
-			m_profiler->end(L"DataAccessCache read");
+			m_profiler->end();
 			s->close();
 			return object;
 		}
@@ -53,7 +53,7 @@ Ref< ISerializable > DataAccessCache::readObject(
 	// No cached entry; need to fabricate object.
 	m_profiler->begin(L"DataAccessCache create");
 	Ref< ISerializable > object = create();
-	m_profiler->end(L"DataAccessCache create");
+	m_profiler->end();
 	if (!object)
 		return nullptr;
 
@@ -64,7 +64,7 @@ Ref< ISerializable > DataAccessCache::readObject(
 		{
 			m_profiler->begin(L"DataAccessCache write");
 			const bool result = BinarySerializer(s).writeObject(object);
-			m_profiler->end(L"DataAccessCache write");
+			m_profiler->end();
 			if (result)
 				s->close();
 			else

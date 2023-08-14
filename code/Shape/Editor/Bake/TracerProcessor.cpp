@@ -648,13 +648,13 @@ bool TracerProcessor::process(const TracerTask* task)
 		RefArray< render::SHCoeffs > shs(gridX * gridY * gridZ);
 		RefArray< Job > jobs;
 
-		for (int32_t x = 0; x < gridX; ++x)
+		for (int32_t x = 0; !m_cancelled && x < gridX; ++x)
 		{
 			const float fx = x / (float)(gridX - 1.0f);
-			for (int32_t y = 0; y < gridY; ++y)
+			for (int32_t y = 0; !m_cancelled && y < gridY; ++y)
 			{
 				const float fy = y / (float)(gridY - 1.0f);
-				for (int32_t z = 0; z < gridZ; ++z)
+				for (int32_t z = 0; !m_cancelled && z < gridZ; ++z)
 				{
 					const float fz = z / (float)(gridZ - 1.0f);
 			
