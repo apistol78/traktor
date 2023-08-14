@@ -65,7 +65,7 @@ namespace traktor::mesh
 class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
+	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
 	:	m_pipelineBuilder(pipelineBuilder)
 	{
 	}
@@ -126,10 +126,13 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 	}
 }
 
-bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::wstring& outputPath, const Guid& outputGuid, model::Material::Map& map, bool normalMap)
+bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Material::Map& map, bool normalMap)
 {
 	if (map.image == nullptr || map.texture.isNotNull())
 		return true;
+
+	const uint32_t hash = DeepHash(map.image).get();
+	const Guid outputGuid = Guid(L"{6E6346F6-4665-42DC-BE69-58D8B7A475E4}").permutation(hash);
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_textureType = render::Tt2D;
@@ -138,7 +141,6 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::
 
 	if (!pipelineBuilder->buildAdHocOutput(
 		output,
-		outputPath + L"/" + map.name,
 		outputGuid,
 		map.image
 	))
@@ -150,7 +152,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, const std::
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 37, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 38, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -467,19 +469,17 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Build embedded textures and assign generated id;s to materials.
-	Guid nextEmbeddedTextureId = outputGuid.permutation(Guid(L"{86EE187C-3DB8-4500-B4FD-35941AC953DE}"));
 	for (auto& materialPair : materials)
 	{
 		model::Material& m = materialPair.second;
-
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getDiffuseMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getSpecularMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getRoughnessMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getMetalnessMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getTransparencyMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getEmissiveMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getReflectiveMap(), false);
-		buildEmbeddedTexture(pipelineBuilder, outputPath, nextEmbeddedTextureId.permutate(), m.getNormalMap(), true);
+		buildEmbeddedTexture(pipelineBuilder, m.getDiffuseMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getSpecularMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getRoughnessMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getMetalnessMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getTransparencyMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getEmissiveMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getReflectiveMap(), false);
+		buildEmbeddedTexture(pipelineBuilder, m.getNormalMap(), true);
 	}
 
 	// Build materials.
