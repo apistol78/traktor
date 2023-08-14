@@ -12,7 +12,7 @@
 #include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallMap.h"
 #include "Database/Compact/CompactRegistry.h"
 
 namespace traktor::db
@@ -42,7 +42,7 @@ void CompactInstanceEntry::serialize(ISerializer& s)
 	s >> Member< Guid >(L"guid", m_guid);
 	s >> Member< std::wstring >(L"primaryTypeName", m_primaryTypeName);
 	s >> MemberRef< CompactBlockEntry >(L"objectBlock", m_objectBlock);
-	s >> MemberStlMap
+	s >> MemberSmallMap
 		<
 			std::wstring,
 			Ref< CompactBlockEntry >,
