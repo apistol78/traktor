@@ -13,6 +13,7 @@
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 
@@ -30,8 +31,9 @@ uint32_t rotateLeft(uint32_t value, uint32_t count)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Object)
 
-ShaderGraphHash::ShaderGraphHash(bool includeTextures)
+ShaderGraphHash::ShaderGraphHash(bool includeTextures, bool includeTechniqueNames)
 :	m_includeTextures(includeTextures)
+,	m_includeTechniqueNames(includeTechniqueNames)
 {
 }
 
@@ -47,6 +49,18 @@ uint32_t ShaderGraphHash::calculate(const Node* node) const
 	{
 		if (auto textureNode = dynamic_type_cast< Texture* >(nodeCopy))
 			textureNode->setExternal(Guid::null);
+	}
+
+	if (!m_includeTechniqueNames)
+	{
+		if (auto vertexNode = dynamic_type_cast< VertexOutput* >(nodeCopy))
+			vertexNode->setTechnique(L"");
+		else if (auto pixelNode = dynamic_type_cast< PixelOutput* >(nodeCopy))
+			pixelNode->setTechnique(L"");
+		else if (auto computeNode = dynamic_type_cast< ComputeOutput* >(nodeCopy))
+			computeNode->setTechnique(L"");
+		else if (auto scriptNode = dynamic_type_cast< Script* >(nodeCopy))
+			scriptNode->setTechnique(L"");
 	}
 
 	return DeepHash(nodeCopy).get();

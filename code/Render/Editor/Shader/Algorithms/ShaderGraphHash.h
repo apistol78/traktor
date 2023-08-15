@@ -38,14 +38,15 @@ class T_DLLCLASS ShaderGraphHash : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ShaderGraphHash(bool includeTextures);
+	explicit ShaderGraphHash(bool includeTextures, bool includeTechniqueNames);
 
 	uint32_t calculate(const Node* node) const;
 
 	uint32_t calculate(const ShaderGraph* shaderGraph) const;
 
 private:
-	bool m_includeTextures;	//!< Include texture node id in hash.
+	bool m_includeTextures;			//!< Include texture node id in hash.
+	bool m_includeTechniqueNames;	//!< Include technique name in hash.
 };
 
 }

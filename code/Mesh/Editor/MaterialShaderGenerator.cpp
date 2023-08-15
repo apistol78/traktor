@@ -421,7 +421,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 			const std::wstring comment = node->getComment();
 			if (comment == L"Tag_LightmapTexCoord")
 			{
-				render::External* externalNode = mandatory_non_null_type_cast<render::External*>(node);
+				render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
 				const uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
 				externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 				resolveNodes.push_back(externalNode);
@@ -445,7 +445,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 			if (comment == L"Tag_LightMapDiffuse")
 			{
 				T_FATAL_ASSERT(lightMapTexture.isNotNull());
-				render::Texture* lightMapTextureNode = mandatory_non_null_type_cast<render::Texture*>(node);
+				render::Texture* lightMapTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
 				lightMapTextureNode->setComment(L"");
 				lightMapTextureNode->setExternal(lightMapTexture);
 			}

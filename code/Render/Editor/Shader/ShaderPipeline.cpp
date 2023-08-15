@@ -161,7 +161,7 @@ uint32_t ShaderPipeline::hashAsset(const ISerializable* sourceAsset) const
 	if ((shaderGraph = ShaderGraphStatic(shaderGraph, Guid()).getRendererPermutation(rendererSignature)) == nullptr)
 		return 0;
 
-	return ShaderGraphHash(true).calculate(shaderGraph);
+	return ShaderGraphHash(true, true).calculate(shaderGraph);
 }
 
 bool ShaderPipeline::buildDependencies(
@@ -348,7 +348,7 @@ bool ShaderPipeline::buildOutput(
 		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique, shaderGraphId);
 		const uint32_t combinationCount = combinations->getCombinationCount();
 
-		log::info << L"Building shader technique \"" << techniqueName << L"\" (" << combinationCount << L" permutations)..." << Endl;
+		log::info << L"Building shader technique \"" << techniqueName << L"\" (" << combinationCount << L" combinations)..." << Endl;
 		log::info << IncreaseIndent;
 
 		ShaderResource::Technique shaderResourceTechnique;
@@ -534,8 +534,20 @@ bool ShaderPipeline::buildOutput(
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
+				// Save generated shader for debugging.
+				//{
+				//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Debug/" + outputGuid.format() + L"/" + techniqueName + L"_" + str(L"%08x", combination), db::CifReplaceExisting);
+				//	if (dumpInstance)
+				//	{
+				//		dumpInstance->setObject(programGraph);
+				//		dumpInstance->commit();
+				//	}
+				//	else
+				//		log::warning << L"Unable to create error instance." << Endl;
+				//}
+
 				// Compile shader program.
-				const uint32_t hash = ShaderGraphHash(false).calculate(programGraph);
+				const uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
 					[&]() {
