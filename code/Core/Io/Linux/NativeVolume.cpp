@@ -7,16 +7,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <sstream>
-#include <sys/types.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>
 #include <utime.h>
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Linux/NativeVolume.h"
+#include "Core/Io/Linux/NativeMappedFile.h"
 #include "Core/Io/Linux/NativeStream.h"
+#include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/WildCompare.h"
@@ -172,7 +175,7 @@ bool NativeVolume::modify(const Path& fileName, const DateTime* creationTime, co
 	return true;
 }
 
-Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
+Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 {
 	const uint32_t mrw = (mode & (File::FmRead | File::FmWrite));
 
@@ -188,21 +191,45 @@ Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 		return nullptr;
 
 	FILE* fp = fopen(
-		wstombs(getSystemPath(filename)).c_str(),
+		wstombs(getSystemPath(fileName)).c_str(),
 		m
 	);
 	return bool(fp != nullptr) ? new NativeStream(fp, mode) : nullptr;
 }
 
-bool NativeVolume::exist(const Path& filename)
+Ref< IMappedFile > NativeVolume::map(const Path& fileName)
 {
-	struct stat sb;
-	return bool(stat(wstombs(getSystemPath(filename)).c_str(), &sb) == 0);
+	const int fd = ::open(wstombs(getSystemPath(fileName)).c_str(), O_RDONLY, S_IREAD);
+	if (fd < 0)
+		return nullptr;
+
+	struct stat st = {};
+	if (fstat(fd, &st) < 0)
+	{
+		close(fd);
+		return nullptr;
+	}
+	const int64_t size = st.st_size;
+
+	void* ptr = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (!ptr)
+	{
+		close(fd);
+		return nullptr;
+	}
+
+	return new NativeMappedFile(fd, ptr, size);
 }
 
-bool NativeVolume::remove(const Path& filename)
+bool NativeVolume::exist(const Path& fileName)
 {
-	return bool(unlink(wstombs(getSystemPath(filename)).c_str()) == 0);
+	struct stat sb;
+	return bool(stat(wstombs(getSystemPath(fileName)).c_str(), &sb) == 0);
+}
+
+bool NativeVolume::remove(const Path& fileName)
+{
+	return bool(unlink(wstombs(getSystemPath(fileName)).c_str()) == 0);
 }
 
 bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)

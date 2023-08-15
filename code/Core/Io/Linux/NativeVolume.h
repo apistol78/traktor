@@ -41,11 +41,13 @@ public:
 
 	virtual bool modify(const Path& fileName, const DateTime* creationTime, const DateTime* lastAccessTime, const DateTime* lastWriteTime) override final;
 
-	virtual Ref< IStream > open(const Path& filename, uint32_t mode) override final;
+	virtual Ref< IStream > open(const Path& fileName, uint32_t mode) override final;
 
-	virtual bool exist(const Path& filename) override final;
+	virtual Ref< IMappedFile > map(const Path& fileName) override final;
 
-	virtual bool remove(const Path& filename) override final;
+	virtual bool exist(const Path& fileName) override final;
+
+	virtual bool remove(const Path& fileName) override final;
 
 	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite) override final;
 
