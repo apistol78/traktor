@@ -56,6 +56,8 @@ void SkyComponent::destroy()
 {
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
+	m_shader.clear();
+	m_texture.clear();
 }
 
 void SkyComponent::setOwner(world::Entity* owner)
