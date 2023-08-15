@@ -9,9 +9,10 @@
 #include <direct.h>
 #include <iostream>
 #include <sstream>
-#include "Core/Io/Win32/NativeVolume.h"
-#include "Core/Io/Win32/NativeStream.h"
+#include "Core/Io/Win32/NativeMappedFile.h"
 #include "Core/Io/Win32/NativeMappedStream.h"
+#include "Core/Io/Win32/NativeStream.h"
+#include "Core/Io/Win32/NativeVolume.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -270,6 +271,54 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	}
 
 	return new NativeStream(hFile, mode);
+}
+
+Ref< IMappedFile > NativeVolume::map(const Path& fileName)
+{
+	const std::wstring systemPath = getSystemPath(fileName);
+
+	const HANDLE hFile = CreateFile(
+		wstots(systemPath).c_str(),
+		GENERIC_READ,
+		FILE_SHARE_READ,
+		NULL,
+		OPEN_EXISTING,
+		FILE_ATTRIBUTE_NORMAL,
+		NULL
+	);
+	if (hFile == INVALID_HANDLE_VALUE)
+	{
+#if defined(_DEBUG)
+		DWORD errorCode = GetLastError();
+		log::warning << L"Unable to map file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
+#endif
+		return nullptr;
+	}
+
+	const int64_t fileSize = GetFileSize(hFile, NULL);
+	const HANDLE hFileMapping = CreateFileMapping(
+		hFile,
+		NULL,
+		PAGE_READONLY,
+		0,
+		0,
+		NULL
+	);
+	if (hFileMapping == INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(hFile);
+		return nullptr;
+	}
+
+	void* ptr = MapViewOfFile(hFileMapping, FILE_MAP_READ, 0, 0, 0);
+	if (!ptr)
+	{
+		CloseHandle(hFileMapping);
+		CloseHandle(hFile);
+		return nullptr;
+	}
+
+	return new NativeMappedFile(hFile, hFileMapping, ptr, fileSize);
 }
 
 bool NativeVolume::exist(const Path& fileName)

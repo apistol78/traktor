@@ -7,7 +7,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/BufferedStream.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IMappedFile.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -68,18 +70,20 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	const std::wstring cachedPathName = m_cacheDirectory + L"/" + cachedFileName + L".bin";
 
 	// Read from cache; discard cached item if not matching time stamp.
-	Ref< IStream > stream = FileSystem::getInstance().open(cachedPathName, File::FmRead | File::FmMapped);
-	if (stream)
+	Ref< IMappedFile > mf = FileSystem::getInstance().map(cachedPathName);
+	if (mf)
 	{
 		uint64_t cachedLastModifyDate = 0;
 		uint32_t cachedHash = 0;
 
-		Reader(stream) >> cachedLastModifyDate;
-		Reader(stream) >> cachedHash;
+		MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
+
+		Reader(&ms) >> cachedLastModifyDate;
+		Reader(&ms) >> cachedHash;
 
 		if (cachedLastModifyDate == lastModifyDate)
 		{
-			Ref< ISerializable > object = BinarySerializer(stream).readObject();
+			Ref< ISerializable > object = BinarySerializer(&ms).readObject();
 			if (object)
 			{
 				m_readCache[instanceGuid].object = object;
@@ -88,8 +92,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 			}
 		}
 
-		stream->close();
-		stream = nullptr;
+		mf = nullptr;
 	}
 
 	// Either the instance isn't cached yet or not up-to-date; read from database and write a shadow copy in cache.
@@ -105,7 +108,7 @@ Ref< const ISerializable > PipelineInstanceCache::getObjectReadOnly(const Guid& 
 	m_readCache[instanceGuid].object = object;
 	m_readCache[instanceGuid].hash = hash;
 
-	stream = FileSystem::getInstance().open(cachedPathName, File::FmWrite);
+	Ref< IStream > stream = FileSystem::getInstance().open(cachedPathName, File::FmWrite);
 	if (stream)
 	{
 		BufferedStream bufferedStream(stream);

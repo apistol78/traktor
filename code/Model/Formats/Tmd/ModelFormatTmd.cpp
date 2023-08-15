@@ -8,10 +8,14 @@
  */
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IMappedFile.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Model/Model.h"
 #include "Model/Formats/Tmd/ModelFormatTmd.h"
+
+#define USE_MAPPED_FILE 1
 
 namespace traktor::model
 {
@@ -31,11 +35,20 @@ bool ModelFormatTmd::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filter) const
 {
+#if USE_MAPPED_FILE
+	Ref< IMappedFile > mf = FileSystem::getInstance().map(filePath);
+	if (mf)
+	{
+		MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
+		return BinarySerializer(&ms).readObject< Model >();
+	}
+#else
 	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead | File::FmMapped);
 	if (stream)
 		return BinarySerializer(stream).readObject< Model >();
 	else
 		return nullptr;
+#endif
 }
 
 bool ModelFormatTmd::write(const Path& filePath, const Model* model) const
