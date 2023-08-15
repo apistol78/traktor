@@ -172,8 +172,17 @@ bool Graph::detach(const Node* node)
 
 	if (removed > 0)
 	{
-		updateInputPinToEdge();
-		updateOutputPinDestinationCount();
+		const int32_t inputPinCount = node->getInputPinCount();
+		for (int32_t i = 0; i < inputPinCount; ++i)
+			m_inputPinToEdge.remove(node->getInputPin(i));
+
+		const int32_t outputPinCount = node->getOutputPinCount();
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			uint32_t& count = m_outputPinDestinationCount[node->getOutputPin(i)];
+			if (--count == 0)
+				m_outputPinDestinationCount.remove(node->getOutputPin(i));
+		}
 	}
 
 	return true;
