@@ -103,18 +103,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	m_data.resize(width * height);
 	m_boundingBox = Aabb3();
 
-	for (int32_t i = 0; i < width * height; ++i)
-	{
-		m_data[i].position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		m_data[i].normal = Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-		m_data[i].tangent = Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-		m_data[i].polygon = model::c_InvalidIndex;
-		m_data[i].material = 0;
-		m_data[i].delta = 0.0f;
-		m_data[i].distance = 0.0f;
-	}
-
-	const Vector2 wh((float)width - 1, (float)height - 1);
+	const Vector2 wh((float)width, (float)height);
 
 	for (uint32_t i = 0; i < model.getPolygonCount(); ++i)
 	{
@@ -176,11 +165,11 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			bbox.contain(texCoords[i1]);
 			bbox.contain(texCoords[i2]);
 
-			const int32_t pad = 8;
+			const int32_t pad = 1;
 			const int32_t sx = (int32_t)(bbox.mn.x - pad);
-			const int32_t ex = (int32_t)(bbox.mx.x + pad);
+			const int32_t ex = (int32_t)(bbox.mx.x + pad + 0.5f);
 			const int32_t sy = (int32_t)(bbox.mn.y - pad);
-			const int32_t ey = (int32_t)(bbox.mx.y + pad);
+			const int32_t ey = (int32_t)(bbox.mx.y + pad + 0.5f);
 
 			for (int32_t x = sx; x <= ex; ++x)
 			{
@@ -189,45 +178,58 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					Vector2 pt((float)x, (float)y);
+					const Vector2 texelCenter((float)x, (float)y);
+					Vector2 pt = texelCenter;
 
-					float distance = std::numeric_limits< float >::max();
-					if (bary.inside(pt))
-						distance = 0.0f;
-					else
+					if (!bary.inside(pt))
 					{
+						const float treshold = 1.5f;
+
 						const Vector2 cpt = texCoords.closest(pt);
 						const float fd = (pt - cpt).length();
-						if (fd < 8.0f)
-						{
-							pt = texCoords.closest(cpt + (cpt - pt) * 8.0f);
-							distance = fd + 1.0f;
-						}
-						else
+						if (fd > treshold)
 							continue;
+
+						pt = cpt;
 					}
 
-					Element& elm = m_data[x + y * m_width];
+					float distance = distance = (pt - texelCenter).length();
+					element_vector_t& ev = m_data[x + y * m_width];
 
-					// Do not overwrite existing data unless we're closer to be inside triangle.
-					if (elm.polygon != model::c_InvalidIndex)
+					// Add to elements, if full we try to replace a worst entry if possible.
+					Element* elm = nullptr;
+					if (!ev.full())
+						elm = &ev.push_back();
+					else
 					{
-						if (elm.distance < distance)
+						// Sort worst to best; replace worst if distance is less than any entry.
+						std::sort(ev.begin(), ev.end(), [&](Element& lh, Element& rh) {
+							return lh.distance > rh.distance;
+						});
+						for (auto& it : ev)
+						{
+							if (distance < it.distance)
+							{
+								elm = ev.ptr();
+								break;
+							}
+						}
+						if (!elm)
 							continue;
 					}
 
-					elm.position = ipolPositions.evaluate(bary, pt).xyz1();
-					elm.normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
-					elm.tangent = ipolTangents.evaluate(bary, pt).xyz0().normalized();
-					elm.polygon = i;
-					elm.material = polygon.getMaterial();
-					elm.distance = distance;
+					elm->position = ipolPositions.evaluate(bary, pt).xyz1();
+					elm->normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
+					elm->tangent = ipolTangents.evaluate(bary, pt).xyz0().normalized();
+					elm->polygon = i;
+					elm->material = polygon.getMaterial();
+					elm->distance = distance;
 
 					// Evaluate delta magnitude of position in world space per texel offset.
-					const Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm.position;
-					const Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm.position;
+					const Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm->position;
+					const Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm->position;
 					const Vector4 duv = max(ddx.absolute(), ddy.absolute());
-					elm.delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0f));
+					elm->delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0f));
 				}
 			}
 		});
@@ -236,93 +238,5 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	return true;
 }
 
-void GBuffer::saveAsImages(const std::wstring& outputPath) const
-{
-	Ref< drawing::Image > image;
-
-	// Positions as a checker pattern.
-	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
-	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	for (int32_t y = 0; y < m_height; ++y)
-	{
-		for (int32_t x = 0; x < m_width; ++x)
-		{
-			const Element& e = m_data[x + y * m_width];
-			if (e.polygon == model::c_InvalidIndex)
-				continue;
-
-			const int32_t bx = int32_t(e.position.x() * 32.0f) & 1;
-			const int32_t by = int32_t(e.position.y() * 32.0f) & 1;
-			const int32_t bz = int32_t(e.position.z() * 32.0f) & 1;
-
-			image->setPixel(x, y, (bx ^ by ^ bz) ? Color4f(1.0f, 1.0f, 1.0f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f));
-		}
-	}
-	image->save(outputPath + L"_Positions.png");
-
-	// Normals.
-	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
-	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	for (int32_t y = 0; y < m_height; ++y)
-	{
-		for (int32_t x = 0; x < m_width; ++x)
-		{
-			const Element& e = m_data[x + y * m_width];
-			if (e.polygon == model::c_InvalidIndex)
-				continue;
-
-			const Vector4 n = e.normal * Scalar(0.5f) + Scalar(0.5f);
-			image->setPixel(x, y, Color4f(n.x(), n.y(), n.z(), 1.0f));
-		}
-	}
-	image->save(outputPath + L"_Normals.png");
-
-	// Deltas.
-	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
-	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-	for (int32_t y = 0; y < m_height; ++y)
-	{
-		for (int32_t x = 0; x < m_width; ++x)
-		{
-			const Element& e = m_data[x + y * m_width];
-			if (e.polygon == model::c_InvalidIndex)
-				continue;
-
-			const float n = e.delta * 0.1f;
-			image->setPixel(x, y, Color4f(n, n, n, 1.0f));
-		}
-	}
-	image->save(outputPath + L"_Deltas.png");
-
-	// Polygons
-	image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
-	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-	SmallMap< uint32_t, Color4f > colors;
-	Random rnd(std::clock());
-
-	for (int32_t y = 0; y < m_height; ++y)
-	{
-		for (int32_t x = 0; x < m_width; ++x)
-		{
-			const Element& e = m_data[x + y * m_width];
-			if (e.polygon == model::c_InvalidIndex)
-				continue;
-
-			if (colors.find(e.polygon) == colors.end())
-			{
-				colors[e.polygon] = Color4f(
-					rnd.nextFloat(),
-					rnd.nextFloat(),
-					rnd.nextFloat(),
-					1.0f
-				);
-			}
-
-			image->setPixel(x, y, colors[e.polygon]);
-		}
-	}
-	image->save(outputPath + L"_Polygons.png");
-}
 
 }

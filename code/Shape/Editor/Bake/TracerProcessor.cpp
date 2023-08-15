@@ -84,12 +84,22 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 		width,
 		height
 	);
+	normals.clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 	for (int32_t y = 0; y < height; ++y)
 	{
 		for (int32_t x = 0; x < width; ++x)
 		{
-			const auto elm = gbuffer.get(x, y);
-			normals.setPixelUnsafe(x, y, Color4f(elm.normal));
+			const GBuffer::element_vector_t& ev = gbuffer.get(x, y);
+
+			if (ev.empty())
+				continue;
+
+			Vector4 normal = Vector4::zero();
+			for (const auto& elm : ev)
+				normal += elm.normal;
+			normal.normalize();
+
+			normals.setPixelUnsafe(x, y, Color4f(normal));
 		}
 	}
 
