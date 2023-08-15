@@ -24,25 +24,45 @@ namespace traktor::render
 
 #define T_VALIDATE_SHADERGRAPH(sg) // T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
 
-const ImmutableNode::InputPinDesc c_PortConnector_i[] = { { L"Input", L"{581D486E-5A7F-46CE-BB38-251008DCF746}", false }, { 0 } };
-const ImmutableNode::OutputPinDesc c_PortConnector_o[] = { { L"Output", L"{255B6D44-455E-46D2-9865-E1764FBF20BF}" }, { 0 } };
-
-class PortConnector : public ImmutableNode
+class PortConnector : public Node
 {
 	T_RTTI_CLASS;
 
 public:
 	explicit PortConnector(const Guid& fromFragmentId)
-	:	ImmutableNode(c_PortConnector_i, c_PortConnector_o)
-	,	m_fromFragmentId(fromFragmentId)
+	:	m_fromFragmentId(fromFragmentId)
+	,	m_inputPin(this, Guid::null, L"Input", false)
+	,	m_outputPin(this, Guid::null, L"Output")
 	{
+	}
+
+	virtual int getInputPinCount() const override final
+	{
+		return 1;
+	}
+
+	virtual const InputPin* getInputPin(int index) const override final
+	{
+		return &m_inputPin;
+	}
+
+	virtual int getOutputPinCount() const override final
+	{
+		return 1;
+	}
+
+	virtual const OutputPin* getOutputPin(int index) const override final
+	{
+		return &m_outputPin;
 	}
 
 private:
 	Guid m_fromFragmentId;
+	InputPin m_inputPin;
+	OutputPin m_outputPin;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker.PortConnector", PortConnector, ImmutableNode)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FragmentLinker.PortConnector", PortConnector, Node)
 
 const InputPin* findExternalInputPin(const External* externalNode, const InputPort* fragmentInputPort)
 {
