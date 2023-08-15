@@ -29,7 +29,7 @@ bool TracerSettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 	m_checkEnable->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_ENABLE"), settings->getProperty< bool >(L"BakePipelineOperator.Enable", true));
 
 	m_checkTraceIrradianceGrid = new ui::CheckBox();
-	m_checkTraceIrradianceGrid->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_IRRADIANCEGRID"), settings->getProperty< bool >(L"BakePipelineOperator.TraceIrradianceGrid", false));
+	m_checkTraceIrradianceGrid->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_IRRADIANCEGRID"), settings->getProperty< bool >(L"BakePipelineOperator.TraceIrradianceGrid", true));
 
 	m_checkTraceImages = new ui::CheckBox();
 	m_checkTraceImages->create(m_container, i18n::Text(L"SHAPE_EDITOR_TRACER_IMAGES"), settings->getProperty< bool >(L"BakePipelineOperator.TraceImages", false));

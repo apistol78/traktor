@@ -132,20 +132,20 @@ Vector2 Winding2::closest(const Vector2& pnt) const
 	{
 		const Vector2& pi = m_points[i];
 		const Vector2& pj = m_points[j];
-		Line2 ln(pi, pj);
+		const Line2 ln(pi, pj);
 
 		// Project point onto edge line.
 		Vector2 pc = ln.project(pnt);
 
 		// Clamp projected point within edge.
-		float k = dot(pc - pi, ln.delta()) / (ln.length() * ln.length());
+		const float k = dot(pc - pi, ln.delta()) / (ln.length() * ln.length());
 		if (k < 0.0f)
 			pc = pi;
 		else if (k > 1.0f)
 			pc = pj;
 
 		// Check if projected point is closest.
-		float d2 = (pc - pnt).length2();
+		const float d2 = (pc - pnt).length2();
 		if (d2 < minD2)
 		{
 			minP = pc;

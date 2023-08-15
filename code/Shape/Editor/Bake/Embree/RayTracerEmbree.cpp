@@ -267,79 +267,88 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	{
 		for (int32_t x = region[0]; x < region[2]; ++x)
 		{
-			auto elm = gbuffer->get(x, y);
-			if (elm.polygon == model::c_InvalidIndex)
+			GBuffer::element_vector_t ev = gbuffer->get(x, y);
+			if (ev.empty())
 				continue;
 
-			// Adjust gbuffer position to reduce shadowing issues.
+			Color4f lightmapColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+			for (int32_t i = 0; i < ev.size(); ++i)
 			{
-				const Scalar l = Scalar(elm.delta);
-				const Scalar hl = l * 1.0_simd;
+				auto& elm = ev[i];
 
-				const Vector4 normal = elm.normal;
-				Vector4 position = elm.position + normal * hl;
-
-				Vector4 u, v;
-				orthogonalFrame(normal, u, v);
-
-				for (int32_t rev = 0; rev < 32; ++rev)
+				// Adjust gbuffer position to reduce shadowing issues.
 				{
-					float minExitDistance = std::numeric_limits< float >::max();
-					Vector4 minExitDirection = Vector4::zero();
+					const Scalar l = Scalar(elm.delta);
+					const Scalar hl = l * 1.0_simd;
 
-					for (int32_t i = 0; i < 64; ++i)
+					const Vector4 normal = elm.normal;
+					Vector4 position = elm.position + normal * hl;
+
+					Vector4 u, v;
+					orthogonalFrame(normal, u, v);
+
+					for (int32_t rev = 0; rev < 32; ++rev)
 					{
-						const float a = TWO_PI * i / 64.0f;
-						const float s = sin(a), c = cos(a);
+						float minExitDistance = std::numeric_limits< float >::max();
+						Vector4 minExitDirection = Vector4::zero();
 
-						const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-						constructRay(position, traceDirection, hl, rh);
-
-						RTCIntersectContext context;
-						rtcInitIntersectContext(&context);
-						rtcIntersect1(m_scene, &context, &rh);					
-
-						if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-							continue;
-
-						const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
-						if (dot3(hitNormal, traceDirection) > 0.0_simd)
+						for (int32_t i = 0; i < 64; ++i)
 						{
-							if (rh.ray.tfar < minExitDistance)
+							const float a = TWO_PI * i / 64.0f;
+							const float s = sin(a), c = cos(a);
+
+							const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
+							constructRay(position, traceDirection, hl, rh);
+
+							RTCIntersectContext context;
+							rtcInitIntersectContext(&context);
+							rtcIntersect1(m_scene, &context, &rh);
+
+							if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+								continue;
+
+							const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+							if (dot3(hitNormal, traceDirection) > 0.0_simd)
 							{
-								minExitDirection = traceDirection;
-								minExitDistance = rh.ray.tfar;
+								if (rh.ray.tfar < minExitDistance)
+								{
+									minExitDirection = traceDirection;
+									minExitDistance = rh.ray.tfar;
+								}
 							}
 						}
+
+						if (minExitDirection.length2() > 0.0001_simd)
+							position += minExitDirection * Scalar(minExitDistance + l);
+						else
+							break;
 					}
 
-					if (minExitDirection.length2() > 0.0001_simd)
-						position += minExitDirection * Scalar(minExitDistance + l);
-					else
-						break;
+					elm.position = position;
 				}
 
-				elm.position = position;
+				// Trace lightmap.
+				{
+					const auto& originPolygon = polygons[elm.polygon];
+					const auto& originMaterial = materials[originPolygon.getMaterial()];
+
+					const Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
+
+					// Trace IBL and indirect illumination.
+					const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
+
+					// Trace ambient occlusion.
+					Scalar occlusion = 1.0_simd;
+					if (ambientOcclusion > Scalar(FUZZY_EPSILON))
+						occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
+
+					// Combine and write final lumel.
+					lightmapColor += emittance + incoming * occlusion;
+				}
 			}
 
-			// Trace lightmap.
-			{
-				const auto& originPolygon = polygons[elm.polygon];
-				const auto& originMaterial = materials[originPolygon.getMaterial()];
-
-				const Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
-
-				// Trace IBL and indirect illumination.
-				const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
-
-				// Trace ambient occlusion.
-				Scalar occlusion = 1.0_simd;
-				if (ambientOcclusion > Scalar(FUZZY_EPSILON))
-					occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
-
-				// Combine and write final lumel.
-				lightmapDiffuse->setPixel(x, y, (emittance + incoming * occlusion).rgb1());
-			}
+			lightmapDiffuse->setPixel(x, y, (lightmapColor / Scalar(ev.size())).rgb1());
 		}
 	}
 }

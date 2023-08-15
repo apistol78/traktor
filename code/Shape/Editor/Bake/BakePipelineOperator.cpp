@@ -386,7 +386,7 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
 	m_compressionMethod = settings->getPropertyIncludeHash< std::wstring >(L"BakePipelineOperator.CompressionMethod", L"FP16");
 	m_asynchronous = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false) && !settings->getPropertyExcludeHash< bool >(L"Pipeline.TargetEditor.Build", false);
-	m_traceIrradianceGrid = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceIrradianceGrid", false);
+	m_traceIrradianceGrid = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceIrradianceGrid", true);
 	m_traceCameras = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.TraceImages", false);
 
 	// Instantiate raytracer implementation.
@@ -738,7 +738,7 @@ bool BakePipelineOperator::build(
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), lightmap ID " << lightmapDiffuseId.format() << L" (" << str(L"%08x", modelHash) << L")..." << Endl;
+						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), lightmap ID " << lightmapDiffuseId.format() << L", model hash " << str(L"%08x", modelHash) << L"..." << Endl;
 
 						// Get calculated lightmap size.
 						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
