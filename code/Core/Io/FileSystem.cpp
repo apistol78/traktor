@@ -146,6 +146,12 @@ Ref< IStream > FileSystem::open(const Path& fileName, uint32_t mode)
 	return volume ? volume->open(fileName, mode) : nullptr;
 }
 
+Ref< IMappedFile > FileSystem::map(const Path& fileName)
+{
+	Ref< IVolume > volume = getVolume(fileName);
+	return volume ? volume->map(fileName) : nullptr;
+}
+
 bool FileSystem::exist(const Path& fileName)
 {
 	Ref< IVolume > volume = getVolume(fileName);

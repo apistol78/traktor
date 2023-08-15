@@ -8,11 +8,14 @@
  */
 #include <cstring>
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
+#include "Core/Io/IMappedFile.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Database/Local/PhysicalAccess.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
+
+#define USE_MAPPED_FILE 1
 
 namespace traktor::db
 {
@@ -34,6 +37,21 @@ Path getInstanceDataPath(const Path& instancePath, const std::wstring& dataName)
 
 Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 {
+#if USE_MAPPED_FILE
+	Ref< IMappedFile > mf = FileSystem::getInstance().map(objectPath);
+	if (!mf || mf->getSize() < 5)
+		return nullptr;
+
+	MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
+
+	Ref< ISerializable > object;
+	if (std::memcmp(mf->getBase(), "<?xml", 5) != 0)
+		object = BinarySerializer(&ms).readObject();
+	else
+		object = xml::XmlDeserializer(&ms, objectPath.getPathName()).readObject();
+
+	return object;
+#else
 	Ref< IStream > objectStream = FileSystem::getInstance().open(objectPath, File::FmRead);
 	if (!objectStream)
 		return nullptr;
@@ -57,6 +75,7 @@ Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 
 	objectStream->close();
 	return object;
+#endif
 }
 
 bool writePhysicalObject(const Path& objectPath, const ISerializable* object, bool binary)

@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/IMappedFile.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
@@ -444,20 +445,17 @@ void PipelineDependsIncremental::updateDependencyHashes(
 			}
 		}
 
-		Ref< IStream > fileStream = FileSystem::getInstance().open(dependencyFile.filePath, File::FmRead);
-		if (fileStream)
+		Ref< IMappedFile > mf = FileSystem::getInstance().map(dependencyFile.filePath);
+		if (mf)
 		{
-			uint8_t buffer[4096];
 			Murmur3 a32;
-			int64_t r;
-
 			a32.begin();
-			while ((r = fileStream->read(buffer, sizeof(buffer))) > 0)
-				a32.feed(buffer, r);
+			a32.feed(mf->getBase(), mf->getSize());
 			a32.end();
 
+			mf = nullptr;
+
 			dependency->filesHash += a32.get();
-			fileStream->close();
 
 			if (m_pipelineDb)
 			{

@@ -45,6 +45,8 @@ public:
 
 	virtual Ref< IStream > open(const Path& fileName, uint32_t mode) override final;
 
+	virtual Ref< IMappedFile > map(const Path& fileName) override final;
+
 	virtual bool exist(const Path& fileName) override final;
 
 	virtual bool remove(const Path& fileName) override final;

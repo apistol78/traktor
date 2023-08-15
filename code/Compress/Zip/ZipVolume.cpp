@@ -311,6 +311,11 @@ Ref< IStream > ZipVolume::open(const Path& fileName, uint32_t mode)
 	);
 }
 
+Ref< IMappedFile > ZipVolume::map(const Path& fileName)
+{
+	return nullptr;
+}
+
 bool ZipVolume::exist(const Path& fileName)
 {
 	return (bool)(get(fileName) != nullptr);

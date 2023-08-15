@@ -26,6 +26,7 @@ namespace traktor
 {
 
 class FileArray;
+class IMappedFile;
 class IStream;
 
 /*! Virtual file system volume.
@@ -88,6 +89,10 @@ public:
 	 * \return Stream object at beginning of resource.
 	 */
 	virtual Ref< IStream > open(const Path& fileName, uint32_t mode) = 0;
+
+	/*!
+	 */
+	virtual Ref< IMappedFile > map(const Path& fileName) = 0;
 
 	/*! Check if file or directory exists.
 	 *

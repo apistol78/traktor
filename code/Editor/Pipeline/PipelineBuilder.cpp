@@ -6,8 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -48,7 +46,7 @@ const uint32_t c_cacheVersion = 1;
 class LogTargetFilter : public ILogTarget
 {
 public:
-	LogTargetFilter(ILogTarget* target, bool muted)
+	explicit LogTargetFilter(ILogTarget* target, bool muted)
 	:	m_target(target)
 	,	m_muted(muted)
 	,	m_count(0)

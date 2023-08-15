@@ -27,6 +27,7 @@
 namespace traktor
 {
 
+class IMappedFile;
 class IStream;
 
 /*! File system manager.
@@ -143,6 +144,13 @@ public:
 	 * \return Stream to file, null if unable to access file.
 	 */
 	Ref< IStream > open(const Path& fileName, uint32_t mode);
+
+	/*! Map file into memory for reading.
+	 * 
+	 * \param fileName Path to file to open.
+	 * \return Mapped file view.
+	 */
+	Ref< IMappedFile > map(const Path& fileName);
 
 	/*! Return true if file exists.
 	 *
