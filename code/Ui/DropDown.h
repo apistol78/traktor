@@ -37,8 +37,6 @@ public:
 		WsDefault = WsSingle
 	};
 
-	DropDown();
-
 	bool create(Widget* parent, int32_t style = WsDefault);
 
 	int32_t add(const std::wstring& item, Object* data = 0);
@@ -98,11 +96,8 @@ private:
 	};
 
 	AlignedVector< Item > m_items;
-	Size m_preferedSize;
-	bool m_multiple;
-	bool m_hover;
-
-	void updatePreferedSize();
+	bool m_multiple = false;
+	bool m_hover = false;
 
 	void eventMouseTrack(MouseTrackEvent* event);
 

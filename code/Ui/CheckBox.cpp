@@ -18,7 +18,6 @@ namespace traktor::ui
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CheckBox", CheckBox, Widget)
 
 CheckBox::CheckBox()
-:	m_checked(false)
 {
 	m_imageUnchecked = new StyleBitmap(L"UI.Unchecked");
 	m_imageChecked = new StyleBitmap(L"UI.Checked");
@@ -49,22 +48,14 @@ bool CheckBox::isChecked() const
 	return m_checked;
 }
 
-void CheckBox::setText(const std::wstring& text)
+Size CheckBox::getPreferredSize(const Size& hint) const
 {
-	Widget::setText(text);
-
-	// Calculate prefered size from new text.
 	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	const int32_t width = getFontMetric().getExtent(getText()).cx;
-	m_preferedSize = Size(
+	return Size(
 		width + m_imageUnchecked->getSize(this).cx + pixel(4_ut),
 		std::max(height, m_imageUnchecked->getSize(this).cy)
 	);
-}
-
-Size CheckBox::getPreferredSize(const Size& hint) const
-{
-	return m_preferedSize;
 }
 
 void CheckBox::eventPaint(PaintEvent* event)

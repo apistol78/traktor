@@ -29,17 +29,17 @@ public:
 
 	virtual ~CanvasDirect2DWin32();
 
-	virtual bool beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC) override final;
+	virtual bool beginPaint(Window& hWnd, const Font& font, bool doubleBuffer, HDC hDC) override final;
 
 	virtual void endPaint(Window& hWnd) override final;
 
-	virtual void getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const override final;
+	virtual void getAscentAndDescent(Window& hWnd, const Font& font, int32_t& outAscent, int32_t& outDescent) const override final;
 
-	virtual int32_t getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const override final;
+	virtual int32_t getAdvance(Window& hWnd, const Font& font, wchar_t ch, wchar_t next) const override final;
 
 	virtual int32_t getLineSpacing(Window& hWnd) const override final;
 
-	virtual Size getExtent(Window& hWnd, const std::wstring& text) const override final;
+	virtual Size getExtent(Window& hWnd, const Font& font, const std::wstring& text) const override final;
 
 	// IFontMetric
 

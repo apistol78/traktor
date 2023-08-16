@@ -12,10 +12,8 @@
 #include "Ui/Static.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Static", Static, Widget)
 
@@ -29,11 +27,8 @@ bool Static::create(Widget* parent, const std::wstring& text)
 	return true;
 }
 
-void Static::setText(const std::wstring& text)
+Size Static::getPreferredSize(const Size& hint) const
 {
-	Widget::setText(text);
-
-	// Calculate prefered size from new text.
 	Size extent(0, 0);
 	auto fontMetric = getFontMetric();
 	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
@@ -42,12 +37,7 @@ void Static::setText(const std::wstring& text)
 		extent.cx = std::max(sz.cx, extent.cx);
 		extent.cy += sz.cy;
 	}
-	m_preferedSize = extent + Size(pixel(1_ut), pixel(1_ut));
-}
-
-Size Static::getPreferredSize(const Size& hint) const
-{
-	return m_preferedSize;
+	return extent + Size(pixel(1_ut), pixel(1_ut));
 }
 
 Size Static::getMaximumSize() const
@@ -79,5 +69,4 @@ void Static::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

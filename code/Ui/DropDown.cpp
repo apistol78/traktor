@@ -20,12 +20,6 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
-DropDown::DropDown()
-:	m_multiple(false)
-,	m_hover(false)
-{
-}
-
 bool DropDown::create(Widget* parent, int32_t style)
 {
 	if (!Widget::create(parent, style))
@@ -38,14 +32,12 @@ bool DropDown::create(Widget* parent, int32_t style)
 	addEventHandler< MouseButtonUpEvent >(this, &DropDown::eventButtonUp);
 	addEventHandler< PaintEvent >(this, &DropDown::eventPaint);
 
-	updatePreferedSize();
 	return true;
 }
 
 int32_t DropDown::add(const std::wstring& item, Object* data)
 {
 	m_items.push_back({ item, data, false });
-	updatePreferedSize();
 	return (int32_t)m_items.size() - 1;
 }
 
@@ -56,14 +48,12 @@ bool DropDown::remove(int32_t index)
 
 	auto i = m_items.begin() + index;
 	m_items.erase(i);
-	updatePreferedSize();
 	return true;
 }
 
 void DropDown::removeAll()
 {
 	m_items.resize(0);
-	updatePreferedSize();
 }
 
 int32_t DropDown::count() const
@@ -74,7 +64,6 @@ int32_t DropDown::count() const
 void DropDown::setItem(int32_t index, const std::wstring& item)
 {
 	m_items[index].text = item;
-	updatePreferedSize();
 }
 
 void DropDown::setData(int32_t index, Object* data)
@@ -171,16 +160,6 @@ Object* DropDown::getSelectedData() const
 
 Size DropDown::getPreferredSize(const Size& hint) const
 {
-	return m_preferedSize;
-}
-
-Size DropDown::getMaximumSize() const
-{
-	return Size(65535, m_preferedSize.cy);
-}
-
-void DropDown::updatePreferedSize()
-{
 	const int32_t marginX = pixel(16_ut);
 	const int32_t marginY = pixel(4_ut);
 
@@ -194,7 +173,13 @@ void DropDown::updatePreferedSize()
 		w = std::max(w, iw);
 	}
 
-	m_preferedSize = Size(w + marginX * 2, h + marginY * 2);
+	return Size(w + marginX * 2, h + marginY * 2);
+}
+
+Size DropDown::getMaximumSize() const
+{
+	const Size preferredSize = getPreferredSize(Size(0, 0));
+	return Size(65535, preferredSize.cy);
 }
 
 void DropDown::eventMouseTrack(MouseTrackEvent* event)
@@ -224,7 +209,7 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 		}
 	}
 
-	Rect rcInner = getInnerRect();
+	const Rect rcInner = getInnerRect();
 
 	const MenuItem* selectedItem = menu.showModal(this, rcInner.getBottomLeft(), rcInner.getWidth(), 8);
 	if (!selectedItem)

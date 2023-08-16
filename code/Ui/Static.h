@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Static text.
  * \ingroup UI
@@ -33,18 +31,12 @@ class T_DLLCLASS Static : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text = L"");
 
-	virtual void setText(const std::wstring& text) override;
-
 	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 
 private:
-	Size m_preferedSize;
-
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

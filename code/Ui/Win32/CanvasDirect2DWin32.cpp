@@ -45,7 +45,7 @@ CanvasDirect2DWin32::~CanvasDirect2DWin32()
 	Atomic::decrement(s_instanceCount);
 }
 
-bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
+bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool doubleBuffer, HDC hDC)
 {
 	HRESULT hr;
 
@@ -90,14 +90,9 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	setForeground(Color4ub(0, 0, 0, 255));
 	setBackground(Color4ub(255, 255, 255, 255));
+	setFont(font);
 
 	m_strokeWidth = 1.0f;
-
-	LOGFONT lf;
-	const BOOL result = GetObject(hWnd.getFont(), sizeof(lf), &lf);
-	T_FATAL_ASSERT_M (result, L"Unable to get device font");
-	setFont(logFontToFont(lf));
-
 	m_inPaint = true;
 
 	// Ensure font is recreated when dpi change.
@@ -131,33 +126,29 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 	m_inPaint = false;
 }
 
-void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, int32_t& outDescent) const
+void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, int32_t& outAscent, int32_t& outDescent) const
 {
 	if (!m_inPaint)
 	{
 		outAscent = 0;
 		outDescent = 0;
 
-		LOGFONT lf;
-		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
-			return;
-
-		int32_t logical = abs(lf.lfHeight);
-
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
-			lf.lfFaceName,
+			font.getFace().c_str(),
 			NULL,
-			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+			font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+			font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			float(logical) * (hWnd.dpi() / 96.0f),
+			(font.getSize().get() * hWnd.dpi()) / 96.0f,
 			L"",
 			&dwTextFormat.getAssign()
 		);
 		if (!dwTextFormat)
 			return;
 
+		dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+		dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 
 		ComRef< IDWriteFontCollection > collection;
@@ -165,7 +156,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 
 		UINT32 findex;
 		BOOL exists;
-		collection->FindFamilyName(lf.lfFaceName, &findex, &exists);
+		collection->FindFamilyName(font.getFace().c_str(), &findex, &exists);
 		T_FATAL_ASSERT(exists);
 
 		ComRef< IDWriteFontFamily > ffamily;
@@ -193,11 +184,11 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, int32_t& outAscent, 
 	}
 }
 
-int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, wchar_t ch, wchar_t next) const
+int32_t CanvasDirect2DWin32::getAdvance(Window& hWnd, const Font& font, wchar_t ch, wchar_t next) const
 {
 	if (!m_inPaint)
 	{
-		return getExtent(hWnd, std::wstring(1, ch)).cx;
+		return getExtent(hWnd, font, std::wstring(1, ch)).cx;
 	}
 	else	// Inside begin/end thus use current paint context.
 	{
@@ -210,30 +201,26 @@ int32_t CanvasDirect2DWin32::getLineSpacing(Window& hWnd) const
 	return 0;
 }
 
-Size CanvasDirect2DWin32::getExtent(Window& hWnd, const std::wstring& text) const
+Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::wstring& text) const
 {
 	if (!m_inPaint)
 	{
-		LOGFONT lf;
-		if (!GetObject(hWnd.getFont(), sizeof(lf), &lf))
-			return Size(0, 0);
-
-		int32_t logical = abs(lf.lfHeight);
-
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
-			lf.lfFaceName,
+			font.getFace().c_str(),
 			NULL,
-			bool(lf.lfWeight == FW_BOLD) ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-			bool(lf.lfItalic == TRUE) ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+			font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+			font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			float(logical) * (hWnd.dpi() / 96.0f),
+			(font.getSize().get() * hWnd.dpi()) / 96.0f,
 			L"",
 			&dwTextFormat.getAssign()
 		);
 		if (!dwTextFormat)
 			return Size(0, 0);
 
+		dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+		dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
 		dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 
 		ComRef< IDWriteTextLayout > dwLayout;
