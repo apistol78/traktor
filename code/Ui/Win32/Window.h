@@ -98,10 +98,6 @@ public:
 
 	int32_t dpi() const;
 
-	int32_t dpi96(int32_t measure) const;
-
-	int32_t invdpi96(int32_t measure) const;
-
 	LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const;
 
 	operator HWND () const;

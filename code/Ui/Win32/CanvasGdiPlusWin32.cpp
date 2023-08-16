@@ -80,8 +80,8 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		}
 		else
 		{
-			uint32_t width = m_ps.rcPaint.right - m_ps.rcPaint.left;
-			uint32_t height = m_ps.rcPaint.bottom - m_ps.rcPaint.top;
+			const uint32_t width = m_ps.rcPaint.right - m_ps.rcPaint.left;
+			const uint32_t height = m_ps.rcPaint.bottom - m_ps.rcPaint.top;
 
 			if (m_offScreenBitmap.ptr() == 0 || m_offScreenBitmapWidth < width || m_offScreenBitmapHeight < height)
 			{
@@ -106,6 +106,8 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 		m_ownDC = true;
 	}
+
+	m_dpi = hWnd.dpi();
 
 	m_hFont = hWnd.getFont();
 	m_font.reset(new Gdiplus::Font(m_hDC, m_hFont));
@@ -343,7 +345,7 @@ void CanvasGdiPlusWin32::setFont(const Font& font)
 {
 	m_font.reset(new Gdiplus::Font(
 		font.getFace().c_str(),
-		(Gdiplus::REAL)font.getPixelSize(),
+		(Gdiplus::REAL)(font.getSize().get() * m_dpi) / 96.0f,
 		(font.isBold() ? FontStyleBold : 0) |
 		(font.isItalic() ? FontStyleItalic : 0) |
 		(font.isUnderline() ? FontStyleUnderline : 0),
@@ -411,7 +413,7 @@ void CanvasGdiPlusWin32::drawLines(const Point* pnts, int npnts)
 	}
 }
 
-void CanvasGdiWin32::drawCurve(const Point& start, const Point& control, const Point& end)
+void CanvasGdiPlusWin32::drawCurve(const Point& start, const Point& control, const Point& end)
 {
 }
 
@@ -533,14 +535,14 @@ void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 	}	
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
 		return;
 
 	Gdiplus::ImageAttributes attr;
-	if ((blendMode & BmModulate) != 0)
+	if (blendMode == BlendMode::Modulate)
 	{
 		Gdiplus::ColorMatrix cm =
 		{
@@ -565,14 +567,14 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, cons
 	);
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	Gdiplus::Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
 		return;
 
 	Gdiplus::ImageAttributes attr;
-	if ((blendMode & BmModulate) != 0)
+	if (blendMode == BlendMode::Modulate)
 	{
 		Gdiplus::ColorMatrix cm =
 		{
