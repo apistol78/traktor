@@ -21,10 +21,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Win32/SmartHandle.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 #define WM_REFLECTED_COMMAND			(WM_USER + 1000)
 #define WM_REFLECTED_NOTIFY				(WM_USER + 1001)
@@ -54,7 +52,7 @@ struct MethodMessageHandler : public IMessageHandler
 	ClassType* m_object;
 	MethodType m_method;
 
-	MethodMessageHandler(ClassType* object, MethodType method)
+	explicit MethodMessageHandler(ClassType* object, MethodType method)
 	:	m_object(object)
 	,	m_method(method)
 	{
@@ -92,10 +90,6 @@ public:
 
 	bool subClass(HWND hWnd);
 
-	void setFont(HFONT hFont);
-
-	HFONT getFont() const;
-
 	int32_t dpi() const;
 
 	LRESULT sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const;
@@ -116,7 +110,6 @@ public:
 
 private:
 	HWND m_hWnd;
-	SmartFont m_hFont;
 	WNDPROC m_originalWndProc;
 	SmallMap< UINT, Ref< IMessageHandler > > m_messageHandlers;
 
@@ -129,6 +122,4 @@ private:
 	static LRESULT CALLBACK wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 };
 
-	}
 }
-

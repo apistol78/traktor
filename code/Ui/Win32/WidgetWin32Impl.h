@@ -32,10 +32,8 @@
 
 extern HINSTANCE g_hInstance;
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 class ICanvas;
@@ -46,7 +44,7 @@ class WidgetWin32Impl
 ,	public IFontMetric
 {
 public:
-	WidgetWin32Impl(EventSubject* owner)
+	explicit WidgetWin32Impl(EventSubject* owner)
 	:	m_owner(owner)
 	,	m_doubleBuffer(false)
 	,	m_canvasImpl(nullptr)
@@ -212,16 +210,12 @@ public:
 
 	virtual void setFont(const Font& font) override
 	{
-		const LOGFONT lf = fontToLogFont(font);
-		m_hFont = CreateFontIndirect(&lf);
-		m_hWnd.setFont(m_hFont);
+		m_font = font;
 	}
 
 	virtual Font getFont() const override
 	{
-		LOGFONT lf;
-		BOOL result = GetObject(m_hWnd.getFont(), sizeof(lf), &lf);
-		return logFontToFont(lf);
+		return m_font;
 	}
 
 	virtual const IFontMetric* getFontMetric() const override
@@ -420,13 +414,13 @@ public:
 	virtual void getAscentAndDescent(int32_t& outAscent, int32_t& outDescent) const override
 	{
 		T_FATAL_ASSERT(m_canvasImpl != nullptr);
-		m_canvasImpl->getAscentAndDescent(m_hWnd, outAscent, outDescent);
+		m_canvasImpl->getAscentAndDescent(m_hWnd, m_font, outAscent, outDescent);
 	}
 
 	virtual int32_t getAdvance(wchar_t ch, wchar_t next) const override
 	{
 		T_FATAL_ASSERT(m_canvasImpl != nullptr);
-		return m_canvasImpl->getAdvance(m_hWnd, ch, next);
+		return m_canvasImpl->getAdvance(m_hWnd, m_font, ch, next);
 	}
 
 	virtual int32_t getLineSpacing() const override
@@ -438,7 +432,7 @@ public:
 	virtual Size getExtent(const std::wstring& text) const override
 	{
 		T_FATAL_ASSERT(m_canvasImpl != nullptr);
-		return m_canvasImpl->getExtent(m_hWnd, text);
+		return m_canvasImpl->getExtent(m_hWnd, m_font, text);
 	}
 
 protected:
@@ -446,8 +440,8 @@ protected:
 	mutable Window m_hWnd;
 	bool m_doubleBuffer;
 	CanvasWin32* m_canvasImpl;
-	SmartFont m_hFont;
 	HCURSOR m_hCursor;
+	Font m_font;
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
@@ -541,6 +535,13 @@ protected:
 		setCursor(Cursor::Arrow);
 
 		m_dpi = m_hWnd.dpi();
+
+		// Get system default font.
+		ICONMETRICS im = {};
+		im.cbSize = sizeof(im);
+		SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
+		m_font = logFontToFont(im.lfFont);
+
 		return true;
 	}
 
@@ -764,7 +765,7 @@ protected:
 			RECT rcUpdate = { 0 };
 			GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
 
-			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_doubleBuffer, NULL))
+			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_font, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl, reinterpret_cast< Widget* >(m_owner));
 				PaintEvent p(
@@ -863,14 +864,8 @@ protected:
 
 	LRESULT eventDpiChanged(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		//Font f = getFont();
-		//f.setSize((f.getSize() * m_dpi) / m_hWnd.dpi());
-		//setFont(f);
-		//m_dpi = m_hWnd.dpi();
-
 		SizeEvent s(m_owner, Size(0, 0));
 		m_owner->raiseEvent(&s);
-
 		return 0;
 	}
 
@@ -880,6 +875,4 @@ protected:
 	}
 };
 
-	}
 }
-

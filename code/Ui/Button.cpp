@@ -31,10 +31,8 @@ bool Button::create(Widget* parent, const std::wstring& text, int style)
 	return true;
 }
 
-void Button::setText(const std::wstring& text)
+Size Button::getPreferredSize(const Size& hint) const
 {
-	Widget::setText(text);
-
 	// Calculate prefered size from new text.
 	const int32_t marginX = pixel(16_ut);
 	const int32_t marginY = pixel(4_ut);
@@ -42,17 +40,12 @@ void Button::setText(const std::wstring& text)
 	const FontMetric fm = getFontMetric();
 	const Size xt = fm.getExtent(getText());
 
-	m_preferedSize = Size(xt.cx + marginX * 2, xt.cy + marginY * 2);
-}
-
-Size Button::getPreferredSize(const Size& hint) const
-{
-	return m_preferedSize;
+	return Size(xt.cx + marginX * 2, xt.cy + marginY * 2);
 }
 
 Size Button::getMaximumSize() const
 {
-	return m_preferedSize;
+	return getPreferredSize(Size(0, 0));
 }
 
 void Button::eventMouseTrack(MouseTrackEvent* event)

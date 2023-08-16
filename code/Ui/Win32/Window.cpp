@@ -117,12 +117,6 @@ bool Window::create(
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 	}
 
-	ICONMETRICS im = {};
-	im.cbSize = sizeof(im);
-	SystemParametersInfo(SPI_GETICONMETRICS, 0, &im, sizeof(im));
-	m_hFont = CreateFontIndirect(&im.lfFont);
-	SendMessage(m_hWnd, WM_SETFONT, (WPARAM)m_hFont.getHandle(), FALSE);
-
 	return true;
 }
 
@@ -137,17 +131,6 @@ bool Window::subClass(HWND hWnd)
 	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 
 	return true;
-}
-
-void Window::setFont(HFONT hFont)
-{
-	sendMessage(WM_SETFONT, (WPARAM)hFont, TRUE);
-	m_hFont = hFont;
-}
-
-HFONT Window::getFont() const
-{
-	return m_hFont.getHandle();
 }
 
 int32_t Window::dpi() const
