@@ -8,8 +8,9 @@
  */
 #include <functional>
 #include <fbxsdk.h>
-#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Io/IMappedFile.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
@@ -233,17 +234,14 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	FileSystem::getInstance().makeAllDirectories(embeddedPath);
 	importer->SetEmbeddingExtractionFolder(wstombs(embeddedPath.getPathNameOS()).c_str());
 
-	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (!stream)
+	Ref< IMappedFile > mf = FileSystem::getInstance().map(filePath);
+	if (!mf)
 		return nullptr;
 
-	// Wrap source stream into a buffered stream if necessary as
-	// FBX keep reading very small chunks.
-	if (!is_a< BufferedStream >(stream))
-		stream = new BufferedStream(stream);
+	MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
 
 	AutoPtr< FbxStream > fbxStream(new IStreamWrapper());
-	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
+	bool status = importer->Initialize(fbxStream.ptr(), &ms, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
 		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
@@ -258,6 +256,8 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
 		return nullptr;
 	}
+
+	mf = nullptr;
 
 	FbxNode* rootNode = s_scene->GetRootNode();
 	if (!rootNode)
