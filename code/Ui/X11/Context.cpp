@@ -172,6 +172,10 @@ void Context::dispatch(XEvent& xe)
 			Window focusWindow; int revertTo;
 			XGetInputFocus(m_display, &focusWindow, &revertTo);
 
+			auto b = m_bindings.find(focusWindow);
+			if (b == m_bindings.end())
+				break;
+
 			if (m_focused != nullptr)
 			{
 				if (m_focused->window == focusWindow)
@@ -186,15 +190,13 @@ void Context::dispatch(XEvent& xe)
 				m_focused = nullptr;
 			}
 
-			auto b = m_bindings.find(focusWindow);
-			if (b != m_bindings.end())
 			{
 				m_focused = b->second.widget;
 				m_focused->focus = true;
 
 				XEvent xevent;
 				xevent.type = FocusIn;
-				dispatch(m_focused->window, FocusIn, true, xevent);
+				dispatch(focusWindow, FocusIn, true, xevent);
 			}
 		}
         break;
