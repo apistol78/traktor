@@ -395,12 +395,14 @@ public:
 
 	virtual int32_t dpi96(int32_t measure) const
 	{
-		return m_hWnd.dpi96(measure);
+		const int32_t dpiw = m_hWnd.dpi();
+		return (dpiw * measure) / 96;
 	}
 
 	virtual int32_t invdpi96(int32_t measure) const
 	{
-		return m_hWnd.invdpi96(measure);
+		const int32_t dpiw = m_hWnd.dpi();
+		return (96 * measure) / (dpiw > 0 ? dpiw : 96);
 	}
 
 	virtual void* getInternalHandle() override

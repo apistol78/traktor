@@ -155,18 +155,6 @@ int32_t Window::dpi() const
 	return GetDpiForWindow(m_hWnd);
 }
 
-int32_t Window::dpi96(int32_t measure) const
-{
-	const int32_t dpiw = GetDpiForWindow(m_hWnd);
-	return (dpiw * measure) / 96;
-}
-
-int32_t Window::invdpi96(int32_t measure) const
-{
-	const int32_t dpiw = GetDpiForWindow(m_hWnd);
-	return (96 * measure) / (dpiw > 0 ? dpiw : 96);
-}
-
 LRESULT Window::sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const
 {
 	return SendMessage(m_hWnd, message, wParam, lParam);

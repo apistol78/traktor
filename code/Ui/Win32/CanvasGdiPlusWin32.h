@@ -106,9 +106,9 @@ public:
 
 	virtual void fillPolygon(const Point* pnts, int count) override final;
 
-	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, uint32_t blendMode) override final;
+	virtual void drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter) override final;
 
-	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, uint32_t blendMode) override final;
+	virtual void drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter) override final;
 
 	virtual void drawText(const Point& at, const std::wstring& text) override final;
 
@@ -126,6 +126,7 @@ private:
 	HFONT m_hFont;
 	bool m_ownDC;
 	bool m_doubleBuffer;
+	int32_t m_dpi;
 	uint32_t m_offScreenBitmapWidth;
 	uint32_t m_offScreenBitmapHeight;
 	AutoPtr< Gdiplus::Bitmap > m_offScreenBitmap;
