@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/AnimationGraphPoseControllerData.h"
-#include "Animation/IK/IKPoseControllerData.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Animation/Editor/PoseControllerPipeline.h"
 #include "Editor/IPipelineDepends.h"
@@ -21,7 +20,6 @@ TypeInfoSet PoseControllerPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		AnimationGraphPoseControllerData,
-		IKPoseControllerData,
 		RagDollPoseControllerData
 	>();
 }
@@ -36,8 +34,6 @@ bool PoseControllerPipeline::buildDependencies(
 {
 	if (const AnimationGraphPoseControllerData* statePoseControllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild | editor::PdfResource);
-	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());
 	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(ragDollPoseContollerData->getTrackPoseController());

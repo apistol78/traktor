@@ -13,7 +13,6 @@
 #	include "Animation/Animation/SimpleAnimationControllerData.h"
 #	include "Animation/Animation/StatePoseControllerData.h"
 #	include "Animation/Animation/StateNode.h"
-#	include "Animation/IK/IKPoseControllerData.h"
 #	include "Animation/RagDoll/RagDollPoseControllerData.h"
 
 namespace traktor::animation
@@ -23,7 +22,6 @@ extern "C" void __module__Traktor_Animation()
 {
 	T_FORCE_LINK_REF(AnimationClassFactory);
 	T_FORCE_LINK_REF(AnimationGraphPoseControllerData);
-	T_FORCE_LINK_REF(IKPoseControllerData);
 	T_FORCE_LINK_REF(RagDollPoseControllerData);
 	T_FORCE_LINK_REF(SimpleAnimationControllerData);
 	T_FORCE_LINK_REF(StateNode);
