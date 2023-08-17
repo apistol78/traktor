@@ -1075,15 +1075,18 @@ void PrimitiveRenderer::drawText(
 	const Color4ub& color
 )
 {
-	Vector4 p = position;
+	const Vector4 viewPosition = m_worldView * position.xyz1();
 	const Vector4 dx(glyphWidth, 0.0f, 0.0f);
 	const Vector4 dy(0.0f, glyphHeight, 0.0f);
+
+	pushView(Matrix44::identity());
+	pushWorld(Matrix44::identity());
 
 	const float du = 1.0f / 16.0f;
 	const float dv = 1.0f / 16.0f;
 
-	const std::string tx = wstombs(AnsiEncoding(), text);
-	for (auto ch : tx)
+	Vector4 p = viewPosition;
+	for (auto ch : wstombs(AnsiEncoding(), text))
 	{
 		const float u = (int32_t(ch - L' ') % 16) * du;
 		const float v = (int32_t(ch - L' ') / 16) * dv;
@@ -1099,6 +1102,9 @@ void PrimitiveRenderer::drawText(
 
 		p += dx;
 	}
+
+	popWorld();
+	popView();
 }
 
 void PrimitiveRenderer::updateTransforms()
