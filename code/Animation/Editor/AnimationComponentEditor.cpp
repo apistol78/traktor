@@ -161,6 +161,8 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
 
+					primitiveRenderer->drawText(poseTransforms[i].translation().xyz1(), 0.2f, 0.2f, joint->getName(), Color4ub(255, 255, 255, 255));
+
 					if (joint->getParent() >= 0)
 					{
 						const Joint* parent = skeleton->getJoint(joint->getParent());
