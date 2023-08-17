@@ -257,8 +257,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		return nullptr;
 	}
 
-	mf = nullptr;
-
 	FbxNode* rootNode = s_scene->GetRootNode();
 	if (!rootNode)
 		return nullptr;
