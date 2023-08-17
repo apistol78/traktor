@@ -108,6 +108,16 @@ bool SkeletonPipeline::buildOutput(
 		skeleton->addJoint(joint);
 	}
 
+	// Write information about skeleton.
+	for (int32_t i = 0; i < skeleton->getJointCount(); ++i)
+	{
+		const Joint* joint = skeleton->getJoint(i);
+		log::info << L"\"" << joint->getName() << L"\" (" <<
+			(joint->getParent() >= 0 ? skeleton->getJoint(joint->getParent())->getName() : std::wstring(L"root")) <<
+			L")" <<
+			Endl;
+	}
+
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)
 	{
