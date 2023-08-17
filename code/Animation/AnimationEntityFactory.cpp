@@ -17,6 +17,8 @@
 #include "Animation/Boids/BoidsComponentData.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/Cloth/ClothComponentData.h"
+#include "Animation/IK/IKComponent.h"
+#include "Animation/IK/IKComponentData.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/Rotator/OrientateComponent.h"
 #include "Animation/Rotator/OrientateComponentData.h"
@@ -52,6 +54,7 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< AnimatedMeshComponentData >();
 	typeSet.insert< BoidsComponentData >();
 	typeSet.insert< ClothComponentData >();
+	typeSet.insert< IKComponentData >();
 	typeSet.insert< JointBindingComponentData >();
 	typeSet.insert< OrientateComponentData >();
 	typeSet.insert< PathComponentData >();
@@ -80,6 +83,8 @@ Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(con
 		return boidsComponentData->createComponent(builder);
 	else if (auto clothComponentData = dynamic_type_cast< const ClothComponentData* >(&entityComponentData))
 		return clothComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (auto ikComponentData = dynamic_type_cast< const IKComponentData* >(&entityComponentData))
+		return ikComponentData->createComponent();
 	else if (auto jointBindingComponentData = dynamic_type_cast< const JointBindingComponentData* >(&entityComponentData))
 		return jointBindingComponentData->createComponent(builder);
 	else if (auto orientateComponentData = dynamic_type_cast< const OrientateComponentData* >(&entityComponentData))

@@ -79,6 +79,9 @@ public:
 	/*! Get all joint pose transforms. */
 	const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
 
+	/*! Set all joint pose transforms. */
+	void setPoseTransforms(const AlignedVector< Transform >& poseTransforms) { m_poseTransforms = poseTransforms; }
+
 private:
 	Transform m_transform;
 	resource::Proxy< Skeleton > m_skeleton;

@@ -72,7 +72,8 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	os << L"	use_mesh_modifiers=True," << Endl;
 	os << L"	add_leaf_bones=True," << Endl;
 	os << L"	primary_bone_axis=\"Y\"," << Endl;
-	os << L"	secondary_bone_axis=\"-X\"" << Endl;
+	os << L"	secondary_bone_axis=\"-X\"," << Endl;
+	os << L"	bake_anim=True" << Endl;
 	os << L")" << Endl;
 	os.close();
 
