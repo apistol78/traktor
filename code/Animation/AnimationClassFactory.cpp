@@ -13,7 +13,7 @@
 #include "Animation/Animation/AnimationGraphPoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
-#include "Animation/IK/IKPoseController.h"
+#include "Animation/IK/IKComponent.h"
 #include "Animation/PathEntity/PathComponent.h"
 #include "Animation/PathEntity/PathComponentData.h"
 #include "Animation/RagDoll/RagDollPoseController.h"
@@ -89,6 +89,10 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classAnimatedMeshComponent->addMethod("getSkinTransform", &AnimatedMeshComponent_getSkinTransform);
 	registrar->registerClass(classAnimatedMeshComponent);
 
+	auto classIKComponent = new AutoRuntimeClass< IKComponent >();
+	classIKComponent->addConstructor();
+	registrar->registerClass(classIKComponent);
+
 	auto classJointBindingComponent = new AutoRuntimeClass< JointBindingComponent >();
 	classJointBindingComponent->addMethod("getEntity", &JointBindingComponent::getEntity);
 	classJointBindingComponent->addMethod("getEntities", &JointBindingComponent::getEntities);
@@ -96,11 +100,6 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 
 	auto classPoseController = new AutoRuntimeClass< IPoseController >();
 	registrar->registerClass(classPoseController);
-
-	auto classIKPoseController = new AutoRuntimeClass< IKPoseController >();
-	classIKPoseController->addConstructor< physics::PhysicsManager*, IPoseController*, uint32_t >();
-	classIKPoseController->addProperty("neutralPoseController", &IKPoseController::getNeutralPoseController);
-	registrar->registerClass(classIKPoseController);
 
 	auto classRagDollPoseController = new AutoRuntimeClass< RagDollPoseController >();
 	classRagDollPoseController->addProperty("enable", &RagDollPoseController::setEnable, &RagDollPoseController::isEnable);
