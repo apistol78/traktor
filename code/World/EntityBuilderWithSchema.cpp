@@ -54,7 +54,10 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 
 	if (entityData->getId().isNotNull())
+	{
+		T_FATAL_ASSERT(m_entityProducts.find(entityData->getId()) == m_entityProducts.end());
 		m_entityProducts.insert(entityData->getId(), entity);
+	}
 
 	return entity;
 }

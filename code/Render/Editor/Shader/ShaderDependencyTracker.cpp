@@ -18,41 +18,6 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database)
-{
-	RefArray< db::Instance > shaderGraphInstances;
-	db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
-	for (auto shaderGraphInstance : shaderGraphInstances)
-	{
-		Ref< ShaderGraph > shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
-		if (!shaderGraph)
-			continue;
-
-		for (auto externalNode : shaderGraph->findNodesOf< External >())
-			tracker->addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
-	}
-}
-
-void scanDependencies(Ref< ShaderDependencyTracker > tracker, db::Database* database, Guid shader)
-{
-	Ref< db::Instance > instance = database->getInstance(shader);
-	if (instance)
-	{
-		Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
-		if (shaderGraph)
-		{
-			tracker->removeDependencies(shader);
-
-			for (auto externalNode : shaderGraph->findNodesOf< External >())
-				tracker->addDependency(shader, externalNode->getFragmentGuid());
-		}
-	}
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyTracker", ShaderDependencyTracker, Object)
 
@@ -85,7 +50,22 @@ void ShaderDependencyTracker::scan(db::Database* database)
 		m_scanThread = nullptr;
 	}
 
-	ThreadPool::getInstance().spawn([=](){ scanDependencies(this, database); }, m_scanThread);
+	ThreadPool::getInstance().spawn(
+		[=]() {
+			RefArray< db::Instance > shaderGraphInstances;
+			db::recursiveFindChildInstances(database->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphInstances);
+			for (auto shaderGraphInstance : shaderGraphInstances)
+			{
+				Ref< ShaderGraph > shaderGraph = shaderGraphInstance->getObject< ShaderGraph >();
+				if (shaderGraph)
+				{
+					for (auto externalNode : shaderGraph->findNodesOf< External >())
+						addDependency(shaderGraphInstance->getGuid(), externalNode->getFragmentGuid());
+				}
+			}
+		},
+		m_scanThread
+	);
 }
 
 void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
@@ -96,7 +76,22 @@ void ShaderDependencyTracker::scan(db::Database* database, const Guid& shader)
 		m_scanThread = nullptr;
 	}
 
-	ThreadPool::getInstance().spawn([=](){ scanDependencies(this, database, shader); }, m_scanThread);
+	ThreadPool::getInstance().spawn(
+		[=]() {
+			Ref< db::Instance > instance = database->getInstance(shader);
+			if (instance)
+			{
+				Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
+				if (shaderGraph)
+				{
+					removeDependencies(shader);
+					for (auto externalNode : shaderGraph->findNodesOf< External >())
+						addDependency(shader, externalNode->getFragmentGuid());
+				}
+			}
+		},
+		m_scanThread
+	);
 }
 
 void ShaderDependencyTracker::addListener(IListener* listener)
