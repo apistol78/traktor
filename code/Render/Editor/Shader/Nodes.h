@@ -825,6 +825,15 @@ private:
 	PrecisionHint m_precisionHint;
 };
 
+/*! Preview output. */
+class T_DLLCLASS PreviewOutput : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	PreviewOutput();
+};
+
 /*! Step function. */
 class T_DLLCLASS Step : public ImmutableNode
 {

@@ -2097,6 +2097,21 @@ void PixelState::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PreviewOutput", 0, PreviewOutput, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_PreviewOutput_i[] =
+{
+	{ L"Input", L"{BDB32F7B-599C-42C8-A2CE-2B1BD0738E8B}", false },
+	{ 0 }
+};
+
+PreviewOutput::PreviewOutput()
+:	ImmutableNode(c_PreviewOutput_i, 0)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", 0, Polynomial, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Polynomial_i[] =

@@ -442,6 +442,10 @@
 			<second>Platform</second>
 		</item>
 		<item>
+			<first>SHADERGRAPH_NODE_PREVIEWOUTPUT</first>
+			<second>Preview output</second>
+		</item>
+		<item>
 			<first>SHADERGRAPH_NODE_RENDERER</first>
 			<second>Renderer</second>
 		</item>

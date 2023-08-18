@@ -75,6 +75,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Pow >(), L"SHADERGRAPH_ARITHMETIC", L"Power of function" },
 	{ type_of< PixelOutput >(), L"SHADERGRAPH_VALUE", L"Pixel shader output" },
 	{ type_of< PixelState >(), L"SHADERGRAPH_VALUE", L"Pixel shader output state" },
+	{ type_of< PreviewOutput >(), L"SHADERGRAPH_VALUE", L"Preview output" },
 	{ type_of< ReadStruct >(), L"SHADERGRAPH_VALUE", L"Read struct element" },
 	{ type_of< ReadStruct2 >(), L"SHADERGRAPH_VALUE", L"Read struct element(s)" },
 	{ type_of< RecipSqrt >(), L"SHADERGRAPH_ALGEBRA", L"Reciprocal square root" },
