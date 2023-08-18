@@ -42,7 +42,6 @@ namespace traktor::animation
 {
 
 class Skeleton;
-class IPoseController;
 
 /*! Animated mesh entity.
  * \ingroup Animation
