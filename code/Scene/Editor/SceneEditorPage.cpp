@@ -1417,9 +1417,9 @@ void SceneEditorPage::eventGuideClick(ui::GridColumnClickEvent* event)
 	if (event->getColumn() == 1)
 	{
 		ui::GridRow* row = event->getRow();
-		std::wstring id = row->get(0)->getText();
+		const std::wstring id = row->get(0)->getText();
 
-		bool shouldDraw = !m_context->shouldDrawGuide(id);
+		const bool shouldDraw = !m_context->shouldDrawGuide(id);
 		m_context->setDrawGuide(id, shouldDraw);
 
 		row->set(1, new ui::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
@@ -1427,6 +1427,8 @@ void SceneEditorPage::eventGuideClick(ui::GridColumnClickEvent* event)
 
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"SceneEditor.Guides/" + id, shouldDraw);
 		m_editor->commitGlobalSettings();
+
+		m_context->enqueueRedraw(nullptr);
 	}
 }
 
