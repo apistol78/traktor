@@ -118,7 +118,15 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 				{
 					const Joint* joint = skeleton->getJoint(i);
-					primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+
+					bool haveChildren = false;
+					skeleton->findChildren(i, [&](uint32_t) {
+						haveChildren = true;
+					});
+
+					if (haveChildren)
+						primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+
 					if (joint->getParent() >= 0)
 					{
 						const Joint* parent = skeleton->getJoint(joint->getParent());
@@ -144,11 +152,16 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 			if (poseTransforms.size() == skeleton->getJointCount())
 			{
 				const Color4ub color(255, 255, 0, 255);
-				const Color4ub colorAlpha(255, 255, 0, 140);
+				const Color4ub colorAlpha(255, 180, 0, 140);
 
 				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 				{
 					const Joint* joint = skeleton->getJoint(i);
+
+					bool haveChildren = false;
+					skeleton->findChildren(i, [&](uint32_t) {
+						haveChildren = true;
+					});
 
 					if (bindVisible)
 					{
@@ -159,8 +172,11 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 						);
 					}
 
-					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
-
+					if (haveChildren)
+					{
+						primitiveRenderer->drawSolidPoint(poseTransforms[i].translation().xyz1(), 8.0f, Color4ub(255, 255, 255, 255));
+						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+					}
 					primitiveRenderer->drawText(poseTransforms[i].translation().xyz1(), 0.2f, 0.2f, joint->getName(), Color4ub(255, 255, 255, 255));
 
 					if (joint->getParent() >= 0)

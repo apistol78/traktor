@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset" version="17">
+<object type="traktor.render.TextureAsset" version="18">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Hdri/Quarry.hdr</fileName>
 	<textureFormat>TfR16G16B16A16F</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
@@ -10,8 +10,9 @@
 	<hasAlpha>false</hasAlpha>
 	<generateAlpha>false</generateAlpha>
 	<invertAlpha>false</invertAlpha>
-	<ignoreAlpha>false</ignoreAlpha>
+	<ignoreAlpha>true</ignoreAlpha>
 	<premultiplyAlpha>false</premultiplyAlpha>
+	<dilateImage>false</dilateImage>
 	<scaleImage>false</scaleImage>
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
@@ -28,7 +29,7 @@
 	<preserveAlphaCoverage>false</preserveAlphaCoverage>
 	<alphaCoverageReference>0.5</alphaCoverageReference>
 	<sharpenRadius>5</sharpenRadius>
-	<sharpenStrength>1</sharpenStrength>
+	<sharpenStrength>0</sharpenStrength>
 	<noiseStrength>0</noiseStrength>
 	<systemTexture>false</systemTexture>
 </object>
