@@ -8,14 +8,10 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/PropertyString.h"
-#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Raster.h"
-#include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/InputPin.h"
@@ -23,7 +19,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphBrowsePreview.h"
-#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
@@ -49,51 +45,13 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* edit
 	const float sw = (float)100 / 100.0f;
 	const float ns = (float)200 / 100.0f;
 
-	Ref< drawing::Image > shaderGraphThumb = new drawing::Image(
-		drawing::PixelFormat::getR8G8B8A8(),
-		w,
-		h
-	);
+	Ref< drawing::Image > shaderGraphThumb = ShaderGraphPreview(editor).generate(shaderGraph, w, h);
 
-	shaderGraphThumb->clear(Color4f(0.2f, 0.2f, 0.2f, 0.0f));
-
-	bool havePreview = false;
-
-	const RefArray< PreviewOutput > previewOutputs = shaderGraph->findNodesOf< PreviewOutput >();
-	if (!previewOutputs.empty())
+	if (!shaderGraphThumb)
 	{
-		const InputPin* inputPin = previewOutputs.front()->getInputPin(0);
-		const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
-		if (auto colorNode = dynamic_type_cast< const Color* >(outputPin->getNode()))
-		{
-			shaderGraphThumb->clear(colorNode->getColor());
-			havePreview = true;
-		}
-		else if (auto textureNode = dynamic_type_cast< const Texture* >(outputPin->getNode()))
-		{
-			const std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-			Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(textureNode->getExternal());
-			if (textureAsset)
-			{
-				const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
-				Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-				if (file)
-				{
-					Ref< drawing::Image > image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-					if (image)
-					{
-						drawing::ScaleFilter scaleFilter(w, h, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-						image->apply(&scaleFilter);
-						shaderGraphThumb = image;
-						havePreview = true;
-					}
-				}
-			}
-		}
-	}
+		shaderGraphThumb = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), w, h);
+		shaderGraphThumb->clear(Color4f(0.2f, 0.2f, 0.2f, 0.0f));
 
-	if (!havePreview)
-	{
 		drawing::Raster raster(shaderGraphThumb);
 
 		const int32_t clearStyle = raster.defineSolidStyle(Color4f(0.2f, 0.2f, 0.2f, 0.8f));
