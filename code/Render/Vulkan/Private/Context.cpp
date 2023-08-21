@@ -225,7 +225,10 @@ void Context::addDeferredCleanup(const cleanup_fn_t& fn)
 	else
 	{
 		for (int32_t i = 0; i < sizeof_array(m_uniformBufferPools); ++i)
-			m_uniformBufferPools[i]->flush();
+		{
+			if (m_uniformBufferPools[i])
+				m_uniformBufferPools[i]->flush();
+		}
 
 		fn(this);
 	}
