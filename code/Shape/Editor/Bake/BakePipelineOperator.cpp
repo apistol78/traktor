@@ -348,31 +348,6 @@ int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int
 	return alignUp(size, 4);
 }
 
-/*! */
-bool prepareModel(
-	editor::IPipelineBuilder* pipelineBuilder,
-	model::Model* model,
-	const std::wstring& assetPath,
-	int32_t lightmapSize
-)
-{
-	// Ensure model is fit for tracing.
-	model->clear(model::Model::CfColors | model::Model::CfJoints);
-	model::Triangulate().apply(*model);
-	model::CalculateTangents(false).apply(*model);
-
-	// Check if model already contain lightmap UV or if we need to unwrap.
-	uint32_t channel = model->getTexCoordChannel(L"Lightmap");
-	if (channel == model::c_InvalidIndex)
-	{
-		// No lightmap UV channel, need to add and unwrap automatically.
-		channel = model->addUniqueTexCoordChannel(L"Lightmap");
-		model::UnwrapUV(channel, lightmapSize).apply(*model);
-	}
-
-	return true;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
@@ -710,17 +685,22 @@ bool BakePipelineOperator::build(
 								configuration->getMinimumLightMapSize(),
 								configuration->getMaximumLightMapSize()
 							);
+							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
 
 							// Prepare model for baking.
-							if (!prepareModel(
-								pipelineBuilder,
-								model,
-								m_assetPath,
-								lightmapSize
-							))
-								return nullptr;
+							model->clear(model::Model::CfColors | model::Model::CfJoints);
+							model::Triangulate().apply(*model);
+							model::CalculateTangents(false).apply(*model);
 
-							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
+							// Check if model already contain lightmap UV or if we need to unwrap.
+							uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+							if (channel == model::c_InvalidIndex)
+							{
+								// No lightmap UV channel, need to add and unwrap automatically.
+								channel = model->addUniqueTexCoordChannel(L"Lightmap");
+								model::UnwrapUV(channel, lightmapSize).apply(*model);
+							}
+
 							return model;
 						}
 					);
