@@ -127,6 +127,9 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		RefArray< IEntityComponent > components;
 		for (auto componentData : componentDatas)
 		{
+			if (!componentData)
+				continue;
+
 			Ref< IEntityComponent > component = builder->create(componentData);
 			if (!component)
 			{
@@ -135,6 +138,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 				else
 					continue;
 			}
+
 			components.push_back(component);
 		}
 
