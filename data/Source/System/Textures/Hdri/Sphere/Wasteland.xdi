@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset" version="17">
+<object type="traktor.render.TextureAsset" version="18">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Hdri/Wasteland.hdr</fileName>
 	<textureFormat>TfR16G16B16A16F</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
@@ -12,6 +12,7 @@
 	<invertAlpha>false</invertAlpha>
 	<ignoreAlpha>true</ignoreAlpha>
 	<premultiplyAlpha>false</premultiplyAlpha>
+	<dilateImage>false</dilateImage>
 	<scaleImage>false</scaleImage>
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
@@ -19,7 +20,7 @@
 	<flipY>false</flipY>
 	<enableCompression>true</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
-	<encodeAsRGBM>true</encodeAsRGBM>
+	<encodeAsRGBM>false</encodeAsRGBM>
 	<inverseNormalMapX>false</inverseNormalMapX>
 	<inverseNormalMapY>false</inverseNormalMapY>
 	<scaleNormalMap>0</scaleNormalMap>
