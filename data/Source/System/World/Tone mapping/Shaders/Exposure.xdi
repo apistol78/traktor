@@ -68,7 +68,7 @@ Middle gray
 				<first>392</first>
 				<second>53</second>
 			</position>
-			<value>0.4</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{B6AA73FC-EA74-FF40-BD7B-71298F0FBA85}</id>
