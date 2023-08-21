@@ -70,7 +70,7 @@ Ref< IStream > BlobFile::append()
 Ref< IStream > BlobFile::read() const
 {
 	m_lastAccessed = DateTime::now();
-	return FileSystem::getInstance().open(m_path, File::FmRead);
+	return FileSystem::getInstance().open(m_path, File::FmRead | File::FmMapped);
 }
 
 bool BlobFile::remove()
