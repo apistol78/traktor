@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{A1B0BF4E-3685-9D43-80C3-B22E5110D8B9}</id>
 			<comment/>
 			<position>
-				<first>2194</first>
-				<second>389</second>
+				<first>2207</first>
+				<second>521</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -46,7 +46,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -264,6 +263,45 @@ W
 			</position>
 			<value>0</value>
 		</item>
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+			<id>{B3BD51AD-CCD7-3941-A37B-6FA92E124562}</id>
+			<comment/>
+			<position>
+				<first>1320</first>
+				<second>726</second>
+			</position>
+			<name>Filmic</name>
+			<technique/>
+			<inputPins>
+				<item>
+					<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+vec3 x = $Input.xyz;
+float a = 2.51f;
+float b = 0.03f;
+float c = 2.43f;
+float d = 0.59f;
+float e = 0.14f;
+$Output = vec4(
+	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
+	1.0f
+);
+
+
+			]]>
+			</script>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -348,16 +386,6 @@ W
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
@@ -404,6 +432,26 @@ W
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{29646386-9200-5A48-8453-670F69381E4A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{4F257A94-BC66-BA48-8547-1A25C1E18957}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

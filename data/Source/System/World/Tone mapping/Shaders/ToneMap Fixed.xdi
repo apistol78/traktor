@@ -62,12 +62,12 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{37DF1313-180C-4D49-B4F9-807441A7933A}</id>
 			<comment/>
 			<position>
-				<first>1971</first>
-				<second>593</second>
+				<first>1921</first>
+				<second>800</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -107,7 +107,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
@@ -201,6 +200,45 @@ W
 				<second>581</second>
 			</position>
 			<value>1</value>
+		</item>
+		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+			<id>{EEAF1B08-2D03-7E4B-AA71-0F847BE6479C}</id>
+			<comment/>
+			<position>
+				<first>1348</first>
+				<second>967</second>
+			</position>
+			<name>Filmic</name>
+			<technique/>
+			<inputPins>
+				<item>
+					<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+vec3 x = $Input.xyz;
+float a = 2.51f;
+float b = 0.03f;
+float c = 2.43f;
+float d = 0.59f;
+float e = 0.14f;
+$Output = vec4(
+	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
+	1.0f
+);
+
+
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -306,8 +344,18 @@ W
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
