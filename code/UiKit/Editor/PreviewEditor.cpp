@@ -112,9 +112,12 @@ bool PreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializ
 
 void PreviewEditor::destroy()
 {
-	safeDestroy(m_previewControl);
+	if (m_previewControl)
+		m_previewControl->setScaffolding(nullptr);
+
 	safeDestroy(m_resourceManager);
 	safeDestroy(m_scriptContext);
+	safeDestroy(m_previewControl);
 }
 
 void PreviewEditor::apply()

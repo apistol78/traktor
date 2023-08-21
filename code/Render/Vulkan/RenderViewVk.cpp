@@ -277,10 +277,12 @@ void RenderViewVk::close()
 	for (auto& frame : m_frames)
 	{
 		if (frame.graphicsCommandBuffer)
-			frame.graphicsCommandBuffer->externalSynced();
+			frame.graphicsCommandBuffer->wait();
 
 		frame.primaryTarget->destroy();
 		vkDestroySemaphore(m_context->getLogicalDevice(), frame.renderFinishedSemaphore, nullptr);
+
+		frame.graphicsCommandBuffer = nullptr;
 	}
 	m_frames.clear();
 
@@ -1460,6 +1462,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 	if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS)
 		return false;
+	setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	// Create time query pool.
@@ -1498,6 +1501,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		VkSemaphoreCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 		vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &frame.renderFinishedSemaphore);
+		setObjectDebugName(m_context->getLogicalDevice(), L"frame.renderFinishedSemaphore", (uint64_t)frame.renderFinishedSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
 
 		static uint32_t primaryInstances = 0;
 		frame.primaryTarget = new RenderTargetSetVk(m_context, primaryInstances);
