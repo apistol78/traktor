@@ -200,28 +200,19 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		{
 			// Build entity trough pipeline; replace entity with product.
 			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
-			if (product)
-				objectMember->set(product);
-			else
-				reflection->removeMember(objectMember);
+			objectMember->set(product);
 		}
 		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
 			// Build component trough pipeline; replace component with product.
 			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityComponentData, ownerEntityData);
-			if (product)
-				objectMember->set(product);
-			else
-				reflection->removeMember(objectMember);
+			objectMember->set(product);
 		}
 		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
 			// Build event trough pipeline; replace event with product.
 			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
-			if (product)
-				objectMember->set(product);
-			else
-				reflection->removeMember(objectMember);
+			objectMember->set(product);
 		}
 		else if (objectMember->get())
 		{
