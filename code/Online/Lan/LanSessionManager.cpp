@@ -10,6 +10,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/UdpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
@@ -23,12 +24,10 @@
 #include "Online/Lan/LanUser.h"
 #include "Online/Lan/LanVoiceChat.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_keyServiceTypeUser = L"U";
 const wchar_t* c_keyUserHandle = L"UH";
@@ -37,14 +36,14 @@ const wchar_t* c_keyUserPort = L"UP";
 
 int32_t generateUniqueKey()
 {
-	Guid unique = Guid::create();
+	const Guid unique = Guid::create();
 	const uint8_t* p = unique;
 	int32_t k = *(const int32_t*)&p[0] ^ *(const int32_t*)&p[4] ^ *(const int32_t*)&p[8] ^ *(const int32_t*)&p[12];
 	if (k < 0) k = -k;
 	return k;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.LanSessionManager", 0, LanSessionManager, ISessionManagerProvider)
 
@@ -56,6 +55,8 @@ LanSessionManager::LanSessionManager()
 
 bool LanSessionManager::create(const IGameConfiguration* configuration)
 {
+	net::Network::initialize();
+
 	m_discoveryManager = new net::DiscoveryManager();
 	if (!m_discoveryManager->create(net::MdFindServices | net::MdPublishServices/* | net::MdVerbose*/))
 		return false;
@@ -246,5 +247,4 @@ IVoiceChatProvider* LanSessionManager::getVoiceChat() const
 	return m_voiceChat;
 }
 
-	}
 }

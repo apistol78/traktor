@@ -10,10 +10,8 @@
 
 #include "Online/Provider/IVoiceChatProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LanVoiceChat : public IVoiceChatProvider
 {
@@ -29,6 +27,4 @@ public:
 	virtual void endTransmission() override final;
 };
 
-	}
 }
-

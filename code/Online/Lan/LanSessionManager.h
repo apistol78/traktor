@@ -19,18 +19,16 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class DiscoveryManager;
 class UdpSocket;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LanAchievements;
 class LanLeaderboards;
@@ -110,6 +108,4 @@ private:
 	Ref< LanVoiceChat > m_voiceChat;
 };
 
-	}
 }
-

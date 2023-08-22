@@ -11,18 +11,16 @@
 #include "Core/Thread/Semaphore.h"
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class DiscoveryManager;
 class NetworkService;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LanMatchMaking : public IMatchMakingProvider
 {
@@ -104,6 +102,4 @@ private:
 	uint64_t m_primaryLobbyUser;
 };
 
-	}
 }
-
