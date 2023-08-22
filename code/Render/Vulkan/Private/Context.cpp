@@ -247,11 +247,6 @@ void Context::removeCleanupListener(ICleanupListener* cleanupListener)
 	m_cleanupListeners.erase(it);
 }
 
-// bool Context::needCleanup() const
-// {
-// 	return !m_cleanupFns.empty();
-// }
-
 void Context::performCleanup()
 {
 	if (m_cleanupFns.empty())

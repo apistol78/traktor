@@ -66,8 +66,6 @@ public:
 
 	void removeCleanupListener(ICleanupListener* cleanupListener);
 
-	// bool needCleanup() const;
-
 	void performCleanup();
 
 	void recycle();
