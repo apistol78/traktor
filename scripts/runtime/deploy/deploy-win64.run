@@ -87,7 +87,7 @@ local function linkStaticProduct()
 	if result ~= 0 then
 		stderr:printLn("Unable to build product resources.")
 		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
+		stderr:printLn(run.stdOut)
 		return 1
 	end
 
@@ -112,7 +112,7 @@ local function linkStaticProduct()
 	if result ~= 0 then
 		stderr:printLn("Unable to build executable product.")
 		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
+		stderr:printLn(run.stdOut)
 		return 1
 	end
 
@@ -122,7 +122,7 @@ local function linkStaticProduct()
 	if result ~= 0 then
 		stderr:printLn("Unable to embed manifest into executable product.")
 		stderr:printLn(cmd)
-		stderr:printLn(run:stdOut())
+		stderr:printLn(run.stdOut)
 		return 1
 	end
 
