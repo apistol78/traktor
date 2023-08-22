@@ -247,7 +247,7 @@
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_COUNTS</first>
-			<second>Node counts</second>
+			<second>Nodes</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_NODE_ABS</first>
@@ -756,6 +756,10 @@
 		<item>
 			<first>SHADERGRAPH_UNIFORMS</first>
 			<second>Uniforms</second>
+		</item>
+		<item>
+			<first>SHADERGRAPH_UNIFORMS_FREQUENCY</first>
+			<second>Frequency</second>
 		</item>
 		<item>
 			<first>SHADERGRAPH_UNIFORMS_NAME</first>
