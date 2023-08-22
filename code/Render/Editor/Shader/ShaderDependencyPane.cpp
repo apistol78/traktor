@@ -16,6 +16,28 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+class RefereeListData : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	RefereeListData() = default;
+
+	explicit RefereeListData(const db::Instance* _instance)
+	{
+		id = _instance->getGuid();
+	}
+
+public:
+	Guid id;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyPane.RefereeListData", RefereeListData, Object)
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderDependencyPane", ShaderDependencyPane, ui::Container)
 
@@ -65,7 +87,7 @@ void ShaderDependencyPane::dependencyAdded(const Guid& fromShader, const Guid& t
 
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(fromShader);
 	if (instance)
-		m_refereeList->add(instance->getPath(), instance);
+		m_refereeList->add(instance->getPath(), new RefereeListData(instance));
 }
 
 void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid& toShader)
@@ -76,8 +98,8 @@ void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid&
 	const int32_t count = m_refereeList->count();
 	for (int32_t i = 0; i < count; ++i)
 	{
-		Ref< db::Instance > instance = m_refereeList->getData< db::Instance >(i);
-		if (instance != nullptr && instance->getGuid() == fromShader)
+		Ref< RefereeListData > rd = m_refereeList->getData< RefereeListData >(i);
+		if (rd->id == fromShader)
 		{
 			m_refereeList->remove(i);
 			break;
@@ -87,9 +109,13 @@ void ShaderDependencyPane::dependencyRemoved(const Guid& fromShader, const Guid&
 
 void ShaderDependencyPane::eventRefereeListDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	Ref< db::Instance > instance = m_refereeList->getSelectedData< db::Instance >();
-	if (instance)
-		m_editor->openEditor(instance);
+	Ref< RefereeListData > rd = m_refereeList->getSelectedData< RefereeListData >();
+	if (rd)
+	{
+		Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(rd->id);
+		if (instance)
+			m_editor->openEditor(instance);
+	}
 }
 
 }

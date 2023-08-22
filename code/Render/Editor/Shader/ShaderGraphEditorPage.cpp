@@ -343,12 +343,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &ShaderGraphEditorPage::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
-	// Create shader graph referee view.
-	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
-	m_dependencyPane->create(parent);
-	m_dependencyPane->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderDependencyPaneVisible", true));
-	m_site->createAdditionalPanel(m_dependencyPane, 400_ut, false);
-
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
@@ -416,6 +410,15 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeCountGrid->addColumn(new ui::GridColumn(i18n::Text(L"SHADERGRAPH_NODE_COUNT"), 80_ut, false));
 
 	tab->addPage(tabPageNodeCount);
+
+	// Shader graph referee tab.
+	Ref< ui::TabPage > tabPageReferee = new ui::TabPage();
+	tabPageReferee->create(tab, i18n::Text(L"SHADERGRAPH_REFEREES"), new ui::FloodLayout());
+
+	m_dependencyPane = new ShaderDependencyPane(m_editor, m_document->getInstance(0)->getGuid());
+	m_dependencyPane->create(tabPageReferee);
+
+	tab->addPage(tabPageReferee);
 
 	tab->setActivePage(tabPageVariables);
 
@@ -499,13 +502,6 @@ void ShaderGraphEditorPage::destroy()
 		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(false));
 		m_editor->commitGlobalSettings();
 		m_site->destroyAdditionalPanel(m_shaderViewer);
-	}
-
-	if (m_dependencyPane)
-	{
-		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderDependencyPaneVisible", m_dependencyPane->isVisible(false));
-		m_editor->commitGlobalSettings();
-		m_site->destroyAdditionalPanel(m_dependencyPane);
 	}
 
 	m_site->destroyAdditionalPanel(m_dataContainer);
@@ -1282,6 +1278,10 @@ void ShaderGraphEditorPage::updateGraph()
 	};
 	std::map< std::wstring, VariableInfo > variables;
 
+	// Fully resolve shader graph so we can inspect all uniforms etc.
+	FragmentReaderAdapter reader(m_editor->getSourceDatabase());
+	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker(reader).resolve(m_shaderGraph, true);
+
 	// Extract techniques.
 	m_toolTechniques->removeAll();	
 	for (const auto& technique : ShaderGraphTechniques(m_shaderGraph, Guid()).getNames())
@@ -1339,6 +1339,39 @@ void ShaderGraphEditorPage::updateGraph()
 			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
 			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]));
 			m_uniformsGrid->addRow(row);
+		}
+	}
+	if (resolvedShaderGraph)
+	{
+		for (auto node : resolvedShaderGraph->getNodes())
+		{
+			auto it = std::find_if(
+				m_shaderGraph->getNodes().begin(), m_shaderGraph->getNodes().end(),
+				[&](const Node* n) {
+					return node->getId() == n->getId();
+				}
+			);
+			if (it != m_shaderGraph->getNodes().end())
+				continue;
+
+			if (Uniform* uniformNode = dynamic_type_cast<Uniform*>(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->add(new ui::GridItem(uniformNode->getParameterName()));
+				row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]));
+				row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
+				row->setBackground(Color4ub(90, 60, 40, 255));
+				m_uniformsGrid->addRow(row);
+			}
+			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast<IndexedUniform*>(node))
+			{
+				Ref< ui::GridRow > row = new ui::GridRow();
+				row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
+				row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
+				row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]));
+				row->setBackground(Color4ub(90, 60, 40, 255));
+				m_uniformsGrid->addRow(row);
+			}
 		}
 	}
 
