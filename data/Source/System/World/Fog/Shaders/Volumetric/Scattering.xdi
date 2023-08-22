@@ -71,7 +71,7 @@ NDC
 			<id>{D03CE9B3-BA39-FB4F-8F2A-25EB9436E3BF}</id>
 			<comment/>
 			<position>
-				<first>546</first>
+				<first>555</first>
 				<second>582</second>
 			</position>
 			<value>-1, 1, 0, 1</value>
@@ -99,7 +99,7 @@ NDC
 			<comment/>
 			<position>
 				<first>-1501</first>
-				<second>429</second>
+				<second>430</second>
 			</position>
 			<fragmentGuid>{83C1284E-627A-5E4D-81DD-0C2E5C34EC17}</fragmentGuid>
 			<inputPins>
@@ -237,16 +237,16 @@ NDC
 			<id>{DC900E5A-C045-8B48-BCC4-DA9EC9C3FCAF}</id>
 			<comment/>
 			<position>
-				<first>1552</first>
-				<second>182</second>
+				<first>1554</first>
+				<second>209</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A780AD98-CCC4-A145-B43D-A8EC3AE3257B}</id>
 			<comment/>
 			<position>
-				<first>1353</first>
-				<second>179</second>
+				<first>1360</first>
+				<second>188</second>
 			</position>
 			<name>L_NearZ</name>
 		</item>
@@ -254,8 +254,8 @@ NDC
 			<id>{D6A9D952-309E-1640-B092-7156698A32D4}</id>
 			<comment/>
 			<position>
-				<first>1347</first>
-				<second>218</second>
+				<first>1354</first>
+				<second>227</second>
 			</position>
 			<name>L_FarZ</name>
 		</item>
@@ -263,8 +263,8 @@ NDC
 			<id>{50AAA77B-E51F-024C-890A-A611348684D6}</id>
 			<comment/>
 			<position>
-				<first>1782</first>
-				<second>184</second>
+				<first>1784</first>
+				<second>211</second>
 			</position>
 			<name>L_ViewZ</name>
 		</item>
@@ -562,20 +562,12 @@ $Output = fract(sin(sn) * c);
 				<second>879</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{16309785-86FE-244B-AD45-C049B74151F2}</id>
-			<comment/>
-			<position>
-				<first>-931</first>
-				<second>750</second>
-			</position>
-		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
 			<id>{AF10E59E-248D-434D-901A-F22C29885AC2}</id>
 			<comment/>
 			<position>
-				<first>-1339</first>
-				<second>916</second>
+				<first>-1300</first>
+				<second>893</second>
 			</position>
 			<name>Mie Scattering Phase</name>
 			<technique/>
@@ -624,10 +616,10 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<id>{AE52034D-E4C2-BC4B-A021-78F61C769837}</id>
 			<comment/>
 			<position>
-				<first>-1295</first>
-				<second>639</second>
+				<first>-1248</first>
+				<second>982</second>
 			</position>
-			<value>1</value>
+			<value>0.75</value>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A1E3DF67-45D5-8544-919B-A61DE8D94B16}</id>
@@ -649,15 +641,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			</position>
 			<swizzle>xyzw</swizzle>
 		</item>
-		<item type="traktor.render.Vector" version="traktor.render.Node:1">
-			<id>{39AEB781-3B7D-AA42-B871-7FF5FA2973BF}</id>
-			<comment/>
-			<position>
-				<first>-1327</first>
-				<second>710</second>
-			</position>
-			<value>1, 1, 1, 1</value>
-		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{43618504-E677-614E-BE28-DBE70E3EDA18}</id>
 			<comment/>
@@ -674,6 +657,32 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 				<second>334</second>
 			</position>
 			<name>L_FarZ</name>
+		</item>
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{36F26554-4E1D-7443-8841-B206C15A668C}</id>
+			<comment/>
+			<position>
+				<first>-1025</first>
+				<second>934</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{95619C80-1F10-5746-80BA-BA4095C91B26}</id>
+			<comment/>
+			<position>
+				<first>-1248</first>
+				<second>1041</second>
+			</position>
+			<value>0.25</value>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{5B52BAED-7EDB-7B46-B36B-52C4A2BBF0A4}</id>
+			<comment/>
+			<position>
+				<first>-1278</first>
+				<second>630</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1183,7 +1192,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 				<id>{73A3DE7A-6D35-4844-BF53-55E239F553F1}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<id>{0D22C808-9FE4-B548-89F0-8D6BF18DBFCF}</id>
 			</destination>
 		</item>
@@ -1200,16 +1209,6 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[58]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[59]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
@@ -1219,32 +1218,12 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[55]"/>
-				<id>{444C9199-3D65-514B-B3F3-EF9295325ED3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[54]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{5DC24E9F-DEF0-9C45-984B-B27493D02914}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[57]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1263,13 +1242,13 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
@@ -1289,7 +1268,7 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
@@ -1299,32 +1278,82 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{3E538F69-C85C-44E2-9320-73F876288BAE}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[43]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{5DC24E9F-DEF0-9C45-984B-B27493D02914}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<id>{444C9199-3D65-514B-B3F3-EF9295325ED3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{4067F6C8-9404-45CA-9359-D9E2456F7431}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[57]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[62]"/>
+				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 	</edges>
@@ -1333,12 +1362,12 @@ $Output = (1.0f - G * G) / (4.0f * PI * pow(1.0f + G * G - 2.0f * G * cosTheta, 
 			<title>Inject light into frustum grid</title>
 			<comment/>
 			<position>
-				<first>-660</first>
-				<second>-70</second>
+				<first>-1955</first>
+				<second>-202</second>
 			</position>
 			<size>
-				<first>2591</first>
-				<second>1177</second>
+				<first>3892</first>
+				<second>1357</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

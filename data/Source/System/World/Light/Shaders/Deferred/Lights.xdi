@@ -2137,10 +2137,6 @@ Check max shadow distance
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{A983BA51-1DCB-104F-96C3-53E44704D60D}</id>
-					<name>Factor</name>
-				</item>
-				<item>
 					<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
 					<name>Output</name>
 				</item>
