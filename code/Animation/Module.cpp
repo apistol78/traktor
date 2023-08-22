@@ -10,8 +10,8 @@
 
 #if defined(T_STATIC)
 #	include "Animation/AnimationClassFactory.h"
+#	include "Animation/Animation/AnimationGraphPoseControllerData.h"
 #	include "Animation/Animation/SimpleAnimationControllerData.h"
-#	include "Animation/Animation/StatePoseControllerData.h"
 #	include "Animation/Animation/StateNode.h"
 #	include "Animation/RagDoll/RagDollPoseControllerData.h"
 
