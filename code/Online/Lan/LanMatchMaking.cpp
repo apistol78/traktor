@@ -18,12 +18,10 @@
 #include "Net/Discovery/NetworkService.h"
 #include "Online/Lan/LanMatchMaking.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_keyServiceTypeUserInLobby = L"UIL";
 const wchar_t* c_keyLobbyHandle = L"LH";
@@ -35,14 +33,14 @@ const wchar_t* c_keyPrefixUserMeta = L"UM";
 
 int32_t generateUniqueKey()
 {
-	Guid unique = Guid::create();
+	const Guid unique = Guid::create();
 	const uint8_t* p = unique;
 	int32_t k = *(const int32_t*)&p[0] ^ *(const int32_t*)&p[4] ^ *(const int32_t*)&p[8] ^ *(const int32_t*)&p[12];
 	if (k < 0) k = -k;
 	return k;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LanMatchMaking", LanMatchMaking, IMatchMakingProvider)
 
@@ -480,5 +478,4 @@ bool LanMatchMaking::inviteToParty(uint64_t partyHandle, uint64_t userHandle)
 	return false;
 }
 
-	}
 }

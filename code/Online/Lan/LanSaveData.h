@@ -10,10 +10,8 @@
 
 #include "Online/Provider/ISaveDataProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LanSaveData : public ISaveDataProvider
 {
@@ -31,6 +29,4 @@ public:
 	virtual bool remove(const std::wstring& saveDataId) override final;
 };
 
-	}
 }
-

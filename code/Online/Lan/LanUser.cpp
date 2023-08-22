@@ -20,12 +20,10 @@
 #include "Net/Discovery/NetworkService.h"
 #include "Online/Lan/LanUser.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
+	namespace
 	{
-		namespace
-		{
 
 #if defined(T_INTERNET_SIMULATION)
 Random s_random;
@@ -37,7 +35,7 @@ const wchar_t* c_keyUserHandle = L"UH";
 const wchar_t* c_keyUserAddr = L"UA";
 const wchar_t* c_keyUserPort = L"UP";
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LanUser", LanUser, IUserProvider)
 
@@ -148,10 +146,10 @@ bool LanUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bo
 		if (propertyGroup->getProperty< int32_t >(c_keyUserHandle) != userHandle)
 			continue;
 
-		uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
-		uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
+		const uint32_t addr = propertyGroup->getProperty< int32_t >(c_keyUserAddr);
+		const uint16_t port = propertyGroup->getProperty< int32_t >(c_keyUserPort);
 
-		int32_t result = m_socket->sendTo(
+		const int32_t result = m_socket->sendTo(
 			net::SocketAddressIPv4(addr, port),
 			data,
 			int(size)
@@ -204,5 +202,4 @@ void LanUser::update()
 #endif
 }
 
-	}
 }

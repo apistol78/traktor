@@ -8,10 +8,8 @@
  */
 #include "Online/Lan/LanVoiceChat.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LanVoiceChat", LanVoiceChat, IVoiceChatProvider)
 
@@ -31,5 +29,4 @@ void LanVoiceChat::endTransmission()
 {
 }
 
-	}
 }

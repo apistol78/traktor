@@ -10,10 +10,8 @@
 
 #include "Online/Provider/IAchievementsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LanAchievements : public IAchievementsProvider
 {
@@ -25,6 +23,4 @@ public:
 	virtual bool set(const std::wstring& achievementId, bool reward) override final;
 };
 
-	}
 }
-

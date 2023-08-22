@@ -10,10 +10,8 @@
 
 #include "Online/Provider/ILeaderboardsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LanLeaderboards : public ILeaderboardsProvider
 {
@@ -31,6 +29,4 @@ public:
 	virtual bool getFriendScores(uint64_t handle, int32_t from, int32_t to, std::vector< ScoreData >& outScores) override final;
 };
 
-	}
 }
-

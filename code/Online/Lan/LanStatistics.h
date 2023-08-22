@@ -10,10 +10,8 @@
 
 #include "Online/Provider/IStatisticsProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LanStatistics : public IStatisticsProvider
 {
@@ -25,6 +23,4 @@ public:
 	virtual bool set(const std::wstring& statId, int32_t value) override final;
 };
 
-	}
 }
-

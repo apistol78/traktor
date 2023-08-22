@@ -8,10 +8,8 @@
  */
 #include "Online/Lan/LanLeaderboards.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LanLeaderboards", LanLeaderboards, ILeaderboardsProvider)
 
@@ -40,5 +38,4 @@ bool LanLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t to,
 	return false;
 }
 
-	}
 }
