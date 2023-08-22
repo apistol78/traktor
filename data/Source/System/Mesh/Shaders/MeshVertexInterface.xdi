@@ -10,19 +10,6 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{E4CBD992-2855-5245-8159-F151DFE70FCD}</id>
-			<comment/>
-			<position>
-				<first>223</first>
-				<second>199</second>
-			</position>
-			<name>Position</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<haveDefaultValue>false</haveDefaultValue>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{D576759A-1345-BE41-BE33-BA905A3DA2C0}</id>
 			<comment/>
@@ -40,7 +27,7 @@
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

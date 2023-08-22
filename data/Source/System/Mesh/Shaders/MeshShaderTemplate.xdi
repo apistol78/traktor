@@ -701,13 +701,7 @@
 				<second>241</second>
 			</position>
 			<fragmentGuid>{4015ACBD-D998-6243-B379-21BB383B864E}</fragmentGuid>
-			<inputPins>
-				<item>
-					<id>{E4CBD992-2855-5245-8159-F151DFE70FCD}</id>
-					<name>Position</name>
-					<optional>true</optional>
-				</item>
-			</inputPins>
+			<inputPins/>
 			<outputPins>
 				<item>
 					<id>{D576759A-1345-BE41-BE33-BA905A3DA2C0}</id>
