@@ -561,7 +561,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
-		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
+		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel, m_editor ? 1 : 4);
 
 		// Trace lightmaps.
 		Ref< drawing::Image > lightmapDiffuse = new drawing::Image(
