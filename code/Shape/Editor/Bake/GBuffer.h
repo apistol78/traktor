@@ -43,7 +43,7 @@ public:
 
 	typedef StaticVector< Element, 4 > element_vector_t;
 
-	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel);
+	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel, uint32_t maxElements);
 
 	const element_vector_t& get(int32_t x, int32_t y) const { return m_data[x + y * m_width]; }
 
@@ -52,8 +52,6 @@ public:
 	int32_t getHeight() const { return m_height; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
-
-	//void saveAsImages(const std::wstring& outputPath) const;
 
 private:
 	int32_t m_width = 0;

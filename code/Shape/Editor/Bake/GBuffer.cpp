@@ -91,8 +91,10 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.GBuffer", GBuffer, Object)
 
-bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel)
+bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel, uint32_t maxElements)
 {
+	T_FATAL_ASSERT(maxElements <= 4);
+
 	AlignedVector< Vector4 > positions;
 	AlignedVector< Vector4 > normals;
 	AlignedVector< Vector4 > tangents;
@@ -198,7 +200,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 
 					// Add to elements, if full we try to replace a worst entry if possible.
 					Element* elm = nullptr;
-					if (!ev.full())
+					if (ev.size() < maxElements)
 						elm = &ev.push_back();
 					else
 					{
