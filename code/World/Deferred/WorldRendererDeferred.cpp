@@ -57,7 +57,6 @@ const render::Handle s_handleVisualTargetSet[] =
 };
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
-const resource::Id< render::Shader > c_fogShader(L"{9453D74C-76C4-8748-9A5B-9E3D6D4F9406}");
 
 Vector2 jitter(int32_t count)
 {
@@ -88,8 +87,6 @@ bool WorldRendererDeferred::create(
 	// Create light, reflection and fog shaders.
 	if (!resourceManager->bind(c_lightShader, m_lightShader))
 		return false;
-	if (!resourceManager->bind(c_fogShader, m_fogShader))
-		return false;
 
 	return true;
 }
@@ -98,7 +95,6 @@ void WorldRendererDeferred::destroy()
 {
 	WorldRendererShared::destroy();
 	m_lightShader.clear();
-	m_fogShader.clear();
 }
 
 void WorldRendererDeferred::setup(
