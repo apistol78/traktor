@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="9">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="37">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="39">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
-		<exposureMode>EmFixed</exposureMode>
-		<exposure>-0.5</exposure>
+		<exposureMode>Fixed</exposureMode>
+		<exposure>1</exposure>
 		<shadowSettings>
 			<disabled>
-				<projection>SpUniform</projection>
 				<farZ>0</farZ>
 				<resolution>128</resolution>
 				<bias>0</bias>
-				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
@@ -19,11 +17,9 @@
 				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</disabled>
 			<low>
-				<projection>SpUniform</projection>
 				<farZ>10</farZ>
 				<resolution>1024</resolution>
 				<bias>0.05</bias>
-				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.55</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
@@ -31,11 +27,9 @@
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</low>
 			<medium>
-				<projection>SpUniform</projection>
 				<farZ>10</farZ>
 				<resolution>2048</resolution>
 				<bias>0.05</bias>
-				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
@@ -43,11 +37,9 @@
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</medium>
 			<high>
-				<projection>SpUniform</projection>
 				<farZ>10</farZ>
 				<resolution>4096</resolution>
 				<bias>0.05</bias>
-				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>1.5</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
@@ -55,11 +47,9 @@
 				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
 			</high>
 			<ultra>
-				<projection>SpUniform</projection>
 				<farZ>10</farZ>
 				<resolution>4096</resolution>
 				<bias>0.05</bias>
-				<biasCoeff>0</biasCoeff>
 				<cascadingSlices>1</cascadingSlices>
 				<cascadingLambda>3</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
@@ -69,6 +59,7 @@
 		</shadowSettings>
 		<fogDistance>90</fogDistance>
 		<fogDensity>0</fogDensity>
+		<fogDensityMax>1</fogDensityMax>
 		<fogColor>1, 1, 1, 1</fogColor>
 		<irradianceGrid>{8F500C87-6146-A44F-B102-01BFDE65F9B9}</irradianceGrid>
 		<imageProcess>
