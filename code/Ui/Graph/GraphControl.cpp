@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
@@ -619,16 +620,8 @@ bool GraphControl::endSelectModification()
 	return true;
 }
 
-void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
+void GraphControl::capturePositions()
 {
-	if (!hasFocus())
-		setFocus();
-
-	// Save origin of drag and where the cursor is currently at.
-	m_cursor =
-	m_moveOrigin = event->getPosition() / m_scale;
-
-	// Save positions of all groups and nodes so we can issue node moved events later.
 	m_groupPositions.resize(m_groups.size());
 	for (uint32_t i = 0; i < m_groups.size(); ++i)
 		m_groupPositions[i] = m_groups[i]->calculateRect();
@@ -636,16 +629,31 @@ void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
 	m_nodePositions.resize(m_nodes.size());
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		m_nodePositions[i] = m_nodes[i]->calculateRect();
+}
+
+void GraphControl::eventMouseDown(MouseButtonDownEvent* event)
+{
+	// Save positions of all groups and nodes so we can issue node moved events later,
+	// we need to do this when we leave this method since order of nodes
+	// might change.
+	T_ANONYMOUS_VAR(Leave)([&]() {
+		capturePositions();
+	});
+
+	if (!hasFocus())
+		setFocus();
+
+	// Save origin of drag and where the cursor is currently at.
+	m_cursor =
+	m_moveOrigin = event->getPosition() / m_scale;
 
 	// If user holds down ALT we should move entire graph.
 	if ((event->getKeyState() & KsMenu) != 0 || event->getButton() == MbtMiddle)
 	{
 		m_mode = MdMoveGraph;
 		setCapture();
-		return;
 	}
-
-	if (event->getButton() == MbtLeft)
+	else if (event->getButton() == MbtLeft)
 	{
 		const Point hitPosition = m_cursor - m_offset;
 		const UnitPoint unitHitPosition = unit(hitPosition);

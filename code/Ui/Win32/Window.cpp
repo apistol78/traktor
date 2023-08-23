@@ -8,6 +8,7 @@
  */
 #include <Windows.h>
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Ui/Win32/Window.h"
 
 extern HINSTANCE g_hInstance;
@@ -86,6 +87,17 @@ bool Window::create(
 {
 	T_ASSERT_M (!m_hWnd, L"Window already created");
 
+	// In case we've got a parent and no position we need to ensure
+	// window is created on the same desktop as the parent. This
+	// is because we want the same DPI reported for child window as parent.
+	if (hParentWnd != NULL && left == CW_USEDEFAULT && top == CW_USEDEFAULT)
+	{
+		RECT rcParent;
+		GetWindowRect(hParentWnd, &rcParent);
+		left = rcParent.left;
+		top = rcParent.top;
+	}
+
 	m_hWnd = CreateWindowEx(
 		styleEx,
 		className,
@@ -135,7 +147,15 @@ bool Window::subClass(HWND hWnd)
 
 int32_t Window::dpi() const
 {
-	return GetDpiForWindow(m_hWnd);
+	HWND hWnd = m_hWnd;
+
+	while (hWnd != NULL && (GetWindowLong(m_hWnd, GWL_STYLE) & WS_VISIBLE) != WS_VISIBLE)
+		hWnd = GetParent(hWnd);
+
+	if (hWnd == NULL)
+		hWnd = m_hWnd;
+
+	return GetDpiForWindow(hWnd);
 }
 
 LRESULT Window::sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const

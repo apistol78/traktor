@@ -10,6 +10,7 @@
 
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Thread/Atomic.h"
 #include "Ui/Application.h"
 #include "Ui/Win32/BitmapWin32.h"
@@ -133,6 +134,9 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 		outAscent = 0;
 		outDescent = 0;
 
+		const int32_t dpi = hWnd.dpi();
+		const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
+
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
 			font.getFace().c_str(),
@@ -140,7 +144,7 @@ void CanvasDirect2DWin32::getAscentAndDescent(Window& hWnd, const Font& font, in
 			font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			(font.getSize().get() * hWnd.dpi()) / 96.0f,
+			fontSize,
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -205,6 +209,9 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 {
 	if (!m_inPaint)
 	{
+		const int32_t dpi = hWnd.dpi();
+		const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
+
 		ComRef< IDWriteTextFormat > dwTextFormat;
 		s_dwFactory->CreateTextFormat(
 			font.getFace().c_str(),
@@ -212,7 +219,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 			font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 			font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 			DWRITE_FONT_STRETCH_NORMAL,
-			(font.getSize().get() * hWnd.dpi()) / 96.0f,
+			fontSize,
 			L"",
 			&dwTextFormat.getAssign()
 		);
@@ -806,13 +813,15 @@ bool CanvasDirect2DWin32::realizeFont() const
 	if (m_dwFont)
 		return true;
 
+	const int32_t fontSize = (m_font.getSize().get() * m_dpi) / 96.0f;
+
 	s_dwFactory->CreateTextFormat(
 		m_font.getFace().c_str(),
 		NULL,
 		m_font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
 		m_font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
 		DWRITE_FONT_STRETCH_NORMAL,
-		(m_font.getSize().get() * m_dpi) / 96.0f,
+		fontSize,
 		L"",
 		&m_dwTextFormat.getAssign()
 	);
