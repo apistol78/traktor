@@ -34,12 +34,6 @@ namespace traktor::world
  * \ingroup World
  *
  * Advanced deferred rendering path.
- *
- * Operation
- * \TBD
- *
- * Techniques used
- * \TBD
  */
 class T_DLLCLASS WorldRendererDeferred : public WorldRendererShared
 {
@@ -63,7 +57,6 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_lightShader;
-	resource::Proxy< render::Shader > m_fogShader;
 
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
