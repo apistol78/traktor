@@ -29,6 +29,8 @@ public:
 
 	virtual ~CanvasDirect2DWin32();
 
+	// CanvasWin32
+
 	virtual bool beginPaint(Window& hWnd, const Font& font, bool doubleBuffer, HDC hDC) override final;
 
 	virtual void endPaint(Window& hWnd) override final;

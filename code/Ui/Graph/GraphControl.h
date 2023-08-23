@@ -171,9 +171,9 @@ public:
 private:
 	PaintSettings m_paintSettings;
 	Ref< IBitmap > m_imageLabel;
-	RefArray< Group > m_groups;
-	RefArray< Node > m_nodes;
-	RefArray< Edge > m_edges;
+	RefArray< Group > m_groups;		//!< All groups in graph.
+	RefArray< Node > m_nodes;		//!< All nodes in graph.
+	RefArray< Edge > m_edges;		//!< All edges in graph.
 	float m_scale;
 	Size m_offset;
 	Point m_cursor;
@@ -194,6 +194,8 @@ private:
 	void beginSelectModification();
 
 	bool endSelectModification();
+
+	void capturePositions();
 
 	void eventMouseDown(MouseButtonDownEvent* event);
 

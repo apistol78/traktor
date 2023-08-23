@@ -36,4 +36,25 @@ private:
 	std::function< void() > m_leave;
 };
 
+/*! Automatically call functors when leaving scope.
+ * \ingroup Core
+ */
+class Leave
+{
+public:
+	explicit Leave(const std::function< void() >& leave)
+	:	m_leave(leave)
+	{
+	}
+
+	inline ~Leave()
+	{
+		if (m_leave)
+			m_leave();
+	}
+
+private:
+	std::function< void() > m_leave;
+};
+
 }

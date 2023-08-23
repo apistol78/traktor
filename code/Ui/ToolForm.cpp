@@ -41,12 +41,12 @@ bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit
 		return false;
 	}
 
-	// Ensure size are converted to display DPI.
-	const int32_t w = toolForm->dpi96(width.get());
-	const int32_t h = toolForm->dpi96(height.get());
-	Rect rc = toolForm->getRect();
-	rc.setSize(ui::Size(w, h));
-	toolForm->setRect(rc);
+	//// Ensure size are converted to display DPI.
+	//const int32_t w = toolForm->dpi96(width.get());
+	//const int32_t h = toolForm->dpi96(height.get());
+	//Rect rc = toolForm->getRect();
+	//rc.setSize(ui::Size(w, h));
+	//toolForm->setRect(rc);
 
 	m_widget = toolForm;
 	return Container::create(parent, style, refLayout);

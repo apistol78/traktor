@@ -445,7 +445,7 @@ protected:
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
-	int32_t m_dpi;
+	//int32_t m_dpi;
 
 	static
 	void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)
@@ -534,7 +534,7 @@ protected:
 
 		setCursor(Cursor::Arrow);
 
-		m_dpi = m_hWnd.dpi();
+		//m_dpi = m_hWnd.dpi();
 
 		// Get system default font.
 		ICONMETRICS im = {};
