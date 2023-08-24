@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <embree3/rtcore.h>
+#include <embree4/rtcore.h>
 #include "Model/Model.h"
 #include "Shape/Editor/Bake/IRayTracer.h"
 

@@ -7,13 +7,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <functional>
-#include <embree3/rtcore.h>
-#include <embree3/rtcore_ray.h>
+#include <embree4/rtcore.h>
+#include <embree4/rtcore_ray.h>
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Memory/Alloc.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Model/Operations/MergeModel.h"
@@ -26,6 +27,12 @@
 #include "Shape/Editor/Bake/Embree/SplitModel.h"
 
 #define USE_LAMBERTIAN_DIRECTION
+
+#if defined (_MSC_VER)
+#	define T_ALIGN64 __declspec(align(64))
+#elif defined(__GNUC__) || defined(__ANDROID__)
+#	define T_ALIGN64 __attribute__((aligned(64)))
+#endif
 
 namespace traktor
 {
@@ -89,16 +96,62 @@ void constructRay(const Vector4& position, const Vector4& direction, float far, 
 	outRay.tnear = 0.001f;
 	outRay.time = 0.0f;
 	outRay.tfar = far;
-	outRay.mask = 0;
+	outRay.mask = -1;
 	outRay.id = 0;
 	outRay.flags = 0;
 }
 
-void constructRay(const Vector4& position, const Vector4& direction, float far, RTCRayHit& outRayHit)
+void constructRayHit(const Vector4& position, const Vector4& direction, float far, RTCRayHit& outRayHit)
 {
 	constructRay(position, direction, far, outRayHit.ray);
+	outRayHit.hit.Ng_x = 0.0f;
+	outRayHit.hit.Ng_y = 0.0f;
+	outRayHit.hit.Ng_z = 0.0f;
+	outRayHit.hit.u = 0.0f;
+	outRayHit.hit.v = 0.0f;
+	outRayHit.hit.primID = 0;
 	outRayHit.hit.geomID = RTC_INVALID_GEOMETRY_ID;
 	outRayHit.hit.instID[0] = RTC_INVALID_GEOMETRY_ID;
+}
+
+void constructRay16(const Vector4& position, const Vector4& direction, float far, int index, RTCRay16& outRay)
+{
+	T_ASSERT(index >= 0 && index < 16);
+	outRay.org_x[index] = position.x();
+	outRay.org_y[index] = position.y();
+	outRay.org_z[index] = position.z();
+	outRay.dir_x[index] = direction.x();
+	outRay.dir_y[index] = direction.y();
+	outRay.dir_z[index] = direction.z();
+	outRay.tnear[index] = 0.001f;
+	outRay.time[index] = 0.0f;
+	outRay.tfar[index] = far;
+	outRay.mask[index] = -1;
+	outRay.id[index] = 0;
+	outRay.flags[index] = 0;
+}
+
+void constructRayHit16(const Vector4& position, const Vector4& direction, float far, int index, RTCRayHit16& outRayHit)
+{
+	constructRay16(position, direction, far, index, outRayHit.ray);
+	outRayHit.hit.Ng_x[index] = 0.0f;
+	outRayHit.hit.Ng_y[index] = 0.0f;
+	outRayHit.hit.Ng_z[index] = 0.0f;
+	outRayHit.hit.u[index] = 0.0f;
+	outRayHit.hit.v[index] = 0.0f;
+	outRayHit.hit.primID[index] = 0;
+	outRayHit.hit.geomID[index] = RTC_INVALID_GEOMETRY_ID;
+	outRayHit.hit.instID[0][index] = RTC_INVALID_GEOMETRY_ID;
+}
+
+Vector4 getHitNormal(const RTCRayHit& rayHit)
+{
+	return Vector4::loadAligned(&rayHit.hit.Ng_x).xyz0().normalized();
+}
+
+Vector4 getHitNormal(const RTCRayHit16& rayHit, int index)
+{
+	return Vector4(rayHit.hit.Ng_x[index], rayHit.hit.Ng_y[index], rayHit.hit.Ng_z[index], 0.0f).normalized();
 }
 
 float wrap(float n)
@@ -144,7 +197,8 @@ void RayTracerEmbree::destroy()
 {
 	m_shEngine = nullptr;
 	for (auto buffer : m_buffers)
-		delete[] buffer;
+		Alloc::freeAlign(buffer);
+	m_buffers.clear();
 }
 
 void RayTracerEmbree::addEnvironment(const IblProbe* environment)
@@ -159,9 +213,16 @@ void RayTracerEmbree::addLight(const Light& light)
 
 void RayTracerEmbree::addModel(const model::Model* model, const Transform& transform)
 {
-	float* positions = new float [3 * model->getVertices().size()];
-	float* texCoords = new float [2 * model->getVertices().size()];
+	T_FATAL_ASSERT(model->getPolygonCount() > 0);
 
+	// Allocate buffers with positions and texCoords.
+	float* positions = (float*)Alloc::acquireAlign(3 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
+	float* texCoords = (float*)Alloc::acquireAlign(2 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
+
+	m_buffers.push_back(positions);
+	m_buffers.push_back(texCoords);
+
+	// Copy positions and texCoords.
 	float* pp = positions;
 	float* pt = texCoords;
 	for (uint32_t i = 0; i < model->getVertexCount(); ++i)
@@ -180,9 +241,6 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 		m_boundingBox.contain(p);
 	}
 
-	m_buffers.push_back(positions);
-	m_buffers.push_back(texCoords);
-
 	RefArray< const model::Model > splits;
 	// splitModel(model, splits);
 	splits.push_back(model);
@@ -198,36 +256,37 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 		uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), split->getPolygons().size());
 		for (const auto& polygon : split->getPolygons())
 		{
+			T_FATAL_ASSERT(polygon.getVertexCount() == 3);
 			*triangles++ = polygon.getVertex(2);
 			*triangles++ = polygon.getVertex(1);
 			*triangles++ = polygon.getVertex(0);
 		}
 
 		// Add filter functions if model contain alpha-test material.
-		for (const auto& material : split->getMaterials())
-		{
-			if (
-				material.getBlendOperator() == model::Material::BoAlphaTest &&
-				material.getDiffuseMap().image != nullptr
-			)
-			{
-				rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
-				rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
-			}
-		}
+		//for (const auto& material : split->getMaterials())
+		//{
+		//	if (
+		//		material.getBlendOperator() == model::Material::BoAlphaTest &&
+		//		material.getDiffuseMap().image != nullptr
+		//	)
+		//	{
+		//		rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+		//		rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+		//	}
+		//}
 
 		// Attach this class as user data to geometry.
 		rtcSetGeometryUserData(mesh, this);
 
 		rtcCommitGeometry(mesh);
-		rtcAttachGeometry(m_scene, mesh);
+		const uint32_t geomID = rtcAttachGeometry(m_scene, mesh);
 		rtcReleaseGeometry(mesh);
 
 		// Create a flatten list of materials to reduce number of indirections while tracing.
 		m_materialOffset.push_back((uint32_t)m_materials.size());
 		for (const auto& polygon : split->getPolygons())
 		{
-			const auto& material = model->getMaterial(polygon.getMaterial());
+			const auto& material = split->getMaterial(polygon.getMaterial());
 			m_materials.push_back(&material);
 		}
 	}
@@ -238,6 +297,9 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 void RayTracerEmbree::commit()
 {
 	rtcCommitScene(m_scene);
+
+	const RTCError error = rtcGetDeviceError(m_device);
+	T_FATAL_ASSERT(error == RTC_ERROR_NONE);
 }
 
 Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) const
@@ -255,7 +317,7 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 
 void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const
 {
-	RTCRayHit T_MATH_ALIGN16 rh;
+	RTCRayHit T_ALIGN64 rh;
 	RandomGeometry random;
 
 	const Scalar ambientOcclusion(m_configuration->getAmbientOcclusionFactor());
@@ -299,16 +361,17 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 							const float s = sin(a), c = cos(a);
 
 							const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-							constructRay(position, traceDirection, hl, rh);
+							constructRayHit(position, traceDirection, hl, rh);
 
-							RTCIntersectContext context;
-							rtcInitIntersectContext(&context);
-							rtcIntersect1(m_scene, &context, &rh);
+							RTCIntersectArguments iargs;
+							rtcInitIntersectArguments(&iargs);
+							iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+							rtcIntersect1(m_scene, &rh, &iargs);
 
 							if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 								continue;
 
-							const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+							const Vector4 hitNormal = getHitNormal(rh);
 							if (dot3(hitNormal, traceDirection) > 0.0_simd)
 							{
 								if (rh.ray.tfar < minExitDistance)
@@ -355,12 +418,13 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direction) const
 {
-	RTCRayHit T_MATH_ALIGN16 rh;
-	constructRay(position, direction, 10000.0_simd, rh);
+	RTCRayHit T_ALIGN64 rh;
+	constructRayHit(position, direction, 10000.0_simd, rh);
 
-	RTCIntersectContext context;
-	rtcInitIntersectContext(&context);
-	rtcIntersect1(m_scene, &context, &rh);	
+	RTCIntersectArguments iargs;
+	rtcInitIntersectArguments(&iargs);
+	iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+	rtcIntersect1(m_scene, &rh, &iargs);
 
 	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 	{
@@ -372,7 +436,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	}
 
 	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
-	const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+	const Vector4 hitNormal = getHitNormal(rh);
 
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
@@ -412,7 +476,7 @@ Color4f RayTracerEmbree::tracePath0(
 	uint32_t extraLightMask
 ) const
 {
-	constexpr int SampleBatch = 64;
+	constexpr int SampleBatch = 16;
 
 	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
@@ -435,11 +499,8 @@ Color4f RayTracerEmbree::tracePath0(
 		color += incoming * BRDF * cosPhi / probability;
 	}
 #else
-	RTCRayHit T_MATH_ALIGN16 rhv[SampleBatch];
+	RTCRayHit16 T_ALIGN64 rhv;
 	Vector4 directions[SampleBatch];
-
-	RTCIntersectContext context;
-	rtcInitIntersectContext(&context);
 
 	// Sample across hemisphere.
 	for (int32_t i = 0; i < sampleCount; i += SampleBatch)
@@ -448,17 +509,19 @@ Color4f RayTracerEmbree::tracePath0(
 		{
 			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			directions[j] = Quasirandom::uniformHemiSphere(uv, normal);
-			constructRay(origin, directions[j], m_configuration->getMaxPathDistance(), rhv[j]);
+			constructRayHit16(origin, directions[j], m_configuration->getMaxPathDistance(), j, rhv);
 		}
 
-		rtcIntersect1M(m_scene, &context, rhv, SampleBatch, sizeof(RTCRayHit));
+		RTCIntersectArguments iargs;
+		rtcInitIntersectArguments(&iargs);
+		iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+		rtcIntersect16(c_valid, m_scene, &rhv, &iargs);
 
 		for (int32_t j = 0; j < SampleBatch; ++j)
 		{
-			const auto& rh = rhv[j];
 			const auto& direction = directions[j];
 
-			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+			if (rhv.hit.geomID[j] == RTC_INVALID_GEOMETRY_ID)
 			{
 				// Nothing hit, sample sky if available else it's all black.
 				if (m_environment)
@@ -466,12 +529,12 @@ Color4f RayTracerEmbree::tracePath0(
 				continue;
 			}
 
-			const Scalar hitDistance = Scalar(rh.ray.tfar);
-			const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+			const Scalar hitDistance = Scalar(rhv.ray.tfar[j]);
+			const Vector4 hitNormal = getHitNormal(rhv, j);
 			const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
 
-			const uint32_t offset = m_materialOffset[rh.hit.geomID];
-			const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
+			const uint32_t offset = m_materialOffset[rhv.hit.geomID[j]];
+			const auto& hitMaterial = *m_materials[offset + rhv.hit.primID[j]];
 
 			Color4f hitMaterialColor = hitMaterial.getColor();
 			const auto& image = hitMaterial.getDiffuseMap().image;
@@ -480,8 +543,8 @@ Color4f RayTracerEmbree::tracePath0(
 				const uint32_t slot = 0;
 				float texCoord[2] = { 0.0f, 0.0f };
 
-				RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
-				rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+				RTCGeometry geometry = rtcGetGeometry(m_scene, rhv.hit.geomID[j]);
+				rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 				image->getPixel(
 					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
@@ -543,12 +606,13 @@ Color4f RayTracerEmbree::traceSinglePath(
 	if (depth > 2 || maxDistance <= 0.0f)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
-	RTCRayHit T_MATH_ALIGN16 rh;
-	constructRay(origin, direction, maxDistance /*m_configuration->getMaxPathDistance()*/, rh);
+	RTCRayHit T_ALIGN64 rh;
+	constructRayHit(origin, direction, maxDistance /*m_configuration->getMaxPathDistance()*/, rh);
 
-	RTCIntersectContext context;
-	rtcInitIntersectContext(&context);
-	rtcIntersect1(m_scene, &context, &rh);
+	RTCIntersectArguments iargs;
+	rtcInitIntersectArguments(&iargs);
+	iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+	rtcIntersect1(m_scene, &rh, &iargs);
 
 	if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
 	{
@@ -560,7 +624,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 	}
 
 	const Scalar hitDistance = Scalar(rh.ray.tfar);
-	const Vector4 hitNormal = Vector4::loadAligned(&rh.hit.Ng_x).xyz0().normalized();
+	const Vector4 hitNormal = getHitNormal(rh);
 	const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
 
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
@@ -623,7 +687,7 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 {
 	const int32_t sampleCount = alignUp(m_configuration->getShadowSampleCount(), 16);
 	const float maxOcclusionDistance = 1.0f;
-	RTCRay T_ALIGN16 rv[16];
+	RTCRay16 T_ALIGN64 rv;
 	int32_t unoccluded = 0;
 
 	for (int32_t i = 0; i < sampleCount; i += 16)
@@ -632,20 +696,19 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 		{
 			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-			constructRay(origin, direction, maxOcclusionDistance, rv[j]);
+			constructRay16(origin, direction, maxOcclusionDistance, j, rv);
 		}
 
 		// Intersect test all rays using ray streams.
-		RTCIntersectContext context;
-		rtcInitIntersectContext(&context);
-		context.flags = RTC_INTERSECT_CONTEXT_FLAG_INCOHERENT;
-		rtcOccluded1M(m_scene, &context, rv, 16, sizeof(RTCRay));
+		RTCOccludedArguments oargs;
+		rtcInitOccludedArguments(&oargs);
+		oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+		rtcOccluded16(c_valid, m_scene, &rv, &oargs);
 
 		// Count number of occluded rays.
 		for (int32_t j = 0; j < 16; ++j)
 		{
-			const auto& r = rv[j];
-			if (r.tfar > r.tnear)
+			if (rv.tfar[j] > rv.tnear[j])
 				unoccluded++;
 		}
 	}
@@ -666,7 +729,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 {
 	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
 	const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
-	RTCRay T_MATH_ALIGN16 r;
+	RTCRay T_ALIGN64 r;
 
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& light : m_lights)
@@ -678,7 +741,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 		{
 		case Light::LtDirectional:
 			{
-				Scalar phi = dot3(normal, -light.direction);
+				const Scalar phi = dot3(normal, -light.direction);
 				if (phi <= 0.0f)
 					break;
 
@@ -688,10 +751,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 				{
 					Vector4 u, v;
 					orthogonalFrame(normal, u, v);
-
-					RTCIntersectContext context;
-					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
 
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
@@ -707,12 +766,14 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.tnear = c_epsilonOffset;
 						r.time = 0.0f;
 						r.tfar = 1000.0f;
-
-						r.mask = 0;
+						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
 		
-						rtcOccluded1(m_scene, &context, &r);
+						RTCOccludedArguments oargs;
+						rtcInitOccludedArguments(&oargs);
+						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
 							shadowCount++;
@@ -746,10 +807,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					Vector4 u, v;
 					orthogonalFrame(lightDirection, u, v);
 
-					RTCIntersectContext context;
-					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
-
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
@@ -764,12 +821,14 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.tnear = c_epsilonOffset;
 						r.time = 0.0f;
 						r.tfar = lightDistance - c_epsilonOffset * 2;
-
-						r.mask = 0;
+						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
 		
-						rtcOccluded1(m_scene, &context, &r);
+						RTCOccludedArguments oargs;
+						rtcInitOccludedArguments(&oargs);
+						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
 							shadowCount++;
@@ -808,10 +867,6 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					Vector4 u, v;
 					orthogonalFrame(-lightToPoint, u, v);
 
-					RTCIntersectContext context;
-					rtcInitIntersectContext(&context);
-					context.flags = RTC_INTERSECT_CONTEXT_FLAG_COHERENT;
-
 					int32_t shadowCount = 0;
 					for (uint32_t j = 0; j < shadowSampleCount; ++j)
 					{
@@ -826,12 +881,14 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 						r.tnear = c_epsilonOffset;
 						r.time = 0.0f;
 						r.tfar = lightDistance - c_epsilonOffset * 2;
-
-						r.mask = 0;
+						r.mask = -1;
 						r.id = 0;
 						r.flags = 0;
 		
-						rtcOccluded1(m_scene, &context, &r);
+						RTCOccludedArguments oargs;
+						rtcInitOccludedArguments(&oargs);
+						oargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+						rtcOccluded1(m_scene, &r, &oargs);
 
 						if (r.tfar < 0.0f)
 							shadowCount++;

@@ -5754,7 +5754,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3.lib</item>
+						<item>embree4.lib</item>
 						<item>tbb.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5782,7 +5782,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3.lib</item>
+						<item>embree4.lib</item>
 						<item>tbb.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5810,7 +5810,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3.lib</item>
+						<item>embree4.lib</item>
 						<item>tbb.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5847,7 +5847,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3.lib</item>
+						<item>embree4.lib</item>
 						<item>tbb.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
