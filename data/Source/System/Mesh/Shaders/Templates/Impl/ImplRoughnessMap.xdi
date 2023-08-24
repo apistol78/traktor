@@ -18,8 +18,8 @@ Tag_RoughnessMap
 			]]>
 			</comment>
 			<position>
-				<first>145</first>
-				<second>92</second>
+				<first>189</first>
+				<second>93</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>Texture2D</type>

@@ -24,19 +24,16 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
-			<id>{4B3E012E-3FBD-8C49-91F9-6B563C924C0A}</id>
+			<id>{80812B1D-D3A7-1444-B747-68EC44683C7B}</id>
 			<comment/>
 			<position>
 				<first>466</first>
-				<second>6</second>
+				<second>36</second>
 			</position>
 			<names>
-				<item>ViewVelocity</item>
-				<item>ViewBinormal</item>
-				<item>ViewNormal</item>
-				<item>ViewPosition</item>
-				<item>ViewTangent</item>
-				<item>WorldPosition</item>
+				<item>Object</item>
+				<item>World</item>
+				<item>View</item>
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
@@ -57,7 +54,7 @@
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{D596E4E4-1A78-4D80-C56B-6DEEF934EDEC}</id>
+				<id>{D596E4E4-1A78-4D80-C26B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
