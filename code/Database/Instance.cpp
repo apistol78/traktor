@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Io/BufferedStream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
@@ -124,12 +124,11 @@ Ref< ISerializable > Instance::getObject() const
 	if (!stream || !serializerType)
 		return nullptr;
 
-	BufferedStream bs(stream);
 	Ref< Serializer > serializer;
 	if (serializerType == &type_of< BinarySerializer >())
-		serializer = new BinarySerializer(&bs);
+		serializer = new BinarySerializer(stream);
 	else if (serializerType == &type_of< xml::XmlDeserializer >())
-		serializer = new xml::XmlDeserializer(&bs, getPath());
+		serializer = new xml::XmlDeserializer(stream, getPath());
 	else
 	{
 		stream->close();
@@ -160,9 +159,7 @@ Ref< IStream > Instance::readData(const std::wstring& dataName) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);
-
-	Ref< IStream > stream = m_providerInstance->readData(dataName);
-	return stream ? new BufferedStream(stream) : nullptr;
+	return m_providerInstance->readData(dataName);
 }
 
 bool Instance::checkout()
