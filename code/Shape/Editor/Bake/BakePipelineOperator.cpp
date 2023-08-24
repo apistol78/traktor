@@ -731,54 +731,12 @@ bool BakePipelineOperator::build(
 							// Modify all materials to contain reference to lightmap channel.
 							for (auto& material : visualModel->getMaterials())
 								material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
-						}
 
-						// Load texture images and attach to materials.
-						for (auto& material : visualModel->getMaterials())
-						{
-							auto diffuseMap = material.getDiffuseMap();
-							if (diffuseMap.image == nullptr && diffuseMap.texture.isNotNull())
-							{
-								Ref< const render::TextureAsset > textureAsset = pipelineBuilder->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-								if (!textureAsset)
-									continue;
-
-								Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + textureAsset->getFileName());
-								Ref< drawing::Image > image = images[filePath];
-								if (image == nullptr)
-								{
-									Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-									if (file)
-									{
-										image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-										// if (image && !textureAsset->m_output.m_linearGamma)
-										// {
-										// 	// Convert to linear color space.
-										// 	const drawing::GammaFilter gammaFilter(1.0f / 2.2f);
-										// 	image->apply(&gammaFilter);
-										// }
-										images[filePath] = image;
-									}
-								}
-
-								diffuseMap.image = image;
-								material.setDiffuseMap(diffuseMap);
-							}
-						}
-
-						tracerTask->addTracerModel(new TracerModel(
-							visualModel,
-							inoutEntityData->getTransform()
-						));
-
-						if (configuration->getEnableLightmaps())
-						{
+							// Create lightmap output instance, attach an alias until it's been traced.
 							Ref< db::Instance > lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
 							if (!lightmapDiffuseInstance)
 								return false;
-							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(
-								resource::Id< render::ITexture >(c_lightmapProxyId)
-							));
+							lightmapDiffuseInstance->setObject(new render::AliasTextureResource(resource::Id< render::ITexture >(c_lightmapProxyId)));
 							lightmapDiffuseInstance->commit();
 
 							tracerTask->addTracerOutput(new TracerOutput(
@@ -788,6 +746,11 @@ bool BakePipelineOperator::build(
 								lightmapSize
 							));
 						}
+
+						tracerTask->addTracerModel(new TracerModel(
+							visualModel,
+							inoutEntityData->getTransform()
+						));
 					}
 
 					// Modify entity.
