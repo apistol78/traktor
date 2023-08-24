@@ -62,9 +62,9 @@ local PACKAGES =
 		type = "GET",
 		name = "embree-linux",
 		os = "linux",
-		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x86_64.linux.tar.gz",
+		url = "https://github.com/embree/embree/releases/download/v4.2.0/embree-4.2.0.x86_64.linux.tar.gz",
 		patch = function()
-			run:execute(TAR .. " -xzf embree-3.13.4.x86_64.linux.tar.gz")
+			run:execute(TAR .. " -xzf embree-4.2.0.x86_64.linux.tar.gz")
 		end,
 		license = "Apache 2.0"
 	},
@@ -72,9 +72,9 @@ local PACKAGES =
 		type = "GET",
 		name = "embree-windows",
 		os = "windows",
-		url = "https://github.com/embree/embree/releases/download/v3.13.4/embree-3.13.4.x64.vc14.windows.zip",
+		url = "https://github.com/embree/embree/releases/download/v4.2.0/embree-4.2.0.x64.windows.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq embree-3.13.4.x64.vc14.windows.zip")
+			run:execute(UNZIP .. " -qq embree-4.2.0.x64.windows.zip")
 		end,
 		license = "Apache 2.0"
 	},

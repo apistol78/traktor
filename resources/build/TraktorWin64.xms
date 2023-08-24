@@ -13023,7 +13023,7 @@
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/embree4.dll</sourceFile>
 										<targetPath>debugshared</targetPath>
 									</item>
 									<item type="AggregationItem">
@@ -13070,7 +13070,7 @@
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/embree4.dll</sourceFile>
 										<targetPath>releaseshared</targetPath>
 									</item>
 									<item type="AggregationItem">
@@ -13113,7 +13113,7 @@
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/embree4.dll</sourceFile>
 										<targetPath>debugstatic</targetPath>
 									</item>
 									<item type="AggregationItem">
@@ -13156,7 +13156,7 @@
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
-										<sourceFile>$(EMBREE_SDK)/bin/embree3.dll</sourceFile>
+										<sourceFile>$(EMBREE_SDK)/bin/embree4.dll</sourceFile>
 										<targetPath>releasestatic</targetPath>
 									</item>
 									<item type="AggregationItem">
