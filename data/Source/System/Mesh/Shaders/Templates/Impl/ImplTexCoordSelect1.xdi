@@ -39,19 +39,16 @@ Append selected texcoord channel.
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
-			<id>{86620690-1C09-6541-81F0-48C5DF90924F}</id>
+			<id>{F450A256-CCFF-6948-A09D-BD747130428E}</id>
 			<comment/>
 			<position>
-				<first>360</first>
-				<second>74</second>
+				<first>361</first>
+				<second>98</second>
 			</position>
 			<names>
-				<item>ViewVelocity</item>
-				<item>ViewBinormal</item>
-				<item>ViewNormal</item>
-				<item>ViewPosition</item>
-				<item>ViewTangent</item>
-				<item>WorldPosition</item>
+				<item>Object</item>
+				<item>World</item>
+				<item>View</item>
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
@@ -59,16 +56,6 @@ Append selected texcoord channel.
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
@@ -91,8 +78,18 @@ Append selected texcoord channel.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{D596E4E4-1A78-4D80-C46B-6DEEF934EDEC}</id>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

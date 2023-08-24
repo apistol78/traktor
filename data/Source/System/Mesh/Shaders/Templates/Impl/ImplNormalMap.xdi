@@ -79,8 +79,8 @@ Tag_NormalMap
 			<id>{82227F22-5001-0C42-8295-BF0D9F8BF2F9}</id>
 			<comment/>
 			<position>
-				<first>1252</first>
-				<second>55</second>
+				<first>1193</first>
+				<second>1</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
@@ -88,8 +88,8 @@ Tag_NormalMap
 			<id>{E0F1D49C-28F1-884A-9AED-5F8748B0F015}</id>
 			<comment/>
 			<position>
-				<first>1252</first>
-				<second>94</second>
+				<first>1193</first>
+				<second>40</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
@@ -97,8 +97,8 @@ Tag_NormalMap
 			<id>{D691E3CC-A81C-F940-B167-507F3448AD1F}</id>
 			<comment/>
 			<position>
-				<first>1253</first>
-				<second>134</second>
+				<first>1194</first>
+				<second>80</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -116,22 +116,44 @@ Tag_NormalMap
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
-			<id>{79E5BB2C-B431-FE49-8841-FE2CB4D7A1C7}</id>
+			<id>{5D7D7688-B287-9C42-8933-42359E5A5C66}</id>
 			<comment/>
 			<position>
-				<first>447</first>
-				<second>-8</second>
+				<first>442</first>
+				<second>37</second>
 			</position>
 			<names>
-				<item>ViewVelocity</item>
-				<item>ViewBinormal</item>
-				<item>ViewNormal</item>
-				<item>ViewPosition</item>
-				<item>ViewTangent</item>
-				<item>WorldPosition</item>
+				<item>Object</item>
+				<item>World</item>
+				<item>View</item>
 				<item>TexCoord0</item>
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
+			</names>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{F2B7035E-F40F-B047-804E-707613CC57DE}</id>
+			<comment/>
+			<position>
+				<first>652</first>
+				<second>39</second>
+			</position>
+			<names>
+				<item>Position</item>
+				<item>Normal</item>
+				<item>Tangent</item>
+				<item>Binormal</item>
+				<item>Velocity</item>
+			</names>
+		</item>
+		<item type="traktor.render.BundleSplit" version="traktor.render.Node:1">
+			<id>{55417B75-BC89-084C-A953-6BA686548B28}</id>
+			<comment/>
+			<position>
+				<first>442</first>
+				<second>-34</second>
+			</position>
+			<names>
 				<item>TexCoord</item>
 			</names>
 		</item>
@@ -173,14 +195,24 @@ Tag_NormalMap
 				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -189,18 +221,8 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-C06B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
@@ -209,8 +231,18 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D596E4E4-1A78-4D80-BE6B-6DEEF934EDEC}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-BF6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{D596E4E4-1A78-4D80-C06B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
@@ -219,8 +251,18 @@ Tag_NormalMap
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D596E4E4-1A78-4D80-C66B-6DEEF934EDEC}</id>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D596E4E4-1A78-4D80-BC6B-6DEEF934EDEC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

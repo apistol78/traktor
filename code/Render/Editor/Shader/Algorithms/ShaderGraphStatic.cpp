@@ -774,77 +774,98 @@ Ref< ShaderGraph > ShaderGraphStatic::getBundleResolved() const
 	RefArray< BundleSplit > splitNodes = shaderGraph->findNodesOf< BundleSplit >();
 	RefArray< BundleUnite > uniteNodes = shaderGraph->findNodesOf< BundleUnite >();
 
-	for (const auto splitNode : splitNodes)
+	RefArray< BundleSplit > workSplitNodes = splitNodes;
+	RefArray< BundleSplit > retrySplitNodes;
+
+	do 
 	{
-		const OutputPin* sourcePin = shaderGraph->findSourcePin(splitNode->getInputPin(0));
-		if (!sourcePin)
+		for (const auto splitNode : workSplitNodes)
 		{
-			log::error << L"No bundle connected to split node." << Endl;
-			return nullptr;
-		}
-		
-		BundleUnite* uniteNode = dynamic_type_cast< BundleUnite* >(sourcePin->getNode());
-		if (!uniteNode)
-		{
-			log::error << L"Incorrect input connected to split node, must be a bundle (is \"" << type_name(sourcePin->getNode()) << L"\")." << Endl;
-			return nullptr;
-		}
-
-		const int32_t outputPinCount = splitNode->getOutputPinCount();
-		for (int32_t i = 0; i < outputPinCount; ++i)
-		{
-			const OutputPin* outputPin = splitNode->getOutputPin(i);
-
-			const auto destinationPins = shaderGraph->findDestinationPins(outputPin);
-			if (destinationPins.empty())
-				continue;
-
-			const OutputPin* sourcePin = nullptr;
-
-			BundleUnite* uniteNodeIt = uniteNode;
-			while (uniteNodeIt != nullptr)
+			const OutputPin* sourcePin = shaderGraph->findSourcePin(splitNode->getInputPin(0));
+			if (!sourcePin)
 			{
-				// Get source pin connected to current unite node.
-				const InputPin* inputPin = uniteNodeIt->findInputPin(outputPin->getName());
-				if (inputPin)
+				log::error << L"No bundle connected to split node " << splitNode->getId().format() << L"." << Endl;
+				return nullptr;
+			}
+		
+			BundleUnite* uniteNode = dynamic_type_cast< BundleUnite* >(sourcePin->getNode());
+			if (!uniteNode)
+			{
+				if (is_a< BundleSplit >(sourcePin->getNode()))
 				{
-					if ((sourcePin = shaderGraph->findSourcePin(inputPin)) != nullptr)
-						break;
-				}
-
-				// No such pin or not connected to a source; walk to next unite node.
-				const InputPin* parentBundleInputPin = uniteNodeIt->getInputPin(0);
-				T_FATAL_ASSERT(parentBundleInputPin != nullptr);
-
-				const OutputPin* parentBundleSourcePin = shaderGraph->findSourcePin(parentBundleInputPin);
-				if (parentBundleSourcePin)
-				{
-					uniteNodeIt = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
-					if (uniteNodeIt == nullptr)
-					{
-						log::error << L"Input \"Input\" into a bundle unite node must be a bundle itself." << Endl;
-						return nullptr;
-					}
+					// We must resolve source split first so we retry this node later.
+					retrySplitNodes.push_back(splitNode);
+					continue;
 				}
 				else
-					uniteNodeIt = nullptr;
+				{
+					log::error << L"Incorrect input connected to split node, must be a bundle (is \"" << type_name(sourcePin->getNode()) << L"\")." << Endl;
+					return nullptr;
+				}
 			}
 
-			for (auto edge : shaderGraph->findEdges(outputPin))
-				shaderGraph->removeEdge(edge);
-
-			if (sourcePin)
+			const int32_t outputPinCount = splitNode->getOutputPinCount();
+			for (int32_t i = 0; i < outputPinCount; ++i)
 			{
-				for (auto destinationPin : destinationPins)
-					shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
+				const OutputPin* outputPin = splitNode->getOutputPin(i);
+
+				const auto destinationPins = shaderGraph->findDestinationPins(outputPin);
+				if (destinationPins.empty())
+					continue;
+
+				const OutputPin* sourcePin = nullptr;
+
+				BundleUnite* uniteNodeIt = uniteNode;
+				while (uniteNodeIt != nullptr)
+				{
+					// Get source pin connected to current unite node.
+					const InputPin* inputPin = uniteNodeIt->findInputPin(outputPin->getName());
+					if (inputPin)
+					{
+						if ((sourcePin = shaderGraph->findSourcePin(inputPin)) != nullptr)
+							break;
+					}
+
+					// No such pin or not connected to a source; walk to next unite node.
+					const InputPin* parentBundleInputPin = uniteNodeIt->getInputPin(0);
+					T_FATAL_ASSERT(parentBundleInputPin != nullptr);
+
+					const OutputPin* parentBundleSourcePin = shaderGraph->findSourcePin(parentBundleInputPin);
+					if (parentBundleSourcePin)
+					{
+						uniteNodeIt = dynamic_type_cast< BundleUnite* >(parentBundleSourcePin->getNode());
+						if (uniteNodeIt == nullptr)
+						{
+							log::error << L"Input \"Input\" into a bundle unite node must be a bundle itself." << Endl;
+							return nullptr;
+						}
+					}
+					else
+						uniteNodeIt = nullptr;
+				}
+
+				for (auto edge : shaderGraph->findEdges(outputPin))
+					shaderGraph->removeEdge(edge);
+
+				if (sourcePin)
+				{
+					for (auto destinationPin : destinationPins)
+						shaderGraph->addEdge(new Edge(sourcePin, destinationPin));
+				}
 			}
 		}
-	}
 
-	// Remove resolved bundle unite/split.
+		// Swap set with retry nodes.
+		workSplitNodes.swap(retrySplitNodes);
+		retrySplitNodes.resize(0);
+	}
+	while (!workSplitNodes.empty());
+
+	// Remove resolved bundle splits.
 	for (const auto splitNode : splitNodes)
 		shaderGraph->removeNode(splitNode);
 
+	// Remove resolved bundle unites.
 	for (const auto uniteNode : uniteNodes)
 		shaderGraph->removeNode(uniteNode);
 
