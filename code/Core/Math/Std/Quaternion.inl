@@ -36,30 +36,30 @@ T_MATH_INLINE Quaternion::Quaternion(float x, float y, float z, float w)
 
 T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 {
-	Vector4 mc0 = m.get(0);
-	Vector4 mc1 = m.get(1);
-	Vector4 mc2 = m.get(2);
+	const Vector4 mc0 = m.get(0);
+	const Vector4 mc1 = m.get(1);
+	const Vector4 mc2 = m.get(2);
 
-	Scalar trace = Scalar(1.0f) + mc0.x() + mc1.y() + mc2.z();
+	const Scalar trace = 1.0_simd + mc0.x() + mc1.y() + mc2.z();
 	if (trace > FUZZY_EPSILON)
 	{
-		Scalar S = squareRoot(trace) * Scalar(2.0f);
-		Scalar iS = Scalar(1.0f) / S;
+		const Scalar S = squareRoot(trace) * 2.0_simd;
+		const Scalar iS = 1.0_simd / S;
 		e.set(
 			(mc1.z() - mc2.y()) * iS,
 			(mc2.x() - mc0.z()) * iS,
 			(mc0.y() - mc1.x()) * iS,
-			Scalar(0.25f) * S
+			0.25_simd * S
 		);
 	}
 	else
 	{
 		if (mc0.x() > mc1.y() && mc0.x() > mc2.z())
 		{
-			Scalar S = squareRoot(Scalar(1.0f) + mc0.x() - mc1.y() - mc2.z()) * Scalar(2.0f);
-			Scalar iS = Scalar(1.0f) / S;
+			const Scalar S = squareRoot(1.0_simd + mc0.x() - mc1.y() - mc2.z()) * 2.0_simd;
+			const Scalar iS = 1.0_simd / S;
 			e.set(
-				Scalar(0.25f) * S,
+				0.25_simd * S,
 				(mc0.y() + mc1.x()) * iS,
 				(mc2.x() + mc0.z()) * iS,
 				(mc1.z() - mc2.y()) * iS
@@ -67,23 +67,23 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 		}
 		else if (m(1, 1) > m(2, 2))
 		{
-			Scalar S = squareRoot(Scalar(1.0f) + mc1.y() - mc0.x() - mc2.z()) * Scalar(2.0f);
-			Scalar iS = Scalar(1.0f) / S;
+			const Scalar S = squareRoot(1.0_simd + mc1.y() - mc0.x() - mc2.z()) * 2.0_simd;
+			const Scalar iS = 1.0_simd / S;
 			e.set(
 				(mc0.y() + mc1.x()) * iS,
-				Scalar(0.25f) * S,
+				0.25_simd * S,
 				(mc1.z() + mc2.y()) * iS,
 				(mc2.x() - mc0.z()) * iS
 			);
 		}
 		else
 		{
-			Scalar S = squareRoot(Scalar(1.0f) + mc2.z() - mc0.x() - mc1.y()) * Scalar(2.0f);
-			Scalar iS = Scalar(1.0f) / S;
+			const Scalar S = squareRoot(1.0_simd + mc2.z() - mc0.x() - mc1.y()) * 2.0_simd;
+			const Scalar iS = 1.0_simd / S;
 			e.set(
 				(mc2.x() + mc0.z()) * iS,
 				(mc1.z() + mc2.y()) * iS,
-				Scalar(0.25f) * S,
+				0.25_simd * S,
 				(mc0.y() - mc1.x()) * iS
 			);
 		}
@@ -95,8 +95,8 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 	T_ASSERT(abs(from.w()) == 0.0f);
 	T_ASSERT(abs(to.w()) == 0.0f);
 
-	Vector4 c = cross(from, to);
-	Scalar d = dot3(from, to);
+	const Vector4 c = cross(from, to);
+	const Scalar d = dot3(from, to);
 
 	if (d < -1.0f + FUZZY_EPSILON)
 	{
@@ -104,9 +104,9 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 	}
 	else
 	{
-		Scalar s = squareRoot((Scalar(1.0f) + d) * Scalar(2.0f));
-		Scalar rs = Scalar(1.0f) / s;
-		e = (c.xyz0() * rs) + Vector4(0.0f, 0.0f, 0.0f, s * Scalar(0.5f));
+		const Scalar s = squareRoot((1.0_simd + d) * 2.0_simd);
+		const Scalar rs = 1.0_simd / s;
+		e = (c.xyz0() * rs) + Vector4(0.0f, 0.0f, 0.0f, s * 0.5_simd);
 	}
 }
 
