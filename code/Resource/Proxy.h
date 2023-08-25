@@ -102,11 +102,6 @@ public:
 		return getResource();
 	}
 
-	operator const ResourceType* () const
-	{
-		return getResource();
-	}
-
 	ResourceType* operator -> ()
 	{
 		return getResource();
@@ -125,6 +120,16 @@ public:
 	bool operator != (const ResourceType* rs) const
 	{
 		return bool(getResource() != rs);
+	}
+
+	bool operator == (const Proxy< ResourceType >& rh) const
+	{
+		return bool(getResource() == rh.getResource());
+	}
+
+	bool operator != (const Proxy< ResourceType >& rh) const
+	{
+		return bool(getResource() != rh.getResource());
 	}
 
 	Proxy< ResourceType >& operator = (const Proxy< ResourceType >& rh)
