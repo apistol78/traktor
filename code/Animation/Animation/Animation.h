@@ -87,11 +87,10 @@ public:
 	/*! Get key pose from time.
 	 *
 	 * \param at Time
-	 * \param indexHint Key frame index hint.
 	 * \param outPose Output key pose.
 	 * \return True if found key pose.
 	 */
-	bool getPose(float at, int32_t& indexHint, Pose& outPose) const;
+	bool getPose(float at, Pose& outPose) const;
 
 	/*!
 	 */

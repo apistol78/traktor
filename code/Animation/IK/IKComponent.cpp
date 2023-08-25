@@ -47,14 +47,16 @@ void IKComponent::update(const world::UpdateParams& update)
 		return;
 
 	const uint32_t jointCount = skeleton->getJointCount();
+	if (jointCount > 128)
+		return;
+
 	const auto& jointTransforms = skeletonComponent->getJointTransforms();
-	
 	const auto& poseTransforms = skeletonComponent->getPoseTransforms();
 	if (poseTransforms.size() < jointCount)
 		return;
 
-	StaticVector< Vector4, 64 > nodes(jointCount);
-	StaticVector< Scalar, 64 > lengths(jointCount, 0.0_simd);
+	StaticVector< Vector4, 128 > nodes(jointCount);
+	StaticVector< Scalar, 128 > lengths(jointCount, 0.0_simd);
 
 	// Calculate skeleton bone lengths.
 	for (uint32_t i = 0; i < jointCount; ++i)
@@ -109,8 +111,8 @@ void IKComponent::update(const world::UpdateParams& update)
 			if (abs(err) > FUZZY_EPSILON)
 			{
 				d /= ln;
-				e += err * d * 0.45_simd;
-				s -= err * d * 0.45_simd;
+				e += err * d * 0.5_simd;
+				s -= err * d * 0.5_simd;
 			}
 		}
 	}
@@ -136,12 +138,15 @@ void IKComponent::update(const world::UpdateParams& update)
 			const Vector4& eik = nodes[i];
 			const Vector4 axisZik = (eik - sik).normalized();
 
+			const Vector4 s = poseTransforms[joint->getParent()].translation();
+			const Vector4 e = poseTransforms[i].translation();
+			const Vector4 axisZik0 = (e - s).normalized();
+
+			const Quaternion Qr(axisZik0, axisZik);
+
 			solvedPoseTransforms[joint->getParent()] = Transform(
 				sik,
-				Quaternion(
-					Vector4(0.0f, 0.0f, 1.0f, 0.0f),
-					axisZik
-				)
+				Qr.normalized() * poseTransforms[joint->getParent()].rotation()
 			);
 		}
 	}

@@ -70,12 +70,8 @@ void StateNode::evaluate(
 ) const
 {
 	const float time = context.getTime();
-	int32_t indexHint = context.getIndexHint();
-
 	if (m_animation)
-		m_animation->getPose(time, indexHint, outPose);
-
-	context.setIndexHint(indexHint);
+		m_animation->getPose(time, outPose);
 }
 
 void StateNode::serialize(ISerializer& s)

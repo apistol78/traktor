@@ -45,7 +45,7 @@ public:
 
 private:
 	Guid m_skeleton;
-	std::wstring m_take = L"Animation";
+	std::wstring m_take = L"";
 	float m_scale = 1.0f;
 	Vector4 m_translate = Vector4::zero();
 	bool m_removeLocomotion = true;

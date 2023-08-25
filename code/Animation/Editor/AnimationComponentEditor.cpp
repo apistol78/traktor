@@ -177,7 +177,7 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 						primitiveRenderer->drawSolidPoint(poseTransforms[i].translation().xyz1(), 8.0f, Color4ub(255, 255, 255, 255));
 						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
 					}
-					primitiveRenderer->drawText(poseTransforms[i].translation().xyz1(), 0.2f, 0.2f, joint->getName(), Color4ub(255, 255, 255, 255));
+					//primitiveRenderer->drawText(poseTransforms[i].translation().xyz1(), 0.2f, 0.2f, joint->getName(), Color4ub(255, 255, 255, 255));
 
 					if (joint->getParent() >= 0)
 					{

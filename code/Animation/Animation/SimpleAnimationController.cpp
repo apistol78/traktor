@@ -31,7 +31,6 @@ SimpleAnimationController::SimpleAnimationController(
 )
 :	m_animation(animation)
 ,	m_transformTime(transformTime)
-,	m_indexHint(-1)
 ,	m_lastTime(std::numeric_limits< float >::max())
 {
 	m_timeOffset = s_random.nextFloat() * m_animation->getLastKeyPose().at;
@@ -63,7 +62,7 @@ bool SimpleAnimationController::evaluate(
 	// Calculate pose from animation.
 	const float poseTime = std::fmod(m_timeOffset + time, m_animation->getLastKeyPose().at);
 
-	m_animation->getPose(poseTime, m_indexHint, m_evaluationPose);
+	m_animation->getPose(poseTime, m_evaluationPose);
 	calculatePoseTransforms(
 		skeleton,
 		&m_evaluationPose,
