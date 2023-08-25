@@ -119,12 +119,10 @@
 #	undef MessageBox
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 #if defined(_DEBUG)
 const wchar_t* c_title = L"Traktor Editor - Debug build";
@@ -423,7 +421,7 @@ ui::Size getDesktopSizeEstimate()
 	return sz;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 
@@ -3218,5 +3216,4 @@ void EditorForm::threadOpenWorkspace(const Path& workspacePath, int32_t& progres
 	progress = 1000;
 }
 
-	}
 }
