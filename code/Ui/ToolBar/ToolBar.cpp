@@ -7,10 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-//#include "Drawing/Image.h"
-//#include "Drawing/Filters/BrightnessContrastFilter.h"
-//#include "Drawing/Filters/GrayscaleFilter.h"
-//#include "Drawing/Filters/TransformFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/StyleSheet.h"
@@ -24,9 +20,9 @@ namespace traktor::ui
 	namespace
 	{
 
-const Unit c_marginWidth = 1_ut;
-const Unit c_marginHeight = 1_ut;
-const int c_itemPad = 2;
+const Unit c_marginWidth = 2_ut;
+const Unit c_marginHeight = 2_ut;
+const Unit c_itemPad = 4_ut;
 
 	}
 
@@ -131,7 +127,7 @@ Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 		if (rc.inside(at))
 			return item;
 
-		x += size.cx + c_itemPad;
+		x += size.cx + pixel(c_itemPad);
 	}
 
 	return nullptr;
@@ -145,7 +141,7 @@ Size ToolBar::getPreferredSize(const Size& hint) const
 	for (auto item : m_items)
 	{
 		const Size size = item->getSize(this);
-		width += size.cx + c_itemPad;
+		width += size.cx + pixel(c_itemPad);
 		height = std::max(height, size.cy);
 	}
 
@@ -283,7 +279,7 @@ void ToolBar::eventPaint(PaintEvent* event)
 			m_images
 		);
 
-		x += size.cx + c_itemPad;
+		x += size.cx + pixel(c_itemPad);
 	}
 
 	event->consume();

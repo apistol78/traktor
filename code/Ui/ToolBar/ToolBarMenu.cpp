@@ -16,10 +16,8 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarMenu.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarMenu", ToolBarMenu, ToolBarItem)
 
@@ -72,7 +70,7 @@ Size ToolBarMenu::getSize(const ToolBar* toolBar) const
 {
 	const Size imageSize = toolBar->getImageSize();
 	const Size sz = toolBar->getFontMetric().getExtent(m_text);
-	return Size(sz.cx + toolBar->pixel(16_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(4_ut));
+	return Size(sz.cx + toolBar->pixel(24_ut), std::max< int32_t >(sz.cy, imageSize.cy) + toolBar->pixel(8_ut));
 }
 
 void ToolBarMenu::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, const RefArray< IBitmap >& images)
@@ -141,5 +139,4 @@ void ToolBarMenu::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 }
 
-	}
 }

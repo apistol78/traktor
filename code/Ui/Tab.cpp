@@ -15,10 +15,8 @@
 #include "Ui/TabPage.h"
 #include "Ui/Font.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tab", Tab, Widget)
 
@@ -52,7 +50,7 @@ bool Tab::create(Widget* parent, int32_t style)
 	m_bottom = bool((style & WsBottom) == WsBottom);
 
 	m_bitmapClose = new StyleBitmap(L"UI.TabClose");
-	m_tabHeight = getFont().getSize() + 9_ut;
+	m_tabHeight = getFont().getSize() + 12_ut;
 	return true;
 }
 
@@ -426,7 +424,7 @@ void Tab::eventPaint(PaintEvent* event)
 				tabWidthNoMargin += closeSize.cx + pixel(4_ut);
 			}
 
-			const int32_t tabWidth = tabWidthNoMargin + pixel(8_ut);
+			const int32_t tabWidth = tabWidthNoMargin + pixel(12_ut);
 
 			// Save right separator position in vector.
 			ps.right = left + tabWidth;
@@ -582,5 +580,4 @@ bool Tab::PageState::operator == (const Tab::PageState& rh) const
 	return page == rh.page;
 }
 
-	}
 }
