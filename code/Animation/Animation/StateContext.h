@@ -37,14 +37,9 @@ public:
 
 	float getDuration() const { return m_duration; }
 
-	void setIndexHint(int32_t indexHint) { m_indexHint = indexHint; }
-
-	int32_t getIndexHint() const { return m_indexHint; }
-
 private:
 	float m_time = 0.0f;
 	float m_duration = 0.0f;
-	int32_t m_indexHint = -1;
 };
 
 }

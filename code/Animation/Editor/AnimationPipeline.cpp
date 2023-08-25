@@ -148,6 +148,10 @@ bool AnimationPipeline::buildOutput(
 	}
 
 	// Find animation take.
+	log::info << L"Available animations are:" << Endl;
+	for (const auto anim : modelAnimation->getAnimations())
+		log::info << L"\t\"" << anim->getName() << L"\", " << anim->getKeyFrameCount() << L" frame(s)" << Endl;
+
 	const std::wstring take = animationAsset->getTake();
 
 	Ref< const model::Animation > ma;
@@ -159,9 +163,6 @@ bool AnimationPipeline::buildOutput(
 	if (!ma)
 	{
 		log::error << L"Unable to build animation; no such animation \"" << take << L"\" in file \"" << animationAsset->getFileName().getPathName() << L"\"." << Endl;
-		log::error << L"Available animations are:" << Endl;
-		for (const auto anim : modelAnimation->getAnimations())
-			log::error << L"\t\"" << anim->getName() << L"\"" << Endl;
 		return false;
 	}
 

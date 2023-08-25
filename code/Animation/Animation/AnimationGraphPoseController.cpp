@@ -72,7 +72,6 @@ void AnimationGraphPoseController::setTime(float time)
 {
 	T_FATAL_ASSERT (m_currentState);
 	m_currentStateContext.setTime(time);
-	m_currentStateContext.setIndexHint(-1);
 }
 
 float AnimationGraphPoseController::getTime() const

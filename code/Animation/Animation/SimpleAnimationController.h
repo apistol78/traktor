@@ -62,7 +62,6 @@ public:
 private:
 	resource::Proxy< Animation > m_animation;
 	Ref< ITransformTime > m_transformTime;
-	int32_t m_indexHint;
 	float m_timeOffset;
 	float m_lastTime;
 	Pose m_evaluationPose;
