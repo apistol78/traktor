@@ -4431,7 +4431,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3</item>
+						<item>embree4</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -4458,7 +4458,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3</item>
+						<item>embree4</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -4485,7 +4485,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3</item>
+						<item>embree4</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -4512,7 +4512,7 @@
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
-						<item>embree3</item>
+						<item>embree4</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
