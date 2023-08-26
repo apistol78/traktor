@@ -71,10 +71,10 @@ fi
 
 # Platform specific 3rd party dependencies.
 if [[ $TRAKTOR_PLATFORM == linux ]]; then
-	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-linux/embree-3.13.4.x86_64.linux
+	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-linux
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-linux/oidn-1.4.3.x86_64.linux
 elif [[ $TRAKTOR_PLATFORM == macos ]]; then
-	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-macOS/embree-3.13.4.x86_64.macosx
+	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-macOS
 	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-macOS/oidn-1.4.3.x86_64.macos
 fi
 
