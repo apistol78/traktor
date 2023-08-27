@@ -2316,6 +2316,18 @@ bool emitScript(GlslContext& cx, Script* node)
 			reps.push_back({ variableName, L"__bindlessTexturesCube__[" + ins[i]->getName() + L"]" });
 			break;
 
+		case GlslType::Image2D:
+			reps.push_back({ variableName, L"__bindlessImages2D__[" + ins[i]->getName() + L"]" });
+			break;
+
+		case GlslType::Image3D:
+			reps.push_back({ variableName, L"__bindlessImages3D__[" + ins[i]->getName() + L"]" });
+			break;
+
+		case GlslType::ImageCube:
+			reps.push_back({ variableName, L"__bindlessImagesCube__[" + ins[i]->getName() + L"]" });
+			break;
+
 		default:
 			reps.push_back({ variableName, ins[i]->getName() });
 			break;
