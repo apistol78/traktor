@@ -105,6 +105,7 @@ extern const render::Handle s_handleInputColorLast;
 extern const render::Handle s_handleInputDepth;
 extern const render::Handle s_handleInputNormal;
 extern const render::Handle s_handleInputVelocity;
+extern const render::Handle s_handleInputVelocityLast;
 extern const render::Handle s_handleInputShadowMap;
 extern const render::Handle s_handleInputRoughness;
 extern const render::Handle s_handleInputColorGrading;
