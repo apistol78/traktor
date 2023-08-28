@@ -10,6 +10,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
+#include "Render/Types.h"
 
 namespace traktor::world
 {
@@ -81,6 +82,14 @@ struct GatherView
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
 	AlignedVector< const VolumetricFogComponent* > fogs;
+};
+
+/*!
+ */
+struct DoubleBufferedTarget
+{
+	render::handle_t previous;
+	render::handle_t current;
 };
 
 }

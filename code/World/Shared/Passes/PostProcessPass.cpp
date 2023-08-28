@@ -178,9 +178,8 @@ void PostProcessPass::setup(
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
-	render::handle_t velocityTargetSetId,
-	render::handle_t visualWriteTargetSetId,
-	render::handle_t visualReadTargetSetId,
+	const DoubleBufferedTarget& velocityTargetSetId,
+	const DoubleBufferedTarget& visualTargetSetId,
 	render::handle_t outputTargetSetId
 ) const
 {
@@ -201,11 +200,12 @@ void PostProcessPass::setup(
 	const float fxRotate = axisX.z() + axisZ.y();
 
 	render::ImageGraphContext igctx;
-	igctx.associateTextureTargetSet(s_handleInputColor, visualWriteTargetSetId, 0);
-	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId.current, 0);
+	igctx.associateTextureTargetSet(s_handleInputColorLast, visualTargetSetId.previous, 0);
 	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
+	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId.current, 0);
+	igctx.associateTextureTargetSet(s_handleInputVelocityLast, velocityTargetSetId.previous, 0);
 	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
 
 	// Expose gamma and exposure.
@@ -220,12 +220,12 @@ void PostProcessPass::setup(
 	igctx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
 
 	StaticVector< render::ImageGraph*, 5 > processes;
-	if (m_motionBlur)
-		processes.push_back(m_motionBlur);
-	if (m_antiAlias)
-		processes.push_back(m_antiAlias);
 	if (m_toneMap)
 		processes.push_back(m_toneMap);
+	if (m_antiAlias)
+		processes.push_back(m_antiAlias);
+	if (m_motionBlur)
+		processes.push_back(m_motionBlur);
 	if (m_visual)
 		processes.push_back(m_visual);
 	if (m_gammaCorrection)

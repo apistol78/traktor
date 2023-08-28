@@ -95,6 +95,7 @@ const render::Handle s_handleInputColorLast(L"InputColorLast");
 const render::Handle s_handleInputDepth(L"InputDepth");
 const render::Handle s_handleInputNormal(L"InputNormal");
 const render::Handle s_handleInputVelocity(L"InputVelocity");
+const render::Handle s_handleInputVelocityLast(L"InputVelocityLast");
 const render::Handle s_handleInputShadowMap(L"InputShadowMap");
 const render::Handle s_handleInputRoughness(L"InputRoughness");
 const render::Handle s_handleInputColorGrading(L"InputColorGrading");

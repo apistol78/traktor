@@ -137,15 +137,18 @@ void WorldRendererForward::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-	auto visualReadTargetSetId = renderGraph.addPersistentTargetSet(L"History", s_handleVisualTargetSet[m_count % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId);
-	auto visualWriteTargetSetId = renderGraph.addPersistentTargetSet(L"Visual", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId);
+	const DoubleBufferedTarget visualTargetSetId =
+	{
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId)
+	};
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_blackCubeTexture, renderGraph, gbufferTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, m_blackCubeTexture, renderGraph, gbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -160,14 +163,14 @@ void WorldRendererForward::setup(
 		worldRenderView,
 		rootEntity,
 		renderGraph,
-		visualWriteTargetSetId,
+		visualTargetSetId.current,
 		gbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualWriteTargetSetId, visualReadTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
 	m_count++;
 }

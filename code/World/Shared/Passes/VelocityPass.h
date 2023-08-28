@@ -48,10 +48,11 @@ public:
 
     bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
-	render::handle_t setup(
+    DoubleBufferedTarget setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
+        uint32_t frameCount,
 		render::RenderGraph& renderGraph,
         render::handle_t gbufferTargetSetId,
 		render::handle_t outputTargetSetId
