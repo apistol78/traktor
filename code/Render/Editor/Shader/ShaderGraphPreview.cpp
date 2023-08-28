@@ -30,14 +30,14 @@ Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGrap
 	if (!resolvedShaderGraph)
 		return nullptr;
 
-	const RefArray< PreviewOutput > previewOutputs = shaderGraph->findNodesOf< PreviewOutput >();
+	const RefArray< PreviewOutput > previewOutputs = resolvedShaderGraph->findNodesOf< PreviewOutput >();
 	if (previewOutputs.empty())
 		return nullptr;
 
 	Ref< drawing::Image > image;
 
 	const InputPin* inputPin = previewOutputs.front()->getInputPin(0);
-	const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
+	const OutputPin* outputPin = resolvedShaderGraph->findSourcePin(inputPin);
 	if (auto colorNode = dynamic_type_cast< const Color* >(outputPin->getNode()))
 	{
 		image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
