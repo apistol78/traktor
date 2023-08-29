@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
@@ -34,7 +32,7 @@ class T_DLLCLASS ToolBarEmbed : public ToolBarItem
 	T_RTTI_CLASS;
 
 public:
-	ToolBarEmbed(Widget* widget, Unit width);
+	explicit ToolBarEmbed(Widget* widget, Unit width, Unit preferredHeight = 0_ut);
 
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const override final;
@@ -54,8 +52,7 @@ protected:
 private:
 	Ref< Widget > m_widget;
 	Unit m_width;
+	Unit m_preferredHeight;
 };
 
-	}
 }
-

@@ -124,12 +124,12 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					texture->getPixel(tu, tv, color);
 
 					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
-					const Scalar d = -n.z();
+					const Scalar d = -n.z() * 0.5_simd + 0.5_simd;
 
-					outImage->setPixelUnsafe(x, y, (color * d).rgb1());
+					outImage->setPixelUnsafe(x, y, (color * d * 2.0_simd).rgb1());
 					zbuffer[offset] = z;
 				}
-				});
+			});
 		}
 		else
 		{
@@ -145,9 +145,9 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					const Color4f& color = polygonMaterial.getColor();
 
 					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
-					const Scalar d = -n.z();
+					const Scalar d = -n.z() * 0.5_simd + 0.5_simd;
 
-					outImage->setPixelUnsafe(x, y, (color * d).rgb1());
+					outImage->setPixelUnsafe(x, y, (color * d * 2.0_simd).rgb1());
 					zbuffer[offset] = z;
 				}
 			});

@@ -12,27 +12,19 @@
 #include "Ui/PreviewList/PreviewList.h"
 #include "Ui/PreviewList/PreviewSelectionChangeEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_marginX = 10_ut;
 const Unit c_marginY = 10_ut;
-const Unit c_itemWidth[] = { 120_ut, 240_ut };
-const Unit c_itemHeight[] = { 100_ut, 200_ut };
+const Unit c_itemWidth = 120_ut;
+const Unit c_itemHeight = 110_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewList", PreviewList, AutoWidget)
-
-PreviewList::PreviewList()
-:	m_itemSize(IsSmall)
-,	m_single(true)
-{
-}
 
 bool PreviewList::create(Widget* parent, uint32_t style)
 {
@@ -43,11 +35,6 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	return true;
-}
-
-void PreviewList::setItemSize(ItemSize itemSize)
-{
-	m_itemSize = itemSize;
 }
 
 void PreviewList::setItems(PreviewItems* items)
@@ -93,16 +80,18 @@ void PreviewList::getSelectedItems(RefArray< PreviewItem >& outItems) const
 
 void PreviewList::layoutCells(const Rect& rc)
 {
-	int32_t nitems = m_items ? m_items->count() : 0;
+	const int32_t nitems = m_items ? m_items->count() : 0;
 	if (nitems <= 0)
 		return;
 
-	int32_t width = pixel(c_itemWidth[m_itemSize]);
-	int32_t height = pixel(c_itemHeight[m_itemSize]);
+	const int32_t width = pixel(c_itemWidth);
+	const int32_t height = pixel(c_itemHeight);
 
-	int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
+	const int32_t ncolumns = (rc.getWidth() - pixel(c_marginX * 2_ut)) / width;
 	if (ncolumns <= 0)
 		return;
+
+	const int32_t pad = pixel(4_ut);
 
 	// First layout non selected.
 	for (int32_t i = 0; i < nitems; ++i)
@@ -110,17 +99,17 @@ void PreviewList::layoutCells(const Rect& rc)
 		if (m_items->get(i)->isSelected())
 			continue;
 
-		int32_t column = i % ncolumns;
-		int32_t row = i / ncolumns;
+		const int32_t column = i % ncolumns;
+		const int32_t row = i / ncolumns;
 
-		Rect rcItem(
+		const Rect rcItem(
 			pixel(c_marginX) + column * width,
 			pixel(c_marginY) + row * height,
 			pixel(c_marginX) + column * width + width,
 			pixel(c_marginY) + row * height + height
 		);
 
-		placeCell(m_items->get(i), rcItem);
+		placeCell(m_items->get(i), rcItem.inflate(-pad, -pad));
 	}
 
 	// Then layout selected items.
@@ -129,17 +118,17 @@ void PreviewList::layoutCells(const Rect& rc)
 		if (!m_items->get(i)->isSelected())
 			continue;
 
-		int32_t column = i % ncolumns;
-		int32_t row = i / ncolumns;
+		const int32_t column = i % ncolumns;
+		const int32_t row = i / ncolumns;
 
-		Rect rcItem(
+		const Rect rcItem(
 			pixel(c_marginX) + column * width,
 			pixel(c_marginY) + row * height,
 			pixel(c_marginX) + column * width + width,
 			pixel(c_marginY) + row * height + height
 		);
 
-		placeCell(m_items->get(i), rcItem);
+		placeCell(m_items->get(i), rcItem.inflate(-pad, -pad));
 	}
 }
 
@@ -175,5 +164,4 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 	requestUpdate();
 }
 
-	}
 }

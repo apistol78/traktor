@@ -480,7 +480,24 @@
 				</item>
 			</colors>
 		</item>
-		<item>
+        <item>
+            <typeName>traktor.ui.PreviewItem</typeName>
+            <colors>
+                <item>
+                    <first>background-color</first>
+                    <second>90, 90, 90, 255</second>
+                </item>
+                <item>
+                    <first>background-color-selected</first>
+                    <second>0, 122, 204, 255</second>
+                </item>
+                <item>
+                    <first>color-subtext</first>
+                    <second>120, 120, 120, 255</second>
+                </item>
+            </colors>
+        </item>
+        <item>
 			<typeName>traktor.ui.PreviewList</typeName>
 			<colors>
 				<item>
@@ -490,14 +507,6 @@
 				<item>
 					<first>color</first>
 					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>item-background-color</first>
-					<second>200, 200, 200, 255</second>
-				</item>
-				<item>
-					<first>item-background-color-selected</first>
-					<second>51, 153, 255, 255</second>
 				</item>
 			</colors>
 		</item>

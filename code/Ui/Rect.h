@@ -26,7 +26,7 @@ namespace traktor::ui
  * \ingroup UI
  */
 template < typename ValueType >
-class T_DLLCLASS RectBase
+class RectBase
 {
 public:
 	typedef PointBase< ValueType > point_t;
@@ -168,7 +168,7 @@ public:
 
 	ValueType area() const
 	{
-		return getWidth() * getHeight();
+		return (right - left) * (bottom - top);
 	}
 
 	RectBase< ValueType > contain(const point_t& pnt) const

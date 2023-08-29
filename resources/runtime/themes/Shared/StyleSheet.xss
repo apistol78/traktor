@@ -726,6 +726,10 @@
 			<first>UI.Log</first>
 			<second>$(Images.Path)/Images/UI/Log.image</second>
 		</item>
+        <item>
+            <first>UI.Preview.Background</first>
+            <second>$(Images.Path)/Images/UI/Preview/Background.image</second>
+        </item>
 		<item>
 			<first>UI.PropertyList</first>
 			<second>$(Images.Path)/Images/UI/PropertyList.image</second>

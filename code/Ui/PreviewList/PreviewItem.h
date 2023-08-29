@@ -18,12 +18,11 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Bitmap;
+class StyleBitmap;
 
 class T_DLLCLASS PreviewItem : public AutoWidgetCell
 {
@@ -32,11 +31,15 @@ class T_DLLCLASS PreviewItem : public AutoWidgetCell
 public:
 	PreviewItem();
 
-	PreviewItem(const std::wstring& text);
+	explicit PreviewItem(const std::wstring& text);
 
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const;
+
+	void setSubText(const std::wstring& subText);
+
+	const std::wstring& getSubText() const;
 
 	void setImage(ui::Bitmap* image);
 
@@ -50,10 +53,10 @@ public:
 
 private:
 	std::wstring m_text;
+	std::wstring m_subText;
+	Ref< ui::StyleBitmap > m_imageBackground;
 	Ref< ui::Bitmap > m_bitmapImage;
 	bool m_selected;
 };
 
-	}
 }
-
