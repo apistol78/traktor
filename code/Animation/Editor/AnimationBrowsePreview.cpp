@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
+#include "Drawing/Raster.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
@@ -36,7 +37,7 @@ TypeInfoSet AnimationBrowsePreview::getPreviewTypes() const
 
 Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
 {
-    Ref< const editor::Asset > asset = instance->getObject< editor::Asset >();
+	Ref< const editor::Asset > asset = instance->getObject< editor::Asset >();
 	if (!asset)
 		return nullptr;
 
@@ -56,79 +57,69 @@ Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor
 	if (!model)
 		return nullptr;
 
-	if (!model::Triangulate().apply(*model))
-		return nullptr;
+	const float hw = (float)(meshThumb->getWidth() / 2.0f);
+	const float hh = (float)(meshThumb->getHeight() / 2.0f);
+	const float r = (float)meshThumb->getWidth() / meshThumb->getHeight();
 
-	// Create list of texture references.
-	// SmallMap< std::wstring, Guid > materialTextures;
+	if (is_a< AnimationAsset >(asset))
+	{
+		if (!model::Triangulate().apply(*model))
+			return nullptr;
 
-	// First use textures from texture set.
-	// const auto& textureSetId = asset->getTextureSet();
-	// if (textureSetId.isNotNull())
-	// {
-	// 	Ref< const render::TextureSet > textureSet = editor->getSourceDatabase()->getObjectReadOnly< render::TextureSet >(textureSetId);
-	// 	if (!textureSet)
-	// 		return nullptr;
-
-	// 	materialTextures = textureSet->get();
-	// }
-
-	// Then let explicit material textures override those from a texture set.
-	// for (const auto& mt : asset->getMaterialTextures())
-	// 	materialTextures[mt.first] = mt.second;
-
-	// // Bind texture references in material maps.
-	// for (auto& material : model->getMaterials())
-	// {
-	// 	auto diffuseMap = material.getDiffuseMap();
-	// 	auto it = materialTextures.find(diffuseMap.name);
-	// 	if (it != materialTextures.end())
-	// 	{
-	// 		diffuseMap.texture = it->second;
-	// 		material.setDiffuseMap(diffuseMap);
-	// 	}
-	// }
-
-	// Load texture images and attach to materials.
-	// SmallMap< Path, Ref< drawing::Image > > images;
-	// for (auto& material : model->getMaterials())
-	// {
-	// 	auto diffuseMap = material.getDiffuseMap();
-	// 	if (diffuseMap.texture.isNotNull())
-	// 	{
-	// 		Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-	// 		if (!textureAsset)
-	// 			continue;
-
-	// 		const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
-	// 		Ref< drawing::Image > image = images[filePath];
-	// 		if (image == nullptr)
-	// 		{
-	// 			Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-	// 			if (file)
-	// 			{
-	// 				image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-	// 				if (image && textureAsset->m_output.m_linearGamma)
-	// 				{
-	// 					// Convert to gamma color space.
-	// 					drawing::GammaFilter gammaFilter(2.2f);
-	// 					image->apply(&gammaFilter);							
-	// 				}
-	// 				images[filePath] = image;
-	// 			}
-	// 		}
-
-	// 		diffuseMap.image = image;			
-	// 		material.setDiffuseMap(diffuseMap);
-	// 	}
-	// }
-
-	// Rasterize model.
 	const Aabb3 boundingBox = model->getBoundingBox();
 	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
 	const Scalar invMaxExtent = 1.0_simd / maxExtent;
 	const Matrix44 modelView = translate(0.0f, 0.0f, 3.0f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(/*asset->getPreviewAngle()*/0.0f) * translate(-boundingBox.getCenter());
-	model::ModelRasterizer().generate(model, modelView, meshThumb);
+
+		model::ModelRasterizer().generate(model, modelView, meshThumb);
+	}
+	else if (is_a< SkeletonAsset >(asset))
+	{
+		drawing::Raster raster(meshThumb);
+		const int32_t ls = raster.defineSolidStyle(Color4f(1.0f, 0.9f, 0.1f, 1.0f));
+
+		const Matrix44 projection = perspectiveLh(deg2rad(70.0f), r, 0.1f, 100.0f);
+
+		// Transform all joints into screen space.
+		Aabb3 boundingBox;
+		for (int32_t i = 0; i < model->getJointCount(); ++i)
+		{
+			const Transform Tjoint = model->getJointGlobalTransform(i);
+			boundingBox.contain(Tjoint.translation().xyz1());
+		}
+
+		const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
+		const Scalar invMaxExtent = 1.0_simd / maxExtent;
+		const Matrix44 modelView = translate(0.0f, 0.0f, 3.0f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * translate(-boundingBox.getCenter());
+
+		AlignedVector< Vector2 > sp(model->getJointCount());
+		for (int32_t i = 0; i < model->getJointCount(); ++i)
+		{
+			const Transform Tjoint = model->getJointGlobalTransform(i);
+			const Vector4 vp = modelView * Tjoint.translation().xyz1();
+			Vector4 cp = projection * vp; cp = cp / cp.w();
+			sp[i] = Vector2(
+				cp.x() * hw + hw,
+				hh - (cp.y() * hh)
+			);
+		}
+
+		// Draw joint edges.
+		for (int32_t i = 0; i < model->getJointCount(); ++i)
+		{
+			const model::Joint& joint = model->getJoint(i);
+			if (joint.getParent() != model::c_InvalidIndex)
+			{
+				const Vector2& s = sp[joint.getParent()];
+				const Vector2& e = sp[i];
+				raster.clear();
+				raster.moveTo(s);
+				raster.lineTo(e);
+				raster.stroke(ls, 2.0f, drawing::Raster::StrokeCap::Round);
+			}
+		}
+		raster.submit();
+	}
 
 	drawing::ScaleFilter scaleFilter(
 		64,
