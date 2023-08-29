@@ -19,9 +19,9 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
 #include "Model/Model.h"
+#include "Model/Pose.h"
 #include "Model/Operations/Triangulate.h"
 #include "Model/ModelCache.h"
-#include "Model/ModelRasterizer.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 
@@ -61,38 +61,42 @@ Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor
 	const float hh = (float)(meshThumb->getHeight() / 2.0f);
 	const float r = (float)meshThumb->getWidth() / meshThumb->getHeight();
 
-	if (is_a< AnimationAsset >(asset))
-	{
-		if (!model::Triangulate().apply(*model))
-			return nullptr;
+	drawing::Raster raster(meshThumb);
+	const int32_t ls = raster.defineSolidStyle(Color4f(1.0f, 0.9f, 0.1f, 1.0f));
 
-	const Aabb3 boundingBox = model->getBoundingBox();
+	const Matrix44 projection = perspectiveLh(deg2rad(70.0f), r, 0.1f, 100.0f);
+
+	// Transform all joints into screen space.
+	Aabb3 boundingBox;
+	for (int32_t i = 0; i < model->getJointCount(); ++i)
+	{
+		const Transform Tjoint = model->getJointGlobalTransform(i);
+		boundingBox.contain(Tjoint.translation().xyz1());
+	}
+
 	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
 	const Scalar invMaxExtent = 1.0_simd / maxExtent;
-	const Matrix44 modelView = translate(0.0f, 0.0f, 3.0f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(/*asset->getPreviewAngle()*/0.0f) * translate(-boundingBox.getCenter());
+	const Matrix44 modelView = translate(0.0f, 0.0f, 1.75f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * translate(-boundingBox.getCenter());
 
-		model::ModelRasterizer().generate(model, modelView, meshThumb);
-	}
-	else if (is_a< SkeletonAsset >(asset))
+	AlignedVector< Vector2 > sp(model->getJointCount());
+
+	if (is_a< AnimationAsset >(asset) && model->getAnimationCount() > 0)
 	{
-		drawing::Raster raster(meshThumb);
-		const int32_t ls = raster.defineSolidStyle(Color4f(1.0f, 0.9f, 0.1f, 1.0f));
-
-		const Matrix44 projection = perspectiveLh(deg2rad(70.0f), r, 0.1f, 100.0f);
-
-		// Transform all joints into screen space.
-		Aabb3 boundingBox;
+		const model::Animation* anim = model->getAnimation(0);
+		const model::Pose* pose = anim->getKeyFramePose(0);
 		for (int32_t i = 0; i < model->getJointCount(); ++i)
 		{
-			const Transform Tjoint = model->getJointGlobalTransform(i);
-			boundingBox.contain(Tjoint.translation().xyz1());
+			const Transform Tjoint = pose->getJointGlobalTransform(model, i);
+			const Vector4 vp = modelView * Tjoint.translation().xyz1();
+			Vector4 cp = projection * vp; cp = cp / cp.w();
+			sp[i] = Vector2(
+				cp.x() * hw + hw,
+				hh - (cp.y() * hh)
+			);
 		}
-
-		const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
-		const Scalar invMaxExtent = 1.0_simd / maxExtent;
-		const Matrix44 modelView = translate(0.0f, 0.0f, 3.0f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * translate(-boundingBox.getCenter());
-
-		AlignedVector< Vector2 > sp(model->getJointCount());
+	}
+	else
+	{
 		for (int32_t i = 0; i < model->getJointCount(); ++i)
 		{
 			const Transform Tjoint = model->getJointGlobalTransform(i);
@@ -103,23 +107,23 @@ Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor
 				hh - (cp.y() * hh)
 			);
 		}
-
-		// Draw joint edges.
-		for (int32_t i = 0; i < model->getJointCount(); ++i)
-		{
-			const model::Joint& joint = model->getJoint(i);
-			if (joint.getParent() != model::c_InvalidIndex)
-			{
-				const Vector2& s = sp[joint.getParent()];
-				const Vector2& e = sp[i];
-				raster.clear();
-				raster.moveTo(s);
-				raster.lineTo(e);
-				raster.stroke(ls, 2.0f, drawing::Raster::StrokeCap::Round);
-			}
-		}
-		raster.submit();
 	}
+
+	// Draw joint edges.
+	raster.clear();
+	for (int32_t i = 0; i < model->getJointCount(); ++i)
+	{
+		const model::Joint& joint = model->getJoint(i);
+		if (joint.getParent() != model::c_InvalidIndex)
+		{
+			const Vector2& s = sp[joint.getParent()];
+			const Vector2& e = sp[i];
+			raster.moveTo(s);
+			raster.lineTo(e);
+		}
+	}
+	raster.stroke(ls, 2.0f, drawing::Raster::StrokeCap::Round);
+	raster.submit();
 
 	drawing::ScaleFilter scaleFilter(
 		64,

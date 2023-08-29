@@ -477,9 +477,13 @@
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>66, 112, 161, 255</second>
+                    <second>0, 122, 204, 255</second>
 				</item>
-			</colors>
+                <item>
+                    <first>color-subtext</first>
+                    <second>120, 120, 120, 255</second>
+                </item>
+            </colors>
 		</item>
 		<item>
 			<typeName>traktor.ui.PreviewList</typeName>

@@ -1239,6 +1239,7 @@ void DatabaseView::updateGridInstances()
 
 		Ref< ui::PreviewItem > item = new ui::PreviewItem();
 		item->setText(childInstance->getName());
+		item->setSubText(getCategoryText(primaryType));
 		item->setData(L"GROUP", childInstance->getParent());
 		item->setData(L"INSTANCE", childInstance);
 		previewItems->add(item);

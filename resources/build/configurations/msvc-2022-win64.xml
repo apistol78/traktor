@@ -202,7 +202,7 @@
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
+							<value>EditAndContinue</value>
 						</item>
 						<item>
 							<name>Optimization</name>
@@ -260,7 +260,7 @@
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
+							<value>EditAndContinue</value>
 						</item>
 						<item>
 							<name>Optimization</name>
@@ -336,7 +336,7 @@
 						</item>
 						<item>
 							<name>EnableCOMDATFolding</name>
-							<value>true</value>
+							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -366,7 +366,7 @@
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
+							<value>EditAndContinue</value>
 						</item>
 						<item>
 							<name>Optimization</name>
@@ -438,7 +438,7 @@
 						</item>
 						<item>
 							<name>EnableCOMDATFolding</name>
-							<value>true</value>
+							<value>false</value>
 						</item>
 					</options>
 				</item>
@@ -468,7 +468,7 @@
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
-							<value>ProgramDatabase</value>
+							<value>EditAndContinue</value>
 						</item>
 						<item>
 							<name>Optimization</name>
@@ -540,7 +540,7 @@
 						</item>
 						<item>
 							<name>EnableCOMDATFolding</name>
-							<value>true</value>
+							<value>false</value>
 						</item>
 					</options>
 				</item>

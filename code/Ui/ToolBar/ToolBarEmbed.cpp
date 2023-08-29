@@ -11,16 +11,15 @@
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarEmbed.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarEmbed", ToolBarEmbed, ToolBarItem)
 
-ToolBarEmbed::ToolBarEmbed(Widget* widget, Unit width)
+ToolBarEmbed::ToolBarEmbed(Widget* widget, Unit width, Unit preferredHeight)
 :	m_widget(widget)
 ,	m_width(width)
+,	m_preferredHeight(preferredHeight)
 {
 }
 
@@ -35,7 +34,7 @@ Size ToolBarEmbed::getSize(const ToolBar* toolBar) const
 	const Size preferedSize = m_widget->getPreferredSize(Size(toolBar->pixel(m_width), imageSize.cy));
 	return Size(
 		max(preferedSize.cx, toolBar->pixel(m_width)),
-		max(preferedSize.cy, imageSize.cy)
+		m_preferredHeight <= 0_ut ? max(preferedSize.cy, imageSize.cy) : toolBar->pixel(m_preferredHeight)
 	);
 }
 
@@ -62,5 +61,4 @@ void ToolBarEmbed::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 }
 
-	}
 }

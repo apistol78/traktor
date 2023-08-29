@@ -12,6 +12,15 @@ import(traktor.drawing)
 local outputs =
 {
 	{
+		source = "PreviewBackground.svg",
+		name = "UI_Preview_Background",
+		path = "../runtime/themes/%s/Images/UI/Preview",
+		resources =
+		{
+			{ name = "Background", column = 0, row = 0, width = 128/32, height = 128/32, base = 64 },
+		}
+	},
+	{
 		source = "Label.svg",
 		name = "UI_Graph_Label",
 		path = "../runtime/themes/%s/Images/UI/Graph",
@@ -586,7 +595,7 @@ local function export(theme, input, x, y, width, height, dpi, output)
 	local cmd = inkscape .. " --export-filename=" .. output .. " --export-id=\"Common;" .. theme .. "\" --export-id-only --export-area=" .. x .. ":" .. y .. ":" .. (x + width) .. ":" .. (y + height) .. " --export-dpi=" .. math.floor(dpi) .. " " .. input
 	--stdout:printLn(cmd)
 	local result = run:execute(cmd, nil)
-	--stdout:printLn("  exitcode " .. result)
+	stdout:printLn("  exitcode " .. result)
 	return result == 0
 end
 
@@ -603,7 +612,10 @@ function main(argv)
 	if theme == "Monokai" then themeExportId = "Dark" end
 	
 	local filter = nil
-	if argv.size >= 2 then filter = argv:get(1) end
+	if argv.size >= 2 then
+		filter = argv:get(1)
+		stdout:printLn("Using filter \"" .. filter .. "\"")
+	end
 
 	for _, g in ipairs(outputs) do
 
@@ -622,6 +634,7 @@ function main(argv)
 
 			-- Check filter.
 			if filter ~= nil then
+				-- stdout:printLn(g.name)
 				include = (filter == g.name)
 			end
 
@@ -678,10 +691,12 @@ function main(argv)
 				stdout:printLn("Cleaning up intermediate")
 
 				-- Remove all intermediate images.
+				--[[
 				for j, dpi in ipairs(dpis) do
 					run:rm(dpi .. ".png")
 					FileSystem.getInstance():move(Path(o.name .. "_" .. dpi .. ".png"), Path(dpi .. ".png"), true)
 				end
+				]]
 
 				stdout:printLn("Done")
 			end

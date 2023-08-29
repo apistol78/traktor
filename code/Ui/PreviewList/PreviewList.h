@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class PreviewItems;
 
@@ -39,17 +37,7 @@ public:
 		WsMultiple = WsUser
 	};
 
-	enum ItemSize
-	{
-		IsSmall = 0,
-		IsLarge = 1
-	};
-
-	PreviewList();
-
 	bool create(Widget* parent, uint32_t style);
-
-	void setItemSize(ItemSize itemSize);
 
 	void setItems(PreviewItems* items);
 
@@ -60,15 +48,12 @@ public:
 	void getSelectedItems(RefArray< PreviewItem >& outItems) const;
 
 private:
-	ItemSize m_itemSize;
 	Ref< PreviewItems > m_items;
-	bool m_single;
+	bool m_single = true;
 
 	virtual void layoutCells(const Rect& rc) override final;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 };
 
-	}
 }
-
