@@ -48,7 +48,7 @@ bool VelocityOverlay::create(resource::IResourceManager* resourceManager)
 
 void VelocityOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	render::handle_t velocityId = findTargetByName(renderGraph, L"Velocity");
+	render::handle_t velocityId = findTargetByName(renderGraph, L"Velocity Current");
 	if (!velocityId)
 		return;
 
