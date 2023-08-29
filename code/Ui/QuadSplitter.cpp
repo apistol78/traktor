@@ -18,7 +18,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.QuadSplitter", QuadSplitter, Widget)
 
-const Unit c_splitterSize = 2_ut;
+const Unit c_splitterSize = 4_ut;
 const int c_relativeScale = 100000;
 
 QuadSplitter::QuadSplitter()
