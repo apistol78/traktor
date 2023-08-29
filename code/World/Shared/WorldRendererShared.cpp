@@ -8,6 +8,7 @@
  */
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
