@@ -8,9 +8,8 @@
  */
 #pragma once
 
-#include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Transform.h"
+#include "Animation/IPoseController.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,37 +22,22 @@
 namespace traktor::animation
 {
 
-class Pose;
 class Skeleton;
 
-/*! Pose evaluation controller.
+/*!
  * \ingroup Animation
  */
-class T_DLLCLASS IPoseController : public Object
+class T_DLLCLASS RetargetPoseController : public IPoseController
 {
 	T_RTTI_CLASS;
 
 public:
-	struct Velocity
-	{
-		Vector4 linear;
-		Vector4 angular;
-	};
+	explicit RetargetPoseController(const resource::Proxy< Skeleton >& animationSkeleton, IPoseController* poseController);
 
-	virtual void destroy() = 0;
+	virtual void destroy() override final;
 
-	virtual void setTransform(const Transform& transform) = 0;
+	virtual void setTransform(const Transform& transform) override final;
 
-	/*! Evaluate pose through pose controller.
-	 *
-	 * \param time Current animation time.
-	 * \param deltaTime Delta time since last evaluation.
-	 * \param worldTransform World transform of owner entity.
-	 * \param skeleton Skeleton of skinned mesh.
-	 * \param jointTransforms Array of joint transforms in object space.
-	 * \param outPoseTransforms Output pose transforms for each joint.
-	 * \return True if pose is continuous since last evaluation.
-	 */
 	virtual bool evaluate(
 		float time,
 		float deltaTime,
@@ -61,12 +45,20 @@ public:
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms
-	) = 0;
+	) override final;
 
 	virtual void estimateVelocities(
 		const Skeleton* skeleton,
 		AlignedVector< Velocity >& outVelocities
-	) = 0;
+	) override final;
+
+private:
+	resource::Proxy< Skeleton > m_animationSkeleton;
+	Ref< IPoseController > m_poseController;
+	AlignedVector< Transform > m_jointTransforms;
+	AlignedVector< Transform > m_poseTransforms;
+	AlignedVector< Transform > m_remappedPoseTransforms;
+	AlignedVector< Transform > m_deltaPoseTransforms;
 };
 
 }
