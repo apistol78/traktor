@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Animation/Animation/AnimationGraphPoseControllerData.h"
+#include "Animation/Animation/RetargetPoseControllerData.h"
 #include "Animation/RagDoll/RagDollPoseControllerData.h"
 #include "Animation/Editor/PoseControllerPipeline.h"
 #include "Editor/IPipelineDepends.h"
@@ -20,6 +21,7 @@ TypeInfoSet PoseControllerPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		AnimationGraphPoseControllerData,
+		RetargetPoseControllerData,
 		RagDollPoseControllerData
 	>();
 }
@@ -32,9 +34,14 @@ bool PoseControllerPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const AnimationGraphPoseControllerData* statePoseControllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
+	if (auto statePoseControllerData = dynamic_type_cast< const AnimationGraphPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild | editor::PdfResource);
-	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
+	else if (auto retargetPoseControllerData = dynamic_type_cast<const RetargetPoseControllerData*>(sourceAsset))
+	{
+		pipelineDepends->addDependency(retargetPoseControllerData->getAnimationSkeleton(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(retargetPoseControllerData->getPoseController());
+	}
+	else if (auto ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))
 	{
 		pipelineDepends->addDependency(ragDollPoseContollerData->getTrackPoseController());
 		for (auto id : ragDollPoseContollerData->getCollisionGroup())

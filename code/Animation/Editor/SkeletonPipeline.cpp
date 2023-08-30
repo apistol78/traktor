@@ -112,7 +112,7 @@ bool SkeletonPipeline::buildOutput(
 	for (int32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
-		log::info << L"\"" << joint->getName() << L"\" (" <<
+		log::info << i << L". \"" << joint->getName() << L"\" (" <<
 			(joint->getParent() >= 0 ? skeleton->getJoint(joint->getParent())->getName() : std::wstring(L"root")) <<
 			L")" <<
 			Endl;
