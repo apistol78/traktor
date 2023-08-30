@@ -15,7 +15,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 6, AnimationAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimationAsset", 7, AnimationAsset, editor::Asset)
 
 void AnimationAsset::serialize(ISerializer& s)
 {
@@ -23,8 +23,10 @@ void AnimationAsset::serialize(ISerializer& s)
 
 	editor::Asset::serialize(s);
 
-	if (s.getVersion() >= 4)
-		s >> Member< Guid >(L"skeleton", m_skeleton, AttributeType(type_of< SkeletonAsset >()));
+	if (s.getVersion() >= 7)
+		s >> Member< Guid >(L"targetSkeleton", m_targetSkeleton, AttributeType(type_of< SkeletonAsset >()));
+	else if (s.getVersion() >= 4)
+		s >> Member< Guid >(L"skeleton", m_targetSkeleton, AttributeType(type_of< SkeletonAsset >()));
 
 	s >> Member< std::wstring >(L"take", m_take);
 	s >> Member< float >(L"scale", m_scale);
