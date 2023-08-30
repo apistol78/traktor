@@ -33,7 +33,7 @@ class T_DLLCLASS AnimationAsset : public editor::Asset
 public:
 	virtual void serialize(ISerializer& s) override final;
 
-	const Guid& getSkeleton() const { return m_skeleton; }
+	const Guid& getTargetSkeleton() const { return m_targetSkeleton; }
 
 	const std::wstring& getTake() const { return m_take; }
 
@@ -44,7 +44,7 @@ public:
 	bool getRemoveLocomotion() const { return m_removeLocomotion; }
 
 private:
-	Guid m_skeleton;
+	Guid m_targetSkeleton;					//!< Target skeleton onto animation are retargeted; if no skeleton provided then assuming to be same as animation skeleton.
 	std::wstring m_take = L"";
 	float m_scale = 1.0f;
 	Vector4 m_translate = Vector4::zero();

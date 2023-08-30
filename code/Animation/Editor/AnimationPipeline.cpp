@@ -75,9 +75,9 @@ bool AnimationPipeline::buildDependencies(
 	// Animation source data.
 	pipelineDepends->addDependency(m_assetPath, animationAsset->getFileName().getPathName());
 
-	// Remapping skeleton if skeleton in animation data differ from mesh skeleton.
-	if (animationAsset->getSkeleton().isNotNull())
-		pipelineDepends->addDependency(animationAsset->getSkeleton(), editor::PdfUse);
+	// Retarget skeleton.
+	if (animationAsset->getTargetSkeleton().isNotNull())
+		pipelineDepends->addDependency(animationAsset->getTargetSkeleton(), editor::PdfUse);
 
 	return true;
 }
@@ -107,9 +107,9 @@ bool AnimationPipeline::buildOutput(
 
 	// Read skeleton model.
 	Ref< model::Model > modelSkeleton = modelAnimation;
-	if (animationAsset->getSkeleton().isNotNull())
+	if (animationAsset->getTargetSkeleton().isNotNull())
 	{
-		Ref< const SkeletonAsset > skeletonAsset = pipelineBuilder->getObjectReadOnly< SkeletonAsset >(animationAsset->getSkeleton());
+		Ref< const SkeletonAsset > skeletonAsset = pipelineBuilder->getObjectReadOnly< SkeletonAsset >(animationAsset->getTargetSkeleton());
 		if (!skeletonAsset)
 		{
 			log::error << L"Unable to build animation; no such skeleton asset." << Endl;
