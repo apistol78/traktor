@@ -151,8 +151,8 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 			AlignedVector< Transform > poseTransforms = skeletonComponent->getPoseTransforms();
 			if (poseTransforms.size() == skeleton->getJointCount())
 			{
-				const Color4ub color(255, 255, 0, 255);
-				const Color4ub colorAlpha(255, 180, 0, 140);
+				const Color4ub color(255, 255, 0, 160);
+				const Color4ub colorAlpha(255, 180, 0, 90);
 
 				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 				{
@@ -174,8 +174,8 @@ void AnimationComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 					if (haveChildren)
 					{
-						primitiveRenderer->drawSolidPoint(poseTransforms[i].translation().xyz1(), 8.0f, Color4ub(255, 255, 255, 255));
-						primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
+						primitiveRenderer->drawSolidPoint(poseTransforms[i].translation().xyz1(), 6.0f, Color4ub(255, 255, 255, 160));
+						//primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 1.0f);
 					}
 					//primitiveRenderer->drawText(poseTransforms[i].translation().xyz1(), 0.2f, 0.2f, joint->getName(), Color4ub(255, 255, 255, 255));
 
