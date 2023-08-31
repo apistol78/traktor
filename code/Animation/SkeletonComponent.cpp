@@ -162,17 +162,26 @@ bool SkeletonComponent::setPoseTransform(render::handle_t jointName, const Trans
 	if (m_poseTransforms.empty())
 		m_poseTransforms = m_jointTransforms;
 
-	m_poseTransforms[index] = transform;
+	const Transform Tdelta = transform * m_poseTransforms[index].inverse();
+	m_poseTransforms[index] = Tdelta * m_poseTransforms[index];
 
 	if (inclusive)
 	{
-		const Transform delta = transform * m_jointTransforms[index].inverse();
 		m_skeleton->findAllChildren(index, [&](uint32_t child){
-			m_poseTransforms[child] = delta * m_jointTransforms[child];
+			m_poseTransforms[child] = Tdelta * m_poseTransforms[child];
 		});
 	}
 
 	return true;
+}
+
+bool SkeletonComponent::concatenatePoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive)
+{
+	Transform Tpose;
+	if (getPoseTransform(jointName, Tpose))
+		return setPoseTransform(jointName, Tpose * transform, inclusive);
+	else
+		return false;
 }
 
 void SkeletonComponent::updatePoseController(double time, double deltaTime)

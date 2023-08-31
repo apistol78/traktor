@@ -53,9 +53,18 @@ Transform SkeletonComponent_getPoseTransform(SkeletonComponent* self, const std:
 	return transform;
 }
 
-void SkeletonComponent_setPoseTransform(SkeletonComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
+bool SkeletonComponent_setPoseTransform(SkeletonComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
 {
-	self->setPoseTransform(
+	return self->setPoseTransform(
+		render::getParameterHandle(jointName),
+		transform,
+		inclusive
+	);
+}
+
+bool SkeletonComponent_concatenatePoseTransform(SkeletonComponent* self, const std::wstring& jointName, const Transform& transform, bool inclusive)
+{
+	return self->concatenatePoseTransform(
 		render::getParameterHandle(jointName),
 		transform,
 		inclusive
@@ -83,6 +92,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classSkeletonComponent->addMethod("getJointTransform", &SkeletonComponent_getJointTransform);
 	classSkeletonComponent->addMethod("getPoseTransform", &SkeletonComponent_getPoseTransform);
 	classSkeletonComponent->addMethod("setPoseTransform", &SkeletonComponent_setPoseTransform);
+	classSkeletonComponent->addMethod("concatenatePoseTransform", &SkeletonComponent_concatenatePoseTransform);
 	registrar->registerClass(classSkeletonComponent);
 
 	auto classAnimatedMeshComponent = new AutoRuntimeClass< AnimatedMeshComponent >();
