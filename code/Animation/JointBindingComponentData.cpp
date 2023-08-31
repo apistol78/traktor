@@ -40,7 +40,7 @@ Ref< JointBindingComponent > JointBindingComponentData::createComponent(const wo
 
 int32_t JointBindingComponentData::getOrdinal() const
 {
-	return 100;
+	return 1500;
 }
 
 void JointBindingComponentData::setTransform(const world::EntityData* owner, const Transform& transform)

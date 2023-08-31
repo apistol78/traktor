@@ -64,6 +64,9 @@ public:
 	/*! Set pose transform of joint. */
 	bool setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive);
 
+	/*! Concatenate pose transform of joint. */
+	bool concatenatePoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive);
+
 	/*! Get skeleton. */
 	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 

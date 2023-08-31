@@ -65,7 +65,7 @@ void Skeleton::findAllChildren(uint32_t index, const std::function< void(uint32_
 		if (m_joints[i]->getParent() == index)
 		{
 			fn(i);
-			findChildren(i, fn);
+			findAllChildren(i, fn);
 		}
 	}
 }

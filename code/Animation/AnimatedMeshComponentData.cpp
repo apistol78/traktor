@@ -48,7 +48,7 @@ Ref< AnimatedMeshComponent > AnimatedMeshComponentData::createComponent(resource
 
 int32_t AnimatedMeshComponentData::getOrdinal() const
 {
-	return 0;
+	return 2000;
 }
 
 void AnimatedMeshComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
