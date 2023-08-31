@@ -47,19 +47,6 @@ ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* paren
 	envelopeControl->insertKey(new ui::EnvelopeKey(envelopeGrain->getMid(), levels[1], false));
 	envelopeControl->insertKey(new ui::EnvelopeKey(1.0f, levels[2], true));
 
-	const std::vector< EnvelopeGrainData::GrainData >& grainData = envelopeGrain->getGrains();
-	for (uint32_t i = 0; i < uint32_t(grainData.size()); ++i)
-	{
-		const EnvelopeGrainData::GrainData& gd = grainData[i];
-		envelopeControl->addRange(
-			c_rangeColors[i % sizeof_array(c_rangeColors)],
-			gd.in - gd.easeIn,
-			gd.in,
-			gd.out,
-			gd.out + gd.easeOut
-		);
-	}
-
 	envelopeControl->setData(L"GRAIN", grain);
 	envelopeControl->addEventHandler< ui::EnvelopeContentChangeEvent >(this, &EnvelopeGrainFacade::eventEnvelopeChange);
 

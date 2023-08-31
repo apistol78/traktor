@@ -65,6 +65,11 @@ std::wstring ShaderWizardTool::getDescription() const
 	return i18n::Text(L"RENDER_SHADER_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet ShaderWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t ShaderWizardTool::getFlags() const
 {
 	return WfGroup;

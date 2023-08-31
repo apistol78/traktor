@@ -495,11 +495,9 @@ void DatabaseView::setDatabase(db::Database* db)
 	m_db = db;
 
 	// Update wizards as this method is called after a workspace has been loaded.
-	m_menuGroupWizards->removeAll();
-	m_menuInstanceWizards->removeAll();
 	m_wizardTools.clear();
 
-	TypeInfoSet wizardToolTypes = type_of< IWizardTool >().findAllOf();
+	const TypeInfoSet wizardToolTypes = type_of< IWizardTool >().findAllOf();
 	if (!wizardToolTypes.empty())
 	{
 		// Create instances of all found wizards.
@@ -514,21 +512,6 @@ void DatabaseView::setDatabase(db::Database* db)
 		m_wizardTools.sort([](const IWizardTool* a, const IWizardTool* b) {
 			return compareIgnoreCase(a->getDescription(), b->getDescription()) < 0;
 		});
-
-		// Populate menus.
-		int32_t nextWizardId = 0;
-		for (auto wizardTool : m_wizardTools)
-		{
-			const std::wstring wizardDescription = wizardTool->getDescription();
-			T_ASSERT(!wizardDescription.empty());
-
-			const int32_t wizardId = nextWizardId++;
-
-			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
-				m_menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
-				m_menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
-		}
 	}
 
 	// Ensure database views is cleaned.
@@ -1507,6 +1490,38 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 
 	if (group && instance)
 	{
+		m_menuInstanceWizards->removeAll();
+
+		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
+		int32_t nextWizardId = 0;
+		for (auto wizardTool : m_wizardTools)
+		{
+			const std::wstring wizardDescription = wizardTool->getDescription();
+			T_ASSERT(!wizardDescription.empty());
+
+			const int32_t wizardId = nextWizardId++;
+
+			if ((wizardTool->getFlags() & IWizardTool::WfInstance) != 0)
+			{
+				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
+				const TypeInfoSet supportedTypes = wizardTool->getSupportedTypes();
+				if (!supportedTypes.empty())
+				{
+					bool enabled = false;
+					for (auto supportedType : supportedTypes)
+					{
+						if (is_type_of(*supportedType, *instance->getPrimaryType()))
+						{
+							enabled = true;
+							break;
+						}
+					}
+					item->setEnable(enabled);
+				}
+				m_menuInstanceWizards->add(item);
+			}
+		}
+
 		Ref< ui::Menu > menuInstance;
 		if (is_type_of< Asset >(*instance->getPrimaryType()))
 			menuInstance = m_menuInstanceAsset;
@@ -1522,6 +1537,24 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	}
 	else if (group)
 	{
+		m_menuGroupWizards->removeAll();
+
+		// Rebuild instance wizard menu to ensure only valid wizards are enabled.
+		int32_t nextWizardId = 0;
+		for (auto wizardTool : m_wizardTools)
+		{
+			const std::wstring wizardDescription = wizardTool->getDescription();
+			T_ASSERT(!wizardDescription.empty());
+
+			const int32_t wizardId = nextWizardId++;
+
+			if ((wizardTool->getFlags() & IWizardTool::WfGroup) != 0)
+			{
+				Ref< ui::MenuItem > item = new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription);
+				m_menuGroupWizards->add(item);
+			}
+		}
+
 		const bool showFavorites = m_toolFavoritesShow->isToggled();
 		const ui::MenuItem* selected = m_menuGroup[showFavorites ? 1 : 0]->showModal(
 			mandatory_non_null_type_cast< ui::Widget* >(event->getSender()),

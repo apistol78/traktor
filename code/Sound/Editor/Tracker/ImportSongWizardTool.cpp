@@ -27,6 +27,11 @@ std::wstring ImportSongWizardTool::getDescription() const
 	return L"Import MOD/XM/S3M..."; // i18n::Text(L"IMPORT_SONG_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet ImportSongWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t ImportSongWizardTool::getFlags() const
 {
 	return WfGroup;

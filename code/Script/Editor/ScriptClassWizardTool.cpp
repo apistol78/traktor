@@ -62,6 +62,11 @@ std::wstring ScriptClassWizardTool::getDescription() const
 	return i18n::Text(L"SCRIPT_CLASS_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet ScriptClassWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t ScriptClassWizardTool::getFlags() const
 {
 	return WfGroup;

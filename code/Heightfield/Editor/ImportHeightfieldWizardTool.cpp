@@ -74,6 +74,11 @@ std::wstring ImportHeightfieldWizardTool::getDescription() const
 	return i18n::Text(L"IMPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet ImportHeightfieldWizardTool::getSupportedTypes() const
+{
+	return makeTypeInfoSet< HeightfieldAsset >();
+}
+
 uint32_t ImportHeightfieldWizardTool::getFlags() const
 {
 	return WfInstance | WfGroup;

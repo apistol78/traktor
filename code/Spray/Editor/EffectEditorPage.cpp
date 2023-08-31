@@ -207,7 +207,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addEventHandler< ui::SequenceButtonClickEvent >(this, &EffectEditorPage::eventSequencerLayerClick);
 	m_sequencer->addEventHandler< ui::MouseButtonDownEvent >(this, &EffectEditorPage::eventSequencerButtonDown);
 
-	m_site->createAdditionalPanel(m_containerSequencer, 280_ut, true);
+	m_site->createAdditionalPanel(m_containerSequencer, 140_ut, true);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);

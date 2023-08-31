@@ -45,6 +45,11 @@ std::wstring CropTerrainWizardTool::getDescription() const
 	return i18n::Text(L"CROP_TERRAIN_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet CropTerrainWizardTool::getSupportedTypes() const
+{
+	return makeTypeInfoSet< TerrainAsset >();
+}
+
 uint32_t CropTerrainWizardTool::getFlags() const
 {
 	return WfInstance;

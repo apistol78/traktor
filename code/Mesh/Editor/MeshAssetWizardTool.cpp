@@ -31,6 +31,11 @@ std::wstring MeshAssetWizardTool::getDescription() const
 	return i18n::Text(L"MESHASSET_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet MeshAssetWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t MeshAssetWizardTool::getFlags() const
 {
 	return WfGroup;

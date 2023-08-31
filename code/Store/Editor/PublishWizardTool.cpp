@@ -59,6 +59,11 @@ std::wstring PublishWizardTool::getDescription() const
 	return i18n::Text(L"STORE_PUBLISH_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet PublishWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t PublishWizardTool::getFlags() const
 {
 	return editor::IWizardTool::WfInstance;
