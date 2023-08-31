@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EnvelopeEvaluator;
 class EnvelopeKey;
@@ -41,20 +39,11 @@ public:
 
 	const RefArray< EnvelopeKey >& getKeys() const;
 
-	void addRange(const Color4ub& color, float limit0, float limit1, float limit2, float limit3);
-
 private:
-	struct Range
-	{
-		Color4ub color;
-		float limits[4];
-	};
-
 	Ref< EnvelopeEvaluator > m_evaluator;
 	float m_minValue;
 	float m_maxValue;
 	RefArray< EnvelopeKey > m_keys;
-	std::vector< Range > m_ranges;
 	Rect m_rcEnv;
 	Ref< EnvelopeKey > m_selectedKey;
 
@@ -67,6 +56,4 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-
