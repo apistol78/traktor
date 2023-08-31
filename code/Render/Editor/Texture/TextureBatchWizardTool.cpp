@@ -26,6 +26,11 @@ std::wstring TextureBatchWizardTool::getDescription() const
 	return i18n::Text(L"TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet TextureBatchWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t TextureBatchWizardTool::getFlags() const
 {
 	return WfGroup;

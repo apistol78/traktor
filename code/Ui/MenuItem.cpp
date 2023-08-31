@@ -207,10 +207,10 @@ void MenuItem::paint(const Widget* shell, Canvas& canvas, const Rect& rc, bool t
 	const StyleSheet* ss = shell->getStyleSheet();
 	const Rect rcLabel = rc.inflate(-shell->pixel(c_itemMarginX), 0);
 
-	canvas.setBackground(ss->getColor(this, tracking ? L"background-color-hover" : L"background-color"));
+	canvas.setBackground(ss->getColor(this, (m_enable && tracking) ? L"background-color-hover" : L"background-color"));
 	canvas.fillRect(rc);
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, m_enable ? L"color" : L"color-disabled"));
 
 	if (m_text != L"-")
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);

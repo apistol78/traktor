@@ -35,6 +35,11 @@ std::wstring CreatePreviewSceneTool::getDescription() const
 	return i18n::Text(L"SCENE_CREATE_PREVIEW_SCENE_DESCRIPTION");
 }
 
+const TypeInfoSet CreatePreviewSceneTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t CreatePreviewSceneTool::getFlags() const
 {
 	return WfGroup;

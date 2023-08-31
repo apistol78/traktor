@@ -29,6 +29,11 @@ std::wstring SoundBatchWizardTool::getDescription() const
 	return i18n::Text(L"SOUND_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet SoundBatchWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t SoundBatchWizardTool::getFlags() const
 {
 	return WfGroup;

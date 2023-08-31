@@ -28,6 +28,11 @@ std::wstring BatchWizardTool::getDescription() const
 	return i18n::Text(L"FLASH_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet BatchWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t BatchWizardTool::getFlags() const
 {
 	return WfGroup;

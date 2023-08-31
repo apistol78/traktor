@@ -28,6 +28,8 @@ class T_DLLCLASS TextureBatchWizardTool : public editor::IWizardTool
 public:
 	virtual std::wstring getDescription() const override final;
 
+	virtual const TypeInfoSet getSupportedTypes() const override final;
+
 	virtual uint32_t getFlags() const override final;
 
 	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance) override final;

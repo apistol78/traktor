@@ -58,6 +58,8 @@ public:
 
 	virtual std::wstring getDescription() const = 0;
 
+	virtual const TypeInfoSet getSupportedTypes() const = 0;
+
 	virtual uint32_t getFlags() const = 0;
 
 	virtual bool launch(ui::Widget* parent, IEditor* editor, db::Group* group, db::Instance* instance) = 0;

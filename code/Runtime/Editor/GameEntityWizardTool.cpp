@@ -21,6 +21,11 @@ std::wstring GameEntityWizardTool::getDescription() const
 	return i18n::Text(L"GAMEENTITY_WIZARD_DESCRIPTION");
 }
 
+const TypeInfoSet GameEntityWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t GameEntityWizardTool::getFlags() const
 {
 	return WfGroup;

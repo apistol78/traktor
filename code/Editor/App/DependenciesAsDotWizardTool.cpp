@@ -18,16 +18,19 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DependenciesAsDotWizardToolTool", 0, DependenciesAsDotWizardTool, IWizardTool)
 
 std::wstring DependenciesAsDotWizardTool::getDescription() const
 {
 	return i18n::Text(L"DEPENDENCIES_AS_DOT_WIZARDTOOL_DESCRIPTION");
+}
+
+const TypeInfoSet DependenciesAsDotWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
 }
 
 uint32_t DependenciesAsDotWizardTool::getFlags() const
@@ -78,5 +81,4 @@ bool DependenciesAsDotWizardTool::launch(ui::Widget* parent, IEditor* editor, db
 	return true;
 }
 
-	}
 }

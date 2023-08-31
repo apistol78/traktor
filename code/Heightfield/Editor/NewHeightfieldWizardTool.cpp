@@ -28,6 +28,11 @@ std::wstring NewHeightfieldWizardTool::getDescription() const
 	return i18n::Text(L"NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION");
 }
 
+const TypeInfoSet NewHeightfieldWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 uint32_t NewHeightfieldWizardTool::getFlags() const
 {
 	return WfGroup;

@@ -31,6 +31,11 @@ uint32_t ImportDictionaryWizardTool::getFlags() const
 	return WfGroup;
 }
 
+const TypeInfoSet ImportDictionaryWizardTool::getSupportedTypes() const
+{
+	return TypeInfoSet();
+}
+
 bool ImportDictionaryWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	std::wstring line;
