@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <sstream>
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Envelope/EnvelopeContentChangeEvent.h"
@@ -15,19 +15,17 @@
 #include "Ui/Envelope/EnvelopeEvaluator.h"
 #include "Ui/Envelope/EnvelopeKey.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 float scaleValue(float value, float minValue, float maxValue)
 {
 	return clamp((value - minValue) / (maxValue - minValue), minValue, maxValue);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EnvelopeControl", EnvelopeControl, Widget)
 
@@ -66,23 +64,17 @@ const RefArray< EnvelopeKey >& EnvelopeControl::getKeys() const
 	return m_keys;
 }
 
-void EnvelopeControl::addRange(const Color4ub& color, float limit0, float limit1, float limit2, float limit3)
-{
-	const Range r = { color, { limit0, limit1, limit2, limit3 } };
-	m_ranges.push_back(r);
-}
-
 void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point pt = event->getPosition();
 
-	m_selectedKey = 0;
+	m_selectedKey = nullptr;
 
 	if (event->getButton() == MbtLeft)
 	{
-		const int32_t sx = pixel(2_ut);
-		const int32_t sy = pixel(2_ut);
-
+		const int32_t sx = pixel(4_ut);
+		const int32_t sy = pixel(4_ut);
+		
 		for (auto key : m_keys)
 		{
 			const int32_t x = m_rcEnv.left + (int32_t)(m_rcEnv.getWidth() * key->getT());
@@ -93,6 +85,8 @@ void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 				break;
 			}
 		}
+
+		update();
 	}
 	else if (event->getButton() == MbtRight)
 	{
@@ -102,10 +96,6 @@ void EnvelopeControl::eventButtonDown(MouseButtonDownEvent* event)
 		);
 
 		insertKey(m_selectedKey);
-
-		//Event changeEvent(this, m_selectedKey);
-		//raiseEvent(&changeEvent);
-
 		update();
 	}
 
@@ -160,12 +150,11 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 
 	const Rect rcInner = getInnerRect();
 
-	std::wstringstream mnv, mxv;
-	mnv << m_minValue;
-	mxv << m_maxValue;
+	const std::wstring mnv = str(L"%.1f", m_minValue);
+	const std::wstring mxv = str(L"%.1f", m_maxValue);
 
-	const Size mne = canvas.getFontMetric().getExtent(mnv.str());
-	const Size mxe = canvas.getFontMetric().getExtent(mxv.str());
+	const Size mne = canvas.getFontMetric().getExtent(mnv);
+	const Size mxe = canvas.getFontMetric().getExtent(mxv);
 
 	const int32_t x = std::max< int32_t >(mne.cx, mxe.cx);
 	const int32_t y = std::max< int32_t >(mne.cy, mxe.cy);
@@ -177,59 +166,18 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 	);
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
-	canvas.fillRect(rcInner);
-
-	for (std::vector< Range >::const_iterator i = m_ranges.begin(); i != m_ranges.end(); ++i)
-	{
-		const int32_t y0 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[0], m_minValue, m_maxValue) + 0.5f);
-		const int32_t y1 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[1], m_minValue, m_maxValue) + 0.5f);
-		const int32_t y2 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[2], m_minValue, m_maxValue) + 0.5f);
-		const int32_t y3 = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(i->limits[3], m_minValue, m_maxValue) + 0.5f);
-
-		canvas.setForeground(i->color * Color4ub(255, 255, 255, 0));
-		canvas.setBackground(i->color * Color4ub(255, 255, 255, 255));
-
-		if (y0 > y1)
-		{
-			canvas.fillGradientRect(Rect(
-				m_rcEnv.left,
-				y0,
-				m_rcEnv.right,
-				y1
-			));
-		}
-
-		if (y1 > y2)
-		{
-			canvas.fillRect(Rect(
-				m_rcEnv.left,
-				y1,
-				m_rcEnv.right,
-				y2
-			));
-		}
-
-		if (y2 > y3)
-		{
-			canvas.fillGradientRect(Rect(
-				m_rcEnv.left,
-				y3,
-				m_rcEnv.right,
-				y2
-			));
-		}
-	}
-
 	canvas.setForeground(ss->getColor(this, L"color"));
+
+	canvas.fillRect(rcInner);
 	canvas.drawRect(m_rcEnv.inflate(1, 1));
 
 	canvas.drawText(
 		Point(m_rcEnv.left - mne.cx - 4, m_rcEnv.bottom - mne.cy / 2),
-		mnv.str()
+		mnv
 	);
 	canvas.drawText(
 		Point(m_rcEnv.left - mxe.cx - 4, m_rcEnv.top - mxe.cy / 2),
-		mxv.str()
+		mxv
 	);
 
 	const int32_t zero = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(0, m_minValue, m_maxValue));
@@ -237,41 +185,30 @@ void EnvelopeControl::eventPaint(PaintEvent* event)
 
 	if (!m_keys.empty())
 	{
-		if (m_selectedKey)
-		{
-			const int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * m_selectedKey->getT() + 0.5f);
-			const int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue) + 0.5f);
-			canvas.setForeground(ss->getColor(this, L"color-cursor"));
-			canvas.drawLine(m_rcEnv.left, sy, sx, sy);
-			canvas.drawLine(sx, m_rcEnv.bottom, sx, sy);
-		}
-
 		canvas.setForeground(ss->getColor(this, L"color-line"));
 
-		const float dT = 1.0f / (rcInner.getSize().cx / 4.0f);
+		const float dT = 1.0f / (rcInner.getSize().cx / 8.0f);
 
-		int32_t px = m_rcEnv.left;
-		int32_t py = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, 0.0f), m_minValue, m_maxValue));
-		for (float T = dT; T <= 1.0f; T += dT)
+		std::vector< Point > points;
+		for (float T = 0.0f; T <= 1.0f + dT; T += dT)
 		{
-			const int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * T + 0.5f);
-			const int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, T), m_minValue, m_maxValue) + 0.5f);
-			canvas.drawLine(px, py, sx, sy);
-			px = sx;
-			py = sy;
+			const float cT = std::min< float >(T, 1.0f);
+			const int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * cT);
+			const int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, cT), m_minValue, m_maxValue));
+			points.push_back({ sx, sy });
 		}
+		canvas.drawLines(points);
 
 		canvas.setBackground(ss->getColor(this, L"color-key"));
 		for (auto key : m_keys)
 		{
-			const int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * key->getT() + 0.5f);
-			const int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue) + 0.5f);
-			canvas.fillRect(Rect(sx - 2, sy - 2, sx + 3, sy + 3));
+			const int32_t sx = m_rcEnv.left + int32_t(m_rcEnv.getWidth() * key->getT());
+			const int32_t sy = m_rcEnv.bottom - int32_t(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue));
+			canvas.fillCircle(Point(sx, sy), (key == m_selectedKey) ? 5.0f : 3.0f);
 		}
 	}
 
 	event->consume();
 }
 
-	}
 }
