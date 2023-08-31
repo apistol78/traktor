@@ -202,11 +202,11 @@ W
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
-			<id>{EEAF1B08-2D03-7E4B-AA71-0F847BE6479C}</id>
+			<id>{95E1E131-C36E-6241-921E-BEE81E849E0E}</id>
 			<comment/>
 			<position>
-				<first>1348</first>
-				<second>967</second>
+				<first>1353</first>
+				<second>870</second>
 			</position>
 			<name>Filmic</name>
 			<technique/>
@@ -226,16 +226,15 @@ W
 			<script>
 			<![CDATA[
 vec3 x = $Input.xyz;
-float a = 2.51f;
-float b = 0.03f;
-float c = 2.43f;
-float d = 0.59f;
-float e = 0.14f;
+float a = 4.5f;
+float b = 0.1f;
+float c = 1.5f;
+float d = 1.2f;
+float e = 0.4f;
 $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
 );
-
 
 			]]>
 			</script>

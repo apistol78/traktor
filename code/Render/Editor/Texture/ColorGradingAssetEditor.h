@@ -81,6 +81,7 @@ private:
 	Ref< ui::Slider > m_sliderBrightness;
 	Ref< ui::Slider > m_sliderContrast;
 	Ref< ui::Slider > m_sliderSaturation;
+	float m_referenceIntensity;
 
 	void updatePreview();
 

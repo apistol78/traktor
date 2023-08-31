@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/Float.h"
 #include "Database/Instance.h"
@@ -26,6 +27,27 @@
 
 namespace traktor::render
 {
+	namespace
+	{
+
+float calculateAverageIntensity(const drawing::Image* image)
+{
+	Scalar intensity = 0.0_simd;
+	Color4f clr;
+
+	for (int32_t y = 0; y < image->getHeight(); ++y)
+	{
+		for (int32_t x = 0; x < image->getWidth(); ++x)
+		{
+			image->getPixelUnsafe(x, y, clr);
+			intensity += (clr.getRed() + clr.getAlpha() + clr.getBlue()) / 3.0_simd;
+		}
+	}
+
+	return intensity / Scalar(image->getWidth() * image->getHeight());
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorGradingAssetEditor", ColorGradingAssetEditor, editor::IObjectEditor)
 
@@ -110,6 +132,9 @@ bool ColorGradingAssetEditor::create(ui::Widget* parent, db::Instance* instance,
 	const drawing::GammaFilter gammaFilter(2.2f, 1.0f);
 	m_referenceImage->apply(&gammaFilter);
 
+	// Calculate reference intensity.
+	m_referenceIntensity = calculateAverageIntensity(m_referenceImage);
+
 	m_resultImage = m_referenceImage->clone();
 	T_FATAL_ASSERT(m_resultImage);
 
@@ -183,11 +208,18 @@ void ColorGradingAssetEditor::updatePreview()
 		}
 	}
 
+	// Calculate difference in intensity.
+	const float resultIntensity = calculateAverageIntensity(m_resultImage);
+
 	// Convert result image into sRGB so we can preview it properly.
 	const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 	m_resultImage->apply(&gammaFilter);
 
 	m_imageResult->setImage(new ui::Bitmap(m_resultImage));
+
+	// Log difference of intensity.
+	const float diff = (resultIntensity * 100.0f) / m_referenceIntensity;
+	log::info << diff << L"% intensity of reference." << Endl;
 }
 
 void ColorGradingAssetEditor::eventEnvelopeChange(ui::EnvelopeContentChangeEvent* event)
