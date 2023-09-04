@@ -1286,6 +1286,11 @@ $Output = gl_DrawID;
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
 					<name>View normal</name>
 					<optional>true</optional>

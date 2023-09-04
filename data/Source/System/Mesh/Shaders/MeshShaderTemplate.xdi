@@ -84,6 +84,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
 					<name>View normal</name>
 					<optional>true</optional>
@@ -390,8 +395,8 @@
 			<id>{BFC530DE-6DE2-2B4C-A4A7-0F4CA291C84D}</id>
 			<comment/>
 			<position>
-				<first>2296</first>
-				<second>482</second>
+				<first>2300</first>
+				<second>477</second>
 			</position>
 			<name>Albedo</name>
 		</item>
@@ -399,8 +404,8 @@
 			<id>{E82A3FCC-B49B-F949-8460-397FA7A319CF}</id>
 			<comment/>
 			<position>
-				<first>2280</first>
-				<second>335</second>
+				<first>2284</first>
+				<second>333</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -408,8 +413,8 @@
 			<id>{389F0ADE-2A3C-B74B-8986-205F7DFBA69A}</id>
 			<comment/>
 			<position>
-				<first>2280</first>
-				<second>384</second>
+				<first>2284</first>
+				<second>381</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -562,8 +567,8 @@
 			<id>{022E4295-684C-AE48-B510-8DAAADADC3CA}</id>
 			<comment/>
 			<position>
-				<first>2296</first>
-				<second>531</second>
+				<first>2300</first>
+				<second>525</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -633,8 +638,8 @@
 			<id>{80D90961-6B94-8648-BF31-494072A15B7A}</id>
 			<comment/>
 			<position>
-				<first>2296</first>
-				<second>433</second>
+				<first>2300</first>
+				<second>429</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -651,8 +656,8 @@
 			<id>{F15A971B-B5D2-8048-967F-F856D9C4EE7C}</id>
 			<comment/>
 			<position>
-				<first>2264</first>
-				<second>580</second>
+				<first>2268</first>
+				<second>621</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -669,8 +674,8 @@
 			<id>{0EB7CD19-65D4-654F-B973-3A4639A1EF6E}</id>
 			<comment/>
 			<position>
-				<first>2264</first>
-				<second>629</second>
+				<first>2268</first>
+				<second>669</second>
 			</position>
 			<name>ViewVelocity</name>
 		</item>
@@ -786,8 +791,8 @@ Tag_LightmapTexCoord
 			<id>{612C2732-C24F-B746-BC76-B705FD62BF4C}</id>
 			<comment/>
 			<position>
-				<first>2280</first>
-				<second>286</second>
+				<first>2284</first>
+				<second>285</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -804,7 +809,7 @@ Tag_LightmapTexCoord
 			<id>{9CF1BAA5-3C98-4786-96D8-9D42D282475D}</id>
 			<comment/>
 			<position>
-				<first>2304</first>
+				<first>2308</first>
 				<second>237</second>
 			</position>
 			<name>Alpha</name>
@@ -839,6 +844,15 @@ Tag_LightmapTexCoord
 				<item>TexCoord1</item>
 				<item>VertexColor</item>
 			</names>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{3A67EFF2-10D5-F745-B2E1-BCC69842163C}</id>
+			<comment/>
+			<position>
+				<first>2284</first>
+				<second>573</second>
+			</position>
+			<name>ViewNormal</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1264,16 +1278,6 @@ Tag_LightmapTexCoord
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[44]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
 			</source>
@@ -1570,6 +1574,26 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[66]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
 			</destination>
 		</item>
 	</edges>

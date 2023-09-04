@@ -372,12 +372,12 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 			<title>DXT5nm unpack</title>
 			<comment/>
 			<position>
-				<first>431</first>
-				<second>163</second>
+				<first>375</first>
+				<second>129</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1679</first>
+				<second>313</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -388,8 +388,8 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 				<second>-161</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>475</first>
+				<second>248</second>
 			</size>
 		</item>
 	</groups>
