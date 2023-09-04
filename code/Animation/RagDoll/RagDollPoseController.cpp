@@ -53,7 +53,6 @@ bool RagDollPoseController::create(
 	const Skeleton* skeleton,
 	const Transform& worldTransform,
 	const AlignedVector< Transform >& jointTransformsImmutable,
-	const AlignedVector< Velocity >& velocities,
 	IPoseController* trackPoseController
 )
 {
@@ -130,11 +129,6 @@ bool RagDollPoseController::create(
 		const Transform limbTransform(m2 * m1);
 
 		limb->setTransform(worldTransform * limbTransform);
-		if (!velocities.empty())
-		{
-			limb->setLinearVelocity(velocities[i].linear);
-			limb->setAngularVelocity(velocities[i].angular);
-		}
 		limb->setClusterId(s_clusterId);
 
 		m_limbs[i] = limb;
@@ -317,13 +311,6 @@ bool RagDollPoseController::evaluate(
 
 	m_worldTransform = worldTransform;
 	return true;
-}
-
-void RagDollPoseController::estimateVelocities(
-	const Skeleton* skeleton,
-	AlignedVector< Velocity >& outVelocities
-)
-{
 }
 
 void RagDollPoseController::setEnable(bool enable)

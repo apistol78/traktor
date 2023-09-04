@@ -65,7 +65,6 @@ public:
 		const Skeleton* skeleton,
 		const Transform& worldTransform,
 		const AlignedVector< Transform >& jointTransforms,
-		const AlignedVector< Velocity >& velocities,
 		IPoseController* trackPoseController
 	);
 
@@ -80,11 +79,6 @@ public:
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& boneTransforms,
 		AlignedVector< Transform >& outPoseTransforms
-	) override final;
-
-	virtual void estimateVelocities(
-		const Skeleton* skeleton,
-		AlignedVector< Velocity >& outVelocities
 	) override final;
 
 	void setEnable(bool enable);

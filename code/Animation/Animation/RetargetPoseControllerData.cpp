@@ -26,6 +26,9 @@ RetargetPoseControllerData::RetargetPoseControllerData(const resource::Id< Skele
 
 Ref< IPoseController > RetargetPoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform) const
 {
+	if (!m_poseController)
+		return nullptr;
+
 	resource::Proxy< Skeleton > animationSkeleton;
 	if (!resourceManager->bind(m_animationSkeleton, animationSkeleton))
 		return nullptr;

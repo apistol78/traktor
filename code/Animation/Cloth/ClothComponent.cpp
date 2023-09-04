@@ -322,33 +322,36 @@ void ClothComponent::update(const world::UpdateParams& update)
 					}
 				}
 
-				// Ensure nodes are not inside joint spheres.
-				const auto& poseTransforms = skeletonComponent->getPoseTransforms();
-				for (auto& node : m_nodes)
+				if (skeletonComponent)
 				{
-					for (const auto& poseTransform : poseTransforms)
+					// Ensure nodes are not inside joint spheres.
+					const auto& poseTransforms = skeletonComponent->getPoseTransforms();
+					for (auto& node : m_nodes)
 					{
-						const Vector4 sphereCenter = poseTransform.translation();
-						const Scalar sphereRadius = m_jointRadius;
-						const Vector4 d = (node.position[0] - sphereCenter).xyz0();
-						if (dot3(d, d) <= sphereRadius * sphereRadius)
+						for (const auto& poseTransform : poseTransforms)
 						{
-							const Scalar depth = sphereRadius / d.length() - 1.0_simd;
-							node.position[0] += d * depth;
+							const Vector4 sphereCenter = poseTransform.translation();
+							const Scalar sphereRadius = m_jointRadius;
+							const Vector4 d = (node.position[0] - sphereCenter).xyz0();
+							if (dot3(d, d) <= sphereRadius * sphereRadius)
+							{
+								const Scalar depth = sphereRadius / d.length() - 1.0_simd;
+								node.position[0] += d * depth;
+							}
 						}
 					}
-				}
 
-				// Ensure nodes are anchored.
-				for (auto& node : m_nodes)
-				{
-					if (node.jointName == 0)
-						continue;
-
-					Transform poseTransform;
-					if (skeletonComponent->getPoseTransform(node.jointName, poseTransform))
+					// Ensure nodes are anchored.
+					for (auto& node : m_nodes)
 					{
-						node.position[0] = (poseTransform.translation() + node.jointOffset).xyz1();
+						if (node.jointName == 0)
+							continue;
+
+						Transform poseTransform;
+						if (skeletonComponent->getPoseTransform(node.jointName, poseTransform))
+						{
+							node.position[0] = (poseTransform.translation() + node.jointOffset).xyz1();
+						}
 					}
 				}
 			}

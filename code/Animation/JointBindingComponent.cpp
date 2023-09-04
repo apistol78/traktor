@@ -65,21 +65,17 @@ void JointBindingComponent::setTransform(const Transform& transform)
 
 Aabb3 JointBindingComponent::getBoundingBox() const
 {
-	const Transform invTransform = m_transform.inverse();
-
-	Aabb3 boundingBox;
+	Aabb3 worldBoundingBox;
 	for (auto& binding : m_bindings)
 	{
 		const Aabb3 childBoundingBox = binding.entity->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
 			const Transform childTransform = binding.entity->getTransform();
-			const Transform intoParentTransform = invTransform * childTransform;
-			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
+			worldBoundingBox.contain(childBoundingBox.transform(childTransform));
 		}
 	}
-
-	return boundingBox;
+	return worldBoundingBox.transform(m_transform.inverse());
 }
 
 void JointBindingComponent::update(const world::UpdateParams& update)

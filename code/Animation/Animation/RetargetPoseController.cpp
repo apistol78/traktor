@@ -76,6 +76,8 @@ void RetargetPoseController::destroy()
 
 void RetargetPoseController::setTransform(const Transform& transform)
 {
+	if (m_poseController)
+		m_poseController->setTransform(transform);
 }
 
 bool RetargetPoseController::evaluate(
@@ -126,13 +128,6 @@ bool RetargetPoseController::evaluate(
 	// Combine all delta transforms into final pose transforms.
 	calculatePoseTransforms(skeleton, m_deltaPoseTransforms, outPoseTransforms);
 	return result;
-}
-
-void RetargetPoseController::estimateVelocities(
-	const Skeleton* skeleton,
-	AlignedVector< Velocity >& outVelocities
-)
-{
 }
 
 }
