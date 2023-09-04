@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Io/BufferedStream.h"
 #include "Database/Types.h"
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteConnection.h"
@@ -124,7 +125,11 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 	if (!outSerializerType)
 		return nullptr;
 
-	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
+	Ref< IStream > s = net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
+	if (!s)
+		return nullptr;
+
+	return new BufferedStream(s);
 }
 
 Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
@@ -137,7 +142,11 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 	if (!outSerializerType)
 		return nullptr;
 
-	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
+	Ref< IStream > s = net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
+	if (!s)
+		return nullptr;
+
+	return new BufferedStream(s);
 }
 
 uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
@@ -167,7 +176,11 @@ Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 	if (!result)
 		return nullptr;
 
-	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
+	Ref< IStream > s = net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
+	if (!s)
+		return nullptr;
+
+	return new BufferedStream(s);
 }
 
 Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
@@ -176,7 +189,11 @@ Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 	if (!result)
 		return nullptr;
 
-	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
+	Ref< IStream > s = net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
+	if (!s)
+		return nullptr;
+
+	return new BufferedStream(s);
 }
 
 }
