@@ -142,31 +142,39 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 {
 	const Scalar interval(worldRenderView.getInterval());
 	const Transform worldTransform = m_transform.get(interval);
-	auto jointBufferLast = m_jointBuffers[0];
-	auto jointBufferCurrent = m_jointBuffers[1];
+	auto& jointBufferLast = m_jointBuffers[0];
+	auto& jointBufferCurrent = m_jointBuffers[1];
 
-	if (m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
 		// Update joint buffers only for first pass of frame, buffers are implicitly double buffered
 		// and cannot be updated multiple times per frame.
-		if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
+		std::swap< Ref< render::Buffer > >(
+			jointBufferLast,
+			jointBufferCurrent
+		);
+
+		m_lastWorldTransform[1] = m_lastWorldTransform[0];
+		m_lastWorldTransform[0] = worldTransform;
+
+		const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
+		const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
+
+		// Interpolate between updates to get current build skin transforms.
+		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
+		for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
 		{
-			const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
-			const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
-
-			// Interpolate between updates to get current build skin transforms.
-			mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
-			for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
-			{
-				auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
-				auto rotation = slerp(Quaternion(skinTransformsLastUpdate[i]), Quaternion(skinTransformsCurrentUpdate[i]), interval);
-				translation.storeAligned(jointData->translation);
-				rotation.e.storeAligned(jointData->rotation);
-				jointData++;
-			}
-			jointBufferCurrent->unlock();
+			auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
+			auto rotation = slerp(Quaternion(skinTransformsLastUpdate[i]), Quaternion(skinTransformsCurrentUpdate[i]), interval);
+			translation.storeAligned(jointData->translation);
+			rotation.e.storeAligned(jointData->rotation);
+			jointData++;
 		}
+		jointBufferCurrent->unlock();
+	}
 
+	if (m_mesh->supportTechnique(worldRenderPass.getTechnique()))
+	{
 		float distance = 0.0f;
 		if (worldRenderView.isBoxVisible(
 			m_mesh->getBoundingBox(),
@@ -177,7 +185,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 			m_mesh->build(
 				context.getRenderContext(),
 				worldRenderPass,
-				m_lastWorldTransform,
+				m_lastWorldTransform[1],
 				worldTransform,
 				jointBufferLast,
 				jointBufferCurrent,
@@ -185,14 +193,6 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 				getParameterCallback()
 			);
 		}
-	}
-
-	// Save last rendered transform so we can properly write velocities next frame.
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::Last) != 0)
-	{
-		m_jointBuffers[0] = jointBufferCurrent;
-		m_jointBuffers[1] = jointBufferLast;
-		m_lastWorldTransform = worldTransform;
 	}
 }
 
