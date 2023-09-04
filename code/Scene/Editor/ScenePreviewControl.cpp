@@ -548,7 +548,6 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 void ScenePreviewControl::eventIdle(ui::IdleEvent* event)
 {
 	m_context->processAutoRedraw();
-	event->requestMore();
 }
 
 }
