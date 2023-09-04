@@ -30,13 +30,20 @@ public:
 	{
 	}
 
+	explicit MemberRef(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberComplex(name, false, attributes)
+	,	m_ref(ref)
+	{
+	}
+
 	virtual void serialize(ISerializer& s) const override final
 	{
+		AttributeType attributeType(type_of< Class >());
 		Ref< ISerializable > object = (ISerializable*)m_ref.ptr();
 		s >> Member< ISerializable* >(
 			getName(),
 			object,
-			AttributeType(type_of< Class >())
+			getAttributes() ? attributeType | *getAttributes() : attributeType
 		);
 		m_ref = checked_type_cast< Class* >(object);
 	}

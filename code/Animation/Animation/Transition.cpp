@@ -8,6 +8,7 @@
  */
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/StateNode.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
@@ -52,8 +53,8 @@ const std::wstring& Transition::getCondition() const
 
 void Transition::serialize(ISerializer& s)
 {
-	s >> MemberRef< StateNode >(L"from", m_from);
-	s >> MemberRef< StateNode >(L"to", m_to);
+	s >> MemberRef< StateNode >(L"from", m_from, AttributePrivate());
+	s >> MemberRef< StateNode >(L"to", m_to, AttributePrivate());
 	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));
 
 	if (s.getVersion< Transition >() >= 1)
