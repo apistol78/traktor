@@ -76,11 +76,4 @@ bool SimpleAnimationController::evaluate(
 	return !wrapped;
 }
 
-void SimpleAnimationController::estimateVelocities(
-	const Skeleton* skeleton,
-	AlignedVector< Velocity >& outVelocities
-)
-{
-}
-
 }

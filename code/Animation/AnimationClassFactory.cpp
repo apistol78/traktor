@@ -11,6 +11,7 @@
 #include "Animation/JointBindingComponent.h"
 #include "Animation/SkeletonComponent.h"
 #include "Animation/Animation/AnimationGraphPoseController.h"
+#include "Animation/Animation/RetargetPoseController.h"
 #include "Animation/Boids/BoidsComponent.h"
 #include "Animation/Cloth/ClothComponent.h"
 #include "Animation/IK/IKComponent.h"
@@ -122,6 +123,10 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	classStatePoseController->addMethod("setState", &AnimationGraphPoseController::setState);
 	classStatePoseController->addMethod("setCondition", &AnimationGraphPoseController::setCondition);
 	registrar->registerClass(classStatePoseController);
+
+	auto classRetargetPoseController = new AutoRuntimeClass< RetargetPoseController >();
+	classRetargetPoseController->addProperty("controller", &RetargetPoseController::getController);
+	registrar->registerClass(classRetargetPoseController);
 
 	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
 	registrar->registerClass(classBoidsComponent);

@@ -54,11 +54,6 @@ public:
 		AlignedVector< Transform >& outPoseTransforms
 	) override final;
 
-	virtual void estimateVelocities(
-		const Skeleton* skeleton,
-		AlignedVector< Velocity >& outVelocities
-	) override final;
-
 private:
 	resource::Proxy< Animation > m_animation;
 	Ref< ITransformTime > m_transformTime;

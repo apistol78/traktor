@@ -34,12 +34,6 @@ class T_DLLCLASS IPoseController : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct Velocity
-	{
-		Vector4 linear;
-		Vector4 angular;
-	};
-
 	virtual void destroy() = 0;
 
 	virtual void setTransform(const Transform& transform) = 0;
@@ -61,11 +55,6 @@ public:
 		const Skeleton* skeleton,
 		const AlignedVector< Transform >& jointTransforms,
 		AlignedVector< Transform >& outPoseTransforms
-	) = 0;
-
-	virtual void estimateVelocities(
-		const Skeleton* skeleton,
-		AlignedVector< Velocity >& outVelocities
 	) = 0;
 };
 

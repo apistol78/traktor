@@ -47,10 +47,7 @@ public:
 		AlignedVector< Transform >& outPoseTransforms
 	) override final;
 
-	virtual void estimateVelocities(
-		const Skeleton* skeleton,
-		AlignedVector< Velocity >& outVelocities
-	) override final;
+	IPoseController* getController() const { return m_poseController; }
 
 private:
 	resource::Proxy< Skeleton > m_animationSkeleton;

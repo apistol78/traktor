@@ -339,11 +339,4 @@ bool AnimationGraphPoseController::evaluate(
 	return continous;
 }
 
-void AnimationGraphPoseController::estimateVelocities(
-	const Skeleton* skeleton,
-	AlignedVector< Velocity >& outVelocities
-)
-{
-}
-
 }

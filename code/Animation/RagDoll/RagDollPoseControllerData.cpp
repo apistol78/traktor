@@ -58,9 +58,6 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	AlignedVector< Transform > jointTransforms;
 	calculateJointTransforms(skeleton, jointTransforms);
 
-	AlignedVector< IPoseController::Velocity > velocities;
-	velocities.reserve(jointTransforms.size());
-
 	if (m_trackPoseController)
 	{
 		trackPoseController = m_trackPoseController->createInstance(
@@ -71,16 +68,6 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		);
 		if (!trackPoseController)
 			return nullptr;
-
-		trackPoseController->estimateVelocities(skeleton, velocities);
-	}
-
-	for (uint32_t i = (uint32_t)velocities.size(); i < (uint32_t)jointTransforms.size(); ++i)
-	{
-		IPoseController::Velocity velocity;
-		velocity.linear =
-		velocity.angular = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-		velocities.push_back(velocity);
 	}
 
 	Ref< RagDollPoseController > poseController = new RagDollPoseController();
@@ -91,7 +78,6 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		skeleton,
 		worldTransform,
 		jointTransforms,
-		velocities,
 		trackPoseController
 	))
 		return nullptr;
