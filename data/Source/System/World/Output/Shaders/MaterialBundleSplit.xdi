@@ -34,6 +34,7 @@
 				<item>View normal</item>
 				<item>View position</item>
 				<item>View velocity</item>
+				<item>View detail normal</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -152,6 +153,15 @@
 				<second>1227</second>
 			</position>
 			<name>View velocity</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{473EC7EE-A55A-7B47-9E8A-00869E419708}</id>
+			<comment/>
+			<position>
+				<first>1187</first>
+				<second>1278</second>
+			</position>
+			<name>View detail normal</name>
 		</item>
 	</nodes>
 	<edges>
@@ -292,6 +302,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D596E4E4-1A78-4D80-C96B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

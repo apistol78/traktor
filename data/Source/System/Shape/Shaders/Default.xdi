@@ -129,7 +129,7 @@
 			<id>{7D9E79E4-30FD-4D66-85D7-60A649157A35}</id>
 			<comment/>
 			<position>
-				<first>1777</first>
+				<first>1841</first>
 				<second>-90</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
@@ -200,6 +200,11 @@
 				<item>
 					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 					<name>Transparent</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
 					<optional>true</optional>
 				</item>
 				<item>

@@ -899,6 +899,10 @@ Opaque
 					<name>Transparent</name>
 				</item>
 				<item>
+					<id>{473EC7EE-A55A-7B47-9E8A-00869E419708}</id>
+					<name>View detail normal</name>
+				</item>
+				<item>
 					<id>{C6F116A7-670F-8747-A9D3-86405E0E0AB9}</id>
 					<name>View normal</name>
 				</item>
@@ -1602,16 +1606,6 @@ World_DeferredGBufferWrite
 				<id>{C6F116A7-670F-8747-A9D3-86405E0E0AB9}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[52]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[61]"/>
-				<id>{C6F116A7-670F-8747-A9D3-86405E0E0AB9}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[53]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
@@ -1824,6 +1818,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[74]"/>
 				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{473EC7EE-A55A-7B47-9E8A-00869E419708}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

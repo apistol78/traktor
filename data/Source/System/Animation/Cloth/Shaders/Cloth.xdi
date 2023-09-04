@@ -87,8 +87,8 @@
 			<id>{EDE3B640-C01A-0A49-8E86-9310091D8194}</id>
 			<comment/>
 			<position>
-				<first>925</first>
-				<second>295</second>
+				<first>990</first>
+				<second>289</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -170,6 +170,11 @@
 				<item>
 					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 					<name>Transparent</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
 					<optional>true</optional>
 				</item>
 				<item>

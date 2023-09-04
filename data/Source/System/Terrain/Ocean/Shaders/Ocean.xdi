@@ -941,8 +941,8 @@ Dynamic surface normal
 			<id>{5F38DA6F-2192-4F07-858B-C136EA7F34D1}</id>
 			<comment/>
 			<position>
-				<first>2229</first>
-				<second>1810</second>
+				<first>2334</first>
+				<second>1808</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -1012,6 +1012,11 @@ Dynamic surface normal
 				<item>
 					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 					<name>Transparent</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
 					<optional>true</optional>
 				</item>
 				<item>
