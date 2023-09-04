@@ -43,7 +43,7 @@ public:
 
 	EventSubject* getSender() const;
 
-	int getKeyState() const;
+	int32_t getKeyState() const;
 
 	void consume();
 
@@ -51,7 +51,6 @@ public:
 
 private:
 	Ref< EventSubject > m_sender;
-	int m_keyState;
 	bool m_consumed;
 };
 

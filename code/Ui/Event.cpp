@@ -17,12 +17,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Event", Event, Object)
 
 Event::Event(EventSubject* sender)
 :	m_sender(sender)
-,	m_keyState(WsNone)
 ,	m_consumed(false)
 {
-	auto application = Application::getInstance();
-	if (application != nullptr && application->getEventLoop() != nullptr)
-		m_keyState = application->getEventLoop()->getAsyncKeyState();
 }
 
 EventSubject* Event::getSender() const
@@ -32,7 +28,11 @@ EventSubject* Event::getSender() const
 
 int Event::getKeyState() const
 {
-	return m_keyState;
+	auto application = Application::getInstance();
+	if (application != nullptr && application->getEventLoop() != nullptr)
+		return application->getEventLoop()->getAsyncKeyState();
+	else
+		return WsNone;
 }
 
 void Event::consume()
