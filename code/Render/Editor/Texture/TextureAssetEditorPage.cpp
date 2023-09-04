@@ -65,10 +65,12 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 
 	m_textureControl = new TextureControl();
 	m_textureControl->create(imageContainer);
+	m_textureControl->addEventHandler< ui::MouseMoveEvent >(this, &TextureAssetEditorPage::eventMouseMove);
 
 	m_statusBar = new ui::StatusBar();
 	m_statusBar->create(imageContainer);
-	m_statusBar->addColumn(1000);
+	m_statusBar->addColumn(400);
+	m_statusBar->addColumn(-300);
 
 	// Create properties view.
 	m_propertiesView = m_site->createPropertiesView(parent);
@@ -143,6 +145,23 @@ void TextureAssetEditorPage::updatePreview()
 		m_textureControl->setImage(nullptr, m_asset->m_output);
 		m_statusBar->setText(0, L"");
 	}
+}
+
+void TextureAssetEditorPage::eventMouseMove(ui::MouseMoveEvent* event)
+{
+	Color4f clr;
+	if (m_textureControl->getPixel(event->getPosition(), clr))
+	{
+		StringOutputStream ss;
+		ss << (float)clr.getRed() << L", ";
+		ss << (float)clr.getGreen() << L", ";
+		ss << (float)clr.getBlue() << L", ";
+		ss << (float)clr.getAlpha();
+		m_statusBar->setText(1, ss.str());
+	}
+	else
+		m_statusBar->setText(1, L"");
+	m_statusBar->update();
 }
 
 void TextureAssetEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)

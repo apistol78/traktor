@@ -41,7 +41,7 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
 	const bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
-	const bool linearGamma = textureAsset->m_output.m_linearGamma;
+	const bool linearGamma = textureAsset->m_output.m_assumeLinearGamma;
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
 		64,

@@ -65,7 +65,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	if (!image)
 		return nullptr;
 
-	drawing::ScaleFilter scale(
+	const drawing::ScaleFilter scale(
 		width,
 		height,
 		drawing::ScaleFilter::MnAverage,
@@ -96,7 +96,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	}
 	else if (alpha == Alpha::AlphaOnly)
 	{
-		drawing::SwizzleFilter swizzleFilter(L"aaa1");
+		const drawing::SwizzleFilter swizzleFilter(L"aaa1");
 		image->apply(&swizzleFilter);
 	}
 	else	// Create solid alpha channel.
@@ -114,7 +114,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 	}
 	if (gamma == Gamma::Linear)
 	{
-		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+		const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 		image->apply(&gammaFilter);
 	}
 

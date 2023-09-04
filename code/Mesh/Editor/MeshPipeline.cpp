@@ -140,8 +140,8 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_textureType = render::Tt2D;
-	output->m_enableNormalMapCompression = normalMap;
-	output->m_linearGamma = normalMap;
+	output->m_normalMap = normalMap;
+	output->m_assumeLinearGamma = normalMap;
 
 	if (!pipelineBuilder->buildAdHocOutput(
 		output,

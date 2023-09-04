@@ -16,28 +16,12 @@ namespace traktor::drawing
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GammaFilter", GammaFilter, IImageFilter)
 
-GammaFilter::GammaFilter(float gamma)
-{
-	m_gamma[0] =
-	m_gamma[1] =
-	m_gamma[2] = gamma;
-	m_gamma[3] = 1.0f;
-}
-
 GammaFilter::GammaFilter(float fromGamma, float toGamma)
 {
 	m_gamma[0] =
 	m_gamma[1] =
 	m_gamma[2] = fromGamma / toGamma;
 	m_gamma[3] = 1.0f;
-}
-
-GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
-{
-	m_gamma[0] = gammaR;
-	m_gamma[1] = gammaG;
-	m_gamma[2] = gammaB;
-	m_gamma[3] = gammaA;
 }
 
 void GammaFilter::apply(Image* image) const

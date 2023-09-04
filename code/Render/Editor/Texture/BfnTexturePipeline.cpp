@@ -126,7 +126,7 @@ bool BfnTexturePipeline::buildOutput(
 			output->m_keepZeroAlpha = false;
 			output->m_textureType = TtCube;
 			output->m_enableCompression = false;
-			output->m_linearGamma = true;
+			output->m_assumeLinearGamma = true;
 		}
 		else
 		{
@@ -152,8 +152,7 @@ bool BfnTexturePipeline::buildOutput(
 			output->m_keepZeroAlpha = false;
 			output->m_textureType = Tt2D;
 			output->m_enableCompression = false;
-			output->m_linearGamma = true;
-			output->m_sharpenRadius = 0;
+			output->m_assumeLinearGamma = true;
 		}
 	}
 

@@ -36,7 +36,6 @@
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NoiseFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
-#include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SharpenFilter.h"
@@ -136,7 +135,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 37, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 38, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -223,25 +222,11 @@ bool TextureOutputPipeline::buildOutput(
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
 	int32_t mipCount = 1;
-	bool isNormalMap = false;
 	bool sRGB = false;
 
 	drawing::PixelFormat pixelFormat;
 	TextureFormat textureFormat;
 	bool needAlpha;
-
-	// Check if linear space is explicit in image; this is mearly an
-	// warning and rest of pipeline still expect image to be linear is explicitly tagged as such.
-	if (image->getImageInfo() != nullptr && image->getImageInfo()->getGamma() >= 0.001f)
-	{
-		const bool explicitLinear = (bool)(std::abs(image->getImageInfo()->getGamma() - 1.0f) < 0.1f);
-		if (explicitLinear != textureOutput->m_linearGamma)
-		{
-			log::warning << L"Image linear gamma mismatch in texture \"" << outputGuid.format() << L"\";" << Endl;
-			log::warning << L"\tImage is " << (explicitLinear ? L"linear" : L"non-linear") << L" (" << str(L"%.2f", image->getImageInfo()->getGamma()) << L")" << Endl;
-			log::warning << L"\tAsset is " << (textureOutput->m_linearGamma ? L"linear" : L"non-linear") << L"." << Endl;
-		}
-	}
 
 	// Use explicit texture format if specified.
 	if (textureOutput->m_textureFormat != TfInvalid)
@@ -342,7 +327,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		needAlpha =
 			(pixelFormat.getAlphaBits() > 0 && !textureOutput->m_ignoreAlpha) ||
-			textureOutput->m_enableNormalMapCompression;
+			textureOutput->m_generateAlpha;
 	}
 	else
 	{
@@ -351,8 +336,7 @@ bool TextureOutputPipeline::buildOutput(
 		// Determine pixel and texture format from source image (and hints).
 		needAlpha =
 			(image->getPixelFormat().getAlphaBits() > 0 && !textureOutput->m_ignoreAlpha) ||
-			textureOutput->m_generateAlpha ||
-			textureOutput->m_enableNormalMapCompression;
+			textureOutput->m_generateAlpha;
 
 		if (needAlpha)
 		{
@@ -367,13 +351,13 @@ bool TextureOutputPipeline::buildOutput(
 
 		// Determine texture compression format.
 		if (
-			(textureOutput->m_textureType == Tt2D || textureOutput->m_textureType == TtCube) &&
-			(textureOutput->m_enableCompression || textureOutput->m_enableNormalMapCompression)
+			textureOutput->m_enableCompression &&
+			(textureOutput->m_textureType == Tt2D || textureOutput->m_textureType == TtCube)
 		)
 		{
 			if (m_compressionMethod == CompressionMethod::DXTn)
 			{
-				if (textureOutput->m_enableNormalMapCompression)
+				if (textureOutput->m_normalMap)
 				{
 					log::info << L"Using BC6HU compression." << Endl;
 					textureFormat = TfBC6HU;
@@ -446,7 +430,8 @@ bool TextureOutputPipeline::buildOutput(
 	// Flip image if necessary.
 	if (textureOutput->m_flipX || textureOutput->m_flipY)
 	{
-		drawing::MirrorFilter mirrorFilter(textureOutput->m_flipX, textureOutput->m_flipY);
+		log::info << L"Mirroring image..." << Endl;
+		const drawing::MirrorFilter mirrorFilter(textureOutput->m_flipX, textureOutput->m_flipY);
 		image->apply(&mirrorFilter);
 	}
 
@@ -476,6 +461,7 @@ bool TextureOutputPipeline::buildOutput(
 	// Invert alpha channel.
 	if (textureOutput->m_invertAlpha)
 	{
+		log::info << L"Inverting alpha..." << Endl;
 		const drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
 		image->apply(&invertAlphaFilter);
 	}
@@ -483,6 +469,7 @@ bool TextureOutputPipeline::buildOutput(
 	// Dilate image from alpha channel.
 	if (textureOutput->m_dilateImage)
 	{
+		log::info << L"Dilate image..." << Endl;
 		const drawing::DilateFilter dilateFilter(8);
 		image->apply(&dilateFilter);
 	}
@@ -491,7 +478,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
-		drawing::SphereMapFilter sphereMapFilter;
+		const drawing::SphereMapFilter sphereMapFilter;
 		image->apply(&sphereMapFilter);
 	}
 
@@ -499,7 +486,8 @@ bool TextureOutputPipeline::buildOutput(
 	// format as it's possible source image has float format thus
 	// resulting in greater accuracy.
 	if (
-		!textureOutput->m_linearGamma &&
+		!textureOutput->m_normalMap &&
+		!textureOutput->m_assumeLinearGamma &&
 		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
 	)
 	{
@@ -507,24 +495,24 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			const float imageGamma = image->getImageInfo()->getGamma();
 			const bool is_sRGB = (bool)(std::abs(imageGamma - m_gamma) < 0.1f);
-			if (is_sRGB && !isNormalMap)
+			if (is_sRGB && !textureOutput->m_normalMap)
 				sRGB = true;
 			else
 			{
 				log::info << L"Converting from " << str(L"%.2f", imageGamma) << L" to linear gamma..." << Endl;
-				drawing::GammaFilter gammaFilter(imageGamma);
+				const drawing::GammaFilter gammaFilter(imageGamma, 1.0f);
 				image->apply(&gammaFilter);
 			}
 		}
 		else
 		{
 			// No image meta data; assume image is sRGB.
-			if (m_sRGB && !isNormalMap)
+			if (m_sRGB && !textureOutput->m_normalMap)
 				sRGB = true;
 			else
 			{
-				log::info << L"Converting into linear gamma..." << Endl;
-				drawing::GammaFilter gammaFilter(m_gamma);
+				log::info << L"Converting from " << str(L"%.2f", m_gamma) << L" to linear gamma..." << Endl;
+				const drawing::GammaFilter gammaFilter(m_gamma, 1.0f);
 				image->apply(&gammaFilter);
 			}
 		}
@@ -533,7 +521,8 @@ bool TextureOutputPipeline::buildOutput(
 	// Apply noise.
 	if (textureOutput->m_noiseStrength > 0.0f)
 	{
-		drawing::NoiseFilter noiseFilter(textureOutput->m_noiseStrength);
+		log::info << L"Applying noise..." << Endl;
+		const drawing::NoiseFilter noiseFilter(textureOutput->m_noiseStrength);
 		image->apply(&noiseFilter);
 	}
 
@@ -541,7 +530,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_premultiplyAlpha)
 	{
 		log::info << L"Pre-multiply with alpha..." << Endl;
-		drawing::PremultiplyAlphaFilter preAlphaFilter;
+		const drawing::PremultiplyAlphaFilter preAlphaFilter;
 		image->apply(&preAlphaFilter);
 	}
 
@@ -549,6 +538,7 @@ bool TextureOutputPipeline::buildOutput(
 	// we need to consider high range images.
 	if (textureOutput->m_encodeAsRGBM)
 	{
+		log::info << L"Encoding RGBM..." << Endl;
 		const drawing::EncodeRGBM encodeRGBM(5.0f, 4, 4, 0.8f);
 		image->apply(&encodeRGBM);
 	}
@@ -556,20 +546,11 @@ bool TextureOutputPipeline::buildOutput(
 	// Convert image into proper format.
 	image->convert(pixelFormat);
 
-	// Generate normal map from image.
-	if (textureOutput->m_generateNormalMap)
-	{
-		log::info << L"Generating normal map..." << Endl;
-		drawing::NormalMapFilter filter(textureOutput->m_scaleDepth);
-		image->apply(&filter);
-		isNormalMap = true;
-	}
-
 	// Inverse normal map Y; assume it's a normal map to begin with.
 	if (textureOutput->m_inverseNormalMapX || textureOutput->m_inverseNormalMapY)
 	{
 		log::info << L"Converting normal map..." << Endl;
-		drawing::TransformFilter transformFilter(
+		const drawing::TransformFilter transformFilter(
 			Color4f(
 				textureOutput->m_inverseNormalMapX ? -1.0f : 1.0f,
 				textureOutput->m_inverseNormalMapY ? -1.0f : 1.0f,
@@ -584,38 +565,7 @@ bool TextureOutputPipeline::buildOutput(
 			)
 		);
 		image->apply(&transformFilter);
-		isNormalMap = true;
 	}
-
-	// Ensure normal map isn't using sRGB texture.
-	if (isNormalMap)
-		sRGB = false;
-
-//#if defined(T_USE_MIP_SCALE_TASKS)
-//	Ref< drawing::ChainFilter > mipFilters;
-//
-//	// Swizzle channels to prepare for DXT5nm compression.
-//	if (
-//		m_compressionMethod == CmDXTn &&
-//		textureOutput->m_enableNormalMapCompression
-//	)
-//	{
-//		log::info << L"Preparing for DXT5nm compression..." << Endl;
-//
-//		mipFilters = new drawing::ChainFilter();
-//
-//		// Inverse X axis; do it here instead of in shader.
-//		mipFilters->add(new drawing::TransformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f)));
-//
-//		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)
-//		mipFilters->add(new drawing::SwizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r"));
-//
-//		if (!textureOutput->m_ignoreAlpha)
-//			log::warning << L"Kept source alpha in red channel; compressed normals might have severe artifacts" << Endl;
-//
-//		isNormalMap = true;
-//	}
-//#endif
 
 	// Rescale image.
 	if (textureOutput->m_scaleImage)
@@ -748,7 +698,7 @@ bool TextureOutputPipeline::buildOutput(
 				int32_t mipWidth = std::max(width >> i, 1);
 				int32_t mipHeight = std::max(height >> i, 1);
 
-				if (mipWidth != image->getWidth() || mipHeight != image->getHeight() || isNormalMap || mipFilters)
+				if (mipWidth != image->getWidth() || mipHeight != image->getHeight() || textureOutput->m_normalMap || mipFilters)
 				{
 					// Create chain of image filters.
 					Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
@@ -763,7 +713,7 @@ bool TextureOutputPipeline::buildOutput(
 					));
 
 					// Append sharpen filter.
-					if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+					if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
 					{
 						taskFilters->add(new drawing::SharpenFilter(
 							textureOutput->m_sharpenRadius,
@@ -772,7 +722,7 @@ bool TextureOutputPipeline::buildOutput(
 					}
 
 					// Ensure each pixel is renormalized after scaling.
-					if (isNormalMap)
+					if (textureOutput->m_normalMap)
 						taskFilters->add(new drawing::NormalizeFilter());
 
 					// Append mip filters for compression etc.
@@ -838,9 +788,6 @@ bool TextureOutputPipeline::buildOutput(
 			}
 		}
 #else
-		if (textureOutput->m_enableNormalMapCompression)
-			isNormalMap = true;
-
 		for (int32_t i = 0; i < mipCount; ++i)
 		{
 			const int32_t mipWidth = std::max(width >> i, 1);
@@ -871,15 +818,15 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		// Ensure each pixel is renormalized after scaling.
-		if (isNormalMap)
+		if (textureOutput->m_normalMap)
 		{
 			for (auto mipImage : mipImages)
 			{
-				drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
-				mipImage->apply(&normalizeFilter);
+				//const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
+				//mipImage->apply(&normalizeFilter);
 
 				// Prepare for DXT5nm compression, need to swizzle the channels around.
-				if (textureFormat == TfDXT5 && textureOutput->m_enableNormalMapCompression)
+				if (textureFormat == TfDXT5 && textureOutput->m_enableCompression)
 				{
 					drawing::SwizzleFilter swizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r");
 					mipImage->apply(&swizzleFilter);
@@ -888,11 +835,11 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		// Apply sharpen filter.
-		if (!isNormalMap && textureOutput->m_sharpenRadius > 0)
+		if (!textureOutput->m_normalMap && textureOutput->m_sharpenRadius > 0)
 		{
 			for (int32_t i = 1; i < (int32_t)mipImages.size(); ++i)
 			{
-				drawing::SharpenFilter sharpenFilter(
+				const drawing::SharpenFilter sharpenFilter(
 					textureOutput->m_sharpenRadius,
 					textureOutput->m_sharpenStrength * (float(i) / (mipCount - 1))
 				);

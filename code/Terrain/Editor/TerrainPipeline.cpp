@@ -265,7 +265,7 @@ bool TerrainPipeline::buildOutput(
 		colorTexture->m_keepZeroAlpha = false;
 		colorTexture->m_ignoreAlpha = false;
 		colorTexture->m_hasAlpha = true;
-		colorTexture->m_linearGamma = true;
+		colorTexture->m_assumeLinearGamma = true;
 		colorTexture->m_systemTexture = true;
 		pipelineBuilder->buildAdHocOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
 	}
@@ -295,7 +295,7 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_keepZeroAlpha = false;
 		splatTexture->m_ignoreAlpha = false;
 		splatTexture->m_hasAlpha = true;
-		splatTexture->m_linearGamma = true;
+		splatTexture->m_assumeLinearGamma = true;
 		splatTexture->m_systemTexture = true;
 		pipelineBuilder->buildAdHocOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
@@ -309,7 +309,7 @@ bool TerrainPipeline::buildOutput(
 		splatTexture->m_keepZeroAlpha = false;
 		splatTexture->m_ignoreAlpha = false;
 		splatTexture->m_hasAlpha = true;
-		splatTexture->m_linearGamma = true;
+		splatTexture->m_assumeLinearGamma = true;
 		splatTexture->m_enableCompression = false;
 		pipelineBuilder->buildAdHocOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}

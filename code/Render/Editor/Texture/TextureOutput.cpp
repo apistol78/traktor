@@ -15,7 +15,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 18, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 20, TextureOutput, ISerializable)
 
 void TextureOutput::serialize(ISerializer& s)
 {
@@ -61,7 +61,15 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> MemberEnum< TextureFormat >(L"textureFormat", m_textureFormat, c_TextureFormat_Keys);
 	}
 
-	s >> Member< bool >(L"generateNormalMap", m_generateNormalMap);
+	if (s.getVersion() >= 20)
+		s >> Member< bool >(L"normalMap", m_normalMap);
+
+	if (s.getVersion() < 20)
+	{
+		bool generateNormalMap;
+		s >> Member< bool >(L"generateNormalMap", generateNormalMap);
+	}
+
 	s >> Member< float >(L"scaleDepth", m_scaleDepth, AttributeRange(0.0f));
 	s >> Member< bool >(L"generateMips", m_generateMips);
 	s >> Member< bool >(L"keepZeroAlpha", m_keepZeroAlpha);
@@ -112,8 +120,12 @@ void TextureOutput::serialize(ISerializer& s)
 
 	s >> Member< bool >(L"enableCompression", m_enableCompression);
 
-	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"enableNormalMapCompression", m_enableNormalMapCompression);
+	if (s.getVersion() >= 2 && s.getVersion() < 20)
+	{
+		bool enableNormalMapCompression;
+		s >> Member< bool >(L"enableNormalMapCompression", enableNormalMapCompression);
+		m_normalMap = enableNormalMapCompression;
+	}
 
 	if (s.getVersion() >= 16)
 		s >> Member< bool >(L"encodeAsRGBM", m_encodeAsRGBM);
@@ -126,7 +138,10 @@ void TextureOutput::serialize(ISerializer& s)
 	if (s.getVersion() >= 17)
 		s >> Member< float >(L"scaleNormalMap", m_scaleNormalMap, AttributeRange(-1.0f, 10.0f));
 
-	s >> Member< bool >(L"linearGamma", m_linearGamma);
+	if (s.getVersion() >= 19)
+		s >> Member< bool >(L"assumeLinearGamma", m_assumeLinearGamma);
+	else
+		s >> Member< bool >(L"linearGamma", m_assumeLinearGamma);
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"generateSphereMap", m_generateSphereMap);
