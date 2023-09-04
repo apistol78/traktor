@@ -23,6 +23,7 @@
 #include "Drawing/CubeMap.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/SH/SHEngine.h"
 #include "Render/SH/SHFunction.h"
@@ -89,6 +90,8 @@ bool IrradianceGridPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	const IrradianceGridAsset* asset = mandatory_non_null_type_cast<const IrradianceGridAsset*>(sourceAsset);
+	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 	return true;
 }
 
