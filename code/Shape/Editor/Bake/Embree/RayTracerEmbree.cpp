@@ -217,22 +217,31 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 
 	// Allocate buffers with positions and texCoords.
 	float* positions = (float*)Alloc::acquireAlign(3 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
+	float* normals = (float*)Alloc::acquireAlign(3 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
 	float* texCoords = (float*)Alloc::acquireAlign(2 * model->getVertices().size() * sizeof(float), 16, T_FILE_LINE);
 
 	m_buffers.push_back(positions);
+	m_buffers.push_back(normals);
 	m_buffers.push_back(texCoords);
 
-	// Copy positions and texCoords.
+	// Copy positions, normals and texCoords.
 	float* pp = positions;
+	float* pn = normals;
 	float* pt = texCoords;
 	for (uint32_t i = 0; i < model->getVertexCount(); ++i)
 	{
 		const auto& vertex = model->getVertex(i);
+		T_FATAL_ASSERT(vertex.getNormal() != model::c_InvalidIndex);
 
 		const Vector4 p = transform * model->getPosition(vertex.getPosition()).xyz1();
 		*pp++ = p.x();
 		*pp++ = p.y();
 		*pp++ = p.z();
+
+		const Vector4 n = transform.rotation() * model->getNormal(vertex.getNormal()).xyz0();
+		*pn++ = n.x();
+		*pn++ = n.y();
+		*pn++ = n.z();
 
 		const Vector2 uv = (vertex.getTexCoord(0) != model::c_InvalidIndex) ? model->getTexCoord(vertex.getTexCoord(0)) : Vector2::zero();
 		*pt++ = uv.x;
@@ -248,10 +257,11 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 	for (auto split : splits)
 	{
 		RTCGeometry mesh = rtcNewGeometry(m_device, RTC_GEOMETRY_TYPE_TRIANGLE);
-		rtcSetGeometryVertexAttributeCount(mesh, 1);
+		rtcSetGeometryVertexAttributeCount(mesh, 2);
 
 		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX, 0, RTC_FORMAT_FLOAT3, positions, 0, 3 * sizeof(float), model->getVertices().size());
-		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
+		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, RTC_FORMAT_FLOAT3, normals, 0, 3 * sizeof(float), model->getVertices().size());
+		rtcSetSharedGeometryBuffer(mesh, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 1, RTC_FORMAT_FLOAT2, texCoords, 0, 2 * sizeof(float), model->getVertices().size());
 
 		uint32_t* triangles = (uint32_t*)rtcSetNewGeometryBuffer(mesh, RTC_BUFFER_TYPE_INDEX, 0, RTC_FORMAT_UINT3, 3 * sizeof(uint32_t), split->getPolygons().size());
 		for (const auto& polygon : split->getPolygons())
@@ -418,6 +428,8 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direction) const
 {
+	float T_MATH_ALIGN16 normal[4];
+
 	RTCRayHit T_ALIGN64 rh;
 	constructRayHit(position, direction, 10000.0_simd, rh);
 
@@ -435,8 +447,11 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 			return Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	}
 
+	const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+
 	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
-	const Vector4 hitNormal = getHitNormal(rh);
+	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normal, 3);
+	const Vector4 hitNormal = Vector4::loadAligned(normal).xyz0().normalized();
 
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
@@ -445,10 +460,8 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	const auto& image = hitMaterial.getDiffuseMap().image;
 	if (image)
 	{
-		const uint32_t slot = 0;
+		const uint32_t slot = 1;
 		float texCoord[2] = { 0.0f, 0.0f };
-
-		RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
 		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 		image->getPixel(
@@ -477,6 +490,7 @@ Color4f RayTracerEmbree::tracePath0(
 ) const
 {
 	constexpr int SampleBatch = 16;
+	float T_MATH_ALIGN16 normalTmp[4];
 
 	int32_t sampleCount = m_configuration->getSecondarySampleCount();
 	if (sampleCount <= 0)
@@ -529,9 +543,13 @@ Color4f RayTracerEmbree::tracePath0(
 				continue;
 			}
 
+			const RTCGeometry geometry = rtcGetGeometry(m_scene, rhv.hit.geomID[j]);
+
 			const Scalar hitDistance = Scalar(rhv.ray.tfar[j]);
-			const Vector4 hitNormal = getHitNormal(rhv, j);
 			const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
+
+			rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normalTmp, 3);
+			const Vector4 hitNormal = Vector4::loadAligned(normalTmp).xyz0();
 
 			const uint32_t offset = m_materialOffset[rhv.hit.geomID[j]];
 			const auto& hitMaterial = *m_materials[offset + rhv.hit.primID[j]];
@@ -540,10 +558,8 @@ Color4f RayTracerEmbree::tracePath0(
 			const auto& image = hitMaterial.getDiffuseMap().image;
 			if (image)
 			{
-				const uint32_t slot = 0;
+				const uint32_t slot = 1;
 				float texCoord[2] = { 0.0f, 0.0f };
-
-				RTCGeometry geometry = rtcGetGeometry(m_scene, rhv.hit.geomID[j]);
 				rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 				image->getPixel(
@@ -603,6 +619,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	int32_t depth
 ) const
 {
+	float T_MATH_ALIGN16 normalTmp[4];
+
 	if (depth > 2 || maxDistance <= 0.0f)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -623,9 +641,12 @@ Color4f RayTracerEmbree::traceSinglePath(
 			return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	}
 
+	const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
+
 	const Scalar hitDistance = Scalar(rh.ray.tfar);
-	const Vector4 hitNormal = getHitNormal(rh);
 	const Vector4 hitOrigin = (origin + direction * hitDistance).xyz1();
+	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normalTmp, 3);
+	const Vector4 hitNormal = Vector4::loadAligned(normalTmp).xyz0().normalized();
 
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
@@ -634,10 +655,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const auto& image = hitMaterial.getDiffuseMap().image;
 	if (image)
 	{
-		const uint32_t slot = 0;
+		const uint32_t slot = 1;
 		float texCoord[2] = { 0.0f, 0.0f };
-
-		RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
 		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
 		image->getPixel(
@@ -931,7 +950,7 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		const auto& image = hitMaterial.getDiffuseMap().image;
 		if (image)
 		{
-			const uint32_t slot = 0;
+			const uint32_t slot = 1;
 			float texCoord[2] = { 0.0f, 0.0f };
 
 			const float u = RTCHitN_u(hits, args->N, i);
