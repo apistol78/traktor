@@ -802,10 +802,10 @@ bool TracerProcessor::process(const TracerTask* task)
 			}
 		}
 
-		drawing::TonemapFilter tonemapFilter;
+		const drawing::TonemapFilter tonemapFilter;
 		image->apply(&tonemapFilter);
 
-		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+		const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 		image->apply(&gammaFilter);
 
 		image->save(str(L"Preview%04d.png", i));

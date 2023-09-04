@@ -32,6 +32,7 @@ namespace traktor::ui
 {
 
 class ContentChangeEvent;
+class MouseMoveEvent;
 class StatusBar;
 
 }
@@ -69,6 +70,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 
 	void updatePreview();
+
+	void eventMouseMove(ui::MouseMoveEvent* event);
 
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };

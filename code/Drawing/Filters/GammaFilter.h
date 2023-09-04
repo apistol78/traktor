@@ -29,11 +29,7 @@ class T_DLLCLASS GammaFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 public:
-	explicit GammaFilter(float gamma);
-
 	explicit GammaFilter(float fromGamma, float toGamma);
-
-	explicit GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
 
 protected:
 	virtual void apply(Image* image) const override final;

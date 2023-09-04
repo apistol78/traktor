@@ -56,16 +56,22 @@ bool TextureControl::create(ui::Widget* parent)
 
 ui::Size TextureControl::getMinimumSize() const
 {
-	return m_imageSource ? m_imageSource->getSize(this) : ui::Size(0, 0);
+	return m_bitmapSource ? m_bitmapSource->getSize(this) : ui::Size(0, 0);
 }
 
 ui::Size TextureControl::getPreferredSize(const ui::Size& hint) const
 {
-	return m_imageSource ? m_imageSource->getSize(this) : ui::Size(0, 0);
+	return m_bitmapSource ? m_bitmapSource->getSize(this) : ui::Size(0, 0);
 }
 
 bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output)
 {
+	m_imageSource = nullptr;
+	m_imageOutput = nullptr;
+
+	m_bitmapSource = nullptr;
+	m_bitmapOutput = nullptr;
+
 	if (image != nullptr)
 	{
 		float gamma = 2.2f;
@@ -78,35 +84,35 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		}
 
 		// Create source image.
-		Ref< drawing::Image > imageSource = image->clone();
+		m_imageSource = image->clone();
 		if (!sRGB)
 		{
 			// Ensure image is in sRGB since that's what UI expects.
 			const drawing::GammaFilter gammaFilter(gamma, 2.2f);
-			imageSource->apply(&gammaFilter);
+			m_imageSource->apply(&gammaFilter);
 		}
-		m_imageSource = new ui::Bitmap(imageSource);
+		m_bitmapSource = new ui::Bitmap(m_imageSource);
 
 		// Create output image.
-		Ref< drawing::Image > imageOutput = image->clone();
-		imageOutput->convert(drawing::PixelFormat::getR8G8B8A8());
+		m_imageOutput = image->clone();
+		m_imageOutput->convert(drawing::PixelFormat::getR8G8B8A8());
 
 		// Discard alpha.
 		if (output.m_ignoreAlpha)
 		{
 			const drawing::SwizzleFilter swizzleFilter(L"RGB1");
-			imageOutput->apply(&swizzleFilter);
+			m_imageOutput->apply(&swizzleFilter);
 		}
 
 		// Generate alpha, maximum of color channels.
 		if (output.m_generateAlpha)
 		{
 			Color4f tmp;
-			for (int32_t y = 0; y < imageOutput->getHeight(); ++y)
+			for (int32_t y = 0; y < m_imageOutput->getHeight(); ++y)
 			{
-				for (int32_t x = 0; x < imageOutput->getWidth(); ++x)
+				for (int32_t x = 0; x < m_imageOutput->getWidth(); ++x)
 				{
-					imageOutput->getPixelUnsafe(x, y, tmp);
+					m_imageOutput->getPixelUnsafe(x, y, tmp);
 
 					Scalar alpha = 0.0_simd;
 					alpha = max(alpha, tmp.getRed());
@@ -114,7 +120,7 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 					alpha = max(alpha, tmp.getBlue());
 					tmp.setAlpha(alpha);
 
-					imageOutput->setPixelUnsafe(x, y, tmp);
+					m_imageOutput->setPixelUnsafe(x, y, tmp);
 				}
 			}
 		}
@@ -123,47 +129,42 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		if (output.m_invertAlpha)
 		{
 			const drawing::TransformFilter invertAlphaFilter(Color4f(1.0f, 1.0f, 1.0f, -1.0f), Color4f(0.0f, 0.0f, 0.0f, 1.0f));
-			imageOutput->apply(&invertAlphaFilter);
+			m_imageOutput->apply(&invertAlphaFilter);
 		}
 
 		// Dilate image from alpha channel.
 		if (output.m_dilateImage)
 		{
 			const drawing::DilateFilter dilateFilter(8);
-			imageOutput->apply(&dilateFilter);
+			m_imageOutput->apply(&dilateFilter);
 		}
 
 		// Convert image into linear space to ensure all filters are applied in linear space.
-		if (sRGB && !output.m_linearGamma)
+		if (sRGB && !output.m_assumeLinearGamma)
 		{
 			const drawing::GammaFilter gammaFilter(gamma, 1.0f);
-			imageOutput->apply(&gammaFilter);
+			m_imageOutput->apply(&gammaFilter);
 		}
 
 		if (output.m_flipX || output.m_flipY)
 		{
 			const drawing::MirrorFilter mirrorFilter(output.m_flipX, output.m_flipY);
-			imageOutput->apply(&mirrorFilter);
+			m_imageOutput->apply(&mirrorFilter);
 		}
 		if (output.m_generateSphereMap)
 		{
 			const drawing::SphereMapFilter sphereMapFilter;
-			imageOutput->apply(&sphereMapFilter);
+			m_imageOutput->apply(&sphereMapFilter);
 		}
 		if (output.m_noiseStrength > 0.0f)
 		{
 			const drawing::NoiseFilter noiseFilter(output.m_noiseStrength);
-			imageOutput->apply(&noiseFilter);
+			m_imageOutput->apply(&noiseFilter);
 		}
 		if (output.m_premultiplyAlpha)
 		{
 			const drawing::PremultiplyAlphaFilter preAlphaFilter;
-			imageOutput->apply(&preAlphaFilter);
-		}
-		if (output.m_generateNormalMap)
-		{
-			const drawing::NormalMapFilter filter(output.m_scaleDepth);
-			imageOutput->apply(&filter);
+			m_imageOutput->apply(&preAlphaFilter);
 		}
 		if (output.m_inverseNormalMapX || output.m_inverseNormalMapY)
 		{
@@ -181,40 +182,57 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 					0.0f
 				)
 			);
-			imageOutput->apply(&transformFilter);
+			m_imageOutput->apply(&transformFilter);
 		}
 
 		// Convert to sRGB last since that's what UI expect.
 		{
 			const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-			imageOutput->apply(&gammaFilter);
+			m_imageOutput->apply(&gammaFilter);
 		}
 
-		for (int32_t y = 0; y < imageOutput->getHeight(); ++y)
+		for (int32_t y = 0; y < m_imageOutput->getHeight(); ++y)
 		{
-			for (int32_t x = 0; x < imageOutput->getWidth(); ++x)
+			for (int32_t x = 0; x < m_imageOutput->getWidth(); ++x)
 			{
 				Color4f clr;
-				imageOutput->getPixelUnsafe(x, y, clr);
+				m_imageOutput->getPixelUnsafe(x, y, clr);
 
 				Color4f ptrn = (((x / 16) ^ (y / 16)) & 1) ? Color4f(1.0f, 1.0f, 1.0f, 1.0f) : Color4f(0.2f, 0.2f, 0.2f, 1.0f);
 
 				clr = clr * clr.getAlpha() + ptrn * (1.0_simd - clr.getAlpha());
-				imageOutput->setPixelUnsafe(x, y, clr);
+				m_imageOutput->setPixelUnsafe(x, y, clr);
 			}
 		}
 
-		m_imageOutput = new ui::Bitmap(imageOutput);
-	}
-	else
-	{
-		m_imageSource = nullptr;
-		m_imageOutput = nullptr;
+		m_bitmapOutput = new ui::Bitmap(m_imageOutput);
 	}
 
 	// Update view.
 	update();
 	return true;
+}
+
+bool TextureControl::getPixel(const ui::Point& position, Color4f& outColor) const
+{
+	if (!m_bitmapSource)
+		return false;
+
+	const ui::Size clientSize = getInnerRect().getSize();
+	const ui::Size imageSize = m_bitmapSource->getSize(this);
+
+	const ui::Point center =
+	{
+		(clientSize.cx - imageSize.cx) / 2,
+		(clientSize.cy - imageSize.cy) / 2
+	};
+
+	const ui::Size pixel = (position - (center + m_offset)) * (1.0f / m_scale);
+
+	if (position.x < clientSize.cx / 2)
+		return m_imageSource->getPixel(pixel.cx, pixel.cy, outColor);
+	else
+		return m_imageOutput->getPixel(pixel.cx, pixel.cy, outColor);
 }
 
 void TextureControl::eventMouseDown(ui::MouseButtonDownEvent* event)
@@ -262,10 +280,10 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(getInnerRect());
 
-	if (m_imageSource)
+	if (m_bitmapSource)
 	{
 		const ui::Size clientSize = getInnerRect().getSize();
-		const ui::Size imageSize = m_imageSource->getSize(this);
+		const ui::Size imageSize = m_bitmapSource->getSize(this);
 
 		const ui::Point center =
 		{
@@ -276,10 +294,10 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 		canvas.setClipRect(ui::Rect(0, 0, clientSize.cx / 2, clientSize.cy));
 		canvas.drawBitmap(
 			center + m_offset,
-			m_imageSource->getSize(this) * m_scale,
+			m_bitmapSource->getSize(this) * m_scale,
 			ui::Point(0, 0),
-			m_imageSource->getSize(this),
-			m_imageSource,
+			m_bitmapSource->getSize(this),
+			m_bitmapSource,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest
 		);
@@ -287,10 +305,10 @@ void TextureControl::eventPaint(ui::PaintEvent* event)
 		canvas.setClipRect(ui::Rect(clientSize.cx / 2, 0, clientSize.cx, clientSize.cy));
 		canvas.drawBitmap(
 			center + m_offset,
-			m_imageOutput->getSize(this) * m_scale,
+			m_bitmapOutput->getSize(this) * m_scale,
 			ui::Point(0, 0),
-			m_imageOutput->getSize(this),
-			m_imageOutput,
+			m_bitmapOutput->getSize(this),
+			m_bitmapOutput,
 			ui::BlendMode::Opaque,
 			ui::Filter::Nearest
 		);

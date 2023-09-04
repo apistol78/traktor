@@ -335,7 +335,7 @@ bool Pipeline::buildOutput(
 
 			Ref< render::TextureOutput > output = new render::TextureOutput();
 			output->m_textureFormat = render::TfInvalid;
-			output->m_generateNormalMap = false;
+			output->m_normalMap = false;
 			output->m_scaleDepth = 0.0f;
 			output->m_generateMips = m_generateMips;
 			output->m_keepZeroAlpha = false;
@@ -346,9 +346,8 @@ bool Pipeline::buildOutput(
 			output->m_scaleWidth = 0;
 			output->m_scaleHeight = 0;
 			output->m_enableCompression = m_useTextureCompression;
-			output->m_enableNormalMapCompression = false;
 			output->m_inverseNormalMapY = false;
-			output->m_linearGamma = true;
+			output->m_assumeLinearGamma = true;
 			output->m_generateSphereMap = false;
 			output->m_preserveAlphaCoverage = false;
 			output->m_alphaCoverageReference = 0.0f;
@@ -420,7 +419,7 @@ bool Pipeline::buildOutput(
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;
-		output->m_generateNormalMap = false;
+		output->m_normalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = m_generateMips;
 		output->m_keepZeroAlpha = false;
@@ -431,9 +430,8 @@ bool Pipeline::buildOutput(
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
 		output->m_enableCompression = m_useTextureCompression;
-		output->m_enableNormalMapCompression = false;
 		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
+		output->m_assumeLinearGamma = true;
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;

@@ -28,7 +28,7 @@ class T_DLLCLASS TextureOutput : public ISerializable
 
 public:
 	TextureFormat m_textureFormat = TfInvalid;
-	bool m_generateNormalMap = false;
+	bool m_normalMap = false;
 	float m_scaleDepth = 0.0f;
 	bool m_generateMips = true;
 	bool m_keepZeroAlpha = false;
@@ -45,12 +45,11 @@ public:
 	bool m_flipX = false;
 	bool m_flipY = false;
 	bool m_enableCompression = true;
-	bool m_enableNormalMapCompression = false;
 	bool m_encodeAsRGBM = false;
 	bool m_inverseNormalMapX = false;
 	bool m_inverseNormalMapY = false;
 	float m_scaleNormalMap = 0.0f;
-	bool m_linearGamma = false;
+	bool m_assumeLinearGamma = false;
 	bool m_generateSphereMap = false;
 	bool m_preserveAlphaCoverage = false;
 	float m_alphaCoverageReference = 0.5f;

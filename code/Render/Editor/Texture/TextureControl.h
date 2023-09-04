@@ -47,9 +47,13 @@ public:
 
 	bool setImage(drawing::Image* image, const TextureOutput& output);
 
+	bool getPixel(const ui::Point& position, Color4f& outColor) const;
+
 private:
-	Ref< ui::IBitmap > m_imageSource;
-	Ref< ui::IBitmap > m_imageOutput;
+	Ref< drawing::Image > m_imageSource;
+	Ref< drawing::Image > m_imageOutput;
+	Ref< ui::IBitmap > m_bitmapSource;
+	Ref< ui::IBitmap > m_bitmapOutput;
 	ui::Size m_offset = { 0, 0 };
 	ui::Point m_moveOrigin;
 	ui::Size m_moveOriginOffset;

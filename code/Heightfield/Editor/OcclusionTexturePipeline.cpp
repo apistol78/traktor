@@ -465,7 +465,7 @@ bool OcclusionTexturePipeline::buildOutput(
 	output->m_hasAlpha = false;
 	output->m_ignoreAlpha = true;
 	output->m_enableCompression = true;
-	output->m_linearGamma = true;
+	output->m_assumeLinearGamma = true;
 
 	return pipelineBuilder->buildAdHocOutput(
 		output,

@@ -112,7 +112,7 @@ bool ColorGradingTexturePipeline::buildOutput(
 	output->m_keepZeroAlpha = false;
 	output->m_textureType = Tt3D;
 	output->m_enableCompression = false;
-	output->m_linearGamma = true;
+	output->m_assumeLinearGamma = true;
 	output->m_systemTexture = true;
 
 	return pipelineBuilder->buildAdHocOutput(

@@ -173,7 +173,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = c_heightTextureFormats[m_heightFormat];
-		output->m_generateNormalMap = false;
+		output->m_normalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;
 		output->m_keepZeroAlpha = false;
@@ -184,9 +184,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
 		output->m_enableCompression = false;
-		output->m_enableNormalMapCompression = false;
 		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
+		output->m_assumeLinearGamma = true;
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
@@ -222,7 +221,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfInvalid;
-		output->m_generateNormalMap = false;
+		output->m_normalMap = true;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = true;
 		output->m_keepZeroAlpha = false;
@@ -233,9 +232,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
 		output->m_enableCompression = m_compressNormals;
-		output->m_enableNormalMapCompression = m_compressNormals;
 		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
+		output->m_assumeLinearGamma = true;
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
@@ -266,7 +264,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfR8;
-		output->m_generateNormalMap = false;
+		output->m_normalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;
 		output->m_keepZeroAlpha = false;
@@ -277,9 +275,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
 		output->m_enableCompression = false;
-		output->m_enableNormalMapCompression = false;
 		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
+		output->m_assumeLinearGamma = true;
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;
@@ -356,7 +353,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		Ref< render::TextureOutput > output = new render::TextureOutput();
 		output->m_textureFormat = render::TfR8G8B8A8;
-		output->m_generateNormalMap = false;
+		output->m_normalMap = false;
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;
 		output->m_keepZeroAlpha = false;
@@ -367,9 +364,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleWidth = 0;
 		output->m_scaleHeight = 0;
 		output->m_enableCompression = false;
-		output->m_enableNormalMapCompression = false;
 		output->m_inverseNormalMapY = false;
-		output->m_linearGamma = true;
+		output->m_assumeLinearGamma = true;
 		output->m_generateSphereMap = false;
 		output->m_preserveAlphaCoverage = false;
 		output->m_alphaCoverageReference = 0.0f;

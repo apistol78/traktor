@@ -282,8 +282,7 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classDilateFilter);
 
 	auto classGammaFilter = new AutoRuntimeClass< GammaFilter >();
-	classGammaFilter->addConstructor< float >();
-	//classGammaFilter->addConstructor< float, float, float, float >();
+	classGammaFilter->addConstructor< float, float >();
 	registrar->registerClass(classGammaFilter);
 
 	auto classGaussianBlurFilter = new AutoRuntimeClass< GaussianBlurFilter >();

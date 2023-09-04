@@ -104,10 +104,10 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 				if (file)
 				{
 					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-					if (image && textureAsset->m_output.m_linearGamma)
+					if (image && textureAsset->m_output.m_assumeLinearGamma)
 					{
 						// Convert to gamma color space.
-						drawing::GammaFilter gammaFilter(2.2f);
+						const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
 						image->apply(&gammaFilter);							
 					}
 					images[filePath] = image;
