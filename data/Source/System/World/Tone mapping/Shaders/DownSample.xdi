@@ -113,7 +113,7 @@
 			<fromY>-1</fromY>
 			<toY>1</toY>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{AFD133CA-1E24-4CA4-9C11-96B25CCBD60F}</id>
 			<comment/>
 			<position>
@@ -158,7 +158,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Undefined</precisionHint>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
