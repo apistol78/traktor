@@ -359,7 +359,6 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 		if (m_verbose)
 		{
 			AlignedVector< std::pair< const wchar_t*, PipelineProfiler::Duration > > durations(m_profiler->getDurations().begin(), m_profiler->getDurations().end());
@@ -372,6 +371,11 @@ bool PipelineBuilder::build(const PipelineDependencySet* dependencySet, bool reb
 			for (const auto& duration : durations)
 				log::info << formatDuration(duration.second.seconds) << L" (" << duration.second.count << L", " << str(L"%.1f", (100.0 * duration.second.seconds) / totalDuration) << L"%) in " << duration.first << Endl;
 		}
+
+		if (m_failed == 0)
+			log::info << L"Build finished in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
+		else
+			log::error << L"Build failed in " << formatDuration(timer.getElapsedTime()) << L"; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed." << Endl;
 	}
 	else
 		log::info << L"Build finished; aborted." << Endl;
