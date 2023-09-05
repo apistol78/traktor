@@ -55,7 +55,7 @@ void DropListCell::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	const ui::Rect& rcInner = rect;
 	const ui::Point at = rcInner.getTopLeft();
 	const ui::Size size = rcInner.getSize();
-	const int32_t sep = 14;
+	const int32_t sep = pixel(14_ut);
 	bool hover = false; //isEnable() && hasCapture();
 
 	const ui::Rect rcText(
