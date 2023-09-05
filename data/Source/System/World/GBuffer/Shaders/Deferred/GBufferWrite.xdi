@@ -5,8 +5,8 @@
 			<id>{DF015B38-4B91-6C48-BB5E-81FC8355D961}</id>
 			<comment/>
 			<position>
-				<first>-39</first>
-				<second>160</second>
+				<first>-23</first>
+				<second>186</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -31,7 +31,7 @@
 			<id>{8D3DC51D-D9AA-DC4F-B3E3-558D3B60192F}</id>
 			<comment/>
 			<position>
-				<first>463</first>
+				<first>466</first>
 				<second>246</second>
 			</position>
 			<name>Roughness</name>
@@ -44,8 +44,8 @@
 			<id>{A326DE3C-1B9E-7848-9560-7C28ACC9158D}</id>
 			<comment/>
 			<position>
-				<first>312</first>
-				<second>179</second>
+				<first>293</first>
+				<second>159</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -53,8 +53,8 @@
 			<id>{B2E457BD-A3DC-AA49-A8DA-90B28E752AF0}</id>
 			<comment/>
 			<position>
-				<first>448</first>
-				<second>179</second>
+				<first>429</first>
+				<second>159</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -161,7 +161,7 @@
 			<id>{E00555C0-78D1-7041-99AD-C032D560FDEC}</id>
 			<comment/>
 			<position>
-				<first>658</first>
+				<first>664</first>
 				<second>244</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -183,7 +183,7 @@
 			<id>{BB1CF911-4BA8-5C49-A139-809DD1A678F9}</id>
 			<comment/>
 			<position>
-				<first>661</first>
+				<first>664</first>
 				<second>280</second>
 			</position>
 			<swizzle>x</swizzle>
@@ -205,10 +205,10 @@
 			<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
 			<comment/>
 			<position>
-				<first>299</first>
-				<second>50</second>
+				<first>282</first>
+				<second>55</second>
 			</position>
-			<name>Alpha</name>
+			<name>Discard</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
@@ -230,7 +230,7 @@
 				<first>546</first>
 				<second>74</second>
 			</position>
-			<operator>CoGreaterEqual</operator>
+			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0EF96363-9F6F-9E4F-876E-15937FC05263}</id>
@@ -245,7 +245,7 @@
 			<id>{E965B68D-2C18-1547-B41D-F4766F74530B}</id>
 			<comment/>
 			<position>
-				<first>469</first>
+				<first>482</first>
 				<second>315</second>
 			</position>
 			<name>Specular</name>
@@ -259,7 +259,6 @@
 			<comment>
 			<![CDATA[
 Ensure only RGB is written.
-
 			]]>
 			</comment>
 			<position>
@@ -272,7 +271,7 @@ Ensure only RGB is written.
 			<id>{7F94F69A-4243-4617-921D-F6FF7FC71D16}</id>
 			<comment/>
 			<position>
-				<first>538</first>
+				<first>554</first>
 				<second>564</second>
 			</position>
 			<name>Irradiance</name>

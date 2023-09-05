@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{E3A514E5-7A9B-D74D-A9D4-8B6A7F69FFF1}</id>
 			<comment/>
 			<position>
@@ -46,14 +46,13 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D5D4BB0D-373C-A84B-BF44-76F51286AB94}</id>
 			<comment/>
 			<position>
-				<first>56</first>
+				<first>74</first>
 				<second>686</second>
 			</position>
 			<value>0</value>
@@ -78,13 +77,13 @@
 				<first>275</first>
 				<second>596</second>
 			</position>
-			<operator>CoGreaterEqual</operator>
+			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{DF884627-B36A-3145-AF46-2CD4023B4035}</id>
 			<comment/>
 			<position>
-				<first>56</first>
+				<first>74</first>
 				<second>640</second>
 			</position>
 			<value>0.5</value>
@@ -96,11 +95,11 @@
 				<first>26</first>
 				<second>594</second>
 			</position>
-			<name>Alpha</name>
+			<name>Discard</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -155,4 +154,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

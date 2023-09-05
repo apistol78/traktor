@@ -64,7 +64,7 @@ Eye direction
 			<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 			<comment/>
 			<position>
-				<first>-832</first>
+				<first>-814</first>
 				<second>257</second>
 			</position>
 			<name>ViewPosition</name>
@@ -77,7 +77,7 @@ Eye direction
 			<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 			<comment/>
 			<position>
-				<first>-832</first>
+				<first>-814</first>
 				<second>133</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -90,7 +90,7 @@ Eye direction
 			<id>{C15FFA71-480D-3948-BF4B-5D1FD2F40B3C}</id>
 			<comment/>
 			<position>
-				<first>-862</first>
+				<first>-830</first>
 				<second>316</second>
 			</position>
 			<name>ViewNormalDetail</name>
@@ -103,7 +103,7 @@ Eye direction
 			<id>{28AF9CD6-D160-E641-AF57-D097F6C47895}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
+				<first>-798</first>
 				<second>195</second>
 			</position>
 			<name>Roughness</name>
@@ -150,7 +150,7 @@ Eye direction
 			<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
 			<comment/>
 			<position>
-				<first>-792</first>
+				<first>-782</first>
 				<second>71</second>
 			</position>
 			<name>Enable</name>
@@ -205,7 +205,7 @@ Eye direction
 			<id>{11CC706F-9C87-4161-9063-1CBB049A1A86}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
+				<first>-798</first>
 				<second>579</second>
 			</position>
 			<name>Metalness</name>
@@ -611,7 +611,7 @@ Eye direction
 				</item>
 				<item>
 					<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
-					<name>Alpha</name>
+					<name>Discard</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -637,7 +637,7 @@ Eye direction
 			<id>{10790711-A620-41B4-9872-DAD870F1B693}</id>
 			<comment/>
 			<position>
-				<first>-410</first>
+				<first>-394</first>
 				<second>-481</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
@@ -649,11 +649,11 @@ Eye direction
 				<first>-782</first>
 				<second>9</second>
 			</position>
-			<name>Alpha</name>
+			<name>Discard</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E3FF4346-2F4F-534C-941C-14797D532ADB}</id>
@@ -832,7 +832,7 @@ Eye direction
 			<id>{D9CA157E-44A4-6940-871F-B050C16705C9}</id>
 			<comment/>
 			<position>
-				<first>-378</first>
+				<first>-362</first>
 				<second>-437</second>
 			</position>
 			<name>L_ViewPosition</name>
@@ -979,7 +979,7 @@ Eye direction
 			<id>{2421E9E3-07E6-114E-84CD-5FE488248544}</id>
 			<comment/>
 			<position>
-				<first>-346</first>
+				<first>-330</first>
 				<second>-349</second>
 			</position>
 			<name>L_Enable</name>
@@ -991,7 +991,7 @@ Eye direction
 				<first>-541</first>
 				<second>-4</second>
 			</position>
-			<name>L_Alpha</name>
+			<name>L_Discard</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{D3FEC089-5DDC-1548-A514-B67998C090A4}</id>
@@ -1000,13 +1000,13 @@ Eye direction
 				<first>-346</first>
 				<second>-393</second>
 			</position>
-			<name>L_Alpha</name>
+			<name>L_Discard</name>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A91E0D2C-F7E8-1A40-8ECA-CA1E5A8671E1}</id>
 			<comment/>
 			<position>
-				<first>-378</first>
+				<first>-362</first>
 				<second>-261</second>
 			</position>
 			<name>L_Roughness</name>
@@ -1067,7 +1067,7 @@ Eye direction
 			<id>{BE4CDD51-167A-5448-890E-F78C5AB3F05E}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
+				<first>-782</first>
 				<second>641</second>
 			</position>
 			<name>Specular</name>
@@ -1080,7 +1080,7 @@ Eye direction
 			<id>{4035DB65-856C-A04D-8C62-D49A6BF36C85}</id>
 			<comment/>
 			<position>
-				<first>-812</first>
+				<first>-782</first>
 				<second>703</second>
 			</position>
 			<name>Emissive</name>
@@ -1160,7 +1160,7 @@ Eye direction
 				<first>2454</first>
 				<second>1029</second>
 			</position>
-			<operator>CoGreaterEqual</operator>
+			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{096C945C-B68B-FE4C-A862-262560A58A47}</id>
@@ -1178,7 +1178,7 @@ Eye direction
 				<first>2244</first>
 				<second>995</second>
 			</position>
-			<name>L_Alpha</name>
+			<name>L_Discard</name>
 		</item>
 		<item type="traktor.render.Platform" version="traktor.render.Node:1">
 			<id>{234E4422-3085-6C43-8C91-DD3821BCE5B1}</id>
@@ -1335,7 +1335,7 @@ Eye direction
 			<id>{64E274DD-42A5-4EBB-99AF-628FE6B9D74B}</id>
 			<comment/>
 			<position>
-				<first>-872</first>
+				<first>-862</first>
 				<second>410</second>
 			</position>
 			<name>ViewNormalGeometry</name>
@@ -1427,7 +1427,7 @@ Eye direction
 			<id>{5CD34CAA-A866-9646-B555-7640BE7A1A5B}</id>
 			<comment/>
 			<position>
-				<first>-362</first>
+				<first>-346</first>
 				<second>-305</second>
 			</position>
 			<name>L_Metalness</name>
@@ -1436,7 +1436,7 @@ Eye direction
 			<id>{493F0EF8-AA4C-704B-8AE1-DFD675345422}</id>
 			<comment/>
 			<position>
-				<first>-378</first>
+				<first>-362</first>
 				<second>-525</second>
 			</position>
 			<name>L_SurfaceColor</name>
@@ -2207,16 +2207,6 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[88]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[89]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2883,6 +2873,16 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[90]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[88]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
 			</destination>
 		</item>
 	</edges>

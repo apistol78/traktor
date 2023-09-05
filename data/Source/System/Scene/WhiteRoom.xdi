@@ -4,7 +4,7 @@
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>Fixed</exposureMode>
-		<exposure>1</exposure>
+		<exposure>0.5</exposure>
 		<shadowSettings>
 			<disabled>
 				<farZ>0</farZ>
@@ -107,7 +107,7 @@
 								<item type="traktor.world.LightComponentData" version="11">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
-									<intensity>2</intensity>
+									<intensity>0.5</intensity>
 									<castShadow>true</castShadow>
 									<range>20</range>
 									<radius>1.570796</radius>
@@ -163,7 +163,7 @@
 								<item type="traktor.world.LightComponentData" version="11">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
-									<intensity>1</intensity>
+									<intensity>0.25</intensity>
 									<castShadow>false</castShadow>
 									<range>20</range>
 									<radius>1.570796</radius>

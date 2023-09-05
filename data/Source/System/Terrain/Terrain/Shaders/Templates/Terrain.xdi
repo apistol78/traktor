@@ -428,8 +428,8 @@ Generated texture from surface cache.
 			<id>{31430D09-7ADB-554F-8DD8-CB0CD84B8194}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>210</second>
+				<first>2372</first>
+				<second>258</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -437,8 +437,8 @@ Generated texture from surface cache.
 			<id>{010F4795-3CF2-0A48-A9E8-E5EF67131EE2}</id>
 			<comment/>
 			<position>
-				<first>2400</first>
-				<second>166</second>
+				<first>2372</first>
+				<second>214</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -716,8 +716,8 @@ Generated texture from surface cache.
 			<id>{55159F6D-B7AC-694B-AE48-EDDEB427B7EF}</id>
 			<comment/>
 			<position>
-				<first>2352</first>
-				<second>80</second>
+				<first>2340</first>
+				<second>128</second>
 			</position>
 			<name>L_SurfaceRoughness</name>
 		</item>
@@ -725,8 +725,8 @@ Generated texture from surface cache.
 			<id>{CCE8848A-8742-D24D-B399-FC0D3C95B008}</id>
 			<comment/>
 			<position>
-				<first>2394</first>
-				<second>124</second>
+				<first>2366</first>
+				<second>172</second>
 			</position>
 			<value>0.25</value>
 		</item>
@@ -734,8 +734,8 @@ Generated texture from surface cache.
 			<id>{FF129A59-01E5-AC44-9BAD-9FDC58095309}</id>
 			<comment/>
 			<position>
-				<first>2410</first>
-				<second>-4</second>
+				<first>2382</first>
+				<second>44</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -908,8 +908,8 @@ $Output = vec4(mix(t, b, f), 0.0f);
 			<id>{AC111C0C-7361-B945-9086-55316955BDF2}</id>
 			<comment/>
 			<position>
-				<first>2440</first>
-				<second>-48</second>
+				<first>2412</first>
+				<second>0</second>
 			</position>
 			<name>L_Cut</name>
 		</item>
@@ -1221,8 +1221,8 @@ $Output = gl_DrawID;
 			<id>{9EEE9EB5-5245-414E-A9C1-EA43C12FFE82}</id>
 			<comment/>
 			<position>
-				<first>2410</first>
-				<second>38</second>
+				<first>2382</first>
+				<second>86</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -1243,6 +1243,11 @@ $Output = gl_DrawID;
 				<item>
 					<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
 					<name>Cast shadow</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+					<name>Discard</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -1278,11 +1283,6 @@ $Output = gl_DrawID;
 				<item>
 					<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 					<name>SurfaceColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
-					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -2338,16 +2338,6 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[85]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[115]"/>
-				<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[71]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
@@ -2424,6 +2414,16 @@ $Output = gl_DrawID;
 			<destination>
 				<node ref="/object/nodes/item[115]"/>
 				<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[85]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[115]"/>
+				<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 			</destination>
 		</item>
 	</edges>

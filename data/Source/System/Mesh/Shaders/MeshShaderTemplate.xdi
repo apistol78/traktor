@@ -44,6 +44,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+					<name>Discard</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{E0A19334-5502-FC49-AB32-3860B9607516}</id>
 					<name>Emissive</name>
 					<optional>true</optional>
@@ -76,11 +81,6 @@
 				<item>
 					<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 					<name>SurfaceColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
-					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -117,10 +117,6 @@
 				</item>
 				<item>
 					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Transparent</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -800,8 +796,8 @@ Tag_LightmapTexCoord
 			<id>{90A4E7B8-F84A-447B-9E26-0481E405B73A}</id>
 			<comment/>
 			<position>
-				<first>394</first>
-				<second>822</second>
+				<first>367</first>
+				<second>977</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -1488,16 +1484,6 @@ Tag_LightmapTexCoord
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[7]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1594,6 +1580,16 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
 			</destination>
 		</item>
 	</edges>
