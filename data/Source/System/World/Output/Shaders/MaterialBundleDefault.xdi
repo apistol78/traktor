@@ -17,7 +17,7 @@
 				<item>Metalness</item>
 				<item>Roughness</item>
 				<item>Specular</item>
-				<item>Transparent</item>
+				<item>Discard</item>
 				<item>View normal</item>
 				<item>Write velocity</item>
 				<item>View position</item>

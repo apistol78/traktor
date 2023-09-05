@@ -30,7 +30,7 @@
 				<item>Metalness</item>
 				<item>Roughness</item>
 				<item>Specular</item>
-				<item>Transparent</item>
+				<item>Discard</item>
 				<item>View normal</item>
 				<item>View position</item>
 				<item>View velocity</item>
@@ -125,7 +125,7 @@
 				<first>1187</first>
 				<second>1074</second>
 			</position>
-			<name>Transparent</name>
+			<name>Discard</name>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{C6F116A7-670F-8747-A9D3-86405E0E0AB9}</id>

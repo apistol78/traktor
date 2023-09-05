@@ -87,8 +87,8 @@
 			<id>{EDE3B640-C01A-0A49-8E86-9310091D8194}</id>
 			<comment/>
 			<position>
-				<first>990</first>
-				<second>289</second>
+				<first>989</first>
+				<second>276</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
@@ -117,8 +117,8 @@
 			<id>{F9B66BC4-6737-4D65-87DD-FDAC9AF7D103}</id>
 			<comment/>
 			<position>
-				<first>622</first>
-				<second>258</second>
+				<first>621</first>
+				<second>245</second>
 			</position>
 			<fragmentGuid>{78B269D7-7546-FB42-8539-BAC518A5A174}</fragmentGuid>
 			<inputPins>
@@ -130,6 +130,11 @@
 				<item>
 					<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
 					<name>Cast shadow</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+					<name>Discard</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -165,11 +170,6 @@
 				<item>
 					<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
 					<name>SurfaceColor</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
-					<name>Transparent</name>
 					<optional>true</optional>
 				</item>
 				<item>

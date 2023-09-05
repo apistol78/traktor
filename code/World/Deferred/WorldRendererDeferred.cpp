@@ -312,7 +312,11 @@ void WorldRendererDeferred::setupVisualPass(
 				s_techniqueDeferredColor,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::Last
+				IWorldRenderPass::Last,
+				{
+					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
+					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr)}
+				}
 			);
 
 			T_ASSERT(!renderContext->havePendingDraws());

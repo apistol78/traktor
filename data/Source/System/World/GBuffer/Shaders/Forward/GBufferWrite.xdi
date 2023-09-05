@@ -67,7 +67,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{363C0FA0-DF9F-564E-9671-C530C17B6AAA}</id>
 			<comment/>
 			<position>
@@ -112,7 +112,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Medium</precisionHint>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
@@ -135,11 +134,11 @@
 				<first>261</first>
 				<second>21</second>
 			</position>
-			<name>Alpha</name>
+			<name>Discard</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<haveDefaultValue>true</haveDefaultValue>
-			<defaultValue>1</defaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{D301496E-DDAC-4860-B8DD-15359A619FF7}</id>
@@ -157,7 +156,7 @@
 				<first>530</first>
 				<second>38</second>
 			</position>
-			<operator>CoGreaterEqual</operator>
+			<operator>CoLess</operator>
 		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{E38384FB-A792-504E-B3C9-EB43AAFE346E}</id>
