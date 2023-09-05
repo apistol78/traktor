@@ -10,6 +10,7 @@
 #include "Core/Math/RandomGeometry.h"
 #include "World/Entity.h"
 #include "World/WorldBuildContext.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor::animation
 {
@@ -23,8 +24,6 @@ RandomGeometry s_random;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BoidsComponent", BoidsComponent, world::IEntityComponent)
 
 BoidsComponent::BoidsComponent(
-	const RefArray< world::Entity >& boidEntities,
-	const Vector4& spawnPositionDiagonal,
 	const Vector4& spawnVelocityDiagonal,
 	const Vector4& constrain,
 	float followForce,
@@ -34,7 +33,7 @@ BoidsComponent::BoidsComponent(
 	float centerForce,
 	float maxVelocity
 )
-:	m_boidEntities(boidEntities)
+:	m_spawnVelocityDiagonal(spawnVelocityDiagonal)
 ,	m_constrain(constrain)
 ,	m_followForce(followForce)
 ,	m_repelDistance(repelDistance)
@@ -43,26 +42,17 @@ BoidsComponent::BoidsComponent(
 ,	m_centerForce(centerForce)
 ,	m_maxVelocity(maxVelocity)
 {
-	m_boids.resize(m_boidEntities.size());
-	for (auto& boid : m_boids)
-	{
-		boid.position = m_transform * (s_random.nextUnit() * spawnPositionDiagonal).xyz1();
-		boid.velocity = s_random.nextUnit() * spawnVelocityDiagonal;
-	}
 }
 
 void BoidsComponent::destroy()
 {
-	for (auto boidEntity : m_boidEntities)
-	{
-		if (boidEntity)
-			boidEntity->destroy();
-	}
-	m_boidEntities.resize(0);
+	m_owner = nullptr;
 }
 
 void BoidsComponent::setOwner(world::Entity* owner)
 {
+	m_owner = owner;
+	m_boids.resize(0);
 }
 
 void BoidsComponent::setTransform(const Transform& transform)
@@ -86,6 +76,27 @@ void BoidsComponent::update(const world::UpdateParams& update)
 	const Scalar deltaTime((float)min(update.deltaTime, 1.0 / 30.0));
 	const Vector4 attraction = m_transform.translation().xyz1();
 
+	if (deltaTime <= FUZZY_EPSILON)
+		return;
+
+	world::GroupComponent* group = m_owner->getComponent< world::GroupComponent >();
+	if (!group)
+		return;
+
+	const auto& entities = group->getEntities();
+
+	// Ensure number of boids match number of entities.
+	if (entities.size() != m_boids.size())
+	{
+		for (uint32_t i = (uint32_t)m_boids.size(); i < entities.size(); ++i)
+		{
+			auto& boid = m_boids.push_back();
+			boid.position = entities[i]->getTransform().translation().xyz1();
+			boid.velocity = s_random.nextUnit() * m_spawnVelocityDiagonal;
+		}
+		m_boids.resize(entities.size());
+	}
+
 	// Calculate perceived center and velocity of all boids.
 	Vector4 center(0.0f, 0.0f, 0.0f, 0.0f);
 	Vector4 velocity(0.0f, 0.0f, 0.0f, 0.0f);
@@ -95,7 +106,6 @@ void BoidsComponent::update(const world::UpdateParams& update)
 		velocity += m_boids[i].velocity;
 	}
 
-	const Vector4 constrainAdd = attraction * (Vector4::one() - m_constrain);
 	const Scalar invBoidsSize(1.0f / (float(m_boids.size()) - 1.0f));
 
 	// Update boids.
@@ -113,7 +123,8 @@ void BoidsComponent::update(const world::UpdateParams& update)
 			if (i != j)
 			{
 				Vector4 d = m_boids[j].position - m_boids[i].position;
-				if (d.normalize() < m_repelDistance)
+				Scalar ln = d.normalize();
+				if (ln > 0.0_simd && ln < m_repelDistance)
 					m_boids[i].velocity -= d * m_repelForce;
 			}
 		}
@@ -126,21 +137,24 @@ void BoidsComponent::update(const world::UpdateParams& update)
 
 		// 5: Clamp velocity.
 		const Scalar ln = m_boids[i].velocity.length();
-		m_boids[i].velocity = m_boids[i].velocity.normalized() * min(ln, m_maxVelocity);
+		if (ln > 0.0_simd)
+			m_boids[i].velocity = m_boids[i].velocity.normalized() * min(ln, m_maxVelocity);
 
 		// Integrate position.
 		m_boids[i].position += m_boids[i].velocity * deltaTime;
 
-		// Constrain position.
-		m_boids[i].position = m_boids[i].position * m_constrain + constrainAdd;
+		// Constrain velocity.
+		m_boids[i].velocity = m_boids[i].velocity * m_constrain;
 
 		// Update boid entity.
-		if (m_boidEntities[i])
+		if (entities[i])
 		{
-			m_boidEntities[i]->setTransform(Transform(
-				lookAt(m_boids[i].position, m_boids[i].position + m_boids[i].velocity).inverse()
-			));
-			m_boidEntities[i]->update(update);
+			if (m_boids[i].velocity.length() > 0.0_simd)
+				entities[i]->setTransform(Transform(
+					lookAt(m_boids[i].position, m_boids[i].position + m_boids[i].velocity).inverse()
+				));
+			else
+				entities[i]->setTransform(Transform(m_boids[i].position));
 		}
 	}
 }

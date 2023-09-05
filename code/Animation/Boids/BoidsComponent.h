@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
 #include "World/IEntityComponent.h"
 
@@ -19,16 +18,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor::world
-{
-
-class Entity;
-class IWorldRenderPass;
-class WorldBuildContext;
-class WorldRenderView;
-
-}
 
 namespace traktor::animation
 {
@@ -42,8 +31,6 @@ class T_DLLCLASS BoidsComponent : public world::IEntityComponent
 
 public:
 	explicit BoidsComponent(
-		const RefArray< world::Entity >& boidEntities,
-		const Vector4& spawnPositionDiagonal,
 		const Vector4& spawnVelocityDiagonal,
 		const Vector4& constrain,
 		float followForce,
@@ -64,8 +51,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	const RefArray< world::Entity >& getEntities() const { return m_boidEntities; }
-
 private:
 	struct Boid
 	{
@@ -73,9 +58,10 @@ private:
 		Vector4 velocity;
 	};
 
-	RefArray< world::Entity > m_boidEntities;
+	world::Entity* m_owner = nullptr;
 	AlignedVector< Boid > m_boids;
 	Transform m_transform;
+	Vector4 m_spawnVelocityDiagonal;
 	Vector4 m_constrain;
 	Scalar m_followForce;
 	Scalar m_repelDistance;

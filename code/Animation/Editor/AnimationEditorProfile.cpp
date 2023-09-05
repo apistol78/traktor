@@ -9,7 +9,6 @@
 #include "Animation/AnimationEntityFactory.h"
 #include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/AnimationResourceFactory.h"
-#include "Animation/Boids/BoidsRenderer.h"
 #include "Animation/Cloth/ClothRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimationComponentEditorFactory.h"
@@ -72,7 +71,6 @@ void AnimationEditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new AnimatedMeshComponentRenderer());
-	outEntityRenderers.push_back(new BoidsRenderer());
 	outEntityRenderers.push_back(new ClothRenderer());
 }
 
