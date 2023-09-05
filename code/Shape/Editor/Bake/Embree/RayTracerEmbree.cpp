@@ -273,17 +273,20 @@ void RayTracerEmbree::addModel(const model::Model* model, const Transform& trans
 		}
 
 		// Add filter functions if model contain alpha-test material.
-		//for (const auto& material : split->getMaterials())
-		//{
-		//	if (
-		//		material.getBlendOperator() == model::Material::BoAlphaTest &&
-		//		material.getDiffuseMap().image != nullptr
-		//	)
-		//	{
-		//		rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
-		//		rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
-		//	}
-		//}
+		for (const auto& material : split->getMaterials())
+		{
+			//if (
+			//	material.getBlendOperator() == model::Material::BoAlphaTest &&
+			//	material.getDiffuseMap().image != nullptr
+			//)
+			//{
+			//	rtcSetGeometryOccludedFilterFunction(mesh, alphaTestFilter);
+			//	rtcSetGeometryIntersectFilterFunction(mesh, alphaTestFilter);
+			//}
+
+			if (material.getBlendOperator() != model::Material::BoDecal)
+				rtcSetGeometryOccludedFilterFunction(mesh, shadowOccluded);
+		}
 
 		// Attach this class as user data to geometry.
 		rtcSetGeometryUserData(mesh, this);
@@ -428,6 +431,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 
 Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direction) const
 {
+	static RandomGeometry random;
 	float T_MATH_ALIGN16 normal[4];
 
 	RTCRayHit T_ALIGN64 rh;
@@ -457,26 +461,30 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 	Color4f hitMaterialColor = hitMaterial.getColor();
-	const auto& image = hitMaterial.getDiffuseMap().image;
-	if (image)
-	{
-		const uint32_t slot = 1;
-		float texCoord[2] = { 0.0f, 0.0f };
-		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+	//const auto& image = hitMaterial.getDiffuseMap().image;
+	//if (image)
+	//{
+	//	const uint32_t slot = 1;
+	//	float texCoord[2] = { 0.0f, 0.0f };
+	//	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-		image->getPixel(
-			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-			hitMaterialColor
-		);
-	}
+	//	image->getPixel(
+	//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+	//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+	//		hitMaterialColor
+	//	);
+	//}
 	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor / Scalar(PI);
 	const Scalar cosPhi = clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
 	const Scalar probability = 1.0_simd / Scalar(PI);
 
-	static RandomGeometry random;
 	const Color4f incoming = tracePath0(hitPosition, hitNormal, random, Light::LmDirect | Light::LmIndirect);
+
+	if (hitMaterial.getBlendOperator() != model::Material::BoDecal)
+	{
+		return traceRay(hitPosition + direction * 0.1_simd, direction);
+	}
 
 	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability);
 	return output;
@@ -556,19 +564,19 @@ Color4f RayTracerEmbree::tracePath0(
 
 			Color4f hitMaterialColor = hitMaterial.getColor();
 			const auto& image = hitMaterial.getDiffuseMap().image;
-			if (image)
-			{
-				const uint32_t slot = 1;
-				float texCoord[2] = { 0.0f, 0.0f };
-				rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+			//if (image)
+			//{
+			//	const uint32_t slot = 1;
+			//	float texCoord[2] = { 0.0f, 0.0f };
+			//	rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-				image->getPixel(
-					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-					hitMaterialColor
-				);
-				hitMaterialColor = hitMaterialColor.linear();
-			}
+			//	image->getPixel(
+			//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+			//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+			//		hitMaterialColor
+			//	);
+			//	hitMaterialColor = hitMaterialColor.linear();
+			//}
 			const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 			const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
@@ -653,19 +661,19 @@ Color4f RayTracerEmbree::traceSinglePath(
 
 	Color4f hitMaterialColor = hitMaterial.getColor();
 	const auto& image = hitMaterial.getDiffuseMap().image;
-	if (image)
-	{
-		const uint32_t slot = 1;
-		float texCoord[2] = { 0.0f, 0.0f };
-		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+	//if (image)
+	//{
+	//	const uint32_t slot = 1;
+	//	float texCoord[2] = { 0.0f, 0.0f };
+	//	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-		image->getPixel(
-			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-			hitMaterialColor
-		);
-		hitMaterialColor = hitMaterialColor.linear();
-	}
+	//	image->getPixel(
+	//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+	//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+	//		hitMaterialColor
+	//	);
+	//	hitMaterialColor = hitMaterialColor.linear();
+	//}
 	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
@@ -929,7 +937,6 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 		return;
 
 	RayTracerEmbree* self = (RayTracerEmbree*)args->geometryUserPtr;
-
 	RTCHitN* hits = args->hit;
 	Color4f color;
 
@@ -969,6 +976,31 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 					args->valid[i] = 0;
 			}
 		}
+	}
+}
+
+void RayTracerEmbree::shadowOccluded(const RTCFilterFunctionNArguments* args)
+{
+	if (args->context == nullptr)
+		return;
+
+	RayTracerEmbree* self = (RayTracerEmbree*)args->geometryUserPtr;
+	RTCHitN* hits = args->hit;
+
+	// Only rays occluded by opaque material are valid.
+	for (int i = 0; i < args->N; ++i)
+	{
+		if (args->valid[i] != -1)
+			continue;
+
+		const uint32_t geomID = RTCHitN_geomID(hits, args->N, i);
+		const uint32_t primID = RTCHitN_primID(hits, args->N, i);
+
+		const uint32_t offset = self->m_materialOffset[geomID];
+		const auto& hitMaterial = *self->m_materials[offset + primID];
+
+		if (hitMaterial.getBlendOperator() != model::Material::BoDecal)
+			args->valid[i] = 0;
 	}
 }
 

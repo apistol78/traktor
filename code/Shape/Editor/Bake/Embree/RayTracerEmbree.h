@@ -111,6 +111,8 @@ private:
 	) const;
 
 	static void alphaTestFilter(const RTCFilterFunctionNArguments* args);
+
+	static void shadowOccluded(const RTCFilterFunctionNArguments* args);
 };
 
 	}
