@@ -711,16 +711,16 @@ Eye direction
 			<id>{F22F7CE6-5806-3C43-A32C-77B6D6B57259}</id>
 			<comment/>
 			<position>
-				<first>1064</first>
-				<second>507</second>
+				<first>1095</first>
+				<second>440</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{96E0CF0A-7DFD-994F-9494-E9451FF230F8}</id>
 			<comment/>
 			<position>
-				<first>863</first>
-				<second>569</second>
+				<first>893</first>
+				<second>528</second>
 			</position>
 			<name>L_Reflections</name>
 		</item>
@@ -728,8 +728,8 @@ Eye direction
 			<id>{E4F3B5A2-C8C2-D14E-9265-5984179CF504}</id>
 			<comment/>
 			<position>
-				<first>598</first>
-				<second>500</second>
+				<first>599</first>
+				<second>528</second>
 			</position>
 			<name>L_SpecularG</name>
 		</item>
@@ -738,7 +738,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>809</first>
-				<second>441</second>
+				<second>440</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
@@ -1378,16 +1378,6 @@ Eye direction
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[65]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
@@ -1496,6 +1486,16 @@ Eye direction
 				<id>{99E003AF-999D-4AC3-AF6E-397B5B356E97}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1511,7 +1511,7 @@ Eye direction
 			</size>
 		</item>
 		<item type="traktor.render.Group">
-			<title>Reflection (not used)</title>
+			<title>Reflection</title>
 			<comment/>
 			<position>
 				<first>-16</first>
