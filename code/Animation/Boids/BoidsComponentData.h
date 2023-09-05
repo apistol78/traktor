@@ -19,14 +19,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::world
-{
-
-class EntityData;
-class IEntityBuilder;
-
-}
-
 namespace traktor::animation
 {
 
@@ -42,7 +34,7 @@ class T_DLLCLASS BoidsComponentData : public world::IEntityComponentData
 public:
 	BoidsComponentData();
 
-	Ref< BoidsComponent > createComponent(const world::IEntityBuilder* builder) const;
+	Ref< BoidsComponent > createComponent() const;
 
 	virtual int32_t getOrdinal() const override final;
 
@@ -50,12 +42,7 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const Ref< world::EntityData >& getBoidEntityData() const { return m_boidEntityData; }
-
 private:
-	Ref< world::EntityData > m_boidEntityData;
-	uint32_t m_boidCount;
-	Vector4 m_spawnPositionDiagonal;
 	Vector4 m_spawnVelocityDiagonal;
 	Vector4 m_constrain;
 	float m_followForce;
