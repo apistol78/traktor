@@ -31,15 +31,15 @@
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_ANIMATIONASSET</first>
-			<second>Animation asset</second>
+			<second>Animation</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_SKELETON</first>
-			<second>Animation skeleton</second>
+			<second>Skeleton</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_SKELETONASSET</first>
-			<second>Skeleton asset</second>
+			<second>Skeleton</second>
 		</item>
 		<item>
 			<first>TRAKTOR_ANIMATION_STATEGRAPH</first>
@@ -51,11 +51,11 @@
 		</item>
 		<item>
 			<first>TRAKTOR_SPARK_MOVIEASSET</first>
-			<second>Flash asset</second>
+			<second>UI movie</second>
 		</item>
 		<item>
 			<first>TRAKTOR_HF_HEIGHTFIELDASSET</first>
-			<second>Heightfield asset</second>
+			<second>Heightfield</second>
 		</item>
 		<item>
 			<first>TRAKTOR_HF_MATERIALMASKASSET</first>
@@ -71,7 +71,7 @@
 		</item>
 		<item>
 			<first>TRAKTOR_INPUT_INPUTMAPPINGASSET</first>
-			<second>Input asset</second>
+			<second>Input mapping</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_LODMESHENTITYDATA</first>
@@ -79,7 +79,7 @@
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_MESHASSET</first>
-			<second>Mesh asset</second>
+			<second>Mesh</second>
 		</item>
 		<item>
 			<first>TRAKTOR_MESH_MESHENTITYDATA</first>
@@ -101,9 +101,13 @@
 			<first>TRAKTOR_PHYSICS_MESHASSET</first>
 			<second>Physics mesh</second>
 		</item>
+        <item>
+            <first>TRAKTOR_RENDER_COLORGRADINGTEXTUREASSET</first>
+            <second>Color grading</second>
+        </item>
 		<item>
 			<first>TRAKTOR_RENDER_BFNTEXTUREASSET</first>
-			<second>BFN texture asset</second>
+			<second>BFN texture</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_SHADERGRAPH</first>
@@ -111,7 +115,7 @@
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_TEXTUREASSET</first>
-			<second>Texture asset</second>
+			<second>Texture</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RESOURCE_RESOURCEBUNDLEASSET</first>
@@ -135,7 +139,7 @@
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_SOUNDASSET</first>
-			<second>Sound asset</second>
+			<second>Sound</second>
 		</item>
 		<item>
 			<first>TRAKTOR_SOUND_SOUNDCATEGORY</first>
@@ -151,19 +155,15 @@
 		</item>
 		<item>
 			<first>TRAKTOR_SPRAY_POINTSETASSET</first>
-			<second>Effect point set asset</second>
+			<second>Effect point set</second>
 		</item>
 		<item>
 			<first>TRAKTOR_TERRAIN_TERRAINASSET</first>
-			<second>Terrain asset</second>
+			<second>Terrain</second>
 		</item>
 		<item>
 			<first>TRAKTOR_VIDEO_VIDEOASSET</first>
-			<second>Video asset</second>
-		</item>
-		<item>
-			<first>TRAKTOR_WEATHER_SKYENTITYDATA</first>
-			<second>Sky entity</second>
+			<second>Video</second>
 		</item>
 		<item>
 			<first>TRAKTOR_WORLD_ENTITYDATA</first>
@@ -199,7 +199,7 @@
 		</item>
 		<item>
 			<first>TRAKTOR_SHAPE_BAKECONFIGURATION</first>
-			<second>Lightmap bake configuration</second>
+			<second>Lightmap configuration</second>
 		</item>
 		<item>
 			<first>TRAKTOR_RENDER_IMAGEGRAPHASSET</first>
