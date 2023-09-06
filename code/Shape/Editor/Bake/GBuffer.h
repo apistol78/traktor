@@ -37,7 +37,6 @@ public:
 		Vector4 tangent;
 		uint32_t polygon;
 		uint32_t material;
-		float delta;
 		float distance;
 	};
 

@@ -42,7 +42,7 @@ namespace traktor
 		{
 
 const Scalar p(1.0f / (2.0f * PI));
-const float c_epsilonOffset = 0.0001f;
+const float c_epsilonOffset = 0.00001f;
 const int32_t c_valid[16] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 
 class WrappedSHFunction : public render::SHFunction
@@ -174,7 +174,7 @@ bool RayTracerEmbree::create(const BakeConfiguration* configuration)
 	// Create SH sampling engine.
 	m_shEngine = new render::SHEngine(3);
 	m_shEngine->generateSamplePoints(
-		100 // configuration->getIrradianceSampleCount()
+		60 // configuration->getIrradianceSampleCount()
 	);
 
 	// Calculate sampling pattern of shadows, using uniform pattern within a disc.
@@ -338,6 +338,24 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	const auto& polygons = model->getPolygons();
 	const auto& materials = model->getMaterials();
 
+
+	//for (int32_t y = region[1]; y < region[3]; ++y)
+	//{
+	//	for (int32_t x = region[0]; x < region[2]; ++x)
+	//	{
+	//		GBuffer::element_vector_t ev = gbuffer->get(x, y);
+	//		if (ev.empty())
+	//			continue;
+
+	//		if (ev.size() == 1)
+	//			lightmapDiffuse->setPixel(x, y, Color4f(0.0f, 1.0f, 0.0f, 1.0f));
+	//		else if (ev.size() == 2)
+	//			lightmapDiffuse->setPixel(x, y, Color4f(1.0f, 1.0f, 0.0f, 1.0f));
+	//		else
+	//			lightmapDiffuse->setPixel(x, y, Color4f(1.0f, 0.0f, 0.0f, 1.0f));
+	//	}
+	//}
+
 	for (int32_t y = region[1]; y < region[3]; ++y)
 	{
 		for (int32_t x = region[0]; x < region[2]; ++x)
@@ -353,56 +371,56 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				auto& elm = ev[i];
 
 				// Adjust gbuffer position to reduce shadowing issues.
-				{
-					const Scalar l = Scalar(elm.delta);
-					const Scalar hl = l * 1.0_simd;
+				//{
+				//	const Scalar l = Scalar(elm.delta);
+				//	const Scalar hl = l * 1.0_simd;
 
-					const Vector4 normal = elm.normal;
-					Vector4 position = elm.position + normal * hl;
+				//	const Vector4 normal = elm.normal;
+				//	Vector4 position = elm.position + normal * hl;
 
-					Vector4 u, v;
-					orthogonalFrame(normal, u, v);
+				//	Vector4 u, v;
+				//	orthogonalFrame(normal, u, v);
 
-					for (int32_t rev = 0; rev < 32; ++rev)
-					{
-						float minExitDistance = std::numeric_limits< float >::max();
-						Vector4 minExitDirection = Vector4::zero();
+				//	for (int32_t rev = 0; rev < 32; ++rev)
+				//	{
+				//		float minExitDistance = std::numeric_limits< float >::max();
+				//		Vector4 minExitDirection = Vector4::zero();
 
-						for (int32_t i = 0; i < 64; ++i)
-						{
-							const float a = TWO_PI * i / 64.0f;
-							const float s = sin(a), c = cos(a);
+				//		for (int32_t i = 0; i < 64; ++i)
+				//		{
+				//			const float a = TWO_PI * i / 64.0f;
+				//			const float s = sin(a), c = cos(a);
 
-							const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-							constructRayHit(position, traceDirection, hl, rh);
+				//			const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
+				//			constructRayHit(position, traceDirection, hl, rh);
 
-							RTCIntersectArguments iargs;
-							rtcInitIntersectArguments(&iargs);
-							iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
-							rtcIntersect1(m_scene, &rh, &iargs);
+				//			RTCIntersectArguments iargs;
+				//			rtcInitIntersectArguments(&iargs);
+				//			iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
+				//			rtcIntersect1(m_scene, &rh, &iargs);
 
-							if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-								continue;
+				//			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
+				//				continue;
 
-							const Vector4 hitNormal = getHitNormal(rh);
-							if (dot3(hitNormal, traceDirection) > 0.0_simd)
-							{
-								if (rh.ray.tfar < minExitDistance)
-								{
-									minExitDirection = traceDirection;
-									minExitDistance = rh.ray.tfar;
-								}
-							}
-						}
+				//			const Vector4 hitNormal = getHitNormal(rh);
+				//			if (dot3(hitNormal, traceDirection) > 0.0_simd)
+				//			{
+				//				if (rh.ray.tfar < minExitDistance)
+				//				{
+				//					minExitDirection = traceDirection;
+				//					minExitDistance = rh.ray.tfar;
+				//				}
+				//			}
+				//		}
 
-						if (minExitDirection.length2() > 0.0001_simd)
-							position += minExitDirection * Scalar(minExitDistance + l);
-						else
-							break;
-					}
+				//		if (minExitDirection.length2() > 0.0001_simd)
+				//			position += minExitDirection * Scalar(minExitDistance + l);
+				//		else
+				//			break;
+				//	}
 
-					elm.position = position;
-				}
+				//	elm.position = position;
+				//}
 
 				// Trace lightmap.
 				{

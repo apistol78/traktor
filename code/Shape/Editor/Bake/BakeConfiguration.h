@@ -56,6 +56,8 @@ public:
 
 	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
 
+	uint32_t calculateModelRelevanteHash() const;
+
 	virtual void serialize(ISerializer& s) override final;
 
 private:

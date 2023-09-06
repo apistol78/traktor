@@ -71,6 +71,8 @@ public:
 
 	T_MATH_INLINE float length2() const;
 
+	T_MATH_INLINE Vector2 absolute() const;
+
 	T_MATH_INLINE Vector2 normalized() const;
 
 	T_MATH_INLINE Vector2 perpendicular() const;

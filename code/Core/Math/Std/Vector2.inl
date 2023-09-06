@@ -12,7 +12,7 @@ namespace traktor
 T_MATH_INLINE Vector2::Vector2()
 {
 	x =
-	y = 0;
+	y = 0.0f;
 }
 
 T_MATH_INLINE Vector2::Vector2(const Vector2& v)
@@ -53,6 +53,11 @@ T_MATH_INLINE float Vector2::length() const
 T_MATH_INLINE float Vector2::length2() const
 {
 	return dot(*this, *this);
+}
+
+T_MATH_INLINE Vector2 Vector2::absolute() const
+{
+	return Vector2(abs(x), abs(y));
 }
 
 T_MATH_INLINE Vector2 Vector2::normalized() const
