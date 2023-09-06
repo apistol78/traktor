@@ -99,6 +99,7 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 	AlignedVector< Vector4 > normals;
 	AlignedVector< Vector4 > tangents;
 	Winding2 texCoords;
+	Random rnd;
 
 	m_width = width;
 	m_height = height;
@@ -167,10 +168,10 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			bbox.contain(texCoords[i1]);
 			bbox.contain(texCoords[i2]);
 
-			const int32_t pad = 1;
-			const int32_t sx = (int32_t)(bbox.mn.x - pad);
+			const int32_t pad = 2;
+			const int32_t sx = (int32_t)(bbox.mn.x - pad - 0.5f);
 			const int32_t ex = (int32_t)(bbox.mx.x + pad + 0.5f);
-			const int32_t sy = (int32_t)(bbox.mn.y - pad);
+			const int32_t sy = (int32_t)(bbox.mn.y - pad - 0.5f);
 			const int32_t ey = (int32_t)(bbox.mx.y + pad + 0.5f);
 
 			for (int32_t x = sx; x <= ex; ++x)
@@ -180,18 +181,16 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					const Vector2 texelCenter((float)x, (float)y);
-					Vector2 pt = texelCenter;
+					const Vector2 texelCenterRnd = Vector2(rnd.nextFloat() * 0.5f - 0.5f, rnd.nextFloat() * 0.5f - 0.5f);
+					const Vector2 texelCenter = Vector2((float)x + 0.5f, (float)y + 0.5f) + texelCenterRnd;
 
+					Vector2 pt = texelCenter;
 					if (!bary.inside(pt))
 					{
-						const float treshold = 1.5f;
-
 						const Vector2 cpt = texCoords.closest(pt);
-						const float fd = (pt - cpt).length();
-						if (fd > treshold)
+						const Vector2 d = (pt - cpt).absolute();
+						if (d.x > 1.5f || d.y > 1.5f)
 							continue;
-
 						pt = cpt;
 					}
 
@@ -226,12 +225,6 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					elm->polygon = i;
 					elm->material = polygon.getMaterial();
 					elm->distance = distance;
-
-					// Evaluate delta magnitude of position in world space per texel offset.
-					const Vector4 ddx = ipolPositions.evaluate(bary, pt + Vector2(1.0f, 0.0f)).xyz1() - elm->position;
-					const Vector4 ddy = ipolPositions.evaluate(bary, pt + Vector2(0.0f, 1.0f)).xyz1() - elm->position;
-					const Vector4 duv = max(ddx.absolute(), ddy.absolute());
-					elm->delta = max(max(duv.x(), duv.y()), duv.z()) * Scalar(sqrt(2.0f));
 				}
 			}
 		});

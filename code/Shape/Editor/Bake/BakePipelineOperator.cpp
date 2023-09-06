@@ -311,9 +311,9 @@ void addSky(
 			radiance->clearAlpha(1.0f);
 
 			// Attenuate images; imperically measured using Blender as reference.
-			//const float c_refScale = 5.0f / 4.0f;
-			//const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-			//radiance->apply(&tform);
+			const float c_refScale = 5.0f / 4.0f;
+			const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			radiance->apply(&tform);
 
 			// Scale probe by user attenuation factor.
 			const drawing::TransformFilter tform2(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -330,23 +330,13 @@ void addSky(
 /*! */
 int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
 {
-	Winding3 polygonWinding;
+	const Scalar mx = model->getBoundingBox().getExtent().max() * 2.0_simd;
 
-	float totalWorldArea = 0.0f;
-	for (const auto& polygon : model->getPolygons())
-	{
-		polygonWinding.resize(0);
-		for (const auto index : polygon.getVertices())
-			polygonWinding.push(model->getVertexPosition(index));
-		totalWorldArea += abs(polygonWinding.area());
-	}
-
-	const float totalLightMapArea = lumelDensity * lumelDensity * totalWorldArea;
-	int32_t size = (int32_t)(std::sqrt(totalLightMapArea) + 0.5f);
+	int32_t size = (int32_t)(mx *lumelDensity + 0.5f);
 	size = std::max< int32_t >(minimumSize, size);
 	size = std::min< int32_t >(maximumSize, size);
 
-	return alignUp(size, 4);
+	return alignUp(size, 4);	
 }
 
 		}
@@ -530,7 +520,7 @@ bool BakePipelineOperator::build(
 	ms_tracerProcessor->cancel(sourceInstance->getGuid());
 
 	// Calculate hash of configuration so we don't use stale models from cache.
-	const uint32_t configurationHash = DeepHash(configuration).get();
+	const uint32_t configurationHash = configuration->calculateModelRelevanteHash();
 
 	log::info << L"Creating lightmap tasks..." << Endl;
 	Ref< TracerTask > tracerTask = new TracerTask(
@@ -650,7 +640,6 @@ bool BakePipelineOperator::build(
 				// Calculate synthesized ids.
 				const Guid entityId = inoutEntityData->getId();
 				Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
-				//Guid outputId = entityId.permutation(c_outputIdSeed);
 
 				// Find model synthesizer which can generate from components.
 				auto componentDatas = inoutEntityData->getComponents();
@@ -863,7 +852,6 @@ bool BakePipelineOperator::build(
 					}
 
 					lightmapDiffuseId.permutate();
-					//outputId.permutate();
 				}
 			}
 

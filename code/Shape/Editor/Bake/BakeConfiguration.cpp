@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/Murmur3.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
@@ -13,12 +14,21 @@
 #include "Core/Serialization/Member.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 31, BakeConfiguration, ISerializable)
+
+uint32_t BakeConfiguration::calculateModelRelevanteHash() const
+{
+	Murmur3 cs;
+	cs.begin();
+	cs.feed(m_lumelDensity);
+	cs.feed(m_minimumLightMapSize);
+	cs.feed(m_maximumLightMapSize);
+	cs.end();
+	return cs.get();
+}
 
 void BakeConfiguration::serialize(ISerializer& s)
 {
@@ -103,5 +113,4 @@ void BakeConfiguration::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

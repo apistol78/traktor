@@ -151,121 +151,6 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 #endif
 }
 
-void line(const Vector2& from, const Vector2& to, const std::function< void(const Vector2, float) >& fn)
-{
-	Vector2 ad = (to - from);
-	ad.x = std::abs(ad.x);
-	ad.y = std::abs(ad.y);
-	int32_t ln = (int32_t)(std::max(ad.x, ad.y) + 0.5f);
-	for (int32_t i = 0; i <= ln; ++i)
-	{
-		float fraction = (float)i / ln;
-		Vector2 position = lerp(from, to, fraction);
-		fn(position, fraction);
-	}
-}
-
-void seamFilter(const model::Model* model, uint32_t channel, drawing::Image* lightmap)
-{
-	const float edgeLimit = std::cos(deg2rad(45.0f));
-	const Vector2 imageSize(lightmap->getWidth() - 1, lightmap->getHeight() - 1);
-
-	model::ModelAdjacency adjacency(model, model::ModelAdjacency::Mode::ByPosition);
-	for (uint32_t i = 0; i < adjacency.getEdgeCount(); ++i)
-	{
-		// Get shared edges of this polygon's edge.
-		model::ModelAdjacency::share_vector_t shared;
-		adjacency.getSharedEdges(i, shared);
-		if (shared.size() != 1)
-			continue;
-
-		// Get attributes of this edge.
-		const model::Polygon& polygonA = model->getPolygon(adjacency.getPolygon(i));
-		uint32_t Aivx0 = polygonA.getVertex(adjacency.getPolygonEdge(i));
-		uint32_t Aivx1 = polygonA.getVertex((Aivx0 + 1) % polygonA.getVertexCount());
-
-		// Get attributes of shared edge.
-		const model::Polygon& polygonB = model->getPolygon(adjacency.getPolygon(shared[0]));
-		uint32_t Bivx0 = polygonB.getVertex(adjacency.getPolygonEdge(shared[0]));
-		uint32_t Bivx1 = polygonB.getVertex((Bivx0 + 1) % polygonB.getVertexCount());
-
-		model::Vertex Avx0 = model->getVertex(Aivx0);
-		model::Vertex Avx1 = model->getVertex(Aivx1);
-		model::Vertex Bvx0 = model->getVertex(Bivx0);
-		model::Vertex Bvx1 = model->getVertex(Bivx1);
-
-		// Swap indices if order is reversed.
-		if (Bvx0.getPosition() == Avx1.getPosition())
-		{
-			std::swap(Bivx0, Bivx1);
-			std::swap(Bvx0, Bvx1);
-		}
-
-		// Do not blend over sharp edges.
-		Vector4 An = (model->getNormal(Avx0.getNormal()) + model->getNormal(Avx1.getNormal())).normalized();
-		Vector4 Bn = (model->getNormal(Bvx0.getNormal()) + model->getNormal(Bvx1.getNormal())).normalized();
-		if (dot3(An, Bn) < edgeLimit)
-			continue;
-
-		// Check for lightmap seam.
-		if (
-			Avx0.getTexCoord(channel) != Bvx0.getTexCoord(channel) ||
-			Avx1.getTexCoord(channel) != Bvx1.getTexCoord(channel)
-		)
-		{
-			Vector4 Ap0 = model->getPosition(Avx0.getPosition());
-			Vector4 Ap1 = model->getPosition(Avx1.getPosition());
-			Vector2 Auv0 = model->getTexCoord(Avx0.getTexCoord(channel)) * imageSize;
-			Vector2 Auv1 = model->getTexCoord(Avx1.getTexCoord(channel)) * imageSize;
-
-			Vector4 Bp0 = model->getPosition(Bvx0.getPosition());
-			Vector4 Bp1 = model->getPosition(Bvx1.getPosition());
-			Vector2 Buv0 = model->getTexCoord(Bvx0.getTexCoord(channel)) * imageSize;
-			Vector2 Buv1 = model->getTexCoord(Bvx1.getTexCoord(channel)) * imageSize;
-
-			float Auvln = (Auv1 - Auv0).length();
-			float Buvln = (Buv1 - Buv0).length();
-
-			if (Auvln >= Buvln)
-			{
-				line(Auv0, Auv1, [&](const Vector2& Auv, float fraction) {
-					Vector2 Buv = lerp(Buv0, Buv1, fraction);
-
-					const int32_t Ax = (int32_t)(Auv.x + 0.5f);
-					const int32_t Ay = (int32_t)(Auv.y + 0.5f);
-					const int32_t Bx = (int32_t)(Buv.x + 0.5f);
-					const int32_t By = (int32_t)(Buv.y + 0.5f);
-
-					Color4f Aclr, Bclr;
-					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
-					{
-						lightmap->setPixel(Ax, Ay, Aclr * 0.75_simd + Bclr * 0.25_simd);
-						lightmap->setPixel(Bx, By, Aclr * 0.25_simd + Bclr * 0.75_simd);
-					}
-				});
-			}
-			else
-			{
-				line(Buv0, Buv1, [&](const Vector2& Buv, float fraction) {
-					Vector2 Auv = lerp(Auv0, Auv1, fraction);
-
-					const int32_t Ax = (int32_t)(Auv.x + 0.5f);
-					const int32_t Ay = (int32_t)(Auv.y + 0.5f);
-					const int32_t Bx = (int32_t)(Buv.x + 0.5f);
-					const int32_t By = (int32_t)(Buv.y + 0.5f);
-
-					Color4f Aclr, Bclr;
-					if (lightmap->getPixel(Ax, Ay, Aclr) && lightmap->getPixel(Bx, By, Bclr))
-					{
-						lightmap->setPixel(Ax, Ay, Aclr * 0.75_simd + Bclr * 0.25_simd);
-						lightmap->setPixel(Bx, By, Aclr * 0.25_simd + Bclr * 0.75_simd);
-					}
-				});
-			}
-		}
-	}
-}
-
 bool writeTexture(
 	db::Instance* outputInstance,
 	const std::wstring& compressionMethod,
@@ -561,7 +446,7 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
-		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel, m_editor ? 1 : 4);
+		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel, 4);
 
 		// Trace lightmaps.
 		Ref< drawing::Image > lightmapDiffuse = new drawing::Image(
@@ -605,8 +490,6 @@ bool TracerProcessor::process(const TracerTask* task)
 			// Denoise lightmap.
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
-
-			seamFilter(renderModel, channel, lightmapDiffuse);
 
 			lightmapDiffuse->clearAlpha(1.0f);
 

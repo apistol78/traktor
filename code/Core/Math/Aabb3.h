@@ -158,42 +158,42 @@ public:
 	/*! Scale bounding box along extent vector. */
 	T_MATH_INLINE Aabb3 scale(const Scalar& factor) const
 	{
-		Vector4 center = getCenter();
-		Vector4 extent = getExtent() * factor;
-		Vector4 bbmn = center - extent;
-		Vector4 bbmx = center + extent;
+		const Vector4 center = getCenter();
+		const Vector4 extent = getExtent() * factor;
+		const Vector4 bbmn = center - extent;
+		const Vector4 bbmx = center + extent;
 		return Aabb3(bbmn, bbmx);
 	}
 
 	/*! Expand bounding box. */
 	T_MATH_INLINE Aabb3 expand(const Scalar& margin) const
 	{
-		Vector4 center = getCenter();
-		Vector4 extent = getExtent() + Vector4(margin, margin, margin, 0);
-		Vector4 bbmn = center - extent;
-		Vector4 bbmx = center + extent;
+		const Vector4 center = getCenter();
+		const Vector4 extent = getExtent() + Vector4(margin, margin, margin, 0);
+		const Vector4 bbmn = center - extent;
+		const Vector4 bbmx = center + extent;
 		return Aabb3(bbmn, bbmx);
 	}
 
 	/*! Query intersection with sphere. */
 	T_MATH_INLINE bool queryIntersectionSphere(const Vector4& center, const Scalar& radius) const
 	{
-		Vector4 minDistance = max(mn - center, Vector4::zero());
-		Vector4 maxDistance = max(center - mx, Vector4::zero());
-		Scalar distance = dot3(minDistance, minDistance) + dot3(maxDistance, maxDistance);
+		const Vector4 minDistance = max(mn - center, Vector4::zero());
+		const Vector4 maxDistance = max(center - mx, Vector4::zero());
+		const Scalar distance = dot3(minDistance, minDistance) + dot3(maxDistance, maxDistance);
 		return distance <= radius * radius;
 	}
 
 	/*! Get center of bounding box. */
 	T_MATH_INLINE Vector4 getCenter() const
 	{
-		return ((mn + mx) * Scalar(0.5f)).xyz1();
+		return ((mn + mx) * 0.5_simd).xyz1();
 	}
 
 	/*! Get extent of bounding box. */
 	T_MATH_INLINE Vector4 getExtent() const
 	{
-		return ((mx - mn) * Scalar(0.5f)).xyz0();
+		return ((mx - mn) * 0.5_simd).xyz0();
 	}
 
 	/*! Check if bounding box is empty. */
