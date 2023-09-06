@@ -129,12 +129,6 @@ public:
 
 	const Map& getNormalMap() const { return m_normalMap; }
 
-	void setLightMap(const Map& lightMap);
-
-	Map& getLightMap() { return m_lightMap; }
-
-	const Map& getLightMap() const { return m_lightMap; }
-
 	void setColor(const Color4f& color);
 
 	const Color4f& getColor() const { return m_color; }
@@ -187,7 +181,6 @@ private:
 	Map m_emissiveMap;
 	Map m_reflectiveMap;
 	Map m_normalMap;
-	Map m_lightMap;
 	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_diffuseTerm = 1.0f;
 	float m_specularTerm = 1.0f;

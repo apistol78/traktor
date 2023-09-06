@@ -635,8 +635,7 @@ void MeshAssetEditor::createMaterialShader()
 			m.getTransparencyMap(),
 			m.getEmissiveMap(),
 			m.getReflectiveMap(),
-			m.getNormalMap(),
-			m.getLightMap()
+			m.getNormalMap()
 		};
 			
 		for (auto& map : maps)
@@ -654,7 +653,6 @@ void MeshAssetEditor::createMaterialShader()
 		m.setEmissiveMap(maps[5]);
 		m.setReflectiveMap(maps[6]);
 		m.setNormalMap(maps[7]);
-		m.setLightMap(maps[8]);
 	}
 	m_model->setMaterials(materials);
 

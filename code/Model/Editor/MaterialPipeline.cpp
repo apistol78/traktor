@@ -57,7 +57,6 @@ bool MaterialPipeline::buildDependencies(
 	pipelineDepends->addDependency(material->getEmissiveMap().texture, editor::PdfBuild);
 	pipelineDepends->addDependency(material->getReflectiveMap().texture, editor::PdfBuild);
 	pipelineDepends->addDependency(material->getNormalMap().texture, editor::PdfBuild);
-	pipelineDepends->addDependency(material->getLightMap().texture, editor::PdfBuild);
 	return true;
 }
 

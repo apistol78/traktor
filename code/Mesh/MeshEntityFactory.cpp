@@ -8,6 +8,8 @@
  */
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentData.h"
+#include "Mesh/MeshParameterComponent.h"
+#include "Mesh/MeshParameterComponentData.h"
 #include "Mesh/MeshEntityFactory.h"
 
 namespace traktor::mesh
@@ -33,7 +35,7 @@ const TypeInfoSet MeshEntityFactory::getEntityEventTypes() const
 
 const TypeInfoSet MeshEntityFactory::getEntityComponentTypes() const
 {
-	return makeTypeInfoSet< MeshComponentData >();
+	return makeTypeInfoSet< MeshComponentData, MeshParameterComponentData >();
 }
 
 Ref< world::Entity > MeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
@@ -48,8 +50,12 @@ Ref< world::IEntityEvent > MeshEntityFactory::createEntityEvent(const world::IEn
 
 Ref< world::IEntityComponent > MeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	const MeshComponentData* meshComponentData = mandatory_non_null_type_cast< const MeshComponentData* >(&entityComponentData);
-	return meshComponentData->createComponent(m_resourceManager, m_renderSystem);
+	if (auto meshComponentData = dynamic_type_cast< const MeshComponentData* >(&entityComponentData))
+		return meshComponentData->createComponent(m_resourceManager, m_renderSystem);
+	else if (auto meshParameterComponentData = dynamic_type_cast< const MeshParameterComponentData* >(&entityComponentData))
+		return meshParameterComponentData->createComponent(m_resourceManager);
+	else
+		return nullptr;
 }
 
 }

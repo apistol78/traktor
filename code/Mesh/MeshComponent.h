@@ -42,8 +42,6 @@ class T_DLLCLASS MeshComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit MeshComponent();
-
 	virtual void destroy() override;
 
 	virtual void setOwner(world::Entity* owner) override;
@@ -71,9 +69,9 @@ public:
 	IntervalTransform& getTransform() { return m_transform; }
 
 protected:
-	world::Entity* m_owner;
-	Ref< const IMeshParameterCallback > m_parameterCallback;
-	IntervalTransform m_transform;	//!< Contain interval of update transforms. 
+	world::Entity* m_owner = nullptr;
+	const IMeshParameterCallback* m_parameterCallback = nullptr;
+	IntervalTransform m_transform = Transform::identity();	//!< Contain interval of update transforms. 
 };
 
 }

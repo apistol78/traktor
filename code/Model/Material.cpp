@@ -76,11 +76,6 @@ void Material::setNormalMap(const Map& normalMap)
 	m_normalMap = normalMap;
 }
 
-void Material::setLightMap(const Map& lightMap)
-{
-	m_lightMap = lightMap;
-}
-
 void Material::setColor(const Color4f& color)
 {
 	m_color = color;
@@ -154,7 +149,13 @@ void Material::serialize(ISerializer& s)
 	s >> MemberComposite< Map >(L"emissiveMap", m_emissiveMap);
 	s >> MemberComposite< Map >(L"reflectiveMap", m_reflectiveMap);
 	s >> MemberComposite< Map >(L"normalMap", m_normalMap);
-	s >> MemberComposite< Map >(L"lightMap", m_lightMap);
+	
+	if (s.getVersion() < 3)
+	{
+		Map lightMap;
+		s >> MemberComposite< Map >(L"lightMap", lightMap);
+	}
+
 	s >> Member< Color4f >(L"color", m_color);
 	s >> Member< float >(L"diffuseTerm", m_diffuseTerm);
 	s >> Member< float >(L"specularTerm", m_specularTerm);

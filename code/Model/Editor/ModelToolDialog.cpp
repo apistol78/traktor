@@ -215,7 +215,6 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_EMISSIVE_MAP"), 100_ut));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_REFLECTIVE_MAP"), 100_ut));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_NORMAL_MAP"), 100_ut));
-	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_LIGHT_MAP"), 100_ut));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_COLOR"), 110_ut));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_DIFFUSE_TERM"), 100_ut));
 	m_materialGrid->addColumn(new ui::GridColumn(i18n::Text(L"MODEL_TOOL_MATERIAL_SPECULAR_TERM"), 100_ut));
@@ -490,7 +489,6 @@ void ModelToolDialog::updateModel()
 			row->add(new ui::GridItem(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]"));
 			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
 			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getLightMap().name + L" [" + toString(i->getLightMap().channel) + L"]"));
 			row->add(new ui::GridItem( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha())));
 			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
 			row->add(new ui::GridItem(toString(i->getSpecularTerm())));

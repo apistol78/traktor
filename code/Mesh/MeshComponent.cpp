@@ -14,12 +14,6 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponent", MeshComponent, world::IEntityComponent)
 
-MeshComponent::MeshComponent()
-:	m_owner(nullptr)
-,	m_transform(Transform::identity())
-{
-}
-
 void MeshComponent::destroy()
 {
 	m_owner = nullptr;
