@@ -45,6 +45,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
 #include "Mesh/MeshComponentData.h"
+#include "Mesh/MeshParameterComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -649,7 +650,7 @@ bool BakePipelineOperator::build(
 				// Calculate synthesized ids.
 				const Guid entityId = inoutEntityData->getId();
 				Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
-				Guid outputId = entityId.permutation(c_outputIdSeed);
+				//Guid outputId = entityId.permutation(c_outputIdSeed);
 
 				// Find model synthesizer which can generate from components.
 				auto componentDatas = inoutEntityData->getComponents();
@@ -701,6 +702,8 @@ bool BakePipelineOperator::build(
 								model::UnwrapUV(channel, lightmapSize).apply(*model);
 							}
 
+							// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
+							model->setProperty< PropertyString >(L"ID", Guid::create().format());
 							return model;
 						}
 					);
@@ -711,6 +714,11 @@ bool BakePipelineOperator::build(
 							pipelineBuilder->getProfiler()->begin(type_of(entityReplicator));
 							Ref< model::Model > model = entityReplicator->createModel(pipelineBuilder, inoutEntityData, componentData, world::IEntityReplicator::Usage::Collision);
 							pipelineBuilder->getProfiler()->end();
+							if (!model)
+								return nullptr;
+
+							// Attach an unique ID for this mesh; since collision model is cached this will get reused automatically.
+							model->setProperty< PropertyString >(L"ID", Guid::create().format());
 							return model;
 						}
 					);
@@ -727,10 +735,6 @@ bool BakePipelineOperator::build(
 						{
 							// Register lightmap ID as being built.
 							pipelineBuilder->buildAdHocOutput(lightmapDiffuseId);
-
-							// Modify all materials to contain reference to lightmap channel.
-							for (auto& material : visualModel->getMaterials())
-								material.setLightMap(model::Material::Map(L"Lightmap", L"Lightmap", false, lightmapDiffuseId));
 
 							// Create lightmap output instance, attach an alias until it's been traced.
 							Ref< db::Instance > lightmapDiffuseInstance = pipelineBuilder->createOutputInstance(L"Generated/" + lightmapDiffuseId.format(), lightmapDiffuseId);
@@ -761,6 +765,8 @@ bool BakePipelineOperator::build(
 
 						if (visualModel)
 						{
+							const Guid outputMeshId = Guid(visualModel->getProperty< std::wstring >(L"ID"));
+
 							Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(
 								visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >())
 							);
@@ -775,24 +781,30 @@ bool BakePipelineOperator::build(
 								outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 							}
 
+							// Setup per-component parameters.
+							Ref< mesh::MeshParameterComponentData > meshParameter = new mesh::MeshParameterComponentData();
+							meshParameter->setTexture(L"__Lightmap__", resource::Id< render::ITexture >(lightmapDiffuseId));
+
+							// Create entity.
 							Ref< world::EntityData > outputMeshEntity = new world::EntityData();
 							outputMeshEntity->setId(Guid::create());
 							outputMeshEntity->setName(inoutEntityData->getName());
 							outputMeshEntity->setTransform(inoutEntityData->getTransform());
-							outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputId)));
+							outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputMeshId)));
+							outputMeshEntity->setComponent(meshParameter);
 							outputGroup->addEntityData(outputMeshEntity);
 
 							// Ensure visual mesh is build.
 							pipelineBuilder->buildAdHocOutput(
 								outputMeshAsset,
-								outputId,
+								outputMeshId,
 								visualModel
 							);
 						}
 
 						if (collisionModel)
 						{
-							const Guid outputShapeId = outputId.permutation(c_shapeMeshAssetSeed);
+							const Guid outputShapeId = Guid(collisionModel->getProperty< std::wstring >(L"ID"));
 
 							Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
 								collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())
@@ -851,7 +863,7 @@ bool BakePipelineOperator::build(
 					}
 
 					lightmapDiffuseId.permutate();
-					outputId.permutate();
+					//outputId.permutate();
 				}
 			}
 

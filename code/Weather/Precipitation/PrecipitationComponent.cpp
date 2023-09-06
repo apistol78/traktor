@@ -27,7 +27,7 @@ const render::Handle c_handleDepthDistance(L"Precipitation_DepthDistance");
 const render::Handle c_handleOpacity(L"Precipitation_Opacity");
 const render::Handle c_handleLayerAngle(L"Precipitation_LayerAngle");
 
-class PrecipitationMeshCallback : public RefCountImpl< mesh::IMeshParameterCallback >
+class PrecipitationMeshCallback : public mesh::IMeshParameterCallback
 {
 public:
 	Vector4 m_frustumEdges[4];
@@ -36,9 +36,7 @@ public:
 	float m_opacity;
 	float* m_layerAngle;
 
-	virtual void setCombination(render::Shader* shader) const final {}
-
-	virtual void setParameters(render::ProgramParameters* programParameters) const final
+	virtual void setParameters(render::ProgramParameters* programParameters) const override final
 	{
 		programParameters->setVectorArrayParameter(c_handleFrustumEdges, m_frustumEdges, sizeof_array(m_frustumEdges));
 		programParameters->setFloatParameter(c_handleParallaxDistance, m_parallaxDistance);

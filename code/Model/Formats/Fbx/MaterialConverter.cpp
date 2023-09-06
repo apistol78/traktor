@@ -449,12 +449,6 @@ void fixMaterialUvSets(Model& outModel)
 				map.channel = channel;
 			material.setNormalMap(map);
 		}
-		{
-			auto map = material.getLightMap();
-			if (map.channel == L"default")
-				map.channel = channel;
-			material.setLightMap(map);
-		}
 	}
 	outModel.setMaterials(materials);
 }

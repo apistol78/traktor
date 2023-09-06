@@ -42,6 +42,8 @@ Ref< Model > ModelFormatTmd::read(const Path& filePath, const std::wstring& filt
 		MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
 		return BinarySerializer(&ms).readObject< Model >();
 	}
+	else
+		return nullptr;
 #else
 	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead | File::FmMapped);
 	if (stream)

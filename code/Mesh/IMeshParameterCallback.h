@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/IRefCount.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,7 +35,7 @@ namespace traktor::mesh
  * Called when meshes are rendered in order to allow
  * user defined shader parameters.
  */
-class T_DLLCLASS IMeshParameterCallback : public IRefCount
+class T_DLLCLASS IMeshParameterCallback
 {
 public:
 	virtual void setParameters(render::ProgramParameters* programParameters) const = 0;

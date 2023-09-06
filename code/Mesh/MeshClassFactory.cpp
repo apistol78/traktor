@@ -11,7 +11,6 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedIntervalTransform.h"
-#include "Mesh/IMeshParameterCallback.h"
 #include "Mesh/MeshClassFactory.h"
 #include "Mesh/MeshComponent.h"
 #include "Mesh/Blend/BlendMesh.h"
@@ -39,42 +38,6 @@ namespace traktor::mesh
 	namespace
 	{
 
-class DelegateMeshParameterCallback : public RefCountImpl< IMeshParameterCallback >
-{
-public:
-	DelegateMeshParameterCallback(IRuntimeDelegate* callback)
-	:	m_callback(callback)
-	{
-	}
-
-	virtual void setCombination(render::Shader* shader) const
-	{
-	}
-
-	virtual void setParameters(render::ProgramParameters* programParameters) const
-	{
-		m_programParameters.setProgramParameters(programParameters);
-		Any argv[] =
-		{
-			CastAny< render::BoxedProgramParameters* >::set(&m_programParameters)
-		};
-		m_callback->call(sizeof_array(argv), argv);
-		m_programParameters.setProgramParameters(nullptr);
-	}
-
-private:
-	Ref< IRuntimeDelegate > m_callback;
-	mutable render::BoxedProgramParameters m_programParameters;
-};
-
-void MeshComponent_setParameterCallback(MeshComponent* self, IRuntimeDelegate* callback)
-{
-	if (callback)
-		self->setParameterCallback(new DelegateMeshParameterCallback(callback));
-	else
-		self->setParameterCallback(nullptr);
-}
-
 const IntervalTransform& MeshComponent_getTransform(MeshComponent* self)
 {
 	return self->getTransform();
@@ -90,7 +53,6 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIMesh);
 
 	auto classMeshComponent = new AutoRuntimeClass< MeshComponent >();
-	classMeshComponent->addMethod("setParameterCallback", &MeshComponent_setParameterCallback);
 	classMeshComponent->addProperty("transform", &MeshComponent_getTransform);
 	registrar->registerClass(classMeshComponent);
 

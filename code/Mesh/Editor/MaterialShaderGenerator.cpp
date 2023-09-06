@@ -391,8 +391,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 	if (!meshShaderGraph)
 		return nullptr;
 
-	// Patch material template shader with concrete implementations of value fetching fragments.
-	const Guid& lightMapTexture = material.getLightMap().texture;
+	const uint32_t lightMapChannel = model.getTexCoordChannel(L"Lightmap");
 
 	// Insert surface shader into mesh shader.
 	{
@@ -406,7 +405,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 				resolveNodes.push_back(externalNode);
 			else if (fragmentGuid == c_tplLightMapParams)
 			{
-				if (lightMapTexture.isNull())
+				if (lightMapChannel == model::c_InvalidIndex)
 					externalNode->setFragmentGuid(c_implLightMapNull);
 				else
 					externalNode->setFragmentGuid(c_implLightMap);
@@ -422,8 +421,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 			if (comment == L"Tag_LightmapTexCoord")
 			{
 				render::External* externalNode = mandatory_non_null_type_cast< render::External* >(node);
-				const uint32_t channel = model.getTexCoordChannel(material.getLightMap().channel);
-				externalNode->setFragmentGuid(channel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
+				externalNode->setFragmentGuid(lightMapChannel == 0 ? c_implTexCoordSelect0 : c_implTexCoordSelect1);
 				resolveNodes.push_back(externalNode);
 			}
 		}
@@ -437,19 +435,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateMesh(
 		}).resolve(meshShaderGraph, resolveNodes, false);
 		if (!meshShaderGraph)
 			return nullptr;
-
-		// Patch constant values, such as colors, from materials into shader.
-		for (auto node : meshShaderGraph->getNodes())
-		{
-			const std::wstring comment = node->getComment();
-			if (comment == L"Tag_LightMapDiffuse")
-			{
-				T_FATAL_ASSERT(lightMapTexture.isNotNull());
-				render::Texture* lightMapTextureNode = mandatory_non_null_type_cast< render::Texture* >(node);
-				lightMapTextureNode->setComment(L"");
-				lightMapTextureNode->setExternal(lightMapTexture);
-			}
-		}
 	}
 
 	// Replace vertex interface with concrete implementation fragment.

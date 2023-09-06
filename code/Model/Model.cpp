@@ -78,7 +78,7 @@ bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 2, Model, PropertyGroup)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.Model", 3, Model, PropertyGroup)
 
 Model::Model()
 :	m_positions(0.5f)
