@@ -532,7 +532,7 @@ const ImmutableNode::OutputPinDesc c_Color_o[] =
 Color::Color(const traktor::Color4f& color)
 :	ImmutableNode(nullptr, c_Color_o)
 ,	m_color(color)
-,	m_linear(false)
+,	m_linear(true)
 {
 }
 
