@@ -221,10 +221,10 @@
 			<first>EDITOR_SETTINGS_RENDERER_VALIDATION</first>
 			<second>Renderer validation</second>
 		</item>
-    <item>
-      <first>EDITOR_SETTINGS_RENDERER_RENDERDOC</first>
-      <second>Enable RenderDoc integration</second>
-    </item>
+		<item>
+			<first>EDITOR_SETTINGS_RENDERER_RENDERDOC</first>
+			<second>Enable RenderDoc integration</second>
+		</item>
 		<item>
 			<first>EDITOR_SETTINGS_RENDERER_CLAMP_TEXTURE_SIZE</first>
 			<second>Clamp max texture size</second>
@@ -313,6 +313,10 @@
 			<first>EDITOR_SETTINGS_STYLESHEET_LIGHT</first>
 			<second>Light</second>
 		</item>
+        <item>
+            <first>EDITOR_SETTINGS_STYLESHEET_MONOKAI</first>
+            <second>Monokai</second>
+        </item>
 		<item>
 			<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
 			<second>System root</second>
