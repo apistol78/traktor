@@ -79,7 +79,7 @@ class T_DLLCLASS Branch : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Branch(const std::wstring& parameterName = L"");
+	explicit Branch(const std::wstring& parameterName = L"");
 
 	void setParameterName(const std::wstring& parameterName);
 
@@ -151,7 +151,7 @@ class T_DLLCLASS Clamp : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Clamp(float min = 0.0f, float max = 1.0f);
+	explicit Clamp(float min = 0.0f, float max = 1.0f);
 
 	void setMin(float min);
 
@@ -176,7 +176,7 @@ class T_DLLCLASS Color : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Color(const traktor::Color4f& color = traktor::Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+	explicit Color(const traktor::Color4f& color = traktor::Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
 	void setColor(const traktor::Color4f& color);
 
@@ -416,7 +416,7 @@ class T_DLLCLASS IndexedUniform : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	IndexedUniform(
+	explicit IndexedUniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = ParameterType::Scalar,
 		UpdateFrequency frequency = UpdateFrequency::Frame,
@@ -458,7 +458,7 @@ class T_DLLCLASS InputPort : public ImmutableNode
 public:
 	InputPort();
 
-	InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue);
+	explicit InputPort(const std::wstring& name, bool connectable, bool optional, bool haveDefaultValue, float defaultValue);
 
 	void setName(const std::wstring& name);
 
@@ -516,7 +516,7 @@ class T_DLLCLASS Iterate : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Iterate(int32_t from = 0, int32_t to = 0);
+	explicit Iterate(int32_t from = 0, int32_t to = 0);
 
 	void setFrom(int32_t from);
 
@@ -553,7 +553,7 @@ class T_DLLCLASS Iterate2d : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Iterate2d(int32_t fromX = 0, int32_t toX = 0, int32_t fromY = 0, int32_t toY = 0);
+	explicit Iterate2d(int32_t fromX = 0, int32_t toX = 0, int32_t fromY = 0, int32_t toY = 0);
 
 	void setFromX(int32_t fromX);
 
@@ -613,7 +613,7 @@ public:
 		LbNatural
 	};
 
-	Log(Base base = LbTen);
+	explicit Log(Base base = LbTen);
 
 	Base getBase() const;
 
@@ -721,7 +721,7 @@ class T_DLLCLASS OutputPort : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	OutputPort(const std::wstring& name = L"");
+	explicit OutputPort(const std::wstring& name = L"");
 
 	void setName(const std::wstring& name);
 
@@ -942,7 +942,7 @@ class T_DLLCLASS Sampler : public ImmutableNode
 public:
 	Sampler();
 
-	Sampler(const SamplerState& state);
+	explicit Sampler(const SamplerState& state);
 
 	void setSamplerState(const SamplerState& state);
 
@@ -960,7 +960,7 @@ class T_DLLCLASS Scalar : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Scalar(float value = 0.0f);
+	explicit Scalar(float value = 0.0f);
 
 	void set(float value);
 
@@ -1050,7 +1050,7 @@ class T_DLLCLASS Sum : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Sum(int32_t from = 0, int32_t to = 0);
+	explicit Sum(int32_t from = 0, int32_t to = 0);
 
 	void setFrom(int32_t from);
 
@@ -1120,7 +1120,7 @@ class T_DLLCLASS Swizzle : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Swizzle(const std::wstring& swizzle = L"xyzw");
+	explicit Swizzle(const std::wstring& swizzle = L"xyzw");
 
 	void set(const std::wstring& swizzle);
 
@@ -1158,7 +1158,7 @@ class T_DLLCLASS Texture : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Texture(const Guid& external = Guid(), ParameterType type = ParameterType::Texture2D);
+	explicit Texture(const Guid& external = Guid(), ParameterType type = ParameterType::Texture2D);
 
 	void setExternal(const Guid& external);
 
@@ -1244,7 +1244,7 @@ class T_DLLCLASS Uniform : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Uniform(
+	explicit Uniform(
 		const std::wstring& parameterName = L"",
 		ParameterType type = ParameterType::Scalar,
 		UpdateFrequency frequency = UpdateFrequency::Frame
@@ -1298,7 +1298,7 @@ class T_DLLCLASS Vector : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Vector(const Vector4& value = Vector4(0, 0, 0, 0));
+	explicit Vector(const Vector4& value = Vector4(0, 0, 0, 0));
 
 	void set(const Vector4& value);
 
@@ -1318,7 +1318,7 @@ class T_DLLCLASS VertexInput : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	VertexInput(const std::wstring& name = L"", DataUsage usage = DataUsage::Position, DataType type = DtFloat4, int index = 0);
+	explicit VertexInput(const std::wstring& name = L"", DataUsage usage = DataUsage::Position, DataType type = DtFloat4, int index = 0);
 
 	void setName(const std::wstring& name);
 
