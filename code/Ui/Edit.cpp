@@ -37,6 +37,7 @@ Edit::Edit()
 ,	m_selectionEnd(-1)
 ,	m_caret(0)
 ,	m_caretBlink(true)
+,	m_acceptTab(false)
 ,	m_readOnly(false)
 ,	m_hover(false)
 {
@@ -44,7 +45,7 @@ Edit::Edit()
 
 bool Edit::create(Widget* parent, const std::wstring& text, int style, const EditValidator* validator)
 {
-	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer))
+	if (!Widget::create(parent, style | WsDoubleBuffer))
 		return false;
 
 	if ((m_validator = validator) != nullptr)
@@ -53,7 +54,8 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, const Edi
 			return false;
 	}
 
-	m_readOnly = bool((style & WsReadOnly) != 0);
+	m_acceptTab = (bool)((style & WsWantAllInput) != 0);
+	m_readOnly = (bool)((style & WsReadOnly) != 0);
 
 	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
 	addEventHandler< MouseTrackEvent >(this, &Edit::eventMouseTrack);
@@ -445,6 +447,11 @@ void Edit::eventKeyDown(KeyDownEvent* event)
 void Edit::eventKey(KeyEvent* event)
 {
 	const wchar_t ch = event->getCharacter();
+
+	// Ignore tab if we don't want all character inputs.
+	if (!m_acceptTab && ch == L'\t')
+		return;
+
 	if ((event->getKeyState() & KsControl) == 0)
 	{
 		std::wstring text = getText();
