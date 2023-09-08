@@ -12,12 +12,10 @@
 #include "Ui/PropertyList/ObjectPropertyItem.h"
 #include "Ui/PropertyList/PropertyItem.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 void removeAllChildren(PropertyList* list, PropertyItem* item)
 {
@@ -30,22 +28,18 @@ void removeAllChildren(PropertyList* list, PropertyItem* item)
 	T_ASSERT(item->getChildItems().empty());
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoPropertyList", AutoPropertyList, PropertyList)
 
 bool AutoPropertyList::bind(ISerializable* object)
 {
 	removeAllPropertyItems();
-	if (!(m_object = object))
+	if ((m_object = object) != nullptr)
 	{
-		update();
-		return true;
+		InspectReflector reflector(this);
+		reflector.serialize(m_object);
 	}
-
-	InspectReflector reflector(this);
-	reflector.serialize(m_object);
-
 	update();
 	return true;
 }
@@ -129,5 +123,4 @@ bool AutoPropertyList::paste()
 		return false;
 }
 
-	}
 }

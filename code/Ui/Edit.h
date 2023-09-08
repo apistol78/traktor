@@ -79,6 +79,7 @@ private:
 	int32_t m_selectionEnd;
 	int32_t m_caret;
 	bool m_caretBlink;
+	bool m_acceptTab;
 	bool m_readOnly;
 	bool m_hover;
 

@@ -80,7 +80,7 @@ void VectorPropertyItem::destroyInPlaceControls()
 		if (m_editors[i])
 		{
 			m_editors[i]->destroy();
-			m_editors[i] = 0;
+			m_editors[i] = nullptr;
 		}
 	}
 }
@@ -92,7 +92,7 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 		if (!m_editors[i])
 			continue;
 
-		Rect rcSub(
+		const Rect rcSub(
 			rc.left + (getPropertyList()->pixel(c_valueWidth) * i) / m_dimension,
 			rc.top,
 			rc.left + (getPropertyList()->pixel(c_valueWidth) * (i + 1)) / m_dimension,
@@ -107,7 +107,7 @@ void VectorPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 {
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{
-		Rect rcSub = m_editors[i]->getRect();
+		const Rect rcSub = m_editors[i]->getRect();
 		if (rcSub.inside(event->getPosition()))
 		{
 			m_editors[i]->setText(toString(m_value[i], 3));
@@ -171,7 +171,7 @@ bool VectorPropertyItem::paste()
 	Split< std::wstring, float >::any(clipboard->getText(), L",", values, true);
 	if (values.size() >= m_dimension)
 	{
-		for (int i = 0; i < m_dimension; ++i)
+		for (int32_t i = 0; i < m_dimension; ++i)
 			m_value[i] = values[i];
 		return true;
 	}
@@ -183,7 +183,7 @@ bool VectorPropertyItem::isEditing() const
 {
 	for (int32_t i = 0; i < m_dimension; ++i)
 	{
-		if (m_editors[i] && m_editors[i]->isVisible(false))
+		if (m_editors[i] != nullptr && m_editors[i]->isVisible(false))
 			return true;
 	}
 	return false;

@@ -48,8 +48,7 @@ void TextPropertyItem::createInPlaceControls(PropertyList* parent)
 		m_editor = new Edit();
 		m_editor->create(
 			parent,
-			L"",
-			WsWantAllInput
+			L""
 		);
 		m_editor->setVisible(false);
 		m_editor->addEventHandler< FocusEvent >(this, &TextPropertyItem::eventEditFocus);
