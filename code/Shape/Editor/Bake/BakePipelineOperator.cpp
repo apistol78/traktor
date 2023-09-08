@@ -327,18 +327,6 @@ void addSky(
 	tracerTask->addTracerEnvironment(new TracerEnvironment(probe));
 }
 
-/*! */
-int32_t calculateLightmapSize(const model::Model* model, float lumelDensity, int32_t minimumSize, int32_t maximumSize)
-{
-	const Scalar mx = model->getBoundingBox().getExtent().max() * 2.0_simd;
-
-	int32_t size = (int32_t)(mx *lumelDensity + 0.5f);
-	size = std::max< int32_t >(minimumSize, size);
-	size = std::min< int32_t >(maximumSize, size);
-
-	return alignUp(size, 4);	
-}
-
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
@@ -668,15 +656,6 @@ bool BakePipelineOperator::build(
 							if (!model)
 								return nullptr;
 
-							// Calculate size of lightmap from geometry.
-							const int32_t lightmapSize = calculateLightmapSize(
-								model,
-								configuration->getLumelDensity(),
-								configuration->getMinimumLightMapSize(),
-								configuration->getMaximumLightMapSize()
-							);
-							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
-
 							// Prepare model for baking.
 							model->clear(model::Model::CfColors | model::Model::CfJoints);
 							model::Triangulate().apply(*model);
@@ -688,8 +667,46 @@ bool BakePipelineOperator::build(
 							{
 								// No lightmap UV channel, need to add and unwrap automatically.
 								channel = model->addUniqueTexCoordChannel(L"Lightmap");
-								model::UnwrapUV(channel, lightmapSize).apply(*model);
+								model::UnwrapUV(channel, /*lightmapSize*/1024).apply(*model);
 							}
+
+							// Evaluate lightmap size by measuring each edge ratio.
+							double ratio = 0.0;
+							for (int32_t i = 0; i < model->getPolygonCount(); ++i)
+							{
+								const auto& polygon = model->getPolygon(i);
+								T_FATAL_ASSERT(polygon.getVertexCount() == 3);
+
+								Vector4 pt[3];
+								Vector2 uv[3];
+
+								for (int32_t j = 0; j < 3; ++j)
+								{
+									const auto& vertex = model->getVertex(polygon.getVertex(j));
+									pt[j] = model->getPosition(vertex.getPosition());
+									uv[j] = model->getTexCoord(vertex.getTexCoord(channel));
+								}
+
+								for (int32_t j = 0; j < 3; ++j)
+								{
+									const float ptl = (pt[(j + 1) % 3] - pt[j]).length();
+									const float uvl = (uv[(j + 1) % 3] - uv[j]).length();
+									if (ptl > 0.0f)
+										ratio += (double)(uvl / ptl);
+								}
+							}
+							ratio /= (double)(model->getPolygonCount() * 3);
+
+							const int32_t lightmapDesiredSize = configuration->getLumelDensity() / ratio;
+
+							int32_t lightmapSize = lightmapDesiredSize;
+							lightmapSize = std::max< int32_t >(configuration->getMinimumLightMapSize(), lightmapSize);
+							lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
+							lightmapSize = alignUp(lightmapSize, 4);
+
+							model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
+							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
+
 
 							// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
 							model->setProperty< PropertyString >(L"ID", Guid::create().format());
@@ -715,10 +732,16 @@ bool BakePipelineOperator::build(
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
-						log::info << L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), lightmap ID " << lightmapDiffuseId.format() << L", model hash " << str(L"%08x", modelHash) << L"..." << Endl;
-
 						// Get calculated lightmap size.
 						const int32_t lightmapSize = visualModel->getProperty< int32_t >(L"LightmapSize");
+						const int32_t lightmapDesiredSize = visualModel->getProperty< int32_t >(L"LightmapDesiredSize");
+
+						log::info << 
+							L"Adding model \"" << inoutEntityData->getName() << L"\" (" << type_name(entityReplicator) << L"), " << 
+							L"lightmap ID " << lightmapDiffuseId.format() << L", " <<
+							L"lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L"), " <<
+							L"model hash " << str(L"%08x", modelHash) << L"..." << Endl;
+
 
 						if (configuration->getEnableLightmaps())
 						{
