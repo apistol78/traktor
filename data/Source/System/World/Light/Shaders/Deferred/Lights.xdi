@@ -1396,7 +1396,7 @@
 			<comment/>
 			<position>
 				<first>882</first>
-				<second>-421</second>
+				<second>-420</second>
 			</position>
 			<name>LightIndex</name>
 		</item>
@@ -1411,7 +1411,7 @@
 			<elements>
 				<item>
 					<name>LightIndex</name>
-					<type>DtFloat4</type>
+					<type>DtInteger4</type>
 				</item>
 			</elements>
 		</item>
@@ -1717,7 +1717,7 @@ else
 			<comment/>
 			<position>
 				<first>380</first>
-				<second>-859</second>
+				<second>-858</second>
 			</position>
 			<parameterName>World_LightSBuffer</parameterName>
 			<elements>
