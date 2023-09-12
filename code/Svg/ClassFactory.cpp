@@ -57,27 +57,29 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.SubPath", BoxedSubPath, Object)
 class ShapeVisitorDelegate : public IShapeVisitor
 {
 public:
-	ShapeVisitorDelegate(IRuntimeDelegate* delegateEnter, IRuntimeDelegate* delegateLeave)
+	explicit ShapeVisitorDelegate(IRuntimeDelegate* delegateEnter, IRuntimeDelegate* delegateLeave)
 	:	m_delegateEnter(delegateEnter)
 	,	m_delegateLeave(delegateLeave)
 	{
 	}
 
-	virtual void enter(Shape* shape) override final
+	virtual bool enter(Shape* shape) override final
 	{
 		if (m_delegateEnter)
 		{
-			Any argv[] = { CastAny< Shape* >::set(shape) };
-			Any ret = m_delegateEnter->call(sizeof_array(argv), argv);
+			const Any argv[] = { CastAny< Shape* >::set(shape) };
+			return m_delegateEnter->call(sizeof_array(argv), argv).getBoolean();
 		}
+		else
+			return true;
 	}
 
 	virtual void leave(Shape* shape) override final
 	{
 		if (m_delegateLeave)
 		{
-			Any argv[] = { CastAny< Shape* >::set(shape) };
-			Any ret = m_delegateLeave->call(sizeof_array(argv), argv);
+			const Any argv[] = { CastAny< Shape* >::set(shape) };
+			m_delegateLeave->call(sizeof_array(argv), argv);
 		}
 	}
 
@@ -181,7 +183,6 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classPathShape);
 
 	auto classShape = new AutoRuntimeClass< Shape >();
-	classShape->addProperty("id", &Shape::setId, &Shape::getId);
 	classShape->addProperty("style", &Shape::setStyle, &Shape::getStyle);
 	classShape->addProperty("transform", &Shape::setTransform, &Shape::getTransform);
 	classShape->addProperty("globalTransform", &Shape::getGlobalTransform);

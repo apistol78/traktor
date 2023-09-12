@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <functional>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -12,7 +14,9 @@
 #include "Spark/Movie.h"
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
-#include "Spark/Editor/ConvertSwf.h"
+#include "Spark/Editor/ConvertFont.h"
+#include "Spark/Editor/ConvertSvg.h"
+#include "Spark/Editor/MovieAsset.h"
 #include "Svg/Document.h"
 #include "Svg/ImageShape.h"
 #include "Svg/IShapeVisitor.h"
@@ -30,8 +34,8 @@ namespace traktor::spark
 class ShapeVisitor : public svg::IShapeVisitor
 {
 public:
-	ShapeVisitor(
-		const std::function< void(svg::Shape*) >& enter,
+	explicit ShapeVisitor(
+		const std::function< bool(svg::Shape*) >& enter,
 		const std::function< void(svg::Shape*) >& leave
 	)
 	:	m_enter(enter)
@@ -39,9 +43,9 @@ public:
 	{
 	}
 
-	virtual void enter(svg::Shape* shape) override final
+	virtual bool enter(svg::Shape* shape) override final
 	{
-		m_enter(shape);
+		return m_enter(shape);
 	}
 
 	virtual void leave(svg::Shape* shape) override final
@@ -50,13 +54,13 @@ public:
 	}
 
 private:
-	std::function< void(svg::Shape*) > m_enter;
+	std::function< bool(svg::Shape*) > m_enter;
 	std::function< void(svg::Shape*) > m_leave;
 };
 
 	}
 
-Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStream)
+Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieAsset, const db::Instance* sourceInstance, IStream* sourceStream)
 {
 	xml::Document xd;
 	if (!xd.loadFromStream(sourceStream))
@@ -79,90 +83,160 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 		return nullptr;
 	}
 
-	const Vector2& size = document->getSize();
+	const Vector2& movieSize = document->getSize() * 20.0f;
 	const Aabb2& viewBox = document->getViewBox();
 
 	// Create sprite for movie clip.
 	Ref< Frame > movieFrame = new Frame();
-	movieFrame->changeBackgroundColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+	movieFrame->changeBackgroundColor(Color4f(0.5f, 0.5f, 0.5f, 1.0f));
 
 	Ref< Sprite > movieSprite = new Sprite();
 	movieSprite->addFrame(movieFrame);
 
 	// Create movie container.
-	Ref< Movie > movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(size.x * 20.0f, size.y * 20.0f)), movieSprite);
+	Ref< Movie > movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(movieSize.x, movieSize.y)), movieSprite);
 
-	// Create another sprite which contain the shape.
-	Ref< Frame > shapeFrame = new Frame();
-	Ref< Sprite > shapeSprite = new Sprite();
-	shapeSprite->addFrame(shapeFrame);
+	// Import all fonts from the asset into the movie.
+	for (const auto& font : movieAsset->getFonts())
+	{
+		if (!convertFont(assetPath, font, movie))
+			return false;
+	}
 
-	// Convert SVG shape into Spark shape.
-	Ref< Shape > outputShape = new Shape();
-	ShapeVisitor visitor(
-		[&](svg::Shape* svg) {
+	// Visit all shapes and create sprites and shapes.
+	struct SD
+	{
+		Ref< Sprite > sprite;
+		Ref< Frame > frame;
+		Ref< Shape > shape;
+	};
+	AlignedVector< SD > spriteStack;
+	uint32_t characterId = 1;
 
-			const Matrix33 transform = svg->getGlobalTransform();
-			if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
+	ShapeVisitor createCharactersVisitor(
+		[&](svg::Shape* svg) -> bool
+		{
+			// Begin creating new sprite.
+			if (svg->hasAttribute(L"traktor:sprite"))
 			{
-				uint16_t fillStyle = 0;
-				uint16_t lineStyle = 0;
+				const std::wstring id = svg->getAttribute(L"id").getWideString();
+				if (id.empty())
+					return false;
 
-				const auto style = ps->getStyle();
-				if (style)
+				Ref< Sprite > sprite = new Sprite();
+				Ref< Shape > shape = new Shape();
+
+				movie->defineCharacter(characterId + 0, shape);
+				movie->defineCharacter(characterId + 1, sprite);
+
+				if (spriteStack.empty())
+					movie->setExport(wstombs(id), characterId + 1);
+
+				// Add frame and place shape.
+				Ref< Frame > frame = new Frame();
+				sprite->addFrame(frame);
+
+				// Place the shape, which we're about to build, onto created sprite.
 				{
-					if (style->getFillEnable())
-						fillStyle = outputShape->defineFillStyle(style->getFill() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()));
-					if (style->getStrokeEnable())
-						lineStyle = outputShape->defineLineStyle(style->getStroke() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()), (uint16_t)(style->getStrokeWidth() * 20.0f));
+					Frame::PlaceObject p;
+					p.hasFlags = Frame::PfHasCharacterId;
+					p.depth = frame->nextUnusedDepth();
+					p.characterId = characterId + 0;
+					frame->placeObject(p);
 				}
 
-				const auto& subPaths = ps->getPath().getSubPaths();
-				if (subPaths.empty())
-					return;
-
-				// Get close position; when path is closed.
-				Vector2 closePosition = subPaths.front().points.front();
-				closePosition = (size * (transform * closePosition)) / viewBox.getSize();
-
-				Path path;
-				for (const auto& sp : ps->getPath().getSubPaths())
+				// Place this sprite on parent sprite.
+				if (!spriteStack.empty())
 				{
-					AlignedVector< Vector2 > pnts = sp.points;
+					Frame::PlaceObject p;
+					p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId;
+					p.depth = spriteStack.back().frame->nextUnusedDepth();
+					p.name = wstombs(id);
+					p.characterId = characterId + 1;
+					spriteStack.back().frame->placeObject(p);
+				}
 
-					// Convert points into document coordinates.
-					for (auto& pnt : pnts)
-						pnt = (size * (transform * pnt)) / viewBox.getSize();
+				// Add sprite to stack.
+				spriteStack.push_back({ sprite, frame, shape });
+				log::info << L"Enter sprite \"" << id << L"\" (" << (characterId + 1) << L")..." << Endl;
+				log::info << IncreaseIndent;
 
-					const size_t ln = pnts.size();
-					switch (sp.type)
+				characterId += 2;
+			}
+
+			if (!spriteStack.empty())
+			{
+				const Matrix33 transform = svg->getGlobalTransform();
+				if (const auto ps = dynamic_type_cast< svg::PathShape* >(svg))
+				{
+					uint16_t fillStyle = 0;
+					uint16_t lineStyle = 0;
+
+					const auto style = ps->getStyle();
+					if (style)
 					{
-					case svg::SubPathType::Linear:
+						if (style->getFillEnable())
+							fillStyle = spriteStack.back().shape->defineFillStyle(style->getFill() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()));
+						if (style->getStrokeEnable())
+							lineStyle = spriteStack.back().shape->defineLineStyle(style->getStroke() * Color4f(1.0f, 1.0f, 1.0f, style->getOpacity()), (uint16_t)(style->getStrokeWidth() * 20.0f));
+					}
+
+					const auto& subPaths = ps->getPath().getSubPaths();
+					if (subPaths.empty())
+						return false;
+
+					// Get close position; when path is closed.
+					Vector2 closePosition = subPaths.front().points.front();
+					{
+						const Vector2 viewPnt = transform * closePosition;						// Point in view box.
+						const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
+						const Vector2 moviePnt = normPnt * movieSize;							// Point in movie.
+						closePosition = moviePnt;
+					}
+
+					Path path;
+					for (const auto& sp : ps->getPath().getSubPaths())
+					{
+						AlignedVector< Vector2 > pnts = sp.points;
+
+						// Convert points into document coordinates.
+						for (auto& pnt : pnts)
+						{
+							const Vector2 viewPnt = transform * pnt;								// Point in view box.
+							const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
+							const Vector2 moviePnt = normPnt * movieSize;							// Point in movie.
+							pnt = moviePnt;
+						}
+
+						const size_t ln = pnts.size();
+						switch (sp.type)
+						{
+						case svg::SubPathType::Linear:
 						{
 							log::info << L"linear " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
-							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
+							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; ++i)
-								path.lineTo((int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f), Path::CmAbsolute);
+								path.lineTo((int32_t)(pnts[i].x), (int32_t)(pnts[i].y), Path::CmAbsolute);
 						}
 						break;
 
-					case svg::SubPathType::Quadric:
+						case svg::SubPathType::Quadric:
 						{
 							log::info << L"quadric " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
-							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
+							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; i += 2)
 								path.quadraticTo(
-									(int32_t)(pnts[i].x * 20.0f), (int32_t)(pnts[i].y * 20.0f),
-									(int32_t)(pnts[i + 1].x * 20.0f), (int32_t)(pnts[i + 1].y * 20.0f),
+									(int32_t)(pnts[i].x), (int32_t)(pnts[i].y),
+									(int32_t)(pnts[i + 1].x), (int32_t)(pnts[i + 1].y),
 									Path::CmAbsolute
 								);
 						}
 						break;
 
-					case svg::SubPathType::Cubic:
+						case svg::SubPathType::Cubic:
 						{
 							log::info << L"cubic " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
-							path.moveTo((int32_t)(pnts[0].x * 20.0f), (int32_t)(pnts[0].y * 20.0f), Path::CmAbsolute);
+							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; i += 3)
 							{
 								const Bezier3rd b(
@@ -181,8 +255,8 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 								for (const auto& b2 : b2s)
 								{
 									path.quadraticTo(
-										(int32_t)(b2.cp1.x * 20.0f), (int32_t)(b2.cp1.y * 20.0f),
-										(int32_t)(b2.cp2.x * 20.0f), (int32_t)(b2.cp2.y * 20.0f),
+										(int32_t)(b2.cp1.x), (int32_t)(b2.cp1.y),
+										(int32_t)(b2.cp2.x), (int32_t)(b2.cp2.y),
 										Path::CmAbsolute
 									);
 								}
@@ -190,103 +264,132 @@ Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStrea
 						}
 						break;
 
-					default:
-						break;
+						default:
+							break;
+						}
+
+						if (sp.closed)
+							path.lineTo((int32_t)(closePosition.x), (int32_t)(closePosition.y), Path::CmAbsolute);
+
+						path.end(0, fillStyle, lineStyle);
 					}
-
-					if (sp.closed)
-						path.lineTo((int32_t)(closePosition.x * 20.0f), (int32_t)(closePosition.y * 20.0f), Path::CmAbsolute);
-
-					path.end(0, fillStyle, lineStyle);
+					spriteStack.back().shape->addPath(path);
 				}
-				outputShape->addPath(path);
+				else if (const auto is = dynamic_type_cast< const svg::ImageShape* >(svg))
+				{
+					const drawing::Image* image = is->getImage();
+
+					const int32_t width = image->getWidth() * 20;
+					const int32_t height = image->getHeight() * 20;
+
+					const uint16_t fillBitmap = 1;
+
+					movie->defineBitmap(fillBitmap, new BitmapImage(image));
+
+					const uint16_t fillStyle = spriteStack.back().shape->defineFillStyle(fillBitmap, Matrix33(
+						20.0f, 0.0f, 0.0f,
+						0.0f, 20.0f, 0.0f,
+						0.0f, 0.0f, 1.0f
+					), true);
+
+					Path path;
+					path.moveTo(0, 0, Path::CmAbsolute);
+					path.lineTo(width, 0, Path::CmAbsolute);
+					path.lineTo(width, height, Path::CmAbsolute);
+					path.lineTo(0, height, Path::CmAbsolute);
+					path.lineTo(0, 0, Path::CmAbsolute);
+					path.end(fillStyle, fillStyle, 0);
+
+					spriteStack.back().shape->addPath(path);
+				}
+				else if (const auto ts = dynamic_type_cast< const svg::TextShape* >(svg))
+				{
+					const std::wstring id = ts->getAttribute(L"id").getWideString();
+					if (id.empty())
+						return false;
+
+					// Import font.
+					const std::wstring font = ts->getStyle()->getFontFamily();
+					if (font.empty())
+						return false;
+
+					// Calculate transform.
+					const Vector2 viewPnt = Vector2(500.0f, 60.0f);				// Point in view box.
+					const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
+					const Vector2 moviePnt = normPnt * movieSize;							// Point in movie.
+
+					float width = moviePnt.x; //  1305.0f;
+					float height = moviePnt.y; //  325.0f;
+
+
+
+
+					// Create an edit field; most likely since text fields are static.
+					Ref< Edit > edit = new Edit(
+						1,	// font id
+						(uint16_t)(ts->getStyle()->getFontSize() * 20.0f),	// font height
+						Aabb2(Vector2(0.0f, 0.0f), Vector2(width, height)),	// textBounds
+						ts->getStyle()->getFill(),
+						255,		// maxLength
+						ts->getText(),	// initialText
+						StaLeft,
+						0,	// leftMargin
+						0,	// rightMargin
+						0,	// indent
+						0,	// leading
+						false,	// readOnly
+						false,	// wordWrap
+						false,	// multiLine
+						false,	// password
+						false	// renderHtml
+					);
+					movie->defineCharacter(characterId, edit);
+
+					// Place edit field on sprite.
+					Frame::PlaceObject p;
+					p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId; // | Frame::PfHasMatrix;
+					p.depth = spriteStack.back().frame->nextUnusedDepth();
+					p.name = wstombs(id);
+					p.characterId = characterId;
+					//p.matrix = Matrix33(
+					//	1.0f, 0.0f, moviePnt.x,
+					//	0.0f, 1.0f, moviePnt.y,
+					//	0.0f, 0.0f, 1.0f
+					//);
+					spriteStack.back().frame->placeObject(p);
+
+					log::info << L"Added textfield \"" << id << L"\"." << Endl;
+					characterId++;
+				}
 			}
-			else if (const auto is = dynamic_type_cast< const svg::ImageShape* >(svg))
-			{
-				const drawing::Image* image = is->getImage();
 
-				const int32_t width = image->getWidth() * 20;
-				const int32_t height = image->getHeight() * 20;
-
-				const uint16_t fillBitmap = 1;
-
-				movie->defineBitmap(fillBitmap, new BitmapImage(image));
-
-				const uint16_t fillStyle = outputShape->defineFillStyle(fillBitmap, Matrix33(
-					20.0f, 0.0f, 0.0f,
-					0.0f, 20.0f, 0.0f,
-					0.0f, 0.0f, 1.0f
-				), true);
-
-				Path path;
-				path.moveTo(0, 0, Path::CmAbsolute);
-				path.lineTo(width, 0, Path::CmAbsolute);
-				path.lineTo(width, height, Path::CmAbsolute);
-				path.lineTo(0, height, Path::CmAbsolute);
-				path.lineTo(0, 0, Path::CmAbsolute);
-				path.end(fillStyle, fillStyle, 0);
-
-				outputShape->addPath(path);
-			}
-			else if (const auto ts = dynamic_type_cast< const svg::TextShape* >(svg))
-			{
-				// Create an edit field; most likely since text fields are static.
-				Ref< Edit > edit = new Edit(
-					0,	// font id
-					(uint16_t)ts->getStyle()->getFontSize(),	// font height
-					Aabb2(),	// textBounds
-					ts->getStyle()->getFill(),
-					0,		// maxLength
-					ts->getText(),	// initialText
-					StaLeft,
-					0,	// leftMargin
-					0,	// rightMargin
-					0,	// indent
-					0,	// leading
-					false,	// readOnly
-					false,	// wordWrap
-					false,	// multiLine
-					false,	// password
-					false	// renderHtml
-				);
-				movie->defineCharacter(3, edit);
-
-				// Place edit field on sprite.
-				Frame::PlaceObject p;
-				p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId;
-				p.depth = 2;
-				p.name = wstombs(ts->getId());
-				p.characterId = 3;
-				shapeFrame->placeObject(p);
-			}
+			return true;
 		},
-		[&](svg::Shape*) {
+		[&](svg::Shape* svg)
+		{
+			if (svg->hasAttribute(L"traktor:sprite"))
+			{
+				const std::wstring id = svg->getAttribute(L"id").getWideString();
+				log::info << DecreaseIndent;
+				log::info << L"Leave sprite \"" << id << L"\"..." << Endl;
+				spriteStack.pop_back();
+			}
 		}
 	);
-	shape->visit(&visitor);
+	shape->visit(&createCharactersVisitor);
 
-	// Place shape character on first frame of the sprite.
-	{
-		Frame::PlaceObject p;
-		p.hasFlags = Frame::PfHasCharacterId;
-		p.depth = 1;
-		p.characterId = 1;
-		shapeFrame->placeObject(p);
-	}
+
 
 	// Place sprite character on first frame of the root.
 	{
 		Frame::PlaceObject p;
 		p.hasFlags = Frame::PfHasCharacterId;
 		p.depth = 1;
-		p.characterId = 2;
+		p.characterId = 5;
 		movieFrame->placeObject(p);
 	}
 
-	// Add sprite to dictionary.
-	movie->defineCharacter(1, outputShape);
-	movie->defineCharacter(2, shapeSprite);
-	movie->setExport(wstombs(sourceInstance->getName()), 2);
+
 	return movie;
 }
 

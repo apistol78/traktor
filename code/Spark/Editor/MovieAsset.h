@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -18,26 +19,32 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class T_DLLCLASS MovieAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
-	MovieAsset();
+	struct Font
+	{
+		std::wstring name;
+		traktor::Path fileName;
+
+		void serialize(ISerializer& s);
+	};
+
+	const AlignedVector< Font >& getFonts() const { return m_fonts; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	friend class Pipeline;
 
-	bool m_staticMovie;
+	bool m_staticMovie = false;
+	AlignedVector< Font > m_fonts;
+
 };
 
-	}
 }
-

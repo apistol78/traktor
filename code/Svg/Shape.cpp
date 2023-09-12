@@ -14,14 +14,31 @@ namespace traktor::svg
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Shape", Shape, Object)
 
-void Shape::setId(const std::wstring& id)
+//void Shape::setId(const std::wstring& id)
+//{
+//	m_id = id;
+//}
+//
+//const std::wstring& Shape::getId() const
+//{
+//	return m_id;
+//}
+
+void Shape::setAttribute(const std::wstring& attribute, const Any& value)
 {
-	m_id = id;
+	m_attributes[attribute] = value;
 }
 
-const std::wstring& Shape::getId() const
+Any Shape::getAttribute(const std::wstring& attribute, const Any& defaultValue) const
 {
-	return m_id;
+	const auto it = m_attributes.find(attribute);
+	return it != m_attributes.end() ? it->second : defaultValue;
+}
+
+bool Shape::hasAttribute(const std::wstring& attribute) const
+{
+	const auto it = m_attributes.find(attribute);
+	return it != m_attributes.end();
 }
 
 void Shape::setStyle(const Style* style)
@@ -64,14 +81,19 @@ void Shape::addChild(Shape* shape)
 	shape->m_parent = this;
 }
 
-void Shape::visit(IShapeVisitor* shapeVisitor)
+bool Shape::visit(IShapeVisitor* shapeVisitor)
 {
-	shapeVisitor->enter(this);
+	if (!shapeVisitor->enter(this))
+		return false;
 
 	for (auto child : m_children)
-		child->visit(shapeVisitor);
+	{
+		if (!child->visit(shapeVisitor))
+			return false;
+	}
 
 	shapeVisitor->leave(this);
+	return true;
 }
 
 }

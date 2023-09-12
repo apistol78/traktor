@@ -15,33 +15,16 @@
 #include "Spark/Font.h"
 #include "Spark/Shape.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Font", 0, Font, ISerializable)
 
-Font::Font()
-:	m_italic(false)
-,	m_bold(false)
-,	m_ascent(0)
-,	m_descent(0)
-,	m_leading(0)
-,	m_maxDimension(0.0f, 0.0f)
-,	m_coordinateType(CtTwips)
+bool Font::initializeFromShapes(const RefArray< Shape >& shapeTable)
 {
-}
-
-bool Font::create(const AlignedVector< SwfShape* >& shapeTable)
-{
-	m_shapes.resize(shapeTable.size());
+	m_shapes = shapeTable;
 	for (uint32_t i = 0; i < shapeTable.size(); ++i)
 	{
-		m_shapes[i] = new Shape();
-		if (!m_shapes[i]->create(shapeTable[i]))
-			return false;
-
 		const Aabb2 shapeBounds = m_shapes[i]->getShapeBounds();
 		m_maxDimension = max(m_maxDimension, shapeBounds.mx - shapeBounds.mn);
 	}
@@ -49,22 +32,22 @@ bool Font::create(const AlignedVector< SwfShape* >& shapeTable)
 	return true;
 }
 
-bool Font::create(
+bool Font::initialize(
 	const std::string& fontName,
 	bool italic,
 	bool bold,
-	const AlignedVector< SwfShape* >& shapeTable,
+	const RefArray< Shape >& shapeTable,
 	int16_t ascent,
 	int16_t descent,
 	int16_t leading,
 	const AlignedVector< int16_t >& advanceTable,
 	const AlignedVector< Aabb2 >& boundsTable,
-	const AlignedVector< SwfKerningRecord >& kerningRecords,
+	const SmallMap< uint32_t, int16_t >& kerningLookup,
 	const AlignedVector< uint16_t >& codeTable,
 	CoordinateType coordinateType
 )
 {
-	if (!create(shapeTable))
+	if (!initializeFromShapes(shapeTable))
 		return false;
 
 	m_fontName = fontName;
@@ -75,13 +58,8 @@ bool Font::create(
 	m_leading = leading;
 	m_advanceTable = advanceTable;
 	m_boundsTable = boundsTable;
+	m_kerningLookup = kerningLookup;
 	m_coordinateType = coordinateType;
-
-	for (const auto& kerning : kerningRecords)
-	{
-		const uint32_t codePair = (uint32_t(kerning.code1) << 16) | kerning.code2;
-		m_kerningLookup[codePair] = kerning.adjustment;
-	}
 
 	for (uint32_t i = 0; i < codeTable.size(); ++i)
 		m_indexLookup[codeTable[i]] = i;
@@ -189,5 +167,4 @@ void Font::serialize(ISerializer& s)
 	s >> MemberEnum< CoordinateType >(L"coordinateType", m_coordinateType, kCoordinateType);
 }
 
-	}
 }

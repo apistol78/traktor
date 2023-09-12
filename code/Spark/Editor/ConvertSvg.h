@@ -20,7 +20,8 @@ namespace traktor::spark
 {
 
 class Movie;
+class MovieAsset;
 
-Ref< Movie > convertSvg(const db::Instance* sourceInstance, IStream* sourceStream);
+Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieAsset, const db::Instance* sourceInstance, IStream* sourceStream);
 
 }

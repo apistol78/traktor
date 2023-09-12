@@ -10,8 +10,8 @@
 
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Spark/Swf/SwfTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,13 +21,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Shape;
-struct SwfShape;
 
 /*! Font
  * \ingroup Spark
@@ -43,21 +40,19 @@ public:
 		CtEMSquare
 	};
 
-	Font();
+	bool initializeFromShapes(const RefArray< Shape >& shapeTable);
 
-	bool create(const AlignedVector< SwfShape* >& shapeTable);
-
-	bool create(
+	bool initialize(
 		const std::string& fontName,
 		bool italic,
 		bool bold,
-		const AlignedVector< SwfShape* >& shapeTable,
+		const RefArray< Shape >& shapeTable,
 		int16_t ascent,
 		int16_t descent,
 		int16_t leading,
 		const AlignedVector< int16_t >& advanceTable,
 		const AlignedVector< Aabb2 >& boundsTable,
-		const AlignedVector< SwfKerningRecord >& kerningRecords,
+		const SmallMap< uint32_t, int16_t >& kerningLookup,
 		const AlignedVector< uint16_t >& codeTable,
 		CoordinateType coordinateType
 	);
@@ -94,20 +89,18 @@ public:
 
 private:
 	std::string m_fontName;
-	bool m_italic;
-	bool m_bold;
+	bool m_italic = false;
+	bool m_bold = false;
 	RefArray< Shape > m_shapes;
-	int16_t m_ascent;
-	int16_t m_descent;
-	int16_t m_leading;
+	int16_t m_ascent = 0;
+	int16_t m_descent = 0;
+	int16_t m_leading = 0;
 	AlignedVector< int16_t > m_advanceTable;
 	AlignedVector< Aabb2 > m_boundsTable;
-	Vector2 m_maxDimension;
+	Vector2 m_maxDimension = Vector2::zero();
 	SmallMap< uint32_t, int16_t > m_kerningLookup;
 	SmallMap< uint16_t, uint16_t > m_indexLookup;
-	CoordinateType m_coordinateType;
+	CoordinateType m_coordinateType = CtTwips;
 };
 
-	}
 }
-
