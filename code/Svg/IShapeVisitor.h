@@ -31,7 +31,7 @@ class T_DLLCLASS IShapeVisitor : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void enter(Shape* shape) = 0;
+	virtual bool enter(Shape* shape) = 0;
 
 	virtual void leave(Shape* shape) = 0;
 };

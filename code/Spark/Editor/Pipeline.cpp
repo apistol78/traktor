@@ -40,12 +40,10 @@
 #include "Spark/Editor/MovieAsset.h"
 #include "Spark/Editor/Pipeline.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const Guid c_idFlashShaderAssets(L"{14D6A2DB-796D-E54D-9D70-73DE4AE7C4E8}");
 
@@ -62,7 +60,7 @@ struct AtlasBucket
 	std::list< AtlasBitmap > bitmaps;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 10, Pipeline, editor::IPipeline)
 
@@ -116,8 +114,12 @@ bool Pipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
+	if (const MovieAsset* movieAsset = dynamic_type_cast<const MovieAsset*>(sourceAsset))
+	{
 		pipelineDepends->addDependency(traktor::Path(m_assetPath), movieAsset->getFileName().getOriginal());
+		for (const auto& font : movieAsset->getFonts())
+			pipelineDepends->addDependency(traktor::Path(m_assetPath), font.fileName.getOriginal());
+	}
 	pipelineDepends->addDependency(c_idFlashShaderAssets, editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
@@ -140,7 +142,7 @@ bool Pipeline::buildOutput(
 
 	if (const MovieAsset* movieAsset = dynamic_type_cast< const MovieAsset* >(sourceAsset))
 	{
-		traktor::Path filePath = FileSystem::getInstance().getAbsolutePath(traktor::Path(m_assetPath) + movieAsset->getFileName());
+		const traktor::Path filePath = FileSystem::getInstance().getAbsolutePath(traktor::Path(m_assetPath) + movieAsset->getFileName());
 		Ref< IStream > sourceStream = FileSystem::getInstance().open(filePath, File::FmRead);
 		if (!sourceStream)
 		{
@@ -152,7 +154,7 @@ bool Pipeline::buildOutput(
 		if (extension == L"swf")
 			movie = convertSwf(sourceInstance, sourceStream);
 		else if (extension == L"svg")
-			movie = convertSvg(sourceInstance, sourceStream);
+			movie = convertSvg(traktor::Path(m_assetPath), movieAsset, sourceInstance, sourceStream);
 		else
 			movie = convertImage(sourceInstance, sourceStream, extension);
 
@@ -498,5 +500,4 @@ Ref< ISerializable > Pipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

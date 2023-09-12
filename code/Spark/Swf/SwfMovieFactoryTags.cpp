@@ -152,71 +152,85 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t fontId = bs.readUInt16();
+	const uint16_t fontId = bs.readUInt16();
 
 	if (m_fontType == 1)
 	{
-		int64_t offsetBase = bs.getStream()->tell();
-		uint16_t firstOffset = bs.readUInt16();
-		uint16_t glyphCount = firstOffset >> 1;
+		const int64_t offsetBase = bs.getStream()->tell();
+		const uint16_t firstOffset = bs.readUInt16();
+		const uint16_t glyphCount = firstOffset >> 1;
 
 		AlignedVector< uint16_t > offsetTable(glyphCount);
 		offsetTable[0] = firstOffset;
 		for (uint16_t i = 1; i < glyphCount; ++i)
 			offsetTable[i] = bs.readUInt16();
 
-		AlignedVector< SwfShape* > shapeTable(glyphCount);
+		RefArray< Shape > shapeTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
 			T_ASSERT(offsetBase + offsetTable[i] < context.tagEndPosition);
 			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
-			shapeTable[i] = swf->readShape(0);
+
+			const SwfShape* swfShape = swf->readShape(0);
+
+			Ref< Shape > shape = new Shape();
+			if (!shape->create(swfShape))
+				return false;
+
+			shapeTable[i] = shape;
 		}
 
 		Ref< Font > font = new Font();
-		if (!font->create(shapeTable))
+		if (!font->initializeFromShapes(shapeTable))
 			return false;
 
 		context.movie->defineFont(fontId, font);
 	}
 	else if (m_fontType == 2 || m_fontType == 3)
 	{
-		bool hasLayout = bs.readBit();
+		const bool hasLayout = bs.readBit();
 
 		/*
-		bool shiftJIS = bs.readBit();
-		bool smallText = bs.readBit();		// SWF 7.0+
-		bool ansi = bs.readBit();
+		const bool shiftJIS = bs.readBit();
+		const bool smallText = bs.readBit();		// SWF 7.0+
+		const bool ansi = bs.readBit();
 		*/
 		bs.skip(3);
 
-		bool wideOffsets = bs.readBit();
-		bool wideCodes = bs.readBit();
-		bool italic = bs.readBit();
-		bool bold = bs.readBit();
+		const bool wideOffsets = bs.readBit();
+		const bool wideCodes = bs.readBit();
+		const bool italic = bs.readBit();
+		const bool bold = bs.readBit();
 
-		/*uint8_t languageCode = */bs.readUInt8();	// SWF 6.0+
-		std::string fontName = swf->readStringU8();
-		uint16_t glyphCount = bs.readUInt16();
-		int64_t offsetBase = bs.getStream()->tell();
+		/*const uint8_t languageCode = */bs.readUInt8();	// SWF 6.0+
+		const std::string fontName = swf->readStringU8();
+		const uint16_t glyphCount = bs.readUInt16();
+		const int64_t offsetBase = bs.getStream()->tell();
 
 		AlignedVector< uint32_t > offsetTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 			offsetTable[i] = wideOffsets ? bs.readUInt32() : bs.readUInt16();
 
-		uint32_t codeOffset = wideOffsets ? bs.readUInt32() : bs.readUInt16();
+		const uint32_t codeOffset = wideOffsets ? bs.readUInt32() : bs.readUInt16();
 
-		AlignedVector< SwfShape* > shapeTable(glyphCount);
+		RefArray< Shape > shapeTable(glyphCount);
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
 			T_ASSERT(offsetBase + offsetTable[i] < context.tagEndPosition);
 			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
-			shapeTable[i] = swf->readShape(0);
+
+			const SwfShape* swfShape = swf->readShape(0);
+
+			Ref< Shape > shape = new Shape();
+			if (!shape->create(swfShape))
+				return false;
+
+			shapeTable[i] = shape;
 		}
 
-		int64_t currentPosition = bs.getStream()->tell();
+		const int64_t currentPosition = bs.getStream()->tell();
 		T_ASSERT(offsetBase + codeOffset == currentPosition);
 
 		AlignedVector< uint16_t > codeTable(glyphCount);
@@ -226,7 +240,7 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 		int16_t ascent = 0, descent = 0, leading = 0;
 		AlignedVector< int16_t > advanceTable;
 		AlignedVector< Aabb2 > boundsTable;
-		AlignedVector< SwfKerningRecord > kerningTable;
+		SmallMap< uint32_t, int16_t > kerningLookup;
 
 		if (hasLayout)
 		{
@@ -242,14 +256,17 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 			for (uint16_t i = 0; i < glyphCount; ++i)
 				boundsTable[i] = swf->readRect();
 
-			uint16_t kerningCount = bs.readUInt16();
-			kerningTable.resize(kerningCount);
+			const uint16_t kerningCount = bs.readUInt16();
 			for (uint16_t i = 0; i < kerningCount; ++i)
-				kerningTable[i] = swf->readKerningRecord(wideCodes);
+			{
+				const SwfKerningRecord kerning = swf->readKerningRecord(wideCodes);
+				const uint32_t codePair = (uint32_t(kerning.code1) << 16) | kerning.code2;
+				kerningLookup[codePair] = kerning.adjustment;
+			}
 		}
 
 		Ref< Font > font = new Font();
-		if (!font->create(
+		if (!font->initialize(
 			fontName,
 			italic,
 			bold,
@@ -259,7 +276,7 @@ bool TagDefineFont::read(SwfReader* swf, ReadContext& context)
 			leading,
 			advanceTable,
 			boundsTable,
-			kerningTable,
+			kerningLookup,
 			codeTable,
 			m_fontType == 3 ? Font::CtEMSquare : Font::CtTwips
 		))

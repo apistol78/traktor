@@ -120,6 +120,10 @@ public:
 	 */
 	const Color4f& getBackgroundColor() const;
 
+	/*! Get next available depth.
+	 */
+	uint16_t nextUnusedDepth() const;
+
 	/*! Place object onto display list.
 	 *
 	 * \param placeObject Place object description.

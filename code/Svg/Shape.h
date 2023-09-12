@@ -12,6 +12,8 @@
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Class/Any.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Matrix33.h"
 
 // import/export mechanism.
@@ -36,9 +38,11 @@ class T_DLLCLASS Shape : public Object
 	T_RTTI_CLASS;
 
 public:
-	void setId(const std::wstring& id);
+	void setAttribute(const std::wstring& attribute, const Any& value);
 
-	const std::wstring& getId() const;
+	Any getAttribute(const std::wstring& attribute, const Any& defaultValue = Any()) const;
+
+	bool hasAttribute(const std::wstring& attribute) const;
 
 	void setStyle(const Style* style);
 
@@ -54,10 +58,10 @@ public:
 
 	void addChild(Shape* shape);
 
-	virtual void visit(IShapeVisitor* shapeVisitor);
+	virtual bool visit(IShapeVisitor* shapeVisitor);
 
 private:
-	std::wstring m_id;
+	SmallMap< std::wstring, Any > m_attributes;
 	Ref< const Style > m_style;
 	Matrix33 m_transform = Matrix33::identity();
 	Shape* m_parent = nullptr;

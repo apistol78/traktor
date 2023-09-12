@@ -54,6 +54,14 @@ const Color4f& Frame::getBackgroundColor() const
 	return m_backgroundColor;
 }
 
+uint16_t Frame::nextUnusedDepth() const
+{
+	uint16_t depth = 0;
+	for (auto it : m_placeObjects)
+		depth = max(depth, it.first);
+	return depth + 1;
+}
+
 void Frame::placeObject(const PlaceObject& placeObject)
 {
 	T_ASSERT(placeObject.depth > 0);

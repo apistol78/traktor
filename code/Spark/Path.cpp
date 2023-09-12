@@ -58,7 +58,7 @@ void Path::reset()
 
 void Path::moveTo(int32_t x, int32_t y, CoordinateMode mode)
 {
-	T_ASSERT(m_current.segments.empty());
+	T_FATAL_ASSERT(m_current.segments.empty());
 	transform(mode, CmAbsolute, x, y);
 	m_cursor = Vector2(x, y);
 }

@@ -46,11 +46,19 @@ public:
 
 	explicit Movie(const Aabb2& frameBounds, Sprite* movieClip);
 
+	uint16_t nextFontId() const;
+
 	void defineFont(uint16_t fontId, Font* font);
+
+	uint16_t nextBitmapId() const;
 
 	void defineBitmap(uint16_t bitmapId, Bitmap* bitmap);
 
+	uint16_t nextSoundId() const;
+
 	void defineSound(uint16_t soundId, Sound* sound);
+
+	uint16_t nextCharacterId() const;
 
 	void defineCharacter(uint16_t characterId, Character* character);
 

@@ -22,13 +22,12 @@
 #include "Spark/Shape.h"
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
+#include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const ColorTransform c_cxfIdentity(Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -264,7 +263,7 @@ void traverse(MergeQueue& queue, const Movie* movie, const Sprite* sprite, const
 		queue.endClip();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Optimizer", Optimizer, Object)
 
@@ -320,5 +319,4 @@ void Optimizer::triangulate(Movie* movie, bool discardPaths) const
 	}
 }
 
-	}
 }

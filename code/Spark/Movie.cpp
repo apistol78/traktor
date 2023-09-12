@@ -20,10 +20,21 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
+
+template < typename T >
+uint16_t nextId(const T& m)
+{
+	uint16_t id = 0;
+	for (const auto it : m)
+		id = max(id, it.first);
+	return id + 1;
+}
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Movie", 0, Movie, ISerializable)
 
@@ -33,9 +44,19 @@ Movie::Movie(const Aabb2& frameBounds, Sprite* movieClip)
 {
 }
 
+uint16_t Movie::nextFontId() const
+{
+	return nextId(m_fonts);
+}
+
 void Movie::defineFont(uint16_t fontId, Font* font)
 {
 	m_fonts[fontId] = font;
+}
+
+uint16_t Movie::nextBitmapId() const
+{
+	return nextId(m_bitmaps);
 }
 
 void Movie::defineBitmap(uint16_t bitmapId, Bitmap* bitmap)
@@ -43,9 +64,19 @@ void Movie::defineBitmap(uint16_t bitmapId, Bitmap* bitmap)
 	m_bitmaps[bitmapId] = bitmap;
 }
 
+uint16_t Movie::nextSoundId() const
+{
+	return nextId(m_sounds);
+}
+
 void Movie::defineSound(uint16_t soundId, Sound* sound)
 {
 	m_sounds[soundId] = sound;
+}
+
+uint16_t Movie::nextCharacterId() const
+{
+	return nextId(m_characters);
 }
 
 void Movie::defineCharacter(uint16_t characterId, Character* character)
@@ -190,5 +221,4 @@ void Movie::serialize(ISerializer& s)
 	s >> MemberSmallMap< std::string, uint16_t >(L"exports", m_exports);
 }
 
-	}
 }

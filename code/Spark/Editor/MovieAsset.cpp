@@ -8,20 +8,15 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Spark/Movie.h"
 #include "Spark/Editor/MovieAsset.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.MovieAsset", 1, MovieAsset, editor::Asset)
-
-MovieAsset::MovieAsset()
-:	m_staticMovie(false)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spark.MovieAsset", 2, MovieAsset, editor::Asset)
 
 void MovieAsset::serialize(ISerializer& s)
 {
@@ -34,7 +29,15 @@ void MovieAsset::serialize(ISerializer& s)
 		bool includeAS;
 		s >> Member< bool >(L"includeAS", includeAS);
 	}
+
+	if (s.getVersion< MovieAsset >() >= 2)
+		s >> MemberAlignedVector< Font, MemberComposite< Font > >(L"fonts", m_fonts);
 }
 
-	}
+void MovieAsset::Font::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< Path >(L"fileName", fileName);
+}
+
 }

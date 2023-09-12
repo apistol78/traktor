@@ -173,9 +173,12 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 
 	if (shape)
 	{
-		const xml::Attribute* id = elm->getAttribute(L"id");
-		if (id)
-			shape->setId(id->getValue());
+		//const xml::Attribute* id = elm->getAttribute(L"id");
+		//if (id)
+		//	shape->setId(id->getValue());
+
+		for (const xml::Attribute* attr = elm->getFirstAttribute(); attr != nullptr; attr = attr->getNext())
+			shape->setAttribute(attr->getName(), Any::fromString(attr->getValue()));
 
 		if (!shape->getStyle())
 			shape->setStyle(parseStyle(elm));

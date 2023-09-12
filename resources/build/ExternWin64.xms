@@ -572,7 +572,7 @@
 					<items>
 						<item type="File" version="1">
 							<fileName>base/ft*.c</fileName>
-							<excludeFilter/>
+                            <excludeFilter>ftbase.*</excludeFilter>
 							<items/>
 						</item>
 					</items>
@@ -677,7 +677,17 @@
 						</item>
 					</items>
 				</item>
-				<item type="Filter">
+                <item type="Filter">
+                    <name>psnames</name>
+                    <items>
+                        <item type="File" version="1">
+                            <fileName>psnames/psnames.c</fileName>
+                            <excludeFilter/>
+                            <items/>
+                        </item>
+                    </items>
+                </item>
+                <item type="Filter">
 					<name>raster</name>
 					<items>
 						<item type="File" version="1">
