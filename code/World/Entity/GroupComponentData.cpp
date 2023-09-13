@@ -57,7 +57,7 @@ const RefArray< EntityData >& GroupComponentData::getEntityData() const
 
 int32_t GroupComponentData::getOrdinal() const
 {
-	return 500;
+	return -10000;
 }
 
 void GroupComponentData::setTransform(const EntityData* owner, const Transform& transform)

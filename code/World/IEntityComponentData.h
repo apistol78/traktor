@@ -38,8 +38,19 @@ class T_DLLCLASS IEntityComponentData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	/*! Get this component's ordinal number.
+	 *
+	 * The ordinal number determine when in the sequence
+	 * the component should be updated.
+	 * The higher the number the later it will get
+	 * updated.
+	 *
+	 * \return Ordinal number.
+	 */
 	virtual int32_t getOrdinal() const = 0;
 
+	/*! Set the transform of the component data.
+	 */
 	virtual void setTransform(const EntityData* owner, const Transform& transform) = 0;
 };
 
