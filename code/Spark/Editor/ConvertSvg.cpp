@@ -300,36 +300,24 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					if (font.empty())
 						return false;
 
-					const svg::Shape* shapeInside = ts->getStyle()->getShapeInside();
-					if (shapeInside)
-					{
-						log::info << L"GOT SHAPE INSIDE" << Endl;
-					}
-
 					// Calculate transform.
-					const Vector2 viewPnt = Vector2(500.0f, 60.0f);				// Point in view box.
-					const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
-					const Vector2 moviePnt = normPnt * movieSize;							// Point in movie.
-
-					float width = moviePnt.x; //  1305.0f;
-					float height = moviePnt.y; //  325.0f;
-
-
-
+					const Vector2 viewTextSize = ts->getBoundingBox().getSize();	// Size in view box.
+					const Vector2 normTextSize = viewTextSize / viewBox.getSize();	// Normalized size.
+					const Vector2 movieTextSize = normTextSize * movieSize;			// Size in movie.
 
 					// Create an edit field; most likely since text fields are static.
 					Ref< Edit > edit = new Edit(
 						1,	// font id
 						(uint16_t)(ts->getStyle()->getFontSize() * 20.0f),	// font height
-						Aabb2(Vector2(0.0f, 0.0f), Vector2(width, height)),	// textBounds
+						Aabb2(Vector2(0.0f, 0.0f), movieTextSize),			// textBounds
 						ts->getStyle()->getFill(),
 						255,		// maxLength
 						ts->getText(),	// initialText
 						StaLeft,
-						0,	// leftMargin
-						0,	// rightMargin
-						0,	// indent
-						0,	// leading
+						0,		// leftMargin
+						0,		// rightMargin
+						0,		// indent
+						0,		// leading
 						true,	// readOnly
 						false,	// wordWrap
 						false,	// multiLine

@@ -226,6 +226,17 @@ void WireDisplayRenderer::beginEdit(const EditInstance& edit, const Matrix33& tr
 								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mn.x, mx.y)),
 								Color4ub(0, 0, 255, 128)
 							);
+
+							m_primitiveRenderer->drawSolidPoint(
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2::zero()),
+								4.0f,
+								Color4ub(0, 0, 255, 255)
+							);
+							m_primitiveRenderer->drawLine(
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2::zero()),
+								transformIntoView(m_frameBounds, m_frameTransform, glyphTransform, Vector2(mn.x, mn.y)),
+								Color4ub(0, 0, 255, 255)
+							);
 						}
 					}
 				}

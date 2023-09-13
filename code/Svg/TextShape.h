@@ -36,6 +36,8 @@ public:
 
 	const std::wstring& getText() const;
 
+	virtual Aabb2 getBoundingBox() const override;
+
 private:
 	Vector2 m_position;
 	std::wstring m_text;

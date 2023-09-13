@@ -66,8 +66,8 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 	const float scale = (1024.0f * 20.0f) / face->units_per_EM;
 
 	const int16_t ascent = face->ascender * scale;
-	const int16_t descent = 0;
-	const int16_t leading = 0;
+	const int16_t descent = -face->descender * scale;
+	const int16_t leading = face->height * scale;
 
 	RefArray< Shape > glyphShapes;
 	AlignedVector< int16_t > advanceTable;
@@ -104,6 +104,9 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 		}
 		ud;
 
+		// Transformation.
+		const Vector2 mn((float)face->bbox.xMin, (float)face->bbox.yMin);
+		const Vector2 mx((float)face->bbox.xMax, (float)face->bbox.yMax);
 		ud.transform = Matrix33(
 			scale, 0.0f, 0.0f,
 			0.0f, -scale, 0.0f,
@@ -159,11 +162,14 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 		advanceTable.push_back(slot->metrics.horiAdvance * scale);
 
 		// Save bounding box.
-		FT_BBox boundingBox;
-		FT_Outline_Get_BBox(&outline, &boundingBox);
-		const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
-		const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
-		boundsTable.push_back(Aabb2(mn * scale, mx * scale));
+		//FT_BBox boundingBox;
+		//FT_Outline_Get_BBox(&outline, &boundingBox);
+		//const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
+		//const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
+		boundsTable.push_back(Aabb2(Vector2::zero(), Vector2::zero())); //  mn* scale, mx* scale));
+
+		const Aabb2 bounds = ud.path.getBounds();
+		log::info << bounds.mn.x << L", " << bounds.mn.y << Endl;
 
 		// Glyph code.
 		codeTable.push_back(ch);

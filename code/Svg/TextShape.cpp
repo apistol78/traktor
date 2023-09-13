@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Svg/Style.h"
 #include "Svg/TextShape.h"
 
 namespace traktor::svg
@@ -27,6 +28,15 @@ const Vector2& TextShape::getPosition() const
 const std::wstring& TextShape::getText() const
 {
 	return m_text;
+}
+
+Aabb2 TextShape::getBoundingBox() const
+{
+	const Style* style = getStyle();
+	if (style != nullptr && style->getShapeInside() != nullptr)
+		return getTransform() * style->getShapeInside()->getBoundingBox();
+	else
+		return Aabb2();
 }
 
 }

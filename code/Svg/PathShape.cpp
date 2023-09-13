@@ -23,4 +23,15 @@ const Path& PathShape::getPath() const
 	return m_path;
 }
 
+Aabb2 PathShape::getBoundingBox() const
+{
+	Aabb2 boundingBox;
+	for (const auto& subPath : m_path.getSubPaths())
+	{
+		for (const auto& point : subPath.points)
+			boundingBox.contain(point);
+	}
+	return boundingBox;
+}
+
 }
