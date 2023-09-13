@@ -14,6 +14,7 @@
 #include "Core/RefArray.h"
 #include "Core/Class/Any.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
 
 // import/export mechanism.
@@ -57,6 +58,8 @@ public:
 	Shape* getParent() const;
 
 	void addChild(Shape* shape);
+
+	virtual Aabb2 getBoundingBox() const;
 
 	virtual bool visit(IShapeVisitor* shapeVisitor);
 

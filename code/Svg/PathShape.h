@@ -34,6 +34,8 @@ public:
 
 	const Path& getPath() const;
 
+	virtual Aabb2 getBoundingBox() const override;
+
 private:
 	Path m_path;
 };

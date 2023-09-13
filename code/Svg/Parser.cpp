@@ -722,7 +722,7 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 			else if (key == L"shape-inside")
 			{
 				const size_t s = value.find(L"url(#");
-				const size_t e = value.find(L");");
+				const size_t e = value.find(L")");
 				if (s != value.npos && e != value.npos)
 				{
 					const std::wstring id = value.substr(s + 5, e - s - 5);

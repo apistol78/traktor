@@ -44,6 +44,8 @@ public:
 
 	const drawing::Image* getImage() const;
 
+	virtual Aabb2 getBoundingBox() const override;
+
 private:
 	Vector2 m_position;
 	Vector2 m_size;

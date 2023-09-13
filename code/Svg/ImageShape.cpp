@@ -35,4 +35,11 @@ const drawing::Image* ImageShape::getImage() const
 	return m_image;
 }
 
+Aabb2 ImageShape::getBoundingBox() const
+{
+	Aabb2 boundingBox(Vector2::zero(), m_size);
+	boundingBox.contain(Shape::getBoundingBox());
+	return boundingBox;
+}
+
 }

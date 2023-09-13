@@ -81,6 +81,14 @@ void Shape::addChild(Shape* shape)
 	shape->m_parent = this;
 }
 
+Aabb2 Shape::getBoundingBox() const
+{
+	Aabb2 boundingBox;
+	for (auto child : m_children)
+		boundingBox.contain(child->getTransform() * child->getBoundingBox());
+	return boundingBox;
+}
+
 bool Shape::visit(IShapeVisitor* shapeVisitor)
 {
 	if (!shapeVisitor->enter(this))
