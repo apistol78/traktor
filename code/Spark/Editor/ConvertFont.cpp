@@ -22,7 +22,7 @@
 namespace traktor::spark
 {
 
-bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAsset, Movie* movie)
+uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAsset, Movie* movie)
 {
 	FT_Library library;
 	FT_Face face;
@@ -34,7 +34,7 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 	if (error)
 	{
 		log::error << L"Unable to initialize FreeType library." << Endl;
-		return false;
+		return 0;
 	}
 
 	error = FT_New_Face(
@@ -46,14 +46,14 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 	if (error)
 	{
 		log::error << L"Unable to load font." << Endl;
-		return false;
+		return 0;
 	}
 
 	error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 	if (error)
 	{
 		log::error << L"Unable to select unicode char map." << Endl;
-		return false;
+		return 0;
 	}
 
 	std::set< wchar_t > characters;
@@ -203,7 +203,7 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 		font
 	);
 
-	return true;
+	return fontId;
 }
 
 }

@@ -1,10 +1,9 @@
-#pragma optimize( "", off )
-
 #include <functional>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
 #include "Core/Math/Bezier3rd.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -97,10 +96,13 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 	Ref< Movie > movie = new Movie(Aabb2(Vector2(0.0f, 0.0f), Vector2(movieSize.x, movieSize.y)), movieSprite);
 
 	// Import all fonts from the asset into the movie.
+	SmallMap< std::wstring, uint16_t > fontIds;
 	for (const auto& font : movieAsset->getFonts())
 	{
-		if (!convertFont(assetPath, font, movie))
+		const uint16_t fontId = convertFont(assetPath, font, movie);
+		if (fontId == 0)
 			return nullptr;
+		fontIds[toLower(font.name)] = fontId;
 	}
 
 	// Visit all shapes and create sprites and shapes.
@@ -295,9 +297,12 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					if (id.empty())
 						return false;
 
-					// Import font.
 					const std::wstring font = ts->getStyle()->getFontFamily();
 					if (font.empty())
+						return false;
+
+					const auto it = fontIds.find(toLower(font));
+					if (it == fontIds.end())
 						return false;
 
 					// Calculate transform.
@@ -307,11 +312,11 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 
 					// Create an edit field; most likely since text fields are static.
 					Ref< Edit > edit = new Edit(
-						1,	// font id
+						it->second,	// font id
 						(uint16_t)(ts->getStyle()->getFontSize() * 20.0f),	// font height
 						Aabb2(Vector2(0.0f, 0.0f), movieTextSize),			// textBounds
 						ts->getStyle()->getFill(),
-						255,		// maxLength
+						255,			// maxLength
 						ts->getText(),	// initialText
 						StaLeft,
 						0,		// leftMargin

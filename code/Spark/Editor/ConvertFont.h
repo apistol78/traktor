@@ -8,6 +8,6 @@ namespace traktor::spark
 
 class Movie;
 
-bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& font, Movie* movie);
+uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& font, Movie* movie);
 
 }
