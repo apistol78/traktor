@@ -774,6 +774,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 {
 	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
 	const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
+	const Scalar lightAttenution = Scalar(m_configuration->getAnalyticalLightAttenuation());
 	RTCRay T_ALIGN64 r;
 
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
@@ -790,7 +791,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 				if (phi <= 0.0f)
 					break;
 
-				Scalar shadowAttenuate(1.0f);
+				Scalar shadowAttenuate = 1.0_simd;
 
 				if (shadowSampleCount > 0)
 				{
@@ -826,7 +827,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
-				contribution += light.color * phi * shadowAttenuate;
+				contribution += light.color * phi * shadowAttenuate * lightAttenution;
 			}
 			break;
 
@@ -881,7 +882,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
-				contribution += light.color * phi * min(f, 1.0_simd) * shadowAttenuate;
+				contribution += light.color * phi * min(f, 1.0_simd) * shadowAttenuate * lightAttenution;
 			}
 			break;
 
@@ -941,7 +942,7 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 					shadowAttenuate = Scalar(1.0f - float(shadowCount) / shadowSampleCount);
 				}
 
-				contribution += light.color * k0 * k1 * k2 * shadowAttenuate;
+				contribution += light.color * k0 * k1 * k2 * shadowAttenuate * lightAttenution;
 			}
 			break;
 		}

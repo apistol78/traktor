@@ -17,7 +17,7 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 31, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 32, BakeConfiguration, ISerializable)
 
 uint32_t BakeConfiguration::calculateModelRelevanteHash() const
 {
@@ -87,6 +87,9 @@ void BakeConfiguration::serialize(ISerializer& s)
 		bool enableSeamFilter;
 		s >> Member< bool >(L"enableSeamFilter", enableSeamFilter);
 	}
+
+	if (s.getVersion< BakeConfiguration >() >= 32)
+		s >> Member< float >(L"analyticalLightAttenuation", m_analyticalLightAttenuation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 
 	if (s.getVersion< BakeConfiguration >() >= 20)
 		s >> Member< float >(L"skyAttenuation", m_skyAttenuation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
