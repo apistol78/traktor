@@ -10,6 +10,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Spark/Dictionary.h"
 #include "Spark/Edit.h"
 #include "Spark/EditInstance.h"
 
@@ -81,7 +82,11 @@ Ref< CharacterInstance > Edit::createInstance(
 	const Matrix33& transform
 ) const
 {
-	return new EditInstance(context, dictionary, parent, this, m_initialText);
+	const Font* font = dictionary->getFont(m_fontId);
+	if (font)
+		return new EditInstance(context, dictionary, parent, this, font, m_initialText);
+	else
+		return nullptr;
 }
 
 uint16_t Edit::getFontId() const

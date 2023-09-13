@@ -20,12 +20,11 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Edit;
+class Font;
 class TextFormat;
 class TextLayout;
 
@@ -37,7 +36,7 @@ class T_DLLCLASS EditInstance : public CharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	explicit EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html);
+	explicit EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const Font* font, const std::wstring& html);
 
 	virtual ~EditInstance();
 
@@ -221,6 +220,7 @@ private:
 	Color4f m_textColor;
 	float m_letterSpacing;
 	SwfTextAlignType m_align;
+	Ref< const Font > m_font;
 	float m_fontHeight;
 	std::wstring m_text;
 	std::wstring m_htmlText;
@@ -241,6 +241,4 @@ private:
 	void updateLayout();
 };
 
-	}
 }
-

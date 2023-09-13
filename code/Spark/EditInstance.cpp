@@ -23,12 +23,10 @@
 #include "Html/Element.h"
 #include "Html/Text.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const struct { const wchar_t* name; Color4f color; } c_colorTable[] =
 {
@@ -147,17 +145,18 @@ void traverseHtmlDOM(
 	layout->setAttribute(font, textColor);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.EditInstance", EditInstance, CharacterInstance)
 
-EditInstance::EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const std::wstring& html)
+EditInstance::EditInstance(Context* context, Dictionary* dictionary, CharacterInstance* parent, const Edit* edit, const Font* font, const std::wstring& html)
 :	CharacterInstance(context, dictionary, parent)
 ,	m_edit(edit)
 ,	m_textBounds(edit->getTextBounds())
 ,	m_textColor(edit->getTextColor())
 ,	m_letterSpacing(0.0f)
 ,	m_align(edit->getAlign())
+,	m_font(font)
 ,	m_fontHeight(edit->getFontHeight())
 ,	m_html(false)
 ,	m_multiLine(edit->multiLine())
@@ -231,12 +230,6 @@ Vector2 EditInstance::measureText(const std::wstring& text) const
 
 Vector2 EditInstance::measureText(const std::wstring& text, float width) const
 {
-	const Dictionary* dictionary = getDictionary();
-	T_ASSERT(dictionary);
-
-	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT(font);
-
 	TextLayout layout;
 	layout.begin();
 	layout.setBounds(Aabb2(Vector2(0.0f, 0.0f), Vector2(width, std::numeric_limits< float >::max())));
@@ -245,10 +238,9 @@ Vector2 EditInstance::measureText(const std::wstring& text, float width) const
 	layout.setFontHeight(m_fontHeight);
 	layout.setWordWrap(m_wordWrap);
 	layout.setAlignment(m_align);
-	layout.setAttribute(font, m_textColor);
+	layout.setAttribute(m_font, m_textColor);
 	layout.insertText(text);
 	layout.end();
-
 	return Vector2(layout.getWidth(), layout.getHeight());
 }
 
@@ -346,12 +338,6 @@ int32_t EditInstance::getMaxScroll() const
 
 Ref< TextLayout > EditInstance::prepareTextLayout() const
 {
-	const Dictionary* dictionary = getDictionary();
-	T_ASSERT(dictionary);
-
-	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT(font);
-
 	Ref< TextLayout > layout = new TextLayout();
 	layout->begin();
 	layout->setBounds(m_textBounds);
@@ -360,8 +346,7 @@ Ref< TextLayout > EditInstance::prepareTextLayout() const
 	layout->setFontHeight(m_fontHeight);
 	layout->setWordWrap(m_wordWrap);
 	layout->setAlignment(m_align);
-	layout->setAttribute(font, m_textColor);
-
+	layout->setAttribute(m_font, m_textColor);
 	return layout;
 }
 
@@ -407,7 +392,6 @@ void EditInstance::eventKey(wchar_t unicode)
 
 	internalParseText(m_text);
 
-	//executeScriptEvent(ActionContext::IdOnChanged, ActionValue(getAsObject()));
 	m_eventChanged.issue();
 }
 
@@ -586,12 +570,6 @@ float EditInstance::getTextHeight() const
 
 bool EditInstance::internalParseText(const std::wstring& text)
 {
-	const Dictionary* dictionary = getDictionary();
-	T_ASSERT(dictionary);
-
-	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT(font);
-
 	m_layout->begin();
 
 	m_layout->setBounds(m_textBounds);
@@ -600,7 +578,7 @@ bool EditInstance::internalParseText(const std::wstring& text)
 	m_layout->setFontHeight(m_fontHeight);
 	m_layout->setWordWrap(m_wordWrap);
 	m_layout->setAlignment(m_align);
-	m_layout->setAttribute(font, m_textColor);
+	m_layout->setAttribute(m_font, m_textColor);
 
 	if (m_multiLine)
 	{
@@ -635,12 +613,6 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 	if (!document.loadFromText(html))
 		return false;
 
-	const Dictionary* dictionary = getDictionary();
-	T_ASSERT(dictionary);
-
-	const Font* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT(font);
-
 	m_layout->begin();
 
 	m_layout->setBounds(m_textBounds);
@@ -649,7 +621,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 	m_layout->setFontHeight(m_fontHeight);
 	m_layout->setWordWrap(m_wordWrap);
 	m_layout->setAlignment(m_align);
-	m_layout->setAttribute(font, m_textColor);
+	m_layout->setAttribute(m_font, m_textColor);
 
 	const html::Element* element = document.getDocumentElement();
 	T_ASSERT(element);
@@ -658,7 +630,7 @@ bool EditInstance::internalParseHtml(const std::wstring& html)
 	traverseHtmlDOM(
 		this,
 		element,
-		font,
+		m_font,
 		m_textColor,
 		m_layout,
 		text
@@ -681,5 +653,4 @@ void EditInstance::updateLayout()
 		internalParseText(m_text);
 }
 
-	}
 }
