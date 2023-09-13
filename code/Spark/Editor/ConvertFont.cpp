@@ -7,8 +7,6 @@
 #include FT_OUTLINE_H
 #include FT_BBOX_H
 
-//#include "Core/Io/DynamicMemoryStream.h"
-//#include "Core/Io/StreamCopy.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Bezier2nd.h"
@@ -26,24 +24,17 @@ namespace traktor::spark
 
 bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAsset, Movie* movie)
 {
-	//AlignedVector< uint8_t > memory;
 	FT_Library library;
 	FT_Face face;
 	FT_Error error;
 
-	// Load entire file into memory.
-	//DynamicMemoryStream ms(memory, false, true);
-	//if (!StreamCopy(&ms, sourceStream).execute())
-	//	return nullptr;
-
 	const traktor::Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath + fontAsset.fileName);
-
 
 	error = FT_Init_FreeType(&library);
 	if (error)
 	{
 		log::error << L"Unable to initialize FreeType library." << Endl;
-		return nullptr;
+		return false;
 	}
 
 	error = FT_New_Face(
@@ -106,23 +97,18 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 		if (outline.n_contours <= 0 || outline.n_points <= 0)
 			continue;
 
-		// Get bounding box and calculate transformation to flip Y.
-		const Matrix33 transform(
-			scale, 0.0f, 0.0f,
-			0.0f, -scale, 0.0f,
-			0.0f, 0.0f, 1.0f
-		);
-
 		struct UD
 		{
 			Matrix33 transform;
 			Path path;
-			bool valid;
 		}
 		ud;
 
-		ud.transform = transform;
-		ud.valid = true;
+		ud.transform = Matrix33(
+			scale, 0.0f, 0.0f,
+			0.0f, -scale, 0.0f,
+			0.0f, 0.0f, 1.0f
+		);
 
 		// Create curves from font outline.
 		FT_Outline_Funcs callbacks = {};
@@ -169,26 +155,23 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 
 		ud.path.end(1, 0, 0);
 
-		if (ud.valid)
-		{
-			// Glyph advancement.
-			advanceTable.push_back(slot->metrics.horiAdvance * scale);
+		// Glyph advancement.
+		advanceTable.push_back(slot->metrics.horiAdvance * scale);
 
-			// Save bounding box.
-			FT_BBox boundingBox;
-			FT_Outline_Get_BBox(&outline, &boundingBox);
-			const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
-			const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
-			boundsTable.push_back(Aabb2(mn * scale, mx * scale));
+		// Save bounding box.
+		FT_BBox boundingBox;
+		FT_Outline_Get_BBox(&outline, &boundingBox);
+		const Vector2 mn((float)boundingBox.xMin, (float)boundingBox.yMin);
+		const Vector2 mx((float)boundingBox.xMax, (float)boundingBox.yMax);
+		boundsTable.push_back(Aabb2(mn * scale, mx * scale));
 
-			// Glyph code.
-			codeTable.push_back(ch);
+		// Glyph code.
+		codeTable.push_back(ch);
 
-			// Convert into Spark shape.
-			Ref< Shape > glyphShape = new Shape();
-			glyphShape->addPath(ud.path);
-			glyphShapes.push_back(glyphShape);
-		}
+		// Convert into Spark shape.
+		Ref< Shape > glyphShape = new Shape();
+		glyphShape->addPath(ud.path);
+		glyphShapes.push_back(glyphShape);
 	}
 
 	Ref< Font > font = new Font();
@@ -213,7 +196,6 @@ bool convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAss
 		fontId,
 		font
 	);
-
 
 	return true;
 }

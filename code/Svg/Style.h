@@ -25,6 +25,7 @@ namespace traktor::svg
 {
 
 class Gradient;
+class Shape;
 
 /*! SVG style description.
  * \ingroup SVG
@@ -76,6 +77,10 @@ public:
 
 	float getFontSize() const;
 
+	void setShapeInside(const Shape* shape);
+
+	const Shape* getShapeInside() const;
+
 	bool operator == (const Style& other) const;
 
 private:
@@ -89,6 +94,7 @@ private:
 	float m_opacity;
 	std::wstring m_fontFamily;
 	float m_fontSize;
+	Ref< const Shape > m_shapeInside;
 };
 
 }

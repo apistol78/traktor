@@ -835,7 +835,7 @@
 					<items>
 						<item type="File" version="1">
 							<fileName>base/ft*.c</fileName>
-							<excludeFilter/>
+							<excludeFilter>ftbase.*</excludeFilter>
 							<items/>
 						</item>
 					</items>
@@ -935,6 +935,16 @@
 					<items>
 						<item type="File" version="1">
 							<fileName>pshinter/pshinter.c</fileName>
+							<excludeFilter/>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>psnames</name>
+					<items>
+						<item type="File" version="1">
+							<fileName>psnames/psnames.c</fileName>
 							<excludeFilter/>
 							<items/>
 						</item>
