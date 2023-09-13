@@ -52,6 +52,8 @@ public:
 
 	bool getEnableDenoise() const { return m_enableDenoise; }
 
+	float getAnalyticalLightAttenuation() const { return m_analyticalLightAttenuation; }
+
 	float getSkyAttenuation() const { return m_skyAttenuation; }
 
 	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
@@ -72,6 +74,7 @@ private:
 	int32_t m_minimumLightMapSize = 16;
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;
+	float m_analyticalLightAttenuation = 1.0f;
 	float m_skyAttenuation = 1.0f;
 	float m_ambientOcclusionFactor = 0.5f;
 };

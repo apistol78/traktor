@@ -414,6 +414,16 @@ bool BakePipelineOperator::transform(
 	RefArray< world::LayerEntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
+		// Dynamic layers do not get baked.
+		if (auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >())
+		{
+			if (!editorAttributes->include || editorAttributes->dynamic)
+			{
+				layers.push_back(layer);
+				continue;
+			}
+		}
+
 		// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
 		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
@@ -427,16 +437,6 @@ bool BakePipelineOperator::transform(
 		if (!flattenedLayer)
 			return false;
 
-		// Dynamic layers do not get baked.
-		if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-			{
-				layers.push_back(flattenedLayer);
-				continue;
-			}
-		}
-
 		// Collect all entities from layer which do not get baked.
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
 		{
@@ -445,9 +445,8 @@ bool BakePipelineOperator::transform(
 			{
 				if (!editorAttributes->include)
 					return scene::Traverser::VrSkip;
-
-				if (editorAttributes->dynamic)
-					return scene::Traverser::VrContinue;
+				//if (editorAttributes->dynamic)
+				//	return scene::Traverser::VrContinue;
 			}
 
 			// "Unnamed" entities do not bake.
@@ -528,6 +527,16 @@ bool BakePipelineOperator::build(
 		// Find all static meshes and lights; replace external referenced entities with local if necessary.
 		for (const auto layer : inoutSceneAsset->getLayers())
 		{
+			// Dynamic layers do not get baked.
+			if (auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >())
+			{
+				if (!editorAttributes->include || editorAttributes->dynamic)
+				{
+					layers.push_back(layer);
+					continue;
+				}
+			}
+
 			// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 			// entities which are inline in scene, only those referenced from an external entity should be re-assigned IDs.
 			Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
@@ -541,16 +550,6 @@ bool BakePipelineOperator::build(
 			if (!flattenedLayer)
 				return false;
 
-			// Dynamic layers do not get baked.
-			if (auto editorAttributes = flattenedLayer->getComponent< world::EditorAttributesComponentData >())
-			{
-				if (!editorAttributes->include || editorAttributes->dynamic)
-				{
-					layers.push_back(flattenedLayer);
-					continue;
-				}
-			}
-
 			// Collect all entities from layer which we will include in bake.
 			RefArray< world::EntityData > bakeEntityData;
 			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
@@ -558,7 +557,7 @@ bool BakePipelineOperator::build(
 				// Check editor attributes component if we should include entity.
 				if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 				{
-					if (!editorAttributes->include || editorAttributes->dynamic)
+					if (!editorAttributes->include/* || editorAttributes->dynamic*/)
 						return scene::Traverser::VrSkip;
 				}
 
