@@ -64,7 +64,7 @@ Ref< MeshComponent > MeshComponentData::createComponent(resource::IResourceManag
 
 int32_t MeshComponentData::getOrdinal() const
 {
-	return 0;
+	return 3000;
 }
 
 void MeshComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
