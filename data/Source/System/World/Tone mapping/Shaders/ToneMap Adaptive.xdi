@@ -314,10 +314,10 @@ W
 			<![CDATA[
 vec3 x = $Input.xyz;
 float a = 4.5f;
-float b = 0.1f;
-float c = 1.5f;
-float d = 1.2f;
-float e = 0.4f;
+float b = 0.5f;
+float c = 1.2f;
+float d = 1.3f;
+float e = 1.6f;
 $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
