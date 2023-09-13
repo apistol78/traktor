@@ -100,7 +100,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 	for (const auto& font : movieAsset->getFonts())
 	{
 		if (!convertFont(assetPath, font, movie))
-			return false;
+			return nullptr;
 	}
 
 	// Visit all shapes and create sprites and shapes.
@@ -126,24 +126,14 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 				Ref< Sprite > sprite = new Sprite();
 				Ref< Shape > shape = new Shape();
 
-				movie->defineCharacter(characterId + 0, shape);
-				movie->defineCharacter(characterId + 1, sprite);
+				movie->defineCharacter(characterId, sprite);
 
 				if (spriteStack.empty())
-					movie->setExport(wstombs(id), characterId + 1);
+					movie->setExport(wstombs(id), characterId);
 
 				// Add frame and place shape.
 				Ref< Frame > frame = new Frame();
 				sprite->addFrame(frame);
-
-				// Place the shape, which we're about to build, onto created sprite.
-				{
-					Frame::PlaceObject p;
-					p.hasFlags = Frame::PfHasCharacterId;
-					p.depth = frame->nextUnusedDepth();
-					p.characterId = characterId + 0;
-					frame->placeObject(p);
-				}
 
 				// Place this sprite on parent sprite.
 				if (!spriteStack.empty())
@@ -152,7 +142,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					p.hasFlags = Frame::PfHasName | Frame::PfHasCharacterId;
 					p.depth = spriteStack.back().frame->nextUnusedDepth();
 					p.name = wstombs(id);
-					p.characterId = characterId + 1;
+					p.characterId = characterId;
 					spriteStack.back().frame->placeObject(p);
 				}
 
@@ -161,7 +151,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 				log::info << L"Enter sprite \"" << id << L"\" (" << (characterId + 1) << L")..." << Endl;
 				log::info << IncreaseIndent;
 
-				characterId += 2;
+				characterId++;
 			}
 
 			if (!spriteStack.empty())
@@ -213,7 +203,6 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 						{
 						case svg::SubPathType::Linear:
 						{
-							log::info << L"linear " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; ++i)
 								path.lineTo((int32_t)(pnts[i].x), (int32_t)(pnts[i].y), Path::CmAbsolute);
@@ -222,7 +211,6 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 
 						case svg::SubPathType::Quadric:
 						{
-							log::info << L"quadric " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; i += 2)
 								path.quadraticTo(
@@ -235,7 +223,6 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 
 						case svg::SubPathType::Cubic:
 						{
-							log::info << L"cubic " << ln << L" (" << (sp.closed ? L"closed" : L"open") << L")" << Endl;
 							path.moveTo((int32_t)(pnts[0].x), (int32_t)(pnts[0].y), Path::CmAbsolute);
 							for (size_t i = 1; i < ln; i += 3)
 							{
@@ -313,6 +300,12 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					if (font.empty())
 						return false;
 
+					const svg::Shape* shapeInside = ts->getStyle()->getShapeInside();
+					if (shapeInside)
+					{
+						log::info << L"GOT SHAPE INSIDE" << Endl;
+					}
+
 					// Calculate transform.
 					const Vector2 viewPnt = Vector2(500.0f, 60.0f);				// Point in view box.
 					const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
@@ -337,7 +330,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 						0,	// rightMargin
 						0,	// indent
 						0,	// leading
-						false,	// readOnly
+						true,	// readOnly
 						false,	// wordWrap
 						false,	// multiLine
 						false,	// password
@@ -370,8 +363,24 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 			if (svg->hasAttribute(L"traktor:sprite"))
 			{
 				const std::wstring id = svg->getAttribute(L"id").getWideString();
+				
+				// Place the shape onto first frame of sprite.
+				if (!spriteStack.back().shape->getPaths().empty())
+				{
+					movie->defineCharacter(characterId, spriteStack.back().shape);
+
+					Frame::PlaceObject p;
+					p.hasFlags = Frame::PfHasCharacterId;
+					p.depth = spriteStack.back().frame->nextUnusedDepth();
+					p.characterId = characterId;
+					spriteStack.back().frame->placeObject(p);
+
+					characterId++;
+				}
+
 				log::info << DecreaseIndent;
 				log::info << L"Leave sprite \"" << id << L"\"..." << Endl;
+
 				spriteStack.pop_back();
 			}
 		}
@@ -381,13 +390,13 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 
 
 	// Place sprite character on first frame of the root.
-	{
-		Frame::PlaceObject p;
-		p.hasFlags = Frame::PfHasCharacterId;
-		p.depth = 1;
-		p.characterId = 5;
-		movieFrame->placeObject(p);
-	}
+	// {
+	// 	Frame::PlaceObject p;
+	// 	p.hasFlags = Frame::PfHasCharacterId;
+	// 	p.depth = 1;
+	// 	p.characterId = 5;
+	// 	movieFrame->placeObject(p);
+	// }
 
 
 	return movie;

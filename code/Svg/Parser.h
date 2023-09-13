@@ -49,6 +49,7 @@ public:
 
 private:
 	std::map< std::wstring, Ref< Gradient > > m_gradients;
+	std::map< std::wstring, Ref< Shape > > m_shapeDefs;
 
 	Ref< Shape > traverse(xml::Element* elm);
 
@@ -60,7 +61,7 @@ private:
 
 	Ref< Shape > parseEllipse(xml::Element* elm);
 
-	Ref< Shape > parseRect(xml::Element* elm);
+	Ref< Shape > parseRect(const xml::Element* elm);
 
 	Ref< Shape > parsePolygon(xml::Element* elm);
 
@@ -78,7 +79,7 @@ private:
 
 	Matrix33 parseTransform(xml::Element* elm);
 
-	float parseAttr(xml::Element* elm, const std::wstring& attrName, float defValue = 0.0f) const;
+	float parseAttr(const xml::Element* elm, const std::wstring& attrName, float defValue = 0.0f) const;
 };
 
 }

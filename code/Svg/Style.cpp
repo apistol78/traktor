@@ -124,6 +124,16 @@ float Style::getFontSize() const
 	return m_fontSize;
 }
 
+void Style::setShapeInside(const Shape* shape)
+{
+	m_shapeInside = shape;
+}
+
+const Shape* Style::getShapeInside() const
+{
+	return m_shapeInside;
+}
+
 bool Style::operator == (const Style& other) const
 {
 	if (m_fillEnable != other.m_fillEnable)
@@ -156,6 +166,9 @@ bool Style::operator == (const Style& other) const
 	if (m_fontSize != other.m_fontSize)
 		return false;
 	if (m_fontFamily != other.m_fontFamily)
+		return false;
+
+	if (m_shapeInside != other.m_shapeInside)
 		return false;
 
 	return true;

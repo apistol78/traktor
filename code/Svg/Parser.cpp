@@ -173,10 +173,6 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 
 	if (shape)
 	{
-		//const xml::Attribute* id = elm->getAttribute(L"id");
-		//if (id)
-		//	shape->setId(id->getValue());
-
 		for (const xml::Attribute* attr = elm->getFirstAttribute(); attr != nullptr; attr = attr->getNext())
 			shape->setAttribute(attr->getName(), Any::fromString(attr->getValue()));
 
@@ -314,7 +310,7 @@ Ref< Shape > Parser::parseEllipse(xml::Element* elm)
 	return new PathShape(path);
 }
 
-Ref< Shape > Parser::parseRect(xml::Element* elm)
+Ref< Shape > Parser::parseRect(const xml::Element* elm)
 {
 	const float x = parseAttr(elm, L"x");
 	const float y = parseAttr(elm, L"y");
@@ -601,7 +597,13 @@ void Parser::parseDefs(xml::Element* elm)
 		const std::wstring name = ch->getName();
 		const std::wstring id = ch->getAttribute(L"id")->getValue();
 
-		if (name == L"linearGradient")
+		if (name == L"rect")
+		{
+			Ref< Shape > rect = parseRect(ch);
+			if (rect)
+				m_shapeDefs[id] = rect;
+		}
+		else if (name == L"linearGradient")
 		{
 			RefArray< xml::Element > stops;
 			elm->get(L"stop", stops);
@@ -716,6 +718,21 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 				float fillOpacity;
 				std::wstringstream(value) >> fillOpacity;
 				style->setOpacity(fillOpacity);
+			}
+			else if (key == L"shape-inside")
+			{
+				const size_t s = value.find(L"url(#");
+				const size_t e = value.find(L");");
+				if (s != value.npos && e != value.npos)
+				{
+					const std::wstring id = value.substr(s + 5, e - s - 5);
+					log::info << id << Endl;
+					const auto it = m_shapeDefs.find(id);
+					if (it != m_shapeDefs.end())
+						style->setShapeInside(it->second);
+					else
+						log::warning << L"Unable to set \"shape-inside\"; no such def \"" << id << L"\"." << Endl;
+				}
 			}
 			else if (key == L"stroke")
 			{
@@ -840,7 +857,7 @@ Matrix33 Parser::parseTransform(xml::Element* elm)
 	return transform;
 }
 
-float Parser::parseAttr(xml::Element* elm, const std::wstring& attrName, float defValue) const
+float Parser::parseAttr(const xml::Element* elm, const std::wstring& attrName, float defValue) const
 {
 	if (elm && elm->hasAttribute(attrName))
 	{
