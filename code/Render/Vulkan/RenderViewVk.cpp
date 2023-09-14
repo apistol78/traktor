@@ -433,7 +433,7 @@ int RenderViewVk::getHeight() const
 
 bool RenderViewVk::isActive() const
 {
-#if defined(_WIN32) || defined(__ANDROID__) || defined(__IOS__)
+#if defined(__ANDROID__) || defined(__IOS__)
 	return true;
 #else
 	return m_window->isActive();
