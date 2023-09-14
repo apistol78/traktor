@@ -55,7 +55,7 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 
 	if (entityData->getId().isNotNull())
 	{
-		T_FATAL_ASSERT(m_entityProducts.find(entityData->getId()) == m_entityProducts.end());
+		// Note! External of external will get duplicate ID's.
 		m_entityProducts.insert(entityData->getId(), entity);
 	}
 
