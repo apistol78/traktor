@@ -35,6 +35,7 @@ BoidsComponent::BoidsComponent(
 )
 :	m_spawnVelocityDiagonal(spawnVelocityDiagonal)
 ,	m_constrain(constrain)
+,	m_attractPosition(Vector4::zero())
 ,	m_followForce(followForce)
 ,	m_repelDistance(repelDistance)
 ,	m_repelForce(repelForce)
@@ -74,7 +75,6 @@ Aabb3 BoidsComponent::getBoundingBox() const
 void BoidsComponent::update(const world::UpdateParams& update)
 {
 	const Scalar deltaTime((float)min(update.deltaTime, 1.0 / 30.0));
-	const Vector4 attraction = m_transform.translation().xyz1();
 
 	if (deltaTime <= FUZZY_EPSILON)
 		return;
@@ -133,7 +133,8 @@ void BoidsComponent::update(const world::UpdateParams& update)
 		m_boids[i].velocity += (otherVelocity - m_boids[i].velocity) * m_matchVelocityStrength;
 
 		// 4: Always try to be circulating around center.
-		m_boids[i].velocity += (attraction - m_boids[i].position).xyz0() * m_centerForce;
+		if (m_attractPosition.w() > 0.0_simd)
+			m_boids[i].velocity += (m_attractPosition - m_boids[i].position).xyz0() * m_centerForce;
 
 		// 5: Clamp velocity.
 		const Scalar ln = m_boids[i].velocity.length();
@@ -157,6 +158,16 @@ void BoidsComponent::update(const world::UpdateParams& update)
 				entities[i]->setTransform(Transform(m_boids[i].position));
 		}
 	}
+}
+
+void BoidsComponent::setAttractPosition(const Vector4& attractPosition)
+{
+	m_attractPosition = attractPosition;
+}
+
+const Vector4& BoidsComponent::getAttractPosition() const
+{
+	return m_attractPosition;
 }
 
 }
