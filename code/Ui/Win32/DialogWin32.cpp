@@ -158,7 +158,7 @@ DialogResult DialogWin32::showModal()
 		if (!GetMessage(&msg, NULL, 0, 0))
 			break;
 
-		if (!IsDialogMessage(m_hWnd, &msg))
+		//if (!IsDialogMessage(m_hWnd, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
