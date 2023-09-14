@@ -44,6 +44,8 @@ public:
 
 	void hide();
 
+	bool isActive() const;
+
 	operator HWND () const;
 
 	void addListener(IWindowListener* listener);

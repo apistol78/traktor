@@ -139,6 +139,11 @@ void Window::hide()
 	ShowWindow(m_hWnd, SW_HIDE);
 }
 
+bool Window::isActive() const
+{
+	return GetForegroundWindow() == m_hWnd;
+}
+
 Window::operator HWND () const
 {
 	return m_hWnd;
