@@ -51,6 +51,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void setAttractPosition(const Vector4& attractPosition);
+
+	const Vector4& getAttractPosition() const;
+
 private:
 	struct Boid
 	{
@@ -63,6 +67,7 @@ private:
 	Transform m_transform;
 	Vector4 m_spawnVelocityDiagonal;
 	Vector4 m_constrain;
+	Vector4 m_attractPosition;
 	Scalar m_followForce;
 	Scalar m_repelDistance;
 	Scalar m_repelForce;

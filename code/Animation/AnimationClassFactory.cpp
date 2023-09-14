@@ -23,6 +23,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/Boxes/BoxedTransform.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Physics/Body.h"
@@ -129,6 +130,7 @@ void AnimationClassFactory::createClasses(IRuntimeClassRegistrar* registrar) con
 	registrar->registerClass(classRetargetPoseController);
 
 	auto classBoidsComponent = new AutoRuntimeClass< BoidsComponent >();
+	classBoidsComponent->addProperty("attractPosition", &BoidsComponent::setAttractPosition, &BoidsComponent::getAttractPosition);
 	registrar->registerClass(classBoidsComponent);
 
 	auto classClothComponent = new AutoRuntimeClass< ClothComponent >();
