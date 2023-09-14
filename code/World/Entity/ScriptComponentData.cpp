@@ -36,7 +36,7 @@ Ref< ScriptComponent > ScriptComponentData::createComponent(resource::IResourceM
 
 int32_t ScriptComponentData::getOrdinal() const
 {
-	return 2000;
+	return 1000;
 }
 
 void ScriptComponentData::setTransform(const EntityData* owner, const Transform& transform)
