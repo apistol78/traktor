@@ -21,6 +21,7 @@
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
+#include "Ui/ShortcutTable.h"
 #include "Ui/Splitter.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
@@ -42,12 +43,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 template < typename ItemType >
 class Wrapper : public Object
@@ -137,7 +136,7 @@ TreeViewItem* getEntity(TreeViewItem* item)
 	return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ThemeForm", ThemeForm, Form)
 
@@ -153,6 +152,17 @@ bool ThemeForm::create()
 		return false;
 
 	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
+
+	// Create shortcut table.
+	m_shortcutTable = new ui::ShortcutTable();
+	m_shortcutTable->create();
+	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &ThemeForm::eventShortcut);
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkO, ui::Command(L"File.Open"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkS, ui::Command(L"File.Save"));
+	m_shortcutTable->addCommand(ui::KsCommand | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkX, ui::Command(L"Edit.Cut"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkC, ui::Command(L"Edit.Copy"));
+	m_shortcutTable->addCommand(ui::KsCommand, ui::VkV, ui::Command(L"Edit.Paste"));
 
 	m_menuBar = new ToolBar();
 	m_menuBar->create(this);
@@ -174,10 +184,6 @@ bool ThemeForm::create()
 	menuEdit->add(new MenuItem(Command(L"Edit.Copy"), L"Copy"));
 	menuEdit->add(new MenuItem(Command(L"Edit.Paste"), L"Paste"));
 	m_menuBar->addItem(menuEdit);
-
-	Ref< ToolBarMenu > menuTools = new ToolBarMenu(L"Tools", L"");
-	//menuTools->add(new MenuItem(Command(L"Tools.Synchronize"), L"Synchronize..."));
-	m_menuBar->addItem(menuTools);
 
 	Ref< Splitter > splitter = new Splitter();
 	splitter->create(this, true, 300_ut);
@@ -442,6 +448,11 @@ void ThemeForm::eventClose(CloseEvent*)
 	ui::Application::getInstance()->exit(0);
 }
 
+void ThemeForm::eventShortcut(ShortcutEvent* event)
+{
+	handleCommand(event->getCommand());
+}
+
 void ThemeForm::eventMenuClick(ToolBarButtonClickEvent* event)
 {
 	handleCommand(event->getCommand());
@@ -630,5 +641,4 @@ void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
 	updateTitle();
 }
 
-	}
 }

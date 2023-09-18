@@ -11,12 +11,12 @@
 #include "Core/Io/Path.h"
 #include "Ui/Form.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class GridView;
+class ShortcutEvent;
+class ShortcutTable;
 class StyleSheet;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -32,6 +32,7 @@ public:
 	bool create();
 
 private:
+	Ref< ShortcutTable > m_shortcutTable;
 	Ref< ToolBar > m_menuBar;
 	Ref< TreeView > m_treeTheme;
 	Ref< GridView > m_gridPalette;
@@ -54,6 +55,8 @@ private:
 
 	void eventClose(CloseEvent*);
 
+	void eventShortcut(ShortcutEvent* event);
+
 	void eventMenuClick(ToolBarButtonClickEvent* event);
 
 	void eventTreeSelectionChange(SelectionChangeEvent* event);
@@ -67,5 +70,4 @@ private:
 	void eventPaletteDoubleClick(MouseDoubleClickEvent* event);
 };
 
-	}
 }

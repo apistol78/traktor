@@ -12,12 +12,10 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/ScrollBar.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 int32_t getPrimaryPosition(const Point& p, bool vertical)
 {
@@ -29,18 +27,9 @@ int32_t getPrimarySize(const Size& s, bool vertical)
 	return vertical ? s.cy : s.cx;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ScrollBar", ScrollBar, Widget)
-
-ScrollBar::ScrollBar()
-:	m_vertical(true)
-,	m_range(100)
-,	m_page(10)
-,	m_position(0)
-,	m_trackOffset(0)
-{
-}
 
 bool ScrollBar::create(Widget* parent, int32_t style)
 {
@@ -49,6 +38,7 @@ bool ScrollBar::create(Widget* parent, int32_t style)
 
 	m_vertical = bool((style & WsVertical) == WsVertical);
 
+	addEventHandler< MouseTrackEvent >(this, &ScrollBar::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &ScrollBar::eventMouseButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &ScrollBar::eventMouseButtonUp);
 	addEventHandler< MouseMoveEvent >(this, &ScrollBar::eventMouseMove);
@@ -89,6 +79,12 @@ void ScrollBar::setPosition(int32_t position)
 int32_t ScrollBar::getPosition() const
 {
 	return m_position;
+}
+
+void ScrollBar::eventMouseTrack(MouseTrackEvent* event)
+{
+	m_hover = event->entered();
+	update();
 }
 
 void ScrollBar::eventMouseButtonDown(MouseButtonDownEvent* event)
@@ -168,24 +164,24 @@ void ScrollBar::eventMouseButtonUp(MouseButtonUpEvent* event)
 
 void ScrollBar::eventMouseMove(MouseMoveEvent* event)
 {
-	if (!hasCapture())
-		return;
-
-	const Rect rcInner = getInnerRect();
-
-	const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - pixel(16_ut) * 2;
-	const int32_t sliderHeight = max(m_page * sliderRange / m_range, pixel(60_ut));
-	const int32_t position0 = m_position;
-
-	m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - pixel(16_ut) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
-	m_position = clamp(m_position, 0, m_range - (m_page - 1));
-
-	if (m_position != position0)
+	if (hasCapture())
 	{
-		update(0, true);
-		ScrollEvent scrollEvent(this, m_position);
-		raiseEvent(&scrollEvent);
+		const Rect rcInner = getInnerRect();
+
+		const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - pixel(16_ut) * 2;
+		const int32_t sliderHeight = max(m_page * sliderRange / m_range, pixel(60_ut));
+		const int32_t position0 = m_position;
+
+		m_position = (getPrimaryPosition(event->getPosition(), m_vertical) - pixel(16_ut) - m_trackOffset) * (m_range - (m_page - 1)) / (sliderRange - sliderHeight);
+		m_position = clamp(m_position, 0, m_range - (m_page - 1));
+
+		if (m_position != position0)
+		{
+			ScrollEvent scrollEvent(this, m_position);
+			raiseEvent(&scrollEvent);
+		}
 	}
+	update();
 }
 
 void ScrollBar::eventPaint(PaintEvent* event)
@@ -193,6 +189,19 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
+	const Point mousePosition = getMousePosition();
+
+	const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - pixel(16_ut) * 2;
+	const int32_t sliderHeight = max(m_page * sliderRange / m_range, pixel(60_ut));
+	const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
+
+	const bool hover =
+		isEnable() &&
+		m_hover &&
+		(
+			getPrimaryPosition(mousePosition, m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + pixel(16_ut) + sliderTop &&
+			getPrimaryPosition(mousePosition, m_vertical) <= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + pixel(16_ut) + sliderTop + sliderHeight
+		);
 
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
@@ -215,7 +224,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 					rcInner.top + pixel(16_ut) + sliderTop + sliderHeight
 				);
 
-				canvas.setBackground(ss->getColor(this, L"color-slider"));
+				canvas.setBackground(ss->getColor(this, hover ? L"color-slider-hover" : L"color-slider"));
 				canvas.fillRect(rcSlider);
 			}
 		}
@@ -274,7 +283,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 					rcInner.bottom - pixel(4_ut)
 				);
 
-				canvas.setBackground(ss->getColor(this, L"color-slider"));
+				canvas.setBackground(ss->getColor(this, hover ? L"color-slider-hover" : L"color-slider"));
 				canvas.fillRect(rcSlider);
 			}
 		}
@@ -335,5 +344,4 @@ Size ScrollBar::getMaximumSize() const
 		return Size(65535, pixel(16_ut));
 }
 
-	}
 }

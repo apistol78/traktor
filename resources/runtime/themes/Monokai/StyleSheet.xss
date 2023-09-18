@@ -497,23 +497,23 @@
 				</item>
 			</colors>
 		</item>
-        <item>
-            <typeName>traktor.ui.PreviewItem</typeName>
-            <colors>
-                <item>
-                    <first>background-color</first>
-                    <second>55, 57, 47, 255</second>
-                </item>
-                <item>
-                    <first>background-color-selected</first>
-                    <second>65, 67, 57, 255</second>
-                </item>
-                <item>
-                    <first>color-subtext</first>
-                    <second>120, 120, 120, 255</second>
-                </item>                
-            </colors>
-        </item>
+		<item>
+			<typeName>traktor.ui.PreviewItem</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>55, 57, 47, 255</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>65, 67, 57, 255</second>
+				</item>
+				<item>
+					<first>color-subtext</first>
+					<second>120, 120, 120, 255</second>
+				</item>
+			</colors>
+		</item>
 		<item>
 			<typeName>traktor.ui.PreviewList</typeName>
 			<colors>
@@ -642,6 +642,10 @@
 				<item>
 					<first>color-slider</first>
 					<second>81, 82, 80, 255</second>
+				</item>
+				<item>
+					<first>color-slider-hover</first>
+					<second>153, 153, 153, 255</second>
 				</item>
 			</colors>
 		</item>
