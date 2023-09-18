@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Scroll bar.
  * \ingroup UI
@@ -36,8 +34,6 @@ public:
 		WsHorizontal = 0,
 		WsVertical = WsUser
 	};
-
-	ScrollBar();
 
 	bool create(Widget* parent, int32_t style = WsHorizontal);
 
@@ -58,11 +54,14 @@ public:
 	virtual Size getMaximumSize() const override;
 
 private:
-	bool m_vertical;
-	int32_t m_range;
-	int32_t m_page;
-	int32_t m_position;
-	int32_t m_trackOffset;
+	bool m_vertical = true;
+	bool m_hover = false;
+	int32_t m_range = 100;
+	int32_t m_page = 10;
+	int32_t m_position = 0;
+	int32_t m_trackOffset = 0;
+
+	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventMouseButtonDown(MouseButtonDownEvent* event);
 
@@ -73,6 +72,5 @@ private:
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
 
