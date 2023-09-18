@@ -645,56 +645,16 @@ void AccShape::render(
 
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		if (programSolid)
-		{
-			auto rb = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set solid parameters");
-			rb->program = programSolid;
-			rb->programParams = renderContext->alloc< render::ProgramParameters >();
-			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setMatrixParameter(s_handleTransform, m);
-			rb->programParams->setVectorParameter(s_handleClipBounds, clipBounds);
-			rb->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-			rb->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-			rb->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
-			rb->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
-			rb->programParams->setStencilReference(maskReference);
-			rb->programParams->endParameters(renderContext);
-			renderContext->enqueue(rb);
-		}
-
-		if (programTextured)
-		{
-			auto rb = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set textured parameters");
-			rb->program = programTextured;
-			rb->programParams = renderContext->alloc< render::ProgramParameters >();
-			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setMatrixParameter(s_handleTransform, m);
-			rb->programParams->setVectorParameter(s_handleClipBounds, clipBounds);
-			rb->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-			rb->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-			rb->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
-			rb->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
-			rb->programParams->setStencilReference(maskReference);
-			rb->programParams->endParameters(renderContext);
-			renderContext->enqueue(rb);
-		}
-
-		if (programLine)
-		{
-			auto rb = renderContext->alloc< render::NullRenderBlock >(L"Flash AccShape; set line parameters");
-			rb->program = programLine;
-			rb->programParams = renderContext->alloc< render::ProgramParameters >();
-			rb->programParams->beginParameters(renderContext);
-			rb->programParams->setMatrixParameter(s_handleTransform, m);
-			rb->programParams->setVectorParameter(s_handleClipBounds, clipBounds);
-			rb->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
-			rb->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
-			rb->programParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
-			rb->programParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
-			rb->programParams->setStencilReference(maskReference);
-			rb->programParams->endParameters(renderContext);
-			renderContext->enqueue(rb);
-		}
+		render::ProgramParameters* sharedParams = renderContext->alloc < render::ProgramParameters >();
+		sharedParams->beginParameters(renderContext);
+		sharedParams->setMatrixParameter(s_handleTransform, m);
+		sharedParams->setVectorParameter(s_handleClipBounds, clipBounds);
+		sharedParams->setVectorParameter(s_handleFrameBounds, frameBounds);
+		sharedParams->setVectorParameter(s_handleFrameTransform, frameTransform);
+		sharedParams->setVectorParameter(s_handleCxFormMul, cxform.mul);
+		sharedParams->setVectorParameter(s_handleCxFormAdd, cxform.add);
+		sharedParams->setStencilReference(maskReference);
+		sharedParams->endParameters(renderContext);
 
 		for (const auto& batch : m_fillRenderBatches)
 		{
@@ -704,6 +664,7 @@ void AccShape::render(
 				{
 					auto rb = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 					rb->program = programSolid;
+					rb->programParams = sharedParams;
 					rb->vertexBuffer = m_fillVertexRange->getBufferView();
 					rb->vertexLayout = m_fillVertexPool->getVertexLayout();
 					rb->primitive = batch.primitives.type;
@@ -725,6 +686,7 @@ void AccShape::render(
 					rb->count = batch.primitives.count;
 					rb->programParams = renderContext->alloc< render::ProgramParameters >();
 					rb->programParams->beginParameters(renderContext);
+					rb->programParams->attachParameters(sharedParams);
 					rb->programParams->setTextureParameter(s_handleTexture, batch.texture->texture);
 					rb->programParams->setFloatParameter(s_handleTextureClamp, batch.textureClamp ? 1.0f : 0.0f);
 					rb->programParams->endParameters(renderContext);
