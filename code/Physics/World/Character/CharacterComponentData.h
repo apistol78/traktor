@@ -61,6 +61,8 @@ public:
 
 	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionGroup() const { return m_collisionGroup; }
 
+	const SmallSet< resource::Id< CollisionSpecification > >& getCollisionMask() const { return m_collisionMask; }
+
 	const SmallSet< resource::Id< CollisionSpecification > >& getTraceInclude() const { return m_traceInclude; }
 
 	const SmallSet< resource::Id< CollisionSpecification > >& getTraceIgnore() const { return m_traceIgnore; }
@@ -91,6 +93,7 @@ public:
 
 private:
 	SmallSet< resource::Id< CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< CollisionSpecification > > m_collisionMask;
 	SmallSet< resource::Id< CollisionSpecification > > m_traceInclude;
 	SmallSet< resource::Id< CollisionSpecification > > m_traceIgnore;
 	float m_radius = 1.0f;

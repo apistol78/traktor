@@ -26,7 +26,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 3, CharacterComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.CharacterComponentData", 4, CharacterComponentData, world::IEntityComponentData)
 
 Ref< CharacterComponent > CharacterComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
@@ -87,6 +87,7 @@ Ref< ShapeDesc > CharacterComponentData::getShapeDesc(float epsilon) const
 {
 	Ref< CapsuleShapeDesc > shapeDesc = new CapsuleShapeDesc();
 	shapeDesc->setCollisionGroup(m_collisionGroup);
+	shapeDesc->setCollisionMask(m_collisionMask);
 	shapeDesc->setLocalTransform(Transform(
 		Quaternion::fromEulerAngles(0.0f, deg2rad(90.0f), 0.0f)
 	));
@@ -108,6 +109,8 @@ void CharacterComponentData::serialize(ISerializer& s)
 {
 	if (s.getVersion< CharacterComponentData >() >= 3)
 		s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	if (s.getVersion< CharacterComponentData >() >= 4)
+		s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"collisionMask", m_collisionMask);
 
 	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceInclude", m_traceInclude);
 	s >> MemberSmallSet< resource::Id< CollisionSpecification >, resource::Member< CollisionSpecification > >(L"traceIgnore", m_traceIgnore);

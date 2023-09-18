@@ -80,6 +80,8 @@ bool PhysicsPipeline::buildDependencies(
 	{
 		for (auto id : characterData->getCollisionGroup())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
+		for (auto id : characterData->getCollisionMask())
+			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : characterData->getTraceInclude())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);
 		for (auto id : characterData->getTraceIgnore())
