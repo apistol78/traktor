@@ -192,7 +192,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	const Point mousePosition = getMousePosition();
 
 	const int32_t sliderRange = getPrimarySize(rcInner.getSize(), m_vertical) - pixel(16_ut) * 2;
-	const int32_t sliderHeight = max(m_page * sliderRange / m_range, pixel(60_ut));
+	const int32_t sliderHeight = (m_range > 0) ? max(m_page * sliderRange / m_range, pixel(60_ut)) : 0;
 	const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 	const bool hover =
