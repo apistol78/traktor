@@ -24,7 +24,7 @@
 namespace traktor::world
 {
 
-class LayerEntityData;
+class EntityData;
 class WorldRenderSettings;
 
 }
@@ -45,9 +45,9 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setLayers(const RefArray< world::LayerEntityData >& layers);
+	void setLayers(const RefArray< world::EntityData >& layers);
 
-	const RefArray< world::LayerEntityData >& getLayers() const;
+	const RefArray< world::EntityData >& getLayers() const;
 
 	void setControllerData(ISceneControllerData* controllerData);
 
@@ -61,7 +61,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	RefArray< world::LayerEntityData > m_layers;
+	RefArray< world::EntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 	RefArray< ISerializable > m_operationData;
 };

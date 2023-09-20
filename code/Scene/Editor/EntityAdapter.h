@@ -38,7 +38,6 @@ class Entity;
 class EntityData;
 class IEntityComponent;
 class IEntityComponentData;
-class ILayerAttribute;
 
 }
 
@@ -144,21 +143,6 @@ public:
 	bool isChildOfExternal() const;
 
 	bool getExternalGuid(Guid& outGuid) const;
-
-	//@}
-
-	/*! \name Layer entity accessors. */
-	//@{
-
-	bool isLayer() const;
-
-	const world::ILayerAttribute* getLayerAttribute(const TypeInfo& attributeType) const;
-
-	template < typename AttributeType >
-	const AttributeType* getLayerAttribute() const
-	{
-		return checked_type_cast< const AttributeType* >(getLayerAttribute(type_of< AttributeType >()));
-	}
 
 	//@}
 

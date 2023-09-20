@@ -27,7 +27,6 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Editor/EditorAttributesComponentData.h"
-#include "World/Editor/LayerEntityData.h"
 
 namespace traktor::scene
 {

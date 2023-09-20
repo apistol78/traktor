@@ -81,7 +81,7 @@
 		<colorGrading>{3DEEC673-EDF5-364A-B796-BAC7EF575258}</colorGrading>
 	</worldRenderSettings>
 	<layers>
-		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
+		<item type="traktor.world.EntityData" version="1">
 			<id>{804B1EEA-DB34-2D4A-A981-FD5B0066A7AC}</id>
 			<name>Environment</name>
 			<transform>
@@ -155,7 +155,7 @@
 				</item>
 			</components>
 		</item>
-		<item type="traktor.world.LayerEntityData" version="3,traktor.world.EntityData:1">
+		<item type="traktor.world.EntityData" version="1">
 			<id>{C7DDFFFA-FF6C-8242-AC5C-AB13A2411DA9}</id>
 			<name>Entity</name>
 			<transform>

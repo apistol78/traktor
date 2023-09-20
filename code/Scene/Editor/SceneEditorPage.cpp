@@ -91,8 +91,8 @@
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Editor/LayerEntityData.h"
 
 namespace traktor::scene
 {
@@ -370,7 +370,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontBold->setBold(true);
 
 	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
-	m_instanceGridFontHuge->setSize(12_ut);
+	m_instanceGridFontHuge->setBold(true);
+	m_instanceGridFontHuge->setSize(14_ut);
 
 	m_site->createAdditionalPanel(m_entityPanel, 400_ut, false);
 
@@ -569,27 +570,18 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Ensure drop is valid.
 		if (!parentGroupAdapter)
 		{
-			log::error << L"Unable to drop entity; no layer or group selected" << Endl;
+			log::error << L"Unable to drop entity; no layer or group selected." << Endl;
 			return false;
 		}
 		if (parentGroupAdapter->isLocked(true))
 		{
-			log::error << L"Unable to drop entity; layer or group is locked" << Endl;
+			log::error << L"Unable to drop entity; layer or group is locked." << Endl;
 			return false;
 		}
 
 		// Ensure group is selected when editing a prefab.
 		Object* documentObject = m_context->getDocument()->getObject(0);
 		T_ASSERT(documentObject);
-
-		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
-		{
-			if (parentGroupAdapter->isLayer())
-			{
-				log::error << L"Unable to drop entity; no prefab group selected" << Endl;
-				return false;
-			}
-		}
 
 		// Issue automatic build of dropped entity just in case the
 		// entity hasn't been built.
@@ -753,14 +745,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				selectedEntity->destroyEntity();
 				removedCount++;
 			}
-			else if (selectedEntity->isLayer())
+			else
 			{
-				RefArray< world::LayerEntityData > layers = m_context->getSceneAsset()->getLayers();
-				layers.remove(mandatory_non_null_type_cast< world::LayerEntityData* >(selectedEntity->getEntityData()));
-				m_context->getSceneAsset()->setLayers(layers);
-
-				selectedEntity->destroyEntity();
-				removedCount++;
+				RefArray< world::EntityData > layers = m_context->getSceneAsset()->getLayers();
+				if (layers.remove(selectedEntity->getEntityData()))
+				{
+					m_context->getSceneAsset()->setLayers(layers);
+					selectedEntity->destroyEntity();
+					removedCount++;
+				}
 			}
 		}
 
@@ -814,8 +807,12 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_context->getDocument()->push();
 
+		Ref< world::EntityData > layer = new world::EntityData();
+		layer->setComponent(new world::EditorAttributesComponentData());
+		layer->setComponent(new world::GroupComponentData());
+
 		auto layers = m_context->getSceneAsset()->getLayers();
-		layers.push_back(new world::LayerEntityData());
+		layers.push_back(layer);
 		m_context->getSceneAsset()->setLayers(layers);
 
 		updateScene();
@@ -1068,6 +1065,9 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
 		return nullptr;
 
+	// Assume root entities are layers.
+	const bool layer = (bool)(entityAdapter->getParent() == nullptr);
+
 	Ref< ui::GridRow > row = new ui::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
 	row->setState(
@@ -1075,8 +1075,11 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 		(entityAdapter->isExpanded() ? ui::GridRow::Expanded : 0)
 	);
 
-	if (entityAdapter->isLayer())
+	if (layer)
+	{
 		row->setMinimumHeight(32);
+		row->setBackground(Color4ub(60, 70, 90, 255));
+	}
 
 	std::wstring entityName = entityAdapter->getName();
 	if (entityName.empty())
@@ -1085,10 +1088,10 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	// Create entity name item.
 	Ref< ui::GridItem > item = new ui::GridItem(entityName);
 
-	if (entityAdapter->isExternal())
-		item->setFont(m_instanceGridFontBold);
-	else if (entityAdapter->isLayer())
+	if (layer)
 		item->setFont(m_instanceGridFontHuge);
+	else if (entityAdapter->isExternal())
+		item->setFont(m_instanceGridFontBold);
 
 	if (entityAdapter->isGroup())
 		item->addImage(new ui::StyleBitmap(L"Scene.EntityAttributeGroup"));
@@ -1276,18 +1279,7 @@ bool SceneEditorPage::createExternal()
 		return false;
 
 	Ref< world::EntityData > entityData = selectedEntities[0]->getEntityData();
-
-	// Do not export as LayerEntityData; replace with a plain entity data.
-	if (is_a< world::LayerEntityData >(entityData))
-	{
-		Ref< world::EntityData > plainEntityData = new world::EntityData();
-		plainEntityData->setId(entityData->getId());
-		plainEntityData->setName(entityData->getName());
-		plainEntityData->setTransform(entityData->getTransform());
-		for (auto component : entityData->getComponents())
-			plainEntityData->setComponent(component);
-		entityData = plainEntityData;
-	}
+	T_FATAL_ASSERT(entityData != nullptr);
 	
 	std::wstring instanceName = entityData->getName();
 	if (instanceName.empty())
@@ -1367,7 +1359,7 @@ bool SceneEditorPage::moveUp()
 	T_ASSERT(moving != nullptr);
 
 	EntityAdapter* parent = moving->getParent();
-	if (!parent)
+	if (parent)
 		return false;
 
 	auto& children = parent->getChildren();

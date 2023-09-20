@@ -11,6 +11,7 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Shape/Editor/EntityFactory.h"
+#include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Solid/PrimitiveEntity.h"
 #include "Shape/Editor/Solid/PrimitiveEntityData.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
@@ -23,16 +24,14 @@
 #include "Shape/Editor/Spline/SplineLayerComponentData.h"
 #include "World/IEntityBuilder.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 		
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::IEntityFactory)
 
@@ -67,6 +66,7 @@ const TypeInfoSet EntityFactory::getEntityEventTypes() const
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
+		PrefabComponentData,
 		ControlPointComponentData,
 		SplineComponentData,
 		SplineLayerComponentData
@@ -113,8 +113,10 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 		);
 	}
 	else
+	{
+		// We're ignoring PrefabComponentData since it will not do anything in editor.
 		return nullptr;
+	}
 }
 
-	}
 }

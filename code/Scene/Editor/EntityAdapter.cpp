@@ -15,7 +15,6 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "World/Editor/LayerEntityData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
@@ -211,22 +210,6 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 		return true;
 	}
 	return false;
-}
-
-bool EntityAdapter::isLayer() const
-{
-	return is_a< world::LayerEntityData >(m_entityData);
-}
-
-const world::ILayerAttribute* EntityAdapter::getLayerAttribute(const TypeInfo& attributeType) const
-{
-	if (const world::LayerEntityData* layerData = dynamic_type_cast< const world::LayerEntityData* >(m_entityData))
-	{
-		auto attribute = layerData->getAttribute(attributeType);
-		if (attribute != nullptr)
-			return attribute;
-	}
-	return m_parent ? m_parent->getLayerAttribute(attributeType) : nullptr;
 }
 
 bool EntityAdapter::isChildrenPrivate() const

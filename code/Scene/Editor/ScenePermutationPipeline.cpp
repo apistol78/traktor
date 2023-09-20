@@ -14,9 +14,9 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/ScenePermutationAsset.h"
 #include "Scene/Editor/ScenePermutationPipeline.h"
+#include "World/EntityData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/EditorAttributesComponentData.h"
-#include "World/Editor/LayerEntityData.h"
 
 namespace traktor::scene
 {

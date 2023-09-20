@@ -10,10 +10,8 @@
 #include "Model/Pose.h"
 #include "Model/Operations/Transform.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Transform", Transform, IModelOperation)
 
@@ -26,19 +24,19 @@ bool Transform::apply(Model& model) const
 {
 	AlignedVector< Vector4 > positions = model.getPositions();
 	for (auto& position : positions)
-		position = m_transform * position;
+		position = m_transform * position.xyz1();
 	model.setPositions(positions);
 
 	AlignedVector< Vector4 > normals = model.getNormals();
 	for (auto& normal : normals)
-		normal = (m_transform * normal).normalized();
+		normal = (m_transform * normal.xyz0()).normalized();
 	model.setNormals(normals);
 
 	AlignedVector< Joint > joints = model.getJoints();
 	for (auto& joint : joints)
 	{
-		traktor::Transform jt0 = joint.getTransform();
-		traktor::Transform jt1(
+		const traktor::Transform jt0 = joint.getTransform();
+		const traktor::Transform jt1(
 			m_transform * jt0.translation().xyz1(),
 			jt0.rotation()
 		);
@@ -49,7 +47,7 @@ bool Transform::apply(Model& model) const
 	auto animations = model.getAnimations();
 	if (!animations.empty())
 	{
-		Matrix44 transformZeroOffset(
+		const Matrix44 transformZeroOffset(
 			m_transform.axisX(),
 			m_transform.axisY(),
 			m_transform.axisZ(),
@@ -63,10 +61,10 @@ bool Transform::apply(Model& model) const
 				Ref< Pose > pose = new Pose(*animation->getKeyFramePose(i));
 				for (uint32_t j = 0; j < model.getJointCount(); ++j)
 				{
-					traktor::Transform jt0 = pose->getJointTransform(j);
+					const traktor::Transform jt0 = pose->getJointTransform(j);
 					if (model.getJoint(j).getParent() != c_InvalidIndex)
 					{
-						traktor::Transform jt1(
+						const traktor::Transform jt1(
 							transformZeroOffset * jt0.translation().xyz1(),
 							jt0.rotation()
 						);
@@ -74,7 +72,7 @@ bool Transform::apply(Model& model) const
 					}
 					else
 					{
-						traktor::Transform jt1(
+						const traktor::Transform jt1(
 							m_transform * jt0.translation().xyz1(),
 							jt0.rotation()
 						);
@@ -89,5 +87,4 @@ bool Transform::apply(Model& model) const
 	return true;
 }
 
-	}
 }

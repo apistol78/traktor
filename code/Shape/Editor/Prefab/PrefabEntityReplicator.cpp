@@ -42,7 +42,7 @@ const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 1, PrefabEntityReplicator, world::IEntityReplicator)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabEntityReplicator", 2, PrefabEntityReplicator, world::IEntityReplicator)
 
 bool PrefabEntityReplicator::create(const editor::IPipelineSettings* settings)
 {
@@ -61,8 +61,10 @@ RefArray< const world::IEntityComponentData > PrefabEntityReplicator::getDepende
 	const world::IEntityComponentData* componentData
 ) const
 {
+	// We do not include PrefabComponent since it's not relevant for generating models.
 	RefArray< const world::IEntityComponentData > dependentComponentData;
-	dependentComponentData.push_back(componentData);
+	if (auto groupComponent = entityData->getComponent< world::GroupComponentData >())
+		dependentComponentData.push_back(groupComponent);
 	return dependentComponentData;
 }
 
@@ -133,8 +135,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	const Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
-	SmallMap< std::wstring, Guid > materialTemplates;
-	SmallMap< std::wstring, Guid > materialTextures;
+	SmallMap< std::wstring, Guid > materialShaders;
 
 	// Collect all models from prefab component.
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
@@ -157,8 +158,8 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 				return scene::Traverser::VrFailed;
 			}
 
+			// Load the model references by the mesh asset.
 			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-
 			Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 			if (!model)
 			{
@@ -166,6 +167,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 				return scene::Traverser::VrFailed;
 			}
 
+			// Transform model into world space.
 			model::Transform(
 				translate(meshAsset->getOffset()) *
 				scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
@@ -177,27 +179,9 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
 			models.push_back(model);
 
-			// Insert material templates.
-			for (const auto& mt : meshAsset->getMaterialTemplates())
-			 	materialTemplates[mt.first] = mt.second;
-
-			// First use textures from texture set.
-			const auto& textureSetId = meshAsset->getTextureSet();
-			if (textureSetId.isNotNull())
-			{
-			 	Ref< const render::TextureSet > textureSet = pipelineCommon->getObjectReadOnly< render::TextureSet >(textureSetId);
-			 	if (!textureSet)
-			 	{
-			 		log::error << L"Prefab failed; unable to read texture set \"" << textureSetId.format() << L"\"." << Endl;
-			 		return scene::Traverser::VrFailed;
-			 	}
-			 	for (auto mt : textureSet->get())
-			 		materialTextures[mt.first] = mt.second;
-			}
-
-			// Then let explicit material textures override those from a texture set.
-			for (auto mt : meshAsset->getMaterialTextures())
-			 	materialTextures[mt.first] = mt.second;
+			// Insert material shaders.
+			for (const auto& ms : meshAsset->getMaterialShaders())
+				materialShaders[ms.first] = ms.second;
 		}
 
 		return scene::Traverser::VrContinue;
@@ -214,8 +198,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	outputMeshAsset->setMaterialTemplates(materialTemplates);
-	outputMeshAsset->setMaterialTextures(materialTextures);
+	outputMeshAsset->setMaterialShaders(materialShaders);
 	outputModel->setProperty< PropertyObject >(type_name(outputMeshAsset), outputMeshAsset);
 
 	return outputModel;
@@ -227,8 +210,11 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	const world::IEntityComponentData* componentData
 ) const
 {
-	const PrefabComponentData* prefabComponentData = mandatory_non_null_type_cast< const PrefabComponentData* >(componentData);
-	Transform worldInv = entityData->getTransform().inverse();
+	const world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
+	if (!groupComponentData)
+		return nullptr;
+
+	const Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
 	SmallMap< std::wstring, Guid > materialPhysics;
@@ -238,7 +224,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	float restitution = 0.0f;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(prefabComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
 	{
 		// Check editor attributes component if we should include entity.
 		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
@@ -264,7 +250,8 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 				return scene::Traverser::VrFailed;
 			}
 
-			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+			// Load the model references by the mesh asset.
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
 			Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
 			if (!shapeModel)
 			{
@@ -272,6 +259,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 				return scene::Traverser::VrFailed;
 			}
 
+			// Transform model into world space.
 			model::Transform(
 				(worldInv * inEntityData->getTransform()).toMatrix44()
 			).apply(*shapeModel);

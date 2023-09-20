@@ -81,6 +81,11 @@ IEntityComponentData* EntityData::getComponent(const TypeInfo& componentType) co
 	return nullptr;
 }
 
+void EntityData::setComponents(const RefArray< IEntityComponentData >& components)
+{
+	m_components = components;
+}
+
 const RefArray< IEntityComponentData >& EntityData::getComponents() const
 {
 	return m_components;

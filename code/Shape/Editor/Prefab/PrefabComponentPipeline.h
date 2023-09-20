@@ -21,6 +21,8 @@
 namespace traktor::shape
 {
 
+class PrefabEntityReplicator;
+
 class T_DLLCLASS PrefabComponentPipeline : public world::EntityPipeline
 {
 	T_RTTI_CLASS;
@@ -39,6 +41,7 @@ public:
 
 private:
 	bool m_editor = false;
+	Ref< PrefabEntityReplicator > m_replicator;
 };
 
 }

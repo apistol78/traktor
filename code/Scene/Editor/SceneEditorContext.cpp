@@ -44,7 +44,7 @@
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
-#include "World/Editor/LayerEntityData.h"
+#include "World/EntityData.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
@@ -443,14 +443,14 @@ void SceneEditorContext::buildEntities()
 		rootEntity->setComponent(rootGroup);
 
 		// Create entities from scene layers.
-		RefArray< world::LayerEntityData > layers = m_sceneAsset->getLayers();
-		RefArray< world::LayerEntityData >::iterator it = std::remove(layers.begin(), layers.end(), (world::LayerEntityData*)nullptr);
+		RefArray< world::EntityData > layers = m_sceneAsset->getLayers();
+		RefArray< world::EntityData >::iterator it = std::remove(layers.begin(), layers.end(), (world::EntityData*)nullptr);
 		layers.erase(it, layers.end());
 
 		m_layerEntityAdapters.resize(layers.size());
 		for (uint32_t i = 0; i < layers.size(); ++i)
 		{
-			world::LayerEntityData* layerEntityData = layers[i];
+			world::EntityData* layerEntityData = layers[i];
 			T_ASSERT(layerEntityData);
 
 			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilder, m_layerEntityAdapters[i]);

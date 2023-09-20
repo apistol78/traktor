@@ -16,7 +16,6 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/CreatePreviewSceneTool.h"
 #include "World/EntityData.h"
-#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupComponentData.h"
 
 namespace traktor::scene
@@ -64,7 +63,7 @@ bool CreatePreviewSceneTool::launch(ui::Widget* parent, editor::IEditor* editor,
 		return false;
 	}
 
-	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
+	const RefArray< world::EntityData >& layers = sceneAsset->getLayers();
 	T_ASSERT(layers.size() >= 2);
 
 	int32_t n = int32_t(std::sqrt(entityInstances.size()));

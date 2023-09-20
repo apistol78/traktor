@@ -134,17 +134,15 @@ bool UnwrapUV::apply(Model& model) const
 
 			for (int32_t k = 0; k < 3; ++k)
 			{
-				int32_t index = mesh.indexArray[j + k];
+				const int32_t index = mesh.indexArray[j + k];
 				const xatlas::Vertex& v = mesh.vertexArray[index];
-
-				Vertex vx = originalVertices[v.xref];
 
 				Vector2 uv(v.uv[0], v.uv[1]);
 				uv.x /= (float)atlas->width;
 				uv.y /= (float)atlas->height;
 
+				Vertex vx = originalVertices[v.xref];
 				vx.setTexCoord(m_channel, model.addTexCoord(uv));
-
 				polygon.setVertex(k, model.addUniqueVertex(vx));
 			}
 

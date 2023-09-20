@@ -34,7 +34,7 @@ bool MergeModel::apply(Model& model) const
 	// Merge texture channels.
 	for (uint32_t i = 0; i < m_sourceModel.getTexCoordChannels().size(); ++i)
 	{
-		uint32_t channel = model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
+		const uint32_t channel = model.addUniqueTexCoordChannel(m_sourceModel.getTexCoordChannels()[i]);
 		channelMap[i] = channel;
 	}
 
@@ -100,7 +100,7 @@ bool MergeModel::apply(Model& model) const
 
 		for (uint32_t j = 0; j < sourceVertex.getJointInfluenceCount(); ++j)
 		{
-			float influence = sourceVertex.getJointInfluence(j);
+			const float influence = sourceVertex.getJointInfluence(j);
 			v.setJointInfluence(j, influence);
 		}
 
@@ -120,7 +120,7 @@ bool MergeModel::apply(Model& model) const
 
 		if (sourcePolygon.getNormal() != c_InvalidIndex)
 		{
-			uint32_t normal = model.addUniqueNormal(m_sourceTransform * m_sourceModel.getNormal(sourcePolygon.getNormal()).xyz0());
+			const uint32_t normal = model.addUniqueNormal(m_sourceTransform * m_sourceModel.getNormal(sourcePolygon.getNormal()).xyz0());
 			outputPolygon.setNormal(normal);
 		}
 
