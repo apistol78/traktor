@@ -82,12 +82,9 @@ public:
 
 	VkDescriptorPool getDescriptorPool() const { return m_descriptorPool; }
 
-	//uint32_t getDescriptorPoolRevision() const { return m_descriptorPoolRevision; }
-
 	Queue* getGraphicsQueue() const { return m_graphicsQueue; }
 
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
-
 
 	VkDescriptorSetLayout getBindlessSetLayout() const { return m_bindlessDescriptorLayout; }
 
@@ -105,16 +102,13 @@ private:
 	VkPipelineCache m_pipelineCache;
 	VkDescriptorPool m_descriptorPool;
 	int32_t m_views;
-	//uint32_t m_descriptorPoolRevision;
 	Ref< Queue > m_graphicsQueue;
 	Ref< UniformBufferPool > m_uniformBufferPools[3];
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
-
 	VkDescriptorSetLayout m_bindlessDescriptorLayout;
 	VkDescriptorSet m_bindlessDescriptorSet;
-
 	IdAllocator m_resourceIndexAllocator;
 };
 
