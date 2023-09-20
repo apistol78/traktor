@@ -17,8 +17,8 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/SceneAsset.h"
+#include "World/EntityData.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Editor/LayerEntityData.h"
 
 namespace traktor::scene
 {
@@ -40,12 +40,12 @@ Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneAsset::setLayers(const RefArray< world::LayerEntityData >& layers)
+void SceneAsset::setLayers(const RefArray< world::EntityData >& layers)
 {
 	m_layers = layers;
 }
 
-const RefArray< world::LayerEntityData >& SceneAsset::getLayers() const
+const RefArray< world::EntityData >& SceneAsset::getLayers() const
 {
 	return m_layers;
 }
@@ -82,7 +82,7 @@ void SceneAsset::serialize(ISerializer& s)
 		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", imageProcessParams);
 	}
 
-	s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers, AttributePrivate());
+	s >> MemberRefArray< world::EntityData >(L"layers", m_layers, AttributePrivate());
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 
 	if (s.getVersion() >= 8)

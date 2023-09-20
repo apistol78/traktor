@@ -92,6 +92,9 @@ public:
 		return checked_type_cast< ComponentDataType* >(getComponent(type_of< ComponentDataType >()));
 	}
 
+	/*! Set components. */
+	void setComponents(const RefArray< IEntityComponentData >& components);
+
 	/*! Get components.
 	 *
 	 * \return Array of all components.

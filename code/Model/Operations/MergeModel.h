@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 /*!
  * \ingroup Model
@@ -32,7 +30,7 @@ class T_DLLCLASS MergeModel : public IModelOperation
 	T_RTTI_CLASS;
 
 public:
-	MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
+	explicit MergeModel(const Model& sourceModel, const Transform& sourceTransform, float positionDistance);
 
 	virtual bool apply(Model& model) const override final;
 
@@ -42,6 +40,5 @@ private:
 	float m_positionDistance;
 };
 
-	}
 }
 

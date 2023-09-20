@@ -158,7 +158,108 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 	const Object* buildParams
 ) const
 {
-	// Ensure we have a reflection of source asset.
+	if (auto entityData = dynamic_type_cast< const EntityData* >(sourceAsset))
+	{
+		// Create a clone of the entity and replace components with built components.
+		Ref< EntityData > mutableEntityData = DeepClone(entityData).create< EntityData >();
+		RefArray< IEntityComponentData > components = mutableEntityData->getComponents();
+
+		// Sort components by ordinal to ensure they are built in predictable order.
+		components.sort([](IEntityComponentData* lh, IEntityComponentData* rh)
+			{
+				return lh->getOrdinal() < rh->getOrdinal();
+			}
+		);
+
+		for (size_t i = 0; i < components.size(); )
+		{
+			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, components[i], mutableEntityData);
+			if (auto replaceEntityData = dynamic_type_cast< EntityData* >(product))
+			{
+				// Keep the new set of components and restart the loop.
+				components = replaceEntityData->getComponents();
+
+				// Once again sort components by ordinal to ensure they are built in predictable order.
+				components.sort([](IEntityComponentData* lh, IEntityComponentData* rh)
+					{
+						return lh->getOrdinal() < rh->getOrdinal();
+					}
+				);
+
+				i = 0;
+			}
+			else if (auto replaceComponentData = dynamic_type_cast< IEntityComponentData* >(product))
+			{
+				// Replace component with built component.
+				components[i] = replaceComponentData;
+				++i;
+			}
+			else
+			{
+				// Remove component all together.
+				components.erase(components.begin() + (int32_t)i);
+			}
+
+			// Replace components in entity data being built to enure it's always
+			// propagated when building rest of the components.
+			mutableEntityData->setComponents(components);
+		}
+
+		return mutableEntityData;
+	}
+	else if (auto componentData = dynamic_type_cast< const IEntityComponentData* >(sourceAsset))
+	{
+		auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(buildParams);
+
+		// Remove editor only component data.
+		if (is_a< EditorAttributesComponentData >(componentData))
+			return nullptr;
+
+		// Create a reflection of the component data.
+		Ref< Reflection > reflection = Reflection::create(sourceAsset);
+		if (!reflection)
+			return nullptr;
+
+		RefArray< ReflectionMember > objectMembers;
+		reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+		while (!objectMembers.empty())
+		{
+			Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+			objectMembers.pop_front();
+
+			if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+			{
+				// Build entity trough pipeline; replace entity with product.
+				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
+				objectMember->set(product);
+			}
+			else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
+			{
+				// Build event trough pipeline; replace event with product.
+				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
+				objectMember->set(product);
+			}
+			else if (objectMember->get())
+			{
+				// Scan recursively through object references; add to member list.
+				Ref< Reflection > childReflection = Reflection::create(objectMember->get());
+				if (childReflection)
+					childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+			}
+		}
+
+		return reflection->clone(); 
+	}
+	else if (auto eventData = dynamic_type_cast< const IEntityEventData* >(sourceAsset))
+	{
+		return nullptr;
+	}
+
+	T_FATAL_ERROR;
+	return nullptr;
+
+	/*
+	// Create a reflection of the source asset, aka the entity data.
 	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
 		return nullptr;
@@ -190,7 +291,6 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		}
 	}
 
-	auto ownerEntityData = dynamic_type_cast< const EntityData* >(sourceAsset);
 	while (!objectMembers.empty())
 	{
 		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
@@ -205,12 +305,27 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
 		{
 			// Build component trough pipeline; replace component with product.
+			auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(sourceAsset);
+
 			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityComponentData, ownerEntityData);
-			objectMember->set(product);
+			if (auto replaceEntityData = dynamic_type_cast< EntityData* >(product))
+			{
+			}
+			else if (auto replaceComponentData = dynamic_type_cast< IEntityComponentData* >(product))
+			{
+				objectMember->set(replaceComponentData);
+			}
+			else
+			{
+				const bool result = reflection->removeMember(objectMember);
+				T_FATAL_ASSERT(result);
+			}
 		}
 		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 		{
 			// Build event trough pipeline; replace event with product.
+			auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(sourceAsset);
+
 			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
 			objectMember->set(product);
 		}
@@ -224,6 +339,7 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 	}
 
 	return reflection->clone();
+	*/
 }
 
 }

@@ -82,7 +82,6 @@
 #include "World/IrradianceGridResource.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/EditorAttributesComponentData.h"
-#include "World/Editor/LayerEntityData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -355,7 +354,10 @@ bool BakePipelineOperator::create(const editor::IPipelineSettings* settings)
 	// Do this last since we want to ensure asynchronous flag is properly set.
 	const bool tracerEnable = settings->getPropertyIncludeHash< bool >(L"BakePipelineOperator.Enable", true);
 	if (!tracerEnable)
+	{
+		m_tracerType = nullptr;
 		return true;
+	}
 
 	// Create entity replicators.
 	for (const auto entityReplicatorType : type_of< world::IEntityReplicator >().findAllOf(false))
@@ -411,7 +413,7 @@ bool BakePipelineOperator::transform(
 	if (!configuration->getEnableLightmaps())
 		return true;
 
-	RefArray< world::LayerEntityData > layers;
+	RefArray< world::EntityData > layers;
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
 		// Dynamic layers do not get baked.
@@ -426,7 +428,7 @@ bool BakePipelineOperator::transform(
 
 		// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 		// entities which are inlines in scene, only those referenced from an external entity should be re-assigned IDs.
-		Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
+		Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 			[&](const Guid& objectId) -> Ref< const ISerializable > {
 				return pipelineCommon->getObjectReadOnly(objectId);
 			},
@@ -521,7 +523,7 @@ bool BakePipelineOperator::build(
 	);
 
 	{
-		RefArray< world::LayerEntityData > layers;
+		RefArray< world::EntityData > layers;
 		SmallMap< Path, Ref< drawing::Image > > images;
 
 		// Find all static meshes and lights; replace external referenced entities with local if necessary.
@@ -539,7 +541,7 @@ bool BakePipelineOperator::build(
 
 			// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
 			// entities which are inline in scene, only those referenced from an external entity should be re-assigned IDs.
-			Ref< world::LayerEntityData > flattenedLayer = checked_type_cast< world::LayerEntityData* >(world::resolveExternal(
+			Ref< world::EntityData > flattenedLayer = checked_type_cast< world::EntityData* >(world::resolveExternal(
 				[&](const Guid& objectId) -> Ref< const ISerializable > {
 					return pipelineBuilder->getObjectReadOnly(objectId);
 				},
@@ -629,7 +631,12 @@ bool BakePipelineOperator::build(
 				Guid lightmapDiffuseId = entityId.permutation(c_lightmapDiffuseIdSeed);
 
 				// Find model synthesizer which can generate from components.
-				auto componentDatas = inoutEntityData->getComponents();
+				RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
+				componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh)
+					{
+						return lh->getOrdinal() < rh->getOrdinal();
+					}
+				);
 				for (auto componentData : componentDatas)
 				{
 					const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
@@ -740,7 +747,6 @@ bool BakePipelineOperator::build(
 							L"lightmap ID " << lightmapDiffuseId.format() << L", " <<
 							L"lightmap size " << lightmapSize << L" (" << lightmapDesiredSize << L"), " <<
 							L"model hash " << str(L"%08x", modelHash) << L"..." << Endl;
-
 
 						if (configuration->getEnableLightmaps())
 						{

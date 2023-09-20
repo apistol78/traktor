@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "World/IEntityComponentData.h"
 
 // import/export mechanism.
@@ -31,11 +32,16 @@ class T_DLLCLASS PrefabComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	PrefabComponentData();
+
 	virtual int32_t getOrdinal() const override final;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
+
+private:
+	Guid m_id;
 };
 
 }

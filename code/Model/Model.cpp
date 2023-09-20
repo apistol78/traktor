@@ -107,25 +107,28 @@ void Model::clear(uint32_t clearFlags)
 	if (clearFlags & CfJoints)
 		m_joints.resize(0);
 
-	AlignedVector< Vertex > vertices = m_vertices.values();
-	for (auto& vertex : vertices)
+	if ((clearFlags & (CfPositions | CfColors | CfNormals | CfTexCoords | CfJoints)) != 0)
 	{
-		if (clearFlags & CfPositions)
-			vertex.setPosition(c_InvalidIndex);
-		if (clearFlags & CfColors)
-			vertex.setColor(c_InvalidIndex);
-		if (clearFlags & CfNormals)
+		AlignedVector< Vertex > vertices = m_vertices.values();
+		for (auto& vertex : vertices)
 		{
-			vertex.setNormal(c_InvalidIndex);
-			vertex.setTangent(c_InvalidIndex);
-			vertex.setBinormal(c_InvalidIndex);
+			if (clearFlags & CfPositions)
+				vertex.setPosition(c_InvalidIndex);
+			if (clearFlags & CfColors)
+				vertex.setColor(c_InvalidIndex);
+			if (clearFlags & CfNormals)
+			{
+				vertex.setNormal(c_InvalidIndex);
+				vertex.setTangent(c_InvalidIndex);
+				vertex.setBinormal(c_InvalidIndex);
+			}
+			if (clearFlags & CfTexCoords)
+				vertex.clearTexCoords();
+			if (clearFlags & CfJoints)
+				vertex.clearJointInfluences();
 		}
-		if (clearFlags & CfTexCoords)
-			vertex.clearTexCoords();
-		if (clearFlags & CfJoints)
-			vertex.clearJointInfluences();
+		m_vertices.replace(vertices);
 	}
-	m_vertices.replace(vertices);
 
 	for (auto& polygon : m_polygons)
 	{
