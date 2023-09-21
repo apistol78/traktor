@@ -105,7 +105,8 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepAmbientOcclusion">
+				<item type="traktor.render.ImgStepAmbientOcclusion" version="traktor.render.IImgStep:1">
+					<name/>
 					<shader>{C4F79F8D-43EF-6D43-993E-6A3B83F60B0B}</shader>
 					<parameters>
 						<item>Depth</item>
@@ -142,11 +143,12 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepDirectionalBlur">
+				<item type="traktor.render.ImgStepDirectionalBlur" version="traktor.render.IImgStep:1">
+					<name/>
 					<blurType>BtGaussian</blurType>
-					<direction>3, 0</direction>
-					<taps>16</taps>
-					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+					<direction>2, 0</direction>
+					<taps>32</taps>
+					<shader>{546D17AA-03A0-4FBA-9D5F-79907612567B}</shader>
 					<parameters>
 						<item>Source</item>
 						<item>Depth</item>
@@ -182,11 +184,12 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepDirectionalBlur">
+				<item type="traktor.render.ImgStepDirectionalBlur" version="traktor.render.IImgStep:1">
+					<name/>
 					<blurType>BtGaussian</blurType>
-					<direction>0, 3</direction>
-					<taps>16</taps>
-					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+					<direction>0, 2</direction>
+					<taps>32</taps>
+					<shader>{546D17AA-03A0-4FBA-9D5F-79907612567B}</shader>
 					<parameters>
 						<item>Depth</item>
 						<item>Source</item>
@@ -196,94 +199,94 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Depth</name>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Normal</name>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Depth</name>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
+				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Source</name>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item"/>
-				<name>Output</name>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Depth</name>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Source</name>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
 			</destination>
 		</item>
 	</edges>
