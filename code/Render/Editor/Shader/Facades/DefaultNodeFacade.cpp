@@ -13,11 +13,12 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Ui/Application.h"
-#include "Ui/Graph/GraphControl.h"
-#include "Ui/Graph/Node.h"
 #include "Ui/Graph/DefaultNodeShape.h"
+#include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/InputNodeShape.h"
 #include "Ui/Graph/OutputNodeShape.h"
+#include "Ui/Graph/Node.h"
+#include "Ui/Graph/Pin.h"
 
 namespace traktor
 {
@@ -115,6 +116,64 @@ void DefaultNodeFacade::refreshEditorNode(
 {
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
+
+	// Add or rename editor pins.
+	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+	{
+		const InputPin* inputPin = shaderNode->getInputPin(j);
+		ui::Pin* editorInputPin = editorNode->findInputPin(inputPin->getId());
+		if (editorInputPin)
+			editorInputPin->setName(inputPin->getName());
+		else
+			editorNode->createInputPin(inputPin->getName(), inputPin->getId(), !inputPin->isOptional(), false);
+	}
+
+	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+	{
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
+		ui::Pin* editorOutputPin = editorNode->findOutputPin(outputPin->getId());
+		if (editorOutputPin)
+			editorOutputPin->setName(outputPin->getName());
+		else
+			editorNode->createOutputPin(outputPin->getName(), outputPin->getId());
+	}
+
+	// Remove editors pins.
+	RefArray< ui::Pin > removeEditorInputPins;
+	for (auto editorInputPin : editorNode->getInputPins())
+	{
+		bool valid = false;
+		for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
+		{
+			if (shaderNode->getInputPin(j)->getId() == editorInputPin->getId())
+			{
+				valid = true;
+				break;
+			}
+		}
+		if (!valid)
+			removeEditorInputPins.push_back(editorInputPin);
+	}
+	for (auto editorInputPin : removeEditorInputPins)
+		editorNode->removeInputPin(editorInputPin);
+
+	RefArray< ui::Pin > removeEditorOutputPins;
+	for (auto editorOutputPin : editorNode->getOutputPins())
+	{
+		bool valid = false;
+		for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
+		{
+			if (shaderNode->getOutputPin(j)->getId() == editorOutputPin->getId())
+			{
+				valid = true;
+				break;
+			}
+		}
+		if (!valid)
+			removeEditorOutputPins.push_back(editorOutputPin);
+	}
+	for (auto editorOutputPin : removeEditorOutputPins)
+		editorNode->removeOutputPin(editorOutputPin);
 }
 
 void DefaultNodeFacade::setValidationIndicator(

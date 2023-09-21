@@ -161,7 +161,7 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 			rc.left,
 			rc.top + rc.getHeight(),
 			rc.right,
-			rc.top + rc.getHeight() + m_listForm->pixel(16_ut) * 4
+			rc.top + rc.getHeight() + m_listForm->pixel(16_ut) * 8
 		);
 	}
 }
@@ -199,7 +199,7 @@ void ListPropertyItem::eventSelect(SelectionChangeEvent* event)
 
 void ListPropertyItem::eventFocus(FocusEvent* event)
 {
-	if (event->lostFocus())
+	if (!m_listForm->containFocus())
 		m_listForm->setVisible(false);
 }
 

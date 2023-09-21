@@ -50,7 +50,6 @@
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
-#include "Render/Editor/Shader/Facades/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Render/Editor/Shader/Facades/UniformNodeFacade.h"
@@ -480,7 +479,6 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade();
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
 	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(this);
-	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade();
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade();
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade();
 	m_nodeFacades[&type_of< Uniform >()] = new UniformNodeFacade();
