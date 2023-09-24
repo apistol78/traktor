@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Frustum.h"
 #include "Resource/Proxy.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -20,6 +21,7 @@ class Buffer;
 class IRenderTargetSet;
 class ITexture;
 class ScreenRenderer;
+class Shader;
 
 }
 
@@ -97,9 +99,14 @@ protected:
 	Ref< render::ITexture > m_whiteTexture;
 	Ref< render::ITexture > m_blackCubeTexture;
 
+	resource::Proxy< render::Shader > m_clearDepthShader;
+
 	Ref< render::Buffer > m_lightSBuffer;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< Packer > m_shadowAtlasPacker;
+
+	Matrix44 m_shadowLightView[4];
+	Frustum m_shadowSlices[4];
 
 	GatherView m_gatheredView;
 

@@ -8,17 +8,14 @@
  */
 #include <cmath>
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
 
 namespace traktor
 {
 
-Frustum::Frustum()
-:	planes(6)
-{
-}
-
 void Frustum::buildFromPlanes(const Plane planes_[6])
 {
+	planes.resize(6);
 	for (int32_t i = 0; i < 6; ++i)
 		planes[i] = planes_[i];
 	update();
@@ -26,6 +23,7 @@ void Frustum::buildFromPlanes(const Plane planes_[6])
 
 void Frustum::buildFromCorners(const Vector4 corners_[8])
 {
+	planes.resize(6);
 	planes[0] = Plane(corners_[0], corners_[3], corners_[4]);	// left
 	planes[1] = Plane(corners_[2], corners_[1], corners_[6]);	// right
 	planes[2] = Plane(corners_[2], corners_[6], corners_[3]);	// bottom 2 3 6
@@ -44,6 +42,7 @@ void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 	const float c = sqrtf(a * a + b * b);
 	const float hfov = asinf(a / c);
 
+	planes.resize(6);
 	planes[0].set(Vector4(cosf(hfov), 0.0f, sinf(hfov)), 0.0_simd);
 	planes[1].set(Vector4(-cosf(hfov), 0.0f, sinf(hfov)), 0.0_simd);
 	planes[2].set(Vector4(0.0f, cosf(vfov), sinf(vfov)), 0.0_simd);
@@ -59,6 +58,7 @@ void Frustum::buildOrtho(float width, float height, float zn, float zf)
 	const Scalar hw = Scalar(-width * 0.5f);
 	const Scalar hh = Scalar(-height * 0.5f);
 
+	planes.resize(6);
 	planes[0].set(Vector4(1.0f, 0.0f, 0.0f), hw);
 	planes[1].set(Vector4(-1.0f, 0.0f, 0.0f), hw);
 	planes[2].set(Vector4(0.0f, 1.0f, 0.0f), hh);
@@ -89,6 +89,13 @@ void Frustum::setFarZ(const Scalar& zf)
 Scalar Frustum::getFarZ() const
 {
 	return -planes[PsFar].distance();
+}
+
+void Frustum::scale(const Scalar& f)
+{
+	for (int32_t i = 0; i < planes.size(); ++i)
+		planes[i].setDistance(planes[i].distance() - f);
+	update();
 }
 
 Frustum::InsideResult Frustum::inside(const Vector4& point) const
@@ -132,6 +139,18 @@ Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
 			partial |= true;
 	}
 	return partial ? IrPartial : IrInside;
+}
+
+Frustum::InsideResult Frustum::inside(const Matrix44& transform, const Frustum& other) const
+{
+	if (planes.empty() || other.planes.empty())
+		return IrOutside;
+	for (int32_t i = 0; i < sizeof_array(other.corners); ++i)
+	{
+		if (inside(transform * other.corners[i].xyz1()) != IrInside)
+			return IrOutside;
+	}
+	return IrInside;
 }
 
 void Frustum::update()

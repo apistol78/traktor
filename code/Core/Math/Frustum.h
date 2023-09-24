@@ -26,6 +26,8 @@
 namespace traktor
 {
 
+class Matrix44;
+
 /*! Frustum
  * \ingroup Core
  */
@@ -53,8 +55,6 @@ public:
 	Vector4 corners[8];
 	Vector4 center;
 
-	Frustum();
-
 	void buildFromPlanes(const Plane planes_[6]);
 
 	void buildFromCorners(const Vector4 corners_[8]);
@@ -71,11 +71,15 @@ public:
 
 	Scalar getFarZ() const;
 
+	void scale(const Scalar& f);
+
 	InsideResult inside(const Vector4& point) const;
 
 	InsideResult inside(const Vector4& center_, const Scalar& radius) const;
 
 	InsideResult inside(const Aabb3& aabb) const;
+
+	InsideResult inside(const Matrix44& transform, const Frustum& other) const;
 
 private:
 	void update();
