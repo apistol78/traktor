@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
+			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
+			<comment/>
+			<position>
+				<first>493</first>
+				<second>440</second>
+			</position>
+			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>Never</cullMode>
+			<blendEnable>false</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfOne</blendColorSource>
+			<blendColorDestination>BfZero</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>false</red>
+				<green>false</green>
+				<blue>false</blue>
+				<alpha>false</alpha>
+			</colorWriteMask>
+			<depthEnable>true</depthEnable>
+			<depthWriteEnable>true</depthWriteEnable>
+			<depthFunction>CfAlways</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<precisionHint>Undefined</precisionHint>
+		</item>
+		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
+			<id>{6608E3AE-3B8C-47A0-9F8F-14CFAF5E1E8A}</id>
+			<comment/>
+			<position>
+				<first>276</first>
+				<second>289</second>
+			</position>
+			<technique/>
+			<precisionHint>Undefined</precisionHint>
+		</item>
+		<item type="traktor.render.VertexInput" version="1,traktor.render.Node:1">
+			<id>{C41D3C8B-EBB0-4E47-8B2F-DDAAE9CCB614}</id>
+			<comment/>
+			<position>
+				<first>-86</first>
+				<second>306</second>
+			</position>
+			<name>Position</name>
+			<usage>Position</usage>
+			<type>DtFloat2</type>
+			<index>0</index>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{10893A17-A3FA-4719-86A9-0C95B049F5D9}</id>
+			<comment/>
+			<position>
+				<first>136</first>
+				<second>318</second>
+			</position>
+			<swizzle>xy11</swizzle>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{03ADD615-B9D4-4C3B-9EB6-41C786EF52B0}</id>
+			<comment/>
+			<position>
+				<first>249</first>
+				<second>474</second>
+			</position>
+			<value>0</value>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{BFBE8191-F6E6-4A4F-A2CC-6CBC1D19BF70}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

@@ -45,6 +45,8 @@ namespace traktor::world
 	namespace
 	{
 
+const resource::Id< render::Shader > c_clearDepthShader(L"{0135F7CC-FC65-4FD9-BBD5-CCE0C003B540}");
+
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, uint32_t value)
 {
 	render::SimpleTextureCreateDesc stcd = {};
@@ -133,6 +135,10 @@ bool WorldRendererShared::create(
 		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
 			return false;
 	}
+
+	// Create "clear depth" shader.
+	if (!resourceManager->bind(c_clearDepthShader, m_clearDepthShader))
+		return false;
 
 	// Determine slice distances.
 	for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
@@ -273,6 +279,7 @@ void WorldRendererShared::setupLightPass(
 	auto shadowAtlasPacker = m_shadowAtlasPacker;
 	shadowAtlasPacker->reset();
 
+	const Matrix44 lastView = worldRenderView.getLastView();
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
@@ -364,15 +371,16 @@ void WorldRendererShared::setupLightPass(
 		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
-		outShadowMapAtlasTargetSetId = renderGraph.addTransientTargetSet(L"Shadow map atlas", rgtd);
+		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
+			L"Shadow map atlas",
+			render::getParameterHandle(L"ShadowMap"),
+			false,
+			rgtd
+		);
 
 		// Add shadow map render passes.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map");
-
-		render::Clear clear;
-		clear.mask = render::CfDepth;
-		clear.depth = 1.0f;
-		rp->setOutput(outShadowMapAtlasTargetSetId, clear, render::TfNone, render::TfDepth);
+		rp->setOutput(outShadowMapAtlasTargetSetId, render::TfNone, render::TfDepth);
 
 		if (m_gatheredView.lights[0] != nullptr)
 		{
@@ -381,11 +389,11 @@ void WorldRendererShared::setupLightPass(
 			const Vector4 lightPosition = lightTransform.translation().xyz1();
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
 
-			// First 4 entries are allocated to cascading shadow light.
-			auto* lsd = lightShaderData;
-
-			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			// Update one slice per frame.
+			//const int32_t updateSlices[] = { 0, (m_count % (shadowSettings.cascadingSlices - 1)) + 1 };
+			for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
 			{
+				const int32_t slice = i; //updateSlices[i];
 				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
 				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
 
@@ -393,6 +401,19 @@ void WorldRendererShared::setupLightPass(
 				Frustum sliceViewFrustum = viewFrustum;
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
+
+				// Check if this slice is still inside
+				// the expanded slice frustum.
+				if (slice != 0)
+				{
+					const Matrix44 viewDelta = view * lastView.inverse();
+					const int32_t force = (m_count % (shadowSettings.cascadingSlices - 1)) + 1;
+					if (slice != force && m_shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::IrInside)
+						continue;
+					sliceViewFrustum.scale(1.0_simd);
+				}
+
+				m_shadowSlices[i] = sliceViewFrustum;
 
 				// Calculate shadow map projection.
 				Matrix44 shadowLightView;
@@ -411,19 +432,7 @@ void WorldRendererShared::setupLightPass(
 					shadowFrustum
 				);
 
-				const Matrix44 viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-				viewToLightSpace.axisX().storeUnaligned(lsd[slice].viewToLight0);
-				viewToLightSpace.axisY().storeUnaligned(lsd[slice].viewToLight1);
-				viewToLightSpace.axisZ().storeUnaligned(lsd[slice].viewToLight2);
-				viewToLightSpace.translation().storeUnaligned(lsd[slice].viewToLight3);
-
-				// Write slice coordinates to shaders.
-				Vector4(
-					(float)(slice * sliceDim) / shmw,
-					0.0f,
-					(float)sliceDim / shmw,
-					1.0f
-				).storeUnaligned(lsd[slice].atlasTransform);
+				m_shadowLightView[slice] = shadowLightProjection * shadowLightView;
 
 				rp->addBuild(
 					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -476,6 +485,12 @@ void WorldRendererShared::setupLightPass(
 
 						T_ASSERT(!renderContext->havePendingDraws());
 
+						// Clear cascade shadow map.
+						{
+							const render::Shader::Permutation perm;
+							m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
+						}
+
 						for (auto r : m_gatheredView.renderables)
 							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
@@ -483,6 +498,26 @@ void WorldRendererShared::setupLightPass(
 							entityRenderer->build(wc, shadowRenderView, shadowPass);
 					}
 				);
+			}
+
+			// Expose slice data to shaders.
+			auto* lsd = lightShaderData;
+			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
+			{
+				const Matrix44 viewToLightSpace = m_shadowLightView[slice] * viewInverse;
+
+				viewToLightSpace.axisX().storeUnaligned(lsd[slice].viewToLight0);
+				viewToLightSpace.axisY().storeUnaligned(lsd[slice].viewToLight1);
+				viewToLightSpace.axisZ().storeUnaligned(lsd[slice].viewToLight2);
+				viewToLightSpace.translation().storeUnaligned(lsd[slice].viewToLight3);
+
+				// Write slice coordinates to shaders.
+				Vector4(
+					(float)(slice * sliceDim) / shmw,
+					0.0f,
+					(float)sliceDim / shmw,
+					1.0f
+				).storeUnaligned(lsd[slice].atlasTransform);
 			}
 		}
 
