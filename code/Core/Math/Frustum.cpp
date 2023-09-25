@@ -71,24 +71,24 @@ void Frustum::buildOrtho(float width, float height, float zn, float zf)
 
 void Frustum::setNearZ(const Scalar& zn)
 {
-	planes[PsNear].setDistance(zn);
+	planes[Near].setDistance(zn);
 	update();
 }
 
 Scalar Frustum::getNearZ() const
 {
-	return planes[PsNear].distance();
+	return planes[Near].distance();
 }
 
 void Frustum::setFarZ(const Scalar& zf)
 {
-	planes[PsFar].setDistance(-zf);
+	planes[Far].setDistance(-zf);
 	update();
 }
 
 Scalar Frustum::getFarZ() const
 {
-	return -planes[PsFar].distance();
+	return -planes[Far].distance();
 }
 
 void Frustum::scale(const Scalar& f)
@@ -98,17 +98,22 @@ void Frustum::scale(const Scalar& f)
 	update();
 }
 
-Frustum::InsideResult Frustum::inside(const Vector4& point) const
+bool Frustum::empty() const
+{
+	return planes.empty();
+}
+
+Frustum::Result Frustum::inside(const Vector4& point) const
 {
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
 		if (planes[i].distance(point) < 0.0_simd)
-			return IrOutside;
+			return Result::Outside;
 	}
-	return IrInside;
+	return Result::Inside;
 }
 
-Frustum::InsideResult Frustum::inside(const Vector4& center, const Scalar& radius) const
+Frustum::Result Frustum::inside(const Vector4& center, const Scalar& radius) const
 {
 	const Scalar nradius = -radius;
 	bool partial = false;
@@ -117,52 +122,52 @@ Frustum::InsideResult Frustum::inside(const Vector4& center, const Scalar& radiu
 	{
 		const Scalar distance = dot3(planes[i].normal(), center) - planes[i].distance();
 		if (distance < nradius)
-			return IrOutside;
+			return Result::Outside;
 		if (distance < radius)
 			partial = true;
 	}
 
-	return partial ? IrPartial : IrInside;
+	return partial ? Result::Partial : Result::Inside;
 }
 
-Frustum::InsideResult Frustum::inside(const Aabb3& aabb) const
+Frustum::Result Frustum::inside(const Aabb3& aabb) const
 {
 	bool partial = false;
 	for (uint32_t i = 0; i < planes.size(); ++i)
 	{
-		Vector4 n = select(planes[i].normal(), aabb.mn, aabb.mx);
+		const Vector4 n = select(planes[i].normal(), aabb.mn, aabb.mx);
 		if (planes[i].distance(n) < 0.0_simd)	// outside
-			return IrOutside;
+			return Result::Outside;
 
-		Vector4 p = select(planes[i].normal(), aabb.mx, aabb.mn);
+		const Vector4 p = select(planes[i].normal(), aabb.mx, aabb.mn);
 		if (planes[i].distance(p) < 0.0_simd)	// intersecting
 			partial |= true;
 	}
-	return partial ? IrPartial : IrInside;
+	return partial ? Result::Partial : Result::Inside;
 }
 
-Frustum::InsideResult Frustum::inside(const Matrix44& transform, const Frustum& other) const
+Frustum::Result Frustum::inside(const Matrix44& transform, const Frustum& other) const
 {
-	if (planes.empty() || other.planes.empty())
-		return IrOutside;
-	for (int32_t i = 0; i < sizeof_array(other.corners); ++i)
+	if (empty() || other.empty())
+		return Result::Outside;
+	for (uint32_t i = 0; i < sizeof_array(other.corners); ++i)
 	{
-		if (inside(transform * other.corners[i].xyz1()) != IrInside)
-			return IrOutside;
+		if (inside(transform * other.corners[i].xyz1()) != Result::Inside)
+			return Result::Outside;
 	}
-	return IrInside;
+	return Result::Inside;
 }
 
 void Frustum::update()
 {
-	Plane::uniqueIntersectionPoint(planes[PsNear], planes[PsLeft]  , planes[PsTop]   , corners[0]);
-	Plane::uniqueIntersectionPoint(planes[PsNear], planes[PsTop]   , planes[PsRight] , corners[1]);
-	Plane::uniqueIntersectionPoint(planes[PsNear], planes[PsRight] , planes[PsBottom], corners[2]);
-	Plane::uniqueIntersectionPoint(planes[PsNear], planes[PsBottom], planes[PsLeft]  , corners[3]);
-	Plane::uniqueIntersectionPoint(planes[PsFar] , planes[PsLeft]  , planes[PsTop]   , corners[4]);
-	Plane::uniqueIntersectionPoint(planes[PsFar] , planes[PsTop]   , planes[PsRight] , corners[5]);
-	Plane::uniqueIntersectionPoint(planes[PsFar] , planes[PsRight] , planes[PsBottom], corners[6]);
-	Plane::uniqueIntersectionPoint(planes[PsFar] , planes[PsBottom], planes[PsLeft]  , corners[7]);
+	Plane::uniqueIntersectionPoint(planes[Near], planes[Left]  , planes[Top]   , corners[0]);
+	Plane::uniqueIntersectionPoint(planes[Near], planes[Top]   , planes[Right] , corners[1]);
+	Plane::uniqueIntersectionPoint(planes[Near], planes[Right] , planes[Bottom], corners[2]);
+	Plane::uniqueIntersectionPoint(planes[Near], planes[Bottom], planes[Left]  , corners[3]);
+	Plane::uniqueIntersectionPoint(planes[Far] , planes[Left]  , planes[Top]   , corners[4]);
+	Plane::uniqueIntersectionPoint(planes[Far] , planes[Top]   , planes[Right] , corners[5]);
+	Plane::uniqueIntersectionPoint(planes[Far] , planes[Right] , planes[Bottom], corners[6]);
+	Plane::uniqueIntersectionPoint(planes[Far] , planes[Bottom], planes[Left]  , corners[7]);
 
 	center = corners[0];
 	for (int32_t i = 1; i < 8; ++i)

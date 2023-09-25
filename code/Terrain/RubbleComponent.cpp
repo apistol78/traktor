@@ -133,7 +133,7 @@ void RubbleComponent::build(
 				cluster.distance = (cluster.center - eye).length();
 
 				const bool visible = cluster.visible;
-				cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::IrOutside);
+				cluster.visible = (bool)(viewFrustum.inside(view * cluster.center, Scalar(m_clusterSize)) != Frustum::Result::Outside);
 				if (!cluster.visible)
 					continue;
 				if (cluster.visible && visible)

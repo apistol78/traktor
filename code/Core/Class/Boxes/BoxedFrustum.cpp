@@ -58,17 +58,17 @@ float BoxedFrustum::getFarZ() const
 
 bool BoxedFrustum::insidePoint(const BoxedVector4* point) const
 {
-	return m_value.inside(point->unbox()) != Frustum::IrOutside;
+	return m_value.inside(point->unbox()) == Frustum::Result::Inside;
 }
 
 int32_t BoxedFrustum::insideSphere(const BoxedVector4* center, float radius) const
 {
-	return m_value.inside(center->unbox(), Scalar(radius));
+	return m_value.inside(center->unbox(), Scalar(radius)) == Frustum::Result::Inside;
 }
 
 int32_t BoxedFrustum::insideAabb(const BoxedAabb3* aabb) const
 {
-	return m_value.inside(aabb->unbox());
+	return m_value.inside(aabb->unbox()) == Frustum::Result::Inside;
 }
 
 const Plane& BoxedFrustum::getPlane(int32_t index) const

@@ -517,7 +517,7 @@ void ProbeRenderer::build(
 		const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
 		const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
 		const Scalar radius = probeComponent->getVolume().getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 			return;
 	}
 

@@ -186,7 +186,7 @@ bool DefaultEntityEditor::queryFrustum(const Frustum& worldFrustum) const
 
 	Frustum objectFrustum;
 	objectFrustum.buildFromPlanes(objectPlanes);
-	return objectFrustum.inside(boundingBox) != Frustum::IrOutside;
+	return objectFrustum.inside(boundingBox) != Frustum::Result::Outside;
 }
 
 void DefaultEntityEditor::entitySelected(bool selected)
