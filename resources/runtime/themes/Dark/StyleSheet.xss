@@ -855,6 +855,15 @@
 				</item>
 			</colors>
 		</item>
+		<item>
+			<typeName>traktor.scene.SceneEditorPage</typeName>
+			<colors>
+				<item>
+					<first>background-color-layer</first>
+					<second>3, 94, 148, 255</second>
+				</item>
+			</colors>
+		</item>
 	</entities>
 	<values>
 		<item>
