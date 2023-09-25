@@ -95,11 +95,6 @@ const IRuntimeDispatch* RuntimeClass::getOperatorDispatch(Operator op) const
 	return m_operators[(int32_t)op];
 }
 
-const IRuntimeDispatch* RuntimeClass::getUnknownDispatch() const
-{
-	return m_unknown;
-}
-
 void RuntimeClass::addConstructor(uint32_t argc, IRuntimeDispatch* constructor)
 {
 	if (m_constructor)

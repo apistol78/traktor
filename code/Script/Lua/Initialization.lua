@@ -107,9 +107,6 @@ function class(name, super)
 		local m = rawget(cl, member)
 		if m ~= nil then return m end
 
-		-- Invoke "unknown" handler.
-		local unknown = rawget(cl, "__unknown")
-		if unknown ~= nil then return function(...) return unknown(member, ...) end end
 		return nil
 	end
 

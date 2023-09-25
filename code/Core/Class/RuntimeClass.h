@@ -30,10 +30,7 @@ class T_DLLCLASS RuntimeClass : public IRuntimeClass
 public:
 	T_NO_COPY_CLASS(RuntimeClass);
 
-	RuntimeClass()
-	:	m_constructorArgc(0)
-	{
-	}
+	RuntimeClass() = default;
 
 	/*! \name Constants */
 	/*! \{ */
@@ -72,8 +69,6 @@ public:
 
 	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const override final;
 
-	virtual const IRuntimeDispatch* getUnknownDispatch() const override final;
-
 protected:
 	struct ConstInfo
 	{
@@ -95,14 +90,13 @@ protected:
 		Ref< IRuntimeDispatch > getter;
 	};
 
-	uint32_t m_constructorArgc;
+	uint32_t m_constructorArgc = 0;
 	Ref< IRuntimeDispatch > m_constructor;
 	AlignedVector< ConstInfo > m_consts;
 	AlignedVector< MethodInfo > m_methods;
 	AlignedVector< MethodInfo > m_staticMethods;
 	AlignedVector< PropertyInfo > m_properties;
 	Ref< IRuntimeDispatch > m_operators[(int32_t)Operator::Count];
-	Ref< IRuntimeDispatch > m_unknown;
 
 	void addConstructor(uint32_t argc, IRuntimeDispatch* constructor);
 

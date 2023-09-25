@@ -56,8 +56,6 @@ public:
 
 	virtual const IRuntimeDispatch* getPropertySetDispatch(uint32_t propertyId) const override final;
 
-	virtual const IRuntimeDispatch* getUnknownDispatch() const override final;
-
 	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const override final;
 
 private:
