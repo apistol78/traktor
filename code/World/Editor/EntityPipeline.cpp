@@ -52,7 +52,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipelin
 
 bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -62,11 +61,7 @@ void EntityPipeline::destroy()
 
 TypeInfoSet EntityPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< EntityData >();
-	typeSet.insert< IEntityEventData >();
-	typeSet.insert< IEntityComponentData >();
-	return typeSet;
+	return makeTypeInfoSet< EntityData, IEntityEventData, IEntityComponentData >();
 }
 
 bool EntityPipeline::shouldCache() const
@@ -200,7 +195,7 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 				components.erase(components.begin() + (int32_t)i);
 			}
 
-			// Replace components in entity data being built to enure it's always
+			// Replace components in entity data being built to ensure it's always
 			// propagated when building rest of the components.
 			mutableEntityData->setComponents(components);
 		}
@@ -252,94 +247,46 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 	}
 	else if (auto eventData = dynamic_type_cast< const IEntityEventData* >(sourceAsset))
 	{
-		return nullptr;
+		auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(buildParams);
+
+		// Create a reflection of the event data.
+		Ref< Reflection > reflection = Reflection::create(sourceAsset);
+		if (!reflection)
+			return nullptr;
+
+		RefArray< ReflectionMember > objectMembers;
+		reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+		while (!objectMembers.empty())
+		{
+			Ref< RfmObject > objectMember = checked_type_cast<RfmObject*, false>(objectMembers.front());
+			objectMembers.pop_front();
+
+			if (auto entityData = dynamic_type_cast<const EntityData*>(objectMember->get()))
+			{
+				// Build entity trough pipeline; replace entity with product.
+				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
+				objectMember->set(product);
+			}
+			else if (auto entityEventData = dynamic_type_cast<const IEntityEventData*>(objectMember->get()))
+			{
+				// Build event trough pipeline; replace event with product.
+				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
+				objectMember->set(product);
+			}
+			else if (objectMember->get())
+			{
+				// Scan recursively through object references; add to member list.
+				Ref< Reflection > childReflection = Reflection::create(objectMember->get());
+				if (childReflection)
+					childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+			}
+		}
+
+		return reflection->clone();
 	}
 
 	T_FATAL_ERROR;
 	return nullptr;
-
-	/*
-	// Create a reflection of the source asset, aka the entity data.
-	Ref< Reflection > reflection = Reflection::create(sourceAsset);
-	if (!reflection)
-		return nullptr;
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	// Remove editor attributes component; can not be used in runtime.
-	if (!m_editor)
-	{
-		for (;;)
-		{
-			auto it = std::find_if(objectMembers.begin(), objectMembers.end(), [](ReflectionMember* member) {
-				return is_a< EditorAttributesComponentData >(static_cast< RfmObject* >(member)->get());
-			});
-			if (it != objectMembers.end())
-			{
-				ReflectionMember* member = *it;
-
-				auto attributes = static_cast< const EditorAttributesComponentData* >(static_cast< RfmObject* >(member)->get());
-				if (!attributes->include)
-					return nullptr;
-
-				removeMember(reflection, member);
-				objectMembers.erase(it);
-			}
-			else
-				break;
-		}
-	}
-
-	while (!objectMembers.empty())
-	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
-		{
-			// Build entity trough pipeline; replace entity with product.
-			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
-			objectMember->set(product);
-		}
-		else if (auto entityComponentData = dynamic_type_cast< const IEntityComponentData* >(objectMember->get()))
-		{
-			// Build component trough pipeline; replace component with product.
-			auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(sourceAsset);
-
-			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityComponentData, ownerEntityData);
-			if (auto replaceEntityData = dynamic_type_cast< EntityData* >(product))
-			{
-			}
-			else if (auto replaceComponentData = dynamic_type_cast< IEntityComponentData* >(product))
-			{
-				objectMember->set(replaceComponentData);
-			}
-			else
-			{
-				const bool result = reflection->removeMember(objectMember);
-				T_FATAL_ASSERT(result);
-			}
-		}
-		else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
-		{
-			// Build event trough pipeline; replace event with product.
-			auto ownerEntityData = mandatory_non_null_type_cast< const EntityData* >(sourceAsset);
-
-			Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
-			objectMember->set(product);
-		}
-		else if (objectMember->get())
-		{
-			// Scan recursively through object references; add to member list.
-			Ref< Reflection > childReflection = Reflection::create(objectMember->get());
-			if (childReflection)
-				childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-		}
-	}
-
-	return reflection->clone();
-	*/
 }
 
 }
