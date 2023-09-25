@@ -129,7 +129,7 @@ void DecalRenderer::build(
 		return;
 
 	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
-	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 		return;
 
 	m_decalComponents.push_back(decalComponent);

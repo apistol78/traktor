@@ -34,21 +34,21 @@ class Matrix44;
 class T_DLLCLASS Frustum
 {
 public:
-	enum PlaneSide
+	enum Side : int32_t
 	{
-		PsLeft,
-		PsRight,
-		PsBottom,
-		PsTop,
-		PsNear,
-		PsFar
+		Left = 0,
+		Right = 1,
+		Bottom = 2,
+		Top = 3,
+		Near = 4,
+		Far = 5
 	};
 
-	enum InsideResult
+	enum class Result
 	{
-		IrOutside = 0,
-		IrInside = 1,
-		IrPartial = 2
+		Outside,
+		Inside,
+		Partial
 	};
 
 	StaticVector< Plane, 12 > planes;
@@ -73,13 +73,15 @@ public:
 
 	void scale(const Scalar& f);
 
-	InsideResult inside(const Vector4& point) const;
+	bool empty() const;
 
-	InsideResult inside(const Vector4& center_, const Scalar& radius) const;
+	Result inside(const Vector4& point) const;
 
-	InsideResult inside(const Aabb3& aabb) const;
+	Result inside(const Vector4& center_, const Scalar& radius) const;
 
-	InsideResult inside(const Matrix44& transform, const Frustum& other) const;
+	Result inside(const Aabb3& aabb) const;
+
+	Result inside(const Matrix44& transform, const Frustum& other) const;
 
 private:
 	void update();

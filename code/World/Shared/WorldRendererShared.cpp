@@ -390,10 +390,9 @@ void WorldRendererShared::setupLightPass(
 			const Vector4 lightDirection = lightTransform.axisY().xyz0();
 
 			// Update one slice per frame.
-			//const int32_t updateSlices[] = { 0, (m_count % (shadowSettings.cascadingSlices - 1)) + 1 };
 			for (int32_t i = 0; i < shadowSettings.cascadingSlices; ++i)
 			{
-				const int32_t slice = i; //updateSlices[i];
+				const int32_t slice = i;
 				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
 				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
 
@@ -408,7 +407,7 @@ void WorldRendererShared::setupLightPass(
 				{
 					const Matrix44 viewDelta = view * lastView.inverse();
 					const int32_t force = (m_count % (shadowSettings.cascadingSlices - 1)) + 1;
-					if (slice != force && m_shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::IrInside)
+					if (slice != force && m_shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
 						continue;
 					sliceViewFrustum.scale(1.0_simd);
 				}

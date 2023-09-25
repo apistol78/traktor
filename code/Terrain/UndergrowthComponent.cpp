@@ -205,7 +205,7 @@ void UndergrowthComponent::build(
 			vs.distances[i] = (cluster.center - eye).length();
 
 			const bool visible = vs.pvs[i];
-			vs.pvs.set(i, viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::IrOutside);
+			vs.pvs.set(i, viewFrustum.inside(view * cluster.center, clusterSize) != Frustum::Result::Outside);
 			if (!vs.pvs[i])
 				continue;
 			if (vs.pvs[i] && visible)

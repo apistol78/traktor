@@ -74,18 +74,18 @@ void EffectRenderer::build(
 	if (!effectComponent->haveTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
+	const Aabb3 boundingBox = effectComponent->getWorldBoundingBox();
 	if (boundingBox.empty())
 		return;
 
 	// Early out of bounding sphere is outside of frustum.
-	Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
-	Scalar radius = boundingBox.getExtent().length();
-	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+	const Vector4 center = worldRenderView.getView() * boundingBox.getCenter().xyz1();
+	const Scalar radius = boundingBox.getExtent().length();
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 		return;
 
-	Vector4 cameraPosition = worldRenderView.getEyePosition();
-	Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
+	const Vector4 cameraPosition = worldRenderView.getEyePosition();
+	const Plane cameraPlane(worldRenderView.getEyeDirection(), cameraPosition);
 
 	effectComponent->render(
 		worldRenderPass.getTechnique(),

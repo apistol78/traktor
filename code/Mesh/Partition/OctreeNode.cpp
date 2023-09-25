@@ -42,8 +42,8 @@ void OctreeNode::traverse(
 	AlignedVector< uint32_t >& outPartIndices
 ) const
 {
-	Frustum::InsideResult result = frustumObject.inside(m_boundingBox);
-	if (result == Frustum::IrInside)
+	const Frustum::Result result = frustumObject.inside(m_boundingBox);
+	if (result == Frustum::Result::Inside)
 	{
 		if (worldTechniqueId < m_partIndices.size())
 		{
@@ -51,7 +51,7 @@ void OctreeNode::traverse(
 			outPartIndices.insert(outPartIndices.end(), parts.begin(), parts.end());
 		}
 	}
-	else if (result == Frustum::IrPartial)
+	else if (result == Frustum::Result::Partial)
 	{
 		if (!m_leaf)
 		{

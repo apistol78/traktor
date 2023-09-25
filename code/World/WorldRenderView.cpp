@@ -112,7 +112,7 @@ bool WorldRenderView::isBoxVisible(const Aabb3& box, const Transform& worldTrans
 	const Vector4 center = worldView * box.getCenter();
 	const Scalar radius = box.getExtent().length();
 
-	if (m_cullFrustum.inside(center, radius) == Frustum::IrOutside)
+	if (m_cullFrustum.inside(center, radius) == Frustum::Result::Outside)
 		return false;
 
 #if T_ENABLE_SCREENSPACE_CULLING

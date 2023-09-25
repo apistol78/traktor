@@ -168,7 +168,7 @@ void TerrainComponent::setup(
 				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight + FUZZY_EPSILON,  patchDeltaHalf.z(), 0.0f)
 			);
 
-			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
+			if (worldCullFrustum.inside(patchAabb) != Frustum::Result::Outside)
 			{
 				const Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
 				const Vector4 patchCenterWorld_x0zw = patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f);

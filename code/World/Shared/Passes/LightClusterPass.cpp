@@ -115,10 +115,10 @@ void LightClusterPass::setup(
 			const Vector4 d = tl + vx * fx + vy * (fy + dy);
 
 			auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
-			tileFrustum.planes[Frustum::PsLeft] = Plane(Vector4::zero(), d, a);
-			tileFrustum.planes[Frustum::PsRight] = Plane(Vector4::zero(), b, c);
-			tileFrustum.planes[Frustum::PsBottom] = Plane(Vector4::zero(), c, d);
-			tileFrustum.planes[Frustum::PsTop] = Plane(Vector4::zero(), a, b);
+			tileFrustum.planes[Frustum::Left] = Plane(Vector4::zero(), d, a);
+			tileFrustum.planes[Frustum::Right] = Plane(Vector4::zero(), b, c);
+			tileFrustum.planes[Frustum::Bottom] = Plane(Vector4::zero(), c, d);
+			tileFrustum.planes[Frustum::Top] = Plane(Vector4::zero(), a, b);
 		}
 	}
 
@@ -197,8 +197,8 @@ void LightClusterPass::setup(
 			for (int32_t x = 0; x < ClusterDimXY; ++x)
 			{
 				auto& tileFrustum = tileFrustums[x + y * ClusterDimXY];
-				tileFrustum.planes[Frustum::PsNear] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
-				tileFrustum.planes[Frustum::PsFar] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
+				tileFrustum.planes[Frustum::Near] = Plane(Vector4(0.0f, 0.0f, 1.0f), snz);
+				tileFrustum.planes[Frustum::Far] = Plane(Vector4(0.0f, 0.0f, -1.0f), -sfz);
 
 				int32_t count = 0;
 				for (uint32_t i = 0; i < sliceLights.size(); ++i)
@@ -212,7 +212,7 @@ void LightClusterPass::setup(
 					}
 					else if (light->getLightType() == LightType::Point)
 					{
-						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
+						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::Result::Outside)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
@@ -221,7 +221,7 @@ void LightClusterPass::setup(
 					else if (light->getLightType() == LightType::Spot)
 					{
 						// \fixme Implement frustum to frustum culling.
-						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::IrOutside)
+						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::Result::Outside)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
