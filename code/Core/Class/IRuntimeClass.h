@@ -89,9 +89,6 @@ public:
 
 	/*! Get math operator. */
 	virtual const IRuntimeDispatch* getOperatorDispatch(Operator op) const = 0;
-
-	/*! Invoke unknown method. */
-	virtual const IRuntimeDispatch* getUnknownDispatch() const = 0;
 };
 
 /*! \brief

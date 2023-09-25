@@ -14,7 +14,6 @@
 #include "Core/Class/AutoOperator.h"
 #include "Core/Class/AutoProperty.h"
 #include "Core/Class/AutoStaticMethod.h"
-#include "Core/Class/AutoUnknown.h"
 #include "Core/Class/OperatorDispatch.h"
 #include "Core/Class/RuntimeClass.h"
 #include "Core/Io/StringOutputStream.h"
@@ -42,11 +41,6 @@ public:
 	T_NO_COPY_CLASS(AutoRuntimeClass);
 
 	AutoRuntimeClass() = default;
-
-	void setUnknownHandler(typename Unknown< ClassType >::unknown_fn_t unknown)
-	{
-		m_unknown = new Unknown< ClassType >(unknown);
-	}
 
 	/*! \name Constructors */
 	/*! \{ */

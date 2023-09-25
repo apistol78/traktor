@@ -258,15 +258,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 		lua_setfield(m_luaState, -2, "new");
 	}
 
-	// Create "__unknown" callback if class handle unknown calls.
-	if (runtimeClass->getUnknownDispatch())
-	{
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getUnknownDispatch());
-		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
-		lua_pushcclosure(m_luaState, classCallUnknownMethod, 2);
-		lua_setfield(m_luaState, -2, "__unknown");
-	}
-
 	// Add static methods.
 	const uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
 	for (uint32_t i = 0; i < staticMethodCount; ++i)

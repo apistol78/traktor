@@ -241,11 +241,6 @@ const IRuntimeDispatch* ScriptClassLua::getPropertySetDispatch(uint32_t property
 	return nullptr;
 }
 
-const IRuntimeDispatch* ScriptClassLua::getUnknownDispatch() const
-{
-	return nullptr;
-}
-
 const IRuntimeDispatch* ScriptClassLua::getOperatorDispatch(Operator op) const
 {
 	return nullptr;
