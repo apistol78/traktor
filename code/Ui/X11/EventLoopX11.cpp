@@ -102,15 +102,6 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 
 	while (!m_terminated)
 	{
-		fd_set fds;
-		FD_ZERO(&fds);
-		FD_SET(fd, &fds);
-
-		struct timeval tv;
-		tv.tv_usec = 1 * 1000;
-		tv.tv_sec = 0;
-		select(fd + 1, &fds, nullptr, nullptr, &tv);
-
 		// Process events; do this even if select doesn't return any waiting
 		// due to some strange behaviour of X11 events.
 		{
@@ -118,17 +109,36 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 
 			// Read all pending events, do not dispatch expose events
 			// directly since we synthesize those later to reduce number of redraws.
-			while (XPending(m_context->getDisplay()))
+			for (;;)
 			{
-				XNextEvent(m_context->getDisplay(), &e);
-				if (e.type != Expose)
+				if (XPending(m_context->getDisplay()))
 				{
-					if (!preTranslateEvent(owner, e))
-						m_context->dispatch(e);
+					XNextEvent(m_context->getDisplay(), &e);
+					if (e.type != Expose)
+					{
+						if (!preTranslateEvent(owner, e))
+							m_context->dispatch(e);
+					}
+					else
+						exposeWindows.insert(e.xexpose.window);
 				}
 				else
-					exposeWindows.insert(e.xexpose.window);
-				idle = true;
+				{
+					fd_set fds;
+					FD_ZERO(&fds);
+					FD_SET(fd, &fds);
+
+					struct timeval tv;
+					tv.tv_usec = 1 * 1000;
+					tv.tv_sec = 0;
+					select(fd + 1, &fds, nullptr, nullptr, &tv);
+
+					if (!XPending(m_context->getDisplay()))
+					{
+						idle = true;
+						break;
+					}
+				}
 			}
 
 			for (auto window : exposeWindows)
@@ -148,7 +158,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 				idle = false;
 		}
 
-		double dt = m_timer.getDeltaTime();
+		const double dt = m_timer.getDeltaTime();
 		Timers::getInstance().update(dt);
 	}
 
