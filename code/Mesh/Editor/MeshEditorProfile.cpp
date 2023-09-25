@@ -23,7 +23,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.MeshEditorProfile", 0, MeshEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEditorProfile", 0, MeshEditorProfile, scene::ISceneEditorProfile)
 
 void MeshEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
