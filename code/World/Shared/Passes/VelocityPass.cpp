@@ -93,7 +93,7 @@ DoubleBufferedTarget VelocityPass::setup(
 	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR32G32F;
+	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	const DoubleBufferedTarget velocityTargetSetId =
 	{
 		renderGraph.addPersistentTargetSet(L"Velocity Previous", s_handleVelocityTargetSet[frameCount % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId),
