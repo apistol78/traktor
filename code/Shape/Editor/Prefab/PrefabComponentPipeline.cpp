@@ -79,12 +79,12 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 		nullptr
 	));
 	if (!resolvedEntityData)
-		return false;
+		return nullptr;
 
 	// Create models through replicator.
 	const RefArray< const world::IEntityComponentData > dependentComponentData = m_replicator->getDependentComponents(resolvedEntityData, prefabComponent);
 	if (dependentComponentData.empty())
-		return false;
+		return nullptr;
 
 	uint32_t componentDataHash = 0;
 	for (auto cd : dependentComponentData)
