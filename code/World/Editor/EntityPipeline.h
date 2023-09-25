@@ -65,9 +65,6 @@ public:
 		const ISerializable* sourceAsset,
 		const Object* buildParams
 	) const override;
-
-private:
-	bool m_editor = false;
 };
 
 }
