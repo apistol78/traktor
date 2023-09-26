@@ -346,7 +346,6 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	di.descriptorBindingPartiallyBound = VK_TRUE;
 	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
 	f16.pNext = &di;
-#endif
 
 	VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
@@ -363,6 +362,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	v11.samplerYcbcrConversion = VK_FALSE;
 	v11.shaderDrawParameters = VK_TRUE;
 	di.pNext = &v11;
+#endif
 
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
 	{
