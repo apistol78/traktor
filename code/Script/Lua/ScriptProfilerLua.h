@@ -20,6 +20,9 @@ namespace traktor::script
 
 class ScriptManagerLua;
 
+/*! LUA script profiler
+ * \ingroup Script
+ */
 class ScriptProfilerLua : public IScriptProfiler
 {
 	T_RTTI_CLASS;

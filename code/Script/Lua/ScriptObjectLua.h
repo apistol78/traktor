@@ -14,6 +14,9 @@
 namespace traktor::script
 {
 
+/*! LUA script object runtime interface.
+ * \ingroup Script
+ */
 class ScriptObjectLua : public IRuntimeObject
 {
 	T_RTTI_CLASS;
@@ -25,6 +28,7 @@ public:
 
 	virtual Ref< const IRuntimeClass > getRuntimeClass() const override final;
 
+	/*! Push script object onto LUA stack. */
 	void push() const
 	{
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_tableRef);

@@ -19,6 +19,9 @@ namespace traktor::script
 class ScriptContextLua;
 class ScriptManagerLua;
 
+/*! Runtime representation of a script-side LUA class.
+ * \ingroup Script
+ */
 class ScriptClassLua : public IRuntimeClass
 {
 	T_RTTI_CLASS;

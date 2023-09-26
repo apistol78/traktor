@@ -21,7 +21,7 @@ class ScriptManagerLua;
 class ScriptObjectLua;
 
 /*! LUA scripting context.
- * \ingroup LUA Script
+ * \ingroup Script
  */
 class ScriptContextLua : public IScriptContext
 {

@@ -23,7 +23,7 @@ namespace traktor
 
 class Any;
 
-/*! \brief
+/*! Runtime delegate interface.
  * \ingroup Core
  */
 class T_DLLCLASS IRuntimeDelegate : public Object
@@ -31,6 +31,7 @@ class T_DLLCLASS IRuntimeDelegate : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Call delegate. */
 	virtual Any call(int32_t argc, const Any* argv) = 0;
 };
 

@@ -25,7 +25,7 @@ namespace traktor::script
 {
 
 /*! LUA script compiler.
- * \ingroup LUA Script
+ * \ingroup Script
  */
 class T_DLLCLASS ScriptCompilerLua : public IScriptCompiler
 {
