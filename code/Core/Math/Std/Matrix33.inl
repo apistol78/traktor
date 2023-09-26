@@ -97,7 +97,7 @@ T_MATH_INLINE Matrix33 Matrix33::inverse() const
 {
 	float s = determinant();
 	if (s == 0)
-		s = 1;
+		s = 1.0f;
 
 	s = 1.0f / s;
 	return Matrix33(
@@ -131,7 +131,7 @@ T_MATH_INLINE void Matrix33::decompose(Vector2* outTranslation, Vector2* outScal
 
 T_MATH_INLINE Matrix33& Matrix33::operator = (const Matrix33& m_)
 {
-	for (int i = 0; i < 9; ++i)
+	for (int32_t i = 0; i < 9; ++i)
 		this->m[i] = m_.m[i];
 	return *this;
 }
@@ -163,9 +163,9 @@ T_MATH_INLINE Vector4 operator * (const Matrix33& m, const Vector4& v)
 T_MATH_INLINE Matrix33 operator * (const Matrix33& lh, const Matrix33& rh)
 {
 	Matrix33 m;
-	for (int c = 0; c < 3; ++c)
+	for (int32_t c = 0; c < 3; ++c)
 	{
-		for (int r = 0; r < 3; ++r)
+		for (int32_t r = 0; r < 3; ++r)
 		{
 			m.e[r][c] =
 				lh.e[r][0] * rh.e[0][c] +
@@ -196,8 +196,8 @@ T_MATH_INLINE Matrix33 translate(float x, float y)
 
 T_MATH_INLINE Matrix33 rotate(float angle)
 {
-	float c = float(std::cos(angle));
-	float s = float(std::sin(angle));
+	const float c = float(std::cos(angle));
+	const float s = float(std::sin(angle));
 	return Matrix33(
 		    c,   -s, 0.0f,
 		    s,    c, 0.0f,

@@ -46,28 +46,28 @@ T_MATH_INLINE float Line2::distance(const Vector2& pt) const
 
 T_MATH_INLINE Vector2 Line2::project(const Vector2& pt) const
 {
-	float k = distance(pt);
+	const float k = distance(pt);
 	return pt - normal() * k;
 }
 
 T_MATH_INLINE bool Line2::inrange(const Vector2& pt) const
 {
-	float k = dot(pt - p[0], delta()) / (length() * length());
+	const float k = dot(pt - p[0], delta()) / (length() * length());
 	return k >= 0.0f && k <= 1.0f;
 }
 
 T_MATH_INLINE bool Line2::classify(const Vector2& pt, float thickness) const
 {
-	float k = distance(pt);
+	const float k = distance(pt);
 	if (abs(k) > thickness)
 		return false;
-	Vector2 p1 = pt - normal() * k;
+	const Vector2 p1 = pt - normal() * k;
 	return inrange(p1);
 }
 
 T_MATH_INLINE bool Line2::intersect(const Ray2& ray, float& outR, float& outK) const
 {
-	Ray2 ray0(p[0], (p[1] - p[0]).normalized());
+	const Ray2 ray0(p[0], (p[1] - p[0]).normalized());
 	if (ray0.intersect(ray, outR, outK))
 		return outR >= -FUZZY_EPSILON && outR <= 1.0f + FUZZY_EPSILON;
 	else

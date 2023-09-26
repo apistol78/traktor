@@ -102,12 +102,12 @@ T_MATH_INLINE Scalar Color4f::getEV() const
 
 T_MATH_INLINE void Color4f::setEV(const Scalar& ev)
 {
-	Scalar ev0 = getEV();
+	const Scalar ev0 = getEV();
 
-	float mn0 = ev0 > 0.0f ? std::pow(2.0f, ev0) : 0.0f;
+	const float mn0 = ev0 > 0.0f ? std::pow(2.0f, ev0) : 0.0f;
 	m_data -= Vector4(mn0, mn0, mn0, 0.0f);
 
-	float mn = ev > 0.0f ? std::pow(2.0f, ev) : 0.0f;
+	const float mn = ev > 0.0f ? std::pow(2.0f, ev) : 0.0f;
 	m_data += Vector4(mn, mn, mn, 0.0f);
 }
 

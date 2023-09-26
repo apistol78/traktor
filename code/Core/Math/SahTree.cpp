@@ -30,7 +30,7 @@ struct SplitCandidate
 T_IMPLEMENT_RTTI_CLASS(L"traktor.SahTree", SahTree, Object)
 
 SahTree::SahTree()
-:	m_root(0)
+:	m_root(nullptr)
 {
 }
 
