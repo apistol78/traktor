@@ -160,6 +160,10 @@ private:
 
 	static int classDivide(lua_State* luaState);
 
+	static int classNewIndex(lua_State* luaState);
+
+	static int classIndex(lua_State* luaState);
+
 	static void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize);
 
 	static int luaAllocatedMemory(lua_State* luaState);

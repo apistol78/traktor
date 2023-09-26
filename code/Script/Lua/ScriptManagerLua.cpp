@@ -361,6 +361,24 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 
 	rc.classTableRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
+	// __newindex
+	{
+		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__setters")						);
+		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
+		DO_1(m_luaState, lua_pushcclosure(m_luaState, classNewIndex, 2)					);
+		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__newindex")						);
+	}
+
+	// __index
+	{
+		DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
+		DO_1(m_luaState, lua_getfield(m_luaState, -1, "__getters")						);
+		DO_1(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef)	);
+		DO_1(m_luaState, lua_pushcclosure(m_luaState, classIndex, 2)					);
+		DO_1(m_luaState, lua_setfield(m_luaState, -2, "__index")						);
+	}
+
 	// Export class in global scope.
 	std::wstring exportName = exportType.getName();
 	std::vector< std::wstring > exportPath;
@@ -1290,6 +1308,60 @@ int ScriptManagerLua::classDivide(lua_State* luaState)
 #endif
 
 	return 0;
+}
+
+int ScriptManagerLua::classNewIndex(lua_State* luaState)
+{
+	// lua_upvalueindex(1) == __setters
+	// lua_upvalueindex(2) == class
+
+	// 1 [-3] .	table
+	// 2 [-2] .	string: "__typename"
+	// 3 [-1] .	string: "traktor.Color4f"
+
+	// Check if a property setter.
+	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1))	);
+	DO_1(luaState, lua_pushvalue(luaState, -3)					);
+	DO_1(luaState, lua_rawget(luaState, -2)						);
+	if (lua_isfunction(luaState, -1))
+	{
+		// Invoke property setter.
+		DO_1(luaState, lua_pushvalue(luaState, -5)				);
+		DO_1(luaState, lua_pushvalue(luaState, -4)				);
+		DO_1(luaState, lua_call(luaState, 2, 1)					);
+		return 1;
+	}
+	DO_1(luaState, lua_pop(luaState, 2)							);
+
+	// Associate value on instance table.
+	DO_1(luaState, lua_rawset(luaState, -3)						);
+	return 0;
+}
+
+int ScriptManagerLua::classIndex(lua_State* luaState)
+{
+	// lua_upvalueindex(1) == __getters
+	// lua_upvalueindex(2) == class
+
+	// Check if a property getter.
+	DO_0(luaState, lua_pushvalue(luaState, lua_upvalueindex(1))	);
+	DO_1(luaState, lua_pushvalue(luaState, -2)					);
+	DO_1(luaState, lua_rawget(luaState, -2)						);
+	if (lua_isfunction(luaState, -1))
+	{
+		// Invoke property getter.
+		DO_1(luaState, lua_pushvalue(luaState, -4)				);
+		DO_1(luaState, lua_call(luaState, 1, 1)					);
+		return 1;
+	}
+	DO_1(luaState, lua_pop(luaState, 2)							);
+
+	// Check if a method.
+	DO_1(luaState, lua_pushvalue(luaState, lua_upvalueindex(2))	);
+	DO_1(luaState, lua_pushvalue(luaState, -2)					);
+	DO_1(luaState, lua_rawget(luaState, -2)						);
+
+	return 1;
 }
 
 void* ScriptManagerLua::luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)

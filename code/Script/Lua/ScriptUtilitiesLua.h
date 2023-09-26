@@ -92,9 +92,26 @@ private:
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 0);
 
 #if defined(_DEBUG)
-#	define DUMP_LUA_STACK(state) stackDump(state)
+#	define DUMP_LUA_STACK(state) dumpStack(state, log::info)
+
+#	define __DO__W0(x) L ## x
+#	define __DO__W1(x) __DO__W0(#x)
+
+#	define DO_0(state, statement)					\
+		DUMP_LUA_STACK(state);						\
+		log::info << __DO__W1(statement) << Endl;	\
+		(statement);								\
+		DUMP_LUA_STACK(state);						\
+
+#	define DO_1(state, statement)					\
+		log::info << __DO__W1(statement) << Endl;	\
+		(statement);								\
+		DUMP_LUA_STACK(state);
+
 #else
 #	define DUMP_LUA_STACK(state)
+#	define DO_0(state, statement)	(statement);
+#	define DO_1(state, statement)	(statement);
 #endif
 
 int luaPrint(lua_State *L);
