@@ -17,7 +17,7 @@ namespace traktor
 
 bool intersectSegment1D(float smin, float smax, float raystart, float rayend, float& outEnter, float& outExit)
 {
-	float raydir = rayend - raystart;
+	const float raydir = rayend - raystart;
 
 	if (traktor::abs< float >(raydir) <= FUZZY_EPSILON)
 	{

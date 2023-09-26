@@ -67,7 +67,7 @@ int32_t BspPolygon::classify(const Plane& plane) const
 	int32_t side[2] = { 0, 0 };
 	for (size_t i = 0; i < m_vertices.size(); ++i)
 	{
-		Scalar d = plane.distance(m_vertices[i].position);
+		const Scalar d = plane.distance(m_vertices[i].position);
 		if (d > c_thickness)
 			side[0]++;
 		else if (d < -c_thickness)
@@ -255,7 +255,7 @@ void BspNode::build(const AlignedVector< BspPolygon >& polygons, bool fast)
 
 			while (minSpan > 0 && index < polygons.size())
 			{
-				Plane plane = polygons[index].getPlane();
+				const Plane plane = polygons[index].getPlane();
 
 				int32_t span = 0;
 				for (size_t i = 0; i < polygons.size(); ++i)

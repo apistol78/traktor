@@ -122,7 +122,7 @@ T_MATH_INLINE Quaternion Quaternion::identity()
 
 T_MATH_INLINE Quaternion Quaternion::normalized() const
 {
-	Scalar ln = e.length();
+	const Scalar ln = e.length();
 	if (ln > FUZZY_EPSILON)
 		return Quaternion(e / ln);
 	else
@@ -136,8 +136,8 @@ T_MATH_INLINE Quaternion Quaternion::inverse() const
 
 T_MATH_INLINE Quaternion Quaternion::nearest(const Quaternion& q) const
 {
-	Quaternion diff = *this - q;
-	Quaternion sum = *this + q;
+	const Quaternion diff = *this - q;
+	const Quaternion sum = *this + q;
 	if (dot(diff, diff) < dot(sum, sum))
 		return q;
 	else
@@ -146,11 +146,11 @@ T_MATH_INLINE Quaternion Quaternion::nearest(const Quaternion& q) const
 
 T_MATH_INLINE Vector4 Quaternion::toAxisAngle() const
 {
-	Scalar ln = dot3(e, e);
+	const Scalar ln = dot3(e, e);
 	if (abs(ln) >= FUZZY_EPSILON)
 	{
-		Scalar scale = reciprocalSquareRoot(ln);
-		Scalar angle = Scalar(2.0f * acosf(e.w()));
+		const Scalar scale = reciprocalSquareRoot(ln);
+		const Scalar angle = Scalar(2.0f * acosf(e.w()));
 		return Vector4(e * scale * angle).xyz0();
 	}
 	else
@@ -159,10 +159,10 @@ T_MATH_INLINE Vector4 Quaternion::toAxisAngle() const
 
 T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
 {
-	Scalar angle = axisAngle.length();
+	const Scalar angle = axisAngle.length();
 	if (abs(angle) >= FUZZY_EPSILON)
 	{
-		Vector4 axis = axisAngle / angle;
+		const Vector4 axis = axisAngle / angle;
 		return Quaternion::fromAxisAngle(axis, angle);
 	}
 	else
@@ -171,7 +171,7 @@ T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
 
 T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axis, float angle)
 {
-	float half = angle / 2.0f;
+	const float half = angle / 2.0f;
 	return Quaternion(axis.xyz0() * Scalar(sinf(half)) + Vector4(0.0f, 0.0f, 0.0f, cosf(half)));
 }
 
@@ -220,8 +220,8 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 	const Vector4 axisX(1.0f, 0.0f, 0.0f, 0.0f);
 	const Vector4 axisZ(0.0f, 0.0f, 1.0f, 0.0f);
 
-	Vector4 axisX_2 = (*this) * axisX;
-	Vector4 axisZ_2 = (*this) * axisZ;
+	const Vector4 axisX_2 = (*this) * axisX;
+	const Vector4 axisZ_2 = (*this) * axisZ;
 
 	outHead = atan2f(
 		axisZ_2.x(),
@@ -229,9 +229,9 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 	);
 	T_ASSERT(!isNan(outHead));
 
-	Quaternion Qt0 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
-	Vector4 axisX_3 = Qt0 * axisX_2;
-	Vector4 axisZ_3 = Qt0 * axisZ_2;
+	const Quaternion Qt0 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
+	const Vector4 axisX_3 = Qt0 * axisX_2;
+	const Vector4 axisZ_3 = Qt0 * axisZ_2;
 
 	outPitch = -atan2f(
 		axisZ_3.y(),
@@ -239,8 +239,8 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 	);
 	T_ASSERT(!isNan(outPitch));
 
-	Quaternion Qt1 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
-	Vector4 axisX_4 = Qt1 * axisX_3;
+	const Quaternion Qt1 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
+	const Vector4 axisX_4 = Qt1 * axisX_3;
 
 	outBank = atan2f(
 		axisX_4.y(),
@@ -251,17 +251,17 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 
 T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(float head, float pitch, float bank)
 {
-	Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head);
-	Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
-	Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), bank);
+	const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head);
+	const Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
+	const Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), bank);
 	return Qh * Qp * Qb;
 }
 
 T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(const Vector4& angles)
 {
-	Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), angles.x());
-	Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), angles.y());
-	Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), angles.z());
+	const Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), angles.x());
+	const Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), angles.y());
+	const Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), angles.z());
 	return Qh * Qp * Qb;
 }
 
@@ -303,13 +303,13 @@ T_MATH_INLINE Quaternion operator * (const Quaternion& l, float r)
 
 T_MATH_INLINE Quaternion operator * (const Quaternion& l, const Quaternion& r)
 {
-	Vector4 l_wwww = l.e.shuffle< 3, 3, 3, 3 >();
-	Vector4 r_wwwx = r.e.shuffle< 3, 3, 3, 0 >();
-	Vector4 l_xyzx = l.e.shuffle< 0, 1, 2, 0 >();
-	Vector4 l_yzxy = l.e.shuffle< 1, 2, 0, 1 >();
-	Vector4 r_zxyy = r.e.shuffle< 2, 0, 1, 1 >();
-	Vector4 l_zxyz = l.e.shuffle< 2, 0, 1, 2 >();
-	Vector4 r_yzxz = r.e.shuffle< 1, 2, 0, 2 >();
+	const Vector4 l_wwww = l.e.shuffle< 3, 3, 3, 3 >();
+	const Vector4 r_wwwx = r.e.shuffle< 3, 3, 3, 0 >();
+	const Vector4 l_xyzx = l.e.shuffle< 0, 1, 2, 0 >();
+	const Vector4 l_yzxy = l.e.shuffle< 1, 2, 0, 1 >();
+	const Vector4 r_zxyy = r.e.shuffle< 2, 0, 1, 1 >();
+	const Vector4 l_zxyz = l.e.shuffle< 2, 0, 1, 2 >();
+	const Vector4 r_yzxz = r.e.shuffle< 1, 2, 0, 2 >();
 
 	return Quaternion(
 		l_wwww * r.e +
@@ -321,8 +321,8 @@ T_MATH_INLINE Quaternion operator * (const Quaternion& l, const Quaternion& r)
 
 T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 {
-	Quaternion qv(v.xyz0());
-	Quaternion qvp = q * qv * q.inverse();
+	const Quaternion qv(v.xyz0());
+	const Quaternion qvp = q * qv * q.inverse();
 	return qvp.e.xyz0() + v * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 }
 
@@ -341,20 +341,20 @@ T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c
 	Scalar scale1;
 	Scalar scale2;
 
-	Quaternion A = a.normalized();
+	const Quaternion A = a.normalized();
 	Quaternion B = b.normalized();
 
 	Scalar phi = dot4(A.e, B.e);
-	if (phi < 0.0f)
+	if (phi < 0.0_simd)
 	{
 		phi = -phi;
 		B.e = -B.e;
 	}
 
-	if (phi > Scalar(0.95f))
+	if (phi > 0.95_simd)
 		return Quaternion(lerp(A.e, B.e, Scalar(c))).normalized();
 
-	float theta_0 = acosf(phi);
+	const float theta_0 = acosf(phi);
 	return (A * sinf(theta_0 * (1 - c)) + B * sinf(theta_0 * c)) * (1.0f / sinf(theta_0));
 }
 

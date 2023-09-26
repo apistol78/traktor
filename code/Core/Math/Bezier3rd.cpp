@@ -58,12 +58,12 @@ bool Bezier3rd::isFlat(float tolerance) const
 
 void Bezier3rd::split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const
 {
-	Vector2 p = evaluate(t);
-	Vector2 c_12 = lerp(cp0, cp1, t);
-	Vector2 c_23 = lerp(cp1, cp2, t);
-	Vector2 c_34 = lerp(cp2, cp3, t);
-	Vector2 c_123 = lerp(c_12, c_23, t);
-	Vector2 c_234 = lerp(c_23, c_34, t);
+	const Vector2 p = evaluate(t);
+	const Vector2 c_12 = lerp(cp0, cp1, t);
+	const Vector2 c_23 = lerp(cp1, cp2, t);
+	const Vector2 c_34 = lerp(cp2, cp3, t);
+	const Vector2 c_123 = lerp(c_12, c_23, t);
+	const Vector2 c_234 = lerp(c_23, c_34, t);
 	outLeft = Bezier3rd(
 		cp0,
 		c_12,
@@ -85,7 +85,7 @@ namespace
 	{
 		if (maxSubdivisions <= 1)
 		{
-			Vector2 p_m = b.evaluate(0.5f);
+			const Vector2 p_m = b.evaluate(0.5f);
 			outQuadratic.push_back(Bezier2nd::fromPoints(b.cp0, p_m, b.cp3));
 			return;
 		}
@@ -95,7 +95,7 @@ namespace
 
 		if (bl.isFlat(errorThreshold))
 		{
-			Vector2 p_m = bl.evaluate(0.5f);
+			const Vector2 p_m = bl.evaluate(0.5f);
 			outQuadratic.push_back(Bezier2nd::fromPoints(bl.cp0, p_m, bl.cp3));
 		}
 		else
@@ -105,7 +105,7 @@ namespace
 
 		if (br.isFlat(errorThreshold))
 		{
-			Vector2 p_m = br.evaluate(0.5f);
+			const Vector2 p_m = br.evaluate(0.5f);
 			outQuadratic.push_back(Bezier2nd::fromPoints(br.cp0, p_m, br.cp3));
 		}
 		else

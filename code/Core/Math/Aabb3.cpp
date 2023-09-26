@@ -17,7 +17,7 @@ namespace traktor
 
 bool intersectSegment1D(float smin, float smax, float raystart, float rayend, float& outEnter, float& outExit)
 {
-	float raydir = rayend - raystart;
+	const float raydir = rayend - raystart;
 
 	if (abs< float >(raydir) <= FUZZY_EPSILON)
 	{
@@ -87,7 +87,7 @@ bool Aabb3::outside(const Vector4& pt) const
 
 bool Aabb3::surface(const Vector4& pt, float margin) const
 {
-	Vector4 x = (mx - mn).normalized() * Scalar(margin);
+	const Vector4 x = (mx - mn).normalized() * Scalar(margin);
 	if (
 		compareAllGreaterEqual(pt.xyz1(), (mn - x).xyz0()) &&
 		compareAllLessEqual(pt.xyz0(), (mx + x).xyz1())
@@ -119,7 +119,7 @@ bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance
 
 bool Aabb3::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistanceEnter, Scalar& outDistanceExit) const
 {
-	Vector4 id = Scalar(1.0f) / d.xyz1();
+	const Vector4 id = 1.0_simd / d.xyz1();
 
 	float T_MATH_ALIGN16 mnmx[2][4];
 	mn.storeAligned(mnmx[0]);
@@ -183,14 +183,14 @@ bool Aabb3::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDi
 
 Aabb3 Aabb3::transform(const Matrix44& m) const
 {
-	Vector4 c = m * getCenter();
+	const Vector4 c = m * getCenter();
 
-	Vector4 e = getExtent();
-	Vector4 x = m.axisX() * e.x();
-	Vector4 y = m.axisY() * e.y();
-	Vector4 z = m.axisZ() * e.z();
+	const Vector4 e = getExtent();
+	const Vector4 x = m.axisX() * e.x();
+	const Vector4 y = m.axisY() * e.y();
+	const Vector4 z = m.axisZ() * e.z();
 
-	Vector4 first = c + x + y + z;
+	const Vector4 first = c + x + y + z;
 	Aabb3 aabb(first, first);
 
 	aabb.contain(c - x + y + z);
@@ -206,14 +206,14 @@ Aabb3 Aabb3::transform(const Matrix44& m) const
 
 Aabb3 Aabb3::transform(const Transform& tf) const
 {
-	Vector4 c = tf * getCenter();
+	const Vector4 c = tf * getCenter();
 
-	Vector4 e = getExtent();
-	Vector4 x = tf.axisX() * e.x();
-	Vector4 y = tf.axisY() * e.y();
-	Vector4 z = tf.axisZ() * e.z();
+	const Vector4 e = getExtent();
+	const Vector4 x = tf.axisX() * e.x();
+	const Vector4 y = tf.axisY() * e.y();
+	const Vector4 z = tf.axisZ() * e.z();
 
-	Vector4 first = c + x + y + z;
+	const Vector4 first = c + x + y + z;
 	Aabb3 aabb(first, first);
 
 	aabb.contain(c - x + y + z);

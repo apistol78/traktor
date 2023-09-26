@@ -246,8 +246,8 @@ T_MATH_INLINE Vector2 max(const Vector2& l, const Vector2& r)
 
 T_MATH_INLINE Vector2 reflect(const Vector2& v, const Vector2& at)
 {
-	Vector2 N = at.normalized();
-	Vector2 V = N * (dot(N, v) * 2.0f);
+	const Vector2 N = at.normalized();
+	const Vector2 V = N * (dot(N, v) * 2.0f);
 	return V - v;
 }
 

@@ -48,16 +48,16 @@ float Bezier2nd::getLocalMinMaxX() const
 
 void Bezier2nd::intersectX(float y, float& outT0, float& outT1) const
 {
-	float a = cp0.y - 2.0f * cp1.y + cp2.y;
+	const float a = cp0.y - 2.0f * cp1.y + cp2.y;
 	if (abs< float >(a) > FUZZY_EPSILON)
 	{
-		float b = 2.0f * cp1.y - 2.0f * cp0.y;
-		float c = cp0.y - y;
+		const float b = 2.0f * cp1.y - 2.0f * cp0.y;
+		const float c = cp0.y - y;
 
-		float s = std::sqrt(b * b - 4.0f * a * c);
-		float divisor = 2.0f * a;
-		float divend0 = -b + s;
-		float divend1 = -b - s;
+		const float s = std::sqrt(b * b - 4.0f * a * c);
+		const float divisor = 2.0f * a;
+		const float divend0 = -b + s;
+		const float divend1 = -b - s;
 
 		outT0 = divend0 / divisor;
 		outT1 = divend1 / divisor;
@@ -71,16 +71,16 @@ void Bezier2nd::intersectX(float y, float& outT0, float& outT1) const
 
 void Bezier2nd::intersectY(float x, float& outT0, float& outT1) const
 {
-	float a = cp0.x - 2.0f * cp1.x + cp2.x;
+	const float a = cp0.x - 2.0f * cp1.x + cp2.x;
 	if (abs< float >(a) > FUZZY_EPSILON)
 	{
-		float b = 2.0f * cp1.x - 2.0f * cp0.x;
-		float c = cp0.x - x;
+		const float b = 2.0f * cp1.x - 2.0f * cp0.x;
+		const float c = cp0.x - x;
 
-		float s = std::sqrt(b * b - 4.0f * a * c);
-		float divisor = 2.0f * a;
-		float divend0 = -b + s;
-		float divend1 = -b - s;
+		const float s = std::sqrt(b * b - 4.0f * a * c);
+		const float divisor = 2.0f * a;
+		const float divend0 = -b + s;
+		const float divend1 = -b - s;
 
 		outT0 = divend0 / divisor;
 		outT1 = divend1 / divisor;
@@ -94,7 +94,7 @@ void Bezier2nd::intersectY(float x, float& outT0, float& outT1) const
 
 void Bezier2nd::split(float t, Bezier2nd& outLeft, Bezier2nd& outRight) const
 {
-	Vector2 p = evaluate(t);
+	const Vector2 p = evaluate(t);
 	outLeft = Bezier2nd(
 		cp0,
 		lerp(cp0, cp1, t),

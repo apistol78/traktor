@@ -174,7 +174,7 @@ T_MATH_INLINE Scalar Vector4::length2() const
 T_MATH_INLINE Scalar Vector4::normalize()
 {
 	VALIDATE(*this);
-	Scalar ln = length();
+	const Scalar ln = length();
 	*this /= ln;
 	return ln;
 }
@@ -182,7 +182,7 @@ T_MATH_INLINE Scalar Vector4::normalize()
 T_MATH_INLINE Vector4 Vector4::normalized() const
 {
 	VALIDATE(*this);
-	Scalar ln = length();
+	const Scalar ln = length();
 	return *this / ln;
 }
 
@@ -618,7 +618,7 @@ T_MATH_INLINE bool compareAllLessEqual(const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE bool compareFuzzyEqual(const Vector4& l, const Vector4& r)
 {
-	Vector4 d = (l - r).absolute();
+	const Vector4 d = (l - r).absolute();
 	return d.max() <= FUZZY_EPSILON;
 }
 

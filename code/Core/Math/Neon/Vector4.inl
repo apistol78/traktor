@@ -111,17 +111,17 @@ T_MATH_INLINE void Vector4::set(float x, float y, float z, float w)
 
 T_MATH_INLINE Scalar Vector4::min() const
 {
-	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
-	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
-	Vector4 t0 = traktor::min(xxyy, zzww);
+	const Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	const Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	const Vector4 t0 = traktor::min(xxyy, zzww);
 	return traktor::min(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
 }
 
 T_MATH_INLINE Scalar Vector4::max() const
 {
-	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
-	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
-	Vector4 t0 = traktor::max(xxyy, zzww);
+	const Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	const Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	const Vector4 t0 = traktor::max(xxyy, zzww);
 	return traktor::max(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
 }
 
@@ -171,7 +171,7 @@ T_MATH_INLINE Vector4 Vector4::xyz1() const
 
 T_MATH_INLINE Scalar Vector4::length() const
 {
-	Scalar ln2 = length2();
+	const Scalar ln2 = length2();
 	return squareRoot(ln2);
 }
 
@@ -182,7 +182,7 @@ T_MATH_INLINE Scalar Vector4::length2() const
 
 T_MATH_INLINE Scalar Vector4::normalize()
 {
-	Scalar ln = length();
+	const Scalar ln = length();
 	T_ASSERT(abs(ln) > 0.0f);
 	*this /= ln;
 	return ln;
@@ -190,7 +190,7 @@ T_MATH_INLINE Scalar Vector4::normalize()
 
 T_MATH_INLINE Vector4 Vector4::normalized() const
 {
-	Scalar il = reciprocalSquareRoot(dot4(*this, *this));
+	const Scalar il = reciprocalSquareRoot(dot4(*this, *this));
 	T_ASSERT(abs(il) > 0.0f);
 	return *this * il;
 }
@@ -262,7 +262,7 @@ T_MATH_INLINE Vector4 Vector4::operator - () const
 
 T_MATH_INLINE Vector4& Vector4::operator += (const Scalar& v)
 {
-	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	const float32x4_t v4 = vdupq_n_f32(v.m_data);
 	m_data = vaddq_f32(m_data, v4);
 	return *this;
 }
@@ -275,7 +275,7 @@ T_MATH_INLINE Vector4& Vector4::operator += (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator -= (const Scalar& v)
 {
-	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	const float32x4_t v4 = vdupq_n_f32(v.m_data);
 	m_data = vsubq_f32(m_data, v4);
 	return *this;
 }
@@ -288,7 +288,7 @@ T_MATH_INLINE Vector4& Vector4::operator -= (const Vector4& v)
 
 T_MATH_INLINE Vector4& Vector4::operator *= (const Scalar& v)
 {
-	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	const float32x4_t v4 = vdupq_n_f32(v.m_data);
 	m_data = vmulq_f32(m_data, v4);
 	return *this;
 }
@@ -302,7 +302,7 @@ T_MATH_INLINE Vector4& Vector4::operator *= (const Vector4& v)
 T_MATH_INLINE Vector4& Vector4::operator /= (const Scalar& v)
 {
 	T_ASSERT(abs(v.m_data) > 0.0f);
-	float32x4_t v4 = vdupq_n_f32(v.m_data);
+	const float32x4_t v4 = vdupq_n_f32(v.m_data);
 	m_data = v_vec_div(m_data, v4);
 	return *this;
 }
@@ -352,13 +352,13 @@ T_MATH_INLINE Scalar Vector4::operator [] (int index) const
 
 T_MATH_INLINE Vector4 operator + (const Vector4& l, const Scalar& r)
 {
-	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	const float32x4_t v4 = vdupq_n_f32(r.m_data);
 	return Vector4(vaddq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator + (const Scalar& l, const Vector4& r)
 {
-	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	const float32x4_t v4 = vdupq_n_f32(l.m_data);
 	return Vector4(vaddq_f32(v4, r.m_data));
 }
 
@@ -369,13 +369,13 @@ T_MATH_INLINE Vector4 operator + (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator - (const Vector4& l, const Scalar& r)
 {
-	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	const float32x4_t v4 = vdupq_n_f32(r.m_data);
 	return Vector4(vsubq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator - (const Scalar& l, const Vector4& r)
 {
-	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	const float32x4_t v4 = vdupq_n_f32(l.m_data);
 	return Vector4(vsubq_f32(v4, r.m_data));
 }
 
@@ -386,13 +386,13 @@ T_MATH_INLINE Vector4 operator - (const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 operator * (const Vector4& l, const Scalar& r)
 {
-	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	const float32x4_t v4 = vdupq_n_f32(r.m_data);
 	return Vector4(vmulq_f32(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator * (const Scalar& l, const Vector4& r)
 {
-	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	const float32x4_t v4 = vdupq_n_f32(l.m_data);
 	return Vector4(vmulq_f32(v4, r.m_data));
 }
 
@@ -404,13 +404,13 @@ T_MATH_INLINE Vector4 operator * (const Vector4& l, const Vector4& r)
 T_MATH_INLINE Vector4 operator / (const Vector4& l, const Scalar& r)
 {
 	T_ASSERT(abs(r.m_data) > 0.0);
-	float32x4_t v4 = vdupq_n_f32(r.m_data);
+	const float32x4_t v4 = vdupq_n_f32(r.m_data);
 	return Vector4(v_vec_div(l.m_data, v4));
 }
 
 T_MATH_INLINE Vector4 operator / (const Scalar& l, const Vector4& r)
 {
-	float32x4_t v4 = vdupq_n_f32(l.m_data);
+	const float32x4_t v4 = vdupq_n_f32(l.m_data);
 	return Vector4(v_vec_div(v4, r.m_data));
 }
 
@@ -426,7 +426,7 @@ T_MATH_INLINE Scalar horizontalAdd3(const Vector4& v)
 
 T_MATH_INLINE Scalar horizontalAdd4(const Vector4& v)
 {
-	float32x2_t tmp = vadd_f32(vget_high_f32(v.m_data), vget_low_f32(v.m_data)); 
+	const float32x2_t tmp = vadd_f32(vget_high_f32(v.m_data), vget_low_f32(v.m_data)); 
 	return Scalar(vget_lane_f32(vpadd_f32(tmp, tmp), 0));
 }
 
@@ -442,23 +442,22 @@ T_MATH_INLINE Scalar dot4(const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 cross(const Vector4& l, const Vector4& r)
 {
-	Vector4 tmp1 = l.shuffle< 1, 2, 0, 3 >();
-	Vector4 tmp2 = r.shuffle< 2, 0, 1, 3 >();
-	Vector4 tmp3 = l.shuffle< 2, 0, 1, 3 >();
-	Vector4 tmp4 = r.shuffle< 1, 2, 0, 3 >();
+	const Vector4 tmp1 = l.shuffle< 1, 2, 0, 3 >();
+	const Vector4 tmp2 = r.shuffle< 2, 0, 1, 3 >();
+	const Vector4 tmp3 = l.shuffle< 2, 0, 1, 3 >();
+	const Vector4 tmp4 = r.shuffle< 1, 2, 0, 3 >();
 	return tmp1 * tmp2 - tmp3 * tmp4;
 }
 
 T_MATH_INLINE Vector4 lerp(const Vector4& a, const Vector4& b, const Scalar& c)
 {
-	return (Scalar(1.0f) - c) * a + c * b;
+	return (1.0_simd - c) * a + c * b;
 }
 
 T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 {
-	const static Scalar c_two(2.0f);
-	Vector4 N = at.normalized();
-	Vector4 V = N * (dot3(N, v) * c_two);
+	const Vector4 N = at.normalized();
+	const Vector4 V = N * (dot3(N, v) * 2.0_simd);
 	return V - v;
 }
 
@@ -502,7 +501,7 @@ T_MATH_INLINE void orthogonalFrame(const Vector4& d, Vector4& outU, Vector4& out
 		Vector4(0.0f, 0.0f, 1.0f, 0.0f),
 		Vector4(1.0f, 0.0f, 0.0f, 0.0f)
 	};
-	int m = majorAxis3(d);
+	const int m = majorAxis3(d);
 	outU = cross(d, c_axises[m]).normalized();
 	outV = cross(outU, d).normalized();
 }
@@ -525,8 +524,8 @@ T_MATH_INLINE Vector4 clamp(const Vector4& value, const Vector4& minLimit, const
 T_MATH_INLINE Vector4 select(const Vector4& condition, const Vector4& negative, const Vector4& positive)
 {
 	const float32x4_t zero = { 0.0f, 0.0f, 0.0f, 0.0f };
-	uint32x4_t c = vcgeq_f32(condition.m_data, zero);
-	float32x4_t r = vbslq_f32(c, positive.m_data, negative.m_data);
+	const uint32x4_t c = vcgeq_f32(condition.m_data, zero);
+	const float32x4_t r = vbslq_f32(c, positive.m_data, negative.m_data);
 	return Vector4(r);
 }
 

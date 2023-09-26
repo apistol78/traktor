@@ -36,11 +36,11 @@ T_MATH_INLINE bool Ray2::intersect(const Ray2& ray, float& outR, float& outK) co
 	if (direction.y / direction.x == ray.direction.y / ray.direction.x)
 		return false;
 
-	float num = direction.x * ray.direction.y - direction.y * ray.direction.x;
+	const float num = direction.x * ray.direction.y - direction.y * ray.direction.x;
 	if (num == 0.0f)
 		return false;
 
-	Vector2 v = origin - ray.origin;
+	const Vector2 v = origin - ray.origin;
 
 	outR = (v.y * direction.x - v.x * direction.y) / num;
 	outK = (v.y * ray.direction.x - v.x * ray.direction.y) / num;

@@ -67,15 +67,15 @@ bool Winding3::angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) c
 		Vector4 e1 = p1 - p2;
 		Vector4 e2 = p3 - p2;
 
-		Scalar ln1 = e1.length();
-		Scalar ln2 = e2.length();
+		const Scalar ln1 = e1.length();
+		const Scalar ln2 = e2.length();
 
 		if (ln1 > FUZZY_EPSILON && ln2 > FUZZY_EPSILON)
 		{
 			e1 /= ln1;
 			e2 /= ln2;
 
-			Scalar phi = dot3(e1, e2);
+			const Scalar phi = dot3(e1, e2);
 			if (abs(phi) < 1.0f - FUZZY_EPSILON)
 			{
 				outI1 = uint32_t(p);
@@ -143,7 +143,7 @@ void Winding3::split(const Plane& plane, Winding3& outFront, Winding3& outBack) 
 			plane.intersectSegment(a, b, k);
 			T_ASSERT(k >= 0.0_simd && k <= 1.0_simd);
 
-			Vector4 p = lerp(a, b, k);
+			const Vector4 p = lerp(a, b, k);
 			outFront.m_points.push_back(p);
 			outBack.m_points.push_back(p);
 		}

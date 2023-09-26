@@ -372,7 +372,7 @@ TransformPath::Key TransformPath::evaluate(float at) const
 
 TransformPath::Key TransformPath::evaluate(float at, float end) const
 {
-	size_t nkeys = m_keys.size();
+	const size_t nkeys = m_keys.size();
 	if (nkeys == 0)
 		return Key();
 	else if (nkeys == 1)
@@ -397,7 +397,7 @@ TransformPath::Key TransformPath::evaluate(float at, float end) const
 
 TransformPath::Key TransformPath::evaluate(float at, float end, float loop) const
 {
-	size_t nkeys = m_keys.size();
+	const size_t nkeys = m_keys.size();
 	if (nkeys == 0)
 		return Key();
 	else if (nkeys == 1)
@@ -430,7 +430,7 @@ int32_t TransformPath::getClosestKey(float at) const
 
 	for (int32_t i = 0; i < int32_t(m_keys.size()); ++i)
 	{
-		float dT = abs(at - m_keys[i].T);
+		const float dT = abs(at - m_keys[i].T);
 		if (dT < minT)
 		{
 			minT = dT;
@@ -454,7 +454,7 @@ int32_t TransformPath::getClosestPreviousKey(float at) const
 		if (at <= m_keys[i].T + FUZZY_EPSILON)
 			continue;
 
-		float dT = at - m_keys[i].T;
+		const float dT = at - m_keys[i].T;
 		if (dT < minT)
 		{
 			minT = dT;
@@ -478,7 +478,7 @@ int32_t TransformPath::getClosestNextKey(float at) const
 		if (at >= m_keys[i].T - FUZZY_EPSILON)
 			continue;
 
-		float dT = m_keys[i].T - at;
+		const float dT = m_keys[i].T - at;
 		if (dT < minT)
 		{
 			minT = dT;
