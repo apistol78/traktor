@@ -20,6 +20,8 @@ namespace traktor::script
 
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 {
+	os << L"-------------------------" << Endl;
+
 	const int32_t top = lua_gettop(luaState);
 	for (int32_t i = base + 1; i <= top; ++i)
 	{
@@ -55,6 +57,8 @@ void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 			break;
 		}
 	}
+
+	os << L"-------------------------" << Endl;
 }
 
 int luaPrint(lua_State* L)
