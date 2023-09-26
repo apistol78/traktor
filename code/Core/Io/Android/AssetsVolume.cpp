@@ -83,6 +83,11 @@ Ref< IStream > AssetsVolume::open(const Path& filename, uint32_t mode)
 	return ret;
 }
 
+Ref< IMappedFile > AssetsVolume::map(const Path& fileName)
+{
+	return nullptr;
+}
+
 bool AssetsVolume::exist(const Path& filename)
 {
 	return false;
