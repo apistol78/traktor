@@ -134,8 +134,6 @@ private:
 
 	void breakDebugger(lua_State* luaState);
 
-	static int classAlloc(lua_State* luaState);
-
 	static int classGc(lua_State* luaState);
 
 	static int classNew(lua_State* luaState);

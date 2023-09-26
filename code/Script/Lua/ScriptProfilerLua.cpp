@@ -71,22 +71,14 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 
 	double timeStamp = m_timer.getElapsedTime();
 
-#if defined(T_LUA_5_2)
 	if (ar->event == LUA_HOOKCALL || ar->event == LUA_HOOKTAILCALL)
-#else
-	if (ar->event == LUA_HOOKCALL)
-#endif
 	{
 		ProfileStack ps;
 		ps.timeStamp = timeStamp;
 		ps.childDuration = 0.0;
 		m_stack.push_back(ps);
 	}
-#if defined(T_LUA_5_2)
 	else if (ar->event == LUA_HOOKRET)
-#else
-	else if (ar->event == LUA_HOOKRET || ar->event == LUA_HOOKTAILRET)
-#endif
 	{
 		// Make sure we don't break if hooks are behaving strange.
 		if (m_stack.empty())
