@@ -30,10 +30,7 @@
 // Resources
 #include "Resources/Initialization.h"
 
-#if defined(T_LUA_5_2) || (!defined(__LP64__) && !defined(_LP64))
-#	define T_USE_ALLOCATOR 1
-#endif
-
+#define T_USE_ALLOCATOR 1
 #define T_LOG_OBJECT_GC 0
 
 namespace traktor::script
@@ -117,19 +114,7 @@ ScriptManagerLua::ScriptManagerLua()
 #endif
 
 	lua_atpanic(m_luaState, luaPanic);
-
-#if defined(T_LUA_5_2)
 	luaL_openlibs(m_luaState);
-#else
-	luaopen_base(m_luaState);
-	luaopen_table(m_luaState);
-	luaopen_string(m_luaState);
-	luaopen_math(m_luaState);
-	luaopen_os(m_luaState);
-#	if defined(LUA_BITLIBNAME)
-	luaopen_bit(m_luaState);
-#	endif
-#endif
 
 	lua_register(m_luaState, "print", luaPrint);
 	lua_register(m_luaState, "sleep", luaSleep);
@@ -240,11 +225,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 	lua_rawseti(m_luaState, -2, c_tableKey_class);
 
-	// Create "__alloc" callback to be able to instantiate C++ object when creating from script side.
-	lua_pushinteger(m_luaState, classRegistryIndex);
-	lua_pushcclosure(m_luaState, classAlloc, 1);
-	lua_setfield(m_luaState, -2, "__alloc");
-
 	// Create "__gc" callback to be able to track C++ object lifetime.
 	lua_pushcfunction(m_luaState, classGc);
 	lua_setfield(m_luaState, -2, "__gc");
@@ -262,7 +242,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	const uint32_t staticMethodCount = runtimeClass->getStaticMethodCount();
 	for (uint32_t i = 0; i < staticMethodCount; ++i)
 	{
-		std::string methodName = runtimeClass->getStaticMethodName(i);
+		const std::string methodName = runtimeClass->getStaticMethodName(i);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getStaticMethodDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallStaticMethod, 2);
@@ -273,7 +253,7 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	const uint32_t methodCount = runtimeClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
-		std::string methodName = runtimeClass->getMethodName(i);
+		const std::string methodName = runtimeClass->getMethodName(i);
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass->getMethodDispatch(i));
 		lua_pushlightuserdata(m_luaState, (void*)runtimeClass);
 		lua_pushcclosure(m_luaState, classCallMethod, 2);
@@ -384,8 +364,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	std::vector< std::wstring > exportPath;
 	Split< std::wstring >::any(exportName, L".", exportPath);
 
-#if defined(T_LUA_5_2)
-
 	lua_pushglobaltable(m_luaState);
 
 	if (exportPath.size() > 1)
@@ -410,14 +388,6 @@ void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
 	lua_setfield(m_luaState, -2, wstombs(exportPath.back()).c_str());
 
 	lua_pop(m_luaState, 1);
-
-#else
-	// \fixme!
-
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, rc.classTableRef);
-	lua_setglobal(m_luaState, wstombs(exportPath.back()).c_str());
-
-#endif
 
 	// Store index of registered script class in C++ rtti type; used
 	// to accelerate lookup of C++ class when constructing new instance from script.
@@ -524,13 +494,13 @@ void ScriptManagerLua::pushObject(ITypedObject* object)
 	const TypeInfo& objectType = type_of(object);
 	if (&objectType == &type_of< ScriptObjectLua >())
 	{
-		ScriptObjectLua* scriptObject = checked_type_cast< ScriptObjectLua*, false >(object);
+		const ScriptObjectLua* scriptObject = static_cast< const ScriptObjectLua* >(object);
 		scriptObject->push();
 		return;
 	}
 	else if (&objectType == &type_of< ScriptDelegateLua >())
 	{
-		ScriptDelegateLua* delegateContainer = checked_type_cast< ScriptDelegateLua*, false >(object);
+		const ScriptDelegateLua* delegateContainer = static_cast< const ScriptDelegateLua* >(object);
 		delegateContainer->push();
 		return;
 	}
@@ -628,11 +598,9 @@ Any ScriptManagerLua::toAny(int32_t index)
 	const int32_t type = lua_type(m_luaState, index);
 	if (type == LUA_TNUMBER)
 	{
-#if defined(T_LUA_5_2)
 		if (lua_isinteger(m_luaState, index))
 			return Any::fromInt64(lua_tointeger(m_luaState, index));
 		else
-#endif
 			return Any::fromDouble(lua_tonumber(m_luaState, index));
 	}
 	else if (type == LUA_TBOOLEAN)
@@ -689,11 +657,9 @@ void ScriptManagerLua::toAny(int32_t base, int32_t count, Any* outAnys)
 
 		if (type == LUA_TNUMBER)
 		{
-#if defined(T_LUA_5_2)
 			if (lua_isinteger(m_luaState, index))
 				outAnys[i] = Any::fromInt64(lua_tointeger(m_luaState, index));
 			else
-#endif
 				outAnys[i] = Any::fromDouble(lua_tonumber(m_luaState, index));
 		}
 		else if (type == LUA_TBOOLEAN)
@@ -775,7 +741,7 @@ void ScriptManagerLua::collectGarbageFullNoLock()
 
 void ScriptManagerLua::collectGarbagePartial()
 {
-#if defined(T_LUA_5_2) && defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
+#if defined(T_SCRIPT_LUA_USE_GENERATIONAL_COLLECTOR)
 #	if defined(T_SCRIPT_LUA_USE_MT_LOCK)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #	endif
@@ -815,9 +781,7 @@ void ScriptManagerLua::collectGarbagePartial()
 			m_collectSteps = 0;
 		}
 
-#if defined(T_LUA_5_2)
 		T_ASSERT(lua_gc(m_luaState, LUA_GCISRUNNING, 0) == 0);
-#endif
 
 		// Progress with garbage collector.
 		while (m_collectSteps < targetSteps)
@@ -865,12 +829,6 @@ void ScriptManagerLua::breakDebugger(lua_State* luaState)
 
 	m_debugger->actionBreak();
 	m_debugger->analyzeState(luaState, &ar);
-}
-
-int ScriptManagerLua::classAlloc(lua_State* luaState)
-{
-	lua_newtable(luaState);
-	return 1;
 }
 
 int ScriptManagerLua::classGc(lua_State* luaState)

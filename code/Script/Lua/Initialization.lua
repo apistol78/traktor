@@ -80,12 +80,8 @@ function class(name, super)
 
 	setmetatable(cl, {
 		__call = function(cl, ...)
-			-- Allocate object.
-			local o
-			local alloc = rawget(cl, "__alloc")
-			if alloc ~= nil then o = alloc(...) else o = {} end
-
-			-- Setup object.
+			-- Allocate and setup object.
+			local o = {}
 			o.__type = ID_INSTANCE
 			setmetatable(o, cl)
 
@@ -104,10 +100,7 @@ function class(name, super)
 		if gpfn ~= nil then return gpfn(instance) end
 
 		-- Check for method.
-		local m = rawget(cl, member)
-		if m ~= nil then return m end
-
-		return nil
+		return rawget(cl, member)
 	end
 
 	local setters = rawget(cl, "__setters")

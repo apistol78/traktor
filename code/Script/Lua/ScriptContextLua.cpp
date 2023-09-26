@@ -130,13 +130,8 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 		}
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-#if defined(T_LUA_5_2)
 		lua_setupvalue(m_luaState, -2, 1);
 		lua_call(m_luaState, 0, 0);
-#else
-		lua_setfenv(m_luaState, -2);
-		lua_call(m_luaState, 0, 0);
-#endif
 
 		// Lock environment.
 		if (m_strict)

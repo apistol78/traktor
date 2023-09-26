@@ -9,8 +9,7 @@
 #pragma once
 
 #include "Core/Class/IRuntimeDelegate.h"
-
-struct lua_State;
+#include "Script/Lua/ScriptUtilitiesLua.h"
 
 namespace traktor::script
 {
@@ -26,7 +25,11 @@ public:
 
 	virtual ~ScriptDelegateLua();
 
-	void push();
+	void push() const
+	{
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
+		T_ASSERT(lua_isfunction(m_luaState, -1));
+	}
 
 	virtual Any call(int32_t argc, const Any* argv) override final;
 
