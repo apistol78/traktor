@@ -24,7 +24,7 @@ namespace traktor
 
 class IRuntimeClass;
 
-/*! \brief
+/*! Runtime object interface.
  * \ingroup Core
  */
 class T_DLLCLASS IRuntimeObject : public Object
@@ -32,6 +32,7 @@ class T_DLLCLASS IRuntimeObject : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! Get the runtime class of this object. */
 	virtual Ref< const IRuntimeClass > getRuntimeClass() const = 0;
 };
 

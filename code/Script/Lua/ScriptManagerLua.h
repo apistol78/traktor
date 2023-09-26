@@ -44,7 +44,7 @@ class ScriptDebuggerLua;
 class ScriptProfilerLua;
 
 /*! LUA script manager.
- * \ingroup LUA Script
+ * \ingroup Script
  */
 class T_DLLCLASS ScriptManagerLua : public IScriptManager
 {

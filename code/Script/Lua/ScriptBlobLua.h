@@ -14,6 +14,9 @@
 namespace traktor::script
 {
 
+/*! Serialized blob of LUA code.
+ * \ingroup Script
+ */
 class ScriptBlobLua : public IScriptBlob
 {
 	T_RTTI_CLASS;

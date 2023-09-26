@@ -16,6 +16,9 @@ namespace traktor::script
 
 class ScriptContextLua;
 
+/*! LUA script delegate runtime interface.
+ * \ingroup Script
+ */
 class ScriptDelegateLua : public IRuntimeDelegate
 {
 	T_RTTI_CLASS;
@@ -25,6 +28,7 @@ public:
 
 	virtual ~ScriptDelegateLua();
 
+	/*! Push script delegate onto LUA stack. */
 	void push() const
 	{
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
