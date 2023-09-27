@@ -5,8 +5,8 @@
 			<id>{5EA93E71-78A1-7C4D-9417-89EC17FA7424}</id>
 			<comment/>
 			<position>
-				<first>-114</first>
-				<second>197</second>
+				<first>-376</first>
+				<second>86</second>
 			</position>
 			<fragmentGuid>{B973ACD6-9F20-024A-97E4-89242B52CA91}</fragmentGuid>
 			<inputPins>
@@ -16,18 +16,13 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{5E10CE68-05B7-5049-A610-F7284188F81B}</id>
-					<name>Size Add</name>
+					<id>{56AD2EC7-F199-8B41-9344-FFA6DD29EFB1}</id>
+					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 				<item>
 					<id>{534C7910-8089-E24C-8078-AFB008DB088C}</id>
-					<name>Size Multiply</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{56AD2EC7-F199-8B41-9344-FFA6DD29EFB1}</id>
-					<name>View Offset</name>
+					<name>Scale</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -45,10 +40,6 @@
 					<name>Color</name>
 				</item>
 				<item>
-					<id>{287BE23A-BD3C-CA47-8437-98C2DE425009}</id>
-					<name>Depth</name>
-				</item>
-				<item>
 					<id>{0718D78A-0A9B-264A-A468-E65D5527F7EA}</id>
 					<name>Orientation</name>
 				</item>
@@ -61,8 +52,12 @@
 					<name>TexCoord</name>
 				</item>
 				<item>
-					<id>{EC408B4F-B9D4-3743-A634-653017C31765}</id>
-					<name>ViewPosition</name>
+					<id>{E7DDCAD4-EA3E-A546-832F-490174B0C0F5}</id>
+					<name>View</name>
+				</item>
+				<item>
+					<id>{E37D6FFC-7DC2-CF44-AD42-7D465E6DFAA8}</id>
+					<name>World</name>
 				</item>
 			</outputPins>
 			<values>
@@ -70,126 +65,123 @@
 					<first>DepthFade</first>
 					<second>0.1</second>
 				</item>
-				<item>
-					<first>Size Add</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Size Multiply</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>View Offset</first>
-					<second>0</second>
-				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{97F2F49D-3A4C-1541-A9A8-B1793D4EC8B1}</id>
 			<comment/>
 			<position>
-				<first>493</first>
-				<second>175</second>
+				<first>720</first>
+				<second>169</second>
 			</position>
 			<fragmentGuid>{A99D362F-D713-471B-A2A9-EF57C0C21145}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
-					<name>SurfaceColor</name>
+					<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
+					<name>Attributes</name>
 					<optional>false</optional>
-				</item>
-				<item>
-					<id>{8D8DF88B-8DAA-834C-BAE8-070585C3949B}</id>
-					<name>Alpha</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{94E22A68-7854-594C-9319-8AAF20D6DCA1}</id>
-					<name>Cast shadow</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{A5F0E607-E44E-4D43-8743-2CE73EC070EC}</id>
-					<name>Emissive</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{8471E6CB-0CA4-44FA-BA9A-C6FA85A0516A}</id>
-					<name>Irradiance</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{3C90103C-96CA-CD4F-88BF-928235B168E7}</id>
-					<name>Metalness</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{86A497C0-B521-514D-8F75-464E8EDD28D8}</id>
-					<name>Roughness</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{18DB5E7B-0EF6-8548-80BA-8D59FDE4CF7E}</id>
-					<name>Specular</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{A6D7BFAB-0138-4EFD-A71A-1397BCE9E584}</id>
-					<name>Transparent</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{19866EE0-A797-4209-982E-F784A732C803}</id>
-					<name>View normal</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{E16FFF12-8D12-2E43-9C6A-480D3D22A57D}</id>
-					<name>Write velocity</name>
-					<optional>true</optional>
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Cast shadow</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Emissive</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Metalness</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Roughness</first>
-					<second>0.8</second>
-				</item>
-				<item>
-					<first>Specular</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>Transparent</first>
-					<second>1</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{A6519AF9-A598-F749-892E-CEEBE675D94E}</id>
 			<comment/>
 			<position>
-				<first>190</first>
-				<second>146</second>
+				<first>-88</first>
+				<second>125</second>
 			</position>
 			<color>1, 0, 0, 1</color>
 			<linear>false</linear>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{EE75C799-852F-424A-9784-4754E8DA2D17}</id>
+			<comment/>
+			<position>
+				<first>298</first>
+				<second>62</second>
+			</position>
+			<fragmentGuid>{78B269D7-7546-FB42-8539-BAC518A5A174}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
+					<name>Alpha</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
+					<name>Cast shadow</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
+					<name>Discard</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{E0A19334-5502-FC49-AB32-3860B9607516}</id>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{91FF0666-4296-9248-8DED-8DFE98C8F815}</id>
+					<name>Input</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{17DB9995-C5C3-824C-9CDA-5D3A524A7346}</id>
+					<name>Irradiance</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{26E555E1-554E-644E-9D5D-5344AD399B49}</id>
+					<name>Metalness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{98A97471-F8FE-4946-9379-DD12C5FD39D7}</id>
+					<name>Roughness</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{1D7FFB3D-01E1-BF42-9E16-D5247E953065}</id>
+					<name>Specular</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
+					<name>SurfaceColor</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{65D9215E-45E9-BA48-8F10-4BCC7C576CC6}</id>
+					<name>View detail normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{33FE3E39-0A9A-3B46-BC14-39E943720774}</id>
+					<name>View normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{10CC7B54-4F11-1645-967D-E3693051A121}</id>
+					<name>View position</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{B8945579-8010-0B4D-BF63-30B36673C260}</id>
+					<name>View velocity</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{9D13C425-2DBE-B241-AE2D-C174C8D77790}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -199,8 +191,18 @@
 				<id>{4B2822D0-4D9A-4BBB-9956-A996493EE672}</id>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{950F8770-82FA-124D-8656-D9F1F489C10E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{9D13C425-2DBE-B241-AE2D-C174C8D77790}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{4E318C19-B4F1-9242-A467-D16E881C0D92}</id>
+				<id>{AAF55877-5DC7-E249-B955-565B5D3EEFBA}</id>
 			</destination>
 		</item>
 	</edges>
