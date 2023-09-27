@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class SocketAddress;
 class SocketAddressIPv4;
@@ -71,6 +69,4 @@ public:
 	void setQuickAck(bool quickAck);
 };
 
-	}
 }
-

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! Socket address.
  * \ingroup Net
@@ -37,6 +35,4 @@ public:
 	virtual std::wstring getHostName() const = 0;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.UdpSocket", UdpSocket, Socket)
 
@@ -149,5 +147,4 @@ int UdpSocket::recvFrom(void* data, int length, SocketAddressIPv4* outSocketAddr
 	return nrecv;
 }
 
-	}
 }

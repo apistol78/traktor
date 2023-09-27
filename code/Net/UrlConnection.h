@@ -25,8 +25,10 @@ namespace traktor
 
 class IStream;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 /*! URL connection base.
  * \ingroup Net
@@ -81,6 +83,4 @@ public:
 	virtual Ref< IStream > getStream() = 0;
 };
 
-	}
 }
-

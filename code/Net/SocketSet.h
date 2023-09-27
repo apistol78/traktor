@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class Socket;
 
@@ -54,6 +52,4 @@ private:
 	RefArray< Socket > m_sockets;
 };
 
-	}
 }
-

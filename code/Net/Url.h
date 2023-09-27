@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! Unified resource locator.
  * \ingroup Net
@@ -83,6 +81,4 @@ private:
 	std::wstring m_userInfo;
 };
 
-	}
 }
-

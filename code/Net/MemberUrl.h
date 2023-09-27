@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Net/Url.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! URL serialization member.
  * \ingroup Net
@@ -50,6 +48,4 @@ private:
 	value_type& m_ref;
 };
 
-	}
 }
-

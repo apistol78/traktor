@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! IPv4 socket address.
  * \ingroup Net
@@ -52,15 +50,15 @@ public:
 
 	SocketAddressIPv4();
 
-	SocketAddressIPv4(const sockaddr_in& sockaddr);
+	explicit SocketAddressIPv4(const sockaddr_in& sockaddr);
 
-	SocketAddressIPv4(uint16_t port);
+	explicit SocketAddressIPv4(uint16_t port);
 
-	SocketAddressIPv4(const uint32_t addr, uint16_t port);
+	explicit SocketAddressIPv4(const uint32_t addr, uint16_t port);
 
-	SocketAddressIPv4(const uint8_t add[4], uint16_t port);
+	explicit SocketAddressIPv4(const uint8_t add[4], uint16_t port);
 
-	SocketAddressIPv4(const std::wstring& host, uint16_t port);
+	explicit SocketAddressIPv4(const std::wstring& host, uint16_t port);
 
 	virtual bool valid() const override final;
 
@@ -84,6 +82,4 @@ private:
 	sockaddr_in m_sockaddr;
 };
 
-	}
 }
-

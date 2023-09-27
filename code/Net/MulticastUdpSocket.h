@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! Multicast datagram socket.
  * \ingroup Net
@@ -44,6 +42,4 @@ public:
 	bool setTTL(uint8_t ttl);
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IcmpSocket", IcmpSocket, Socket)
 
@@ -102,5 +100,4 @@ int IcmpSocket::recvFrom(void* data, int length, SocketAddressIPv4* outSocketAdd
 	return nrecv;
 }
 
-	}
 }

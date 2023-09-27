@@ -10,10 +10,8 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.TcpSocket", TcpSocket, Socket)
 
@@ -187,5 +185,4 @@ void TcpSocket::setQuickAck(bool quickAck)
 #endif
 }
 
-	}
 }

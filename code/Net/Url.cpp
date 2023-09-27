@@ -13,10 +13,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Url", Url, Object)
 
@@ -271,5 +269,4 @@ std::wstring Url::decodeString(const std::wstring& text)
 	return std::wstring(chrs.begin(), chrs.end());
 }
 
-	}
 }

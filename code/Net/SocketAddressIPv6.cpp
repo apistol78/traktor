@@ -11,10 +11,8 @@
 #include "Core/Misc/TString.h"
 #include "Net/SocketAddressIPv6.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
@@ -108,5 +106,4 @@ const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
 	return nullptr;
 }
 
-	}
 }

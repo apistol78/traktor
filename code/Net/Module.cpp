@@ -11,17 +11,14 @@
 #if defined(T_STATIC)
 #	include "Net/NetClassFactory.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 extern "C" void __module__Traktor_Net()
 {
 	T_FORCE_LINK_REF(NetClassFactory);
 }
 
-	}
 }
 
 #endif

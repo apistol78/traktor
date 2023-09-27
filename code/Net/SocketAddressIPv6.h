@@ -22,10 +22,8 @@
 
 struct addrinfo;
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! IPv6 socket address.
  * \ingroup Net
@@ -37,9 +35,9 @@ class T_DLLCLASS SocketAddressIPv6 : public SocketAddress
 public:
 	SocketAddressIPv6() = default;
 
-	SocketAddressIPv6(uint16_t port);
+	explicit SocketAddressIPv6(uint16_t port);
 
-	SocketAddressIPv6(const std::wstring& host, uint16_t port);
+	explicit SocketAddressIPv6(const std::wstring& host, uint16_t port);
 
 	virtual ~SocketAddressIPv6();
 
@@ -53,6 +51,4 @@ private:
 	addrinfo* m_info = nullptr;
 };
 
-	}
 }
-
