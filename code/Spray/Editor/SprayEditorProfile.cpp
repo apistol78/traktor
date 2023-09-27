@@ -6,13 +6,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Spray/Editor/SprayEditorProfile.h"
-#include "Spray/EffectFactory.h"
-#include "Spray/EffectEntityFactory.h"
-#include "Spray/EffectRenderer.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Command.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Database/Instance.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Spray/Effect.h"
+#include "Spray/EffectComponentData.h"
+#include "Spray/EffectData.h"
+#include "Spray/EffectEntityFactory.h"
+#include "Spray/EffectFactory.h"
+#include "Spray/EffectRenderer.h"
+#include "Spray/Editor/SprayEditorProfile.h"
+#include "Ui/Command.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -93,7 +98,20 @@ Ref< world::EntityData > SprayEditorProfile::createEntityData(
 	db::Instance* instance
 ) const
 {
-	return nullptr;
+	const TypeInfo* primaryType = instance->getPrimaryType();
+	if (!primaryType)
+		return nullptr;
+
+	if (!is_type_of< EffectData >(*primaryType))
+		return nullptr;
+
+	Ref< world::EntityData > entityData = new world::EntityData();
+	entityData->setId(Guid::create());
+	entityData->setName(instance->getName());
+	entityData->setComponent(new EffectComponentData(
+		resource::Id< Effect >(instance->getGuid())
+	));
+	return entityData;
 }
 
 	}

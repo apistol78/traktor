@@ -54,6 +54,10 @@ class T_DLLCLASS EffectComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	EffectComponentData() = default;
+
+	explicit EffectComponentData(const resource::Id< Effect >& effect);
+
 	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual int32_t getOrdinal() const override final;
