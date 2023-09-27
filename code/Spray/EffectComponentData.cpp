@@ -18,6 +18,11 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectComponentData", 0, EffectComponentData, world::IEntityComponentData)
 
+EffectComponentData::EffectComponentData(const resource::Id< Effect >& effect)
+:	m_effect(effect)
+{
+}
+
 Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const
 {
 	resource::Proxy< Effect > effect;
