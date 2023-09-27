@@ -88,6 +88,15 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.scene.SceneEditorPage</typeName>
+			<colors>
+				<item>
+					<first>background-color-layer</first>
+					<second>55, 77, 89, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.script.ScriptEditorPage</typeName>
 			<colors>
 				<item>
@@ -261,7 +270,7 @@
 				</item>
 				<item>
 					<first>color-grid</first>
-					<second>65, 67, 57, 255</second>
+					<second>54, 54, 54, 255</second>
 				</item>
 				<item>
 					<first>color-label</first>
@@ -970,15 +979,6 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.scene.SceneEditorPage</typeName>
-			<colors>
-				<item>
-					<first>background-color-layer</first>
-					<second>55, 77, 89, 255</second>
 				</item>
 			</colors>
 		</item>
