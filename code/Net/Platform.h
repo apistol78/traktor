@@ -6,8 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_net_Platform_H
-#define traktor_net_Platform_H
+#pragma once
 
 #include "Core/Config.h"
 
@@ -40,6 +39,3 @@ typedef int socklen_t;
 #	define CLOSE_SOCKET(s) closesocket(s)
 
 #endif
-
-#endif	// traktor_net_Platform_H
-

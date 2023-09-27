@@ -47,7 +47,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	// Send entire blob in one go.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		for (size_t offset = 0; offset < memory.size(); )
+		for (size_t offset = 0; m_socket != nullptr && offset < memory.size(); )
 		{
 			const auto chunk = memory.getChunk(offset);
 			if (!chunk.ptr)

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 /*! Network manager.
  * \ingroup Net
@@ -41,6 +39,4 @@ private:
 	static int32_t ms_initialized;
 };
 
-	}
 }
-

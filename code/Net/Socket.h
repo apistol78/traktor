@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 enum IoctlCommand
 {
@@ -109,6 +107,4 @@ protected:
 	handle_t m_socket;
 };
 
-	}
 }
-

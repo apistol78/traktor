@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class SocketAddress;
 class SocketAddressIPv4;
@@ -62,6 +60,4 @@ public:
 	int recvFrom(void* data, int length, SocketAddressIPv4* outSocketAddress);
 };
 
-	}
 }
-

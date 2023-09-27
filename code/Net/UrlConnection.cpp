@@ -12,17 +12,15 @@
 #include "Net/Ftp/FtpConnection.h"
 #include "Net/File/FileConnection.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.UrlConnection", UrlConnection, Object)
 
 Ref< UrlConnection > UrlConnection::open(const Url& url)
 {
 	if (!url.valid())
-		return 0;
+		return nullptr;
 
 	Ref< UrlConnection > connection;
 
@@ -40,11 +38,10 @@ Ref< UrlConnection > UrlConnection::open(const Url& url)
 		if (result == ErRedirect)
 			connection = UrlConnection::open(redirectionUrl);
 		else if (result != ErSucceeded)
-			connection = 0;
+			connection = nullptr;
 	}
 
 	return connection;
 }
 
-	}
 }

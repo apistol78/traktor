@@ -12,10 +12,8 @@
 #include "Net/Platform.h"
 #include "Net/Socket.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Socket", Socket, Object)
 
@@ -149,5 +147,4 @@ Socket::handle_t Socket::handle() const
 	return m_socket;
 }
 
-	}
 }

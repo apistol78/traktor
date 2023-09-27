@@ -31,10 +31,8 @@
 #   include <netinet/if_ether.h>
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv4", SocketAddressIPv4, SocketAddress)
 
@@ -286,5 +284,4 @@ bool SocketAddressIPv4::operator == (const SocketAddressIPv4& rh) const
 		m_sockaddr.sin_addr.s_addr == rh.m_sockaddr.sin_addr.s_addr;
 }
 
-	}
 }

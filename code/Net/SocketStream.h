@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class Socket;
 
@@ -34,7 +32,7 @@ class T_DLLCLASS SocketStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	SocketStream(Socket* socket, bool readAllowed = true, bool writeAllowed = true, int32_t timeout = -1);
+	explicit SocketStream(Socket* socket, bool readAllowed = true, bool writeAllowed = true, int32_t timeout = -1);
 
 	virtual void close() override final;
 
@@ -68,6 +66,4 @@ private:
 	int64_t m_offset;
 };
 
-	}
 }
-

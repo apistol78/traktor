@@ -12,10 +12,8 @@
 #include "Net/SocketStream.h"
 #include "Net/Socket.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketStream", SocketStream, IStream)
 
@@ -171,5 +169,4 @@ void SocketStream::setTimeout(int32_t timeout)
 	m_timeout = timeout;
 }
 
-	}
 }

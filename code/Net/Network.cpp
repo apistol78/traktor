@@ -10,10 +10,8 @@
 #include "Net/Platform.h"
 #include "Core/Log/Log.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 int32_t Network::ms_initialized = 0;
 
@@ -50,5 +48,4 @@ void Network::finalize()
 #endif
 }
 
-	}
 }

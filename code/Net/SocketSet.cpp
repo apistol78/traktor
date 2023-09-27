@@ -15,10 +15,8 @@
 #include "Net/Socket.h"
 #include "Net/SocketSet.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketSet", SocketSet, Object)
 
@@ -130,5 +128,4 @@ int SocketSet::select(bool read, bool write, bool except, int timeout, SocketSet
 	return outResultSet.count();
 }
 
-	}
 }

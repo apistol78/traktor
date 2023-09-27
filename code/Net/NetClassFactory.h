@@ -18,11 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
+/*!
+ * \ingroup Net
+ */
 class T_DLLCLASS NetClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
@@ -31,6 +32,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

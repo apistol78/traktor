@@ -9,10 +9,8 @@
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.MulticastUdpSocket", MulticastUdpSocket, UdpSocket)
 
@@ -67,5 +65,4 @@ bool MulticastUdpSocket::setTTL(uint8_t ttl)
 	return setsockopt(m_socket, IPPROTO_IP, IP_MULTICAST_TTL, (const char*)&ttl, sizeof(ttl)) >= 0;
 }
 
-	}
 }
