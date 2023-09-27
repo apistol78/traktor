@@ -13,10 +13,8 @@
 #include "Model/Model.h"
 #include "Model/Operations/UnwrapUV.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.UnwrapUV", UnwrapUV, IModelOperation)
 
@@ -34,7 +32,7 @@ bool UnwrapUV::apply(Model& model) const
 	AlignedVector< float > normals;
 	AlignedVector< float > texCoords;
 	AlignedVector< uint32_t > indices;
-	SmallMap< uint32_t, uint32_t > vertexToPolygon;
+	SmallMap< std::tuple< uint32_t, uint32_t, uint32_t >, uint32_t > vertexToPolygon;
 
 	for (uint32_t i = 0; i < model.getVertexCount(); ++i)
 	{
@@ -71,9 +69,14 @@ bool UnwrapUV::apply(Model& model) const
 		indices.push_back(polygon.getVertex(1));
 		indices.push_back(polygon.getVertex(2));
 
-		vertexToPolygon[polygon.getVertex(0)] = i;
-		vertexToPolygon[polygon.getVertex(1)] = i;
-		vertexToPolygon[polygon.getVertex(2)] = i;
+		const std::tuple< uint32_t, uint32_t, uint32_t > key = {
+			polygon.getVertex(0),
+			polygon.getVertex(1),
+			polygon.getVertex(02)
+		};
+
+		T_ASSERT(vertexToPolygon.find(key) == vertexToPolygon.end());
+		vertexToPolygon[key] = i;
 	}
 
 	xatlas::MeshDecl meshDecl;
@@ -116,8 +119,8 @@ bool UnwrapUV::apply(Model& model) const
 		return false;
 	}
 
-	AlignedVector< Vertex > originalVertices = model.getVertices();
-	AlignedVector< Polygon > originalPolygons = model.getPolygons();
+	const AlignedVector< Vertex > originalVertices = model.getVertices();
+	const AlignedVector< Polygon > originalPolygons = model.getPolygons();
 
 	model.clear(Model::CfVertices | Model::CfPolygons);
 
@@ -126,11 +129,12 @@ bool UnwrapUV::apply(Model& model) const
 		const xatlas::Mesh& mesh = atlas->meshes[i];
 		for (uint32_t j = 0; j < mesh.indexCount; j += 3)
 		{
-			const xatlas::Vertex& vfirst = mesh.vertexArray[mesh.indexArray[j]];
+			const xatlas::Vertex& v0 = mesh.vertexArray[mesh.indexArray[j + 0]];
+			const xatlas::Vertex& v1 = mesh.vertexArray[mesh.indexArray[j + 1]];
+			const xatlas::Vertex& v2 = mesh.vertexArray[mesh.indexArray[j + 2]];
 
-			Polygon polygon = originalPolygons[vertexToPolygon[vfirst.xref]];
-			if (polygon.getVertexCount() != 3)
-				continue;
+			Polygon polygon = originalPolygons[vertexToPolygon[{ v0.xref, v1.xref, v2.xref }]];
+			T_ASSERT(polygon.getVertexCount() == 3);
 
 			for (int32_t k = 0; k < 3; ++k)
 			{
@@ -142,7 +146,7 @@ bool UnwrapUV::apply(Model& model) const
 				uv.y /= (float)atlas->height;
 
 				Vertex vx = originalVertices[v.xref];
-				vx.setTexCoord(m_channel, model.addTexCoord(uv));
+				vx.setTexCoord(m_channel, model.addUniqueTexCoord(uv));
 				polygon.setVertex(k, model.addUniqueVertex(vx));
 			}
 
@@ -154,5 +158,4 @@ bool UnwrapUV::apply(Model& model) const
 	return true;
 }
 
-	}
 }
