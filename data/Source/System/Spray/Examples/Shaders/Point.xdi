@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{EF5676D7-0085-274C-A1C2-7650AD60C6BE}</id>
@@ -85,18 +85,13 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<id>{5E10CE68-05B7-5049-A610-F7284188F81B}</id>
-					<name>Size Add</name>
+					<id>{56AD2EC7-F199-8B41-9344-FFA6DD29EFB1}</id>
+					<name>Offset</name>
 					<optional>true</optional>
 				</item>
 				<item>
 					<id>{534C7910-8089-E24C-8078-AFB008DB088C}</id>
-					<name>Size Multiply</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<id>{56AD2EC7-F199-8B41-9344-FFA6DD29EFB1}</id>
-					<name>View Offset</name>
+					<name>Scale</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -126,26 +121,18 @@
 					<name>TexCoord</name>
 				</item>
 				<item>
-					<id>{EC408B4F-B9D4-3743-A634-653017C31765}</id>
-					<name>ViewPosition</name>
+					<id>{E7DDCAD4-EA3E-A546-832F-490174B0C0F5}</id>
+					<name>View</name>
+				</item>
+				<item>
+					<id>{E37D6FFC-7DC2-CF44-AD42-7D465E6DFAA8}</id>
+					<name>World</name>
 				</item>
 			</outputPins>
 			<values>
 				<item>
 					<first>DepthFade</first>
 					<second>0.1</second>
-				</item>
-				<item>
-					<first>Size Add</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>Size Multiply</first>
-					<second>1</second>
-				</item>
-				<item>
-					<first>View Offset</first>
-					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -182,4 +169,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
