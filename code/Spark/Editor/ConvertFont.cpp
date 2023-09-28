@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <set>
 
 #include <ft2build.h>
@@ -21,6 +19,15 @@
 
 namespace traktor::spark
 {
+	namespace
+	{
+
+Vector2i cast(const Vector2& p)
+{
+	return Vector2i((int32_t)p.x, (int32_t)p.y);
+}
+
+	}
 
 uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fontAsset, Movie* movie)
 {
@@ -65,9 +72,9 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 	// Scale factor from font to SWF em-square.
 	const float scale = (1024.0f * 20.0f) / face->units_per_EM;
 
-	const int16_t ascent = face->ascender * scale;
-	const int16_t descent = -face->descender * scale;
-	const int16_t leading = face->height * scale;
+	const int16_t ascent = (int16_t)(face->ascender * scale);
+	const int16_t descent = (int16_t)(-face->descender * scale);
+	const int16_t leading = (int16_t)(face->height * scale);
 
 	RefArray< Shape > glyphShapes;
 	AlignedVector< int16_t > advanceTable;
@@ -120,21 +127,21 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 
 		callbacks.move_to = [](const FT_Vector* to, void* user) -> int {
 			auto& ud = *(UD*)user;
-			const Vector2 cp = ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f);
+			const Vector2i cp = cast(ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f));
 			ud.path.end(1, 0, 0);
 			ud.path.moveTo(cp.x, cp.y, Path::CmAbsolute);
 			return 0;
 		};
 		callbacks.line_to = [](const FT_Vector* to, void* user) -> int {
 			auto& ud = *(UD*)user;
-			const Vector2 cp2 = ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f);
+			const Vector2i cp2 = cast(ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f));
 			ud.path.lineTo(cp2.x, cp2.y, Path::CmAbsolute);
 			return 0;
 		};
 		callbacks.conic_to = [](const FT_Vector* control, const FT_Vector* to, void* user) -> int {
 			auto& ud = *(UD*)user;
-			const Vector2 cp1 = ud.transform * Vector2((float)control->x / 256.0f, (float)control->y / 256.0f);
-			const Vector2 cp2 = ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f);
+			const Vector2i cp1 = cast(ud.transform * Vector2((float)control->x / 256.0f, (float)control->y / 256.0f));
+			const Vector2i cp2 = cast(ud.transform * Vector2((float)to->x / 256.0f, (float)to->y / 256.0f));
 			ud.path.quadraticTo(cp1.x, cp1.y, cp2.x, cp2.y, Path::CmAbsolute);
 			return 0;
 		};
@@ -150,7 +157,11 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 			Bezier3rd(cp0, cp1, cp2, cp3).approximate(1.5f, 2, b2v);
 
 			for (const auto& it : b2v)
-				ud.path.quadraticTo(it.cp1.x, it.cp1.y, it.cp2.x, it.cp2.y, Path::CmAbsolute);
+			{
+				const Vector2i icp1 = cast(it.cp1);
+				const Vector2i icp2 = cast(it.cp2);
+				ud.path.quadraticTo(icp1.x, icp1.y, icp2.x, icp2.y, Path::CmAbsolute);
+			}
 
 			return 0;
 		};
@@ -159,7 +170,7 @@ uint16_t convertFont(const traktor::Path& assetPath, const MovieAsset::Font& fon
 		ud.path.end(1, 0, 0);
 
 		// Glyph advancement.
-		advanceTable.push_back(slot->metrics.horiAdvance * scale);
+		advanceTable.push_back((int16_t)(slot->metrics.horiAdvance * scale));
 
 		// Save bounding box.
 		//FT_BBox boundingBox;
