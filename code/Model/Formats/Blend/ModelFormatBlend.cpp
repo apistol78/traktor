@@ -105,7 +105,22 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		return nullptr;
 
 	// Import intermediate model.
-	return ModelFormat::readAny(scratchPath + L"/" + intermediate, filter);
+	Ref< Model > model = ModelFormat::readAny(scratchPath + L"/" + intermediate, filter);
+	if (!model)
+		return nullptr;
+
+	// Remove unused materials.
+	AlignedVector< int32_t > materialsToRemove(model->getMaterialCount());
+	for (uint32_t i = 0; i < model->getMaterialCount(); ++i)
+		materialsToRemove[i] = i;
+	for (const auto& polygon : model->getPolygons())
+		materialsToRemove[polygon.getMaterial()] = c_InvalidIndex;
+	auto it = std::remove(materialsToRemove.begin(), materialsToRemove.end(), c_InvalidIndex);
+	materialsToRemove.erase(it, materialsToRemove.end());
+	for (auto it = materialsToRemove.rbegin(); it != materialsToRemove.rend(); ++it)
+		model->removeMaterial(*it);
+
+	return model;
 }
 
 bool ModelFormatBlend::write(const Path& filePath, const Model* model) const
