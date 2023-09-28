@@ -159,6 +159,24 @@ uint32_t Model::addUniqueMaterial(const Material& material)
 	return addUniqueId(m_materials, material, MaterialPredicate());
 }
 
+bool Model::removeMaterial(uint32_t index)
+{
+	if (index >= m_materials.size())
+		return false;
+
+	for (auto& polygon : m_polygons)
+	{
+		const uint32_t m = polygon.getMaterial();
+		if (m > index)
+			polygon.setMaterial(m - 1);
+		else if (m == index)
+			polygon.setMaterial(c_InvalidIndex);
+	}
+
+	m_materials.erase(m_materials.begin() + index);
+	return true;
+}
+
 uint32_t Model::addVertex(const Vertex& vertex)
 {
 	return m_vertices.add(vertex);
