@@ -17,16 +17,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Ninja/SolutionBuilderNinja.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderNinja", SolutionBuilderNinja, SolutionBuilder)
-
-SolutionBuilderNinja::SolutionBuilderNinja()
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderNinja", SolutionBuilderNinja, SolutionBuilder)
 
 SolutionBuilderNinja::~SolutionBuilderNinja()
 {
@@ -144,5 +138,4 @@ void SolutionBuilderNinja::showOptions() const
 	log::info << L"\t-ninja-project-template=[template file]" << Endl;
 }
 
-	}
 }

@@ -17,12 +17,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/CBlocks/SolutionBuilderCBlocks.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderCBlocks", SolutionBuilderCBlocks, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderCBlocks", SolutionBuilderCBlocks, SolutionBuilder)
 
 SolutionBuilderCBlocks::SolutionBuilderCBlocks()
 {
@@ -120,5 +118,4 @@ void SolutionBuilderCBlocks::showOptions() const
 	log::info << L"\t-p,-cblocks-project-template=[project template file]" << Endl;
 }
 
-	}
 }

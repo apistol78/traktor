@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class SolutionBuilderMsvcSettings;
 
@@ -42,6 +40,4 @@ private:
 	bool m_includeExternal = false;
 };
 
-	}
 }
-

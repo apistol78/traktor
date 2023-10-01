@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Project;
 class ProjectItem;
@@ -33,8 +31,6 @@ class T_DLLCLASS SolutionBuilderEclipse : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderEclipse();
-
 	virtual bool create(const CommandLine& cmdLine) override final;
 
 	virtual bool generate(Solution* solution) override final;
@@ -47,6 +43,5 @@ private:
 	std::wstring m_cprojectFile;
 };
 
-	}
 }
 

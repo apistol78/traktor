@@ -18,12 +18,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/GraphViz/SolutionBuilderGraphViz.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 void collectActiveProjects(const Project* project, std::set< const Project* >& outProjects)
 {
@@ -37,14 +35,9 @@ void collectActiveProjects(const Project* project, std::set< const Project* >& o
 	}
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderGraphViz", SolutionBuilderGraphViz, SolutionBuilder)
-
-SolutionBuilderGraphViz::SolutionBuilderGraphViz()
-:	m_skipLeafs(false)
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderGraphViz", SolutionBuilderGraphViz, SolutionBuilder)
 
 bool SolutionBuilderGraphViz::create(const CommandLine& cmdLine)
 {
@@ -113,5 +106,4 @@ void SolutionBuilderGraphViz::showOptions() const
 	log::info << L"\t-s,-graphviz-skipleafs=Skip leaf project(s)" << Endl;
 }
 
-	}
 }

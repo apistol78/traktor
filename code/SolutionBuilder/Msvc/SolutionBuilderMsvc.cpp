@@ -36,12 +36,10 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImport.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 struct ProjectNamePredicate
 {
@@ -98,9 +96,9 @@ bool collectExternalSolutions(
 	return true;
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuilder)
 
 bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 {
@@ -497,5 +495,4 @@ void SolutionBuilderMsvc::showOptions() const
 	log::info << L"\t-w=[filename],-msvc-write-platform=[filename]		(Write platform description file)" << Endl;
 }
 
-	}
 }

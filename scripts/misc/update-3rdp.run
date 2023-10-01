@@ -273,7 +273,13 @@ local PACKAGES =
 					"yes yes | ./fbx202001_fbxsdk_linux " .. cwd,
 				}
 			)
-			run:execute("sh ./install.sh")		
+			run:execute("sh ./install.sh")	
+			write_file(
+				"include/stdc-predef.h",
+				{
+					"/* Dummy */"
+				}
+			)
 		end,
 		license = "AUTODESK"
 	},

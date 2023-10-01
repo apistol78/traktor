@@ -32,7 +32,7 @@ class T_DLLCLASS XmlDeserializer : public Serializer
 	T_RTTI_CLASS;
 
 public:
-	XmlDeserializer(IStream* stream, const std::wstring& name = L"");
+	explicit XmlDeserializer(IStream* stream, const std::wstring& name = L"");
 
 	virtual Direction getDirection() const override final;
 
