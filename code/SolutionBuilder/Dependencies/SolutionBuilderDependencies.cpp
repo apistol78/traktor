@@ -14,12 +14,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Dependencies/SolutionBuilderDependencies.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 void collectDependencies(const Project* project, std::set< std::wstring >& outDependencies)
 {
@@ -33,9 +31,9 @@ void collectDependencies(const Project* project, std::set< std::wstring >& outDe
 	}
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderDependencies", SolutionBuilderDependencies, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderDependencies", SolutionBuilderDependencies, SolutionBuilder)
 
 bool SolutionBuilderDependencies::create(const CommandLine& cmdLine)
 {
@@ -66,5 +64,4 @@ void SolutionBuilderDependencies::showOptions() const
 	log::info << L"\t-p,-project=Dependencies of project" << Endl;
 }
 
-	}
 }

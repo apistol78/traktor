@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 /*! Generate GraphViz visualization of projects and dependencies. */
 class T_DLLCLASS SolutionBuilderDependencies : public SolutionBuilder
@@ -39,6 +37,4 @@ private:
 	std::wstring m_projectName;
 };
 
-	}
 }
-

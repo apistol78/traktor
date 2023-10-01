@@ -300,14 +300,14 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 	}
 	else if ((a = findAttribute(attr, L"type")) != attr.end())
 	{
-		std::wstring typeName = a->second;
+		const std::wstring typeName = a->second;
 
 		const TypeInfo* type = TypeInfo::find(typeName.c_str());
-		if (!ensure(type != 0))
+		if (!ensure(type != nullptr))
 			return;
 
 		Ref< ISerializable > o = checked_type_cast< ISerializable* >(type->createInstance());
-		if (!ensure(o != 0))
+		if (!ensure(o != nullptr))
 			return;
 
 		Serializer::dataVersionMap_t dataVersions;
@@ -318,11 +318,11 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 			for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 			{
 				const std::wstring& s = *i;
-				size_t p = s.find(L':');
+				const size_t p = s.find(L':');
 				if (p != s.npos)
 				{
-					std::wstring dataTypeName = s.substr(0, p);
-					int32_t dataTypeVersion = parseString< int32_t >(s.substr(p + 1));
+					const std::wstring dataTypeName = s.substr(0, p);
+					const int32_t dataTypeVersion = parseString< int32_t >(s.substr(p + 1));
 
 					const TypeInfo* dataType = TypeInfo::find(dataTypeName.c_str());
 					if (!ensure(dataType != 0))
@@ -341,7 +341,7 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 				}
 				else
 				{
-					int32_t dataTypeVersion = parseString< int32_t >(s);
+					const int32_t dataTypeVersion = parseString< int32_t >(s);
 					if (dataTypeVersion > 0)
 					{
 						dataVersions.insert(std::make_pair(
@@ -360,8 +360,8 @@ void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 	}
 	else
 	{
-		rememberObject(0);
-		m = 0;
+		rememberObject(nullptr);
+		m = nullptr;
 	}
 
 	leaveElement(m.getName());

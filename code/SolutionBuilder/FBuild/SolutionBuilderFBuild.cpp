@@ -17,16 +17,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/FBuild/SolutionBuilderFBuild.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderFBuild", SolutionBuilderFBuild, SolutionBuilder)
-
-SolutionBuilderFBuild::SolutionBuilderFBuild()
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderFBuild", SolutionBuilderFBuild, SolutionBuilder)
 
 SolutionBuilderFBuild::~SolutionBuilderFBuild()
 {
@@ -144,5 +138,4 @@ void SolutionBuilderFBuild::showOptions() const
 	log::info << L"\t-fastbuild-project-template=[template file]" << Endl;
 }
 
-	}
 }

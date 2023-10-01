@@ -58,7 +58,8 @@ Mutex::Mutex(const Guid& id)
 	std::memset(data, 0, sizeof(InternalData));
 
 	data->shmid = shm_open(wstombs(id.format()).c_str(), O_CREAT | O_RDWR, S_IRUSR | S_IWUSR);
-	ftruncate(data->shmid, sizeof(pthread_mutex_t));
+	const int result = ftruncate(data->shmid, sizeof(pthread_mutex_t));
+	(void)result;
 
 	data->outer = (pthread_mutex_t*)mmap(nullptr, sizeof(pthread_mutex_t), PROT_READ | PROT_WRITE, MAP_SHARED, data->shmid, 0);
 	data->id = id;

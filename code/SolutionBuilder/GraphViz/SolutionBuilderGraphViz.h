@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 /*! Generate GraphViz visualization of projects and dependencies. */
 class T_DLLCLASS SolutionBuilderGraphViz : public SolutionBuilder
@@ -29,8 +27,6 @@ class T_DLLCLASS SolutionBuilderGraphViz : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderGraphViz();
-
 	virtual bool create(const CommandLine& cmdLine) override final;
 
 	virtual bool generate(Solution* solution) override final;
@@ -38,9 +34,7 @@ public:
 	virtual void showOptions() const override final;
 
 private:
-	bool m_skipLeafs;
+	bool m_skipLeafs = false;
 };
 
-	}
 }
-

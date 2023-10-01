@@ -18,12 +18,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Xcode/SolutionBuilderXcode2.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode2", SolutionBuilderXcode2, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderXcode2", SolutionBuilderXcode2, SolutionBuilder)
 
 SolutionBuilderXcode2::~SolutionBuilderXcode2()
 {
@@ -189,5 +187,4 @@ void SolutionBuilderXcode2::showOptions() const
 	log::info << L"\t-xcode-workspace-scheme-template=[template file]" << Endl;
 }
 
-	}
 }

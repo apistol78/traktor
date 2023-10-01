@@ -22,16 +22,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Eclipse/SolutionBuilderEclipse.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderEclipse", SolutionBuilderEclipse, SolutionBuilder)
-
-SolutionBuilderEclipse::SolutionBuilderEclipse()
-{
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderEclipse", SolutionBuilderEclipse, SolutionBuilder)
 
 bool SolutionBuilderEclipse::create(const CommandLine& cmdLine)
 {
@@ -137,5 +131,4 @@ void SolutionBuilderEclipse::showOptions() const
 	log::info << L"\t-c,--cproject=[cproject template]	(cproject template file)" << Endl;
 }
 
-	}
 }

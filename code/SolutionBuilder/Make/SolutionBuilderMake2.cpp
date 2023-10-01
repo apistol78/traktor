@@ -18,12 +18,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Make/SolutionBuilderMake2.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMake2", SolutionBuilderMake2, SolutionBuilder)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderMake2", SolutionBuilderMake2, SolutionBuilder)
 
 SolutionBuilderMake2::~SolutionBuilderMake2()
 {
@@ -144,5 +142,4 @@ void SolutionBuilderMake2::showOptions() const
 	log::info << L"\t-p,-make-project-template=[project template file]" << Endl;
 }
 
-	}
 }

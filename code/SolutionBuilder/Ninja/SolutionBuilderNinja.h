@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class ScriptProcessor;
 
@@ -31,8 +29,6 @@ class T_DLLCLASS SolutionBuilderNinja : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderNinja();
-
 	virtual ~SolutionBuilderNinja();
 
 	virtual bool create(const CommandLine& cmdLine) override final;
@@ -47,6 +43,4 @@ private:
 	Ref< ScriptProcessor > m_scriptProcessor;
 };
 
-	}
 }
-
