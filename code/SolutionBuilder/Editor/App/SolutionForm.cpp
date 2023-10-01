@@ -92,8 +92,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionForm", SolutionForm, ui::Form)
 
 bool SolutionForm::create(const CommandLine& cmdLine)
 {
-	// Load default stylesheet.
 	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss";
+	if (cmdLine.hasOption(L"styleSheet"))
+		styleSheetName = cmdLine.getOption(L"styleSheet").getString();
+
+	// Load default stylesheet.
 	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
 	if (!styleSheet)
 	{
