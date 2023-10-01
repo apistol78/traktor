@@ -153,7 +153,7 @@ int main(int argc, const char** argv)
 					continue;
 
 				bool include = false;
-				for (int32_t i = 1; !include && i < cmdLine.getCount(); ++i)
+				for (uint32_t i = 1; !include && i < cmdLine.getCount(); ++i)
 				{
 					if (cmdLine.getString(i) == project->getName())
 						include = true;

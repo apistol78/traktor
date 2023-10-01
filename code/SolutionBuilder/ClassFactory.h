@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Class/IRuntimeClassFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,23 +21,12 @@
 namespace traktor::sb
 {
 
-class T_DLLCLASS ProjectItem : public ISerializable
+class T_DLLCLASS ClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	void addItem(ProjectItem* item);
-
-	void removeItem(ProjectItem* item);
-
-	void setItems(const RefArray< ProjectItem >& items);
-
-	const RefArray< ProjectItem >& getItems() const;
-
-	virtual void serialize(ISerializer& s) override;
-
-private:
-	RefArray< ProjectItem > m_items;
+	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
 }
