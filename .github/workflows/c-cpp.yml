@@ -8,13 +8,30 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
-    - name: Install APT dependencies
-      run: sudo ./scripts/misc/install-linux-deps.sh
+    - uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages:
+          build-essential
+          ccache
+          libglu1-mesa-dev
+          uuid-dev
+          libgtk-3-dev
+          libasound2-dev
+          libopenal-dev
+          libpulse-dev
+          mesa-vulkan-drivers
+          libgles2-mesa-dev
+          libopenimageio-dev
+          libglew-dev
+          freeglut3-dev
+          opencl-dev
+          clang
+          lld
+          gdb
+        version: 1.0
     - name: Install 3rdp dependencies
       run: sudo ./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
     - name: Generate build files
