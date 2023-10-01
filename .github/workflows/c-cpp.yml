@@ -28,7 +28,7 @@ jobs:
           gdb
         version: 1.0
     - name: Install 3rdp dependencies
-      run: sudo ./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
+      run: ./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
     - name: Generate build files
       run: ./scripts/build-projects-make-linux.sh
     - name: Build DebugShared
