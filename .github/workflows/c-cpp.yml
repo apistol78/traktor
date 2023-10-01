@@ -14,9 +14,9 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install APT dependencies
-      run: ./scripts/misc/install-linux-deps.sh
+      run: sudo ./scripts/misc/install-linux-deps.sh
     - name: Install 3rdp dependencies
-      run: ./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
+      run: sudo ./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
     - name: Generate build files
       run: ./scripts/build-projects-make-linux.sh
     - name: Build DebugShared
