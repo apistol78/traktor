@@ -7,8 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #ifndef SB_VERSION
-#	define SB_VERSION L"3.9.6"
+#	define SB_VERSION L"3.9.7"
 #endif
 #ifndef SB_TITLE
-#	define SB_TITLE L"SolutionBuilder 3.9.6"
+#	define SB_TITLE L"SolutionBuilder " SB_VERSION
 #endif

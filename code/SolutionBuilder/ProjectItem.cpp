@@ -25,6 +25,11 @@ void ProjectItem::removeItem(ProjectItem* item)
 	m_items.remove(item);
 }
 
+void ProjectItem::setItems(const RefArray< ProjectItem >& items)
+{
+	m_items = items;
+}
+
 const RefArray< ProjectItem >& ProjectItem::getItems() const
 {
 	return m_items;
