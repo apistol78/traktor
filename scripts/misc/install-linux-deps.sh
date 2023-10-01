@@ -11,11 +11,6 @@ PACKAGES="
     libopenal-dev
     libpulse-dev
     mesa-vulkan-drivers
-    libgles2-mesa-dev
-    libopenimageio-dev
-    libglew-dev
-    freeglut3-dev
-    opencl-dev
     clang
     lld
     gdb
