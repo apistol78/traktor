@@ -15,7 +15,7 @@ namespace traktor
 
 std::wstring mbstows(const IEncoding& encoding, const std::string& s)
 {
-	std::vector< wchar_t > es;
+	AlignedVector< wchar_t > es;
 	wchar_t ec;
 	int32_t r;
 
@@ -40,7 +40,10 @@ std::string wstombs(const IEncoding& encoding, const std::wstring& s)
 	uint8_t buf[IEncoding::MaxEncodingSize];
 	std::string out;
 
-	for (uint32_t i = 0; i < s.length(); ++i)
+	const uint32_t ln = s.length();
+	out.reserve(ln);
+
+	for (uint32_t i = 0; i < ln; ++i)
 	{
 		const int32_t nbuf = encoding.translate(&s[i], 1, buf);
 		if (nbuf <= 0)
