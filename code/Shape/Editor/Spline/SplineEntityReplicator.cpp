@@ -136,17 +136,5 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	return outputModel;
 }
 
-void SplineEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
-	// Remove all components from this entity since no spline components are suppose to be part of runtime.
-	RefArray< world::IEntityComponentData > components = entityData->getComponents();
-	for (auto component : components)
-		entityData->removeComponent(component);
-}
-
 	}
 }

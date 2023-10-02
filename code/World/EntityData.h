@@ -71,8 +71,9 @@ public:
 	/*! Remove component.
 	 *
 	 * \param component Component instance to remove.
+	 * \return True if component removed.
 	 */
-	void removeComponent(IEntityComponentData* component);
+	bool removeComponent(const IEntityComponentData* component);
 
 	/*! Get component of type.
 	 *

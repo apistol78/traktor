@@ -83,45 +83,6 @@ Ref< model::Model > PrefabEntityReplicator::createModel(
 		return nullptr;
 }
 
-void PrefabEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
-	world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
-	if (!groupComponentData)
-	{
-		log::warning << L"No group component associated with entity " << entityData->getName() << L"; required by prefab entity replicator." << Endl;
-		return;
-	}
-
-	// Remove "consumed" components from prefab.
-	scene::Traverser::visit(groupComponentData, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
-	{
-		if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::VrSkip;
-		}
-
-		if (auto meshComponentData = inoutEntityData->getComponent< mesh::MeshComponentData >())
-			inoutEntityData->removeComponent(meshComponentData);
-
-		if (auto rigidBodyComponentData = inoutEntityData->getComponent< physics::RigidBodyComponentData >())
-			inoutEntityData->removeComponent(rigidBodyComponentData);
-
-		return scene::Traverser::VrContinue;
-	});
-
-	// Move "non-consumed" entities from prefab into output group.
-	for (auto entityData : groupComponentData->getEntityData())
-		outputGroup->addEntityData(entityData);
-
-	// Remove prefab component.
-	entityData->removeComponent(componentData);
-}
-
 Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	editor::IPipelineCommon* pipelineCommon,
 	const world::EntityData* entityData,
@@ -222,6 +183,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	SmallSet< resource::Id< physics::CollisionSpecification > > collisionMask;
 	float friction = 0.0f;
 	float restitution = 0.0f;
+	float margin = 0.0f;
 
 	// Collect all models from prefab component.
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
@@ -274,6 +236,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 
 			friction += bodyDesc->getFriction();
 			restitution += bodyDesc->getRestitution();
+			margin = std::max(margin, meshAsset->getMargin());
 		}
 
 		return scene::Traverser::VrContinue;
@@ -294,6 +257,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
  	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
  	outputShapeMeshAsset->setCalculateConvexHull(false);
+	outputShapeMeshAsset->setMargin(margin);
  	outputShapeMeshAsset->setMaterials(materialPhysics);
 	outputModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
 

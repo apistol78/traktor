@@ -19,6 +19,11 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/ShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/World/RigidBodyComponentData.h"
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
 #include "Shape/Editor/Prefab/PrefabComponentPipeline.h"
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
@@ -29,7 +34,7 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabComponentPipeline", 1, PrefabComponentPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.PrefabComponentPipeline", 2, PrefabComponentPipeline, world::EntityPipeline)
 
 bool PrefabComponentPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -149,6 +154,52 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 			outputMeshAsset,
 			outputMeshId,
 			visualModel
+		);
+	}
+
+	if (collisionModel)
+	{
+		const Guid outputShapeId = entityData->getId().permutation(1);
+
+		Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
+			collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())
+		);
+
+		Ref< const physics::ShapeDesc > shapeDesc = dynamic_type_cast< const physics::ShapeDesc* >(
+			collisionModel->getProperty< ISerializable >(type_name< physics::ShapeDesc >())
+		);
+
+		Ref< const physics::StaticBodyDesc > bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(
+			collisionModel->getProperty< ISerializable >(type_name< physics::StaticBodyDesc >())
+		);
+
+		// Build collision shape mesh.
+		Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
+		outputMeshAsset->setCalculateConvexHull(false);
+		if (meshAsset)
+			outputMeshAsset->setMaterials(meshAsset->getMaterials());
+
+		Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
+		if (shapeDesc)
+		{
+			outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
+			outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
+		}
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
+		if (bodyDesc)
+		{
+			outputBodyDesc->setFriction(bodyDesc->getFriction());
+			outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+		}
+
+		replacementEntityData->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
+
+		// Ensure collision shape is built.
+		pipelineBuilder->buildAdHocOutput(
+			outputMeshAsset,
+			outputShapeId,
+			collisionModel
 		);
 	}
 

@@ -64,11 +64,16 @@ void EntityData::setComponent(IEntityComponentData* component)
 	m_components.push_back(component);
 }
 
-void EntityData::removeComponent(IEntityComponentData* component)
+bool EntityData::removeComponent(const IEntityComponentData* component)
 {
 	auto it = std::find(m_components.begin(), m_components.end(), component);
 	if (it != m_components.end())
+	{
 		m_components.erase(it);
+		return true;
+	}
+	else
+		return false;
 }
 
 IEntityComponentData* EntityData::getComponent(const TypeInfo& componentType) const

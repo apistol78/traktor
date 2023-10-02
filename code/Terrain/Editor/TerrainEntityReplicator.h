@@ -43,12 +43,6 @@ public:
 	    const world::IEntityComponentData* componentData,
 		Usage usage
     ) const override final;
-
-	virtual void transform(
-		world::EntityData* entityData,
-		world::IEntityComponentData* componentData,
-		world::GroupComponentData* outputGroup
-	) const override final;
 };
 
     }

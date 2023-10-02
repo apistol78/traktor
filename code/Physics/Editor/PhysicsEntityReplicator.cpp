@@ -9,6 +9,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -85,6 +86,24 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 		if (!shapeModel)
 			return nullptr;
 
+		// Attach information about the collision shape into the model.
+ 		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+ 		outputShapeMeshAsset->setCalculateConvexHull(false);
+		outputShapeMeshAsset->setMargin(meshAsset->getMargin());
+ 		outputShapeMeshAsset->setMaterials(meshAsset->getMaterials());
+		shapeModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
+
+		Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
+		outputShapeDesc->setCollisionGroup(meshShape->getCollisionGroup());
+		outputShapeDesc->setCollisionMask(meshShape->getCollisionMask());
+		outputShapeDesc->setMaterial(meshShape->getMaterial());
+		shapeModel->setProperty< PropertyObject >(type_name(outputShapeDesc), outputShapeDesc);
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputBodyDesc->setFriction(bodyDesc->getFriction());
+		outputBodyDesc->setRestitution(bodyDesc->getRestitution());
+		shapeModel->setProperty< PropertyObject >(type_name(outputBodyDesc), outputBodyDesc);
+
 		return shapeModel;
 	}
 
@@ -116,14 +135,6 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 	}
 
 	return nullptr;
-}
-
-void PhysicsEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
 }
 
 }

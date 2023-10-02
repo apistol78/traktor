@@ -85,13 +85,5 @@ Ref< model::Model > TerrainEntityReplicator::createModel(
     return hf::ConvertHeightfield().convert(heightfield, 64, heightfieldAsset->getVistaDistance());
 }
 
-void TerrainEntityReplicator::transform(
-    world::EntityData* entityData,
-    world::IEntityComponentData* componentData,
-    world::GroupComponentData* outputGroup
-) const
-{
-}
-
     }
 }
