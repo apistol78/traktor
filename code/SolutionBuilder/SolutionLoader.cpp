@@ -19,7 +19,7 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionLoader", SolutionLoader, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionLoader", SolutionLoader, Object)
 
 Solution* SolutionLoader::load(const std::wstring& fileName)
 {

@@ -25,7 +25,7 @@ bool writeFileIfMismatch(const std::wstring& fileName, const AlignedVector< uint
 	{
 		if (!data.empty())
 		{
-			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+			Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead | File::FmMapped);
 			if (file)
 			{
 				MemoryStream dataStream(&data[0], data.size());

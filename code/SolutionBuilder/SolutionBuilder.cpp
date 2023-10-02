@@ -11,6 +11,6 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilder", SolutionBuilder, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilder", SolutionBuilder, Object)
 
 }
