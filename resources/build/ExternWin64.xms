@@ -174,7 +174,6 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
@@ -198,7 +197,6 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
@@ -222,7 +220,6 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
@@ -255,7 +252,6 @@
 						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>__BT_DISABLE_SSE__</item>
 					</definitions>
 					<libraryPaths/>
@@ -441,7 +437,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -468,7 +463,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -495,7 +489,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -531,7 +524,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -796,7 +788,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -822,7 +813,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -848,7 +838,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -883,7 +872,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -948,7 +936,6 @@
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>HAVE_CONFIG_H</item>
@@ -978,7 +965,6 @@
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>HAVE_CONFIG_H</item>
@@ -1008,7 +994,6 @@
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>HAVE_CONFIG_H</item>
@@ -1047,7 +1032,6 @@
 						<item>$(FLAC_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>FLAC__NO_DLL</item>
 						<item>FLAC__NO_ASM</item>
 						<item>HAVE_CONFIG_H</item>
@@ -1211,7 +1195,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_LIBMAD_EXPORT</item>
-						<item>_DEBUG</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1238,7 +1221,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_LIBMAD_EXPORT</item>
-						<item>NDEBUG</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1265,7 +1247,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1301,7 +1282,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1477,7 +1457,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1502,7 +1481,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1527,7 +1505,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1561,7 +1538,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1613,9 +1589,7 @@
 						<item>$(VORBIS_SDK)/lib</item>
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1637,9 +1611,7 @@
 						<item>$(VORBIS_SDK)/lib</item>
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1663,7 +1635,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -1697,7 +1668,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2076,7 +2046,6 @@
 						<item>$(PNG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2110,7 +2079,6 @@
 						<item>$(PNG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2144,7 +2112,6 @@
 						<item>$(PNG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2169,7 +2136,6 @@
 						<item>$(PNG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -2215,7 +2181,6 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2249,7 +2214,6 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2284,7 +2248,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_ZLIB-1_2_2_EXPORT</item>
-									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2310,7 +2273,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_ZLIB-1_2_2_EXPORT</item>
-									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2359,7 +2321,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2383,7 +2344,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2407,7 +2367,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2440,7 +2399,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -2493,7 +2451,6 @@
 						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 					</definitions>
 					<libraryPaths/>
@@ -2517,7 +2474,6 @@
 						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 					</definitions>
 					<libraryPaths/>
@@ -2541,7 +2497,6 @@
 						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 					</definitions>
 					<libraryPaths/>
@@ -2574,7 +2529,6 @@
 						<item>$(SQLITE_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>SQLITE_ENABLE_COLUMN_METADATA</item>
 					</definitions>
 					<libraryPaths/>
@@ -2632,9 +2586,7 @@
 						<item>$(THEORA_SDK)/lib</item>
 						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2656,9 +2608,7 @@
 						<item>$(THEORA_SDK)/lib</item>
 						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2680,9 +2630,7 @@
 						<item>$(THEORA_SDK)/lib</item>
 						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2713,9 +2661,7 @@
 						<item>$(THEORA_SDK)/lib</item>
 						<item>$(THEORA_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2780,7 +2726,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
-						<item>_DEBUG</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2808,7 +2753,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
-						<item>NDEBUG</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2836,7 +2780,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2873,7 +2816,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -3191,9 +3133,7 @@
 					<includePaths>
 						<item>$(LZF_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3214,9 +3154,7 @@
 					<includePaths>
 						<item>$(LZF_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3237,9 +3175,7 @@
 					<includePaths>
 						<item>$(LZF_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3269,9 +3205,7 @@
 					<includePaths>
 						<item>$(LZF_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3341,9 +3275,7 @@
 					<includePaths>
 						<item>$(STB_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3364,9 +3296,7 @@
 					<includePaths>
 						<item>$(STB_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3387,9 +3317,7 @@
 					<includePaths>
 						<item>$(STB_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3419,9 +3347,7 @@
 					<includePaths>
 						<item>$(STB_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3467,7 +3393,6 @@
 						<item>$(GLEW_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -3491,7 +3416,6 @@
 						<item>$(GLEW_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -3515,7 +3439,6 @@
 						<item>$(GLEW_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -3548,7 +3471,6 @@
 						<item>$(GLEW_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -3595,9 +3517,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3618,9 +3538,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3641,9 +3559,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3673,9 +3589,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Recast/Include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3735,9 +3649,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3758,9 +3670,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3781,9 +3691,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3813,9 +3721,7 @@
 					<includePaths>
 						<item>$(RECAST_SDK)/Detour/Include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -3879,7 +3785,6 @@
 						<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>LIBGLESV2_IMPLEMENTATION</item>
@@ -3922,7 +3827,6 @@
 					</includePaths>
 					<definitions>
 						<item>ANGLE_DISABLE_TRACE</item>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
@@ -3965,7 +3869,6 @@
 						<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>LIBGLESV2_IMPLEMENTATION</item>
@@ -4003,7 +3906,6 @@
 						<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
@@ -4073,7 +3975,6 @@
 									<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 								</includePaths>
 								<definitions>
-									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 									<item>ANGLE_ENABLE_GLSL</item>
@@ -4107,7 +4008,6 @@
 									<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 								</includePaths>
 								<definitions>
-									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 									<item>ANGLE_ENABLE_GLSL</item>
@@ -4141,7 +4041,6 @@
 									<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 								</includePaths>
 								<definitions>
-									<item>_DEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 									<item>ANGLE_ENABLE_GLSL</item>
@@ -4184,7 +4083,6 @@
 									<item>$(ANGLE_SDK)/src/common/third_party/numerics</item>
 								</includePaths>
 								<definitions>
-									<item>NDEBUG</item>
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 									<item>ANGLE_ENABLE_GLSL</item>
@@ -4419,7 +4317,6 @@
 						<item>$(ANGLE_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 					</definitions>
@@ -4459,7 +4356,6 @@
 					</includePaths>
 					<definitions>
 						<item>ANGLE_DISABLE_TRACE</item>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
@@ -4499,7 +4395,6 @@
 						<item>$(ANGLE_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 					</definitions>
@@ -4534,7 +4429,6 @@
 						<item>$(ANGLE_SDK)/include</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_DEPRECATE</item>
 						<item>NOMINMAX</item>
 						<item>_SECURE_SCL=0</item>
@@ -4604,9 +4498,7 @@
 					<includePaths>
 						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4627,9 +4519,7 @@
 					<includePaths>
 						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4650,9 +4540,7 @@
 					<includePaths>
 						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4682,9 +4570,7 @@
 					<includePaths>
 						<item>$(RG_ETC1_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4730,9 +4616,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config.windows</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4754,9 +4638,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config.windows</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4784,9 +4666,7 @@
 						<item>$(ZLIB_SDK)</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4817,9 +4697,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/IlmImf</item>
 						<item>$(TRAKTOR_HOME)/3rdp/openexr-2.2.0/config.windows</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -4883,7 +4761,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_ILMBASE_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -4912,7 +4789,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_ILMBASE_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -4941,7 +4817,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -4979,7 +4854,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -5120,7 +4994,6 @@
 						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -5144,7 +5017,6 @@
 						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -5168,7 +5040,6 @@
 						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -5201,7 +5072,6 @@
 						<item>$(LUA_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -5256,7 +5126,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_AGG_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5281,7 +5150,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_AGG_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5306,7 +5174,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5340,7 +5207,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -5416,9 +5282,7 @@
 					<includePaths>
 						<item>$(GLSLANG)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5439,9 +5303,7 @@
 					<includePaths>
 						<item>$(GLSLANG)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5462,9 +5324,7 @@
 					<includePaths>
 						<item>$(GLSLANG)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5494,9 +5354,7 @@
 					<includePaths>
 						<item>$(GLSLANG)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5627,9 +5485,7 @@
 					<includePaths>
 						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5650,9 +5506,7 @@
 					<includePaths>
 						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5673,9 +5527,7 @@
 					<includePaths>
 						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5705,9 +5557,7 @@
 					<includePaths>
 						<item>$(XATLAS_SDK)/source/xatlas</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -5757,9 +5607,7 @@
 					<includePaths>
 						<item>$(EMBREE_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
@@ -5785,9 +5633,7 @@
 					<includePaths>
 						<item>$(EMBREE_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
@@ -5813,9 +5659,7 @@
 					<includePaths>
 						<item>$(EMBREE_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
@@ -5850,9 +5694,7 @@
 					<includePaths>
 						<item>$(EMBREE_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(EMBREE_SDK)/lib</item>
 					</libraryPaths>
@@ -5896,9 +5738,7 @@
 					<includePaths>
 						<item>$(OIDN_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(OIDN_SDK)/lib</item>
 					</libraryPaths>
@@ -5923,9 +5763,7 @@
 					<includePaths>
 						<item>$(OIDN_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(OIDN_SDK)/lib</item>
 					</libraryPaths>
@@ -5950,9 +5788,7 @@
 					<includePaths>
 						<item>$(OIDN_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(OIDN_SDK)/lib</item>
 					</libraryPaths>
@@ -5986,9 +5822,7 @@
 					<includePaths>
 						<item>$(OIDN_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths>
 						<item>$(OIDN_SDK)/lib</item>
 					</libraryPaths>
@@ -6031,9 +5865,7 @@
 					<includePaths>
 						<item>$(VMA_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6054,9 +5886,7 @@
 					<includePaths>
 						<item>$(VMA_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6077,9 +5907,7 @@
 					<includePaths>
 						<item>$(VMA_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6109,9 +5937,7 @@
 					<includePaths>
 						<item>$(VMA_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6153,9 +5979,7 @@
 						<item>$(SPIRVTOOLS_SDK)/external/spirv-headers/include</item>
 						<item>$(SPIRVTOOLS_SDK)/build</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6179,9 +6003,7 @@
 						<item>$(SPIRVTOOLS_SDK)/external/spirv-headers/include</item>
 						<item>$(SPIRVTOOLS_SDK)/build</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6205,9 +6027,7 @@
 						<item>$(SPIRVTOOLS_SDK)/external/spirv-headers/include</item>
 						<item>$(SPIRVTOOLS_SDK)/build</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6240,9 +6060,7 @@
 						<item>$(SPIRVTOOLS_SDK)/external/spirv-headers/include</item>
 						<item>$(SPIRVTOOLS_SDK)/build</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6359,7 +6177,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_MIKKTSPACE_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6383,7 +6200,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_MIKKTSPACE_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6407,7 +6223,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6440,7 +6255,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -6486,9 +6300,7 @@
 					<includePaths>
 						<item>$(SPIRVCROSS_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6509,9 +6321,7 @@
 					<includePaths>
 						<item>$(SPIRVCROSS_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6532,9 +6342,7 @@
 					<includePaths>
 						<item>$(SPIRVCROSS_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6564,9 +6372,7 @@
 					<includePaths>
 						<item>$(SPIRVCROSS_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6622,7 +6428,6 @@
 						<item>$(ASTCENC_SDK)/Source</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>ASTCENC_SSE=20</item>
 						<item>ASTCENC_POPCNT=0</item>
 						<item>ASTCENC_AVX=0</item>
@@ -6649,7 +6454,6 @@
 						<item>$(ASTCENC_SDK)/Source</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>ASTCENC_SSE=20</item>
 						<item>ASTCENC_POPCNT=0</item>
 						<item>ASTCENC_AVX=0</item>
@@ -6676,7 +6480,6 @@
 						<item>$(ASTCENC_SDK)/Source</item>
 					</includePaths>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>ASTCENC_SSE=20</item>
 						<item>ASTCENC_POPCNT=0</item>
 						<item>ASTCENC_AVX=0</item>
@@ -6712,7 +6515,6 @@
 						<item>$(ASTCENC_SDK)/Source</item>
 					</includePaths>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>ASTCENC_SSE=20</item>
 						<item>ASTCENC_POPCNT=0</item>
 						<item>ASTCENC_AVX=0</item>
@@ -6773,9 +6575,7 @@
 						<item>$(TINYEXR_SDK)/deps/miniz</item>
 						<item>$(TINYEXR_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6797,9 +6597,7 @@
 						<item>$(TINYEXR_SDK)/deps/miniz</item>
 						<item>$(TINYEXR_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6821,9 +6619,7 @@
 						<item>$(TINYEXR_SDK)/deps/miniz</item>
 						<item>$(TINYEXR_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6854,9 +6650,7 @@
 						<item>$(TINYEXR_SDK)/deps/miniz</item>
 						<item>$(TINYEXR_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>

@@ -198,7 +198,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);_DEBUG;WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
@@ -256,7 +256,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;_USRDLL;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);_DEBUG;WIN32;_WINDOWS;_USRDLL;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
@@ -362,7 +362,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);_DEBUG;WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
@@ -464,7 +464,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);_DEBUG;WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>DebugInformationFormat</name>
@@ -568,7 +568,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);NDEBUG;WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>BufferSecurityCheck</name>
@@ -650,7 +650,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;_USRDLL;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);NDEBUG;WIN32;_WINDOWS;_USRDLL;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>BufferSecurityCheck</name>
@@ -780,7 +780,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);NDEBUG;WIN32;_WINDOWS;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>BufferSecurityCheck</name>
@@ -906,7 +906,7 @@
 						</item>
 						<item>
 							<name>PreprocessorDefinitions</name>
-							<value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+							<value>%(PROJECT_DEFINITIONS);NDEBUG;WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
 						</item>
 						<item>
 							<name>BufferSecurityCheck</name>

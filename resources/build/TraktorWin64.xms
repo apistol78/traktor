@@ -17,7 +17,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -52,7 +51,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -87,7 +85,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -118,7 +115,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -238,7 +234,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_CORE_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
@@ -278,7 +273,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_CORE_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
@@ -318,7 +312,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
@@ -354,7 +347,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
@@ -689,7 +681,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -726,7 +717,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_WORLD_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -763,7 +753,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -796,7 +785,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -919,7 +907,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_RENDER_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -954,7 +941,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_RENDER_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -989,7 +975,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1020,7 +1005,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1183,7 +1167,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_RESOURCE_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1218,7 +1201,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_RESOURCE_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1253,7 +1235,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1284,7 +1265,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1340,7 +1320,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1375,7 +1354,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_COMPRESS_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1410,7 +1388,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1441,7 +1418,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1547,7 +1523,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_DATABASE_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1582,7 +1557,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_DATABASE_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1617,7 +1591,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1648,7 +1621,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -1721,7 +1693,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_XML_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1756,7 +1727,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_XML_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1791,7 +1761,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1822,7 +1791,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -1895,7 +1863,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_MESH_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -1930,7 +1897,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_MESH_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -1965,7 +1931,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -1996,7 +1961,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2152,7 +2116,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_PHYSICS_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2187,7 +2150,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_PHYSICS_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2222,7 +2184,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2253,7 +2214,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2361,7 +2321,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_HEIGHTFIELD_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -2396,7 +2355,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_HEIGHTFIELD_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -2431,7 +2389,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -2462,7 +2419,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -2532,7 +2488,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 						<item>FBXSDK_NEW_API</item>
 						<item>FBXSDK_SHARED</item>
 					</definitions>
@@ -2575,7 +2530,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 						<item>FBXSDK_NEW_API</item>
 						<item>FBXSDK_SHARED</item>
 					</definitions>
@@ -2618,7 +2572,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>FBXSDK_NEW_API</item>
 						<item>FBXSDK_SHARED</item>
 					</definitions>
@@ -2657,7 +2610,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>FBXSDK_NEW_API</item>
 						<item>FBXSDK_SHARED</item>
 					</definitions>
@@ -2746,7 +2698,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2781,7 +2732,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2816,7 +2766,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2847,7 +2796,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -2940,7 +2888,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_UI_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -2975,7 +2922,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_UI_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3010,7 +2956,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3041,7 +2986,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3364,7 +3308,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DRAWING_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -3399,7 +3342,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DRAWING_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -3434,7 +3376,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -3465,7 +3406,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -3589,7 +3529,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_NET_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -3627,7 +3566,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_NET_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -3665,7 +3603,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -3699,7 +3636,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -3818,7 +3754,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SQL_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3853,7 +3788,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SQL_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3888,7 +3822,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3919,7 +3852,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -3975,7 +3907,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SQL_SQLITE3_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4010,7 +3941,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SQL_SQLITE3_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4045,7 +3975,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4076,7 +4005,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4142,7 +4070,6 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
-												<item>_DEBUG</item>
 												<item>T_DATABASE_REMOTE_EXPORT</item>
 											</definitions>
 											<libraryPaths/>
@@ -4177,7 +4104,6 @@
 											<precompiledHeader/>
 											<includePaths/>
 											<definitions>
-												<item>NDEBUG</item>
 												<item>T_DATABASE_REMOTE_EXPORT</item>
 											</definitions>
 											<libraryPaths/>
@@ -4213,7 +4139,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4244,7 +4169,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4320,7 +4244,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4355,7 +4278,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4390,7 +4312,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4421,7 +4342,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4479,7 +4399,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DATABASE_COMPACT_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4514,7 +4433,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DATABASE_COMPACT_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4549,7 +4467,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4580,7 +4497,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4646,7 +4562,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DATABASE_LOCAL_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4681,7 +4596,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_DATABASE_LOCAL_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4716,7 +4630,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4747,7 +4660,6 @@
 														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -4828,7 +4740,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_AVALANCHE_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4865,7 +4776,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_AVALANCHE_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4902,7 +4812,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -4935,7 +4844,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5049,7 +4957,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SCENE_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -5084,7 +4991,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SCENE_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -5119,7 +5025,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -5150,7 +5055,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -5268,7 +5172,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SCENE_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5303,7 +5206,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SCENE_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5338,7 +5240,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5369,7 +5270,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5445,7 +5345,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_WEATHER_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5480,7 +5379,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_WEATHER_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5515,7 +5413,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5546,7 +5443,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5657,7 +5553,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_I18N_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5692,7 +5587,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_I18N_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5727,7 +5621,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5758,7 +5651,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5819,7 +5711,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_WORLD_EDITOR_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5854,7 +5745,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_WORLD_EDITOR_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5889,7 +5779,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -5920,7 +5809,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -6015,7 +5903,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_RENDER_EDITOR_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -6052,7 +5939,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_RENDER_EDITOR_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -6089,7 +5975,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -6122,7 +6007,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -6350,7 +6234,6 @@
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
-																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
@@ -6387,7 +6270,6 @@
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
-																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
@@ -6424,7 +6306,6 @@
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
-																		<item>_DEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
@@ -6457,7 +6338,6 @@
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
-																		<item>NDEBUG</item>
 																	</definitions>
 																	<libraryPaths/>
 																	<libraries/>
@@ -6534,7 +6414,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -6569,7 +6448,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_VIDEO_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -6604,7 +6482,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -6635,7 +6512,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -6723,7 +6599,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
-												<item>_DEBUG</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6759,7 +6634,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
-												<item>NDEBUG</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6795,7 +6669,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6827,7 +6700,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6996,7 +6868,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SCRIPT_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -7031,7 +6902,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SCRIPT_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -7066,7 +6936,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -7097,7 +6966,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -7176,7 +7044,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7211,7 +7078,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_MESH_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7246,7 +7112,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7277,7 +7142,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -7434,7 +7298,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
-												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
 											</definitions>
@@ -7483,7 +7346,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
-												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
 											</definitions>
@@ -7532,7 +7394,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
 											</definitions>
@@ -7577,7 +7438,6 @@
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 												<item>FBXSDK_NEW_API</item>
 												<item>FBXSDK_SHARED</item>
 											</definitions>
@@ -7734,7 +7594,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_JSON_EXPORT</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -7772,7 +7631,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_JSON_EXPORT</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -7810,7 +7668,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -7844,7 +7701,6 @@
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
-															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -7972,7 +7828,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_PHYSICS_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8007,7 +7862,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_PHYSICS_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8042,7 +7896,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8073,7 +7926,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -8186,7 +8038,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_HEIGHTFIELD_EDITOR_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -8221,7 +8072,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_HEIGHTFIELD_EDITOR_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -8256,7 +8106,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -8287,7 +8136,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -8431,7 +8279,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_EDITOR_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8458,7 +8305,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_EDITOR_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8485,7 +8331,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8512,7 +8357,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8631,7 +8475,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
-									<item>_DEBUG</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -8671,7 +8514,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_UI_WIN32_EXPORT</item>
-									<item>NDEBUG</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -8711,7 +8553,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -8747,7 +8588,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 									<item>T_USE_DIRECT2D</item>
 								</definitions>
 								<libraryPaths/>
@@ -8834,7 +8674,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8871,7 +8710,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8908,7 +8746,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8941,7 +8778,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9069,7 +8905,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_HTML_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9104,7 +8939,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_HTML_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9139,7 +8973,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9170,7 +9003,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9242,7 +9074,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9279,7 +9110,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9316,7 +9146,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9349,7 +9178,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9467,7 +9295,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9502,7 +9329,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SOUND_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9537,7 +9363,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9568,7 +9393,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9733,7 +9557,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_SVG_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9774,7 +9597,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_SVG_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9815,7 +9637,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9852,7 +9673,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -9929,7 +9749,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_I18N_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9964,7 +9783,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_I18N_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -9999,7 +9817,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10030,7 +9847,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10102,7 +9918,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10137,7 +9952,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10172,7 +9986,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10203,7 +10016,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10270,7 +10082,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10308,7 +10119,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10346,7 +10156,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10380,7 +10189,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10440,7 +10248,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_WIN32_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10475,7 +10282,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_WIN32_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10510,7 +10316,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10541,7 +10346,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10598,7 +10402,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_XI_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10635,7 +10438,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_XI_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10672,7 +10474,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10705,7 +10506,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -10769,7 +10569,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10804,7 +10603,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10839,7 +10637,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10870,7 +10667,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10942,9 +10738,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -10968,9 +10762,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -10995,7 +10787,6 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>_DEBUG</item>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -11022,7 +10813,6 @@
 					<precompiledHeader/>
 					<includePaths/>
 					<definitions>
-						<item>NDEBUG</item>
 						<item>T_STATIC</item>
 					</definitions>
 					<libraryPaths/>
@@ -11117,7 +10907,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -11152,7 +10941,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -11187,7 +10975,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -11218,7 +11005,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -11294,7 +11080,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SCRIPT_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -11329,7 +11114,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SCRIPT_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -11364,7 +11148,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -11395,7 +11178,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -11482,7 +11264,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
-						<item>_DEBUG</item>
 						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
@@ -11518,7 +11299,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
-						<item>NDEBUG</item>
 						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
@@ -11554,7 +11334,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
@@ -11586,7 +11365,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 						<item>T_LUA_5_2</item>
 					</definitions>
 					<libraryPaths/>
@@ -11651,7 +11429,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11689,7 +11466,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11727,7 +11503,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11761,7 +11536,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11822,7 +11596,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_WINMM_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11859,7 +11632,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_WINMM_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11896,7 +11668,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11929,7 +11700,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11988,7 +11758,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_XAUDIO2_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12023,7 +11792,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SOUND_XAUDIO2_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12058,7 +11826,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12089,7 +11856,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12146,7 +11912,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SPRAY_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12181,7 +11946,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SPRAY_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12216,7 +11980,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12247,7 +12010,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12359,7 +12121,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SPRAY_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12394,7 +12155,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_SPRAY_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12429,7 +12189,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12460,7 +12219,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12597,7 +12355,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_TERRAIN_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12632,7 +12389,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_TERRAIN_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12667,7 +12423,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12698,7 +12453,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12775,7 +12529,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_TERRAIN_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12810,7 +12563,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_TERRAIN_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12845,7 +12597,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -12876,7 +12627,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13004,7 +12754,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SHAPE_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -13051,7 +12800,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_SHAPE_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -13098,7 +12846,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -13141,7 +12888,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -13368,7 +13114,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_WEATHER_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13403,7 +13148,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_WEATHER_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13438,7 +13182,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13469,7 +13212,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13556,9 +13298,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -13582,9 +13322,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -13610,7 +13348,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13637,7 +13374,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13719,7 +13455,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_VIDEO_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13754,7 +13489,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_VIDEO_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13789,7 +13523,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13820,7 +13553,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -13897,7 +13629,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
-						<item>_DEBUG</item>
 						<item>T_USE_D3DPERF</item>
 					</definitions>
 					<libraryPaths/>
@@ -13938,7 +13669,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -13977,7 +13707,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 						<item>T_USE_D3DPERF</item>
 					</definitions>
 					<libraryPaths/>
@@ -14014,7 +13743,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -14075,7 +13803,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RUNTIME_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14110,7 +13837,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RUNTIME_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14145,7 +13871,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14176,7 +13901,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14324,7 +14048,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_RUNTIME_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14359,7 +14082,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_RUNTIME_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14394,7 +14116,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14425,7 +14146,6 @@
 								<includePaths/>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -14608,7 +14328,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_ONLINE_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14643,7 +14362,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_ONLINE_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14678,7 +14396,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14709,7 +14426,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14815,7 +14531,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_AI_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14850,7 +14565,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_AI_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14885,7 +14599,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14916,7 +14629,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -14993,7 +14705,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_THEATER_EXPORT</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -15028,7 +14739,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_THEATER_EXPORT</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -15063,7 +14773,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -15094,7 +14803,6 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries/>
@@ -15165,7 +14873,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_RUNTIME_DEPLOY_EXPORT</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -15202,7 +14909,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_RUNTIME_DEPLOY_EXPORT</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -15239,7 +14945,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>_DEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -15272,7 +14977,6 @@
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
-									<item>NDEBUG</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
@@ -15381,9 +15085,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -15407,9 +15109,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -15435,7 +15135,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15462,7 +15161,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15526,7 +15224,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_LOCAL_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15561,7 +15258,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_LOCAL_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15596,7 +15292,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15627,7 +15322,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15697,7 +15391,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_THEATER_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15732,7 +15425,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_THEATER_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15767,7 +15459,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15798,7 +15489,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15900,7 +15590,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15935,7 +15624,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_INPUT_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -15970,7 +15658,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16001,7 +15688,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16086,9 +15772,7 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -16112,9 +15796,7 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths/>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -16140,7 +15822,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16171,7 +15852,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16285,7 +15965,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
@@ -16330,7 +16009,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
@@ -16375,7 +16053,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
@@ -16420,7 +16097,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
@@ -16500,7 +16176,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_AI_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16535,7 +16210,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_AI_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16570,7 +16244,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16601,7 +16274,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -16742,7 +16414,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(P4_DEBUG_SDK)/lib</item>
@@ -16798,7 +16469,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(P4_RELEASE_SDK)/lib</item>
@@ -16854,7 +16524,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(P4_DEBUG_SDK)/lib</item>
@@ -16906,7 +16575,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(P4_RELEASE_SDK)/lib</item>
@@ -16992,7 +16660,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RESOURCE_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17027,7 +16694,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_RESOURCE_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17062,7 +16728,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17093,7 +16758,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17155,7 +16819,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_MODEL_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17190,7 +16853,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_MODEL_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17225,7 +16887,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17256,7 +16917,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17359,7 +17019,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_GC_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17394,7 +17053,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_GC_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17429,7 +17087,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17460,7 +17117,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17522,7 +17178,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_LAN_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17557,7 +17212,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_ONLINE_LAN_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17592,7 +17246,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17623,7 +17276,6 @@
 					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17692,7 +17344,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RUN_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17721,7 +17372,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RUN_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17750,7 +17400,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17779,7 +17428,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17908,9 +17556,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -17936,9 +17582,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -17966,7 +17610,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -17995,7 +17638,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18071,7 +17713,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_CLIENT_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18100,7 +17741,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_CLIENT_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18129,7 +17769,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18158,7 +17797,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18224,7 +17862,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_TOBII_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TOBII_SDK)/lib/x64</item>
@@ -18270,7 +17907,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_TOBII_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TOBII_SDK)/lib/x64</item>
@@ -18316,7 +17952,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TOBII_SDK)/lib/x64</item>
@@ -18362,7 +17997,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(TOBII_SDK)/lib/x64</item>
@@ -18433,7 +18067,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18470,7 +18103,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18507,7 +18139,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18540,7 +18171,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18625,7 +18255,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_DEBUG_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18654,7 +18283,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_DEBUG_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18683,7 +18311,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18712,7 +18339,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18802,7 +18428,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18839,7 +18464,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18876,7 +18500,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -18909,7 +18532,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19068,7 +18690,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19097,7 +18718,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19126,7 +18746,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19155,7 +18774,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19215,7 +18833,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_EDITOR_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19244,7 +18861,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SOLUTIONBUILDER_EDITOR_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19273,7 +18889,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19302,7 +18917,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19382,7 +18996,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_UIKIT_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19419,7 +19032,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_UIKIT_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19456,7 +19068,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19489,7 +19100,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19588,7 +19198,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VRFY_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19625,7 +19234,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VRFY_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19662,7 +19270,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19695,7 +19302,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -19759,7 +19365,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX11_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -19798,7 +19403,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX11_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -19837,7 +19441,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -19872,7 +19475,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -19950,7 +19552,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
@@ -20004,7 +19605,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_VULKAN_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
@@ -20058,7 +19658,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
@@ -20108,7 +19707,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
 						<item>$(VULKAN_SDK)/Lib</item>
@@ -20192,7 +19790,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_RUNTIME_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20233,7 +19830,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_RUNTIME_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20274,7 +19870,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20311,7 +19906,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20404,7 +19998,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_RUNTIME_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20445,7 +20038,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_SPARK_RUNTIME_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20486,7 +20078,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20523,7 +20114,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20596,7 +20186,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STORE_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20637,7 +20226,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STORE_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20678,7 +20266,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20715,7 +20302,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20808,7 +20394,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STORE_SERVER_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20841,7 +20426,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STORE_SERVER_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20874,7 +20458,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20907,7 +20490,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -20977,7 +20559,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_SERVER_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21018,7 +20599,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_SERVER_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21059,7 +20639,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21092,7 +20671,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21156,7 +20734,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_SERVER_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21197,7 +20774,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_REMOTE_SERVER_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21238,7 +20814,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21275,7 +20850,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21343,7 +20917,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_UI_THEME_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21376,7 +20949,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_UI_THEME_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21409,7 +20981,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21442,7 +21013,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21516,7 +21086,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_EDITOR_BUILD_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21549,7 +21118,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_EDITOR_BUILD_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21582,7 +21150,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21615,7 +21182,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21685,7 +21251,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_AVALANCHE_SERVER_APP_EXPORT</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21718,7 +21283,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_AVALANCHE_SERVER_APP_EXPORT</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21751,7 +21315,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -21784,7 +21347,6 @@
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
