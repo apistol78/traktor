@@ -64,9 +64,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->setName(L"DebugShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpDebug);
-			//configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
 			configuration->addDefinition(buildExportDefinition(project->getName()));
-			//configuration->addDefinition(L"_DEBUG");
 			project->addConfiguration(configuration);
 		}
 		if (!hasConfiguration(project, L"ReleaseShared"))
@@ -75,9 +73,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->setName(L"ReleaseShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpRelease);
-			//configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
 			configuration->addDefinition(buildExportDefinition(project->getName()));
-			//configuration->addDefinition(L"NDEBUG");
 			project->addConfiguration(configuration);
 		}
 		if (!hasConfiguration(project, L"DebugStatic"))
@@ -86,9 +82,6 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->setName(L"DebugStatic");
 			configuration->setTargetFormat(Configuration::TfStaticLibrary);
 			configuration->setTargetProfile(Configuration::TpDebug);
-			//configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
-			//configuration->addDefinition(L"T_STATIC");
-			//configuration->addDefinition(L"_DEBUG");
 			project->addConfiguration(configuration);
 		}
 		if (!hasConfiguration(project, L"ReleaseStatic"))
@@ -97,9 +90,6 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 			configuration->setName(L"ReleaseStatic");
 			configuration->setTargetFormat(Configuration::TfStaticLibrary);
 			configuration->setTargetProfile(Configuration::TpRelease);
-			//configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
-			//configuration->addDefinition(L"T_STATIC");
-			//configuration->addDefinition(L"NDEBUG");
 			project->addConfiguration(configuration);
 		}
 	}

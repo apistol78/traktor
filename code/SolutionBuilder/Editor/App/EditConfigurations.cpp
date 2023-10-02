@@ -84,7 +84,6 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 						configuration->setTargetFormat(Configuration::TfSharedLibrary);
 						configuration->setTargetProfile(Configuration::TpRelease);
 						configuration->addDefinition(buildExportDefinition(project->getName()));
-						configuration->addDefinition(L"NDEBUG");
 					}
 					project->addConfiguration(configuration);
 				}
