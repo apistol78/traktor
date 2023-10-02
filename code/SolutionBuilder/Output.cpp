@@ -11,7 +11,7 @@
 namespace traktor::sb
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"Output", Output, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.Output", Output, Object)
 
 Output::Output(const std::vector< std::wstring >& sections)
 :	m_sections(sections)
