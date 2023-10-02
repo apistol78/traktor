@@ -175,13 +175,5 @@ Ref< ISerializable > SolidEntityPipeline::buildProduct(
 		);
 }
 
-void SolidEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
-}
-
 	}
 }

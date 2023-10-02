@@ -445,10 +445,8 @@ bool BakePipelineOperator::transform(
 			// Check editor attributes component if we should include entity.
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
-				if (!editorAttributes->include)
+				if (!editorAttributes->include/* || editorAttributes->dynamic*/)
 					return scene::Traverser::VrSkip;
-				//if (editorAttributes->dynamic)
-				//	return scene::Traverser::VrContinue;
 			}
 
 			// "Unnamed" entities do not bake.
@@ -456,27 +454,26 @@ bool BakePipelineOperator::transform(
 				return scene::Traverser::VrContinue;
 
 			// Transform and keep entities which isn't included in bake.
-			auto componentDatas = inoutEntityData->getComponents();
+			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
+			componentDatas.sort([](world::IEntityComponentData* lh, world::IEntityComponentData* rh)
+				{
+					return lh->getOrdinal() < rh->getOrdinal();
+				}
+			);
 			for (auto componentData : componentDatas)
 			{
 				const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 				if (!entityReplicator)
 					continue;
 
-				Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
-				entityReplicator->transform(inoutEntityData, componentData, outputGroup);
+				const RefArray< const world::IEntityComponentData > dependentComponentData = entityReplicator->getDependentComponents(inoutEntityData, componentData);
+				if (dependentComponentData.empty())
+					continue;
 
-				// Transfer entities from existing group.
-				Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
-				if (existingGroup)
-				{
-					Ref< world::EntityData > mergeEntity = new world::EntityData();
-					mergeEntity->setId(Guid::create());
-					mergeEntity->setComponent(existingGroup);
-					outputGroup->addEntityData(mergeEntity);
-				}
+				inoutEntityData->removeComponent(componentData);
+				for (auto cd : dependentComponentData)
+					inoutEntityData->removeComponent(cd);
 
-				inoutEntityData->setComponent(outputGroup);
 				return scene::Traverser::VrSkip;
 			}
 
@@ -639,6 +636,14 @@ bool BakePipelineOperator::build(
 				);
 				for (auto componentData : componentDatas)
 				{
+					// Check so this component still exist in the inoutEntityData; might have already been consumed.
+					if (std::find(
+						inoutEntityData->getComponents().begin(),
+						inoutEntityData->getComponents().end(),
+						componentData
+					) == inoutEntityData->getComponents().end())
+						continue;
+
 					const world::IEntityReplicator* entityReplicator = m_entityReplicators[&type_of(componentData)];
 					if (!entityReplicator)
 						continue;
@@ -647,12 +652,13 @@ bool BakePipelineOperator::build(
 					if (dependentComponentData.empty())
 						continue;
 
+					// Calculate hashes.
 					uint32_t componentDataHash = 0;
 					for (auto cd : dependentComponentData)
 						componentDataHash += pipelineBuilder->calculateInclusiveHash(cd);
-
 					const uint32_t modelHash = configurationHash + componentDataHash;
 
+					// Create models.
 					Ref< model::Model > visualModel = pipelineBuilder->getDataAccessCache()->read< model::Model >(
 						Key(0x00000020, 0x00000000, type_of(entityReplicator).getVersion(), modelHash),
 						[&]() -> Ref< model::Model > {
@@ -735,6 +741,11 @@ bool BakePipelineOperator::build(
 						}
 					);
 
+					// Remove components from entity which was used to create the models.
+					inoutEntityData->removeComponent(componentData);
+					for (auto cd : dependentComponentData)
+						inoutEntityData->removeComponent(cd);
+
 					// Add visual model to tracer task.
 					if (visualModel)
 					{
@@ -777,9 +788,6 @@ bool BakePipelineOperator::build(
 					// Modify entity.
 					if (configuration->getEnableLightmaps() && (visualModel || collisionModel))
 					{
-						Ref< world::GroupComponentData > outputGroup = new world::GroupComponentData();
-						entityReplicator->transform(inoutEntityData, componentData, outputGroup);
-
 						if (visualModel)
 						{
 							const Guid outputMeshId = Guid(visualModel->getProperty< std::wstring >(L"ID"));
@@ -802,14 +810,8 @@ bool BakePipelineOperator::build(
 							Ref< mesh::MeshParameterComponentData > meshParameter = new mesh::MeshParameterComponentData();
 							meshParameter->setTexture(L"__Lightmap__", resource::Id< render::ITexture >(lightmapDiffuseId));
 
-							// Create entity.
-							Ref< world::EntityData > outputMeshEntity = new world::EntityData();
-							outputMeshEntity->setId(Guid::create());
-							outputMeshEntity->setName(inoutEntityData->getName());
-							outputMeshEntity->setTransform(inoutEntityData->getTransform());
-							outputMeshEntity->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputMeshId)));
-							outputMeshEntity->setComponent(meshParameter);
-							outputGroup->addEntityData(outputMeshEntity);
+							inoutEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputMeshId)));
+							inoutEntityData->setComponent(meshParameter);
 
 							// Ensure visual mesh is build.
 							pipelineBuilder->buildAdHocOutput(
@@ -839,7 +841,10 @@ bool BakePipelineOperator::build(
 							Ref< physics::MeshAsset > outputMeshAsset = new physics::MeshAsset();
 							outputMeshAsset->setCalculateConvexHull(false);
 							if (meshAsset)
+							{
+								outputMeshAsset->setMargin(meshAsset->getMargin());
 								outputMeshAsset->setMaterials(meshAsset->getMaterials());
+							}
 
 							Ref< physics::MeshShapeDesc > outputShapeDesc = new physics::MeshShapeDesc(resource::Id< physics::Mesh >(outputShapeId));
 							if (shapeDesc)
@@ -847,6 +852,8 @@ bool BakePipelineOperator::build(
 								outputShapeDesc->setCollisionGroup(shapeDesc->getCollisionGroup());
 								outputShapeDesc->setCollisionMask(shapeDesc->getCollisionMask());
 							}
+							else
+								log::warning << L"No collision group nor mask in collision model." << Endl;
 
 							Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc(outputShapeDesc);
 							if (bodyDesc)
@@ -854,11 +861,10 @@ bool BakePipelineOperator::build(
 								outputBodyDesc->setFriction(bodyDesc->getFriction());
 								outputBodyDesc->setRestitution(bodyDesc->getRestitution());
 							}
+							else
+								log::warning << L"No collision friction/restitution specified in collision model." << Endl;
 
-							Ref< world::EntityData > outputShapeEntity = new world::EntityData();
-							outputShapeEntity->setId(Guid::create());
-							outputShapeEntity->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
-							outputGroup->addEntityData(outputShapeEntity);
+							inoutEntityData->setComponent(new physics::RigidBodyComponentData(outputBodyDesc));
 
 							// Ensure collision shape is built.
 							pipelineBuilder->buildAdHocOutput(
@@ -867,16 +873,6 @@ bool BakePipelineOperator::build(
 								collisionModel
 							);
 						}
-
-						// Transfer entities from existing group, need to merge with our output group.
-						Ref< world::GroupComponentData > existingGroup = inoutEntityData->getComponent< world::GroupComponentData >();
-						if (existingGroup)
-						{
-							for (auto childEntity : existingGroup->getEntityData())
-								outputGroup->addEntityData(childEntity);
-						}
-
-						inoutEntityData->setComponent(outputGroup);
 					}
 
 					lightmapDiffuseId.permutate();

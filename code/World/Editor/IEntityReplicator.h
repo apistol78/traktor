@@ -100,13 +100,6 @@ public:
 		const world::IEntityComponentData* componentData,
 		Usage usage
 	) const = 0;
-
-	/*! Transform entity and component data. */
-	virtual void transform(
-		world::EntityData* entityData,
-		world::IEntityComponentData* componentData,
-		world::GroupComponentData* outputGroup
-	) const = 0;
 };
 
 }

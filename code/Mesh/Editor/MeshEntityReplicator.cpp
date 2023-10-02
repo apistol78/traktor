@@ -120,13 +120,4 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	return model;
 }
 
-void MeshEntityReplicator::transform(
-	world::EntityData* entityData,
-	world::IEntityComponentData* componentData,
-	world::GroupComponentData* outputGroup
-) const
-{
-	entityData->removeComponent(componentData);
-}
-
 }
