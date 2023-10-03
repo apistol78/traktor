@@ -822,8 +822,11 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			for (auto mipImage : mipImages)
 			{
-				//const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
-				//mipImage->apply(&normalizeFilter);
+				if (abs(textureOutput->m_scaleNormalMap) > FUZZY_EPSILON)
+				{
+					const drawing::NormalizeFilter normalizeFilter(textureOutput->m_scaleNormalMap);
+					mipImage->apply(&normalizeFilter);
+				}
 
 				// Prepare for DXT5nm compression, need to swizzle the channels around.
 				if (textureFormat == TfDXT5 && textureOutput->m_enableCompression)

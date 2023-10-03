@@ -13,6 +13,7 @@
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NoiseFilter.h"
+#include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/SphereMapFilter.h"
@@ -166,7 +167,7 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 			const drawing::PremultiplyAlphaFilter preAlphaFilter;
 			m_imageOutput->apply(&preAlphaFilter);
 		}
-		if (output.m_inverseNormalMapX || output.m_inverseNormalMapY)
+		if (output.m_normalMap && (output.m_inverseNormalMapX || output.m_inverseNormalMapY))
 		{
 			const drawing::TransformFilter transformFilter(
 				Color4f(
@@ -183,6 +184,11 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 				)
 			);
 			m_imageOutput->apply(&transformFilter);
+		}
+		if (output.m_normalMap && abs(output.m_scaleNormalMap) > FUZZY_EPSILON)
+		{
+			const drawing::NormalizeFilter normalizeFilter(output.m_scaleNormalMap);
+			m_imageOutput->apply(&normalizeFilter);
 		}
 
 		// Convert to sRGB last since that's what UI expect.
