@@ -338,29 +338,11 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	const auto& polygons = model->getPolygons();
 	const auto& materials = model->getMaterials();
 
-
-	//for (int32_t y = region[1]; y < region[3]; ++y)
-	//{
-	//	for (int32_t x = region[0]; x < region[2]; ++x)
-	//	{
-	//		GBuffer::element_vector_t ev = gbuffer->get(x, y);
-	//		if (ev.empty())
-	//			continue;
-
-	//		if (ev.size() == 1)
-	//			lightmapDiffuse->setPixel(x, y, Color4f(0.0f, 1.0f, 0.0f, 1.0f));
-	//		else if (ev.size() == 2)
-	//			lightmapDiffuse->setPixel(x, y, Color4f(1.0f, 1.0f, 0.0f, 1.0f));
-	//		else
-	//			lightmapDiffuse->setPixel(x, y, Color4f(1.0f, 0.0f, 0.0f, 1.0f));
-	//	}
-	//}
-
 	for (int32_t y = region[1]; y < region[3]; ++y)
 	{
 		for (int32_t x = region[0]; x < region[2]; ++x)
 		{
-			GBuffer::element_vector_t ev = gbuffer->get(x, y);
+			const GBuffer::element_vector_t& ev = gbuffer->get(x, y);
 			if (ev.empty())
 				continue;
 
@@ -370,76 +352,21 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			{
 				auto& elm = ev[i];
 
-				// Adjust gbuffer position to reduce shadowing issues.
-				//{
-				//	const Scalar l = Scalar(elm.delta);
-				//	const Scalar hl = l * 1.0_simd;
+				const auto& originPolygon = polygons[elm.polygon];
+				const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-				//	const Vector4 normal = elm.normal;
-				//	Vector4 position = elm.position + normal * hl;
+				const Color4f emittance = originMaterial.getColor().linear() * Scalar(100.0f * originMaterial.getEmissive());
 
-				//	Vector4 u, v;
-				//	orthogonalFrame(normal, u, v);
+				// Trace IBL and indirect illumination.
+				const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
 
-				//	for (int32_t rev = 0; rev < 32; ++rev)
-				//	{
-				//		float minExitDistance = std::numeric_limits< float >::max();
-				//		Vector4 minExitDirection = Vector4::zero();
+				// Trace ambient occlusion.
+				Scalar occlusion = 1.0_simd;
+				if (ambientOcclusion > Scalar(FUZZY_EPSILON))
+					occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
 
-				//		for (int32_t i = 0; i < 64; ++i)
-				//		{
-				//			const float a = TWO_PI * i / 64.0f;
-				//			const float s = sin(a), c = cos(a);
-
-				//			const Vector4 traceDirection = (u * Scalar(c) + v * Scalar(s)).normalized();
-				//			constructRayHit(position, traceDirection, hl, rh);
-
-				//			RTCIntersectArguments iargs;
-				//			rtcInitIntersectArguments(&iargs);
-				//			iargs.feature_mask = (RTCFeatureFlags)RTC_FEATURE_FLAG_TRIANGLE;
-				//			rtcIntersect1(m_scene, &rh, &iargs);
-
-				//			if (rh.hit.geomID == RTC_INVALID_GEOMETRY_ID)
-				//				continue;
-
-				//			const Vector4 hitNormal = getHitNormal(rh);
-				//			if (dot3(hitNormal, traceDirection) > 0.0_simd)
-				//			{
-				//				if (rh.ray.tfar < minExitDistance)
-				//				{
-				//					minExitDirection = traceDirection;
-				//					minExitDistance = rh.ray.tfar;
-				//				}
-				//			}
-				//		}
-
-				//		if (minExitDirection.length2() > 0.0001_simd)
-				//			position += minExitDirection * Scalar(minExitDistance + l);
-				//		else
-				//			break;
-				//	}
-
-				//	elm.position = position;
-				//}
-
-				// Trace lightmap.
-				{
-					const auto& originPolygon = polygons[elm.polygon];
-					const auto& originMaterial = materials[originPolygon.getMaterial()];
-
-					const Color4f emittance = originMaterial.getColor() * Scalar(100.0f * originMaterial.getEmissive());
-
-					// Trace IBL and indirect illumination.
-					const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
-
-					// Trace ambient occlusion.
-					Scalar occlusion = 1.0_simd;
-					if (ambientOcclusion > Scalar(FUZZY_EPSILON))
-						occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
-
-					// Combine and write final lumel.
-					lightmapColor += emittance + incoming * occlusion;
-				}
+				// Combine and write final lumel.
+				lightmapColor += emittance + incoming * occlusion;
 			}
 
 			lightmapDiffuse->setPixel(x, y, (lightmapColor / Scalar(ev.size())).rgb1());
@@ -478,7 +405,7 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
-	Color4f hitMaterialColor = hitMaterial.getColor();
+	Color4f hitMaterialColor = hitMaterial.getColor().linear();
 	//const auto& image = hitMaterial.getDiffuseMap().image;
 	//if (image)
 	//{
@@ -525,20 +452,6 @@ Color4f RayTracerEmbree::tracePath0(
 
 	Color4f color(0.0f, 0.0f, 0.0f, 0.0f);
 
-#if 0
-	const Color4f BRDF = Color4f(1.0f, 1.0f, 1.0f, 1.0f) / Scalar(PI);
-	const Scalar probability = 1.0_simd / (2.0_simd * Scalar(PI));
-
-	// Sample across hemisphere.
-	for (int32_t i = 0; i < sampleCount; ++i)
-	{
-		const Vector2 uv = Quasirandom::hammersley(i, sampleCount, random);
-		const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-		const Scalar cosPhi = dot3(direction, normal);
-		const Color4f incoming = traceSinglePath(origin, direction, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
-		color += incoming * BRDF * cosPhi / probability;
-	}
-#else
 	RTCRayHit16 T_ALIGN64 rhv;
 	Vector4 directions[SampleBatch];
 
@@ -580,8 +493,8 @@ Color4f RayTracerEmbree::tracePath0(
 			const uint32_t offset = m_materialOffset[rhv.hit.geomID[j]];
 			const auto& hitMaterial = *m_materials[offset + rhv.hit.primID[j]];
 
-			Color4f hitMaterialColor = hitMaterial.getColor();
-			const auto& image = hitMaterial.getDiffuseMap().image;
+			Color4f hitMaterialColor = hitMaterial.getColor().linear();
+			//const auto& image = hitMaterial.getDiffuseMap().image;
 			//if (image)
 			//{
 			//	const uint32_t slot = 1;
@@ -608,8 +521,8 @@ Color4f RayTracerEmbree::tracePath0(
 			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-			const Scalar cosPhi = dot3(newDirection, hitNormal);
-			// const Scalar cosPhi = dot3(-direction, hitNormal);
+			//const Scalar cosPhi = dot3(newDirection, hitNormal);
+			const Scalar cosPhi = dot3(-direction, hitNormal);
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
@@ -619,14 +532,13 @@ Color4f RayTracerEmbree::tracePath0(
 				true
 			);
 
-			const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+			const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor; // * cosPhi;
 			color += output;
 
 			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			//color += incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 		}
 	}
-#endif
 
 	color /= Scalar(sampleCount);
 
@@ -647,11 +559,11 @@ Color4f RayTracerEmbree::traceSinglePath(
 {
 	float T_MATH_ALIGN16 normalTmp[4];
 
-	if (depth > 2 || maxDistance <= 0.0f)
+	if (depth > 3 || maxDistance <= 0.0f)
 		return Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 
 	RTCRayHit T_ALIGN64 rh;
-	constructRayHit(origin, direction, maxDistance /*m_configuration->getMaxPathDistance()*/, rh);
+	constructRayHit(origin, direction, maxDistance, rh);
 
 	RTCIntersectArguments iargs;
 	rtcInitIntersectArguments(&iargs);
@@ -677,8 +589,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
-	Color4f hitMaterialColor = hitMaterial.getColor();
-	const auto& image = hitMaterial.getDiffuseMap().image;
+	Color4f hitMaterialColor = hitMaterial.getColor().linear();
+	//const auto& image = hitMaterial.getDiffuseMap().image;
 	//if (image)
 	//{
 	//	const uint32_t slot = 1;
@@ -705,8 +617,8 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-	const Scalar cosPhi = dot3(newDirection, hitNormal);
-	// const Scalar cosPhi = dot3(-direction, hitNormal);
+	//const Scalar cosPhi = dot3(newDirection, hitNormal);
+	const Scalar cosPhi = dot3(-direction, hitNormal);
 	const Color4f incoming = traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
 	const Color4f direct = sampleAnalyticalLights(
 		random,
@@ -716,7 +628,7 @@ Color4f RayTracerEmbree::traceSinglePath(
 		true
 	);
 
-	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor * cosPhi;
+	const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor; // * cosPhi;
 	return output;
 
 	//const Color4f incoming = direct + traceSinglePath(hitOrigin, newDirection, maxDistance - hitDistance, random, extraLightMask, depth + 1);
