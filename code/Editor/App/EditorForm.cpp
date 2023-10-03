@@ -638,7 +638,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_statusBar->addColumn(0);
 	m_statusBar->addColumn(0);
 	m_statusBar->setText(0, i18n::Text(L"STATUS_IDLE"));
-	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
+	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", str(L"%zu", (Alloc::allocated() + 1023) / 1024)));
 	m_statusBar->setText(2, L"");
 	m_statusBar->setText(3, L"");
 
@@ -3065,7 +3065,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	checkModified();
 
 	m_statusBar->setText(0, i18n::Text(building ? L"STATUS_BUILDING" : L"STATUS_IDLE"));
-	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", (int32_t)(Alloc::allocated() + 1023) / 1024));
+	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", str(L"%zu", (Alloc::allocated() + 1023) / 1024)));
 
 	if (m_streamServer)
 		m_statusBar->setText(2, i18n::Format(L"STATUS_STREAMS", (int32_t)m_streamServer->getStreamCount()));
