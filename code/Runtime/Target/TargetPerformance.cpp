@@ -115,7 +115,7 @@ bool TpsMemory::check(const TargetPerfSet& old) const
 
 void TpsMemory::serialize(ISerializer& s)
 {
-	s >> Member< uint32_t >(L"memInUse", memInUse);
+	s >> Member< uint64_t >(L"memInUse", memInUse);
 	s >> Member< uint32_t >(L"memInUseScript", memInUseScript);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 }

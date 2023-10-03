@@ -935,7 +935,7 @@ bool Application::update()
 			// Memory
 			{
 				TpsMemory tp;
-				tp.memInUse = (uint32_t)Alloc::allocated();
+				tp.memInUse = (uint64_t)Alloc::allocated();
 				tp.heapObjects = Object::getHeapObjectCount();
 				if (m_scriptServer)
 				{
