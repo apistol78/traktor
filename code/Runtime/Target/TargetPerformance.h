@@ -66,7 +66,7 @@ class T_DLLCLASS TpsMemory : public TargetPerfSet
 	T_RTTI_CLASS;
 
 public:
-	uint32_t memInUse = 0;
+	uint64_t memInUse = 0;
 	uint32_t memInUseScript = 0;
 	uint32_t heapObjects = 0;
 
