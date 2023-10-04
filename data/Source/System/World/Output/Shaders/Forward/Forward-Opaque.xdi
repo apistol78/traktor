@@ -169,6 +169,11 @@ Eye direction
 			<fragmentGuid>{9E812171-5BC3-4EEC-B689-B677968BA08A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
+					<name>Metalness</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{99E003AF-999D-4AC3-AF6E-397B5B356E97}</id>
 					<name>Normal</name>
 					<optional>false</optional>
@@ -862,8 +867,8 @@ Eye direction
 			<id>{5D8681BA-80B0-FC4A-B648-0B75E2AFDF2E}</id>
 			<comment/>
 			<position>
-				<first>873</first>
-				<second>484</second>
+				<first>891</first>
+				<second>482</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -880,8 +885,8 @@ Eye direction
 			<id>{EC114A98-BA84-AC4A-A2AC-8C9BDE431A38}</id>
 			<comment/>
 			<position>
-				<first>889</first>
-				<second>441</second>
+				<first>891</first>
+				<second>439</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -1326,8 +1331,8 @@ Eye direction
 			<id>{D2EBE885-3AB2-4C81-8E46-CA3DA580B54F}</id>
 			<comment/>
 			<position>
-				<first>857</first>
-				<second>360</second>
+				<first>859</first>
+				<second>396</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -1622,6 +1627,15 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 				<second>591</second>
 			</position>
 			<value>1</value>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{0C0692B6-BA81-874E-8F4D-FF7229D219DD}</id>
+			<comment/>
+			<position>
+				<first>907</first>
+				<second>353</second>
+			</position>
+			<name>L_Metalness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -2883,6 +2897,16 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<id>{38143377-57B7-4388-9D3F-3AA62077F273}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[142]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
 			</destination>
 		</item>
 	</edges>

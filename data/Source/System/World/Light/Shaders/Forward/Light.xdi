@@ -21,6 +21,11 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+					<name>Metalness</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{E721D5E2-A499-5B4D-A50F-80AB306E601F}</id>
 					<name>Normal</name>
 					<optional>false</optional>
@@ -53,7 +58,7 @@
 			<comment/>
 			<position>
 				<first>-861</first>
-				<second>-824</second>
+				<second>-827</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -65,8 +70,8 @@
 			<id>{E20F65BD-1750-4B62-A70F-5D1A0C22A2D8}</id>
 			<comment/>
 			<position>
-				<first>-881</first>
-				<second>-780</second>
+				<first>-877</first>
+				<second>-786</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -91,8 +96,8 @@
 			<id>{C3F0138E-AE4C-4214-B397-C76D3290B131}</id>
 			<comment/>
 			<position>
-				<first>-901</first>
-				<second>-736</second>
+				<first>-893</first>
+				<second>-704</second>
 			</position>
 			<name>ViewDirection</name>
 			<connectable>true</connectable>
@@ -139,7 +144,7 @@
 			<comment/>
 			<position>
 				<first>1057</first>
-				<second>724</second>
+				<second>721</second>
 			</position>
 			<name>L_Direction</name>
 		</item>
@@ -251,8 +256,8 @@
 			<id>{AF59013E-68DB-1F40-A42A-2595D2972BEE}</id>
 			<comment/>
 			<position>
-				<first>1457</first>
-				<second>1752</second>
+				<first>1501</first>
+				<second>1707</second>
 			</position>
 			<fragmentGuid>{B2786933-9C69-4442-82C8-867F4F51A748}</fragmentGuid>
 			<inputPins>
@@ -264,6 +269,11 @@
 				<item>
 					<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
 					<name>LightDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+					<name>Metalness</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -298,8 +308,8 @@
 			<id>{779E04C2-DD7B-7947-87E3-940C30B021CA}</id>
 			<comment/>
 			<position>
-				<first>1201</first>
-				<second>1655</second>
+				<first>1202</first>
+				<second>1623</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -582,7 +592,7 @@
 			<comment/>
 			<position>
 				<first>-618</first>
-				<second>-837</second>
+				<second>-847</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -591,7 +601,7 @@
 			<comment/>
 			<position>
 				<first>-618</first>
-				<second>-781</second>
+				<second>-801</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -600,7 +610,7 @@
 			<comment/>
 			<position>
 				<first>-618</first>
-				<second>-725</second>
+				<second>-709</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -609,7 +619,7 @@
 			<comment/>
 			<position>
 				<first>1041</first>
-				<second>770</second>
+				<second>807</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -618,7 +628,7 @@
 			<comment/>
 			<position>
 				<first>1041</first>
-				<second>816</second>
+				<second>850</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -627,7 +637,7 @@
 			<comment/>
 			<position>
 				<first>1025</first>
-				<second>862</second>
+				<second>893</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -636,7 +646,7 @@
 			<comment/>
 			<position>
 				<first>1170</first>
-				<second>1699</second>
+				<second>1717</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -645,7 +655,7 @@
 			<comment/>
 			<position>
 				<first>1170</first>
-				<second>1742</second>
+				<second>1764</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -654,7 +664,7 @@
 			<comment/>
 			<position>
 				<first>1154</first>
-				<second>1785</second>
+				<second>1811</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -834,8 +844,8 @@
 			<id>{97C2C09E-2BAE-724C-8D1C-20AA9A12A84F}</id>
 			<comment/>
 			<position>
-				<first>1160</first>
-				<second>2859</second>
+				<first>1194</first>
+				<second>2874</second>
 			</position>
 			<fragmentGuid>{B26E6F5B-AE70-D74E-B393-6E64C222CF25}</fragmentGuid>
 			<inputPins>
@@ -912,7 +922,7 @@
 			<comment/>
 			<position>
 				<first>878</first>
-				<second>2675</second>
+				<second>2537</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -920,8 +930,8 @@
 			<id>{D1BCF309-CBEF-F242-A599-9023B146CF55}</id>
 			<comment/>
 			<position>
-				<first>1122</first>
-				<second>2683</second>
+				<first>1208</first>
+				<second>2585</second>
 			</position>
 			<fragmentGuid>{B2786933-9C69-4442-82C8-867F4F51A748}</fragmentGuid>
 			<inputPins>
@@ -933,6 +943,11 @@
 				<item>
 					<id>{3B4C0403-67AA-CB44-818C-9B964C8D6DB0}</id>
 					<name>LightDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+					<name>Metalness</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -1145,7 +1160,7 @@
 			<comment/>
 			<position>
 				<first>846</first>
-				<second>2581</second>
+				<second>2629</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -1154,7 +1169,7 @@
 			<comment/>
 			<position>
 				<first>846</first>
-				<second>2629</second>
+				<second>2675</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -1163,7 +1178,7 @@
 			<comment/>
 			<position>
 				<first>830</first>
-				<second>2723</second>
+				<second>2721</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -1629,6 +1644,55 @@ Check max shadow distance
 				<item>ViewToLight3</item>
 				<item>AtlasTransform</item>
 			</names>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{420ADDB4-6351-1042-829B-BDAEF2C46322}</id>
+			<comment/>
+			<position>
+				<first>1057</first>
+				<second>764</second>
+			</position>
+			<name>L_Metalness</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{A80E5EAE-CCDF-6E47-81B2-1EE62085977A}</id>
+			<comment/>
+			<position>
+				<first>1186</first>
+				<second>1670</second>
+			</position>
+			<name>L_Metalness</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{938016E6-E51A-3F42-8AFA-F2938040AB25}</id>
+			<comment/>
+			<position>
+				<first>862</first>
+				<second>2583</second>
+			</position>
+			<name>L_Metalness</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{6444708A-85FD-6A40-8263-01CA73D15088}</id>
+			<comment/>
+			<position>
+				<first>-612</first>
+				<second>-755</second>
+			</position>
+			<name>L_Metalness</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
+			<comment/>
+			<position>
+				<first>-877</first>
+				<second>-745</second>
+			</position>
+			<name>Metalness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -3100,6 +3164,46 @@ Check max shadow distance
 			<destination>
 				<node ref="/object/nodes/item[95]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[143]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[144]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[145]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[83]"/>
+				<id>{3C930130-0AA1-B542-97EA-6B1D8969815A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[147]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[146]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

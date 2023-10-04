@@ -203,6 +203,11 @@ Eye direction
 			<fragmentGuid>{9E812171-5BC3-4EEC-B689-B677968BA08A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
+					<name>Metalness</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{99E003AF-999D-4AC3-AF6E-397B5B356E97}</id>
 					<name>Normal</name>
 					<optional>false</optional>
@@ -641,7 +646,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>267</first>
-				<second>444</second>
+				<second>441</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -681,7 +686,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>267</first>
-				<second>399</second>
+				<second>397</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -821,7 +826,7 @@ Eye direction
 			<comment/>
 			<position>
 				<first>267</first>
-				<second>354</second>
+				<second>353</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -833,6 +838,15 @@ Eye direction
 				<second>309</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{48520480-B2B0-F249-B0B6-9905F21DFF22}</id>
+			<comment/>
+			<position>
+				<first>283</first>
+				<second>265</second>
+			</position>
+			<name>L_Metalness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1494,6 +1508,16 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[75]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
 			</destination>
 		</item>
 	</edges>
