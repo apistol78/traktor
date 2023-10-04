@@ -16,6 +16,7 @@
 #include "Render/Editor/Texture/Bc6hCompressor.h"
 
 #define BC6H_ENC_IMPLEMENTATION
+#define BC6H_SSE_INTRINSICS
 #include "bc6h_enc.h"
 
 namespace traktor::render
