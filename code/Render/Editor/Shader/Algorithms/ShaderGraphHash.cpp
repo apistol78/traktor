@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Core/Containers/SmallSet.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Render/Editor/Edge.h"
 #include "Render/Editor/Node.h"
 #include "Render/Editor/OutputPin.h"
 #include "Render/Editor/Shader/INodeTraits.h"
@@ -24,20 +25,11 @@ namespace traktor::render
 
 uint32_t rotateLeft(uint32_t value, uint32_t count)
 {
+	T_FATAL_ASSERT(count < 32);
 	return (value << count) | (value >> (32 - count));
 }
 
-	}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Object)
-
-ShaderGraphHash::ShaderGraphHash(bool includeTextures, bool includeTechniqueNames)
-:	m_includeTextures(includeTextures)
-,	m_includeTechniqueNames(includeTechniqueNames)
-{
-}
-
-uint32_t ShaderGraphHash::calculate(const Node* node) const
+uint32_t calculateLocalNodeHash(const Node* node, bool includeTextures, bool includeTechniqueNames)
 {
 	Ref< Node > nodeCopy = DeepClone(node).create< Node >();
 	
@@ -45,13 +37,13 @@ uint32_t ShaderGraphHash::calculate(const Node* node) const
 	nodeCopy->setPosition(std::make_pair(0, 0));
 	nodeCopy->setComment(L"");
 
-	if (!m_includeTextures)
+	if (!includeTextures)
 	{
 		if (auto textureNode = dynamic_type_cast< Texture* >(nodeCopy))
 			textureNode->setExternal(Guid::null);
 	}
 
-	if (!m_includeTechniqueNames)
+	if (!includeTechniqueNames)
 	{
 		if (auto vertexNode = dynamic_type_cast< VertexOutput* >(nodeCopy))
 			vertexNode->setTechnique(L"");
@@ -66,57 +58,88 @@ uint32_t ShaderGraphHash::calculate(const Node* node) const
 	return DeepHash(nodeCopy).get();
 }
 
+uint32_t calculateBranchHash(const ShaderGraph* shaderGraph, const OutputPin* outputPin, SmallMap< const OutputPin*, uint32_t >& visited)
+{
+	const Node* node = outputPin->getNode();
+	const INodeTraits* nodeTraits = INodeTraits::find(node);
+
+	uint32_t nodeHash = calculateLocalNodeHash(node, false, false);
+
+	const uint32_t inputPinCount = node->getInputPinCount();
+	for (uint32_t i = 0; i < inputPinCount; ++i)
+	{
+		const InputPin* inputPin = node->getInputPin(i);
+		T_ASSERT(inputPin);
+
+		const int32_t inputPinGroup = nodeTraits ? nodeTraits->getInputPinGroup(shaderGraph, node, inputPin) : i;
+
+		const Edge* edge = shaderGraph->findEdge(inputPin);
+		if (!edge)
+			continue;
+
+		const auto it = visited.find(edge->getSource());
+		if (it != visited.end())
+		{
+			// Hash already calculated for this output.
+			nodeHash += rotateLeft(it->second, inputPinGroup);
+		}
+		else
+		{
+			visited[edge->getSource()] = 0;
+			const uint32_t inputNodeHash = calculateBranchHash(shaderGraph, edge->getSource(), visited);
+			visited[edge->getSource()] = inputNodeHash;
+			nodeHash += rotateLeft(inputNodeHash, inputPinGroup);
+		}
+	}
+
+	for (int32_t i = 0; i < node->getOutputPinCount(); ++i)
+	{
+		if (node->getOutputPin(i) == outputPin)
+		{
+			nodeHash = rotateLeft(nodeHash, i);
+			break;
+		}
+	}
+
+	return nodeHash;
+}
+
+	}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphHash", ShaderGraphHash, Object)
+
+ShaderGraphHash::ShaderGraphHash(bool includeTextures, bool includeTechniqueNames)
+:	m_includeTextures(includeTextures)
+,	m_includeTechniqueNames(includeTechniqueNames)
+{
+}
+
+uint32_t ShaderGraphHash::calculate(const Node* node) const
+{
+	return calculateLocalNodeHash(node, m_includeTextures, m_includeTechniqueNames);
+}
+
 uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 {
-	AlignedVector< std::pair< Ref< const Node >, int32_t > > nodeStack;
-	SmallSet< std::pair< Ref< const Node >, int32_t > > nodeVisited;
+	SmallMap< const OutputPin*, uint32_t > visited;
 	uint32_t hash = 0;
 
-	// Collect root nodes.
 	for (auto node : shaderGraph->getNodes())
 	{
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		if (nodeTraits != nullptr && nodeTraits->isRoot(shaderGraph, node))
-			nodeStack.push_back(std::make_pair(node, 0));
-	}
-
-	// Traverse graph nodes.
-	while (!nodeStack.empty())
-	{
-		const std::pair< Ref< const Node >, int32_t > top = nodeStack.back();
-		nodeStack.pop_back();
-
-		// Already visited this node?
-		if (nodeVisited.find(top) != nodeVisited.end())
-			continue;
-		nodeVisited.insert(top);
-
-		const Node* node = top.first;
-		const int32_t order = top.second;
-
-		// Find node's traits; some nodes which doesn't have a trait
-		// (meta type nodes such as Branch, Type etc) we treat as each
-		// input is dependent.
-		const INodeTraits* nodeTraits = INodeTraits::find(node);
-
-		// Calculate local hash.
-		hash += rotateLeft(calculate(node), order);
-
-		// Push all input nodes onto stack.
-		const int32_t inputPinCount = node->getInputPinCount();
-		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
-			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT(inputPin);
-
-			const OutputPin* sourcePin = shaderGraph->findSourcePin(inputPin);
-			if (!sourcePin)
-				continue;
-
-			const Node* childNode = sourcePin->getNode();
-			const int32_t childOrder = nodeTraits ? nodeTraits->getInputPinGroup(shaderGraph, node, inputPin) : i;
-
-			nodeStack.push_back(std::make_pair(childNode, childOrder));
+			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
+			{
+				const InputPin* inputPin = node->getInputPin(i);
+				const Edge* inputEdge = shaderGraph->findEdge(inputPin);
+				if (inputEdge)
+				{
+					const uint32_t inputHash = calculateBranchHash(shaderGraph, inputEdge->getSource(), visited);
+					const int32_t inputPinGroup = nodeTraits->getInputPinGroup(shaderGraph, node, inputPin);
+					hash += rotateLeft(inputHash, inputPinGroup);
+				}
+			}
 		}
 	}
 
