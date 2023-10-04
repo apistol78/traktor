@@ -322,7 +322,6 @@ $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
 );
-
 			]]>
 			</script>
 		</item>

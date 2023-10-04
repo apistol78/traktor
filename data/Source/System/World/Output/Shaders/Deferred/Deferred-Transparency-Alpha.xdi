@@ -11,6 +11,11 @@
 			<fragmentGuid>{9E812171-5BC3-4EEC-B689-B677968BA08A}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
+					<name>Metalness</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{99E003AF-999D-4AC3-AF6E-397B5B356E97}</id>
 					<name>Normal</name>
 					<optional>false</optional>
@@ -342,8 +347,8 @@ Eye direction
 			<id>{EC5E212F-8B27-5D4D-9291-4BC2AB50EB82}</id>
 			<comment/>
 			<position>
-				<first>414</first>
-				<second>772</second>
+				<first>417</first>
+				<second>770</second>
 			</position>
 			<name>L_EyeDirection</name>
 		</item>
@@ -351,8 +356,8 @@ Eye direction
 			<id>{EE31CFB0-EF12-6B4F-BF6C-30DDE7293048}</id>
 			<comment/>
 			<position>
-				<first>414</first>
-				<second>670</second>
+				<first>417</first>
+				<second>672</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -369,8 +374,8 @@ Eye direction
 			<id>{CC0684ED-4BB4-D943-A71A-DAB1ABD67C1A}</id>
 			<comment/>
 			<position>
-				<first>382</first>
-				<second>619</second>
+				<first>385</first>
+				<second>623</second>
 			</position>
 			<name>L_ViewNormalDetail</name>
 		</item>
@@ -387,7 +392,7 @@ Eye direction
 			<id>{30E3837C-DFFE-1448-83AF-98615EBF3F7D}</id>
 			<comment/>
 			<position>
-				<first>414</first>
+				<first>417</first>
 				<second>721</second>
 			</position>
 			<name>L_Roughness</name>
@@ -793,6 +798,15 @@ Eye direction
 				<second>829</second>
 			</position>
 			<name>L_SpecularG</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{94E6FFA1-355B-5F4A-BC22-01B82D691187}</id>
+			<comment/>
+			<position>
+				<first>433</first>
+				<second>574</second>
+			</position>
+			<name>L_Metalness</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1426,6 +1440,16 @@ Eye direction
 				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[71]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1436,8 +1460,8 @@ Eye direction
 				<second>-1202</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>2069</first>
+				<second>639</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
@@ -1448,8 +1472,8 @@ Eye direction
 				<second>-461</second>
 			</position>
 			<size>
-				<first>200</first>
-				<second>200</second>
+				<first>1919</first>
+				<second>500</second>
 			</size>
 		</item>
 	</groups>
