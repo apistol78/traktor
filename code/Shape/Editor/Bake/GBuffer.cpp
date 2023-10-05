@@ -91,10 +91,8 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.GBuffer", GBuffer, Object)
 
-bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel, uint32_t maxElements)
+bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel)
 {
-	T_FATAL_ASSERT(maxElements <= 4);
-
 	AlignedVector< Vector4 > positions;
 	AlignedVector< Vector4 > normals;
 	AlignedVector< Vector4 > tangents;
@@ -115,7 +113,6 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 		// Extract data for polygon.
 		positions.resize(0);
 		normals.resize(0);
-		tangents.resize(0);
 		texCoords.resize(0);
 
 		for (const auto index : polygon.getVertices())
@@ -128,11 +125,8 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 			const uint32_t normalIndex = vertex.getNormal();
 			normals.push_back((transform * model.getNormal(normalIndex).xyz0()).normalized());
 
-			const uint32_t tangentIndex = vertex.getTangent();
-			tangents.push_back((transform * model.getNormal(tangentIndex).xyz0()).normalized());
-
 			const uint32_t texCoordIndex = vertex.getTexCoord(texCoordChannel);
-			texCoords.push(model.getTexCoord(texCoordIndex) * wh);
+			texCoords.push(model.getTexCoord(texCoordIndex) * wh - Vector2(0.5f, 0.5f));
 
 			m_boundingBox.contain(positions.back());
 		}
@@ -157,16 +151,16 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 				normals[i2]
 			);
 
-			const Interpolants< Vector4 > ipolTangents(
-				tangents[i0],
-				tangents[i1],
-				tangents[i2]
-			);
-
 			Aabb2 bbox;
 			bbox.contain(texCoords[i0]);
 			bbox.contain(texCoords[i1]);
 			bbox.contain(texCoords[i2]);
+
+			const float a = (texCoords[i1] - texCoords[i0]).length();
+			const float b = (texCoords[i2] - texCoords[i1]).length();
+			const float c = (texCoords[i0] - texCoords[i2]).length();
+			const float s = 0.5f * (a + b + c);
+			const float area = sqrt(s * (s - a) * (s - b) * (s - c));
 
 			const int32_t pad = 2;
 			const int32_t sx = (int32_t)(bbox.mn.x - pad - 0.5f);
@@ -181,50 +175,36 @@ bool GBuffer::create(int32_t width, int32_t height, const model::Model& model, c
 					if (x < 0 || x >= width || y < 0 || y >= height)
 						continue;
 
-					const Vector2 texelCenterRnd = Vector2(rnd.nextFloat() * 0.5f - 0.5f, rnd.nextFloat() * 0.5f - 0.5f);
-					const Vector2 texelCenter = Vector2((float)x + 0.5f, (float)y + 0.5f) + texelCenterRnd;
+					const float maxDistance = 1.0f;
 
+					const Vector2 texelCenter = Vector2((float)x, (float)y);
 					Vector2 pt = texelCenter;
 					if (!bary.inside(pt))
 					{
 						const Vector2 cpt = texCoords.closest(pt);
 						const Vector2 d = (pt - cpt).absolute();
-						if (d.x > 1.5f || d.y > 1.5f)
+						if (d.x > maxDistance || d.y > maxDistance)
 							continue;
 						pt = cpt;
 					}
 
-					float distance = distance = (pt - texelCenter).length();
-					element_vector_t& ev = m_data[x + y * m_width];
+					const float distance = (pt - texelCenter).length();
 
-					// Add to elements, if full we try to replace a worst entry if possible.
-					Element* elm = nullptr;
-					if (ev.size() < maxElements)
-						elm = &ev.push_back();
-					else
+					auto& e = m_data[x + y * m_width];
+					if (e.polygon != ~0U)
 					{
-						// Sort worst to best; replace worst if distance is less than any entry.
-						std::sort(ev.begin(), ev.end(), [&](Element& lh, Element& rh) {
-							return lh.distance > rh.distance;
-						});
-						for (auto& it : ev)
-						{
-							if (distance < it.distance)
-							{
-								elm = ev.ptr();
-								break;
-							}
-						}
-						if (!elm)
+						if (distance > e.distance)
+							continue;
+						if (abs(distance - e.distance) < FUZZY_EPSILON && area < e.area)
 							continue;
 					}
 
-					elm->position = ipolPositions.evaluate(bary, pt).xyz1();
-					elm->normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
-					elm->tangent = ipolTangents.evaluate(bary, pt).xyz0().normalized();
-					elm->polygon = i;
-					elm->material = polygon.getMaterial();
-					elm->distance = distance;
+					e.position = ipolPositions.evaluate(bary, pt).xyz1();
+					e.normal = ipolNormals.evaluate(bary, pt).xyz0().normalized();
+					e.polygon = i;
+					e.material = polygon.getMaterial();
+					e.area = area;
+					e.distance = distance;
 				}
 			}
 		});
