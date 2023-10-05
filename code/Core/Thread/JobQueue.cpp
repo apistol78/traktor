@@ -62,8 +62,8 @@ Job* JobQueue::add(const Job::task_t& task)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		m_jobQueue.push_back(job);
-		m_pending++;
 	}
+	m_pending++;
 	m_jobQueuedEvent.pulse();
 	return job;
 }
@@ -78,14 +78,16 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 	// Create jobs for given functors.
 	if (ntasks > 1)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 		jobs.resize(ntasks);
-		for (size_t i = 1; i < ntasks; ++i)
 		{
-			jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
-			m_jobQueue.push_back(jobs[i]);
-			m_pending++;
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
+			for (size_t i = 1; i < ntasks; ++i)
+			{
+				jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
+				m_jobQueue.push_back(jobs[i]);
+			}
 		}
+		m_pending += ntasks - 1;
 		m_jobQueuedEvent.pulse((int32_t)(ntasks - 1));
 	}
 
@@ -130,8 +132,12 @@ void JobQueue::threadWorker()
 
 	while (!thread->stopped())
 	{
-		if (m_pending == 0 && !m_jobQueuedEvent.wait(100))
-			continue;
+		// If queue is empty then we wait.
+		if (m_jobQueue.empty())
+		{
+			if (!m_jobQueuedEvent.wait(100))
+				continue;
+		}
 
 		// Pop job from queue.
 		{
@@ -146,9 +152,7 @@ void JobQueue::threadWorker()
 		}
 
 		// Execute job.
-		T_FATAL_ASSERT(job->m_finished == 0);
 		job->m_task();
-		T_FATAL_ASSERT(job->m_finished == 0);
 		job->m_finished = 1;
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
