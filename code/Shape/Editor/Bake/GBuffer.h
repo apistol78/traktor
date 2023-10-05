@@ -10,7 +10,6 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Shape/Editor/Bake/Types.h"
 #include "Model/Model.h"
@@ -34,17 +33,15 @@ public:
 	{
 		Vector4 position;
 		Vector4 normal;
-		Vector4 tangent;
-		uint32_t polygon;
+		uint32_t polygon = ~0U;
 		uint32_t material;
+		float area;
 		float distance;
 	};
 
-	typedef StaticVector< Element, 4 > element_vector_t;
+	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel);
 
-	bool create(int32_t width, int32_t height, const model::Model& model, const Transform& transform, uint32_t texCoordChannel, uint32_t maxElements);
-
-	const element_vector_t& get(int32_t x, int32_t y) const { return m_data[x + y * m_width]; }
+	const Element& get(int32_t x, int32_t y) const { return m_data[x + y * m_width]; }
 
 	int32_t getWidth() const { return m_width; }
 
@@ -55,7 +52,7 @@ public:
 private:
 	int32_t m_width = 0;
 	int32_t m_height = 0;
-	AlignedVector< element_vector_t > m_data;
+	AlignedVector< Element > m_data;
 	Aabb3 m_boundingBox;
 };
 

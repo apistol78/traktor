@@ -675,11 +675,13 @@ bool BakePipelineOperator::build(
 
 							// Check if model already contain lightmap UV or if we need to unwrap.
 							uint32_t channel = model->getTexCoordChannel(L"Lightmap");
+							bool generated = false;
 							if (channel == model::c_InvalidIndex)
 							{
 								// No lightmap UV channel, need to add and unwrap automatically.
 								channel = model->addUniqueTexCoordChannel(L"Lightmap");
 								model::UnwrapUV(channel, /*lightmapSize*/1024).apply(*model);
+								generated = true;
 							}
 
 							// Evaluate lightmap size by measuring each edge ratio.
@@ -716,9 +718,12 @@ bool BakePipelineOperator::build(
 							lightmapSize = std::min< int32_t >(configuration->getMaximumLightMapSize(), lightmapSize);
 							lightmapSize = alignUp(lightmapSize, 4);
 
+							// Re-run UV unwrapping with proper lightmap size.
+							if (generated)
+								model::UnwrapUV(channel, lightmapSize).apply(*model);
+
 							model->setProperty< PropertyInteger >(L"LightmapDesiredSize", lightmapDesiredSize);
 							model->setProperty< PropertyInteger >(L"LightmapSize", lightmapSize);
-
 
 							// Attach an unique ID for this mesh; since visual model is cached this will get reused automatically.
 							model->setProperty< PropertyString >(L"ID", Guid::create().format());

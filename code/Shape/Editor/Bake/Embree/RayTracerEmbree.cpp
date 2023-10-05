@@ -330,7 +330,6 @@ Ref< render::SHCoeffs > RayTracerEmbree::traceProbe(const Vector4& position) con
 
 void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const
 {
-	RTCRayHit T_ALIGN64 rh;
 	RandomGeometry random;
 
 	const Scalar ambientOcclusion(m_configuration->getAmbientOcclusionFactor());
@@ -342,34 +341,26 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 	{
 		for (int32_t x = region[0]; x < region[2]; ++x)
 		{
-			const GBuffer::element_vector_t& ev = gbuffer->get(x, y);
-			if (ev.empty())
+			const auto& e = gbuffer->get(x, y);
+			if (e.polygon == ~0U)
 				continue;
 
-			Color4f lightmapColor(0.0f, 0.0f, 0.0f, 0.0f);
+			const auto& originPolygon = polygons[e.polygon];
+			const auto& originMaterial = materials[originPolygon.getMaterial()];
 
-			for (int32_t i = 0; i < ev.size(); ++i)
-			{
-				auto& elm = ev[i];
+			const Color4f emittance = originMaterial.getColor().linear() * Scalar(100.0f * originMaterial.getEmissive());
 
-				const auto& originPolygon = polygons[elm.polygon];
-				const auto& originMaterial = materials[originPolygon.getMaterial()];
+			// Trace IBL and indirect illumination.
+			const Color4f incoming = tracePath0(e.position, e.normal, random, 0);
 
-				const Color4f emittance = originMaterial.getColor().linear() * Scalar(100.0f * originMaterial.getEmissive());
+			// Trace ambient occlusion.
+			Scalar occlusion = 1.0_simd;
+			if (ambientOcclusion > Scalar(FUZZY_EPSILON))
+				occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(e.position, e.normal, random);
 
-				// Trace IBL and indirect illumination.
-				const Color4f incoming = tracePath0(elm.position, elm.normal, random, 0);
-
-				// Trace ambient occlusion.
-				Scalar occlusion = 1.0_simd;
-				if (ambientOcclusion > Scalar(FUZZY_EPSILON))
-					occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(elm.position, elm.normal, random);
-
-				// Combine and write final lumel.
-				lightmapColor += emittance + incoming * occlusion;
-			}
-
-			lightmapDiffuse->setPixel(x, y, (lightmapColor / Scalar(ev.size())).rgb1());
+			// Combine and write final lumel.
+			const Color4f lightmapColor = emittance + incoming * occlusion;
+			lightmapDiffuse->setPixel(x, y, lightmapColor.rgb1());
 		}
 	}
 }

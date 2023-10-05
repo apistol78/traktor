@@ -57,6 +57,9 @@
 #	include <OpenImageDenoise/oidn.h>
 #endif
 
+#include "Core/Math/Random.h"
+#include "Model/ModelFormat.h"
+
 namespace traktor
 {
 	namespace shape
@@ -89,17 +92,10 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 	{
 		for (int32_t x = 0; x < width; ++x)
 		{
-			const GBuffer::element_vector_t& ev = gbuffer.get(x, y);
-
-			if (ev.empty())
+			const auto& e = gbuffer.get(x, y);
+			if (e.polygon == ~0U)
 				continue;
-
-			Vector4 normal = Vector4::zero();
-			for (const auto& elm : ev)
-				normal += elm.normal;
-			normal.normalize();
-
-			normals.setPixelUnsafe(x, y, Color4f(normal));
+			normals.setPixelUnsafe(x, y, Color4f(e.normal));
 		}
 	}
 
@@ -278,13 +274,13 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 	m_thread = ThreadManager::getInstance().create([this](){ processorThread(); }, L"Tracer");
 	m_thread->start();
 
-	if (!m_editor)
+	//if (!m_editor)
 		m_queue = &JobManager::getInstance().getQueue();
-	else
-	{
-		m_queue = new JobQueue();
-		m_queue->create(4, Thread::Below);
-	}
+	//else
+	//{
+	//	m_queue = new JobQueue();
+	//	m_queue->create(4, Thread::Below);
+	//}
 }
 
 TracerProcessor::~TracerProcessor()
@@ -300,8 +296,8 @@ TracerProcessor::~TracerProcessor()
 		m_thread = nullptr;
 	}
 
-	if (m_editor)
-		safeDestroy(m_queue);
+	//if (m_editor)
+	//	safeDestroy(m_queue);
 }
 
 void TracerProcessor::enqueue(const TracerTask* task)
@@ -446,7 +442,46 @@ bool TracerProcessor::process(const TracerTask* task)
 
 		// Create GBuffer of mesh's geometry.
 		GBuffer gbuffer;
-		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel, 4);
+		gbuffer.create(width, height, *renderModel, tracerOutput->getTransform(), channel);
+
+		//{
+		//	model::ModelFormat::writeAny(str(L"data/Temp/Model_%03d.obj", i), renderModel);
+		//	Ref< drawing::Image > img = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+		//	for (int y = 0; y < height; ++y)
+		//	{
+		//		for (int x = 0; x < width; ++x)
+		//		{
+		//			const auto& g = gbuffer.get(x, y);
+		//			if (!g.empty())
+		//			{
+		//				switch (g.size())
+		//				{
+		//				case 1:
+		//					img->setPixel(x, y, Color4f(0.0f, 1.0f, 0.0f, 1.0f));
+		//					break;
+		//				case 2:
+		//					img->setPixel(x, y, Color4f(1.0f, 1.0f, 0.0f, 1.0f));
+		//					break;
+		//				case 3:
+		//					img->setPixel(x, y, Color4f(1.0f, 0.0f, 0.0f, 1.0f));
+		//					break;
+		//				case 4:
+		//					img->setPixel(x, y, Color4f(0.0f, 0.0f, 1.0f, 1.0f));
+		//					break;
+		//				case 5:
+		//					img->setPixel(x, y, Color4f(0.0f, 1.0f, 1.0f, 1.0f));
+		//					break;
+		//				default:
+		//					img->setPixel(x, y, Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+		//					break;
+		//				}
+		//			}
+		//			else
+		//				img->setPixel(x, y, Color4f(0.0f, 0.0f, 0.0f, 1.0f));
+		//		}
+		//	}
+		//	img->save(str(L"data/Temp/Model_%03d.png", i));
+		//}
 
 		// Trace lightmaps.
 		Ref< drawing::Image > lightmapDiffuse = new drawing::Image(
