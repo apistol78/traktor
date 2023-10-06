@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,16 +11,14 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/StatusBar/StatusBar.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
-const Unit c_preferedHeight = 23_ut;
+const Unit c_preferedHeightMargin = 2_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StatusBar", StatusBar, Widget)
 
@@ -64,7 +62,7 @@ void StatusBar::setText(int32_t column, const std::wstring& text)
 
 Size StatusBar::getPreferredSize(const Size& hint) const
 {
-	Size preferedSize(0, pixel(c_preferedHeight));
+	Size preferedSize(0, getFontMetric().getHeight() + pixel(c_preferedHeightMargin) * 2);
 	if (getParent())
 		preferedSize.cx = getParent()->getInnerRect().getWidth();
 	return preferedSize;
@@ -140,5 +138,4 @@ void StatusBar::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }
