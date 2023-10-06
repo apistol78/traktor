@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,7 @@ namespace traktor::ui
 	namespace
 	{
 
-const Unit c_headerSize = 24_ut;
+const Unit c_headerMargin = 2_ut;
 
 struct SortRowPredicateLexical
 {
@@ -315,13 +315,15 @@ void GridView::applyState(const HierarchicalState* state)
 
 void GridView::layoutCells(const Rect& rc)
 {
+	int32_t fontHeight = getFontMetric().getHeight();
 	Rect rcLayout = rc;
 
 	if (m_header)
 	{
+		const int32_t headerHeight = fontHeight + pixel(c_headerMargin) * 2;
 		m_header->setColumns(m_columns);
-		placeHeaderCell(m_header, pixel(c_headerSize));
-		rcLayout.top += pixel(c_headerSize);
+		placeHeaderCell(m_header, headerHeight);
+		rcLayout.top += headerHeight;
 	}
 
 	RefArray< GridRow > rows = getRows(GfDescendants | GfExpandedOnly);
