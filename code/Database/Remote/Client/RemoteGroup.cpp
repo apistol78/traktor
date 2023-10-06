@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Database/Types.h"
 #include "Database/Remote/Client/RemoteGroup.h"
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteConnection.h"
@@ -42,6 +43,11 @@ std::wstring RemoteGroup::getName() const
 {
 	Ref< const MsgStringResult > result = m_connection->sendMessage< MsgStringResult >(DbmGetGroupName(m_handle));
 	return result ? result->get() : L"";
+}
+
+uint32_t RemoteGroup::getFlags() const
+{
+	return GfNormal;
 }
 
 bool RemoteGroup::rename(const std::wstring& name)

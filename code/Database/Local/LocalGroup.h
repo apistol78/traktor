@@ -24,9 +24,11 @@ class LocalGroup : public IProviderGroup
 	T_RTTI_CLASS;
 
 public:
-	explicit LocalGroup(Context& contex, const Path& groupPath);
+	explicit LocalGroup(Context& contex, const Path& groupPath, uint32_t flags);
 
 	virtual std::wstring getName() const override final;
+
+	virtual uint32_t getFlags() const override final;
 
 	virtual bool rename(const std::wstring& name) override final;
 
@@ -41,6 +43,7 @@ public:
 private:
 	Context& m_context;
 	Path m_groupPath;
+	uint32_t m_flags;
 };
 
 }

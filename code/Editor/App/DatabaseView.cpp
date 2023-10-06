@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,7 @@
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Ui/StyleBitmap.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Splitter.h"
@@ -66,17 +67,13 @@
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 #include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView", DatabaseView, ui::Container)
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView::Filter, Object)
-
-		namespace
-		{
+	namespace
+	{
 
 class DefaultFilter : public DatabaseView::Filter
 {
@@ -287,7 +284,7 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 	return modified;
 }
 
-		}
+	}
 
 DatabaseView::DatabaseView(IEditor* editor)
 :	m_editor(editor)
@@ -540,7 +537,7 @@ void DatabaseView::updateView()
 			m_favoriteInstances.insert(Guid(favoriteInstance));
 
 		if (viewMode == 0)	// Hierarchy
-			buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
+			buildTreeItemHierarchy(m_treeDatabase, 0, m_db->getRootGroup());
 		else if (viewMode == 1)	// Split
 		{
 			m_listInstances->setVisible(true);
@@ -762,7 +759,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			Ref< InstanceClipboardData > instanceClipboardData = new InstanceClipboardData();
 			instanceClipboardData->addInstance(instance->getName(), object);
 
-			bool rootIsPrivate = isInstanceInPrivate(instance);
+			const bool rootIsPrivate = isInstanceInPrivate(instance);
 
 			for (uint32_t i = 0; i < dependencySet.size(); ++i)
 			{
@@ -1074,12 +1071,21 @@ int32_t DatabaseView::getIconIndex(const TypeInfo* instanceType) const
 	return iconIndex;
 }
 
-Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
+Ref< ui::TreeViewItem > DatabaseView::buildTreeItemHierarchy(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
-	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
+	
+	// Highlight linked groups and ensure they cannot be renamed.
+	if ((group->getFlags() & db::GfLink) != 0)
+	{
+		groupItem->setEditable(false);
+		groupItem->setTextColor(getStyleSheet()->getColor(this, L"color-link"));
+		groupItem->setBold(true);
+	}
+	else
+		groupItem->setEditable(true);
 
 	// Expand root groups by default.
 	if (!parentItem)
@@ -1092,7 +1098,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	});
 
 	for (auto childGroup : childGroups)
-		buildTreeItem(treeView, groupItem, childGroup);
+		buildTreeItemHierarchy(treeView, groupItem, childGroup);
 
 	const bool showFiltered = m_toolFilterShow->isToggled();
 	const bool showFavorites = m_toolFavoritesShow->isToggled();
@@ -1152,8 +1158,17 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 {
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 1);
 	groupItem->setImage(0, 0, 1);
-	groupItem->setEditable(true);
 	groupItem->setData(L"GROUP", group);
+
+	// Highlight linked groups and ensure they cannot be renamed.
+	if ((group->getFlags() & db::GfLink) != 0)
+	{
+		groupItem->setEditable(false);
+		groupItem->setTextColor(getStyleSheet()->getColor(this, L"color-link"));
+		groupItem->setBold(true);
+	}
+	else
+		groupItem->setEditable(true);
 
 	RefArray< db::Group > childGroups;
 	group->getChildGroups(childGroups);
@@ -1251,7 +1266,7 @@ void DatabaseView::filterType(db::Instance* instance)
 	TypeInfoSet typeSet;
 	typeSet.insert(instance->getPrimaryType());
 	m_editFilter->setText(L"");
-	m_filter = new TypeSetFilter(typeSet);
+	m_filter.reset(new TypeSetFilter(typeSet));
 	m_toolFilterType->setToggled(true);
 	m_toolFilterAssets->setToggled(false);
 	updateView();
@@ -1284,7 +1299,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	}
 
 	m_editFilter->setText(L"");
-	m_filter = new GuidSetFilter(guidSet);
+	m_filter.reset(new GuidSetFilter(guidSet));
 	m_toolFilterType->setToggled(true);
 	m_toolFilterAssets->setToggled(false);
 
@@ -1345,14 +1360,14 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 				TypeInfoSet typeSet;
 				typeSet.insert(filterType);
 				m_editFilter->setText(L"");
-				m_filter = new TypeSetFilter(typeSet);
+				m_filter.reset(new TypeSetFilter(typeSet));
 				m_toolFilterAssets->setToggled(false);
 			}
 			else
 				m_toolFilterType->setToggled(false);
 		}
 		if (!m_toolFilterType->isToggled())
-			m_filter = new DefaultFilter();
+			m_filter.reset(new DefaultFilter());
 	}
 	else if (cmd == L"Database.FilterAssets")
 	{
@@ -1389,11 +1404,11 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 			}
 
 			m_editFilter->setText(L"");
-			m_filter = new GuidSetFilter(guidSet);
+			m_filter.reset(new GuidSetFilter(guidSet));
 			m_toolFilterType->setToggled(false);
 		}
 		if (!m_toolFilterAssets->isToggled())
-			m_filter = new DefaultFilter();
+			m_filter.reset(new DefaultFilter());
 	}
 	else if (cmd == L"Database.ViewModes")
 	{
@@ -1427,12 +1442,12 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 		{
 			const Guid filterGuid(m_filterText);
 			if (filterGuid.isValid() && filterGuid.isNotNull())
-				m_filter = new GuidFilter(filterGuid);
+				m_filter.reset(new GuidFilter(filterGuid));
 			else
-				m_filter = new TextFilter(m_filterText);
+				m_filter.reset(new TextFilter(m_filterText));
 		}
 		else
-			m_filter = new DefaultFilter();
+			m_filter.reset(new DefaultFilter());
 
 		m_toolFilterType->setToggled(false);
 		m_toolFilterAssets->setToggled(false);
@@ -1631,5 +1646,5 @@ void DatabaseView::eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event
 	m_editor->openEditor(instance);
 }
 
-	}
 }
+

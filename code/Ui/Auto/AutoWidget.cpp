@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,10 +13,8 @@
 #include "Ui/Auto/AutoWidget.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidget", AutoWidget, Widget)
 
@@ -76,7 +74,7 @@ AutoWidgetCell* AutoWidget::hitTest(const Point& position)
 			return m_footerCell;
 	}
 
-	Point clientPosition = position - m_scrollOffset;
+	const Point clientPosition = position - m_scrollOffset;
 	for (int32_t i = (int32_t)m_cells.size() - 1; i >= 0; --i)
 	{
 		AutoWidgetCell* cell = m_cells[i];
@@ -123,10 +121,7 @@ void AutoWidget::requestInterval(AutoWidgetCell* cell, int32_t duration)
 	}
 
 	// Not queued, then add new entry.
-	CellInterval ci;
-	ci.cell = cell;
-	ci.duration = duration;
-	m_intervals.push_back(ci);
+	m_intervals.push_back({ cell, duration });
 }
 
 void AutoWidget::placeCell(AutoWidgetCell* cell, const Rect& rect)
@@ -189,7 +184,7 @@ void AutoWidget::releaseCapturedCell()
 
 void AutoWidget::scrollTo(const Point& pnt)
 {
-	Rect innerRect = getInnerRect();
+	const Rect innerRect = getInnerRect();
 
 	m_scrollOffset = -(pnt - innerRect.getCenter());
 
@@ -225,8 +220,8 @@ void AutoWidget::updateLayout()
 
 	Rect innerRect = getInnerRect();
 
-	bool scrollBarVisibleH = m_scrollBarH->isVisible(false);
-	bool scrollBarVisibleV = m_scrollBarV->isVisible(false);
+	const bool scrollBarVisibleH = m_scrollBarH->isVisible(false);
+	const bool scrollBarVisibleV = m_scrollBarV->isVisible(false);
 
 	if (scrollBarVisibleH)
 		innerRect.bottom -= m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
@@ -246,7 +241,7 @@ void AutoWidget::updateLayout()
 
 	for (const auto& instance : m_cells)
 	{
-		Rect rc = instance->getRect();
+		const Rect rc = instance->getRect();
 		m_bounds.left = std::min(m_bounds.left, rc.left);
 		m_bounds.right = std::max(m_bounds.right, rc.right);
 		m_bounds.top = std::min(m_bounds.top, rc.top);
@@ -254,10 +249,10 @@ void AutoWidget::updateLayout()
 	}
 
 	// Update scrollbar ranges.
-	int32_t columnCount = (m_bounds.right + 15) / 16;
-	int32_t columnPageCount = (innerRect.right + 15) / 16;
-	int32_t rowCount = (m_bounds.bottom + 15) / 16;
-	int32_t rowPageCount = (innerRect.bottom + 15) / 16;
+	const int32_t columnCount = (m_bounds.right + 15) / 16;
+	const int32_t columnPageCount = (innerRect.right + 15) / 16;
+	const int32_t rowCount = (m_bounds.bottom + 15) / 16;
+	const int32_t rowPageCount = (innerRect.bottom + 15) / 16;
 
 	m_scrollBarH->setRange(columnCount);
 	m_scrollBarH->setPage(columnPageCount);
@@ -292,9 +287,15 @@ void AutoWidget::updateLayout()
 	}
 
 	if (!m_scrollBarH->isVisible(false))
+	{
+		m_scrollBarH->setPosition(0);
 		m_scrollOffset.cx = 0;
+	}
 	if (!m_scrollBarV->isVisible(false))
+	{
+		m_scrollBarV->setPosition(0);
 		m_scrollOffset.cy = 0;
+	}
 
 	// Update hover tracking.
 	Ref< AutoWidgetCell > hitItem = hitTest(getMousePosition());
@@ -311,17 +312,17 @@ void AutoWidget::placeScrollBars()
 {
 	Rect innerRect = getInnerRect();
 
-	int32_t width = m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
-	int32_t height = m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
+	const int32_t width = m_scrollBarV->getPreferredSize(innerRect.getSize()).cx;
+	const int32_t height = m_scrollBarH->getPreferredSize(innerRect.getSize()).cy;
 
 	if (m_headerCell)
 	{
-		Rect rc = m_headerCell->getRect();
+		const Rect rc = m_headerCell->getRect();
 		innerRect.top = rc.bottom + 1;
 	}
 	if (m_footerCell)
 	{
-		Rect rc = m_footerCell->getRect();
+		const Rect rc = m_footerCell->getRect();
 		innerRect.bottom = rc.top - 1;
 	}
 
@@ -371,7 +372,7 @@ void AutoWidget::eventButtonUp(MouseButtonUpEvent* event)
 
 	if (m_captureCell)
 	{
-		Point clientPosition = event->getPosition() - m_scrollOffset;
+		const Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_captureCell->mouseUp(event, clientPosition);
 	}
 
@@ -384,7 +385,7 @@ void AutoWidget::eventDoubleClick(MouseDoubleClickEvent* event)
 	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
 	if (hitItem)
 	{
-		Point clientPosition = event->getPosition() - m_scrollOffset;
+		const Point clientPosition = event->getPosition() - m_scrollOffset;
 		hitItem->mouseDoubleClick(event, clientPosition);
 	}
 }
@@ -403,13 +404,13 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 
 	if (m_captureCell)
 	{
-		Point clientPosition = event->getPosition() - m_scrollOffset;
+		const Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_captureCell->mouseMove(event, clientPosition);
 	}
 
 	if (m_focusCell)
 	{
-		Point clientPosition = event->getPosition() - m_scrollOffset;
+		const Point clientPosition = event->getPosition() - m_scrollOffset;
 		m_focusCell->mouseMoveFocus(event, clientPosition);
 	}
 
@@ -457,20 +458,20 @@ void AutoWidget::eventPaint(PaintEvent* event)
 
 	for (const auto& instance : m_cells)
 	{
-		Rect rc = instance->getRect().offset(m_scrollOffset);
+		const Rect rc = instance->getRect().offset(m_scrollOffset);
 		if (rc.intersect(innerRect))
 			instance->paint(canvas, rc);
 	}
 
 	if (m_headerCell)
 	{
-		Rect rc = m_headerCell->getRect().offset(m_scrollOffset.cx, 0);
+		const Rect rc = m_headerCell->getRect().offset(m_scrollOffset.cx, 0);
 		m_headerCell->paint(canvas, rc);
 	}
 
 	if (m_footerCell)
 	{
-		Rect rc = m_footerCell->getRect().offset(m_scrollOffset.cx, 0);
+		const Rect rc = m_footerCell->getRect().offset(m_scrollOffset.cx, 0);
 		m_footerCell->paint(canvas, rc);
 	}
 
@@ -519,5 +520,4 @@ void AutoWidget::eventScroll(ScrollEvent* event)
 	update();
 }
 
-	}
 }

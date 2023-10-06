@@ -110,7 +110,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 		m_bus = new LocalBus(eventPath.getPathName());
 	}
 
-	m_rootGroup = new LocalGroup(m_context, groupPath);
+	m_rootGroup = new LocalGroup(m_context, groupPath, GfNormal);
 	return true;
 }
 

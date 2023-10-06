@@ -38,6 +38,15 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.editor.DatabaseView</typeName>
+			<colors>
+				<item>
+					<first>color-link</first>
+					<second>206, 235, 144, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.runtime.DropListCell</typeName>
 			<colors>
 				<item>

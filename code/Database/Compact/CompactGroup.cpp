@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Database/Types.h"
 #include "Database/Compact/CompactGroup.h"
 #include "Database/Compact/CompactInstance.h"
 #include "Database/Compact/CompactContext.h"
@@ -50,6 +51,11 @@ std::wstring CompactGroup::getName() const
 {
 	T_ASSERT(m_groupEntry);
 	return m_groupEntry->getName();
+}
+
+uint32_t CompactGroup::getFlags() const
+{
+	return GfNormal;
 }
 
 bool CompactGroup::rename(const std::wstring& name)

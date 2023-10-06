@@ -55,6 +55,8 @@ public:
 
 	virtual std::wstring getPath() const;
 
+	virtual uint32_t getFlags() const;
+
 	virtual bool rename(const std::wstring& name);
 
 	virtual bool remove();

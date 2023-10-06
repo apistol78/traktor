@@ -9,6 +9,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Database/Types.h"
 #include "Database/Local/LocalGroup.h"
 #include "Database/Local/LocalInstance.h"
 #include "Database/Local/LocalFileLink.h"
@@ -20,15 +21,21 @@ namespace traktor::db
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalGroup", LocalGroup, IProviderGroup)
 
-LocalGroup::LocalGroup(Context& context, const Path& groupPath)
+LocalGroup::LocalGroup(Context& context, const Path& groupPath, uint32_t flags)
 :	m_context(context)
 ,	m_groupPath(groupPath)
+,	m_flags(flags)
 {
 }
 
 std::wstring LocalGroup::getName() const
 {
 	return m_groupPath.getFileNameNoExtension();
+}
+
+uint32_t LocalGroup::getFlags() const
+{
+	return m_flags;
 }
 
 bool LocalGroup::rename(const std::wstring& name)
@@ -55,7 +62,7 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
 		return nullptr;
 
-	return new LocalGroup(m_context, newGroupPath);
+	return new LocalGroup(m_context, newGroupPath, GfNormal);
 }
 
 Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
@@ -92,7 +99,8 @@ bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArra
 		{
 			outChildGroups.push_back(new LocalGroup(
 				m_context,
-				path
+				path,
+				GfNormal
 			));
 		}
 		else if (!groupFile->isDirectory())
@@ -111,7 +119,8 @@ bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArra
 				{
 					outChildGroups.push_back(new LocalGroup(
 						m_context,
-						Path(link->getPath())
+						Path(link->getPath()),
+						GfLink
 					));
 				}
 			}

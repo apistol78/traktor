@@ -38,6 +38,15 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.editor.DatabaseView</typeName>
+			<colors>
+				<item>
+					<first>color-link</first>
+					<second>138, 187, 235, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.runtime.DropListCell</typeName>
 			<colors>
 				<item>
@@ -84,6 +93,15 @@
 				<item>
 					<first>item-seperator-color</first>
 					<second>50, 50, 50, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.scene.SceneEditorPage</typeName>
+			<colors>
+				<item>
+					<first>background-color-layer</first>
+					<second>3, 94, 148, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -852,15 +870,6 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.scene.SceneEditorPage</typeName>
-			<colors>
-				<item>
-					<first>background-color-layer</first>
-					<second>3, 94, 148, 255</second>
 				</item>
 			</colors>
 		</item>

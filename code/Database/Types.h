@@ -34,6 +34,12 @@ enum InstanceFlags
 	IfModified = 1 << 1
 };
 
+enum GroupFlags
+{
+	GfNormal = 0,
+	GfLink = 1 << 0
+};
+
 //@}
 
 }

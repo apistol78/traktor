@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #include "Ui/TreeView/TreeViewItemActivateEvent.h"
 #include "Ui/TreeView/TreeViewItemStateChangeEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewItem", TreeViewItem, AutoWidgetCell)
 
@@ -47,14 +45,14 @@ bool TreeViewItem::isBold() const
 	return m_bold;
 }
 
-void TreeViewItem::setTextOutlineColor(const Color4ub& outlineColor)
+void TreeViewItem::setTextColor(const Color4ub& textColor)
 {
-	m_outlineColor = outlineColor;
+	m_textColor = textColor;
 }
 
-const Color4ub& TreeViewItem::getTextOutlineColor() const
+const Color4ub& TreeViewItem::getTextColor() const
 {
-	return m_outlineColor;
+	return m_textColor;
 }
 
 void TreeViewItem::removeAllImages()
@@ -324,7 +322,7 @@ TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstr
 :	m_view(view)
 ,	m_parent(parent)
 ,	m_text(text)
-,	m_outlineColor(0, 0, 0, 0)
+,	m_textColor(0, 0, 0, 0)
 ,	m_bold(false)
 ,	m_expanded(false)
 ,	m_enabled(true)
@@ -501,7 +499,7 @@ void TreeViewItem::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& p
 
 void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 {
-	Size d = position - m_mouseDownPosition;
+	const Size d = position - m_mouseDownPosition;
 	if (abs(d.cx) > m_view->pixel(2_ut) || abs(d.cy) > m_view->pixel(2_ut))
 	{
 		// Ensure edit isn't triggered if mouse moved during edit state tracking.
@@ -536,8 +534,8 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (m_view->m_imageState && hasChildren())
 	{
-		Rect rcExpand = calculateExpandRect();
-		int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
+		const Rect rcExpand = calculateExpandRect();
+		const int32_t d = m_view->m_imageState->getSize(getWidget()).cy;
 		canvas.drawBitmap(
 			rcExpand.getTopLeft(),
 			Point(isExpanded() ? d : 0, 0),
@@ -578,29 +576,20 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (!m_text.empty())
 	{
-		Rect rcLabel = calculateLabelRect();
+		const Rect rcLabel = calculateLabelRect();
 
 		if (m_bold)
 			canvas.setFont(m_view->m_fontBold);
 
-		if (m_outlineColor.a != 0)
+		if (m_textColor.a == 0)
 		{
-			canvas.setForeground(m_outlineColor);
-			for (int32_t dy = -1; dy <= 1; ++dy)
-			{
-				for (int32_t dx = -1; dx <= 1; ++dx)
-				{
-					if (dx == 0 && dy == 0)
-						continue;
-					canvas.drawText(rcLabel.offset(dx, dy), m_text, AnLeft, AnCenter);
-				}
-			}
+			if (m_enabled)
+				canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected" : L"color"));
+			else
+				canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected-disabled" : L"color-disabled"));
 		}
-
-		if (m_enabled)
-			canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected" : L"color"));
 		else
-			canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected-disabled" : L"color-disabled"));
+			canvas.setForeground(m_textColor);
 
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
 
@@ -609,5 +598,4 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 	}
 }
 
-	}
 }

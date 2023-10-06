@@ -29,6 +29,8 @@ public:
 
 	virtual std::wstring getName() const override final;
 
+	virtual uint32_t getFlags() const override final;
+
 	virtual bool rename(const std::wstring& name) override final;
 
 	virtual bool remove() override final;

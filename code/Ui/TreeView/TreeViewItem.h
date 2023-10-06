@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class TreeView;
 
@@ -44,9 +42,9 @@ public:
 
 	bool isBold() const;
 
-	void setTextOutlineColor(const Color4ub& outlineColor);
+	void setTextColor(const Color4ub& textColor);
 
-	const Color4ub& getTextOutlineColor() const;
+	const Color4ub& getTextColor() const;
 
 	void removeAllImages();
 
@@ -117,22 +115,15 @@ private:
 
 	struct Image
 	{
-		int32_t image;
-		int32_t expanded;
-		int32_t overlay;
-
-		Image()
-		:	image(-1)
-		,	expanded(-1)
-		,	overlay(-1)
-		{
-		}
+		int32_t image = -1;
+		int32_t expanded = -1;
+		int32_t overlay = -1;
 	};
 
 	TreeView* m_view;
 	TreeViewItem* m_parent;
 	std::wstring m_text;
-	Color4ub m_outlineColor;
+	Color4ub m_textColor;
 	AlignedVector< Image > m_images;
 	bool m_bold;
 	bool m_expanded;
@@ -144,9 +135,9 @@ private:
 	int32_t m_dragMode;
 	RefArray< TreeViewItem > m_children;
 
-	TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage = -1, int32_t overlayImage = -1);
+	explicit TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text, int32_t image, int32_t expandedImage = -1, int32_t overlayImage = -1);
 
-	TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text);
+	explicit TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstring& text);
 
 	int32_t calculateDepth() const;
 
@@ -171,6 +162,4 @@ private:
 	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 };
 
-	}
 }
-

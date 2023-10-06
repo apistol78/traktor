@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Ui/Container.h"
 
 namespace traktor
@@ -16,8 +17,10 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class Edit;
 class HierarchicalState;
@@ -35,19 +38,19 @@ class TreeViewItem;
 class TreeViewItemActivateEvent;
 class TreeViewItemStateChangeEvent;
 
-	}
+}
 
-	namespace db
-	{
+namespace traktor::db
+{
 
 class Database;
 class Group;
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IBrowsePreview;
 class IEditor;
@@ -58,17 +61,15 @@ class DatabaseView : public ui::Container
 	T_RTTI_CLASS;
 
 public:
-	class Filter : public Object
+	class Filter
 	{
-		T_RTTI_CLASS;
-
 	public:
 		virtual bool acceptInstance(const db::Instance* instance) const = 0;
 
 		virtual bool acceptEmptyGroups() const = 0;
 	};
 
-	DatabaseView(IEditor* editor);
+	explicit DatabaseView(IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -103,7 +104,7 @@ private:
 	Ref< ui::MenuItem > m_menuInstanceWizards;
 	Ref< PropertyGroup > m_iconsGroup;
 	Ref< db::Database > m_db;
-	Ref< Filter > m_filter;
+	AutoPtr< Filter > m_filter;
 	RefArray< const IBrowsePreview > m_browsePreview;
 	RefArray< IWizardTool > m_wizardTools;
 	std::set< Guid > m_rootInstances;
@@ -113,7 +114,7 @@ private:
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;
 
-	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
+	Ref< ui::TreeViewItem > buildTreeItemHierarchy(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
 	Ref< ui::TreeViewItem > buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
@@ -146,6 +147,4 @@ private:
 	void eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event);
 };
 
-	}
 }
-
