@@ -40,6 +40,13 @@ public:
 	 */
 	virtual std::wstring getName() const = 0;
 
+	/*! Get flags from group.
+	 *
+	 * \sa GroupFlags
+	 * \param Group flags.
+	 */
+	virtual uint32_t getFlags() const = 0;
+
 	/*! Rename group.
 	 *
 	 * \param name New name of group.

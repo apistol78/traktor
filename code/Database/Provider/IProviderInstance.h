@@ -105,6 +105,7 @@ public:
 
 	/*! Get flags from instance storage.
 	 *
+	 * \sa InstanceFlags
 	 * \param Instance storage flags.
 	 */
 	virtual uint32_t getFlags() const = 0;

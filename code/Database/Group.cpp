@@ -44,6 +44,12 @@ std::wstring Group::getPath() const
 	return path;
 }
 
+uint32_t Group::getFlags() const
+{
+	T_ASSERT(m_providerGroup);
+	return m_providerGroup->getFlags();
+}
+
 bool Group::rename(const std::wstring& name)
 {
 	T_ASSERT(m_providerGroup);
@@ -51,7 +57,7 @@ bool Group::rename(const std::wstring& name)
 	if (!m_providerGroup->rename(name))
 		return false;
 
-	std::wstring previousName = m_name;
+	const std::wstring previousName = m_name;
 
 	m_name = name;
 
@@ -120,7 +126,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 	T_ASSERT(m_providerGroup);
 
 	// Create instance guid, use given if available.
-	Guid instanceGuid = guid ? *guid : Guid::create();
+	const Guid instanceGuid = guid ? *guid : Guid::create();
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 	{
 		log::error << L"Not allowed to create instance with invalid guid." << Endl;
