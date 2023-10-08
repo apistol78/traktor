@@ -1502,6 +1502,7 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 		}
 
 		m_instanceGrid->update();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (event->getColumn() == 2)
 	{
