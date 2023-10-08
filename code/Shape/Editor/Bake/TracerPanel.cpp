@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerPanel", TracerPanel, ui::Container)
 
@@ -77,6 +75,8 @@ bool TracerPanel::create(ui::Widget* parent)
 				m_idle = true;
 				update();
 			}
+
+			processor->setEnable(m_editor->isBuilding());
 		}
 	});
 
@@ -86,5 +86,4 @@ bool TracerPanel::create(ui::Widget* parent)
 	return true;
 }
 
-	}
 }

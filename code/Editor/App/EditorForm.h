@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,16 +25,18 @@ namespace traktor
 class CommandLine;
 class Thread;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class DiscoveryManager;
 class StreamServer;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ShortcutTable;
 class Dock;
@@ -49,18 +51,18 @@ class ToolBar;
 class ToolBarButtonClickEvent;
 class ToolBarMenu;
 
-	}
+}
 
-	namespace db
-	{
+namespace traktor::db
+{
 
 class ConnectionManager;
 class Database;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class DatabaseView;
 class Document;
@@ -156,6 +158,8 @@ public:
 	virtual void buildCancel() override final;
 
 	virtual void buildWaitUntilFinished() override final;
+
+	virtual bool isBuilding() const override final;
 
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
@@ -336,5 +340,4 @@ private:
 	//@}
 };
 
-	}
 }

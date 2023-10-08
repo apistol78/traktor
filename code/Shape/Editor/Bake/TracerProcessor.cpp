@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,12 +60,10 @@
 #include "Core/Math/Random.h"
 #include "Model/ModelFormat.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, bool directional)
 {
@@ -259,7 +257,7 @@ bool writeTexture(
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerProcessor", TracerProcessor, Object)
 
@@ -349,6 +347,11 @@ TracerProcessor::Status TracerProcessor::getStatus() const
 	return m_status;
 }
 
+void TracerProcessor::setEnable(bool enable)
+{
+	m_enable = enable;
+}
+
 void TracerProcessor::processorThread()
 {
 	int32_t pending;
@@ -357,6 +360,8 @@ void TracerProcessor::processorThread()
 	while (!m_thread->stopped())
 	{
 		m_event.wait(100);
+		if (!m_enable)
+			continue;
 
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -732,5 +737,4 @@ bool TracerProcessor::process(const TracerTask* task)
 	return true;
 }
 
-	}
 }

@@ -1364,7 +1364,7 @@ bool SceneEditorPage::moveUp()
 	T_ASSERT(moving != nullptr);
 
 	EntityAdapter* parent = moving->getParent();
-	if (parent)
+	if (!parent)
 		return false;
 
 	auto& children = parent->getChildren();
