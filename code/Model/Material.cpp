@@ -12,6 +12,8 @@
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Drawing/Image.h"
 #include "Drawing/Formats/ImageFormatTri.h"
 #include "Model/Material.h"
 
@@ -175,34 +177,41 @@ void Material::Map::serialize(ISerializer& s)
 	s >> Member< bool >(L"anisotropic", anisotropic);
 	s >> Member< Guid >(L"texture", texture);
 
-	AlignedVector< uint8_t > blob;
-	if (s.getDirection() == ISerializer::Direction::Read)
+	if (s.getVersion() >= 4)
 	{
-		s >> Member< void* >(
-			L"image",
-			[&]() { return blob.size(); },	// get blob size
-			[&](size_t size) { blob.resize(size); return true; },	// set blob size
-			[&]() { return blob.ptr(); }
-		);
-		if (!blob.empty())
-		{
-			DynamicMemoryStream ms(blob, true, false);
-			image = drawing::ImageFormatTri().read(&ms);
-		}
+		s >> MemberRef< drawing::Image >(L"image", image);
 	}
 	else
 	{
-		if (image)
+		AlignedVector< uint8_t > blob;
+		if (s.getDirection() == ISerializer::Direction::Read)
 		{
-			DynamicMemoryStream ms(blob, false, true);
-			drawing::ImageFormatTri().write(&ms, image);
+			s >> Member< void* >(
+				L"image",
+				[&]() { return blob.size(); },	// get blob size
+				[&](size_t size) { blob.resize(size); return true; },	// set blob size
+				[&]() { return blob.ptr(); }
+			);
+			if (!blob.empty())
+			{
+				DynamicMemoryStream ms(blob, true, false);
+				image = drawing::ImageFormatTri().read(&ms);
+			}
 		}
-		s >> Member< void* >(
-			L"image",
-			[&]() { return blob.size(); },	// get blob size
-			[&](size_t size) { return true; },	// set blob size
-			[&]() { return blob.ptr(); }
-		);
+		else
+		{
+			if (image)
+			{
+				DynamicMemoryStream ms(blob, false, true);
+				drawing::ImageFormatTri().write(&ms, image);
+			}
+			s >> Member< void* >(
+				L"image",
+				[&]() { return blob.size(); },	// get blob size
+				[&](size_t size) { return true; },	// set blob size
+				[&]() { return blob.ptr(); }
+			);
+		}
 	}
 }
 
