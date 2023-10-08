@@ -29,38 +29,33 @@ class JobQueue;
 class PropertyGroup;
 class Thread;
 
-    namespace shape
-    {
+}
+
+namespace traktor::shape
+{
 
 class TracerTask;
 
 class T_DLLCLASS TracerProcessor : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
 	struct Status
 	{
-		bool active;
-		uint32_t current;
-		uint32_t total;
+		bool active = false;
+		uint32_t current = 0;
+		uint32_t total = 0;
 		std::wstring description;
-
-        Status()
-        :   active(false)
-        ,   current(0)
-        ,   total(0)
-        {
-        }
 	};
 
-    TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool editor);
+	explicit TracerProcessor(const TypeInfo* rayTracerType, const std::wstring& compressionMethod, bool editor);
 
-    virtual ~TracerProcessor();
+	virtual ~TracerProcessor();
 
 	void enqueue(const TracerTask* task);
 
-    void cancel(const Guid& sceneId);
+	void cancel(const Guid& sceneId);
 
 	void cancelAll();
 
@@ -68,23 +63,25 @@ public:
 
 	Status getStatus() const;
 
+	void setEnable(bool enable);
+
 private:
-	const TypeInfo* m_rayTracerType;
-    std::wstring m_compressionMethod;
-    bool m_editor;
-    Thread* m_thread;
-    Ref< JobQueue > m_queue;
-    Semaphore m_lock;
-    Event m_event;
-    RefArray< const TracerTask > m_tasks;
+	const TypeInfo* m_rayTracerType = nullptr;
+	std::wstring m_compressionMethod;
+	bool m_editor = false;
+	Thread* m_thread = nullptr;
+	Ref< JobQueue > m_queue;
+	Semaphore m_lock;
+	Event m_event;
+	RefArray< const TracerTask > m_tasks;
 	Ref< const TracerTask > m_activeTask;
 	Status m_status;
-    bool m_cancelled;
+	bool m_cancelled = false;
+	bool m_enable = true;
 
-    void processorThread();
+	void processorThread();
 
-    bool process(const TracerTask* task);
+	bool process(const TracerTask* task);
 };
 
-    }
 }

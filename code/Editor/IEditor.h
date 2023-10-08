@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -145,6 +145,9 @@ public:
 
 	/*! Wait until current build has finished. */
 	virtual void buildWaitUntilFinished() = 0;
+
+	/*! Check if building. */
+	virtual bool isBuilding() const = 0;
 
 	/*! Create an instance of pipeline dependency walker.
 	 *
