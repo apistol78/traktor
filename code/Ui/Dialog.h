@@ -51,6 +51,8 @@ public:
 
 	bool isModal() const;
 
+	virtual bool isEnable(bool includingParents) const override;
+
 	virtual bool acceptLayout() const override;
 
 private:

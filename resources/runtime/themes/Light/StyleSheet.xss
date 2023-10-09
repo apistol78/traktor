@@ -238,6 +238,27 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.EnvelopeControl</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>173, 173, 173, 255</second>
+				</item>
+				<item>
+					<first>color-cursor</first>
+					<second>128, 128, 128, 255</second>
+				</item>
+				<item>
+					<first>color-key</first>
+					<second>58, 85, 112, 255</second>
+				</item>
+				<item>
+					<first>color-line</first>
+					<second>96, 96, 96, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.GraphControl</typeName>
 			<colors>
 				<item>

@@ -96,6 +96,12 @@ void Form::showProgress(int32_t current, int32_t total)
 	static_cast< IForm* >(m_widget)->showProgress(current, total);
 }
 
+bool Form::isEnable(bool includingParents) const
+{
+	T_ASSERT(m_widget);
+	return m_widget->isEnable();
+}
+
 bool Form::acceptLayout() const
 {
 	return false;
