@@ -35,12 +35,10 @@
 #include "UiKit/Editor/PreviewControl.h"
 #include "UiKit/Editor/Scaffolding.h"
 
-namespace traktor
+namespace traktor::uikit
 {
-	namespace uikit
+	namespace
 	{
-		namespace
-		{
 
 const struct
 {
@@ -78,7 +76,7 @@ int32_t translateVirtualKey(ui::VirtualKey vk)
 	return 0;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewControl", PreviewControl, ui::Widget)
 
@@ -209,17 +207,18 @@ void PreviewControl::setDebugWires(bool debugWires)
 
 void PreviewControl::eventSize(ui::SizeEvent* event)
 {
-	ui::Size sz = getInnerRect().getSize();
+	const ui::Size sz = getInnerRect().getSize();
+	const float scale = std::max(dpi() / 96.0f, 1.0f);
 
 	if (m_renderView)
 		m_renderView->reset(sz.cx, sz.cy);
 
 	if (m_moviePlayer)
 	{
-		m_moviePlayer->postViewResize(sz.cx, sz.cy);
+		m_moviePlayer->postViewResize(sz.cx / scale, sz.cy / scale);
 
 		// Update movie player while resizing; no idle messages are triggered while resizing.
-		float deltaTime = float(m_timer.getDeltaTime());
+		const float deltaTime = (float)m_timer.getDeltaTime();
 		if (m_moviePlayer->progress(deltaTime, nullptr))
 			update();
 	}
@@ -231,6 +230,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 		return;
 
 	const ui::Size sz = getInnerRect().getSize();
+	const float scale = std::max(dpi() / 96.0f, 1.0f);
 
 	// Render view events; reset view if it has become lost.
 	render::RenderEvent re;
@@ -260,8 +260,8 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance()),
-				Any::fromInt32(sz.cx),
-				Any::fromInt32(sz.cy)
+				Any::fromInt32(sz.cx / scale),
+				Any::fromInt32(sz.cy / scale)
 			};
 			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
 		}
@@ -328,7 +328,7 @@ void PreviewControl::eventIdle(ui::IdleEvent* event)
 
 	if (isVisible(true))
 	{
-		float deltaTime = float(m_timer.getDeltaTime());
+		const float deltaTime = (float)m_timer.getDeltaTime();
 
 		if (m_moviePlayer->progress(deltaTime, nullptr))
 			update();
@@ -347,7 +347,7 @@ void PreviewControl::eventKeyDown(ui::KeyDownEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		int32_t ak = translateVirtualKey(event->getVirtualKey());
+		const int32_t ak = translateVirtualKey(event->getVirtualKey());
 		if (ak > 0)
 			m_moviePlayer->postKeyDown(ak);
 	}
@@ -357,7 +357,7 @@ void PreviewControl::eventKeyUp(ui::KeyUpEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		int32_t ak = translateVirtualKey(event->getVirtualKey());
+		const int32_t ak = translateVirtualKey(event->getVirtualKey());
 		if (ak > 0)
 			m_moviePlayer->postKeyUp(ak);
 	}
@@ -367,8 +367,9 @@ void PreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = event->getPosition();
-		m_moviePlayer->postMouseDown(mousePosition.x, mousePosition.y, event->getButton());
+		const ui::Point mousePosition = event->getPosition();
+		const float scale = std::max(dpi() / 96.0f, 1.0f);
+		m_moviePlayer->postMouseDown(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
 	}
 	setCapture();
 	setFocus();
@@ -378,8 +379,9 @@ void PreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = event->getPosition();
-		m_moviePlayer->postMouseUp(mousePosition.x, mousePosition.y, event->getButton());
+		const ui::Point mousePosition = event->getPosition();
+		const float scale = std::max(dpi() / 96.0f, 1.0f);
+		m_moviePlayer->postMouseUp(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
 	}
 	releaseCapture();
 }
@@ -388,8 +390,9 @@ void PreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = event->getPosition();
-		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, event->getButton());
+		const ui::Point mousePosition = event->getPosition();
+		const float scale = std::max(dpi() / 96.0f, 1.0f);
+		m_moviePlayer->postMouseMove(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
 	}
 }
 
@@ -397,10 +400,10 @@ void PreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
 	if (m_moviePlayer)
 	{
-		ui::Point mousePosition = event->getPosition();
-		m_moviePlayer->postMouseWheel(mousePosition.x, mousePosition.y, event->getRotation());
+		const ui::Point mousePosition = event->getPosition();
+		const float scale = std::max(dpi() / 96.0f, 1.0f);
+		m_moviePlayer->postMouseWheel(mousePosition.x / scale, mousePosition.y / scale, event->getRotation());
 	}
 }
 
-	}
 }
