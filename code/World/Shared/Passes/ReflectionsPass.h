@@ -53,7 +53,6 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
-        render::ITexture* blackCubeTexture,
 		render::RenderGraph& renderGraph,
         render::handle_t gbufferTargetSetId,
         render::handle_t visualReadTargetSetId,
@@ -65,6 +64,8 @@ private:
     Ref< WorldEntityRenderers > m_entityRenderers;
     Ref< render::IRenderTargetSet > m_sharedDepthStencil;
     Ref< render::ScreenRenderer > m_screenRenderer;
+    resource::Proxy< render::ImageGraph > m_probeGlobalReflections;
+    resource::Proxy< render::ImageGraph > m_probeLocalReflections;
     resource::Proxy< render::ImageGraph > m_screenReflections;
     Quality m_reflectionsQuality = Quality::Disabled;
 };

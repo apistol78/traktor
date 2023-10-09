@@ -83,9 +83,6 @@ extern const render::Handle s_handleIrradianceGridSize;
 // Reflection probe.
 extern const render::Handle s_handleProbeDiffuse;
 extern const render::Handle s_handleProbeIntensity;
-extern const render::Handle s_handleProbeLocal;
-extern const render::Handle s_handleProbeSpecular;
-extern const render::Handle s_handleProbeSpecularMips;
 extern const render::Handle s_handleProbeTexture;
 extern const render::Handle s_handleProbeTextureMips;
 extern const render::Handle s_handleProbeVolumeCenter;

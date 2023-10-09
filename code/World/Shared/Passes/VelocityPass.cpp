@@ -120,7 +120,8 @@ DoubleBufferedTarget VelocityPass::setup(
 			renderGraph,
 			rp,
 			igctx,
-			view
+			view,
+			nullptr
 		);
 	}
 

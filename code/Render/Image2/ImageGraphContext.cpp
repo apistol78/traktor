@@ -90,19 +90,24 @@ Buffer* ImageGraphContext::findSBuffer(const RenderGraph& renderGraph, img_handl
 	return renderGraph.getBuffer(it->second);
 }
 
-void ImageGraphContext::setFloatParameter(handle_t handle, float value)
-{
-	m_scalarParameters[handle] = value;
-}
+//void ImageGraphContext::setParameters(const std::function< void(ProgramParameters*) >& parametersFn)
+//{
+//	m_parametersFn = parametersFn;
+//}
 
-void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value)
-{
-	m_vectorParameters[handle] = value;
-}
-
-void ImageGraphContext::setTextureParameter(handle_t handle, ITexture* texture)
-{
-	m_textureParameters[handle] = texture;
-}
+//void ImageGraphContext::setFloatParameter(handle_t handle, float value)
+//{
+//	m_scalarParameters[handle] = value;
+//}
+//
+//void ImageGraphContext::setVectorParameter(handle_t handle, const Vector4& value)
+//{
+//	m_vectorParameters[handle] = value;
+//}
+//
+//void ImageGraphContext::setTextureParameter(handle_t handle, ITexture* texture)
+//{
+//	m_textureParameters[handle] = texture;
+//}
 
 }

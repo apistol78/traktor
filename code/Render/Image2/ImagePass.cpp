@@ -32,6 +32,7 @@ void ImagePass::addRenderGraphPasses(
 	const ImageGraphView& view,
 	const targetSetVector_t& targetSetIds,
 	const targetSetVector_t& sbufferIds,
+	const std::function< void(ProgramParameters*) >& parametersFn,
 	ScreenRenderer* screenRenderer,
 	RenderGraph& renderGraph
 ) const
@@ -63,12 +64,15 @@ void ImagePass::addRenderGraphPasses(
 			sharedParams->setFloatParameter(s_handleTime, view.time);
 			sharedParams->setFloatParameter(s_handleDeltaTime, view.deltaTime);
 
-			for (auto it : context.getFloatParameters())
-				sharedParams->setFloatParameter(it.first, it.second);
-			for (auto it : context.getVectorParameters())
-				sharedParams->setVectorParameter(it.first, it.second);
-			for (auto it : context.getTextureParameters())
-				sharedParams->setTextureParameter(it.first, it.second);
+			if (parametersFn)
+				parametersFn(sharedParams);
+
+			//for (auto it : context.getFloatParameters())
+			//	sharedParams->setFloatParameter(it.first, it.second);
+			//for (auto it : context.getVectorParameters())
+			//	sharedParams->setVectorParameter(it.first, it.second);
+			//for (auto it : context.getTextureParameters())
+			//	sharedParams->setTextureParameter(it.first, it.second);
 
 			sharedParams->endParameters(renderContext);
 				

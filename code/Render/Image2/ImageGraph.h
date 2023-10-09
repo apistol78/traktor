@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Render/Types.h"
@@ -29,6 +30,7 @@ class ImagePassStep;
 class ImageStructBuffer;
 class ImageTargetSet;
 class ImageTexture;
+class ProgramParameters;
 class RenderGraph;
 class RenderPass;
 class ScreenRenderer;
@@ -50,7 +52,8 @@ public:
 	    RenderGraph& renderGraph,
 	    RenderPass* pass,
 	    const ImageGraphContext& cx,
-	    const ImageGraphView& view
+	    const ImageGraphView& view,
+        const std::function< void(ProgramParameters*) >& parametersFn
     ) const;
 
 private:

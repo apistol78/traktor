@@ -73,5 +73,13 @@
 			<id>{0135F7CC-FC65-4FD9-BBD5-CCE0C003B540}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{79208A82-A65C-2045-A8AD-85E4DA2D160D}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
+		<item>
+			<id>{3DCB8715-1E44-074A-8D1D-151BE6A8BF81}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>
