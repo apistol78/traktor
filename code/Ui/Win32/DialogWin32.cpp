@@ -122,10 +122,15 @@ DialogResult DialogWin32::showModal()
 		while (GetParent(hParentWnd))
 			hParentWnd = GetParent(hParentWnd);
 
-		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-			EnableWindow(hWnd, FALSE);
-			return TRUE;
-		}, NULL);
+		//EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+		//	EnableWindow(hWnd, FALSE);
+		//	return TRUE;
+		//}, NULL);
+
+		//EnableWindow(m_hWnd, TRUE);
+
+		EnableWindow(hParentWnd, FALSE);
+		EnableWindow(m_hWnd, TRUE);
 	}
 
 	// Place dialog window centered above parent window.
@@ -181,10 +186,12 @@ DialogResult DialogWin32::showModal()
 	// Enable parent window.
 	if (hParentWnd)
 	{
-		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-			EnableWindow(hWnd, TRUE);
-			return TRUE;
-		}, NULL);
+		//EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+		//	EnableWindow(hWnd, TRUE);
+		//	return TRUE;
+		//}, NULL);
+
+		EnableWindow(hParentWnd, TRUE);
 	}
 
 	return m_result;

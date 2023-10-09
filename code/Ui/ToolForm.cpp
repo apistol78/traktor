@@ -90,6 +90,12 @@ bool ToolForm::isModal() const
 	return m_modal;
 }
 
+bool ToolForm::isEnable(bool includingParents) const
+{
+	T_ASSERT(m_widget);
+	return m_widget->isEnable();
+}
+
 bool ToolForm::acceptLayout() const
 {
 	return false;

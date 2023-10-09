@@ -140,11 +140,10 @@ bool Widget::isVisible(bool includingParents) const
 	if (!m_widget->isVisible())
 		return false;
 
-	if (includingParents)
+	if (m_parent != nullptr && includingParents)
 	{
-		for (Widget* parent = m_parent; parent != nullptr; parent = parent->getParent())
-			if (!parent->isVisible(true))
-				return false;
+		if (!m_parent->isVisible(true))
+			return false;
 	}
 
 	return true;
@@ -163,11 +162,10 @@ bool Widget::isEnable(bool includingParents) const
 	if (!m_widget->isEnable())
 		return false;
 
-	if (includingParents)
+	if (m_parent != nullptr && includingParents)
 	{
-		for (Widget* parent = m_parent; parent != nullptr; parent = parent->getParent())
-			if (!parent->isEnable(true))
-				return false;
+		if (!m_parent->isEnable(true))
+			return false;
 	}
 
 	return true;

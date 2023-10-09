@@ -66,6 +66,8 @@ public:
 
 	void showProgress(int32_t current, int32_t total);
 
+	virtual bool isEnable(bool includingParents) const override;
+
 	virtual bool acceptLayout() const override;
 
 private:

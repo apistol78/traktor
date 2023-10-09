@@ -105,6 +105,12 @@ bool Dialog::isModal() const
 	return m_modal;
 }
 
+bool Dialog::isEnable(bool includingParents) const
+{
+	T_ASSERT(m_widget);
+	return m_widget->isEnable();
+}
+
 bool Dialog::acceptLayout() const
 {
 	return false;
