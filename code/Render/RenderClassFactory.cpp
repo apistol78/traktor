@@ -240,8 +240,8 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIRenderView);
 
 	auto classImageGraphContext = new AutoRuntimeClass< ImageGraphContext >();
-	classImageGraphContext->addMethod("setFloatParameter", &ImageGraphContext::setFloatParameter);
-	classImageGraphContext->addMethod("setVectorParameter", &ImageGraphContext::setVectorParameter);
+	//classImageGraphContext->addMethod("setFloatParameter", &ImageGraphContext::setFloatParameter);
+	//classImageGraphContext->addMethod("setVectorParameter", &ImageGraphContext::setVectorParameter);
 	registrar->registerClass(classImageGraphContext);
 }
 

@@ -2,7 +2,7 @@
 <object type="traktor.render.ImageGraphAsset">
 	<nodes>
 		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
-			<id>{A24C08E3-CDBB-F540-A23E-D2DDEE8715EB}</id>
+			<id>{815B5166-3E37-1542-AF27-09E1C0A3AD1C}</id>
 			<comment/>
 			<position>
 				<first>1143</first>
@@ -10,7 +10,7 @@
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
+			<id>{228DA073-B664-F147-BEC2-0331B33140DA}</id>
 			<comment/>
 			<position>
 				<first>495</first>
@@ -19,7 +19,7 @@
 			<textureId>InputDepth</textureId>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{F45C816F-6B0C-2443-9179-2D3DDD6225CD}</id>
+			<id>{599786DC-596D-4240-96C3-7DEBEDA2C31B}</id>
 			<comment/>
 			<position>
 				<first>479</first>
@@ -28,7 +28,7 @@
 			<textureId>InputNormal</textureId>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{86DABBE0-B5B7-A947-8CFC-DEBB4F93249F}</id>
+			<id>{7EEB9732-C99D-5343-80C0-99FDDF154F98}</id>
 			<comment/>
 			<position>
 				<first>463</first>
@@ -37,7 +37,7 @@
 			<textureId>InputRoughness</textureId>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
+			<id>{04CCFB6F-0EB4-D943-82C0-A8CF09DCE768}</id>
 			<comment/>
 			<position>
 				<first>479</first>
@@ -46,16 +46,16 @@
 			<textureId>InputColorLast</textureId>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
+			<id>{7CF9F196-2243-004F-83E5-A6EDE87FFB42}</id>
 			<comment/>
 			<position>
 				<first>799</first>
 				<second>187</second>
 			</position>
-			<name>Screen space reflections</name>
+			<name>Probe global reflections</name>
 			<clear>
 				<mask>
-					<Color>true</Color>
+					<Color>false</Color>
 					<Depth>false</Depth>
 					<Stencil>false</Stencil>
 				</mask>
@@ -74,13 +74,12 @@
 			</clear>
 			<steps>
 				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name>Screenspace reflections</name>
-					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
+					<name>Probe reflections</name>
+					<shader>{D44B17A5-5BA5-714B-AD7C-7DDFE6C7D6C6}</shader>
 					<parameters>
 						<item>Depth</item>
 						<item>InputNormal</item>
 						<item>InputRoughness</item>
-						<item>Color</item>
 					</parameters>
 				</item>
 			</steps>
@@ -104,7 +103,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -114,7 +113,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -124,17 +123,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BE66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 	</edges>

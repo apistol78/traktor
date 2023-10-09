@@ -30,6 +30,8 @@ namespace traktor::world
 	namespace
 	{
 
+const resource::Id< render::ImageGraph > c_probeGlobalReflections(L"{79208A82-A65C-2045-A8AD-85E4DA2D160D}");
+const resource::Id< render::ImageGraph > c_probeLocalReflections(L"{3DCB8715-1E44-074A-8D1D-151BE6A8BF81}");
 const resource::Id< render::ImageGraph > c_screenReflections(L"{2F8EC56A-FD46-DF42-94B5-9DD676B8DD8A}");
 
 	}
@@ -49,8 +51,23 @@ ReflectionsPass::ReflectionsPass(
 
 bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc)
 {
+	// Create probe reflections processes.
+	if (desc.quality.reflections >= Quality::Low)
+	{
+		if (!resourceManager->bind(c_probeGlobalReflections, m_probeGlobalReflections))
+		{
+			log::error << L"Unable to create probe (global) reflections process." << Endl;
+			return false;
+		}
+		if (!resourceManager->bind(c_probeLocalReflections, m_probeLocalReflections))
+		{
+			log::error << L"Unable to create probe (local) reflections process." << Endl;
+			return false;
+		}
+	}
+
 	// Create screen reflections processing.
-	if (desc.quality.reflections >= Quality::Disabled)
+	if (desc.quality.reflections >= Quality::High)
 	{
 		if (!resourceManager->bind(c_screenReflections, m_screenReflections))
 		{
@@ -60,11 +77,14 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 	}
 
 	// Create screen renderer.
-	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(renderSystem))
-		return false;
+	if (m_probeGlobalReflections || m_probeLocalReflections || m_screenReflections)
+	{
+		m_screenRenderer = new render::ScreenRenderer();
+		if (!m_screenRenderer->create(renderSystem))
+			return false;
 
-	m_reflectionsQuality = desc.quality.reflections;
+		m_reflectionsQuality = desc.quality.reflections;
+	}
 	return true;
 }
 
@@ -72,7 +92,6 @@ render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::ITexture* blackCubeTexture,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t visualReadTargetSetId,
@@ -83,17 +102,6 @@ render::handle_t ReflectionsPass::setup(
 
 	if (m_reflectionsQuality == Quality::Disabled)
 		return 0;
-
-	// Find first, non-local, probe.
-	const ProbeComponent* probe = nullptr;
-	for (auto p : gatheredView.probes)
-	{
-		if (!p->getLocal() && p->getTexture() != nullptr)
-		{
-			probe = p;
-			break;
-		}
-	}
 
 	// Add reflections target.
 	render::RenderGraphTargetSetDesc rgtd;
@@ -157,26 +165,102 @@ render::handle_t ReflectionsPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
 
-	if (probe)
+	// Global reflections.
+	if (m_probeGlobalReflections)
 	{
-		igctx.setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-		igctx.setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-		igctx.setTextureParameter(s_handleProbeTexture, probe->getTexture());
-	}
-	else
-	{
-		igctx.setFloatParameter(s_handleProbeIntensity, 0.0f);
-		igctx.setFloatParameter(s_handleProbeTextureMips, 0.0f);
-		igctx.setTextureParameter(s_handleProbeTexture, blackCubeTexture);
+		// Find first, non-local, probe.
+		const ProbeComponent* probe = nullptr;
+		for (auto p : gatheredView.probes)
+		{
+			if (!p->getLocal() && p->getTexture() != nullptr)
+			{
+				probe = p;
+				break;
+			}
+		}
+
+		if (probe != nullptr)
+		{
+			//igctx.setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
+			//igctx.setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+			//igctx.setTextureParameter(s_handleProbeTexture, probe->getTexture());
+
+			auto setParameters = [=](render::ProgramParameters* params) {
+				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
+				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
+				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
+			};
+
+			m_probeGlobalReflections->addPasses(
+				m_screenRenderer,
+				renderGraph,
+				rp,
+				igctx,
+				view,
+				setParameters
+			);
+		}
 	}
 
-	m_screenReflections->addPasses(
-		m_screenRenderer,
-		renderGraph,
-		rp,
-		igctx,
-		view
-	);
+	// Apply local reflections.
+	if (m_probeLocalReflections)
+	{
+		for (auto p : gatheredView.probes)
+		{
+			if (p->getLocal() && p->getTexture() != nullptr)
+			{
+				const Transform& transform = p->getTransform();
+				const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
+				//const Vector4 center = worldView * p->getVolume().getCenter().xyz1();
+				//const Scalar radius = p->getVolume().getExtent().length();
+
+				float distance;
+				if (!worldRenderView.isBoxVisible(p->getVolume(), p->getTransform(), distance))
+					continue;
+
+				//igctx.setFloatParameter(s_handleProbeIntensity, p->getIntensity());
+				//igctx.setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
+				//igctx.setTextureParameter(s_handleProbeTexture, p->getTexture());
+				//igctx.setVectorParameter(s_handleProbeVolumeCenter, p->getBoundingBox().getCenter());
+				//igctx.setVectorParameter(s_handleProbeVolumeExtent, p->getBoundingBox().getExtent());
+				//igctx.setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
+
+				Aabb3 worldVolume = p->getBoundingBox(); //.transform(transform);
+
+				auto setParameters = [=](render::ProgramParameters* params) {
+					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
+					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
+					params->setTextureParameter(s_handleProbeTexture, p->getTexture());
+					params->setVectorParameter(s_handleProbeVolumeCenter,worldVolume.getCenter());
+					params->setVectorParameter(s_handleProbeVolumeExtent, worldVolume.getExtent());
+					params->setMatrixParameter(s_handleWorldView, worldView);
+					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
+				};
+
+				m_probeLocalReflections->addPasses(
+					m_screenRenderer,
+					renderGraph,
+					rp,
+					igctx,
+					view,
+					setParameters
+				);
+			}
+		}
+	}
+
+	// Apply screenspace traced reflections.
+	if (m_screenReflections)
+	{
+		m_screenReflections->addPasses(
+			m_screenRenderer,
+			renderGraph,
+			rp,
+			igctx,
+			view,
+			nullptr
+		);
+	}
 
 	renderGraph.addPass(rp);
 	return reflectionsTargetSetId;

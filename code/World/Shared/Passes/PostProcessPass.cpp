@@ -208,16 +208,16 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputVelocityLast, velocityTargetSetId.previous, 0);
 	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
 
-	// Expose gamma and exposure.
-	igctx.setFloatParameter(s_handleGamma, m_gamma);
-	igctx.setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
-	igctx.setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-	igctx.setFloatParameter(s_handleFxRotate, fxRotate);
-
-	// Expose jitter; in texture space.
+	// Expose gamma, exposure and jitter.
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
-	igctx.setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));
+	auto setParameters = [=](render::ProgramParameters* params) {
+		params->setFloatParameter(s_handleGamma, m_gamma);
+		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
+		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
+		params->setFloatParameter(s_handleFxRotate, fxRotate);
+		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));	// Texture space.
+	};
 
 	StaticVector< render::ImageGraph*, 5 > processes;
 	if (m_toneMap)
@@ -265,7 +265,8 @@ void PostProcessPass::setup(
 			renderGraph,
 			rp,
 			igctx,
-			view
+			view,
+			setParameters
 		);
 
 		if (next)

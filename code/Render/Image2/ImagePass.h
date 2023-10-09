@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
@@ -28,6 +29,7 @@ namespace traktor::render
 class ImageGraph;
 class ImageGraphContext;
 class ImagePassStep;
+class ProgramParameters;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -53,6 +55,7 @@ public:
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
 		const targetSetVector_t& sbufferIds,
+		const std::function< void(ProgramParameters*) >& parametersFn,
 		ScreenRenderer* screenRenderer,
 		RenderGraph& renderGraph
 	) const;

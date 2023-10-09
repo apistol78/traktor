@@ -127,7 +127,8 @@ render::handle_t AmbientOcclusionPass::setup(
 		renderGraph,
 		rp,
 		igctx,
-		view
+		view,
+		nullptr
 	);
 
 	render::Clear clear;

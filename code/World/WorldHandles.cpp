@@ -73,9 +73,6 @@ const render::Handle s_handleIrradianceGridSize(L"World_IrradianceGridSize");
 // Reflection probe.
 const render::Handle s_handleProbeDiffuse(L"World_ProbeDiffuse");
 const render::Handle s_handleProbeIntensity(L"World_ProbeIntensity");
-const render::Handle s_handleProbeLocal(L"World_ProbeLocal");
-const render::Handle s_handleProbeSpecular(L"World_ProbeSpecular");
-const render::Handle s_handleProbeSpecularMips(L"World_ProbeSpecularMips");
 const render::Handle s_handleProbeTexture(L"World_ProbeTexture");
 const render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
 const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");

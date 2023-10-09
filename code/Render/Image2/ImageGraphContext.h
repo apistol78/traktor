@@ -8,6 +8,7 @@
  */
 #pragma once
 
+//#include <functional>
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
@@ -27,6 +28,7 @@ namespace traktor::render
 
 class Buffer;
 class ITexture;
+class ProgramParameters;
 class RenderGraph;
 
 /*!
@@ -79,17 +81,21 @@ public:
 	/*! Shader pameters */
 	//@{
 
-	void setFloatParameter(handle_t handle, float value);
+	//void setFloatParameter(handle_t handle, float value);
 
-	const SmallMap< handle_t, float >& getFloatParameters() const { return m_scalarParameters; }
+	//const SmallMap< handle_t, float >& getFloatParameters() const { return m_scalarParameters; }
 
-	void setVectorParameter(handle_t handle, const Vector4& value);
+	//void setVectorParameter(handle_t handle, const Vector4& value);
 
-	const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
+	//const SmallMap< handle_t, Vector4 >& getVectorParameters() const { return m_vectorParameters; }
 
-	void setTextureParameter(handle_t handle, ITexture* texture);
+	//void setTextureParameter(handle_t handle, ITexture* texture);
 
-	const SmallMap< handle_t, ITexture* >& getTextureParameters() const { return m_textureParameters; }
+	//const SmallMap< handle_t, ITexture* >& getTextureParameters() const { return m_textureParameters; }
+
+	//void setParameters(const std::function< void(ProgramParameters*) >& parametersFn);
+
+	//const std::function< void(ProgramParameters*) >& getParameters() const { return m_parametersFn; }
 
 	//@}
 
@@ -103,9 +109,10 @@ private:
 
 	SmallMap< img_handle_t, TextureTargetSet > m_textureTargetSet;
 	SmallMap< img_handle_t, handle_t > m_sbufferHandles;
-	SmallMap< handle_t, float > m_scalarParameters;
-	SmallMap< handle_t, Vector4 > m_vectorParameters;
-	SmallMap< handle_t, ITexture* > m_textureParameters;
+	//SmallMap< handle_t, float > m_scalarParameters;
+	//SmallMap< handle_t, Vector4 > m_vectorParameters;
+	//SmallMap< handle_t, ITexture* > m_textureParameters;
+	//std::function< void(ProgramParameters*) > m_parametersFn;
 };
 
 }
