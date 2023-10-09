@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include "Core/Containers/SmallMap.h"
-#include "Core/Containers/SmallSet.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor::model
@@ -54,7 +53,8 @@ template
 class Grid3
 {
 public:
-	static const uint32_t InvalidIndex = ~0U;
+	static constexpr uint32_t InvalidIndex = ~0U;
+	static constexpr uint32_t HashBuckets = 256;
 
 	explicit Grid3(float cellSize)
 	:	m_cellSize(cellSize)
@@ -91,14 +91,14 @@ public:
 		// Remove index from cell and add to new cell.
 		if (fromHash != toHash)
 		{
-			auto& indices = m_indices[fromHash];
+			auto& indices = m_indices[fromHash & (HashBuckets - 1)];
 			if (!indices.empty())
 			{
 				auto it = std::remove(indices.begin(), indices.end(), index);
 				indices.erase(it, indices.end());
 			}
 
-			m_indices[toHash].push_back(index);
+			m_indices[toHash & (HashBuckets - 1)].push_back(index);
 		}
 
 		// Modify value.
@@ -138,12 +138,7 @@ public:
 				for (int32_t ix = mnx; ix <= mxx; ++ix)
 				{
 					const uint32_t hash = HashFunction::get(ix, iy, iz);
-
-					auto it = m_indices.find(hash);
-					if (it == m_indices.end())
-						continue;
-
-					for (auto index : it->second)
+					for (auto index : m_indices[hash & (HashBuckets - 1)])
 					{
 						const Vector4 pv = PositionAccessor::get(m_values[index]);
 						if ((pv - p).length2() <= sd2)
@@ -158,7 +153,7 @@ public:
 
 	uint32_t add(const ValueType& v)
 	{
-		Vector4 p = PositionAccessor::get(v) / m_cellSize;
+		const Vector4 p = PositionAccessor::get(v) / m_cellSize;
 
 		T_MATH_ALIGN16 int32_t pe[4];
 		p.storeIntegersAligned(pe);
@@ -167,7 +162,7 @@ public:
 		const uint32_t id = (uint32_t)m_values.size();
 
 		m_values.push_back(v);
-		m_indices[hash].push_back(id);
+		m_indices[hash & (HashBuckets - 1)].push_back(id);
 		return id;
 	}
 
@@ -185,8 +180,9 @@ public:
 
 	void clear()
 	{
-		m_indices.clear();
 		m_values.clear();
+		for (uint32_t i = 0; i < HashBuckets; ++i)
+			m_indices[i].clear();
 	}
 
 	void reserve(size_t capacity)
@@ -206,13 +202,14 @@ public:
 
 private:
 	Scalar m_cellSize;
-	SmallMap< uint32_t, AlignedVector< uint32_t > > m_indices;
+	AlignedVector< uint32_t > m_indices[HashBuckets];
 	AlignedVector< ValueType > m_values;
 
 	void rehash()
 	{
-		m_indices.reset();
-		m_indices.reserve(m_values.size());
+		for (uint32_t i = 0; i < HashBuckets; ++i)
+			m_indices[i].resize(0);
+
 		for (uint32_t i = 0; i < (uint32_t)m_values.size(); ++i)
 		{
 			const Vector4 p = PositionAccessor::get(m_values[i]) / m_cellSize;
@@ -221,7 +218,7 @@ private:
 			p.storeIntegersAligned(pe);
 
 			const uint32_t hash = HashFunction::get(pe[0], pe[1], pe[2]);
-			m_indices[hash].push_back(i);
+			m_indices[hash & (HashBuckets - 1)].push_back(i);
 		}
 	}
 };
