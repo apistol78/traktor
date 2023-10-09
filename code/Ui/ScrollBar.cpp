@@ -196,7 +196,7 @@ void ScrollBar::eventPaint(PaintEvent* event)
 	const int32_t sliderTop = m_position * (sliderRange - sliderHeight) / (m_range - (m_page - 1));
 
 	const bool hover =
-		isEnable() &&
+		isEnable(true) &&
 		m_hover &&
 		(
 			getPrimaryPosition(mousePosition, m_vertical) >= getPrimaryPosition(rcInner.getTopLeft(), m_vertical) + pixel(16_ut) + sliderTop &&

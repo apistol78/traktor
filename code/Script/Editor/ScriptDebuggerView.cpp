@@ -252,7 +252,7 @@ void ScriptDebuggerView::eventDebuggerToolClick(ui::ToolBarButtonClickEvent* eve
 
 void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent* event)
 {
-	if (!m_callStackGrid->isEnable())
+	if (!m_callStackGrid->isEnable(true))
 		return;
 
 	ui::GridRow* selectedRow = m_callStackGrid->getSelectedRow();

@@ -190,7 +190,7 @@ void DropDown::eventMouseTrack(MouseTrackEvent* event)
 
 void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	if (m_items.empty())
@@ -244,7 +244,7 @@ void DropDown::eventButtonDown(MouseButtonDownEvent* event)
 
 void DropDown::eventButtonUp(MouseButtonUpEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	update();
@@ -259,7 +259,7 @@ void DropDown::eventPaint(PaintEvent* event)
 	const Point at = rcInner.getTopLeft();
 	const Size size = rcInner.getSize();
 	const int32_t sep = pixel(14_ut);
-	bool hover = isEnable() && m_hover;
+	bool hover = isEnable(true) && m_hover;
 
 	const Rect rcText(
 		at.x + pixel(4_ut),
@@ -298,7 +298,7 @@ void DropDown::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"color-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
-	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 
 	if (!m_multiple)
 		canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);

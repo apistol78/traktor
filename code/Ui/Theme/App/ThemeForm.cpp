@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyColor.h"
@@ -23,6 +24,7 @@
 #include "Ui/MessageBox.h"
 #include "Ui/ShortcutTable.h"
 #include "Ui/Splitter.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ColorPicker/ColorDialog.h"
@@ -140,9 +142,14 @@ TreeViewItem* getEntity(TreeViewItem* item)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ThemeForm", ThemeForm, Form)
 
-bool ThemeForm::create()
+bool ThemeForm::create(const CommandLine& cmdLine)
 {
-	Ref< StyleSheet > styleSheet = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss", true);
+	std::wstring styleSheetName = L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss";
+	if (cmdLine.hasOption(L"styleSheet"))
+		styleSheetName = cmdLine.getOption(L"styleSheet").getString();
+
+	// Load default style sheet.
+	Ref< StyleSheet > styleSheet = loadStyleSheet(styleSheetName, true);
 	if (!styleSheet)
 		return false;
 
@@ -150,6 +157,8 @@ bool ThemeForm::create()
 
 	if (!Form::create(L"Theme Editor", 1000_ut, 800_ut, Form::WsDefault, new TableLayout(L"100%", L"*,100%", 0_ut, 0_ut)))
 		return false;
+
+	setIcon(new ui::StyleBitmap(L"ThemeEditor.Icon"));
 
 	addEventHandler< ui::CloseEvent >(this, &ThemeForm::eventClose);
 
@@ -215,6 +224,21 @@ bool ThemeForm::create()
 
 	update();
 	show();
+
+	if (cmdLine.getCount() > 0)
+	{
+		if ((m_styleSheet = loadStyleSheet(cmdLine.getString(0), false)) != nullptr)
+		{
+			m_styleSheetPath = cmdLine.getString(0);
+			m_styleSheetHash = DeepHash(m_styleSheet).get();
+			updateTitle();
+			updateTree();
+			updatePalette();
+			updatePreview();
+		}
+		else
+			ui::MessageBox::show(this, L"Unable to open stylesheet.", L"Error", ui::MbIconExclamation | ui::MbOk);
+	}
 
 	return true;
 }

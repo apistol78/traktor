@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,13 @@
 
 #include "Core/Io/Path.h"
 #include "Ui/Form.h"
+
+namespace traktor
+{
+
+class CommandLine;
+
+}
 
 namespace traktor::ui
 {
@@ -29,7 +36,7 @@ class ThemeForm : public Form
 	T_RTTI_CLASS;
 
 public:
-	bool create();
+	bool create(const CommandLine& cmdLine);
 
 private:
 	Ref< ShortcutTable > m_shortcutTable;

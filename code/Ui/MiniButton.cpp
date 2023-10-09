@@ -95,7 +95,7 @@ void MiniButton::eventPaint(PaintEvent* event)
 	Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	if (isEnable())
+	if (isEnable(true))
 	{
 		canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
 		canvas.fillRect(rcInner);

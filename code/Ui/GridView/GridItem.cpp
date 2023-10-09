@@ -171,7 +171,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 
 		if (m_textColor.a == 0)
 		{
-			if (getWidget< GridView >()->isEnable() && getRow())
+			if (getWidget< GridView >()->isEnable(true) && getRow())
 				canvas.setForeground(ss->getColor(this, (getRow()->getState() & GridRow::Selected) ? L"color-selected" : L"color"));
 			else
 				canvas.setForeground(ss->getColor(this, L"color-disabled"));

@@ -521,7 +521,7 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"control-background-color"));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 
-	canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
