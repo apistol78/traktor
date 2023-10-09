@@ -385,7 +385,7 @@
 				<first>982</first>
 				<second>889</second>
 			</position>
-			<value>0</value>
+			<value>0.8</value>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{BFC530DE-6DE2-2B4C-A4A7-0F4CA291C84D}</id>
