@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,12 +11,10 @@
 #include "UiKit/Editor/PreviewEditorFactory.h"
 #include "UiKit/Editor/Scaffolding.h"
 
-namespace traktor
+namespace traktor::uikit
 {
-	namespace uikit
-	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.PreviewEditorFactory", 0, PreviewEditorFactory, editor::IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.uikit.PreviewEditorFactory", 0, PreviewEditorFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet PreviewEditorFactory::getEditableTypes() const
 {
@@ -31,9 +29,9 @@ bool PreviewEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::se
 	return true;
 }
 
-Ref< editor::IObjectEditor > PreviewEditorFactory::createObjectEditor(editor::IEditor* editor) const
+Ref< editor::IEditorPage > PreviewEditorFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
-	return new PreviewEditor(editor);
+	return new PreviewEditor(editor, document);
 }
 
 void PreviewEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
@@ -45,5 +43,4 @@ Ref< ISerializable > PreviewEditorFactory::cloneAsset(const ISerializable* asset
 	return DeepClone(asset).create();
 }
 
-	}
 }

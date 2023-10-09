@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,8 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Database/Instance.h"
+#include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Spark/MovieResourceFactory.h"
 #include "Render/IRenderSystem.h"
@@ -33,21 +35,20 @@
 #include "UiKit/Editor/Scaffolding.h"
 #include "Video/VideoFactory.h"
 
-namespace traktor
+namespace traktor::uikit
 {
-	namespace uikit
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewEditor", PreviewEditor, editor::IObjectEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.uikit.PreviewEditor", PreviewEditor, editor::IEditorPage)
 
-PreviewEditor::PreviewEditor(editor::IEditor* editor)
+PreviewEditor::PreviewEditor(editor::IEditor* editor, editor::IDocument* document)
 :	m_editor(editor)
+,	m_document(document)
 {
 }
 
-bool PreviewEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
+bool PreviewEditor::create(ui::Container* parent)
 {
-	Ref< Scaffolding > ws = mandatory_non_null_type_cast< Scaffolding* >(object);
+	Ref< Scaffolding > ws = mandatory_non_null_type_cast< Scaffolding* >(m_document->getInstance(0)->getObject());
 
 	// Get systems and managers.
 	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
@@ -120,8 +121,9 @@ void PreviewEditor::destroy()
 	safeDestroy(m_previewControl);
 }
 
-void PreviewEditor::apply()
+bool PreviewEditor::dropInstance(db::Instance* instance, const ui::Point& position)
 {
+	return false;
 }
 
 bool PreviewEditor::handleCommand(const ui::Command& command)
@@ -132,18 +134,7 @@ bool PreviewEditor::handleCommand(const ui::Command& command)
 void PreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager && database == m_editor->getOutputDatabase())
-	{
-		if (m_resourceManager->reload(eventId, false))
-			m_previewControl->invalidateScaffolding();
-	}
-}
-
-ui::Size PreviewEditor::getPreferredSize() const
-{
-	return ui::Size(
-		1280,
-		720
-	);
+		m_resourceManager->reload(eventId, false);
 }
 
 void PreviewEditor::eventPreviewSize(ui::SizeEvent* event)
@@ -155,5 +146,4 @@ void PreviewEditor::eventPreviewSize(ui::SizeEvent* event)
 	m_statusBar->setText(0, ss.str());
 }
 
-	}
 }
