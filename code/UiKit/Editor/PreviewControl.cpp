@@ -195,6 +195,13 @@ void PreviewControl::setScaffolding(const Scaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
+void PreviewControl::invalidateScaffolding(const Guid& eventId)
+{
+	// This will cause the tag in the proxy to be zero so the scaffolding will get re-created.
+	if (m_scaffolding != nullptr && (Guid)m_scaffolding->getScaffoldingClass() != eventId)
+		m_scaffoldingClass.unconsume();
+}
+
 void PreviewControl::setDebugWires(bool debugWires)
 {
 	m_debugWires = debugWires;

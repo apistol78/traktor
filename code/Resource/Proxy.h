@@ -92,6 +92,12 @@ public:
 		m_tag = (intptr_t)getResource();
 	}
 
+	/*! Un-consume change; useful for forcing a consume again. */
+	void unconsume()
+	{
+		m_tag = 0;
+	}
+
 	operator bool () const
 	{
 		return getResource() != nullptr;

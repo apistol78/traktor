@@ -134,7 +134,14 @@ bool PreviewEditor::handleCommand(const ui::Command& command)
 void PreviewEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
 	if (m_resourceManager && database == m_editor->getOutputDatabase())
-		m_resourceManager->reload(eventId, false);
+	{
+		if (m_resourceManager->reload(eventId, false))
+		{
+			// Content in resource manager was reloaded; in case it's not the main scaffolding script
+			// we need to invalidate it manually so the scaffolding is re-created properly.
+			m_previewControl->invalidateScaffolding(eventId);
+		}
+	}
 }
 
 void PreviewEditor::eventPreviewSize(ui::SizeEvent* event)
