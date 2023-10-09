@@ -20,11 +20,11 @@ bool ProgressBar::create(Widget* parent, int32_t style, int32_t minProgress, int
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_minProgress = minProgress;
-	m_maxProgress = maxProgress;
-	m_progress = minProgress;
-
 	addEventHandler< PaintEvent >(this, &ProgressBar::eventPaint);
+	addEventHandler< TimerEvent >(this, &ProgressBar::eventTimer);
+
+	setRange(minProgress, maxProgress);
+	setProgress(minProgress);
 	return true;
 }
 
@@ -32,6 +32,11 @@ void ProgressBar::setRange(int32_t minProgress, int32_t maxProgress)
 {
 	m_minProgress = minProgress;
 	m_maxProgress = maxProgress;
+
+	if (m_maxProgress <= m_minProgress)
+		startTimer(100);
+	else
+		stopTimer();
 }
 
 int32_t ProgressBar::getMinRange() const
@@ -104,7 +109,7 @@ void ProgressBar::eventPaint(PaintEvent* event)
 		canvas.setBackground(ss->getColor(this, isEnable() ? L"progress-color" : L"progress-color-disabled"));
 		canvas.fillRect(rc2);
 
-		m_loop += std::max< int32_t >(rc.getWidth() / 16, 1);
+		m_loop += std::max< int32_t >(rc.getWidth() / 32, 1);
 		if (m_loop >= (rc.getWidth() * 5) / 4)
 			m_loop = 0;
 	}
@@ -118,6 +123,11 @@ void ProgressBar::eventPaint(PaintEvent* event)
 	}
 
 	event->consume();
+}
+
+void ProgressBar::eventTimer(TimerEvent* event)
+{
+	update();
 }
 
 }

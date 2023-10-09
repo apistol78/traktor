@@ -245,12 +245,23 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 	}
 	else if (typeName == L"traktor.ui.ProgressBar")
 	{
-		Ref< ProgressBar > progressBar = new ProgressBar();
-		progressBar->setStyleSheet(styleSheet);
-		progressBar->create(parent, WsAccelerated, 0, 100);
-		progressBar->setProgress(50);
-		progressBar->setText(L"Preview");
-		return progressBar;
+		Ref< Container > container = new Container();
+		container->setStyleSheet(styleSheet);
+		container->create(parent, WsNone, new TableLayout(L"100%", L"*", 0_ut, 16_ut));
+
+		Ref< ProgressBar > progressBar0 = new ProgressBar();
+		progressBar0->setStyleSheet(styleSheet);
+		progressBar0->create(container, WsAccelerated, 0, 100);
+		progressBar0->setProgress(50);
+		progressBar0->setText(L"Preview");
+
+		Ref< ProgressBar > progressBar1 = new ProgressBar();
+		progressBar1->setStyleSheet(styleSheet);
+		progressBar1->create(container, WsAccelerated, 0, 0);
+		progressBar1->setProgress(50);
+		progressBar1->setText(L"Preview");
+
+		return container;
 	}
 	else if (typeName == L"traktor.ui.PropertyList")
 	{
