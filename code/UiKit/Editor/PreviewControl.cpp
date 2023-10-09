@@ -195,12 +195,6 @@ void PreviewControl::setScaffolding(const Scaffolding* scaffolding)
 		m_scaffoldingClass.clear();
 }
 
-void PreviewControl::invalidateScaffolding()
-{
-	if (m_scaffoldingClass)
-		m_resourceManager->bind(m_scaffolding->getScaffoldingClass(), m_scaffoldingClass);
-}
-
 void PreviewControl::setDebugWires(bool debugWires)
 {
 	m_debugWires = debugWires;
@@ -254,7 +248,7 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 			}
 
 			// Construct new scaffolding.
-			Any argv[] =
+			const Any argv[] =
 			{
 				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
