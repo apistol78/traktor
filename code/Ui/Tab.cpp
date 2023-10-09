@@ -399,7 +399,7 @@ void Tab::eventPaint(PaintEvent* event)
 	Rect rcTabs(rcInner.left, y0, rcInner.right, y1);
 
 	// Fill tab background.
-	canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(rcTabs);
 
 	// Draw tab pages.
@@ -494,7 +494,7 @@ void Tab::eventPaint(PaintEvent* event)
 					left + textOffset + pixel(4_ut) + sizText.cx,
 					rcTab.bottom
 				);
-				if (isEnable())
+				if (isEnable(true))
 				{
 					canvas.setForeground(ss->getColor(this, (page == m_selectedPage || page == m_hoverPage) ? L"tab-color-active" : L"tab-color-inactive"));
 					canvas.drawText(rcTabText, text, AnLeft, AnCenter);
@@ -518,7 +518,7 @@ void Tab::eventPaint(PaintEvent* event)
 			rcInner.right,
 			m_bottom ? rcInner.bottom - pixel(m_tabHeight) : rcInner.bottom
 		);
-		canvas.setBackground(ss->getColor(this, isEnable() ? L"background-color" : L"background-color-disabled"));
+		canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 		canvas.fillRect(rcTabItem);
 	}
 

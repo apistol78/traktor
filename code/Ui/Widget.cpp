@@ -156,10 +156,21 @@ void Widget::setEnable(bool enable)
 	m_widget->setEnable(enable);
 }
 
-bool Widget::isEnable() const
+bool Widget::isEnable(bool includingParents) const
 {
 	T_ASSERT(m_widget);
-	return m_widget->isEnable();
+	
+	if (!m_widget->isEnable())
+		return false;
+
+	if (includingParents)
+	{
+		for (Widget* parent = m_parent; parent != nullptr; parent = parent->getParent())
+			if (!parent->isEnable(true))
+				return false;
+	}
+
+	return true;
 }
 
 bool Widget::hasFocus() const

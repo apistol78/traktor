@@ -79,7 +79,7 @@ public:
 
 	virtual void setEnable(bool enable);
 
-	virtual bool isEnable() const;
+	virtual bool isEnable(bool includingParents) const;
 
 	virtual bool hasFocus() const;
 

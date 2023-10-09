@@ -490,6 +490,10 @@
 			<first>Texture.PlusMinus</first>
 			<second>$(Images.Path)/Images/Texture/PlusMinus.image</second>
 		</item>
+        <item>
+            <first>ThemeEditor.Icon</first>
+            <second>$(Images.Path)/Images/Editor/Icon.image</second>
+        </item>        
 		<item>
 			<first>Theater.Theater</first>
 			<second>$(Images.Path)/Images/Theater/Theater.image</second>

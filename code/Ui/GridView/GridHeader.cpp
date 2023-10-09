@@ -85,7 +85,7 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 
 		canvas.setClipRect(rcText);
 
-		canvas.setForeground(ss->getColor(this, getWidget< AutoWidget >()->isEnable() ? L"color" : L"color-disabled"));
+		canvas.setForeground(ss->getColor(this, getWidget< AutoWidget >()->isEnable(true) ? L"color" : L"color-disabled"));
 		canvas.drawText(rcText, column->getTitle(), AnLeft, AnCenter);
 
 		canvas.resetClipRect();

@@ -357,7 +357,7 @@ void SearchToolDialog::search(const std::wstring& needle)
 
 void SearchToolDialog::eventSearchKey(ui::KeyDownEvent* event)
 {
-	if (m_editSearch->isEnable() && event->getVirtualKey() == ui::VkReturn)
+	if (m_editSearch->isEnable(true) && event->getVirtualKey() == ui::VkReturn)
 	{
 		std::wstring needle = m_editSearch->getText();
 		if (!needle.empty())

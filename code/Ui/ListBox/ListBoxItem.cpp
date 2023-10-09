@@ -65,7 +65,7 @@ bool ListBoxItem::isSelected() const
 void ListBoxItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getStyleSheet();
-	bool enabled = getWidget()->isEnable();
+	bool enabled = getWidget()->isEnable(true);
 
 	if (enabled && m_selected)
 	{

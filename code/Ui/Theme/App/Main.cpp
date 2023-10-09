@@ -65,7 +65,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	ui::ThemeForm form;
-	if (form.create(/*cmdLine*/))
+	if (form.create(cmdLine))
 	{
 		ui::Application::getInstance()->execute();
 		form.destroy();

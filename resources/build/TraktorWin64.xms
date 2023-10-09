@@ -21042,6 +21042,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -21211,6 +21216,11 @@
 					<excludeFilter/>
 					<items/>
 				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="3">
@@ -21373,6 +21383,11 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+				<item type="File" version="1">
+					<fileName>$(TRAKTOR_HOME)/resources/build/windows/Traktor.rc</fileName>
 					<excludeFilter/>
 					<items/>
 				</item>

@@ -530,7 +530,7 @@ void Edit::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 	const FontMetric fm = canvas.getFontMetric();
 
-	if (isEnable())
+	if (isEnable(true))
 		canvas.setBackground(ss->getColor(this, m_hover ? L"background-color-hover" : L"background-color"));
 	else
 		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
@@ -544,7 +544,7 @@ void Edit::eventPaint(PaintEvent* event)
 
 	const std::wstring text = getText();
 
-	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 
 	const int32_t h = fm.getHeight();
 	const int32_t y = (rcInner.getHeight() - h) / 2;

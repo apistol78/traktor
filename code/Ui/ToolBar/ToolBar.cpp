@@ -184,7 +184,7 @@ void ToolBar::eventMouseTrack(MouseTrackEvent* event)
 
 void ToolBar::eventMouseMove(MouseMoveEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	ToolBarItem* item = getItem(event->getPosition());
@@ -221,7 +221,7 @@ void ToolBar::eventMouseMove(MouseMoveEvent* event)
 
 void ToolBar::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	ToolBarItem* item = getItem(event->getPosition());
@@ -234,7 +234,7 @@ void ToolBar::eventButtonDown(MouseButtonDownEvent* event)
 
 void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	ToolBarItem* item = getItem(event->getPosition());

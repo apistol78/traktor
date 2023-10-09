@@ -56,7 +56,7 @@ void Button::eventMouseTrack(MouseTrackEvent* event)
 
 void Button::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	m_pushed = true;
@@ -65,7 +65,7 @@ void Button::eventButtonDown(MouseButtonDownEvent* event)
 
 void Button::eventButtonUp(MouseButtonUpEvent* event)
 {
-	if (!m_pushed || !isEnable())
+	if (!m_pushed || !isEnable(true))
 		return;
 
 	const bool pushed = m_pushed;
@@ -85,7 +85,7 @@ void Button::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	Rect rcInner = getInnerRect();
 
-	const bool hover = isEnable() && m_hover;
+	const bool hover = isEnable(true) && m_hover;
 
 	if (m_pushed)
 		canvas.setBackground(ss->getColor(this, L"background-color-pushed"));
@@ -103,7 +103,7 @@ void Button::eventPaint(PaintEvent* event)
 		rcInner = rcInner.offset(offset, offset);
 	}
 
-	canvas.setForeground(ss->getColor(this, isEnable() ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 	canvas.drawText(rcInner, getText(), AnCenter, AnCenter);
 
 	event->consume();

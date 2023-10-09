@@ -74,7 +74,7 @@ Size Slider::getMaximumSize() const
 
 void Slider::eventButtonDown(MouseButtonDownEvent* event)
 {
-	if (!isEnable())
+	if (!isEnable(true))
 		return;
 
 	auto sz = getInnerRect().getSize();
