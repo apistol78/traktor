@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
 
 namespace traktor::model
@@ -52,9 +52,10 @@ template
 class Grid2
 {
 public:
-	static const uint32_t InvalidIndex = ~0U;
+	static constexpr uint32_t InvalidIndex = ~0U;
+	static constexpr uint32_t HashBuckets = 256;
 
-	Grid2(float cellSize)
+	explicit Grid2(float cellSize)
 	:	m_cellSize(cellSize)
 	{
 	}
@@ -73,12 +74,7 @@ public:
 		const int32_t y = (int32_t)pq.y;
 
 		const uint32_t hash = HashFunction::get(x, y);
-
-		const auto it = m_indices.find(hash);
-		if (it == m_indices.end())
-			return InvalidIndex;
-
-		for (auto index : it->second)
+		for (auto index : m_indices[hash & (HashBuckets - 1)])
 		{
 			const Vector2 pv = PositionAccessor::get(m_values[index]);
 			if ((pv - p).length2() <= 1e-8f)
@@ -103,12 +99,7 @@ public:
 			for (int32_t ix = -1; ix <= 1; ++ix)
 			{
 				const uint32_t hash = HashFunction::get(x + ix, y + iy);
-
-				const auto it = m_indices.find(hash);
-				if (it == m_indices.end())
-					continue;
-
-				for (auto index : it->second)
+				for (auto index : m_indices[hash & (HashBuckets - 1)])
 				{
 					const Vector2 pv = PositionAccessor::get(m_values[index]);
 					if ((pv - p).length2() <= distance * distance)
@@ -126,7 +117,7 @@ public:
 		const int32_t x = (int32_t)p.x;
 		const int32_t y = (int32_t)p.y;
 		const uint32_t hash = HashFunction::get(x, y);
-		AlignedVector< uint32_t >& indices = m_indices[hash];
+		AlignedVector< uint32_t >& indices = m_indices[hash & (HashBuckets - 1)];
 		const uint32_t id = (uint32_t)m_values.size();
 		m_values.push_back(v);
 		indices.push_back(id);
@@ -136,37 +127,42 @@ public:
 	void swap(AlignedVector< ValueType >& values)
 	{
 		m_values.swap(values);
-		m_indices.reset();
-		m_indices.reserve(m_values.size());
+
+		for (uint32_t i = 0; i < HashBuckets; ++i)
+			m_indices[i].resize(0);
+
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
 			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 			const int32_t x = (int32_t)p.x;
 			const int32_t y = (int32_t)p.y;
 			const uint32_t hash = HashFunction::get(x, y);
-			m_indices[hash].push_back(i);
+			m_indices[hash & (HashBuckets - 1)].push_back(i);
 		}
 	}
 
 	void replace(const AlignedVector< ValueType >& values)
 	{
 		m_values = values;
-		m_indices.reset();
-		m_indices.reserve(m_values.size());
+		
+		for (uint32_t i = 0; i < HashBuckets; ++i)
+			m_indices[i].resize(0);
+
 		for (uint32_t i = 0; i < uint32_t(m_values.size()); ++i)
 		{
 			const Vector2 p = PositionAccessor::get(m_values[i]) / m_cellSize;
 			const int32_t x = (int32_t)p.x;
 			const int32_t y = (int32_t)p.y;
 			const uint32_t hash = HashFunction::get(x, y);
-			m_indices[hash].push_back(i);
+			m_indices[hash & (HashBuckets - 1)].push_back(i);
 		}
 	}
 
 	void clear()
 	{
-		m_indices.clear();
 		m_values.clear();
+		for (uint32_t i = 0; i < HashBuckets; ++i)
+			m_indices[i].clear();
 	}
 
 	void reserve(size_t capacity)
@@ -181,7 +177,7 @@ public:
 
 private:
 	float m_cellSize;
-	SmallMap< uint32_t, AlignedVector< uint32_t > > m_indices;
+	AlignedVector< uint32_t > m_indices[HashBuckets];
 	AlignedVector< ValueType > m_values;
 };
 
