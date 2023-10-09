@@ -77,6 +77,8 @@ public:
 
 	void setScaffolding(const Scaffolding* scaffolding);
 
+	void invalidateScaffolding(const Guid& eventId);
+
 	void setDebugWires(bool debugWires);
 
 	bool getDebugWires() const { return m_debugWires; }
