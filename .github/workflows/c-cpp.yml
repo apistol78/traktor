@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: hendrikmuhs/ccache-action@v1.2
     - uses: awalsh128/cache-apt-pkgs-action@latest
       with:
         packages:
           build-essential
-          ccache
           libglu1-mesa-dev
           uuid-dev
           libgtk-3-dev
