@@ -107,7 +107,7 @@ int32_t GridItem::getHeight()
 		height = std::max(height, lines * pixel(m_font->getSize() + 10_ut));
 	}
 	else
-		height = std::max(height, getFontMetric().getHeight());
+		height = std::max(height, getFontMetric().getHeight() + pixel(6_ut));
 
 	for (auto image : m_images)
 		height = std::max(height, image->getSize(getWidget()).cy + pixel(4_ut));
