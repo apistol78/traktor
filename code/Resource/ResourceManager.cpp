@@ -259,7 +259,7 @@ bool ResourceManager::reload(const Guid& guid, bool flushedOnly)
 	const auto i0 = m_exclusiveHandles.find(guid);
 	if (i0 != m_exclusiveHandles.end())
 	{
-		for (auto& handle : i0->second)
+		for (auto handle : i0->second)
 		{
 			const TypeInfo& productType = handle->getProductType();
 			if (!flushedOnly || handle->get() == nullptr)
