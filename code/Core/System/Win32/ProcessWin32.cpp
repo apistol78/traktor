@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,8 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/System/Win32/ProcessWin32.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadPool.h"
 
 namespace traktor
 {
@@ -21,14 +20,14 @@ namespace traktor
 class PipeStream : public IStream
 {
 public:
-	PipeStream(HANDLE hProcess, HANDLE hPipe)
+	explicit PipeStream(HANDLE hProcess, HANDLE hPipe)
 	:	m_hProcess(hProcess)
 	,	m_hPipe(hPipe)
 	{
-		m_thread = ThreadManager::getInstance().create([this]() {
-			threadPipeReader();
-		});
-		m_thread->start();
+		ThreadPool::getInstance().spawn(
+			[this]() { threadPipeReader(); },
+			m_thread
+		);
 	}
 
 	virtual ~PipeStream()
@@ -75,12 +74,12 @@ public:
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		uint32_t nread = std::min< uint32_t >(nbytes, m_buffer.size());
+		const int64_t nread = std::min< int64_t >(nbytes, (int64_t)m_buffer.size());
 		if (nread == 0)
 			return 0;
 
 		std::memcpy(block, m_buffer.c_ptr(), nread);
-		m_buffer.erase(m_buffer.begin(), m_buffer.begin() + nread);
+		m_buffer.erase(m_buffer.begin(), m_buffer.begin() + (int32_t)nread);
 		return nread;
 	}
 
@@ -96,15 +95,13 @@ public:
 	void cancelThread()
 	{
 		T_FATAL_ASSERT(m_thread != nullptr);
-		m_thread->stop();
-		ThreadManager::getInstance().destroy(m_thread);
-		m_thread = nullptr;
+		ThreadPool::getInstance().stop(m_thread);
 	}
 
 private:
-	HANDLE m_hProcess;
-	HANDLE m_hPipe;
-	Thread* m_thread;
+	HANDLE m_hProcess = INVALID_HANDLE_VALUE;
+	HANDLE m_hPipe = INVALID_HANDLE_VALUE;
+	Thread* m_thread = nullptr;
 	mutable Semaphore m_lock;
 	AlignedVector< uint8_t > m_buffer;
 
