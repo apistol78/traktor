@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -70,7 +70,6 @@ ProbeRenderer::ProbeRenderer(
 ,	m_worldRendererType(worldRendererType)
 ,	m_captureState(0)
 {
-	resourceManager->bind(c_probeShader, m_probeShader);
 	resourceManager->bind(c_idFilterShader, m_filterShader);
 
 	AlignedVector< render::VertexElement > vertexElements;
@@ -501,97 +500,6 @@ void ProbeRenderer::build(
 	Object* renderable
 )
 {
-	auto probeComponent = static_cast< ProbeComponent* >(renderable);
-
-	if (!m_probeShader)
-		return;
-
-	// Do not render probe which is being captured.
-	if (probeComponent == m_capture)
-		return;
-
-	// Cull local probes to frustum.
-	if (probeComponent->getLocal())
-	{
-		const Transform& transform = probeComponent->getTransform();
-		const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-		const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
-		const Scalar radius = probeComponent->getVolume().getExtent().length();
-		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
-			return;
-	}
-
-	// Add to capture queue if probe is "dirty".
-	if (probeComponent->getDirty() && probeComponent->shouldCapture())
-	{
-		m_captureQueue.push_back(probeComponent);
-		probeComponent->setDirty(false);
-		return;
-	}
-
-	render::RenderContext* renderContext = context.getRenderContext();
-	T_ASSERT(renderContext);
-
-	const Matrix44& projection = worldRenderView.getProjection();
-	const Matrix44& view = worldRenderView.getView();
-	const Scalar p11 = projection.get(0, 0);
-	const Scalar p22 = projection.get(1, 1);
-	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
-
-	render::IProgram* program = worldRenderPass.getProgram(m_probeShader).program;
-	if (!program)
-		return;
-
-	const Transform& transform = probeComponent->getTransform();
-
-	const Matrix44 worldView = view * transform.toMatrix44();
-	const Matrix44 worldViewInv = worldView.inverse();
-
-	auto rb = renderContext->alloc< render::IndexedRenderBlock >(L"Probe");
-
-	rb->distance = 0.0f;
-	rb->program = program;
-	rb->programParams = renderContext->alloc< render::ProgramParameters >();
-	rb->indexBuffer = m_indexBuffer->getBufferView();
-	rb->indexType = render::IndexType::UInt16;
-	rb->vertexBuffer = m_vertexBuffer->getBufferView();
-	rb->vertexLayout = m_vertexLayout;
-	rb->primitive = render::PrimitiveType::Triangles;
-		
-	if (!probeComponent->getLocal())
-	{
-		rb->offset = 0;
-		rb->count = 2;
-		rb->minIndex = 0;
-		rb->maxIndex = 3;
-	}
-	else
-	{
-		rb->offset = 6;
-		rb->count = 12;
-		rb->minIndex = 4;
-		rb->maxIndex = 11;
-	}
-
-	rb->programParams->beginParameters(renderContext);
-
-	worldRenderPass.setProgramParameters(rb->programParams);
-
-	if (probeComponent->getLocal())
-	{
-		rb->programParams->setVectorParameter(s_handleProbeVolumeCenter, probeComponent->getVolume().getCenter());
-		rb->programParams->setVectorParameter(s_handleProbeVolumeExtent, probeComponent->getVolume().getExtent());
-	}
-
-	rb->programParams->setFloatParameter(s_handleProbeIntensity, probeComponent->getIntensity());
-	rb->programParams->setFloatParameter(s_handleProbeTextureMips, probeComponent->getTexture() != nullptr ? (float)probeComponent->getTexture()->getSize().mips : 0.0f);
-	rb->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
-	rb->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
-	rb->programParams->setTextureParameter(s_handleProbeTexture, probeComponent->getTexture());
-
-	rb->programParams->endParameters(renderContext);
-
-	renderContext->draw(render::RpOverlay, rb);
 }
 
 void ProbeRenderer::build(

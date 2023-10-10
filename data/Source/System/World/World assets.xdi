@@ -54,10 +54,6 @@
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
 		<item>
-			<id>{99BB18CB-A744-D845-9A17-D0E586E4D9EA}</id>
-			<editorDeployOnly>false</editorDeployOnly>
-		</item>
-		<item>
 			<id>{D9CC2267-0BDF-4A19-A970-856112821734}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
