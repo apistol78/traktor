@@ -135,7 +135,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 38, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 39, TextureOutputPipeline, editor::IPipeline)
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -359,8 +359,11 @@ bool TextureOutputPipeline::buildOutput(
 			{
 				if (textureOutput->m_normalMap)
 				{
-					log::info << L"Using BC6HU compression." << Endl;
-					textureFormat = TfBC6HU;
+					//log::info << L"Using BC6HU compression." << Endl;
+					//textureFormat = TfBC6HU;
+					log::info << L"Using no compression (should use compression)." << Endl;
+					pixelFormat = drawing::PixelFormat::getABGRF16();
+					textureFormat = TfR16G16B16A16F;
 				}
 				else if (textureOutput->m_encodeAsRGBM)
 				{
