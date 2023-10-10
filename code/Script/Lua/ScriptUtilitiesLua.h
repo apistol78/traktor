@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,9 +9,11 @@
 #pragma once
 
 #if defined(_DEBUG)
-#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 1
+#	define T_SCRIPT_LUA_FORCE_STACK_CHECK	1
+#	define T_SCRIPT_LUA_DUMP_STACK			0
 #else
-#	define T_SCRIPT_LUA_FORCE_STACK_CHECK 0
+#	define T_SCRIPT_LUA_FORCE_STACK_CHECK	0
+#	define T_SCRIPT_LUA_DUMP_STACK			0
 #endif
 
 #include "Core/Log/Log.h"
@@ -91,7 +93,7 @@ private:
 
 void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 0);
 
-#if defined(_DEBUG)
+#if T_SCRIPT_LUA_DUMP_STACK
 #	define DUMP_LUA_STACK(state) dumpStack(state, log::info)
 
 #	define __DO__W0(x) L ## x
