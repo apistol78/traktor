@@ -500,6 +500,25 @@ void ProbeRenderer::build(
 	Object* renderable
 )
 {
+	auto probeComponent = static_cast< ProbeComponent* >(renderable);
+
+	// Cull local probes to frustum.
+	if (probeComponent->getLocal())
+	{
+		const Transform& transform = probeComponent->getTransform();
+		const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
+		const Vector4 center = worldView * probeComponent->getVolume().getCenter().xyz1();
+		const Scalar radius = probeComponent->getVolume().getExtent().length();
+		if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
+			return;
+	}
+
+	// Add to capture queue if probe is "dirty".
+	if (probeComponent->getDirty() && probeComponent->shouldCapture())
+	{
+		m_captureQueue.push_back(probeComponent);
+		probeComponent->setDirty(false);
+	}
 }
 
 void ProbeRenderer::build(
