@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,9 +37,9 @@ public:
 
 	bool spawn(const threadPoolFn_t& fn, Thread*& outThread, Thread::Priority priority = Thread::Normal);
 
-	bool join(Thread* thread);
+	bool join(Thread*& thread);
 
-	bool stop(Thread* thread);
+	bool stop(Thread*& thread);
 
 protected:
 	virtual void destroy();
@@ -51,10 +51,8 @@ private:
 		Event eventAttachWork;
 		Event eventFinishedWork;
 		threadPoolFn_t fn;
-		std::atomic< int32_t > alive;
-		std::atomic< int32_t > busy;
-
-		Worker();
+		std::atomic< bool > alive = true;
+		std::atomic< bool > busy = false;
 	};
 
 	Worker m_workerThreads[256];
