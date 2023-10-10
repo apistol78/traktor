@@ -57,8 +57,8 @@
 			<cullMode>Never</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendColorOperation>BoAdd</blendColorOperation>
-			<blendColorSource>BfOneMinusSourceAlpha</blendColorSource>
-			<blendColorDestination>BfSourceAlpha</blendColorDestination>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
 			<blendAlphaOperation>BoAdd</blendAlphaOperation>
 			<blendAlphaSource>BfOne</blendAlphaSource>
 			<blendAlphaDestination>BfOne</blendAlphaDestination>

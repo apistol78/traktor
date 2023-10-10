@@ -96,7 +96,6 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	const TypeInfo& m_worldRendererType;
 	Ref< IWorldRenderer > m_worldRenderer;
-	resource::Proxy< render::Shader > m_probeShader;
 	resource::Proxy< render::Shader > m_filterShader;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
