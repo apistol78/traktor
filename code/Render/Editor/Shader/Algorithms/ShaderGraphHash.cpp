@@ -129,6 +129,8 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		if (nodeTraits != nullptr && nodeTraits->isRoot(shaderGraph, node))
 		{
+			hash += calculateLocalNodeHash(node, false, false);
+
 			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 			{
 				const InputPin* inputPin = node->getInputPin(i);
