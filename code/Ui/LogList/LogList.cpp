@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,10 +22,8 @@
 #include "Ui/Events/LogActivateEvent.h"
 #include "Ui/LogList/LogList.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.LogList", LogList, Widget)
 
@@ -225,7 +223,7 @@ void LogList::eventPaint(PaintEvent* event)
 	if (m_scrollBar->isVisible(false))
 		inner.right -= m_scrollBar->getPreferredSize(inner.getSize()).cx;
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(inner);
 
 	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), pixel(m_itemHeight)));
@@ -435,5 +433,4 @@ void LogList::eventScroll(ScrollEvent* event)
 	update();
 }
 
-	}
 }

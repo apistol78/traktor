@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarButton", ToolBarButton, ToolBarItem)
 
@@ -111,8 +109,9 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, con
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size imageSize = toolBar->getImageSize();
 	const Size size = getSize(toolBar);
+	const bool enabled = isEnable() && toolBar->isEnable(true);
 
-	if (isEnable())
+	if (enabled)
 	{
 		if ((m_state & (BstPushed | BstHover)) != 0)
 		{
@@ -147,7 +146,7 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, con
 	{
 		const Size textExtent = toolBar->getFontMetric().getExtent(m_text);
 		const int32_t centerOffsetY = (size.cy - textExtent.cy) / 2;
-		canvas.setForeground(ss->getColor(toolBar, isEnable() ? L"color" : L"color-disabled"));
+		canvas.setForeground(ss->getColor(toolBar, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			at + Size(centerOffsetX, centerOffsetY),
 			m_text
@@ -187,5 +186,4 @@ void ToolBarButton::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 	toolBar->raiseEvent(&clickEvent);
 }
 
-	}
 }

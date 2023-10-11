@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -258,7 +258,7 @@ void ToolBar::eventPaint(PaintEvent* event)
 	const Rect rc = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));
 
 	int32_t x = rc.left + pixel(c_marginWidth) + m_offsetX;
@@ -266,11 +266,11 @@ void ToolBar::eventPaint(PaintEvent* event)
 
 	for (auto item : m_items)
 	{
-		Size size = item->getSize(this);
+		const Size size = item->getSize(this);
 
 		// Calculate top-left position of item, center vertically.
-		int32_t offset = (rc.getHeight() - pixel(c_marginHeight) * 2 - size.cy) / 2;
-		Point at(x, y + offset);
+		const int32_t offset = (rc.getHeight() - pixel(c_marginHeight) * 2 - size.cy) / 2;
+		const Point at(x, y + offset);
 
 		item->paint(
 			this,

@@ -122,14 +122,13 @@ DialogResult DialogWin32::showModal()
 		while (GetParent(hParentWnd))
 			hParentWnd = GetParent(hParentWnd);
 
-		//EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-		//	EnableWindow(hWnd, FALSE);
-		//	return TRUE;
-		//}, NULL);
-
-		//EnableWindow(m_hWnd, TRUE);
-
-		EnableWindow(hParentWnd, FALSE);
+		// Disable children to ancestor instead of ancestor directly, this
+		// allows us to move the ancestor form.
+		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+			EnableWindow(hWnd, FALSE);
+			RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			return TRUE;
+		}, NULL);
 		EnableWindow(m_hWnd, TRUE);
 	}
 
@@ -144,7 +143,7 @@ DialogResult DialogWin32::showModal()
 	{
 		RECT rcParent;
 		GetWindowRect(hCenterWnd, &rcParent);
-		POINT pntPos =
+		const POINT pntPos =
 		{
 			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
 			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
@@ -163,18 +162,15 @@ DialogResult DialogWin32::showModal()
 		if (!GetMessage(&msg, NULL, 0, 0))
 			break;
 
-		//if (!IsDialogMessage(m_hWnd, &msg))
-		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
 
 		// Keep dialog centered if parent has moved.
 		if (m_keepCentered)
 		{
 			RECT rcParent;
 			GetWindowRect(hCenterWnd, &rcParent);
-			POINT pntPos =
+			const POINT pntPos =
 			{
 				rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
 				rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
@@ -186,12 +182,11 @@ DialogResult DialogWin32::showModal()
 	// Enable parent window.
 	if (hParentWnd)
 	{
-		//EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
-		//	EnableWindow(hWnd, TRUE);
-		//	return TRUE;
-		//}, NULL);
-
-		EnableWindow(hParentWnd, TRUE);
+		EnumChildWindows(hParentWnd, [](HWND hWnd, LPARAM lParam) -> BOOL {
+			EnableWindow(hWnd, TRUE);
+			RedrawWindow(hWnd, NULL, NULL, RDW_INVALIDATE);
+			return TRUE;
+		}, NULL);
 	}
 
 	return m_result;

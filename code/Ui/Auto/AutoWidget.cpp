@@ -452,8 +452,9 @@ void AutoWidget::eventPaint(PaintEvent* event)
 	const Rect innerRect = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setForeground(ss->getColor(this, L"color"));
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	const bool enabled = isEnable(true);
+	canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
+	canvas.setBackground(ss->getColor(this, enabled ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(innerRect);
 
 	for (const auto& instance : m_cells)
