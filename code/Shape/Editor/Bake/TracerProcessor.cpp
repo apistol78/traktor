@@ -104,7 +104,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 	);
 	output->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_DEFAULT);
+	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_CPU);
 	oidnCommitDevice(device);
 
 	OIDNFilter filter = oidnNewFilter(device, "RTLightmap"); // generic ray tracing filter
