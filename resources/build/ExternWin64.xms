@@ -5613,7 +5613,7 @@
 					</libraryPaths>
 					<libraries>
 						<item>embree4.lib</item>
-						<item>tbb.lib</item>
+						<item>tbb12.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -5639,7 +5639,7 @@
 					</libraryPaths>
 					<libraries>
 						<item>embree4.lib</item>
-						<item>tbb.lib</item>
+						<item>tbb12.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -5665,7 +5665,7 @@
 					</libraryPaths>
 					<libraries>
 						<item>embree4.lib</item>
-						<item>tbb.lib</item>
+						<item>tbb12.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
@@ -5700,7 +5700,7 @@
 					</libraryPaths>
 					<libraries>
 						<item>embree4.lib</item>
-						<item>tbb.lib</item>
+						<item>tbb12.lib</item>
 					</libraries>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>

@@ -51,12 +51,12 @@ export BC6H_ENC_SDK=$TRAKTOR_HOME/3rdp/bc6h_enc
 #	VULKAN_GLSLANG_SDK
 #	VULKAN_SPIRVTOOLS_SDK
 #	VULKAN_SPIRVCROSS_SDK
-export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0
-export VULKAN_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0/source/Vulkan-Headers
-export VMA_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0/source/VulkanMemoryAllocator
-export GLSLANG_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0/source/glslang
-export SPIRVTOOLS_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0/source/SPIRV-Tools
-export SPIRVCROSS_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.216.0/source/SPIRV-Cross
+export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/vulkan-sdk
+export VULKAN_SDK=$VULKAN_BASE_SDK/source/Vulkan-Headers
+export VMA_SDK=$VULKAN_BASE_SDK/source/VulkanMemoryAllocator
+export GLSLANG_SDK=$VULKAN_BASE_SDK/source/glslang
+export SPIRVTOOLS_SDK=$VULKAN_BASE_SDK/source/SPIRV-Tools
+export SPIRVCROSS_SDK=$VULKAN_BASE_SDK/source/SPIRV-Cross
 
 # Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then
@@ -72,10 +72,10 @@ fi
 # Platform specific 3rd party dependencies.
 if [[ $TRAKTOR_PLATFORM == linux ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-linux
-	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-linux/oidn-1.4.3.x86_64.linux
+	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-linux/oidn-2.0.1.x86_64.linux
 elif [[ $TRAKTOR_PLATFORM == macos ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-macOS
-	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-macOS/oidn-1.4.3.x86_64.macos
+	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-macOS/oidn-2.0.1.x86_64.macos
 fi
 
 # Export name of solution builder binary.
