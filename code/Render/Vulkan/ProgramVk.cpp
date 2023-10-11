@@ -439,23 +439,15 @@ bool ProgramVk::validate(
 		bufferOffsets.push_back(bvvk->getVkBufferOffset());
 	}
 
-	vkCmdBindDescriptorSets(
-		*commandBuffer,
-		bindPoint,
-		m_pipelineLayout,
-		1,
-		1, &m_descriptorSet,
-		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
-	);
-
-	const VkDescriptorSet bindlessDescriptorSet = m_context->getBindlessDescriptorSet();
+	// Bind descriptor sets.
+	const VkDescriptorSet descriptorSets[] = { m_context->getBindlessDescriptorSet(), m_descriptorSet };
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
 		bindPoint,
 		m_pipelineLayout,
 		0,
-		1, &bindlessDescriptorSet,
-		0, nullptr
+		sizeof_array(descriptorSets), descriptorSets,
+		(uint32_t)bufferOffsets.size(), bufferOffsets.c_ptr()
 	);
 
 	if (bindPoint == VK_PIPELINE_BIND_POINT_GRAPHICS && m_renderState.stencilEnable)
