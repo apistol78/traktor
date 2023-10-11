@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -234,13 +234,6 @@ bool MeshPipeline::buildDependencies(
 	// Add dependencies to generator fragments.
 	MaterialShaderGenerator::addDependencies(pipelineDepends);
 
-	// Add dependencies to material templates.
-	if (m_enableCustomTemplates)
-	{
-		for (const auto& it : asset->getMaterialTemplates())
-			pipelineDepends->addDependency(it.second, editor::PdfUse);
-	}
-
 	// Add dependencies to "fixed" material shaders.
 	if (m_enableCustomShaders)
 	{
@@ -251,8 +244,6 @@ bool MeshPipeline::buildDependencies(
 	// Add dependencies to material textures.
 	for (const auto& it : asset->getMaterialTextures())
 		pipelineDepends->addDependency(it.second, editor::PdfBuild | editor::PdfResource);
-
-	pipelineDepends->addDependency(asset->getTextureSet(), editor::PdfBuild);
 
 	pipelineDepends->addDependency< render::ShaderGraph >();
 	return true;
@@ -270,7 +261,6 @@ bool MeshPipeline::buildOutput(
 	uint32_t /*reason*/
 ) const
 {
-	SmallMap< std::wstring, Guid > materialTextures;
 	SmallMap< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
@@ -280,26 +270,9 @@ bool MeshPipeline::buildOutput(
 	if (!programCompiler)
 		return false;
 
-	auto asset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
-	auto& materialTemplates = asset->getMaterialTemplates();
-	auto& materialShaders = asset->getMaterialShaders();
-
-	// Create list of texture references.
-	const auto& textureSetId = asset->getTextureSet();
-	if (textureSetId.isNotNull())
-	{
-		Ref< const render::TextureSet > textureSet = pipelineBuilder->getObjectReadOnly< render::TextureSet >(textureSetId);
-		if (!textureSet)
-		{
-			log::error << L"Missing texture set reference." << Endl;
-			return false;
-		}
-		materialTextures = textureSet->get();
-	}
-
-	// Explicit material textures override those from a texture set.
-	for (const auto& mt : asset->getMaterialTextures())
-		materialTextures[mt.first] = mt.second;
+	const auto asset = mandatory_non_null_type_cast< const MeshAsset* >(sourceAsset);
+	const auto& materialShaders = asset->getMaterialShaders();
+	const auto& materialTextures = asset->getMaterialTextures();
 
 	// Create mesh converter.
 	Ref< IMeshConverter > converter;

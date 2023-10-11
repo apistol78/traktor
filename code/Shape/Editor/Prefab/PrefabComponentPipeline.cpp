@@ -141,7 +141,6 @@ Ref< ISerializable > PrefabComponentPipeline::buildProduct(
 		outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 		if (meshAsset)
 		{
-			outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
 			outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 			outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 		}

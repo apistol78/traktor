@@ -806,7 +806,6 @@ bool BakePipelineOperator::build(
 							outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 							if (meshAsset)
 							{
-								outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
 								outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 								outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
 							}

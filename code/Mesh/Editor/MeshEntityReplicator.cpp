@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -81,24 +81,10 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
 	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
-	outputMeshAsset->setMaterialTemplates(meshAsset->getMaterialTemplates());
 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 
 	// Create list of texture references.
 	SmallMap< std::wstring, Guid > materialTextures;
-
-	// First use textures from texture set.
-	const auto& textureSetId = meshAsset->getTextureSet();
-	if (textureSetId.isNotNull())
-	{
-		Ref< const render::TextureSet > textureSet = pipelineCommon->getObjectReadOnly< render::TextureSet >(textureSetId);
-		if (!textureSet)
-			return nullptr;
-
-		materialTextures = textureSet->get();
-	}
-
-	// Then let explicit material textures override those from a texture set.
 	for (const auto& mt : meshAsset->getMaterialTextures())
 		materialTextures[mt.first] = mt.second;
 
