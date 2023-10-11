@@ -55,25 +55,8 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	if (!model::Triangulate().apply(*model))
 		return false;
 
-	// Create list of texture references.
-	SmallMap< std::wstring, Guid > materialTextures;
-
-	// First use textures from texture set.
-	const auto& textureSetId = asset->getTextureSet();
-	if (textureSetId.isNotNull())
-	{
-		Ref< const render::TextureSet > textureSet = editor->getSourceDatabase()->getObjectReadOnly< render::TextureSet >(textureSetId);
-		if (!textureSet)
-			return false;
-
-		materialTextures = textureSet->get();
-	}
-
-	// Then let explicit material textures override those from a texture set.
-	for (const auto& mt : asset->getMaterialTextures())
-		materialTextures[mt.first] = mt.second;
-
 	// Bind texture references in material maps.
+	const SmallMap< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
 	for (auto& material : model->getMaterials())
 	{
 		auto diffuseMap = material.getDiffuseMap();

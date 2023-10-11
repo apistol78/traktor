@@ -59,12 +59,6 @@ public:
 	/*! Get type of runtime mesh. */
 	MeshType getMeshType() const { return m_meshType; }
 
-	/*! Set material shader templates. */
-	void setMaterialTemplates(const SmallMap< std::wstring, Guid >& materialTemplates) { m_materialTemplates = materialTemplates; }
-
-	/*! Get material shader templates. */
-	const SmallMap< std::wstring, Guid >& getMaterialTemplates() const { return m_materialTemplates; }
-
 	/*! Set explicit material shaders. */
 	void setMaterialShaders(const SmallMap< std::wstring, Guid >& materialShaders) { m_materialShaders = materialShaders; }
 
@@ -76,12 +70,6 @@ public:
 
 	/*! Get material textures. */
 	const SmallMap< std::wstring, Guid >& getMaterialTextures() const { return m_materialTextures; }
-
-	/*! Set texture set. */
-	void setTextureSet(const Guid& textureSet) { m_textureSet = textureSet; }
-
-	/*! Get texture set. */
-	const Guid& getTextureSet() const { return m_textureSet; }
 
 	/*! Set scale factor. */
 	void setScaleFactor(float scaleFactor) { m_scaleFactor = scaleFactor; }
@@ -140,10 +128,8 @@ public:
 private:
 	std::wstring m_importFilter;
 	MeshType m_meshType = MtStatic;
-	SmallMap< std::wstring, Guid > m_materialTemplates;
 	SmallMap< std::wstring, Guid > m_materialShaders;
 	SmallMap< std::wstring, Guid > m_materialTextures;
-	Guid m_textureSet;
 	float m_scaleFactor = 1.0f;
 	Vector4 m_offset = Vector4::zero();
 	bool m_renormalize = false;

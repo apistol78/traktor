@@ -20,7 +20,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 21, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 22, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -43,8 +43,11 @@ void MeshAsset::serialize(ISerializer& s)
 
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
 
-	if (s.getVersion() >= 6)
-		s >> MemberSmallMap< std::wstring, Guid >(L"materialTemplates", m_materialTemplates);
+	if (s.getVersion() >= 6 && s.getVersion() < 22)
+	{
+		SmallMap< std::wstring, Guid > materialTemplates;
+		s >> MemberSmallMap< std::wstring, Guid >(L"materialTemplates", materialTemplates);
+	}
 
 	if (s.getVersion() >= 1)
 		s >> MemberSmallMap< std::wstring, Guid >(L"materialShaders", m_materialShaders);
@@ -52,8 +55,11 @@ void MeshAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 4)
 		s >> MemberSmallMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
 
-	if (s.getVersion() >= 18)
-		s >> Member< Guid >(L"textureSet", m_textureSet, AttributeType(type_of< render::TextureSet >()));
+	if (s.getVersion() >= 18 && s.getVersion() < 22)
+	{
+		Guid textureSet;
+		s >> Member< Guid >(L"textureSet", textureSet, AttributeType(type_of< render::TextureSet >()));
+	}
 
 	if (s.getVersion() >= 11)
 		s >> Member< float >(L"scaleFactor", m_scaleFactor);
