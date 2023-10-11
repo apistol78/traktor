@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarDropDown.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolBarDropDown", ToolBarDropDown, ToolBarItem)
 
@@ -116,7 +114,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, c
 {
 	const StyleSheet* ss = toolBar->getStyleSheet();
 	const Size size = getSize(toolBar);
-
+	const bool enabled = isEnable() && toolBar->isEnable(true);
 	const int32_t sep = toolBar->pixel(14_ut);
 
 	const Rect rcText(
@@ -156,7 +154,7 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, c
 	canvas.setBackground(ss->getColor(toolBar, L"item-color-dropdown-arrow"));
 	canvas.fillPolygon(pnts, 3);
 
-	canvas.setForeground(ss->getColor(toolBar, toolBar->isEnable(true) ? L"color" : L"color-disabled"));
+	canvas.setForeground(ss->getColor(toolBar, enabled ? L"color" : L"color-disabled"));
 	canvas.drawText(rcText, getSelectedItem(), AnLeft, AnCenter);
 
 	m_dropPosition = rcButton.left;
@@ -198,5 +196,4 @@ void ToolBarDropDown::buttonUp(ToolBar* toolBar, MouseButtonUpEvent* mouseEvent)
 {
 }
 
-	}
 }

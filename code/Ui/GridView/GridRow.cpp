@@ -301,6 +301,7 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	const StyleSheet* ss = getStyleSheet();
 	const RefArray< GridColumn >& columns = view->getColumns();
 	const int32_t depth = getDepth();
+	const bool enabled = view->isEnable(true);
 
 	// Paint custom background.
 	if (m_background.a > 0)
@@ -311,7 +312,10 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	// No custom background, use different background colors per depth.
 	else if (depth > 0)
 	{
-		canvas.setBackground(ss->getColor(this, str(L"background-color-%d", std::min(depth, 4))));
+		if (enabled)
+			canvas.setBackground(ss->getColor(this, str(L"background-color-%d", std::min(depth, 4))));
+		else
+			canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
 		canvas.fillRect(rect);
 	}
 

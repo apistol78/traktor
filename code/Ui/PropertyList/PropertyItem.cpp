@@ -240,7 +240,7 @@ void PropertyItem::paintBackground(Canvas& canvas, const Rect& rc)
 	}
 	else
 	{
-		canvas.setBackground(ss->getColor(this, L"background-color"));
+		canvas.setBackground(ss->getColor(this, m_propertyList->isEnable(true) ? L"background-color" : L"background-color-disabled"));
 		canvas.fillRect(rc);
 	}
 }

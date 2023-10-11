@@ -238,7 +238,7 @@ void Dock::eventPaint(PaintEvent* event)
 	const Rect innerRect = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(innerRect);
 
 	m_pane->draw(canvas);

@@ -632,13 +632,14 @@ void PropertyList::eventPaint(PaintEvent* event)
 	Canvas& canvas = event->getCanvas();
 	const Rect rcInner = getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
+	const bool enabled = isEnable(true);
 
 	const int32_t scrollBarOffset = m_scrollBar->getPosition() * pixel(m_propertyItemHeight);
 	const int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferredSize(rcInner.getSize()).cx : 0;
 	const int32_t top = m_columnHeader ? pixel(c_columnsHeight) : 0;
 
 	// Clear widget background.
-	canvas.setBackground(ss->getColor(this, L"background-color"));
+	canvas.setBackground(ss->getColor(this, enabled ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(rcInner);
 
 	// Draw columns.
@@ -647,7 +648,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 		canvas.setBackground(ss->getColor(this, L"header-background-color"));
 		canvas.fillRect(Rect(rcInner.left, rcInner.top, rcInner.right, rcInner.top + pixel(c_columnsHeight)));
 
-		canvas.setForeground(ss->getColor(this, this->isEnable(true) ? L"color" : L"color-disabled"));
+		canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + 2, rcInner.top,
@@ -658,7 +659,7 @@ void PropertyList::eventPaint(PaintEvent* event)
 			AnCenter
 		);
 
-		canvas.setForeground(ss->getColor(this, this->isEnable(true) ? L"color" : L"color-disabled"));
+		canvas.setForeground(ss->getColor(this, enabled ? L"color" : L"color-disabled"));
 		canvas.drawText(
 			Rect(
 				rcInner.left + pixel(m_separator) + 2, rcInner.top,
