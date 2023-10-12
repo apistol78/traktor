@@ -310,10 +310,12 @@ void WorldRendererShared::setupLightPass(
 
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 			{
-				lsd->typeRangeRadius[0] = (float)light->getLightType();
-				lsd->typeRangeRadius[1] = light->getRange();
-				lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
-				lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+				lsd->type[0] = (float)light->getLightType();
+
+				lsd->rangeRadius[0] = light->getNearRange();
+				lsd->rangeRadius[1] = light->getFarRange();
+				lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+				lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
 				const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 				lightTransform.translation().xyz1().storeUnaligned(lsd->position);
@@ -335,10 +337,12 @@ void WorldRendererShared::setupLightPass(
 			const auto& light = m_gatheredView.lights[i];
 			auto* lsd = &lightShaderData[i];
 
-			lsd->typeRangeRadius[0] = (float)light->getLightType();
-			lsd->typeRangeRadius[1] = light->getRange();
-			lsd->typeRangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
-			lsd->typeRangeRadius[3] = std::cos(light->getRadius() / 2.0f);
+			lsd->type[0] = (float)light->getLightType();
+
+			lsd->rangeRadius[0] = light->getNearRange();
+			lsd->rangeRadius[1] = light->getFarRange();
+			lsd->rangeRadius[2] = std::cos((light->getRadius() - deg2rad(8.0f)) / 2.0f);
+			lsd->rangeRadius[3] = std::cos(light->getRadius() / 2.0f);
 
 			const Matrix44 lightTransform = view * light->getTransform().toMatrix44();
 			lightTransform.translation().xyz1().storeUnaligned(lsd->position);
@@ -534,8 +538,8 @@ void WorldRendererShared::setupLightPass(
 			Matrix44 shadowLightProjection;
 			Frustum shadowFrustum;
 
-			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getRange());
-			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getRange());
+			shadowFrustum.buildPerspective(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
+			shadowLightProjection = perspectiveLh(light->getRadius(), 1.0f, 0.1f, light->getFarRange());
 
 			Vector4 lightAxisX, lightAxisY, lightAxisZ;
 			lightAxisZ = -lightDirection;
@@ -623,6 +627,12 @@ void WorldRendererShared::setupLightPass(
 					);
 
 					T_ASSERT(!renderContext->havePendingDraws());
+
+					// Clear shadow map tile.
+					{
+						const render::Shader::Permutation perm;
+						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
+					}
 
 					for (auto r : m_gatheredView.renderables)
 						r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);

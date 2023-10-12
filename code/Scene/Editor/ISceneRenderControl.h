@@ -39,9 +39,10 @@ class ISceneRenderControl : public Object
 public:
 	enum MoveCameraMode
 	{
-		McmRotate = 0,
-		McmMoveXZ = 1,
-		McmMoveXY = 2
+		McmRotate,
+		McmMove,
+		McmMoveXZ,
+		McmMoveXY
 	};
 
 	virtual void destroy() = 0;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,20 +20,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 11, LightComponentData, IEntityComponentData)
-
-LightComponentData::LightComponentData()
-:	m_lightType(LightType::Disabled)
-,	m_color(1.0f, 1.0f, 1.0f, 0.0f)
-,	m_intensity(1000.0f)
-,	m_castShadow(false)
-,	m_range(10.0f)
-,	m_radius(HALF_PI)
-,	m_flickerAmount(0.0f)
-,	m_flickerFilter(0.0f)
-,	m_bakeMode(LbmIndirect)
-{
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.LightComponentData", 12, LightComponentData, IEntityComponentData)
 
 int32_t LightComponentData::getOrdinal() const
 {
@@ -117,7 +104,18 @@ void LightComponentData::serialize(ISerializer& s)
 	}
 
 	s >> Member< bool >(L"castShadow", m_castShadow);
-	s >> Member< float >(L"range", m_range, AttributeUnit(UnitType::Metres));
+
+	if (s.getVersion< LightComponentData >() >= 12)
+	{
+		s >> Member< float >(L"nearRange", m_nearRange, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+		s >> Member< float >(L"farRange", m_farRange, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
+	}
+	else
+	{
+		m_nearRange = 0.0f;
+		s >> Member< float >(L"range", m_farRange, AttributeUnit(UnitType::Metres));
+	}
+
 	s >> Member< float >(L"radius", m_radius, AttributeUnit(UnitType::Radians));
 	s >> Member< float >(L"flickerAmount", m_flickerAmount, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 	s >> Member< float >(L"flickerFilter", m_flickerFilter, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));

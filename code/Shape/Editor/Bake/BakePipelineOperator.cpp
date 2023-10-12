@@ -166,7 +166,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.position = transform.translation().xyz1();
 		light.direction = Vector4::zero();
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
-		light.range = Scalar(lightComponentData->getRange());
+		light.range = Scalar(lightComponentData->getFarRange());
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));
 	}
@@ -176,7 +176,7 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 		light.position = transform.translation().xyz1();
 		light.direction = -transform.axisY();
 		light.color = lightComponentData->getColor() * Scalar(lightComponentData->getIntensity());
-		light.range = Scalar(lightComponentData->getRange());
+		light.range = Scalar(lightComponentData->getFarRange());
 		light.radius = Scalar(lightComponentData->getRadius());
 		light.mask = mask;
 		tracerTask->addTracerLight(new TracerLight(light));

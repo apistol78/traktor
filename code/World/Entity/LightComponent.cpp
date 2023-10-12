@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,8 @@ LightComponent::LightComponent(
 	LightType lightType,
 	const Vector4& color,
 	bool castShadow,
-	float range,
+	float nearRange,
+	float farRange,
 	float radius,
 	float flickerAmount,
 	float flickerFilter
@@ -34,7 +35,8 @@ LightComponent::LightComponent(
 ,	m_lightType(lightType)
 ,	m_color(color)
 ,	m_castShadow(castShadow)
-,	m_range(range)
+,	m_nearRange(nearRange)
+,	m_farRange(farRange)
 ,	m_radius(radius)
 ,	m_flickerAmount(flickerAmount)
 ,	m_flickerFilter(flickerFilter)

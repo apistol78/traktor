@@ -46,8 +46,6 @@ public:
 		LbmAll			//!< All lighting, direct and indirect, are baked and this light is not dynamic.
 	};
 
-	LightComponentData();
-
 	virtual int32_t getOrdinal() const override final;
 
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
@@ -70,9 +68,13 @@ public:
 
 	bool getCastShadow() const { return m_castShadow; }
 
-	void setRange(float range) { m_range = range;  }
+	void setNearRange(float range) { m_nearRange = range;  }
 
-	float getRange() const { return m_range; }
+	float getNearRange() const { return m_nearRange; }
+
+	void setFarRange(float range) { m_farRange = range;  }
+
+	float getFarRange() const { return m_farRange; }
 
 	void setRadius(float radius) { m_radius = radius; }
 
@@ -89,15 +91,16 @@ public:
 	LightBakeMode getBakeMode() const { return m_bakeMode; }
 
 private:
-	LightType m_lightType;
-	Color4f m_color;
-	float m_intensity;
-	bool m_castShadow;
-	float m_range;
-	float m_radius;
-	float m_flickerAmount;
-	float m_flickerFilter;
-	LightBakeMode m_bakeMode;
+	LightType m_lightType = LightType::Disabled;
+	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 0.0f);
+	float m_intensity = 1000.0f;
+	bool m_castShadow = true;
+	float m_nearRange = 0.0f;
+	float m_farRange = 10.0f;
+	float m_radius = HALF_PI;
+	float m_flickerAmount = 0.0f;
+	float m_flickerFilter = 0.0f;
+	LightBakeMode m_bakeMode = LbmIndirect;
 };
 
 }
