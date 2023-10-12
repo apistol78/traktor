@@ -237,6 +237,8 @@ void WorldRendererDeferred::setupVisualPass(
 
 			const float viewNearZ = worldRenderView.getViewFrustum().getNearZ();
 			const float viewFarZ = worldRenderView.getViewFrustum().getFarZ();
+			const float viewSliceScale = ClusterDimZ / std::log(viewFarZ / viewNearZ);
+			const float viewSliceBias = ClusterDimZ * std::log(viewNearZ) / std::log(viewFarZ / viewNearZ) - 0.001f;
 
 			const Scalar p11 = projection.get(0, 0);
 			const Scalar p22 = projection.get(1, 1);
@@ -244,7 +246,7 @@ void WorldRendererDeferred::setupVisualPass(
 			auto sharedParams = renderContext->alloc< render::ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			sharedParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
-			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, 0.0f, 0.0f));
+			sharedParams->setVectorParameter(s_handleViewDistance, Vector4(viewNearZ, viewFarZ, viewSliceScale, viewSliceBias));
 			sharedParams->setVectorParameter(s_handleSlicePositions, Vector4(m_slicePositions[1], m_slicePositions[2], m_slicePositions[3], m_slicePositions[4]));
 			sharedParams->setMatrixParameter(s_handleProjection, projection);
 			sharedParams->setMatrixParameter(s_handleView, view);

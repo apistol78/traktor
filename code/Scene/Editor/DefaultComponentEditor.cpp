@@ -99,7 +99,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 				primitiveRenderer->pushDepthState(true, true, false);
 
 				primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
-				primitiveRenderer->drawWireSphere(translate(lightPosition), lightComponent->getRange(), Color4ub(255, 255, 0, 128));
+				primitiveRenderer->drawWireSphere(translate(lightPosition), lightComponent->getFarRange(), Color4ub(255, 255, 0, 128));
 
 				primitiveRenderer->popDepthState();
 			}
@@ -110,7 +110,7 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 				primitiveRenderer->drawSolidPoint(lightPosition, 8.0f, Color4ub(255, 255, 0));
 
 				Frustum spotFrustum;
-				spotFrustum.buildPerspective(lightComponent->getRadius(), 1.0f, 0.1f, lightComponent->getRange());
+				spotFrustum.buildPerspective(lightComponent->getRadius(), 1.0f, lightComponent->getNearRange(), lightComponent->getFarRange());
 
 				primitiveRenderer->pushWorld(transform.toMatrix44() * rotateX(deg2rad(90.0f)));
 				primitiveRenderer->drawWireQuad(

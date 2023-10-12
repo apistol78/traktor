@@ -278,6 +278,11 @@ void FinalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDel
 		m_camera->rotate(delta.y(), delta.x());
 		break;
 
+	case McmMove:
+		delta *= Scalar(c_cameraTranslateDeltaScale);
+		m_camera->move(delta);
+		break;
+
 	case McmMoveXZ:
 		delta *= Scalar(c_cameraTranslateDeltaScale);
 		m_camera->move(delta.shuffle< 0, 2, 1, 3 >());

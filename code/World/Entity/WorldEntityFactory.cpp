@@ -224,7 +224,8 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getLightType(),
 			lightComponentData->getColor() * Scalar(lightComponentData->getIntensity()),
 			lightComponentData->getCastShadow(),
-			lightComponentData->getRange(),
+			lightComponentData->getNearRange(),
+			lightComponentData->getFarRange(),
 			lightComponentData->getRadius(),
 			lightComponentData->getFlickerAmount(),
 			lightComponentData->getFlickerFilter()

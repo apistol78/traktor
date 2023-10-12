@@ -260,7 +260,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classLightComponentData = new AutoRuntimeClass< LightComponentData >();
 	classLightComponentData->addProperty("color", &LightComponentData::setColor, &LightComponentData::getColor);
 	classLightComponentData->addProperty("castShadow", &LightComponentData::setCastShadow, &LightComponentData::getCastShadow);
-	classLightComponentData->addProperty("range", &LightComponentData::setRange, &LightComponentData::getRange);
+	classLightComponentData->addProperty("nearRange", &LightComponentData::setNearRange, &LightComponentData::getNearRange);
+	classLightComponentData->addProperty("farRange", &LightComponentData::setFarRange, &LightComponentData::getFarRange);
 	classLightComponentData->addProperty("radius", &LightComponentData::setRadius, &LightComponentData::getRadius);
 	classLightComponentData->addProperty("flickerAmount", &LightComponentData::setFlickerAmount, &LightComponentData::getFlickerAmount);
 	classLightComponentData->addProperty("flickerFilter", &LightComponentData::setFlickerFilter, &LightComponentData::getFlickerFilter);
@@ -269,7 +270,8 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classLightComponent = new AutoRuntimeClass< LightComponent >();
 	classLightComponent->addProperty("color", &LightComponent::setColor, &LightComponent::getColor);
 	classLightComponent->addProperty("castShadow", &LightComponent::setCastShadow, &LightComponent::getCastShadow);
-	classLightComponent->addProperty("range", &LightComponent::setRange, &LightComponent::getRange);
+	classLightComponent->addProperty("nearRange", &LightComponent::setNearRange, &LightComponent::getNearRange);
+	classLightComponent->addProperty("farRange", &LightComponent::setFarRange, &LightComponent::getFarRange);
 	classLightComponent->addProperty("radius", &LightComponent::setRadius, &LightComponent::getRadius);
 	classLightComponent->addProperty("flickerAmount", &LightComponent::setFlickerAmount, &LightComponent::getFlickerAmount);
 	classLightComponent->addProperty("flickerFilter", &LightComponent::setFlickerFilter, &LightComponent::getFlickerFilter);

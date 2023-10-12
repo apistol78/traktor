@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,11 +30,12 @@ class T_DLLCLASS LightComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	LightComponent(
+	explicit LightComponent(
 		LightType lightType,
 		const Vector4& color,
 		bool castShadow,
-		float range,
+		float nearRange,
+		float farRange,
 		float radius,
 		float flickerAmount,
 		float flickerFilter
@@ -64,9 +65,13 @@ public:
 
 	bool getCastShadow() const { return m_castShadow; }
 
-	void setRange(Scalar range) { m_range = range;  }
+	void setNearRange(Scalar range) { m_nearRange = range;  }
 
-	Scalar getRange() const { return m_range; }
+	Scalar getNearRange() const { return m_nearRange; }
+
+	void setFarRange(Scalar range) { m_farRange = range;  }
+
+	Scalar getFarRange() const { return m_farRange; }
 
 	void setRadius(Scalar radius) { m_radius = radius; }
 
@@ -87,7 +92,8 @@ private:
 	LightType m_lightType;
 	Vector4 m_color;
 	bool m_castShadow;
-	Scalar m_range;
+	Scalar m_nearRange;
+	Scalar m_farRange;
 	Scalar m_radius;
 	float m_flickerAmount;
 	float m_flickerFilter;

@@ -144,14 +144,14 @@ void LightClusterPass::setup(
 			}
 			else if (light->getLightType() == LightType::Point)
 			{
-				const Scalar lr = light->getRange();
+				const Scalar lr = light->getFarRange();
 				const Scalar lz = lightPositions[i].z();
 				if (lz + lr >= snz && lz - lr <= sfz)
 					sliceLights.push_back(i);
 			}
 			else if (light->getLightType() == LightType::Spot)
 			{
-				const Scalar lr = light->getRange();
+				const Scalar lr = light->getFarRange();
 				const Scalar lz = lightPositions[i].z();
 				if (lz + lr >= snz && lz - lr <= sfz)
 				{
@@ -212,7 +212,7 @@ void LightClusterPass::setup(
 					}
 					else if (light->getLightType() == LightType::Point)
 					{
-						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::Result::Outside)
+						if (tileFrustum.inside(lightPositions[lightIndex], light->getFarRange()) != Frustum::Result::Outside)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;
@@ -221,7 +221,7 @@ void LightClusterPass::setup(
 					else if (light->getLightType() == LightType::Spot)
 					{
 						// \fixme Implement frustum to frustum culling.
-						if (tileFrustum.inside(lightPositions[lightIndex], light->getRange()) != Frustum::Result::Outside)
+						if (tileFrustum.inside(lightPositions[lightIndex], light->getFarRange()) != Frustum::Result::Outside)
 						{
 							lightIndexShaderData[lightOffset + count].lightIndex[0] = lightIndex;
 							++count;

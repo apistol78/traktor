@@ -57,13 +57,17 @@ void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* 
 
 	Vector4 delta = Vector4::zero();
 	if ((m_moveCamera & (1 << 0)) != 0)
-		delta += Vector4(0.0f, 1.0f, 0.0f);
+		delta += Vector4(0.0f, 0.0f, 1.0f);
 	if ((m_moveCamera & (1 << 1)) != 0)
-		delta += Vector4(0.0f, -1.0f, 0.0f);
+		delta += Vector4(0.0f, 0.0f, -1.0f);
 	if ((m_moveCamera & (1 << 2)) != 0)
 		delta += Vector4(-1.0f, 0.0f, 0.0f);
 	if ((m_moveCamera & (1 << 3)) != 0)
 		delta += Vector4(1.0f, 0.0f, 0.0f);
+	if ((m_moveCamera & (1 << 4)) != 0)
+		delta += Vector4(0.0f, 1.0f, 0.0f);
+	if ((m_moveCamera & (1 << 5)) != 0)
+		delta += Vector4(0.0f, -1.0f, 0.0f);
 
 	const float deltaTime = std::min< float >(m_timer.getDeltaTime(), 1.0f / 30.0f);
 	Scalar speed = Scalar(deltaTime * m_movementSpeed) * 8.0_simd;
@@ -74,7 +78,7 @@ void RenderControlModel::update(ISceneRenderControl* renderControl, ui::Widget* 
 	if ((keyState & ui::KsControl) != 0)
 		speed /= 4.0_simd;
 
-	renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, delta * speed, Vector4::zero());
+	renderControl->moveCamera(ISceneRenderControl::McmMove, delta * speed, Vector4::zero());
 
 	context->enqueueRedraw(renderControl);
 }
@@ -390,6 +394,14 @@ void RenderControlModel::eventKeyDown(ISceneRenderControl* renderControl, ui::Wi
 		m_moveCamera |= (1 << 3);
 		break;
 
+	case ui::VkQ:
+		m_moveCamera |= (1 << 4);
+		break;
+
+	case ui::VkE:
+		m_moveCamera |= (1 << 5);
+		break;
+
 	default:
 		return;
 	}
@@ -425,6 +437,14 @@ void RenderControlModel::eventKeyUp(ISceneRenderControl* renderControl, ui::Widg
 
 	case ui::VkD:
 		m_moveCamera &= ~(1 << 3);
+		break;
+
+	case ui::VkQ:
+		m_moveCamera &= ~(1 << 4);
+		break;
+
+	case ui::VkE:
+		m_moveCamera &= ~(1 << 5);
 		break;
 
 	default:
