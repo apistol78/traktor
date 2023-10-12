@@ -973,11 +973,11 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 
 void RichEdit::scrollToCaret()
 {
+	const int32_t caretLine = getLineFromOffset(m_caret);
+	const Rect rc = getEditRect();
+
 	if (m_scrollBarV->isVisible(false))
 	{
-		const int32_t caretLine = getLineFromOffset(m_caret);
-		const Rect rc = getEditRect();
-
 		const int32_t lineHeight = getFontMetric().getHeight() + pixel(c_fontHeightMargin);
 		const int32_t pageLines = rc.getHeight() / lineHeight;
 
@@ -987,14 +987,38 @@ void RichEdit::scrollToCaret()
 		{
 			m_scrollBarV->setPosition(caretLine);
 			m_scrollBarV->update();
+			update();
 		}
 		else if (caretLine >= top + pageLines)
 		{
 			m_scrollBarV->setPosition(caretLine - pageLines + 1);
 			m_scrollBarV->update();
+			update();
 		}
+	}
 
-		update();
+	if (m_scrollBarH->isVisible(false))
+	{
+		const int32_t width = rc.getWidth() - m_lineMargin;
+		const int32_t lineOffset = getLineOffset(caretLine);
+
+		int32_t x = 0;
+		for (int32_t i = lineOffset; i < m_caret; ++i)
+			x += m_text[i].width;
+		
+		const int32_t left = m_scrollBarH->getPosition() * c_scrollHSteps;
+		if (x < left)
+		{
+			m_scrollBarH->setPosition(x / c_scrollHSteps);
+			m_scrollBarH->update();
+			update();
+		}
+		else if (x > left + width)
+		{
+			m_scrollBarH->setPosition((x - width + c_scrollHSteps - 1) / c_scrollHSteps);
+			m_scrollBarH->update();
+			update();
+		}
 	}
 }
 
