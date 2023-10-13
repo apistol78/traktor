@@ -72,10 +72,8 @@ fi
 # Platform specific 3rd party dependencies.
 if [[ $TRAKTOR_PLATFORM == linux ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-linux
-	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-linux/oidn-2.0.1.x86_64.linux
 elif [[ $TRAKTOR_PLATFORM == macos ]]; then
 	export EMBREE_SDK=$TRAKTOR_HOME/3rdp/embree-macOS
-	export OIDN_SDK=$TRAKTOR_HOME/3rdp/oidn-macOS/oidn-2.0.1.x86_64.macos
 fi
 
 # Export name of solution builder binary.

@@ -14,6 +14,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Format.h"
+#include "Core/Math/Random.h"
 #include "Core/Math/Winding3.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -33,6 +34,7 @@
 #include "Drawing/Functions/BlendFunction.h"
 #include "Model/Model.h"
 #include "Model/ModelAdjacency.h"
+#include "Model/ModelFormat.h"
 #include "Render/Types.h"
 #include "Render/Editor/Texture/AstcCompressor.h"
 #include "Render/Editor/Texture/Bc6hCompressor.h"
@@ -53,13 +55,6 @@
 #include "Shape/Editor/Bake/TracerTask.h"
 #include "World/IrradianceGridResource.h"
 
-#if !defined(__RPI__) && !defined(__APPLE__)
-#	include <OpenImageDenoise/oidn.h>
-#endif
-
-#include "Core/Math/Random.h"
-#include "Model/ModelFormat.h"
-
 namespace traktor::shape
 {
 	namespace
@@ -67,9 +62,8 @@ namespace traktor::shape
 
 Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, bool directional)
 {
-#if !defined(__RPI__) && !defined(__APPLE__)
-	int32_t width = lightmap->getWidth();
-	int32_t height = lightmap->getHeight();
+	const int32_t width = lightmap->getWidth();
+	const int32_t height = lightmap->getHeight();
 
 	lightmap->convert(drawing::PixelFormat::getRGBAF32());
 
@@ -104,19 +98,51 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 	);
 	output->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-	OIDNDevice device = oidnNewDevice(OIDN_DEVICE_TYPE_CPU);
-	oidnCommitDevice(device);
+	const int32_t c_kernelSize = 4;
+	for (int32_t y = 0; y < height; ++y)
+	{
+		for (int32_t x = 0; x < width; ++x)
+		{
+			Color4f nc;
+			normals.getPixelUnsafe(x, y, nc);
 
-	OIDNFilter filter = oidnNewFilter(device, "RTLightmap"); // generic ray tracing filter
-	oidnSetSharedFilterImage(filter, "color",  lightmap->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
-	oidnSetSharedFilterImage(filter, "albedo", albedo.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
-	oidnSetSharedFilterImage(filter, "normal", normals.getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0); // optional
-	oidnSetSharedFilterImage(filter, "output", output->getData(), OIDN_FORMAT_FLOAT3, width, height, 0, 4 * sizeof(float), 0);
-	oidnSetFilter1b(filter, "hdr", true); // image is HDR
-	oidnSetFilter1b(filter, "directional", directional);
-	oidnCommitFilter(filter);
+			Color4f ct(Vector4::zero());
+			Scalar ctc = 0.0_simd;
+			for (int32_t ky = -c_kernelSize; ky <= c_kernelSize; ++ky)
+			{
+				for (int32_t kx = -c_kernelSize; kx <= c_kernelSize; ++kx)
+				{
+					Color4f clr;
+					if (lightmap->getPixel(x + kx, y + ky, clr))
+					{
+						if (clr.getAlpha() > FUZZY_EPSILON)
+						{
+							Color4f ncc;
+							normals.getPixelUnsafe(x + kx, y + ky, ncc);
+							const Scalar cp = dot3((Vector4)ncc, (Vector4)nc);
+							if (cp > 0.0_simd)
+							{
+								const float df = 1.0f - sqrt(kx * kx + ky * ky) / sqrt(c_kernelSize * c_kernelSize * 2);
+								ct += clr * cp * Scalar(df);
+								ctc += cp * Scalar(df);
+							}
+						}
+					}
+				}
+			}
 
-	oidnExecuteFilter(filter);
+			if (ctc > FUZZY_EPSILON)
+			{
+				ct /= ctc;
+				output->setPixelUnsafe(x, y, ct);
+			}
+			else
+			{
+				lightmap->getPixelUnsafe(x, y, ct);
+				output->setPixelUnsafe(x, y, ct);
+			}
+		}
+	}
 
 	// Keep source alpha.
 	Color4f src, dst;
@@ -131,18 +157,7 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 		}
 	}
 
-	// Check for errors
-	const char* errorMessage;
-	if (oidnGetDeviceError(device, &errorMessage) != OIDN_ERROR_NONE)
-		log::error << mbstows(errorMessage) << Endl;
-
-	// Cleanup
-	oidnReleaseFilter(filter);
-	oidnReleaseDevice(device);	
 	return output;
-#else
-	return lightmap;
-#endif
 }
 
 bool writeTexture(

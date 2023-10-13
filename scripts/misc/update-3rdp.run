@@ -89,38 +89,6 @@ local PACKAGES =
 		license = "Apache 2.0"
 	},
 
-	-- Intel Open Image Denoise
-	{
-		type = "GET",
-		name = "oidn-linux",
-		os = "linux",
-		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v2.0.1/oidn-2.0.1.x86_64.linux.tar.gz",
-		patch = function()
-			run:execute(TAR .. " -xzf oidn-2.0.1.x86_64.linux.tar.gz")
-		end,
-		license = "Apache 2.0"
-	},
-	{
-		type = "GET",
-		name = "oidn-windows",
-		os = "windows",
-		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v2.0.1/oidn-2.0.1.x64.windows.zip",
-		patch = function()
-			run:execute(UNZIP .. " -qq oidn-2.0.1.x64.windows.zip")
-		end,
-		license = "Apache 2.0"
-	},
-	{
-		type = "GET",
-		name = "oidn-macOS",
-		os = "macos",
-		url = "https://github.com/OpenImageDenoise/oidn/releases/download/v2.0.1/oidn-2.0.1.x86_64.macos.tar.gz",
-		patch = function()
-			run:execute(TAR .. " -xzf oidn-2.0.1.x86_64.macos.tar.gz")
-		end,
-		license = "Apache 2.0"
-	},
-
 	-- FLAC
 	{
 		type = "GIT",

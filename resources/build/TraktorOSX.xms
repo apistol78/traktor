@@ -2091,7 +2091,7 @@
 										<items/>
 									</item>
 								</items>
-							</item>						
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="3">
@@ -11535,12 +11535,6 @@
 								<link>LnkNo</link>
 								<solutionFileName>ExternOSX.xms</solutionFileName>
 								<projectName>Extern.embree</projectName>
-							</item>
-							<item type="ExternalDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkNo</link>
-								<solutionFileName>ExternOSX.xms</solutionFileName>
-								<projectName>Extern.oidn</projectName>
 							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>

@@ -21,7 +21,6 @@ set LUA_SDK=%TRAKTOR_HOME%\3rdp\lua\lua-5.4.6
 set LZF_SDK=%TRAKTOR_HOME%\3rdp\liblzf\liblzf-3.6
 set MIKKTSPACE_SDK=%TRAKTOR_HOME%\3rdp\MikkTSpace
 set OGG_SDK=%TRAKTOR_HOME%\3rdp\ogg
-set OIDN_SDK=%TRAKTOR_HOME%\3rdp\oidn-windows\oidn-2.0.1.x64.windows
 ::set P4_SDK=%TRAKTOR_HOME%\3rdp\p4api-linux\p4api-2022.1.2305383
 set PNG_SDK=%TRAKTOR_HOME%\3rdp\libpng
 set RAPIDJSON_SDK=%TRAKTOR_HOME%\3rdp\rapidjson
