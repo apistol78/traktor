@@ -13036,12 +13036,6 @@
 								<solutionFileName>ExternWin64.xms</solutionFileName>
 								<projectName>Extern.embree</projectName>
 							</item>
-							<item type="ExternalDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkNo</link>
-								<solutionFileName>ExternWin64.xms</solutionFileName>
-								<projectName>Extern.oidn</projectName>
-							</item>
 							<item type="ProjectDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>
 								<link>LnkYes</link>
