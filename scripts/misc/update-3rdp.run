@@ -376,9 +376,9 @@ local PACKAGES =
 		type = "GET",
 		name = "vulkan-linux",
 		os = "linux",
-		url = "https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.gz",
+		url = "https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz",
 		patch = function()
-			run:execute(TAR .. " -xzf vulkan-sdk.tar.gz")
+			run:execute(TAR .. " -xf vulkan-sdk.tar.xz")
 		end
 	},
 	{

@@ -51,12 +51,12 @@ export BC6H_ENC_SDK=$TRAKTOR_HOME/3rdp/bc6h_enc
 #	VULKAN_GLSLANG_SDK
 #	VULKAN_SPIRVTOOLS_SDK
 #	VULKAN_SPIRVCROSS_SDK
-export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/vulkan-sdk
-export VULKAN_SDK=$VULKAN_BASE_SDK/source/Vulkan-Headers
-export VMA_SDK=$VULKAN_BASE_SDK/source/VulkanMemoryAllocator
-export GLSLANG_SDK=$VULKAN_BASE_SDK/source/glslang
-export SPIRVTOOLS_SDK=$VULKAN_BASE_SDK/source/SPIRV-Tools
-export SPIRVCROSS_SDK=$VULKAN_BASE_SDK/source/SPIRV-Cross
+export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/1.3.261.1/x86_64
+export VULKAN_SDK=$VULKAN_BASE_SDK
+export VMA_SDK=$VULKAN_BASE_SDK/include/vma
+export GLSLANG_SDK=$VULKAN_BASE_SDK/include/glslang
+export SPIRVTOOLS_SDK=$VULKAN_BASE_SDK
+export SPIRVCROSS_SDK=$VULKAN_BASE_SDK/include/spirv_cross
 
 # Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then

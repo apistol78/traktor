@@ -13,7 +13,7 @@
 #include <SPIRV/GlslangToSpv.h>
 
 #if defined(__LINUX__)
-#	include <SPIRV/GLSL.std.450.h>
+#	include <GLSL.std.450.h>
 #else
 #	include <spirv-headers/GLSL.std.450.h>
 #endif
