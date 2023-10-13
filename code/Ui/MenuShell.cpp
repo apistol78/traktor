@@ -134,7 +134,8 @@ Size MenuShell::getMinimumSize() const
 	// Limit maximum number of visible items; assume all items has same height.
 	if (m_maxItems > 0)
 	{
-		minimumSize.cy = m_items.front()->getSize(this).cy * m_maxItems;
+		const int32_t numItems = std::min(m_maxItems, (int32_t)m_items.size());
+		minimumSize.cy = m_items.front()->getSize(this).cy * numItems;
 		if (m_scrollBar->isVisible(false))
 			minimumSize.cx += m_scrollBar->getPreferredSize(rcInner.getSize()).cx;
 	}
