@@ -304,7 +304,7 @@ void TreeView::eventKeyDown(KeyDownEvent* event)
 	if (current < 0)
 		return;
 
-	bool recursive = (bool)((event->getKeyState() & KsShift) != 0);
+	const bool recursive = (bool)((event->getKeyState() & KsShift) != 0);
 
 	switch (event->getVirtualKey())
 	{
