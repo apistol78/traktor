@@ -17059,7 +17059,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+						<item>$(VULKAN_BASE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent</item>
@@ -17107,7 +17107,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+						<item>$(VULKAN_BASE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent</item>
@@ -17155,7 +17155,7 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+						<item>$(VULKAN_BASE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent</item>
@@ -17203,7 +17203,7 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(VULKAN_BASE_SDK)/x86_64/lib</item>
+						<item>$(VULKAN_BASE_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>MachineIndependent</item>
