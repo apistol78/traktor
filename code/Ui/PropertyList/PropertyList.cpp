@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #include "Ui/PropertyList/PropertyList.h"
 #include "Ui/PropertyList/PropertySelectionChangeEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 enum Modes
 {
@@ -133,6 +131,7 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	m_scrollBar->addEventHandler< ScrollEvent >(this, &PropertyList::eventScroll);
 	m_scrollBar->setVisible(false);
 
+	addEventHandler< KeyDownEvent >(this, &PropertyList::eventKeyDown);
 	addEventHandler< MouseButtonDownEvent >(this, &PropertyList::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &PropertyList::eventButtonUp);
 	addEventHandler< MouseDoubleClickEvent >(this, &PropertyList::eventDoubleClick);
@@ -454,6 +453,74 @@ void PropertyList::eventScroll(ScrollEvent* event)
 	event->consume();
 }
 
+void PropertyList::eventKeyDown(KeyDownEvent* event)
+{
+	RefArray< PropertyItem > items;
+	getPropertyItems(items, PropertyList::GfDescendants | PropertyList::GfExpandedOnly | PropertyList::GfVisibleOnly);
+
+	// Find index of selected item.
+	int32_t current = -1;
+	for (int32_t i = 0; i < items.size(); ++i)
+	{
+		if (items[i]->isSelected())
+		{
+			current = i;
+			break;
+		}
+	}
+	if (current < 0)
+		return;
+
+	for (auto item : items)
+		item->setSelected(false);
+
+	switch (event->getVirtualKey())
+	{
+	case VkLeft:
+		if (items[current]->isExpanded())
+		{
+			items[current]->collapse();
+			items[current]->setSelected(true);
+		}
+		else if (items[current]->getParentItem() != nullptr)
+			items[current]->getParentItem()->setSelected(true);
+		break;
+
+	case VkRight:
+		if (!items[current]->getChildItems().empty())
+		{
+			if (items[current]->isCollapsed())
+			{
+				items[current]->expand();
+				items[current]->setSelected(true);
+			}
+			else
+				items[current + 1]->setSelected(true);
+		}
+		break;
+
+	case VkUp:
+		if (current > 0)
+			items[current - 1]->setSelected(true);
+		else
+			items[current]->setSelected(true);
+		break;
+
+	case VkDown:
+		if (current < items.size() - 1)
+			items[current + 1]->setSelected(true);
+		else
+			items[current]->setSelected(true);
+		break;
+
+	default:
+		items[current]->setSelected(true);
+		break;
+	}
+
+	update();
+}
+
 void PropertyList::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const Point p = event->getPosition();
@@ -724,5 +791,4 @@ void PropertyList::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

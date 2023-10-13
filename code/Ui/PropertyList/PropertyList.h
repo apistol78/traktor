@@ -127,6 +127,8 @@ private:
 
 	void eventScroll(ScrollEvent* event);
 
+	void eventKeyDown(KeyDownEvent* event);
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);
