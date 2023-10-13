@@ -22,6 +22,12 @@ ShaderGraphPreview::ShaderGraphPreview(const editor::IEditor* editor)
 	m_database = editor->getSourceDatabase();
 }
 
+ShaderGraphPreview::ShaderGraphPreview(const std::wstring& assetPath, db::Database* database)
+:	m_assetPath(assetPath)
+,	m_database(database)
+{
+}
+
 Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const
 {
 	Ref< ShaderGraph > resolvedShaderGraph = FragmentLinker([&](const Guid& fragmentId) -> Ref< const ShaderGraph > {
@@ -55,7 +61,7 @@ Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGrap
 				image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
 				if (image)
 				{
-					drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+					const drawing::ScaleFilter scaleFilter(width, height, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
 					image->apply(&scaleFilter);
 				}
 			}

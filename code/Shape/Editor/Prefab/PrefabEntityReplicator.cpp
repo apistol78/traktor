@@ -25,6 +25,8 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "Scene/Editor/Traverser.h"
 #include "Shape/Editor/Prefab/PrefabComponentData.h"
@@ -155,6 +157,26 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	Ref< model::Model > outputModel = new model::Model();
 	for (auto mdl : models)
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
+
+	// Bind texture references in material maps.
+	for (auto& material : outputModel->getMaterials())
+	{
+		const auto it = materialShaders.find(material.getName());
+		if (it != materialShaders.end())
+		{
+			const Ref< const render::ShaderGraph > materialShaderGraph = pipelineCommon->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!materialShaderGraph)
+				continue;
+		
+			Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+			if (!image)
+				continue;
+
+			auto diffuseMap = material.getDiffuseMap();
+			diffuseMap.image = image;			
+			material.setDiffuseMap(diffuseMap);
+		}
+	}
 
 	// Create a mesh asset; used by bake pipeline to set appropriate materials.
 	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();

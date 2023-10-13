@@ -52,6 +52,8 @@ class T_DLLCLASS ShaderGraphPreview : public Object
 public:
 	explicit ShaderGraphPreview(const editor::IEditor* editor);
 
+	explicit ShaderGraphPreview(const std::wstring& assetPath, db::Database* database);
+
 	Ref< drawing::Image > generate(const ShaderGraph* shaderGraph, int32_t width, int32_t height) const;
 
 private:

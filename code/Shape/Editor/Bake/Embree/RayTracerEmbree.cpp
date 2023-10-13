@@ -397,19 +397,19 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 	Color4f hitMaterialColor = hitMaterial.getColor().linear();
-	//const auto& image = hitMaterial.getDiffuseMap().image;
-	//if (image)
-	//{
-	//	const uint32_t slot = 1;
-	//	float texCoord[2] = { 0.0f, 0.0f };
-	//	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+	const auto& image = hitMaterial.getDiffuseMap().image;
+	if (image)
+	{
+		const uint32_t slot = 1;
+		float texCoord[2] = { 0.0f, 0.0f };
+		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-	//	image->getPixel(
-	//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-	//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-	//		hitMaterialColor
-	//	);
-	//}
+		image->getPixel(
+			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+			hitMaterialColor
+		);
+	}
 	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor / Scalar(PI);
 	const Scalar cosPhi = clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
@@ -485,20 +485,20 @@ Color4f RayTracerEmbree::tracePath0(
 			const auto& hitMaterial = *m_materials[offset + rhv.hit.primID[j]];
 
 			Color4f hitMaterialColor = hitMaterial.getColor().linear();
-			//const auto& image = hitMaterial.getDiffuseMap().image;
-			//if (image)
-			//{
-			//	const uint32_t slot = 1;
-			//	float texCoord[2] = { 0.0f, 0.0f };
-			//	rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+			const auto& image = hitMaterial.getDiffuseMap().image;
+			if (image)
+			{
+				const uint32_t slot = 1;
+				float texCoord[2] = { 0.0f, 0.0f };
+				rtcInterpolate0(geometry, rhv.hit.primID[j], rhv.hit.u[j], rhv.hit.v[j], RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-			//	image->getPixel(
-			//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-			//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-			//		hitMaterialColor
-			//	);
-			//	hitMaterialColor = hitMaterialColor.linear();
-			//}
+				image->getPixel(
+					(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+					(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+					hitMaterialColor
+				);
+				hitMaterialColor = hitMaterialColor.linear();
+			}
 			const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 			const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 
@@ -581,20 +581,20 @@ Color4f RayTracerEmbree::traceSinglePath(
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
 	Color4f hitMaterialColor = hitMaterial.getColor().linear();
-	//const auto& image = hitMaterial.getDiffuseMap().image;
-	//if (image)
-	//{
-	//	const uint32_t slot = 1;
-	//	float texCoord[2] = { 0.0f, 0.0f };
-	//	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
+	const auto& image = hitMaterial.getDiffuseMap().image;
+	if (image)
+	{
+		const uint32_t slot = 1;
+		float texCoord[2] = { 0.0f, 0.0f };
+		rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, slot, texCoord, 2);
 
-	//	image->getPixel(
-	//		(int32_t)(wrap(texCoord[0]) * image->getWidth()),
-	//		(int32_t)(wrap(texCoord[1]) * image->getHeight()),
-	//		hitMaterialColor
-	//	);
-	//	hitMaterialColor = hitMaterialColor.linear();
-	//}
+		image->getPixel(
+			(int32_t)(wrap(texCoord[0]) * image->getWidth()),
+			(int32_t)(wrap(texCoord[1]) * image->getHeight()),
+			hitMaterialColor
+		);
+		hitMaterialColor = hitMaterialColor.linear();
+	}
 	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor; // / Scalar(PI);
 

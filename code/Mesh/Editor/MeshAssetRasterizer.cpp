@@ -20,6 +20,8 @@
 #include "Model/Operations/Triangulate.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetRasterizer.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
@@ -55,8 +57,10 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	if (!model::Triangulate().apply(*model))
 		return false;
 
+	const auto& materialTextures = asset->getMaterialTextures();
+	const auto& materialShaders = asset->getMaterialShaders();
+
 	// Bind texture references in material maps.
-	const SmallMap< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
 	for (auto& material : model->getMaterials())
 	{
 		auto diffuseMap = material.getDiffuseMap();
@@ -72,41 +76,57 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	SmallMap< Path, Ref< drawing::Image > > images;
 	for (auto& material : model->getMaterials())
 	{
-		auto diffuseMap = material.getDiffuseMap();
-		if (diffuseMap.texture.isNotNull())
+		const auto it = materialShaders.find(material.getName());
+		if (it != materialShaders.end())
 		{
-			Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
-			if (!textureAsset)
+			const Ref< render::ShaderGraph > materialShaderGraph = editor->getSourceDatabase()->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!materialShaderGraph)
+				continue;
+		
+			Ref< drawing::Image > image = render::ShaderGraphPreview(editor).generate(materialShaderGraph, 128, 128);
+			if (!image)
 				continue;
 
-			const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
-			Ref< drawing::Image > image = images[filePath];
-			if (image == nullptr)
-			{
-				Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-				if (file)
-				{
-					image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
-					if (image && textureAsset->m_output.m_assumeLinearGamma)
-					{
-						// Convert to gamma color space.
-						const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-						image->apply(&gammaFilter);							
-					}
-					images[filePath] = image;
-				}
-			}
-
+			auto diffuseMap = material.getDiffuseMap();
 			diffuseMap.image = image;			
 			material.setDiffuseMap(diffuseMap);
 		}
+
+		//auto diffuseMap = material.getDiffuseMap();
+		//if (diffuseMap.texture.isNotNull())
+		//{
+		//	Ref< const render::TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< render::TextureAsset >(diffuseMap.texture);
+		//	if (!textureAsset)
+		//		continue;
+
+		//	const Path filePath = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
+		//	Ref< drawing::Image > image = images[filePath];
+		//	if (image == nullptr)
+		//	{
+		//		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+		//		if (file)
+		//		{
+		//			image = drawing::Image::load(file, textureAsset->getFileName().getExtension());
+		//			if (image && textureAsset->m_output.m_assumeLinearGamma)
+		//			{
+		//				// Convert to gamma color space.
+		//				const drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+		//				image->apply(&gammaFilter);							
+		//			}
+		//			images[filePath] = image;
+		//		}
+		//	}
+
+		//	diffuseMap.image = image;			
+		//	material.setDiffuseMap(diffuseMap);
+		//}
 	}
 
 	// Rasterize model.
 	const Aabb3 boundingBox = model->getBoundingBox();
 	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
 	const Scalar invMaxExtent = 1.0_simd / maxExtent;
-	const Matrix44 modelView = translate(0.0f, 0.0f, 1.75f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(asset->getPreviewAngle()) * translate(-boundingBox.getCenter());
+	const Matrix44 modelView = translate(0.0f, 0.0f, 2.25f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(asset->getPreviewAngle()) * translate(-boundingBox.getCenter());
 	return model::ModelRasterizer().generate(model, modelView, outImage);
 }
 
