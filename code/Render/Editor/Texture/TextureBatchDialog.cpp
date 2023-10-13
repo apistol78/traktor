@@ -83,6 +83,8 @@ void TextureBatchDialog::destroy()
 
 bool TextureBatchDialog::showModal(RefArray< TextureAsset >& outAssets)
 {
+	addTexture();
+
 	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 

@@ -86,6 +86,8 @@ void BatchDialog::destroy()
 
 bool BatchDialog::showModal(RefArray< MovieAsset >& outAssets)
 {
+	addTexture();
+
 	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 
