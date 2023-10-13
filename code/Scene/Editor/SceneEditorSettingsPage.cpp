@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -111,11 +111,15 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
+	const std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	for (auto worldRendererType : type_of< world::IWorldRenderer >().findAllOf(false))
 	{
-		std::wstring name = worldRendererType->getName();
-		int32_t index = m_dropWorldRenderer->add(name);
+		if (!worldRendererType->isInstantiable())
+			continue;
+
+		const std::wstring name = worldRendererType->getName();
+		const int32_t index = m_dropWorldRenderer->add(name);
+
 		if (name == worldRendererTypeName)
 			m_dropWorldRenderer->select(index);
 	}
