@@ -85,6 +85,8 @@ void SoundBatchDialog::destroy()
 
 bool SoundBatchDialog::showModal(RefArray< SoundAsset >& outAssets)
 {
+	addSound();
+
 	if (ui::ConfigDialog::showModal() != ui::DialogResult::Ok)
 		return false;
 
