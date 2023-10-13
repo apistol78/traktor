@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -167,13 +167,13 @@ Ref< CubeMap > CubeMap::createFromEquirectangularImage(const drawing::Image* ima
 				}
 				else if(ftv > 0.0f)
 				{ 
-					float d = std::sqrt(nx * nx + ny * ny);
+					const float d = std::sqrt(nx * nx + ny * ny);
 					v = PI / 2 - std::atan2(d, ak);
 					u = std::atan2(ny, nx);
 				}
 				else
 				{
-					float d = std::sqrt(nx * nx + ny * ny);
+					const float d = std::sqrt(nx * nx + ny * ny);
 					v = -PI / 2 + std::atan2(d, ak);
 					u = std::atan2(-ny, nx);
 				}
@@ -317,28 +317,29 @@ Vector4 CubeMap::getDirection(int32_t side, int32_t x, int32_t y) const
 
 void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& outX, int32_t& outY) const
 {
-	const int32_t major = majorAxis3(direction);
-	outSide = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
+	const Vector4 dir = direction.normalized();
+	const int32_t major = majorAxis3(dir);
+	outSide = major * 2 + (dir[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
 	switch (major)
 	{
 	case 0:
-		u = -sign(direction.x()) * direction.z();
-		v = -direction.y();
-		n = 1.0f / abs(direction.x());
+		u = -sign(dir.x()) * dir.z();
+		v = -dir.y();
+		n = 1.0f / abs(dir.x());
 		break;
 
 	case 1:
-		u = direction.x();
-		v = sign(direction.y()) * direction.z();
-		n = 1.0f / abs(direction.y());
+		u = dir.x();
+		v = sign(dir.y()) * dir.z();
+		n = 1.0f / abs(dir.y());
 		break;
 
 	case 2:
-		u = sign(direction.z()) * direction.x();
-		v = -direction.y();
-		n = 1.0f / abs(direction.z());
+		u = sign(dir.z()) * dir.x();
+		v = -dir.y();
+		n = 1.0f / abs(dir.z());
 		break;
 			
 	default:
@@ -355,28 +356,29 @@ void CubeMap::getPosition(const Vector4& direction, int32_t& outSide, int32_t& o
 
 void CubeMap::set(const Vector4& direction, const Color4f& value)
 {
-	const int32_t major = majorAxis3(direction);
-	const int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
+	const Vector4 dir = direction.normalized();
+	const int32_t major = majorAxis3(dir);
+	const int32_t side = major * 2 + (dir[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
 	switch (major)
 	{
 	case 0:
-		u = -sign(direction.x()) * direction.z();
-		v = -direction.y();
-		n = 1.0f / abs(direction.x());
+		u = -sign(dir.x()) * dir.z();
+		v = -dir.y();
+		n = 1.0f / abs(dir.x());
 		break;
 
 	case 1:
-		u = direction.x();
-		v = sign(direction.y()) * direction.z();
-		n = 1.0f / abs(direction.y());
+		u = dir.x();
+		v = sign(dir.y()) * dir.z();
+		n = 1.0f / abs(dir.y());
 		break;
 
 	case 2:
-		u = sign(direction.z()) * direction.x();
-		v = -direction.y();
-		n = 1.0f / abs(direction.z());
+		u = sign(dir.z()) * dir.x();
+		v = -dir.y();
+		n = 1.0f / abs(dir.z());
 		break;
             
     default:
@@ -395,28 +397,29 @@ void CubeMap::set(const Vector4& direction, const Color4f& value)
 
 Color4f CubeMap::get(const Vector4& direction) const
 {
-	const int32_t major = majorAxis3(direction);
-	const int32_t side = major * 2 + (direction[major] >= 0.0f ? 0 : 1);
+	const Vector4 dir = direction.normalized();
+	const int32_t major = majorAxis3(dir);
+	const int32_t side = major * 2 + (dir[major] >= 0.0f ? 0 : 1);
 
 	float u, v, n;
 	switch (major)
 	{
 	case 0:
-		u = -sign(direction.x()) * direction.z();
-		v = -direction.y();
-		n = 1.0f / abs(direction.x());
+		u = -sign(dir.x()) * dir.z();
+		v = -dir.y();
+		n = 1.0f / abs(dir.x());
 		break;
 
 	case 1:
-		u = direction.x();
-		v = sign(direction.y()) * direction.z();
-		n = 1.0f / abs(direction.y());
+		u = dir.x();
+		v = sign(dir.y()) * dir.z();
+		n = 1.0f / abs(dir.y());
 		break;
 
 	case 2:
-		u = sign(direction.z()) * direction.x();
-		v = -direction.y();
-		n = 1.0f / abs(direction.z());
+		u = sign(dir.z()) * dir.x();
+		v = -dir.y();
+		n = 1.0f / abs(dir.z());
 		break;
 			
 	default:
