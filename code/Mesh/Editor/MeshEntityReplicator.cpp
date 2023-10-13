@@ -20,6 +20,8 @@
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/Operations/Transform.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphPreview.h"
 #include "Render/Editor/Texture/TextureSet.h"
 #include "World/EntityData.h"
 
@@ -83,10 +85,8 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
 	outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
 
-	// Create list of texture references.
-	SmallMap< std::wstring, Guid > materialTextures;
-	for (const auto& mt : meshAsset->getMaterialTextures())
-		materialTextures[mt.first] = mt.second;
+	const auto& materialTextures = meshAsset->getMaterialTextures();
+	const auto& materialShaders = meshAsset->getMaterialShaders();
 
 	// Bind texture references in material maps.
 	for (auto& material : model->getMaterials())
@@ -96,6 +96,25 @@ Ref< model::Model > MeshEntityReplicator::createModel(
 		if (it != materialTextures.end())
 		{
 			diffuseMap.texture = it->second;
+			material.setDiffuseMap(diffuseMap);
+		}
+	}
+
+	for (auto& material : model->getMaterials())
+	{
+		const auto it = materialShaders.find(material.getName());
+		if (it != materialShaders.end())
+		{
+			const Ref< const render::ShaderGraph > materialShaderGraph = pipelineCommon->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!materialShaderGraph)
+				continue;
+		
+			Ref< drawing::Image > image = render::ShaderGraphPreview(m_assetPath, pipelineCommon->getSourceDatabase()).generate(materialShaderGraph, 128, 128);
+			if (!image)
+				continue;
+
+			auto diffuseMap = material.getDiffuseMap();
+			diffuseMap.image = image;			
 			material.setDiffuseMap(diffuseMap);
 		}
 	}
