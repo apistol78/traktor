@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Bitmap;
 
@@ -42,7 +40,7 @@ class T_DLLCLASS ColorSliderControl : public Widget
 public:
 	struct IGradient : public Object
 	{
-		virtual Color4ub get(int at) const = 0;
+		virtual Color4ub get(int32_t at) const = 0;
 	};
 
 	bool create(Widget* parent, int style, IGradient* gradient);
@@ -58,6 +56,7 @@ private:
 	Ref< drawing::Image > m_gradientImage;
 	Ref< Bitmap > m_gradientBitmap;
 	int32_t m_marker;
+	bool m_hover;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
@@ -65,9 +64,9 @@ private:
 
 	void eventMouseMove(MouseMoveEvent* event);
 
+	void eventMouseTrack(MouseTrackEvent* event);
+
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-

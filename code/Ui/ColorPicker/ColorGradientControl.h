@@ -56,6 +56,10 @@ private:
 
 	void updateGradientImage();
 
+	Point clientToGradient(const Point& client) const;
+
+	Point gradientToClient(const Point& gradient) const;
+
 	void eventButtonDown(MouseButtonDownEvent* event);
 
 	void eventButtonUp(MouseButtonUpEvent* event);

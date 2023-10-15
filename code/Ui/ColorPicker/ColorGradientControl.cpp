@@ -94,15 +94,30 @@ void ColorGradientControl::updateGradientImage()
 	m_gradientBitmap->copyImage(m_gradientImage);
 }
 
+Point ColorGradientControl::clientToGradient(const Point& client) const
+{
+	const Rect innerRect = getInnerRect();
+	const Point pt = (client * Size(256, 256)) / innerRect.getSize();
+	return Point(
+		clamp(pt.x, 0, 255),
+		clamp(pt.y, 0, 255)
+	);
+}
+
+Point ColorGradientControl::gradientToClient(const Point& gradient) const
+{
+	const Rect innerRect = getInnerRect();
+	return (gradient * innerRect.getSize()) / Size(256, 256);
+}
+
 void ColorGradientControl::eventButtonDown(MouseButtonDownEvent* event)
 {
-	m_cursor = event->getPosition();
+	m_cursor = clientToGradient(event->getPosition());
 
 	ColorEvent colorEvent(this, getColor());
 	raiseEvent(&colorEvent);
 
 	update();
-
 	setCapture();
 }
 
@@ -116,20 +131,7 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	m_cursor = event->getPosition();
-
-	const int32_t size = pixel(256_ut);
-	m_cursor.x = (m_cursor.x * 256) / size;
-	m_cursor.y = (m_cursor.y * 256) / size;
-
-	if (m_cursor.x < 0)
-		m_cursor.x = 0;
-	if (m_cursor.x > 255)
-		m_cursor.x = 255;
-	if (m_cursor.y < 0)
-		m_cursor.y = 0;
-	if (m_cursor.y > 255)
-		m_cursor.y = 255;
+	m_cursor = clientToGradient(event->getPosition());
 
 	ColorEvent colorEvent(this, getColor());
 	raiseEvent(&colorEvent);
@@ -139,8 +141,8 @@ void ColorGradientControl::eventMouseMove(MouseMoveEvent* event)
 
 void ColorGradientControl::eventPaint(PaintEvent* event)
 {
-	const int32_t size = pixel(256_ut);
 	Canvas& canvas = event->getCanvas();
+	const int32_t size = pixel(256_ut);
 
 	canvas.drawBitmap(
 		Point(0, 0),
@@ -151,15 +153,13 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 	);
 
 	const Color4ub color = getColor();
-
-	int average = (color.r + color.g + color.b) / 3;
+	const int32_t average = (color.r + color.g + color.b) / 3;
 	if (average < 128)
 		canvas.setForeground(Color4ub(255, 255, 255));
 	else
 		canvas.setForeground(Color4ub(0, 0, 0));
 
-	Point cursor(m_cursor.x, m_cursor.y);
-	canvas.drawCircle(cursor, 5);
+	canvas.drawCircle(gradientToClient(m_cursor), pixel(5_ut));
 
 	event->consume();
 }

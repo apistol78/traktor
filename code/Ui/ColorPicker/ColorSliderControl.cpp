@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Ui/ColorPicker/ColorEvent.h"
 #include "Ui/ColorPicker/ColorSliderControl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorSliderControl", ColorSliderControl, Widget)
 
@@ -29,6 +27,7 @@ bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
 	addEventHandler< MouseButtonDownEvent >(this, &ColorSliderControl::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &ColorSliderControl::eventButtonUp);
 	addEventHandler< MouseMoveEvent >(this, &ColorSliderControl::eventMouseMove);
+	addEventHandler< MouseTrackEvent >(this, &ColorSliderControl::eventMouseTrack);
 	addEventHandler< PaintEvent >(this, &ColorSliderControl::eventPaint);
 
 	const int32_t sliderWidth = pixel(24_ut);
@@ -38,6 +37,7 @@ bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
 	m_gradientImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), sliderWidth, sliderHeight);
 	m_gradientBitmap = new Bitmap(sliderWidth, sliderHeight);
 	m_marker = 0;
+	m_hover = false;
 
 	updateGradient();
 	update();
@@ -84,11 +84,15 @@ void ColorSliderControl::updateGradient()
 void ColorSliderControl::eventButtonDown(MouseButtonDownEvent* event)
 {
 	const int32_t sliderHeight = pixel(256_ut);
-	int32_t y = event->getPosition().y;
-	Color4ub color = m_gradient->get((y * 256) / sliderHeight);
+	m_marker = clamp< int32_t >((event->getPosition().y * 256) / sliderHeight, 0, 255);
+
+	const Color4ub color = m_gradient->get(m_marker);
+
 	ColorEvent colorEvent(this, color);
 	raiseEvent(&colorEvent);
+
 	setCapture();
+	update();
 }
 
 void ColorSliderControl::eventButtonUp(MouseButtonUpEvent* event)
@@ -98,16 +102,22 @@ void ColorSliderControl::eventButtonUp(MouseButtonUpEvent* event)
 
 void ColorSliderControl::eventMouseMove(MouseMoveEvent* event)
 {
-	if (!hasCapture())
-		return;
+	if (hasCapture())
+	{
+		const int32_t sliderHeight = pixel(256_ut);
+		m_marker = clamp< int32_t >((event->getPosition().y * 256) / sliderHeight, 0, 255);
 
-	const int32_t sliderHeight = pixel(256_ut);
-	m_marker = clamp< int32_t >((event->getPosition().y * 256) / sliderHeight, 0, 255);
+		const Color4ub color = m_gradient->get(m_marker);
 
-	Color4ub color = m_gradient->get(m_marker);
-	ColorEvent colorEvent(this, color);
-	raiseEvent(&colorEvent);
+		ColorEvent colorEvent(this, color);
+		raiseEvent(&colorEvent);
+	}
+	update();
+}
 
+void ColorSliderControl::eventMouseTrack(MouseTrackEvent* event)
+{
+	m_hover = event->entered();
 	update();
 }
 
@@ -124,15 +134,22 @@ void ColorSliderControl::eventPaint(PaintEvent* event)
 	);
 
 	const int32_t y = pixel(Unit(m_marker));
+	const int32_t m = pixel(1_ut);
 
 	canvas.setBackground(Color4ub(0, 0, 0, 255));
 	canvas.fillRect(Rect(
-		innerRect.left, y - 1,
-		innerRect.right, y + 1
+		innerRect.left, y - m,
+		innerRect.right, y + m
 	));
+
+	if (m_hover && !hasCapture())
+	{
+		const Point mousePosition = getMousePosition();
+		canvas.setForeground(Color4ub(0, 0, 0, 128));
+		canvas.drawLine(Point(innerRect.left, mousePosition.y), Point(innerRect.right, mousePosition.y));
+	}
 
 	event->consume();
 }
 
-	}
 }
