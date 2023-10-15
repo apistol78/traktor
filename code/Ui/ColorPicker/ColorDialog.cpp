@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,20 +20,18 @@
 #include "Ui/ColorPicker/ColorControl.h"
 #include "Ui/ColorPicker/ColorEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 struct ColorGradient : public ColorSliderControl::IGradient
 {
-	virtual Color4ub get(int at) const
+	virtual Color4ub get(int32_t at) const
 	{
-		int rgb[] = { 255, 0, 0 };
-		int i = 2;
-		int d = 6;
+		int32_t rgb[] = { 255, 0, 0 };
+		int32_t i = 2;
+		int32_t d = 6;
 
-		for (int y = 0; y < at; ++y)
+		for (int32_t y = 0; y < at; ++y)
 		{
 			rgb[i] += d;
 			if ((d < 0 && rgb[i] <= 0) || (d > 0 && rgb[i] >= 255))
@@ -54,7 +52,7 @@ struct AlphaGradient : public ColorSliderControl::IGradient
 {
 	Color4ub color;
 
-	virtual Color4ub get(int at) const
+	virtual Color4ub get(int32_t at) const
 	{
 		return Color4ub(color.r, color.g, color.b, at);
 	}
@@ -80,7 +78,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style
 	if (style & WsHDR)
 	{
 		ev = cl.getEV();
-		cl.setEV(Scalar(0.0f));
+		cl.setEV(0.0_simd);
 	}
 
 	Color4ub club = cl.saturated().toColor4ub();
@@ -169,10 +167,10 @@ void ColorDialog::updateControls()
 {
 	Color4f cl = m_color;
 
-	float ev = cl.getEV();
-	cl.setEV(Scalar(0.0f));
+	const float ev = cl.getEV();
+	cl.setEV(0.0_simd);
 
-	Color4ub club = cl.saturated().toColor4ub();
+	const Color4ub club = cl.saturated().toColor4ub();
 
 	m_editColor[0]->setText(toString< int32_t >(club.r));
 	m_editColor[1]->setText(toString< int32_t >(club.g));
@@ -206,7 +204,7 @@ void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 	m_color = Color4f::fromColor4ub(color);
 	if (m_editColor[4])
 	{
-		int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
+		const int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
 		m_color.setEV(Scalar(ev));
 	}
 
@@ -270,5 +268,4 @@ void ColorDialog::eventEditFocus(FocusEvent* event)
 	updateControls();
 }
 
-	}
 }
