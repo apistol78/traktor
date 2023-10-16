@@ -94,6 +94,7 @@ GraphControl::GraphControl()
 ,	m_mode(MdNothing)
 ,	m_edgeSelectable(false)
 ,	m_hotPin(nullptr)
+,	m_hotEdge(nullptr)
 {
 }
 
@@ -335,9 +336,10 @@ Node* GraphControl::getNodeAt(const Point& p) const
 
 Edge* GraphControl::getEdgeAt(const Point& p) const
 {
+	const UnitPoint up = unit(p - m_offset);
 	for (auto edge : m_edges)
 	{
-		if (edge->hit(this, p))
+		if (edge->hit(this, up))
 			return edge;
 	}
 	return nullptr;
@@ -1031,12 +1033,20 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		event->consume();
 	}
 
+	const auto position = event->getPosition() / m_scale;
+
 	// Track "hot" pin.
-	auto position = event->getPosition() / m_scale;
 	auto hotPin = getPinAt(position);
 	if (hotPin != m_hotPin)
 	{
 		m_hotPin = hotPin;
+		update();
+	}
+
+	auto hotEdge = getEdgeAt(position);
+	if (hotEdge != m_hotEdge)
+	{
+		m_hotEdge = hotEdge;
 		update();
 	}
 }
@@ -1197,8 +1207,8 @@ void GraphControl::eventPaint(PaintEvent* event)
 	// Draw edges.
 	for (auto edge : m_edges)
 	{
-		if (!edge->isSelected())
-			edge->paint(this, &graphCanvas, m_offset, m_imageLabel);
+		if (!edge->isSelected() && m_hotEdge != edge)
+			edge->paint(this, &graphCanvas, m_offset, m_imageLabel, false);
 	}
 
 	// Node shapes.
@@ -1217,11 +1227,11 @@ void GraphControl::eventPaint(PaintEvent* event)
 #endif
 	}
 
-	// Draw selected edges.
+	// Draw selected, or hot, edges.
 	for (auto edge : m_edges)
 	{
-		if (edge->isSelected())
-			edge->paint(this, &graphCanvas, m_offset, m_imageLabel);
+		if (edge->isSelected() || m_hotEdge == edge)
+			edge->paint(this, &graphCanvas, m_offset, m_imageLabel, (bool)(m_hotEdge == edge));
 	}
 
 	// Edge cursor.

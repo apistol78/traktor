@@ -199,6 +199,10 @@
 					<second>255, 255, 255, 255</second>
 				</item>
 				<item>
+					<first>color-hover</first>
+					<second>0, 140, 255, 255</second>
+				</item>
+				<item>
 					<first>color-label</first>
 					<second>80, 80, 80, 255</second>
 				</item>

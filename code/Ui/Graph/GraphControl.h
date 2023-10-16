@@ -190,6 +190,7 @@ private:
 	std::vector< bool > m_edgeSelectionStates;
 	std::vector< std::pair< const Node*, const Node* > > m_dependencyHints;
 	const Pin* m_hotPin;
+	const Edge* m_hotEdge;
 
 	void beginSelectModification();
 

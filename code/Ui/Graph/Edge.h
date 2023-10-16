@@ -67,9 +67,9 @@ public:
 
 	bool isSelected() const;
 
-	bool hit(const GraphControl* graph, const Point& p) const;
+	bool hit(const GraphControl* graph, const UnitPoint& p) const;
 
-	void paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const;
+	void paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel, bool hot) const;
 
 private:
 	Ref< Pin > m_source;
