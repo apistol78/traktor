@@ -168,9 +168,10 @@ bool Edge::isSelected() const
 	return m_selected;
 }
 
-bool Edge::hit(const GraphControl* graph, const Point& p) const
+bool Edge::hit(const GraphControl* graph, const UnitPoint& p) const
 {
-	Vector2 P(float(p.x), float(p.y));
+	const Point pt = graph->pixel(p);
+	const Vector2 P(float(pt.x), float(pt.y));
 
 	calculateLinearSpline(
 		graph,
@@ -179,7 +180,7 @@ bool Edge::hit(const GraphControl* graph, const Point& p) const
 		m_spline
 	);
 
-	const float c_hitWidth = (float)graph->pixel(4_ut);
+	const float c_hitWidth = (float)graph->pixel(8_ut);
 	for (int32_t i = 1; i < (int32_t)(m_spline.size() - 2); ++i)
 	{
 		const Point& s = m_spline[i];
@@ -207,7 +208,7 @@ bool Edge::hit(const GraphControl* graph, const Point& p) const
 	return false;
 }
 
-void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel) const
+void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, IBitmap* imageLabel, bool hot) const
 {
 	if (!m_source || !m_destination)
 		return;
@@ -216,7 +217,14 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	const PaintSettings& settings = canvas->getPaintSettings();
 	const Dim dim(graph);
 
-	auto color = ss->getColor(this, m_selected ? L"color-selected" : L"color");
+	Color4ub color;
+	if (hot)
+		color = ss->getColor(this, L"color-hover");
+	else if (m_selected)
+		color = ss->getColor(this, L"color-selected");
+	else
+		color = ss->getColor(this, L"color");
+
 	canvas->setForeground(color);
 	canvas->setBackground(color);
 
@@ -239,21 +247,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setBackground(color);
 #endif
 
-	canvas->drawLines(m_spline, graph->pixel(m_thickness));
-	//canvas->drawLine(m_spline[0], m_spline[1], pixel(m_thickness));
-	//canvas->drawCurve(
-	//	m_spline[1],
-	//	m_spline[2],
-	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
-	//	pixel(m_thickness)
-	//);
-	//canvas->drawCurve(
-	//	Point((m_spline[2].x + m_spline[3].x) / 2, (m_spline[2].y + m_spline[3].y) / 2),
-	//	m_spline[3],
-	//	m_spline[4],
-	//	pixel(m_thickness)
-	//);
-	//canvas->drawLine(m_spline[4], m_spline[5], pixel(m_thickness));
+	canvas->drawLines(m_spline, graph->pixel(hot ? 4_ut : m_thickness));
 
 	const Point at = graph->pixel(m_destination->getPosition()) + offset;
 	const Point arrow[] =
