@@ -61,6 +61,16 @@ public:
 		return PointBase< ValueType >(x - s.cx, y - s.cy);
 	}
 
+	PointBase< ValueType > operator * (const SizeBase< ValueType >& s) const
+	{
+		return PointBase< ValueType >(x * s.cx, y * s.cy);
+	}
+
+	PointBase< ValueType > operator / (const SizeBase< ValueType >& s) const
+	{
+		return PointBase< ValueType >(x / s.cx, y / s.cy);
+	}
+
 	const PointBase< ValueType >& operator += (const SizeBase< ValueType >& s)
 	{
 		x += s.cx; y += s.cy;

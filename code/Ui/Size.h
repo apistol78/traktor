@@ -84,6 +84,30 @@ public:
 		return *this;
 	}
 
+	SizeBase< ValueType > operator * (const SizeBase< ValueType >& r) const
+	{
+		return SizeBase< ValueType >(cx * r.cx, cy * r.cy);
+	}
+
+	SizeBase< ValueType >& operator *= (const SizeBase< ValueType >& r)
+	{
+		cx *= r.cx;
+		cy *= r.cy;
+		return *this;
+	}
+
+	SizeBase< ValueType > operator / (const SizeBase< ValueType >& r) const
+	{
+		return SizeBase< ValueType >(cx / r.cx, cy / r.cy);
+	}
+
+	SizeBase< ValueType >& operator /= (const SizeBase< ValueType >& r)
+	{
+		cx /= r.cx;
+		cy /= r.cy;
+		return *this;
+	}
+
 	bool operator == (const SizeBase< ValueType >& r) const
 	{
 		return cx == r.cx && cy == r.cy;
