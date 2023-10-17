@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <numeric>
+#include "Core/Log/Log.h"
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 #include "Render/PrimitiveRenderer.h"
@@ -84,8 +85,8 @@ IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 	const Scalar distance = (m_center - eye).xyz0().length();
 
 	const float axisLength = (distance / 4.0f) * m_context->getGuideSize();
-	const float arrowLength = axisLength / 8.0f;
-	const float squareLength = axisLength / 3.0f;
+	const float arrowLength = axisLength / 7.0f;
+	const float squareLength = axisLength / 2.5f;
 
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(m_center));
@@ -117,7 +118,9 @@ IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 
 	// Check drag circles.
 	{
-		// \FIXME
+		const float d = (center - cursorPosition).length();
+		if (d < 0.015f)
+			m_axisHot |= 1 | 2 | 4;
 	}
 
 	// Check combo squares.
@@ -125,39 +128,37 @@ IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 		Winding2 w(4);
 
 		// XY
-		w[0] = center;
-		w[1] = square[0];
-		w[2] = square[3];
-		w[3] = square[1];
-		if (w.inside(cursorPosition))
+		if (m_axisHot == 0)
 		{
-			m_axisHot |= 1 | 2;
-			goto hit;
+			w[0] = center;
+			w[1] = square[0];
+			w[2] = square[3];
+			w[3] = square[1];
+			if (w.inside(cursorPosition))
+				m_axisHot |= 1 | 2;
 		}
 
 		// XZ
-		w[0] = center;
-		w[1] = square[0];
-		w[2] = square[4];
-		w[3] = square[2];
-		if (w.inside(cursorPosition))
+		if (m_axisHot == 0)
 		{
-			m_axisHot |= 1 | 4;
-			goto hit;
+			w[0] = center;
+			w[1] = square[0];
+			w[2] = square[4];
+			w[3] = square[2];
+			if (w.inside(cursorPosition))
+				m_axisHot |= 1 | 4;
 		}
 
 		// YZ
-		w[0] = center;
-		w[1] = square[1];
-		w[2] = square[5];
-		w[3] = square[2];
-		if (w.inside(cursorPosition))
+		if (m_axisHot == 0)
 		{
-			m_axisHot |= 2 | 4;
-			goto hit;
+			w[0] = center;
+			w[1] = square[1];
+			w[2] = square[5];
+			w[3] = square[2];
+			if (w.inside(cursorPosition))
+				m_axisHot |= 2 | 4;
 		}
-
-hit:;
 	}
 
 	// Check each line.
@@ -247,31 +248,49 @@ void TranslateModifier::apply(
 {
 	const Vector4 cp = transformChain.worldToClip(m_center);
 
-	Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
-	if (!(m_axisEnable & 1))
-		worldDelta *= Vector4(0.0f, 1.0f, 1.0f);
-	if (!(m_axisEnable & 2))
-		worldDelta *= Vector4(1.0f, 0.0f, 1.0f);
-	if (!(m_axisEnable & 4))
-		worldDelta *= Vector4(1.0f, 1.0f, 0.0f);
-	m_center += worldDelta;
-
-	Vector4 baseDelta = snap(m_center, 1 | 2 | 4, snapOverrideEnable) - m_center0;
-	if (!(m_axisEnable & 1))
-		baseDelta *= Vector4(0.0f, 1.0f, 1.0f);
-	if (!(m_axisEnable & 2))
-		baseDelta *= Vector4(1.0f, 0.0f, 1.0f);
-	if (!(m_axisEnable & 4))
-		baseDelta *= Vector4(1.0f, 1.0f, 0.0f);
-
-	for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+	if (m_axisEnable != (1 | 2 | 4))
 	{
-		const Transform T = m_entityAdapters[i]->getTransform();
-		m_entityAdapters[i]->setTransform(Transform(
-			//m_baseTranslations[i] + baseDelta,	<< Snap in object space
-			snap(m_baseTranslations[i] + baseDelta, m_axisEnable, snapOverrideEnable),	//< Snap in world space.
-			T.rotation()
-		));
+		Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
+		if (!(m_axisEnable & 1))
+			worldDelta *= Vector4(0.0f, 1.0f, 1.0f);
+		if (!(m_axisEnable & 2))
+			worldDelta *= Vector4(1.0f, 0.0f, 1.0f);
+		if (!(m_axisEnable & 4))
+			worldDelta *= Vector4(1.0f, 1.0f, 0.0f);
+		m_center += worldDelta;
+
+		Vector4 baseDelta = snap(m_center, 1 | 2 | 4, snapOverrideEnable) - m_center0;
+		if (!(m_axisEnable & 1))
+			baseDelta *= Vector4(0.0f, 1.0f, 1.0f);
+		if (!(m_axisEnable & 2))
+			baseDelta *= Vector4(1.0f, 0.0f, 1.0f);
+		if (!(m_axisEnable & 4))
+			baseDelta *= Vector4(1.0f, 1.0f, 0.0f);
+
+		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		{
+			const Transform T = m_entityAdapters[i]->getTransform();
+			m_entityAdapters[i]->setTransform(Transform(
+				snap(m_baseTranslations[i] + baseDelta, m_axisEnable, snapOverrideEnable),
+				T.rotation()
+			));
+		}
+	}
+	else
+	{
+		Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
+		m_center += worldDelta;
+
+		Vector4 baseDelta = m_center - m_center0;
+
+		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		{
+			const Transform T = m_entityAdapters[i]->getTransform();
+			m_entityAdapters[i]->setTransform(Transform(
+				snap(m_baseTranslations[i] + baseDelta, 1 | 2 | 4, snapOverrideEnable),
+				T.rotation()
+			));
+		}
 	}
 
 	m_axisHot = m_axisEnable;
@@ -292,8 +311,8 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	const Scalar distance = (m_center - eye).xyz0().length();
 
 	const float axisLength = (distance / 4.0f) * m_context->getGuideSize();
-	const float arrowLength = axisLength / 8.0f;
-	const float squareLength = axisLength / 3.0f;
+	const float arrowLength = axisLength / 7.0f;
+	const float squareLength = axisLength / 2.5f;
 
 	primitiveRenderer->pushWorld(translate(m_center));
 
@@ -354,45 +373,63 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	// Guide fill squares.
 	// XY
-	primitiveRenderer->drawSolidQuad(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
-		Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f),
-		Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
-		Color4ub(255, 255, 0, m_axisHot == (1 | 2) ? 90 : 70)
-	);
+	if (m_axisEnable == 0 || m_axisEnable == (1 | 2))
+	{
+		primitiveRenderer->drawSolidQuad(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
+			Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f),
+			Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
+			Color4ub(255, 255, 0, m_axisHot == (1 | 2) ? 90 : 70)
+		);
+	}
 	// XZ
-	primitiveRenderer->drawSolidQuad(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
-		Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f),
-		Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
-		Color4ub(255, 255, 0, m_axisHot == (1 | 4) ? 90 : 70)
-	);
+	if (m_axisEnable == 0 || m_axisEnable == (1 | 4))
+	{
+		primitiveRenderer->drawSolidQuad(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f),
+			Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f),
+			Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
+			Color4ub(255, 255, 0, m_axisHot == (1 | 4) ? 90 : 70)
+		);
+	}
 	// YZ
-	primitiveRenderer->drawSolidQuad(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
-		Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f),
-		Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
-		Color4ub(255, 255, 0, m_axisHot == (2 | 4) ? 90 : 70)
-	);
+	if (m_axisEnable == 0 || m_axisEnable == (2 | 4))
+	{
+		primitiveRenderer->drawSolidQuad(
+			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(0.0f, sy * squareLength, 0.0f, 1.0f),
+			Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f),
+			Vector4(0.0f, 0.0f, sz * squareLength, 1.0f),
+			Color4ub(255, 255, 0, m_axisHot == (2 | 4) ? 90 : 70)
+		);
+	}
 
 	// Guide square lines.
 	// XY
-	const float awxy = (float)(((m_axisHot & (1 | 2)) == (1 | 2)) ? 3 : 1);
-	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(0, 255, 0, 255));
+	if (m_axisEnable == 0 || m_axisEnable == (1 | 2))
+	{
+		const float awxy = (float)(((m_axisHot & (1 | 2)) == (1 | 2)) ? 3 : 1);
+		primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(255, 0, 0, 255));
+		primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(sx * squareLength, sy * squareLength, 0.0f, 1.0f), awxy, Color4ub(0, 255, 0, 255));
+	}
 
 	// XZ
-	const float awxz = (float)(((m_axisHot & (1 | 4)) == (1 | 4)) ? 3 : 1);
-	primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(0, 0, 255, 255));
+	if (m_axisEnable == 0 || m_axisEnable == (1 | 4))
+	{
+		const float awxz = (float)(((m_axisHot & (1 | 4)) == (1 | 4)) ? 3 : 1);
+		primitiveRenderer->drawLine(Vector4(sx * squareLength, 0.0f, 0.0f, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(255, 0, 0, 255));
+		primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(sx * squareLength, 0.0f, sz * squareLength, 1.0f), awxz, Color4ub(0, 0, 255, 255));
+	}
 
 	// YZ
-	const float awyz = (float)(((m_axisHot & (2 | 4)) == (2 | 4)) ? 3 : 1);
-	primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 255, 0, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 0, 255, 255));
+	if (m_axisEnable == 0 || m_axisEnable == (2 | 4))
+	{
+		const float awyz = (float)(((m_axisHot & (2 | 4)) == (2 | 4)) ? 3 : 1);
+		primitiveRenderer->drawLine(Vector4(0.0f, sy * squareLength, 0.0f, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 255, 0, 255));
+		primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, sz * squareLength, 1.0f), Vector4(0.0f, sy * squareLength, sz * squareLength, 1.0f), awyz, Color4ub(0, 0, 255, 255));
+	}
 
 	// Guide axis lines.
 	primitiveRenderer->drawLine(
@@ -432,6 +469,13 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f),
 		0.5f,
 		Color4ub(0, 0, 255, 255)
+	);
+
+	// Center point.
+	primitiveRenderer->drawSolidPoint(
+		Vector4::origo(),
+		10.0f,
+		(m_axisHot != (1 | 2 | 4)) ? Color4ub(255, 255, 255, 180) : Color4ub(255, 255, 255, 255)
 	);
 
 	primitiveRenderer->popDepthState();
