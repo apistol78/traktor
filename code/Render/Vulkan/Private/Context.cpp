@@ -146,8 +146,8 @@ bool Context::create()
 	{
 		// Create descriptor layout.
 		VkDescriptorBindingFlags bindlessFlags[] = {
-			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT,
-			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT
+			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | /*VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | */VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT,
+			VK_DESCRIPTOR_BINDING_PARTIALLY_BOUND_BIT_EXT | /*VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT | */VK_DESCRIPTOR_BINDING_UPDATE_AFTER_BIND_BIT_EXT
 		};
 
 		VkDescriptorSetLayoutBinding binding[2];
@@ -186,11 +186,11 @@ bool Context::create()
 		alloc_info.descriptorSetCount = 1;
 		alloc_info.pSetLayouts = &m_bindlessDescriptorLayout;
 
-		VkDescriptorSetVariableDescriptorCountAllocateInfoEXT count_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT };
-		uint32_t max_binding = k_max_bindless_resources - 1;
-		count_info.descriptorSetCount = 1;
-		count_info.pDescriptorCounts = &max_binding;	// This number is the max allocatable count.
-		alloc_info.pNext = &count_info;
+		//VkDescriptorSetVariableDescriptorCountAllocateInfoEXT count_info{ VK_STRUCTURE_TYPE_DESCRIPTOR_SET_VARIABLE_DESCRIPTOR_COUNT_ALLOCATE_INFO_EXT };
+		//uint32_t max_binding = k_max_bindless_resources - 1;
+		//count_info.descriptorSetCount = 1;
+		//count_info.pDescriptorCounts = &max_binding;	// This number is the max allocatable count.
+		//alloc_info.pNext = &count_info;
 
 		VkResult result;
 		if ((result = vkAllocateDescriptorSets(m_logicalDevice, &alloc_info, &m_bindlessDescriptorSet)) != VK_SUCCESS)
