@@ -16,13 +16,6 @@
 
 namespace traktor::render
 {
-	namespace
-	{
-
-static const uint32_t k_bindless_texture_binding = 0;
-static const uint32_t k_bindless_image_binding = 1;
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Image", Image, Object)
 
@@ -96,9 +89,21 @@ bool Image::createSimple(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	updateBindlessResource(
+		Context::BindlessTexturesBinding,
+		m_context->getBindlessTexturesDescriptorSet(),
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+	);
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	{
+		updateBindlessResource(
+			Context::BindlessImagesBinding,
+			m_context->getBindlessImagesDescriptorSet(),
+			VK_IMAGE_LAYOUT_GENERAL,
+			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+		);
+	}
 
 	return true;
 }
@@ -163,9 +168,21 @@ bool Image::createCube(
 	m_layerCount = 6;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	updateBindlessResource(
+		Context::BindlessTexturesBinding,
+		m_context->getBindlessTexturesDescriptorSet(),
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+	);
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	{
+		updateBindlessResource(
+			Context::BindlessImagesBinding,
+			m_context->getBindlessImagesDescriptorSet(),
+			VK_IMAGE_LAYOUT_GENERAL,
+			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+		);
+	}
 
 	return true;
 }
@@ -231,9 +248,21 @@ bool Image::createVolume(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	updateBindlessResource(
+		Context::BindlessTexturesBinding,
+		m_context->getBindlessTexturesDescriptorSet(),
+		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+	);
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-		updateBindlessResource(k_bindless_image_binding, VK_IMAGE_LAYOUT_GENERAL, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE);
+	{
+		updateBindlessResource(
+			Context::BindlessImagesBinding,
+			m_context->getBindlessImagesDescriptorSet(),
+			VK_IMAGE_LAYOUT_GENERAL,
+			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
+		);
+	}
 
 	return true;
 }
@@ -305,7 +334,15 @@ bool Image::createTarget(
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (swapChainImage == 0)
-		updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	{
+		updateBindlessResource(
+			Context::BindlessTexturesBinding,
+			m_context->getBindlessTexturesDescriptorSet(),
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+		);
+	}
+
 	return true;
 }
 
@@ -375,7 +412,15 @@ bool Image::createDepthTarget(
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (usedAsTexture)
-		updateBindlessResource(k_bindless_texture_binding, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
+	{
+		updateBindlessResource(
+			Context::BindlessTexturesBinding,
+			m_context->getBindlessTexturesDescriptorSet(),
+			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+			VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
+		);
+	}
+
 	return true;
 }
 
@@ -486,7 +531,12 @@ bool Image::changeLayout(
 	return true;
 }
 
-bool Image::updateBindlessResource(int32_t binding, VkImageLayout imageLayout, VkDescriptorType imageType)
+bool Image::updateBindlessResource(
+	int32_t binding,
+	VkDescriptorSet descriptorSet,
+	VkImageLayout imageLayout,
+	VkDescriptorType imageType
+)
 {
 	if (m_resourceIndex == ~0U)
 	{
@@ -506,7 +556,7 @@ bool Image::updateBindlessResource(int32_t binding, VkImageLayout imageLayout, V
 	VkWriteDescriptorSet write = {};
 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	write.pNext = nullptr;
-	write.dstSet = m_context->getBindlessDescriptorSet();
+	write.dstSet = descriptorSet;
 	write.descriptorCount = 1;
 	write.descriptorType = imageType;
 	write.pImageInfo = &imageInfo;

@@ -439,8 +439,14 @@ bool ProgramVk::validate(
 		bufferOffsets.push_back(bvvk->getVkBufferOffset());
 	}
 
-	// Bind descriptor sets.
-	const VkDescriptorSet descriptorSets[] = { m_context->getBindlessDescriptorSet(), m_descriptorSet };
+	// Must match order defined in GlslResource.h
+	const VkDescriptorSet descriptorSets[] =
+	{
+		m_descriptorSet,
+		m_context->getBindlessTexturesDescriptorSet(),
+		m_context->getBindlessImagesDescriptorSet()
+	};
+
 	vkCmdBindDescriptorSets(
 		*commandBuffer,
 		bindPoint,

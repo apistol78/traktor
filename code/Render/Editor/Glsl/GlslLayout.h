@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Render/Editor/Glsl/GlslResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,8 +23,6 @@
 
 namespace traktor::render
 {
-	
-class GlslResource;
 
 class T_DLLCLASS GlslLayout : public Object
 {
@@ -61,7 +60,7 @@ public:
 	GlslResource* getByName(const std::wstring& name);
 
 	/*! Get all resources. */
-	RefArray< GlslResource > getBySet(int32_t set);
+	RefArray< GlslResource > getBySet(GlslResource::Set set);
 
 	/*! Get all resources. */
 	const RefArray< GlslResource >& get() const { return m_resources; }

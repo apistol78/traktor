@@ -449,7 +449,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	};
 	std::map< std::wstring, ParameterMapping > parameterMapping;
 
-	for (auto resource : cx.getLayout().getBySet(1))
+	for (auto resource : cx.getLayout().getBySet(GlslResource::Set::Default))
 	{
 		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
@@ -773,18 +773,18 @@ bool ProgramCompilerVk::generate(
 		{
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
-				ss << L"// [binding = " << sampler->getBinding() << L", set = " << sampler->getSet() << L"] = sampler" << Endl;
+				ss << L"// [binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L"] = sampler" << Endl;
 				ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
 			}
 			else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 			{
-				ss << L"// [binding = " << texture->getBinding() << L", set = " << texture->getSet() << L"] = texture" << Endl;
+				ss << L"// [binding = " << texture->getBinding() << L", set = " << (int32_t)texture->getSet() << L"] = texture" << Endl;
 				ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
 				ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
 			}
 			else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
 			{
-				ss << L"// [binding = " << uniformBuffer->getBinding() << L", set = " << uniformBuffer->getSet() << L"] = uniform buffer" << Endl;
+				ss << L"// [binding = " << uniformBuffer->getBinding() << L", set = " << (int32_t)uniformBuffer->getSet() << L"] = uniform buffer" << Endl;
 				ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
 				ss << L"//   .uniforms = {" << Endl;
 				for (auto uniform : uniformBuffer->get())
@@ -795,13 +795,13 @@ bool ProgramCompilerVk::generate(
 			}
 			else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
 			{
-				ss << L"// [binding = " << image->getBinding() << L", set = " << image->getSet() << L"] = image" << Endl;
+				ss << L"// [binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L"] = image" << Endl;
 				ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
 				ss << L"//   .type = " << int32_t(image->getUniformType()) << Endl;
 			}
 			else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
 			{
-				ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << storageBuffer->getSet() << L"] = storage buffer" << Endl;
+				ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L"] = storage buffer" << Endl;
 				ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
 				ss << L"//   .elements = {" << Endl;
 				for (auto element : storageBuffer->get())

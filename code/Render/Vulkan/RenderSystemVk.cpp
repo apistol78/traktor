@@ -428,7 +428,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
-	m_pipelineLayoutCache = new PipelineLayoutCache(m_logicalDevice, m_context->getBindlessSetLayout());
+	m_pipelineLayoutCache = new PipelineLayoutCache(m_context); // m_logicalDevice, m_context->getBindlessSetLayout());
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
 
