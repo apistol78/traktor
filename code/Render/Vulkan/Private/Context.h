@@ -32,6 +32,10 @@ class Context : public Object
 	T_RTTI_CLASS;
 
 public:
+	constexpr static uint32_t MaxBindlessResources = 16536;
+	constexpr static uint32_t BindlessTexturesBinding = 1;
+	constexpr static uint32_t BindlessImagesBinding = 2;
+
 	typedef std::function< void(Context*) > cleanup_fn_t;
 
 	struct ICleanupListener
@@ -86,9 +90,13 @@ public:
 
 	UniformBufferPool* getUniformBufferPool(int32_t index) const { return m_uniformBufferPools[index]; }
 
-	VkDescriptorSetLayout getBindlessSetLayout() const { return m_bindlessDescriptorLayout; }
+	VkDescriptorSetLayout getBindlessTexturesSetLayout() const { return m_bindlessTexturesDescriptorLayout; }
 
-	VkDescriptorSet getBindlessDescriptorSet() const { return m_bindlessDescriptorSet; }
+	VkDescriptorSet getBindlessTexturesDescriptorSet() const { return m_bindlessTexturesDescriptorSet; }
+
+	VkDescriptorSetLayout getBindlessImagesSetLayout() const { return m_bindlessImagesDescriptorLayout; }
+
+	VkDescriptorSet getBindlessImagesDescriptorSet() const { return m_bindlessImagesDescriptorSet; }
 
 	uint32_t allocBindlessResourceIndex();
 
@@ -107,8 +115,10 @@ private:
 	Semaphore m_cleanupLock;
 	AlignedVector< cleanup_fn_t > m_cleanupFns;
 	AlignedVector< ICleanupListener* > m_cleanupListeners;
-	VkDescriptorSetLayout m_bindlessDescriptorLayout;
-	VkDescriptorSet m_bindlessDescriptorSet;
+	VkDescriptorSetLayout m_bindlessTexturesDescriptorLayout;
+	VkDescriptorSet m_bindlessTexturesDescriptorSet;
+	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout;
+	VkDescriptorSet m_bindlessImagesDescriptorSet;
 	IdAllocator m_resourceIndexAllocator;
 };
 

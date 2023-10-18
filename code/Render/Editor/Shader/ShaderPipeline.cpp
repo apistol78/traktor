@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,12 +52,10 @@
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 {
@@ -83,7 +81,7 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
+	explicit FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
 	:	m_pipeline(pipeline)
 	{
 	}
@@ -104,9 +102,9 @@ private:
 	Ref< editor::IPipelineCommon > m_pipeline;
 };
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 96, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 97, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -706,5 +704,4 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 	return m_programCompiler;
 }
 
-	}
 }

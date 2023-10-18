@@ -10,6 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/Utilities.h"
 
@@ -55,9 +56,8 @@ std::wstring describe(const VkDescriptorSetLayoutCreateInfo& dlci)
 
 	}
 
-PipelineLayoutCache::PipelineLayoutCache(VkDevice logicalDevice, VkDescriptorSetLayout bindlessDescriptorLayout)
-:	m_logicalDevice(logicalDevice)
-,	m_bindlessDescriptorLayout(bindlessDescriptorLayout)
+PipelineLayoutCache::PipelineLayoutCache(Context* context)
+:	m_context(context)
 {
 }
 
@@ -65,12 +65,12 @@ PipelineLayoutCache::~PipelineLayoutCache()
 {
 	for (auto& it : m_entries)
 	{
-		vkDestroyDescriptorSetLayout(m_logicalDevice, it.second.descriptorSetLayout, 0);
-		vkDestroyPipelineLayout(m_logicalDevice, it.second.pipelineLayout, 0);
+		vkDestroyDescriptorSetLayout(m_context->getLogicalDevice(), it.second.descriptorSetLayout, 0);
+		vkDestroyPipelineLayout(m_context->getLogicalDevice(), it.second.pipelineLayout, 0);
 	}
 
 	for (auto& it : m_samplers)
-		vkDestroySampler(m_logicalDevice, it.second, 0);
+		vkDestroySampler(m_context->getLogicalDevice(), it.second, 0);
 }
 
 bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const VkDescriptorSetLayoutCreateInfo& dlci, VkDescriptorSetLayout& outDescriptorSetLayout, VkPipelineLayout& outPipelineLayout)
@@ -97,10 +97,16 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 	}
 	else
 	{
-		if (vkCreateDescriptorSetLayout(m_logicalDevice, &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
+		if (vkCreateDescriptorSetLayout(m_context->getLogicalDevice(), &dlci, nullptr, &outDescriptorSetLayout) != VK_SUCCESS)
 			return false;
 
-		const VkDescriptorSetLayout setLayouts[] = { m_bindlessDescriptorLayout, outDescriptorSetLayout };
+		// Must match order defined in GlslResource.h
+		const VkDescriptorSetLayout setLayouts[] =
+		{
+			outDescriptorSetLayout,
+			m_context->getBindlessTexturesSetLayout(),
+			m_context->getBindlessImagesSetLayout()
+		};
 
 		VkPushConstantRange pcr = {};
 		pcr.offset = 0;
@@ -109,7 +115,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 
 		VkPipelineLayoutCreateInfo lci = {};
 		lci.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-		lci.setLayoutCount = 2;
+		lci.setLayoutCount = sizeof_array(setLayouts);
 		lci.pSetLayouts = setLayouts;
 		lci.pushConstantRangeCount = 0;
 		lci.pPushConstantRanges = nullptr;
@@ -120,7 +126,7 @@ bool PipelineLayoutCache::get(uint32_t pipelineHash, bool useTargetSize, const V
 			lci.pPushConstantRanges = &pcr;
 		}
 
-		if (vkCreatePipelineLayout(m_logicalDevice, &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)
+		if (vkCreatePipelineLayout(m_context->getLogicalDevice(), &lci, nullptr, &outPipelineLayout) != VK_SUCCESS)
 			return false;
 
 		auto& entry = m_entries[pipelineHash];
@@ -147,10 +153,10 @@ VkSampler PipelineLayoutCache::getSampler(const VkSamplerCreateInfo& sci)
 		return it->second;
 
 	VkSampler sampler = 0;
-	if (vkCreateSampler(m_logicalDevice, &sci, nullptr, &sampler) != VK_SUCCESS)
+	if (vkCreateSampler(m_context->getLogicalDevice(), &sci, nullptr, &sampler) != VK_SUCCESS)
 		return 0;
 
-	setObjectDebugName(m_logicalDevice, L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
+	setObjectDebugName(m_context->getLogicalDevice(), L"Sampler", (uint64_t)sampler, VK_OBJECT_TYPE_SAMPLER);
 
 	m_samplers.insert(samplerHash, sampler);
 	return sampler;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,15 +30,23 @@ class T_DLLCLASS GlslResource : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum BindStages
+	enum class Set
 	{
-		BsVertex = 1,
-		BsFragment = 2,
-		BsCompute = 4,
-		BsAll = (BsVertex | BsFragment | BsCompute)
+		Undefined			= -1,
+		Default				= 0,
+		BindlessTextures	= 1,
+		BindlessImages		= 2
 	};
 
-	int32_t getSet() const { return m_set; }
+	enum BindStages
+	{
+		BsVertex 	= 1,
+		BsFragment	= 2,
+		BsCompute	= 4,
+		BsAll		= (BsVertex | BsFragment | BsCompute)
+	};
+
+	Set getSet() const { return m_set; }
 
 	int32_t getBinding() const { return m_binding; }
 
@@ -51,13 +59,13 @@ public:
 	virtual int32_t getOrdinal() const = 0;
 
 protected:
-	explicit GlslResource(const std::wstring& name, int32_t set, uint8_t stages);
+	explicit GlslResource(const std::wstring& name, Set set, uint8_t stages);
 
 private:
 	friend class GlslLayout;
 
 	std::wstring m_name;
-	int32_t m_set = -1;
+	Set m_set = Set::Undefined;
 	int32_t m_binding = -1;
 	uint8_t m_stages = 0;
 };

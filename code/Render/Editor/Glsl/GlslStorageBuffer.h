@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,7 +33,7 @@ public:
 		DataType type;
 	};
 
-	explicit GlslStorageBuffer(const std::wstring& name, int32_t set, uint8_t stages);
+	explicit GlslStorageBuffer(const std::wstring& name, Set set, uint8_t stages);
 
 	bool add(const std::wstring& elementName, DataType elementType);
 

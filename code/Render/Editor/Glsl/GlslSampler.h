@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,7 +27,7 @@ class T_DLLCLASS GlslSampler : public GlslResource
 	T_RTTI_CLASS;
 
 public:
-	explicit GlslSampler(const std::wstring& name, int32_t set, uint8_t stages, const SamplerState& state, const std::wstring& textureName = L"");
+	explicit GlslSampler(const std::wstring& name, Set set, uint8_t stages, const SamplerState& state, const std::wstring& textureName = L"");
 
 	const SamplerState& getState() const { return m_state; }
 

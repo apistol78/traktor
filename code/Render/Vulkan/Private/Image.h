@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -112,7 +112,12 @@ private:
 	uint32_t m_resourceIndex = ~0U;
 	void* m_locked = nullptr;
 
-	bool updateBindlessResource(int32_t binding, VkImageLayout imageLayout, VkDescriptorType imageType);
+	bool updateBindlessResource(
+		int32_t binding,
+		VkDescriptorSet descriptorSet,
+		VkImageLayout imageLayout,
+		VkDescriptorType imageType
+	);
 };
 		
 }

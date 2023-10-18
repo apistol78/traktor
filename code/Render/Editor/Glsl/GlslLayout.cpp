@@ -1,13 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Render/Editor/Glsl/GlslLayout.h"
-#include "Render/Editor/Glsl/GlslResource.h"
 
 namespace traktor::render
 {
@@ -34,7 +33,7 @@ void GlslLayout::add(GlslResource* resource)
 	m_dynamicResources.sort([](const GlslResource* r0, const GlslResource* r1) -> bool {
 		const wchar_t* tn0 = type_name(r0);
 		const wchar_t* tn1 = type_name(r1);
-		int32_t c = wcscmp(tn0, tn1);
+		const int32_t c = wcscmp(tn0, tn1);
 		if (c < 0)
 			return false;
 		else if (c > 0)
@@ -83,7 +82,7 @@ GlslResource* GlslLayout::getByName(const std::wstring& name)
 	return it != m_resources.end() ? (*it).ptr() : nullptr;
 }
 
-RefArray< GlslResource > GlslLayout::getBySet(int32_t set)
+RefArray< GlslResource > GlslLayout::getBySet(GlslResource::Set set)
 {
 	RefArray< GlslResource > setResources;
 	for (auto resource : m_resources)

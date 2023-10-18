@@ -42,15 +42,15 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph, const PropertyGroup* se
 ,	m_computeShader(GlslShader::StCompute)
 ,	m_currentShader(nullptr)
 {
-	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__", 0, GlslResource::BsAll, GlslType::Texture2D, true), 0);
-	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__", 0, GlslResource::BsAll, GlslType::Texture3D, true), 0);
-	m_layout.addStatic(new GlslTexture(L"__bindlessTexturesCube__", 0, GlslResource::BsAll, GlslType::TextureCube, true), 0);
-	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__", 0, GlslResource::BsAll, GlslType::Image2D, true), 1);
-	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__", 0, GlslResource::BsAll, GlslType::Image3D, true), 1);
-	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", 0, GlslResource::BsAll, GlslType::ImageCube, true), 1);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce", 1, 0), 2);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", 1, 0), 3);
-	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw", 1, 0), 4);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures2D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture2D, true),   /* binding */ 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTextures3D__",   GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::Texture3D, true),   /* binding */ 0);
+	m_layout.addStatic(new GlslTexture(L"__bindlessTexturesCube__", GlslResource::Set::BindlessTextures, GlslResource::BsAll, GlslType::TextureCube, true), /* binding */ 0);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages2D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image2D, true),   /* binding */ 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImages3D__",   GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::Image3D, true),   /* binding */ 1);
+	m_layout.addStatic(new GlslImage(L"__bindlessImagesCube__", GlslResource::Set::BindlessImages, GlslResource::BsAll, GlslType::ImageCube, true), /* binding */ 1);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbOnce",  GlslResource::Set::Default , 0), /* binding */ 2);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbFrame", GlslResource::Set::Default, 0), /* binding */ 3);
+	m_layout.addStatic(new GlslUniformBuffer(L"UbDraw",  GlslResource::Set::Default, 0), /* binding */ 4);
 }
 
 Node* GlslContext::getInputNode(const InputPin* inputPin)

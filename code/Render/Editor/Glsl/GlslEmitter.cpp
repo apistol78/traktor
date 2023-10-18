@@ -283,7 +283,15 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		else
 		{
 			// Image do not exist; add new image resource.
-			cx.getLayout().addBindless(new GlslImage(storageUniformNode->getParameterName(), 1, GlslResource::BsCompute, glsl_from_parameter_type(storageUniformNode->getParameterType()), false));
+			cx.getLayout().addBindless(
+				new GlslImage(
+					storageUniformNode->getParameterName(),
+					GlslResource::Set::Default,
+					GlslResource::BsCompute,
+					glsl_from_parameter_type(storageUniformNode->getParameterType()),
+					false
+				)
+			);
 		}
 
 		auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -329,7 +337,11 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		else
 		{
 			// Storage buffer do not exist; add new storage buffer resource.
-			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(storageStructNode->getParameterName(), 1, getBindStage(cx));
+			Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
+				storageStructNode->getParameterName(),
+				GlslResource::Set::Default,
+				getBindStage(cx)
+			);
 			for (const auto& element : storageStructNode->getElements())
 				storageBuffer->add(element.name, element.type);
 			cx.getLayout().add(storageBuffer);
@@ -2025,7 +2037,14 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	if (samplerName.empty())
 	{
 		samplerName = str(L"_gl_sampler%d", cx.getLayout().count< GlslSampler >());
-		cx.getLayout().add(new GlslSampler(samplerName, 1, getBindStage(cx), samplerState));
+		cx.getLayout().add(
+			new GlslSampler(
+				samplerName,
+				GlslResource::Set::Default,
+				getBindStage(cx),
+				samplerState
+			)
+		);
 	}
 
 	comment(f, node);
@@ -2283,7 +2302,14 @@ bool emitScript(GlslContext& cx, Script* node)
 			if (samplerName.empty())
 			{
 				samplerName = str(L"_gl_sampler%d", cx.getLayout().count< GlslSampler >());
-				cx.getLayout().add(new GlslSampler(samplerName, 1, getBindStage(cx), samplerState));
+				cx.getLayout().add(
+					new GlslSampler(
+						samplerName,
+						GlslResource::Set::Default,
+						getBindStage(cx),
+						samplerState
+					)
+				);
 			}
 
 			ins[i] = new GlslVariable(nullptr, samplerName, GlslType::Void);
@@ -2432,7 +2458,11 @@ bool emitStruct(GlslContext& cx, Struct* node)
 	else
 	{
 		// Storage buffer do not exist; add new storage buffer resource.
-		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(node->getParameterName(), 1, getBindStage(cx));
+		Ref< GlslStorageBuffer > storageBuffer = new GlslStorageBuffer(
+			node->getParameterName(),
+			GlslResource::Set::Default,
+			getBindStage(cx)
+		);
 		for (const auto& element : node->getElements())
 			storageBuffer->add(element.name, element.type);
 		cx.getLayout().add(storageBuffer);
@@ -2944,7 +2974,15 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 		else
 		{
 			// Texture do not exist; add new texture resource.
-			cx.getLayout().addBindless(new GlslTexture(node->getParameterName(), 1, getBindStage(cx), out->getType(), false));
+			cx.getLayout().addBindless(
+				new GlslTexture(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					getBindStage(cx),
+					out->getType(),
+					false
+				)
+			);
 		}
 
 		// Texture parameter; since resource index is passed to shader we define an integer uniform.
