@@ -33,8 +33,8 @@ class Context : public Object
 
 public:
 	constexpr static uint32_t MaxBindlessResources = 16536;
-	constexpr static uint32_t BindlessTexturesBinding = 1;
-	constexpr static uint32_t BindlessImagesBinding = 2;
+	constexpr static uint32_t BindlessTexturesBinding = 0;
+	constexpr static uint32_t BindlessImagesBinding = 1;
 
 	typedef std::function< void(Context*) > cleanup_fn_t;
 
