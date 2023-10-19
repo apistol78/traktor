@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 #	include <renderdoc_app.h>
 #endif
 #include "Core/Library/Library.h"
@@ -36,11 +36,15 @@ bool RenderSystemVrfy::create(const RenderSystemDesc& desc)
 	if ((m_renderSystem = desc.capture) == nullptr)
 		return false;
 
-#if defined(_WIN32) && !defined(_DEBUG)
+#if defined(_WIN32) || defined(__LINUX__)
 	// Try to load RenderDoc capture.
 	if (m_useRenderDoc)
 	{
+#if defined(_WIN32)
 		const std::wstring renderDocDLL = Path(L"renderdoc.dll").getPathNameOS();
+#else
+		const std::wstring renderDocDLL = Path(L"renderdoc").getPathNameOS();
+#endif
 
 		m_libRenderDoc = new Library();
 		if (m_libRenderDoc->open(renderDocDLL.c_str()))
@@ -120,7 +124,7 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	if (!renderView)
 		return nullptr;
 
-#if defined(_WIN32) && !defined(_DEBUG)
+#if defined(_WIN32)
 	if (m_apiRenderDoc)
 		m_apiRenderDoc->SetActiveWindow(
 			m_renderSystem->getInternalHandle(),

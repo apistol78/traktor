@@ -6291,7 +6291,7 @@
 																	<targetProfile>TpDebug</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(RENDERDOC_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
@@ -6320,7 +6320,7 @@
 																	<targetProfile>TpRelease</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(RENDERDOC_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_RENDER_VRFY_EXPORT</item>
@@ -6349,7 +6349,7 @@
 																	<targetProfile>TpDebug</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(RENDERDOC_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -6378,7 +6378,7 @@
 																	<targetProfile>TpRelease</targetProfile>
 																	<precompiledHeader/>
 																	<includePaths>
-																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(RENDERDOC_SDK)/include</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
