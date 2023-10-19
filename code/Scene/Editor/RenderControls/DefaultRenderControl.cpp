@@ -165,6 +165,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.PostProcessQuality"), L"Medium", true, 0));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.PostProcessQuality"), L"High", true, 0));
 	m_menuPostProcess->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.PostProcessQuality"), L"Ultra", true, 0));
+	m_menuPostProcess->get(settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuPostProcess);
 
 	m_menuMotionBlur = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
@@ -173,6 +174,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.MotionBlurQuality"), L"Medium", true, 0));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.MotionBlurQuality"), L"High", true, 0));
 	m_menuMotionBlur->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.MotionBlurQuality"), L"Ultra", true, 0));
+	m_menuMotionBlur->get(settings->getProperty< int32_t >(L"SceneEditor.MotionBlurQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuMotionBlur);
 
 	m_menuShadows = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_SHADOWS"));
@@ -181,6 +183,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuShadows->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ShadowQuality"), L"Medium", true, 0));
 	m_menuShadows->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ShadowQuality"), L"High", true, 0));
 	m_menuShadows->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ShadowQuality"), L"Ultra", true, 0));
+	m_menuShadows->get(settings->getProperty< int32_t >(L"SceneEditor.ShadowQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuShadows);
 
 	m_menuReflections = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_REFLECTIONS"));
@@ -189,6 +192,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuReflections->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.ReflectionsQuality"), L"Medium", true, 0));
 	m_menuReflections->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.ReflectionsQuality"), L"High", true, 0));
 	m_menuReflections->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.ReflectionsQuality"), L"Ultra", true, 0));
+	m_menuReflections->get(settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuReflections);
 
 	m_menuAO = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AO"));
@@ -197,6 +201,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAO->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AmbientOcclusionQuality"), L"Medium", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AmbientOcclusionQuality"), L"High", true, 0));
 	m_menuAO->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AmbientOcclusionQuality"), L"Ultra", true, 0));
+	m_menuAO->get(settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuAO);
 
 	m_menuAA = new ui::MenuItem(i18n::Text(L"SCENE_EDITOR_AA"));
@@ -205,6 +210,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->add(new ui::MenuItem(ui::Command(2, L"Scene.Editor.AntiAliasQuality"), L"Medium", true, 0));
 	m_menuAA->add(new ui::MenuItem(ui::Command(3, L"Scene.Editor.AntiAliasQuality"), L"High", true, 0));
 	m_menuAA->add(new ui::MenuItem(ui::Command(4, L"Scene.Editor.AntiAliasQuality"), L"Ultra", true, 0));
+	m_menuAA->get(settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuAA);
 
 	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), 130_ut, i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
@@ -212,7 +218,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolWorldRenderer->add(L"Forward");
 	m_toolWorldRenderer->add(L"Deferred");
 
-	std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererForward");
+	const std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererForward");
 	for (int32_t i = 0; i < 3; ++i)
 	{
 		if (worldRendererTypeName == c_worldRendererTypes[i])
@@ -246,13 +252,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, 50_ut));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
-
-	m_menuPostProcess->get(4)->setChecked(true);
-	m_menuMotionBlur->get(4)->setChecked(true);
-	m_menuShadows->get(4)->setChecked(true);
-	m_menuReflections->get(4)->setChecked(true);
-	m_menuAO->get(4)->setChecked(true);
-	m_menuAA->get(4)->setChecked(true);
 
 	if (!createRenderControl(viewType))
 		return false;

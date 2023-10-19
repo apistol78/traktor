@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,7 +59,13 @@ private:
 	Ref< ui::CheckBox > m_checkInvertPanY;
 	Ref< ui::CheckBox > m_checkBuildWhenDrop;
 	Ref< ui::CheckBox > m_checkBuildNavMesh;
-	Ref< ui::CheckBox > m_checkBuildOcclusion;
+
+	Ref< ui::DropDown > m_dropDownPostProcess;
+	Ref< ui::DropDown > m_dropDownMotionBlur;
+	Ref< ui::DropDown > m_dropDownShadows;
+	Ref< ui::DropDown > m_dropDownReflections;
+	Ref< ui::DropDown > m_dropDownAmbientOcclusion;
+	Ref< ui::DropDown > m_dropAntialias;
 
 	void updateValues();
 
