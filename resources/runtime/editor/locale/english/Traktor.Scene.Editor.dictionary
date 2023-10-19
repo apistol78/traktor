@@ -242,10 +242,6 @@
 			<second>Build NavMesh in editor</second>
 		</item>
 		<item>
-			<first>SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION</first>
-			<second>Bake terrain occlusion in editor</second>
-		</item>
-		<item>
 			<first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
 			<second>Auto-build entity when drag&apos;n&apos;drop</second>
 		</item>

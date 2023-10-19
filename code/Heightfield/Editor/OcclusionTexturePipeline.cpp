@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -234,7 +234,6 @@ bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_editor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
-	m_build = settings->getPropertyIncludeHash< bool >(L"OcclusionPipeline.Build", true);
 	return true;
 }
 
@@ -279,186 +278,183 @@ bool OcclusionTexturePipeline::buildOutput(
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8(), asset->m_size, asset->m_size);
 	image->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
-	if (m_build)
+	// Get heightfield asset and instance.
+	Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(asset->m_heightfield);
+	if (!heightfieldAssetInstance)
 	{
-		// Get heightfield asset and instance.
-		Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(asset->m_heightfield);
-		if (!heightfieldAssetInstance)
-		{
-			log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset instance" << Endl;
-			return false;
-		}
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset instance" << Endl;
+		return false;
+	}
 
-		Ref< const HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const HeightfieldAsset >();
-		if (!heightfieldAsset)
-		{
-			log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset" << Endl;
-			return false;
-		}
+	Ref< const HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const HeightfieldAsset >();
+	if (!heightfieldAsset)
+	{
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset" << Endl;
+		return false;
+	}
 
-		Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
-		if (!sourceData)
-		{
-			log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
-			return false;
-		}
+	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+	if (!sourceData)
+	{
+		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
+		return false;
+	}
 
-		Ref< Heightfield > heightfield = HeightfieldFormat().read(
-			sourceData,
-			heightfieldAsset->getWorldExtent()
-		);
-		if (!heightfield)
-		{
-			log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
-			return 0;
-		}
+	Ref< Heightfield > heightfield = HeightfieldFormat().read(
+		sourceData,
+		heightfieldAsset->getWorldExtent()
+	);
+	if (!heightfield)
+	{
+		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
+		return 0;
+	}
 
-		sourceData->close();
-		sourceData = 0;
+	sourceData->close();
+	sourceData = 0;
 
-		const uint32_t size = heightfield->getSize();
+	const uint32_t size = heightfield->getSize();
 
-		// Extract occluder meshes.
-		Ref< const ISerializable > occluderData = pipelineBuilder->getObjectReadOnly(asset->m_occluderData);
-		if (!occluderData)
-			return false;
+	// Extract occluder meshes.
+	Ref< const ISerializable > occluderData = pipelineBuilder->getObjectReadOnly(asset->m_occluderData);
+	if (!occluderData)
+		return false;
 
-		occluderData = world::resolveExternal(
-			[&](const Guid& objectId) -> Ref< const ISerializable > {
-				return pipelineBuilder->getObjectReadOnly(objectId);
-			},
-			occluderData,
-			Guid::null,
-			nullptr
-		);
+	occluderData = world::resolveExternal(
+		[&](const Guid& objectId) -> Ref< const ISerializable > {
+			return pipelineBuilder->getObjectReadOnly(objectId);
+		},
+		occluderData,
+		Guid::null,
+		nullptr
+	);
 
-		AlignedVector< MeshAndTransform > meshes;
-		collectMeshes(occluderData, meshes);
+	AlignedVector< MeshAndTransform > meshes;
+	collectMeshes(occluderData, meshes);
 
-		log::info << L"Found " << int32_t(meshes.size()) << L" mesh(es)" << Endl;
+	log::info << L"Found " << int32_t(meshes.size()) << L" mesh(es)" << Endl;
 
-		// Trace occlusion onto heightfield.
-		std::map< std::wstring, Ref< SahTree > > treeCache;
-		RandomGeometry rnd;
+	// Trace occlusion onto heightfield.
+	std::map< std::wstring, Ref< SahTree > > treeCache;
+	RandomGeometry rnd;
 
-		RefArray< TraceTask > tasks;
-		RefArray< Job > jobs;
+	RefArray< TraceTask > tasks;
+	RefArray< Job > jobs;
 
-		for (AlignedVector< MeshAndTransform >::const_iterator i = meshes.begin(); i != meshes.end(); ++i)
-		{
-			if (ThreadManager::getInstance().getCurrentThread()->stopped())
-				break;
-
-			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(i->mesh);
-			if (!meshAsset)
-				continue;
-
-			Ref< SahTree > tree;
-
-			std::map< std::wstring, Ref< SahTree > >::const_iterator j = treeCache.find(meshAsset->getFileName().getOriginal());
-			if (j != treeCache.end())
-				tree = j->second;
-			else
-			{
-				log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
-
-				const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-				Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter());
-				if (!model)
-				{
-					log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
-					continue;
-				}
-
-				log::info << L"Generating trace tree..." << Endl;
-
-				model::Triangulate().apply(*model);
-
-				const AlignedVector< model::Polygon >& polygons = model->getPolygons();
-				const AlignedVector< model::Vertex >& vertices = model->getVertices();
-
-				AlignedVector< Winding3 > windings(polygons.size());
-				for (uint32_t j = 0; j < polygons.size(); ++j)
-				{
-					Winding3& w = windings[j];
-
-					const auto& vertexIndices = polygons[j].getVertices();
-					for (auto index : vertexIndices)
-					{
-						const model::Vertex& polyVertex = vertices[index];
-						const Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
-						w.push(polyVertexPosition);
-					}
-				}
-
-				tree = new SahTree();
-				tree->build(windings);
-
-				treeCache[meshAsset->getFileName().getOriginal()] = tree;
-			}
-
-			Ref< TraceTask > task = new TraceTask();
-			task->resolution = asset->m_size;
-			task->maxTraceDistance = asset->m_traceDistance;
-			task->worldExtent = heightfieldAsset->getWorldExtent();
-			task->transform = i->transform;
-			task->heightfield = heightfield;
-			task->tree = tree;
-			task->x = 0;
-			task->y = 0;
-			task->rayCount = m_editor ? 16 : 128;
-
-			Ref< Job > job = JobManager::getInstance().add([=](){
-				task->execute();
-			});
-			T_ASSERT(job);
-
-			tasks.push_back(task);
-			jobs.push_back(job);
-		}
-
-		log::info << L"Collecting task(s)..." << Endl;
-
-		for (size_t i = 0; i < jobs.size(); ++i)
-		{
-			Color4f cd, cs;
-
-			jobs[i]->wait();
-			jobs[i] = 0;
-
-			if (!tasks[i]->occlusion)
-				continue;
-
-			for (int32_t y = 0; y < tasks[i]->occlusion->getHeight(); ++y)
-			{
-				for (int32_t x = 0; x < tasks[i]->occlusion->getWidth(); ++x)
-				{
-					tasks[i]->occlusion->getPixel(x, y, cs);
-					image->getPixel(x + tasks[i]->x, y + tasks[i]->y, cd);
-
-					const float os = cs.getRed();
-					const float od = cd.getRed();
-					const float o = std::min(os, od);
-
-					image->setPixel(x + tasks[i]->x, y + tasks[i]->y, Color4f(o, o, o, 1.0f));
-				}
-			}
-		}
-
-		jobs.clear();
-		tasks.clear();
-
+	for (AlignedVector< MeshAndTransform >::const_iterator i = meshes.begin(); i != meshes.end(); ++i)
+	{
 		if (ThreadManager::getInstance().getCurrentThread()->stopped())
+			break;
+
+		Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(i->mesh);
+		if (!meshAsset)
+			continue;
+
+		Ref< SahTree > tree;
+
+		std::map< std::wstring, Ref< SahTree > >::const_iterator j = treeCache.find(meshAsset->getFileName().getOriginal());
+		if (j != treeCache.end())
+			tree = j->second;
+		else
 		{
-			log::info << L"Occlusion texture pipeline terminated; pipeline aborted." << Endl;
-			return false;
+			log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
+
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+			Ref< model::Model > model = model::ModelFormat::readAny(filePath, meshAsset->getImportFilter());
+			if (!model)
+			{
+				log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+				continue;
+			}
+
+			log::info << L"Generating trace tree..." << Endl;
+
+			model::Triangulate().apply(*model);
+
+			const AlignedVector< model::Polygon >& polygons = model->getPolygons();
+			const AlignedVector< model::Vertex >& vertices = model->getVertices();
+
+			AlignedVector< Winding3 > windings(polygons.size());
+			for (uint32_t j = 0; j < polygons.size(); ++j)
+			{
+				Winding3& w = windings[j];
+
+				const auto& vertexIndices = polygons[j].getVertices();
+				for (auto index : vertexIndices)
+				{
+					const model::Vertex& polyVertex = vertices[index];
+					const Vector4 polyVertexPosition = model->getPosition(polyVertex.getPosition()).xyz1();
+					w.push(polyVertexPosition);
+				}
+			}
+
+			tree = new SahTree();
+			tree->build(windings);
+
+			treeCache[meshAsset->getFileName().getOriginal()] = tree;
 		}
 
-		if (asset->m_blurRadius > 0)
+		Ref< TraceTask > task = new TraceTask();
+		task->resolution = asset->m_size;
+		task->maxTraceDistance = asset->m_traceDistance;
+		task->worldExtent = heightfieldAsset->getWorldExtent();
+		task->transform = i->transform;
+		task->heightfield = heightfield;
+		task->tree = tree;
+		task->x = 0;
+		task->y = 0;
+		task->rayCount = m_editor ? 16 : 128;
+
+		Ref< Job > job = JobManager::getInstance().add([=](){
+			task->execute();
+		});
+		T_ASSERT(job);
+
+		tasks.push_back(task);
+		jobs.push_back(job);
+	}
+
+	log::info << L"Collecting task(s)..." << Endl;
+
+	for (size_t i = 0; i < jobs.size(); ++i)
+	{
+		Color4f cd, cs;
+
+		jobs[i]->wait();
+		jobs[i] = 0;
+
+		if (!tasks[i]->occlusion)
+			continue;
+
+		for (int32_t y = 0; y < tasks[i]->occlusion->getHeight(); ++y)
 		{
-			Ref< drawing::GaussianBlurFilter > blurFilter = new drawing::GaussianBlurFilter(asset->m_blurRadius);
-			image->apply(blurFilter);
+			for (int32_t x = 0; x < tasks[i]->occlusion->getWidth(); ++x)
+			{
+				tasks[i]->occlusion->getPixel(x, y, cs);
+				image->getPixel(x + tasks[i]->x, y + tasks[i]->y, cd);
+
+				const float os = cs.getRed();
+				const float od = cd.getRed();
+				const float o = std::min(os, od);
+
+				image->setPixel(x + tasks[i]->x, y + tasks[i]->y, Color4f(o, o, o, 1.0f));
+			}
 		}
+	}
+
+	jobs.clear();
+	tasks.clear();
+
+	if (ThreadManager::getInstance().getCurrentThread()->stopped())
+	{
+		log::info << L"Occlusion texture pipeline terminated; pipeline aborted." << Endl;
+		return false;
+	}
+
+	if (asset->m_blurRadius > 0)
+	{
+		Ref< drawing::GaussianBlurFilter > blurFilter = new drawing::GaussianBlurFilter(asset->m_blurRadius);
+		image->apply(blurFilter);
 	}
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();

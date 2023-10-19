@@ -11,6 +11,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/SceneEditorSettingsPage.h"
@@ -38,7 +39,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorSettingsPage", 0, Scen
 bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup* originalSettings, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	m_container = new ui::Container();
-	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0_ut, 4_ut)))
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 4_ut, 4_ut)))
 		return false;
 
 	Ref< ui::Container > containerSliders = new ui::Container();
@@ -105,12 +106,84 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, const PropertyGroup*
 	m_checkBuildNavMesh->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_NAVMESH"));
 	m_checkBuildNavMesh->setChecked(settings->getProperty< bool >(L"NavMeshPipeline.Build", true));
 
-	m_checkBuildOcclusion = new ui::CheckBox();
-	m_checkBuildOcclusion->create(m_container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_OCCLUSION"));
-	m_checkBuildOcclusion->setChecked(settings->getProperty< bool >(L"OcclusionPipeline.Build", true));
+	Ref< ui::Container > containerQuality = new ui::Container();
+	containerQuality->create(m_container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0_ut, 4_ut));
+
+	Ref< ui::Static > staticPostProcess = new ui::Static();
+	staticPostProcess->create(containerQuality, i18n::Text(L"SCENE_EDITOR_POST_PROCESS"));
+
+	m_dropDownPostProcess = new ui::DropDown();
+	m_dropDownPostProcess->create(containerQuality);
+	m_dropDownPostProcess->add(L"Disabled");
+	m_dropDownPostProcess->add(L"Low");
+	m_dropDownPostProcess->add(L"Medium");
+	m_dropDownPostProcess->add(L"High");
+	m_dropDownPostProcess->add(L"Ultra");
+	m_dropDownPostProcess->select(settings->getProperty< int32_t >(L"SceneEditor.PostProcessQuality", 4));
+
+	Ref< ui::Static > staticMotionBlur = new ui::Static();
+	staticMotionBlur->create(containerQuality, i18n::Text(L"SCENE_EDITOR_MOTION_BLUR"));
+
+	m_dropDownMotionBlur = new ui::DropDown();
+	m_dropDownMotionBlur->create(containerQuality);
+	m_dropDownMotionBlur->add(L"Disabled");
+	m_dropDownMotionBlur->add(L"Low");
+	m_dropDownMotionBlur->add(L"Medium");
+	m_dropDownMotionBlur->add(L"High");
+	m_dropDownMotionBlur->add(L"Ultra");
+	m_dropDownMotionBlur->select(settings->getProperty< int32_t >(L"SceneEditor.MotionBlurQuality", 4));
+
+	Ref< ui::Static > staticShadows = new ui::Static();
+	staticShadows->create(containerQuality, i18n::Text(L"SCENE_EDITOR_SHADOWS"));
+
+	m_dropDownShadows = new ui::DropDown();
+	m_dropDownShadows->create(containerQuality);
+	m_dropDownShadows->add(L"Disabled");
+	m_dropDownShadows->add(L"Low");
+	m_dropDownShadows->add(L"Medium");
+	m_dropDownShadows->add(L"High");
+	m_dropDownShadows->add(L"Ultra");
+	m_dropDownShadows->select(settings->getProperty< int32_t >(L"SceneEditor.ShadowQuality", 4));
+
+	Ref< ui::Static > staticReflections = new ui::Static();
+	staticReflections->create(containerQuality, i18n::Text(L"SCENE_EDITOR_REFLECTIONS"));
+
+	m_dropDownReflections = new ui::DropDown();
+	m_dropDownReflections->create(containerQuality);
+	m_dropDownReflections->add(L"Disabled");
+	m_dropDownReflections->add(L"Low");
+	m_dropDownReflections->add(L"Medium");
+	m_dropDownReflections->add(L"High");
+	m_dropDownReflections->add(L"Ultra");
+	m_dropDownReflections->select(settings->getProperty< int32_t >(L"SceneEditor.ReflectionsQuality", 4));
+
+	Ref< ui::Static > staticAmbientOcclusion = new ui::Static();
+	staticAmbientOcclusion->create(containerQuality, i18n::Text(L"SCENE_EDITOR_AO"));
+
+	m_dropDownAmbientOcclusion = new ui::DropDown();
+	m_dropDownAmbientOcclusion->create(containerQuality);
+	m_dropDownAmbientOcclusion->add(L"Disabled");
+	m_dropDownAmbientOcclusion->add(L"Low");
+	m_dropDownAmbientOcclusion->add(L"Medium");
+	m_dropDownAmbientOcclusion->add(L"High");
+	m_dropDownAmbientOcclusion->add(L"Ultra");
+	m_dropDownAmbientOcclusion->select(settings->getProperty< int32_t >(L"SceneEditor.AmbientOcclusionQuality", 4));
+
+	Ref< ui::Static > staticAntialias = new ui::Static();
+	staticAntialias->create(containerQuality, i18n::Text(L"SCENE_EDITOR_AA"));
+
+	m_dropAntialias = new ui::DropDown();
+	m_dropAntialias->create(containerQuality);
+	m_dropAntialias->add(L"Disabled");
+	m_dropAntialias->add(L"Low");
+	m_dropAntialias->add(L"Medium");
+	m_dropAntialias->add(L"High");
+	m_dropAntialias->add(L"Ultra");
+	m_dropAntialias->select(settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4));
 
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
+	// Add available world renderer types.
 	const std::wstring worldRendererTypeName = settings->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	for (auto worldRendererType : type_of< world::IWorldRenderer >().findAllOf(false))
 	{
@@ -142,7 +215,12 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
 	settings->setProperty< PropertyBoolean >(L"NavMeshPipeline.Build", m_checkBuildNavMesh->isChecked());
-	settings->setProperty< PropertyBoolean >(L"OcclusionPipeline.Build", m_checkBuildOcclusion->isChecked());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.PostProcessQuality", m_dropDownPostProcess->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.MotionBlurQuality", m_dropDownMotionBlur->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.ShadowQuality", m_dropDownShadows->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.ReflectionsQuality", m_dropDownReflections->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.AmbientOcclusionQuality", m_dropDownAmbientOcclusion->getSelected());
+	settings->setProperty< PropertyInteger >(L"SceneEditor.AntiAliasQuality", m_dropAntialias->getSelected());
 	return true;
 }
 
