@@ -122,7 +122,7 @@ VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 	return VK_FALSE;
 }
 
-bool isDeviceSuitable(VkPhysicalDevice device)
+bool isDeviceSuitable(VkPhysicalDevice device, VkPhysicalDeviceType deviceType)
 {
     VkPhysicalDeviceProperties dp;
     // VkPhysicalDeviceFeatures df;
@@ -130,7 +130,7 @@ bool isDeviceSuitable(VkPhysicalDevice device)
 	vkGetPhysicalDeviceProperties(device, &dp);
     // vkGetPhysicalDeviceFeatures(device, &df);
 
-	if (dp.deviceType != VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU)
+	if (dp.deviceType != deviceType)
 		return false;
 
 	return true;
@@ -245,25 +245,21 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 
 	AutoArrayPtr< VkPhysicalDevice > physicalDevices(new VkPhysicalDevice[physicalDeviceCount]);
 	vkEnumeratePhysicalDevices(m_instance, &physicalDeviceCount, physicalDevices.ptr());
-	for (uint32_t i = 0; i < physicalDeviceCount; ++i)
+
+	for (uint32_t i = 0; !m_physicalDevice && i < physicalDeviceCount; ++i)
 	{
 		VkPhysicalDeviceProperties pdp = {};
 		vkGetPhysicalDeviceProperties(physicalDevices[i], &pdp);
-
-		if (isDeviceSuitable(physicalDevices[i]))
-		{
-			if (!m_physicalDevice)
-				m_physicalDevice = physicalDevices[i];
-		}
-
-		log::info << (i + 1) << L". \"" << mbstows(pdp.deviceName) << L"\"";
-		
-		if (m_physicalDevice == physicalDevices[i])
-			log::info << L" (selected)";
-		
-		log::info << Endl;
+		if (isDeviceSuitable(physicalDevices[i], VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU))
+			m_physicalDevice = physicalDevices[i];
 	}
-
+	for (uint32_t i = 0; !m_physicalDevice && i < physicalDeviceCount; ++i)
+	{
+		VkPhysicalDeviceProperties pdp = {};
+		vkGetPhysicalDeviceProperties(physicalDevices[i], &pdp);
+		if (isDeviceSuitable(physicalDevices[i], VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU))
+			m_physicalDevice = physicalDevices[i];
+	}		
 	if (!m_physicalDevice)
 	{
 		log::warning << L"Unable to find a suitable device; attempting to use first reported." << Endl;
@@ -428,7 +424,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	}
 
 	m_shaderModuleCache = new ShaderModuleCache(m_logicalDevice);
-	m_pipelineLayoutCache = new PipelineLayoutCache(m_context); // m_logicalDevice, m_context->getBindlessSetLayout());
+	m_pipelineLayoutCache = new PipelineLayoutCache(m_context);
 	m_maxAnisotropy = desc.maxAnisotropy;
 	m_mipBias = desc.mipBias;
 
