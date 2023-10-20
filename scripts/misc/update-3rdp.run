@@ -461,8 +461,17 @@ local PACKAGES =
 	{
 		type = "GET",
 		name = "renderdoc",
+		os = "linux",
+		url = "https://renderdoc.org/stable/1.29/renderdoc_1.29.tar.gz",
+		patch = function()
+			run:execute(TAR .. " -xf renderdoc_1.29.tar.gz")
+		end
+	},
+	{
+		type = "GET",
+		name = "renderdoc",
 		os = "windows",
-		url = "https://renderdoc.org/stable/1.26/RenderDoc_1.26_64.zip",
+		url = "https://renderdoc.org/stable/1.29/RenderDoc_1.29_64.zip",
 		patch = function()
 			run:execute(UNZIP .. " -qq RenderDoc_1.26_64.zip")
 		end
