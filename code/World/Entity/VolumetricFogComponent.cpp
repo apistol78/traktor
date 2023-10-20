@@ -120,7 +120,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->workSize[0] = 128;
 		renderBlock->workSize[1] = 128;
-		renderBlock->workSize[2] = m_sliceCount;
+		renderBlock->workSize[2] = 1; // m_sliceCount;
 
 		renderBlock->programParams->beginParameters(renderContext);
 
@@ -132,9 +132,12 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);
 		renderBlock->programParams->setFloatParameter(s_handleFogVolumeMediumDensity, m_mediumDensity / m_sliceCount);
 		renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCount, (float)m_sliceCount);
+		renderBlock->programParams->setFloatParameter(s_handleFogVolumeSliceCurrent, (float)m_sliceCurrent);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
+
+		m_sliceCurrent = (m_sliceCurrent + 1) % m_sliceCount;
 	}
 }
 

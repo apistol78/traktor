@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,6 @@ namespace traktor::render
 
 class IRenderSystem;
 class ITexture;
-// class ScreenRenderer;
 class Shader;
 
 }
@@ -75,11 +74,12 @@ private:
 	Entity* m_owner = nullptr;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_fogVolumeTexture;
-	float m_maxDistance;
-	float m_maxScattering;
-	int32_t m_sliceCount;
-	Color4f m_mediumColor;
-	float m_mediumDensity;
+	float m_maxDistance = 0.0f;
+	float m_maxScattering = 0.0f;
+	int32_t m_sliceCount = 0;
+	int32_t m_sliceCurrent = 0;
+	Color4f m_mediumColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	float m_mediumDensity = 0.0f;
 };
 
 }

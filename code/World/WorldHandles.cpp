@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -83,6 +83,7 @@ const render::Handle s_handleFogVolume(L"World_FogVolume");
 const render::Handle s_handleFogVolumeTexture(L"World_FogVolumeTexture");
 const render::Handle s_handleFogVolumeRange(L"World_FogVolumeRange");
 const render::Handle s_handleFogVolumeSliceCount(L"World_FogVolumeSliceCount");
+const render::Handle s_handleFogVolumeSliceCurrent(L"World_FogVolumeSliceCurrent");
 const render::Handle s_handleFogVolumeMediumColor(L"World_FogVolumeMediumColor");
 const render::Handle s_handleFogVolumeMediumDensity(L"World_FogVolumeMediumDensity");
 
