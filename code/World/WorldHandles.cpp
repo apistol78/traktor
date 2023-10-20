@@ -98,4 +98,7 @@ const render::Handle s_handleInputShadowMap(L"InputShadowMap");
 const render::Handle s_handleInputRoughness(L"InputRoughness");
 const render::Handle s_handleInputColorGrading(L"InputColorGrading");
 
+// Persistent targets.
+const render::Handle s_handleTargetShadowMap(L"World_ShadowMap");
+
 }

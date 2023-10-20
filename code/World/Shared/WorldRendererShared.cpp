@@ -377,7 +377,7 @@ void WorldRendererShared::setupLightPass(
 		rgtd.ignoreStencil = true;
 		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
 			L"Shadow map atlas",
-			render::getParameterHandle(L"ShadowMap"),
+			s_handleTargetShadowMap,
 			false,
 			rgtd
 		);
