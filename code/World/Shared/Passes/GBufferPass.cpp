@@ -58,8 +58,8 @@ render::handle_t GBufferPass::setup(
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Depth (R), Roughness (G), Metalness (B), Specular (A)
 	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
-	rgtd.targets[2].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGB)
-	rgtd.targets[3].colorFormat = render::TfR16G16B16A16F;	// Irradiance (RGB)
+	rgtd.targets[2].colorFormat = render::TfR11G11B10F;		// Albedo (RGB)
+	rgtd.targets[3].colorFormat = render::TfR11G11B10F;		// Irradiance (RGB)
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
 	// Add GBuffer render pass.
