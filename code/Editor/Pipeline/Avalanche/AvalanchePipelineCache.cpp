@@ -17,6 +17,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/JobManager.h"
 #include "Editor/Pipeline/Avalanche/AvalanchePipelineCache.h"
 #include "Net/Network.h"
 
@@ -54,6 +55,11 @@ AvalanchePipelineCache::~AvalanchePipelineCache()
 
 void AvalanchePipelineCache::destroy()
 {
+	if (m_statsJob)
+	{
+		m_statsJob->wait();
+		m_statsJob = nullptr;
+	}
 	safeDestroy(m_client);
 }
 
@@ -121,8 +127,15 @@ Ref< IStream > AvalanchePipelineCache::put(const Key& key)
 
 void AvalanchePipelineCache::getInformation(OutputStream& os)
 {
-	avalanche::Dictionary::Stats stats;
-	m_client->stats(stats);
+	if (m_statsJob && m_statsJob->wait(0))
+		m_statsJob = nullptr;
+
+	if (m_statsJob == nullptr)
+	{
+		m_statsJob = JobManager::getInstance().add([this](){
+			m_client->stats(m_stats);
+		});
+	}
 
 	os << L"Avalanche cache (";
 	if (m_accessRead && !m_accessWrite)
@@ -133,7 +146,7 @@ void AvalanchePipelineCache::getInformation(OutputStream& os)
 		os << L"read+write";
 	else
 		os << L"disabled";
-	os << L", " << stats.blobCount << L" blobs, " << formatByteSize(stats.memoryUsage);
+	os << L", " << m_stats.blobCount << L" blobs, " << formatByteSize(m_stats.memoryUsage);
 	if (m_accessRead)
 		os << L", " << m_hits << L" hits, " << m_misses << L" misses";
 	os << L")";

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Avalanche/Dictionary.h"
 #include "Editor/IPipelineCache.h"
 
 // import/export mechanism.
@@ -17,6 +18,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktro
+{
+
+class Job;
+
+}
 
 namespace traktor::avalanche
 {
@@ -57,6 +65,8 @@ private:
 	bool m_accessWrite = true;
 	uint32_t m_hits = 0;
 	uint32_t m_misses = 0;
+	Ref< Job > m_statsJob;
+	avalanche::Dictionary::Stats m_stats;
 };
 
 }
