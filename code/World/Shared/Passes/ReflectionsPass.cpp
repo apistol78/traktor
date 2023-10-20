@@ -109,7 +109,7 @@ render::handle_t ReflectionsPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
+	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 
 	switch (m_reflectionsQuality)
 	{
@@ -181,10 +181,6 @@ render::handle_t ReflectionsPass::setup(
 
 		if (probe != nullptr)
 		{
-			//igctx.setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
-			//igctx.setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
-			//igctx.setTextureParameter(s_handleProbeTexture, probe->getTexture());
-
 			auto setParameters = [=](render::ProgramParameters* params) {
 				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
 				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
@@ -211,21 +207,12 @@ render::handle_t ReflectionsPass::setup(
 			{
 				const Transform& transform = p->getTransform();
 				const Matrix44 worldView = worldRenderView.getView() * transform.toMatrix44();
-				//const Vector4 center = worldView * p->getVolume().getCenter().xyz1();
-				//const Scalar radius = p->getVolume().getExtent().length();
 
 				float distance;
 				if (!worldRenderView.isBoxVisible(p->getVolume(), p->getTransform(), distance))
 					continue;
 
-				//igctx.setFloatParameter(s_handleProbeIntensity, p->getIntensity());
-				//igctx.setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
-				//igctx.setTextureParameter(s_handleProbeTexture, p->getTexture());
-				//igctx.setVectorParameter(s_handleProbeVolumeCenter, p->getBoundingBox().getCenter());
-				//igctx.setVectorParameter(s_handleProbeVolumeExtent, p->getBoundingBox().getExtent());
-				//igctx.setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
-
-				Aabb3 worldVolume = p->getBoundingBox(); //.transform(transform);
+				const Aabb3 worldVolume = p->getBoundingBox();
 
 				auto setParameters = [=](render::ProgramParameters* params) {
 					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
