@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,69 +8,122 @@
  */
 #pragma once
 
-#include <list>
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
+#include <atomic>
 
 namespace traktor
 {
 
-/*! Thread-safe FIFO queue.
- * \ingroup Core
+/*!
  */
-template < typename ItemType, typename LockType = Semaphore >
+template < typename T >
 class ThreadsafeFifo
 {
 public:
 	ThreadsafeFifo()
-	:	m_size(0)
 	{
+		Node* dummy = new Node(T());
+		m_head.store(dummy);
+		m_tail.store(dummy);
 	}
 
-	void put(const ItemType& item)
+	~ThreadsafeFifo()
 	{
-		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
-		m_items.push_back(item);
-		m_size++;
-	}
-
-	bool get(ItemType& outItem)
-	{
-		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
-		if (!m_items.empty())
+		while (Node* oldHead = m_head.load())
 		{
-			outItem = m_items.front();
-			m_items.pop_front();
-			m_size--;
-			return true;
+			m_head.store(oldHead->next);
+			delete oldHead;
 		}
-		else
-			return false;
+	}
+
+	void put(const T& item)
+	{
+		Node* newNode = new Node(item);
+		Node* oldTail = nullptr;
+
+		while (true)
+		{
+			oldTail = m_tail.load();
+			Node* oldNext = oldTail->next.load();
+
+			if (oldTail == m_tail.load())  // still consistent?
+			{
+				if (oldNext == nullptr)
+				{
+					if (oldTail->next.compare_exchange_strong(oldNext, newNode))
+						break;
+				}
+				else
+					m_tail.compare_exchange_strong(oldTail, oldNext);
+			}
+		}
+		m_tail.compare_exchange_strong(oldTail, newNode);
+	}
+
+	bool get(T& item)
+	{
+		Node* oldHead = nullptr;
+		while (true)
+		{
+			oldHead = m_head.load();
+			Node* oldTail = m_tail.load();
+			Node* oldNext = oldHead->next.load();
+
+			if (oldHead == m_head.load())	// still consistent?
+			{
+				if (oldHead == oldTail)
+				{
+					if (oldNext == nullptr)  // queue is empty
+						return false;
+					m_tail.compare_exchange_strong(oldTail, oldNext);
+				}
+				else
+				{
+					item = oldNext->data;
+					if (m_head.compare_exchange_strong(oldHead, oldNext))
+						break;
+				}
+			}
+		}
+		delete oldHead;
+		return true;
 	}
 
 	void clear()
 	{
-		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
-		m_items.clear();
-		m_size = 0;
+		T dummy;
+		while (get(dummy));
 	}
 
 	bool empty() const
 	{
-		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
-		return m_items.empty();
+		const Node* currentHead = m_head.load();
+		const Node* nextNode = currentHead->next.load();
+		return nextNode == nullptr;
 	}
 
-	uint32_t size() const
+	size_t size() const
 	{
-		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
-		return m_size;
+		size_t count = 0;
+		for (const Node* current = m_head.load()->next.load(); current != nullptr; current = current->next.load())
+			count++;
+		return count;
 	}
 
 private:
-	mutable LockType m_lock;
-	mutable uint32_t m_size;
-	std::list< ItemType > m_items;
+	struct Node
+	{
+		T data;
+		std::atomic< Node* > next;
+
+		Node(const T& data)
+		:	data(data)
+		,	next(nullptr)
+		{
+		}
+	};
+
+	std::atomic< Node* > m_head;
+	std::atomic< Node* > m_tail;
 };
 
 }

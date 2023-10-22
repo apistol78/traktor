@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/RefArray.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobQueue.h"
 #include "Core/Thread/ThreadManager.h"
 
@@ -56,13 +55,10 @@ void JobQueue::destroy()
 	m_workerThreads.clear();
 }
 
-Job* JobQueue::add(const Job::task_t& task)
+Ref< Job > JobQueue::add(const Job::task_t& task)
 {
 	Ref< Job > job = new Job(m_jobFinishedEvent, task);
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
-		m_jobQueue.push_back(job);
-	}
+	m_jobQueue.put(job);
 	m_pending++;
 	m_jobQueuedEvent.pulse();
 	return job;
@@ -80,11 +76,10 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 	{
 		jobs.resize(ntasks);
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
 			for (size_t i = 1; i < ntasks; ++i)
 			{
 				jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
-				m_jobQueue.push_back(jobs[i]);
+				m_jobQueue.put(jobs[i]);
 			}
 		}
 		m_pending += ntasks - 1;
@@ -128,32 +123,21 @@ void JobQueue::stop()
 void JobQueue::threadWorker()
 {
 	Thread* thread = ThreadManager::getInstance().getCurrentThread();
-	Ref< Job > job;
+	Ref< Job >job;
 
 	while (!thread->stopped())
 	{
-		// If queue is empty then we wait.
-		if (m_jobQueue.empty())
+		// Try to get a job from the queue.
+		if (!m_jobQueue.get(job))
 		{
-			if (!m_jobQueuedEvent.wait(100))
-				continue;
-		}
-
-		// Pop job from queue.
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobQueueLock);
-			if (!m_jobQueue.empty())
-			{
-				job = m_jobQueue.front();
-				m_jobQueue.pop_front();
-			}
-			else
-				continue;
+			m_jobQueuedEvent.wait(100);
+			continue;			
 		}
 
 		// Execute job.
 		job->m_task();
 		job->m_finished = 1;
+		job = nullptr;
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
 		m_pending--;
