@@ -11,7 +11,7 @@
 #include <functional>
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/CircularVector.h"
+#include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/Semaphore.h"
@@ -57,7 +57,7 @@ public:
 	 * a worker thread is idle the scheduler assigns
 	 * a new job to that thread from this queue.
 	 */
-	Job* add(const Job::task_t& task);
+	Ref< Job > add(const Job::task_t& task);
 
 	/*! Enqueue jobs and wait for all to finish.
 	 *
@@ -86,8 +86,7 @@ public:
 
 private:
 	AlignedVector< Thread* > m_workerThreads;
-	CircularVector< Ref< Job >, 16384 > m_jobQueue;
-	Semaphore m_jobQueueLock;
+	ThreadsafeFifo< Ref< Job > > m_jobQueue;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
 	std::atomic< int32_t > m_pending;
