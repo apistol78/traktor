@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
@@ -92,7 +93,7 @@ public:
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
 private:
-	RefArray< Job > m_jobs;
+	ThreadsafeFifo< Ref< Job > > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
@@ -101,7 +102,6 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;
-	Semaphore m_jobsLock;
 	Semaphore m_dependencySetLock;
 	mutable bool m_result;
 

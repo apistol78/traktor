@@ -108,10 +108,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 		jobAddDependency(parentDependency, sourceAssetRef, outputPath, outputGuid, flags);
 	});
 	if (job)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
-		m_jobs.push_back(job);
-	}
+		m_jobs.put(job);
 	else
 		m_result = false;
 }
@@ -131,10 +128,7 @@ void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, u
 		jobAddDependency(parentDependency, sourceAssetInstanceRef, flags);
 	});
 	if (job)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
-		m_jobs.push_back(job);
-	}
+		m_jobs.put(job);
 	else
 		m_result = false;
 }
@@ -153,10 +147,7 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 		jobAddDependency(parentDependency, sourceAssetGuid, flags);
 	});
 	if (job)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
-		m_jobs.push_back(job);
-	}
+		m_jobs.put(job);
 	else
 		m_result = false;
 }
@@ -222,15 +213,9 @@ bool PipelineDependsParallel::waitUntilFinished()
 	Ref< Job > job;
 	for (;;)
 	{
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_jobsLock);
-			if (m_jobs.empty())
-				break;
-			job = m_jobs.back();
-			m_jobs.pop_back();
-		}
-		if (job)
-			job->wait();
+		if (!m_jobs.get(job))
+			break;
+		job->wait();
 	}
 	return m_result;
 }
