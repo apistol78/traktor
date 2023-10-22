@@ -13,7 +13,7 @@
 namespace traktor::drawing
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.ImageInfo", 0, ImageInfo, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.drawing.ImageInfo", 0, ImageInfo, ISerializable)
 
 void ImageInfo::setAuthor(const std::wstring& author)
 {
