@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,25 +90,22 @@ bool Job::wait(int32_t timeout)
 	Thread* current = ThreadManager::getInstance().getCurrentThread();
 	while (!current->stopped())
 	{
-		if (m_finished != 0)
+		if (m_finished)
 			break;
 		if (!m_jobFinishedEvent.wait(timeout))
 			return false;
 	}
-	return (bool)(m_finished != 0);
+	return m_finished;
 }
 
 void Job::stop()
 {
-	m_finished = 1;
+	m_finished = true;
 }
 
 bool Job::stopped() const
 {
-	if (m_finished != 0)
-		return true;
-	else
-		return ThreadManager::getInstance().getCurrentThread()->stopped();
+	return m_finished || ThreadManager::getInstance().getCurrentThread()->stopped();
 }
 
 void* Job::operator new (size_t size)
@@ -124,7 +121,7 @@ void Job::operator delete (void* ptr)
 Job::Job(Event& jobFinishedEvent, const std::function< void() >& task)
 :	m_jobFinishedEvent(jobFinishedEvent)
 ,	m_task(task)
-,	m_finished(0)
+,	m_finished(false)
 {
 }
 
