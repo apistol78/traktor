@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,6 +33,7 @@
 #include "World/Shared/WorldRendererShared.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
+#include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
@@ -155,6 +156,7 @@ bool WorldRendererShared::create(
 		return false;
 
 	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
 
 	m_velocityPass = new VelocityPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
@@ -186,6 +188,7 @@ void WorldRendererShared::destroy()
 	m_reflectionsPass = nullptr;
 	m_ambientOcclusionPass = nullptr;
 	m_velocityPass = nullptr;
+	m_dbufferPass = nullptr;
 	m_gbufferPass = nullptr;
 
 	safeDestroy(m_lightClusterPass);

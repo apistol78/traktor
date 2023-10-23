@@ -64,6 +64,7 @@ private:
 		render::RenderGraph& renderGraph,
 		render::handle_t visualWriteTargetSetId,
 		render::handle_t gbufferTargetSetId,
+		render::handle_t dbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
 		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId

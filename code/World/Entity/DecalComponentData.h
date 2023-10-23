@@ -56,7 +56,7 @@ public:
 private:
 	float m_size = 1.0f;
 	float m_thickness = 1.0f;
-	float m_alpha = 2.0f;
+	float m_alpha = 1.0f;
 	float m_cullDistance = 100.0f;
 	resource::Id< render::Shader > m_shader;
 };
