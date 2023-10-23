@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -135,8 +135,9 @@ void JobQueue::threadWorker()
 		}
 
 		// Execute job.
-		job->m_task();
-		job->m_finished = 1;
+		if (job->m_task)
+			job->m_task();
+		job->m_finished = true;
 		job = nullptr;
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
