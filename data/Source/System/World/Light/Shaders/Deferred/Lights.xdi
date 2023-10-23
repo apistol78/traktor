@@ -9,7 +9,13 @@
 				<second>-65</second>
 			</position>
 			<fragmentGuid>{8FEDE215-7BFC-A248-97FE-BA4D10C043BE}</fragmentGuid>
-			<inputPins/>
+			<inputPins>
+				<item>
+					<id>{C5AC9378-D953-7946-B8E3-819025FA8F18}</id>
+					<name>UV</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
 			<outputPins>
 				<item>
 					<id>{011933FB-5EDC-4E0F-84A4-0352D345A548}</id>
@@ -2495,6 +2501,27 @@ $Output = f + vec4($F0, 0.0f) * (1.0f - f);
 			</position>
 			<name>L_NearRange</name>
 		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{F55F5D6A-7F02-F84E-A048-1759B8D95794}</id>
+			<comment/>
+			<position>
+				<first>-2168</first>
+				<second>-22</second>
+			</position>
+			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<id>{8BB6F055-2258-8F4D-B44C-F443961D973E}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+					<name>TexCoord</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -4595,6 +4622,16 @@ $Output = f + vec4($F0, 0.0f) * (1.0f - f);
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[211]"/>
+				<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{C5AC9378-D953-7946-B8E3-819025FA8F18}</id>
 			</destination>
 		</item>
 	</edges>

@@ -94,6 +94,7 @@ render::handle_t ReflectionsPass::setup(
     const GatherView& gatheredView,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
+	render::handle_t dbufferTargetSetId,
 	render::handle_t visualReadTargetSetId,
 	render::handle_t outputTargetSetId
 ) const
@@ -145,6 +146,7 @@ render::handle_t ReflectionsPass::setup(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
 	rp->addInput(gbufferTargetSetId);
+	rp->addInput(dbufferTargetSetId);
 	rp->addInput(visualReadTargetSetId);
 
 	render::Clear clear;
@@ -164,6 +166,8 @@ render::handle_t ReflectionsPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 	igctx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
+	
+	// @fixme should add dbuffer targets here as well...
 
 	// Global reflections.
 	if (m_probeGlobalReflections)

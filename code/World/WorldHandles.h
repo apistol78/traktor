@@ -27,6 +27,7 @@ extern const render::Handle T_DLLCLASS s_techniqueDeferredGBufferWrite;
 extern const render::Handle T_DLLCLASS s_techniqueForwardColor;
 extern const render::Handle T_DLLCLASS s_techniqueForwardGBufferWrite;
 extern const render::Handle T_DLLCLASS s_techniqueSimpleColor;
+extern const render::Handle T_DLLCLASS s_techniqueDBufferWrite;
 extern const render::Handle T_DLLCLASS s_techniqueReflectionWrite;
 extern const render::Handle T_DLLCLASS s_techniqueVelocityWrite;
 extern const render::Handle T_DLLCLASS s_techniqueShadow;
@@ -73,6 +74,9 @@ extern const render::Handle s_handleWorldView;
 extern const render::Handle s_handleWorldViewInv;
 extern const render::Handle s_handleJitter;
 extern const render::Handle s_handleSlicePositions;
+extern const render::Handle s_handleDBufferColorMap;
+extern const render::Handle s_handleDBufferMiscMap;
+extern const render::Handle s_handleDBufferNormalMap;
 
 // Irradiance grid.
 extern const render::Handle s_handleIrradianceGridBoundsMax;

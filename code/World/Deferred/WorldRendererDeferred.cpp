@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,6 +39,7 @@
 #include "World/Deferred/WorldRendererDeferred.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
+#include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
@@ -147,9 +148,10 @@ void WorldRendererDeferred::setup(
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, outputTargetSetId);
+	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, s_techniqueDBufferWrite, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -166,6 +168,7 @@ void WorldRendererDeferred::setup(
 		renderGraph,
 		visualTargetSetId.current,
 		gbufferTargetSetId,
+		dbufferTargetSetId,
 		ambientOcclusionTargetSetId,
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId
@@ -182,6 +185,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::RenderGraph& renderGraph,
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
+	render::handle_t dbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMapAtlasTargetSetId
@@ -209,6 +213,7 @@ void WorldRendererDeferred::setupVisualPass(
 	// Add visual render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
+	rp->addInput(dbufferTargetSetId);
 	rp->addInput(ambientOcclusionTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMapAtlasTargetSetId);
@@ -228,6 +233,7 @@ void WorldRendererDeferred::setupVisualPass(
 			);
 
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
@@ -312,6 +318,13 @@ void WorldRendererDeferred::setupVisualPass(
 			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
 			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
 			sharedParams->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
+
+			if (dbufferTargetSet)
+			{
+				sharedParams->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
+				sharedParams->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+				sharedParams->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+			}
 
 			if (ambientOcclusionTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));

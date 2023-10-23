@@ -17,6 +17,7 @@ const render::Handle s_techniqueDeferredGBufferWrite(L"World_DeferredGBufferWrit
 const render::Handle s_techniqueForwardColor(L"World_ForwardColor");
 const render::Handle s_techniqueForwardGBufferWrite(L"World_ForwardGBufferWrite");
 const render::Handle s_techniqueSimpleColor(L"World_SimpleColor");
+const render::Handle s_techniqueDBufferWrite(L"World_DBufferWrite");
 const render::Handle s_techniqueReflectionWrite(L"World_ReflectionWrite");
 const render::Handle s_techniqueVelocityWrite(L"World_VelocityWrite");
 const render::Handle s_techniqueShadow(L"World_ShadowWrite");
@@ -63,6 +64,9 @@ const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 const render::Handle s_handleJitter(L"World_Jitter");
 const render::Handle s_handleSlicePositions(L"World_SlicePositions");
+const render::Handle s_handleDBufferColorMap(L"World_DBufferColorMap");
+const render::Handle s_handleDBufferMiscMap(L"World_DBufferMiscMap");
+const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");
 
 // Irradiance grid.
 const render::Handle s_handleIrradianceGridBoundsMax(L"World_IrradianceGridBoundsMax");
