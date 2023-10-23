@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -81,8 +82,8 @@ void EffectLayerData::serialize(ISerializer& s)
 	T_FATAL_ASSERT (s.getVersion() >= 4);
 
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> Member< float >(L"time", m_time);
-	s >> Member< float >(L"duration", m_duration);
+	s >> Member< float >(L"time", m_time, AttributeUnit(UnitType::Seconds));
+	s >> Member< float >(L"duration", m_duration, AttributeUnit(UnitType::Seconds));
 	s >> MemberRef< EmitterData >(L"emitter", m_emitter);
 	s >> MemberRef< TrailData >(L"trail", m_trail);
 	s >> MemberRef< SequenceData >(L"sequence", m_sequence);

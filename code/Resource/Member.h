@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,13 +40,20 @@ public:
 	{
 	}
 
+	explicit Member(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberComplex(name, false, attributes)
+	,	m_ref(ref)
+	{
+	}
+
 	virtual void serialize(ISerializer& s) const
 	{
+		AttributeType attributeType(type_of< Class >());
 		Guid id = m_ref;
 		s >> traktor::Member< traktor::Guid >(
 			getName(),
 			id,
-			AttributeType(type_of< Class >())
+			getAttributes() ? attributeType | *getAttributes() : attributeType
 		);
 		m_ref = Id< Class >(id);
 	}
