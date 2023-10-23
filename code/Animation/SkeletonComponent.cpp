@@ -16,7 +16,7 @@
 #include "Core/Thread/JobManager.h"
 #include "World/Entity.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor::animation
 {
