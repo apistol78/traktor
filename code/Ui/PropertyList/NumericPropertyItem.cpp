@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,19 +19,17 @@
 #include "Ui/PropertyList/NumericPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 double trunc(double value)
 {
 	return (double)((long)value);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.NumericPropertyItem", NumericPropertyItem, PropertyItem)
 
@@ -208,6 +206,8 @@ void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const
 			ss << value << L" N";
 		else if (m_representation == RpNewtonSecond)
 			ss << value << L" Ns";
+		else if (m_representation == RpSeconds)
+			ss << value << L" s";
 		else
 			ss << value;
 	}
@@ -318,5 +318,4 @@ void NumericPropertyItem::eventEditKeyDownEvent(KeyDownEvent* event)
 		m_editor->setVisible(false);
 }
 
-	}
 }

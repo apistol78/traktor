@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,12 +46,10 @@
 #include "Ui/PropertyList/TextPropertyItem.h"
 #include "Ui/PropertyList/VectorPropertyItem.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 /*! Stylize member name.
  *
@@ -96,7 +94,9 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 	const AttributeUnit* unit = findAttribute< AttributeUnit >(m);
 	if (unit)
 	{
-		if (unit->getUnit() == UnitType::Metres)
+		if (unit->getUnit() == UnitType::Seconds)
+			return NumericPropertyItem::RpSeconds;
+		else if (unit->getUnit() == UnitType::Metres)
 			return unit->getPerSecond() ? NumericPropertyItem::RpMetresPerSecond : NumericPropertyItem::RpMetres;
 		else if (unit->getUnit() == UnitType::Radians)
 			return unit->getPerSecond() ? NumericPropertyItem::RpAnglesPerSecond : NumericPropertyItem::RpAngle;
@@ -118,7 +118,7 @@ NumericPropertyItem::Representation findRepresentation(const MemberType& m)
 	return NumericPropertyItem::RpNormal;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InspectReflector", InspectReflector, Serializer)
 
@@ -480,7 +480,7 @@ void InspectReflector::operator >> (const Member< Path >& m)
 void InspectReflector::operator >> (const Member< Color4ub >& m)
 {
 	const bool memberPrivate = bool(findAttribute< AttributePrivate >(m) != nullptr);
-	Color4f value(
+	const Color4f value(
 		m->r / 255.0f,
 		m->g / 255.0f,
 		m->b / 255.0f,
@@ -591,13 +591,13 @@ void InspectReflector::operator >> (const Member< Matrix33 >& m)
 	);
 	addPropertyItem(propertyItem, false);
 
-	VectorPropertyItem::vector_t row1 = { m->e[0][0], m->e[0][1], m->e[0][2] };
+	const VectorPropertyItem::vector_t row1 = { m->e[0][0], m->e[0][1], m->e[0][2] };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 3));
 
-	VectorPropertyItem::vector_t row2 = { m->e[1][0], m->e[1][1], m->e[1][2] };
+	const VectorPropertyItem::vector_t row2 = { m->e[1][0], m->e[1][1], m->e[1][2] };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[1]", row2, 3));
 
-	VectorPropertyItem::vector_t row3 = { m->e[2][0], m->e[2][1], m->e[2][2] };
+	const VectorPropertyItem::vector_t row3 = { m->e[2][0], m->e[2][1], m->e[2][2] };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[2]", row3, 3));
 }
 
@@ -608,16 +608,16 @@ void InspectReflector::operator >> (const Member< Matrix44 >& m)
 	);
 	addPropertyItem(propertyItem, false);
 
-	VectorPropertyItem::vector_t row1 = { m->get(0, 0), m->get(0, 1), m->get(0, 2), m->get(0, 3) };
+	const VectorPropertyItem::vector_t row1 = { m->get(0, 0), m->get(0, 1), m->get(0, 2), m->get(0, 3) };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[0]", row1, 4));
 
-	VectorPropertyItem::vector_t row2 = { m->get(1, 0), m->get(1, 1), m->get(1, 2), m->get(1, 3) };
+	const VectorPropertyItem::vector_t row2 = { m->get(1, 0), m->get(1, 1), m->get(1, 2), m->get(1, 3) };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[1]", row2, 4));
 
-	VectorPropertyItem::vector_t row3 = { m->get(2, 0), m->get(2, 1), m->get(2, 2), m->get(2, 3) };
+	const VectorPropertyItem::vector_t row3 = { m->get(2, 0), m->get(2, 1), m->get(2, 2), m->get(2, 3) };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[2]", row3, 4));
 
-	VectorPropertyItem::vector_t row4 = { m->get(3, 0), m->get(3, 1), m->get(3, 2), m->get(3, 3) };
+	const VectorPropertyItem::vector_t row4 = { m->get(3, 0), m->get(3, 1), m->get(3, 2), m->get(3, 3) };
 	m_propertyList->addPropertyItem(propertyItem, new VectorPropertyItem(L"[3]", row4, 4));
 }
 
@@ -725,5 +725,4 @@ void InspectReflector::addPropertyItem(PropertyItem* propertyItem, bool property
 		m_propertyList->addPropertyItem(m_propertyItemStack.back(), propertyItem);
 }
 
-	}
 }

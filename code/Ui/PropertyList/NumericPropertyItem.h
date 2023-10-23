@@ -48,7 +48,8 @@ public:
 		RpHerz,
 		RpEV,
 		RpNewton,
-		RpNewtonSecond
+		RpNewtonSecond,
+		RpSeconds
 	};
 
 	explicit NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex, Representation representation);

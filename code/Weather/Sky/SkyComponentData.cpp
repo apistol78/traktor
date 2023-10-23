@@ -8,6 +8,7 @@
  */
 #include <cmath>
 #include "Core/Math/Const.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
@@ -148,7 +149,7 @@ void SkyComponentData::setTransform(const world::EntityData* owner, const Transf
 
 void SkyComponentData::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader, AttributePrivate());
 
 	if (s.getVersion< SkyComponentData >() >= 2)
 		s >> resource::Member< render::ITexture >(L"texture", m_texture);
