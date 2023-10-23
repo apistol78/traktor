@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,7 +17,7 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 32, BakeConfiguration, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.BakeConfiguration", 33, BakeConfiguration, ISerializable)
 
 uint32_t BakeConfiguration::calculateModelRelevanteHash() const
 {
@@ -91,8 +91,11 @@ void BakeConfiguration::serialize(ISerializer& s)
 	if (s.getVersion< BakeConfiguration >() >= 32)
 		s >> Member< float >(L"analyticalLightAttenuation", m_analyticalLightAttenuation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 
-	if (s.getVersion< BakeConfiguration >() >= 20)
-		s >> Member< float >(L"skyAttenuation", m_skyAttenuation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+	if (s.getVersion< BakeConfiguration >() >= 20 && s.getVersion< BakeConfiguration >() < 33)
+	{
+		float skyAttenuation;
+		s >> Member< float >(L"skyAttenuation", skyAttenuation, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+	}
 
 	if (s.getVersion< BakeConfiguration >() >= 23)
 		s >> Member< float >(L"ambientOcclusionFactor", m_ambientOcclusionFactor, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));

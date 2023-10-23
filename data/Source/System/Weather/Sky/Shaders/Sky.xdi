@@ -237,8 +237,8 @@
 			<id>{F7B0E6EF-40F3-477E-B1B6-D4124C6D5E64}</id>
 			<comment/>
 			<position>
-				<first>149</first>
-				<second>247</second>
+				<first>154</first>
+				<second>282</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -514,11 +514,30 @@
 			<id>{E88E5C56-08FC-CA46-BCEA-4A1DA38CAA35}</id>
 			<comment/>
 			<position>
-				<first>501</first>
-				<second>167</second>
+				<first>791</first>
+				<second>265</second>
 			</position>
 			<min>0</min>
 			<max>100</max>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{9E81EF68-2890-457F-BDA7-E324160A05E9}</id>
+			<comment/>
+			<position>
+				<first>518</first>
+				<second>223</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{AEC5981A-D6C8-4BE1-B676-7753A98ADC44}</id>
+			<comment/>
+			<position>
+				<first>147</first>
+				<second>186</second>
+			</position>
+			<parameterName>Weather_SkyIntensity</parameterName>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -804,16 +823,6 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -834,8 +843,28 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{DCB98B38-69AF-F640-B75E-99EC7EA2D285}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[14]"/>
 				<id>{AF6C971B-D67A-42EE-A12B-97D36927C89F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
@@ -848,8 +877,18 @@
 				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<id>{DCB98B38-69AF-F640-B75E-99EC7EA2D285}</id>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 	</edges>

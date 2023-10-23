@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,6 +24,7 @@ namespace traktor::weather
 const render::Handle s_handleWeather_SkyRadius(L"Weather_SkyRadius");
 const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
+const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
 
 	}
 
@@ -35,7 +36,8 @@ SkyComponent::SkyComponent(
 	render::Buffer* indexBuffer,
 	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
-	const resource::Proxy< render::ITexture >& texture
+	const resource::Proxy< render::ITexture >& texture,
+	float intensity
 )
 :	m_vertexLayout(vertexLayout)
 ,	m_vertexBuffer(vertexBuffer)
@@ -44,6 +46,7 @@ SkyComponent::SkyComponent(
 ,	m_shader(shader)
 ,	m_texture(texture)
 ,	m_transform(Transform::identity())
+,	m_intensity(intensity)
 {
 }
 
@@ -109,6 +112,7 @@ void SkyComponent::build(
 
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
+	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_intensity);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 
 	renderBlock->programParams->endParameters(renderContext);

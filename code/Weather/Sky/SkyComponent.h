@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -55,7 +55,8 @@ public:
 		render::Buffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
-		const resource::Proxy< render::ITexture >& texture
+		const resource::Proxy< render::ITexture >& texture,
+		float intensity
 	);
 
 	virtual ~SkyComponent();
@@ -86,6 +87,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;
 	Transform m_transform;
+	float m_intensity;
 };
 
 }

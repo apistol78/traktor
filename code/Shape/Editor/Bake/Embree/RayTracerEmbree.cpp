@@ -388,11 +388,13 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 	}
 
 	const RTCGeometry geometry = rtcGetGeometry(m_scene, rh.hit.geomID);
-
-	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
 	rtcInterpolate0(geometry, rh.hit.primID, rh.hit.u, rh.hit.v, RTC_BUFFER_TYPE_VERTEX_ATTRIBUTE, 0, normal, 3);
+
+	// Get position and normal of hit.
+	const Vector4 hitPosition = position + direction * Scalar(rh.ray.tfar - 0.001f); 
 	const Vector4 hitNormal = Vector4::loadAligned(normal).xyz0().normalized();
 
+	// Get material as hit.
 	const uint32_t offset = m_materialOffset[rh.hit.geomID];
 	const auto& hitMaterial = *m_materials[offset + rh.hit.primID];
 
@@ -410,19 +412,30 @@ Color4f RayTracerEmbree::traceRay(const Vector4& position, const Vector4& direct
 			hitMaterialColor
 		);
 	}
+
+	// Calculate lighting at hit.
 	const Color4f emittance = hitMaterialColor * Scalar(100.0f * hitMaterial.getEmissive());
 	const Color4f BRDF = hitMaterialColor / Scalar(PI);
-	const Scalar cosPhi = clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
+	const Scalar cosPhi = 1.0_simd; // clamp(-dot3(hitNormal, direction), 0.0_simd, 1.0_simd);
 	const Scalar probability = 1.0_simd / Scalar(PI);
-
 	const Color4f incoming = tracePath0(hitPosition, hitNormal, random, Light::LmDirect | Light::LmIndirect);
+	const Color4f direct = sampleAnalyticalLights(
+		random,
+		hitPosition,
+		hitNormal,
+		Light::LmIndirect | Light::LmDirect,
+		true
+	);
 
 	if (hitMaterial.getBlendOperator() != model::Material::BoDecal)
 	{
 		return traceRay(hitPosition + direction * 0.1_simd, direction);
 	}
 
-	const Color4f output = emittance + (incoming * BRDF * cosPhi / probability);
+	const Color4f output =
+		emittance +
+		direct * hitMaterialColor +
+		(incoming * BRDF * cosPhi / probability);
 	return output;
 }
 
@@ -512,8 +525,8 @@ Color4f RayTracerEmbree::tracePath0(
 			const Scalar probability = 0.78532_simd; // 1.0_simd / Scalar(PI);	// PDF from cosine weighted direction, if uniform then this should be 1.
 #endif
 
-			//const Scalar cosPhi = dot3(newDirection, hitNormal);
-			const Scalar cosPhi = dot3(-direction, hitNormal);
+			// const Scalar cosPhi = dot3(newDirection, hitNormal);
+			const Scalar cosPhi = abs(dot3(-direction, hitNormal));
 			const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
 			const Color4f direct = sampleAnalyticalLights(
 				random,
@@ -523,11 +536,11 @@ Color4f RayTracerEmbree::tracePath0(
 				true
 			);
 
-			const Color4f output = emittance / hitDistance + (incoming * BRDF * cosPhi / probability) + direct * hitMaterialColor; // * cosPhi;
+			const Color4f output =
+				emittance / hitDistance +
+				direct * hitMaterialColor;
+				(incoming * BRDF * cosPhi / probability);
 			color += output;
-
-			//const Color4f incoming = traceSinglePath(hitOrigin, newDirection, m_configuration->getMaxPathDistance(), random, extraLightMask, 1);
-			//color += incoming * dot3(hitNormal, -direction) * hitMaterialColor;
 		}
 	}
 
