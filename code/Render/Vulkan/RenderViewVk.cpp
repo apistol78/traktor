@@ -1653,9 +1653,9 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 			cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
 			cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
 			cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
-			cbas.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			cbas.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
-			cbas.alphaBlendOp = VK_BLEND_OP_ADD;
+			cbas.srcAlphaBlendFactor = c_blendFactors[rs.blendAlphaSource];
+			cbas.dstAlphaBlendFactor = c_blendFactors[rs.blendAlphaDestination];
+			cbas.alphaBlendOp = c_blendOperations[rs.blendAlphaOperation];
 			cbas.colorWriteMask = rs.colorWriteMask;
 		}
 
