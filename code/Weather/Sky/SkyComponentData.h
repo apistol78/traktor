@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -62,9 +62,12 @@ public:
 
 	const resource::Id< render::ITexture >& getTexture() const { return m_texture; }
 
+	float getIntensity() const { return m_intensity; }
+
 private:
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;
+	float m_intensity;
 };
 
 }

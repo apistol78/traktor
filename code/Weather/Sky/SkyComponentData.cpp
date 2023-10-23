@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,8 @@
  */
 #include <cmath>
 #include "Core/Math/Const.h"
+#include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Resource/IResourceManager.h"
@@ -35,11 +37,12 @@ const int32_t c_indexCount = c_triangleCount * 3;
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 3, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 4, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
 :	m_shader(c_defaultShader)
 ,	m_texture(c_defaultTexture)
+,	m_intensity(1.0f)
 {
 }
 
@@ -129,7 +132,8 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		indexBuffer,
 		primitives,
 		shader,
-		texture
+		texture,
+		m_intensity
 	);
 }
 
@@ -160,6 +164,9 @@ void SkyComponentData::serialize(ISerializer& s)
 		float dummy;
 		s >> Member< float >(L"offset", dummy);
 	}
+
+	if (s.getVersion< SkyComponentData >() >= 4)
+		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }

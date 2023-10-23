@@ -191,7 +191,6 @@ void addSky(
 	const std::wstring& assetPath,
 	const weather::SkyComponentData* skyComponentData,
 	const Transform& skyTransform,
-	float attenuation,
 	TracerTask* tracerTask
 )
 {
@@ -209,7 +208,7 @@ void addSky(
 		0.0f
 	);
 
-	const uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(textureAsset);
+	const uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(skyComponentData);
 
 	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
 		Key(0x00000001, 0x00000000, 0x00000000, textureAssetHash),
@@ -261,6 +260,14 @@ void addSky(
 					}
 				}
 			}
+
+			log::info << L"Sun intensity : " << sunIntensity << Endl;
+			
+			Vector4 sunU, sunV;
+			orthogonalFrame(sunDirection, sunU, sunV);
+			const Matrix44 M(sunU, sunV, sunDirection, Vector4::zero());
+			const Vector4 E = Quaternion(M).toEulerAngles();
+			log::info << L"Sun direction " << rad2deg(E.x()) << L", " << rad2deg(E.y()) << L", " << rad2deg(E.z()) << Endl;
 
 			Ref< drawing::CubeMap > radianceCube = new drawing::CubeMap(128, drawing::PixelFormat::getRGBAF32());
 
@@ -314,8 +321,9 @@ void addSky(
 			const drawing::TransformFilter tform(Color4f(c_refScale, c_refScale, c_refScale, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 			radiance->apply(&tform);
 
-			// Scale probe by user attenuation factor.
-			const drawing::TransformFilter tform2(Color4f(attenuation, attenuation, attenuation, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+			// Scale probe by intensity.
+			const float intensity = skyComponentData->getIntensity();
+			const drawing::TransformFilter tform2(Color4f(intensity, intensity, intensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 			radiance->apply(&tform2);
 
 			return new IblProbe(radiance);
@@ -602,7 +610,7 @@ bool BakePipelineOperator::build(
 
 				// Add sky source.
 				if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
-					addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), configuration->getSkyAttenuation(), tracerTask);
+					addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), tracerTask);
 
 				// Add camera.
 				if (auto cameraComponentData = inoutEntityData->getComponent< world::CameraComponentData >())

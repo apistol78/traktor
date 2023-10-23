@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -54,8 +54,6 @@ public:
 
 	float getAnalyticalLightAttenuation() const { return m_analyticalLightAttenuation; }
 
-	float getSkyAttenuation() const { return m_skyAttenuation; }
-
 	float getAmbientOcclusionFactor() const { return m_ambientOcclusionFactor; }
 
 	uint32_t calculateModelRelevanteHash() const;
@@ -75,7 +73,6 @@ private:
 	int32_t m_maximumLightMapSize = 1024;
 	bool m_enableDenoise = true;
 	float m_analyticalLightAttenuation = 1.0f;
-	float m_skyAttenuation = 1.0f;
 	float m_ambientOcclusionFactor = 0.5f;
 };
 
