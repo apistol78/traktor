@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Context/RenderContext.h"
@@ -25,6 +26,7 @@ namespace traktor::world
 	{
 
 const render::Handle s_techniqueDefault(L"Default");
+const uint32_t c_interleave = 4;
 
 	}
 
@@ -35,7 +37,7 @@ VolumetricFogComponent::VolumetricFogComponent(const VolumetricFogComponentData*
 {
 	m_maxDistance = data->m_maxDistance;
 	m_maxScattering = data->m_maxScattering;
-	m_sliceCount = data->m_sliceCount;
+	m_sliceCount = alignUp(data->m_sliceCount, c_interleave);
 	m_mediumColor = data->m_mediumColor;
 	m_mediumDensity = data->m_mediumDensity;
 }
@@ -120,7 +122,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->workSize[0] = 128;
 		renderBlock->workSize[1] = 128;
-		renderBlock->workSize[2] = 1; // m_sliceCount;
+		renderBlock->workSize[2] = m_sliceCount / c_interleave;
 
 		renderBlock->programParams->beginParameters(renderContext);
 
@@ -137,7 +139,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 
 		renderContext->compute(renderBlock);
 
-		m_sliceCurrent = (m_sliceCurrent + 1) % m_sliceCount;
+		m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
 	}
 }
 
