@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,10 +30,10 @@ bool Static::create(Widget* parent, const std::wstring& text)
 Size Static::getPreferredSize(const Size& hint) const
 {
 	Size extent(0, 0);
-	auto fontMetric = getFontMetric();
+	const auto fontMetric = getFontMetric();
 	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
 	{
-		auto sz = fontMetric.getExtent(s);
+		const auto sz = fontMetric.getExtent(s);
 		extent.cx = std::max(sz.cx, extent.cx);
 		extent.cy += sz.cy;
 	}
@@ -54,14 +54,14 @@ void Static::eventPaint(PaintEvent* event)
 	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcInner);
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 
 	Point pt(0, 0);
 
-	auto fontMetric = getFontMetric();
+	const auto fontMetric = getFontMetric();
 	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
 	{
-		auto sz = fontMetric.getExtent(s);
+		const auto sz = fontMetric.getExtent(s);
 		canvas.drawText(pt, s);
 		pt.y += sz.cy;
 	}
