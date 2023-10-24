@@ -45,38 +45,18 @@ void ScriptContextLua::destroy()
 			if (m_environmentRef != LUA_NOREF)
 			{
 				// Clear all global variables first.
-				lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-				lua_pushnil(m_luaState);
+				DO_0(m_luaState, lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef));
+				DO_1(m_luaState, lua_pushnil(m_luaState));
 
-				// -2 = environmentRef
-				// -1 = nil
 				while (lua_next(m_luaState, -2))
 				{
-					// -3 = environmentRef
-					// -2 = key
-					// -1 = value
-					lua_pop(m_luaState, 1);
-
-					// -2 = environmentRef
-					// -1 = key
-					lua_pushvalue(m_luaState, -1);
-
-					// -3 = environmentRef
-					// -2 = key
-					// -1 = key
-					lua_pushnil(m_luaState);
-
-					// -4 = environmentRef
-					// -3 = key
-					// -2 = key
-					// -1 = nil
-					lua_rawset(m_luaState, -4);
-
-					// -2 = environmentRef
-					// -1 = key
+					DO_1(m_luaState, lua_pop(m_luaState, 1));
+					DO_1(m_luaState, lua_pushvalue(m_luaState, -1));
+					DO_1(m_luaState, lua_pushnil(m_luaState));
+					DO_1(m_luaState, lua_rawset(m_luaState, -4));
 				}
 
-				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+				DO_1(m_luaState, luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef));
 				m_environmentRef = LUA_NOREF;
 				m_luaState = nullptr;
 			}
@@ -115,7 +95,7 @@ bool ScriptContextLua::load(const IScriptBlob* scriptBlob)
 		}
 
 		const ScriptBlobLua* scriptBlobLua = mandatory_non_null_type_cast< const ScriptBlobLua* >(scriptBlob);
-		int32_t result = luaL_loadbuffer(
+		const int32_t result = luaL_loadbuffer(
 			m_luaState,
 			(const char*)scriptBlobLua->m_script.c_str(),
 			scriptBlobLua->m_script.length(),
