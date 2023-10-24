@@ -83,7 +83,7 @@ void CheckBox::eventPaint(PaintEvent* event)
 	Rect rcText = rcInner;
 	rcText.left += image->getSize(this).cx + pixel(4_ut);
 
-	canvas.setForeground(ss->getColor(this, L"color"));
+	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
 	canvas.drawText(rcText, getText(), AnLeft, AnCenter);
 
 	event->consume();
