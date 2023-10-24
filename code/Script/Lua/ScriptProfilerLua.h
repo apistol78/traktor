@@ -30,8 +30,6 @@ class ScriptProfilerLua : public IScriptProfiler
 public:
 	explicit ScriptProfilerLua(ScriptManagerLua* scriptManager, lua_State* luaState);
 
-	virtual ~ScriptProfilerLua();
-
 	virtual void addListener(IListener* listener) override final;
 
 	virtual void removeListener(IListener* listener) override final;
