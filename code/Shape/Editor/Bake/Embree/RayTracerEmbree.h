@@ -96,9 +96,10 @@ private:
 		int32_t depth
 	) const;
 
-	Scalar traceAmbientOcclusion(
+	Scalar traceOcclusion(
 		const Vector4& origin,
 		const Vector4& normal,
+		float maxDistance,
 		RandomGeometry& random
 	) const;
 
