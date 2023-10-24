@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,11 +49,8 @@ public:
 	Any executeMethod(ScriptObjectLua* self, int32_t methodRef, uint32_t argc, const Any* argv);
 
 private:
-	friend class ScriptClassLua;
 	friend class ScriptDebuggerLua;
-	friend class ScriptDelegateLua;
 	friend class ScriptManagerLua;
-	friend class ScriptProfilerLua;
 
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
@@ -62,7 +59,7 @@ private:
 	const Object* m_lastSelf;
 	SmallSet< std::string > m_globals;
 
-	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
+	explicit ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, bool strict);
 
 	static int32_t runtimeError(lua_State* luaState);
 

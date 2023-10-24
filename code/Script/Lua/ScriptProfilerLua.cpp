@@ -26,10 +26,6 @@ ScriptProfilerLua::ScriptProfilerLua(ScriptManagerLua* scriptManager, lua_State*
 	m_timer.reset();
 }
 
-ScriptProfilerLua::~ScriptProfilerLua()
-{
-}
-
 void ScriptProfilerLua::addListener(IListener* listener)
 {
 	m_listeners.insert(listener);
@@ -69,14 +65,13 @@ void ScriptProfilerLua::hookCallback(lua_State* L, lua_Debug* ar)
 	if (!ar->name)
 		return;
 
-	double timeStamp = m_timer.getElapsedTime();
+	const double timeStamp = m_timer.getElapsedTime();
 
 	if (ar->event == LUA_HOOKCALL || ar->event == LUA_HOOKTAILCALL)
 	{
-		ProfileStack ps;
+		ProfileStack& ps = m_stack.push_back();
 		ps.timeStamp = timeStamp;
 		ps.childDuration = 0.0;
-		m_stack.push_back(ps);
 	}
 	else if (ar->event == LUA_HOOKRET)
 	{

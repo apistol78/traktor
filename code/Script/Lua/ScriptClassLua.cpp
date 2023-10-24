@@ -109,7 +109,7 @@ public:
 	virtual Any invoke(ITypedObject* self, uint32_t argc, const Any* argv) const override final
 	{
 		return m_scriptContext->executeMethod(
-			mandatory_non_null_type_cast< ScriptObjectLua* >(self),
+			static_cast< ScriptObjectLua* >(self),
 			m_ref,
 			argc,
 			argv
@@ -132,7 +132,7 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 
 	Ref< ScriptClassLua > sc = new ScriptClassLua(scriptManager, scriptContext, luaState);
 
-	int32_t classRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
+	const int32_t classRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
 	lua_rawgeti(luaState, LUA_REGISTRYINDEX, classRef);
 
 	int32_t constructorRef = 0;
@@ -142,10 +142,10 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 	{
 		if (lua_isfunction(luaState, -1) && !lua_iscfunction(luaState, -1))
 		{
-			std::string functionName = lua_tostring(luaState, -2);
+			const std::string functionName = lua_tostring(luaState, -2);
 
 			lua_pushvalue(luaState, -1);
-			int32_t functionRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
+			const int32_t functionRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
 
 			if (functionName != "new")
 			{
@@ -162,7 +162,6 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 	}
 
 	sc->m_constructor = new ScriptClassConstructorDispatch(scriptManager, scriptContext, luaState, classRef, constructorRef);
-
 	return sc;
 }
 
