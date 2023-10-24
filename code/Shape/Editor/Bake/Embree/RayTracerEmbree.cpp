@@ -356,11 +356,14 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 			// Trace ambient occlusion.
 			Scalar occlusion = 1.0_simd;
 			if (ambientOcclusion > Scalar(FUZZY_EPSILON))
-				occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceAmbientOcclusion(e.position, e.normal, random);
+				occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceOcclusion(e.position, e.normal, 1.0f, random);
+
+			// Trace sky occlusion.
+			const Scalar skyOcclusion = traceOcclusion(e.position, Vector4(0.0f, 1.0f, 0.0f), 1000.0f, random);
 
 			// Combine and write final lumel.
 			const Color4f lightmapColor = emittance + incoming * occlusion;
-			lightmapDiffuse->setPixel(x, y, lightmapColor.rgb1());
+			lightmapDiffuse->setPixel(x, y, lightmapColor.rgb0() + Color4f(0.0f, 0.0f, 0.0f, skyOcclusion));
 		}
 	}
 }
@@ -640,14 +643,14 @@ Color4f RayTracerEmbree::traceSinglePath(
 	//return color;
 }
 
-Scalar RayTracerEmbree::traceAmbientOcclusion(
+Scalar RayTracerEmbree::traceOcclusion(
 	const Vector4& origin,
 	const Vector4& normal,
+	float maxDistance,
 	RandomGeometry& random
 ) const
 {
 	const int32_t sampleCount = alignUp(m_configuration->getShadowSampleCount(), 16);
-	const float maxOcclusionDistance = 1.0f;
 	RTCRay16 T_ALIGN64 rv;
 	int32_t unoccluded = 0;
 
@@ -657,7 +660,7 @@ Scalar RayTracerEmbree::traceAmbientOcclusion(
 		{
 			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
-			constructRay16(origin, direction, maxOcclusionDistance, j, rv);
+			constructRay16(origin, direction, maxDistance, j, rv);
 		}
 
 		// Intersect test all rays using ray streams.

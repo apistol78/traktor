@@ -113,20 +113,21 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 				for (int32_t kx = -c_kernelSize; kx <= c_kernelSize; ++kx)
 				{
 					Color4f clr;
-					if (lightmap->getPixel(x + kx, y + ky, clr))
+					if (!lightmap->getPixel(x + kx, y + ky, clr))
+						continue;
+
+					const auto& e = gbuffer.get(x + kx, y + ky);
+					if (e.polygon == ~0U)
+						continue;
+
+					Color4f ncc;
+					normals.getPixelUnsafe(x + kx, y + ky, ncc);
+					const Scalar cp = dot3((Vector4)ncc, (Vector4)nc);
+					if (cp > 0.0_simd)
 					{
-						if (clr.getAlpha() > FUZZY_EPSILON)
-						{
-							Color4f ncc;
-							normals.getPixelUnsafe(x + kx, y + ky, ncc);
-							const Scalar cp = dot3((Vector4)ncc, (Vector4)nc);
-							if (cp > 0.0_simd)
-							{
-								const float df = 1.0f - sqrt(kx * kx + ky * ky) / sqrt(c_kernelSize * c_kernelSize * 2);
-								ct += clr * cp * Scalar(df);
-								ctc += cp * Scalar(df);
-							}
-						}
+						const float df = 1.0f - sqrt(kx * kx + ky * ky) / sqrt(c_kernelSize * c_kernelSize * 2);
+						ct += clr * cp * Scalar(df);
+						ctc += cp * Scalar(df);
 					}
 				}
 			}
@@ -141,19 +142,6 @@ Ref< drawing::Image > denoise(const GBuffer& gbuffer, drawing::Image* lightmap, 
 				lightmap->getPixelUnsafe(x, y, ct);
 				output->setPixelUnsafe(x, y, ct);
 			}
-		}
-	}
-
-	// Keep source alpha.
-	Color4f src, dst;
-	for (int32_t y = 0; y < height; ++y)
-	{
-		for (int32_t x = 0; x < width; ++x)
-		{
-			output->getPixelUnsafe(x, y, dst);
-			lightmap->getPixelUnsafe(x, y, src);
-			dst.setAlpha(src.getAlpha());
-			output->setPixelUnsafe(x, y, dst);
 		}
 	}
 
@@ -542,11 +530,9 @@ bool TracerProcessor::process(const TracerTask* task)
 		// Create final output instance.
 		if (lightmapDiffuse)
 		{
-			// Denoise lightmap.
+			// De-noise lightmap.
 			if (configuration->getEnableDenoise())
 				lightmapDiffuse = denoise(gbuffer, lightmapDiffuse, false);
-
-			lightmapDiffuse->clearAlpha(1.0f);
 
 			const bool result = writeTexture(
 				tracerOutput->getLightmapDiffuseInstance(),
