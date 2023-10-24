@@ -346,6 +346,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
+	m_shaderViewer->setEnable(false);
 	m_site->createAdditionalPanel(m_shaderViewer, 400_ut, false);
 
 	// Create "data" view.
@@ -1436,6 +1437,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// If validation succeeded then update generated shader as well.
+	m_shaderViewer->setEnable(graphType == ShaderGraphValidator::SgtProgram);
 	if (validationResult && graphType == ShaderGraphValidator::SgtProgram)
 		m_shaderViewer->reflect(m_shaderGraph);
 
