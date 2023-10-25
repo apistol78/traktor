@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -102,18 +103,23 @@ DoubleBufferedTarget VelocityPass::setup(
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
+	rp->addInput(gbufferTargetSetId);
+	rp->setOutput(velocityTargetSetId.current, render::TfDepth, render::TfColor | render::TfDepth);
 
 	if (m_velocityPrime)
 	{
 		render::ImageGraphView view;
-
 		view.viewFrustum = worldRenderView.getViewFrustum();
 		view.view = worldRenderView.getLastView() * worldRenderView.getView().inverse();
 		view.projection = worldRenderView.getProjection();
 		view.deltaTime = (float)worldRenderView.getDeltaTime();
 
 		render::ImageGraphContext igctx;
-		igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+
+		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+		};
 
 		m_velocityPrime->addPasses(
 			m_screenRenderer,
@@ -121,11 +127,9 @@ DoubleBufferedTarget VelocityPass::setup(
 			rp,
 			igctx,
 			view,
-			nullptr
+			setParameters
 		);
 	}
-
-	rp->setOutput(velocityTargetSetId.current, render::TfDepth, render::TfColor | render::TfDepth);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)

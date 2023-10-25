@@ -35,7 +35,7 @@ void ImageGraph::addPasses(
 	RenderPass* pass,
 	const ImageGraphContext& cx,
 	const ImageGraphView& view,
-	const std::function< void(ProgramParameters*) >& parametersFn
+	const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn
 ) const
 {
 	ImagePass::targetSetVector_t sbufferIds;
@@ -100,9 +100,15 @@ void ImageGraph::addPasses(
 		}
 	}
 
-	// Add all steps to render graph.
+	// Add all steps to render graph,
+	// each pass added need to inherit input dependencies from root pass
+	// since we can add parameters through callback.
 	for (auto imagePass : m_passes)
-		imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
+	{
+		RenderPass* rp = imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
+		for (auto input : pass->getInputs())
+			rp->addInput(input.resourceId);
+	}
 
 	// Override pass name with our root node's name.
 	pass->setName(m_name);
@@ -117,13 +123,7 @@ void ImageGraph::addPasses(
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);
 			if (parametersFn)
-				parametersFn(sharedParams);
-			//for (const auto& it : context.getFloatParameters())
-			//	sharedParams->setFloatParameter(it.first, it.second);
-			//for (const auto& it : context.getVectorParameters())
-			//	sharedParams->setVectorParameter(it.first, it.second);
-			//for (const auto& it : context.getTextureParameters())
-			//	sharedParams->setTextureParameter(it.first, it.second);
+				parametersFn(renderGraph, sharedParams);
 			sharedParams->endParameters(renderContext);
 
 			for (auto step : m_steps)

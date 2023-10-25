@@ -29,6 +29,7 @@ namespace traktor::world
 {
 
 class AmbientOcclusionPass;
+class DBufferPass;
 class GBufferPass;
 class IEntityRenderer;
 class IrradianceGrid;
@@ -88,6 +89,7 @@ protected:
 
 	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
+	Ref< DBufferPass > m_dbufferPass;
 	Ref< VelocityPass > m_velocityPass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ReflectionsPass > m_reflectionsPass;

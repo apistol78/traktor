@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
@@ -99,7 +100,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	T_PROFILER_SCOPE(L"AmbientOcclusionPass::setup");
 	render::ImageGraphView view;
 
-	if (m_ambientOcclusion == nullptr)
+	if (m_ambientOcclusion == nullptr || gbufferTargetSetId == 0)
 		return 0;
 
 	// Add ambient occlusion target set.
@@ -118,23 +119,31 @@ render::handle_t AmbientOcclusionPass::setup(
 	view.projection = worldRenderView.getProjection();
 
 	render::ImageGraphContext igctx;
-	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
+	//igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
+	//igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
+	rp->addInput(gbufferTargetSetId);
+
+	render::Clear clear;
+	clear.mask = render::CfColor;
+	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
+	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
+
+	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+		params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
+	};
+
 	m_ambientOcclusion->addPasses(
 		m_screenRenderer,
 		renderGraph,
 		rp,
 		igctx,
 		view,
-		nullptr
+		setParameters
 	);
-
-	render::Clear clear;
-	clear.mask = render::CfColor;
-	clear.colors[0] = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	rp->setOutput(ambientOcclusionTargetSetId, clear, render::TfNone, render::TfColor);
 
 	renderGraph.addPass(rp);
 	return ambientOcclusionTargetSetId;

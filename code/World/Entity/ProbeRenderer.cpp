@@ -45,10 +45,6 @@ const int32_t c_faceSize = 256;
 const resource::Id< render::Shader > c_probeShader(Guid(L"{99BB18CB-A744-D845-9A17-D0E586E4D9EA}"));
 const resource::Id< render::Shader > c_idFilterShader(Guid(L"{D9CC2267-0BDF-4A19-A970-856112821734}"));
 
-const render::Handle c_handleProbeRoughness(L"World_ProbeRoughness");
-const render::Handle c_handleProbeTexture(L"World_ProbeTexture");
-const render::Handle c_handleProbeFilterCorners(L"World_ProbeFilterCorners");
-
 #pragma pack(1)
 struct Vertex
 {
@@ -438,9 +434,9 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 				auto pp = renderContext->alloc< render::ProgramParameters >();
 				pp->beginParameters(renderContext);
-				pp->setFloatParameter(c_handleProbeRoughness, roughness);
-				pp->setTextureParameter(c_handleProbeTexture, probeTexture);
-				pp->setVectorArrayParameter(c_handleProbeFilterCorners, corners, sizeof_array(corners));
+				pp->setFloatParameter(s_handleProbeRoughness, roughness);
+				pp->setTextureParameter(s_handleProbeTexture, probeTexture);
+				pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
 				pp->endParameters(renderContext);
 
 				m_screenRenderer->draw(renderContext, m_filterShader, pp);

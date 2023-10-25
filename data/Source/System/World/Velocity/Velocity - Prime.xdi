@@ -9,15 +9,6 @@
 				<second>153</second>
 			</position>
 		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
-			<comment/>
-			<position>
-				<first>128</first>
-				<second>156</second>
-			</position>
-			<textureId>InputDepth</textureId>
-		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{DB09FFB6-7207-5947-A15B-8026A5683991}</id>
 			<comment/>
@@ -46,34 +37,23 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple">
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
+					<name/>
 					<shader>{944AD06D-240F-4E4A-AF0C-3AEEB50A6FBC}</shader>
-					<parameters>
-						<item>Depth</item>
-					</parameters>
+					<parameters/>
 				</item>
 			</steps>
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
+		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Depth</name>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
 			</destination>
 		</item>
 	</edges>

@@ -10,33 +10,6 @@
 			</position>
 		</item>
 		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
-			<comment/>
-			<position>
-				<first>495</first>
-				<second>211</second>
-			</position>
-			<textureId>InputDepth</textureId>
-		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{F45C816F-6B0C-2443-9179-2D3DDD6225CD}</id>
-			<comment/>
-			<position>
-				<first>479</first>
-				<second>291</second>
-			</position>
-			<textureId>InputNormal</textureId>
-		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{86DABBE0-B5B7-A947-8CFC-DEBB4F93249F}</id>
-			<comment/>
-			<position>
-				<first>463</first>
-				<second>371</second>
-			</position>
-			<textureId>InputRoughness</textureId>
-		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
 			<id>{58AF53DD-58E0-9349-BCBE-9B285E5A292C}</id>
 			<comment/>
 			<position>
@@ -77,9 +50,6 @@
 					<name>Screenspace reflections</name>
 					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
 					<parameters>
-						<item>Depth</item>
-						<item>InputNormal</item>
-						<item>InputRoughness</item>
 						<item>Color</item>
 					</parameters>
 				</item>
@@ -89,7 +59,7 @@
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
@@ -103,37 +73,7 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{FDFF30DE-F467-419B-BE66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
