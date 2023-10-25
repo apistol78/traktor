@@ -97,7 +97,7 @@
 				<first>56</first>
 				<second>131</second>
 			</position>
-			<parameterName>World_DepthMap</parameterName>
+			<parameterName>World_GBufferDepthMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -214,7 +214,7 @@
 				<first>328</first>
 				<second>420</second>
 			</position>
-			<parameterName>World_NormalMap</parameterName>
+			<parameterName>World_GBufferNormalMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

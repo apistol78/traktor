@@ -305,7 +305,7 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
 			}
 
-			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
 
 			if (ambientOcclusionTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
