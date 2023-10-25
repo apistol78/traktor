@@ -381,7 +381,7 @@
 				<first>1478</first>
 				<second>-146</second>
 			</position>
-			<value>0.75</value>
+			<value>0.15</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{DA7709CB-F532-B54B-A057-B8F2D87C7CD4}</id>
