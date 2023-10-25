@@ -41,6 +41,7 @@
 #include "Scene/Editor/Events/PostModifyEvent.h"
 #include "Scene/Editor/Events/PreModifyEvent.h"
 #include "Scene/Editor/Events/RedrawEvent.h"
+#include "Script/IScriptContext.h"
 #include "Ui/Events/SelectionChangeEvent.h"
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
@@ -103,6 +104,7 @@ void SceneEditorContext::destroy()
 {
 	safeDestroy(m_scene);
 	safeDestroy(m_resourceManager);
+	safeDestroy(m_scriptContext);
 
 	m_editor = nullptr;
 	m_document = nullptr;
@@ -111,6 +113,7 @@ void SceneEditorContext::destroy()
 	m_eventManager = nullptr;
 	m_renderSystem = nullptr;
 	m_physicsManager = nullptr;
+
 	m_editorProfiles.clear();
 	m_editorPlugins.clear();
 	m_entityEditorFactories.clear();

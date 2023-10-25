@@ -40,6 +40,7 @@
 #include "World/Forward/WorldRendererForward.h"
 #include "World/Shared/WorldRenderPassShared.h"
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
+#include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
@@ -146,9 +147,10 @@ void WorldRendererForward::setup(
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
+	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, s_techniqueDBufferWrite, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
@@ -303,7 +305,7 @@ void WorldRendererForward::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleShadowMapAtlas, m_whiteTexture);
 			}
 
-			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
 
 			if (ambientOcclusionTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));

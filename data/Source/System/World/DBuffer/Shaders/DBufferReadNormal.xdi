@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
-			<id>{39749CD5-03F0-D045-99EC-E01C2D775486}</id>
+			<id>{17244EB2-02FA-AF4E-AC24-777E200F62A3}</id>
 			<comment/>
 			<position>
 				<first>1042</first>
@@ -15,7 +15,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
-			<id>{B350D788-DF12-6A40-922B-5737E4CB7880}</id>
+			<id>{578CF2A5-F666-5C43-A308-CE02AEC6DE63}</id>
 			<comment/>
 			<position>
 				<first>1613</first>
@@ -24,7 +24,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{3599DB31-534A-F444-B864-75DEECFC3417}</id>
+			<id>{212623A7-2914-8D4D-AAA0-ED03E2ED96B8}</id>
 			<comment/>
 			<position>
 				<first>1308</first>
@@ -52,13 +52,13 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{FD8EF879-3ABA-7C43-99D8-DE17D5DCDF86}</id>
+			<id>{EB9094B7-0D20-724D-8F61-5FAB6C46AF0A}</id>
 			<comment/>
 			<position>
 				<first>1011</first>
 				<second>90</second>
 			</position>
-			<parameterName>World_GBufferNormalMap</parameterName>
+			<parameterName>World_DBufferNormalMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

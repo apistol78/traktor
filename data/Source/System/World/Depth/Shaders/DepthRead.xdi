@@ -69,7 +69,7 @@
 				<first>241</first>
 				<second>251</second>
 			</position>
-			<parameterName>World_DepthMap</parameterName>
+			<parameterName>World_GBufferDepthMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

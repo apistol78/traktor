@@ -26,13 +26,13 @@ const static Handle s_handleDeltaTime(L"DeltaTime");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, Object)
 
-void ImagePass::addRenderGraphPasses(
+RenderPass* ImagePass::addRenderGraphPasses(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
 	const targetSetVector_t& targetSetIds,
 	const targetSetVector_t& sbufferIds,
-	const std::function< void(ProgramParameters*) >& parametersFn,
+	const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn,
 	ScreenRenderer* screenRenderer,
 	RenderGraph& renderGraph
 ) const
@@ -65,14 +65,7 @@ void ImagePass::addRenderGraphPasses(
 			sharedParams->setFloatParameter(s_handleDeltaTime, view.deltaTime);
 
 			if (parametersFn)
-				parametersFn(sharedParams);
-
-			//for (auto it : context.getFloatParameters())
-			//	sharedParams->setFloatParameter(it.first, it.second);
-			//for (auto it : context.getVectorParameters())
-			//	sharedParams->setVectorParameter(it.first, it.second);
-			//for (auto it : context.getTextureParameters())
-			//	sharedParams->setTextureParameter(it.first, it.second);
+				parametersFn(renderGraph, sharedParams);
 
 			sharedParams->endParameters(renderContext);
 				
@@ -90,6 +83,7 @@ void ImagePass::addRenderGraphPasses(
 	);
 
 	renderGraph.addPass(rp);
+	return rp;
 }
 
 }
