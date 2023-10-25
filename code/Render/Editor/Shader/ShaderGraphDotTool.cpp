@@ -21,6 +21,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphDotTool.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor::render
 {
@@ -55,24 +56,41 @@ bool ShaderGraphDotTool::launch(ui::Widget* parent, editor::IEditor* editor, con
 		instances
 	);
 
-
 	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
 	FileOutputStream os(&bufferStream, new Utf8Encoding());
-
-	os << L"digraph G {" << Endl;
-	os << IncreaseIndent;
-	os << L"node [shape=box];" << Endl;
+	
+	os << L"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << Endl;
+	os << L"<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd\">" << Endl;
+	os << L"\t<key id=\"label\" for=\"node\" attr.name=\"label\" attr.type=\"string\"/>" << Endl;
+	os << L"\t<key id=\"color\" for=\"node\" attr.name=\"color\" attr.type=\"string\"><default>yellow</default></key>" << Endl;
+	os << L"\t<graph id=\"G\" edgedefault=\"directed\">" << Endl;
 
 	SmallMap< Guid, int32_t > ids;
 	for (int32_t i = 0; i < (int32_t)instances.size(); ++i)
 	{
-		ids.insert(instances[i]->getGuid(), i + 1);
-		os << L"N" << ids[instances[i]->getGuid()] << L" [label=\"" << instances[i]->getName() << L"\"];" << Endl;
+		const int32_t id = i + 1;
+		ids.insert(instances[i]->getGuid(), id);
+
+		Ref< const ShaderGraph > shaderGraph = instances[i]->getObject< ShaderGraph >();
+		if (!shaderGraph)
+		{
+			log::error << L"Unable to get shader graph from " << instances[i]->getPath() << L"." << Endl;
+			continue;
+		}
+
+		const bool program = (bool)(ShaderGraphValidator(shaderGraph).estimateType() == ShaderGraphValidator::SgtProgram);
+		
+		os << L"\t\t<node id=\"n" << id << L"\">" << Endl;
+		os << L"\t\t\t<data key=\"label\">" << instances[i]->getName() << L"</data>" << Endl;
+		if (program)
+			os << L"\t\t\t<data key=\"color\">green</data>" << Endl;
+		os << L"\t\t</node>" << Endl;
 	}
 
+	int32_t edgeId = 1;
 	for (auto instance : instances)
 	{
 		Ref< const ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
@@ -92,21 +110,21 @@ bool ShaderGraphDotTool::launch(ui::Widget* parent, editor::IEditor* editor, con
 			if (!externalInstance)
 				continue;
 
-			os << L"N" << ids[instance->getGuid()] << L" -> N" << ids[externalInstance->getGuid()] << L";" << Endl;
+			os << L"\t\t<edge id=\"e" << edgeId << L"\" source=\"n" << ids[instance->getGuid()] << L"\" target=\"n" << ids[externalInstance->getGuid()] << L"\"/>" << Endl;
+			++edgeId;
 
 			added.insert(externalRef->getFragmentGuid());
 		}
 	}
 
-	os << DecreaseIndent;
-	os << L"}" << Endl;
-
+	os << L"\t</graph>" << Endl;
+	os << L"</graphml>" << Endl;
 	os.close();
 
 	if (!buffer.empty())
 	{
 		Ref< IStream > file = FileSystem::getInstance().open(
-			L"ShaderGraphs.dot",
+			L"Shaders.graphml",
 			File::FmWrite
 		);
 		if (!file)
@@ -115,7 +133,7 @@ bool ShaderGraphDotTool::launch(ui::Widget* parent, editor::IEditor* editor, con
 		file->close();
 	}
 
-	log::info << L"ShaderGraph dot file generated." << Endl;
+	log::info << L"Shaders.graphml file generated." << Endl;
 	return true;
 }
 

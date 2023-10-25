@@ -81,6 +81,8 @@ const render::Handle s_handleProbeTexture(L"World_ProbeTexture");
 const render::Handle s_handleProbeTextureMips(L"World_ProbeTextureMips");
 const render::Handle s_handleProbeVolumeCenter(L"World_ProbeVolumeCenter");
 const render::Handle s_handleProbeVolumeExtent(L"World_ProbeVolumeExtent");
+const render::Handle s_handleProbeRoughness(L"World_ProbeRoughness");
+const render::Handle s_handleProbeFilterCorners(L"World_ProbeFilterCorners");
 
 // Volumetric fog.
 const render::Handle s_handleFogVolume(L"World_FogVolume");
