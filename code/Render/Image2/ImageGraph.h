@@ -53,7 +53,7 @@ public:
 	    RenderPass* pass,
 	    const ImageGraphContext& cx,
 	    const ImageGraphView& view,
-        const std::function< void(ProgramParameters*) >& parametersFn
+        const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn
     ) const;
 
 private:

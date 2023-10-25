@@ -34,7 +34,6 @@ class T_DLLCLASS ShaderGraphValidator : public Object
 public:
 	enum ShaderGraphType
 	{
-		SgtShader,
 		SgtProgram,
 		SgtFragment
 	};

@@ -211,7 +211,7 @@ void PostProcessPass::setup(
 	// Expose gamma, exposure and jitter.
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
-	auto setParameters = [=](render::ProgramParameters* params) {
+	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		params->setFloatParameter(s_handleGamma, m_gamma);
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));

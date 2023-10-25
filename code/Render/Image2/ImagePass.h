@@ -55,7 +55,7 @@ public:
 		const ImageGraphView& view,
 		const targetSetVector_t& targetSetIds,
 		const targetSetVector_t& sbufferIds,
-		const std::function< void(ProgramParameters*) >& parametersFn,
+		const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn,
 		ScreenRenderer* screenRenderer,
 		RenderGraph& renderGraph
 	) const;

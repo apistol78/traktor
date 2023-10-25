@@ -91,6 +91,8 @@ extern const render::Handle s_handleProbeTexture;
 extern const render::Handle s_handleProbeTextureMips;
 extern const render::Handle s_handleProbeVolumeCenter;
 extern const render::Handle s_handleProbeVolumeExtent;
+extern const render::Handle s_handleProbeRoughness;
+extern const render::Handle s_handleProbeFilterCorners;
 
 // Volumetric fog.
 extern const render::Handle s_handleFogVolume;

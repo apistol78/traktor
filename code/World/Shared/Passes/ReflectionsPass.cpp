@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Timer/Profiler.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ITexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Context/RenderContext.h"
@@ -163,11 +164,6 @@ render::handle_t ReflectionsPass::setup(
 
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualReadTargetSetId, 0);
-	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	igctx.associateTextureTargetSet(s_handleInputRoughness, gbufferTargetSetId, 0);
-	
-	// @fixme should add dbuffer targets here as well...
 
 	// Global reflections.
 	if (m_probeGlobalReflections)
@@ -185,7 +181,24 @@ render::handle_t ReflectionsPass::setup(
 
 		if (probe != nullptr)
 		{
-			auto setParameters = [=](render::ProgramParameters* params) {
+			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+
+				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+				params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
+				params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+				params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
+
+				if (dbufferTargetSet)
+				{
+					params->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
+					params->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+					params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+				}
+
 				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
 				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
@@ -218,7 +231,24 @@ render::handle_t ReflectionsPass::setup(
 
 				const Aabb3 worldVolume = p->getBoundingBox();
 
-				auto setParameters = [=](render::ProgramParameters* params) {
+				auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+
+					const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+					const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+					params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+					params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
+					params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
+					params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+					params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
+
+					if (dbufferTargetSet)
+					{
+						params->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
+						params->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+						params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+					}
+
 					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
 					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
 					params->setTextureParameter(s_handleProbeTexture, p->getTexture());
@@ -240,16 +270,35 @@ render::handle_t ReflectionsPass::setup(
 		}
 	}
 
-	// Apply screenspace traced reflections.
+	// Apply screen-space traced reflections.
 	if (m_screenReflections)
 	{
+		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+
+			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
+			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
+
+			params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
+			params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+			params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
+
+			if (dbufferTargetSet)
+			{
+				params->setTextureParameter(s_handleDBufferColorMap, dbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(s_handleDBufferMiscMap, dbufferTargetSet->getColorTexture(1));
+				params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
+			}
+		};
+
 		m_screenReflections->addPasses(
 			m_screenRenderer,
 			renderGraph,
 			rp,
 			igctx,
 			view,
-			nullptr
+			setParameters
 		);
 	}
 
