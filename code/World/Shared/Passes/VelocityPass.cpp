@@ -118,7 +118,7 @@ DoubleBufferedTarget VelocityPass::setup(
 
 		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
 		};
 
 		m_velocityPrime->addPasses(

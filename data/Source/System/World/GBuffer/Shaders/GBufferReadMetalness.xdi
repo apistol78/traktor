@@ -30,7 +30,7 @@
 				<first>1318</first>
 				<second>98</second>
 			</position>
-			<parameterName>World_MiscMap</parameterName>
+			<parameterName>World_GBufferMiscMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

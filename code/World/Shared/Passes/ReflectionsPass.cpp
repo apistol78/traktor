@@ -186,10 +186,10 @@ render::handle_t ReflectionsPass::setup(
 				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
-				params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-				params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
-				params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-				params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+				params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(s_handleGBufferMiscMap, gbufferTargetSet->getColorTexture(0));
+				params->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
+				params->setTextureParameter(s_handleGBufferColorMap, gbufferTargetSet->getColorTexture(2));
 				params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
 
 				if (dbufferTargetSet)
@@ -236,10 +236,10 @@ render::handle_t ReflectionsPass::setup(
 					const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 					const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
-					params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-					params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
-					params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-					params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+					params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+					params->setTextureParameter(s_handleGBufferMiscMap, gbufferTargetSet->getColorTexture(0));
+					params->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
+					params->setTextureParameter(s_handleGBufferColorMap, gbufferTargetSet->getColorTexture(2));
 					params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
 
 					if (dbufferTargetSet)
@@ -278,10 +278,10 @@ render::handle_t ReflectionsPass::setup(
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
-			params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-			params->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
-			params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-			params->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+			params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleGBufferMiscMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
+			params->setTextureParameter(s_handleGBufferColorMap, gbufferTargetSet->getColorTexture(2));
 			params->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
 
 			if (dbufferTargetSet)

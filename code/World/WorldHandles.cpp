@@ -28,9 +28,7 @@ const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 
 // Shader parameters.
 const render::Handle s_handleIrradianceMap(L"World_IrradianceMap");
-const render::Handle s_handleColorMap(L"World_ColorMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
-const render::Handle s_handleDepthMap(L"World_DepthMap");
 const render::Handle s_handleExposure(L"World_Exposure");
 const render::Handle s_handleFxRotate(L"World_FxRotate");
 const render::Handle s_handleExtent(L"World_Extent");
@@ -46,8 +44,6 @@ const render::Handle s_handleLightMap(L"World_LightMap");
 const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
 const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
 const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
-const render::Handle s_handleMiscMap(L"World_MiscMap");
-const render::Handle s_handleNormalMap(L"World_NormalMap");
 const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
 const render::Handle s_handleProjection(L"World_Projection");
 const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
@@ -64,6 +60,10 @@ const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 const render::Handle s_handleJitter(L"World_Jitter");
 const render::Handle s_handleSlicePositions(L"World_SlicePositions");
+const render::Handle s_handleGBufferColorMap(L"World_GBufferColorMap");
+const render::Handle s_handleGBufferDepthMap(L"World_GBufferDepthMap");
+const render::Handle s_handleGBufferMiscMap(L"World_GBufferMiscMap");
+const render::Handle s_handleGBufferNormalMap(L"World_GBufferNormalMap");
 const render::Handle s_handleDBufferColorMap(L"World_DBufferColorMap");
 const render::Handle s_handleDBufferMiscMap(L"World_DBufferMiscMap");
 const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");
@@ -100,8 +100,6 @@ const render::Handle s_handleInputDepth(L"InputDepth");
 const render::Handle s_handleInputNormal(L"InputNormal");
 const render::Handle s_handleInputVelocity(L"InputVelocity");
 const render::Handle s_handleInputVelocityLast(L"InputVelocityLast");
-const render::Handle s_handleInputShadowMap(L"InputShadowMap");
-const render::Handle s_handleInputRoughness(L"InputRoughness");
 const render::Handle s_handleInputColorGrading(L"InputColorGrading");
 
 // Persistent targets.

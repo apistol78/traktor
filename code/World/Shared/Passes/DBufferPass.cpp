@@ -100,10 +100,10 @@ render::handle_t DBufferPass::setup(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
-			sharedParams->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleMiscMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleColorMap, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleGBufferMiscMap, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
+			sharedParams->setTextureParameter(s_handleGBufferColorMap, gbufferTargetSet->getColorTexture(2));
 			sharedParams->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
 
 			sharedParams->endParameters(renderContext);

@@ -132,8 +132,8 @@ render::handle_t AmbientOcclusionPass::setup(
 
 	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-		params->setTextureParameter(s_handleDepthMap, gbufferTargetSet->getColorTexture(0));
-		params->setTextureParameter(s_handleNormalMap, gbufferTargetSet->getColorTexture(1));
+		params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+		params->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
 	};
 
 	m_ambientOcclusion->addPasses(

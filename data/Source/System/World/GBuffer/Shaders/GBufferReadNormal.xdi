@@ -58,7 +58,7 @@
 				<first>1011</first>
 				<second>90</second>
 			</position>
-			<parameterName>World_NormalMap</parameterName>
+			<parameterName>World_GBufferNormalMap</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
