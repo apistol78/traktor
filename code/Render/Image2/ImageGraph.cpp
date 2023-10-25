@@ -100,9 +100,15 @@ void ImageGraph::addPasses(
 		}
 	}
 
-	// Add all steps to render graph.
+	// Add all steps to render graph,
+	// each pass added need to inherit input dependencies from root pass
+	// since we can add parameters through callback.
 	for (auto imagePass : m_passes)
-		imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
+	{
+		RenderPass* rp = imagePass->addRenderGraphPasses(this, context, view, targetSetIds, sbufferIds, parametersFn, screenRenderer, renderGraph);
+		for (auto input : pass->getInputs())
+			rp->addInput(input.resourceId);
+	}
 
 	// Override pass name with our root node's name.
 	pass->setName(m_name);

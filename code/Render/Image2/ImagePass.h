@@ -31,6 +31,7 @@ class ImageGraphContext;
 class ImagePassStep;
 class ProgramParameters;
 class RenderGraph;
+class RenderPass;
 class ScreenRenderer;
 
 struct ImageGraphView;
@@ -49,7 +50,7 @@ class T_DLLCLASS ImagePass : public Object
 public:
 	typedef StaticVector< handle_t, 32 > targetSetVector_t;
 
-	void addRenderGraphPasses(
+	RenderPass* addRenderGraphPasses(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
 		const ImageGraphView& view,

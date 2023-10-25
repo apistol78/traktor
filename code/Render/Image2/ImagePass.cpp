@@ -26,7 +26,7 @@ const static Handle s_handleDeltaTime(L"DeltaTime");
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImagePass", ImagePass, Object)
 
-void ImagePass::addRenderGraphPasses(
+RenderPass* ImagePass::addRenderGraphPasses(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
@@ -83,6 +83,7 @@ void ImagePass::addRenderGraphPasses(
 	);
 
 	renderGraph.addPass(rp);
+	return rp;
 }
 
 }
