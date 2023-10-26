@@ -143,6 +143,11 @@ render::handle_t ReflectionsPass::setup(
 
 	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
 
+	const Matrix44& projection = worldRenderView.getProjection();
+	const Scalar p11 = projection.get(0, 0);
+	const Scalar p22 = projection.get(1, 1);
+	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
+
 	// Add reflections render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Reflections");
 
@@ -182,7 +187,6 @@ render::handle_t ReflectionsPass::setup(
 		if (probe != nullptr)
 		{
 			auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
-
 				const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 				const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 
@@ -199,6 +203,7 @@ render::handle_t ReflectionsPass::setup(
 					params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 				}
 
+				params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 				params->setFloatParameter(s_handleProbeIntensity, probe->getIntensity());
 				params->setFloatParameter(s_handleProbeTextureMips, (float)probe->getTexture()->getSize().mips);
 				params->setTextureParameter(s_handleProbeTexture, probe->getTexture());
@@ -249,13 +254,14 @@ render::handle_t ReflectionsPass::setup(
 						params->setTextureParameter(s_handleDBufferNormalMap, dbufferTargetSet->getColorTexture(2));
 					}
 
+					params->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
+					params->setMatrixParameter(s_handleWorldView, worldView);
+					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
 					params->setFloatParameter(s_handleProbeIntensity, p->getIntensity());
 					params->setFloatParameter(s_handleProbeTextureMips, (float)p->getTexture()->getSize().mips);
 					params->setTextureParameter(s_handleProbeTexture, p->getTexture());
 					params->setVectorParameter(s_handleProbeVolumeCenter,worldVolume.getCenter());
 					params->setVectorParameter(s_handleProbeVolumeExtent, worldVolume.getExtent());
-					params->setMatrixParameter(s_handleWorldView, worldView);
-					params->setMatrixParameter(s_handleWorldViewInv, worldView.inverse());
 				};
 
 				m_probeLocalReflections->addPasses(
