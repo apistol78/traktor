@@ -376,10 +376,26 @@ ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
 		return SgtFragment;
 	if (!m_shaderGraph->findNodesOf< OutputPort >().empty())
 		return SgtFragment;
-	if (!m_shaderGraph->findNodesOf< Branch >().empty())
-		return SgtFragment;
 
-	return SgtProgram;
+	RefArray< Node > roots;
+	for (auto node : m_shaderGraph->getNodes())
+	{
+		const INodeTraits* traits = INodeTraits::find(node);
+		if (traits != nullptr && traits->isRoot(m_shaderGraph, node))
+			roots.push_back(node);
+	}
+
+	bool haveVertex = false, havePixel = false, haveCompute = false;
+	for (auto root : roots)
+	{
+		haveVertex |= is_a< VertexOutput >(root);
+		havePixel |= is_a< PixelOutput >(root);
+		haveCompute |= is_a< ComputeOutput >(root);
+	}
+	if ((haveVertex && havePixel) || haveCompute)
+		return SgtProgram;
+
+	return SgtFragment;
 }
 
 bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const Node* >* outErrorNodes) const
@@ -415,7 +431,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, AlignedVector< const N
 	else if (type == SgtProgram)
 	{
 		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);
-		NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
+		// NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	}
 	else
 		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);

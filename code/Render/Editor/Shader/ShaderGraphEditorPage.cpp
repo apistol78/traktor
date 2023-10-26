@@ -1412,13 +1412,12 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Determine type of shader graph.
-	ShaderGraphValidator validator(m_shaderGraph);
-	const auto graphType = validator.estimateType();
-
+	const auto graphType = ShaderGraphValidator(resolvedShaderGraph).estimateType();
 	m_editorGraph->setText(graphType == ShaderGraphValidator::SgtFragment ? L"FRAGMENT" : L"SHADER");
-
+	
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
+	ShaderGraphValidator validator(m_shaderGraph);
 	const bool validationResult = validator.validate(graphType, &errorNodes);
 
 	// Update validation indication of each node.
