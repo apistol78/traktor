@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,6 +42,7 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
 #include "Render/Vulkan/ProgramResourceVk.h"
 #include "Render/Vulkan/Editor/ProgramCompilerVk.h"
@@ -247,6 +248,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
+	const resolveModule_fn& resolveModule,
 	std::list< Error >& outErrors
 ) const
 {
@@ -272,6 +274,11 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 				scriptOutputs.push_back(script);
 		}
 	}
+
+	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
+		Ref< const ShaderModule > sm = resolveModule(moduleId);
+		return sm ? sm->getText() : L"";
+	};
 
 	GlslContext cx(shaderGraph, settings);
 
@@ -300,8 +307,8 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const GlslRequirements fragmentRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements));
-		const std::string fragmentShaderText = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements));
+		const std::string vertexShaderText = wstombs(cx.getVertexShader().getGeneratedShader(settings, layout, vertexRequirements, resolveModuleText));
+		const std::string fragmentShaderText = wstombs(cx.getFragmentShader().getGeneratedShader(settings, layout, fragmentRequirements, resolveModuleText));
 
 		// Vertex shader.
 		const char* vst = vertexShaderText.c_str();
@@ -367,7 +374,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		const GlslRequirements computeRequirements = cx.requirements();
 
 		const auto& layout = cx.getLayout();
-		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements)).c_str());
+		const char* computeShaderText = strdup(wstombs(cx.getComputeShader().getGeneratedShader(settings, layout, computeRequirements, resolveModuleText)).c_str());
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
@@ -692,12 +699,18 @@ bool ProgramCompilerVk::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
+	const resolveModule_fn& resolveModule,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader
 ) const
 {
 	const std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
+
+	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
+		Ref< const ShaderModule > sm = resolveModule(moduleId);
+		return sm ? sm->getText() : L"";
+	};
 
 	// No dialect means we should output our generated GLSL.
 	if (crossDialect.empty())
@@ -827,7 +840,7 @@ bool ProgramCompilerVk::generate(
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
 			StringOutputStream vss;
-			vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements);
+			vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
 			vss << Endl;
 			vss << ss.str();
 			vss << Endl;
@@ -838,7 +851,7 @@ bool ProgramCompilerVk::generate(
 		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
 		{
 			StringOutputStream fss;
-			fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements);
+			fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
 			fss << Endl;
 			fss << ss.str();
 			fss << Endl;
@@ -849,7 +862,7 @@ bool ProgramCompilerVk::generate(
 		if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
 		{
 			StringOutputStream css;
-			css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements);
+			css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
 			css << Endl;
 			css << ss.str();
 			css << Endl;
@@ -863,6 +876,7 @@ bool ProgramCompilerVk::generate(
 			shaderGraph,
 			settings,
 			name,
+			resolveModule,
 			errors
 		));
 		if (!programResource)

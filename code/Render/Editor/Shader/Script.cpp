@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,11 +11,14 @@
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeReadOnly.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Shader/Script.h"
+#include "Render/Editor/Shader/ShaderModule.h"
 
 namespace traktor::render
 {
@@ -219,7 +222,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 4, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 5, Script, Node)
 
 void Script::setName(const std::wstring& name)
 {
@@ -239,6 +242,11 @@ void Script::setTechnique(const std::wstring& technique)
 const std::wstring& Script::getTechnique() const
 {
 	return m_technique;
+}
+
+const AlignedVector< Guid >& Script::getIncludes() const
+{
+	return m_includes;
 }
 
 void Script::setScript(const std::wstring& script)
@@ -332,6 +340,10 @@ void Script::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"technique", m_technique);
+
+	if (s.getVersion< Script >() >= 5)
+		s >> MemberAlignedVector< Guid >(L"include", m_includes); // , AttributeType(type_of< ShaderModule >()));
+
 	s >> MemberPinArray< MemberInputPin >(L"inputPins", this, m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", this, m_outputPins);
 	s >> Member< std::wstring >(L"script", m_script, AttributeMultiLine() | AttributePrivate());

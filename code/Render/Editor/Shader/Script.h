@@ -48,6 +48,8 @@ public:
 
 	const std::wstring& getTechnique() const;
 
+	const AlignedVector< Guid >& getIncludes() const;
+
 	void setScript(const std::wstring& script);
 
 	const std::wstring& getScript() const;
@@ -81,6 +83,7 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_technique;
+	AlignedVector< Guid > m_includes;
 	StaticVector< InputPin, 64 > m_inputPins;
 	StaticVector< TypedOutputPin, 64 > m_outputPins;
 	std::wstring m_script;

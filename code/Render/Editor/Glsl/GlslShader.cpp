@@ -28,14 +28,14 @@ GlslShader::GlslShader(ShaderType shaderType)
 	pushScope();
 	pushOutputStream(BtInput, T_FILE_LINE_W);
 	pushOutputStream(BtOutput, T_FILE_LINE_W);
-	pushOutputStream(BtScript, T_FILE_LINE_W);
+	//pushOutputStream(BtScript, T_FILE_LINE_W);
 	pushOutputStream(BtBody, T_FILE_LINE_W);
 }
 
 GlslShader::~GlslShader()
 {
 	popOutputStream(BtBody);
-	popOutputStream(BtScript);
+	//popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popScope();
@@ -149,7 +149,17 @@ const StringOutputStream& GlslShader::getOutputStream(BlockType blockType) const
 	return *(m_outputStreams[int(blockType)].back().outputStream);
 }
 
-std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const GlslLayout& layout, const GlslRequirements& requirements) const
+void GlslShader::addModule(const Guid& moduleId)
+{
+	m_moduleIds.insert(moduleId);
+}
+
+std::wstring GlslShader::getGeneratedShader(
+	const PropertyGroup* settings,
+	const GlslLayout& layout,
+	const GlslRequirements& requirements,
+	const std::function< std::wstring(const Guid&) >& resolveModule
+) const
 {
 	StringOutputStream ss;
 
@@ -412,11 +422,18 @@ std::wstring GlslShader::getGeneratedShader(const PropertyGroup* settings, const
 		ss << Endl;
 	}
 
-	const std::wstring scriptText = getOutputStream(BtScript).str();
-	if (!scriptText.empty())
+	if (!m_moduleIds.empty())
 	{
-		ss << scriptText;
-		ss << Endl;
+		ss << L"// Modules" << Endl;
+		for (const auto& moduleId : m_moduleIds)
+		{
+			const std::wstring moduleText = resolveModule(moduleId);
+			if (!moduleText.empty())
+			{
+				ss << moduleText << Endl;
+				ss << Endl;
+			}
+		}
 	}
 
 	ss << L"void main()" << Endl;
