@@ -39,7 +39,9 @@
 #include "Render/Editor/Shader/External.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
+#include "Render/Editor/Shader/Script.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
@@ -198,7 +200,7 @@ bool ShaderPipeline::buildDependencies(
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(true);
 	T_ASSERT(shaderGraph);
 
-	// Add fragment and texture dependencies.
+	// Add fragment, texture and text dependencies.
 	for (auto node : shaderGraph->getNodes())
 	{
 		if (const auto externalNode = dynamic_type_cast< External* >(node))
@@ -211,6 +213,11 @@ bool ShaderPipeline::buildDependencies(
 			const Guid& textureGuid = textureNode->getExternal();
 			if (textureGuid.isNotNull())
 				pipelineDepends->addDependency(textureGuid, editor::PdfBuild | editor::PdfResource);
+		}
+		else if (const auto scriptNode = dynamic_type_cast< Script* >(node))
+		{
+			for (auto includeId : scriptNode->getIncludes())
+				pipelineDepends->addDependency(includeId, editor::PdfUse);
 		}
 	}
 
@@ -545,14 +552,26 @@ bool ShaderPipeline::buildOutput(
 				//}
 
 				// Compile shader program.
+				auto includeResolver = [&](const Guid& id) -> Ref< ShaderModule > {
+					return pipelineBuilder->getSourceDatabase()->getObjectReadOnly< ShaderModule >(id);
+				};
+
+				// @fixme Hash should include shader texts...
 				const uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
+
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
 					[&]() {
 						pipelineBuilder->getProfiler()->begin(type_of(programCompiler));
 
 						std::list< IProgramCompiler::Error > jobErrors;
-						Ref< ProgramResource > programResource = programCompiler->compile(programGraph, m_compilerSettings, path, jobErrors);
+						Ref< ProgramResource > programResource = programCompiler->compile(
+							programGraph,
+							m_compilerSettings,
+							path,
+							includeResolver,
+							jobErrors
+						);
 
 						// Merge errors into output list.
 						if (!jobErrors.empty())

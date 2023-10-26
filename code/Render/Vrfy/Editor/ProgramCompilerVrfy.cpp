@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,14 +11,12 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCompilerVrfy", ProgramCompilerVrfy, IProgramCompiler)
 
-ProgramCompilerVrfy::ProgramCompilerVrfy(IProgramCompiler* compiler)
+ProgramCompilerVrfy::ProgramCompilerVrfy(const IProgramCompiler* compiler)
 :	m_compiler(compiler)
 {
 }
@@ -32,11 +30,12 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
+	const resolveModule_fn& resolveModule,
 	std::list< Error >& outErrors
 ) const
 {
 	// Compile program using wrapped compiler.
-	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, outErrors);
+	Ref< ProgramResource > resource = m_compiler->compile(shaderGraph, settings, name, resolveModule, outErrors);
 	if (!resource)
 		return nullptr;
 
@@ -53,6 +52,7 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 		shaderGraph,
 		settings,
 		name,
+		resolveModule,
 		resourceVrfy->m_vertexShader,
 		resourceVrfy->m_pixelShader,
 		resourceVrfy->m_computeShader
@@ -65,14 +65,14 @@ bool ProgramCompilerVrfy::generate(
 	const ShaderGraph* shaderGraph,
 	const PropertyGroup* settings,
 	const std::wstring& name,
+	const resolveModule_fn& resolveModule,
 	std::wstring& outVertexShader,
 	std::wstring& outPixelShader,
 	std::wstring& outComputeShader
 ) const
 {
 	// Just let the wrapped compiler generate source.
-	return m_compiler->generate(shaderGraph, settings, name, outVertexShader, outPixelShader, outComputeShader);
+	return m_compiler->generate(shaderGraph, settings, name, resolveModule, outVertexShader, outPixelShader, outComputeShader);
 }
 
-	}
 }

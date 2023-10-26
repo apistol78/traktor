@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,11 @@
  */
 #pragma once
 
+#include <functional>
 #include <list>
-#include <map>
-#include <set>
 #include <string>
 #include "Core/Containers/IdAllocator.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Editor/Glsl/GlslType.h"
@@ -56,7 +56,6 @@ public:
 	{
 		BtInput,
 		BtOutput,
-		BtScript,
 		BtBody,
 		BtLast
 	};
@@ -94,7 +93,14 @@ public:
 
 	/*! \} */
 
-	std::wstring getGeneratedShader(const PropertyGroup* settings, const GlslLayout& layout, const GlslRequirements& requirements) const;
+	void addModule(const Guid& moduleId);
+
+	std::wstring getGeneratedShader(
+		const PropertyGroup* settings,
+		const GlslLayout& layout,
+		const GlslRequirements& requirements,
+		const std::function< std::wstring(const Guid&) >& resolveModule
+	) const;
 
 private:
 	struct OutputPinVariable
@@ -111,12 +117,13 @@ private:
 	};
 
 	ShaderType m_shaderType;
-	std::map< std::wstring, Ref< GlslVariable > > m_inputVariables;
+	SmallMap< std::wstring, Ref< GlslVariable > > m_inputVariables;
 	AlignedVector< OutputPinVariable > m_variables;
 	AlignedVector< uint32_t > m_variableScopes;
 	AlignedVector< OutputPinVariable > m_outerVariables;
 	IdAllocator m_temporaryVariableAlloc;
 	AlignedVector< OutputStreamTuple > m_outputStreams[BtLast];
+	SmallSet< Guid > m_moduleIds;
 };
 
 }

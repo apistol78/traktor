@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <list>
 #include <string>
 #include "Core/Object.h"
@@ -24,6 +25,7 @@
 namespace traktor
 {
 
+class Guid;
 class PropertyGroup;
 
 }
@@ -34,6 +36,7 @@ namespace traktor::render
 class IProgramHints;
 class ProgramResource;
 class ShaderGraph;
+class ShaderModule;
 
 /*! Program compiler interface.
  * \ingroup Render
@@ -48,6 +51,8 @@ public:
 		std::wstring message;
 		std::wstring source;
 	};
+
+	typedef std::function< Ref< const ShaderModule >(const Guid& id) > resolveModule_fn;
 
 	/*! Get renderer signature.
 	 *
@@ -66,6 +71,7 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
+		const resolveModule_fn& resolveModule,
 		std::list< Error >& outErrors
 	) const = 0;
 
@@ -86,6 +92,7 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
+		const resolveModule_fn& resolveModule,
 		std::wstring& outVertexShader,
 		std::wstring& outPixelShader,
 		std::wstring& outComputeShader

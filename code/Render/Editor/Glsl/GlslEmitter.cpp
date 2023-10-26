@@ -2248,10 +2248,13 @@ bool emitScript(GlslContext& cx, Script* node)
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-	// Get platform specific script from node.
 	std::wstring script = node->getScript();
 	if (script.empty())
 		return false;
+
+	// Register modules.
+	for (const auto& moduleId : node->getIncludes())
+		cx.getShader().addModule(moduleId);
 
 	// Emit input and outputs.
 	const int32_t inputPinCount = node->getInputPinCount();

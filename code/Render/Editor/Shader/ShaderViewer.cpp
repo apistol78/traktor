@@ -24,8 +24,9 @@
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/FragmentLinker.h"
 #include "Render/Editor/Shader/Nodes.h"
-#include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderModule.h"
+#include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
@@ -529,9 +530,13 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
+				auto reolveModule = [&](const Guid& moduleId) -> Ref< const ShaderModule > {
+					return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderModule >(moduleId);
+				};
+
 				// Finally ready to compile program graph.
 				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, settings, techniqueName, vertexShader, pixelShader, computeShader))
+				if (compiler->generate(programGraph, settings, techniqueName, reolveModule, vertexShader, pixelShader, computeShader))
 				{
 					ci.vertexShader = vertexShader;
 					ci.pixelShader = pixelShader;

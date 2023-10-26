@@ -37,6 +37,7 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
+		const resolveModule_fn& resolveModule,
 		std::list< Error >& outErrors
 	) const override final;
 
@@ -44,6 +45,7 @@ public:
 		const ShaderGraph* shaderGraph,
 		const PropertyGroup* settings,
 		const std::wstring& name,
+		const resolveModule_fn& resolveModule,
 		std::wstring& outVertexShader,
 		std::wstring& outPixelShader,
 		std::wstring& outComputeShader
