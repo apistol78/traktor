@@ -372,6 +372,9 @@ ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph, const
 
 ShaderGraphValidator::ShaderGraphType ShaderGraphValidator::estimateType() const
 {
+	if (!m_shaderGraph)
+		return SgtFragment;
+
 	if (!m_shaderGraph->findNodesOf< InputPort >().empty())
 		return SgtFragment;
 	if (!m_shaderGraph->findNodesOf< OutputPort >().empty())
