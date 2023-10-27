@@ -138,7 +138,7 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		{
 			m_module = m_document->getObject< ShaderModule >(0);
 			m_edit->setText(m_module->getText());
-			m_edit->placeCaret(*meta);
+			m_edit->placeCaret(*meta, true);
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -151,7 +151,7 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 		{
 			m_module = m_document->getObject< ShaderModule >(0);
 			m_edit->setText(m_module->getText());
-			m_edit->placeCaret(*meta);
+			m_edit->placeCaret(*meta, true);
 		}
 	}
 	else if (command == L"Editor.Find")
@@ -188,8 +188,7 @@ bool ShaderModuleEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Script.Editor.GotoLine")
 	{
 		const int32_t lineOffset = m_edit->getLineOffset(command.getId());
-		m_edit->placeCaret(lineOffset);
-		m_edit->showLine(command.getId());
+		m_edit->placeCaret(lineOffset, true);
 	}
 	else
 		return false;

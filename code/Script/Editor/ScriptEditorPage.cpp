@@ -290,9 +290,9 @@ bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& pos
 	if (dropOffset < 0)
 		return false;
 
-	wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
+	const wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
 
-	m_edit->placeCaret(dropOffset);
+	m_edit->placeCaret(dropOffset, true);
 	m_edit->insert(std::wstring(1, ch));
 
 	return true;
@@ -386,7 +386,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				else
 					return L"\"\"";
 			}));
-			m_edit->placeCaret(*meta);
+			m_edit->placeCaret(*meta, true);
 
 			updateBreakpoints();
 		}
@@ -412,7 +412,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 				else
 					return L"\"\"";
 			}));
-			m_edit->placeCaret(*meta);
+			m_edit->placeCaret(*meta, true);
 
 			updateBreakpoints();
 		}
@@ -451,8 +451,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Script.Editor.GotoLine")
 	{
 		const int32_t lineOffset = m_edit->getLineOffset(command.getId());
-		m_edit->placeCaret(lineOffset);
-		m_edit->showLine(command.getId());
+		m_edit->placeCaret(lineOffset, true);
 	}
 	else
 		return false;
@@ -590,12 +589,9 @@ void ScriptEditorPage::eventOutlineDoubleClick(ui::MouseDoubleClickEvent* event)
 		return;
 
 	const ui::GridItem* lineItem = selectedRow->get(2);
-	int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
+	const int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
 	if (line >= 0)
-	{
-		m_edit->showLine(line);
-		m_edit->placeCaret(m_edit->getLineOffset(line));
-	}
+		m_edit->placeCaret(m_edit->getLineOffset(line), true);
 }
 
 void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
@@ -665,7 +661,7 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 				offset = m_edit->getLineOffset(line);
 
 				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
-				m_edit->placeCaret(offset);
+				m_edit->placeCaret(offset, true);
 				m_edit->insert(L"#using " + std::wstring(1, ch) + L"\n");
 			}
 		}
