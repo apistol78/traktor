@@ -161,7 +161,7 @@ public:
 	bool showLine(int32_t line);
 
 	/*! Place caret at a specified offset. */
-	void placeCaret(int32_t offset);
+	void placeCaret(int32_t offset, bool showLine = false);
 
 	/*! Select all. */
 	void selectAll();

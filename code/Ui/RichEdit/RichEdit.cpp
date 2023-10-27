@@ -580,14 +580,20 @@ bool RichEdit::showLine(int32_t line)
 	return true;
 }
 
-void RichEdit::placeCaret(int32_t offset)
+void RichEdit::placeCaret(int32_t offset, bool showLine)
 {
 	m_caret = offset;
 
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
 
-	update();
+	if (showLine)
+	{
+		const int32_t line = getLineFromOffset(offset);
+		this->showLine(line);
+	}
+	else
+		update();
 }
 
 void RichEdit::selectAll()
