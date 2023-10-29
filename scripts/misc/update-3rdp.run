@@ -346,7 +346,15 @@ local PACKAGES =
 		os = "linux",
 		url = "https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz",
 		patch = function()
-			run:execute(TAR .. " -xf vulkan-sdk.tar.xz")
+			write_file(
+				"install.sh",
+				{
+					"#/bin/sh",
+					TAR .. " -xf vulkan-sdk.tar.xz",
+					"mv $(ls -d */) latest"
+				}
+			)
+			run:execute("sh ./install.sh")
 		end
 	},
 	{
