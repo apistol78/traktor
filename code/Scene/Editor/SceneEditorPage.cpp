@@ -427,11 +427,21 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_NAME"), 150_ut));
 	m_gridMeasurements->addColumn(new ui::GridColumn(i18n::Text(L"SCENE_EDITOR_MEASUREMENTS_DURATION"), 90_ut));
 
+	// Create resources panel.
+	Ref< ui::TabPage > tabPageResources = new ui::TabPage();
+	tabPageResources->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_RESOURCES"), new ui::FloodLayout());
+
+	m_gridResources = new ui::GridView();
+	m_gridResources->create(tabPageResources, ui::WsDoubleBuffer | ui::WsTabStop);
+	m_gridResources->addColumn(new ui::GridColumn(L"", 180_ut));
+	m_gridResources->addColumn(new ui::GridColumn(L"", 150_ut));
+
 	// Add pages.
 	m_tabMisc->addPage(tabPageProperties);
 	m_tabMisc->addPage(tabPageDependencies);
 	m_tabMisc->addPage(tabPageGuides);
 	m_tabMisc->addPage(tabPageMeasurements);
+	m_tabMisc->addPage(tabPageResources);
 	m_tabMisc->setActivePage(tabPageProperties);
 
 	m_site->createAdditionalPanel(m_tabMisc, 400_ut, false);
@@ -1599,6 +1609,51 @@ void SceneEditorPage::eventContextCameraMoved(CameraMovedEvent* event)
 
 void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 {
+	if (m_gridResources->isVisible(true))
+	{
+		m_gridResources->removeAllRows();
+
+		render::RenderSystemStatistics rss;
+		m_context->getRenderSystem()->getStatistics(rss);
+
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Buffers"));
+			row->add(new ui::GridItem(str(L"%d", rss.buffers)));
+			m_gridResources->addRow(row);
+		}
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Textures (2D)"));
+			row->add(new ui::GridItem(str(L"%d", rss.simpleTextures)));
+			m_gridResources->addRow(row);
+		}
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Textures (Cube)"));
+			row->add(new ui::GridItem(str(L"%d", rss.cubeTextures)));
+			m_gridResources->addRow(row);
+		}
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Textures (3D)"));
+			row->add(new ui::GridItem(str(L"%d", rss.volumeTextures)));
+			m_gridResources->addRow(row);
+		}
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Render target sets"));
+			row->add(new ui::GridItem(str(L"%d", rss.renderTargetSets)));
+			m_gridResources->addRow(row);
+		}
+		{
+			Ref< ui::GridRow > row = new ui::GridRow();
+			row->add(new ui::GridItem(L"Programs"));
+			row->add(new ui::GridItem(str(L"%d", rss.programs)));
+			m_gridResources->addRow(row);
+		}
+	}
+
 	updateStatusBar();
 }
 
