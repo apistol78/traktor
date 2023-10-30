@@ -29,6 +29,7 @@ class ToolBar;
 class ToolBarButtonClickEvent;
 class TreeView;
 class TreeViewContentChangeEvent;
+class TreeViewItem;
 class TreeViewItemActivateEvent;
 
 class ThemeForm : public Form
@@ -42,6 +43,7 @@ private:
 	Ref< ShortcutTable > m_shortcutTable;
 	Ref< ToolBar > m_menuBar;
 	Ref< TreeView > m_treeTheme;
+	Ref< TreeViewItem > m_pinnedElementItem;
 	Ref< GridView > m_gridPalette;
 	Ref< Container > m_containerPreview;
 	Ref< StyleSheet > m_styleSheet;

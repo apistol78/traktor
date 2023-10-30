@@ -266,6 +266,8 @@ private:
 
 	void updateShortcutTable();
 
+	void updateStyleSheet(bool forceLoad);
+
 	void moveNewTabGroup();
 
 	void saveCurrentDocument();

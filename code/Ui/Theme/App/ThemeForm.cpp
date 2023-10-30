@@ -306,11 +306,18 @@ void ThemeForm::updatePreview()
 	while (m_containerPreview->getLastChild())
 		m_containerPreview->getLastChild()->destroy();
 
-	RefArray< TreeViewItem > selectedItems;
-	if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
-		return;
+	TreeViewItem* selectedEntityItem = nullptr;
 
-	TreeViewItem* selectedEntityItem = getEntity(selectedItems.front());
+	if (!m_pinnedElementItem)
+	{
+		RefArray< TreeViewItem > selectedItems;
+		if (m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly) != 1)
+			return;
+		selectedEntityItem = getEntity(selectedItems.front());
+	}
+	else
+		selectedEntityItem = m_pinnedElementItem;
+
 	if (!selectedEntityItem)
 		return;
 
@@ -558,6 +565,10 @@ void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
 	{
 		Ref< Menu > menu = new Menu();
 		menu->add(new MenuItem(Command(L"Theme.NewElement"), L"Add New Element"));
+		if (selectedItem != m_pinnedElementItem)
+			menu->add(new MenuItem(Command(L"Theme.PinElement"), L"Pin Element"));
+		else
+			menu->add(new MenuItem(Command(L"Theme.UnpinElement"), L"Unpin Element"));
 
 		const ui::MenuItem* menuItem = menu->showModal(m_treeTheme, event->getPosition());
 		if (menuItem)
@@ -580,10 +591,22 @@ void ThemeForm::eventTreeButtonDown(MouseButtonDownEvent* event)
 				Ref< TreeViewItem > itemElement = m_treeTheme->createItem(selectedItem, L"unnamed", 1);
 				itemElement->setImage(0, imageIndex);
 
-				m_treeTheme->update();
-
 				updatePalette();
 			}
+			else if (menuItem->getCommand() == L"Theme.PinElement")
+			{
+				if (m_pinnedElementItem)
+					m_pinnedElementItem->setBold(false);
+				m_pinnedElementItem = selectedItem;
+				m_pinnedElementItem->setBold(true);
+			}
+			else if (menuItem->getCommand() == L"Theme.UnpinElement")
+			{
+				m_pinnedElementItem->setBold(false);
+				m_pinnedElementItem = nullptr;
+			}
+
+			m_treeTheme->update();
 		}
 	}
 	else if (isElement(selectedItem)) // Element
