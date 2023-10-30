@@ -469,14 +469,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_mergedSettings = m_globalSettings;
 
 	// Load editor stylesheet.
-	const std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
-	Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
-	if (!styleSheet)
-	{
-		log::error << L"Unable to load stylesheet \"" << styleSheetName << L"\"." << Endl;
-		return false;
-	}
-	ui::Application::getInstance()->setStyleSheet(styleSheet);
+	updateStyleSheet(true);
 
 	// Load dependent modules.
 	loadModules();
@@ -2071,6 +2064,33 @@ void EditorForm::updateShortcutTable()
 	}
 }
 
+void EditorForm::updateStyleSheet(bool forceLoad)
+{
+	const std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss");
+
+	// Check if stylesheet has been modified.
+	Ref< File > styleSheetFile = FileSystem::getInstance().get(styleSheetName);
+	if (!forceLoad && styleSheetFile != nullptr && !styleSheetFile->isArchive())
+		return;
+
+	Ref< const ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
+	if (!styleSheet)
+	{
+		log::error << L"Unable to load stylesheet \"" << styleSheetName << L"\"." << Endl;
+		return;
+	}
+
+	ui::Application::getInstance()->setStyleSheet(styleSheet);
+
+	// Remove archive flag.
+	if (styleSheetFile != nullptr)
+		FileSystem::getInstance().modify(styleSheetName, styleSheetFile->getFlags() & ~File::FfArchive);
+
+	// In case we have reloaded the stylesheet dynamically we need to update the entire app.
+	if (!forceLoad)
+		update();
+}
+
 void EditorForm::moveNewTabGroup()
 {
 	ui::TabPage* activeTabPage = getActiveTabPage();
@@ -2648,18 +2668,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				Ref< const PropertyGroup > userSettings = m_originalSettings->difference(m_globalSettings);
 				if (saveUserSettings(m_settingsPath, userSettings))
 				{
-					// Load editor stylesheet.
-					Ref< ui::StyleSheet > styleSheetShared = loadStyleSheet(L"$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss");
-					T_FATAL_ASSERT(styleSheetShared);
-				
-					const std::wstring styleSheetName = m_mergedSettings->getProperty< std::wstring >(L"Editor.StyleSheet", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light.xss");
-					Ref< ui::StyleSheet > styleSheet = loadStyleSheet(styleSheetName);
-					if (styleSheet)
-						ui::Application::getInstance()->setStyleSheet(
-							styleSheetShared->merge(styleSheet)
-						);
-					else
-						log::error << L"Unable to load stylesheet " << styleSheetName << L"." << Endl;
+					// Load editor stylesheet in case it's been changed.
+					updateStyleSheet(true);
 
 					// Create pipeline cache.
 					safeDestroy(m_pipelineCache);
@@ -3069,6 +3079,10 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	// Update modified flags.
 	checkModified();
 
+	// Reload stylesheet if it's been modified.
+	updateStyleSheet(false);
+
+	// Update statusbar.
 	m_statusBar->setText(0, i18n::Text(building ? L"STATUS_BUILDING" : L"STATUS_IDLE"));
 	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", str(L"%zu", (Alloc::allocated() + 1023) / 1024)));
 
