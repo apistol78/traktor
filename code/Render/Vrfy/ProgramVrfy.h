@@ -59,11 +59,10 @@ private:
 
 	struct Parameter
 	{
-		// Ref< const Uniform > uniform;
-		// Ref< const IndexedUniform > indexedUniform;
-		bool undefined;
-
-		// std::wstring getName() const;
+		std::wstring name;
+		ParameterType type;
+		int32_t length;
+		bool set;
 	};
 
 	Ref< ResourceTracker > m_resourceTracker;

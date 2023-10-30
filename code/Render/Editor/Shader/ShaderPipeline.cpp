@@ -33,7 +33,6 @@
 #include "Editor/IPipelineSettings.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
-#include "Render/Vrfy/Editor/ProgramCompilerVrfy.h"
 #include "Render/Editor/Edge.h"
 #include "Render/Editor/IProgramCompiler.h"
 #include "Render/Editor/Shader/External.h"
@@ -716,9 +715,25 @@ IProgramCompiler* ShaderPipeline::getProgramCompiler() const
 		return nullptr;
 	}
 
+	if (!m_programCompiler->create(nullptr))
+	{
+		log::error << L"Shader pipeline; unable to create program compiler \"" << m_programCompilerTypeName << L"\"." << Endl;
+		return nullptr;
+	}
+
 	// In case we're building for the editor we wrap into verification compiler.
-	//if (m_editor)
-	//	m_programCompiler = new ProgramCompilerVrfy(m_programCompiler);
+	if (m_editor)
+	{
+		const TypeInfo* programCompilerVrfyType = TypeInfo::find(L"traktor.render.ProgramCompilerVrfy");
+		if (programCompilerVrfyType)
+		{
+			Ref< IProgramCompiler > programCompilerVrfy = mandatory_non_null_type_cast< IProgramCompiler* >(programCompilerVrfyType->createInstance());
+			programCompilerVrfy->create(m_programCompiler);
+			m_programCompiler = programCompilerVrfy;
+		}
+		else
+			log::warning << L"ProgramCompilerVrfy not loaded; verification of rendering not complete." << Endl;
+	}
 
 	return m_programCompiler;
 }

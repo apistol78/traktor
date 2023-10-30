@@ -54,6 +54,10 @@ public:
 
 	typedef std::function< Ref< const ShaderModule >(const Guid& id) > resolveModule_fn;
 
+	/*!
+	 */
+	virtual bool create(IProgramCompiler* embedded) = 0;
+
 	/*! Get renderer signature.
 	 *
 	 * \return Renderer signature.
