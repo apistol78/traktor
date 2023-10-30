@@ -46,13 +46,13 @@ void ProgramVrfy::setFloatParameter(handle_t handle, float param)
 
 	m_program->setFloatParameter(handle, param);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setFloatArrayParameter(handle_t handle, const float* param, int length)
@@ -67,14 +67,14 @@ void ProgramVrfy::setFloatArrayParameter(handle_t handle, const float* param, in
 
 	m_program->setFloatArrayParameter(handle, param, length);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() >= length, L"Trying to set too many elements of indexed uniform.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length > 0, L"Incorrect parameter type, not an indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.length >= length, L"Trying to set too many elements of indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Scalar, L"Incorrect parameter type, not scalar.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setVectorParameter(handle_t handle, const Vector4& param)
@@ -87,13 +87,13 @@ void ProgramVrfy::setVectorParameter(handle_t handle, const Vector4& param)
 
 	m_program->setVectorParameter(handle, param);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Vector, L"Incorrect parameter type, not vector.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Vector, L"Incorrect parameter type, not vector.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
@@ -108,14 +108,14 @@ void ProgramVrfy::setVectorArrayParameter(handle_t handle, const Vector4* param,
 
 	m_program->setVectorArrayParameter(handle, param, length);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Vector, L"Incorrect parameter type, not scalar.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() >= length, L"Trying to set too many elements of indexed uniform.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length > 0, L"Incorrect parameter type, not an indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.length >= length, L"Trying to set too many elements of indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Vector, L"Incorrect parameter type, not vector.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setMatrixParameter(handle_t handle, const Matrix44& param)
@@ -128,13 +128,13 @@ void ProgramVrfy::setMatrixParameter(handle_t handle, const Matrix44& param)
 
 	m_program->setMatrixParameter(handle, param);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.uniform, L"Incorrect parameter type, not a single uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.uniform->getParameterType() == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
@@ -149,14 +149,14 @@ void ProgramVrfy::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 
 	m_program->setMatrixArrayParameter(handle, param, length);
 
-	// std::map< handle_t, Parameter >::iterator it = m_shadow.find(handle);
-	// if (it != m_shadow.end())
-	// {
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform, L"Incorrect parameter type, not an indexed uniform.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getParameterType() == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
-	// 	T_CAPTURE_ASSERT(it->second.indexedUniform->getLength() <= length, L"Trying to set too many elements of indexed uniform.");
-	// 	it->second.undefined = false;
-	// }
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length > 0, L"Incorrect parameter type, not an indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.length >= length, L"Trying to set too many elements of indexed uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::Matrix, L"Incorrect parameter type, not matrix.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
@@ -179,6 +179,19 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 		m_program->setTextureParameter(handle, nullptr);
 
 	m_boundTextures[handle] = texture;
+
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(
+			(it->second.type == ParameterType::Texture2D) ||
+			(it->second.type == ParameterType::TextureCube) ||
+			(it->second.type == ParameterType::Texture3D),
+			L"Incorrect parameter type, not texture."
+		);
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
@@ -201,25 +214,35 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
 		m_program->setImageViewParameter(handle, nullptr);
 
 	m_boundImages[handle] = imageView;
+
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(
+			(it->second.type == ParameterType::Image2D) ||
+			(it->second.type == ParameterType::ImageCube) ||
+			(it->second.type == ParameterType::Image3D),
+			L"Incorrect parameter type, not image."
+		);
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
-	
-	//if (!m_program)
-	//	return;
-
-	//if (StructBufferVrfy* sbufferVrfy = dynamic_type_cast< StructBufferVrfy* >(structBuffer))
-	//{
-	//	T_CAPTURE_ASSERT(sbufferVrfy->getStructBuffer(), L"Trying to set destroyed sbuffer as shader parameter.");
-	//	m_program->setStructBufferParameter(handle, sbufferVrfy->getStructBuffer());
-	//}
-	//else
-	//	T_FATAL_ERROR;
 
 	if (m_program)
 		m_program->setBufferViewParameter(handle, bufferView);
+
+	const auto it = m_shadow.find(handle);
+	if (it != m_shadow.end())
+	{
+		T_CAPTURE_ASSERT(it->second.length <= 0, L"Incorrect parameter type, not a single uniform.");
+		T_CAPTURE_ASSERT(it->second.type == ParameterType::StructBuffer, L"Incorrect parameter type, not buffer.");
+		it->second.set = true;
+	}
 }
 
 void ProgramVrfy::setStencilReference(uint32_t stencilReference)
@@ -233,10 +256,10 @@ void ProgramVrfy::verify()
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
-	// for (std::map< handle_t, Parameter >::const_iterator i = m_shadow.begin(); i != m_shadow.end(); ++i)
-	// {
-	// 	T_CAPTURE_ASSERT(!i->second.undefined, L"Parameter \"" << i->second.getName() << L"\" not set, value undefined (" << m_tag << L").");
-	// }
+	for (const auto& parameter : m_shadow)
+	{
+		T_CAPTURE_ASSERT(parameter.second.set, L"Parameter \"" << parameter.second.name << L"\" not set, value undefined (" << m_tag << L").");
+	}
 
 	for (auto i = m_boundTextures.begin(); i != m_boundTextures.end(); ++i)
 	{
@@ -262,15 +285,5 @@ void ProgramVrfy::verify()
 		}
 	}
 }
-
-// std::wstring ProgramVrfy::Parameter::getName() const
-// {
-// 	if (indexedUniform)
-// 		return indexedUniform->getParameterName();
-// 	else if (uniform)
-// 		return uniform->getParameterName();
-// 	else
-// 		return L"<Null uniform>";
-// }
 
 }

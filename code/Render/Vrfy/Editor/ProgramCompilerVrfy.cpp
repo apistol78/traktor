@@ -14,11 +14,12 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramCompilerVrfy", ProgramCompilerVrfy, IProgramCompiler)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVrfy", 0, ProgramCompilerVrfy, IProgramCompiler)
 
-ProgramCompilerVrfy::ProgramCompilerVrfy(const IProgramCompiler* compiler)
-:	m_compiler(compiler)
+bool ProgramCompilerVrfy::create(IProgramCompiler* embedded)
 {
+	m_compiler = embedded;
+	return true;
 }
 
 const wchar_t* ProgramCompilerVrfy::getRendererSignature() const
@@ -44,8 +45,22 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	resourceVrfy->m_embedded = resource;
 
 	// Record all uniforms used in shader.
-	// shaderGraph->findNodesOf< Uniform >(resourceVrfy->m_uniforms);
-	// shaderGraph->findNodesOf< IndexedUniform >(resourceVrfy->m_indexedUniforms);
+	for (auto uniform : shaderGraph->findNodesOf< Uniform >())
+	{
+		resourceVrfy->m_uniforms.push_back({
+			uniform->getParameterName(),
+			uniform->getParameterType(),
+			0
+		});
+	}
+	for (auto indexedUniform : shaderGraph->findNodesOf< IndexedUniform >())
+	{
+		resourceVrfy->m_uniforms.push_back({
+			indexedUniform->getParameterName(),
+			indexedUniform->getParameterType(),
+			indexedUniform->getLength()
+		});
+	}
 
 	// Keep copy of readable shader in capture.
 	m_compiler->generate(

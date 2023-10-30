@@ -229,14 +229,16 @@ void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& s
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerVk", 0, ProgramCompilerVk, IProgramCompiler)
 
-ProgramCompilerVk::ProgramCompilerVk()
+bool ProgramCompilerVk::create(IProgramCompiler* embedded)
 {
 	static bool s_initialized = false;
 	if (!s_initialized)
 	{
-		glslang::InitializeProcess();
+		if (!glslang::InitializeProcess())
+			return false;
 		s_initialized = true;
 	}
+	return true;
 }
 
 const wchar_t* ProgramCompilerVk::getRendererSignature() const

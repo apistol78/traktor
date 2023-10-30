@@ -303,19 +303,14 @@ Ref< IProgram > RenderSystemVrfy::createProgram(const ProgramResource* programRe
 
 	Ref< ProgramVrfy > programVrfy = new ProgramVrfy(m_resourceTracker, program, tag);
 
-	// for (RefArray< Uniform >::const_iterator i = resource->m_uniforms.begin(); i != resource->m_uniforms.end(); ++i)
-	// {
-	// 	handle_t handle = getParameterHandle(i->getParameterName());
-	// 	programVrfy->m_shadow[handle].uniform = *i;
-	// 	programVrfy->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
-	// }
-
-	// for (RefArray< IndexedUniform >::const_iterator i = resource->m_indexedUniforms.begin(); i != resource->m_indexedUniforms.end(); ++i)
-	// {
-	// 	handle_t handle = getParameterHandle(i->getParameterName());
-	// 	programVrfy->m_shadow[handle].indexedUniform = *i;
-	// 	programVrfy->m_shadow[handle].undefined = (i->getParameterType() <= PtMatrix) ? true : false;	// Textures are allowed to be unset, should sample black.
-	// }
+	for (const auto& uniform : resource->m_uniforms)
+	{
+		const handle_t handle = getParameterHandle(uniform.name);
+		programVrfy->m_shadow[handle].name = uniform.name;
+		programVrfy->m_shadow[handle].type = uniform.type;
+		programVrfy->m_shadow[handle].length = uniform.length;
+		programVrfy->m_shadow[handle].set = false;
+	}
 
 	return programVrfy;
 }

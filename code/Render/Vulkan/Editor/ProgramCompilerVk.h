@@ -29,7 +29,7 @@ class T_DLLCLASS ProgramCompilerVk : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
-	ProgramCompilerVk();
+	virtual bool create(IProgramCompiler* embedded) override final;
 
 	virtual const wchar_t* getRendererSignature() const override final;
 
