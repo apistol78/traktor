@@ -5,8 +5,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>3434</first>
-				<second>969</second>
+				<first>3638</first>
+				<second>941</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -473,7 +473,7 @@ Merge
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{7602FB25-8F9D-CB48-AF40-98D40931C352}</id>
 			<comment/>
 			<position>
@@ -482,6 +482,7 @@ Merge
 			</position>
 			<name>Clip</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{4990718C-4C4E-6C41-A192-06B9DB382674}</id>
@@ -623,7 +624,7 @@ $Output.w = $Input.w;
 			</position>
 			<name>L_TexCoordCurrent</name>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{16E4D9EC-7D60-1644-BA9B-34609C39445B}</id>
 			<comment/>
 			<position>
@@ -632,6 +633,7 @@ $Output.w = $Input.w;
 			</position>
 			<name>Edge clip</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{09FABB3A-FD83-F84B-8E45-22F756115DFB}</id>
@@ -678,8 +680,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{FEF6A900-BA58-4348-B830-340781584B7B}</id>
 			<comment/>
 			<position>
-				<first>1936</first>
-				<second>780</second>
+				<first>2082</first>
+				<second>496</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -758,8 +760,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{0BF975D2-4C48-481B-AFA9-A7EDD5356533}</id>
 			<comment/>
 			<position>
-				<first>1404</first>
-				<second>427</second>
+				<first>1421</first>
+				<second>454</second>
 			</position>
 			<value>4</value>
 		</item>
@@ -767,8 +769,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{7927F1E1-9F03-42F0-B00B-B2BF946EB57A}</id>
 			<comment/>
 			<position>
-				<first>1601</first>
-				<second>356</second>
+				<first>1618</first>
+				<second>383</second>
 			</position>
 			<fragmentGuid>{AA010A65-F78F-7447-A6BB-8FBE0A238745}</fragmentGuid>
 			<inputPins>
@@ -790,8 +792,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{351074F6-CC34-43DA-8D0A-F55F5D620D24}</id>
 			<comment/>
 			<position>
-				<first>1827</first>
-				<second>418</second>
+				<first>1844</first>
+				<second>445</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
@@ -874,8 +876,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{731A347D-3149-9440-B1D0-923394344CAB}</id>
 			<comment/>
 			<position>
-				<first>1707</first>
-				<second>875</second>
+				<first>1853</first>
+				<second>591</second>
 			</position>
 			<name>Confidence</name>
 		</item>
@@ -1047,8 +1049,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{1CDDEDC9-4A8E-354E-95BC-27A64546A157}</id>
 			<comment/>
 			<position>
-				<first>2681</first>
-				<second>1201</second>
+				<first>2809</first>
+				<second>1154</second>
 			</position>
 			<name>CurrentDepth</name>
 		</item>
@@ -1056,8 +1058,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{E3BA92DF-7A69-234F-8877-D9753E9D7F36}</id>
 			<comment/>
 			<position>
-				<first>4381</first>
-				<second>1762</second>
+				<first>3080</first>
+				<second>990</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -1065,8 +1067,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{2AD8E854-C5D9-D542-8F74-AD93ADD9C663}</id>
 			<comment/>
 			<position>
-				<first>2930</first>
-				<second>1142</second>
+				<first>3058</first>
+				<second>1095</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -1074,8 +1076,8 @@ if ($Input.x > 1 || $Input.y > 1)
 			<id>{633E81C1-EF66-854F-B1CB-51618CC4A53A}</id>
 			<comment/>
 			<position>
-				<first>3120</first>
-				<second>1087</second>
+				<first>3324</first>
+				<second>1059</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">

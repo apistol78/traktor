@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 
@@ -91,5 +92,8 @@ struct DoubleBufferedTarget
 	render::handle_t previous;
 	render::handle_t current;
 };
+
+/*! */
+Vector2 jitter(int32_t count);
 
 }

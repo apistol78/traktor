@@ -68,15 +68,6 @@ resource::Id< render::ImageGraph > getAntiAliasId(Quality quality)
 	}
 }
 
-Vector2 jitter(int32_t count)
-{
-	const Vector2 kernelSize(0.5f, 0.5f);
-	return Vector2(
-		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
-		(float)(count & 1) * kernelSize.y - kernelSize.y / 2.0f
-	);
-}
-
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessPass", PostProcessPass, Object)
