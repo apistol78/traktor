@@ -436,7 +436,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -462,7 +461,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -488,7 +486,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -523,7 +520,6 @@
 						<item>$(FREETYPE_SDK)/src</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FT2_BUILD_LIBRARY</item>
 					</definitions>
 					<libraryPaths/>
@@ -787,7 +783,6 @@
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -812,7 +807,6 @@
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -837,7 +831,6 @@
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -871,7 +864,6 @@
 						<item>$(JPEG_SDK)</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
@@ -1194,7 +1186,6 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win64</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBMAD_EXPORT</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1220,7 +1211,6 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win64</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBMAD_EXPORT</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1246,7 +1236,6 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win64</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1281,7 +1270,6 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/win64</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>FPM_DEFAULT</item>
 						<item>HAVE_CONFIG_H</item>
 					</definitions>
@@ -1455,9 +1443,7 @@
 						<item>$(OGG_SDK)/include</item>
 						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1479,9 +1465,7 @@
 						<item>$(OGG_SDK)/include</item>
 						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1503,9 +1487,7 @@
 						<item>$(OGG_SDK)/include</item>
 						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1536,9 +1518,7 @@
 						<item>$(OGG_SDK)/include</item>
 						<item>$(OGG_SDK)/build/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1633,9 +1613,7 @@
 						<item>$(VORBIS_SDK)/lib</item>
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -1666,9 +1644,7 @@
 						<item>$(VORBIS_SDK)/lib</item>
 						<item>$(VORBIS_SDK)/include</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2247,7 +2223,6 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>T_ZLIB-1_2_2_EXPORT</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2272,7 +2247,6 @@
 									<item>$(ZLIB_SDK)</item>
 								</includePaths>
 								<definitions>
-									<item>T_ZLIB-1_2_2_EXPORT</item>
 									<item>_CRT_SECURE_NO_WARNINGS</item>
 									<item>Z_SOLO</item>
 								</definitions>
@@ -2319,9 +2293,7 @@
 					<includePaths>
 						<item>$(SQUISH_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2342,9 +2314,7 @@
 					<includePaths>
 						<item>$(SQUISH_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2365,9 +2335,7 @@
 					<includePaths>
 						<item>$(SQUISH_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2397,9 +2365,7 @@
 					<includePaths>
 						<item>$(SQUISH_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -2725,7 +2691,6 @@
 						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
-						<item>T_MPG123_EXPORT</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2752,7 +2717,6 @@
 						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
-						<item>T_MPG123_EXPORT</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2779,7 +2743,6 @@
 						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -2815,7 +2778,6 @@
 						<item>$(MPG123_SDK)/ports/Msvc++</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>OPT_I386</item>
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
@@ -4759,9 +4721,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
 								</includePaths>
-								<definitions>
-									<item>T_ILMBASE_EXPORT</item>
-								</definitions>
+								<definitions/>
 								<libraryPaths/>
 								<libraries/>
 								<warningLevel>WlNoWarnings</warningLevel>
@@ -4787,9 +4747,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
 								</includePaths>
-								<definitions>
-									<item>T_ILMBASE_EXPORT</item>
-								</definitions>
+								<definitions/>
 								<libraryPaths/>
 								<libraries/>
 								<warningLevel>WlNoWarnings</warningLevel>
@@ -4815,9 +4773,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
 								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-								</definitions>
+								<definitions/>
 								<libraryPaths/>
 								<libraries/>
 								<warningLevel>WlNoWarnings</warningLevel>
@@ -4852,9 +4808,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/Iex</item>
 									<item>$(TRAKTOR_HOME)/3rdp/ilmbase-2.2.0/IlmThread</item>
 								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-								</definitions>
+								<definitions/>
 								<libraryPaths/>
 								<libraries/>
 								<warningLevel>WlNoWarnings</warningLevel>
@@ -5124,9 +5078,7 @@
 						<item>$(AGG_SDK)/agg-src/include</item>
 						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
-					<definitions>
-						<item>T_AGG_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5148,9 +5100,7 @@
 						<item>$(AGG_SDK)/agg-src/include</item>
 						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
-					<definitions>
-						<item>T_AGG_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5172,9 +5122,7 @@
 						<item>$(AGG_SDK)/agg-src/include</item>
 						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -5205,9 +5153,7 @@
 						<item>$(AGG_SDK)/agg-src/include</item>
 						<item>$(AGG_SDK)/agg-src/gpc</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlNoWarnings</warningLevel>
@@ -6048,9 +5994,7 @@
 					<includePaths>
 						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_MIKKTSPACE_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6071,9 +6015,7 @@
 					<includePaths>
 						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_MIKKTSPACE_EXPORT</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6094,9 +6036,7 @@
 					<includePaths>
 						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
@@ -6126,9 +6066,7 @@
 					<includePaths>
 						<item>$(MIKKTSPACE_SDK)</item>
 					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-					</definitions>
+					<definitions/>
 					<libraryPaths/>
 					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
