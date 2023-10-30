@@ -44,7 +44,6 @@ public:
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
-        render::handle_t dbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
         render::handle_t gbufferTargetSetId,
 		render::handle_t outputTargetSetId

@@ -59,15 +59,6 @@ const render::Handle s_handleVisualTargetSet[] =
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 
-Vector2 jitter(int32_t count)
-{
-	const Vector2 kernelSize(0.5f, 0.5f);
-	return Vector2(
-		(float)((count / 2) & 1) * kernelSize.x - kernelSize.x / 2.0f,
-		(float)(count & 1) * kernelSize.y - kernelSize.y / 2.0f
-	);
-}
-
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererDeferred", 0, WorldRendererDeferred, WorldRendererShared)
@@ -148,7 +139,7 @@ void WorldRendererDeferred::setup(
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, s_techniqueDBufferWrite, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);

@@ -40,7 +40,6 @@ render::handle_t DBufferPass::setup(
 	const WorldRenderView& worldRenderView,
 	const Entity* rootEntity,
     const GatherView& gatheredView,
-	render::handle_t dbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t outputTargetSetId
@@ -109,7 +108,7 @@ render::handle_t DBufferPass::setup(
 			sharedParams->endParameters(renderContext);
 
 			const WorldRenderPassShared dbufferPass(
-				dbufferWriteTechnique,
+				s_techniqueDBufferWrite,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::None,
