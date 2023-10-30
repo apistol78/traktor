@@ -26,17 +26,6 @@
 
 namespace traktor::physics
 {
-	namespace
-	{
-
-int32_t wrap(int32_t v, int32_t l)
-{
-	const int32_t c = v % l;
-	return (c < 0) ? c + l : c;
-}
-
-	}
-
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshAssetRasterizer", MeshAssetRasterizer, Object)
 
