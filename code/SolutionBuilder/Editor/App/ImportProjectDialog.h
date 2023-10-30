@@ -8,14 +8,12 @@
  */
 #pragma once
 
-#include <Ui/CheckBox.h>
-#include <Ui/ConfigDialog.h>
-#include <Ui/ListBox/ListBox.h>
+#include "Ui/CheckBox.h"
+#include "Ui/ConfigDialog.h"
+#include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Solution;
 class Project;
@@ -34,6 +32,4 @@ private:
 	Ref< ui::CheckBox > m_checkIncludeDependencies;
 };
 
-	}
 }
-

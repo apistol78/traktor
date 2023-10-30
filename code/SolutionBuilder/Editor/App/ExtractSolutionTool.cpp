@@ -20,10 +20,8 @@
 #include "SolutionBuilder/Editor/App/ExtractSolutionTool.h"
 #include "Xml/XmlSerializer.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ExtractSolutionTool", ExtractSolutionTool, CustomTool)
 
@@ -114,5 +112,4 @@ bool ExtractSolutionTool::execute(ui::Widget* parent, Solution* solution)
 	return true;
 }
 
-	}
 }

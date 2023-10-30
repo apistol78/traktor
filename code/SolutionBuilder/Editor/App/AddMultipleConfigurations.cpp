@@ -15,12 +15,10 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Editor/App/AddMultipleConfigurations.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 bool hasConfiguration(const Project* project, const std::wstring& configurationName)
 {
@@ -50,7 +48,7 @@ std::wstring buildExportDefinition(const std::wstring& projectName)
 	return ss.str();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AddMultipleConfigurations", AddMultipleConfigurations, CustomTool)
 
@@ -96,5 +94,4 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 	return true;
 }
 
-	}
 }

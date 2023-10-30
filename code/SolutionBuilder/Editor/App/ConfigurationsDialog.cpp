@@ -6,21 +6,19 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <Ui/Application.h>
-#include <Ui/Button.h>
-#include <Ui/Container.h>
-#include <Ui/StyleBitmap.h>
-#include <Ui/TableLayout.h>
-#include <Ui/InputDialog.h>
+#include "Ui/Application.h"
+#include "Ui/Button.h"
+#include "Ui/Container.h"
+#include "Ui/StyleBitmap.h"
+#include "Ui/TableLayout.h"
+#include "Ui/InputDialog.h"
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Configuration.h"
-#include "ConfigurationsDialog.h"
+#include "SolutionBuilder/Editor/App/ConfigurationsDialog.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ConfigurationDialog", ConfigurationsDialog, ui::ConfigDialog)
 
@@ -161,5 +159,4 @@ void ConfigurationsDialog::eventButtonRemove(ui::ButtonClickEvent* event)
 	m_listConfigurations->remove(selectedId);
 }
 
-	}
 }

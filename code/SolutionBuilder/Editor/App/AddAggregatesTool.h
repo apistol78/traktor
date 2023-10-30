@@ -10,17 +10,15 @@
 
 #include "CustomTool.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
-	}
+}
 
-	namespace sb
-	{
+namespace traktor::sb
+{
 
 class AddAggregatesTool : public CustomTool
 {
@@ -30,6 +28,4 @@ public:
 	bool execute(ui::Widget* parent, Solution* solution);
 };
 
-	}
 }
-

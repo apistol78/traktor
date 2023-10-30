@@ -6,16 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <Ui/Application.h>
-#include <Ui/TableLayout.h>
-#include <Ui/Static.h>
-#include "SolutionBuilder/Editor/App/SolutionPropertyPage.h"
+#include "Ui/Application.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Static.h"
 #include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Editor/App/SolutionPropertyPage.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionPropertyPage", SolutionPropertyPage, ui::Container)
 
@@ -64,5 +62,4 @@ void SolutionPropertyPage::eventEditFocus(ui::FocusEvent* event)
 	m_solution->setAggregateOutputPath(m_aggregateOutputPath->getText());
 }
 
-	}
 }

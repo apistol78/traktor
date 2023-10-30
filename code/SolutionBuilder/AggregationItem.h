@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <string>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

@@ -9,6 +9,13 @@
 #if defined(_WIN32)
 #	include <windows.h>
 #endif
+#include "Core/Config.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
+#include "SolutionForm.h"
+#include "SolutionBuilder/ProjectDependency.h"
+#include "SolutionBuilder/ExternalDependency.h"
 #include "Ui/Application.h"
 #if defined(_WIN32)
 #	include "Ui/Win32/WidgetFactoryWin32.h"
@@ -17,13 +24,6 @@
 #elif defined(__LINUX__) || defined(__RPI__)
 #	include "Ui/X11/WidgetFactoryX11.h"
 #endif
-#include "Core/Config.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Misc/TString.h"
-#include "Core/System/OS.h"
-#include "SolutionForm.h"
-#include "SolutionBuilder/ProjectDependency.h"
-#include "SolutionBuilder/ExternalDependency.h"
 
 using namespace traktor;
 using namespace sb;

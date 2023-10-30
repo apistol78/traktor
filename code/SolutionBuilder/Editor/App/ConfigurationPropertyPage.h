@@ -8,16 +8,14 @@
  */
 #pragma once
 
-#include <Ui/Container.h>
-#include <Ui/Edit.h>
-#include <Ui/DropDown.h>
-#include <Ui/EditList.h>
-#include <Ui/EditListEditEvent.h>
+#include "Ui/Container.h"
+#include "Ui/DropDown.h"
+#include "Ui/Edit.h"
+#include "Ui/EditList.h"
+#include "Ui/EditListEditEvent.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Configuration;
 
@@ -64,6 +62,4 @@ private:
 	void eventFocusAdditionalOptions(ui::FocusEvent* event);
 };
 
-	}
 }
-

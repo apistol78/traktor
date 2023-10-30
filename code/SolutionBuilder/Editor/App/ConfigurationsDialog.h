@@ -8,13 +8,11 @@
  */
 #pragma once
 
-#include <Ui/ConfigDialog.h>
-#include <Ui/ListBox/ListBox.h>
+#include "Ui/ConfigDialog.h"
+#include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Solution;
 
@@ -52,6 +50,4 @@ private:
 	void eventButtonRemove(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-

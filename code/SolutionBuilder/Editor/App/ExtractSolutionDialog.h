@@ -10,18 +10,16 @@
 
 #include "Ui/ConfigDialog.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Edit;
 class ListBox;
 
-	}
+}
 
-	namespace sb
-	{
+namespace traktor::sb
+{
 
 class Project;
 class Solution;
@@ -45,6 +43,4 @@ private:
 	Ref< ui::Edit > m_editSolutionName;
 };
 
-	}
 }
-
