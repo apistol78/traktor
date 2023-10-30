@@ -19,7 +19,7 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktro
+namespace traktor
 {
 
 class Job;
