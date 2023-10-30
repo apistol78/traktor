@@ -27,10 +27,8 @@
 #include "Spark/Stage.h"
 #include "Spark/Debug/MovieDebugger.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MoviePlayer", MoviePlayer, Object)
 
@@ -355,5 +353,4 @@ SpriteInstance* MoviePlayer::getMovieInstance() const
 	return m_movieInstance;
 }
 
-	}
 }

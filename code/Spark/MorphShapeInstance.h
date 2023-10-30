@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class MorphShape;
 
@@ -43,6 +41,4 @@ private:
 	Ref< const MorphShape > m_shape;
 };
 
-	}
 }
-

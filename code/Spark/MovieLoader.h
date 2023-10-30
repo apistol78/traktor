@@ -23,8 +23,10 @@ namespace traktor
 
 class Job;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 class T_DLLCLASS MovieLoader : public IMovieLoader
 {
@@ -39,7 +41,7 @@ public:
 
 	void setTriangulate(bool triangulate);
 
-	virtual Ref< IHandle > loadAsync(const std::wstring& url) const override final;
+	virtual Ref< MovieResult > loadAsync(const std::wstring& url) const override final;
 
 	virtual Ref< Movie > load(const std::wstring& url) const override final;
 
@@ -49,6 +51,4 @@ private:
 	bool m_triangulate;
 };
 
-	}
 }
-

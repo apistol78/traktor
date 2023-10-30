@@ -10,10 +10,8 @@
 
 #include "Spark/Event.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Mouse class.
  * \ingroup Spark
@@ -51,6 +49,4 @@ private:
 	Event m_eventMouseWheel;
 };
 
-	}
 }
-

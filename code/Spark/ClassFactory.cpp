@@ -36,6 +36,7 @@
 #include "Spark/Movie.h"
 #include "Spark/MovieLoader.h"
 #include "Spark/MoviePlayer.h"
+#include "Spark/MovieResult.h"
 #include "Spark/MorphShape.h"
 #include "Spark/MorphShapeInstance.h"
 #include "Spark/Mouse.h"
@@ -440,15 +441,6 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classIMovieLoader->addMethod("loadAsync", &IMovieLoader::loadAsync);
 	classIMovieLoader->addMethod("load", &IMovieLoader::load);
 	registrar->registerClass(classIMovieLoader);
-
-	// IMovieLoader::IHandle
-	Ref< AutoRuntimeClass< IMovieLoader::IHandle > > classIMovieLoader_IHandle = new AutoRuntimeClass< IMovieLoader::IHandle >();
-	classIMovieLoader_IHandle->addProperty("ready", &IMovieLoader::IHandle::ready);
-	classIMovieLoader_IHandle->addProperty("succeeded", &IMovieLoader::IHandle::succeeded);
-	classIMovieLoader_IHandle->addProperty("failed", &IMovieLoader::IHandle::failed);
-	classIMovieLoader_IHandle->addMethod("wait", &IMovieLoader::IHandle::wait);
-	classIMovieLoader_IHandle->addMethod("get", &IMovieLoader::IHandle::get);
-	registrar->registerClass(classIMovieLoader_IHandle);
 
 	// Key
 	auto classKey = new AutoRuntimeClass< Key >();

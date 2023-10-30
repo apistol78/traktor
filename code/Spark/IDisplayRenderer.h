@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class ColorTransform;
 class Canvas;
@@ -158,6 +156,4 @@ public:
 	virtual void end() = 0;
 };
 
-	}
 }
-

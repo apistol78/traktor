@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 struct SwfShape;
 struct SwfStyles;
@@ -66,6 +64,4 @@ private:
 	AlignedVector< LineStyle > m_lineStyles;
 };
 
-	}
 }
-

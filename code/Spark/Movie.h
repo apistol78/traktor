@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Bitmap;
 class Character;
@@ -96,6 +94,4 @@ private:
 	SmallMap< std::string, uint16_t > m_exports;
 };
 
-	}
 }
-

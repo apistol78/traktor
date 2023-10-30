@@ -10,13 +10,9 @@
 
 #include "Core/Config.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 int32_t allocateCacheTag();
 
-	}
 }
-

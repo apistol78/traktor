@@ -10,10 +10,8 @@
 
 #include "Core/Math/Vector2.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 //@{
 /*! \ingroup Spark */
@@ -50,6 +48,4 @@ struct Line
 
 //@}
 
-	}
 }
-

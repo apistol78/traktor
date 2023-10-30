@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 #if defined (_MSC_VER)
 #	pragma warning( disable:4324 )
@@ -99,6 +97,4 @@ private:
 #	pragma warning( default:4324 )
 #endif
 
-	}
 }
-

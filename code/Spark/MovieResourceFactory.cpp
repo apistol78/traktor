@@ -10,10 +10,8 @@
 #include "Spark/Movie.h"
 #include "Spark/MovieResourceFactory.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieResourceFactory", MovieResourceFactory, resource::IResourceFactory)
 
@@ -37,5 +35,4 @@ Ref< Object > MovieResourceFactory::create(resource::IResourceManager* resourceM
 	return instance->getObject< Movie >();
 }
 
-	}
 }

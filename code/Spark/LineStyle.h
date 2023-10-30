@@ -24,8 +24,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 class ColorTransform;
 struct SwfLineStyle;
@@ -55,6 +57,4 @@ private:
 	uint16_t m_lineWidth;
 };
 
-	}
 }
-

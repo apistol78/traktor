@@ -15,10 +15,8 @@
 #include "Spark/MorphShapeInstance.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.MorphShape", 0, MorphShape, Character)
 
@@ -159,5 +157,4 @@ void MorphShape::serialize(ISerializer& s)
 	s >> MemberAlignedVector< LineStyle, MemberComposite< LineStyle > >(L"lineStyles", m_lineStyles);
 }
 
-	}
 }

@@ -14,10 +14,8 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Spark/Path.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 void SubPathSegment::serialize(ISerializer& s)
 {
@@ -160,5 +158,4 @@ void Path::transform(CoordinateMode from, CoordinateMode to, int32_t& x, int32_t
 	}
 }
 
-	}
 }

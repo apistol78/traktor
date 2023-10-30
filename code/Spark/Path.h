@@ -27,8 +27,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 #if defined (_MSC_VER)
 #	pragma warning( disable:4324 )
@@ -183,6 +185,4 @@ private:
 #	pragma warning( default:4324 )
 #endif
 
-	}
 }
-

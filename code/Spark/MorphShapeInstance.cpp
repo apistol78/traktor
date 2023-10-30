@@ -9,10 +9,8 @@
 #include "Spark/MorphShape.h"
 #include "Spark/MorphShapeInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MorphShapeInstance", MorphShapeInstance, CharacterInstance)
 
@@ -32,5 +30,4 @@ Aabb2 MorphShapeInstance::getBounds() const
 	return getTransform() * m_shape->getShapeBounds();
 }
 
-	}
 }

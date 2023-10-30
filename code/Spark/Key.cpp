@@ -9,10 +9,8 @@
 #include <cstring>
 #include "Spark/Key.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Key", Key, Object)
 
@@ -50,5 +48,4 @@ void Key::eventKeyUp(int32_t keyCode)
 	m_eventKeyUp.issue();
 }
 
-	}
 }

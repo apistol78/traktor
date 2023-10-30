@@ -13,10 +13,8 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class CharacterInstance;
 class Font;
@@ -133,6 +131,4 @@ private:
 #	pragma warning( default:4324 )
 #endif
 
-	}
 }
-

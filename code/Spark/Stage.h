@@ -15,10 +15,8 @@
 #include "Spark/Event.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Stage class.
  * \ingroup Spark
@@ -83,6 +81,4 @@ private:
 	void updateViewOffset();
 };
 
-	}
 }
-

@@ -16,10 +16,8 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Sprite", 1, Sprite, Character)
 
@@ -96,5 +94,4 @@ void Sprite::serialize(ISerializer& s)
 	s >> MemberAabb2(L"scalingGrid", m_scalingGrid);
 }
 
-	}
 }

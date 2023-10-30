@@ -24,10 +24,8 @@
 #include "Spark/Sprite.h"
 #include "Spark/SpriteInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SpriteInstance", SpriteInstance, CharacterInstance)
 
@@ -912,5 +910,4 @@ void SpriteInstance::preDispatchEvents()
 	m_gotoIssued = false;
 }
 
-	}
 }

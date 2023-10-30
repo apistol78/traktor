@@ -26,8 +26,10 @@ namespace traktor
 
 class ISerializer;
 
-	namespace spark
-	{
+}
+
+namespace traktor::spark
+{
 
 class ColorTransform;
 struct SwfFillStyle;
@@ -104,6 +106,4 @@ private:
 #	pragma warning( default:4324 )
 #endif
 
-	}
 }
-

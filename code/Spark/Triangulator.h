@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Trapezoid triangulation.
  * \ingroup Spark
@@ -40,6 +38,4 @@ private:
 	AlignedVector< Segment > m_slabs;
 };
 
-	}
 }
-

@@ -6,13 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Spark/TextInstance.h"
 #include "Spark/Text.h"
+#include "Spark/TextInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextInstance", TextInstance, CharacterInstance)
 
@@ -32,5 +30,4 @@ Aabb2 TextInstance::getBounds() const
 	return getTransform() * m_text->getTextBounds();
 }
 
-	}
 }

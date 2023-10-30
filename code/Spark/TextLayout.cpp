@@ -15,12 +15,10 @@
 #include "Spark/Shape.h"
 #include "Spark/TextLayout.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 bool isWhiteSpace(wchar_t ch)
 {
@@ -119,8 +117,7 @@ int32_t isBreakableUnicode(wchar_t c)
 		return BreakAfter;
 }
 
-
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.TextLayout", TextLayout, Object)
 
@@ -439,5 +436,4 @@ void TextLayout::end()
 	m_height = std::max(m_height, m_cursorY + lineHeight);
 }
 
-	}
 }

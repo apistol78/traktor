@@ -11,10 +11,8 @@
 #include <stb_rect_pack.h>
 #include "Spark/Packer.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class PackerImpl
 {
@@ -73,5 +71,4 @@ bool Packer::insert(int32_t width, int32_t height, Rectangle& outRectangle)
 	return m_impl->insert(width, height, outRectangle);
 }
 
-	}
 }

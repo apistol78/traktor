@@ -6,13 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Spark/ShapeInstance.h"
 #include "Spark/Shape.h"
+#include "Spark/ShapeInstance.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.ShapeInstance", ShapeInstance, CharacterInstance)
 
@@ -32,5 +30,4 @@ Aabb2 ShapeInstance::getBounds() const
 	return getTransform() * m_shape->getShapeBounds();
 }
 
-	}
 }

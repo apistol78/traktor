@@ -15,10 +15,8 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Spark/Frame.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Frame", 0, Frame, ISerializable)
 
@@ -149,5 +147,4 @@ void Frame::RemoveObject::serialize(ISerializer& s)
 		s >> Member< uint16_t >(L"characterId", characterId);
 }
 
-	}
 }

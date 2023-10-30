@@ -10,10 +10,8 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Spark/Event.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Event", Event, Object)
 
@@ -52,5 +50,4 @@ void Event::issue(int32_t argc, const Any* argv)
 		rd->call(argc, argv);
 }
 
-	}
 }

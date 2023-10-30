@@ -12,10 +12,8 @@
 #include "Spark/Movie.h"
 #include "Spark/Stage.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Stage", Stage, Object)
 
@@ -343,5 +341,4 @@ std::wstring Stage::getScaleMode() const
 	return tbl[m_scaleMode];
 }
 
-	}
 }
