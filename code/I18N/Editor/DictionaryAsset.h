@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class T_DLLCLASS DictionaryAsset : public editor::Asset
 {
@@ -41,6 +39,4 @@ private:
 	int32_t m_textColumn;
 };
 
-	}
 }
-

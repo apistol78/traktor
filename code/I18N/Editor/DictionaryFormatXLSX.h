@@ -10,10 +10,8 @@
 
 #include "I18N/Editor/IDictionaryFormat.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class DictionaryFormatXLSX : public IDictionaryFormat
 {
@@ -27,6 +25,4 @@ public:
 	virtual bool write(IStream* stream, const Dictionary* dictionary) const override final;
 };
 
-	}
 }
-

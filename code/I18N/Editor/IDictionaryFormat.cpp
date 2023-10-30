@@ -9,10 +9,8 @@
 #include "Core/Io/FileSystem.h"
 #include "I18N/Editor/IDictionaryFormat.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.IDictionaryFormat", IDictionaryFormat, Object)
 
@@ -69,5 +67,4 @@ bool IDictionaryFormat::writeAny(IStream* stream, const std::wstring& extension,
 	return false;
 }
 
-	}
 }

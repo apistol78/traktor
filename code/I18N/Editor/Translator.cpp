@@ -16,10 +16,8 @@
 #include "I18N/Editor/Translator.h"
 #include "Net/UrlConnection.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.Translator", Translator, Object)
 
@@ -77,5 +75,4 @@ bool Translator::translate(const std::wstring& text, std::wstring& outText) cons
 	return result;
 }
 
-	}
 }

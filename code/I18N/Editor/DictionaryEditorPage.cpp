@@ -32,12 +32,10 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_languages[] =
 {
@@ -115,7 +113,7 @@ const wchar_t* c_languages[] =
 	0
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::IEditorPage)
 
@@ -390,5 +388,4 @@ void DictionaryEditorPage::eventGridItemChange(ui::GridItemContentChangeEvent* e
 	event->consume();
 }
 
-	}
 }

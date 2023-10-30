@@ -10,17 +10,15 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class Translator : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Translator(const std::wstring& from, const std::wstring& to);
+	explicit Translator(const std::wstring& from, const std::wstring& to);
 
 	bool translate(const std::wstring& text, std::wstring& outText) const;
 
@@ -29,6 +27,4 @@ private:
 	std::wstring m_to;
 };
 
-	}
 }
-
