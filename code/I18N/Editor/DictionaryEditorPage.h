@@ -19,29 +19,27 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class GridItemContentChangeEvent;
 class GridRowDoubleClickEvent;
 class GridView;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace i18n
-	{
+namespace traktor::i18n
+{
 
 class Dictionary;
 
@@ -79,6 +77,4 @@ private:
 	void eventGridItemChange(ui::GridItemContentChangeEvent* event);
 };
 
-	}
 }
-

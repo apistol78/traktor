@@ -17,8 +17,10 @@ namespace traktor
 class IStream;
 class Path;
 
-	namespace i18n
-	{
+}
+
+namespace traktor::i18n
+{
 
 class Dictionary;
 
@@ -42,6 +44,4 @@ public:
 	static bool writeAny(IStream* stream, const std::wstring& extension, const Dictionary* dictionary);
 };
 
-	}
 }
-

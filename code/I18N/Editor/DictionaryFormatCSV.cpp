@@ -15,10 +15,8 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryFormatCSV.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryFormatCSV", 0, DictionaryFormatCSV, IDictionaryFormat)
 
@@ -86,5 +84,4 @@ bool DictionaryFormatCSV::write(IStream* stream, const Dictionary* dictionary) c
 	return true;
 }
 
-	}
 }

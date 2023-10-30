@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 /*! Dictionary pipeline.
  * \ingroup i18n
@@ -59,6 +57,4 @@ private:
 	std::wstring m_assetPath;
 };
 
-	}
 }
-

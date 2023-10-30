@@ -14,10 +14,8 @@
 #include "I18N/Editor/ImportDictionaryWizardTool.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.ImportDictionaryWizardTool", 0, ImportDictionaryWizardTool, editor::IWizardTool)
 
@@ -72,5 +70,4 @@ bool ImportDictionaryWizardTool::launch(ui::Widget* parent, editor::IEditor* edi
 	return true;
 }
 
-	}
 }

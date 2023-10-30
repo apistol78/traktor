@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 class T_DLLCLASS DictionaryEditorPageFactory : public editor::IEditorPageFactory
 {
@@ -39,6 +37,4 @@ public:
 	virtual Ref< ISerializable > cloneAsset(const ISerializable* asset) const override final;
 };
 
-	}
 }
-

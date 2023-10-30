@@ -11,10 +11,8 @@
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/DictionaryEditorPageFactory.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", 0, DictionaryEditorPageFactory, editor::IEditorPageFactory)
 
@@ -42,5 +40,4 @@ Ref< ISerializable > DictionaryEditorPageFactory::cloneAsset(const ISerializable
 	return DeepClone(asset).create();
 }
 
-	}
 }

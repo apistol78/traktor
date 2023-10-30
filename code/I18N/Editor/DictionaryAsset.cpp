@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::i18n
 {
-	namespace i18n
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.i18n.DictionaryAsset", 0, DictionaryAsset, editor::Asset)
 
@@ -31,5 +29,4 @@ void DictionaryAsset::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"textColumn", m_textColumn);
 }
 
-	}
 }
