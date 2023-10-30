@@ -13,10 +13,8 @@
 #include "SolutionBuilder/Solution.h"
 #include "SolutionBuilder/Editor/App/AddAggregatesTool.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AddAggregatesTool", AddAggregatesTool, CustomTool)
 
@@ -162,5 +160,4 @@ bool AddAggregatesTool::execute(ui::Widget* parent, Solution* solution)
 	return true;
 }
 
-	}
 }

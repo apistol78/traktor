@@ -15,12 +15,10 @@
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 struct EmptyString
 {
@@ -30,7 +28,7 @@ struct EmptyString
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ConfigurationPropertyPage", ConfigurationPropertyPage, ui::Container)
 
@@ -335,5 +333,4 @@ void ConfigurationPropertyPage::eventFocusAdditionalOptions(ui::FocusEvent* even
 	m_configuration->setConsumerLibraryPath(m_editConsumerLibraryPath->getText());
 }
 
-	}
 }

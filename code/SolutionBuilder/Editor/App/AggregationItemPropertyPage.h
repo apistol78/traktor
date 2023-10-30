@@ -11,10 +11,8 @@
 #include "Ui/Container.h"
 #include "Ui/Edit.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class AggregationItem;
 
@@ -35,6 +33,4 @@ private:
 	void eventEditFocus(ui::FocusEvent* event);
 };
 
-	}
 }
-

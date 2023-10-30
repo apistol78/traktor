@@ -7,18 +7,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Core/Misc/String.h"
 #include "SolutionBuilder/Editor/App/MRU.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 struct IgnoreCasePredicate
 {
@@ -35,7 +33,7 @@ struct IgnoreCasePredicate
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sb.MRU", 0, MRU, ISerializable)
 
@@ -71,5 +69,4 @@ void MRU::serialize(ISerializer& s)
 	s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);
 }
 
-	}
 }

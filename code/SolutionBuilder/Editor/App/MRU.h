@@ -12,10 +12,8 @@
 #include "Core/Io/Path.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 /*! Most-recently-used. */
 class MRU : public ISerializable
@@ -35,6 +33,4 @@ private:
 	std::vector< std::wstring > m_filePaths;
 };
 
-	}
 }
-

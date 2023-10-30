@@ -22,12 +22,10 @@
 #include "Xml/Element.h"
 #include "Xml/Attribute.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 void traverseMsvcProject(Project* project, Filter* filter, xml::Element* group, const Path& vcprojPath, const Path& solutionPath)
 {
@@ -79,7 +77,7 @@ void traverseMsvcProject(Project* project, Filter* filter, xml::Element* group, 
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ImportMsvcProject", ImportMsvcProject, CustomTool)
 
@@ -192,5 +190,4 @@ bool ImportMsvcProject::execute(ui::Widget* parent, Solution* solution, const st
 	return result;
 }
 
-	}
 }

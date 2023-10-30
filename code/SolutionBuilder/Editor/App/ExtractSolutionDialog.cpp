@@ -19,10 +19,8 @@
 #include "Ui/Splitter.h"
 #include "Ui/ListBox/ListBox.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ExtractSolutionDialog", ExtractSolutionDialog, ui::ConfigDialog)
 
@@ -96,5 +94,4 @@ std::wstring ExtractSolutionDialog::getSolutionName() const
 	return m_editSolutionName->getText();
 }
 
-	}
 }

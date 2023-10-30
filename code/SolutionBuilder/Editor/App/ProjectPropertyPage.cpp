@@ -25,12 +25,10 @@
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridRow.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 struct DependencyPredicate
 {
@@ -48,7 +46,7 @@ struct ProjectSortPredicate
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ProjectPropertyPage", ProjectPropertyPage, ui::Container)
 
@@ -330,5 +328,4 @@ void ProjectPropertyPage::eventClickAddExternal(ui::ButtonClickEvent* event)
 	fileDialog.destroy();
 }
 
-	}
 }

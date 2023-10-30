@@ -10,15 +10,12 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class CustomTool : public Object
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }

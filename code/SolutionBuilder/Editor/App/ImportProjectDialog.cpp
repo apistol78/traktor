@@ -13,10 +13,8 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ImportProjectDialog", ImportProjectDialog, ui::ConfigDialog)
 
@@ -71,5 +69,4 @@ void ImportProjectDialog::getSelectedProjects(RefArray< Project >& outProjects)
 	//}
 }
 
-	}
 }

@@ -6,17 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <Ui/Application.h>
-#include <Ui/TableLayout.h>
-#include <Ui/Static.h>
-#include <Ui/Edit.h>
 #include "SolutionBuilder/AggregationItem.h"
 #include "SolutionBuilder/Editor/App/AggregationItemPropertyPage.h"
+#include "Ui/Application.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Static.h"
+#include "Ui/Edit.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.AggregationItemPropertyPage", AggregationItemPropertyPage, ui::Container)
 
@@ -65,5 +63,4 @@ void AggregationItemPropertyPage::eventEditFocus(ui::FocusEvent* event)
 	}
 }
 
-	}
 }

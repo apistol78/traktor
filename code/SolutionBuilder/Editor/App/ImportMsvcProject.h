@@ -10,17 +10,15 @@
 
 #include "CustomTool.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
-	}
+}
 
-	namespace sb
-	{
+namespace traktor::sb
+{
 
 class Solution;
 
@@ -32,6 +30,4 @@ public:
 	bool execute(ui::Widget* parent, Solution* solution, const std::wstring& solutionFileName);
 };
 
-	}
 }
-

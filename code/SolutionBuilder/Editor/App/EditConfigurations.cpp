@@ -7,21 +7,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Config.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
-#include "EditConfigurations.h"
-#include "ConfigurationsDialog.h"
-#include "SolutionBuilder/Solution.h"
-#include "SolutionBuilder/Project.h"
 #include "SolutionBuilder/Configuration.h"
+#include "SolutionBuilder/Project.h"
+#include "SolutionBuilder/Solution.h"
+#include "SolutionBuilder/Editor/App/EditConfigurations.h"
+#include "SolutionBuilder/Editor/App/ConfigurationsDialog.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 std::wstring buildExportDefinition(const std::wstring& projectName)
 {
@@ -41,7 +39,7 @@ std::wstring buildExportDefinition(const std::wstring& projectName)
 	return ss.str();
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.EditConfigurations", EditConfigurations, CustomTool)
 
@@ -109,5 +107,4 @@ bool EditConfigurations::execute(ui::Widget* parent, Solution* solution)
 	return true;
 }
 
-	}
 }

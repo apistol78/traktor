@@ -8,17 +8,15 @@
  */
 #pragma once
 
-#include <Ui/Container.h>
-#include <Ui/CheckBox.h>
-#include <Ui/Edit.h>
-#include <Ui/DropDown.h>
-#include <Ui/GridView/GridRowDoubleClickEvent.h>
-#include <Ui/GridView/GridView.h>
+#include "Ui/Container.h"
+#include "Ui/CheckBox.h"
+#include "Ui/DropDown.h"
+#include "Ui/Edit.h"
+#include "Ui/GridView/GridRowDoubleClickEvent.h"
+#include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Solution;
 class Project;
@@ -56,6 +54,4 @@ private:
 	void eventClickAddExternal(ui::ButtonClickEvent* event);
 };
 
-	}
 }
-

@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Core/Misc/CommandLine.h"
 #include "Core/Io/Path.h"
+#include "Core/Misc/CommandLine.h"
 #include "Ui/Form.h"
 #include "Ui/ShortcutTable.h"
 #include "Ui/Menu.h"
@@ -21,10 +21,8 @@
 #include "Ui/TreeView/TreeViewEditEvent.h"
 #include "Ui/TreeView/TreeViewItem.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class AggregationItemPropertyPage;
 class AggregationPropertyPage;
@@ -130,5 +128,4 @@ private:
 	void eventPropertyPageChange(ui::ContentChangeEvent*);
 };
 
-	}
 }

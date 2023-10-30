@@ -52,12 +52,10 @@
 #include "SolutionBuilder/Editor/App/ImportMsvcProject.h"
 #include "SolutionBuilder/Editor/App/ImportProject.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 {
@@ -86,7 +84,7 @@ Ref< ui::StyleSheet > loadStyleSheet(const Path& pathName)
 		return nullptr;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionForm", SolutionForm, ui::Form)
 
@@ -1281,5 +1279,4 @@ void SolutionForm::eventPropertyPageChange(ui::ContentChangeEvent*)
 	updateSolutionTree();
 }
 
-	}
 }

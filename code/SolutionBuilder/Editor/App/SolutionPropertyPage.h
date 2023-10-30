@@ -8,13 +8,11 @@
  */
 #pragma once
 
-#include <Ui/Container.h>
-#include <Ui/Edit.h>
+#include "Ui/Container.h"
+#include "Ui/Edit.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Solution;
 
@@ -35,6 +33,4 @@ private:
 	void eventEditFocus(ui::FocusEvent* event);
 };
 
-	}
 }
-

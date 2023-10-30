@@ -19,10 +19,8 @@
 #include "Ui/FileDialog.h"
 #include "Xml/XmlDeserializer.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.ImportProject", ImportProject, CustomTool)
 
@@ -104,5 +102,4 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 	return result;
 }
 
-	}
 }
