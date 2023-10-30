@@ -112,7 +112,7 @@ render::handle_t DBufferPass::setup(
 				dbufferWriteTechnique,
 				sharedParams,
 				worldRenderView,
-				IWorldRenderPass::First,
+				IWorldRenderPass::None,
 				{}
 			);
 
