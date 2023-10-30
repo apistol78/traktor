@@ -25,18 +25,16 @@
 #include "Spark/IDisplayRenderer.h"
 #include "Spark/TextLayout.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const ColorTransform c_cxWhite(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 Timer s_timer;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieRenderer", MovieRenderer, Object)
 
@@ -796,5 +794,4 @@ void MovieRenderer::renderCharacter(
 	}
 }
 
-	}
 }

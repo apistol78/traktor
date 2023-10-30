@@ -16,10 +16,8 @@
 #include "Spark/TextInstance.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Text", 0, Text, Character)
 
@@ -111,5 +109,4 @@ void Text::Char::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"glyphIndexOrCode", glyphIndex);
 }
 
-	}
 }

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class T_DLLCLASS Packer : public Object
 {
@@ -46,5 +44,4 @@ private:
 	class PackerImpl* m_impl;
 };
 
-	}
 }

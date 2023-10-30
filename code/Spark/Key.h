@@ -11,10 +11,8 @@
 #include "Core/RefArray.h"
 #include "Spark/Event.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Key class.
  * \ingroup Spark
@@ -74,6 +72,4 @@ private:
 	Event m_eventKeyUp;
 };
 
-	}
 }
-

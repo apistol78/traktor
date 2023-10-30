@@ -10,10 +10,8 @@
 #include "Core/Class/CastAny.h"
 #include "Spark/Mouse.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Mouse", Mouse, Object)
 
@@ -38,5 +36,4 @@ void Mouse::eventMouseWheel(int32_t x, int32_t y, int32_t delta)
 	m_eventMouseWheel.issue(1, &argv);
 }
 
-	}
 }

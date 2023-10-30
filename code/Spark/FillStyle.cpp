@@ -16,10 +16,8 @@
 #include "Spark/FillStyle.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 FillStyle::FillStyle()
 :	m_gradientType(GradientType::Invalid)
@@ -131,5 +129,4 @@ void FillStyle::ColorRecord::serialize(ISerializer& s)
 	s >> Member< Color4f >(L"color", color);
 }
 
-	}
 }

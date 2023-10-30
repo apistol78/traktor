@@ -22,10 +22,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Frame actions.
  * \ingroup Spark
@@ -169,6 +167,4 @@ private:
 	AlignedVector< uint16_t > m_startSounds;
 };
 
-	}
 }
-

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class T_DLLCLASS TextFormat : public Object
 {
@@ -49,6 +47,4 @@ private:
 	float m_size;
 };
 
-	}
 }
-

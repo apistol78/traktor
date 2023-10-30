@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Movie;
 
@@ -38,6 +36,4 @@ public:
 	void triangulate(Movie* movie, bool discardPaths) const;
 };
 
-	}
 }
-

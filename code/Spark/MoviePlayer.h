@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class ICharacterFactory;
 class IMovieLoader;
@@ -202,14 +200,6 @@ private:
 		};
 	};
 
-	//struct Interval
-	//{
-	//	uint32_t count;
-	//	uint32_t interval;
-	//	Ref< ActionObject > target;
-	//	Ref< ActionFunction > function;
-	//};
-
 	Ref< const ICharacterFactory > m_characterFactory;
 	Ref< const IMovieLoader > m_movieLoader;
 	Ref< const MovieDebugger > m_movieDebugger;
@@ -221,17 +211,10 @@ private:
 	Ref< Stage > m_stage;
 
 	AlignedVector< Event > m_events;
-	//std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
 	float m_timeCurrent;
 	float m_timeNext;
 	float m_timeNextFrame;
-
-	//void Global_setInterval(CallArgs& ca);
-
-	//void Global_clearInterval(CallArgs& ca);
 };
 
-	}
 }
-

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 /*! Sound container.
  * \ingroup Spark
@@ -53,6 +51,4 @@ private:
 	AutoArrayPtr< int16_t > m_samples[2];
 };
 
-	}
 }
-

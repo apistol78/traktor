@@ -95,7 +95,7 @@ public:
 	{
 	}
 
-	virtual Ref< IHandle > loadAsync(const std::wstring& url) const override final
+	virtual Ref< MovieResult > loadAsync(const std::wstring& url) const override final
 	{
 		return nullptr;
 	}
@@ -415,7 +415,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 	}
 
 	// Update movie player.
-	m_moviePlayer->progress(info.getSimulationDeltaTime(), m_soundRenderer);
+	m_moviePlayer->progress((float)info.getSimulationDeltaTime(), m_soundRenderer);
 }
 
 void SparkLayer::preSetup(const runtime::UpdateInfo& info)

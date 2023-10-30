@@ -10,10 +10,8 @@
 #include "Core/Serialization/Member.h"
 #include "Spark/Sound.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Sound", 0, Sound, ISerializable)
 
@@ -48,5 +46,4 @@ void Sound::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

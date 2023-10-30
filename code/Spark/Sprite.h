@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Frame;
 
@@ -68,6 +66,4 @@ private:
 	Aabb2 m_scalingGrid;
 };
 
-	}
 }
-

@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Sound;
 
@@ -38,6 +36,4 @@ public:
 	virtual void play(const Sound* sound) = 0;
 };
 
-	}
 }
-

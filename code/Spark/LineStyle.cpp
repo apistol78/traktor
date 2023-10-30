@@ -12,10 +12,8 @@
 #include "Spark/LineStyle.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 LineStyle::LineStyle()
 :	m_lineColor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -61,5 +59,4 @@ void LineStyle::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"lineWidth", m_lineWidth);
 }
 
-	}
 }

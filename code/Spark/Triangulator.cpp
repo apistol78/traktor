@@ -16,12 +16,10 @@
 #include "Core/Math/MathUtils.h"
 #include "Spark/Triangulator.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 Vector2 truncate(const Vector2& v)
 {
@@ -267,7 +265,7 @@ void segmentsToTriangles(const Segment& sl, const Segment& sr, AlignedVector< Tr
 	segmentsToTriangles_2(sl, sr, outTriangles);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.Triangulator", Triangulator, Object)
 
@@ -520,5 +518,4 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, uint16_
 	}
 }
 
-	}
 }

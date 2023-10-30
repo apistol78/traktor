@@ -20,12 +20,10 @@
 #include "Spark/Triangulator.h"
 #include "Spark/Swf/SwfTypes.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 class MemberTriangle : public MemberComplex
 {
@@ -66,7 +64,7 @@ private:
 	Line& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Shape", 0, Shape, Character)
 
@@ -540,5 +538,4 @@ void Shape::serialize(ISerializer& s)
 	s >> MemberAlignedVector< Line, MemberLine >(L"lines", m_lines);
 }
 
-	}
 }
