@@ -38,12 +38,10 @@
 #include "Ui/ToolBar/ToolBarSeparator.h"
 #include "World/Editor/IDebugOverlay.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_worldRendererTypes[] = { L"traktor.world.WorldRendererSimple", L"traktor.world.WorldRendererForward", L"traktor.world.WorldRendererDeferred" };
 
@@ -76,7 +74,7 @@ std::wstring getOverlayText(const TypeInfo* overlayType)
 	return i18n::Text(id, overlayType->getName());
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultRenderControl", DefaultRenderControl, ISceneRenderControl)
 
@@ -610,5 +608,4 @@ void DefaultRenderControl::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	m_context->enqueueRedraw(this);
 }
 
-	}
 }

@@ -17,34 +17,32 @@
 #include "Ui/Rect.h"
 #include "Ui/Events/AllEvents.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Widget;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderView;
 class RenderContext;
 class RenderGraph;
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderer;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class Camera;
 class SceneEditorContext;
@@ -147,6 +145,4 @@ private:
 	void eventPaint(ui::PaintEvent* event);
 };
 
-	}
 }
-

@@ -46,12 +46,10 @@
 #include "World/Editor/IDebugOverlay.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -64,7 +62,7 @@ const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.FinalRenderControl", FinalRenderControl, ISceneRenderControl)
 
@@ -559,5 +557,4 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

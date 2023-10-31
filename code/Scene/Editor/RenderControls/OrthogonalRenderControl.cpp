@@ -46,12 +46,10 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_defaultMultiSample = 0;
 const float c_cameraTranslateDeltaScale = 0.025f;
@@ -81,7 +79,7 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 	);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
@@ -738,5 +736,4 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

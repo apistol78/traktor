@@ -10,10 +10,8 @@
 
 #include "Scene/Editor/ISceneRenderControl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Container;
 class MenuItem;
@@ -25,10 +23,10 @@ class ToolBarDropDown;
 class ToolBarDropMenu;
 class Widget;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 
@@ -96,6 +94,4 @@ private:
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };
 
-	}
 }
-
