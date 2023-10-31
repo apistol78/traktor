@@ -26,6 +26,7 @@
 #include "Ui/StyleBitmap.h"
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
+#include "Ui/BuildChart/BuildChartControl.h"
 #include "Ui/Envelope/DefaultEnvelopeEvaluator.h"
 #include "Ui/Envelope/EnvelopeControl.h"
 #include "Ui/Envelope/EnvelopeKey.h"
@@ -88,7 +89,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewWidgetFactory", PreviewWidgetFactory,
 
 Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* styleSheet, const std::wstring& typeName) const
 {
-	if (typeName == L"traktor.ui.Button")
+	if (typeName == L"traktor.ui.BuildChartControl")
+	{
+		Ref< BuildChartControl > buildChart = new BuildChartControl();
+		buildChart->setStyleSheet(styleSheet);
+		buildChart->create(parent, 4);
+		buildChart->addTask(0, L"Task", Color4ub(255, 0, 0, 255), 0.0, 2.0);
+		return buildChart;
+	}
+	else if (typeName == L"traktor.ui.Button")
 	{
 		Ref< Button > button = new Button();
 		button->setStyleSheet(styleSheet);

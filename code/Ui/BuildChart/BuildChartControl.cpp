@@ -10,6 +10,7 @@
 #include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
+#include "Ui/StyleSheet.h"
 #include "Ui/BuildChart/BuildChartControl.h"
 
 namespace traktor
@@ -196,6 +197,7 @@ void BuildChartControl::endTask(int32_t lane, const Color4ub& color)
 
 void BuildChartControl::eventPaint(PaintEvent* event)
 {
+	const StyleSheet* ss = getStyleSheet();
 	Canvas& canvas = event->getCanvas();
 
 	if (m_running)
@@ -209,7 +211,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	const int32_t c_twenty = pixel(20_ut);
 
 	// Clear background.
-	canvas.setBackground(Color4ub(255, 255, 255, 255));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcUpdate);
 
 	// Draw tasks.
@@ -217,7 +219,7 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 		Rect rcLane(rc.left, rc.top, rc.right, rc.top + pixel(24_ut));
 		for (int32_t lane = 0; lane < m_lanes.size(); ++lane)
 		{
-			canvas.setForeground(Color4ub(0, 0, 0, 40));
+			canvas.setForeground(ss->getColor(this, L"line-color"));
 			canvas.drawLine(rcLane.left, rcLane.getCenter().y, rcLane.right, rcLane.getCenter().y);
 
 			for (const auto& task : m_lanes[lane])
@@ -260,28 +262,28 @@ void BuildChartControl::eventPaint(PaintEvent* event)
 	// Draw time axis.
 	Rect rcTime(rc.left, rc.bottom - pixel(16_ut), rc.right, rc.bottom);
 
-	canvas.setBackground(Color4ub(255, 255, 255, 255));
+	canvas.setBackground(ss->getColor(this, L"background-color"));
 	canvas.fillRect(rcTime);
 
 	canvas.setForeground(Color4ub(0, 0, 0, 100));
 	canvas.drawLine(rcTime.left, rcTime.top, rcTime.right, rcTime.top);
 
-	double duration = m_toTime - m_fromTime;
+	const double duration = m_toTime - m_fromTime;
 	if (duration > 0.01)
 	{
-		double l = std::log10(duration);
-		double f = std::floor(l);
-		double d = std::pow(10.0, f);
-		double a = std::fmod(m_fromTime, d);
+		const double l = std::log10(duration);
+		const double f = std::floor(l);
+		const double d = std::pow(10.0, f);
+		const double a = std::fmod(m_fromTime, d);
 
 		for (double t = m_fromTime - a; t <= m_toTime; t += d / 10.0)
 		{
-			int32_t x = timeToPosition(t);
+			const int32_t x = timeToPosition(t);
 			canvas.drawLine(x, rcTime.bottom - pixel(8_ut), x, rcTime.bottom);
 		}
 	}
 
-	canvas.setForeground(Color4ub(0, 0, 0, 128));
+	canvas.setForeground(ss->getColor(this, L"color"));
 	canvas.drawText(rcTime, str(L"%.3f", (float)m_fromTime), AnLeft, AnCenter);
 	canvas.drawText(rcTime, str(L"%.3f", (float)m_toTime), AnRight, AnCenter);
 
