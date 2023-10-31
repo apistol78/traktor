@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,12 +32,12 @@ namespace traktor::mesh
 /*! Mesh resource factory.
  * \ingroup Mesh
  */
-class T_DLLCLASS MeshFactory : public resource::IResourceFactory
+class T_DLLCLASS MeshResourceFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = nullptr);
+	explicit MeshResourceFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = nullptr);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

@@ -22,7 +22,7 @@
 #include "Editor/IEditor.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
-#include "Mesh/MeshFactory.h"
+#include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -99,7 +99,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
-	m_resourceManager->addFactory(new mesh::MeshFactory(m_renderSystem));
+	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
