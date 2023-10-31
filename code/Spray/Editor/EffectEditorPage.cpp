@@ -21,7 +21,7 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Mesh/MeshEntityFactory.h"
-#include "Mesh/MeshFactory.h"
+#include "Mesh/MeshResourceFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -142,7 +142,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
 	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, renderSystem));
 
-	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
+	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));

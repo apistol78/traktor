@@ -11,7 +11,7 @@
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshComponentRenderer.h"
 #include "Mesh/MeshEntityFactory.h"
-#include "Mesh/MeshFactory.h"
+#include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEditorProfile.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
@@ -49,7 +49,7 @@ void MeshEditorProfile::createResourceFactories(
 	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new mesh::MeshFactory(context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::MeshResourceFactory(context->getRenderSystem()));
 }
 
 void MeshEditorProfile::createEntityFactories(

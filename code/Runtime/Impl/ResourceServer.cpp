@@ -15,7 +15,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Spark/MovieResourceFactory.h"
 #include "Heightfield/HeightfieldFactory.h"
-#include "Mesh/MeshFactory.h"
+#include "Mesh/MeshResourceFactory.h"
 #include "Spray/EffectFactory.h"
 #include "Video/VideoFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -43,7 +43,7 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 
 	m_resourceManager->addFactory(new ai::NavMeshFactory());
 	m_resourceManager->addFactory(new animation::AnimationResourceFactory());
-	m_resourceManager->addFactory(new mesh::MeshFactory(renderSystem));
+	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
 	m_resourceManager->addFactory(new weather::CloudMaskFactory());

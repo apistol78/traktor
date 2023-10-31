@@ -12,15 +12,15 @@
 #include "Database/Instance.h"
 #include "Mesh/IMesh.h"
 #include "Mesh/MeshResource.h"
-#include "Mesh/MeshFactory.h"
+#include "Mesh/MeshResourceFactory.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshFactory", MeshFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshResourceFactory", MeshResourceFactory, resource::IResourceFactory)
 
-MeshFactory::MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
+MeshResourceFactory::MeshResourceFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_renderSystem(renderSystem)
 ,	m_meshFactory(meshFactory)
 {
@@ -28,22 +28,22 @@ MeshFactory::MeshFactory(render::IRenderSystem* renderSystem, render::MeshFactor
 		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
 }
 
-const TypeInfoSet MeshFactory::getResourceTypes() const
+const TypeInfoSet MeshResourceFactory::getResourceTypes() const
 {
 	return makeTypeInfoSet< MeshResource >();
 }
 
-const TypeInfoSet MeshFactory::getProductTypes(const TypeInfo& resourceType) const
+const TypeInfoSet MeshResourceFactory::getProductTypes(const TypeInfo& resourceType) const
 {
 	return makeTypeInfoSet< IMesh >();
 }
 
-bool MeshFactory::isCacheable(const TypeInfo& productType) const
+bool MeshResourceFactory::isCacheable(const TypeInfo& productType) const
 {
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
+Ref< Object > MeshResourceFactory::create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const
 {
 	Ref< const MeshResource > resource = instance->getObject< MeshResource >();
 	if (!resource)
