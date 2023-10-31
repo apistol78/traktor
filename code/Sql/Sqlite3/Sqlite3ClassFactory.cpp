@@ -11,10 +11,8 @@
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 #include "Sql/Sqlite3/Sqlite3ClassFactory.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sql.Sqlite3ClassFactory", 0, Sqlite3ClassFactory, IRuntimeClassFactory)
 
@@ -25,5 +23,4 @@ void Sqlite3ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classConnectionSqlite3);
 }
 
-	}
 }

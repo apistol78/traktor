@@ -12,10 +12,8 @@
 #include "Sql/IResultSet.h"
 #include "Sql/SqlClassFactory.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sql.SqlClassFactory", 0, SqlClassFactory, IRuntimeClassFactory)
 
@@ -48,5 +46,4 @@ void SqlClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIConnection);
 }
 
-	}
 }

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 /*! Sqlite3 database connection.
  * \ingroup SQL
@@ -56,6 +54,4 @@ private:
 	void* m_db;
 };
 
-	}
 }
-

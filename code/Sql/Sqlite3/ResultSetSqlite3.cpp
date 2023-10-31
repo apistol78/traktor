@@ -12,10 +12,8 @@
 #include "Core/Thread/Semaphore.h"
 #include "Sql/Sqlite3/ResultSetSqlite3.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sql.ResultSetSqlite3", ResultSetSqlite3, IResultSet)
 
@@ -52,20 +50,20 @@ std::wstring ResultSetSqlite3::getColumnName(int32_t columnIndex) const
 	return name ? mbstows(name) : L"";
 }
 
-ColumnType ResultSetSqlite3::getColumnType(int32_t columnIndex) const
+Column ResultSetSqlite3::getColumnType(int32_t columnIndex) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	int type = sqlite3_column_type((sqlite3_stmt*)m_stmt, columnIndex);
+	const int type = sqlite3_column_type((sqlite3_stmt*)m_stmt, columnIndex);
 	switch (type)
 	{
 	case SQLITE_INTEGER:
-		return CtInt64;
+		return Column::Int64;
 	case SQLITE_FLOAT:
-		return CtDouble;
+		return Column::Double;
 	case SQLITE_TEXT:
-		return CtString;
+		return Column::String;
 	}
-	return CtVoid;
+	return Column::Void;
 }
 
 int32_t ResultSetSqlite3::getInt32(int32_t columnIndex) const
@@ -114,5 +112,4 @@ ResultSetSqlite3::~ResultSetSqlite3()
 	}
 }
 
-	}
 }

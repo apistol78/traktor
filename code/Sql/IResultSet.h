@@ -19,22 +19,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 /*! SQL column types.
  * \ingroup SQL
  */
-enum ColumnType
+enum class Column
 {
-	CtVoid,
-	CtInt32,
-	CtInt64,
-	CtFloat,
-	CtDouble,
-	CtString
+	Void,
+	Int32,
+	Int64,
+	Float,
+	Double,
+	String
 };
 
 /*! SQL query/update result set.
@@ -51,7 +49,7 @@ public:
 
 	virtual std::wstring getColumnName(int32_t columnIndex) const = 0;
 
-	virtual ColumnType getColumnType(int32_t columnIndex) const = 0;
+	virtual Column getColumnType(int32_t columnIndex) const = 0;
 
 	virtual int32_t getInt32(int32_t columnIndex) const = 0;
 
@@ -68,7 +66,7 @@ public:
 
 	int32_t findColumn(const std::wstring& columnName) const
 	{
-		int32_t columnCount = getColumnCount();
+		const int32_t columnCount = getColumnCount();
 		for (int32_t columnIndex = 0; columnIndex < columnCount; ++columnIndex)
 		{
 			if (compareIgnoreCase(columnName, getColumnName(columnIndex)) == 0)
@@ -79,37 +77,35 @@ public:
 
 	int32_t getInt32(const std::wstring& columnName) const
 	{
-		int32_t columnIndex = findColumn(columnName);
+		const int32_t columnIndex = findColumn(columnName);
 		return columnIndex >= 0 ? getInt32(columnIndex) : 0;
 	}
 
 	int64_t getInt64(const std::wstring& columnName) const
 	{
-		int32_t columnIndex = findColumn(columnName);
+		const int32_t columnIndex = findColumn(columnName);
 		return columnIndex >= 0 ? getInt64(columnIndex) : 0;
 	}
 
 	float getFloat(const std::wstring& columnName) const
 	{
-		int32_t columnIndex = findColumn(columnName);
+		const int32_t columnIndex = findColumn(columnName);
 		return columnIndex >= 0 ? getFloat(columnIndex) : 0.0f;
 	}
 
 	double getDouble(const std::wstring& columnName) const
 	{
-		int32_t columnIndex = findColumn(columnName);
+		const int32_t columnIndex = findColumn(columnName);
 		return columnIndex >= 0 ? getDouble(columnIndex) : 0.0;
 	}
 
 	std::wstring getString(const std::wstring& columnName) const
 	{
-		int32_t columnIndex = findColumn(columnName);
+		const int32_t columnIndex = findColumn(columnName);
 		return columnIndex >= 0 ? getString(columnIndex) : L"";
 	}
 
 	//@}
 };
 
-	}
 }
-

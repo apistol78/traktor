@@ -15,15 +15,13 @@
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 #include "Sql/Sqlite3/ResultSetSqlite3.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sql.ConnectionSqlite3", 0, ConnectionSqlite3, IConnection)
 
 ConnectionSqlite3::ConnectionSqlite3()
-:	m_db(0)
+:	m_db(nullptr)
 {
 }
 
@@ -146,5 +144,4 @@ bool ConnectionSqlite3::tableExists(const std::wstring& tableName)
 	return (rs && rs->next()) ? (rs->getInt32(0) > 0) : false;
 }
 
-	}
 }
