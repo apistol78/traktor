@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,7 +37,10 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 
 	if (is_a< world::CameraComponentData >(m_componentData))
 	{
-		primitiveRenderer->pushWorld(transform.toMatrix44());
+		const Scalar distance = (primitiveRenderer->getView() * transform.toMatrix44()).translation().xyz0().length();
+		const Scalar s = clamp(distance / 8.0_simd, 0.01_simd, 1.0_simd);
+
+		primitiveRenderer->pushWorld(transform.toMatrix44() * scale(s, s, s));
 		primitiveRenderer->pushDepthState(false, false, false);
 
 		primitiveRenderer->drawWireAabb(
