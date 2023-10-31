@@ -18,18 +18,16 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Container;
 class Widget;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderTargetSet;
 class IRenderView;
@@ -37,18 +35,18 @@ class PrimitiveRenderer;
 class RenderContext;
 class RenderGraph;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderer;
 class Entity;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 
 class SceneEditorContext;
 
@@ -126,6 +124,4 @@ private:
 	void eventPaint(ui::PaintEvent* event);
 };
 
-	}
 }
-

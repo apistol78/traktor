@@ -54,16 +54,14 @@
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_defaultMultiSample = 0;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CameraRenderControl", CameraRenderControl, ISceneRenderControl)
 
@@ -417,5 +415,4 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	event->consume();
 }
 
-	}
 }
