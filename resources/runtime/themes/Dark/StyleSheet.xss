@@ -137,6 +137,19 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.BuildChartControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>40, 40, 40, 255</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>61, 61, 65, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.Button</typeName>
 			<colors>
 				<item>
