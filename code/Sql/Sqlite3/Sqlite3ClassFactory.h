@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class T_DLLCLASS Sqlite3ClassFactory : public IRuntimeClassFactory
 {
@@ -31,6 +29,4 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class IResultSet;
 
@@ -77,6 +75,4 @@ public:
 	virtual bool tableExists(const std::wstring& tableName) = 0;
 };
 
-	}
 }
-

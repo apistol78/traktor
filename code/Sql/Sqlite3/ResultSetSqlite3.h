@@ -23,8 +23,10 @@ namespace traktor
 
 class Semaphore;
 
-	namespace sql
-	{
+}
+
+namespace traktor::sql
+{
 
 /*! Sqlite3 query/update result set.
  * \ingroup SQL
@@ -40,7 +42,7 @@ public:
 
 	virtual std::wstring getColumnName(int32_t columnIndex) const override final;
 
-	virtual ColumnType getColumnType(int32_t columnIndex) const override final;
+	virtual Column getColumnType(int32_t columnIndex) const override final;
 
 	virtual int32_t getInt32(int32_t columnIndex) const override final;
 
@@ -63,6 +65,4 @@ private:
 	virtual ~ResultSetSqlite3();
 };
 
-	}
 }
-
