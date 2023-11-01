@@ -15,7 +15,6 @@
 			<comment>
 			<![CDATA[
 Color
-
 			]]>
 			</comment>
 			<position>
@@ -126,7 +125,6 @@ Color
 			<comment>
 			<![CDATA[
 Roughness
-
 			]]>
 			</comment>
 			<position>
@@ -224,6 +222,14 @@ Roughness
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.PreviewOutput" version="traktor.render.Node:1">
+			<id>{5465827E-28A0-A24C-9A24-CC23139F822D}</id>
+			<comment/>
+			<position>
+				<first>1002</first>
+				<second>464</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -395,6 +401,16 @@ Roughness
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{BDB32F7B-599C-42C8-A2CE-2B1BD0738E8B}</id>
 			</destination>
 		</item>
 	</edges>
