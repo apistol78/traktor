@@ -175,7 +175,7 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 		textRect.top += textExtent.cy + pixel(2_ut);
 		
-		canvas.setForeground(ss->getColor(this, L"color-subtext"));
+		canvas.setForeground(ss->getColor(this, isSelected() ? L"color-selected" : L"color-subtext"));
 		canvas.drawText(
 			textRect,
 			m_subText,
