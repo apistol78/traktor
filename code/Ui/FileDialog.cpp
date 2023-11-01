@@ -261,8 +261,7 @@ void FileDialog::updatePath()
 
 void FileDialog::updateFiles()
 {
-	RefArray< File > files;
-	FileSystem::getInstance().find(m_currentPath + L"*.*", files);
+	RefArray< File > files = FileSystem::getInstance().find(m_currentPath + L"*.*");
 
 	m_gridFiles->removeAllRows();
 	for (auto file : files)

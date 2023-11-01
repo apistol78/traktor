@@ -28,8 +28,7 @@ bool Dictionary::create(const Path& blobsPath)
 		if (!FileSystem::getInstance().makeAllDirectories(blobsPath))
 			return false;
 
-		RefArray< File > blobFiles;
-		FileSystem::getInstance().find(blobsPath.getPathName() + L"/*.blob", blobFiles);
+		RefArray< File > blobFiles = FileSystem::getInstance().find(blobsPath.getPathName() + L"/*.blob");
 
 		log::info << L"Loading " << blobFiles.size() << L" blobs..." << Endl;
 		for (auto blobFile : blobFiles)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,24 +15,26 @@ namespace traktor
 
 class PropertyGroup;
 
-	namespace ui
-	{
+}
+
+namespace traktor::ui
+{
 
 class PreviewList;
 class TreeView;
 class TreeViewItem;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class BrowseTypeDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS;
 
 public:
-	BrowseTypeDialog(PropertyGroup* settings);
+	explicit BrowseTypeDialog(PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, const TypeInfoSet* base, bool onlyEditable, bool onlyInstantiable);
 
@@ -55,6 +57,4 @@ private:
 	void eventListDoubleClick(ui::MouseDoubleClickEvent* event);
 };
 
-	}
 }
-

@@ -31,8 +31,7 @@ namespace traktor::resource
 
 void collectFiles(const Path& mask, bool recursive, RefArray< File >& outFiles)
 {
-	RefArray< File > files;
-	FileSystem::getInstance().find(mask, files);
+	RefArray< File > files = FileSystem::getInstance().find(mask);
 	for (auto f : files)
 	{
 		if (!f->isDirectory())

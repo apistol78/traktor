@@ -35,7 +35,7 @@ public:
 
 	virtual Ref< File > get(const Path& path) override final;
 
-	virtual int find(const Path& mask, RefArray< File >& out) override final;
+	virtual RefArray< File > find(const Path& mask) override final;
 
 	virtual bool modify(const Path& fileName, uint32_t flags) override final;
 

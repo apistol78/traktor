@@ -36,9 +36,9 @@ Ref< File > AssetsVolume::get(const Path& path)
 	return nullptr;
 }
 
-int AssetsVolume::find(const Path& mask, RefArray< File >& out)
+RefArray< File > AssetsVolume::find(const Path& mask)
 {
-	return 0;
+	return RefArray< File >();
 }
 
 bool AssetsVolume::modify(const Path& fileName, uint32_t flags)

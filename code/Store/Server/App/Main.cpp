@@ -74,8 +74,7 @@ public:
 			{
 				std::set< std::wstring > tags;
 
-				RefArray< File > files;
-				FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
+				RefArray< File > files = FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*");
 				for (auto file : files)
 				{
 					const auto p = file->getPath();
@@ -113,8 +112,7 @@ public:
 				os << L"<catalogue>" << Endl;
 
 				// Find all package directories in category.
-				RefArray< File > files;
-				FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*", files);
+				RefArray< File > files = FileSystem::getInstance().find(m_dataPath.getPathName() + L"/*.*");
 				for (auto file : files)
 				{
 					const auto p = file->getPath();

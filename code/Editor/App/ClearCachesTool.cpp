@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,17 +18,14 @@
 #include "Editor/App/ClearCachesTool.h"
 #include "I18N/Text.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 bool clearDirectory(const std::wstring& path)
 {
-	RefArray< File > files;
-	FileSystem::getInstance().find(path + L"/*.*", files);
+	RefArray< File > files = FileSystem::getInstance().find(path + L"/*.*");
 	for (auto file : files)
 	{
 		Path filePath = file->getPath();
@@ -50,7 +47,7 @@ bool clearDirectory(const std::wstring& path)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ClearCachesTool", 0, ClearCachesTool, IEditorTool)
 
@@ -139,5 +136,4 @@ bool ClearCachesTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	return true;
 }
 
-	}
 }

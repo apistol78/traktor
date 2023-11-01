@@ -109,8 +109,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if !defined(_DEBUG)
 	if (!Debugger::getInstance().isDebuggerAttached())
 	{
-		RefArray< File > logs;
-		FileSystem::getInstance().find(writableFolder + L"/Editor_*.log", logs);
+		RefArray< File > logs = FileSystem::getInstance().find(writableFolder + L"/Editor_*.log");
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;

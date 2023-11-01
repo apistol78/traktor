@@ -114,10 +114,9 @@ public:
 	/*! Find files.
 	 *
 	 * \param fileMask Path (with or without wild cards) of files to query.
-	 * \param out Array of file descriptions.
-	 * \return Number of files matching fileMask.
+	 * \return Array of file descriptions.
 	 */
-	int32_t find(const Path& fileMask, RefArray< File >& out);
+	RefArray< File > find(const Path& fileMask);
 
 	/*! Modify file's flags.
 	 *

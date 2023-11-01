@@ -84,8 +84,8 @@ bool LocalGroup::getChildren(RefArray< IProviderGroup >& outChildGroups, RefArra
 	T_ASSERT(outChildGroups.empty());
 	T_ASSERT(outChildInstances.empty());
 
-	RefArray< File > groupFiles;
-	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
+	RefArray< File > groupFiles = FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*");
+	if (groupFiles.empty())
 		return false;
 
 	outChildGroups.reserve(groupFiles.size());

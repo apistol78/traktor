@@ -277,8 +277,7 @@ bool Run::rm(const std::wstring& path)
 {
 	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), path);
 
-	RefArray< File > sourceFiles;
-	FileSystem::getInstance().find(sourcePath, sourceFiles);
+	RefArray< File > sourceFiles = FileSystem::getInstance().find(sourcePath);
 	for (auto sourceFile : sourceFiles)
 	{
 		if (!FileSystem::getInstance().remove(sourceFile->getPath()))
@@ -293,9 +292,7 @@ bool Run::copy(const std::wstring& source, const std::wstring& target)
 	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
 	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
-	RefArray< File > sourceFiles;
-	FileSystem::getInstance().find(sourcePath, sourceFiles);
-
+	RefArray< File > sourceFiles = FileSystem::getInstance().find(sourcePath);
 	for (auto sourceFile : sourceFiles)
 	{
 		if (!sourceFile->isDirectory())
@@ -331,9 +328,7 @@ bool Run::replace(const std::wstring& source, const std::wstring& target)
 	const Path sourcePath = FileSystem::getInstance().getAbsolutePath(cwd(), source);
 	Ref< File > targetFile = FileSystem::getInstance().get(target);
 
-	RefArray< File > sourceFiles;
-	FileSystem::getInstance().find(sourcePath, sourceFiles);
-
+	RefArray< File > sourceFiles = FileSystem::getInstance().find(sourcePath);
 	for (auto sourceFile : sourceFiles)
 	{
 		if (!sourceFile->isDirectory())

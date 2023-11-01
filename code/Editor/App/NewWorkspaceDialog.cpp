@@ -94,10 +94,9 @@ bool NewWorkspaceDialog::create(ui::Widget* parent)
 	m_editWorkspaceFile->setEnable(false);
 
 	// Find templates and add to list.
-	RefArray< File > templateFiles;
-	FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/editor/templates/*.template", templateFiles);
-
 	Ref< ui::PreviewItems > previewItems = new ui::PreviewItems();
+
+	RefArray< File > templateFiles = FileSystem::getInstance().find(L"$(TRAKTOR_HOME)/resources/runtime/editor/templates/*.template");
 	for (auto templateFile : templateFiles)
 	{
 		Ref< xml::Document > doc = new xml::Document();

@@ -60,7 +60,7 @@ Ref< File > NativeVolume::get(const Path& path)
 	);
 }
 
-int NativeVolume::find(const Path& mask, RefArray< File >& out)
+RefArray< File > NativeVolume::find(const Path& mask)
 {
 	struct dirent* dp;
 
@@ -74,19 +74,20 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	if (!dirp)
 	{
 		log::warning << L"Unable to open directory \"" << systemPath << L"\"" << Endl;
-		return 0;
+		return RefArray< File >();
 	}
 
 	if (!maskPath.empty())
 		maskPath += L"/";
 
+	RefArray< File > files;
 	while ((dp = readdir(dirp)) != 0)
 	{
 		if (maskCompare.match(mbstows(dp->d_name)))
 		{
 			if (dp->d_type == DT_DIR)
 			{
-				out.push_back(new File(
+				files.push_back(new File(
 					maskPath + mbstows(dp->d_name),
 					0,
 					File::FfDirectory
@@ -97,7 +98,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				Path filePath = maskPath + mbstows(dp->d_name);
 				Ref< File > file = get(filePath);
 				if (file)
-					out.push_back(file);
+					files.push_back(file);
 				else
 					log::warning << L"Unable to stat file \"" << filePath.getPathName() << L"\"" << Endl;
 			}
@@ -105,7 +106,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	}
 	closedir(dirp);
 
-	return int(out.size());
+	return files;
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)

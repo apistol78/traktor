@@ -215,15 +215,17 @@ Ref< File > ZipVolume::get(const Path& path)
 	return nullptr;
 }
 
-int ZipVolume::find(const Path& mask, RefArray< File >& out)
+RefArray< File > ZipVolume::find(const Path& mask)
 {
-	int32_t directoryIndex = findFileInfoIndex(mask.getPathOnlyNoVolume());
+	const int32_t directoryIndex = findFileInfoIndex(mask.getPathOnlyNoVolume());
 	if (directoryIndex < 0)
-		return 0;
+		return RefArray< File >();
 
 	std::wstring fileMask = mask.getFileName();
 	if (fileMask == L"*.*")
 		fileMask = L"*";
+
+	RefArray< File > files;
 
 	WildCompare maskCompare(fileMask);
 	for (auto child : m_fileInfo[directoryIndex].children)
@@ -233,7 +235,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 		{
 			if (!fi.isDirectory())
 			{
-				out.push_back(new File(
+				files.push_back(new File(
 					L"zip:" + getPathName(child),
 					fi.uncompressedSize,
 					File::FfNormal | ( ((fi.attributes & 0111) != 0000) ? File::FfExecutable : 0 )
@@ -241,7 +243,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 			}
 			else
 			{
-				out.push_back(new File(
+				files.push_back(new File(
 					L"zip:" + getPathName(child),
 					0,
 					File::FfDirectory
@@ -250,7 +252,7 @@ int ZipVolume::find(const Path& mask, RefArray< File >& out)
 		}
 	}
 
-	return (int)out.size();
+	return files;
 }
 
 bool ZipVolume::modify(const Path& fileName, uint32_t flags)

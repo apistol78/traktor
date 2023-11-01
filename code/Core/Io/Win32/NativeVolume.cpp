@@ -113,8 +113,9 @@ Ref< File > NativeVolume::get(const Path& path)
 	);
 }
 
-int NativeVolume::find(const Path& mask, RefArray< File >& out)
+RefArray< File > NativeVolume::find(const Path& mask)
 {
+	RefArray< File > files;
 	WIN32_FIND_DATA ffd;
 	HANDLE hfd;
 
@@ -140,7 +141,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_ARCHIVE  ) == FILE_ATTRIBUTE_ARCHIVE  ) ? File::FfArchive   : 0) |
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) ? File::FfDirectory : 0);
 
-			out.push_back(new File(
+			files.push_back(new File(
 				Path(path + tstows(ffd.cFileName)),
 				ffd.nFileSizeLow,
 				flags,
@@ -153,7 +154,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 		FindClose(hfd);
 	}
 
-	return (int)out.size();
+	return files;
 }
 
 bool NativeVolume::modify(const Path& fileName, uint32_t flags)
