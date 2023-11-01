@@ -1076,10 +1076,6 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	if (m_entityFilterType && !filterIncludeEntity(*m_entityFilterType, entityAdapter))
 		return nullptr;
 
-	// Get our custom layer color from stylesheet.
-	const ui::StyleSheet* ss = ui::Application::getInstance()->getStyleSheet();
-	const Color4ub layerColor = ss->getColor(type_name(this), L"background-color-layer");
-
 	// Assume root entities are layers.
 	const bool layer = (bool)(entityAdapter->getParent() == nullptr);
 
@@ -1093,7 +1089,7 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	if (layer)
 	{
 		row->setMinimumHeight(32);
-		row->setBackground(layerColor);
+		row->setBackground(ui::ColorReference(this, L"background-color-layer"));
 	}
 
 	std::wstring entityName = entityAdapter->getName();

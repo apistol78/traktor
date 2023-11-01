@@ -54,12 +54,12 @@ std::wstring GridItem::getText() const
 	return m_text;
 }
 
-void GridItem::setTextColor(const Color4ub& textColor)
+void GridItem::setTextColor(const ColorReference& textColor)
 {
 	m_textColor = textColor;
 }
 
-const Color4ub& GridItem::getTextColor() const
+const ColorReference& GridItem::getTextColor() const
 {
 	return m_textColor;
 }
@@ -169,7 +169,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		if (m_textColor.a == 0)
+		if (!m_textColor)
 		{
 			if (getWidget< GridView >()->isEnable(true) && getRow())
 				canvas.setForeground(ss->getColor(this, (getRow()->getState() & GridRow::Selected) ? L"color-selected" : L"color"));
@@ -177,7 +177,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 				canvas.setForeground(ss->getColor(this, L"color-disabled"));
 		}
 		else
-			canvas.setForeground(m_textColor);
+			canvas.setForeground(m_textColor.resolve(ss));
 
 		canvas.setClipRect(rcText);
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
