@@ -14,6 +14,11 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderEditorPluginFactory", 0, RenderEditorPluginFactory, editor::IEditorPluginFactory)
 
+int32_t RenderEditorPluginFactory::getOrdinal() const
+{
+	return 0;
+}
+
 void RenderEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
 	outCommands.push_back(ui::Command(L"Render.PrintMemoryUsage"));

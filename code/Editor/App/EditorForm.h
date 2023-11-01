@@ -30,7 +30,6 @@ class Thread;
 namespace traktor::net
 {
 
-class DiscoveryManager;
 class StreamServer;
 
 }
@@ -92,8 +91,6 @@ class EditorForm
 	T_RTTI_CLASS;
 
 public:
-	EditorForm();
-
 	bool create(const CommandLine& cmdLine);
 
 	virtual void destroy() override;
@@ -187,7 +184,6 @@ private:
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
-	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Ref< IPipelineDb > m_pipelineDb;
@@ -219,8 +215,8 @@ private:
 	Ref< Document > m_activeDocument;
 	Ref< EditorPageSite > m_activeEditorPageSite;
 	Ref< IEditorPage > m_activeEditorPage;
-	Thread* m_threadAssetMonitor;
-	Thread* m_threadBuild;
+	Thread* m_threadAssetMonitor = nullptr;
+	Thread* m_threadBuild = nullptr;
 	Semaphore m_lockBuild;
 	Path m_settingsPath;
 	Path m_workspacePath;
@@ -228,11 +224,11 @@ private:
 	Ref< PropertyGroup > m_globalSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config
 	Ref< PropertyGroup > m_workspaceSettings;	//!< <Application>.workspace
 	Ref< PropertyGroup > m_mergedSettings;		//!< Traktor.Editor.config + Traktor.Editor.<platform>.config + Traktor.Editor.<user>.config + <Application>.workspace
-	int32_t m_buildStep;
+	int32_t m_buildStep = 0;
 	std::wstring m_buildStepMessage;
 	Semaphore m_buildStepMessageLock;
 	std::vector< std::pair< db::Database*, Guid > > m_eventIds;
-	bool m_suppressTabFocusEvent;
+	bool m_suppressTabFocusEvent = false;
 
 	ui::TabPage* getActiveTabPage() const;
 

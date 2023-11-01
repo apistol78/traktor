@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Sound editor plugin factory.
  * \ingroup Sound
@@ -31,11 +29,11 @@ class T_DLLCLASS SoundEditorPluginFactory : public editor::IEditorPluginFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const override final;
 };
 
-	}
 }
-

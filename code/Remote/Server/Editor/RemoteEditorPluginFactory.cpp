@@ -14,6 +14,11 @@ namespace traktor::remote
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.remote.RemoteEditorPluginFactory", 0, RemoteEditorPluginFactory, editor::IEditorPluginFactory)
 
+int32_t RemoteEditorPluginFactory::getOrdinal() const
+{
+	return 100;
+}
+
 void RemoteEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
 }

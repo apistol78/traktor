@@ -85,7 +85,6 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
-#include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -425,14 +424,6 @@ ui::Size getDesktopSizeEstimate()
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
 
-EditorForm::EditorForm()
-:	m_threadAssetMonitor(nullptr)
-,	m_threadBuild(nullptr)
-,	m_buildStep(0)
-,	m_suppressTabFocusEvent(false)
-{
-}
-
 bool EditorForm::create(const CommandLine& cmdLine)
 {
 	Ref< ILogTarget > defaultInfoLog = log::info.getGlobalTarget();
@@ -639,17 +630,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_buildProgress->create(m_statusBar);
 	m_buildProgress->setVisible(false);
 
-	// Create shared discovery manager.
-	{
-		uint32_t mode = net::MdFindServices;
-		if (m_mergedSettings->getProperty< bool >(L"Editor.Discoverable", true))
-			mode |= net::MdPublishServices;
-
-		m_discoveryManager = new net::DiscoveryManager();
-		m_discoveryManager->create(mode);
-		setStoreObject(L"DiscoveryManager", m_discoveryManager);
-	}
-
 	// Create editor page factories.
 	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
 	{
@@ -673,6 +653,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		if (editorPluginFactory)
 			m_editorPluginFactories.push_back(editorPluginFactory);
 	}
+
+	// Sort factories by ordinal; this will ensure creation order of plugins.
+	m_editorPluginFactories.sort([](IEditorPluginFactory* lh, IEditorPluginFactory* rh) {
+		return lh->getOrdinal() < rh->getOrdinal();
+	});
 
 	// Create editor plugins.
 	for (auto editorPluginFactory : m_editorPluginFactories)
@@ -843,10 +828,6 @@ void EditorForm::destroy()
 	for (auto editorPluginSite : m_editorPluginSites)
 		editorPluginSite->destroy();
 	m_editorPluginSites.clear();
-
-	// Destroy discovery manager.
-	safeDestroy(m_discoveryManager);
-	setStoreObject(L"DiscoveryManager", nullptr);
 
 	// Destroy shortcut table.
 	safeDestroy(m_shortcutTable);

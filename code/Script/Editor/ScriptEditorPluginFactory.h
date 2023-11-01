@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
-/*! \brief
+/*!
  * \ingroup Script
  */
 class T_DLLCLASS ScriptEditorPluginFactory : public editor::IEditorPluginFactory
@@ -31,11 +29,11 @@ class T_DLLCLASS ScriptEditorPluginFactory : public editor::IEditorPluginFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const override final;
 };
 
-	}
 }
-
