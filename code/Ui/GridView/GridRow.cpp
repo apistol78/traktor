@@ -20,17 +20,14 @@
 #include "Ui/GridView/GridRowStateChangeEvent.h"
 #include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridRow", GridRow, AutoWidgetCell)
 
 GridRow::GridRow(uint32_t initialState)
 :	m_editable(true)
 ,	m_state(initialState)
-,	m_background(255, 255, 255, 0)
 ,	m_minimumHeight(0)
 ,	m_parent(0)
 ,	m_editMode(0)
@@ -56,7 +53,7 @@ void GridRow::setState(uint32_t state)
 	m_state = state;
 }
 
-void GridRow::setBackground(const Color4ub& background)
+void GridRow::setBackground(const ColorReference& background)
 {
 	m_background = background;
 }
@@ -304,9 +301,9 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	const bool enabled = view->isEnable(true);
 
 	// Paint custom background.
-	if (m_background.a > 0)
+	if (m_background)
 	{
-		canvas.setBackground(m_background);
+		canvas.setBackground(m_background.resolve(ss));
 		canvas.fillRect(rect);
 	}
 	// No custom background, use different background colors per depth.
@@ -360,5 +357,4 @@ void GridRow::paint(Canvas& canvas, const Rect& rect)
 	canvas.drawLine(0, rect.bottom - 1, rect.getWidth(), rect.bottom - 1);
 }
 
-	}
 }

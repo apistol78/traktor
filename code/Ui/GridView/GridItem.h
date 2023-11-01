@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Ui/ColorReference.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
@@ -18,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Font;
 class GridRow;
@@ -49,9 +48,9 @@ public:
 
 	std::wstring getText() const;
 
-	void setTextColor(const Color4ub& textColor);
+	void setTextColor(const ColorReference& textColor);
 
-	const Color4ub& getTextColor() const;
+	const ColorReference& getTextColor() const;
 
 	bool edit();
 
@@ -74,7 +73,7 @@ private:
 
 	GridRow* m_row = nullptr;
 	std::wstring m_text;
-	Color4ub m_textColor = Color4ub(0, 0, 0, 0);
+	ColorReference m_textColor;
 	Ref< Font > m_font;
 	RefArray< IBitmap > m_images;
 
@@ -85,6 +84,4 @@ private:
 	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 };
 
-	}
 }
-

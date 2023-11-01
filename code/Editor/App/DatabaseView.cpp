@@ -1164,7 +1164,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 	if ((group->getFlags() & db::GfLink) != 0)
 	{
 		groupItem->setEditable(false);
-		groupItem->setTextColor(getStyleSheet()->getColor(this, L"color-link"));
+		groupItem->setTextColor(ui::ColorReference(this, L"color-link"));
 		groupItem->setBold(true);
 	}
 	else

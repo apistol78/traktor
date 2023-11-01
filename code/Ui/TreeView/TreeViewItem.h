@@ -11,6 +11,7 @@
 #include <functional>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Color4ub.h"
+#include "Ui/ColorReference.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
@@ -42,9 +43,9 @@ public:
 
 	bool isBold() const;
 
-	void setTextColor(const Color4ub& textColor);
+	void setTextColor(const ColorReference& textColor);
 
-	const Color4ub& getTextColor() const;
+	const ColorReference& getTextColor() const;
 
 	void removeAllImages();
 
@@ -123,7 +124,7 @@ private:
 	TreeView* m_view;
 	TreeViewItem* m_parent;
 	std::wstring m_text;
-	Color4ub m_textColor;
+	ColorReference m_textColor;
 	AlignedVector< Image > m_images;
 	bool m_bold;
 	bool m_expanded;

@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class GridColumn;
 
@@ -48,6 +46,4 @@ private:
 	int32_t m_resizePosition;
 };
 
-	}
 }
-

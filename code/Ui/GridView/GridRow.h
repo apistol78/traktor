@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Ui/ColorReference.h"
 #include "Ui/Auto/AutoWidgetCell.h"
 
 // import/export mechanism.
@@ -20,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class GridItem;
 
@@ -53,9 +52,9 @@ public:
 
 	uint32_t getState() const { return m_state; }
 
-	void setBackground(const Color4ub& background);
+	void setBackground(const ColorReference& background);
 
-	const Color4ub& getBackground() const { return m_background; }
+	const ColorReference& getBackground() const { return m_background; }
 
 	void setMinimumHeight(int32_t minimumHeight);
 
@@ -92,7 +91,7 @@ private:
 
 	bool m_editable;
 	uint32_t m_state;
-	Color4ub m_background;
+	ColorReference m_background;
 	int32_t m_minimumHeight;
 	RefArray< GridItem > m_items;
 	GridRow* m_parent;
@@ -119,6 +118,4 @@ private:
 	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 };
 
-	}
 }
-

@@ -45,12 +45,12 @@ bool TreeViewItem::isBold() const
 	return m_bold;
 }
 
-void TreeViewItem::setTextColor(const Color4ub& textColor)
+void TreeViewItem::setTextColor(const ColorReference& textColor)
 {
 	m_textColor = textColor;
 }
 
-const Color4ub& TreeViewItem::getTextColor() const
+const ColorReference& TreeViewItem::getTextColor() const
 {
 	return m_textColor;
 }
@@ -322,7 +322,6 @@ TreeViewItem::TreeViewItem(TreeView* view, TreeViewItem* parent, const std::wstr
 :	m_view(view)
 ,	m_parent(parent)
 ,	m_text(text)
-,	m_textColor(0, 0, 0, 0)
 ,	m_bold(false)
 ,	m_expanded(false)
 ,	m_enabled(true)
@@ -581,7 +580,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 		if (m_bold)
 			canvas.setFont(m_view->m_fontBold);
 
-		if (m_textColor.a == 0)
+		if (!m_textColor)
 		{
 			if (m_enabled)
 				canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected" : L"color"));
@@ -589,7 +588,7 @@ void TreeViewItem::paint(Canvas& canvas, const Rect& rect)
 				canvas.setForeground(ss->getColor(m_view, m_selected ? L"color-selected-disabled" : L"color-disabled"));
 		}
 		else
-			canvas.setForeground(m_textColor);
+			canvas.setForeground(m_textColor.resolve(ss));
 
 		canvas.drawText(rcLabel, m_text, AnLeft, AnCenter);
 
