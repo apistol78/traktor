@@ -2478,8 +2478,7 @@ void EditorForm::loadLanguageDictionaries()
 {
 	const std::wstring dictionaryPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.Dictionary", L"$(TRAKTOR_HOME)/resources/runtime/editor/locale/english");
 
-	RefArray< File > files;
-	FileSystem::getInstance().find(dictionaryPath + L"/*.dictionary", files);
+	RefArray< File > files = FileSystem::getInstance().find(dictionaryPath + L"/*.dictionary");
 	for (auto file : files)
 	{
 		Ref< IStream > s = FileSystem::getInstance().open(file->getPath(), File::FmRead);
@@ -3142,8 +3141,7 @@ void EditorForm::threadAssetMonitor()
 
 				const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
-				files.resize(0);
-				FileSystem::getInstance().find(fileName, files);
+				files = FileSystem::getInstance().find(fileName);
 				for (auto file : files)
 				{
 					const uint32_t flags = file->getFlags();

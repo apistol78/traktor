@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #include "Editor/App/CheckAssetsTool.h"
 #include "I18N/Text.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.CheckAssetsTool", 0, CheckAssetsTool, IEditorTool)
 
@@ -58,30 +56,27 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const Property
 
 	int32_t errorCount = 0;
 
-	for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+	for (auto assetInstance : assetInstances)
 	{
-		Ref< Asset > asset = (*i)->getObject< Asset >();
+		Ref< Asset > asset = assetInstance->getObject< Asset >();
 		if (!asset)
 		{
-			log::error << L"Unable to read asset \"" << (*i)->getPath() << L"\"" << Endl;
+			log::error << L"Unable to read asset \"" << assetInstance->getPath() << L"\"" << Endl;
 			++errorCount;
 			continue;
 		}
 
 		if (!asset->getFileName().isRelative())
 		{
-			log::error << L"File \"" << asset->getFileName().getPathName() << L"\" absolute, in asset \"" << (*i)->getPath() << L"\"" << Endl;
+			log::error << L"File \"" << asset->getFileName().getPathName() << L"\" absolute, in asset \"" << assetInstance->getPath() << L"\"" << Endl;
 			++errorCount;
 		}
 
 		const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-
-		RefArray< File > files;
-		FileSystem::getInstance().find(fileName, files);
-
+		RefArray< File > files = FileSystem::getInstance().find(fileName);
 		if (files.empty())
 		{
-			log::error << L"File \"" << fileName.getPathName() << L"\" missing, in asset \"" << (*i)->getPath() << L"\"" << Endl;
+			log::error << L"File \"" << fileName.getPathName() << L"\" missing, in asset \"" << assetInstance->getPath() << L"\"" << Endl;
 			++errorCount;
 		}
 	}
@@ -90,5 +85,4 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor, const Property
 	return true;
 }
 
-	}
 }

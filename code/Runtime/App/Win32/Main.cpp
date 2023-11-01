@@ -333,8 +333,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if !defined(_DEBUG)
 	if (!IsDebuggerPresent())
 	{
-		RefArray< File > logs;
-		FileSystem::getInstance().find(L"Application_*.log", logs);
+		RefArray< File > logs = FileSystem::getInstance().find(L"Application_*.log");
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;

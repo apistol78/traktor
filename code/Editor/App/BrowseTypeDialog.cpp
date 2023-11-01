@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,12 +29,10 @@
 
 #pragma warning(disable: 4344)
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 class TypeInfoWrapper : public Object
 {
@@ -47,7 +45,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseTypeDialog", BrowseTypeDialog, ui::ConfigDialog)
 
@@ -123,10 +121,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 1);
 	groupRoot->setImage(0, 0, 1);
 
-	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
+	for (auto type : types)
 	{
-		const TypeInfo* type = *i;
-
 		if (onlyEditable && !type->isEditable())
 			continue;
 		if (onlyInstantiable && !type->isInstantiable())
@@ -139,12 +135,12 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfoSet* base, bool 
 		std::wstring className = parts.back(); parts.pop_back();
 
 		Ref< ui::TreeViewItem > group = groupRoot;
-		for (std::vector< std::wstring >::iterator j = parts.begin(); j != parts.end(); ++j)
+		for (const auto& part : parts)
 		{
-			Ref< ui::TreeViewItem > child = group->findChild(*j);
+			Ref< ui::TreeViewItem > child = group->findChild(part);
 			if (!child)
 			{
-				child = m_categoryTree->createItem(group, *j, 1);
+				child = m_categoryTree->createItem(group, part, 1);
 				child->setImage(0, 0, 1);
 				child->expand();
 			}
@@ -252,5 +248,4 @@ void BrowseTypeDialog::eventListDoubleClick(ui::MouseDoubleClickEvent* event)
 	endModal(ui::DialogResult::Ok);
 }
 
-	}
 }

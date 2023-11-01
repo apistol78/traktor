@@ -527,8 +527,7 @@ int standalone(const CommandLine& cmdLine)
 
 	if (cmdLine.hasOption('l', L"log"))
 	{
-		RefArray< File > logs;
-		FileSystem::getInstance().find(L"Pipeline_*.log", logs);
+		RefArray< File > logs = FileSystem::getInstance().find(L"Pipeline_*.log");
 
 		// Get "alive" log ids.
 		std::vector< int32_t > logIds;

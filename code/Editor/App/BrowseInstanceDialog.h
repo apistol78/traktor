@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,17 +19,19 @@ namespace traktor
 class PropertyGroup;
 class Thread;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 class Group;
 class Instance;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class PreviewItem;
 class PreviewList;
@@ -37,10 +39,10 @@ class PreviewSelectionChangeEvent;
 class TreeView;
 class TreeViewItem;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IBrowseFilter;
 class IBrowsePreview;
@@ -51,7 +53,7 @@ class BrowseInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings);
+	explicit BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
@@ -86,6 +88,4 @@ private:
 	void threadGeneratePreview();
 };
 
-	}
 }
-

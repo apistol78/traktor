@@ -59,10 +59,9 @@ public:
 	/*! Find files from wild-card mask.
 	 *
 	 * \param mask Wild-card mask.
-	 * \param out Array of matching file.
-	 * \return Array of files matched.
+	 * \return Array of matching file.
 	 */
-	virtual int find(const Path& mask, RefArray< File >& out) = 0;
+	virtual RefArray< File > find(const Path& mask) = 0;
 
 	/*! Modify file flags.
 	 *

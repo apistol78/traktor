@@ -53,9 +53,7 @@ Ref< Path > Path_concat(Path* self, Path* rh)
 
 RefArray< File > IVolume_find(IVolume* self, const std::wstring& mask)
 {
-	RefArray< File > files;
-	self->find(mask, files);
-	return files;
+	return self->find(mask);
 }
 
 bool IVolume_modify_1(IVolume* self, const Path& fileName, uint32_t flags)
@@ -100,9 +98,7 @@ IVolume* FileSystem_getVolume(FileSystem* self, int32_t index)
 
 RefArray< File > FileSystem_find(FileSystem* self, const std::wstring& mask)
 {
-	RefArray< File > files;
-	self->find(mask, files);
-	return files;
+	return self->find(mask);
 }
 
 bool FileSystem_modify_1(FileSystem* self, const Path& fileName, uint32_t flags)

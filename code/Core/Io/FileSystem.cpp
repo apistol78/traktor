@@ -122,10 +122,10 @@ Ref< File > FileSystem::get(const Path& fileName)
 	return volume ? volume->get(fileName) : nullptr;
 }
 
-int FileSystem::find(const Path& fileMask, RefArray< File >& out)
+RefArray< File > FileSystem::find(const Path& fileMask)
 {
 	Ref< IVolume > volume = getVolume(fileMask);
-	return volume ? volume->find(fileMask, out) : 0;
+	return volume ? volume->find(fileMask) : RefArray< File >();
 }
 
 bool FileSystem::modify(const Path& fileName, uint32_t flags)

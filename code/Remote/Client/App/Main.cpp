@@ -221,8 +221,7 @@ bool deployFile(const net::SocketAddressIPv4& addr, const Path& sourceFile, cons
 
 bool deployFiles(const net::SocketAddressIPv4& addr, const Path& sourcePath, const Path& targetBase, bool recursive, bool verbose, int32_t& inoutDeployedFileCount)
 {
-	RefArray< File > files;
-	FileSystem::getInstance().find(sourcePath, files);
+	RefArray< File > files = FileSystem::getInstance().find(sourcePath);
 
 	if (verbose)
 		log::info << L"Found " << int32_t(files.size()) << L" file(s) matching \"" << sourcePath.getPathName() << L"\"." << Endl;

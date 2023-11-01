@@ -53,8 +53,7 @@ void File::getSystemFiles(const Path& sourcePath, std::set< Path >& outFiles) co
 			wcs.push_back(WildCompare(s));
 	}
 
-	RefArray< traktor::File > files;
-	FileSystem::getInstance().find(path, files);
+	RefArray< traktor::File > files = FileSystem::getInstance().find(path);
 	for (auto file : files)
 	{
 		const std::wstring fn = file->getPath().getFileName();
