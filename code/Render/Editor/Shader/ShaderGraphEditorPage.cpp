@@ -1238,9 +1238,11 @@ void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point
 	if (!shaderNode)
 		return;
 
+	const ui::UnitPoint uat = m_editorGraph->unit(at);
+
 	// Add to shader graph.
 	shaderNode->setId(Guid::create());
-	shaderNode->setPosition({ at.x, at.y });
+	shaderNode->setPosition({ uat.x.get(), uat.y.get() });
 	m_shaderGraph->addNode(shaderNode);
 
 	// Create editor node from shader node.
