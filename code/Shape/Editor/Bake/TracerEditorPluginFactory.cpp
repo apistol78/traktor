@@ -9,12 +9,15 @@
 #include "Shape/Editor/Bake/TracerEditorPlugin.h"
 #include "Shape/Editor/Bake/TracerEditorPluginFactory.h"
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TracerEditorPluginFactory", 0, TracerEditorPluginFactory, editor::IEditorPluginFactory)
+
+int32_t TracerEditorPluginFactory::getOrdinal() const
+{
+	return 100;
+}
 
 void TracerEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
@@ -25,5 +28,4 @@ Ref< editor::IEditorPlugin > TracerEditorPluginFactory::createEditorPlugin(edito
     return new TracerEditorPlugin(editor);
 }
 
-    }
 }

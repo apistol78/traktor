@@ -9,12 +9,15 @@
 #include "Script/Editor/ScriptEditorPlugin.h"
 #include "Script/Editor/ScriptEditorPluginFactory.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorPluginFactory", 0, ScriptEditorPluginFactory, editor::IEditorPluginFactory)
+
+int32_t ScriptEditorPluginFactory::getOrdinal() const
+{
+	return 0;
+}
 
 void ScriptEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
@@ -25,5 +28,4 @@ Ref< editor::IEditorPlugin > ScriptEditorPluginFactory::createEditorPlugin(edito
 	return new ScriptEditorPlugin(editor);
 }
 
-	}
 }

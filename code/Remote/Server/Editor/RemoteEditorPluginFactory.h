@@ -29,6 +29,8 @@ class T_DLLCLASS RemoteEditorPluginFactory : public editor::IEditorPluginFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const override final;
+
 	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual Ref< editor::IEditorPlugin > createEditorPlugin(editor::IEditor* editor) const override final;

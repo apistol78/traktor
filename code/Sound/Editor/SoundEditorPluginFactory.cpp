@@ -9,12 +9,15 @@
 #include "Sound/Editor/SoundEditorPlugin.h"
 #include "Sound/Editor/SoundEditorPluginFactory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundEditorPluginFactory", 0, SoundEditorPluginFactory, editor::IEditorPluginFactory)
+
+int32_t SoundEditorPluginFactory::getOrdinal() const
+{
+	return 0;
+}
 
 void SoundEditorPluginFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
@@ -25,5 +28,4 @@ Ref< editor::IEditorPlugin > SoundEditorPluginFactory::createEditorPlugin(editor
 	return new SoundEditorPlugin(editor);
 }
 
-	}
 }

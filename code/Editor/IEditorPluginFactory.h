@@ -34,6 +34,8 @@ class T_DLLCLASS IEditorPluginFactory : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getOrdinal() const = 0;
+
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
 
 	virtual Ref< IEditorPlugin > createEditorPlugin(IEditor* editor) const = 0;
