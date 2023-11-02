@@ -395,6 +395,11 @@ void CubeMap::set(const Vector4& direction, const Color4f& value)
 	m_side[side]->setPixel(x, y, value);
 }
 
+void CubeMap::set(int32_t side, int32_t x, int32_t y, const Color4f& value)
+{
+	m_side[side]->setPixel(x, y, value);
+}
+
 Color4f CubeMap::get(const Vector4& direction) const
 {
 	const Vector4 dir = direction.normalized();

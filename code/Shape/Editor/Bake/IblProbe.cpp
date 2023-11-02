@@ -47,7 +47,9 @@ Color4f IblProbe::sampleRadiance(const Vector4& direction) const
 	const int32_t v = (int32_t)(y * (h - 1));
 
 	Color4f cl;
-	m_radiance->getPixel(u, v, cl);
+	const bool result = m_radiance->getPixel(u, v, cl);
+	T_FATAL_ASSERT(result);
+	
 	return cl;
 }
 
