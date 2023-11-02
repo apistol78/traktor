@@ -50,14 +50,14 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 	uint32_t traceInclude = 0;
 	uint32_t traceIgnore = 0;
 
-	for (auto ti : m_traceInclude)
+	for (const auto& ti : m_traceInclude)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
 		if (!resourceManager->bind(ti, traceGroup))
 			return nullptr;
 		traceInclude |= traceGroup->getBitMask();
 	}
-	for (auto ti : m_traceIgnore)
+	for (const auto& ti : m_traceIgnore)
 	{
 		resource::Proxy< CollisionSpecification > traceGroup;
 		if (!resourceManager->bind(ti, traceGroup))
