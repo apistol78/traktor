@@ -114,7 +114,7 @@ render::handle_t GBufferPass::setup(
 
 			T_ASSERT(!renderContext->havePendingDraws());
 
-			for (auto r : gatheredView.renderables)
+			for (const auto& r : gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, gbufferPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())

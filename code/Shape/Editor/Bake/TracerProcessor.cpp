@@ -357,7 +357,7 @@ void TracerProcessor::setEnable(bool enable)
 
 void TracerProcessor::processorThread()
 {
-	int32_t pending;
+	int32_t pending = 0;
 	Timer timer;
 
 	while (!m_thread->stopped())
@@ -669,7 +669,7 @@ bool TracerProcessor::process(const TracerTask* task)
 			T_FATAL_ASSERT(sh->get().size() == 9);
 			for (int32_t i = 0; i < 9; ++i)
 			{
-				auto c = (*sh)[i];
+				const auto& c = (*sh)[i];
 				writer << c.x();
 				writer << c.y();
 				writer << c.z();
