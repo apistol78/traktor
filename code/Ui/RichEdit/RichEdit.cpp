@@ -199,7 +199,7 @@ void RichEdit::setFont(const Font& font)
 	updateCharacterWidths();
 }
 
-int32_t RichEdit::addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline)
+int32_t RichEdit::addTextAttribute(const ColorReference& textColor, bool bold, bool italic, bool underline)
 {
 	TextAttribute& attr = m_textAttributes.push_back();
 	attr.textColor = textColor;
@@ -209,7 +209,7 @@ int32_t RichEdit::addTextAttribute(const Color4ub& textColor, bool bold, bool it
 	return (int32_t)(m_textAttributes.size() - 1);
 }
 
-int32_t RichEdit::addBackgroundAttribute(const Color4ub& backColor)
+int32_t RichEdit::addBackgroundAttribute(const ColorReference& backColor)
 {
 	BackgroundAttribute& attr = m_backgroundAttributes.push_back();
 	attr.backColor = backColor;
@@ -1701,7 +1701,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 			if (line.attrib != 0xffff)
 			{
 				const BackgroundAttribute& bgAttrib = m_backgroundAttributes[line.attrib];
-				canvas.setBackground(bgAttrib.backColor);
+				canvas.setBackground(bgAttrib.backColor.resolve(ss));
 				canvas.fillRect(lineRc);
 			}
 
@@ -1734,10 +1734,10 @@ void RichEdit::eventPaint(PaintEvent* event)
 				}
 				else
 				{
-					canvas.setForeground(txAttrib.textColor);
-					solidBackground = bool(bgAttrib.backColor.a != 0);
+					canvas.setForeground(txAttrib.textColor.resolve(ss));
+					solidBackground = bool(bgAttrib.backColor);
 					if (solidBackground)
-						canvas.setBackground(bgAttrib.backColor);
+						canvas.setBackground(bgAttrib.backColor.resolve(ss));
 				}
 
 				// Draw characters.

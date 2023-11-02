@@ -10,6 +10,7 @@
 
 #include <functional>
 #include "Core/Containers/SmallMap.h"
+#include "Ui/ColorReference.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -71,10 +72,10 @@ public:
 	virtual void setFont(const Font& font) override;
 
 	/*! Define a new text attribute. */
-	int32_t addTextAttribute(const Color4ub& textColor, bool bold, bool italic, bool underline);
+	int32_t addTextAttribute(const ColorReference& textColor, bool bold, bool italic, bool underline);
 
 	/*! Define a new background attribute. */
-	int32_t addBackgroundAttribute(const Color4ub& backColor);
+	int32_t addBackgroundAttribute(const ColorReference& backColor);
 
 	/*! Use text attribute on a selection of the text. */
 	void setTextAttribute(int32_t start, int32_t length, int32_t attribute);
@@ -199,7 +200,7 @@ public:
 private:
 	struct TextAttribute
 	{
-		Color4ub textColor;
+		ColorReference textColor;
 		bool bold = false;
 		bool italic = false;
 		bool underline = false;
@@ -207,7 +208,7 @@ private:
 
 	struct BackgroundAttribute
 	{
-		Color4ub backColor;
+		ColorReference backColor;
 	};
 
 	struct Line
