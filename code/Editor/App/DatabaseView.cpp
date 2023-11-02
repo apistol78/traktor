@@ -284,6 +284,37 @@ bool replaceIdentifiers(RfmCompound* reflection, const std::list< InstanceClipbo
 	return modified;
 }
 
+bool removeGroup(db::Group* group)
+{
+	// Recurse with child groups first.
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+	for (auto childGroup : childGroups)
+	{
+		if (!removeGroup(childGroup))
+			return false;
+	}
+
+	// No more child groups; now remove all child instances.
+	RefArray< db::Instance > childInstances;
+	group->getChildInstances(childInstances);
+	for (auto childInstance : childInstances)
+	{
+		if (!childInstance->checkout())
+			return false;
+		if (!childInstance->remove())
+			return false;
+		if (!childInstance->commit())
+			return false;
+	}
+
+	// Finally remove this group since it's now empty.
+	if (!group->remove())
+		return false;
+
+	return true;
+}
+
 	}
 
 DatabaseView::DatabaseView(IEditor* editor)
@@ -665,10 +696,8 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			if (!instance->checkout())
 				return false;
-
 			if (!instance->remove())
 				return false;
-
 			if (!instance->commit())
 				return false;
 
@@ -948,7 +977,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_GROUP"), ui::MbYesNo | ui::MbIconQuestion) != ui::DialogResult::Yes)
 				return false;
 
-			if (!group->remove())
+			if (!removeGroup(group))
 				return false;
 
 			updateView();

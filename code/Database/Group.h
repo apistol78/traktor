@@ -99,6 +99,8 @@ private:
 
 	bool internalAddExtInstance(const Guid& instanceGuid);
 
+	void internalRemoveGroup(Group* childGroup);
+
 	// \name IInstanceEventListener
 	// \{
 
