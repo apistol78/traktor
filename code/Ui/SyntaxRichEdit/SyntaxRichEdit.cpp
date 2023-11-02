@@ -38,40 +38,38 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 	if (!RichEdit::create(parent, text, style))
 		return false;
 
-	const StyleSheet* ss = getStyleSheet();
+	m_attributeDefault[0] = addTextAttribute(ColorReference(this, L"color-default"), false, false, false);
+	m_attributeDefault[1] = addBackgroundAttribute(ColorReference(this, L"background-color-default"));
 
-	m_attributeDefault[0] = addTextAttribute(ss->getColor(this, L"color-default"), false, false, false);
-	m_attributeDefault[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-default"));
+	m_attributeString[0] = addTextAttribute(ColorReference(this, L"color-string"), false, false, false);
+	m_attributeString[1] = addBackgroundAttribute(ColorReference(this, L"background-color-string"));
 
-	m_attributeString[0] = addTextAttribute(ss->getColor(this, L"color-string"), false, false, false);
-	m_attributeString[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-string"));
+	m_attributeNumber[0] = addTextAttribute(ColorReference(this, L"color-number"), false, false, false);
+	m_attributeNumber[1] = addBackgroundAttribute(ColorReference(this, L"background-color-number"));
 
-	m_attributeNumber[0] = addTextAttribute(ss->getColor(this, L"color-number"), false, false, false);
-	m_attributeNumber[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-number"));
+	m_attributeSelf[0] = addTextAttribute(ColorReference(this, L"color-self"), false, true, false);
+	m_attributeSelf[1] = addBackgroundAttribute(ColorReference(this, L"background-color-self"));
 
-	m_attributeSelf[0] = addTextAttribute(ss->getColor(this, L"color-self"), false, true, false);
-	m_attributeSelf[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-self"));
+	m_attributeComment[0] = addTextAttribute(ColorReference(this, L"color-comment"), false, true, false);
+	m_attributeComment[1] = addBackgroundAttribute(ColorReference(this, L"background-color-comment"));
 
-	m_attributeComment[0] = addTextAttribute(ss->getColor(this, L"color-comment"), false, true, false);
-	m_attributeComment[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-comment"));
+	m_attributeFunction[0] = addTextAttribute(ColorReference(this, L"color-function"), false, false, false);
+	m_attributeFunction[1] = addBackgroundAttribute(ColorReference(this, L"background-color-function"));
 
-	m_attributeFunction[0] = addTextAttribute(ss->getColor(this, L"color-function"), false, false, false);
-	m_attributeFunction[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-function"));
+	m_attributeType[0] = addTextAttribute(ColorReference(this, L"color-type"), false, false, false);
+	m_attributeType[1] = addBackgroundAttribute(ColorReference(this, L"background-color-type"));
 
-	m_attributeType[0] = addTextAttribute(ss->getColor(this, L"color-type"), false, false, false);
-	m_attributeType[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-type"));
+	m_attributeKeyword[0] = addTextAttribute(ColorReference(this, L"color-keyword"), false, false, false);
+	m_attributeKeyword[1] = addBackgroundAttribute(ColorReference(this, L"background-color-keyword"));
 
-	m_attributeKeyword[0] = addTextAttribute(ss->getColor(this, L"color-keyword"), false, false, false);
-	m_attributeKeyword[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-keyword"));
+	m_attributeSpecial[0] = addTextAttribute(ColorReference(this, L"color-special"), false, false, false);
+	m_attributeSpecial[1] = addBackgroundAttribute(ColorReference(this, L"background-color-special"));
 
-	m_attributeSpecial[0] = addTextAttribute(ss->getColor(this, L"color-special"), false, false, false);
-	m_attributeSpecial[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-special"));
+	m_attributePreprocessor[0] = addTextAttribute(ColorReference(this, L"color-preprocessor"), false, false, false);
+	m_attributePreprocessor[1] = addBackgroundAttribute(ColorReference(this, L"background-color-preprocessor"));
 
-	m_attributePreprocessor[0] = addTextAttribute(ss->getColor(this, L"color-preprocessor"), false, false, false);
-	m_attributePreprocessor[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-preprocessor"));
-
-	m_attributeError[0] = addTextAttribute(ss->getColor(this, L"color-error"), false, false, false);
-	m_attributeError[1] = addBackgroundAttribute(ss->getColor(this, L"background-color-error"));
+	m_attributeError[0] = addTextAttribute(ColorReference(this, L"color-error"), false, false, false);
+	m_attributeError[1] = addBackgroundAttribute(ColorReference(this, L"background-color-error"));
 
 	addEventHandler< ContentChangeEvent >(this, &SyntaxRichEdit::eventChange);
 	return true;
