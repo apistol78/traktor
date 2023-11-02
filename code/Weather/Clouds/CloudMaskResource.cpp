@@ -10,10 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CloudMaskResource", 0, CloudMaskResource, ISerializable)
 
@@ -32,5 +30,4 @@ void CloudMaskResource::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"size", m_size);
 }
 
-	}
 }

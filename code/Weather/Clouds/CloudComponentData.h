@@ -20,33 +20,31 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class ITexture;
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class Entity;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 class CloudComponent;
 class CloudMask;
@@ -87,6 +85,4 @@ private:
 	CloudParticleData m_particleData;
 };
 
-	}
 }
-

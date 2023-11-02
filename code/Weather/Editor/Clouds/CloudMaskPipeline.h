@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class T_DLLCLASS CloudMaskPipeline : public editor::IPipeline
 {
@@ -69,6 +67,4 @@ private:
 	std::wstring m_assetPath;
 };
 
-	}
 }
-

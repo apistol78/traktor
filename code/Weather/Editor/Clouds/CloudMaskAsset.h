@@ -18,16 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class T_DLLCLASS CloudMaskAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 };
 
-	}
 }
-

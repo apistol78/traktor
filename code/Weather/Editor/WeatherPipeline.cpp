@@ -12,10 +12,8 @@
 #include "Weather/Precipitation/PrecipitationComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherPipeline", 0, WeatherPipeline, world::EntityPipeline)
 
@@ -53,5 +51,4 @@ bool WeatherPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

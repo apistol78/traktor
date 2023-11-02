@@ -12,10 +12,8 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Weather/Clouds/CloudParticle.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class CloudParticleData;
 
@@ -35,6 +33,4 @@ private:
 	AlignedVector< CloudParticle > m_particles;
 };
 
-	}
 }
-

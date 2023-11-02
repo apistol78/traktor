@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class T_DLLCLASS CloudMaskResource : public ISerializable
 {
@@ -38,6 +36,4 @@ private:
 	int32_t m_size;
 };
 
-	}
 }
-

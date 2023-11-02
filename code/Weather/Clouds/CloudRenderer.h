@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 class T_DLLCLASS CloudRenderer : public world::IEntityRenderer
 {
@@ -72,6 +70,4 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 };
 
-	}
 }
-

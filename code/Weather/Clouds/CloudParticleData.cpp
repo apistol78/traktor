@@ -12,10 +12,8 @@
 #include "Core/Serialization/Member.h"
 #include "Weather/Clouds/CloudParticleData.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudParticleData", 0, CloudParticleData, ISerializable)
 
@@ -51,5 +49,4 @@ void CloudParticleData::serialize(ISerializer& s)
 	s >> Member< float >(L"noiseScale", m_noiseScale);
 }
 
-	}
 }
