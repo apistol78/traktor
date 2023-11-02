@@ -15,8 +15,10 @@ namespace traktor
 
 class OutputStream;
 
-	namespace sb
-	{
+}
+
+namespace traktor::sb
+{
 
 class SolutionBuilderMsvcVCXImportCommon : public ISerializable
 {
@@ -26,6 +28,4 @@ public:
 	virtual bool generate(OutputStream& os) const = 0;
 };
 
-	}
 }
-

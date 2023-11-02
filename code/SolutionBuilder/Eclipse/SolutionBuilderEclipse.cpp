@@ -42,7 +42,7 @@ bool SolutionBuilderEclipse::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderEclipse::generate(Solution* solution)
+bool SolutionBuilderEclipse::generate(const Solution* solution)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath()))

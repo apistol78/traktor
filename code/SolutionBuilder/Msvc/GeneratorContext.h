@@ -11,10 +11,8 @@
 #include <string>
 #include "Core/Containers/SmallMap.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 /*! Generator context. */
 class GeneratorContext
@@ -39,6 +37,4 @@ private:
 	SmallMap< std::wstring, std::wstring > m_values;
 };
 
-	}
 }
-

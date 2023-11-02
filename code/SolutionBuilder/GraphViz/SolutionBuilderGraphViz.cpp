@@ -45,7 +45,7 @@ bool SolutionBuilderGraphViz::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderGraphViz::generate(Solution* solution)
+bool SolutionBuilderGraphViz::generate(const Solution* solution)
 {
 	AlignedVector< uint8_t > buffer;
 	buffer.reserve(40000);

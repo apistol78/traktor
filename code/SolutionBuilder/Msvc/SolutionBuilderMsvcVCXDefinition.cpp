@@ -24,10 +24,8 @@
 #include "SolutionBuilder/ExternalDependency.h"
 #include "SolutionBuilder/Configuration.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 1, SolutionBuilderMsvcVCXDefinition, ISerializable)
 
@@ -248,5 +246,4 @@ void SolutionBuilderMsvcVCXDefinition::findDefinitions(
 	}
 }
 
-	}
 }

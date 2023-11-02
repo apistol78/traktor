@@ -44,7 +44,7 @@ bool SolutionBuilderXcode2::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderXcode2::generate(Solution* solution)
+bool SolutionBuilderXcode2::generate(const Solution* solution)
 {
 	log::info << L"Generating Xcode projects..." << Endl;
 

@@ -11,10 +11,8 @@
 #include "Core/Serialization/Member.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImport.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXImport", 0, SolutionBuilderMsvcVCXImport, SolutionBuilderMsvcVCXImportCommon)
 
@@ -47,5 +45,4 @@ void SolutionBuilderMsvcVCXImport::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"condition", m_condition);
 }
 
-	}
 }

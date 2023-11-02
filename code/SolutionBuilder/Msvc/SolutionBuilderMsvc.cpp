@@ -157,7 +157,7 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderMsvc::generate(Solution* solution)
+bool SolutionBuilderMsvc::generate(const Solution* solution)
 {
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)

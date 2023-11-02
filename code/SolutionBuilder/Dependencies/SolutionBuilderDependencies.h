@@ -29,7 +29,7 @@ class T_DLLCLASS SolutionBuilderDependencies : public SolutionBuilder
 public:
 	virtual bool create(const CommandLine& cmdLine) override final;
 
-	virtual bool generate(Solution* solution) override final;
+	virtual bool generate(const Solution* solution) override final;
 
 	virtual void showOptions() const override final;
 

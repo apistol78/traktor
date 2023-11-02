@@ -43,7 +43,7 @@ bool SolutionBuilderDependencies::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderDependencies::generate(Solution* solution)
+bool SolutionBuilderDependencies::generate(const Solution* solution)
 {
 	for (auto project : solution->getProjects())
 	{

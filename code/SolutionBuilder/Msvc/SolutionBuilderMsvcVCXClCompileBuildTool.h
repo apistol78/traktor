@@ -10,10 +10,8 @@
 
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class SolutionBuilderMsvcVCXClCompileBuildTool : public SolutionBuilderMsvcVCXBuildTool
 {
@@ -22,14 +20,12 @@ class SolutionBuilderMsvcVCXClCompileBuildTool : public SolutionBuilderMsvcVCXBu
 public:
 	virtual bool generateProject(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
+		const Solution* solution,
+		const Project* project,
 		const std::wstring& filter,
 		const Path& fileName,
 		OutputStream& os
 	) const override final;
 };
 
-	}
 }
-

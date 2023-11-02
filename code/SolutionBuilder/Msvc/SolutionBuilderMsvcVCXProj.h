@@ -14,10 +14,8 @@
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class Configuration;
 class GeneratorContext;
@@ -41,8 +39,8 @@ public:
 
 	bool getInformation(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
+		const Solution* solution,
+		const Project* project,
 		std::wstring& outSolutionPath,
 		std::wstring& outProjectPath,
 		std::wstring& outProjectFileName,
@@ -51,8 +49,8 @@ public:
 
 	bool generate(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project
+		const Solution* solution,
+		const Project* project
 	) const;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -76,37 +74,35 @@ protected:
 
 	bool generateProject(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project
+		const Solution* solution,
+		const Project* project
 	) const;
 
 	bool generateFilters(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project
+		const Solution* solution,
+		const Project* project
 	) const;
 
 	bool generateUser(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project
+		const Solution* solution,
+		const Project* project
 	) const;
 
 	bool collectFiles(
-		Project* project,
-		ProjectItem* item,
+		const Project* project,
+		const ProjectItem* item,
 		const std::wstring& filterPath,
 		std::vector< std::pair< std::wstring, Path > >& outFiles
 	) const;
 
 	void findDefinitions(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
+		const Solution* solution,
+		const Project* project,
 		const RefArray< ProjectItem >& items
 	) const;
 };
 
-	}
 }
-

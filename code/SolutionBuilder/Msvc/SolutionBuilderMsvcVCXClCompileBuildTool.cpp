@@ -14,17 +14,15 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXClCompileBuildTool.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXClCompileBuildTool", 0, SolutionBuilderMsvcVCXClCompileBuildTool, SolutionBuilderMsvcVCXBuildTool)
 
 bool SolutionBuilderMsvcVCXClCompileBuildTool::generateProject(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project,
+	const Solution* solution,
+	const Project* project,
 	const std::wstring& filter,
 	const Path& fileName,
 	OutputStream& os
@@ -45,5 +43,4 @@ bool SolutionBuilderMsvcVCXClCompileBuildTool::generateProject(
 	return true;
 }
 
-	}
 }

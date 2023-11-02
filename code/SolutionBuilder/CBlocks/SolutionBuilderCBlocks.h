@@ -29,13 +29,11 @@ class T_DLLCLASS SolutionBuilderCBlocks : public SolutionBuilder
 	T_RTTI_CLASS;
 
 public:
-	SolutionBuilderCBlocks();
-
 	virtual ~SolutionBuilderCBlocks();
 
 	virtual bool create(const CommandLine& cmdLine) override final;
 
-	virtual bool generate(Solution* solution) override final;
+	virtual bool generate(const Solution* solution) override final;
 
 	virtual void showOptions() const override final;
 

@@ -12,10 +12,8 @@
 #include "Core/Io/OutputStream.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class GeneratorContext;
 class Solution;
@@ -42,6 +40,4 @@ private:
 	std::map< std::wstring, std::wstring > m_values;
 };
 
-	}
 }
-

@@ -10,10 +10,8 @@
 
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class SolutionBuilderMsvcVCXProj;
 
@@ -37,6 +35,4 @@ private:
 	Ref< SolutionBuilderMsvcVCXProj > m_project;
 };
 
-	}
 }
-

@@ -41,7 +41,7 @@ bool SolutionBuilderFBuild::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderFBuild::generate(Solution* solution)
+bool SolutionBuilderFBuild::generate(const Solution* solution)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))

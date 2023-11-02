@@ -12,10 +12,8 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportGroup.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXImportGroup", 0, SolutionBuilderMsvcVCXImportGroup, SolutionBuilderMsvcVCXImportCommon)
 
@@ -55,5 +53,4 @@ void SolutionBuilderMsvcVCXImportGroup::serialize(ISerializer& s)
 	s >> MemberRefArray< SolutionBuilderMsvcVCXImportCommon >(L"imports", m_imports);
 }
 
-	}
 }
