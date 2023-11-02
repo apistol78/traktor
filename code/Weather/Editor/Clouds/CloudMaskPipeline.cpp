@@ -21,10 +21,8 @@
 #include "Weather/Editor/Clouds/CloudMaskPipeline.h"
 #include "Weather/Editor/Clouds/CloudMaskAsset.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudMaskPipeline", 1, CloudMaskPipeline, editor::IPipeline)
 
@@ -136,8 +134,8 @@ bool CloudMaskPipeline::buildOutput(
 			Color4f imagePixel;
 			image->getPixel(x, y, imagePixel);
 
-			uint8_t opacity = uint8_t(imagePixel.getRed() * 255);
-			uint8_t size = uint8_t(imagePixel.getGreen() * 255);
+			const uint8_t opacity = uint8_t(imagePixel.getRed() * 255);
+			const uint8_t size = uint8_t(imagePixel.getGreen() * 255);
 
 			writer << opacity;
 			writer << size;
@@ -159,5 +157,4 @@ Ref< ISerializable > CloudMaskPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

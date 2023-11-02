@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
@@ -36,18 +34,18 @@ class IVertexLayout;
 class RenderContext;
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldRenderView;
 
-	}
+}
 
-	namespace weather
-	{
+namespace traktor::weather
+{
 
 class CloudMask;
 
@@ -123,6 +121,4 @@ private:
 	);
 };
 
-	}
 }
-

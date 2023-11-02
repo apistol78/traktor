@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 /*! Weather entity pipeline.
  * \ingroup Weather
@@ -42,6 +40,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

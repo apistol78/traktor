@@ -8,10 +8,8 @@
  */
 #include "Weather/Clouds/CloudMask.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudMask", CloudMask, Object)
 
@@ -34,5 +32,4 @@ CloudMask::Sample CloudMask::getSample(int32_t x, int32_t y) const
 		return Sample();
 }
 
-	}
 }

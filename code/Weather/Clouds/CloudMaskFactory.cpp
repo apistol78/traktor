@@ -13,10 +13,8 @@
 #include "Weather/Clouds/CloudMaskFactory.h"
 #include "Weather/Clouds/CloudMaskResource.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudMaskFactory", CloudMaskFactory, resource::IResourceFactory)
 
@@ -45,7 +43,7 @@ Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManag
 	if (!stream)
 		return nullptr;
 
-	int32_t size = resource->getSize();
+	const int32_t size = resource->getSize();
 
 	Ref< CloudMask > mask = new CloudMask(size);
 	Reader(stream).read(mask->m_data.ptr(), size * size, sizeof(CloudMask::Sample));
@@ -54,5 +52,4 @@ Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManag
 	return mask;
 }
 
-	}
 }

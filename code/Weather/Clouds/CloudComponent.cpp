@@ -26,12 +26,10 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 
 template < typename Comparator >
 struct ParticlePredicate
@@ -193,7 +191,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudComponent", CloudComponent, world::IEntityComponent)
 
@@ -582,5 +580,4 @@ void CloudComponent::buildCluster(
 	}
 }
 
-	}
 }

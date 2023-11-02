@@ -11,10 +11,8 @@
 #include "World/WorldBuildContext.h"
 #include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudRenderer", CloudRenderer, world::IEntityRenderer)
 
@@ -69,5 +67,4 @@ void CloudRenderer::build(
 {
 }
 
-	}
 }

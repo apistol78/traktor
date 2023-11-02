@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class T_DLLCLASS CloudParticleData : public ISerializable
 {
@@ -73,6 +71,4 @@ private:
 	float m_noiseScale;
 };
 
-	}
 }
-

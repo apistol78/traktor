@@ -11,12 +11,10 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Random.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
+	namespace
 	{
-		namespace
-		{
 
 float noise(int x, int y)
 {
@@ -65,7 +63,7 @@ float interpolateNoise(float x, float y)
 	return interpolate(i[0], i[1], fy);
 }
 
-		}
+	}
 
 bool CloudParticleCluster::create(const CloudParticleData& particleData)
 {
@@ -123,5 +121,4 @@ const AlignedVector< CloudParticle >& CloudParticleCluster::getParticles() const
 	return m_particles;
 }
 
-	}
 }

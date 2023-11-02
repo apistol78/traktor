@@ -10,10 +10,8 @@
 
 #include "Core/Math/Vector4.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 struct CloudParticle
 {
@@ -27,6 +25,4 @@ struct CloudParticle
 	int sprite;
 };
 
-	}
 }
-

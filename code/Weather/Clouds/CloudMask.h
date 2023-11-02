@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 class T_DLLCLASS CloudMask : public Object
 {
@@ -31,14 +29,8 @@ class T_DLLCLASS CloudMask : public Object
 public:
 	struct Sample
 	{
-		Sample()
-		:	opacity(255)
-		,	size(255)
-		{
-		}
-
-		uint8_t opacity;
-		uint8_t size;
+		uint8_t opacity = 255;
+		uint8_t size = 255;
 	};
 
 	CloudMask(int32_t size);
@@ -54,6 +46,4 @@ private:
 	AutoArrayPtr< Sample > m_data;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #include "Weather/Clouds/CloudMask.h"
 #include "Weather/Clouds/CloudMaskResource.h"
 
-namespace traktor
+namespace traktor::weather
 {
-	namespace weather
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudComponentData", 0, CloudComponentData, world::IEntityComponentData)
 
@@ -98,5 +96,4 @@ void CloudComponentData::serialize(ISerializer& s)
 	s >> MemberComposite< CloudParticleData >(L"particleData", m_particleData);
 }
 
-	}
 }
