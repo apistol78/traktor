@@ -585,7 +585,7 @@ bool BakePipelineOperator::build(
 				}
 
 				// Include in bake.
-				auto componentDatas = inoutEntityData->getComponents();
+				const auto& componentDatas = inoutEntityData->getComponents();
 				for (auto componentData : componentDatas)
 				{
 					if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())

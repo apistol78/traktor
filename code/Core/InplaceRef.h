@@ -91,7 +91,7 @@ public:
 		return *this;
 	}
 
-	const InplaceRef& operator = (const InplaceRef&& ref) const
+	const InplaceRef& operator = (const InplaceRef&& ref) const noexcept
 	{
 		T_SAFE_ADDREF(ref.m_ref);
 		T_SAFE_RELEASE(m_ref);
