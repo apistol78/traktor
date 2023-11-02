@@ -63,6 +63,9 @@ public:
 	/*! Set pixel value at direction. */
 	void set(const Vector4& direction, const Color4f& value);
 
+	/*! */
+	void set(int32_t side, int32_t x, int32_t y, const Color4f& value);
+
 	/*! Get pixel value from direction. */
 	Color4f get(const Vector4& direction) const;
 

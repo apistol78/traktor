@@ -211,7 +211,7 @@ void addSky(
 	const uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(skyComponentData);
 
 	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
-		Key(0x00000001, 0x00000000, 0x00000000, textureAssetHash),
+		Key(0x00000003, 0x00000000, 0x00000000, textureAssetHash),
 		[&]() -> Ref< IblProbe > {
 			// Read sky image from texture asset.
 			Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + textureAsset->getFileName());
@@ -287,7 +287,7 @@ void addSky(
 							{
 								const Vector2 uv = Quasirandom::hammersley(i, 5000, random);
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
-								direction = lerp(d, direction, 0.125_simd).normalized();
+								//direction = lerp(d, direction, 0.125_simd).normalized();
 								Scalar weight = dot3(d, direction);
 
 								// Reduce sun influence.
@@ -302,7 +302,7 @@ void addSky(
 							}
 							cl /= totalWeight;
 							cl = max(cl, Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-							radianceCube->set(d, cl);
+							radianceCube->set(side, x, y, cl);
 						}
 					}
 				});
