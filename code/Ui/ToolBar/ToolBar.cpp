@@ -228,7 +228,8 @@ void ToolBar::eventButtonDown(MouseButtonDownEvent* event)
 	if (item && item->isEnable())
 	{
 		item->buttonDown(this, event);
-		update();
+		if (getIWidget() != nullptr)
+			update();
 	}
 }
 
@@ -241,7 +242,8 @@ void ToolBar::eventButtonUp(MouseButtonUpEvent* event)
 	if (item && item->isEnable())
 	{
 		item->buttonUp(this, event);
-		update();
+		if (getIWidget() != nullptr)
+			update();
 	}
 }
 

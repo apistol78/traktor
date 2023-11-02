@@ -1484,8 +1484,8 @@
 			<id>{C5278F12-9034-F84D-8974-04A4408377A8}</id>
 			<comment/>
 			<position>
-				<first>1109</first>
-				<second>2495</second>
+				<first>1133</first>
+				<second>2684</second>
 			</position>
 			<fragmentGuid>{1FD0C0E9-281E-4986-9AA4-A81B8E407804}</fragmentGuid>
 			<inputPins>
@@ -1507,8 +1507,8 @@
 			<id>{8D5746D4-84C2-4149-ABD9-1F28003CBFB2}</id>
 			<comment/>
 			<position>
-				<first>1397</first>
-				<second>2491</second>
+				<first>1421</first>
+				<second>2680</second>
 			</position>
 			<technique>Slice</technique>
 			<priority>
@@ -1554,8 +1554,8 @@
 			<id>{659FFD6C-8AB8-FC41-9F9C-F79A940C6FDE}</id>
 			<comment/>
 			<position>
-				<first>-183</first>
-				<second>2484</second>
+				<first>-159</first>
+				<second>2673</second>
 			</position>
 			<swizzle>xxx</swizzle>
 		</item>
@@ -1563,8 +1563,8 @@
 			<id>{1690D9E4-09E7-8C41-B783-F7CD7D40A4C0}</id>
 			<comment/>
 			<position>
-				<first>-380</first>
-				<second>2466</second>
+				<first>-356</first>
+				<second>2655</second>
 			</position>
 			<name>DebugValue</name>
 		</item>
@@ -1572,22 +1572,23 @@
 			<id>{5DCE99C0-B494-B048-A4BE-3F8C97C52389}</id>
 			<comment/>
 			<position>
-				<first>-255</first>
-				<second>2542</second>
+				<first>-231</first>
+				<second>2731</second>
 			</position>
 			<parameterName>Scene_DebugSlicePositions</parameterName>
 			<type>Vector</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{77605B4A-6F66-1346-92B2-74B1FC87EC86}</id>
 			<comment/>
 			<position>
-				<first>-4</first>
-				<second>2493</second>
+				<first>20</first>
+				<second>2682</second>
 			</position>
 			<name>GetSlice</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{1DF0A7F6-939F-4341-B9FA-5E76341B831F}</id>
@@ -1625,16 +1626,16 @@ else
 			<id>{8068FA17-483E-4040-9F93-0667AB67B99A}</id>
 			<comment/>
 			<position>
-				<first>412</first>
-				<second>2541</second>
+				<first>436</first>
+				<second>2730</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{2222F38D-178F-9B48-99D5-29853EA2653B}</id>
 			<comment/>
 			<position>
-				<first>111</first>
-				<second>2612</second>
+				<first>135</first>
+				<second>2801</second>
 			</position>
 			<value>3</value>
 		</item>
@@ -1642,8 +1643,8 @@ else
 			<id>{C2A5336A-A05E-9348-93C3-B27C529C521A}</id>
 			<comment/>
 			<position>
-				<first>643</first>
-				<second>2353</second>
+				<first>667</first>
+				<second>2542</second>
 			</position>
 			<external>{A491F0C6-4056-054C-A7B9-53E0B343A95F}</external>
 			<type>Texture2D</type>
@@ -1652,8 +1653,8 @@ else
 			<id>{975F41D1-4095-074F-86A5-6445682C1378}</id>
 			<comment/>
 			<position>
-				<first>681</first>
-				<second>2526</second>
+				<first>705</first>
+				<second>2715</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
@@ -1661,8 +1662,8 @@ else
 			<id>{332E2A29-FCBC-1747-AFD9-38FD47A44246}</id>
 			<comment/>
 			<position>
-				<first>823</first>
-				<second>2449</second>
+				<first>847</first>
+				<second>2638</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -1675,7 +1676,7 @@ else
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{48B27A46-DDD9-1148-BCEE-697C1DB12A87}</id>
 			<comment/>
 			<position>
@@ -1684,6 +1685,7 @@ else
 			</position>
 			<name>Validate</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
@@ -1707,7 +1709,7 @@ else
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{E211D884-E7DC-3C46-9092-6F222ACDF538}</id>
 			<comment/>
 			<position>
@@ -1716,6 +1718,7 @@ else
 			</position>
 			<name>Validate</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
@@ -1739,7 +1742,7 @@ else
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{17CFCA98-0EE5-6144-8C68-3BA1B5FDE518}</id>
 			<comment/>
 			<position>
@@ -1748,6 +1751,7 @@ else
 			</position>
 			<name>Validate</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
@@ -1788,7 +1792,7 @@ else
 			</position>
 			<value>2</value>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{44C8ED1E-D756-4F24-AB8E-69C7437851C3}</id>
 			<comment/>
 			<position>
@@ -1797,6 +1801,7 @@ else
 			</position>
 			<name>Validate</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
@@ -1869,6 +1874,127 @@ else
 				<second>3330</second>
 			</position>
 			<technique>DBufferRoughness</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>Never</cullMode>
+			<blendEnable>true</blendEnable>
+			<blendColorOperation>BoAdd</blendColorOperation>
+			<blendColorSource>BfSourceAlpha</blendColorSource>
+			<blendColorDestination>BfOneMinusSourceAlpha</blendColorDestination>
+			<blendAlphaOperation>BoAdd</blendAlphaOperation>
+			<blendAlphaSource>BfOne</blendAlphaSource>
+			<blendAlphaDestination>BfOne</blendAlphaDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+			<precisionHint>Undefined</precisionHint>
+		</item>
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+			<id>{3ABAE4AE-096C-3F4D-B22C-2542BD3BAB3A}</id>
+			<comment/>
+			<position>
+				<first>733</first>
+				<second>2300</second>
+			</position>
+			<name>Validate</name>
+			<technique/>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
+					<name>Input</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{0C2174A7-5B9D-864E-ACE0-30AB71A5F2F4}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+const float v = $Input;
+if (v >= 0.0f && v <= 1.0f)
+	$Output = vec4(v, v, v, 1.0f);
+else
+	$Output = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{BD8596C5-A03F-E44C-B199-407C88DA2A8F}</id>
+			<comment/>
+			<position>
+				<first>990</first>
+				<second>2311</second>
+			</position>
+			<fragmentGuid>{1FD0C0E9-281E-4986-9AA4-A81B8E407804}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
+					<name>DebugValue</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{4C1806FA-EA34-4D16-8397-709989F7E0E4}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{759B4DA4-BFF3-1441-B5DC-0CA36EAAE1AF}</id>
+			<comment/>
+			<position>
+				<first>323</first>
+				<second>2312</second>
+			</position>
+			<name>DebugValue</name>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{8207450C-42B2-4D41-9B56-E1F6033CBE6C}</id>
+			<comment/>
+			<position>
+				<first>517</first>
+				<second>2324</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
+			<id>{977A06AF-A7FE-8E4B-83E7-5253558F7C04}</id>
+			<comment/>
+			<position>
+				<first>1262</first>
+				<second>2318</second>
+			</position>
+			<technique>Occlusion</technique>
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
@@ -2847,6 +2973,46 @@ else
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[102]"/>
+				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[108]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[109]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[107]"/>
+				<id>{4C1806FA-EA34-4D16-8397-709989F7E0E4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[110]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[109]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<id>{EF5A799F-8433-844A-9C95-8BE41E5A1A2F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[106]"/>
+				<id>{0C2174A7-5B9D-864E-ACE0-30AB71A5F2F4}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[107]"/>
 				<id>{30CE9745-14D3-4AA1-A4A2-ED7F9F952934}</id>
 			</destination>
 		</item>
