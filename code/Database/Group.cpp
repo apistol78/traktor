@@ -77,6 +77,7 @@ bool Group::remove()
 	if (!m_providerGroup->remove())
 		return false;
 
+	m_parent->internalRemoveGroup(this);
 	internalDestroy();
 	return true;
 }
@@ -320,6 +321,12 @@ bool Group::internalAddExtInstance(const Guid& instanceGuid)
 	}
 
 	return false;
+}
+
+void Group::internalRemoveGroup(Group* childGroup)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_childGroups.remove(childGroup);
 }
 
 void Group::instanceEventCreated(Instance* instance)
