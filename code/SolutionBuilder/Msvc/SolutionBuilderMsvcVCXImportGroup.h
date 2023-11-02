@@ -11,10 +11,8 @@
 #include "Core/RefArray.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportCommon.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class SolutionBuilderMsvcVCXImportGroup : public SolutionBuilderMsvcVCXImportCommon
 {
@@ -37,6 +35,4 @@ private:
 	RefArray< SolutionBuilderMsvcVCXImportCommon > m_imports;
 };
 
-	}
 }
-

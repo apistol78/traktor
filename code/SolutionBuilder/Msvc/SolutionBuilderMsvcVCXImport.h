@@ -10,10 +10,8 @@
 
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXImportCommon.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class SolutionBuilderMsvcVCXImport : public SolutionBuilderMsvcVCXImportCommon
 {
@@ -38,6 +36,4 @@ private:
 	std::wstring m_condition;
 };
 
-	}
 }
-

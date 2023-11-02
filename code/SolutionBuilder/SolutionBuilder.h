@@ -36,7 +36,7 @@ class T_DLLCLASS SolutionBuilder : public Object
 public:
 	virtual bool create(const CommandLine& cmdLine) = 0;
 
-	virtual bool generate(Solution* solution) = 0;
+	virtual bool generate(const Solution* solution) = 0;
 
 	virtual void showOptions() const = 0;
 };

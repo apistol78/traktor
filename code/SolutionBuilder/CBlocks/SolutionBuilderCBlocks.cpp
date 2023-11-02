@@ -22,10 +22,6 @@ namespace traktor::sb
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sb.SolutionBuilderCBlocks", SolutionBuilderCBlocks, SolutionBuilder)
 
-SolutionBuilderCBlocks::SolutionBuilderCBlocks()
-{
-}
-
 SolutionBuilderCBlocks::~SolutionBuilderCBlocks()
 {
 	safeDestroy(m_scriptProcessor);
@@ -45,7 +41,7 @@ bool SolutionBuilderCBlocks::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderCBlocks::generate(Solution* solution)
+bool SolutionBuilderCBlocks::generate(const Solution* solution)
 {
 	// Create root path.
 	if (!FileSystem::getInstance().makeAllDirectories(solution->getRootPath()))

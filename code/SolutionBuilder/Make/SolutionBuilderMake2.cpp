@@ -42,7 +42,7 @@ bool SolutionBuilderMake2::create(const CommandLine& cmdLine)
 	return true;
 }
 
-bool SolutionBuilderMake2::generate(Solution* solution)
+bool SolutionBuilderMake2::generate(const Solution* solution)
 {
 	AlignedVector< uint8_t > buf;
 	Timer timer;

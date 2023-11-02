@@ -12,10 +12,8 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcSettings.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcSettings", 0, SolutionBuilderMsvcSettings, ISerializable)
 
@@ -26,5 +24,4 @@ void SolutionBuilderMsvcSettings::serialize(ISerializer& s)
 	s >> MemberRef< SolutionBuilderMsvcVCXProj >(L"project", m_project);
 }
 
-	}
 }

@@ -37,19 +37,17 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
+	namespace
 	{
-		namespace
-		{
 
 std::wstring systemPath(const Path& path)
 {
 	return replaceAll(path.getPathName(), L'/', L'\\');
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 9, SolutionBuilderMsvcVCXProj, ISerializable)
 
@@ -73,8 +71,8 @@ std::wstring SolutionBuilderMsvcVCXProj::getPlatform() const
 
 bool SolutionBuilderMsvcVCXProj::getInformation(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project,
+	const Solution* solution,
+	const Project* project,
 	std::wstring& outSolutionPath,
 	std::wstring& outProjectPath,
 	std::wstring& outProjectFileName,
@@ -90,8 +88,8 @@ bool SolutionBuilderMsvcVCXProj::getInformation(
 
 bool SolutionBuilderMsvcVCXProj::generate(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project
+	const Solution* solution,
+	const Project* project
 ) const
 {
 	if (!generateProject(context, solution, project))
@@ -162,8 +160,8 @@ void SolutionBuilderMsvcVCXProj::serialize(ISerializer& s)
 
 bool SolutionBuilderMsvcVCXProj::generateProject(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project
+	const Solution* solution,
+	const Project* project
 ) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
@@ -478,8 +476,8 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 bool SolutionBuilderMsvcVCXProj::generateFilters(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project
+	const Solution* solution,
+	const Project* project
 ) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
@@ -591,8 +589,8 @@ bool SolutionBuilderMsvcVCXProj::generateFilters(
 
 bool SolutionBuilderMsvcVCXProj::generateUser(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project
+	const Solution* solution,
+	const Project* project
 ) const
 {
 	std::wstring solutionPath, projectPath, projectFileName, projectGuid;
@@ -680,13 +678,13 @@ bool SolutionBuilderMsvcVCXProj::generateUser(
 }
 
 bool SolutionBuilderMsvcVCXProj::collectFiles(
-	Project* project,
-	ProjectItem* item,
+	const Project* project,
+	const ProjectItem* item,
 	const std::wstring& filterPath,
 	std::vector< std::pair< std::wstring, Path > >& outFiles
 ) const
 {
-	Ref< Filter > filter = dynamic_type_cast< Filter* >(item);
+	Ref< const Filter > filter = dynamic_type_cast<const Filter* >(item);
 	if (filter)
 	{
 		std::wstring childFilterPath;
@@ -705,7 +703,7 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 			);
 	}
 
-	Ref< sb::File > file = dynamic_type_cast< sb::File* >(item);
+	Ref< const sb::File > file = dynamic_type_cast< const sb::File* >(item);
 	if (file)
 	{
 		std::set< Path > systemFiles;
@@ -719,8 +717,8 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 
 void SolutionBuilderMsvcVCXProj::findDefinitions(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project,
+	const Solution* solution,
+	const Project* project,
 	const RefArray< ProjectItem >& items
 ) const
 {
@@ -749,5 +747,4 @@ void SolutionBuilderMsvcVCXProj::findDefinitions(
 	}
 }
 
-	}
 }

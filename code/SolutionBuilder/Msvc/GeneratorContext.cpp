@@ -11,10 +11,8 @@
 #include "Core/Misc/MD5.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 GeneratorContext::GeneratorContext(bool includeExternal)
 :	m_includeExternal(includeExternal)
@@ -110,5 +108,4 @@ std::wstring GeneratorContext::generateGUID(const std::wstring& key) const
 	return ss.str();
 }
 
-	}
 }

@@ -12,10 +12,8 @@
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 class GeneratorContext;
 class Solution;
@@ -68,6 +66,4 @@ private:
 	) const;
 };
 
-	}
 }
-

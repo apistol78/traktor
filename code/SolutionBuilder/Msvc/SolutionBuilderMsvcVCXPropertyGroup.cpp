@@ -10,10 +10,8 @@
 #include "Core/Serialization/MemberStl.h"
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXPropertyGroup.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXPropertyGroup", 1, SolutionBuilderMsvcVCXPropertyGroup, ISerializable)
 
@@ -46,5 +44,4 @@ void SolutionBuilderMsvcVCXPropertyGroup::serialize(ISerializer& s)
 	s >> MemberStlMap< std::wstring, std::wstring >(L"values", m_values);
 }
 
-	}
 }

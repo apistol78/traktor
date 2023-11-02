@@ -15,17 +15,15 @@
 #include "SolutionBuilder/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
 #include "SolutionBuilder/Msvc/GeneratorContext.h"
 
-namespace traktor
+namespace traktor::sb
 {
-	namespace sb
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXCustomBuildTool", 0, SolutionBuilderMsvcVCXCustomBuildTool, SolutionBuilderMsvcVCXBuildTool)
 
 bool SolutionBuilderMsvcVCXCustomBuildTool::generateProject(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project,
+	const Solution* solution,
+	const Project* project,
 	const std::wstring& filter,
 	const Path& fileName,
 	OutputStream& os
@@ -55,5 +53,4 @@ void SolutionBuilderMsvcVCXCustomBuildTool::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"outputs", m_outputs);
 }
 
-	}
 }

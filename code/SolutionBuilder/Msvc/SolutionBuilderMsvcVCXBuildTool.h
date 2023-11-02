@@ -15,8 +15,10 @@ namespace traktor
 
 class Path;
 
-	namespace sb
-	{
+}
+
+namespace traktor::sb
+{
 
 class GeneratorContext;
 class Solution;
@@ -29,8 +31,8 @@ class SolutionBuilderMsvcVCXBuildTool : public ISerializable
 public:
 	virtual bool generateProject(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
+		const Solution* solution,
+		const Project* project,
 		const std::wstring& filter,
 		const Path& fileName,
 		OutputStream& os
@@ -38,8 +40,8 @@ public:
 
 	virtual bool generateFilter(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
+		const Solution* solution,
+		const Project* project,
 		const std::wstring& filter,
 		const Path& fileName,
 		OutputStream& os
@@ -52,6 +54,4 @@ protected:
 	std::wstring m_fileType;
 };
 
-	}
 }
-
