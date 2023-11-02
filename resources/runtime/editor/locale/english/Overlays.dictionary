@@ -10,6 +10,10 @@
 			<second>Normals (decals)</second>
 		</item>
 		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_DBUFFERROUGHNESSOVERLAY</first>
+			<second>Roughness (decals)</second>
+		</item>		
+		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_AMBIENTOCCLUSIONOVERLAY</first>
 			<second>Ambient Occlusion</second>
 		</item>
@@ -40,6 +44,10 @@
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_GBUFFERSPECULAROVERLAY</first>
 			<second>Specular</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_GBUFFERSKYOCCLUSIONOVERLAY</first>
+			<second>Sky occlusion</second>
 		</item>
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_REFLECTIONSOVERLAY</first>

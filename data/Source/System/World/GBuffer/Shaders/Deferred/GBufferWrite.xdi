@@ -254,19 +254,6 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>1</defaultValue>
 		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{9683DC6F-70FC-415A-9DDC-1B2F2F71F954}</id>
-			<comment>
-			<![CDATA[
-Ensure only RGB is written.
-			]]>
-			</comment>
-			<position>
-				<first>789</first>
-				<second>559</second>
-			</position>
-			<swizzle>xyz</swizzle>
-		</item>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{7F94F69A-4243-4617-921D-F6FF7FC71D16}</id>
 			<comment/>
@@ -464,18 +451,8 @@ Ensure only RGB is written.
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
