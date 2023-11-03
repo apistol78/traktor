@@ -142,7 +142,7 @@ private:
 
 	void eventInstanceRenamed(ui::TreeViewContentChangeEvent* event);
 
-	void eventInstanceDrag(ui::TreeViewDragEvent* event);
+	void eventInstanceDrag(ui::DragEvent* event);
 
 	void eventInstancePreviewActivate(ui::MouseDoubleClickEvent* event);
 };

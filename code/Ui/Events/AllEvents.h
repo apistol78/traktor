@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Ui/Events/ChildEvent.h"
 #include "Ui/Events/CloseEvent.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/DragEvent.h"
 #include "Ui/Events/FileDropEvent.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/KeyDownEvent.h"

@@ -50,10 +50,16 @@ public:
 private:
 	Ref< PreviewItems > m_items;
 	bool m_single = true;
+	int32_t m_dragMode = 0;
+	Point m_dragOriginPosition;
 
 	virtual void layoutCells(const Rect& rc) override final;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
+
+	void eventButtonUp(MouseButtonUpEvent* event);
+
+	void eventMouseMove(MouseMoveEvent* event);
 };
 
 }
