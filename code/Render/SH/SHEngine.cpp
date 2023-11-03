@@ -59,7 +59,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 			m_samplePoints[o].theta = theta;
 			m_samplePoints[o].coefficients.resize(m_coefficientCount);
 
-			for (int32_t l = 0; l < m_bandCount; ++l)
+			for (int32_t l = 0; l < (int32_t)m_bandCount; ++l)
 			{
 				for (int32_t m = -l; m <= l; ++m)
 				{

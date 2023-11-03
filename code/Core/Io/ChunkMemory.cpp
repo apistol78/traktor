@@ -67,7 +67,7 @@ ChunkMemory::Chunk ChunkMemory::getChunk(size_t position) const
 	uint8_t* head = m_chunks[index];
 	T_FATAL_ASSERT(head != nullptr);
 
-	Chunk chunk;
+	Chunk chunk = {};
 	chunk.head = head;
 	chunk.ptr = head + offset;
 	chunk.size = std::min< size_t >(c_chunkSize, m_size - position);

@@ -94,21 +94,6 @@ public:
 		while (get(dummy));
 	}
 
-	bool empty() const
-	{
-		const Node* currentHead = m_head.load();
-		const Node* nextNode = currentHead->next.load();
-		return nextNode == nullptr;
-	}
-
-	size_t size() const
-	{
-		size_t count = 0;
-		for (const Node* current = m_head.load()->next.load(); current != nullptr; current = current->next.load())
-			count++;
-		return count;
-	}
-
 private:
 	struct Node
 	{

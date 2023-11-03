@@ -54,7 +54,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_bandCount;
+	int32_t m_bandCount = 0;
 	AlignedVector< Vector4 > m_data;
 };
 
