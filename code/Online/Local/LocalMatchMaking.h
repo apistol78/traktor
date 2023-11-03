@@ -11,10 +11,8 @@
 #include <map>
 #include "Online/Provider/IMatchMakingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LocalMatchMaking : public IMatchMakingProvider
 {
@@ -83,6 +81,4 @@ private:
 	std::map< std::wstring, std::wstring > m_lobbyMeta;
 };
 
-	}
 }
-

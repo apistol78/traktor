@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class IConnection;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LocalAchievements;
 class LocalLeaderboards;
@@ -103,6 +101,4 @@ private:
 	Ref< LocalVideoSharing > m_videoSharing;
 };
 
-	}
 }
-

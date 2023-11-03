@@ -10,10 +10,8 @@
 
 #include "Online/Provider/IVideoSharingProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LocalVideoSharing : public IVideoSharingProvider
 {
@@ -27,6 +25,4 @@ public:
 	virtual bool showShareUI() override final;
 };
 
-	}
 }
-

@@ -20,10 +20,8 @@
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.LocalSessionManager", 0, LocalSessionManager, ISessionManagerProvider)
 
@@ -149,17 +147,17 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 
 void LocalSessionManager::destroy()
 {
-	m_user = 0;
-	m_statistics = 0;
-	m_saveData = 0;
-	m_matchMaking = 0;
-	m_leaderboards = 0;
-	m_achievements = 0;
+	m_user = nullptr;
+	m_statistics = nullptr;
+	m_saveData = nullptr;
+	m_matchMaking = nullptr;
+	m_leaderboards = nullptr;
+	m_achievements = nullptr;
 
 	if (m_db)
 	{
 		m_db->disconnect();
-		m_db = 0;
+		m_db = nullptr;
 	}
 }
 
@@ -277,8 +275,7 @@ IVideoSharingProvider* LocalSessionManager::getVideoSharing() const
 
 IVoiceChatProvider* LocalSessionManager::getVoiceChat() const
 {
-	return 0;
+	return nullptr;
 }
 
-	}
 }

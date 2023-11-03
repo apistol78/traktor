@@ -10,10 +10,8 @@
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalStatistics", LocalStatistics, IStatisticsProvider)
 
@@ -49,5 +47,4 @@ bool LocalStatistics::set(const std::wstring& statId, int32_t value)
 		return false;
 }
 
-	}
 }

@@ -10,10 +10,8 @@
 
 #include "Online/Provider/IUserProvider.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LocalUser : public IUserProvider
 {
@@ -45,6 +43,4 @@ public:
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable) override final;
 };
 
-	}
 }
-

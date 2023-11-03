@@ -10,10 +10,8 @@
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalAchievements", LocalAchievements, IAchievementsProvider)
 
@@ -49,5 +47,4 @@ bool LocalAchievements::set(const std::wstring& achievementId, bool reward)
 		return false;
 }
 
-	}
 }

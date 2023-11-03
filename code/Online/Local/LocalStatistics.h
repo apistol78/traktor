@@ -11,24 +11,22 @@
 #include "Core/Ref.h"
 #include "Online/Provider/IStatisticsProvider.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class IConnection;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LocalStatistics : public IStatisticsProvider
 {
 	T_RTTI_CLASS;
 
 public:
-	LocalStatistics(sql::IConnection* db);
+	explicit LocalStatistics(sql::IConnection* db);
 
 	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats) override final;
 
@@ -38,6 +36,4 @@ private:
 	Ref< sql::IConnection > m_db;
 };
 
-	}
 }
-

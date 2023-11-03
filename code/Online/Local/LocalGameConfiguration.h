@@ -12,10 +12,8 @@
 #include <string>
 #include "Online/IGameConfiguration.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class LocalGameConfiguration : public IGameConfiguration
 {
@@ -34,6 +32,4 @@ private:
 	std::list< std::wstring > m_dlcIds;
 };
 
-	}
 }
-

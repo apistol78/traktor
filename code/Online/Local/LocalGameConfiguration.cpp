@@ -11,10 +11,8 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Online/Local/LocalGameConfiguration.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.LocalGameConfiguration", 1, LocalGameConfiguration, IGameConfiguration)
 
@@ -29,5 +27,4 @@ void LocalGameConfiguration::serialize(ISerializer& s)
 		s >> MemberStlList< std::wstring >(L"dlcIds", m_dlcIds);
 }
 
-	}
 }

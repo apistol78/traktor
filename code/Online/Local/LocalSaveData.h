@@ -10,24 +10,22 @@
 
 #include "Online/Provider/ISaveDataProvider.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class IConnection;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LocalSaveData : public ISaveDataProvider
 {
 	T_RTTI_CLASS;
 
 public:
-	LocalSaveData(sql::IConnection* db);
+	explicit LocalSaveData(sql::IConnection* db);
 
 	virtual bool enumerate(std::set< std::wstring >& outSaveDataIds) override final;
 
@@ -41,6 +39,4 @@ private:
 	Ref< sql::IConnection > m_db;
 };
 
-	}
 }
-
