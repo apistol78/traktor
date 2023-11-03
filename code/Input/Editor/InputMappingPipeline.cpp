@@ -17,10 +17,8 @@
 #include "Input/Editor/InputMappingAsset.h"
 #include "Input/Editor/InputMappingPipeline.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingPipeline", 0, InputMappingPipeline, editor::IPipeline)
 
@@ -170,5 +168,4 @@ Ref< ISerializable > InputMappingPipeline::buildProduct(
 	);
 }
 
-	}
 }

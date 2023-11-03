@@ -10,10 +10,8 @@
 #include "Input/Binding/InHysteresis.h"
 #include "Input/Editor/InHysteresisTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InHysteresisTraits::getHeader(const IInputNode* node) const
 {
@@ -48,8 +46,7 @@ void InHysteresisTraits::connectInputNode(IInputNode* node, const std::wstring& 
 void InHysteresisTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InHysteresis* inHysteresis = checked_type_cast< InHysteresis*, false >(node);
-	inHysteresis->m_source = 0;
+	inHysteresis->m_source = nullptr;
 }
 
-	}
 }

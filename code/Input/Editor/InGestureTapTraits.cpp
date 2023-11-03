@@ -9,10 +9,8 @@
 #include "Input/Binding/InGestureTap.h"
 #include "Input/Editor/InGestureTapTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InGestureTapTraits::getHeader(const IInputNode* node) const
 {
@@ -58,16 +56,15 @@ void InGestureTapTraits::disconnectInputNode(IInputNode* node, const std::wstrin
 {
 	InGestureTap* inGestureTap = checked_type_cast< InGestureTap*, false >(node);
 	if (inputName == L"Active")
-		inGestureTap->m_sourceActive = 0;
+		inGestureTap->m_sourceActive = nullptr;
 	else if (inputName == L"X")
-		inGestureTap->m_sourceX = 0;
+		inGestureTap->m_sourceX = nullptr;
 	else if (inputName == L"Y")
-		inGestureTap->m_sourceY = 0;
+		inGestureTap->m_sourceY = nullptr;
 	else if (inputName == L"Fixed X")
-		inGestureTap->m_fixedX = 0;
+		inGestureTap->m_fixedX = nullptr;
 	else if (inputName == L"Fixed Y")
-		inGestureTap->m_fixedY = 0;
+		inGestureTap->m_fixedY = nullptr;
 }
 
-	}
 }

@@ -47,7 +47,7 @@ struct CreateEncoding< 4 >
 class CharacterReader
 {
 public:
-	CharacterReader(IStream* stream, const IEncoding* encoding)
+	explicit CharacterReader(IStream* stream, const IEncoding* encoding)
 	:	m_stream(stream)
 	,	m_encoding(encoding)
 	,	m_count(0)
@@ -99,7 +99,7 @@ bool Document::loadFromFile(const std::wstring& filename, const IEncoding* encod
 	if (!file)
 		return false;
 
-	bool result = loadFromStream(file, encoding);
+	const bool result = loadFromStream(file, encoding);
 
 	file->close();
 	return result;
@@ -132,7 +132,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 		case 0:	// Collect text.
 			if (ch == L'<')
 			{
-				std::wstring text = trim(buf);
+				const std::wstring text = trim(buf);
 				if (text.length() && !elm.empty())
 				{
 					elm.front()->addChild(
@@ -156,7 +156,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 				{
 					if (buf[0] != L'/')
 					{
-						bool single = bool(buf[buf.length() - 1] == L'/');
+						const bool single = bool(buf[buf.length() - 1] == L'/');
 						if (single)
 							buf = buf.substr(0, buf.length() - 1);
 
@@ -251,7 +251,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 			{
 				buf = L"";
 				mode = 4;
-				// Fall-throu as this character is part of value.
+				// Fall-through as this character is part of value.
 			}
 
 		case 4:	// Read non-apostrophe value.
@@ -295,7 +295,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 			{
 				if (m_parseComments)
 				{
-					std::wstring text = trim(buf.substr(0, buf.length() - 2));
+					const std::wstring text = trim(buf.substr(0, buf.length() - 2));
 					if (text.length() && !elm.empty())
 					{
 						elm.front()->addChild(
@@ -334,7 +334,7 @@ bool Document::saveAsFile(const std::wstring& filename)
 	if (!file)
 		return false;
 
-	bool result = saveIntoStream(file);
+	const bool result = saveIntoStream(file);
 	file->close();
 
 	return result;

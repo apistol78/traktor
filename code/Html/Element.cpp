@@ -36,19 +36,19 @@ std::wstring Element::getValue() const
 
 bool Element::hasAttribute(const std::wstring& name) const
 {
-	return bool(getAttribute(name) != 0);
+	return bool(getAttribute(name) != nullptr);
 }
 
 void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 {
 	Ref< Attribute > attr = getAttribute(name);
-	if (attr == 0)
+	if (attr == nullptr)
 	{
 		attr = new Attribute(name);
-		attr->m_previous = 0;
+		attr->m_previous = nullptr;
 		attr->m_next = m_firstAttribute;
 
-		if (m_firstAttribute != 0)
+		if (m_firstAttribute != nullptr)
 			m_firstAttribute->m_previous = attr;
 
 		m_firstAttribute = attr;
@@ -69,7 +69,7 @@ Attribute* Element::getLastAttribute() const
 Attribute* Element::getAttribute(const std::wstring& name) const
 {
 	Ref< Attribute > attr;
-	for (attr = m_firstAttribute; attr != 0; attr = attr->getNext())
+	for (attr = m_firstAttribute; attr != nullptr; attr = attr->getNext())
 	{
 		if (attr->getName() == name)
 			break;
@@ -157,7 +157,7 @@ void Element::toString(OutputStream& os) const
 	}
 	else
 	{
-		bool permitClosed = !bool(
+		const bool permitClosed = !bool(
 			compareIgnoreCase(L"script", m_name) == 0 ||
 			compareIgnoreCase(L"link", m_name) == 0
 		);

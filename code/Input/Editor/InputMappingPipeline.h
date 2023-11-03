@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class T_DLLCLASS InputMappingPipeline : public editor::IPipeline
 {
@@ -66,5 +64,4 @@ public:
 	) const override final;
 };
 
-	}
 }

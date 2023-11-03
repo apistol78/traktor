@@ -12,10 +12,8 @@
 #include <string>
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class IInputNode;
 
@@ -35,6 +33,4 @@ public:
 	virtual void disconnectInputNode(IInputNode* node, const std::wstring& inputName) const = 0;
 };
 
-	}
 }
-

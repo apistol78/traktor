@@ -11,18 +11,14 @@
 #include "Input/Editor/InputMappingEditor.h"
 #include "Input/Editor/InputMappingEditorFactory.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputMappingEditorFactory", 0, InputMappingEditorFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet InputMappingEditorFactory::getEditableTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< InputMappingAsset >();
-	return typeSet;
+	return makeTypeInfoSet< InputMappingAsset >();
 }
 
 bool InputMappingEditorFactory::needOutputResources(const TypeInfo& typeInfo, std::set< Guid >& outDependencies) const
@@ -44,5 +40,4 @@ Ref< ISerializable > InputMappingEditorFactory::cloneAsset(const ISerializable* 
 	return DeepClone(asset).create();
 }
 
-	}
 }

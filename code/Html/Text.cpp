@@ -23,20 +23,20 @@ std::wstring decodeCharacterEntities(const std::wstring& text)
 
 	for (;;)
 	{
-		size_t nccs = text.find(L'&', offset);
+		const size_t nccs = text.find(L'&', offset);
 		if (nccs == text.npos)
 			break;
 
-		size_t ncce = text.find(L';', nccs);
+		const size_t ncce = text.find(L';', nccs);
 		if (ncce == text.npos)
 			break;
 
 		ss << text.substr(offset, nccs - offset);
 
-		std::wstring code = toLower(text.substr(nccs + 1, ncce - nccs - 1));
+		const std::wstring code = toLower(text.substr(nccs + 1, ncce - nccs - 1));
 		if (code[0] == L'#')
 		{
-			int32_t cc = parseString< int32_t >(code.substr(1));
+			const int32_t cc = parseString< int32_t >(code.substr(1));
 			if (cc > 0 && cc <= std::numeric_limits< wchar_t >::max())
 				ss << wchar_t(cc);
 		}

@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::hf
 {
-	namespace hf
-	{
 
 /*!
  * \ingroup Heightfield
@@ -43,6 +41,5 @@ private:
 	Vector4 m_worldExtent = Vector4::zero();
 };
 
-	}
 }
 

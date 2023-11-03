@@ -10,10 +10,8 @@
 #include "Input/Binding/InClamp.h"
 #include "Input/Editor/InClampTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InClampTraits::getHeader(const IInputNode* node) const
 {
@@ -46,8 +44,7 @@ void InClampTraits::connectInputNode(IInputNode* node, const std::wstring& input
 void InClampTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InClamp* inClamp = checked_type_cast< InClamp*, false >(node);
-	inClamp->m_source = 0;
+	inClamp->m_source = nullptr;
 }
 
-	}
 }

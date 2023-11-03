@@ -10,10 +10,8 @@
 #include "Input/Binding/InLowPass.h"
 #include "Input/Editor/InLowPassTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InLowPassTraits::getHeader(const IInputNode* node) const
 {
@@ -50,10 +48,9 @@ void InLowPassTraits::disconnectInputNode(IInputNode* node, const std::wstring& 
 {
 	InLowPass* ilp = checked_type_cast< InLowPass*, false >(node);
 	if (inputName == L"Input")
-		ilp->m_source = 0;
+		ilp->m_source = nullptr;
 	else
-		ilp->m_coeff = 0;
+		ilp->m_coeff = nullptr;
 }
 
-	}
 }

@@ -19,20 +19,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ContentChangeEvent;
 class ContentChangingEvent;
@@ -50,10 +48,10 @@ class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace input
-	{
+namespace traktor::input
+{
 
 class InputMappingAsset;
 class InputNodeTraits;
@@ -112,6 +110,4 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-
