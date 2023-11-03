@@ -468,7 +468,7 @@ void TreeViewItem::mouseUp(MouseButtonUpEvent* event, const Point& position)
 		if (!m_view->getInnerRect().inside(event->getPosition()))
 		{
 			Point position = m_view->clientToScreen(event->getPosition());
-			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrop, position);
+			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::Moment::Drop, position);
 			m_view->raiseEvent(&dragEvent);
 		}
 	}
@@ -506,7 +506,7 @@ void TreeViewItem::mouseMove(MouseMoveEvent* event, const Point& position)
 
 		if (m_dragMode == 1)
 		{
-			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::DmDrag);
+			TreeViewDragEvent dragEvent(m_view, this, TreeViewDragEvent::Moment::Drag);
 			m_view->raiseEvent(&dragEvent);
 			if (!(dragEvent.consumed() && dragEvent.cancelled()))
 				m_dragMode = 2;

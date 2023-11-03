@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "Ui/Events/DragEvent.h"
+#include "Ui/Event.h"
+#include "Ui/Point.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,22 +22,34 @@
 namespace traktor::ui
 {
 
-class TreeViewItem;
-
 /*! Tree view drag event.
  * \ingroup UI
  */
-class T_DLLCLASS TreeViewDragEvent : public DragEvent
+class T_DLLCLASS DragEvent : public Event
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TreeViewDragEvent(EventSubject* sender, TreeViewItem* dragItem, Moment moment, const Point& position = Point(0, 0));
+	enum class Moment
+	{
+		Drag,
+		Drop
+	};
 
-	TreeViewItem* getItem() const;
+	explicit DragEvent(EventSubject* sender, Moment moment, const Point& position = Point(0, 0));
+
+	Moment getMoment() const;
+
+	const Point& getPosition() const;
+
+	void cancel();
+
+	bool cancelled() const;
 
 private:
-	Ref< TreeViewItem > m_dragItem;
+	Moment m_moment;
+	Point m_position;
+	bool m_cancelled;
 };
 
 }

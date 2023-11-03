@@ -404,7 +404,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
-	m_treeDatabase->addEventHandler< ui::TreeViewDragEvent >(this, &DatabaseView::eventInstanceDrag);
+	m_treeDatabase->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
 
 	m_listInstances = new ui::PreviewList();
@@ -412,6 +412,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		return false;
 	m_listInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &DatabaseView::eventInstancePreviewActivate);
+	m_listInstances->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_listInstances->setVisible(false);
 
 	m_menuGroup[0] = new ui::Menu();
@@ -1637,23 +1638,23 @@ void DatabaseView::eventInstanceRenamed(ui::TreeViewContentChangeEvent* event)
 		event->consume();
 }
 
-void DatabaseView::eventInstanceDrag(ui::TreeViewDragEvent* event)
+void DatabaseView::eventInstanceDrag(ui::DragEvent* event)
 {
-	ui::TreeViewItem* dragItem = event->getItem();
+	Ref< db::Instance > instance;
 
-	if (event->getMoment() == ui::TreeViewDragEvent::DmDrag)
+	if (auto treeViewDrag = dynamic_type_cast<ui::TreeViewDragEvent*>(event))
+		instance = treeViewDrag->getItem()->getData< db::Instance >(L"INSTANCE");
+	else
+		instance = m_listInstances->getSelectedItem()->getData< db::Instance >(L"INSTANCE");
+
+	if (!instance)
 	{
-		// Only instance nodes are allowed to be dragged.
-		if (!dragItem->getData< db::Instance >(L"INSTANCE"))
-			event->cancel();
+		event->cancel();
+		return;
 	}
-	else if (event->getMoment() == ui::TreeViewDragEvent::DmDrop)
+
+	if (event->getMoment() == ui::DragEvent::Moment::Drop)
 	{
-		// @fixme Ensure drop target are active editor.
-
-		Ref< db::Instance > instance = dragItem->getData< db::Instance >(L"INSTANCE");
-		T_ASSERT(instance);
-
 		Ref< IEditorPage > editorPage = m_editor->getActiveEditorPage();
 		if (editorPage)
 			editorPage->dropInstance(instance, event->getPosition());

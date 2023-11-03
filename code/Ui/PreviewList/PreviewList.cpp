@@ -34,6 +34,8 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 	m_single = bool((style & WsMultiple) == 0);
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
+	addEventHandler< MouseButtonUpEvent >(this, &PreviewList::eventButtonUp);
+	addEventHandler< MouseMoveEvent >(this, &PreviewList::eventMouseMove);
 	return true;
 }
 
@@ -137,15 +139,20 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 	if (event->getButton() != MbtLeft)
 		return;
 
+	m_dragMode = 0;
+	m_dragOriginPosition = event->getPosition();
+
 	const Point& position = event->getPosition();
 	if (m_items)
 	{
+		// De-select all items first.
 		if (m_single || (event->getKeyState() & (KsShift | KsControl)) == 0)
 		{
 			for (int32_t i = 0; i < m_items->count(); ++i)
 				m_items->get(i)->setSelected(false);
 		}
 
+		// Get item from position.
 		AutoWidgetCell* cell = hitTest(position);
 		if (PreviewItem* item = dynamic_type_cast< PreviewItem* >(cell))
 		{
@@ -153,6 +160,8 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 
 			PreviewSelectionChangeEvent selectionChangeEvent(this, item);
 			raiseEvent(&selectionChangeEvent);
+
+			m_dragMode = 1;
 		}
 		else
 		{
@@ -162,6 +171,34 @@ void PreviewList::eventButtonDown(MouseButtonDownEvent* event)
 	}
 
 	requestUpdate();
+}
+
+void PreviewList::eventButtonUp(MouseButtonUpEvent* event)
+{
+	if (m_dragMode == 2)
+	{
+		const Point position = clientToScreen(event->getPosition());
+		DragEvent dragEvent(this, DragEvent::Moment::Drop, position);
+		raiseEvent(&dragEvent);
+	}
+}
+
+void PreviewList::eventMouseMove(MouseMoveEvent* event)
+{
+	const Size d = event->getPosition() - m_dragOriginPosition;
+	if (abs(d.cx) > pixel(2_ut) || abs(d.cy) > pixel(2_ut))
+	{
+		if (m_dragMode == 1)
+		{
+			DragEvent dragEvent(this, DragEvent::Moment::Drag);
+			raiseEvent(&dragEvent);
+
+			if (!(dragEvent.consumed() && dragEvent.cancelled()))
+				m_dragMode = 2;
+			else
+				m_dragMode = 3;
+		}
+	}
 }
 
 }
