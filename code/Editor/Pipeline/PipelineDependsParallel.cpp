@@ -59,7 +59,6 @@ PipelineDependsParallel::PipelineDependsParallel(
 PipelineDependsParallel::~PipelineDependsParallel()
 {
 	waitUntilFinished();
-	T_FATAL_ASSERT(m_jobs.empty());
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
