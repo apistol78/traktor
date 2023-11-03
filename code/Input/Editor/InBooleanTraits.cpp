@@ -10,10 +10,8 @@
 #include "Input/Binding/InBoolean.h"
 #include "Input/Editor/InBooleanTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InBooleanTraits::getHeader(const IInputNode* node) const
 {
@@ -61,7 +59,7 @@ void InBooleanTraits::connectInputNode(IInputNode* node, const std::wstring& inp
 		inBoolean->m_source.push_back(sourceNode);
 	else
 	{
-		int32_t index = parseString< int32_t >(inputName);
+		const int32_t index = parseString< int32_t >(inputName);
 		if (index >= 0 && index < int32_t(inBoolean->m_source.size()))
 			inBoolean->m_source[index] = sourceNode;
 	}
@@ -70,10 +68,9 @@ void InBooleanTraits::connectInputNode(IInputNode* node, const std::wstring& inp
 void InBooleanTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InBoolean* inBoolean = checked_type_cast< InBoolean*, false >(node);
-	int32_t index = parseString< int32_t >(inputName);
+	const int32_t index = parseString< int32_t >(inputName);
 	if (index >= 0 && index < int32_t(inBoolean->m_source.size()))
 		inBoolean->m_source.erase(inBoolean->m_source.begin() + index);
 }
 
-	}
 }

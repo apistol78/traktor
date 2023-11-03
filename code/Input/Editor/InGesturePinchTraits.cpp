@@ -9,10 +9,8 @@
 #include "Input/Binding/InGesturePinch.h"
 #include "Input/Editor/InGesturePinchTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InGesturePinchTraits::getHeader(const IInputNode* node) const
 {
@@ -69,16 +67,15 @@ void InGesturePinchTraits::disconnectInputNode(IInputNode* node, const std::wstr
 {
 	InGesturePinch* inGesturePinch = checked_type_cast< InGesturePinch*, false >(node);
 	if (inputName == L"Active")
-		inGesturePinch->m_sourceActive = 0;
+		inGesturePinch->m_sourceActive = nullptr;
 	else if (inputName == L"X1")
-		inGesturePinch->m_sourceX1 = 0;
+		inGesturePinch->m_sourceX1 = nullptr;
 	else if (inputName == L"Y1")
-		inGesturePinch->m_sourceY1 = 0;
+		inGesturePinch->m_sourceY1 = nullptr;
 	else if (inputName == L"X2")
-		inGesturePinch->m_sourceX2 = 0;
+		inGesturePinch->m_sourceX2 = nullptr;
 	else if (inputName == L"Y2")
-		inGesturePinch->m_sourceY2 = 0;
+		inGesturePinch->m_sourceY2 = nullptr;
 }
 
-	}
 }

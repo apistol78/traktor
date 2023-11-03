@@ -9,10 +9,8 @@
 #include "Input/Binding/InRemapAxis.h"
 #include "Input/Editor/InRemapAxisTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InRemapAxisTraits::getHeader(const IInputNode* node) const
 {
@@ -44,8 +42,7 @@ void InRemapAxisTraits::connectInputNode(IInputNode* node, const std::wstring& i
 void InRemapAxisTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InRemapAxis* inRemapAxis = checked_type_cast< InRemapAxis*, false >(node);
-	inRemapAxis->m_source = 0;
+	inRemapAxis->m_source = nullptr;
 }
 
-	}
 }

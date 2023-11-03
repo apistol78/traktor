@@ -9,10 +9,8 @@
 #include "Input/Binding/InTrigger.h"
 #include "Input/Editor/InTriggerTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InTriggerTraits::getHeader(const IInputNode* node) const
 {
@@ -44,8 +42,7 @@ void InTriggerTraits::connectInputNode(IInputNode* node, const std::wstring& inp
 void InTriggerTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InTrigger* inTrigger = checked_type_cast< InTrigger*, false >(node);
-	inTrigger->m_source = 0;
+	inTrigger->m_source = nullptr;
 }
 
-	}
 }

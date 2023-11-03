@@ -23,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class IInputNode;
 class InputMappingSourceData;
@@ -78,7 +76,7 @@ private:
 		Ref< const Object > object;
 		Position position;
 
-		ObjectPosition();
+		ObjectPosition() = default;
 
 		ObjectPosition(const Object* object, const Position& position);
 
@@ -92,6 +90,4 @@ private:
 	std::list< Guid > m_dependencies;
 };
 
-	}
 }
-

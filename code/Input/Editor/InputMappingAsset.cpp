@@ -18,12 +18,10 @@
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Editor/InputMappingAsset.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 class MemberPosition : public MemberComplex
 {
@@ -44,7 +42,7 @@ private:
 	InputMappingAsset::Position& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingAsset", 2, InputMappingAsset, ISerializable)
 
@@ -102,10 +100,6 @@ void InputMappingAsset::serialize(ISerializer& s)
 	s >> MemberStlList< Guid >(L"dependencies", m_dependencies);
 }
 
-InputMappingAsset::ObjectPosition::ObjectPosition()
-{
-}
-
 InputMappingAsset::ObjectPosition::ObjectPosition(const Object* object_, const Position& position_)
 :	object(object_)
 ,	position(position_)
@@ -118,5 +112,4 @@ void InputMappingAsset::ObjectPosition::serialize(ISerializer& s)
 	s >> MemberPosition(L"position", position);
 }
 
-	}
 }

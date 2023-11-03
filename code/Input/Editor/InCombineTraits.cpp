@@ -10,10 +10,8 @@
 #include "Input/Binding/InCombine.h"
 #include "Input/Editor/InCombineTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InCombineTraits::getHeader(const IInputNode* node) const
 {
@@ -86,7 +84,7 @@ void InCombineTraits::getInputNodes(const IInputNode* node, std::map< const std:
 	for (uint32_t i = 0; i < (uint32_t)entries.size(); ++i)
 		outInputNodes[toString(i)] = entries[i].source;
 
-	outInputNodes[L"*"] = 0;
+	outInputNodes[L"*"] = nullptr;
 }
 
 void InCombineTraits::connectInputNode(IInputNode* node, const std::wstring& inputName, IInputNode* sourceNode) const
@@ -116,5 +114,4 @@ void InCombineTraits::disconnectInputNode(IInputNode* node, const std::wstring& 
 		inCombine->m_entries.erase(inCombine->m_entries.begin() + index);
 }
 
-	}
 }

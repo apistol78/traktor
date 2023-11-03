@@ -9,10 +9,8 @@
 #include "Input/Binding/InThreshold.h"
 #include "Input/Editor/InThresholdTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InThresholdTraits::getHeader(const IInputNode* node) const
 {
@@ -44,8 +42,7 @@ void InThresholdTraits::connectInputNode(IInputNode* node, const std::wstring& i
 void InThresholdTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InThreshold* inThreshold = checked_type_cast< InThreshold*, false >(node);
-	inThreshold->m_source = 0;
+	inThreshold->m_source = nullptr;
 }
 
-	}
 }

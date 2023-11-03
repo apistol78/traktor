@@ -27,9 +27,9 @@ void Node::addChild(Node* child)
 {
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
-	child->m_nextSibling = 0;
+	child->m_nextSibling = nullptr;
 
-	if (m_lastChild != 0)
+	if (m_lastChild != nullptr)
 		m_lastChild->m_nextSibling = child;
 	else
 		m_firstChild = child;

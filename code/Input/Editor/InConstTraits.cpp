@@ -10,10 +10,8 @@
 #include "Input/Binding/InConst.h"
 #include "Input/Editor/InConstTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InConstTraits::getHeader(const IInputNode* node) const
 {
@@ -43,5 +41,4 @@ void InConstTraits::disconnectInputNode(IInputNode* node, const std::wstring& in
 {
 }
 
-	}
 }

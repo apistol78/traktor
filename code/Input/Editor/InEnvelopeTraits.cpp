@@ -10,10 +10,8 @@
 #include "Input/Binding/InEnvelope.h"
 #include "Input/Editor/InEnvelopeTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InEnvelopeTraits::getHeader(const IInputNode* node) const
 {
@@ -45,8 +43,7 @@ void InEnvelopeTraits::connectInputNode(IInputNode* node, const std::wstring& in
 void InEnvelopeTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InEnvelope* ie = checked_type_cast< InEnvelope*, false >(node);
-	ie->m_source = 0;
+	ie->m_source = nullptr;
 }
 
-	}
 }

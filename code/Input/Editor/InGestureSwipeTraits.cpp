@@ -9,10 +9,8 @@
 #include "Input/Binding/InGestureSwipe.h"
 #include "Input/Editor/InGestureSwipeTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InGestureSwipeTraits::getHeader(const IInputNode* node) const
 {
@@ -65,12 +63,11 @@ void InGestureSwipeTraits::disconnectInputNode(IInputNode* node, const std::wstr
 {
 	InGestureSwipe* inGestureSwipe = checked_type_cast< InGestureSwipe*, false >(node);
 	if (inputName == L"Active")
-		inGestureSwipe->m_sourceActive = 0;
+		inGestureSwipe->m_sourceActive = nullptr;
 	else if (inputName == L"X1")
-		inGestureSwipe->m_sourceX = 0;
+		inGestureSwipe->m_sourceX = nullptr;
 	else if (inputName == L"Y1")
-		inGestureSwipe->m_sourceY = 0;
+		inGestureSwipe->m_sourceY = nullptr;
 }
 
-	}
 }

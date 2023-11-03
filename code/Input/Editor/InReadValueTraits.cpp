@@ -9,10 +9,8 @@
 #include "Input/Binding/InReadValue.h"
 #include "Input/Editor/InReadValueTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InReadValueTraits::getHeader(const IInputNode* node) const
 {
@@ -42,5 +40,4 @@ void InReadValueTraits::disconnectInputNode(IInputNode* node, const std::wstring
 {
 }
 
-	}
 }

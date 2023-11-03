@@ -10,10 +10,8 @@
 
 #include "Input/Editor/InputNodeTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 class InReadValueTraits : public InputNodeTraits
 {
@@ -31,6 +29,4 @@ public:
 	virtual void disconnectInputNode(IInputNode* node, const std::wstring& inputName) const override final;
 };
 
-	}
 }
-

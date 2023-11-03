@@ -10,10 +10,8 @@
 #include "Input/Binding/InDelay.h"
 #include "Input/Editor/InDelayTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InDelayTraits::getHeader(const IInputNode* node) const
 {
@@ -46,8 +44,7 @@ void InDelayTraits::connectInputNode(IInputNode* node, const std::wstring& input
 void InDelayTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InDelay* inDelay = checked_type_cast< InDelay*, false >(node);
-	inDelay->m_source = 0;
+	inDelay->m_source = nullptr;
 }
 
-	}
 }

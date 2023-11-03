@@ -10,10 +10,8 @@
 #include "Input/Binding/InPulse.h"
 #include "Input/Editor/InPulseTraits.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 std::wstring InPulseTraits::getHeader(const IInputNode* node) const
 {
@@ -48,8 +46,7 @@ void InPulseTraits::connectInputNode(IInputNode* node, const std::wstring& input
 void InPulseTraits::disconnectInputNode(IInputNode* node, const std::wstring& inputName) const
 {
 	InPulse* inPulse = checked_type_cast< InPulse*, false >(node);
-	inPulse->m_source = 0;
+	inPulse->m_source = nullptr;
 }
 
-	}
 }
