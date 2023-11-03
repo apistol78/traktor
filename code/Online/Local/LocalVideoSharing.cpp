@@ -8,10 +8,8 @@
  */
 #include "Online/Local/LocalVideoSharing.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalVideoSharing", LocalVideoSharing, IVideoSharingProvider)
 
@@ -29,5 +27,4 @@ bool LocalVideoSharing::showShareUI()
 	return true;
 }
 
-	}
 }

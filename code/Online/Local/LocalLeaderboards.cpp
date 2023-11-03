@@ -10,10 +10,8 @@
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalLeaderboards", LocalLeaderboards, ILeaderboardsProvider)
 
@@ -68,5 +66,4 @@ bool LocalLeaderboards::getFriendScores(uint64_t handle, int32_t from, int32_t t
 	return false;
 }
 
-	}
 }

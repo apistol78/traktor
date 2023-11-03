@@ -11,24 +11,22 @@
 #include "Core/Ref.h"
 #include "Online/Provider/ILeaderboardsProvider.h"
 
-namespace traktor
+namespace traktor::sql
 {
-	namespace sql
-	{
 
 class IConnection;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class LocalLeaderboards : public ILeaderboardsProvider
 {
 	T_RTTI_CLASS;
 
 public:
-	LocalLeaderboards(sql::IConnection* db);
+	explicit LocalLeaderboards(sql::IConnection* db);
 
 	virtual bool enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards) override final;
 
@@ -44,6 +42,4 @@ private:
 	Ref< sql::IConnection > m_db;
 };
 
-	}
 }
-

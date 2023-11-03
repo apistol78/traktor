@@ -8,10 +8,8 @@
  */
 #include "Online/Local/LocalMatchMaking.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalMatchMaking", LocalMatchMaking, IMatchMakingProvider)
 
@@ -159,5 +157,4 @@ bool LocalMatchMaking::inviteToParty(uint64_t partyHandle, uint64_t userHandle)
 	return false;
 }
 
-	}
 }

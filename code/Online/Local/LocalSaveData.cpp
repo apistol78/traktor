@@ -13,10 +13,8 @@
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalSaveData", LocalSaveData, ISaveDataProvider)
 
@@ -95,5 +93,4 @@ bool LocalSaveData::remove(const std::wstring& saveDataId)
 	return m_db->executeUpdate(L"delete from SaveData where id='" + saveDataId + L"'") > 0;
 }
 
-	}
 }
