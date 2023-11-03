@@ -547,7 +547,7 @@ Color4f RayTracerEmbree::tracePath0(
 		}
 	}
 
-	color /= Scalar(sampleCount);
+	color /= Scalar((float)sampleCount);
 
 	// Sample direct lighting from analytical lights.
 	color += sampleAnalyticalLights(random, origin, normal, Light::LmDirect | extraLightMask, false);
@@ -691,10 +691,10 @@ Color4f RayTracerEmbree::sampleAnalyticalLights(
 	bool bounce
  ) const
 {
-	const uint32_t shadowSampleCount = !bounce ? m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
+	const uint32_t shadowSampleCount = !bounce ? (uint32_t)m_shadowSampleOffsets.size() : (m_shadowSampleOffsets.size() > 0 ? 1 : 0);
 	const float shadowRadius = !bounce ? m_configuration->getPointLightShadowRadius() : 0.0f;
 	const Scalar lightAttenution = Scalar(m_configuration->getAnalyticalLightAttenuation());
-	RTCRay T_ALIGN64 r;
+	RTCRay T_ALIGN64 r = {};
 
 	Color4f contribution(0.0f, 0.0f, 0.0f, 0.0f);
 	for (const auto& light : m_lights)
@@ -878,7 +878,7 @@ void RayTracerEmbree::alphaTestFilter(const RTCFilterFunctionNArguments* args)
 	RTCHitN* hits = args->hit;
 	Color4f color;
 
-	for (int i = 0; i < args->N; ++i)
+	for (uint32_t i = 0; i < args->N; ++i)
 	{
 		if (args->valid[i] != -1)
 			continue;
@@ -926,7 +926,7 @@ void RayTracerEmbree::shadowOccluded(const RTCFilterFunctionNArguments* args)
 	RTCHitN* hits = args->hit;
 
 	// Only rays occluded by opaque material are valid.
-	for (int i = 0; i < args->N; ++i)
+	for (uint32_t i = 0; i < args->N; ++i)
 	{
 		if (args->valid[i] != -1)
 			continue;

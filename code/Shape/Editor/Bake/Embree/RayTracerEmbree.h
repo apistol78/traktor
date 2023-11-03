@@ -67,7 +67,7 @@ private:
 		operator const Vector4& () const { return position; }
 	};
 
-	const BakeConfiguration* m_configuration;
+	const BakeConfiguration* m_configuration = nullptr;
 	Ref< const IblProbe > m_environment;
 	AlignedVector< Vector2 > m_shadowSampleOffsets;
 	AlignedVector< Light > m_lights;

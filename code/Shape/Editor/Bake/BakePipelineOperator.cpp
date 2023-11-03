@@ -37,6 +37,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/GammaFilter.h"
+#include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
 #include "Editor/DataAccessCache.h"
@@ -286,15 +287,18 @@ void addSky(
 							for (int32_t i = 0; i < 5000; ++i)
 							{
 								const Vector2 uv = Quasirandom::hammersley(i, 5000, random);
+								
+								// Calculate direction; approximate radiance angle with the lerp construct.
 								Vector4 direction = Quasirandom::uniformHemiSphere(uv, d);
-								//direction = lerp(d, direction, 0.125_simd).normalized();
-								Scalar weight = dot3(d, direction);
+								direction = lerp(d, direction, 0.125_simd).normalized();
+
+								Scalar weight = 1.0_simd; //  dot3(d, direction);
 
 								// Reduce sun influence.
 								if (sunIntensity > 0.0f)
 								{
 									const Scalar f = clamp(dot3(direction, sunDirection), 0.0_simd, 1.0_simd);
-									weight *= 1.0_simd - f;
+									weight *= 1.0_simd - power(f, 4.0_simd);
 								}
 
 								cl += sourceRadianceCube->get(direction) * weight;
@@ -311,6 +315,8 @@ void addSky(
 
 			// Convert cube map to equirectangular image.
 			Ref< drawing::Image > radiance = radianceCube->createEquirectangular();
+			const drawing::MirrorFilter mirrorFilter(true, false);
+			radiance->apply(&mirrorFilter);
 			T_FATAL_ASSERT(radiance != nullptr);
 
 			// Discard alpha channel as they are not used.
@@ -325,6 +331,9 @@ void addSky(
 			const float intensity = skyComponentData->getIntensity();
 			const drawing::TransformFilter tform2(Color4f(intensity, intensity, intensity, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 			radiance->apply(&tform2);
+
+			// Save image for debugging.
+			radiance->save(L"Radiance.png");
 
 			return new IblProbe(radiance);
 		}
