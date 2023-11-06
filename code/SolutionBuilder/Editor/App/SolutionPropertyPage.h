@@ -9,7 +9,14 @@
 #pragma once
 
 #include "Ui/Container.h"
-#include "Ui/Edit.h"
+
+namespace traktor::ui
+{
+
+class Edit;
+class GridView;
+
+}
 
 namespace traktor::sb
 {
@@ -28,7 +35,10 @@ public:
 private:
 	Ref< ui::Edit > m_rootPath;
 	Ref< ui::Edit > m_aggregateOutputPath;
+	Ref< ui::GridView > m_environmentPreview;
 	Ref< Solution > m_solution;
+
+	void updateReferencedEnvironment();
 
 	void eventEditFocus(ui::FocusEvent* event);
 };
