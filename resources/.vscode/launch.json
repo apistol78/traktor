@@ -12,7 +12,6 @@
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}/..",
 			"environment": [
-				{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."},
 				{"name":"ANDROID_HOME", "value":"${workspaceRoot}/../3rdp/android-sdk/linux"},
 				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-ndk-r21"}
 			],
@@ -58,9 +57,9 @@
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}/..",
 			"environment": [
-				{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."},
 				{"name":"ANDROID_HOME", "value":"${workspaceRoot}/../3rdp/android-sdk-linux"},
-				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-sdk-linux/ndk-bundle"}
+				{"name":"ANDROID_NDK_ROOT", "value":"${workspaceRoot}/../3rdp/android-sdk-linux/ndk-bundle"},
+				{"name":"LD_LIBRARY_PATH", "value":"${workspaceRoot}/../bin/latest/linux/releaseshared"},
 			],
 			"externalConsole": false,
 			"MIMode": "gdb",
@@ -78,7 +77,7 @@
 				"args": [],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"environment": [],
 				"externalConsole": true
 			},
 
@@ -88,7 +87,7 @@
 				"args": [],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"environment": [],
 				"externalConsole": false,
 				"MIMode": "lldb"			
 			}
@@ -103,7 +102,7 @@
 			"args": [ "-s" ],
 			"stopAtEntry": false,
 			"cwd": "${workspaceRoot}/..",
-			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
@@ -120,7 +119,7 @@
 				"args": [],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"environment": [],
 				"externalConsole": true
 			}
 		},
@@ -134,7 +133,7 @@
 			"args": [ "-s" ],
 			"stopAtEntry": false,
 			"cwd": "/home/apistol/private/kobolt/output/Kobalt/Linux",
-			"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+			"environment": [],
 			"externalConsole": false,
 			"MIMode": "gdb",
 			"setupCommands": [
@@ -151,7 +150,7 @@
 				"args": [],
 				"stopAtEntry": false,
 				"cwd": "${workspaceRoot}/..",
-				"environment": [{"name":"TRAKTOR_HOME", "value":"${workspaceRoot}/.."}],
+				"environment": [],
 				"externalConsole": true
 			}
 		},
