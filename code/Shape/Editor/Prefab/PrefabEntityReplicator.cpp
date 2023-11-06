@@ -95,8 +95,6 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	if (!groupComponentData)
 		return nullptr;
 
-	const Transform worldInv = entityData->getTransform().inverse();
-
 	RefArray< model::Model > models;
 	SmallMap< std::wstring, Guid > materialShaders;
 
@@ -136,7 +134,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 				scale(meshAsset->getScaleFactor(), meshAsset->getScaleFactor(), meshAsset->getScaleFactor())
 			).apply(*model);
 			model::Transform(
-				(worldInv * inEntityData->getTransform()).toMatrix44()
+				inEntityData->getTransform().toMatrix44()
 			).apply(*model);
 
 			model->clear(model::Model::CfColors | model::Model::CfJoints);
@@ -150,13 +148,16 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 		return scene::Traverser::VrContinue;
 	});
 
-
 	log::info << L"Prefab replicator collected " << models.size() << L" models to be merged." << Endl;
 
 	// Create merged model.
 	Ref< model::Model > outputModel = new model::Model();
 	for (auto mdl : models)
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
+
+	model::Transform(
+		entityData->getTransform().inverse().toMatrix44()
+	).apply(*outputModel);
 
 	// Bind texture references in material maps.
 	for (auto& material : outputModel->getMaterials())
@@ -196,8 +197,6 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	const world::GroupComponentData* groupComponentData = entityData->getComponent< world::GroupComponentData >();
 	if (!groupComponentData)
 		return nullptr;
-
-	const Transform worldInv = entityData->getTransform().inverse();
 
 	RefArray< model::Model > models;
 	SmallMap< std::wstring, Guid > materialPhysics;
@@ -245,7 +244,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 
 			// Transform model into world space.
 			model::Transform(
-				(worldInv * inEntityData->getTransform()).toMatrix44()
+				inEntityData->getTransform().toMatrix44()
 			).apply(*shapeModel);
 
 			models.push_back(shapeModel);
@@ -275,6 +274,10 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	Ref< model::Model > outputModel = new model::Model();
 	for (auto mdl : models)
 		model::MergeModel(*mdl, Transform::identity(), 0.001f).apply(*outputModel);
+
+	model::Transform(
+		entityData->getTransform().inverse().toMatrix44()
+	).apply(*outputModel);
 
 	// Create shape descriptor; used by bake pipeline to set appropriate collision materials.
  	Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
