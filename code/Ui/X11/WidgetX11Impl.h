@@ -311,7 +311,7 @@ public:
 		switch (cursor)
 		{
 		default:
-		case Cursor::None:
+		// case Cursor::None:
 		case Cursor::Arrow:
 			break;
 		case Cursor::ArrowRight:

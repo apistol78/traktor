@@ -54,19 +54,25 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	if ((style & (WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption)) == 0)
 	{
 	  	Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
-    	Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
-    	XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+	}
+	// Else set as dialog type.
+	else
+	{
+	  	Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
+		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DIALOG", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
 	}
 
 	// Notify WM about form title.
 	if ((style & WsCaption) != 0)
 	{
-		std::string cs = wstombs(text);
+		const std::string cs = wstombs(text);
 		const char* csp = cs.c_str();
 
 		XTextProperty tp;
 		XStringListToTextProperty((char**)&csp, 1, &tp);
-
 		XSetWMName(m_context->getDisplay(), window, &tp);
 	}
 

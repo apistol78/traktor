@@ -11,13 +11,12 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Ui/ToolForm.h"
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/X11/ToolFormX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 ToolFormX11::ToolFormX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IToolForm >(context, owner)
@@ -50,9 +49,30 @@ bool ToolFormX11::create(IWidget* parent, const std::wstring& text, int width, i
 	);
 
 	// Change style of window, no WM chrome.
-    Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
-    Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
-    XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+	if ((style & ToolForm::WsDefault) == 0)
+	{
+		Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
+		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DOCK", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+	}
+	// Else set as dialog type.
+	else
+	{
+	  	Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
+		Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_DIALOG", False);
+		XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
+	}
+	
+	// Notify WM about form title.
+	if ((style & WsCaption) != 0)
+	{
+		const std::string cs = wstombs(text);
+		const char* csp = cs.c_str();
+
+		XTextProperty tp;
+		XStringListToTextProperty((char**)&csp, 1, &tp);
+		XSetWMName(m_context->getDisplay(), window, &tp);
+	}
 
 	// Make tool form on top of parent.
 	if (parent != nullptr)
@@ -146,6 +166,4 @@ void ToolFormX11::endModal(DialogResult result)
 	m_modal = false;
 }
 
-	}
 }
-
