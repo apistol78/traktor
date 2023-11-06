@@ -7293,7 +7293,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
-												<item>$(SIMPLYGON_SDK)</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
@@ -7341,7 +7340,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
-												<item>$(SIMPLYGON_SDK)</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
@@ -7389,7 +7387,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
-												<item>$(SIMPLYGON_SDK)</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
@@ -7433,7 +7430,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(FBX_SDK)/include</item>
-												<item>$(SIMPLYGON_SDK)</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
