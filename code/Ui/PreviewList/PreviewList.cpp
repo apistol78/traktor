@@ -181,6 +181,7 @@ void PreviewList::eventButtonUp(MouseButtonUpEvent* event)
 		DragEvent dragEvent(this, DragEvent::Moment::Drop, position);
 		raiseEvent(&dragEvent);
 	}
+	m_dragMode = 0;
 }
 
 void PreviewList::eventMouseMove(MouseMoveEvent* event)
@@ -196,7 +197,7 @@ void PreviewList::eventMouseMove(MouseMoveEvent* event)
 			if (!(dragEvent.consumed() && dragEvent.cancelled()))
 				m_dragMode = 2;
 			else
-				m_dragMode = 3;
+				m_dragMode = 0;
 		}
 	}
 }
