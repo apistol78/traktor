@@ -375,7 +375,7 @@ void PipelineDependsIncremental::updateDependencyHashes(
 	dependency->sourceDataHash = 0;
 	if (sourceInstance)
 	{
-		std::vector< std::wstring > dataNames;
+		AlignedVector< std::wstring > dataNames;
 		DateTime lastWriteTime;
 
 		sourceInstance->getDataNames(dataNames);

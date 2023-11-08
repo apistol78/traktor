@@ -83,7 +83,7 @@ Guid combineGuids(const Guid& g1, const Guid& g2)
 	return Guid(d);
 }
 
-void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* heightfield, std::vector< TerrainResource::Patch >& outPatches)
+void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* heightfield, AlignedVector< TerrainResource::Patch >& outPatches)
 {
 	const uint32_t patchDim = terrainAsset->getPatchDim();
 	const uint32_t detailSkip = terrainAsset->getDetailSkip();

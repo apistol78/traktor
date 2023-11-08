@@ -1,15 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Class/AutoRuntimeClass.h"
+#include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
 #include "Core/Class/Boxes/BoxedRefArray.h"
-#include "Core/Class/Boxes/BoxedStdVector.h"
 #include "Core/Class/Boxes/BoxedTypeInfo.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Io/IStream.h"
@@ -112,17 +112,11 @@ Ref< ISerializable > Instance_getObject(Instance* self)
 	return self->getObject();
 }
 
-std::vector< std::wstring > Instance_getDataNames(Instance* self)
+AlignedVector< std::wstring > Instance_getDataNames(Instance* self)
 {
-	std::vector< std::wstring > dataNames;
+	AlignedVector< std::wstring > dataNames;
 	self->getDataNames(dataNames);
 	return dataNames;
-}
-
-template < typename Class >
-Ref< Class > ref_new()
-{
-	return new Class();
 }
 
 	}
@@ -131,7 +125,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DatabaseClassFactory", 0, DatabaseCl
 
 void DatabaseClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classDatabase = ref_new< AutoRuntimeClass< Database > >();
+	auto classDatabase = new AutoRuntimeClass< Database >();
 	classDatabase->addProperty("rootGroup", &Database::getRootGroup);
 	classDatabase->addMethod("close", &Database::close);
 	classDatabase->addMethod("getGroup", &Database::getGroup);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -75,7 +75,7 @@ public:
 
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
-	const std::vector< Patch >& getPatches() const { return m_patches; }
+	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
 private:
 	friend class TerrainPipeline;
@@ -90,7 +90,7 @@ private:
 	resource::Id< render::ITexture > m_cutMap;
 	resource::Id< render::Shader > m_terrainShader;
 	resource::Id< render::Shader > m_surfaceShader;
-	std::vector< Patch > m_patches;
+	AlignedVector< Patch > m_patches;
 };
 
 }

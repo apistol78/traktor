@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,10 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Date/DateTime.h"
 
 // import/export mechanism.
@@ -142,7 +142,7 @@ public:
 	 * \param outDataNames List of names of data blobs.
 	 * \return Number of data names contained within instance.
 	 */
-	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
+	virtual uint32_t getDataNames(AlignedVector< std::wstring >& outDataNames) const = 0;
 
 	/*! Get date when a data blob was last modified.
 	 *

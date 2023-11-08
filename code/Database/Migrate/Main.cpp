@@ -71,7 +71,7 @@ bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > target
 
 	Guid sourceGuid = sourceInstance->getGuid();
 
-	std::vector< std::wstring > dataNames;
+	AlignedVector< std::wstring > dataNames;
 	sourceInstance->getDataNames(dataNames);
 
 	Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);

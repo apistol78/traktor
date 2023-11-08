@@ -250,7 +250,7 @@ bool InstanceMessageListener::messageGetDataNames(const DbmGetDataNames* message
 		return true;
 	}
 
-	std::vector< std::wstring > dataNames;
+	AlignedVector< std::wstring > dataNames;
 	instance->getDataNames(dataNames);
 
 	m_connection->sendReply(MsgStringArrayResult(dataNames));
