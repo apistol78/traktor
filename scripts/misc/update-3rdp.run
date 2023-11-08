@@ -257,8 +257,16 @@ local PACKAGES =
 		name = "fbx",
 		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_vs2017_win.exe",
 		patch = function()
+
+			local dir < const > = (run.cwd .. "/2020.0.1"):gsub("/", "\\")
+
+			print("")
+			print("** IMPORTANT **")
+			print("FBX SDK must be installed in \"" .. dir .. "\"")
+			print("")
+
 			run:execute(
-				"fbx202001_fbxsdk_vs2017_win.exe /D=" .. run.cwd .. "/2020.0.1",
+				"fbx202001_fbxsdk_vs2017_win.exe /S /D=" .. dir,
 				nil,
 				nil,
 				true
