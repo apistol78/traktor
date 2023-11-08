@@ -103,6 +103,9 @@
 /* Define to make XML Namespaces functionality available. */
 #define XML_NS
 
+/* */
+#define XML_GE 1
+
 /* Define to __FUNCTION__ or "" if `__func__' does not conform to ANSI C. */
 #ifdef _MSC_VER
 #  define __func__ __FUNCTION__
