@@ -149,7 +149,7 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 	return new BufferedStream(s);
 }
 
-uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
+uint32_t RemoteInstance::getDataNames(AlignedVector< std::wstring >& outDataNames) const
 {
 	Ref< const MsgStringArrayResult > result = m_connection->sendMessage< MsgStringArrayResult >(DbmGetDataNames(m_handle));
 	if (!result)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -141,7 +141,7 @@ Ref< ISerializable > Instance::getObject() const
 	return object;
 }
 
-uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
+uint32_t Instance::getDataNames(AlignedVector< std::wstring >& dataNames) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT(m_providerInstance);

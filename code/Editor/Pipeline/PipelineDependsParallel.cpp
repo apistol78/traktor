@@ -354,7 +354,7 @@ void PipelineDependsParallel::updateDependencyHashes(
 	dependency->sourceDataHash = 0;
 	if (sourceInstance)
 	{
-		std::vector< std::wstring > dataNames;
+		AlignedVector< std::wstring > dataNames;
 		sourceInstance->getDataNames(dataNames);
 		for (const auto& dataName : dataNames)
 		{

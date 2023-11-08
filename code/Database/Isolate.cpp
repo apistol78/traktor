@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,7 +26,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 	writer << instance->getName();
 	writer << instance->getGuid().format();
 
-	std::vector< std::wstring > dataNames;
+	AlignedVector< std::wstring > dataNames;
 	writer << uint32_t(instance->getDataNames(dataNames));
 
 	Ref< ISerializable > object = instance->getObject();

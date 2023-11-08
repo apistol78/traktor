@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,10 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Types.h"
@@ -54,7 +54,7 @@ class T_DLLCLASS Instance : public Object
 
 public:
 	// \name Read-only queries.
-	// \brief
+	// 
 	// Read-only queries can be performed without a transaction
 	// and should return result as from latest successfully committed
 	// transaction.
@@ -78,7 +78,7 @@ public:
 
 	virtual Ref< ISerializable > getObject() const;
 
-	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
+	virtual uint32_t getDataNames(AlignedVector< std::wstring >& dataNames) const;
 
 	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const;
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -56,7 +56,7 @@ public:
 
 	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType) override final;
 
-	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const override final;
+	virtual uint32_t getDataNames(AlignedVector< std::wstring >& outDataNames) const override final;
 
 	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const override final;
 

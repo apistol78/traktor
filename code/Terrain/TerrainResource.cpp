@@ -1,15 +1,15 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
@@ -34,7 +34,7 @@ void TerrainResource::serialize(ISerializer& s)
 	s >> resource::Member< render::ITexture >(L"cutMap", m_cutMap);
 	s >> resource::Member< render::Shader >(L"terrainShader", m_terrainShader);
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
-	s >> MemberStlVector< Patch, MemberComposite< Patch > >(L"patches", m_patches);
+	s >> MemberAlignedVector< Patch, MemberComposite< Patch > >(L"patches", m_patches);
 }
 
 void TerrainResource::Patch::serialize(ISerializer& s)

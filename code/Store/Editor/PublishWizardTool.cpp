@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,12 +33,10 @@
 #include "Store/Editor/PublishWizardDialog.h"
 #include "Store/Editor/PublishWizardTool.h"
 
-namespace traktor
+namespace traktor::store
 {
-	namespace store
+	namespace
 	{
-		namespace
-		{
 
 bool isSystemInstance(db::Instance* instance)
 {
@@ -50,7 +48,7 @@ bool isSystemInstance(db::Instance* instance)
 	return false;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.PublishWizardTool", 0, PublishWizardTool, editor::IWizardTool)
 
@@ -161,7 +159,7 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 			return false;
 		}
 
-		std::vector< std::wstring > dataNames;
+		AlignedVector< std::wstring > dataNames;
 		instance->getDataNames(dataNames);
 		for (const auto& dataName : dataNames)
 		{
@@ -303,5 +301,4 @@ bool PublishWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::
 	return true;
 }
 
-	}
 }

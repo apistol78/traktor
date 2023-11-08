@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -167,7 +167,7 @@ Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName,
 	return objectStream;
 }
 
-uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
+uint32_t CompactInstance::getDataNames(AlignedVector< std::wstring >& outDataNames) const
 {
 	T_ASSERT(m_instanceEntry);
 
