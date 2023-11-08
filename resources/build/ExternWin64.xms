@@ -2653,7 +2653,7 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.c</fileName>
-					<excludeFilter/>
+					<excludeFilter>encoder_disabled.c</excludeFilter>
 					<items/>
 				</item>
 				<item type="File" version="1">
