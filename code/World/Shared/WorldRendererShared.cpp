@@ -329,6 +329,7 @@ void WorldRendererShared::setupLightPass(
 				Vector4::zero().storeUnaligned(lsd->viewToLight1);
 				Vector4::zero().storeUnaligned(lsd->viewToLight2);
 				Vector4::zero().storeUnaligned(lsd->viewToLight3);
+				Vector4::zero().storeUnaligned(lsd->atlasTransform);
 
 				++lsd;
 			}
@@ -356,6 +357,7 @@ void WorldRendererShared::setupLightPass(
 			Vector4::zero().storeUnaligned(lsd->viewToLight1);
 			Vector4::zero().storeUnaligned(lsd->viewToLight2);
 			Vector4::zero().storeUnaligned(lsd->viewToLight3);
+			Vector4::zero().storeUnaligned(lsd->atlasTransform);
 		}
 	}
 

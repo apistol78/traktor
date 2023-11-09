@@ -17,44 +17,44 @@
 				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</disabled>
 			<low>
-				<farZ>10</farZ>
-				<resolution>1024</resolution>
-				<bias>0.05</bias>
-				<cascadingSlices>1</cascadingSlices>
-				<cascadingLambda>1.55</cascadingLambda>
+				<farZ>40</farZ>
+				<resolution>256</resolution>
+				<bias>0.001</bias>
+				<cascadingSlices>4</cascadingSlices>
+				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>false</quantizeProjection>
-				<maskDenominator>2</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
+				<maskDenominator>1</maskDenominator>
+				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</low>
 			<medium>
-				<farZ>10</farZ>
-				<resolution>2048</resolution>
-				<bias>0.05</bias>
-				<cascadingSlices>1</cascadingSlices>
+				<farZ>40</farZ>
+				<resolution>512</resolution>
+				<bias>0.001</bias>
+				<cascadingSlices>4</cascadingSlices>
 				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
-				<maskDenominator>2</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
+				<maskDenominator>1</maskDenominator>
+				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</medium>
 			<high>
-				<farZ>10</farZ>
-				<resolution>4096</resolution>
-				<bias>0.05</bias>
-				<cascadingSlices>1</cascadingSlices>
-				<cascadingLambda>1.5</cascadingLambda>
+				<farZ>50</farZ>
+				<resolution>1024</resolution>
+				<bias>0.001</bias>
+				<cascadingSlices>4</cascadingSlices>
+				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
+				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</high>
 			<ultra>
-				<farZ>10</farZ>
-				<resolution>4096</resolution>
-				<bias>0.05</bias>
-				<cascadingSlices>1</cascadingSlices>
-				<cascadingLambda>3</cascadingLambda>
+				<farZ>50</farZ>
+				<resolution>2048</resolution>
+				<bias>0.001</bias>
+				<cascadingSlices>4</cascadingSlices>
+				<cascadingLambda>1</cascadingLambda>
 				<quantizeProjection>true</quantizeProjection>
 				<maskDenominator>1</maskDenominator>
-				<maskProject>{D8A7B76E-AB55-8E43-AB60-A35F3135DB3D}</maskProject>
+				<maskProject>{00000000-0000-0000-0000-000000000000}</maskProject>
 			</ultra>
 		</shadowSettings>
 		<fogDistance>90</fogDistance>
@@ -90,9 +90,10 @@
 								<rotation>0, 0, 0, 1</rotation>
 							</transform>
 							<components>
-								<item type="traktor.weather.SkyComponentData" version="3">
+								<item type="traktor.weather.SkyComponentData" version="4">
 									<shader>{72EA4A13-256E-B64E-8BEC-879AA076144D}</shader>
 									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
+									<intensity>1</intensity>
 								</item>
 							</components>
 						</item>
@@ -104,12 +105,13 @@
 								<rotation>-0.402506, 0.255425, 0.118023, 0.871101</rotation>
 							</transform>
 							<components>
-								<item type="traktor.world.LightComponentData" version="11">
+								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
-									<intensity>0.5</intensity>
+									<intensity>1</intensity>
 									<castShadow>true</castShadow>
-									<range>20</range>
+									<nearRange>0</nearRange>
+									<farRange>20</farRange>
 									<radius>1.570796</radius>
 									<flickerAmount>0</flickerAmount>
 									<flickerFilter>0</flickerFilter>
@@ -157,15 +159,16 @@
 							<name>Light</name>
 							<transform>
 								<translation>0.504307, 0, 0.353142, 0</translation>
-								<rotation>0.463312, 0.225609, -0.123251, 0.848087</rotation>
+								<rotation>0.463313, 0.225609, -0.123251, 0.848087</rotation>
 							</transform>
 							<components>
-								<item type="traktor.world.LightComponentData" version="11">
+								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
-									<intensity>0.25</intensity>
+									<intensity>0.5</intensity>
 									<castShadow>false</castShadow>
-									<range>20</range>
+									<nearRange>0</nearRange>
+									<farRange>20</farRange>
 									<radius>1.570796</radius>
 									<flickerAmount>0</flickerAmount>
 									<flickerFilter>0</flickerFilter>
