@@ -499,6 +499,18 @@
 			<second>$(Images.Path)/Images/Theater/Theater.image</second>
 		</item>
 		<item>
+			<first>UI.CaptionClose</first>
+			<second>$(Images.Path)/Images/UI/Close.image</second>
+		</item>
+		<item>
+			<first>UI.CaptionMinimize</first>
+			<second>$(Images.Path)/Images/UI/Minimize.image</second>
+		</item>
+		<item>
+			<first>UI.CaptionMaximize</first>
+			<second>$(Images.Path)/Images/UI/Maximize.image</second>
+		</item>
+		<item>
 			<first>UI.Checked</first>
 			<second>$(Images.Path)/Images/UI/Checked.image</second>
 		</item>

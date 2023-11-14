@@ -87,15 +87,16 @@
 #include "I18N/Format.h"
 #include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
+#include "Ui/CaptionBar.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MessageBox.h"
-#include "Ui/TableLayout.h"
-#include "Ui/FloodLayout.h"
-#include "Ui/ShortcutTable.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/ShortcutTable.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/MessageBox.h"
 #include "Ui/MultiSplitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
@@ -475,8 +476,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		c_title,
 		1280_ut,
 		900_ut,
-		ui::Form::WsDefault | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut)
+		ui::WsResizable | /* ui::Form::WsDefault | */ ui::WsNoCanvas,
+		new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -484,6 +485,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	addEventHandler< ui::CloseEvent >(this, &EditorForm::eventClose);
 	addEventHandler< ui::TimerEvent >(this, &EditorForm::eventTimer);
+
+	// Create caption bar.
+	Ref< ui::CaptionBar > captionBar = new ui::CaptionBar();
+	captionBar->create(this, ui::WsNone);
 
 	// Create shortcut table.
 	m_shortcutTable = new ui::ShortcutTable();
