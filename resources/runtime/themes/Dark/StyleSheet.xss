@@ -167,6 +167,15 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.CaptionBar</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>37, 37, 38, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.Dock</typeName>
 			<colors>
 				<item>

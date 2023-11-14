@@ -16,11 +16,12 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MiniButton", MiniButton, Widget)
 
-bool MiniButton::create(Widget* parent, const std::wstring& text)
+bool MiniButton::create(Widget* parent, const std::wstring& text, int style)
 {
-	if (!Widget::create(parent))
+	if (!Widget::create(parent, style))
 		return false;
 
+	m_border = ((style & WsNoBorder) == 0);
 	m_pushed = false;
 	setText(text);
 
@@ -31,11 +32,12 @@ bool MiniButton::create(Widget* parent, const std::wstring& text)
 	return true;
 }
 
-bool MiniButton::create(Widget* parent, IBitmap* image)
+bool MiniButton::create(Widget* parent, IBitmap* image, int style)
 {
-	if (!Widget::create(parent))
+	if (!Widget::create(parent, style))
 		return false;
 
+	m_border = ((style & WsNoBorder) == 0);
 	m_pushed = false;
 	m_image  = image;
 
@@ -100,8 +102,11 @@ void MiniButton::eventPaint(PaintEvent* event)
 		canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
 		canvas.fillRect(rcInner);
 
-		canvas.setForeground(ss->getColor(this, L"border-color"));
-		canvas.drawRect(rcInner);
+		if (m_border)
+		{
+			canvas.setForeground(ss->getColor(this, L"border-color"));
+			canvas.drawRect(rcInner);
+		}
 
 		if (m_pushed)
 			rcInner = rcInner.offset(1, 1);
@@ -111,8 +116,11 @@ void MiniButton::eventPaint(PaintEvent* event)
 		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
 		canvas.fillRect(rcInner);
 
-		canvas.setForeground(ss->getColor(this, L"border-color-disabled"));
-		canvas.drawRect(rcInner);
+		if (m_border)
+		{
+			canvas.setForeground(ss->getColor(this, L"border-color-disabled"));
+			canvas.drawRect(rcInner);
+		}
 	}
 
 	if (m_image)

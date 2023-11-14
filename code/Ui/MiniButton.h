@@ -29,9 +29,14 @@ class T_DLLCLASS MiniButton : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, const std::wstring& text);
+	enum StyleFlags
+	{
+		WsNoBorder = WsUser
+	};
 
-	bool create(Widget* parent, IBitmap* image);
+	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
+
+	bool create(Widget* parent, IBitmap* image, int style = WsNone);
 
 	void setImage(IBitmap* image);
 
@@ -40,8 +45,9 @@ public:
 	virtual Size getMaximumSize() const override;
 
 private:
-	bool m_pushed;
 	Ref< IBitmap > m_image;
+	bool m_border;
+	bool m_pushed;
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 
