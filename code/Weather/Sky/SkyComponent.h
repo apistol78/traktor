@@ -101,6 +101,7 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;
 	Ref< render::ITexture > m_cloudTextures[2];
+	world::Entity* m_owner = nullptr;
 	Transform m_transform;
 	float m_intensity = 1.0f;
 	bool m_dirty = true;

@@ -7,9 +7,10 @@
 #define SUN_DIR normalize(vec3(-.7,.5,.75))
 #define SUN_COLOR (vec3(1.,.9,.85) * 1.8)
 
-vec3 getSkyColor(vec3 rd)
+vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 {
-    float sundot = clamp(dot(rd,SUN_DIR),0.0,1.0);
+    const float sundot = clamp(dot(rd, sunDirection), 0.0f, 1.0f);
+
 	vec3 col = vec3(0.2, 0.5, 0.85) * 1.1 - max(rd.y,0.01) * max(rd.y, 0.01) * 0.5;
     col = mix( col, 0.85 * vec3(0.7, 0.75, 0.85), pow(1.0 - max(rd.y, 0.0), 6.0) );
 
@@ -18,7 +19,7 @@ vec3 getSkyColor(vec3 rd)
     col += 0.20 * vec3(1.0,0.8,0.6) * pow( sundot, 512.0 );
     
     col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * vec3(0.0f, 0.1f, 0.2f);
-    col += 0.4f * vec3(1.0,0.8,0.6) * pow( sundot, 8.0 );
+    col += sunColor * pow(sundot, 8.0f);
 
     return col;
 }
@@ -151,10 +152,10 @@ float cloudMap(vec3 pos, vec3 rd, float norY, float time, texture2D clouds2D, te
 	return clamp(m * CLOUDS_DENSITY * (1.0f + max((ps.x - 7000.0f) * 0.005f, 0.0f)), 0.0f, 1.0f);
 }
 
-float volumetricShadow(in vec3 from, in float sundotrd, float time, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler )
+float volumetricShadow(vec3 from, float sundotrd, float time, vec3 sunDirection, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler )
 {
     float dd = CLOUDS_SHADOW_MARGE_STEP_SIZE;
-    vec3 rd = SUN_DIR;
+    vec3 rd = sunDirection;
     float d = dd * 0.5f;
     float shadow = 1.0;
 
@@ -176,7 +177,7 @@ float volumetricShadow(in vec3 from, in float sundotrd, float time, texture2D cl
     return shadow;
 }
 
-vec4 renderClouds(vec3 ro, vec3 rd, float time, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler, inout float dist)
+vec4 renderClouds(vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler, inout float dist)
 {
     if( rd.y < 0. )
         return vec4(0, 0, 0, 1);
@@ -192,7 +193,7 @@ vec4 renderClouds(vec3 ro, vec3 rd, float time, texture2D clouds2D, texture3D cl
     
     end = min(end, dist);
     
-    float sundotrd = dot( rd, -SUN_DIR);
+    float sundotrd = dot( rd, -sunDirection);
 
     float d = start;
     float dD = (end - start) / float(CLOUD_MARCH_STEPS);
@@ -223,7 +224,7 @@ vec4 renderClouds(vec3 ro, vec3 rd, float time, texture2D clouds2D, texture3D cl
             dist = min( dist, d);
             vec3 ambientLight = mix( CLOUDS_AMBIENT_COLOR_BOTTOM, CLOUDS_AMBIENT_COLOR_TOP, norY );
 
-            vec3 S = (ambientLight + SUN_COLOR * (scattering * volumetricShadow(p, sundotrd, time, clouds2D, clouds3D, cloudSampler))) * alpha;
+            vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, sundotrd, time, sunDirection, clouds2D, clouds3D, cloudSampler))) * alpha;
             float dTrans = exp(-alpha * dD);
             vec3 Sint = (S - S * dTrans) * (1. / alpha);
             scatteredLight += transmittance * Sint; 
