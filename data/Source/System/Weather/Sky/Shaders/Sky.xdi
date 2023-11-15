@@ -496,8 +496,8 @@
 			<id>{E88E5C56-08FC-CA46-BCEA-4A1DA38CAA35}</id>
 			<comment/>
 			<position>
-				<first>1035</first>
-				<second>426</second>
+				<first>1108</first>
+				<second>460</second>
 			</position>
 			<min>0</min>
 			<max>10</max>
@@ -566,8 +566,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{3A274518-2C87-4314-9935-E59CF3E45196}</id>
 			<comment/>
 			<position>
-				<first>654</first>
-				<second>-182</second>
+				<first>757</first>
+				<second>-136</second>
 			</position>
 			<name>WorldPosition</name>
 		</item>
@@ -636,7 +636,7 @@ $Output = vec4(clr, 1.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
-const vec3 ro = vec3(0.0f, 0.0f, 0.0f);
+const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
 
 float dist = 10000.0f;
@@ -704,8 +704,8 @@ $Distance = dist;
 			<id>{503FDDD6-5518-4343-BE55-C0B346AE49BE}</id>
 			<comment/>
 			<position>
-				<first>561</first>
-				<second>701</second>
+				<first>710</first>
+				<second>725</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -713,8 +713,8 @@ $Distance = dist;
 			<id>{EB8D5AAE-64F8-4961-B693-72C612313D32}</id>
 			<comment/>
 			<position>
-				<first>707</first>
-				<second>640</second>
+				<first>912</first>
+				<second>607</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
@@ -749,6 +749,48 @@ $Distance = dist;
 			<parameterName>Weather_SkySunDirection</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{C08E5A1A-DBF6-9646-B1D0-8B2DDC5CFFF2}</id>
+			<comment/>
+			<position>
+				<first>644</first>
+				<second>-223</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{CED41597-5F75-384D-BE0D-B99E577A2297}</id>
+			<comment/>
+			<position>
+				<first>1058</first>
+				<second>770</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B1995568-3C6A-0A41-B935-7B6C3B58811B}</id>
+			<comment/>
+			<position>
+				<first>644</first>
+				<second>845</second>
+			</position>
+			<value>0.75</value>
+		</item>
+		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
+			<id>{CE625FD5-6A51-E345-B940-C60097D7C417}</id>
+			<comment/>
+			<position>
+				<first>854</first>
+				<second>848</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{C5A94979-6D8B-A747-ADA9-35C7B618B919}</id>
+			<comment/>
+			<position>
+				<first>634</first>
+				<second>914</second>
+			</position>
+			<value>0.25</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1014,16 +1056,6 @@ $Distance = dist;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
@@ -1070,16 +1102,6 @@ $Distance = dist;
 			<destination>
 				<node ref="/object/nodes/item[29]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1164,26 +1186,6 @@ $Distance = dist;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
-				<id>{7FAD9736-AB93-4E4C-AFAA-A1C93CAD868C}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[25]"/>
-				<id>{51EA7D6F-840D-46B9-9B20-09A837C1300E}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[40]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
@@ -1240,6 +1242,86 @@ $Distance = dist;
 			<destination>
 				<node ref="/object/nodes/item[34]"/>
 				<id>{C5095DF7-63D2-455A-9659-B6592AB27CB1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{7FAD9736-AB93-4E4C-AFAA-A1C93CAD868C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{51EA7D6F-840D-46B9-9B20-09A837C1300E}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{CCC98877-74A3-BB48-A972-448902805009}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[43]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{4067F6C8-9404-45CA-9359-D9E2456F7431}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{F95D9BA4-88CC-4001-9948-B8173FDDE6F0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{29BA4386-B838-4550-93DF-F53D8B812C88}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
 			</destination>
 		</item>
 	</edges>
