@@ -54,7 +54,7 @@ struct OceanVertex
 };
 #pragma pack()
 
-const uint32_t c_gridSize = 512;
+const uint32_t c_gridSize = 1024;
 const uint32_t c_gridInfSize = 128;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
@@ -70,8 +70,8 @@ OceanComponent::~OceanComponent()
 bool OceanComponent::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data)
 {
 	render::SimpleTextureCreateDesc stcd = {};
-	stcd.width = 256;
-	stcd.height = 256;
+	stcd.width = 512;
+	stcd.height = 512;
 	stcd.mipCount = 1;
 	stcd.format = render::TfR32F;
 	stcd.shaderStorage = true;
@@ -106,7 +106,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 			vertex->pos[0] = fx;
 			vertex->pos[1] = fz;
-			vertex->edge = lerp(300.0f, 20000.0f, f);
+			vertex->edge = f; // lerp(100.0f, 10000.0f, f);
 
 			vertex++;
 		}
@@ -202,8 +202,8 @@ void OceanComponent::setup(
 	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Ocean Wave");
 		renderBlock->program = m_shaderWave->getProgram().program;
-		renderBlock->workSize[0] = 256;
-		renderBlock->workSize[1] = 256;
+		renderBlock->workSize[0] = 512;
+		renderBlock->workSize[1] = 512;
 		renderBlock->workSize[2] = 1;
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

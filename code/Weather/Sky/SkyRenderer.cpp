@@ -35,6 +35,8 @@ void SkyRenderer::setup(
 	Object* renderable
 )
 {
+	auto skyComponent = static_cast< SkyComponent* >(renderable);
+	skyComponent->setup(context, worldRenderView);
 }
 
 void SkyRenderer::setup(
