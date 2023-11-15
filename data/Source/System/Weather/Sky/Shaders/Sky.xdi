@@ -538,6 +538,14 @@
 					<id>{72527E9F-5A82-4E5E-986D-9EBF0FB43588}</id>
 					<name>Input</name>
 				</item>
+				<item>
+					<id>{13FC1CDD-FDA9-4445-B961-AC18E29630FA}</id>
+					<name>SunDirection</name>
+				</item>
+				<item>
+					<id>{D31F47A6-19A4-440D-8432-A9E4610D070D}</id>
+					<name>SunColor</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -549,7 +557,7 @@
 			<script>
 			<![CDATA[
 const vec3 rd = normalize($Input.xyz);
-const vec3 clr = getSkyColor(rd);
+const vec3 clr = getSkyColor($SunDirection.xyz, $SunColor.xyz, rd);
 $Output = vec4(clr, 1.0f);
 			]]>
 			</script>
@@ -567,8 +575,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{8FB6549E-5322-4FD8-8912-FD35D323CFF6}</id>
 			<comment/>
 			<position>
-				<first>134</first>
-				<second>575</second>
+				<first>-5</first>
+				<second>610</second>
 			</position>
 			<name>WorldPosition</name>
 		</item>
@@ -576,8 +584,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{3D50C5B7-186C-4798-A7E6-79FB8597A7B9}</id>
 			<comment/>
 			<position>
-				<first>341</first>
-				<second>626</second>
+				<first>335</first>
+				<second>629</second>
 			</position>
 			<name>Clouds</name>
 			<technique/>
@@ -605,6 +613,14 @@ $Output = vec4(clr, 1.0f);
 					<id>{BCDFEAE0-481F-485F-8015-0F9214BEC53A}</id>
 					<name>Time</name>
 				</item>
+				<item>
+					<id>{C5095DF7-63D2-455A-9659-B6592AB27CB1}</id>
+					<name>SunDirection</name>
+				</item>
+				<item>
+					<id>{19586C3A-69D1-46CB-AAFD-B6ACF94CAADE}</id>
+					<name>SunColor</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -628,6 +644,8 @@ const vec4 clr = renderClouds(
 	ro,
 	rd,
 	$Time.x,
+	$SunDirection.xyz,
+	$SunColor.xyz,
 	$Clouds2D,
 	$Clouds3D,
 	$State,
@@ -638,6 +656,7 @@ const vec4 clr = renderClouds(
 
 $Output = clr;
 $Distance = dist;
+
 			]]>
 			</script>
 		</item>
@@ -645,8 +664,8 @@ $Distance = dist;
 			<id>{2BB29238-2675-42BB-9382-17C55B6C1380}</id>
 			<comment/>
 			<position>
-				<first>112</first>
-				<second>695</second>
+				<first>-19</first>
+				<second>729</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -663,8 +682,8 @@ $Distance = dist;
 			<id>{1AD17D96-8F2E-457A-AAB5-8EBCE60711EA}</id>
 			<comment/>
 			<position>
-				<first>74</first>
-				<second>622</second>
+				<first>-53</first>
+				<second>651</second>
 			</position>
 			<parameterName>Weather_SkyCloud2D</parameterName>
 			<type>Texture2D</type>
@@ -674,8 +693,8 @@ $Distance = dist;
 			<id>{20235D86-BCB0-485E-91F7-F7E2ADE78B21}</id>
 			<comment/>
 			<position>
-				<first>73</first>
-				<second>659</second>
+				<first>-53</first>
+				<second>690</second>
 			</position>
 			<parameterName>Weather_SkyCloud3D</parameterName>
 			<type>Texture3D</type>
@@ -702,11 +721,33 @@ $Distance = dist;
 			<id>{21D1CC08-6848-49CB-BA67-E49974F893C6}</id>
 			<comment/>
 			<position>
-				<first>137</first>
-				<second>736</second>
+				<first>-5</first>
+				<second>768</second>
 			</position>
 			<parameterName>World_Time</parameterName>
 			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{49BB686E-3893-4F3E-AFAC-FAC0AC817383}</id>
+			<comment/>
+			<position>
+				<first>-53</first>
+				<second>571</second>
+			</position>
+			<parameterName>Weather_SkySunColor</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{CFE120E4-0277-41B4-A10C-9C932F6764B0}</id>
+			<comment/>
+			<position>
+				<first>-85</first>
+				<second>532</second>
+			</position>
+			<parameterName>Weather_SkySunDirection</parameterName>
+			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 	</nodes>
@@ -1159,6 +1200,46 @@ $Distance = dist;
 			<destination>
 				<node ref="/object/nodes/item[39]"/>
 				<id>{7ACEE4C2-A92D-4E50-BFAE-C1D744BEE5E0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{D31F47A6-19A4-440D-8432-A9E4610D070D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{13FC1CDD-FDA9-4445-B961-AC18E29630FA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{19586C3A-69D1-46CB-AAFD-B6ACF94CAADE}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{C5095DF7-63D2-455A-9659-B6592AB27CB1}</id>
 			</destination>
 		</item>
 	</edges>

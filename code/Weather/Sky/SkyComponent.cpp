@@ -17,9 +17,11 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Weather/Sky/SkyComponent.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
+#include "World/Entity/LightComponent.h"
 
 namespace traktor::weather
 {
@@ -35,6 +37,8 @@ const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
 const render::Handle s_handleWeather_SkyCloud2D(L"Weather_SkyCloud2D");
 const render::Handle s_handleWeather_SkyCloud3D(L"Weather_SkyCloud3D");
 const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
+const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection");
+const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
 
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
@@ -47,18 +51,10 @@ const int32_t c_indexCount = c_triangleCount * 3;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
 
 SkyComponent::SkyComponent(
-	// const render::IVertexLayout* vertexLayout,
-	// render::Buffer* vertexBuffer,
-	// render::Buffer* indexBuffer,
-	// const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< render::ITexture >& texture,
 	float intensity
 )
-// :	m_vertexLayout(vertexLayout)
-// ,	m_vertexBuffer(vertexBuffer)
-// ,	m_indexBuffer(indexBuffer)
-// ,	m_primitives(primitives)
 :	m_shader(shader)
 ,	m_texture(texture)
 ,	m_transform(Transform::identity())
@@ -182,6 +178,7 @@ void SkyComponent::destroy()
 
 void SkyComponent::setOwner(world::Entity* owner)
 {
+	m_owner = owner;
 }
 
 void SkyComponent::setTransform(const Transform& transform)
@@ -262,6 +259,15 @@ void SkyComponent::build(
 	if (!sp)
 		return;
 
+	// Get sun from directional light in same entity as sky component.
+	Vector4 sunDirection = m_transform.axisY();
+	Vector4 sunColor = Vector4(1.0f, 0.9f, 0.85f) * 1.8_simd;
+	if (m_owner != nullptr)
+	{
+		auto lightComponent = m_owner->getComponent< world::LightComponent >();
+		sunColor = lightComponent->getColor();
+	}
+
 	const float rotation = m_transform.rotation().toEulerAngles().x();
 
 	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
@@ -283,8 +289,11 @@ void SkyComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_intensity);
-	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
+
+	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
 
