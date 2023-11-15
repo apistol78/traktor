@@ -555,8 +555,18 @@ bool ShaderPipeline::buildOutput(
 					return pipelineBuilder->getSourceDatabase()->getObjectReadOnly< ShaderModule >(id);
 				};
 
-				// @fixme Hash should include shader texts...
-				const uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
+				// Calculate hash of the entire shader graph including modules so we can
+				// memoize shader compilation.
+				uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
+				for (auto scriptNode : programGraph->findNodesOf< Script >())
+				{
+					for (const auto& scriptInclude : scriptNode->getIncludes())
+					{
+						Ref< const ISerializable > module = pipelineBuilder->getObjectReadOnly(Guid(scriptInclude));
+						if (module)
+							hash += pipelineBuilder->calculateInclusiveHash(module);
+					}
+				}
 
 				Ref< ProgramResource > programResource = pipelineBuilder->getDataAccessCache()->read< ProgramResource >(
 					Key(0x00000000, 0x00000000, dependency->pipelineHash, hash),
