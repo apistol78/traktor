@@ -26,6 +26,7 @@ namespace traktor::world
 
 class IWorldRenderPass;
 class WorldRenderView;
+class WorldSetupContext;
 
 }
 
@@ -33,8 +34,16 @@ namespace traktor::render
 {
 
 class Buffer;
-class RenderContext;
+class IRenderSystem;
 class IVertexLayout;
+class RenderContext;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
 
 }
 
@@ -50,16 +59,14 @@ class T_DLLCLASS SkyComponent : public world::IEntityComponent
 
 public:
 	explicit SkyComponent(
-		const render::IVertexLayout* vertexLayout,
-		render::Buffer* vertexBuffer,
-		render::Buffer* indexBuffer,
-		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< render::ITexture >& texture,
 		float intensity
 	);
 
 	virtual ~SkyComponent();
+
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual void destroy() override final;
 
@@ -70,6 +77,11 @@ public:
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void update(const world::UpdateParams& update) override final;
+
+	void setup(
+		const world::WorldSetupContext& context,
+		const world::WorldRenderView& worldRenderView
+	);
 
 	void build(
 		render::RenderContext* renderContext,
@@ -84,10 +96,14 @@ private:
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	render::Primitives m_primitives;
+	resource::Proxy< render::Shader > m_shaderClouds2D;
+	resource::Proxy< render::Shader > m_shaderClouds3D;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;
+	Ref< render::ITexture > m_cloudTextures[2];
 	Transform m_transform;
-	float m_intensity;
+	float m_intensity = 1.0f;
+	bool m_dirty = true;
 };
 
 }
