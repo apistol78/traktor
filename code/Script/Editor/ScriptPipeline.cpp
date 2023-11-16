@@ -13,6 +13,7 @@
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Preprocessor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
@@ -27,7 +28,6 @@
 #include "Script/IErrorCallback.h"
 #include "Script/IScriptCompiler.h"
 #include "Script/ScriptResource.h"
-#include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptPipeline.h"
 
