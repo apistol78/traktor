@@ -165,7 +165,7 @@ TBuiltInResource getDefaultBuiltInResource()
 
 void performOptimization(bool convertRelaxedToHalf, AlignedVector< uint32_t >& spirv)
 {
-	spv_target_env target_env = SPV_ENV_UNIVERSAL_1_2;
+	spv_target_env target_env = SPV_ENV_VULKAN_1_2;
 
 	spvtools::Optimizer optimizer(target_env);
 	optimizer.SetMessageConsumer([](spv_message_level_t level, const char* source, const spv_position_t& position, const char* message) {
@@ -314,10 +314,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Vertex shader.
 		const char* vst = vertexShaderText.c_str();
 		vertexShader = new glslang::TShader(EShLangVertex);
-		vertexShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+		vertexShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
 		vertexShader->setStrings(&vst, 1);
 		vertexShader->setEntryPoint("main");
-		const bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
+		vertexShader->setSourceEntryPoint("main");
+		vertexShader->setDebugInfo(true);
+
+		const bool vertexResult = vertexShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
 		if (vertexShader->getInfoLog())
 		{
 			if (!vertexResult)
@@ -334,10 +337,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 		// Fragment shader.
 		const char* fst = fragmentShaderText.c_str();
 		fragmentShader = new glslang::TShader(EShLangFragment);
-		fragmentShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+		fragmentShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
 		fragmentShader->setStrings(&fst, 1);
 		fragmentShader->setEntryPoint("main");
-		const bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
+		fragmentShader->setSourceEntryPoint("main");
+		fragmentShader->setDebugInfo(true);
+
+		const bool fragmentResult = fragmentShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
 		if (fragmentShader->getInfoLog())
 		{
 			if (!fragmentResult)
@@ -379,10 +385,13 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 
 		// Compute shader.
 		computeShader = new glslang::TShader(EShLangCompute);
-		computeShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_1);
+		computeShader->setEnvClient(glslang::EShClientVulkan, glslang::EShTargetVulkan_1_2);
 		computeShader->setStrings(&computeShaderText, 1);
 		computeShader->setEntryPoint("main");
-		bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings));
+		computeShader->setSourceEntryPoint("main");
+		computeShader->setDebugInfo(true);
+		
+		const bool computeResult = computeShader->parse(&defaultBuiltInResource, 100, false, (EShMessages)(EShMsgVulkanRules | EShMsgSpvRules | EShMsgSuppressWarnings | EShMsgDebugInfo));
 		if (computeShader->getInfoLog())
 		{
 			if (!computeResult)
@@ -408,7 +417,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (!program->link(EShMsgDefault))
 		return nullptr;
 
-	const int32_t optimize = (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
+	const int32_t optimize = 0; // (settings != nullptr ? settings->getProperty< int32_t >(L"Glsl.Vulkan.Optimize", 1) : 1);
 	const bool convertRelaxedToHalf = (settings != nullptr ? settings->getProperty< bool >(L"Glsl.Vulkan.ConvertRelaxedToHalf", false) : false);
 
 	// Create output resource.
@@ -417,12 +426,19 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	programResource->m_useTargetSize = cx.requirements().useTargetSize;
 
 	// Generate SPIR-V from program AST.
+	glslang::SpvOptions options;
+	options.generateDebugInfo = true;
+	options.emitNonSemanticShaderDebugInfo = true;
+	options.emitNonSemanticShaderDebugSource = true;
+
 	auto vsi = program->getIntermediate(EShLangVertex);
 	if (vsi != nullptr)
 	{
 		std::vector< uint32_t > vs;
-		glslang::GlslangToSpv(*vsi, vs);
+		glslang::GlslangToSpv(*vsi, vs, &options);
+
 		programResource->m_vertexShader = AlignedVector< uint32_t >(vs.begin(), vs.end());
+
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_vertexShader);
 	}
@@ -431,8 +447,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (fsi != nullptr)
 	{
 		std::vector< uint32_t > fs;
-		glslang::GlslangToSpv(*fsi, fs);
+		glslang::GlslangToSpv(*fsi, fs, &options);
+
 		programResource->m_fragmentShader = AlignedVector< uint32_t >(fs.begin(), fs.end());
+
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_fragmentShader);
 	}
@@ -441,8 +459,10 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	if (csi != nullptr)
 	{
 		std::vector< uint32_t > cs;
-		glslang::GlslangToSpv(*csi, cs);
+		glslang::GlslangToSpv(*csi, cs, &options);
+
 		programResource->m_computeShader = AlignedVector< uint32_t >(cs.begin(), cs.end());
+		
 		if (optimize > 0)
 			performOptimization(convertRelaxedToHalf, programResource->m_computeShader);
 	}
