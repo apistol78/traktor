@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,11 @@
 #include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Preprocessor.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
-#include "Script/Editor/Preprocessor.h"
 
-namespace traktor::script
+namespace traktor
 {
 	namespace
 	{
@@ -26,7 +26,8 @@ enum PreprocessorKeyword
 	PkwElseIf,
 	PkwElse,
 	PkwEnd,
-	PkwUsing
+	PkwUsing,
+	PkwDefine
 };
 
 struct Tokenizer
@@ -133,9 +134,9 @@ struct Tokenizer
 	}
 };
 
-int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error);
+int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error);
 
-int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	int32_t value = 0;
 	switch (t.next())
@@ -181,7 +182,7 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, int32_t >& def
 				{
 					if (fn == L"defined")
 					{
-						std::map< std::wstring, int32_t >::const_iterator i = definitions.find(arg);
+						const auto i = definitions.find(arg);
 						value = (i != definitions.end()) ? 1 : 0;
 					}
 					else
@@ -191,9 +192,9 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, int32_t >& def
 			else
 			{
 				t.push();
-				std::map< std::wstring, int32_t >::const_iterator i = definitions.find(fn);
+				const auto i = definitions.find(fn);
 				if (i != definitions.end())
-					value = i->second;
+					value = i->second.getInt32();
 				else
 					value = 0;
 			}
@@ -209,7 +210,7 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, int32_t >& def
 	return value;
 }
 
-int32_t evaluateFactors(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateFactors(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	int32_t left = evaluateAtoms(t, definitions, error);
 	while (!error)
@@ -228,7 +229,7 @@ int32_t evaluateFactors(Tokenizer& t, const std::map< std::wstring, int32_t >& d
 	return left;
 }
 
-int32_t evaluateSummands(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateSummands(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	int32_t left = evaluateFactors(t, definitions, error);
 	while (!error)
@@ -247,7 +248,7 @@ int32_t evaluateSummands(Tokenizer& t, const std::map< std::wstring, int32_t >& 
 	return left;
 }
 
-int32_t evaluateBitwise(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateBitwise(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	int32_t left = evaluateSummands(t, definitions, error);
 	while (!error)
@@ -266,7 +267,7 @@ int32_t evaluateBitwise(Tokenizer& t, const std::map< std::wstring, int32_t >& d
 	return left;
 }
 
-int32_t evaluateLogical(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateLogical(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	int32_t left = evaluateBitwise(t, definitions, error);
 	while (!error)
@@ -301,7 +302,7 @@ int32_t evaluateLogical(Tokenizer& t, const std::map< std::wstring, int32_t >& d
 	return left;
 }
 
-int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, int32_t >& definitions, bool& error)
+int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, Any >& definitions, bool& error)
 {
 	return evaluateLogical(t, definitions, error);
 }
@@ -310,21 +311,24 @@ int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, int32_t >& definit
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Preprocessor", Preprocessor, Object)
 
-void Preprocessor::setDefinition(const std::wstring& symbol, int32_t value)
+void Preprocessor::setDefinition(const std::wstring& symbol, const Any& value)
 {
 	m_definitions[symbol] = value;
 }
 
 void Preprocessor::removeDefinition(const std::wstring& symbol)
 {
-	std::map< std::wstring, int32_t >::iterator i = m_definitions.find(symbol);
-	if (i != m_definitions.end())
-		m_definitions.erase(i);
+	auto it = m_definitions.find(symbol);
+	if (it != m_definitions.end())
+		m_definitions.erase(it);
 }
 
 bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, std::set< std::wstring >& usings) const
 {
 	StringOutputStream ss;
+
+	// Create a local duplicate of definitions so evaluation can modify it.
+	std::map< std::wstring, Any > definitions = m_definitions;
 
 	std::stack< int32_t > keep;
 	keep.push(0);
@@ -340,10 +344,10 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 
 			ss << Endl;
 
-			size_t sep = line.find_first_of(L" \t");
+			const size_t sep = line.find_first_of(L" \t");
 			if (sep != line.npos)
 			{
-				std::wstring tmp = line.substr(0, sep);
+				const std::wstring tmp = line.substr(0, sep);
 
 				if (tmp == L"#if")
 					keyword = PkwIf;
@@ -351,6 +355,8 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 					keyword = PkwElseIf;
 				else if (tmp == L"#using")
 					keyword = PkwUsing;
+				else if (tmp == L"#define")
+					keyword = PkwDefine;
 
 				expression = line.substr(sep + 1);
 			}
@@ -368,7 +374,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				{
 					if (keep.top() == 0)
 						keep.push(
-							(evaluateExpression(expression) != 0) ? 0 : 1
+							(evaluateExpression(expression, definitions) != 0) ? 0 : 1
 						);
 					else
 						keep.push(2);
@@ -380,7 +386,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 					if (keep.top() == 0)
 						keep.top() = 2;
 					else if (keep.top() == 1)
-						keep.top() = (evaluateExpression(expression) != 0) ? 0 : 1;
+						keep.top() = (evaluateExpression(expression, definitions) != 0) ? 0 : 1;
 				}
 				break;
 
@@ -405,8 +411,23 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				break;
 
 			case PkwUsing:
-					if (keep.top() == 0)
-						usings.insert(trim(expression));
+				if (keep.top() == 0)
+					usings.insert(trim(expression));
+				break;
+
+			case PkwDefine:
+				if (keep.top() == 0)
+				{
+					const size_t sep = expression.find_first_of(L" \t");
+					const std::wstring def = expression.substr(0, sep);
+					if (sep != expression.npos)
+					{
+						const std::wstring xpr = trim(expression.substr(sep + 1));
+						definitions[trim(def)] = Any::fromString(xpr);
+					}
+					else
+						definitions[trim(def)] = Any();
+				}
 				break;
 
 			default:
@@ -437,12 +458,12 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 	return true;
 }
 
-int32_t Preprocessor::evaluateExpression(const std::wstring& expression) const
+int32_t Preprocessor::evaluateExpression(const std::wstring& expression, const std::map< std::wstring, Any >& definitions) const
 {
 	Tokenizer t(expression);
 	bool error = false;
 
-	int32_t result = evaluateL(t, m_definitions, error);
+	int32_t result = evaluateL(t, definitions, error);
 	if (error)
 	{
 		log::error << L"Preprocessor failed; syntax error in expression \"" << expression << L"\"" << Endl;

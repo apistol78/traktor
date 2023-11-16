@@ -27,6 +27,9 @@
 
 namespace traktor
 {
+
+class Preprocessor;
+
 	namespace editor
 	{
 
@@ -57,7 +60,6 @@ class ToolBarButtonClickEvent;
 
 class IScriptCompiler;
 class IScriptContext;
-class Preprocessor;
 class Script;
 class ScriptBreakpointEvent;
 class ScriptClassesView;
