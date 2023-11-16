@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,62 +8,254 @@
  */
 #include "Ui/SyntaxRichEdit/SyntaxLanguageGlsl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
+
+const wchar_t* c_glslIntrinsics[] =
+{
+	L"determinant",
+	L"texCUBEbias",
+	L"texCUBEgrad",
+	L"texCUBEproj",
+	L"ddx_coarse",
+	L"ddy_coarse",
+	L"smoothstep",
+	L"texCUBElod",
+	L"textureLod",
+	L"countbits",
+	L"normalize",
+	L"tex1Dbias",
+	L"tex1Dgrad",
+	L"tex1Dproj",
+	L"tex2Dbias",
+	L"tex2Dgrad",
+	L"tex2Dproj",
+	L"tex3Dbias",
+	L"tex3Dproj",
+	L"transpose",
+	L"asdouble",
+	L"ddx_fine",
+	L"ddy_fine",
+	L"distance",
+	L"isfinite",
+	L"saturate",
+	L"tex1Dlod",
+	L"tex2Dlod",
+	L"tex3Dlod",
+	L"asfloat",
+	L"degrees",
+	L"discard",
+	L"radians",
+	L"reflect",
+	L"refract",
+	L"texCUBE",
+	L"Texture",
+	L"asuint",
+	L"errorf",
+	L"fwidth",
+	L"length",
+	L"printf",
+	L"Sample",
+	L"sincos",
+	L"abort",
+	L"asint",
+	L"atan2",
+	L"clamp",
+	L"cross",
+	L"floor",
+	L"fract",
+	L"frexp",
+	L"isinf",
+	L"isnan",
+	L"ldexp",
+	L"log10",
+	L"noise",
+	L"round",
+	L"rsqrt",
+	L"tex1D",
+	L"tex2D",
+	L"tex3D",
+	L"trunc",
+	L"acos",
+	L"asin",
+	L"atan",
+	L"ceil",
+	L"clip",
+	L"cosh",
+	L"exp2",
+	L"fmod",
+	L"frac",
+	L"lerp",
+	L"log2",
+	L"modf",
+	L"sinh",
+	L"sqrt",
+	L"step",
+	L"tanh",
+	L"abs",
+	L"all",
+	L"any",
+	L"cos",
+	L"ddx",
+	L"ddy",
+	L"dot",
+	L"dst",
+	L"exp",
+	L"fma",
+	L"lit",
+	L"log",
+	L"mad",
+	L"max",
+	L"min",
+	L"mix",
+	L"mod",
+	L"mul",
+	L"pow",
+	L"rcp",
+	L"sin",
+	L"tan",
+	nullptr
+};
 
 const wchar_t* c_glslKeywords[] =
 {
+	L"noperspective",
 	L"attribute",
-	L"const",
+	L"invariant",
+	L"precision",
+	L"centroid",
+	L"continue",
+	L"default",
+	L"readonly",
 	L"uniform",
 	L"varying",
-	L"layout",
-	L"centroid",
-	L"flat",
-	L"fract",
-	L"smooth",
-	L"noperspective",
-	L"break",
-	L"continue",
-	L"do",
-	L"for",
-	L"while",
-	L"switch",
-	L"case",
-	L"default", 
-	L"if",
-	L"else",
-	L"in",
-	L"out",
-	L"inout",
-	L"true",
-	L"false",
-	L"invariant",
 	L"discard",
-	L"return",
-	L"lowp",
 	L"mediump",
-	L"highp",
-	L"precision",
+	L"reflect",
+	L"refract",
+	L"texCUBE",
+	L"Texture",
+	L"layout",
+	L"smooth",
+	L"switch",
+	L"return",
 	L"struct",
-	L"readonly",
-	L"textureLod",
+	L"asuint",
+	L"errorf",
+	L"fwidth",
+	L"length",
+	L"printf",
+	L"Sample",
+	L"sincos",
+	L"break",
+	L"while",
+	L"inout",
+	L"false",
+	L"highp",
+	L"abort",
+	L"asint",
+	L"atan2",
+	L"clamp",
+	L"cross",
+	L"floor",
+	L"fract",
+	L"frexp",
+	L"isinf",
+	L"isnan",
+	L"ldexp",
+	L"log10",
+	L"noise",
+	L"round",
+	L"rsqrt",
+	L"tex1D",
+	L"tex2D",
+	L"tex3D",
+	L"trunc",
+	L"flat",
+	L"case",
+	L"else",
+	L"true",
+	L"lowp",
+	L"acos",
+	L"asin",
+	L"atan",
+	L"ceil",
+	L"clip",
+	L"cosh",
+	L"exp2",
+	L"fmod",
+	L"frac",
+	L"lerp",
+	L"log2",
+	L"modf",
+	L"sinh",
+	L"sqrt",
+	L"step",
+	L"tanh",
+	L"for",
+	L"out",
+	L"abs",
+	L"all",
+	L"any",
+	L"cos",
+	L"ddx",
+	L"ddy",
+	L"dot",
+	L"dst",
+	L"exp",
+	L"fma",
+	L"lit",
+	L"log",
+	L"mad",
+	L"max",
+	L"min",
+	L"mix",
+	L"mul",
+	L"pow",
+	L"rcp",
+	L"sin",
+	L"tan",
+	L"do",
+	L"if",
+	L"in",
 	nullptr
 };
 
 const wchar_t* c_glslTypes[] =
 {
-	L"float",
-	L"int",
-	L"void",
-	L"bool",
-	L"mat2",
-	L"mat3",
-	L"mat4",
+	L"sampler1DArrayShadow",
+	L"sampler2DArrayShadow",
+	L"sampler2DRectShadow",
+	L"samplerCubeShadow",
+	L"sampler1DShadow",
+	L"sampler2DShadow",
+	L"isampler1DArray",
+	L"isampler2DArray",
+	L"usampler1DArray",
+	L"usampler2DArray",
+	L"samplerCube",
+	L"sampler1DArray",
+	L"sampler2DArray",
+	L"isampler2DRect",
+	L"usampler2DRect",
+	L"isamplerBuffer",
+	L"usamplerBuffer",
+	L"sampler2DRect",
+	L"samplerBuffer",
+	L"isamplerCube",
+	L"usamplerCube",
+	L"isampler1D",
+	L"isampler2D",
+	L"isampler3D",
+	L"usampler1D",
+	L"usampler2D",
+	L"usampler3D",
+	L"sampler1D",
+	L"sampler2D",
+	L"sampler3D",
+	L"sampler",
 	L"mat2x2",
 	L"mat2x3",
 	L"mat2x4",
@@ -73,55 +265,71 @@ const wchar_t* c_glslTypes[] =
 	L"mat4x2",
 	L"mat4x3",
 	L"mat4x4",
-	L"vec2",
-	L"vec3",
-	L"vec4",
+	L"buffer",
+	L"const",
+	L"float",
 	L"ivec2",
 	L"ivec3",
 	L"ivec4",
 	L"bvec2",
 	L"bvec3",
 	L"bvec4",
-	L"uint",
 	L"uvec2",
 	L"uvec3",
 	L"uvec4",
-	L"sampler",
-	L"sampler1D",
-	L"sampler2D",
-	L"sampler3D",
-	L"samplerCube",   
-	L"sampler1DShadow",
-	L"sampler2DShadow",
-	L"samplerCubeShadow",
-	L"sampler1DArray",
-	L"sampler2DArray",
-	L"sampler1DArrayShadow",
-	L"sampler2DArrayShadow",
-	L"isampler1D",
-	L"isampler2D",
-	L"isampler3D",
-	L"isamplerCube",
-	L"isampler1DArray",
-	L"isampler2DArray",
-	L"usampler1D",
-	L"usampler2D",
-	L"usampler3D",
-	L"usamplerCube",
-	L"usampler1DArray",
-	L"usampler2DArray",
-	L"sampler2DRect",
-	L"sampler2DRectShadow",
-	L"isampler2DRect",
-	L"usampler2DRect",
-	L"samplerBuffer",
-	L"isamplerBuffer",
-	L"usamplerBuffer",
-	L"buffer",
+	L"ceil",
+	L"clip",
+	L"cosh",
+	L"exp2",
+	L"fmod",
+	L"frac",
+	L"lerp",
+	L"log2",
+	L"modf",
+	L"sinh",
+	L"sqrt",
+	L"step",
+	L"tanh",
+	L"void",
+	L"bool",
+	L"mat2",
+	L"mat3",
+	L"mat4",
+	L"vec2",
+	L"vec3",
+	L"vec4",
+	L"uint",
+	L"for",
+	L"out",
+	L"abs",
+	L"all",
+	L"any",
+	L"cos",
+	L"ddx",
+	L"ddy",
+	L"dot",
+	L"dst",
+	L"exp",
+	L"fma",
+	L"lit",
+	L"log",
+	L"mad",
+	L"max",
+	L"min",
+	L"mix",
+	L"mul",
+	L"pow",
+	L"rcp",
+	L"sin",
+	L"tan",
+	L"int",
+	L"do",
+	L"if",
+	L"in",
 	nullptr
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.SyntaxLanguageGlsl", 0, SyntaxLanguageGlsl, SyntaxLanguage)
 
@@ -177,13 +385,16 @@ bool SyntaxLanguageGlsl::consume(const std::wstring& text, State& outState, int&
 		int i = 1;
 
 		// Integer or float.
-		for (; (i < ln && (text[i] >= L'0' && text[i] <= L'9')) || text[i] == L'.'; ++i)
+		for (; i < ln && text[i] >= L'0' && text[i] <= L'9'; ++i)
 			++outConsumedChars;
 
 		// Fractional
-		if (text[i] == L'.')
+		if (i < ln && text[i] == L'.')
 		{
-			for (; i < ln && text[i] >= L'0' && text[i] <= L'9'; ++i)
+			++outConsumedChars;
+			for (++i; i < ln && text[i] >= L'0' && text[i] <= L'9'; ++i)
+				++outConsumedChars;
+			if (i < ln && text[i] == L'f')
 				++outConsumedChars;
 		}
 
@@ -236,114 +447,19 @@ bool SyntaxLanguageGlsl::consume(const std::wstring& text, State& outState, int&
 		}
 	}
 
-	if (
-		word == L"abort" ||
-		word == L"abs" ||
-		word == L"acos" ||
-		word == L"all" ||
-		word == L"any" ||
-		word == L"asdouble" ||
-		word == L"asfloat" ||
-		word == L"asin" ||
-		word == L"asint" ||
-		word == L"asuint" ||
-		word == L"atan" ||
-		word == L"atan2" ||
-		word == L"ceil" ||
-		word == L"clamp" ||
-		word == L"clip" ||
-		word == L"cos" ||
-		word == L"cosh" ||
-		word == L"countbits" ||
-		word == L"cross" ||
-		word == L"ddx" ||
-		word == L"ddx_coarse" ||
-		word == L"ddx_fine" ||
-		word == L"ddy" ||
-		word == L"ddy_coarse" ||
-		word == L"ddy_fine" ||
-		word == L"degrees" ||
-		word == L"determinant" ||
-		word == L"discard" ||
-		word == L"distance" ||
-		word == L"dot" ||
-		word == L"dst" ||
-		word == L"errorf" ||
-		word == L"exp" ||
-		word == L"exp2" ||
-		word == L"floor" ||
-		word == L"fma" ||
-		word == L"fmod" ||
-		word == L"frac" ||
-		word == L"frexp" ||
-		word == L"fwidth" ||
-		word == L"isfinite" ||
-		word == L"isinf" ||
-		word == L"isnan" ||
-		word == L"ldexp" ||
-		word == L"length" ||
-		word == L"lerp" ||
-		word == L"lit" ||
-		word == L"log" ||
-		word == L"log10" ||
-		word == L"log2" ||
-		word == L"mad" ||
-		word == L"max" ||
-		word == L"min" ||
-		word == L"modf" ||
-		word == L"mul" ||
-		word == L"noise" ||
-		word == L"normalize" ||
-		word == L"pow" ||
-		word == L"printf" ||
-		word == L"radians" ||
-		word == L"rcp" ||
-		word == L"reflect" ||
-		word == L"refract" ||
-		word == L"round" ||
-		word == L"rsqrt" ||
-		word == L"saturate" ||
-		word == L"sin" ||
-		word == L"sincos" ||
-		word == L"sinh" ||
-		word == L"smoothstep" ||
-		word == L"sqrt" ||
-		word == L"step" ||
-		word == L"tan" ||
-		word == L"tanh" ||
-		word == L"tex1D" ||
-		word == L"tex1Dbias" ||
-		word == L"tex1Dgrad" ||
-		word == L"tex1Dlod" ||
-		word == L"tex1Dproj" ||
-		word == L"tex2D" ||
-		word == L"tex2Dbias" ||
-		word == L"tex2Dgrad" ||
-		word == L"tex2Dlod" ||
-		word == L"tex2Dproj" ||
-		word == L"tex3D" ||
-		word == L"tex3Dbias" ||
-		word == L"tex3Dlod" ||
-		word == L"tex3Dproj" ||
-		word == L"texCUBE" ||
-		word == L"texCUBEbias" ||
-		word == L"texCUBEgrad" ||
-		word == L"texCUBElod" ||
-		word == L"texCUBEproj" ||
-		word == L"transpose" ||
-		word == L"trunc" ||
-		word == L"Texture" ||
-		word == L"Sample"
-	)
+	for (const wchar_t** k = c_glslIntrinsics; *k != nullptr; ++k)
 	{
-		outState = StFunction;
-		outConsumedChars = int(ws);
-		return true;
+		if (word == *k)
+		{
+			outState = StFunction;
+			outConsumedChars = int(ws);
+			return true;
+		}
 	}
 
 	// Default as text.
 	outState = StDefault;
-	outConsumedChars = 1;
+	outConsumedChars = int(ws);
 	return true;
 }
 
@@ -351,5 +467,4 @@ void SyntaxLanguageGlsl::outline(int32_t line, const std::wstring& text, std::li
 {
 }
 
-	}
 }
