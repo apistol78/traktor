@@ -22,7 +22,7 @@
 #include "Render/SH/SHFunction.h"
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/GBuffer.h"
-#include "Shape/Editor/Bake/IblProbe.h"
+#include "Shape/Editor/Bake/IProbe.h"
 #include "Shape/Editor/Bake/Embree/RayTracerEmbree.h"
 #include "Shape/Editor/Bake/Embree/SplitModel.h"
 
@@ -201,7 +201,7 @@ void RayTracerEmbree::destroy()
 	m_buffers.clear();
 }
 
-void RayTracerEmbree::addEnvironment(const IblProbe* environment)
+void RayTracerEmbree::addEnvironment(const IProbe* environment)
 {
 	m_environment = environment;
 }
