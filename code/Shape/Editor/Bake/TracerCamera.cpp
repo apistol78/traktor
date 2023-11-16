@@ -8,10 +8,8 @@
  */
 #include "Shape/Editor/Bake/TracerCamera.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerCamera", TracerCamera, Object)
 
@@ -28,5 +26,4 @@ TracerCamera::TracerCamera(
 {
 }
 
-	}
 }

@@ -22,17 +22,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::world
 {
-	namespace world
-	{
 
 class IEntityReplicator;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 class TracerProcessor;
 
@@ -80,5 +78,4 @@ private:
 	SmallMap< const TypeInfo*, Ref< const world::IEntityReplicator > > m_entityReplicators;
 };
 
-	}
 }

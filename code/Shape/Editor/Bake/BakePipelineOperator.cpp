@@ -92,12 +92,10 @@
 #include "World/Entity/VolumeComponentData.h"
 #include "Weather/Sky/SkyComponentData.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
+	namespace
 	{
-		namespace
-		{
 
 const Guid c_lightmapProxyId(L"{A5F6E00A-6291-D640-825C-99006197AF49}");
 const Guid c_lightmapDiffuseIdSeed(L"{A5A16214-0A01-4D6D-A509-6A5A16ACB6A3}");
@@ -350,7 +348,7 @@ void addSky(
 	*/
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.BakePipelineOperator", 0, BakePipelineOperator, scene::IScenePipelineOperator)
 
@@ -1005,5 +1003,4 @@ TracerProcessor* BakePipelineOperator::getTracerProcessor()
 	return ms_tracerProcessor;
 }
 
-	}
 }

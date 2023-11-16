@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-    namespace shape
-    {
 
 class BakeConfiguration;
 class TracerCamera;
@@ -80,5 +78,4 @@ private:
     RefArray< const TracerCamera > m_tracerCameras;
 };
 
-    }
 }

@@ -10,25 +10,23 @@
 
 #include "Ui/Container.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 	
 class Button;
 class ProgressBar;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 class TracerPanel : public ui::Container
 {
@@ -46,5 +44,4 @@ private:
 	bool m_idle;
 };
 
-	}
 }
