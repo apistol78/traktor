@@ -36,75 +36,6 @@ bool haveProperty(Display* display, const Atom* properties, unsigned long nprope
 	return false;
 }
 
- #define MWM_DECOR_NONE          0
- #define MWM_DECOR_ALL           (1L << 0)
- #define MWM_DECOR_BORDER        (1L << 1)
- #define MWM_DECOR_RESIZEH       (1L << 2)
- #define MWM_DECOR_TITLE         (1L << 3)
- #define MWM_DECOR_MENU          (1L << 4)
- #define MWM_DECOR_MINIMIZE      (1L << 5)
- #define MWM_DECOR_MAXIMIZE      (1L << 6) 
-
- /* KDE decoration values */
- enum {
-  KDE_noDecoration = 0,
-  KDE_normalDecoration = 1,
-  KDE_tinyDecoration = 2,
-  KDE_noFocus = 256, 
-  KDE_standaloneMenuBar = 512,
-  KDE_desktopIcon = 1024 ,
-  KDE_staysOnTop = 2048
- };
-
-void wm_nodecorations(Display* dpy, Window window) {
-    Atom WM_HINTS;
-    int set;
-
-    WM_HINTS = XInternAtom(dpy, "_MOTIF_WM_HINTS", True);
-    if ( WM_HINTS != 0 ) {
-        #define MWM_HINTS_DECORATIONS   (1L << 1)
-        struct {
-          unsigned long flags;
-          unsigned long functions;
-          unsigned long decorations;
-                   long input_mode;
-          unsigned long status;
-        } MWMHints = { MWM_HINTS_DECORATIONS, 0,
-            MWM_DECOR_NONE, 0, 0 };
-        XChangeProperty(dpy, window, WM_HINTS, WM_HINTS, 32,
-                        PropModeReplace, (unsigned char *)&MWMHints,
-                        sizeof(MWMHints)/4);
-    }
-    WM_HINTS = XInternAtom(dpy, "KWM_WIN_DECORATION", True);
-    if ( WM_HINTS != 0 ) {
-        long KWMHints = KDE_tinyDecoration;
-        XChangeProperty(dpy, window, WM_HINTS, WM_HINTS, 32,
-                        PropModeReplace, (unsigned char *)&KWMHints,
-                        sizeof(KWMHints)/4);
-    }
-
-    WM_HINTS = XInternAtom(dpy, "_WIN_HINTS", True);
-    if ( WM_HINTS != 0 ) {
-        long GNOMEHints = 0;
-        XChangeProperty(dpy, window, WM_HINTS, WM_HINTS, 32,
-                        PropModeReplace, (unsigned char *)&GNOMEHints,
-                        sizeof(GNOMEHints)/4);
-    }
-    WM_HINTS = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE", True);
-    if ( WM_HINTS != 0 ) {
-        Atom NET_WMHints[2];
-        NET_WMHints[0] = XInternAtom(dpy,
-            "_KDE_NET_WM_WINDOW_TYPE_OVERRIDE", True);
-        NET_WMHints[1] = XInternAtom(dpy, "_NET_WM_WINDOW_TYPE_NORMAL", True);
-        XChangeProperty(dpy, window,
-                        WM_HINTS, XA_ATOM, 32, PropModeReplace,
-                        (unsigned char *)&NET_WMHints, 2);
-    }
-    XSetTransientForHint(dpy, window, DefaultRootWindow(dpy));
-    // XUnmapWindow(dpy, window);
-    // XMapWindow(dpy, window);
- }   
-
 		}
 
 FormX11::FormX11(Context* context, EventSubject* owner)
@@ -144,15 +75,6 @@ bool FormX11::create(IWidget* parent, const std::wstring& text, int width, int h
 
 	if (!WidgetX11Impl< IForm >::create(nullptr, style, window, Rect(0, 0, width, height), false, true))
 		return false;
-
-	// Remove chrome if no caption set.
-	if ((style & (WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption)) == 0)
-	{
-	  	// Atom type = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE", False);
-		// Atom value = XInternAtom(m_context->getDisplay(),"_NET_WM_WINDOW_TYPE_TOOLBAR", False);
-		// XChangeProperty(m_context->getDisplay(), window, type, XA_ATOM, 32, PropModeReplace, reinterpret_cast<unsigned char*>(&value), 1);
-		wm_nodecorations(m_context->getDisplay(), window);
-	}
 
 	// Listen to client messages when user tries to close form.
 	m_context->bind(&m_data, ClientMessage, [&](XEvent& xe){
