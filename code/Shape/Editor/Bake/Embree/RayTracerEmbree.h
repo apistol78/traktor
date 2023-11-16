@@ -38,7 +38,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void addEnvironment(const IblProbe* environment) override final;
+	virtual void addEnvironment(const IProbe* environment) override final;
 
 	virtual void addLight(const Light& light) override final;
 
@@ -68,7 +68,7 @@ private:
 	};
 
 	const BakeConfiguration* m_configuration = nullptr;
-	Ref< const IblProbe > m_environment;
+	Ref< const IProbe > m_environment;
 	AlignedVector< Vector2 > m_shadowSampleOffsets;
 	AlignedVector< Light > m_lights;
 	RTCDevice m_device = nullptr;

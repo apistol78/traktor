@@ -27,7 +27,7 @@ Vector2 toEquirectangular(const Vector4& direction)
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.IblProbe", 0, IblProbe, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.IblProbe", 0, IblProbe, IProbe)
 
 IblProbe::IblProbe(const drawing::Image* radiance)
 :	m_radiance(radiance)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,6 +71,7 @@
 #include "Shape/Editor/Bake/BakeConfiguration.h"
 #include "Shape/Editor/Bake/BakePipelineOperator.h"
 #include "Shape/Editor/Bake/IblProbe.h"
+#include "Shape/Editor/Bake/SkyProbe.h"
 #include "Shape/Editor/Bake/TracerCamera.h"
 #include "Shape/Editor/Bake/TracerEnvironment.h"
 #include "Shape/Editor/Bake/TracerIrradiance.h"
@@ -190,11 +191,16 @@ bool addLight(const world::LightComponentData* lightComponentData, const Transfo
 void addSky(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const std::wstring& assetPath,
+	const world::EntityData* entityData,
 	const weather::SkyComponentData* skyComponentData,
 	const Transform& skyTransform,
 	TracerTask* tracerTask
 )
 {
+	const Vector4 sunDirection = entityData->getTransform().axisY();
+	tracerTask->addTracerEnvironment(new TracerEnvironment(new SkyProbe(sunDirection)));
+
+	/*
 	const auto& textureId = skyComponentData->getTexture();
 	if (textureId.isNull())
 		return;
@@ -211,7 +217,7 @@ void addSky(
 
 	const uint32_t textureAssetHash = pipelineBuilder->calculateInclusiveHash(skyComponentData);
 
-	Ref< IblProbe > probe = pipelineBuilder->getDataAccessCache()->read< IblProbe >(
+	Ref< IProbe > probe = pipelineBuilder->getDataAccessCache()->read< IProbe >(
 		Key(0x00000003, 0x00000000, 0x00000000, textureAssetHash),
 		[&]() -> Ref< IblProbe > {
 			// Read sky image from texture asset.
@@ -341,6 +347,7 @@ void addSky(
 
 	// Create tracer environment.
 	tracerTask->addTracerEnvironment(new TracerEnvironment(probe));
+	*/
 }
 
 		}
@@ -619,7 +626,7 @@ bool BakePipelineOperator::build(
 
 				// Add sky source.
 				if (auto skyComponentData = inoutEntityData->getComponent< weather::SkyComponentData >())
-					addSky(pipelineBuilder, m_assetPath, skyComponentData, inoutEntityData->getTransform(), tracerTask);
+					addSky(pipelineBuilder, m_assetPath, inoutEntityData, skyComponentData, inoutEntityData->getTransform(), tracerTask);
 
 				// Add camera.
 				if (auto cameraComponentData = inoutEntityData->getComponent< world::CameraComponentData >())
