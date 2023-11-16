@@ -145,7 +145,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	vtcd.height = 64;
 	vtcd.depth = 64;
 	vtcd.mipCount = 1;
-	vtcd.format = render::TfR32G32B32A32F;
+	vtcd.format = render::TfR32F;
 	vtcd.shaderStorage = true;
 	m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
