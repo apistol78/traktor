@@ -39,6 +39,7 @@ const render::Handle s_handleWeather_SkyCloud3D(L"Weather_SkyCloud3D");
 const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
 const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection");
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
+const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
 
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
@@ -268,6 +269,7 @@ void SkyComponent::build(
 		sunColor = lightComponent->getColor();
 	}
 
+	const Vector4 eyePosition = worldRenderView.getEyePosition();
 	const float rotation = m_transform.rotation().toEulerAngles().x();
 
 	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
@@ -292,6 +294,7 @@ void SkyComponent::build(
 
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
 
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);

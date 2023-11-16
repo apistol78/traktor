@@ -621,6 +621,10 @@ $Output = vec4(clr, 1.0f);
 					<id>{19586C3A-69D1-46CB-AAFD-B6ACF94CAADE}</id>
 					<name>SunColor</name>
 				</item>
+				<item>
+					<id>{70605746-81B0-A64B-8596-3F4762DB8477}</id>
+					<name>EyePosition</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -646,6 +650,7 @@ const vec4 clr = renderClouds(
 	$Time.x,
 	$SunDirection.xyz,
 	$SunColor.xyz,
+	$EyePosition.xz,
 	$Clouds2D,
 	$Clouds3D,
 	$State,
@@ -664,7 +669,7 @@ $Distance = dist;
 			<id>{2BB29238-2675-42BB-9382-17C55B6C1380}</id>
 			<comment/>
 			<position>
-				<first>-19</first>
+				<first>-3</first>
 				<second>729</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
@@ -721,7 +726,7 @@ $Distance = dist;
 			<id>{21D1CC08-6848-49CB-BA67-E49974F893C6}</id>
 			<comment/>
 			<position>
-				<first>-5</first>
+				<first>11</first>
 				<second>768</second>
 			</position>
 			<parameterName>World_Time</parameterName>
@@ -743,7 +748,7 @@ $Distance = dist;
 			<id>{CFE120E4-0277-41B4-A10C-9C932F6764B0}</id>
 			<comment/>
 			<position>
-				<first>-85</first>
+				<first>-69</first>
 				<second>532</second>
 			</position>
 			<parameterName>Weather_SkySunDirection</parameterName>
@@ -791,6 +796,17 @@ $Distance = dist;
 				<second>914</second>
 			</position>
 			<value>0.25</value>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{3CC2F2B4-36BD-B54E-8E1B-D12B69ADE23F}</id>
+			<comment/>
+			<position>
+				<first>-53</first>
+				<second>807</second>
+			</position>
+			<parameterName>Weather_SkyEyePosition</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -1322,6 +1338,16 @@ $Distance = dist;
 			<destination>
 				<node ref="/object/nodes/item[46]"/>
 				<id>{567A2DC4-F113-4DE2-917A-791917DA5DA5}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{70605746-81B0-A64B-8596-3F4762DB8477}</id>
 			</destination>
 		</item>
 	</edges>
