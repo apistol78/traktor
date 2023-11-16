@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 class T_DLLCLASS BakeConfiguration : public ISerializable
 {
@@ -76,5 +74,4 @@ private:
 	float m_ambientOcclusionFactor = 0.5f;
 };
 
-	}
 }

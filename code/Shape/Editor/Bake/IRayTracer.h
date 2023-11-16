@@ -17,29 +17,31 @@ namespace traktor
 
 class Transform;
 
-    namespace drawing
-    {
+}
+
+namespace traktor::drawing
+{
 
 class Image;
 
-    }
+}
 
-    namespace model
-    {
+namespace traktor::model
+{
 
 class Model;
 
-    }
+}
 
-    namespace render
-    {
+namespace traktor::render
+{
 
 class SHCoeffs;
 
-    }
+}
 
-    namespace shape
-    {
+namespace traktor::shape
+{
 
 struct Light;
 class BakeConfiguration;
@@ -51,27 +53,26 @@ class IProbe;
  */
 class IRayTracer : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual bool create(const BakeConfiguration* configuration) = 0;
+	virtual bool create(const BakeConfiguration* configuration) = 0;
 
-    virtual void destroy() = 0;
+	virtual void destroy() = 0;
 
 	virtual void addEnvironment(const IProbe* environment) = 0;
 
-    virtual void addLight(const Light& light) = 0;
+	virtual void addLight(const Light& light) = 0;
 
-    virtual void addModel(const model::Model* model, const Transform& transform) = 0;
+	virtual void addModel(const model::Model* model, const Transform& transform) = 0;
 
-    virtual void commit() = 0;
+	virtual void commit() = 0;
 
-    virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const = 0;
+	virtual Ref< render::SHCoeffs > traceProbe(const Vector4& position) const = 0;
 
-    virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const = 0;
+	virtual void traceLightmap(const model::Model* model, const GBuffer* gbuffer, drawing::Image* lightmapDiffuse, const int32_t region[4]) const = 0;
 
-    virtual Color4f traceRay(const Vector4& position, const Vector4& direction) const = 0;
+	virtual Color4f traceRay(const Vector4& position, const Vector4& direction) const = 0;
 };
 
-    }
 }
