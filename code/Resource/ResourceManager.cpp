@@ -302,7 +302,6 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 			{
 				if (!flushedOnly || handle->get() == nullptr)
 				{
-					handle->flush();
 					load(instance, factory, handleProductType, handle);
 				}
 			}
@@ -331,7 +330,6 @@ void ResourceManager::reload(const TypeInfo& productType, bool flushedOnly)
 
 			if (!flushedOnly || i->second->get() == nullptr)
 			{
-				i->second->flush();
 				load(instance, factory, handleProductType, i->second);
 			}
 		}
