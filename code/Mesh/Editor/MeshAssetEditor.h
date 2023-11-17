@@ -86,10 +86,10 @@ private:
 	Ref< ui::CheckBox > m_checkRenormalize;
 	Ref< ui::CheckBox > m_checkCenter;
 	Ref< ui::CheckBox > m_checkGrounded;
-	Ref< ui::Static > m_staticLodSteps;
-	Ref< ui::Slider > m_sliderLodSteps;
-	Ref< ui::Edit > m_editLodMaxDistance;
-	Ref< ui::Edit > m_editLodCullDistance;
+	//Ref< ui::Static > m_staticLodSteps;
+	//Ref< ui::Slider > m_sliderLodSteps;
+	//Ref< ui::Edit > m_editLodMaxDistance;
+	//Ref< ui::Edit > m_editLodCullDistance;
 	Ref< ui::Edit > m_editScaleFactor;
 	Ref< ui::Slider > m_sliderPreviewAngle;
 	Ref< ui::Image > m_imagePreview;
@@ -120,7 +120,7 @@ private:
 
 	void eventMeshTypeChange(ui::SelectionChangeEvent* event);
 
-	void eventLodStepsChange(ui::ContentChangeEvent* event);
+	//void eventLodStepsChange(ui::ContentChangeEvent* event);
 
 	void eventPreviewAngleChange(ui::ContentChangeEvent* event);
 

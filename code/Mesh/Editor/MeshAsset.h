@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 /*! Mesh asset.
  * \ingroup Mesh
@@ -36,13 +34,9 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 public:
 	enum MeshType
 	{
-		MtBlend = 0,
-		MtIndoor = 1,
-		MtInstance = 2,
-		MtLod = 3,
-		MtPartition = 4,
-		MtSkinned = 5,
-		MtStatic = 6
+		MtInstance = 0,
+		MtSkinned = 1,
+		MtStatic = 2
 	};
 
 	virtual void serialize(ISerializer& s) override final;
@@ -113,10 +107,10 @@ public:
 	/*! Get distance when lowest lod should be used. */
 	float getLodMaxDistance() const { return m_lodMaxDistance; }
 
-	/*! Set distance to when mesh should no longer be rendererd. */
+	/*! Set distance to when mesh should no longer be rendered. */
 	void setLodCullDistance(float lodCullDistance) { m_lodCullDistance = lodCullDistance; }
 
-	/*! Get distance to when mesh should no longer be rendererd. */
+	/*! Get distance to when mesh should no longer be rendered. */
 	float getLodCullDistance() const { return m_lodCullDistance; }
 
 	/*! */
@@ -141,6 +135,4 @@ private:
 	float m_previewAngle = 0.0f;
 };
 
-	}
 }
-

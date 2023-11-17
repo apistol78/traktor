@@ -131,7 +131,6 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 
 		// Build output mesh from merged model.
 		Ref< mesh::MeshAsset > visualMeshAsset = new mesh::MeshAsset();
-		visualMeshAsset->setMeshType(mesh::MeshAsset::MtPartition);
 		pipelineBuilder->buildAdHocOutput(
 		 	visualMeshAsset,
 		 	outputRenderMeshPath,

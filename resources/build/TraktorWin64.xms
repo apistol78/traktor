@@ -1991,16 +1991,6 @@
 								<items/>
 							</item>
 							<item type="Filter">
-								<name>Indoor</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Indoor/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Skinned</name>
 								<items>
 									<item type="File" version="1">
@@ -2025,36 +2015,6 @@
 								<items>
 									<item type="File" version="1">
 										<fileName>Instance/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Blend</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Blend/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Partition</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Partition/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Lod</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Lod/*.*</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>
@@ -7172,16 +7132,6 @@
 								<items/>
 							</item>
 							<item type="Filter">
-								<name>Indoor</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Indoor/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Skinned</name>
 								<items>
 									<item type="File" version="1">
@@ -7206,46 +7156,6 @@
 								<items>
 									<item type="File" version="1">
 										<fileName>Instance/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Blend</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Blend/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Partition</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Partition/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Batch</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Batch/*.*</fileName>
-										<excludeFilter/>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Lod</name>
-								<items>
-									<item type="File" version="1">
-										<fileName>Lod/*.*</fileName>
 										<excludeFilter/>
 										<items/>
 									</item>

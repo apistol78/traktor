@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,16 +13,8 @@
 #include "Core/Class/Boxes/BoxedIntervalTransform.h"
 #include "Mesh/MeshClassFactory.h"
 #include "Mesh/MeshComponent.h"
-#include "Mesh/Blend/BlendMesh.h"
-#include "Mesh/Blend/BlendMeshComponent.h"
-#include "Mesh/Indoor/IndoorMesh.h"
-#include "Mesh/Indoor/IndoorMeshComponent.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
-#include "Mesh/Lod/AutoLodMesh.h"
-#include "Mesh/Lod/AutoLodMeshComponent.h"
-#include "Mesh/Partition/PartitionMesh.h"
-#include "Mesh/Partition/PartitionMeshComponent.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshComponent.h"
 #include "Mesh/Static/StaticMesh.h"
@@ -56,37 +48,11 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classMeshComponent->addProperty("transform", &MeshComponent_getTransform);
 	registrar->registerClass(classMeshComponent);
 
-	auto classBlendMesh = new AutoRuntimeClass< BlendMesh >();
-	registrar->registerClass(classBlendMesh);
-
-	auto classBlendMeshComponent = new AutoRuntimeClass< BlendMeshComponent >();
-	classBlendMeshComponent->addMethod("setBlendWeights", &BlendMeshComponent::setBlendWeights);
-	classBlendMeshComponent->addMethod("getBlendWeights", &BlendMeshComponent::getBlendWeights);
-	registrar->registerClass(classBlendMeshComponent);
-
-	auto classIndoorMesh = new AutoRuntimeClass< IndoorMesh >();
-	registrar->registerClass(classIndoorMesh);
-
-	auto classIndoorMeshComponent = new AutoRuntimeClass< IndoorMeshComponent >();
-	registrar->registerClass(classIndoorMeshComponent);
-
 	auto classInstanceMesh = new AutoRuntimeClass< InstanceMesh >();
 	registrar->registerClass(classInstanceMesh);
 
 	auto classInstanceMeshComponent = new AutoRuntimeClass< InstanceMeshComponent >();
 	registrar->registerClass(classInstanceMeshComponent);
-
-	auto classAutoLodMesh = new AutoRuntimeClass< AutoLodMesh >();
-	registrar->registerClass(classAutoLodMesh);
-
-	auto classAutoLodMeshComponent = new AutoRuntimeClass< AutoLodMeshComponent >();
-	registrar->registerClass(classAutoLodMeshComponent);
-
-	auto classPartitionMesh = new AutoRuntimeClass< PartitionMesh >();
-	registrar->registerClass(classPartitionMesh);
-
-	auto classPartitionMeshComponent = new AutoRuntimeClass< PartitionMeshComponent >();
-	registrar->registerClass(classPartitionMeshComponent);
 
 	auto classSkinnedMesh = new AutoRuntimeClass< SkinnedMesh >();
 	registrar->registerClass(classSkinnedMesh);

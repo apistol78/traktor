@@ -32,11 +32,7 @@
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
-#include "Mesh/Editor/Blend/BlendMeshConverter.h"
-#include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
-#include "Mesh/Editor/Lod/AutoLodMeshConverter.h"
-#include "Mesh/Editor/Partition/PartitionMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Model/Model.h"
@@ -102,20 +98,8 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 {
 	switch (meshType)
 	{
-	case MeshAsset::MtBlend:
-		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-
-	case MeshAsset::MtIndoor:
-		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-
 	case MeshAsset::MtInstance:
 		return Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
-
-	case MeshAsset::MtLod:
-		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-
-	case MeshAsset::MtPartition:
-		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	case MeshAsset::MtSkinned:
 		return Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
@@ -278,24 +262,8 @@ bool MeshPipeline::buildOutput(
 	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
 	{
-	case MeshAsset::MtBlend:
-		converter = new BlendMeshConverter();
-		break;
-
-	case MeshAsset::MtIndoor:
-		converter = new IndoorMeshConverter();
-		break;
-
 	case MeshAsset::MtInstance:
 		converter = new InstanceMeshConverter();
-		break;
-
-	case MeshAsset::MtLod:
-		converter = new AutoLodMeshConverter();
-		break;
-
-	case MeshAsset::MtPartition:
-		converter = new PartitionMeshConverter();
 		break;
 
 	case MeshAsset::MtSkinned:
