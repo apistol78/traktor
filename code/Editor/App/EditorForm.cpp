@@ -1108,7 +1108,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		{
 			if (needOutputResources)
 				dependencies.insert(instance->getGuid());
-			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildAssets(AlignedVector< Guid >(dependencies.begin(), dependencies.end()), false);
 			buildWaitUntilFinished();
 		}
 
@@ -1184,7 +1184,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		{
 			if (needOutputResources)
 				dependencies.insert(instance->getGuid());
-			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildAssets(AlignedVector< Guid >(dependencies.begin(), dependencies.end()), false);
 			buildWaitUntilFinished();
 		}
 
@@ -1298,7 +1298,7 @@ bool EditorForm::openTool(const std::wstring& toolType, const PropertyGroup* par
 			std::set< Guid > dependencies;
 			if (editorTool->needOutputResources(dependencies))
 			{
-				buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+				buildAssets(AlignedVector< Guid >(dependencies.begin(), dependencies.end()), false);
 				buildWaitUntilFinished();
 			}
 
@@ -1689,7 +1689,7 @@ void EditorForm::updateAdditionalPanelMenu()
 void EditorForm::buildAssetsForOpenedEditors()
 {
 	const std::wstring cachePath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.InstanceCache.Path");
-	std::vector< Guid > assetGuids;
+	AlignedVector< Guid > assetGuids;
 
 	for (auto tab : m_tabGroups)
 	{
@@ -1737,7 +1737,7 @@ void EditorForm::buildAssetsForOpenedEditors()
 		buildAssets(assetGuids, false);
 }
 
-void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
+void EditorForm::buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuild)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBuild);
 
@@ -1834,7 +1834,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_pipelineDb->endTransaction();
 }
 
-void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
+void EditorForm::buildAssets(const AlignedVector< Guid >& assetGuids, bool rebuild)
 {
 	if (!m_workspaceSettings)
 		return;
@@ -1856,7 +1856,7 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 
 void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 {
-	std::vector< Guid > assetGuids;
+	AlignedVector< Guid > assetGuids;
 	assetGuids.push_back(assetGuid);
 	buildAssets(assetGuids, rebuild);
 }
@@ -1879,7 +1879,7 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << L"Collecting assets..." << Endl;
 	log::info << IncreaseIndent;
 
-	std::vector< Guid > assetGuids;
+	AlignedVector< Guid > assetGuids;
 	for (const auto& rootInstance : m_workspaceSettings->getProperty< AlignedVector< std::wstring > >(L"Editor.RootInstances"))
 	{
 		const Guid rootInstanceId(rootInstance);
@@ -2745,7 +2745,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		std::set< Guid > dependencies;
 		if (tool->needOutputResources(dependencies))
 		{
-			buildAssets(std::vector< Guid >(dependencies.begin(), dependencies.end()), false);
+			buildAssets(AlignedVector< Guid >(dependencies.begin(), dependencies.end()), false);
 			buildWaitUntilFinished();
 		}
 
@@ -3067,7 +3067,7 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 	// Reload stylesheet if it's been modified.
 	updateStyleSheet(false);
 
-	// Update statusbar.
+	// Update status bar.
 	m_statusBar->setText(0, i18n::Text(building ? L"STATUS_BUILDING" : L"STATUS_IDLE"));
 	m_statusBar->setText(1, i18n::Format(L"STATUS_MEMORY", str(L"%zu", (Alloc::allocated() + 1023) / 1024)));
 
@@ -3094,7 +3094,7 @@ void EditorForm::threadAssetMonitor()
 	RefArray< db::Instance > assetInstances;
 	RefArray< const File > modifiedFiles;
 	RefArray< File > files;
-	std::vector< Guid > modifiedAssets;
+	AlignedVector< Guid > modifiedAssets;
 
 	while (!m_threadAssetMonitor->stopped())
 	{
@@ -3111,7 +3111,7 @@ void EditorForm::threadAssetMonitor()
 				assetInstances
 			);
 
-			std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+			const std::wstring assetPath = m_mergedSettings->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 			// Find all assets which have archive flag set.
 			modifiedFiles.resize(0);
