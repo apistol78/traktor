@@ -143,11 +143,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_dropMeshType->create(containerFile))
 		return false;
 
-	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_BLEND"));
-	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_INDOOR"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_INSTANCE"));
-	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_LOD"));
-	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_PARTITION"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_SKINNED"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STATIC"));
 	m_dropMeshType->addEventHandler< ui::SelectionChangeEvent >(this, &MeshAssetEditor::eventMeshTypeChange);
@@ -175,26 +171,6 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	Ref< ui::Container > containerRight = new ui::Container();
 	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0_ut, 4_ut));
-
-	m_staticLodSteps = new ui::Static();
-	m_staticLodSteps->create(containerRight, i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", 1));
-
-	m_sliderLodSteps = new ui::Slider();
-	m_sliderLodSteps->create(containerRight);
-	m_sliderLodSteps->setRange(1, 64);
-	m_sliderLodSteps->addEventHandler< ui::ContentChangeEvent >(this, &MeshAssetEditor::eventLodStepsChange);
-
-	Ref< ui::Static > staticLodMaxDistance = new ui::Static();
-	staticLodMaxDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_MAX_DISTANCE"));
-
-	m_editLodMaxDistance = new ui::Edit();
-	m_editLodMaxDistance->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
-
-	Ref< ui::Static > staticLodCullDistance = new ui::Static();
-	staticLodCullDistance->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_LOD_CULL_DISTANCE"));
-
-	m_editLodCullDistance = new ui::Edit();
-	m_editLodCullDistance->create(containerRight, L"", ui::WsNone, new ui::NumericEditValidator(true, 0.0f, 10000.0f, 2));
 
 	Ref< ui::Static > staticScaleFactor = new ui::Static();
 	staticScaleFactor->create(containerRight, i18n::Text(L"MESHASSET_EDITOR_SCALE_FACTOR"));
@@ -275,9 +251,9 @@ void MeshAssetEditor::apply()
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
 	m_asset->setCenter(m_checkCenter->isChecked());
 	m_asset->setGrounded(m_checkGrounded->isChecked());
-	m_asset->setLodSteps(m_sliderLodSteps->getValue());
-	m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
-	m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
+	//m_asset->setLodSteps(m_sliderLodSteps->getValue());
+	//m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
+	//m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
 	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
 	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
@@ -330,14 +306,14 @@ ui::Size MeshAssetEditor::getPreferredSize() const
 
 void MeshAssetEditor::updateModel()
 {
-	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
-	std::wstring importFilter = m_asset->getImportFilter();
+	const Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
+	const std::wstring importFilter = m_asset->getImportFilter();
 	m_model = model::ModelCache(m_modelCachePath).get(assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()
 {
-	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
+	const Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 
 	Path assetRelPath;
 	if (!FileSystem::getInstance().getRelativePath(assetPath, m_assetPath, assetRelPath))
@@ -349,20 +325,7 @@ void MeshAssetEditor::updateFile()
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
 	m_checkCenter->setChecked(m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
-
-	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_asset->getLodSteps()));
-
-	m_sliderLodSteps->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
-	m_sliderLodSteps->setValue(m_asset->getLodSteps());
-
-	m_editLodMaxDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
-	m_editLodMaxDistance->setText(toString(m_asset->getLodMaxDistance()));
-
-	m_editLodCullDistance->setEnable(m_asset->getMeshType() == MeshAsset::MtLod);
-	m_editLodCullDistance->setText(toString(m_asset->getLodCullDistance()));
-
 	m_editScaleFactor->setText(toString(m_asset->getScaleFactor()));
-
 	m_sliderPreviewAngle->setValue((int32_t)(m_asset->getPreviewAngle() * 100.0f / TWO_PI));
 }
 
@@ -708,11 +671,6 @@ void MeshAssetEditor::eventMeshTypeChange(ui::SelectionChangeEvent* event)
 {
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected()));
 	updateFile();
-}
-
-void MeshAssetEditor::eventLodStepsChange(ui::ContentChangeEvent* event)
-{
-	m_staticLodSteps->setText(i18n::Format(L"MESHASSET_EDITOR_LOD_STEPS", m_sliderLodSteps->getValue()));
 }
 
 void MeshAssetEditor::eventPreviewAngleChange(ui::ContentChangeEvent* event)

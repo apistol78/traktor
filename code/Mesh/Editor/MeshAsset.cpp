@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Render/Editor/Texture/TextureSet.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 22, MeshAsset, editor::Asset)
 
@@ -26,13 +24,16 @@ void MeshAsset::serialize(ISerializer& s)
 {
 	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
 	{
-		{ L"MtBlend", MtBlend },
-		{ L"MtIndoor", MtIndoor },
 		{ L"MtInstance", MtInstance },
-		{ L"MtLod", MtLod },
-		{ L"MtPartition", MtPartition },
 		{ L"MtSkinned", MtSkinned },
 		{ L"MtStatic", MtStatic },
+
+		// deprecated
+		{ L"MtBlend", MtStatic },
+		{ L"MtIndoor", MtStatic },
+		{ L"MtLod", MtStatic },
+		{ L"MtPartition", MtStatic },
+
 		{ 0 }
 	};
 
@@ -117,5 +118,4 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> Member< float >(L"previewAngle", m_previewAngle, AttributeNoHash());
 }
 
-	}
 }
