@@ -556,13 +556,13 @@ bool ShaderPipeline::buildOutput(
 				};
 
 				// Calculate hash of the entire shader graph including modules so we can
-				// memoize shader compilation.
+				// memorize shader compilation.
 				uint32_t hash = ShaderGraphHash(false, false).calculate(programGraph);
 				for (auto scriptNode : programGraph->findNodesOf< Script >())
 				{
 					for (const auto& scriptInclude : scriptNode->getIncludes())
 					{
-						Ref< const ISerializable > module = pipelineBuilder->getObjectReadOnly(Guid(scriptInclude));
+						Ref< const ShaderModule > module = pipelineBuilder->getObjectReadOnly< ShaderModule >(scriptInclude);
 						if (module)
 							hash += pipelineBuilder->calculateInclusiveHash(module);
 					}
@@ -611,51 +611,51 @@ bool ShaderPipeline::buildOutput(
 		for (const auto& error : errors)
 		{
 			T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-			log::info.setIndent(0);
-			log::info << Endl;
-			log::info << L"-----------------------------------------------------" << Endl;
-			log::info << error.error.message << Endl;
-			log::info << L"-----------------------------------------------------" << Endl;
-			FormatMultipleLines(log::info, error.error.source);
-			log::info << L"-----------------------------------------------------" << Endl;
+			log::error.setIndent(0);
+			log::error << Endl;
+			log::error << L"-----------------------------------------------------" << Endl;
+			FormatMultipleLines(log::error, error.error.source);
+			log::error << L"-----------------------------------------------------" << Endl;
+			log::error << error.error.message << Endl;
+			log::error << L"-----------------------------------------------------" << Endl;
 
-			{
-				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Resolved/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-				if (dumpInstance)
-				{
-					dumpInstance->setObject(error.resolvedGraph);
-					dumpInstance->commit();
-					log::info << L"Resolved: " << dumpInstance->getGuid().format() << Endl;
-				}
-				else
-					log::warning << L"Unable to create error instance." << Endl;
-			}
+			//{
+			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Resolved/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+			//	if (dumpInstance)
+			//	{
+			//		dumpInstance->setObject(error.resolvedGraph);
+			//		dumpInstance->commit();
+			//		log::error << L"Resolved: " << dumpInstance->getGuid().format() << Endl;
+			//	}
+			//	else
+			//		log::error << L"Unable to create error instance." << Endl;
+			//}
 
-			{
-				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Combination/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-				if (dumpInstance)
-				{
-					dumpInstance->setObject(error.combinationGraph);
-					dumpInstance->commit();
-					log::info << L"Combination: " << dumpInstance->getGuid().format() << Endl;
-				}
-				else
-					log::warning << L"Unable to create error instance." << Endl;
-			}
+			//{
+			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Combination/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+			//	if (dumpInstance)
+			//	{
+			//		dumpInstance->setObject(error.combinationGraph);
+			//		dumpInstance->commit();
+			//		log::error << L"Combination: " << dumpInstance->getGuid().format() << Endl;
+			//	}
+			//	else
+			//		log::error << L"Unable to create error instance." << Endl;
+			//}
 
-			{
-				Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Program/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-				if (dumpInstance)
-				{
-					dumpInstance->setObject(error.programGraph);
-					dumpInstance->commit();
-					log::info << L"Program: " << dumpInstance->getGuid().format() << Endl;
-				}
-				else
-					log::warning << L"Unable to create error instance." << Endl;
-			}
+			//{
+			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Program/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
+			//	if (dumpInstance)
+			//	{
+			//		dumpInstance->setObject(error.programGraph);
+			//		dumpInstance->commit();
+			//		log::error << L"Program: " << dumpInstance->getGuid().format() << Endl;
+			//	}
+			//	else
+			//		log::error << L"Unable to create error instance." << Endl;
+			//}
 
-			log::info << L"-----------------------------------------------------" << Endl;
+			//log::error << L"-----------------------------------------------------" << Endl;
 		}
 
 		if (!status)
