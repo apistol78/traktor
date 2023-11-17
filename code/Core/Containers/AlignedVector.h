@@ -560,7 +560,8 @@ public:
 	,	m_size(0)
 	,	m_capacity(0)
 	{
-		reserve((size_t)(to - from));
+		const size_t nsize = std::distance(from, to);
+		reserve(nsize);
 		for (IteratorType i = from; i != to; ++i)
 			push_back(*i);
 	}

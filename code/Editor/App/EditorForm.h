@@ -146,7 +146,7 @@ public:
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage) override final;
 
-	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) override final;
+	virtual void buildAssets(const AlignedVector< Guid >& assetGuids, bool rebuild) override final;
 
 	virtual void buildAsset(const Guid& assetGuid, bool rebuild) override final;
 
@@ -254,7 +254,7 @@ private:
 
 	void buildAssetsForOpenedEditors();
 
-	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
+	void buildAssetsThread(AlignedVector< Guid > assetGuids, bool rebuild);
 
 	void updateMRU();
 

@@ -9,10 +9,10 @@
 #pragma once
 
 #include <set>
-#include <vector>
 #include "Core/Config.h"
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Rtti/ITypedObject.h"
 #include "Net/Url.h"
 
@@ -132,7 +132,7 @@ public:
 	virtual void setActiveEditorPage(IEditorPage* editorPage) = 0;
 
 	/*! Build assets. */
-	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) = 0;
+	virtual void buildAssets(const AlignedVector< Guid >& assetGuids, bool rebuild) = 0;
 
 	/*! Build asset. */
 	virtual void buildAsset(const Guid& assetGuid, bool rebuild) = 0;

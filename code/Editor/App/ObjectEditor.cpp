@@ -155,7 +155,7 @@ void ObjectEditor::setActiveEditorPage(IEditorPage* editorPage)
 	m_editor->setActiveEditorPage(editorPage);
 }
 
-void ObjectEditor::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
+void ObjectEditor::buildAssets(const AlignedVector< Guid >& assetGuids, bool rebuild)
 {
 	m_editor->buildAssets(assetGuids, rebuild);
 }
