@@ -173,11 +173,16 @@ public:
 		return m_data.erase(first, last);
 	}
 
-	void remove(const Key& key)
+	bool remove(const Key& key)
 	{
 		iterator it = find(key);
 		if (it != end())
+		{
 			erase(it);
+			return true;
+		}
+		else
+			return false;
 	}
 
 	/*! Reset content but keep memory allocated.

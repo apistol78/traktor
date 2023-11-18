@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,11 +9,10 @@
 #pragma once
 
 #include <functional>
-#include <map>
-#include <vector>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Ui/X11/TypesX11.h"
 
 namespace traktor::ui
@@ -76,17 +75,17 @@ private:
 	struct Binding
 	{
 		WidgetData* widget = nullptr;
-		std::map< int32_t, std::function< void(XEvent& xe) > > fns;
+		SmallMap< int32_t, std::function< void(XEvent& xe) > > fns;
 	};
 
-	Display* m_display;
-	int m_screen;
+	Display* m_display = nullptr;
+	int m_screen = 0;
 	XIM m_xim;
-	int32_t m_dpi;
-	std::map< Window, Binding > m_bindings;
-	std::vector< WidgetData* > m_modal;
-	WidgetData* m_grabbed;
-	WidgetData* m_focused;
+	int32_t m_dpi = 0;
+	SmallMap< Window, Binding > m_bindings;
+	AlignedVector< WidgetData* > m_modal;
+	WidgetData* m_grabbed = nullptr;
+	WidgetData* m_focused = nullptr;
 
 	void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
 };
