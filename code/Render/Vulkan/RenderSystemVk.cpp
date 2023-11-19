@@ -74,6 +74,7 @@ const char* c_deviceExtensions[] =
 	"VK_KHR_storage_buffer_storage_class",	// Required by VK_KHR_16bit_storage, VK_KHR_8bit_storage and VK_KHR_shader_float16_int8.
 	"VK_KHR_16bit_storage",
 	"VK_KHR_8bit_storage",
+	"VK_KHR_shader_non_semantic_info",
 	"VK_KHR_shader_float16_int8",
 #if !defined(__ANDROID__)
 	"VK_EXT_shader_subgroup_ballot",
