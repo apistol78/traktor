@@ -933,12 +933,9 @@ public:
 	template< typename IteratorType >
 	iterator insert(const iterator& where, const IteratorType& from, const IteratorType& to)
 	{
-		auto fptr = &(*from);
-		auto tptr = &(*to);
-
 		const size_t size = m_size;
 		const size_t offset = size_t(where.m_ptr - m_data);
-		const size_t count = size_t(tptr - fptr);
+		const size_t count = std::distance(from, to);
 
 		grow(count);
 
@@ -956,8 +953,12 @@ public:
 		}
 
 		// Copy insert items into location.
+		IteratorType mutfrom = from;
 		for (size_t i = 0; i < count; ++i)
-			Constructor::construct(m_data[i + offset], fptr[i]);
+		{
+			Constructor::construct(m_data[i + offset], *mutfrom);
+			mutfrom++;
+		}
 
 		return iterator(&m_data[offset]);
 	}
