@@ -266,7 +266,8 @@ void SkyComponent::build(
 	if (m_owner != nullptr)
 	{
 		auto lightComponent = m_owner->getComponent< world::LightComponent >();
-		sunColor = lightComponent->getColor();
+		if (lightComponent)
+			sunColor = lightComponent->getColor();
 	}
 
 	const Vector4 eyePosition = worldRenderView.getEyePosition();
