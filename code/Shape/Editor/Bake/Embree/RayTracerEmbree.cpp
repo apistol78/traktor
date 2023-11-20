@@ -359,7 +359,7 @@ void RayTracerEmbree::traceLightmap(const model::Model* model, const GBuffer* gb
 				occlusion = (1.0_simd - ambientOcclusion) + ambientOcclusion * traceOcclusion(e.position, e.normal, 1.0f, random);
 
 			// Trace sky occlusion.
-			const Scalar skyOcclusion = traceOcclusion(e.position, Vector4(0.0f, 1.0f, 0.0f), 1000.0f, random);
+			const Scalar skyOcclusion = power(traceOcclusion(e.position, Vector4(0.0f, 1.0f, 0.0f), 1000.0f, random), 0.25_simd);
 
 			// Combine and write final lumel.
 			const Color4f lightmapColor = emittance + incoming * occlusion;
@@ -660,6 +660,7 @@ Scalar RayTracerEmbree::traceOcclusion(
 		{
 			const Vector2 uv = Quasirandom::hammersley(i + j, sampleCount, random);
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, normal);
+			T_FATAL_ASSERT(dot3(direction, normal) >= 0.0_simd);
 			constructRay16(origin, direction, maxDistance, j, rv);
 		}
 
@@ -677,10 +678,7 @@ Scalar RayTracerEmbree::traceOcclusion(
 		}
 	}
 
-	const float k = float(unoccluded) / sampleCount;
-	const float o = std::pow(k, 2.0f);
-
-	return Scalar(o);
+	return Scalar(float(unoccluded) / sampleCount);
 }
 
 Color4f RayTracerEmbree::sampleAnalyticalLights(
