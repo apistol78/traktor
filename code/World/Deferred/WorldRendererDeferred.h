@@ -66,6 +66,7 @@ private:
 		render::handle_t gbufferTargetSetId,
 		render::handle_t dbufferTargetSetId,
 		render::handle_t ambientOcclusionTargetSetId,
+		render::handle_t contactShadowsTargetSetId,
 		render::handle_t reflectionsTargetSetId,
 		render::handle_t shadowMapAtlasTargetSetId
 	) const;

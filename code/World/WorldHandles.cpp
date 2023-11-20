@@ -45,6 +45,7 @@ const render::Handle s_handleLightSBuffer(L"World_LightSBuffer");
 const render::Handle s_handleLightSpecularMap(L"World_LightSpecularMap");
 const render::Handle s_handleMagicCoeffs(L"World_MagicCoeffs");
 const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
+const render::Handle s_handleContactShadowsMap(L"World_ContactShadowsMap");
 const render::Handle s_handleProjection(L"World_Projection");
 const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
 const render::Handle s_handleScreenMap(L"World_ScreenMap");

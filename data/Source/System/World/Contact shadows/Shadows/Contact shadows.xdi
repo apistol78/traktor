@@ -208,9 +208,9 @@
 				<first>-203</first>
 				<second>638</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
@@ -269,8 +269,7 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
-const float traceLength = 0.05f;
+const float traceLength = 0.2f;
 
 $Hit = 0.0f;
 
@@ -293,7 +292,7 @@ for (int i = 0; i < 16; ++i)
 	const float depth = texture(sampler2D($DepthMap, $DepthMapState), t.xy).x;
 	const float e = pos.z - depth;
 
-	if (e > 0.0f && e < 0.02f)
+	if (e > 0.01f && e < 0.1f)
 	{
 		$Hit = 1.0f;
 		break;
