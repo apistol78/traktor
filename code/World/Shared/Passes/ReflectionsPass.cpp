@@ -41,12 +41,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ReflectionsPass", ReflectionsPass, Object
 
 ReflectionsPass::ReflectionsPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
 }
 
@@ -141,7 +139,7 @@ render::handle_t ReflectionsPass::setup(
 		break;
 	}
 
-	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, nullptr, outputTargetSetId);
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Scalar p11 = projection.get(0, 0);

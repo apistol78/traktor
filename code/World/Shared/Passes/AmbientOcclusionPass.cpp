@@ -58,12 +58,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AmbientOcclusionPass", AmbientOcclusionPa
 
 AmbientOcclusionPass::AmbientOcclusionPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
 }
 
@@ -111,7 +109,7 @@ render::handle_t AmbientOcclusionPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, nullptr, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();

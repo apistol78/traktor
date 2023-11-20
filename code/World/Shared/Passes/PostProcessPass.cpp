@@ -74,12 +74,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessPass", PostProcessPass, Object
 
 PostProcessPass::PostProcessPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
 }
 

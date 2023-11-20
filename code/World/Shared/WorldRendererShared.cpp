@@ -163,19 +163,19 @@ bool WorldRendererShared::create(
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_ambientOcclusionPass = new AmbientOcclusionPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_ambientOcclusionPass = new AmbientOcclusionPass(m_settings, m_entityRenderers);
 	if (!m_ambientOcclusionPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_contactShadowsPass = new ContactShadowsPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_contactShadowsPass = new ContactShadowsPass(m_settings, m_entityRenderers);
 	if (!m_contactShadowsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_reflectionsPass = new ReflectionsPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_reflectionsPass = new ReflectionsPass(m_settings, m_entityRenderers);
 	if (!m_reflectionsPass->create(resourceManager, renderSystem, desc))
 		return false;
 
-	m_postProcessPass = new PostProcessPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_postProcessPass = new PostProcessPass(m_settings, m_entityRenderers);
 	if (!m_postProcessPass->create(resourceManager, renderSystem, desc))
 		return false;
 
