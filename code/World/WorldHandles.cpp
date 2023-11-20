@@ -93,6 +93,9 @@ const render::Handle s_handleFogVolumeSliceCurrent(L"World_FogVolumeSliceCurrent
 const render::Handle s_handleFogVolumeMediumColor(L"World_FogVolumeMediumColor");
 const render::Handle s_handleFogVolumeMediumDensity(L"World_FogVolumeMediumDensity");
 
+// Contact shadows.
+const render::Handle s_handleContactLightDirection(L"World_ContactLightDirection");
+
 // ImageGraph inputs.
 const render::Handle s_handleInputColor(L"InputColor");
 const render::Handle s_handleInputColorLast(L"InputColorLast");

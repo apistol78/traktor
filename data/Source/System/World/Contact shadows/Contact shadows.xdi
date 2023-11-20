@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ImageGraphAsset">
+	<nodes>
+		<item type="traktor.render.ImgOutput" version="traktor.render.Node:1">
+			<id>{7F098C18-F1DA-4B4A-8DA9-F46C2A66A74C}</id>
+			<comment/>
+			<position>
+				<first>703</first>
+				<second>238</second>
+			</position>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{1C6B9D25-6536-2546-8CED-8007D7AD8212}</id>
+			<comment/>
+			<position>
+				<first>412</first>
+				<second>245</second>
+			</position>
+			<name>Contact shadows</name>
+			<clear>
+				<mask>
+					<Color>true</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
+					<name>Contact shadows</name>
+					<shader>{316B5CE6-6AD4-BF4E-8B11-C11560191F65}</shader>
+					<parameters/>
+				</item>
+			</steps>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{C603AA17-9EFC-42F9-9E12-41D08FB7AC4E}</id>
+			</destination>
+		</item>
+	</edges>
+</object>

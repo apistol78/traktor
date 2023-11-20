@@ -29,6 +29,7 @@ namespace traktor::world
 {
 
 class AmbientOcclusionPass;
+class ContactShadowsPass;
 class DBufferPass;
 class GBufferPass;
 class IEntityRenderer;
@@ -92,6 +93,7 @@ protected:
 	Ref< DBufferPass > m_dbufferPass;
 	Ref< VelocityPass > m_velocityPass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
+	Ref< ContactShadowsPass > m_contactShadowsPass;
 	Ref< ReflectionsPass > m_reflectionsPass;
 	Ref< PostProcessPass > m_postProcessPass;
 
