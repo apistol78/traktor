@@ -42,7 +42,7 @@
 			<colors>
 				<item>
 					<first>color-link</first>
-					<second>138, 187, 235, 255</second>
+					<second>210, 150, 90, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -132,7 +132,7 @@
 			<colors>
 				<item>
 					<first>border-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -217,7 +217,7 @@
 				</item>
 				<item>
 					<first>color-arrow</first>
-					<second>153, 153, 153, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 				<item>
 					<first>color-hover</first>
@@ -234,7 +234,7 @@
 				</item>
 				<item>
 					<first>color-hover</first>
-					<second>28, 151, 234, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 				<item>
 					<first>color-label</first>
@@ -242,7 +242,7 @@
 				</item>
 				<item>
 					<first>color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -651,7 +651,7 @@
 				</item>
 				<item>
 					<first>color-margin</first>
-					<second>36, 126, 175, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 				<item>
 					<first>color-selection</first>
@@ -861,7 +861,7 @@
 				</item>
 				<item>
 					<first>item-color-dropdown-arrow</first>
-					<second>153, 153, 153, 255</second>
+					<second>224, 91, 0, 255</second>
 				</item>
 				<item>
 					<first>item-color-dropdown-hover</first>
