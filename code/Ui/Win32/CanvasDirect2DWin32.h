@@ -9,8 +9,8 @@
 #pragma once
 
 #if defined(T_USE_DIRECT2D)
-
-#include <d2d1.h>
+#include <d2d1_1.h>
+#include <d2d1effects_2.h>
 #include <dwrite.h>
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
@@ -120,7 +120,9 @@ private:
 
 	bool m_inPaint = false;
 	int32_t m_dpi = 0;
+	ComRef< ID2D1DeviceContext > m_d2dDeviceContext;
 	ComRef< ID2D1HwndRenderTarget > m_d2dRenderTarget;
+	ComRef< ID2D1Effect > m_d2dTintEffect;
 	ComRef< ID2D1SolidColorBrush > m_d2dForegroundBrush;
 	ComRef< ID2D1SolidColorBrush > m_d2dBackgroundBrush;
 	D2D1_GRADIENT_STOP m_gradientStops[2];

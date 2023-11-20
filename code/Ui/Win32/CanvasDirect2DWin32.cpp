@@ -58,6 +58,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 
 	if (width <= 0 || height <= 0)
 	{
+		m_d2dTintEffect.release();
+		m_d2dDeviceContext.release();
 		m_d2dRenderTarget.release();
 		return false;
 	}
@@ -74,6 +76,9 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, const Font& font, bool double
 		);
 		if (FAILED(hr))
 			return false;
+
+		m_d2dRenderTarget->QueryInterface(&m_d2dDeviceContext.getAssign());
+		m_d2dDeviceContext->CreateEffect(CLSID_D2D1Tint, &m_d2dTintEffect.getAssign());
 	}
 	else
 	{
@@ -671,31 +676,61 @@ void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Point& srcAt, con
 	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode, filter);
 }
 
+DEFINE_GUID(CLSID_D2D1Tint, 0x36312b17, 0xf7dd, 0x4014, 0x91, 0x5d, 0xff, 0xca, 0x76, 0x8c, 0xf2, 0x11);
+
 void CanvasDirect2DWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
 {
 	ID2D1Bitmap* bm = getCachedBitmap(bitmap);
 	if (!bm)
 		return;
 
-	D2D1_BITMAP_INTERPOLATION_MODE im = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
-	if (filter == Filter::Nearest)
-		im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-	else if (dstSize.cx == srcSize.cx && dstSize.cy == srcSize.cy)
-		im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+	if (blendMode == BlendMode::Modulate)
+	{
+		//ID2D1DeviceContext* deviceContext;
+		//m_d2dRenderTarget->QueryInterface(&deviceContext);
 
-	m_d2dRenderTarget->DrawBitmap(
-		bm,
-		D2D1::RectF(
-			dstAt.x, dstAt.y,
-			dstAt.x + dstSize.cx, dstAt.y + dstSize.cy
-		),
-		1.0f,
-		im,
-		D2D1::RectF(
-			srcAt.x, srcAt.y,
-			srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
-		)
-	);
+		//ID2D1Effect* tintEffect;
+		//deviceContext->CreateEffect(CLSID_D2D1Tint, &tintEffect);
+
+		m_d2dTintEffect->SetInput(0, bm);
+		m_d2dTintEffect->SetValue(D2D1_TINT_PROP_COLOR, m_gradientStops[1].color);
+		m_d2dTintEffect->SetValue(D2D1_TINT_PROP_CLAMP_OUTPUT, TRUE);
+
+		m_d2dDeviceContext->DrawImage(
+			m_d2dTintEffect,
+			D2D1::Point2F(dstAt.x, dstAt.y),
+			D2D1::RectF(
+				srcAt.x, srcAt.y,
+				srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
+			),
+			D2D1_INTERPOLATION_MODE_LINEAR
+		);
+
+		//tintEffect->Release();
+		//deviceContext->Release();
+	}
+	else
+	{
+		D2D1_BITMAP_INTERPOLATION_MODE im = D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
+		if (filter == Filter::Nearest)
+			im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+		else if (dstSize.cx == srcSize.cx && dstSize.cy == srcSize.cy)
+			im = D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
+
+		m_d2dRenderTarget->DrawBitmap(
+			bm,
+			D2D1::RectF(
+				dstAt.x, dstAt.y,
+				dstAt.x + dstSize.cx, dstAt.y + dstSize.cy
+			),
+			1.0f,
+			im,
+			D2D1::RectF(
+				srcAt.x, srcAt.y,
+				srcAt.x + srcSize.cx, srcAt.y + srcSize.cy
+			)
+		);
+	}
 }
 
 void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
