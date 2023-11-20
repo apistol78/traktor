@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,12 +24,10 @@
 #include "Ui/DropDown.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 const struct
 {
@@ -41,10 +39,11 @@ c_styleSheets[] =
 	{ L"EDITOR_SETTINGS_STYLESHEET_LIGHT", L"$(TRAKTOR_HOME)/resources/runtime/themes/Light/StyleSheet.xss" },
 	{ L"EDITOR_SETTINGS_STYLESHEET_DARK", L"$(TRAKTOR_HOME)/resources/runtime/themes/Dark/StyleSheet.xss" },
 	{ L"EDITOR_SETTINGS_STYLESHEET_MONOKAI", L"$(TRAKTOR_HOME)/resources/runtime/themes/Monokai/StyleSheet.xss" },
+	{ L"EDITOR_SETTINGS_STYLESHEET_ORANGE", L"$(TRAKTOR_HOME)/resources/runtime/themes/Orange/StyleSheet.xss" },
 	{ 0 }
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.GeneralSettingsPage", 0, GeneralSettingsPage, ISettingsPage)
 
@@ -157,5 +156,4 @@ bool GeneralSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-	}
 }
