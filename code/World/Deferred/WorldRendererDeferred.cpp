@@ -163,6 +163,7 @@ void WorldRendererDeferred::setup(
 		gbufferTargetSetId,
 		dbufferTargetSetId,
 		ambientOcclusionTargetSetId,
+		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId
 	);
@@ -180,6 +181,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
 	render::handle_t ambientOcclusionTargetSetId,
+	render::handle_t contactShadowsTargetSetId,
 	render::handle_t reflectionsTargetSetId,
 	render::handle_t shadowMapAtlasTargetSetId
 ) const
@@ -208,6 +210,7 @@ void WorldRendererDeferred::setupVisualPass(
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(dbufferTargetSetId);
 	rp->addInput(ambientOcclusionTargetSetId);
+	rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMapAtlasTargetSetId);
 
@@ -228,6 +231,7 @@ void WorldRendererDeferred::setupVisualPass(
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
+			const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
@@ -323,6 +327,11 @@ void WorldRendererDeferred::setupVisualPass(
 				sharedParams->setTextureParameter(s_handleOcclusionMap, ambientOcclusionTargetSet->getColorTexture(0));
 			else
 				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
+
+			if (contactShadowsTargetSet != nullptr)
+				sharedParams->setTextureParameter(s_handleContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
+			else
+				sharedParams->setTextureParameter(s_handleContactShadowsMap, m_blackTexture);
 
 			if (reflectionsTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));

@@ -55,6 +55,7 @@ extern const render::Handle s_handleLightSBuffer;
 extern const render::Handle s_handleLightSpecularMap;
 extern const render::Handle s_handleMagicCoeffs;
 extern const render::Handle s_handleOcclusionMap;
+extern const render::Handle s_handleContactShadowsMap;
 extern const render::Handle s_handleProjection;
 extern const render::Handle s_handleReflectionMap;
 extern const render::Handle s_handleScreenMap;
