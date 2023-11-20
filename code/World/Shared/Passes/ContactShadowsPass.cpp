@@ -38,12 +38,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ContactShadowsPass", ContactShadowsPass, 
 
 ContactShadowsPass::ContactShadowsPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
 }
 
