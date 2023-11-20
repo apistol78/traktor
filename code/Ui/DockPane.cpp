@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -426,6 +426,8 @@ void DockPane::draw(Canvas& canvas)
 		int32_t gx1 = captionRect.right - closeWidth - m_owner->pixel(4_ut);
 		const int32_t gw = m_bitmapGripper->getSize(m_owner).cx;
 		const int32_t gh = m_bitmapGripper->getSize(m_owner).cy;
+
+		canvas.setBackground(ss->getColor(m_owner, m_focus ? L"gripper-color-focus" : L"gripper-color-no-focus"));
 		while (gx < gx1)
 		{
 			const int32_t w = min(gw, gx1 - gx);
@@ -434,7 +436,7 @@ void DockPane::draw(Canvas& canvas)
 				Point(0, 0),
 				Size(w, gh),
 				m_bitmapGripper,
-				BlendMode::Alpha
+				BlendMode::Modulate
 			);
 			gx += gw;
 		}

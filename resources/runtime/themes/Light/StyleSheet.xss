@@ -161,6 +161,14 @@
 					<second>30, 30, 30, 255</second>
 				</item>
 				<item>
+					<first>gripper-color-focus</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>gripper-color-no-focus</first>
+					<second>160, 160, 160, 255</second>
+				</item>
+				<item>
 					<first>splitter-color</first>
 					<second>204, 200, 219, 255</second>
 				</item>
