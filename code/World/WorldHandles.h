@@ -103,6 +103,9 @@ extern const render::Handle s_handleFogVolumeSliceCurrent;
 extern const render::Handle s_handleFogVolumeMediumColor;
 extern const render::Handle s_handleFogVolumeMediumDensity;
 
+// Contact shadows.
+extern const render::Handle s_handleContactLightDirection;
+
 // ImageGraph inputs.
 extern const render::Handle s_handleInputColor;
 extern const render::Handle s_handleInputColorLast;
