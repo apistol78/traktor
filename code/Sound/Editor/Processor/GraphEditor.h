@@ -63,6 +63,7 @@ class ToolBarButtonClickEvent;
 class AudioChannel;
 class AudioSystem;
 class GraphAsset;
+class GraphBuffer;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
 {
@@ -93,8 +94,11 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< AudioSystem > m_audioSystem;
 	Ref< AudioChannel > m_audioChannel;
+	Ref< GraphBuffer > m_graphBuffer;
 
 	void updateView();
+
+	void play();
 
 	void eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event);
 

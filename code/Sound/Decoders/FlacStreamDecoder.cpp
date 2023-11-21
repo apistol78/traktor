@@ -16,16 +16,14 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class FlacStreamDecoderImpl : public Object
 {
 public:
 	FlacStreamDecoderImpl()
-	:	m_decoder(0)
+	:	m_decoder(nullptr)
 	,	m_decodedCount(0)
 	,	m_keepOffset(0)
 	{
@@ -79,7 +77,7 @@ public:
 		Alloc::freeAlign(m_decoded[0]);
 		Alloc::freeAlign(m_decoded[1]);
 
-		m_decoder = 0;
+		m_decoder = nullptr;
 	}
 
 	double getDuration() const
@@ -102,9 +100,13 @@ public:
 			if (!decodeResult)
 				return false;
 
-			if (FLAC__stream_decoder_get_state(m_decoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
+			const auto state = FLAC__stream_decoder_get_state(m_decoder);
+			if (state >= FLAC__STREAM_DECODER_END_OF_STREAM)
 				break;
 		}
+
+		if (m_decodedCount == 0)
+			return false;
 
 		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
@@ -175,7 +177,7 @@ bool FlacStreamDecoder::create(IStream* stream)
 {
 	m_stream = stream;
 	rewind();
-	return m_decoderImpl != 0;
+	return m_decoderImpl != nullptr;
 }
 
 void FlacStreamDecoder::destroy()
@@ -183,7 +185,7 @@ void FlacStreamDecoder::destroy()
 	if (m_decoderImpl)
 	{
 		m_decoderImpl->destroy();
-		m_decoderImpl = 0;
+		m_decoderImpl = nullptr;
 	}
 }
 
@@ -205,8 +207,7 @@ void FlacStreamDecoder::rewind()
 	m_stream->seek(IStream::SeekSet, 0);
 	m_decoderImpl = new FlacStreamDecoderImpl();
 	if (!m_decoderImpl->create(m_stream))
-		m_decoderImpl = 0;
+		m_decoderImpl = nullptr;
 }
 
-	}
 }

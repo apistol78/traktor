@@ -88,8 +88,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphEditor.NodeType", NodeType, Object)
 
 std::wstring getLocalizedName(const TypeInfo* nodeType)
 {
-	std::wstring nodeName = nodeType->getName();
-	size_t p = nodeName.find_last_of(L'.');
+	const std::wstring nodeName = nodeType->getName();
+	const size_t p = nodeName.find_last_of(L'.');
 	return i18n::Text(L"SOUND_PROCESSOR_NODE_" + toUpper(nodeName.substr(p + 1)));
 }
 
@@ -124,6 +124,8 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_VERTICALLY"), 4, ui::Command(L"Sound.Processor.Editor.EvenSpaceVertically")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Sound.Processor.Editor.EventSpaceHorizontally")));
+	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_PLAY"), 4, ui::Command(L"Sound.Processor.Editor.Play")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &GraphEditor::eventToolBarGraphClick);
 
 	m_graph = new ui::GraphControl();
@@ -265,6 +267,10 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 		m_graph->evenSpace(ui::GraphControl::EsHorizontally);
 		m_graph->update();
 	}
+	else if (command == L"Sound.Processor.Editor.Play")
+	{
+		play();
+	}
 	else
 		return false;
 
@@ -362,6 +368,28 @@ void GraphEditor::updateView()
 	}
 
 	m_graph->update();
+}
+
+void GraphEditor::play()
+{
+	m_audioChannel->stop();
+
+	Ref< Graph > graph = DeepClone(m_graphAsset->getGraph()).create< Graph >();
+	for (auto node : graph->getNodes())
+	{
+		if (!node->bind(m_resourceManager))
+			return;
+	}
+
+	m_graphBuffer = new GraphBuffer(graph);
+
+	m_audioChannel->play(
+		m_graphBuffer,
+		0,
+		1.0f,
+		false,
+		0
+	);
 }
 
 void GraphEditor::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
