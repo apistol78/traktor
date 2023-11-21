@@ -237,7 +237,7 @@ void Splitter::update(const Rect* rc, bool immediate)
 	Widget::update(rc, immediate);
 }
 
-void Splitter::setOrientation(bool vertical)
+void Splitter::setVertical(bool vertical)
 {
 	m_vertical = vertical;
 	update();

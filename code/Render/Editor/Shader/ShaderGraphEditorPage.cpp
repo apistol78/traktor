@@ -1077,7 +1077,7 @@ void ShaderGraphEditorPage::editScript(Script* script)
 	if ((m_script = script) != nullptr)
 	{
 		const ui::Size szInner = m_container->getInnerRect().getSize();
-		m_scriptSplitter->setOrientation(szInner.cx >= szInner.cy);
+		m_scriptSplitter->setVertical(szInner.cx >= szInner.cy);
 
 		const wchar_t sc = m_scriptEditor->addSpecialCharacter(new EntryCharacter(m_script));
 

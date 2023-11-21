@@ -327,7 +327,7 @@ Aabb3 CloudComponent::getBoundingBox() const
 void CloudComponent::update(const world::UpdateParams& update)
 {
 	m_cluster.update(m_particleData, update.deltaTime);
-	m_timeUntilUpdate -= update.deltaTime;
+	m_timeUntilUpdate -= (float)update.deltaTime;
 }
 
 void CloudComponent::build(
