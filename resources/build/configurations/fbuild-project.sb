@@ -28,15 +28,15 @@ end
 
 
 local function collectLocalBuildDependencies(project, configuration, outBuildDependencies)
-	local dependencies = project:getDependencies()
+	local dependencies = project.dependencies
 	for i = 0, dependencies.size - 1 do
 		local dep = dependencies:get(i)
 		if isa(dep, ProjectDependency) then
-			local localProject = dep:getProject()
-			local localConfig = localProject:getConfiguration(configuration:getName())
-			if localProject:getEnable() and localConfig ~= nil then
-				outBuildDependencies[localProject:getName()] = localProject
-				if localConfig:getTargetFormat() == "StaticLibrary" then
+			local localProject = dep.project
+			local localConfig = localProject:getConfiguration(configuration.name)
+			if localProject.enable and localConfig ~= nil then
+				outBuildDependencies[localProject.name] = localProject
+				if localConfig.targetFormat == "StaticLibrary" then
 					collectLocalBuildDependencies(localProject, localConfig, outBuildDependencies)
 				end
 			end
@@ -55,7 +55,7 @@ local function collectDependencies(
 	outLibraryPaths
 )
 	-- Add include paths.
-	local includePaths = configuration:getIncludePaths()
+	local includePaths = configuration.includePaths
 	for i = 0, includePaths.size - 1 do
 		local ip = Path(includePaths:get(i)).pathName
 		if ip ~= "" then
@@ -64,13 +64,13 @@ local function collectDependencies(
 	end
 
 	-- Add external libraries, ex precompiled libraries etc.
-	local libraries = configuration:getLibraries()
+	local libraries = configuration.libraries
 	for i = 0, libraries.size - 1 do
 		insertLast(outLibrariesExternal, libraries:get(i))
 	end
 
 	-- Add library paths.
-	local libraryPaths = configuration:getLibraryPaths()
+	local libraryPaths = configuration.libraryPaths
 	for i = 0, libraryPaths.size - 1 do
 		local libraryAbsPath = fileSystem:getAbsolutePath(Path(libraryPaths:get(i)))
 		local lp = libraryAbsPath.pathName
@@ -80,21 +80,21 @@ local function collectDependencies(
 	end
 
 	-- Recurse with dependencies.
-	local dependencies = project:getDependencies()
+	local dependencies = project.dependencies
 	for i = 0, dependencies.size - 1 do
 		local dep = dependencies:get(i)
 		if isa(dep, ProjectDependency) then
 			local localSolution = solution
 			local localProject = dep:getProject()
-			local localConfig = localProject:getConfiguration(configuration:getName())
-			if localProject:getEnable() then
+			local localConfig = localProject:getConfiguration(configuration.name)
+			if localProject.enable then
 
 				-- \TBD Add local projects if referenced in an external solution....
 				-- Add library.
-				-- insertLast(outLibraries, localProject:getName())
+				-- insertLast(outLibraries, localProject.name)
 
 				-- Recurse with child dependencies.
-				if localConfig:getTargetFormat() == "StaticLibrary" then
+				if localConfig.targetFormat == "StaticLibrary" then
 					collectDependencies(
 						localSolution,
 						localProject,
@@ -107,7 +107,7 @@ local function collectDependencies(
 				else
 
 					-- Only add include paths when dealing with shared library dependencies.
-					local includePaths = localConfig:getIncludePaths()
+					local includePaths = localConfig.includePaths
 					for j = 0, includePaths.size - 1 do
 						local ip = Path(includePaths:get(j)).pathName
 						if ip ~= "" then
@@ -118,33 +118,33 @@ local function collectDependencies(
 				end
 			end
 		elseif isa(dep, ExternalDependency) then
-			local externalSolution = dep:getSolution()
-			local externalProject = dep:getProject()
-			local externalConfig = externalProject:getConfiguration(configuration:getName())
+			local externalSolution = dep.solution
+			local externalProject = dep.project
+			local externalConfig = externalProject:getConfiguration(configuration.name)
 
 			-- Add path to library.
-			if externalConfig:getConsumerLibraryPath() ~= "" then
-				local aggregateOutputPath = Path(externalSolution:getAggregateOutputPath())
-				local consumerLibraryPath = Path(externalConfig:getConsumerLibraryPath())
+			if externalConfig.consumerLibraryPath ~= "" then
+				local aggregateOutputPath = Path(externalSolution.aggregateOutputPath)
+				local consumerLibraryPath = Path(externalConfig.consumerLibraryPath)
 
 				local consumerAbsPath = fileSystem:getAbsolutePath(aggregateOutputPath:concat(consumerLibraryPath))
 				insertLast(outLibraryPaths, consumerAbsPath.pathName)
 			else
 				local externalAbsPath = fileSystem:getAbsolutePath(
-					Path(externalSolution:getRootPath() .. "/" .. configuration:getName())
+					Path(externalSolution.rootPath .. "/" .. configuration.name)
 				)
 				if externalAbsPath ~= nil then
 					insertLast(outLibraryPaths, externalAbsPath.pathName)
 				end
 			end
 
-			if externalProject:getEnable() then
+			if externalProject.enable then
 				-- Add library.
-				insertLast(outLibraries, externalProject:getName())
+				insertLast(outLibraries, externalProject.name)
 			end
 
 			-- Recurse with child dependencies.
-			if externalConfig:getTargetFormat() == "StaticLibrary" then
+			if externalConfig.targetFormat == "StaticLibrary" then
 				collectDependencies(
 					externalSolution,
 					externalProject,
@@ -156,7 +156,7 @@ local function collectDependencies(
 				)
 			else
 				-- Only add include paths when dealing with shared library dependencies.
-				local includePaths = externalConfig:getIncludePaths()
+				local includePaths = externalConfig.includePaths
 				for j = 0, includePaths.size - 1 do
 					local ip = Path(includePaths:get(j)).pathName
 					if ip ~= "" then
@@ -170,13 +170,13 @@ end
 
 
 local function collectFiles(project, projectOrFilter, pred)
-	local items = projectOrFilter:getItems()
+	local items = projectOrFilter.items
 	for i = 0, items.size - 1 do
 		local item = items:get(i)
 		if isa(item, Filter) then
 			collectFiles(project, item, pred)
 		else
-			local files = item:getSystemFiles(project:getSourcePath())
+			local files = item:getSystemFiles(project.sourcePath)
 			for i = 0, files.size - 1 do
 				local file = files:get(i)
 --				if os ~= "windows" then
@@ -189,8 +189,8 @@ local function collectFiles(project, projectOrFilter, pred)
 end
 
 
-local configurations = project:getConfigurations()
-local sourcePath = Path(project:getSourcePath())
+local configurations = project.configurations
+local sourcePath = Path(project.sourcePath)
 
 
 -- Scan configurations.
@@ -276,14 +276,14 @@ local inc = fileSystem:getAbsolutePath(Path(OS.getInstance():getEnvironment("FBU
 <?--
 
 -- Include build scripts for local dependencies.
-local dependencies = project:getDependencies()
+local dependencies = project.dependencies
 for i = 0, dependencies.size - 1 do
 	local dep = dependencies:get(i)
 	if isa(dep, ProjectDependency) then
 		local localSolution = solution
-		local localProject = dep:getProject()
-		if localProject:getEnable() then
---?>#include "../<?-- output:print(localProject:getName()) --?>/fbuild.bff"
+		local localProject = dep.project
+		if localProject.enable then
+--?>#include "../<?-- output:print(localProject.name) --?>/fbuild.bff"
 <?--
 		end
 	end
@@ -291,11 +291,11 @@ end
 
 
 -- Build rules for each configuration.
-local configurations = project:getConfigurations()
+local configurations = project.configurations
 for i = 0, configurations.size - 1 do
 	local configuration = configurations:get(i)
-	local profile = configuration:getTargetProfile()
-	local format = configuration:getTargetFormat()
+	local profile = configuration.targetProfile
+	local format = configuration.targetFormat
 
 	local flags = profile:upper()
 	if format == "StaticLibrary" then
@@ -308,7 +308,7 @@ for i = 0, configurations.size - 1 do
 		flags = flags .. "_EXECUTABLE_CONSOLE"
 	end
 
-	local resourceIncludePath = fileSystem:getAbsolutePath(projectPath:concat(Path(configuration:getName())))
+	local resourceIncludePath = fileSystem:getAbsolutePath(projectPath:concat(Path(configuration.name)))
 
 	local compileOptions = ""
 	if toolchain == "gcc" or toolchain == "clang" then
@@ -323,7 +323,7 @@ for i = 0, configurations.size - 1 do
 		end
 	end
 
-	local definitions = configuration:getDefinitions()
+	local definitions = configuration.definitions
 	for j = 0, definitions.size - 1 do
 		local definition = definitions:get(j)
 		local def0 = string.sub(definition, 1, 1)
@@ -341,7 +341,7 @@ for i = 0, configurations.size - 1 do
 	-- Output PDB file.
 	local compileOptionsPDB = ""
 	if not (toolchain == "gcc" or toolchain == "clang") then
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".pdb"))
+		local outputPath = Path(solution.rootPath):concat(Path(configuration.name .. "/" .. project.name .. ".pdb"))
 		outputPath = fileSystem:getAbsolutePath(outputPath)
 		compileOptionsPDB = compileOptionsPDB .. " /Fd\"" .. outputPath.pathName .. "\""
 	end
@@ -356,11 +356,11 @@ for i = 0, configurations.size - 1 do
 		local fileAbs = fileSystem:getAbsolutePath(file)
 		assert (fileAbs)
 
-		local outputFileAbs = fileSystem:getAbsolutePath(projectPath:concat(Path(configuration:getName() .. "/Resources/" .. file.fileNameNoExtension .. ".h")))
+		local outputFileAbs = fileSystem:getAbsolutePath(projectPath:concat(Path(configuration.name .. "/Resources/" .. file.fileNameNoExtension .. ".h")))
 		assert (outputFileAbs)
 --?>
 // Resource <?-- output:print(fileRel.pathName) --?>
-Exec('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel.pathNameNoExtension) --?>')
+Exec('<?-- output:print(project.name .. "/" .. configuration.name .. "/Resource/" .. fileRel.pathNameNoExtension) --?>')
 {
 	.ExecExecutable = '$RUN$'
 	.ExecInput = '<?-- output:print(fileAbs.pathName) --?>'
@@ -374,12 +374,12 @@ Exec('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "
 		if sfn ~= "" then
 --?>
 // Files <?-- output:print(sfn) --?>
-ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC/" .. sfn) --?>')
+ObjectList('<?-- output:print(project.name .. "/" .. configuration.name .. "/CC/" .. sfn) --?>')
 <?--
 		else
 --?>
 // Files
-ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC") --?>')
+ObjectList('<?-- output:print(project.name .. "/" .. configuration.name .. "/CC") --?>')
 <?--
 		end
 --?>{
@@ -404,7 +404,7 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		end
 --?>	}
 <?--
-		local outputPath = projectPath:concat(Path(configuration:getName()))
+		local outputPath = projectPath:concat(Path(configuration.name))
 		if sfn ~= "" then
 			outputPath = outputPath:concat(Path(sfn))
 		end
@@ -418,12 +418,12 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		if sfn ~= "" then
 --?>
 // Files <?-- output:print(sfn) --?>
-ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC/" .. sfn) --?>')
+ObjectList('<?-- output:print(project.name .. "/" .. configuration.name .. "/RC/" .. sfn) --?>')
 <?--
 		else
 --?>
 // Files
-ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC") --?>')
+ObjectList('<?-- output:print(project.name .. "/" .. configuration.name .. "/RC") --?>')
 <?--
 		end
 --?>{
@@ -438,7 +438,7 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		end
 --?>	}
 <?--
-		local outputPath = projectPath:concat(Path(configuration:getName()))
+		local outputPath = projectPath:concat(Path(configuration.name))
 		if sfn ~= "" then
 			outputPath = outputPath:concat(Path(sfn))
 		end
@@ -453,7 +453,7 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 
 	local lo = ""
 	if format ~= "StaticLibrary" then
-		--lo = lo .. " /LIBPATH:\"../" .. configuration:getName() .. "\""
+		--lo = lo .. " /LIBPATH:\"../" .. configuration.name .. "\""
 		for _, libraryPath in ipairs(libraryPaths[i]) do
 			lo = lo .. " /LIBPATH:\"" .. libraryPath .. "\""
 		end
@@ -469,11 +469,11 @@ ObjectList('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 	end
 
 	if format == "SharedLibrary" then
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".dll"))
+		local outputPath = Path(solution.rootPath):concat(Path(configuration.name .. "/" .. project.name .. ".dll"))
 		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>
 // Build product
-DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
+DLL('<?-- output:print(project.name .. "/" .. configuration.name .. "/Product") --?>')
 {
 	.Linker = '$LINK$'
 	.LinkerOptions = '$LINK_FLAGS_<?-- output:print(flags) --?>$<?-- output:print(lo) --?> /OUT:"%2" "%1"'
@@ -484,25 +484,25 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 <?--
 		for sfn, sf in pairs(sourceFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC") --?>',
 <?--
 			end
 		end
 		for sfn, sf in pairs(winresFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC") --?>',
 <?--
 			end
 		end
 
 		for _, dependentProject in pairs(buildDependencies[i]) do
---?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
+--?>		'<?-- output:print(dependentProject.name .. "/" .. configuration.name .. "/Product") --?>',
 <?--
 		end
 --?>	}
@@ -513,11 +513,11 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 		for _, file in ipairs(resourceFiles) do
 			local fileRel = fileSystem:getRelativePath(file, sourcePath)
 			assert (fileRel ~= nil)
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
 <?--
 		end
 		for _, dependentProject in pairs(buildDependencies[i]) do
---?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName()) --?>',
+--?>		'<?-- output:print(dependentProject.name .. "/" .. configuration.name) --?>',
 <?--
 		end
 --?>	}
@@ -526,7 +526,7 @@ DLL('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/
 	elseif format == "StaticLibrary" then
 --?>
 // Build product
-Library('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
+Library('<?-- output:print(project.name .. "/" .. configuration.name .. "/Product") --?>')
 {
 	.Librarian = '$LIB$'
 <?--
@@ -545,32 +545,32 @@ end
 <?--
 		for sfn, sf in pairs(sourceFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC") --?>',
 <?--
 			end
 		end
 		for sfn, sf in pairs(winresFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC") --?>',
 <?--
 			end
 		end	
 --?>	}
 <?--
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".lib"))
+		local outputPath = Path(solution.rootPath):concat(Path(configuration.name .. "/" .. project.name .. ".lib"))
 		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>
 	.LibrarianOutput = '<?-- output:print(outputPath.pathName) --?>'
 	.Compiler = '$CC$'
 	.CompilerOptions = '$CC_FLAGS_<?-- output:print(flags) --?>$ <?-- output:print(compileOptions) --?> "%1" /Fo"%2"'
 <?--
-		local outputPath = projectPath:concat(Path(configuration:getName()))
+		local outputPath = projectPath:concat(Path(configuration.name))
 		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>	.CompilerOutputPath = '<?-- output:print(outputPath.pathName) --?>'
 	.PreBuildDependencies =
@@ -579,18 +579,18 @@ end
 		for _, file in ipairs(resourceFiles) do
 			local fileRel = fileSystem:getRelativePath(file, sourcePath)
 			assert (fileRel ~= nil)
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
 <?--
 		end
 --?>	}
 }
 <?--
 	elseif format == "Executable" or format == "ExecutableConsole" then
-		local outputPath = Path(solution:getRootPath()):concat(Path(configuration:getName() .. "/" .. project:getName() .. ".exe"))
+		local outputPath = Path(solution.rootPath):concat(Path(configuration.name .. "/" .. project.name .. ".exe"))
 		outputPath = fileSystem:getAbsolutePath(outputPath)
 --?>
 // Build product
-Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>')
+Executable('<?-- output:print(project.name .. "/" .. configuration.name .. "/Product") --?>')
 {
 	.Linker = '$LINK$'
 	.LinkerOptions = '$LINK_FLAGS_<?-- output:print(flags) --?>$<?-- output:print(lo) --?> /OUT:"%2" "%1"'
@@ -601,24 +601,24 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 <?--
 		for sfn, sf in pairs(sourceFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/CC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/CC") --?>',
 <?--
 			end
 		end
 		for sfn, sf in pairs(winresFiles) do
 			if sfn ~= "" then
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC/" .. sfn) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC/" .. sfn) --?>',
 <?--
 			else
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/RC") --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/RC") --?>',
 <?--
 			end
 		end
 		for _, dependentProject in pairs(buildDependencies[i]) do
---?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
+--?>		'<?-- output:print(dependentProject.name .. "/" .. configuration.name .. "/Product") --?>',
 <?--
 		end
 --?>	}
@@ -629,11 +629,11 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		for _, file in ipairs(resourceFiles) do
 			local fileRel = fileSystem:getRelativePath(file, sourcePath)
 			assert (fileRel ~= nil)
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/Resource/" .. fileRel.pathNameNoExtension) --?>',
 <?--
 		end
 		for _, dependentProject in pairs(buildDependencies[i]) do
---?>		'<?-- output:print(dependentProject:getName() .. "/" .. configuration:getName()) --?>',
+--?>		'<?-- output:print(dependentProject.name .. "/" .. configuration.name) --?>',
 <?--
 		end
 
@@ -647,32 +647,32 @@ Executable('<?-- output:print(project:getName() .. "/" .. configuration:getName(
 		local aggregationItem = aggregationItems:get(j)
 
 		local aggregateOutputPath = Path(solution:getAggregateOutputPath())
-		local sourceFile = Path(solution:getRootPath()):concat(Path(configuration:getName()):concat(Path(aggregationItem:getSourceFile())))
+		local sourceFile = Path(solution.rootPath):concat(Path(configuration.name):concat(Path(aggregationItem:getSourceFile())))
 		local sourceFileAbs = fileSystem:getAbsolutePath(sourceFile)
 		local targetPath = aggregateOutputPath:concat(Path(aggregationItem:getTargetPath()))
 
 --?>
 // Aggregate <?-- output:print(sourceFile.pathName .. " => " .. targetPath.pathName) --?>
-CopyDir('<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Aggregate/" .. j) --?>')
+CopyDir('<?-- output:print(project.name .. "/" .. configuration.name .. "/Aggregate/" .. j) --?>')
 {
 	.SourcePaths = '<?-- output:print(sourceFileAbs.pathOnly) --?>'
 	.SourcePathsPattern = '<?-- output:print(sourceFile.fileName) --?>'
 	.SourcePathsRecurse = false;
 	.Dest = '<?-- output:print(targetPath.pathName) --?>/'
-	.PreBuildDependencies = '<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>'
+	.PreBuildDependencies = '<?-- output:print(project.name .. "/" .. configuration.name .. "/Product") --?>'
 }
 <?--
 	end
 --?>
 // Target
-Alias('<?-- output:print(project:getName() .. "/" .. configuration:getName()) --?>')
+Alias('<?-- output:print(project.name .. "/" .. configuration.name) --?>')
 {
 	.Targets =
 	{
-		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Product") --?>',
+		'<?-- output:print(project.name .. "/" .. configuration.name .. "/Product") --?>',
 <?--
 	for j = 0, aggregationItems.size - 1 do
---?>		'<?-- output:print(project:getName() .. "/" .. configuration:getName() .. "/Aggregate/" .. j) --?>',
+--?>		'<?-- output:print(project.name .. "/" .. configuration.name .. "/Aggregate/" .. j) --?>',
 <?--
 	end
 --?>	}
