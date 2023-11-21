@@ -103,7 +103,7 @@ void PrecipitationComponent::update(const world::UpdateParams& update)
 		{ -0.3f,  0.1f,  0.02f }
 	};
 
-	const float x = update.totalTime;
+	const float x = (float)update.totalTime;
 	for (int i = 0; i < 4; ++i)
 	{
 		const float s1 = std::sin(x);

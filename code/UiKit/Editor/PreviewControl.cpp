@@ -215,7 +215,7 @@ void PreviewControl::eventSize(ui::SizeEvent* event)
 
 	if (m_moviePlayer)
 	{
-		m_moviePlayer->postViewResize(sz.cx / scale, sz.cy / scale);
+		m_moviePlayer->postViewResize((int32_t)(sz.cx / scale), (int32_t)(sz.cy / scale));
 
 		// Update movie player while resizing; no idle messages are triggered while resizing.
 		const float deltaTime = (float)m_timer.getDeltaTime();
@@ -260,8 +260,8 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 				Any::fromObject(m_editor->getSourceDatabase()),
 				Any::fromObject(m_resourceManager),
 				Any::fromObject(m_moviePlayer->getMovieInstance()),
-				Any::fromInt32(sz.cx / scale),
-				Any::fromInt32(sz.cy / scale)
+				Any::fromInt32((int32_t)(sz.cx / scale)),
+				Any::fromInt32((int32_t)(sz.cy / scale))
 			};
 			m_scaffoldingObject = createRuntimeClassInstance(m_scaffoldingClass, nullptr, sizeof_array(argv), argv);
 		}
@@ -369,7 +369,11 @@ void PreviewControl::eventButtonDown(ui::MouseButtonDownEvent* event)
 	{
 		const ui::Point mousePosition = event->getPosition();
 		const float scale = std::max(dpi() / 96.0f, 1.0f);
-		m_moviePlayer->postMouseDown(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
+		m_moviePlayer->postMouseDown(
+			(int32_t)(mousePosition.x / scale),
+			(int32_t)(mousePosition.y / scale),
+			event->getButton()
+		);
 	}
 	setCapture();
 	setFocus();
@@ -381,7 +385,11 @@ void PreviewControl::eventButtonUp(ui::MouseButtonUpEvent* event)
 	{
 		const ui::Point mousePosition = event->getPosition();
 		const float scale = std::max(dpi() / 96.0f, 1.0f);
-		m_moviePlayer->postMouseUp(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
+		m_moviePlayer->postMouseUp(
+			(int32_t)(mousePosition.x / scale),
+			(int32_t)(mousePosition.y / scale),
+			event->getButton()
+		);
 	}
 	releaseCapture();
 }
@@ -392,7 +400,11 @@ void PreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	{
 		const ui::Point mousePosition = event->getPosition();
 		const float scale = std::max(dpi() / 96.0f, 1.0f);
-		m_moviePlayer->postMouseMove(mousePosition.x / scale, mousePosition.y / scale, event->getButton());
+		m_moviePlayer->postMouseMove(
+			(int32_t)(mousePosition.x / scale),
+			(int32_t)(mousePosition.y / scale),
+			event->getButton()
+		);
 	}
 }
 
@@ -402,7 +414,11 @@ void PreviewControl::eventMouseWheel(ui::MouseWheelEvent* event)
 	{
 		const ui::Point mousePosition = event->getPosition();
 		const float scale = std::max(dpi() / 96.0f, 1.0f);
-		m_moviePlayer->postMouseWheel(mousePosition.x / scale, mousePosition.y / scale, event->getRotation());
+		m_moviePlayer->postMouseWheel(
+			(int32_t)(mousePosition.x / scale),
+			(int32_t)(mousePosition.y / scale),
+			event->getRotation()
+		);
 	}
 }
 

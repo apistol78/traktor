@@ -126,11 +126,11 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 		T_FATAL_ASSERT(grid);
 
 		float tmp[3];
-		for (int32_t x = 0; x < size[0]; ++x)
+		for (uint32_t x = 0; x < size[0]; ++x)
 		{
-			for (int32_t y = 0; y < size[1]; ++y)
+			for (uint32_t y = 0; y < size[1]; ++y)
 			{
-				for (int32_t z = 0; z < size[2]; ++z)
+				for (uint32_t z = 0; z < size[2]; ++z)
 				{
 					auto& g = *grid++;
 					for (int32_t i = 0; i < 4; ++i)

@@ -78,8 +78,8 @@ bool CloudParticleCluster::create(const CloudParticleData& particleData)
 		float y = 0.0f;
 		for (int j = 0; j < particleData.getOctaves(); ++j)
 		{
-			float frequency = std::pow(2.0f, j);
-			float amplitude = std::pow(particleData.getPersistence(), j);
+			float frequency = (float)std::pow(2.0f, j);
+			float amplitude = (float)std::pow(particleData.getPersistence(), j);
 			y += interpolateNoise(x * frequency * particleData.getNoiseScale(), z * frequency * particleData.getNoiseScale()) * amplitude;
 		}
 

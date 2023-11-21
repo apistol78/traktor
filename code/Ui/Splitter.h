@@ -49,7 +49,7 @@ public:
 
 	virtual Size getMaximumSize() const override;
 
-	void setOrientation(bool vertical);
+	void setVertical(bool vertical);
 
 	void setPosition(Unit position);
 

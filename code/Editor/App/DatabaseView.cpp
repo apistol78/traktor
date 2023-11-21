@@ -1459,9 +1459,9 @@ void DatabaseView::eventSize(ui::SizeEvent* event)
 {
 	const ui::Size& sz = event->getSize();
 	if (sz.cx >= sz.cy)
-		m_splitter->setOrientation(true);
+		m_splitter->setVertical(true);
 	else
-		m_splitter->setOrientation(false);
+		m_splitter->setVertical(false);
 }
 
 void DatabaseView::eventTimer(ui::TimerEvent* event)
