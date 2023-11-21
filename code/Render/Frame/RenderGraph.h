@@ -73,8 +73,7 @@ public:
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
 		Ref< Buffer > buffer;
-		uint32_t elementCount;
-		uint32_t elementSize;
+		uint32_t bufferSize;
 	};
 
 	/*! */
@@ -149,7 +148,7 @@ public:
 
 	/*!
 	 */
-	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize);
+	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize);
 
 	/*! Find target ID by name.
 	 *

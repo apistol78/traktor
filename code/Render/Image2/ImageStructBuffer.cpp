@@ -13,12 +13,11 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageStructBuffer", ImageStructBuffer, Object)
 
-ImageStructBuffer::ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize)
+ImageStructBuffer::ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t bufferSize)
 :	m_name(name)
 ,	m_id(id)
 ,	m_persistentHandle(persistentHandle)
-,	m_elementCount(elementCount)
-,   m_elementSize(elementSize)
+,	m_bufferSize(bufferSize)
 {
 }
 

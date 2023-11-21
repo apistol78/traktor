@@ -116,8 +116,7 @@ bool WorldRendererShared::create(
 	// Lights struct buffer.
 	m_lightSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		LightClusterPass::c_maxLightCount,
-		sizeof(LightShaderData),
+		LightClusterPass::c_maxLightCount * sizeof(LightShaderData),
 		true
 	);
 	if (!m_lightSBuffer)

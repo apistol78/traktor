@@ -1140,7 +1140,7 @@ Vertex* PrimitiveRenderer::allocBatch(render::PrimitiveType primitiveType, uint3
 		if (m_freeVertexBuffers.empty())
 		{
 			// No free buffers; need to allocate a new buffer.
-			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(BuVertex, c_bufferCount, sizeof(Vertex), true);
+			Ref< render::Buffer > vertexBuffer = m_renderSystem->createBuffer(BuVertex, c_bufferCount * sizeof(Vertex), true);
 			if (!vertexBuffer)
 				return nullptr;
 

@@ -20,7 +20,7 @@ class BufferVk : public Buffer
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances);
+	explicit BufferVk(Context* context, uint32_t bufferSize, uint32_t& instances);
 
 	virtual ~BufferVk();
 

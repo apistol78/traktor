@@ -27,12 +27,11 @@ constexpr int32_t c_guardBytes = 16;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferVrfy", BufferVrfy, Buffer)
 
-BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t elementCount, uint32_t elementSize)
-:	Buffer(elementCount, elementSize)
+BufferVrfy::BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize)
+:	Buffer(bufferSize)
 ,	m_resourceTracker(resourceTracker)
 ,	m_buffer(buffer)
 {
-	const uint32_t bufferSize = elementCount * elementSize;
 	m_resourceTracker->add(this);
 	m_shadow = (uint8_t*)Alloc::acquireAlign(bufferSize + 2 * c_guardBytes, 16, T_FILE_LINE);
 	std::memset(m_shadow, 0, bufferSize + 2 * c_guardBytes);

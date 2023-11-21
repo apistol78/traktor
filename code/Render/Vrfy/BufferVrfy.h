@@ -24,7 +24,7 @@ class BufferVrfy : public Buffer
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t elementCount, uint32_t elementSize);
+	explicit BufferVrfy(ResourceTracker* resourceTracker, Buffer* buffer, uint32_t bufferSize);
 
 	virtual ~BufferVrfy();
 

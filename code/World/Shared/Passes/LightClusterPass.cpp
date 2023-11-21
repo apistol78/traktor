@@ -32,8 +32,7 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	// Tile light index array buffer.
 	m_lightIndexSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster,
-		sizeof(LightIndexShaderData),
+		ClusterDimXY * ClusterDimXY * ClusterDimZ * MaxLightsPerCluster * sizeof(LightIndexShaderData),
 		true
 	);
 	if (!m_lightIndexSBuffer)
@@ -42,8 +41,7 @@ bool LightClusterPass::create(render::IRenderSystem* renderSystem)
 	// Tile cluster buffer.
 	m_tileSBuffer = renderSystem->createBuffer(
 		render::BuStructured,
-		ClusterDimXY * ClusterDimXY * ClusterDimZ,
-		sizeof(TileShaderData),
+		ClusterDimXY * ClusterDimXY * ClusterDimZ * sizeof(TileShaderData),
 		true
 	);
 	if (!m_tileSBuffer)

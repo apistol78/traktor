@@ -135,18 +135,17 @@ Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewEmbeddedDe
 	return new RenderViewVrfy(desc, m_renderSystem, renderView);
 }
 
-Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t elementCount, uint32_t elementSize, bool dynamic)
+Ref< Buffer > RenderSystemVrfy::createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic)
 {
 	T_CAPTURE_TRACE(L"createBuffer");
 	T_CAPTURE_ASSERT(usage != 0, L"Invalid usage.");
-	T_CAPTURE_ASSERT(elementCount > 0, L"Invalid element count.");
-	T_CAPTURE_ASSERT(elementSize > 0, L"Invalid element size.");
+	T_CAPTURE_ASSERT(bufferSize > 0, L"Invalid buffer size.");
 
-	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, elementCount, elementSize, dynamic);
+	Ref< Buffer > buffer = m_renderSystem->createBuffer(usage, bufferSize, dynamic);
 	if (!buffer)
 		return nullptr;
 
-	return new BufferVrfy(m_resourceTracker, buffer, elementCount, elementSize);
+	return new BufferVrfy(m_resourceTracker, buffer, bufferSize);
 }
 
 Ref< const IVertexLayout > RenderSystemVrfy::createVertexLayout(const AlignedVector< VertexElement >& vertexElements)

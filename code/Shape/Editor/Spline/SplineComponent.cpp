@@ -163,8 +163,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 				m_vertexBuffer = m_renderSystem->createBuffer(
 					render::BuVertex,
-					nvertices + 4 * 128,
-					sizeof(Vertex),
+					(nvertices + 4 * 128) * sizeof(Vertex),
 					false
 				);
 			}
@@ -190,7 +189,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 			if (m_indexBuffer == nullptr || m_indexBuffer->getBufferSize() < nindices * sizeof(uint32_t))
 			{
 				safeDestroy(m_indexBuffer);
-				m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, nindices + 3 * 128, sizeof(uint32_t), false);
+				m_indexBuffer = m_renderSystem->createBuffer(render::BuIndex, (nindices + 3 * 128) * sizeof(uint32_t), false);
 			}
 
 			uint32_t* index = (uint32_t*)m_indexBuffer->lock();

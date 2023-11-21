@@ -41,7 +41,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 		if (!vertexLayout)
 			return nullptr;
 
-		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize / vertexSize, vertexSize, false);
+		vertexBuffer = m_renderSystem->createBuffer(BuVertex, vertexBufferSize, false);
 		if (!vertexBuffer)
 			return nullptr;
 	}
@@ -49,7 +49,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 	if (indexBufferSize > 0)
 	{
 		const uint32_t indexSize = (indexType == IndexType::UInt16) ? 2 : 4;
-		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize / indexSize, indexSize, false);
+		indexBuffer = m_renderSystem->createBuffer(BuIndex, indexBufferSize, false);
 		if (!indexBuffer)
 			return nullptr;
 	}

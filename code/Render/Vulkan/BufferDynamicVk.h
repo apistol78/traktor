@@ -21,7 +21,7 @@ class BufferDynamicVk : public BufferVk
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferDynamicVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances);
+	explicit BufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t& instances);
 
 	virtual ~BufferDynamicVk();
 

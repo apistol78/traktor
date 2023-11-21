@@ -287,7 +287,7 @@ bool AccShape::createFromTriangles(
 			for (auto c : clusters)
 				lineDataSize += c.lines.size();
 
-			Ref< render::Buffer > lineBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, lineDataSize, sizeof(LineData), false);
+			Ref< render::Buffer > lineBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, lineDataSize * sizeof(LineData), false);
 			if (!lineBuffer)
 				return false;
 

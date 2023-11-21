@@ -73,7 +73,7 @@ ProbeRenderer::ProbeRenderer(
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 + 8, sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, (4 + 8) * sizeof(Vertex), false);
 	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	Vector4 extents[8];
@@ -100,7 +100,7 @@ ProbeRenderer::ProbeRenderer(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 2 * 3 + 6 * 2 * 3, sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, (2 * 3 + 6 * 2 * 3) * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
