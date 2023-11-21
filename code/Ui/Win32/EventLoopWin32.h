@@ -19,12 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class T_DLLCLASS EventLoopWin32 : public IEventLoop
@@ -55,6 +53,4 @@ private:
 	bool preTranslateMessage(EventSubject* owner, const MSG& msg);
 };
 
-	}
 }
-

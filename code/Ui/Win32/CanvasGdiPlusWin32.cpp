@@ -17,17 +17,15 @@
 
 using namespace Gdiplus;
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 GdiplusStartupInput s_si;
-ULONG_PTR s_token = 0;
+ULONG_PTR s_token = nullptr;
 
-		}
+	}
 
 HDC CanvasGdiPlusWin32::ms_hGlobalDC = NULL;
 AutoPtr< Gdiplus::Graphics > CanvasGdiPlusWin32::ms_globalGraphics;
@@ -677,7 +675,6 @@ void CanvasGdiPlusWin32::flushCachedBitmaps()
 	m_cachedBitmaps.clear();
 }
 
-	}
 }
 
 #endif	// T_USE_GDI_PLUS

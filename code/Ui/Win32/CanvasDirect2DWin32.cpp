@@ -816,7 +816,7 @@ ID2D1Bitmap* CanvasDirect2DWin32::getCachedBitmap(const ISystemBitmap* bm)
 	{
 		const uint32_t srcOffset = (size.cy - y - 1) * size.cx;
 		const uint32_t dstOffset = y * size.cx;
-		for (uint32_t x = 0; x < size.cx; ++x)
+		for (int32_t x = 0; x < size.cx; ++x)
 			bits[dstOffset + x] = colorBits[srcOffset + x];
 	}
 
@@ -848,7 +848,7 @@ bool CanvasDirect2DWin32::realizeFont() const
 	if (m_dwFont)
 		return true;
 
-	const int32_t fontSize = (m_font.getSize().get() * m_dpi) / 96.0f;
+	const int32_t fontSize = (int32_t)((m_font.getSize().get() * m_dpi) / 96.0f);
 
 	s_dwFactory->CreateTextFormat(
 		m_font.getFace().c_str(),

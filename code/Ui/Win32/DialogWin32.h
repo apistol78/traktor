@@ -11,10 +11,8 @@
 #include "Ui/Itf/IDialog.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*!
  * \ingroup UIW32
@@ -54,6 +52,4 @@ private:
 	LRESULT eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
-	}
 }
-

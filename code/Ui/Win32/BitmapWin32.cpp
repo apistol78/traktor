@@ -11,10 +11,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Ui/Win32/BitmapWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 std::atomic< int32_t > BitmapWin32::ms_nextTag(1);
 
@@ -230,5 +228,4 @@ HICON BitmapWin32::createIcon() const
 	return hIcon;
 }
 
-	}
 }

@@ -19,12 +19,10 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/ClipboardWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 int CALLBACK enumFontCallBack(const LOGFONT* lf, const TEXTMETRIC*, DWORD, LPVOID lParam)
 {
@@ -40,7 +38,7 @@ BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
 	return TRUE;
 }
 
-		}
+	}
 
 IEventLoop* WidgetFactoryWin32::createEventLoop(EventSubject* owner)
 {
@@ -131,5 +129,4 @@ void WidgetFactoryWin32::getDesktopRects(std::list< Rect >& outRects) const
 	}
 }
 
-	}
 }

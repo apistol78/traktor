@@ -11,10 +11,8 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/FormWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 FormWin32::FormWin32(EventSubject* owner)
 :	WidgetWin32Impl< IForm >(owner)
@@ -184,5 +182,4 @@ LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wPa
 	return 0;
 }
 
-	}
 }

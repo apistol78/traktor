@@ -14,16 +14,14 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/NotificationIconWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 uint32_t s_taskbarCreated = 0;
 
-		}
+	}
 
 NotificationIconWin32::NotificationIconWin32(EventSubject* owner)
 :	m_owner(owner)
@@ -175,5 +173,4 @@ LRESULT NotificationIconWin32::eventTaskbarCreated(HWND hWnd, UINT message, WPAR
 	return 0;
 }
 
-	}
 }

@@ -11,20 +11,18 @@
 #include "Ui/Itf/INotificationIcon.h"
 #include "Ui/Win32/Window.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class NotificationIconWin32 : public INotificationIcon
 {
 public:
-	NotificationIconWin32(EventSubject* owner);
+	explicit NotificationIconWin32(EventSubject* owner);
 
 	virtual bool create(const std::wstring& text, ISystemBitmap* image);
 
@@ -42,6 +40,4 @@ private:
 	LRESULT eventTaskbarCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 };
 
-	}
 }
-

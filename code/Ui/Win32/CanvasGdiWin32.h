@@ -12,12 +12,10 @@
 
 #include "Ui/Win32/CanvasWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class CanvasGdiWin32 : public CanvasWin32
@@ -133,7 +131,6 @@ private:
 	void updateFont();
 };
 
-	}
 }
 
 #endif

@@ -8,12 +8,10 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 struct GdiDeleteObjectPolicy
@@ -21,17 +19,14 @@ struct GdiDeleteObjectPolicy
 	static void deleteObject(HGDIOBJ h) { ::DeleteObject(h); }
 };
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 template < typename HandleType, typename DeletePolicy >
 class SmartHandle
 {
 public:
-	SmartHandle()
-	:	m_object(0)
-	{
-	}
+	SmartHandle() = default;
 
 	SmartHandle(HandleType h)
 	:	m_object(h)
@@ -57,7 +52,7 @@ public:
 		if (m_object)
 			DeletePolicy::deleteObject(m_object);
 		m_object = sh.m_object;
-		sh.m_object = NULL;
+		sh.m_object = 0;
 		return *this;
 	}
 
@@ -72,13 +67,11 @@ public:
 	}
 
 private:
-	HandleType m_object;
+	HandleType m_object = 0;
 };
 
 typedef SmartHandle< HFONT,	GdiDeleteObjectPolicy >	SmartFont;
 typedef SmartHandle< HBRUSH, GdiDeleteObjectPolicy > SmartBrush;
 typedef SmartHandle< HPEN,	GdiDeleteObjectPolicy >	SmartPen;
 
-	}
 }
-

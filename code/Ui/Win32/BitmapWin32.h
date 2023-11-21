@@ -24,10 +24,8 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Ui/Itf/ISystemBitmap.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Win32 system bitmap.
  * \ingroup UIW32
@@ -81,6 +79,4 @@ private:
 #endif
 };
 
-	}
 }
-

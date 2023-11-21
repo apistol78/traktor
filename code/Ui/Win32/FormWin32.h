@@ -12,12 +12,10 @@
 #include "Ui/Itf/IForm.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class FormWin32 : public WidgetWin32Impl< IForm >
@@ -60,6 +58,4 @@ private:
 	LRESULT eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 };
 
-	}
 }
-

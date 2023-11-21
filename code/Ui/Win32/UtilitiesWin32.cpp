@@ -10,12 +10,10 @@
 #include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Win32/Window.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const struct { uint32_t keyCode; VirtualKey vkey; } c_translateTable[] =
 {
@@ -77,7 +75,7 @@ const struct { uint32_t keyCode; VirtualKey vkey; } c_translateTable[] =
 	{ VK_SCROLL, VkScroll }
 };
 
-		}
+	}
 
 VirtualKey translateToVirtualKey(uint32_t keyCode)
 {
@@ -135,5 +133,4 @@ LOGFONT fontToLogFont(const Font& fnt)
 	return lf;
 }
 
-	}
 }

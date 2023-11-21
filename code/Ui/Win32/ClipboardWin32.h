@@ -10,12 +10,10 @@
 
 #include "Ui/Itf/IClipboard.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class ClipboardWin32 : public IClipboard
@@ -43,6 +41,4 @@ private:
 	uint32_t m_objectFormat;
 };
 
-	}
 }
-

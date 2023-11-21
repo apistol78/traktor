@@ -8,10 +8,8 @@
  */
 #include "Ui/Win32/UserWidgetWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 UserWidgetWin32::UserWidgetWin32(EventSubject* owner)
 :	WidgetWin32Impl< IUserWidget >(owner)
@@ -65,5 +63,4 @@ LRESULT UserWidgetWin32::eventButtonDown(HWND hWnd, UINT message, WPARAM wParam,
 	return result;
 }
 
-	}
 }

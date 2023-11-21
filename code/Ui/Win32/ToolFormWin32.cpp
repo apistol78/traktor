@@ -12,16 +12,14 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/ToolFormWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const UINT WM_ENDMODAL = WM_USER + 2000;
 
-		}
+	}
 
 ToolFormWin32::ToolFormWin32(EventSubject* owner)
 :	WidgetWin32Impl< IToolForm >(owner)
@@ -192,5 +190,4 @@ LRESULT ToolFormWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPA
 	return 0;
 }
 
-	}
 }

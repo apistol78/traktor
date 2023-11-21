@@ -10,16 +10,13 @@
 
 #if defined(T_STATIC)
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace runtime
-	{
 
 extern "C" void __module__Traktor_Ui_Win32()
 {
 }
 
-	}
 }
 
 #endif
