@@ -31,7 +31,7 @@ class T_DLLCLASS ImageStructBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize);
+	explicit ImageStructBuffer(const std::wstring& name, img_handle_t id, handle_t persistentHandle, uint32_t bufferSize);
 
 	const std::wstring& getName() const;
 
@@ -39,16 +39,13 @@ public:
 
 	handle_t getPersistentHandle() const;
 
-	uint32_t getElementCount() const { return m_elementCount; }
-
-	uint32_t getElementSize() const { return m_elementSize; }
+	uint32_t getBufferSize() const { return m_bufferSize; }
 
 private:
 	std::wstring m_name;
 	img_handle_t m_id;
 	handle_t m_persistentHandle;
-	uint32_t m_elementCount;
-	uint32_t m_elementSize;
+	uint32_t m_bufferSize;
 };
 
 }

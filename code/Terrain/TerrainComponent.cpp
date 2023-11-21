@@ -619,8 +619,7 @@ bool TerrainComponent::createPatches()
 
 	m_vertexBuffer = m_renderSystem->createBuffer(
 		render::BuVertex,
-		patchVertexCount,
-		vertexSize,
+		patchVertexCount * vertexSize,
 		false
 	);
 	if (!m_vertexBuffer)
@@ -776,8 +775,7 @@ bool TerrainComponent::createPatches()
 
 	m_indexBuffer = m_renderSystem->createBuffer(
 		render::BuIndex,
-		(uint32_t)indices.size(),
-		sizeof(uint32_t),
+		(uint32_t)indices.size() * sizeof(uint32_t),
 		false
 	);
 	if (!m_indexBuffer)
@@ -793,8 +791,7 @@ bool TerrainComponent::createPatches()
 
 	m_drawBuffer = m_renderSystem->createBuffer(
 		render::BuIndirect,
-		(uint32_t)m_patches.size(),
-		sizeof(render::IndexedIndirectDraw),
+		(uint32_t)m_patches.size() * sizeof(render::IndexedIndirectDraw),
 		true
 	);
 	if (!m_drawBuffer)
@@ -802,8 +799,7 @@ bool TerrainComponent::createPatches()
 
 	m_dataBuffer = m_renderSystem->createBuffer(
 		render::BuStructured,
-		(uint32_t)m_patches.size(),
-		sizeof(DrawData),
+		(uint32_t)m_patches.size() * sizeof(DrawData),
 		true
 	);
 	if (!m_dataBuffer)

@@ -158,15 +158,14 @@ handle_t RenderGraph::addBuffer(const wchar_t* const name, Buffer* buffer)
 	return resourceId;
 }
 
-handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t elementCount, uint32_t elementSize)
+handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
 	auto& br = m_buffers[resourceId];
 	br.name = name;
 	br.persistentHandle = persistentHandle;
-	br.elementCount = elementCount;
-	br.elementSize = elementSize;
+	br.bufferSize = bufferSize;
 
 	return resourceId;
 }
@@ -296,8 +295,8 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		if (sbuffer.buffer == nullptr)
 		{
 			sbuffer.buffer = m_bufferPool->acquire(
-				sbuffer.elementCount,
-				sbuffer.elementSize
+				sbuffer.bufferSize,
+				sbuffer.persistentHandle
 			);
 		}
 	}

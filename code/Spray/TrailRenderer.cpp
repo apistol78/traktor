@@ -47,11 +47,11 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 	{
-		m_vertexBuffers[i] = renderSystem->createBuffer(render::BuVertex, c_trailCount * c_stripeLength * 2, sizeof(TrailVertex), true);
+		m_vertexBuffers[i] = renderSystem->createBuffer(render::BuVertex, c_trailCount * c_stripeLength * 2 * sizeof(TrailVertex), true);
 		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_trailCount * c_stripeLength * 2, sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, c_trailCount * c_stripeLength * 2 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = (uint16_t*)m_indexBuffer->lock();

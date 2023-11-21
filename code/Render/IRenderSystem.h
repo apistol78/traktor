@@ -109,11 +109,10 @@ public:
 	/*! Create buffer.
 	 *
 	 * \param usage Buffer usage flags.
-	 * \param elementCount Number of elements.
-	 * \param elementSize Size of a single element.
+	 * \param bufferSize Size of buffer in bytes.
 	 * \param dynamic If index buffer is frequently updated.
 	 */
-	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t elementCount, uint32_t elementSize, bool dynamic) = 0;
+	virtual Ref< Buffer > createBuffer(uint32_t usage, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! Create vertex layout. */
 	virtual Ref< const IVertexLayout > createVertexLayout(const AlignedVector< VertexElement >& vertexElements) = 0;

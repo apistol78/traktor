@@ -85,8 +85,7 @@ bool UndergrowthComponent::create(
 
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
-		4,
-		sizeof(Vertex),
+		4 * sizeof(Vertex),
 		false
 	);
 	if (!m_vertexBuffer)
@@ -109,8 +108,7 @@ bool UndergrowthComponent::create(
 
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
-		3 * 2 * 2,
-		sizeof(uint16_t),
+		3 * 2 * 2 * sizeof(uint16_t),
 		false
 	);
 	if (!m_indexBuffer)

@@ -228,7 +228,7 @@ bool CloudComponent::create(
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(Vertex, index)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
-	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 * c_instanceCount, sizeof(Vertex), false);
+	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, 4 * c_instanceCount * sizeof(Vertex), false);
 	if (!m_vertexBuffer)
 		return false;
 
@@ -245,7 +245,7 @@ bool CloudComponent::create(
 
 	m_vertexBuffer->unlock();
 
-	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 6 * c_instanceCount, sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createBuffer(render::BuIndex, 6 * c_instanceCount * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
 		return false;
 

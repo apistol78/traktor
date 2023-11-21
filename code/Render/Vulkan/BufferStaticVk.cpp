@@ -18,8 +18,8 @@ namespace traktor::render
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferStaticVk", BufferStaticVk, BufferVk)
 
-BufferStaticVk::BufferStaticVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances)
-:	BufferVk(context, elementCount, elementSize, instances)
+BufferStaticVk::BufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances)
+:	BufferVk(context, bufferSize, instances)
 {
 }
 

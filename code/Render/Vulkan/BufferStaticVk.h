@@ -23,7 +23,7 @@ class BufferStaticVk : public BufferVk
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferStaticVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances);
+	explicit BufferStaticVk(Context* context, uint32_t bufferSize, uint32_t& instances);
 
 	virtual ~BufferStaticVk();
 

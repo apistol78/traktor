@@ -30,13 +30,24 @@ public:
 
 	void destroy();
 
-	Ref< Buffer > acquire(uint32_t elementCount, uint32_t elementSize);
+	Ref< Buffer > acquire(uint32_t bufferSize, uint32_t persistentHandle);
 
 	void release(Ref< Buffer >& buffer);
 
 private:
+	struct Pool
+	{
+		// Pool identification.
+		uint32_t bufferSize;
+		uint32_t persistentHandle;
+
+		// Pool buffers.
+		RefArray< Buffer > free;
+		RefArray< Buffer > acquired;
+	};
+
 	Ref< IRenderSystem > m_renderSystem;
-	SmallMap< std::pair< uint32_t, uint32_t >, RefArray< Buffer > > m_pool;
+	AlignedVector< Pool > m_pool;
 };
 
 }

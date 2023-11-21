@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,12 +31,6 @@ class T_DLLCLASS Buffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! */
-	uint32_t getElementCount() const;
-
-	/*! */
-	uint32_t getElementSize() const;
-
 	/*! Get buffer size in bytes.
 	 *
 	 * \return Buffer size.
@@ -59,11 +53,10 @@ public:
 	virtual const IBufferView* getBufferView() const = 0;
 
 protected:
-	explicit Buffer(uint32_t elementCount, uint32_t elementSize);
+	explicit Buffer(uint32_t bufferSize);
 
 private:
-	uint32_t m_elementCount;
-	uint32_t m_elementSize;
+	uint32_t m_bufferSize;
 };
 
 }

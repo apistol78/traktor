@@ -15,8 +15,8 @@ namespace traktor::render
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.BufferDynamicVk", BufferDynamicVk, BufferVk)
 
-BufferDynamicVk::BufferDynamicVk(Context* context, uint32_t elementCount, uint32_t elementSize, uint32_t& instances)
-:	BufferVk(context, elementCount, elementSize, instances)
+BufferDynamicVk::BufferDynamicVk(Context* context, uint32_t bufferSize, uint32_t& instances)
+:	BufferVk(context, bufferSize, instances)
 {
 }
 

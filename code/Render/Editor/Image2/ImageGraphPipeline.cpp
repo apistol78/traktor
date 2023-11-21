@@ -39,7 +39,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 13, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 14, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -169,8 +169,7 @@ bool ImageGraphPipeline::buildOutput(
 			if (sbufferNode->getPersistent())
 				sbd->m_persistentHandle = Guid::create().format();
 
-			sbd->m_elementCount = sbufferNode->m_elementCount;
-			sbd->m_elementSize = sbufferNode->m_elementSize;
+			sbd->m_bufferSize = sbufferNode->m_elementCount * sbufferNode->m_elementSize;
 
 			data->m_sbuffers.push_back(sbd);
 		}

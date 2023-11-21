@@ -71,8 +71,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 
 	m_vertexBuffer = renderSystem->createBuffer(
 		render::BuVertex,
-		c_vertexCount,
-		sizeof(float) * 2,
+		c_vertexCount * sizeof(float) * 2,
 		false
 	);
 	if (!m_vertexBuffer)
@@ -97,8 +96,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 
 	m_indexBuffer = renderSystem->createBuffer(
 		render::BuIndex,
-		c_indexCount,
-		sizeof(uint16_t),
+		c_indexCount * sizeof(uint16_t),
 		false
 	);
 	if (!m_indexBuffer)

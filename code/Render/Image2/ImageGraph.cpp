@@ -51,8 +51,7 @@ void ImageGraph::addPasses(
 		sbufferIds[i] = renderGraph.addPersistentBuffer(
 			m_sbuffers[i]->getName().c_str(),
 			m_sbuffers[i]->getPersistentHandle(),
-			m_sbuffers[i]->getElementCount(),
-			m_sbuffers[i]->getElementSize()
+			m_sbuffers[i]->getBufferSize()
 		);
 		context.associateSBuffer(
 			m_sbuffers[i]->getId(),

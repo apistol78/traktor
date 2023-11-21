@@ -26,38 +26,80 @@ void RenderGraphBufferPool::destroy()
 	m_renderSystem = nullptr;
 }
 
-Ref< Buffer > RenderGraphBufferPool::acquire(uint32_t elementCount, uint32_t elementSize)
+Ref< Buffer > RenderGraphBufferPool::acquire(uint32_t bufferSize, uint32_t persistentHandle)
 {
-	auto it = m_pool.find({ elementCount, elementSize });
-	if (it != m_pool.end() && !it->second.empty())
+	auto it = std::find_if(
+		m_pool.begin(),
+		m_pool.end(),
+		[&](const RenderGraphBufferPool::Pool& p)
+		{
+			if (p.persistentHandle != persistentHandle)
+				return false;
+
+			if (p.bufferSize != bufferSize)
+				return false;
+
+			return true;
+		}
+	);
+
+	// Get or create pool.
+	Pool* pool = nullptr;
+	if (it != m_pool.end())
+		pool = &(*it);
+	else
 	{
-		Ref< Buffer > buffer = it->second.back();
-		it->second.pop_back();
-		return buffer;
+		pool = &m_pool.push_back();
+		pool->bufferSize = bufferSize;
+		pool->persistentHandle = persistentHandle;
 	}
 
-	Ref< Buffer > buffer = m_renderSystem->createBuffer(
-		render::BuStructured,
-		elementCount,
-		elementSize,
-		false
-	);
-	if (!buffer)
-		return nullptr;
+	// Acquire free buffer, if no one left we need to create a new target.
+	if (!pool->free.empty())
+	{
+		Ref< Buffer > target = pool->free.back();
 
-	void* ptr = buffer->lock();
-	if (!ptr)
-		return nullptr;
+		pool->free.pop_back();
+		pool->acquired.push_back(target);
 
-	std::memset(ptr, 0, elementCount * elementSize);
-	buffer->unlock();
+		return target;
+	}
+	else
+	{
+		Ref< Buffer > buffer = m_renderSystem->createBuffer(
+			render::BuStructured,
+			bufferSize,
+			false
+		);
+		if (buffer)
+		{
+			void* ptr = buffer->lock();
+			if (!ptr)
+				return nullptr;
+			std::memset(ptr, 0, bufferSize);
+			buffer->unlock();
 
-	return buffer;
+			pool->acquired.push_back(buffer);
+		}
+		return buffer;
+	}
 }
 
 void RenderGraphBufferPool::release(Ref< Buffer >& buffer)
 {
-	m_pool[{ buffer->getElementCount(), buffer->getElementSize() }].push_back(buffer);
+	T_ANONYMOUS_VAR(Ref< Buffer >)(buffer);
+	for (auto& pool : m_pool)
+	{
+		auto it = std::remove_if(pool.acquired.begin(), pool.acquired.end(), [&](const Buffer* bf) {
+			return bf == buffer;
+		});
+		if (it != pool.acquired.end())
+		{
+			pool.acquired.erase(it, pool.acquired.end());
+			pool.free.push_back(buffer);
+			break;
+		}
+	}
 	buffer = nullptr;
 }
 
