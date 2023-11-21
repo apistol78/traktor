@@ -21,6 +21,9 @@
 namespace traktor::render
 {
 
+/*! GPU buffer view.
+ * \ingroup Render
+ */
 class T_DLLCLASS IBufferView : public Object
 {
 	T_RTTI_CLASS;

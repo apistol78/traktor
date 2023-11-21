@@ -27,6 +27,9 @@ class IBufferView;
 class ITexture;
 class ProgramParameters;
 
+/*!
+ * \ingroup Render
+ */
 class T_DLLCLASS RenderClassFactory : public IRuntimeClassFactory
 {
 	T_RTTI_CLASS;
@@ -35,6 +38,9 @@ public:
 	virtual void createClasses(IRuntimeClassRegistrar* registrar) const override final;
 };
 
+/*!
+ * \ingroup Render
+ */
 class T_DLLCLASS BoxedProgramParameters : public Object
 {
 	T_RTTI_CLASS;
