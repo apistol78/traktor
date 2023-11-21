@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,16 @@
  */
 #include "Sound/Filters/DitherFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
+
+struct DitherFilterInstance : public RefCountImpl< IFilterInstance >
+{
+};
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.DitherFilter", 0, DitherFilter, IFilter)
 
@@ -22,14 +28,14 @@ DitherFilter::DitherFilter(uint32_t bitsPerSample)
 
 Ref< IFilterInstance > DitherFilter::createInstance() const
 {
-	return nullptr;
+	return new DitherFilterInstance();
 }
 
 void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
-		float r = float((m_random.nextDouble() * 2.0 - 1.0) * m_ditherAmplitude);
+		const float r = (float)((m_random.nextDouble() * 2.0 - 1.0) * m_ditherAmplitude);
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			outBlock.samples[j][i] += r;
 	}
@@ -39,5 +45,4 @@ void DitherFilter::serialize(ISerializer& s)
 {
 }
 
-	}
 }
