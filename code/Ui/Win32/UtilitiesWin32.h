@@ -13,10 +13,8 @@
 #include "Ui/Font.h"
 #include "Ui/Win32/Window.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Translate Win32 virtual key to our virtual key.
  * \ingroup UIW32
@@ -42,6 +40,4 @@ Font logFontToFont(const LOGFONT& lf);
  */
 LOGFONT fontToLogFont(const Font& fnt);
 
-	}
 }
-

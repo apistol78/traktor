@@ -12,20 +12,18 @@
 #include "Ui/Itf/IPathDialog.h"
 #include "Ui/Win32/Window.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 
-/*! \brief
+/*!
  * \ingroup UIW32
  */
 class PathDialogWin32 : public IPathDialog
 {
 public:
-	PathDialogWin32(EventSubject* owner);
+	explicit PathDialogWin32(EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& title);
 
@@ -41,6 +39,4 @@ private:
 	TCHAR m_title[64];
 };
 
-	}
 }
-

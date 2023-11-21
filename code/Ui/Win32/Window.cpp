@@ -16,12 +16,10 @@ extern HINSTANCE g_hInstance;
 #define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLongPtr(a, b, c)
 #define GET_WINDOW_LONG_PTR(a, b) GetWindowLongPtr(a, b)
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 UINT getReflectedMessage(UINT message)
 {
@@ -53,11 +51,11 @@ UINT getReflectedMessage(UINT message)
 	}
 }
 
-		}
+	}
 
 Window::Window()
 :	m_hWnd(0)
-,	m_originalWndProc(0)
+,	m_originalWndProc(nullptr)
 {
 }
 
@@ -384,5 +382,4 @@ LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam,
 	);
 }
 
-	}
 }

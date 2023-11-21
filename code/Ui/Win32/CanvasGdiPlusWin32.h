@@ -23,10 +23,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Ui/Win32/CanvasWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! \brief
  * \ingroup UIW32
@@ -143,8 +141,6 @@ private:
 	void flushCachedBitmaps();
 };
 
-	}
 }
 
 #endif	// T_USE_GDI_PLUS
-

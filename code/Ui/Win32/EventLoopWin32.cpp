@@ -28,10 +28,8 @@
 
 HINSTANCE g_hInstance = NULL;
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 EventLoopWin32::EventLoopWin32()
 :	m_exitCode(0)
@@ -241,5 +239,4 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 	return consumed;
 }
 
-	}
 }

@@ -10,16 +10,14 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/DialogWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const UINT WM_ENDMODAL = WM_USER + 2000;
 
-		}
+	}
 
 DialogWin32::DialogWin32(EventSubject* owner)
 :	WidgetWin32Impl< IDialog >(owner)
@@ -328,5 +326,4 @@ LRESULT DialogWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARA
 	return 0;
 }
 
-	}
 }

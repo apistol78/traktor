@@ -8,10 +8,8 @@
  */
 #include "Ui/Win32/ContainerWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 ContainerWin32::ContainerWin32(EventSubject* owner)
 :	WidgetWin32Impl< IContainer >(owner)
@@ -48,5 +46,4 @@ bool ContainerWin32::create(IWidget* parent, int style)
 	return true;
 }
 
-	}
 }

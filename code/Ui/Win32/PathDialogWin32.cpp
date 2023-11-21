@@ -10,10 +10,8 @@
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Enums.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 PathDialogWin32::PathDialogWin32(EventSubject* owner)
 :	m_owner(owner)
@@ -55,5 +53,4 @@ DialogResult PathDialogWin32::showModal(Path& outPath)
 	return DialogResult::Ok;
 }
 
-	}
 }

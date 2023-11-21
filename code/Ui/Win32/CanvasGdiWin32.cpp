@@ -17,12 +17,10 @@
 #include "Ui/Win32/CanvasGdiWin32.h"
 #include "Ui/Win32/Window.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 COLORREF getColorRef(const Color4ub& c)
 {
@@ -33,7 +31,7 @@ COLORREF getColorRef(const Color4ub& c)
 	);
 }
 
-		}
+	}
 
 CanvasGdiWin32::CanvasGdiWin32()
 :	m_hDC(NULL)
@@ -662,7 +660,6 @@ void CanvasGdiWin32::updateFont()
 	SelectObject(m_hDC, m_hFont);
 }
 
-	}
 }
 
 #endif

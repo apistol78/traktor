@@ -15,10 +15,8 @@
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Ui/Win32/ClipboardWin32.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 ClipboardWin32::ClipboardWin32()
 {
@@ -213,7 +211,7 @@ std::wstring ClipboardWin32::getText() const
 		return L"";
 	}
 
-	std::wstring str = ptr;
+	const std::wstring str = ptr;
 	GlobalUnlock(handle);
 
 	CloseClipboard();
@@ -225,5 +223,4 @@ Ref< const drawing::Image > ClipboardWin32::getImage() const
 	return nullptr;
 }
 
-	}
 }

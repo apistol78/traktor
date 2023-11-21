@@ -11,10 +11,8 @@
 #include "Ui/Itf/IToolForm.h"
 #include "Ui/Win32/WidgetWin32Impl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*!
  * \ingroup UIW32
@@ -22,7 +20,7 @@ namespace traktor
 class ToolFormWin32 : public WidgetWin32Impl< IToolForm >
 {
 public:
-	ToolFormWin32(EventSubject* owner);
+	explicit ToolFormWin32(EventSubject* owner);
 
 	virtual bool create(IWidget* parent, const std::wstring& text, int width, int height, int style) override final;
 
@@ -47,6 +45,4 @@ private:
 	LRESULT eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
-	}
 }
-
