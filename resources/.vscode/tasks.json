@@ -177,7 +177,11 @@
 				"problemMatcher": [
 					"$gcc"
 				]
-			}		
+			},
+
+			"windows": {
+				"command": "echo Cannot build iOS on Windows",
+			},			
 		},
 
 		{
@@ -194,7 +198,11 @@
 				"problemMatcher": [
 					"$gcc"
 				]
-			}
+			},
+
+			"windows": {
+				"command": "echo Cannot build iOS on Windows",
+			},			
 		},
 
 		{
@@ -207,7 +215,11 @@
 				"problemMatcher": [
 					"$gcc"
 				]
-			}
+			},
+
+			"windows": {
+				"command": "echo Cannot build Raspberry PI on Windows",
+			},			
 		},
 
 		{
@@ -220,7 +232,11 @@
 				"problemMatcher": [
 					"$gcc"
 				]
-			}
+			},
+
+			"windows": {
+				"command": "echo Cannot build Raspberry PI on Windows",
+			},			
 		},
 
 		{
@@ -233,7 +249,11 @@
 				"problemMatcher": [
 					"$gcc"
 				]
-			}
+			},
+
+			"windows": {
+				"command": "echo Cannot build Raspberry PI on Windows",
+			},			
 		},
 
 		{
@@ -243,9 +263,14 @@
 			"options": {
 				"cwd": "${workspaceRoot}/.."
 			},
+
 			"linux": {
 				"command": "./bin/linux/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run"
-			}
+			},
+
+			"windows": {
+				"command": "./scripts/update-3rdp.bat",
+			},			
 		}		
 	]
 }
