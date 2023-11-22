@@ -19,27 +19,25 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 class PropertiesView;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ContentChangeEvent;
 class ContentChangingEvent;
@@ -55,15 +53,14 @@ class SelectionChangeEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
-class AudioChannel;
-class AudioSystem;
 class GraphAsset;
-class GraphBuffer;
+class ISoundHandle;
+class ISoundPlayer;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
 {
@@ -92,9 +89,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< AudioSystem > m_audioSystem;
-	Ref< AudioChannel > m_audioChannel;
-	Ref< GraphBuffer > m_graphBuffer;
+	Ref< ISoundPlayer > m_soundPlayer;
+	Ref< ISoundHandle > m_soundHandle;
 
 	void updateView();
 
@@ -119,5 +115,4 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
-	}
 }

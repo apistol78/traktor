@@ -15,6 +15,37 @@ namespace traktor::sound
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioMixer", AudioMixer, IAudioMixer)
 
+void AudioMixer::mul(float* lsb, const float* rsb, uint32_t count) const
+{
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(count, 4) == count);
+
+	int32_t s = 0;
+
+	for (; s <= int32_t(count) - 3 * 4; s += 3 * 4)
+	{
+		const Vector4 rs4_0 = Vector4::loadAligned(&rsb[s]);
+		const Vector4 rs4_1 = Vector4::loadAligned(&rsb[s + 4]);
+		const Vector4 rs4_2 = Vector4::loadAligned(&rsb[s + 8]);
+
+		const Vector4 ls4_0 = Vector4::loadAligned(&lsb[s]);
+		const Vector4 ls4_1 = Vector4::loadAligned(&lsb[s + 4]);
+		const Vector4 ls4_2 = Vector4::loadAligned(&lsb[s + 8]);
+
+		(ls4_0 * rs4_0).storeAligned(&lsb[s]);
+		(ls4_1 * rs4_1).storeAligned(&lsb[s + 4]);
+		(ls4_2 * rs4_2).storeAligned(&lsb[s + 8]);
+	}
+
+	for (; s < int32_t(count); s += 4)
+	{
+		const Vector4 rs4 = Vector4::loadAligned(&rsb[s]);
+		const Vector4 ls4 = Vector4::loadAligned(&lsb[s]);
+		(ls4 * rs4).storeAligned(&lsb[s]);
+	}
+}
+
 void AudioMixer::mulConst(float* sb, uint32_t count, float factor) const
 {
 	T_ASSERT(alignUp(sb, 16) == sb);

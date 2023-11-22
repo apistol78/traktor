@@ -8,17 +8,15 @@
  */
 #pragma once
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 enum NodePinType
 {
+	NptVoid,
 	NptEvent,
 	NptScalar,
 	NptSignal
 };
 
-	}
 }

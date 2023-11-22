@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,16 +10,14 @@
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Time.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const ImmutableNode::OutputPinDesc c_Time_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NptScalar },
 	{ 0 }
 };
 
@@ -33,7 +31,7 @@ public:
 	virtual void reset() override final {}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Time", 0, Time, ImmutableNode)
 
@@ -63,5 +61,4 @@ bool Time::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator,
 	return false;
 }
 
-	}
 }

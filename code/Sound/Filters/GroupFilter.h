@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Group filter.
  * \ingroup Sound
@@ -32,13 +30,13 @@ class T_DLLCLASS GroupFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	GroupFilter();
+	GroupFilter() = default;
 
-	GroupFilter(IFilter* filter1);
+	explicit GroupFilter(IFilter* filter1);
 
-	GroupFilter(IFilter* filter1, IFilter* filter2);
+	explicit GroupFilter(IFilter* filter1, IFilter* filter2);
 
-	GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3);
+	explicit GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3);
 
 	void addFilter(IFilter* filter);
 
@@ -52,6 +50,4 @@ private:
 	RefArray< IFilter > m_filters;
 };
 
-	}
 }
-

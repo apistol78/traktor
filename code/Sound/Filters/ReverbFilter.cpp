@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,16 +12,15 @@
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/ReverbFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 enum
 {
@@ -93,15 +92,15 @@ struct ReverbFilterInstance : public RefCountImpl< IFilterInstance >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.ReverbFilter", 0, ReverbFilter, IFilter)
 
 ReverbFilter::ReverbFilter()
 :	m_delay(100)
-,	m_duration(1.0f)
+,	m_duration(0.5f)
 ,	m_cutOff(22050.0f)
-,	m_wet(1.0f)
+,	m_wet(0.25f)
 {
 }
 
@@ -175,10 +174,9 @@ void ReverbFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 void ReverbFilter::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"delay", m_delay, AttributeRange(1));
-	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f));
+	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));
 	s >> Member< float >(L"cutOff", m_cutOff, AttributeRange(0.0f));
 	s >> Member< float >(L"wet", m_wet, AttributeRange(0.0f, 1.0f));
 }
 
-	}
 }

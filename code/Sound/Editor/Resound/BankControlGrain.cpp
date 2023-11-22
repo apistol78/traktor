@@ -67,7 +67,7 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
 	bool focus = bool(getWidget< ui::AutoWidget >()->getFocusCell() == this);
 
-	ui::Size sz = m_bitmapGrain->getSize(getWidget());
+	ui::Size sz = { 16, 16 }; //  m_bitmapGrain->getSize(getWidget());
 
 	int32_t dx = sz.cx / 4;
 	int32_t dy = sz.cy / 6;
@@ -78,24 +78,24 @@ void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 	if (m_active)
 		y += 2 * dy;
 
-	canvas.drawBitmap(
-		rect.getTopLeft(),
-		ui::Point(0, y),
-		ui::Size(sz.cx, dy),
-		m_bitmapGrain,
-		ui::BlendMode::Alpha
-	);
+	//canvas.drawBitmap(
+	//	rect.getTopLeft(),
+	//	ui::Point(0, y),
+	//	ui::Size(sz.cx, dy),
+	//	m_bitmapGrain,
+	//	ui::BlendMode::Alpha
+	//);
 
-	canvas.drawBitmap(
-		rect.getTopLeft(),
-		ui::Point(
-			(m_image % 4) * dx,
-			(m_image / 4) * dy + 4 * dy
-		),
-		ui::Size(dx, dy),
-		m_bitmapGrain,
-		ui::BlendMode::Alpha
-	);
+	//canvas.drawBitmap(
+	//	rect.getTopLeft(),
+	//	ui::Point(
+	//		(m_image % 4) * dx,
+	//		(m_image / 4) * dy + 4 * dy
+	//	),
+	//	ui::Size(dx, dy),
+	//	m_bitmapGrain,
+	//	ui::BlendMode::Alpha
+	//);
 
 	if (!m_text.empty())
 	{

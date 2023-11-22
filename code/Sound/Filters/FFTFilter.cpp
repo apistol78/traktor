@@ -163,7 +163,7 @@ FFTFilter::FFTFilter(uint32_t sampleRate)
 :	m_sampleRate(sampleRate)
 {
 	for (uint32_t i = 0; i < N; ++i)
-		m_filter[i] = 0.0f;
+		m_filter[i] = 1.0f;
 }
 
 void FFTFilter::setFilter(const std::vector< std::pair< float, float > >& filter, uint32_t windowWidth)

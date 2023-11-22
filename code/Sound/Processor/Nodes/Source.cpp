@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,12 +14,10 @@
 #include "Sound/Sound.h"
 #include "Sound/Processor/Nodes/Source.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const ImmutableNode::OutputPinDesc c_Source_o[] =
 {
@@ -50,7 +48,7 @@ public:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Source", 0, Source, ImmutableNode)
 
@@ -105,10 +103,9 @@ bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	))
 		return false;
 
-
 	if (m_sound->getGain() != 0.0f)
 	{
-		float gain = decibelToLinear(m_sound->getGain());
+		const float gain = decibelToLinear(m_sound->getGain());
 		mixer->mulConst(
 			outBlock.samples[0],
 			outBlock.samplesCount,
@@ -126,5 +123,4 @@ void Source::serialize(ISerializer& s)
 	s >> resource::MemberIdProxy< Sound >(L"sound", m_sound);
 }
 
-	}
 }

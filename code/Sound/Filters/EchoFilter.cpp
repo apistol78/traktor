@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,12 +22,10 @@
 #include "Core/Thread/Semaphore.h"
 #include "Sound/Filters/EchoFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_maxEchos = 4;
 const float c_maxDelay = 1.0f;
@@ -41,8 +39,8 @@ float* allocHistory()
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_historyAllocLock);
 	if (!s_historyAlloc)
 	{
-		int32_t samples = c_maxEchos * alignUp(int32_t(c_maxDelay * 48000), 4);
-		int32_t size = alignUp(samples * sizeof(float) * SbcMaxChannelCount, 16);
+		const int32_t samples = c_maxEchos * alignUp(int32_t(c_maxDelay * 48000), 4);
+		const int32_t size = (int32_t)alignUp(samples * sizeof(float) * SbcMaxChannelCount, 16);
 
 		void* ptr = Alloc::acquireAlign(c_maxSimultaneousEchos * size, 16, T_FILE_LINE);
 		T_FATAL_ASSERT(ptr);
@@ -143,8 +141,8 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	EchoFilterInstance* efi = static_cast< EchoFilterInstance* >(instance);
 
-	int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
-	int32_t delay = int32_t(m_delay * outBlock.sampleRate);
+	const int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
+	const int32_t delay = int32_t(m_delay * outBlock.sampleRate);
 
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
@@ -160,7 +158,7 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 		for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
 		{
-			Vector4 s = Vector4::loadAligned(&samples[j]);
+			const Vector4 s = Vector4::loadAligned(&samples[j]);
 
 			s.storeAligned(&history[front]);
 			front = (front + 4) % efi->m_size;
@@ -168,24 +166,24 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 			if (count < efi->m_size)
 				count += 4;
 
-			int32_t maxOffset = count;
+			const int32_t maxOffset = count;
 			Vector4 echo = Vector4::zero();
 
 			for (int32_t k = 1; k < nechos; ++k)
 			{
-				int32_t offset = alignUp(k * delay, 4);
+				const int32_t offset = alignUp(k * delay, 4);
 				if (offset < maxOffset)
 				{
 					int32_t index = front - offset;
 					if (index < 0)
 						index += efi->m_size;
 
-					Vector4 h = Vector4::loadAligned(&history[index]);
+					const Vector4 h = Vector4::loadAligned(&history[index]);
 					echo += h * efi->m_decay[k];
 				}
 			}
 
-			Vector4 r = s * m_dryMix + echo * m_wetMix;
+			const Vector4 r = s * m_dryMix + echo * m_wetMix;
 			r.storeAligned(&samples[j]);
 		}
 	}
@@ -199,5 +197,4 @@ void EchoFilter::serialize(ISerializer& s)
 	s >> Member< Scalar >(L"dryMix", m_dryMix);
 }
 
-	}
 }

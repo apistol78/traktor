@@ -18,10 +18,8 @@
 #	include <intrin.h>
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioMixerAvx", AudioMixerAvx, IAudioMixer)
 
@@ -44,6 +42,10 @@ bool AudioMixerAvx::supported()
 	}
 #endif
 	return false;
+}
+
+void AudioMixerAvx::mul(float* lsb, const float* rsb, uint32_t count) const
+{
 }
 
 void AudioMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
@@ -226,5 +228,4 @@ void AudioMixerAvx::synchronize() const
 {
 }
 
-	}
 }

@@ -33,6 +33,8 @@ class T_DLLCLASS IAudioMixer : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual void mul(float* lsb, const float* rsb, uint32_t count) const = 0;
+
 	virtual void mulConst(float* sb, uint32_t count, float factor) const = 0;
 
 	virtual void mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const = 0;
