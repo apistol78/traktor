@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,36 +11,34 @@
 #include "Editor/IObjectEditor.h"
 #include "Ui/PropertyList/AutoPropertyList.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Instance;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class PropertyCommandEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
-class AudioChannel;
-class AudioSystem;
+class ISoundHandle;
+class ISoundPlayer; 
 class SoundAsset;
 
 class SoundAssetEditor
@@ -50,7 +48,7 @@ class SoundAssetEditor
 	T_RTTI_CLASS;
 
 public:
-	SoundAssetEditor(editor::IEditor* editor);
+	explicit SoundAssetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -70,8 +68,8 @@ private:
 	Ref< SoundAsset > m_asset;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::AutoPropertyList > m_propertyList;
-	Ref< AudioSystem > m_audioSystem;
-	Ref< AudioChannel > m_audioChannel;
+	Ref< ISoundPlayer > m_soundPlayer;
+	Ref< ISoundHandle > m_soundHandle;
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 
@@ -80,6 +78,4 @@ private:
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const override final;
 };
 
-	}
 }
-
