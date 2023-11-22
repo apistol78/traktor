@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,17 +16,17 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Sound/AudioChannel.h"
-#include "Sound/AudioSystem.h"
+#include "Sound/Sound.h"
+#include "Sound/StreamSoundBuffer.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Sound/Decoders/TssStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
-#include "Sound/Sound.h"
-#include "Sound/StreamSoundBuffer.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
+#include "Sound/Player/ISoundHandle.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
@@ -41,10 +41,8 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundAssetEditor", SoundAssetEditor, editor::IObjectEditor)
 
@@ -75,32 +73,22 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	m_propertyList->bind(m_asset);
 
-	// Get audio system for preview.
-	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
-	if (m_audioSystem)
-	{
-		m_audioChannel = m_audioSystem->getChannel(0);
-		if (!m_audioChannel)
-			m_audioSystem = nullptr;
-	}
-	if (!m_audioSystem)
-		log::warning << L"Unable to create preview audio system; preview unavailable" << Endl;
+	// Get audio player for preview.
+	m_soundPlayer = m_editor->getStoreObject< ISoundPlayer >(L"SoundPlayer");
 
 	return true;
 }
 
 void SoundAssetEditor::destroy()
 {
-	if (m_audioChannel)
-	{
-		m_audioChannel->stop();
-		m_audioChannel = nullptr;
-	}
+	if (m_soundHandle)
+		m_soundHandle->stop();
+
+	m_soundPlayer = nullptr;
 
 	safeDestroy(m_propertyList);
 	safeDestroy(m_toolBar);
 
-	m_audioSystem = nullptr;
 	m_instance = nullptr;
 	m_asset = nullptr;
 }
@@ -130,14 +118,14 @@ ui::Size SoundAssetEditor::getPreferredSize() const
 
 void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 {
-	if (!m_audioSystem)
+	if (!m_soundPlayer)
 	{
-		log::error << L"Failed to preview sound asset; no audio system." << Endl;
+		log::error << L"Failed to preview sound asset; no audio player." << Endl;
 		return;
 	}
 
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
@@ -176,7 +164,10 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 	}
 
-	m_audioChannel->play(buffer, 0, m_asset->getGain(), false, 0);
+	if (m_soundHandle)
+		m_soundHandle->stop();
+
+	m_soundHandle = m_soundPlayer->play(new Sound(buffer, 0, 1.0f, 0.0f), 0);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
@@ -357,5 +348,4 @@ bool SoundAssetEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resol
 	return true;
 }
 
-	}
 }
