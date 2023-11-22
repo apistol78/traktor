@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/Filters/GroupFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
 {
@@ -32,13 +30,9 @@ struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GroupFilter", 0, GroupFilter, IFilter)
-
-GroupFilter::GroupFilter()
-{
-}
 
 GroupFilter::GroupFilter(IFilter* filter1)
 {
@@ -80,7 +74,7 @@ Ref< IFilterInstance > GroupFilter::createInstance() const
 void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	GroupFilterInstance* gfi = static_cast< GroupFilterInstance* >(instance);
-	uint32_t nfilters = uint32_t(m_filters.size());
+	const uint32_t nfilters = uint32_t(m_filters.size());
 	for (uint32_t i = 0; i < nfilters; ++i)
 	{
 		if (gfi->m_instances[i])
@@ -93,5 +87,4 @@ void GroupFilter::serialize(ISerializer& s)
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
 }
 
-	}
 }

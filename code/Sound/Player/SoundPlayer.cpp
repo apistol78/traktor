@@ -19,12 +19,10 @@
 #include "Sound/Player/SoundHandle.h"
 #include "Sound/Player/SoundPlayer.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const float c_nearCutOff = 25000.0f;
 const float c_farCutOff = 0.1f;
@@ -33,7 +31,7 @@ const float c_recentTimeOffset = 1.0f / 30.0f;
 handle_t s_handleDistance = 0;
 handle_t s_handleVelocity = 0;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, ISoundPlayer)
 
@@ -86,7 +84,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		float time = float(m_timer.getElapsedTime());
+		const float time = float(m_timer.getElapsedTime());
 
 		// First check if this sound already has been recently played.
 		for (const auto& channel : m_channels)
@@ -114,7 +112,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					false,
 					0
 				);
-				channel.audioChannel->setFilter(0);
+				channel.audioChannel->setFilter(nullptr);
 				channel.audioChannel->setVolume(1.0f);
 				channel.priority = priority;
 				channel.fadeOff = -1.0f;
@@ -145,7 +143,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 					false,
 					0
 				);
-				channel.audioChannel->setFilter(0);
+				channel.audioChannel->setFilter(nullptr);
 				channel.audioChannel->setVolume(1.0f);
 				channel.priority = priority;
 				channel.fadeOff = -1.0f;
@@ -169,7 +167,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	if (!m_surroundEnvironment)
 		return play(sound, priority);
 
-	float time = float(m_timer.getElapsedTime());
+	const float time = float(m_timer.getElapsedTime());
 
 	float maxDistance = sound->getRange();
 	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
@@ -182,14 +180,14 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	if (autoStopFar && distance > maxDistance)
 		return nullptr;
 
-	float k0 = distance / maxDistance;
-	float k1 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
+	const float k0 = distance / maxDistance;
+	const float k1 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
 
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1(), maxDistance);
 
 	// Calculate initial cut-off frequency.
-	float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
+	const float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
 	Ref< LowPassFilter > lowPassFilter = new LowPassFilter(cutOff);
 
 	Ref< GroupFilter > groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
@@ -206,10 +204,10 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 		// First try to associate sound with non-playing channel (or far away).
 		for (auto& channel : m_channels)
 		{
-			Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
+			const Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
 			if (
 				!channel.audioChannel->isPlaying() ||
-				(channel.position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
+				(channel.position.w() > 0.5_simd && channelDistance > m_surroundEnvironment->getMaxDistance())
 			)
 			{
 				if (channel.handle)
@@ -272,10 +270,10 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 		// Then try to associate sound with similar priority channel but further away.
 		for (auto& channel : m_channels)
 		{
-			Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
+			const Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
 			if (
 				priority == channel.priority &&
-				channel.position.w() > 0.5f &&
+				channel.position.w() > 0.5_simd &&
 				distance < channelDistance
 			)
 			{
@@ -331,7 +329,7 @@ void SoundPlayer::update(float dT)
 
 	if (m_surroundEnvironment)
 	{
-		Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
+		const Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
 
 		// Update surround and low pass filters on playing 3d sounds.
 		for (auto& channel : m_channels)
@@ -345,7 +343,7 @@ void SoundPlayer::update(float dT)
 				maxDistance = m_surroundEnvironment->getMaxDistance();
 
 			// Calculate distance from listener; automatically stop sounds which has moved outside max listener distance.
-			Scalar distance = (channel.position - listenerPosition).xyz0().length();
+			const Scalar distance = (channel.position - listenerPosition).xyz0().length();
 			if (channel.autoStopFar && distance > maxDistance)
 			{
 				if (channel.handle)
@@ -359,14 +357,14 @@ void SoundPlayer::update(float dT)
 			}
 
 			// Calculate cut-off frequency.
-			float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
+			const float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
 
 			// Set filter parameters.
 			if (channel.surroundFilter)
 				channel.surroundFilter->setSpeakerPosition(channel.position);
 			if (channel.lowPassFilter)
 			{
-				float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
+				const float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
 				channel.lowPassFilter->setCutOff(cutOff);
 			}
 
@@ -394,5 +392,4 @@ void SoundPlayer::update(float dT)
 	}
 }
 
-	}
 }

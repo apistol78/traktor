@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! AVX2 sound mixer implementation.
  * \ingroup Sound
@@ -32,6 +30,8 @@ class T_DLLCLASS AudioMixerAvx : public IAudioMixer
 
 public:
 	static bool supported();
+
+	virtual void mul(float* lsb, const float* rsb, uint32_t count) const override final;
 
 	virtual void mulConst(float* sb, uint32_t count, float factor) const override final;
 
@@ -46,6 +46,4 @@ public:
 	virtual void synchronize() const override final;
 };
 
-	}
 }
-

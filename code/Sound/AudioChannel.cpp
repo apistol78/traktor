@@ -269,14 +269,14 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 		T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
 
 		// Apply filter on sound block.
-		StateFilter& sf = m_stateFilter.read();
+		const StateFilter& sf = m_stateFilter.read();
 		if (sf.filter)
 		{
 			sf.filter->apply(sf.filterInstance, soundBlock);
 			T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
 		}
 
-		uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
+		const uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
 
 		// Convert sound block into hardware required sample rate.
 		if (sampleRate != m_hwSampleRate)

@@ -14,6 +14,7 @@
 #include "Core/Containers/StaticVector.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/Types.h"
+#include "Sound/Processor/ProcessorTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,10 +24,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class Graph;
 class IAudioMixer;
@@ -53,6 +52,8 @@ public:
 
 	bool evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const;
 
+	NodePinType evaluatePinType(const InputPin* consumerPin) const;
+
 	float getTime() const;
 
 	void flushCachedBlocks();
@@ -69,5 +70,4 @@ private:
 
 };
 
-	}
 }

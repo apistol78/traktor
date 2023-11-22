@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,12 +20,13 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/AudioChannel.h"
-#include "Sound/AudioSystem.h"
+#include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
+#include "Sound/Player/ISoundHandle.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Sound/Processor/Edge.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphBuffer.h"
@@ -58,12 +59,10 @@
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 class NodeType : public Object
 {
@@ -93,7 +92,7 @@ std::wstring getLocalizedName(const TypeInfo* nodeType)
 	return i18n::Text(L"SOUND_PROCESSOR_NODE_" + toUpper(nodeName.substr(p + 1)));
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphEditor", GraphEditor, editor::IEditorPage)
 
@@ -117,6 +116,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->create(container);
 	for (int32_t i = 0; i < 6; ++i)
 		m_toolBarGraph->addImage(new ui::StyleBitmap(L"Input.Alignment", i));
+	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Sound.Play"));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_LEFT"), 0, ui::Command(L"Sound.Processor.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_RIGHT"), 1, ui::Command(L"Sound.Processor.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_TOP"), 2, ui::Command(L"Sound.Processor.Editor.AlignTop")));
@@ -125,7 +125,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_VERTICALLY"), 4, ui::Command(L"Sound.Processor.Editor.EvenSpaceVertically")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Sound.Processor.Editor.EventSpaceHorizontally")));
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
-	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_PLAY"), 4, ui::Command(L"Sound.Processor.Editor.Play")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_PLAY"), 6, ui::Command(L"Sound.Processor.Editor.Play")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &GraphEditor::eventToolBarGraphClick);
 
 	m_graph = new ui::GraphControl();
@@ -144,7 +144,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &GraphEditor::eventPropertiesChanged);
 	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
 
-	// Build popup menu.
+	// Build pop-up menu.
 	m_menuPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"SOUND_PROCESSOR_EDITOR_CREATE_NODE"));
@@ -161,16 +161,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_DELETE_NODE")));
 
-	// Get audio system for preview.
-	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
-	if (m_audioSystem)
-	{
-		m_audioChannel = m_audioSystem->getChannel(0);
-		if (!m_audioChannel)
-			m_audioSystem = nullptr;
-	}
-	if (!m_audioSystem)
-		log::warning << L"Unable to create preview audio system; preview unavailable" << Endl;
+	m_soundPlayer = m_editor->getStoreObject< ISoundPlayer >(L"SoundPlayer");
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
@@ -181,16 +172,10 @@ bool GraphEditor::create(ui::Container* parent)
 
 void GraphEditor::destroy()
 {
-	if (m_audioChannel)
-	{
-		m_audioChannel->stop();
-		m_audioChannel = nullptr;
-	}
+	if (m_soundHandle)
+		m_soundHandle->stop();
 
-	if (m_resourceManager)
-		m_resourceManager = nullptr;
-
-	m_audioSystem = nullptr;
+	m_soundPlayer = nullptr;
 
 	m_site->destroyAdditionalPanel(m_propertiesView);
 
@@ -372,7 +357,8 @@ void GraphEditor::updateView()
 
 void GraphEditor::play()
 {
-	m_audioChannel->stop();
+	if (m_soundHandle)
+		m_soundHandle->stop();
 
 	Ref< Graph > graph = DeepClone(m_graphAsset->getGraph()).create< Graph >();
 	for (auto node : graph->getNodes())
@@ -381,15 +367,7 @@ void GraphEditor::play()
 			return;
 	}
 
-	m_graphBuffer = new GraphBuffer(graph);
-
-	m_audioChannel->play(
-		m_graphBuffer,
-		0,
-		1.0f,
-		false,
-		0
-	);
+	m_soundHandle = m_soundPlayer->play(new Sound(new GraphBuffer(graph), 0, 1.0f, 0.0f), 0);
 }
 
 void GraphEditor::eventToolBarGraphClick(ui::ToolBarButtonClickEvent* event)
@@ -531,5 +509,4 @@ void GraphEditor::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	updateView();
 }
 
-	}
 }

@@ -127,6 +127,12 @@ bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixe
 		return false;
 }
 
+NodePinType GraphEvaluator::evaluatePinType(const InputPin* consumerPin) const
+{
+	const OutputPin* producerPin = m_graph->findSourcePin(consumerPin);
+	return producerPin ? producerPin->getPinType() : NptVoid;
+}
+
 float GraphEvaluator::getTime() const
 {
 	return float(m_timer.getElapsedTime());

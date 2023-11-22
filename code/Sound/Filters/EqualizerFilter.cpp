@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,12 +15,10 @@
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/EqualizerFilter.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct EqualizerFilterInstance : public RefCountImpl< IFilterInstance >
 {
@@ -36,7 +34,7 @@ struct EqualizerFilterInstance : public RefCountImpl< IFilterInstance >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EqualizerFilter", 0, EqualizerFilter, IFilter)
 
@@ -61,7 +59,7 @@ void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) con
 		float* samples = outBlock.samples[i];
 		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
 		{
-			float filtered = samples[j] + 2 * efi->m_historySamples[i][0] + efi->m_historySamples[i][1] - (1.0f / 4.0f) * efi->m_historyFiltered[i][0] + (3.0f / 8.0f) * efi->m_historyFiltered[i][1];
+			const float filtered = samples[j] + 2 * efi->m_historySamples[i][0] + efi->m_historySamples[i][1] - (1.0f / 4.0f) * efi->m_historyFiltered[i][0] + (3.0f / 8.0f) * efi->m_historyFiltered[i][1];
 
 			efi->m_historySamples[i][1] = efi->m_historySamples[i][0];
 			efi->m_historySamples[i][0] = samples[j];
@@ -69,7 +67,7 @@ void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) con
 			efi->m_historyFiltered[i][1] = efi->m_historyFiltered[i][0];
 			efi->m_historyFiltered[i][0] = filtered;
 
-			samples[j] = filtered * m_gain;
+			samples[j] = filtered * m_gain / 4.0f;
 		}
 	}
 }
@@ -79,5 +77,4 @@ void EqualizerFilter::serialize(ISerializer& s)
 	s >> Member< float >(L"gain", m_gain);
 }
 
-	}
 }
