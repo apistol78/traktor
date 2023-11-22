@@ -82,8 +82,8 @@ void ScriptComponent::update(const UpdateParams& update)
 		const Any argv[] =
 		{
 			Any::fromObject(update.contextObject),
-			Any::fromDouble(update.totalTime),
-			Any::fromDouble(update.deltaTime)
+			Any::fromFloat((float)update.totalTime),
+			Any::fromFloat((float)update.deltaTime)
 		};
 		m_methodUpdate->invoke(m_object, sizeof_array(argv), argv);
 	}
