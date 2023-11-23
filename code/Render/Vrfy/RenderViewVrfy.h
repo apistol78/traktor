@@ -91,6 +91,8 @@ public:
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
+	virtual void barrier() override final;
+
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 
 	virtual int32_t beginTimeQuery() override final;

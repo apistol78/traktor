@@ -232,6 +232,15 @@ public:
 	virtual void render(IRenderView* renderView) const override final;
 };
 
+/*! Barrier block.
+ * \ingroup Render
+ */
+class T_DLLCLASS BarrierRenderBlock : public RenderBlock
+{
+public:
+	virtual void render(IRenderView* renderView) const override final;
+};
+
 /*! Lambda callback render block.
  * \ingroup Render
  */

@@ -475,7 +475,14 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 	// Always merge any lingering compute jobs left at the end of frame.
-	renderContext->mergeCompute();
+	if (renderContext->havePendingComputes())
+	{
+		renderContext->mergeCompute();
+
+		// Enqueue a barrier to ensure compute work is done before being used as input.
+		auto rb = renderContext->alloc< BarrierRenderBlock >();
+		renderContext->enqueue(rb);
+	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingComputes());
 	T_FATAL_ASSERT(!renderContext->havePendingDraws());
