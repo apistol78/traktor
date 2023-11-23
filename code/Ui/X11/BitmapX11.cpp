@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Drawing/PixelFormat.h"
 #include "Ui/X11/BitmapX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 bool BitmapX11::create(uint32_t width, uint32_t height)
 {
@@ -52,10 +50,10 @@ void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, c
 	if (rc.getWidth() <= 0 || rc.getHeight() <= 0)
 		return;
 
-	Size size = getSize();
+	const Size size = getSize();
 
-	int width = size.cx - destPos.x;
-	int height = size.cy - destPos.y;
+	const int width = size.cx - destPos.x;
+	const int height = size.cy - destPos.y;
 
 	if (width <= 0 || height <= 0)
 		return;
@@ -65,7 +63,7 @@ void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, c
 	if (rc.getHeight() > height)
 		rc.bottom = rc.top + height;
 
-	bool haveAlpha = image->getPixelFormat().getAlphaBits() > 0;
+	const bool haveAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
 	Ref< drawing::Image > sourceImage = image->clone();
 	sourceImage->convert(drawing::PixelFormat::getA8R8G8B8());
@@ -90,7 +88,7 @@ void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, c
 			else
 				c = c.rgb1();
 
-			Color4ub u = c.toColor4ub();
+			const Color4ub u = c.toColor4ub();
 			*dstBits = u.getARGB();
 		}
 	}
@@ -100,7 +98,7 @@ void BitmapX11::copySubImage(const drawing::Image* image, const Rect& srcRect, c
 
 Ref< drawing::Image > BitmapX11::getImage() const
 {
-	Size size = getSize();
+	const Size size = getSize();
 
 	Ref< drawing::Image > image = new drawing::Image(
 		drawing::PixelFormat::getA8R8G8B8(),
@@ -131,10 +129,9 @@ Ref< drawing::Image > BitmapX11::getImage() const
 
 Size BitmapX11::getSize() const
 {
-	int32_t w = cairo_image_surface_get_width(m_surface);
-	int32_t h = cairo_image_surface_get_height(m_surface);
+	const int32_t w = cairo_image_surface_get_width(m_surface);
+	const int32_t h = cairo_image_surface_get_height(m_surface);
 	return Size(w, h);
 }
 
-	}
 }

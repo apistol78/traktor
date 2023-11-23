@@ -229,7 +229,19 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& s
 	
 	cairo_rectangle(m_cr, dstAt.x, dstAt.y, size.cx, size.cy);
 	cairo_fill(m_cr);
+
+	if (blendMode == BlendMode::Modulate)
+	{
+		cairo_set_source_rgba(m_cr, m_background.e[0] / 255.0, m_background.e[1] / 255.0, m_background.e[2] / 255.0, m_background.e[3] / 255.0);
+		cairo_set_operator(m_cr, CAIRO_OPERATOR_MULTIPLY);
+		cairo_rectangle(m_cr, dstAt.x, dstAt.y, size.cx, size.cy);
+		cairo_clip(m_cr);
+		cairo_mask_surface(m_cr, cs, dstAt.x - srcAt.x, dstAt.y - srcAt.y);
+		cairo_reset_clip(m_cr);
+	}
+
 	cairo_set_source_rgba(m_cr, m_currentSourceColor.e[0] / 255.0, m_currentSourceColor.e[1] / 255.0, m_currentSourceColor.e[2] / 255.0, m_currentSourceColor.e[3] / 255.0);
+	cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
 }
 
 void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, ISystemBitmap* bitmap, BlendMode blendMode, Filter filter)
@@ -270,8 +282,10 @@ void CanvasX11::drawBitmap(const Point& dstAt, const Size& dstSize, const Point&
 
 	cairo_rectangle(m_cr, dstAt.x / sx, dstAt.y / sy, dstSize.cx / sx, dstSize.cy / sy);
 	cairo_fill(m_cr);
+
 	cairo_identity_matrix(m_cr);
 	cairo_set_source_rgba(m_cr, m_currentSourceColor.e[0] / 255.0, m_currentSourceColor.e[1] / 255.0, m_currentSourceColor.e[2] / 255.0, m_currentSourceColor.e[3] / 255.0);
+	cairo_set_operator(m_cr, CAIRO_OPERATOR_SOURCE);
 }
 
 void CanvasX11::drawText(const Point& at, const std::wstring& text)
