@@ -611,7 +611,7 @@ Comment::Comment()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 1, ComputeOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 2, ComputeOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_ComputeOutput_i[] =
 {
@@ -657,8 +657,13 @@ void ComputeOutput::serialize(ISerializer& s)
 	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"technique", m_technique);
 
-	if (s.getVersion< ComputeOutput >() >= 1)
-		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize);
+	if (s.getVersion< ComputeOutput >() >= 2)
+	{
+		const wchar_t* c_localSizeElements[] = { L"X", L"Y", L"Z" };
+		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize, AttributeRange(1), c_localSizeElements);
+	}
+	else if (s.getVersion< ComputeOutput >() == 1)
+		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize, AttributeRange(1));
 }
 
 /*---------------------------------------------------------------------------*/
