@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.ComputeOutput" version="traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="1,traktor.render.Node:1">
 			<id>{81E34288-4FC3-4030-8D94-302A38953C73}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,11 @@
 				<second>39</second>
 			</position>
 			<technique>Default</technique>
+			<localSize>
+				<item>32</item>
+				<item>1</item>
+				<item>1</item>
+			</localSize>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{C8F0FBC3-158B-4E8E-A6DB-389255692A9A}</id>
@@ -56,7 +61,6 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 vec2 vUV = $Position.xy / vec2(512.0f);
 vec3 coord = fract(vec3(vUV + vec2(.2, 0.62), .5));
         
@@ -74,8 +78,6 @@ col.g = 0.625 * tilableVoronoi( coord + 0., 3, 15. ) +
 col.b = 1. - tilableVoronoi( coord + 0.5, 6, 9. );
 
 $Output = col;
-
-
 			]]>
 			</script>
 		</item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.ComputeOutput" version="traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="1,traktor.render.Node:1">
 			<id>{DD8D52C6-6F12-4C50-A189-02BCE8B4047E}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,11 @@
 				<second>42</second>
 			</position>
 			<technique>Default</technique>
+			<localSize>
+				<item>32</item>
+				<item>1</item>
+				<item>1</item>
+			</localSize>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A95A5C28-CA0D-4667-B94A-77B27C112621}</id>
@@ -66,7 +71,6 @@ float b = tilableVoronoi( coord,  4, 16. );
 float c = max(0., 1.-(r + g * .5 + b * .25) / 1.75);
 
 $Output = vec4(c,c,c,c);
-
 			]]>
 			</script>
 		</item>

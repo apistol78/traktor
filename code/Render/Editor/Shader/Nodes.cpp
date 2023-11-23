@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/ITexture.h"
 #include "Render/Editor/Shader/Nodes.h"
@@ -610,7 +611,7 @@ Comment::Comment()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 0, ComputeOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ComputeOutput", 1, ComputeOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_ComputeOutput_i[] =
 {
@@ -626,11 +627,19 @@ ComputeOutput::ComputeOutput()
 :	ImmutableNode(c_ComputeOutput_i, c_ComputeOutput_o)
 ,	m_technique(L"Default")
 {
+	m_localSize[0] = 1;
+	m_localSize[1] = 1;
+	m_localSize[2] = 1;
 }
 
 void ComputeOutput::setTechnique(const std::wstring& technique)
 {
 	m_technique = technique;
+}
+
+const int32_t* ComputeOutput::getLocalSize() const
+{
+	return m_localSize;
 }
 
 const std::wstring& ComputeOutput::getTechnique() const
@@ -647,6 +656,9 @@ void ComputeOutput::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
 	s >> Member< std::wstring >(L"technique", m_technique);
+
+	if (s.getVersion< ComputeOutput >() >= 1)
+		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize);
 }
 
 /*---------------------------------------------------------------------------*/

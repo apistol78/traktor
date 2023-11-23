@@ -105,7 +105,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 97, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 98, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)

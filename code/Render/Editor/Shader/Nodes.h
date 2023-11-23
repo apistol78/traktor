@@ -214,6 +214,8 @@ public:
 
 	void setTechnique(const std::wstring& technique);
 
+	const int32_t* getLocalSize() const;
+
 	const std::wstring& getTechnique() const;
 
 	virtual std::wstring getInformation() const override final;
@@ -222,6 +224,7 @@ public:
 
 private:
 	std::wstring m_technique;
+	int32_t m_localSize[3];
 };
 
 /*! Conditional selection. */

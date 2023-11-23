@@ -12,7 +12,7 @@
 			<type>Image3D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.ComputeOutput" version="traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="1,traktor.render.Node:1">
 			<id>{5287CA15-CC7D-F449-9E62-735EFAA12CCC}</id>
 			<comment/>
 			<position>
@@ -20,6 +20,11 @@
 				<second>32</second>
 			</position>
 			<technique>Default</technique>
+			<localSize>
+				<item>32</item>
+				<item>1</item>
+				<item>1</item>
+			</localSize>
 		</item>
 		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
 			<id>{0B6344A1-ECF2-6F45-8DF8-10A5AD0A9157}</id>
@@ -367,7 +372,7 @@ NDC
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{7A92A631-7E62-D345-9BBB-81EE22D1AF92}</id>
 			<comment/>
 			<position>
@@ -376,6 +381,7 @@ NDC
 			</position>
 			<name>Random</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{01AEDF99-A012-0D41-ABD0-0F30E561709C}</id>
@@ -562,7 +568,7 @@ $Output = fract(sin(sn) * c);
 				<second>879</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{AF10E59E-248D-434D-901A-F22C29885AC2}</id>
 			<comment/>
 			<position>
@@ -571,6 +577,7 @@ $Output = fract(sin(sn) * c);
 			</position>
 			<name>Mie Scattering Phase</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{0D22C808-9FE4-B548-89F0-8D6BF18DBFCF}</id>
