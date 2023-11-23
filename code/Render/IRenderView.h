@@ -172,6 +172,9 @@ public:
 	 */
 	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
 
+	/*! Enqueue a barrier. */
+	virtual void barrier() = 0;
+
 	/*! Copy texture.
 	 *
 	 * \param destinationTexture Destination texture.

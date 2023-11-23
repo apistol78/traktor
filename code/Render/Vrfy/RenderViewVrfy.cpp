@@ -344,6 +344,15 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 	m_renderView->compute(programVrfy->m_program, workSize);
 }
 
+void RenderViewVrfy::barrier()
+{
+	T_CAPTURE_TRACE(L"barier");
+	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot insert barrier outside of beginFrame/endFrame.");
+	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
+
+	m_renderView->barrier();
+}
+
 bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
 	T_CAPTURE_TRACE(L"copy");

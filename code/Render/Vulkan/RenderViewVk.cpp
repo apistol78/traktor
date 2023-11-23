@@ -1082,6 +1082,20 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	vkCmdDispatch(*frame.graphicsCommandBuffer, workSize[0], workSize[1], workSize[2]);
 }
 
+void RenderViewVk::barrier()
+{
+	const auto& frame = m_frames[m_currentImageIndex];
+	vkCmdPipelineBarrier(
+		*frame.graphicsCommandBuffer,
+		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+		0,
+		0, nullptr,
+		0, nullptr,
+		0, nullptr
+	);
+}
+
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
