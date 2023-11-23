@@ -26,7 +26,8 @@ const Utf8Encoding c_utf8enc;
 
 std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
-	return mbstows(c_utf8enc, std::string(xmlstr, term));
+	const size_t len = (size_t)(term - xmlstr);
+	return mbstows(c_utf8enc, std::string_view(xmlstr, len));
 }
 
 std::wstring xmltows(const XML_Char* xmlstr)
@@ -39,7 +40,7 @@ std::wstring xmltows(const XML_Char* xmlstr)
 class XmlPullParserImpl
 {
 public:
-	XmlPullParserImpl(IStream* stream, const std::wstring& name);
+	explicit XmlPullParserImpl(IStream* stream, const std::wstring& name);
 
 	~XmlPullParserImpl();
 

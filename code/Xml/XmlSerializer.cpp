@@ -139,7 +139,7 @@ void XmlSerializer::operator >> (const Member< std::string >& m)
 {
 	T_CHECK_STATUS;
 	if (!m->empty())
-		m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(mbstows(m)) << L"</" << m.getName() << L">" << Endl;
+		m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(mbstows((const std::string &)m)) << L"</" << m.getName() << L">" << Endl;
 	else
 		m_xml << m_indent << L"<" << m.getName() << L"/>" << Endl;
 }

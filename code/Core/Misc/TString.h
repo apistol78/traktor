@@ -39,8 +39,10 @@ class IEncoding;
 
 #if defined(_UNICODE)
 	typedef std::wstring tstring;
+	typedef std::wstring_view tstring_view;
 #else
 	typedef std::string tstring;
+	typedef std::string_view tstring_view;
 #endif
 
 /*! Translate multibyte encoding into wide string.
@@ -49,7 +51,7 @@ class IEncoding;
  * \param s Multibyte string.
  * \return Wide string (UTF-16 or UTF-32 encoded).
  */
-std::wstring T_DLLCLASS mbstows(const IEncoding& encoding, const std::string& s);
+std::wstring T_DLLCLASS mbstows(const IEncoding& encoding, const std::string_view& s);
 
 /*! Translate wide string to multibyte string using encoding.
  *
@@ -57,10 +59,10 @@ std::wstring T_DLLCLASS mbstows(const IEncoding& encoding, const std::string& s)
  * \param s Wide string.
  * \return Multibyte encoded string.
  */
-std::string T_DLLCLASS wstombs(const IEncoding& encoding, const std::wstring& s);
+std::string T_DLLCLASS wstombs(const IEncoding& encoding, const std::wstring_view& s);
 
 inline
-std::wstring mbstows(const std::string& mbs)
+std::wstring mbstows(const std::string_view& mbs)
 {
 #if !defined(__ANDROID__) && !defined(__LINUX__) && !defined(__RPI__)
 	if (!mbs.empty())
@@ -72,7 +74,7 @@ std::wstring mbstows(const std::string& mbs)
 #	endif
 		if (buf)
 		{
-			std::mbstowcs(buf, mbs.c_str(), mbs.length());
+			std::mbstowcs(buf, mbs.data(), mbs.length());
 			return std::wstring(buf, mbs.length());
 		}
 	}
@@ -83,7 +85,7 @@ std::wstring mbstows(const std::string& mbs)
 }
 
 inline
-std::string wstombs(const std::wstring& ws)
+std::string wstombs(const std::wstring_view& ws)
 {
 #if !defined(__ANDROID__) && !defined(__LINUX__) && !defined(__RPI__)
 	if (!ws.empty())
@@ -95,7 +97,7 @@ std::string wstombs(const std::wstring& ws)
 #	endif
 		if (buf)
 		{
-			std::wcstombs(buf, ws.c_str(), ws.length());
+			std::wcstombs(buf, ws.data(), ws.length());
 			return std::string(buf, ws.length());
 		}
 	}
@@ -106,27 +108,27 @@ std::string wstombs(const std::wstring& ws)
 }
 
 #if defined(_UNICODE)
-inline tstring mbstots(const std::string& mbs) { return mbstows(mbs); }
+inline tstring mbstots(const std::string_view& mbs) { return mbstows(mbs); }
 #else
-inline const tstring& mbstots(const std::string& mbs) { return mbs; }
+inline tstring mbstots(const std::string_view& mbs) { return tstring(mbs); }
 #endif
 
 #if defined(_UNICODE)
-inline const tstring& wstots(const std::wstring& ws) { return ws; }
+inline tstring wstots(const std::wstring_view& ws) { return tstring(ws); }
 #else
-inline tstring wstots(const std::wstring& ws) { return wstombs(ws); }
+inline tstring wstots(const std::wstring_view& ws) { return wstombs(ws); }
 #endif
 
 #if defined(_UNICODE)
-inline const std::wstring& tstows(const tstring& ts) { return ts; }
+inline std::wstring tstows(const tstring_view& ts) { return std::wstring(ts); }
 #else
-inline std::wstring tstows(const tstring& ts) { return mbstows(ts); }
+inline std::wstring tstows(const tstring_view& ts) { return mbstows(ts); }
 #endif
 
 #if defined(_UNICODE)
-inline std::string tstombs(const tstring& ts) { return wstombs(ts); }
+inline std::string tstombs(const tstring_view& ts) { return wstombs(ts); }
 #else
-inline const std::string& tstombs(const tstring& ts) { return ts; }
+inline std::string tstombs(const tstring_view& ts) { return std::string(ts); }
 #endif
 
 #if defined(_MSC_VER)
