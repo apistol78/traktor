@@ -364,6 +364,10 @@ bool emitComputeOutput(GlslContext& cx, ComputeOutput* node)
 		return false;
 	}
 
+	cx.requirements().localSize[0] = node->getLocalSize()[0];
+	cx.requirements().localSize[1] = node->getLocalSize()[1];
+	cx.requirements().localSize[2] = node->getLocalSize()[2];
+
 	return true;
 }
 

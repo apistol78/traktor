@@ -28,14 +28,12 @@ GlslShader::GlslShader(ShaderType shaderType)
 	pushScope();
 	pushOutputStream(BtInput, T_FILE_LINE_W);
 	pushOutputStream(BtOutput, T_FILE_LINE_W);
-	//pushOutputStream(BtScript, T_FILE_LINE_W);
 	pushOutputStream(BtBody, T_FILE_LINE_W);
 }
 
 GlslShader::~GlslShader()
 {
 	popOutputStream(BtBody);
-	//popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popScope();
@@ -434,6 +432,12 @@ std::wstring GlslShader::getGeneratedShader(
 				ss << Endl;
 			}
 		}
+	}
+
+	if (m_shaderType == StCompute)
+	{
+		const int32_t* ls = requirements.localSize;
+		ss << L"layout(local_size_x = " << ls[0] << L", local_size_y = " << ls[1] << L", local_size_z = " << ls[2] << L") in;" << Endl;
 	}
 
 	ss << L"void main()" << Endl;

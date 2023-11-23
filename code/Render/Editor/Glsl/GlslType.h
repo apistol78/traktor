@@ -51,6 +51,7 @@ struct GlslRequirements
 {
 	PrecisionHint vertexPrecisionHint = PrecisionHint::Undefined;
 	PrecisionHint fragmentPrecisionHint = PrecisionHint::Undefined;
+	int32_t localSize[3] = { 1, 1, 1 };
 	bool useTargetSize = false;
 };
 
