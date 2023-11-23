@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,10 +28,10 @@ public:
 	{
 	}
 
-	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const Attribute& attributes)
+	explicit MemberStaticArray(const wchar_t* const name, ValueType* arr, const Attribute& attributes, const wchar_t** elementNames = nullptr)
 	:	MemberArray(name, &attributes)
 	,	m_arr(arr)
-	,	m_elementNames(nullptr)
+	,	m_elementNames(elementNames)
 	,	m_index(0)
 	{
 	}
