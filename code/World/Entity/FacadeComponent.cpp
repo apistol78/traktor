@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,12 +41,12 @@ void FacadeComponent::update(const UpdateParams& update)
 
 void FacadeComponent::setTransform(const Transform& transform)
 {
-	Transform invTransform = m_transform.inverse();
+	const Transform invTransform = m_transform.inverse();
 	for (auto it : m_entities)
 	{
-		Transform currentTransform = it.second->getTransform();
-		Transform Tlocal = invTransform * currentTransform;
-		Transform Tworld = transform * Tlocal;
+		const Transform currentTransform = it.second->getTransform();
+		const Transform Tlocal = invTransform * currentTransform;
+		const Transform Tworld = transform * Tlocal;
 		it.second->setTransform(Tworld);
 	}
 	m_transform = transform;
@@ -54,16 +54,16 @@ void FacadeComponent::setTransform(const Transform& transform)
 
 Aabb3 FacadeComponent::getBoundingBox() const
 {
-	Transform invTransform = m_transform.inverse();
+	const Transform invTransform = m_transform.inverse();
 
 	Aabb3 boundingBox;
 	for (auto entity : m_visibleEntities)
 	{
-		Aabb3 childBoundingBox = entity->getBoundingBox();
+		const Aabb3 childBoundingBox = entity->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
-			Transform childTransform = entity->getTransform();
-			Transform intoParentTransform = invTransform * childTransform;
+			const Transform childTransform = entity->getTransform();
+			const Transform intoParentTransform = invTransform * childTransform;
 			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
 		}
 	}

@@ -84,7 +84,7 @@ render::handle_t ContactShadowsPass::setup(
 	const LightComponent* majorLight = nullptr;
 	for (auto light : gatheredView.lights)
 	{
-		if (light->getLightType() == LightType::Directional && light->getCastShadow())
+		if (light != nullptr && light->getLightType() == LightType::Directional && light->getCastShadow())
 		{
 			majorLight = light;
 			break;

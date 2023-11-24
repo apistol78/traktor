@@ -188,7 +188,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			const db::Instance* instance = m_editor->getSourceDatabase()->getInstance(g);
 			if (instance)
 			{
-				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
+				const wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, g, instance->getPath()));
 				return std::wstring(1, ch);
 			}
 			else
@@ -309,7 +309,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (!m_edit->hasFocus())
 			return false;
 
-		std::wstring selectedText = m_edit->getSelectedText(
+		const std::wstring selectedText = m_edit->getSelectedText(
 			[&] (wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
@@ -329,7 +329,7 @@ bool ScriptEditorPage::handleCommand(const ui::Command& command)
 		if (!m_edit->hasFocus())
 			return false;
 
-		std::wstring selectedText = m_edit->getSelectedText(
+		const std::wstring selectedText = m_edit->getSelectedText(
 			[&] (wchar_t ch) -> std::wstring {
 				return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 			},
@@ -660,7 +660,7 @@ void ScriptEditorPage::eventScriptButtonUp(ui::MouseButtonUpEvent* event)
 
 				offset = m_edit->getLineOffset(line);
 
-				wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
+				const wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
 				m_edit->placeCaret(offset, true);
 				m_edit->insert(L"#using " + std::wstring(1, ch) + L"\n");
 			}

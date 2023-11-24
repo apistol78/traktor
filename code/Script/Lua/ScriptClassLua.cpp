@@ -130,7 +130,7 @@ Ref< ScriptClassLua > ScriptClassLua::createFromStack(ScriptManagerLua* scriptMa
 {
 	T_FATAL_ASSERT(lua_istable(luaState, -1));
 
-	Ref< ScriptClassLua > sc = new ScriptClassLua(scriptManager, scriptContext, luaState);
+	Ref< ScriptClassLua > sc = new ScriptClassLua(scriptManager, luaState);
 
 	const int32_t classRef = luaL_ref(luaState, LUA_REGISTRYINDEX);
 	lua_rawgeti(luaState, LUA_REGISTRYINDEX, classRef);
@@ -245,9 +245,8 @@ const IRuntimeDispatch* ScriptClassLua::getOperatorDispatch(Operator op) const
 	return nullptr;
 }
 
-ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState)
+ScriptClassLua::ScriptClassLua(ScriptManagerLua* scriptManager, lua_State*& luaState)
 :	m_scriptManager(scriptManager)
-,	m_scriptContext(scriptContext)
 ,	m_luaState(luaState)
 {
 }

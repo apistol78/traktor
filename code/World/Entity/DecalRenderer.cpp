@@ -120,15 +120,15 @@ void DecalRenderer::build(
 	const DecalComponent* decalComponent = static_cast< const DecalComponent* >(renderable);
 	const Transform& transform = decalComponent->getTransform();
 
-	float s = decalComponent->getSize();
-	float t = decalComponent->getThickness();
-	float d = decalComponent->getCullDistance();
+	const float s = decalComponent->getSize();
+	const float t = decalComponent->getThickness();
+	const float d = decalComponent->getCullDistance();
 
-	Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+	const Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
 	if (center.length2() > d * d)
 		return;
 
-	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
+	const Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 		return;
 
@@ -152,7 +152,7 @@ void DecalRenderer::build(
 	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
 	// Render all decal boxes.
-	uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalComponents.size()), c_maxRenderDecals);
+	const uint32_t decalsCount = std::min< uint32_t >(uint32_t(m_decalComponents.size()), c_maxRenderDecals);
 	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
 		const DecalComponent* decalComponent = m_decalComponents[i];
