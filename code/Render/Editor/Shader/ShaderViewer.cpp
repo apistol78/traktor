@@ -533,8 +533,14 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				auto reolveModule = [&](const Guid& moduleId) -> Ref< const ShaderModule > {
-					return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderModule >(moduleId);
+				auto reolveModule = [&](const Guid& moduleId) -> std::wstring {
+					Ref< const ShaderModule > shaderModule = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderModule >(moduleId);
+					if (shaderModule)
+						return shaderModule->escape([](const Guid& id) -> std::wstring {
+							return id.format();
+						});
+					else
+						return L"";
 				};
 
 				// Finally ready to compile program graph.

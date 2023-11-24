@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// Random hash functions
+
+float hash12(vec2 p)
+{
+    p = 50.0f * fract(p * 0.3183099f);
+    return fract(p.x * p.y * (p.x + p.y));
+}
+
+float hash13(vec3 p3)
+{
+    p3 = fract(p3 * 1031.1031f);
+    p3 += dot(p3, p3.yzx + 19.19f);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+vec3 hash33(vec3 p3)
+{
+	p3 = fract(p3 * vec3(0.1031f, 0.1030f, 0.0973f));
+    p3 += dot(p3, p3.yxz + 19.19f);
+    return fract((p3.xxy + p3.yxx) * p3.zyx);
+}
+
+
+	]]>
+	</text>
+</object>

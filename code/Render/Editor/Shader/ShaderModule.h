@@ -1,6 +1,8 @@
 #pragma once
 
+#include <functional>
 #include <string>
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -19,9 +21,13 @@ class T_DLLCLASS ShaderModule : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void setText(const std::wstring& text);
+	ShaderModule() = default;
 
-	const std::wstring& getText() const;
+	explicit ShaderModule(const std::wstring& text);
+
+	void setTextDirect(const std::wstring& text);
+
+	std::wstring escape(std::function< std::wstring (const Guid& g) > fn) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

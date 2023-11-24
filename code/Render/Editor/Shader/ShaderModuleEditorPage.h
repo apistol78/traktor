@@ -33,6 +33,7 @@ namespace traktor::ui
 {
 
 class IBitmap;
+class Menu;
 class SyntaxRichEdit;
 
 }
@@ -63,11 +64,13 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-
 	Ref< ShaderModule > m_module;
 	Ref< ui::SyntaxRichEdit > m_edit;
+	Ref< ui::Menu > m_editMenu;
 
 	void eventScriptChange(ui::ContentChangeEvent* event);
+
+	void eventScriptButtonUp(ui::MouseButtonUpEvent* event);
 };
 
 }
