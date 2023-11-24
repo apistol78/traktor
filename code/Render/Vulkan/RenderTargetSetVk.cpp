@@ -140,11 +140,6 @@ ITexture* RenderTargetSetVk::getDepthTexture() const
 	return m_depthTarget;
 }
 
-bool RenderTargetSetVk::isContentValid() const
-{
-	return true;
-}
-
 bool RenderTargetSetVk::read(int32_t index, void* buffer) const
 {
 	return false;

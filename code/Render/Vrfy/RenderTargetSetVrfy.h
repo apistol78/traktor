@@ -39,8 +39,6 @@ public:
 
 	virtual ITexture* getDepthTexture() const override final;
 
-	virtual bool isContentValid() const override final;
-
 	virtual bool read(int32_t index, void* buffer) const override final;
 
 	IRenderTargetSet* getRenderTargetSet() const { return m_renderTargetSet; }

@@ -93,12 +93,6 @@ ITexture* RenderTargetSetVrfy::getDepthTexture() const
 	return m_depthTexture;
 }
 
-bool RenderTargetSetVrfy::isContentValid() const
-{
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	return m_renderTargetSet ? m_renderTargetSet->isContentValid() : false;
-}
-
 bool RenderTargetSetVrfy::read(int32_t index, void* buffer) const
 {
 	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");

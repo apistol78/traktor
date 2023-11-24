@@ -48,9 +48,6 @@ public:
 	/*! Get depth target texture. */
 	virtual ITexture* getDepthTexture() const = 0;
 
-	/*! Check if target content is valid. */
-	virtual bool isContentValid() const = 0;
-
 	/*! Read back color target into system memory.
 	 *
 	 * \note
