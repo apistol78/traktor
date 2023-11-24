@@ -69,12 +69,11 @@ private:
 	};
 
 	ScriptManagerLua* m_scriptManager;
-	ScriptContextLua* m_scriptContext;
 	lua_State*& m_luaState;
 	Ref< const IRuntimeDispatch > m_constructor;
 	AlignedVector< Method > m_methods;
 
-	ScriptClassLua(ScriptManagerLua* scriptManager, ScriptContextLua* scriptContext, lua_State*& luaState);
+	explicit ScriptClassLua(ScriptManagerLua* scriptManager, lua_State*& luaState);
 };
 
 }

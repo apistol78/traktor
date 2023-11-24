@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,12 +35,10 @@
 #include "Spark/Acc/AccShapeVertexPool.h"
 #include "Spark/Acc/AccQuad.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_maxCacheSize = 32;
 const uint32_t c_maxUnusedCount = 10;
@@ -71,7 +69,7 @@ bool colorsEqual(const Color4f& a, const Color4f& b)
 	return Vector4(a - b).absolute().max() <= 2 / 255.0f;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccDisplayRenderer", AccDisplayRenderer, IDisplayRenderer)
 
@@ -304,13 +302,6 @@ void AccDisplayRenderer::begin(
 	const Vector2 Ft_scale(frameTransform.z(), frameTransform.w());
 	m_frameBoundsVisible.mn = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * (Ft_offset / Ft_scale);
 	m_frameBoundsVisible.mx = frameBounds.mn + (frameBounds.mx - frameBounds.mn) * ((Vector2::one() - Ft_offset) / Ft_scale);
-
-	// Flush glyph cache is RT has become invalid.
-	if (!m_renderTargetGlyphs->isContentValid())
-	{
-		for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
-			i->second.index = -1;
-	}
 
 	m_glyph->beginFrame();
 
@@ -690,5 +681,4 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 	);
 }
 
-	}
 }

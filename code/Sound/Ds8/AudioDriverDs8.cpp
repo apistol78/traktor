@@ -172,13 +172,25 @@ void AudioDriverDs8::destroy()
 
 void AudioDriverDs8::wait()
 {
-	DWORD result = WaitForMultipleObjects(3, m_eventNotify, FALSE, INFINITE);
-	if (result == WAIT_OBJECT_0)
-		m_bufferWrite = (m_bufferSize * 2) / 3;
-	else if (result == WAIT_OBJECT_0 + 1)
-		m_bufferWrite = (m_bufferSize * 0) / 3;
-	else if (result == WAIT_OBJECT_0 + 2)
-		m_bufferWrite = (m_bufferSize * 1) / 3;
+	DWORD status;
+	HRESULT hr;
+
+	hr = m_dsBuffer->GetStatus(&status);
+	if (FAILED(hr))
+		return;
+
+	if (status & DSBSTATUS_PLAYING)
+	{
+		DWORD result = WaitForMultipleObjects(3, m_eventNotify, FALSE, INFINITE);
+		if (result == WAIT_OBJECT_0)
+			m_bufferWrite = (m_bufferSize * 2) / 3;
+		else if (result == WAIT_OBJECT_0 + 1)
+			m_bufferWrite = (m_bufferSize * 0) / 3;
+		else if (result == WAIT_OBJECT_0 + 2)
+			m_bufferWrite = (m_bufferSize * 1) / 3;
+	}
+	else
+		m_bufferWrite = 0;
 }
 
 void AudioDriverDs8::submit(const SoundBlock& soundBlock)
