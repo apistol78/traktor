@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// Primitive ray intersection
+
+struct Hit
+{
+	float distance;
+	vec3 position;
+	vec3 normal;
+};
+
+void __swap__(inout float t0, inout float t1)
+{
+	float tmp = t0;
+	t0 = t1;
+	t1 = t0;
+}
+
+bool IntersectSphere(vec3 r0, vec3 rd, vec4 sphere, out Hit hit)
+{
+    float a = dot(rd, rd);
+    vec3 s0_r0 = r0 - sphere.xyz;
+    float b = 2.0f * dot(rd, s0_r0);
+    float c = dot(s0_r0, s0_r0) - (sphere.w * sphere.w);
+
+    if (b * b - 4.0f * a * c < 0.0f) {
+        return false;
+    }
+
+	float k = (-b - sqrt((b * b) - 4.0f * a * c)) / (2.0f * a);
+	if (k < 0.0f)
+		return false;
+
+	hit.distance = k;
+	hit.position = r0 + rd * k;
+	hit.normal = normalize(hit.position - sphere.xyz);
+	return true;
+}
+
+bool IntersectPlane(vec3 r0, vec3 rd, vec4 plane, out Hit hit)
+{
+	float denom = -dot(plane.xyz, rd);
+	if (denom == 0.0f)
+		return false;
+
+	float divend = dot(plane.xyz, r0) - plane.w;
+	if (divend < 0.0f)
+		return false;
+
+	float k = divend / denom;
+	if (k < 0.0f)
+		return false;
+
+	hit.distance = k;
+	hit.position = r0 + rd * k;
+	hit.normal = plane.xyz;
+	return true;
+}
+
+bool IntersectBox(vec3 r0, vec3 rd, vec3 bmn, vec3 bmx, out Hit hit)
+{
+    float tmin = (bmn.x - r0.x) / rd.x; 
+    float tmax = (bmx.x - r0.x) / rd.x; 
+ 
+    if (tmin > tmax)
+		__swap__(tmin, tmax); 
+ 
+    float tymin = (bmn.y - r0.y) / rd.y; 
+    float tymax = (bmx.y - r0.y) / rd.y; 
+ 
+    if (tymin > tymax)
+		__swap__(tymin, tymax); 
+ 
+    if ((tmin > tymax) || (tymin > tmax)) 
+        return false; 
+ 
+    if (tymin > tmin) 
+        tmin = tymin; 
+ 
+    if (tymax < tmax) 
+        tmax = tymax; 
+ 
+    float tzmin = (bmn.z - r0.z) / rd.z; 
+    float tzmax = (bmx.z - r0.z) / rd.z; 
+ 
+    if (tzmin > tzmax)
+		__swap__(tzmin, tzmax); 
+ 
+    if ((tmin > tzmax) || (tzmin > tmax)) 
+        return false; 
+ 
+    if (tzmin > tmin) 
+        tmin = tzmin; 
+ 
+    if (tzmax < tmax) 
+        tmax = tzmax; 
+ 
+	hit.distance = tmin;
+	hit.position = r0 + rd * tmin;
+    return true; 
+}
+
+
+	]]>
+	</text>
+</object>
