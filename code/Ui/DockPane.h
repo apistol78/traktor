@@ -74,6 +74,8 @@ public:
 
 	const Rect& getPaneRect() const { return m_rect; }
 
+	void setAlwaysVisible(bool alwaysVisible);
+
 	bool isVisible() const;
 
 private:
@@ -92,6 +94,7 @@ private:
 	Unit m_gripperDim;
 	Rect m_rect;
 	bool m_focus;
+	bool m_alwaysVisible;
 
 	void update(const Rect& rect, std::vector< WidgetRect >& outWidgetRects);
 
