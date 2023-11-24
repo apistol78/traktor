@@ -554,6 +554,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->split(true, -200_ut, paneCenter, paneLog);
 	paneCenter->split(true, -200_ut, paneCenter, m_paneSouth);
 
+	// Both west and east panes are always visible to ensure consistent UI when switching editors.
+	m_paneWest->setAlwaysVisible(true);
+	m_paneEast->setAlwaysVisible(true);
+
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);

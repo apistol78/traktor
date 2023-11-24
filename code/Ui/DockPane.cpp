@@ -60,6 +60,7 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 ,	m_vertical(false)
 ,	m_split(0)
 ,	m_focus(false)
+,	m_alwaysVisible(false)
 {
 	m_bitmapClose = new ui::StyleBitmap(L"UI.DockClose");
 	T_FATAL_ASSERT (m_bitmapClose);
@@ -195,7 +196,7 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, Unit s
 			T_ASSERT(!m_child[0] && !m_child[1]);
 			dock(widget, detachable);
 
-			if (m_parent)
+			if (m_parent && !m_alwaysVisible)
 			{
 				if (m_parent->m_split < 0_ut)
 					m_parent->m_split = Unit(-traktor::abs(split.get()));
@@ -341,14 +342,16 @@ void DockPane::update(const Rect& rect, std::vector< WidgetRect >& outWidgetRect
 				childRects[0].right = split - c_splitterDim / 2;
 				childRects[1].left = split + c_splitterDim / 2;
 			}
-			m_child[0]->update(childRects[0], outWidgetRects);
-			m_child[1]->update(childRects[1], outWidgetRects);
+			if (m_child[0])
+				m_child[0]->update(childRects[0], outWidgetRects);
+			if (m_child[1])
+				m_child[1]->update(childRects[1], outWidgetRects);
 		}
 		else
 		{
-			if (childVisible1)
+			if (m_child[0] && childVisible1)
 				m_child[0]->update(rect, outWidgetRects);
-			if (childVisible2)
+			if (m_child[1] && childVisible2)
 				m_child[1]->update(rect, outWidgetRects);
 		}
 	}
@@ -386,9 +389,9 @@ void DockPane::draw(Canvas& canvas)
 		}
 	}
 
-	if (m_widget && m_detachable)
+	if (m_detachable && m_widget && m_widget->isVisible(false))
 	{
-		const FontMetric fm = m_widget->getFontMetric();
+		const FontMetric fm = m_owner->getFontMetric();
 
 		Rect captionRect = m_rect;
 		captionRect.bottom = captionRect.top + m_owner->pixel(m_gripperDim);
@@ -441,7 +444,6 @@ void DockPane::draw(Canvas& canvas)
 			gx += gw;
 		}
 
-		// \fixme White when focus
 		canvas.drawBitmap(
 			Point(captionRect.right - closeWidth - m_owner->pixel(4_ut), captionRect.getCenter().y - m_bitmapClose->getSize(m_owner).cy / 2),
 			Point(0, 0),
@@ -574,8 +576,16 @@ void DockPane::setSplitterPosition(const Point& position)
 		m_split = m_owner->unit(pos);
 }
 
+void DockPane::setAlwaysVisible(bool alwaysVisible)
+{
+	m_alwaysVisible = alwaysVisible;
+}
+
 bool DockPane::isVisible() const
 {
+	if (m_alwaysVisible)
+		return true;
+
 	if (isSplitter())
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
