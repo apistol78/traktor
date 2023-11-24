@@ -79,13 +79,13 @@ const struct { uint32_t keyCode; VirtualKey vkey; } c_translateTable[] =
 
 VirtualKey translateToVirtualKey(uint32_t keyCode)
 {
-	if ((keyCode >= '0' && keyCode <= '9') || (keyCode >= 'A' && keyCode <= 'Z'))
-		return (VirtualKey)keyCode;
 	for (int32_t i = 0; i < sizeof_array(c_translateTable); ++i)
 	{
 		if (c_translateTable[i].keyCode == keyCode)
 			return c_translateTable[i].vkey;
 	}
+	if ((keyCode >= '0' && keyCode <= '9') || (keyCode >= 'A' && keyCode <= 'Z'))
+		return (VirtualKey)keyCode;
 	return VkNull;
 }
 

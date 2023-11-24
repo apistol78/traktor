@@ -534,8 +534,6 @@ protected:
 
 		setCursor(Cursor::Arrow);
 
-		//m_dpi = m_hWnd.dpi();
-
 		// Get system default font.
 		ICONMETRICS im = {};
 		im.cbSize = sizeof(im);
@@ -547,14 +545,19 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		const bool kctrl = (GetAsyncKeyState(VK_CONTROL) & 1) == 1;
-		const bool kalt = (GetAsyncKeyState(VK_MENU) & 1) == 1;
+		const bool kctrl = (bool)(GetAsyncKeyState(VK_LCONTROL) & 0x8000) || (bool)(GetAsyncKeyState(VK_RCONTROL) & 0x8000);
+		const bool kalt = (bool)(GetAsyncKeyState(VK_MENU) & 0x8000);
+
+		VirtualKey vk = translateToVirtualKey(int(wParam));
 
 		// Seems weird but Windows send Nth character in alphabet when holding down CTRL.
-		if (wParam < L'A' && kctrl && !kalt)
+		if (vk == VkNull && (wParam > 10 && wParam < L'A' && kctrl && !kalt))
+		{
 			wParam = L'A' - 1 + wParam;
+			vk = translateToVirtualKey(int(wParam));
+		}
 
-		KeyEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), wchar_t(wParam));
+		KeyEvent k(m_owner, vk, int(wParam), wchar_t(wParam));
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
@@ -564,19 +567,25 @@ protected:
 
 	LRESULT eventKeyDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyDownEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0);
+		const VirtualKey vk = translateToVirtualKey(int(wParam));
+
+		KeyDownEvent k(m_owner, vk, int(wParam), 0);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
+
 		return TRUE;
 	}
 
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyUpEvent k(m_owner, translateToVirtualKey(int(wParam)), int(wParam), 0, false);
+		const VirtualKey vk = translateToVirtualKey(int(wParam));
+
+		KeyUpEvent k(m_owner, vk, int(wParam), 0, false);
 		m_owner->raiseEvent(&k);
 		if (!k.consumed())
 			outPass = true;
+
 		return TRUE;
 	}
 
