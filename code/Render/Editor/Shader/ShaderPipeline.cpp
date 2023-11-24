@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Log/LogStreamTarget.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/Preprocessor.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -58,27 +59,6 @@ namespace traktor::render
 	namespace
 	{
 
-uint32_t getPriority(const render::ShaderGraph* shaderGraph)
-{
-	RefArray< render::PixelOutput > nodes = shaderGraph->findNodesOf< render::PixelOutput >();
-	if (nodes.empty())
-		return 0;
-
-	uint32_t priority = 0;
-	for (auto node : nodes)
-	{
-		if (node->getPriority() != 0)
-			priority |= node->getPriority();
-		else if (node->getRenderState().blendEnable)
-			priority |= RpAlphaBlend;
-	}
-
-	if (priority == 0)
-		priority = RpOpaque;
-
-	return priority;
-}
-
 class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
 {
 public:
@@ -102,6 +82,59 @@ public:
 private:
 	Ref< editor::IPipelineCommon > m_pipeline;
 };
+
+uint32_t getPriority(const render::ShaderGraph* shaderGraph)
+{
+	RefArray< render::PixelOutput > nodes = shaderGraph->findNodesOf< render::PixelOutput >();
+	if (nodes.empty())
+		return 0;
+
+	uint32_t priority = 0;
+	for (auto node : nodes)
+	{
+		if (node->getPriority() != 0)
+			priority |= node->getPriority();
+		else if (node->getRenderState().blendEnable)
+			priority |= RpAlphaBlend;
+	}
+
+	if (priority == 0)
+		priority = RpOpaque;
+
+	return priority;
+}
+
+std::wstring resolveShaderModule(editor::IPipelineCommon* pipelineCommon, const Preprocessor& preprocessor, const Guid& id, std::set< Guid >& inoutVisited)
+{
+	if (!inoutVisited.insert(id).second)
+		return L"";
+
+	Ref< const ShaderModule> shaderModule = pipelineCommon->getObjectReadOnly< ShaderModule >(id);
+	if (!shaderModule)
+		return L"";
+
+	const std::wstring unprocessedText = shaderModule->escape([&](const Guid& g) -> std::wstring {
+		return g.format();
+	});
+
+	// Execute preprocessor on shader module.
+	std::wstring text;
+	std::set< std::wstring > usings;
+	if (!preprocessor.evaluate(unprocessedText, text, usings))
+	{
+		log::error << L"Shader pipeline failed; unable to preprocess module " << id.format() << L"." << Endl;
+		return L"";
+	}
+
+	// Append all usings.
+	StringOutputStream ss;
+	for (const auto& u : usings)
+		ss << resolveShaderModule(pipelineCommon, preprocessor, Guid(u), inoutVisited);
+	
+	// Append module text.
+	ss << text;
+	return ss.str();
+}
 
 	}
 
@@ -538,21 +571,11 @@ bool ShaderPipeline::buildOutput(
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				// Save generated shader for debugging.
-				//{
-				//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Debug/" + outputGuid.format() + L"/" + techniqueName + L"_" + str(L"%08x", combination), db::CifReplaceExisting);
-				//	if (dumpInstance)
-				//	{
-				//		dumpInstance->setObject(programGraph);
-				//		dumpInstance->commit();
-				//	}
-				//	else
-				//		log::warning << L"Unable to create error instance." << Endl;
-				//}
-
 				// Compile shader program.
-				auto includeResolver = [&](const Guid& id) -> Ref< ShaderModule > {
-					return pipelineBuilder->getSourceDatabase()->getObjectReadOnly< ShaderModule >(id);
+				Preprocessor preprocessor;
+				auto includeResolver = [&](const Guid& id) -> std::wstring {
+					std::set< Guid > visited;
+					return resolveShaderModule(pipelineBuilder, preprocessor, id, visited);
 				};
 
 				// Calculate hash of the entire shader graph including modules so we can

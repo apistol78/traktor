@@ -277,8 +277,7 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	}
 
 	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
-		Ref< const ShaderModule > sm = resolveModule(moduleId);
-		return sm ? sm->getText() : L"";
+		return resolveModule(moduleId);
 	};
 
 	GlslContext cx(shaderGraph, settings);
@@ -729,8 +728,7 @@ bool ProgramCompilerVk::generate(
 	const std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
 
 	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
-		Ref< const ShaderModule > sm = resolveModule(moduleId);
-		return sm ? sm->getText() : L"";
+		return resolveModule(moduleId);
 	};
 
 	// No dialect means we should output our generated GLSL.

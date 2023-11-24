@@ -229,7 +229,7 @@
 			<name>Trace</name>
 			<technique/>
 			<include>
-				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
 			<inputPins>
 				<item>
@@ -301,7 +301,6 @@ if (pos.z < 4.0f)
 		}
 	}
 }
-
 			]]>
 			</script>
 		</item>

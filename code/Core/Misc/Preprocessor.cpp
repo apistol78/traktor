@@ -307,6 +307,16 @@ int32_t evaluateL(Tokenizer& t, const std::map< std::wstring, Any >& definitions
 	return evaluateLogical(t, definitions, error);
 }
 
+void refreshLengthSortedSet(const std::map< std::wstring, Any >& definitions, std::vector< std::map< std::wstring, Any >::const_iterator >& outSorted)
+{
+	outSorted.resize(0);
+	for (auto it = definitions.begin(); it != definitions.end(); ++it)
+		outSorted.push_back(it);
+	std::sort(outSorted.begin(), outSorted.end(), [](const std::map< std::wstring, Any >::const_iterator& lh, const std::map< std::wstring, Any >::const_iterator& rh) {
+		return lh->first.length() > rh->first.length();
+	});
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Preprocessor", Preprocessor, Object)
@@ -329,6 +339,8 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 
 	// Create a local duplicate of definitions so evaluation can modify it.
 	std::map< std::wstring, Any > definitions = m_definitions;
+	std::vector< std::map< std::wstring, Any >::const_iterator > sorted;
+	refreshLengthSortedSet(definitions, sorted);
 
 	std::stack< int32_t > keep;
 	keep.push(0);
@@ -424,9 +436,13 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 					{
 						const std::wstring xpr = trim(expression.substr(sep + 1));
 						definitions[trim(def)] = Any::fromString(xpr);
+						refreshLengthSortedSet(definitions, sorted);
 					}
 					else
+					{
 						definitions[trim(def)] = Any();
+						refreshLengthSortedSet(definitions, sorted);
+					}
 				}
 				break;
 
@@ -441,7 +457,12 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 		else
 		{
 			if (keep.top() == 0)
-				ss << *i << Endl;
+			{
+				std::wstring rtxt = *i;
+				for (const auto& it : sorted)
+					rtxt = replaceAll(rtxt, it->first, it->second.getWideString());
+				ss << rtxt << Endl;
+			}
 			else
 				ss << Endl;
 		}

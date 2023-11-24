@@ -36,7 +36,6 @@ namespace traktor::render
 class IProgramHints;
 class ProgramResource;
 class ShaderGraph;
-class ShaderModule;
 
 /*! Program compiler interface.
  * \ingroup Render
@@ -52,7 +51,7 @@ public:
 		std::wstring source;
 	};
 
-	typedef std::function< Ref< const ShaderModule >(const Guid& id) > resolveModule_fn;
+	typedef std::function< std::wstring (const Guid& id) > resolveModule_fn;
 
 	/*!
 	 */

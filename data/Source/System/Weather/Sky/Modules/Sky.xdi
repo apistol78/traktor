@@ -3,6 +3,7 @@
 	<text>
 	<![CDATA[
 // Sky and clouds from shadertoy.com/view/MdGfzh
+#using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
 
 vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 {
@@ -51,33 +52,6 @@ vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 #define CLOUDS_DETAIL_SCALE 				0.4f
 
 #define CLOUDS_OFFSET_SCALE				40.0f
-
-float hash12(vec2 p)
-{
-    p  = 50.0f * fract(p * 0.3183099f);
-    return fract(p.x * p.y * (p.x + p.y));
-}
-
-float hash13(vec3 p3)
-{
-    p3  = fract(p3 * 1031.1031f);
-    p3 += dot(p3, p3.yzx + 19.19f);
-    return fract((p3.x + p3.y) * p3.z);
-}
-
-vec3 hash33(vec3 p3)
-{
-	p3 = fract(p3 * vec3(0.1031f, 0.1030f, 0.0973f));
-    p3 += dot(p3, p3.yxz + 19.19f);
-    return fract((p3.xxy + p3.yxx) * p3.zyx);
-}
-
-float valueHash(vec3 p3)
-{
-    p3  = fract(p3 * 0.1031f);
-    p3 += dot(p3, p3.yzx + 19.19f);
-    return fract((p3.x + p3.y) * p3.z);
-}
 
 float HenyeyGreenstein( float sundotrd, float g)
 {
@@ -243,6 +217,13 @@ vec4 renderClouds(vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor
 //
 // Noise functions used for cloud shapes
 //
+float valueHash(vec3 p3)
+{
+    p3 = fract(p3 * 0.1031f);
+    p3 += dot(p3, p3.yzx + 19.19f);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
 float valueNoise(vec3 x, float tile)
 {
     vec3 p = floor(x);
