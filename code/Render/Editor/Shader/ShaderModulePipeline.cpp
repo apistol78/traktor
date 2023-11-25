@@ -95,7 +95,7 @@ Ref< ISerializable > ShaderModulePipeline::buildProduct(
 	const Object* buildParams
 ) const
 {
-	return false;
+	return nullptr;
 }
 
 }
