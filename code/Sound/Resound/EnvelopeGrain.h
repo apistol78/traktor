@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Envelope.h"
 #include "Sound/Resound/IGrain.h"
 
@@ -41,7 +41,7 @@ public:
 		float easeOut;
 	};
 
-	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid, float response);
+	explicit EnvelopeGrain(handle_t id, const AlignedVector< Grain >& grains, const float levels[3], float mid, float response);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const override final;
 
@@ -55,7 +55,7 @@ public:
 
 private:
 	handle_t m_id;
-	std::vector< Grain > m_grains;
+	AlignedVector< Grain > m_grains;
 	float m_response;
 	Envelope< float, HermiteEvaluator< float > > m_envelope;
 };

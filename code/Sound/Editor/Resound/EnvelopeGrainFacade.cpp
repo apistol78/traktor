@@ -94,9 +94,9 @@ bool EnvelopeGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* child
 
 bool EnvelopeGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	const std::vector< EnvelopeGrainData::GrainData >& grains = mandatory_non_null_type_cast< EnvelopeGrainData* >(grain)->getGrains();
-	for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
-		outChildren.push_back(i->grain);
+	const auto& grainDatas = mandatory_non_null_type_cast< EnvelopeGrainData* >(grain)->getGrains();
+	for (const auto& grainData : grainDatas)
+		outChildren.push_back(grainData.grain);
 	return true;
 }
 

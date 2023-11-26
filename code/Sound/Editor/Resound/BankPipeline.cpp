@@ -46,9 +46,8 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 	if (const EnvelopeGrainData* envelopeGrain = dynamic_type_cast< const EnvelopeGrainData* >(grain))
 	{
-		const std::vector< EnvelopeGrainData::GrainData >& grains = envelopeGrain->getGrains();
-		for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
-			buildGrainDependencies(pipelineDepends, i->grain);
+		for (const auto& grainData : envelopeGrain->getGrains())
+			buildGrainDependencies(pipelineDepends, grainData.grain);
 	}
 
 	if (const InLoopOutGrainData* iloGrain = dynamic_type_cast< const InLoopOutGrainData* >(grain))
