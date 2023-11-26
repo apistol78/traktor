@@ -4,6 +4,8 @@ Traktor is a game (all batteries) engine which has
 been used in a couple of commercial games across
 different platforms. 
 
+![image info](resources/documentation/images/screenshot%20-%20editor.png)
+
 ---
 
 ## How to build
