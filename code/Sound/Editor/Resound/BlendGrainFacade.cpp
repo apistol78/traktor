@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,26 @@
 #include "I18N/Text.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Editor/Resound/BlendGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BlendGrainFacade", BlendGrainFacade, IGrainFacade)
 
-ui::Widget* BlendGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+BlendGrainFacade::BlendGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.BlendGrain");
 }
 
-int32_t BlendGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* BlendGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 4;
+	return nullptr;
+}
+
+ui::StyleBitmap* BlendGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring BlendGrainFacade::getText(const IGrainData* grain) const
@@ -34,7 +38,7 @@ std::wstring BlendGrainFacade::getText(const IGrainData* grain) const
 
 bool BlendGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
 {
-	const BlendGrainData* blendGrain = checked_type_cast< const BlendGrainData*, false >(grain);
+	const BlendGrainData* blendGrain = mandatory_non_null_type_cast< const BlendGrainData* >(grain);
 	outProperties.insert(blendGrain->getId());
 	return true;
 }
@@ -62,5 +66,4 @@ bool BlendGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& ou
 	return true;
 }
 
-	}
 }

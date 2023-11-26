@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,26 +10,26 @@
 
 #include "Sound/Editor/Resound/IGrainFacade.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EnvelopeContentChangeEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class EnvelopeGrainFacade : public IGrainFacade
 {
 	T_RTTI_CLASS;
 
 public:
+	EnvelopeGrainFacade();
+
 	virtual ui::Widget* createView(IGrainData* grain, ui::Widget* parent) override final;
 
-	virtual int32_t getImage(const IGrainData* grain) const override final;
+	virtual ui::StyleBitmap* getImage(const IGrainData* grain) const override final;
 
 	virtual std::wstring getText(const IGrainData* grain) const override final;
 
@@ -44,9 +44,9 @@ public:
 	virtual bool getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren) override final;
 
 private:
+	Ref< ui::StyleBitmap > m_image;
+
 	void eventEnvelopeChange(ui::EnvelopeContentChangeEvent* event);
 };
 
-	}
 }
-

@@ -430,6 +430,8 @@
 			<first>SolutionBuilder.Solution</first>
 			<second>$(Images.Path)/Images/SolutionBuilder/Solution.image</second>
 		</item>
+
+		<!-- Sound -->
 		<item>
 			<first>Sound.Play</first>
 			<second>$(Images.Path)/Images/Sound/Play.image</second>
@@ -438,6 +440,66 @@
 			<first>Sound.PlusMinus</first>
 			<second>$(Images.Path)/Images/Sound/PlusMinus.image</second>
 		</item>
+
+		<!-- Resound -->
+		<item>
+			<first>Sound.Grain</first>
+			<second>$(Images.Path)/Images/Sound/Grain.image</second>
+		</item>
+		<item>
+			<first>Sound.GrainA</first>
+			<second>$(Images.Path)/Images/Sound/GrainA.image</second>
+		</item>
+		<item>
+			<first>Sound.GrainF</first>
+			<second>$(Images.Path)/Images/Sound/GrainF.image</second>
+		</item>
+		<item>
+			<first>Sound.GrainAF</first>
+			<second>$(Images.Path)/Images/Sound/GrainAF.image</second>
+		</item>
+		<item>
+			<first>Sound.BlendGrain</first>
+			<second>$(Images.Path)/Images/Sound/BlendGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.EnvelopeGrain</first>
+			<second>$(Images.Path)/Images/Sound/EnvelopeGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.PlayGrain</first>
+			<second>$(Images.Path)/Images/Sound/PlayGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.RandomGrain</first>
+			<second>$(Images.Path)/Images/Sound/RandomGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.RepeatGrain</first>
+			<second>$(Images.Path)/Images/Sound/RepeatGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.SequenceGrain</first>
+			<second>$(Images.Path)/Images/Sound/SequenceGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.SimultaneousGrain</first>
+			<second>$(Images.Path)/Images/Sound/SimultaneousGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.InLoopOutGrain</first>
+			<second>$(Images.Path)/Images/Sound/InLoopOutGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.MuteGrain</first>
+			<second>$(Images.Path)/Images/Sound/MuteGrain.image</second>
+		</item>
+		<item>
+			<first>Sound.TriggerGrain</first>
+			<second>$(Images.Path)/Images/Sound/TriggerGrain.image</second>
+		</item>
+
+		<!-- Spray -->
 		<item>
 			<first>Spray.BrowseBackground</first>
 			<second>$(Images.Path)/Images/Spray/BrowseBackground.image</second>

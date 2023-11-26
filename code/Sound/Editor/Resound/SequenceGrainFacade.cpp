@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,26 @@
 #include "I18N/Format.h"
 #include "Sound/Resound/SequenceGrainData.h"
 #include "Sound/Editor/Resound/SequenceGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SequenceGrainFacade", SequenceGrainFacade, IGrainFacade)
 
-ui::Widget* SequenceGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+SequenceGrainFacade::SequenceGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.SequenceGrain");
 }
 
-int32_t SequenceGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* SequenceGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 1;
+	return nullptr;
+}
+
+ui::StyleBitmap* SequenceGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring SequenceGrainFacade::getText(const IGrainData* grain) const
@@ -45,21 +49,20 @@ bool SequenceGrainFacade::canHaveChildren() const
 
 bool SequenceGrainFacade::addChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< SequenceGrainData*, false >(parentGrain)->addGrain(childGrain);
+	mandatory_non_null_type_cast< SequenceGrainData* >(parentGrain)->addGrain(childGrain);
 	return true;
 }
 
 bool SequenceGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< SequenceGrainData*, false >(parentGrain)->removeGrain(childGrain);
+	mandatory_non_null_type_cast< SequenceGrainData* >(parentGrain)->removeGrain(childGrain);
 	return true;
 }
 
 bool SequenceGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	outChildren = checked_type_cast< SequenceGrainData*, false >(grain)->getGrains();
+	outChildren = mandatory_non_null_type_cast< SequenceGrainData* >(grain)->getGrains();
 	return true;
 }
 
-	}
 }

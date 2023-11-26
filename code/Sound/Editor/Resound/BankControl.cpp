@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Sound/Editor/Resound/BankControl.h"
 #include "Sound/Editor/Resound/BankControlGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankControl", BankControl, ui::AutoWidget)
 
@@ -50,23 +48,22 @@ const RefArray< BankControlGrain >& BankControl::getGrains() const
 void BankControl::layoutCells(const ui::Rect& rc)
 {
 	ui::Rect rowRect = rc;
-	rowRect.top += 16;
-	rowRect.bottom = rowRect.top + 32;
+	rowRect.top += pixel(16_ut);
+	rowRect.bottom = rowRect.top + pixel(32_ut);
 
-	for (RefArray< BankControlGrain >::const_iterator i = m_cells.begin(); i != m_cells.end(); ++i)
+	for (auto cell : m_cells)
 	{
 		uint32_t depth = 0;
-		for (const BankControlGrain* item = *i; item; item = item->getParent())
+		for (const BankControlGrain* item = cell; item; item = item->getParent())
 			++depth;
 
 		ui::Rect cellRect = rowRect;
-		cellRect.left += depth * 16;
-		cellRect.right = cellRect.left + 128;
-		placeCell(*i, cellRect);
+		cellRect.left += depth * pixel(16_ut);
+		cellRect.right = cellRect.left + pixel(128_ut);
+		placeCell(cell, cellRect);
 
-		rowRect = rowRect.offset(0, 32 + 8);
+		rowRect = rowRect.offset(0, pixel(32_ut + 8_ut));
 	}
 }
 
-	}
 }

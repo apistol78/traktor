@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,22 +10,26 @@
 #include "I18N/Text.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Editor/Resound/RepeatGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RepeatGrainFacade", RepeatGrainFacade, IGrainFacade)
 
-ui::Widget* RepeatGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+RepeatGrainFacade::RepeatGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.RepeatGrain");
 }
 
-int32_t RepeatGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* RepeatGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 2;
+	return nullptr;
+}
+
+ui::StyleBitmap* RepeatGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring RepeatGrainFacade::getText(const IGrainData* grain) const
@@ -59,10 +63,9 @@ bool RepeatGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGr
 
 bool RepeatGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	RepeatGrainData* repeatGrain = checked_type_cast< RepeatGrainData*, false >(grain);
+	RepeatGrainData* repeatGrain = mandatory_non_null_type_cast< RepeatGrainData* >(grain);
 	outChildren.push_back(repeatGrain->getGrain());
 	return true;
 }
 
-	}
 }

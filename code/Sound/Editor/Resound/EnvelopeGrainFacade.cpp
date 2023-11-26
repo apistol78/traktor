@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,16 +10,15 @@
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
 #include "Ui/Event.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/Envelope/DefaultEnvelopeEvaluator.h"
 #include "Ui/Envelope/EnvelopeContentChangeEvent.h"
 #include "Ui/Envelope/EnvelopeControl.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const Color4ub c_rangeColors[] =
 {
@@ -31,9 +30,14 @@ const Color4ub c_rangeColors[] =
 	Color4ub(200, 255, 255, 100)
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrainFacade", EnvelopeGrainFacade, IGrainFacade)
+
+EnvelopeGrainFacade::EnvelopeGrainFacade()
+{
+	m_image = new ui::StyleBitmap(L"Sound.EnvelopeGrain");
+}
 
 ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
@@ -53,20 +57,20 @@ ui::Widget* EnvelopeGrainFacade::createView(IGrainData* grain, ui::Widget* paren
 	return envelopeControl;
 }
 
-int32_t EnvelopeGrainFacade::getImage(const IGrainData* grain) const
+ui::StyleBitmap* EnvelopeGrainFacade::getImage(const IGrainData* grain) const
 {
-	return 5;
+	return m_image;
 }
 
 std::wstring EnvelopeGrainFacade::getText(const IGrainData* grain) const
 {
-	int32_t count = (int32_t)checked_type_cast< const EnvelopeGrainData* >(grain)->getGrains().size();
+	const int32_t count = (int32_t)checked_type_cast< const EnvelopeGrainData* >(grain)->getGrains().size();
 	return i18n::Format(L"RESOUND_ENVELOPE_GRAIN_TEXT", int32_t(count));
 }
 
 bool EnvelopeGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
 {
-	const EnvelopeGrainData* envelopeGrain = checked_type_cast< const EnvelopeGrainData*, false >(grain);
+	const EnvelopeGrainData* envelopeGrain = mandatory_non_null_type_cast< const EnvelopeGrainData* >(grain);
 	outProperties.insert(envelopeGrain->getId());
 	return true;
 }
@@ -78,19 +82,19 @@ bool EnvelopeGrainFacade::canHaveChildren() const
 
 bool EnvelopeGrainFacade::addChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< EnvelopeGrainData*, false >(parentGrain)->addGrain(childGrain, 0.0f, 1.0f, 0.2f, 0.2f);
+	mandatory_non_null_type_cast< EnvelopeGrainData* >(parentGrain)->addGrain(childGrain, 0.0f, 1.0f, 0.2f, 0.2f);
 	return true;
 }
 
 bool EnvelopeGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< EnvelopeGrainData*, false >(parentGrain)->removeGrain(childGrain);
+	mandatory_non_null_type_cast< EnvelopeGrainData* >(parentGrain)->removeGrain(childGrain);
 	return true;
 }
 
 bool EnvelopeGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	const std::vector< EnvelopeGrainData::GrainData >& grains = checked_type_cast< EnvelopeGrainData*, false >(grain)->getGrains();
+	const std::vector< EnvelopeGrainData::GrainData >& grains = mandatory_non_null_type_cast< EnvelopeGrainData* >(grain)->getGrains();
 	for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 		outChildren.push_back(i->grain);
 	return true;
@@ -116,5 +120,4 @@ void EnvelopeGrainFacade::eventEnvelopeChange(ui::EnvelopeContentChangeEvent* ev
 	envelopeGrain->setMid(keys[1]->getT());
 }
 
-	}
 }

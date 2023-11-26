@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,22 +10,26 @@
 #include "I18N/Text.h"
 #include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/Resound/TriggerGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.TriggerGrainFacade", TriggerGrainFacade, IGrainFacade)
 
-ui::Widget* TriggerGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+TriggerGrainFacade::TriggerGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.TriggerGrain");
 }
 
-int32_t TriggerGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* TriggerGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 2;
+	return nullptr;
+}
+
+ui::StyleBitmap* TriggerGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring TriggerGrainFacade::getText(const IGrainData* grain) const
@@ -35,7 +39,7 @@ std::wstring TriggerGrainFacade::getText(const IGrainData* grain) const
 
 bool TriggerGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
 {
-	const TriggerGrainData* triggerGrain = checked_type_cast< const TriggerGrainData*, false >(grain);
+	const TriggerGrainData* triggerGrain = mandatory_non_null_type_cast< const TriggerGrainData* >(grain);
 	outProperties.insert(triggerGrain->getId());
 	return true;
 }
@@ -57,10 +61,9 @@ bool TriggerGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childG
 
 bool TriggerGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	TriggerGrainData* triggerGrain = checked_type_cast< TriggerGrainData*, false >(grain);
+	TriggerGrainData* triggerGrain = mandatory_non_null_type_cast< TriggerGrainData* >(grain);
 	outChildren.push_back(triggerGrain->getGrain());
 	return true;
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,26 @@
 #include "I18N/Format.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Editor/Resound/PlayGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.PlayGrainFacade", PlayGrainFacade, IGrainFacade)
 
-ui::Widget* PlayGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+PlayGrainFacade::PlayGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.PlayGrain");
 }
 
-int32_t PlayGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* PlayGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 0;
+	return nullptr;
+}
+
+ui::StyleBitmap* PlayGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring PlayGrainFacade::getText(const IGrainData* grain) const
@@ -62,5 +66,4 @@ bool PlayGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& out
 	return true;
 }
 
-	}
 }
