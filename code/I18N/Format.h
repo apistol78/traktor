@@ -83,7 +83,7 @@ public:
 		Type m_type;
 		Value m_value;
 
-		std::wstring format() const;
+		std::wstring format(const std::wstring& fmt) const;
 	};
 
 	Format(

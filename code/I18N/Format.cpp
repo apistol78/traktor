@@ -123,7 +123,7 @@ Format::Argument::~Argument()
 		refStringDec(m_value.s);
 }
 
-std::wstring Format::Argument::format() const
+std::wstring Format::Argument::format(const std::wstring& fmt) const
 {
 	switch (m_type)
 	{
@@ -134,15 +134,15 @@ std::wstring Format::Argument::format() const
 		}
 	case Type::Int32:
 		{
-			return traktor::str(L"%d", m_value.i);
+			return traktor::str(fmt.empty() ? L"%d" : fmt.c_str(), m_value.i);
 		}
 	case Type::Float:
 		{
-			return traktor::str(L"%f", m_value.f);
+			return traktor::str(fmt.empty() ? L"%f" : fmt.c_str(), m_value.f);
 		}
 	case Type::Double:
 		{
-			return traktor::str(L"%f", m_value.d);
+			return traktor::str(fmt.empty() ? L"%f" : fmt.c_str(), m_value.d);
 		}
 	case Type::String:
 		{
@@ -173,22 +173,30 @@ Format::Format(
 		if (e == std::string::npos)
 			break;
 
-		const std::wstring argument = m_text.substr(s + 1, e - s - 1);
+		std::wstring argument = m_text.substr(s + 1, e - s - 1);
+		std::wstring fmt;
+
+		const size_t x = argument.find(L':');
+		if (x != argument.npos)
+		{
+			fmt = argument.substr(x + 1);
+			argument = argument.substr(0, x);
+		}
 
 		std::wstring value;
 		switch (parseString< int32_t >(argument))
 		{
 		case 0:
-			value = arg1.format();
+			value = arg1.format(fmt);
 			break;
 		case 1:
-			value = arg2.format();
+			value = arg2.format(fmt);
 			break;
 		case 2:
-			value = arg3.format();
+			value = arg3.format(fmt);
 			break;
 		case 3:
-			value = arg4.format();
+			value = arg4.format(fmt);
 			break;
 		default:
 			value = L"";

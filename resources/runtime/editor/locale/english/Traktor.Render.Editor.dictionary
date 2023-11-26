@@ -115,11 +115,11 @@
 		</item>
 		<item>
 			<first>RESOUND_MUTE_GRAIN_TEXT</first>
-			<second>{0} ms - {1} ms</second>
+			<second>{0} - {1} ms</second>
 		</item>
 		<item>
 			<first>RESOUND_PLAY_GRAIN_TEXT</first>
-			<second>{0} dB - {1} dB</second>
+			<second>{0:%.1f} - {1:%.1f} dB</second>
 		</item>
 		<item>
 			<first>RESOUND_RANDOM_GRAIN_TEXT</first>
@@ -140,6 +140,10 @@
 		<item>
 			<first>RESOUND_SIMULTANEOUS_GRAIN_TEXT</first>
 			<second>{0} child(ren)</second>
+		</item>
+		<item>
+			<first>RESOUND_INLOOPOUT_GRAIN_TEXT</first>
+			<second>In-Loop-Out</second>
 		</item>
 		<item>
 			<first>RESOUND_TRIGGER_GRAIN_TEXT</first>
