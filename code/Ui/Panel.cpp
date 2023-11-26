@@ -39,8 +39,8 @@ Size Panel::getMinimumSize() const
 {
 	const Size titleSize = getFontMetric().getExtent(getText());
 	Size sz = Container::getMinimumSize();
-	sz.cx += 2;
-	sz.cy += 1 + titleSize.cy;
+	sz.cx += pixel(2_ut);
+	sz.cy += pixel(8_ut) + titleSize.cy;
 	return sz;
 }
 
@@ -48,8 +48,8 @@ Size Panel::getPreferredSize(const Size& hint) const
 {
 	const Size titleSize = getFontMetric().getExtent(getText());
 	Size sz = Container::getPreferredSize(hint);
-	sz.cx += 2;
-	sz.cy += 3 + titleSize.cy;
+	sz.cx += pixel(2_ut);
+	sz.cy += pixel(8_ut) + titleSize.cy;
 	return sz;
 }
 
@@ -57,10 +57,10 @@ Rect Panel::getInnerRect() const
 {
 	const Size titleSize = getFontMetric().getExtent(getText());
 	Rect rc = Container::getInnerRect();
-	rc.left += 1;
-	rc.top += titleSize.cy + 3;
-	rc.right -= 1;
-	rc.bottom -= 1;
+	rc.left += pixel(1_ut);
+	rc.top += titleSize.cy + pixel(8_ut);
+	rc.right -= pixel(1_ut);
+	rc.bottom -= pixel(1_ut);
 	return rc;
 }
 
@@ -77,14 +77,14 @@ void Panel::eventPaint(PaintEvent* event)
 	const std::wstring text = getText();
 	const Size extent = canvas.getFontMetric().getExtent(text);
 
-	const Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
+	const Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + pixel(8_ut));
 
 	canvas.setBackground(ss->getColor(this, focus ? L"caption-background-color-focus" : L"caption-background-color-no-focus"));
 	canvas.fillRect(rcTitle);
 
 	canvas.setForeground(ss->getColor(this, focus ? L"caption-color-focus" : L"caption-color-no-focus"));
 	canvas.drawText(
-		rcTitle.inflate(-4, 0),
+		rcTitle.inflate(pixel(-4_ut), 0),
 		text,
 		AnLeft,
 		AnCenter
