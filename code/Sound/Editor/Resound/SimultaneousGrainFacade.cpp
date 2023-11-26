@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,26 @@
 #include "I18N/Format.h"
 #include "Sound/Resound/SimultaneousGrainData.h"
 #include "Sound/Editor/Resound/SimultaneousGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SimultaneousGrainFacade", SimultaneousGrainFacade, IGrainFacade)
 
-ui::Widget* SimultaneousGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+SimultaneousGrainFacade::SimultaneousGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.SimultaneousGrain");
 }
 
-int32_t SimultaneousGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* SimultaneousGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 6;
+	return nullptr;
+}
+
+ui::StyleBitmap* SimultaneousGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring SimultaneousGrainFacade::getText(const IGrainData* grain) const
@@ -45,21 +49,20 @@ bool SimultaneousGrainFacade::canHaveChildren() const
 
 bool SimultaneousGrainFacade::addChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< SimultaneousGrainData*, false >(parentGrain)->addGrain(childGrain);
+	mandatory_non_null_type_cast< SimultaneousGrainData* >(parentGrain)->addGrain(childGrain);
 	return true;
 }
 
 bool SimultaneousGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
-	checked_type_cast< SimultaneousGrainData*, false >(parentGrain)->removeGrain(childGrain);
+	mandatory_non_null_type_cast< SimultaneousGrainData* >(parentGrain)->removeGrain(childGrain);
 	return true;
 }
 
 bool SimultaneousGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
-	outChildren = checked_type_cast< SimultaneousGrainData*, false >(grain)->getGrains();
+	outChildren = mandatory_non_null_type_cast< SimultaneousGrainData* >(grain)->getGrains();
 	return true;
 }
 
-	}
 }

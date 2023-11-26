@@ -12,24 +12,22 @@
 #include "Ui/Canvas.h"
 #include "Ui/Auto/AutoWidget.h"
 
-// Resources
-#include "Resources/Grain.h"
-
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankControlGrain", BankControlGrain, ui::AutoWidgetCell)
 
-BankControlGrain::BankControlGrain(BankControlGrain* parent, IGrainData* grain, const std::wstring& text, int32_t image)
+BankControlGrain::BankControlGrain(BankControlGrain* parent, IGrainData* grain, const std::wstring& text, ui::StyleBitmap* image)
 :	m_parent(parent)
 ,	m_grain(grain)
 ,	m_text(text)
 ,	m_image(image)
 ,	m_active(false)
 {
-	m_bitmapGrain = ui::Bitmap::load(c_ResourceGrain, sizeof(c_ResourceGrain), L"image");
+	m_bitmapGrain[0] = new ui::StyleBitmap(L"Sound.Grain");
+	m_bitmapGrain[1] = new ui::StyleBitmap(L"Sound.GrainA");
+	m_bitmapGrain[2] = new ui::StyleBitmap(L"Sound.GrainF");
+	m_bitmapGrain[3] = new ui::StyleBitmap(L"Sound.GrainAF");
 }
 
 BankControlGrain* BankControlGrain::getParent() const
@@ -42,7 +40,7 @@ IGrainData* BankControlGrain::getGrain() const
 	return m_grain;
 }
 
-int32_t BankControlGrain::getImage() const
+ui::StyleBitmap* BankControlGrain::getImage() const
 {
 	return m_image;
 }
@@ -65,47 +63,38 @@ void BankControlGrain::mouseDown(ui::MouseButtonDownEvent* event, const ui::Poin
 
 void BankControlGrain::paint(ui::Canvas& canvas, const ui::Rect& rect)
 {
-	bool focus = bool(getWidget< ui::AutoWidget >()->getFocusCell() == this);
+	const bool focus = bool(getWidget< ui::AutoWidget >()->getFocusCell() == this);
 
-	ui::Size sz = { 16, 16 }; //  m_bitmapGrain->getSize(getWidget());
-
-	int32_t dx = sz.cx / 4;
-	int32_t dy = sz.cy / 6;
-
-	int32_t y = 0;
-	if (focus)
-		y += dy;
+	int32_t index = 0;
 	if (m_active)
-		y += 2 * dy;
+		index += 1;
+	if (focus)
+		index += 2;
 
-	//canvas.drawBitmap(
-	//	rect.getTopLeft(),
-	//	ui::Point(0, y),
-	//	ui::Size(sz.cx, dy),
-	//	m_bitmapGrain,
-	//	ui::BlendMode::Alpha
-	//);
+	canvas.drawBitmap(
+		rect.getTopLeft(),
+		ui::Point(0, 0),
+		m_bitmapGrain[index]->getSize(getWidget()),
+		m_bitmapGrain[index],
+		ui::BlendMode::Alpha
+	);
 
-	//canvas.drawBitmap(
-	//	rect.getTopLeft(),
-	//	ui::Point(
-	//		(m_image % 4) * dx,
-	//		(m_image / 4) * dy + 4 * dy
-	//	),
-	//	ui::Size(dx, dy),
-	//	m_bitmapGrain,
-	//	ui::BlendMode::Alpha
-	//);
+	canvas.drawBitmap(
+		rect.getTopLeft(),
+		ui::Point(0, 0),
+		m_image->getSize(getWidget()),
+		m_image,
+		ui::BlendMode::Alpha
+	);
 
 	if (!m_text.empty())
 	{
 		ui::Rect textRect = rect;
-		textRect.left += dx + 4;
+		textRect.left += m_image->getSize(getWidget()).cx + pixel(4_ut);
 
 		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawText(textRect, m_text, ui::AnLeft, ui::AnCenter);
 	}
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,22 +9,26 @@
 #include "I18N/Format.h"
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
+#include "Ui/StyleBitmap.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RandomGrainFacade", RandomGrainFacade, IGrainFacade)
 
-ui::Widget* RandomGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
+RandomGrainFacade::RandomGrainFacade()
 {
-	return 0;
+	m_image = new ui::StyleBitmap(L"Sound.RandomGrain");
 }
 
-int32_t RandomGrainFacade::getImage(const IGrainData* grain) const
+ui::Widget* RandomGrainFacade::createView(IGrainData* grain, ui::Widget* parent)
 {
-	return 3;
+	return nullptr;
+}
+
+ui::StyleBitmap* RandomGrainFacade::getImage(const IGrainData* grain) const
+{
+	return m_image;
 }
 
 std::wstring RandomGrainFacade::getText(const IGrainData* grain) const
@@ -61,5 +65,4 @@ bool RandomGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& o
 	return true;
 }
 
-	}
 }

@@ -551,10 +551,32 @@ local outputs =
 		resources =
 		{
 			{ name = "PlusMinus", column = 0, row = 12, width = 2, height = 1 },
-			{ name = "Grain", column = 0, row = 23, width = 4, height = 6, base = 32 },
 			{ name = "Play", column = 1, row = 14, width = 1, height = 1 },
 		}
-	},	
+	},
+	{
+		source = "Resound.svg",
+		name = "Sound_Resound",
+		path = "../runtime/themes/%s/Images/Sound",
+		resources =
+		{
+			{ name = "Grain", column = 0, row = 0, width = 4, height = 1, base = 32 },
+			{ name = "GrainA", column = 0, row = 1, width = 4, height = 1, base = 32 },
+			{ name = "GrainF", column = 0, row = 2, width = 4, height = 1, base = 32 },
+			{ name = "GrainAF", column = 0, row = 3, width = 4, height = 1, base = 32 },
+			{ name = "BlendGrain", column = 0, row = 5, width = 1, height = 1, base = 32 },
+			{ name = "EnvelopeGrain", column = 0, row = 5, width = 1, height = 1, base = 32 },
+			{ name = "PlayGrain", column = 0, row = 4, width = 1, height = 1, base = 32 },
+			{ name = "RandomGrain", column = 3, row = 4, width = 1, height = 1, base = 32 },
+			{ name = "RepeatGrain", column = 2, row = 4, width = 1, height = 1, base = 32 },
+			{ name = "SequenceGrain", column = 1, row = 4, width = 1, height = 1, base = 32 },
+			{ name = "SimultaneousGrain", column = 0, row = 5, width = 1, height = 1, base = 32 },
+
+			{ name = "InLoopOutGrain", column = 3, row = 5, width = 1, height = 1, base = 32 },
+			{ name = "MuteGrain", column = 3, row = 5, width = 1, height = 1, base = 32 },
+			{ name = "TriggerGrain", column = 3, row = 5, width = 1, height = 1, base = 32 },
+		}
+	},
 	{
 		name = "Runtime_Run",
 		path = "../runtime/themes/%s/Images/Runtime",
@@ -620,7 +642,7 @@ function main(argv)
 	local theme = argv:get(0)
 
 	local themeExportId = theme
-	if theme == "Monokai" then themeExportId = "Dark" end
+	if theme == "Monokai" or theme == "Orange" then themeExportId = "Dark" end
 	
 	local filter = nil
 	if argv.size >= 2 then
