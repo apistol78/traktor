@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include <vector>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Sound/Types.h"
 #include "Sound/Resound/IGrainData.h"
 
@@ -21,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS EnvelopeGrainData : public IGrainData
 {
@@ -34,18 +32,10 @@ public:
 	struct GrainData
 	{
 		Ref< IGrainData > grain;
-		float in;
-		float out;
-		float easeIn;
-		float easeOut;
-
-		GrainData()
-		:	in(0.0f)
-		,	out(0.0f)
-		,	easeIn(0.2f)
-		,	easeOut(0.2f)
-		{
-		}
+		float in = 0.0f;
+		float out = 0.0f;
+		float easeIn = 0.2f;
+		float easeOut = 0.2f;
 
 		void serialize(ISerializer& s);
 	};
@@ -68,7 +58,7 @@ public:
 
 	const std::wstring& getId() const { return m_id; }
 
-	const std::vector< GrainData >& getGrains() const { return m_grains; }
+	const AlignedVector< GrainData >& getGrains() const { return m_grains; }
 
 	const float* getLevels() const { return m_levels; }
 
@@ -78,12 +68,10 @@ public:
 
 private:
 	std::wstring m_id;
-	std::vector< GrainData > m_grains;
+	AlignedVector< GrainData > m_grains;
 	float m_levels[3];
 	float m_mid;
 	float m_response;
 };
 
-	}
 }
-

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,7 +65,7 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrain", EnvelopeGrain, IGrain)
 
-EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid, float response)
+EnvelopeGrain::EnvelopeGrain(handle_t id, const AlignedVector< Grain >& grains, const float levels[3], float mid, float response)
 :	m_id(id)
 ,	m_grains(grains)
 ,	m_response(response)
@@ -142,12 +142,12 @@ void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 
 		if (p < I)
 		{
-			float f = (p - I + Ie) / Ie;
+			const float f = (p - I + Ie) / Ie;
 			v = std::sin(f * PI / 2.0f);
 		}
 		else if (p > O)
 		{
-			float f = 1.0f - (p - O) / Oe;
+			const float f = 1.0f - (p - O) / Oe;
 			v = std::sin(f * PI / 2.0f);
 		}
 		else
@@ -191,12 +191,12 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixe
 
 		if (p < I)
 		{
-			float f = (p - I + Ie) / Ie;
+			const float f = (p - I + Ie) / Ie;
 			v = std::sin(f * PI / 2.0f);
 		}
 		else if (p > O)
 		{
-			float f = 1.0f - (p - O) / Oe;
+			const float f = 1.0f - (p - O) / Oe;
 			v = std::sin(f * PI / 2.0f);
 		}
 		else

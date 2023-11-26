@@ -1,24 +1,23 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Sound/Resound/EnvelopeGrain.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Resound/IGrainFactory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EnvelopeGrainData", 3, EnvelopeGrainData, IGrainData)
 
@@ -66,7 +65,7 @@ void EnvelopeGrainData::setResponse(float response)
 
 Ref< IGrain > EnvelopeGrainData::createInstance(IGrainFactory* grainFactory) const
 {
-	std::vector< EnvelopeGrain::Grain > grains;
+	AlignedVector< EnvelopeGrain::Grain > grains;
 
 	grains.resize(m_grains.size());
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
@@ -95,12 +94,12 @@ void EnvelopeGrainData::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
 
-	s >> MemberStlVector< GrainData, MemberComposite< GrainData > >(L"grains", m_grains);
+	s >> MemberAlignedVector< GrainData, MemberComposite< GrainData > >(L"grains", m_grains, AttributePrivate());
 
 	if (s.getVersion() >= 2)
 	{
-		s >> MemberStaticArray< float, sizeof_array(m_levels) >(L"levels", m_levels);
-		s >> Member< float >(L"mid", m_mid);
+		s >> MemberStaticArray< float, sizeof_array(m_levels) >(L"levels", m_levels, AttributePrivate());
+		s >> Member< float >(L"mid", m_mid, AttributePrivate());
 	}
 
 	if (s.getVersion() >= 3)
@@ -116,5 +115,4 @@ void EnvelopeGrainData::GrainData::serialize(ISerializer& s)
 	s >> Member< float >(L"easeOut", easeOut);
 }
 
-	}
 }
