@@ -29,8 +29,6 @@ class T_DLLCLASS MultiSplitter : public Widget
 	T_RTTI_CLASS;
 
 public:
-	MultiSplitter();
-
 	/*! Create splitter control.
 	 *
 	 * \param parent Parent widget.
@@ -47,8 +45,11 @@ public:
 	virtual Size getMaximumSize() const override;
 
 private:
-	bool m_vertical;
     AlignedVector< float > m_splitters;
+	int32_t m_moveSplitter = -1;
+	int32_t m_moveSplitterMin = 0;
+	int32_t m_moveSplitterMax = 0;
+	bool m_vertical = true;
 
     void eventChild(ChildEvent* event);
 
