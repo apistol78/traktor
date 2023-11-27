@@ -60,6 +60,11 @@ void SoundHandle::setParameter(int32_t id, float parameter)
 		m_channel->setParameter(id, parameter);
 }
 
+ISoundBufferCursor* SoundHandle::getCursor()
+{
+	return m_channel ? m_channel->getCursor() : nullptr;
+}
+
 SoundHandle::SoundHandle(AudioChannel* channel, Vector4& position, float& fadeOff)
 :	m_channel(channel)
 ,	m_position(&position)

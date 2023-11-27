@@ -6559,6 +6559,7 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
+												<item>T_SOUND_USE_AVX_MIXER</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6594,6 +6595,7 @@
 											<includePaths/>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
+												<item>T_SOUND_USE_AVX_MIXER</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6629,6 +6631,7 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
+												<item>T_SOUND_USE_AVX_MIXER</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>
@@ -6660,6 +6663,7 @@
 											<includePaths/>
 											<definitions>
 												<item>T_STATIC</item>
+												<item>T_SOUND_USE_AVX_MIXER</item>
 												<item>FLAC__NO_DLL</item>
 											</definitions>
 											<libraryPaths/>

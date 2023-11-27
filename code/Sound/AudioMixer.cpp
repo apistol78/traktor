@@ -212,8 +212,18 @@ void AudioMixer::mute(float* sb, uint32_t count) const
 	T_ASSERT(alignUp(sb, 16) == sb);
 	T_ASSERT(alignUp(count, 4) == count);
 
-	const Vector4 zero = Vector4::zero();
-	for (uint32_t s = 0; s < count; s += 4)
+	const static Vector4 zero = Vector4::zero();
+
+	int32_t s = 0;
+
+	for (; s <= int32_t(count) - 3 * 4; s += 3 * 4)
+	{
+		zero.storeAligned(&sb[s]);
+		zero.storeAligned(&sb[s + 4]);
+		zero.storeAligned(&sb[s + 8]);
+	}
+
+	for (; s < int32_t(count); s += 4)
 		zero.storeAligned(&sb[s]);
 }
 

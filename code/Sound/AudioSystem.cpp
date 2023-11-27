@@ -30,29 +30,6 @@
 
 namespace traktor::sound
 {
-	namespace
-	{
-
-inline void clearSamples(float* samples, int32_t samplesCount)
-{
-	T_ASSERT((samplesCount & 3) == 0);
-
-	const static Vector4 c_zero4 = Vector4::zero();
-	int32_t i = 0;
-
-	for (i = 0; i < samplesCount - 16; i += 16)
-	{
-		c_zero4.storeAligned(&samples[i]);
-		c_zero4.storeAligned(&samples[i + 4]);
-		c_zero4.storeAligned(&samples[i + 8]);
-		c_zero4.storeAligned(&samples[i + 12]);
-	}
-
-	for (; i < samplesCount; i += 4)
-		c_zero4.storeAligned(&samples[i]);
-}
-
-	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioSystem", AudioSystem, Object)
 
@@ -102,6 +79,7 @@ bool AudioSystem::create(const SoundSystemCreateDesc& desc)
 	if (!m_samplesData)
 		return false;
 
+	std::memset(m_samplesData, 0, samplesPerBlock * samplesBlockCount * sizeof(float));
 	for (uint32_t i = 0; i < samplesBlockCount; ++i)
 		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
@@ -316,7 +294,7 @@ void AudioSystem::threadMixer()
 		m_samplesBlocks.pop_front();
 
 		// Prepare new frame block.
-		clearSamples(samples, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels);
+		m_mixer->mute(samples, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels);
 		for (uint32_t i = 0; i < m_desc.driverDesc.hwChannels; ++i)
 			frameBlock.samples[i] = samples + m_desc.driverDesc.frameSamples * i;
 		frameBlock.samplesCount = m_desc.driverDesc.frameSamples;
@@ -334,8 +312,8 @@ void AudioSystem::threadMixer()
 			T_ASSERT(m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT(m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 
-			float categoryVolume = getVolume(m_requestBlocks[i].category);
-			float finalVolume = m_volume * categoryVolume;
+			const float categoryVolume = getVolume(m_requestBlocks[i].category);
+			const float finalVolume = m_volume * categoryVolume;
 
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
@@ -344,7 +322,7 @@ void AudioSystem::threadMixer()
 
 				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
-					float strength = m_desc.cm[j][k] * finalVolume;
+					const float strength = m_desc.cm[j][k] * finalVolume;
 					if (abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(
