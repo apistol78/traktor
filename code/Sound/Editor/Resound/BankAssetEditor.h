@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,24 +13,22 @@
 #include "Editor/IObjectEditor.h"
 #include "Ui/Events/AllEvents.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Command;
 class Container;
@@ -41,13 +39,11 @@ class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
-class AudioChannel;
-class AudioSystem;
 class BankAsset;
 class BankBuffer;
 class BankControl;
@@ -55,6 +51,8 @@ class BankControlGrain;
 class IGrain;
 class IGrainData;
 class IGrainFacade;
+class ISoundHandle;
+class ISoundPlayer;
 class GrainProperties;
 
 class BankAssetEditor : public editor::IObjectEditor
@@ -62,7 +60,7 @@ class BankAssetEditor : public editor::IObjectEditor
 	T_RTTI_CLASS;
 
 public:
-	BankAssetEditor(editor::IEditor* editor);
+	explicit BankAssetEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object) override final;
 
@@ -93,8 +91,8 @@ private:
 	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
 	Ref< ui::Widget > m_currentGrainView;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< AudioSystem > m_audioSystem;
-	Ref< AudioChannel > m_audioChannel;
+	Ref< ISoundPlayer > m_soundPlayer;
+	Ref< ISoundHandle > m_soundHandle;
 	Ref< BankBuffer > m_bankBuffer;
 	std::map< const IGrainData*, const IGrain* > m_grainInstances;
 
@@ -119,6 +117,4 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 };
 
-	}
 }
-

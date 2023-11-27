@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,6 +46,43 @@ bool AudioMixerAvx::supported()
 
 void AudioMixerAvx::mul(float* lsb, const float* rsb, uint32_t count) const
 {
+	T_ASSERT(alignUp(lsb, 16) == lsb);
+	T_ASSERT(alignUp(rsb, 16) == rsb);
+	T_ASSERT(alignUp(count, 4) == count);
+
+	int32_t s = 0;
+
+	for (; s < int32_t(count) - 8 * 4; s += 8 * 4)
+	{
+		const __m256 rs8_0 = _mm256_load_ps(&rsb[s]);
+		const __m256 rs8_1 = _mm256_load_ps(&rsb[s + 8]);
+		const __m256 rs8_2 = _mm256_load_ps(&rsb[s + 16]);
+		const __m256 rs8_3 = _mm256_load_ps(&rsb[s + 24]);
+
+		const __m256 ls8_0 = _mm256_load_ps(&lsb[s]);
+		const __m256 ls8_1 = _mm256_load_ps(&lsb[s + 8]);
+		const __m256 ls8_2 = _mm256_load_ps(&lsb[s + 16]);
+		const __m256 ls8_3 = _mm256_load_ps(&lsb[s + 24]);
+
+		_mm256_store_ps(&lsb[s], _mm256_mul_ps(rs8_0, ls8_0));
+		_mm256_store_ps(&lsb[s + 8], _mm256_mul_ps(rs8_1, ls8_1));
+		_mm256_store_ps(&lsb[s + 16], _mm256_mul_ps(rs8_2, ls8_2));
+		_mm256_store_ps(&lsb[s + 24], _mm256_mul_ps(rs8_3, ls8_3));
+	}
+
+	for (; s < int32_t(count) - 8; s += 8)
+	{
+		const __m256 rs8_0 = _mm256_load_ps(&rsb[s]);
+		const __m256 ls8_0 = _mm256_load_ps(&lsb[s]);
+		_mm256_store_ps(&lsb[s], _mm256_mul_ps(rs8_0, ls8_0));
+	}
+
+	for (; s < int32_t(count); s += 4)
+	{
+		const Vector4 rs4 = Vector4::loadAligned(&rsb[s]);
+		const Vector4 ls4 = Vector4::loadAligned(&lsb[s]);
+		(ls4 * rs4).storeAligned(&lsb[s]);
+	}
 }
 
 void AudioMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
@@ -219,8 +256,18 @@ void AudioMixerAvx::mute(float* sb, uint32_t count) const
 	T_ASSERT(alignUp(sb, 16) == sb);
 	T_ASSERT(alignUp(count, 4) == count);
 
-	const Vector4 zero = Vector4::zero();
-	for (uint32_t s = 0; s < count; s += 4)
+	const static Vector4 zero = Vector4::zero();
+
+	int32_t s = 0;
+
+	for (; s <= int32_t(count) - 3 * 4; s += 3 * 4)
+	{
+		zero.storeAligned(&sb[s]);
+		zero.storeAligned(&sb[s + 4]);
+		zero.storeAligned(&sb[s + 8]);
+	}
+
+	for (; s < int32_t(count); s += 4)
 		zero.storeAligned(&sb[s]);
 }
 
