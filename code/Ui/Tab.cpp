@@ -430,7 +430,7 @@ void Tab::eventPaint(PaintEvent* event)
 			ps.right = left + tabWidth;
 
 			// Draw only those tabs that are visible.
-			if (ps.right < rcTabs.right)
+			if (left < rcTabs.right)
 			{
 				// Calculate tab item rectangle.
 				Rect rcTab(
