@@ -61,7 +61,7 @@
 		<fogDensity>0</fogDensity>
 		<fogDensityMax>1</fogDensityMax>
 		<fogColor>1, 1, 1, 1</fogColor>
-		<irradianceGrid>{8F500C87-6146-A44F-B102-01BFDE65F9B9}</irradianceGrid>
+		<irradianceGrid>{2D8C2976-00FC-7548-BBFC-3A4CBF1A15AB}</irradianceGrid>
 		<imageProcess>
 			<disabled>{00000000-0000-0000-0000-000000000000}</disabled>
 			<low>{00000000-0000-0000-0000-000000000000}</low>

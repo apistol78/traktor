@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -90,8 +90,9 @@ bool IrradianceGridPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const IrradianceGridAsset* asset = mandatory_non_null_type_cast<const IrradianceGridAsset*>(sourceAsset);
-	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
+	const IrradianceGridAsset* asset = mandatory_non_null_type_cast< const IrradianceGridAsset* >(sourceAsset);
+	if (!asset->getFileName().empty())
+		pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 	return true;
 }
 
@@ -109,82 +110,111 @@ bool IrradianceGridPipeline::buildOutput(
 {
 	const IrradianceGridAsset* asset = mandatory_non_null_type_cast< const IrradianceGridAsset* >(sourceAsset);
 
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
-	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (!file)
+	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
+
+	if (!asset->getFileName().empty())
 	{
-		log::error << L"Irradiance grid pipeline failed; unable to open source file \"" << filePath.getPathName() << L"\"." << Endl;
-		return false;
-	}
-
-	Ref< drawing::Image > skyImage = drawing::Image::load(file, asset->getFileName().getExtension());
-	if (!skyImage)
-	{
-		log::error << L"Irradiance grid pipeline failed; unable to read source image." << Endl;
-		return false;
-	}
-
-	safeClose(file);
-
-	Ref< drawing::CubeMap > cubeMap = drawing::CubeMap::createFromImage(skyImage);
-	if (!cubeMap)
-	{
-		log::error << L"Irradiance grid pipeline failed; unable to create cube map from image." << Endl;
-		return false;
-	}
-
-	// Figure out sun direction.
-	float sunIntensity = -1.0f;
-	Vector4 sunDirection;
-
-	if (asset->shouldCancelSun())
-	{
-		for (int32_t y = 0; y <= 100; ++y)
+		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + asset->getFileName());
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+		if (!file)
 		{
-			const float phi = PI * ((y / 100.0f) * 2.0f - 1.0f);
+			log::error << L"Irradiance grid pipeline failed; unable to open source file \"" << filePath.getPathName() << L"\"." << Endl;
+			return false;
+		}
 
-			for (int32_t x = 0; x < 100; ++x)
+		Ref< drawing::Image > skyImage = drawing::Image::load(file, asset->getFileName().getExtension());
+		if (!skyImage)
+		{
+			log::error << L"Irradiance grid pipeline failed; unable to read source image." << Endl;
+			return false;
+		}
+
+		safeClose(file);
+
+		Ref< drawing::CubeMap > cubeMap = drawing::CubeMap::createFromImage(skyImage);
+		if (!cubeMap)
+		{
+			log::error << L"Irradiance grid pipeline failed; unable to create cube map from image." << Endl;
+			return false;
+		}
+
+		// Figure out sun direction.
+		float sunIntensity = -1.0f;
+		Vector4 sunDirection;
+
+		if (asset->shouldCancelSun())
+		{
+			for (int32_t y = 0; y <= 100; ++y)
 			{
-				const float theta = TWO_PI * (x / 100.0f);
-				const Vector4 direction = Polar(phi, theta).toUnitCartesian();
-				const float intensity = dot3(cubeMap->get(direction), Vector4(1.0f, 1.0f, 1.0f));
-				if (intensity > sunIntensity)
+				const float phi = PI * ((y / 100.0f) * 2.0f - 1.0f);
+
+				for (int32_t x = 0; x < 100; ++x)
 				{
-					sunIntensity = intensity;
-					sunDirection = direction;
+					const float theta = TWO_PI * (x / 100.0f);
+					const Vector4 direction = Polar(phi, theta).toUnitCartesian();
+					const float intensity = dot3(cubeMap->get(direction), Vector4(1.0f, 1.0f, 1.0f));
+					if (intensity > sunIntensity)
+					{
+						sunIntensity = intensity;
+						sunDirection = direction;
+					}
 				}
 			}
 		}
-	}
 
-	// Convolve sky into irradiance probe.
-	const Scalar intensity(asset->getIntensity());
+		// Convolve sky into irradiance probe.
+		const Scalar intensity(asset->getIntensity());
 
-	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
-		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
-		for (int32_t i = 0; i < 1000; ++i)
-		{
-			const Vector2 uv = Quasirandom::hammersley(i, 1000);
-			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
-			Scalar w = dot3(direction, unit);
-
-			// Reduce sun influence.
-			if (sunIntensity > 0.0f)
+		WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+			Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+			for (int32_t i = 0; i < 1000; ++i)
 			{
-				const Scalar f = clamp(dot3(direction, sunDirection), 0.0_simd, 1.0_simd);
-				w *= 1.0_simd - f;
+				const Vector2 uv = Quasirandom::hammersley(i, 1000);
+				const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+				Scalar w = dot3(direction, unit);
+
+				// Reduce sun influence.
+				if (sunIntensity > 0.0f)
+				{
+					const Scalar f = clamp(dot3(direction, sunDirection), 0.0_simd, 1.0_simd);
+					w *= 1.0_simd - f;
+				}
+
+				cl += cubeMap->get(direction) * w;
 			}
+			return (cl * intensity * 2.0_simd) / 1000.0_simd;
+		});
 
-			cl += cubeMap->get(direction) * w;
-		}
-		return (cl * intensity * 2.0_simd) / 1000.0_simd;
-	});
+		render::SHEngine shEngine(3);
+		shEngine.generateSamplePoints(10000);
+		shEngine.generateCoefficients(&shFunction, true, *shCoeffs);
+	}
+	else
+	{
+		// No asset specified; use dynamic sky.
+		const Scalar intensity(asset->getIntensity());
 
-	Ref< render::SHCoeffs > shCoeffs = new render::SHCoeffs();
-	
-	render::SHEngine shEngine(3);
-	shEngine.generateSamplePoints(10000);
-	shEngine.generateCoefficients(&shFunction, true, *shCoeffs);
+		WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+			Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+			for (int32_t i = 0; i < 1000; ++i)
+			{
+				const Vector2 uv = Quasirandom::hammersley(i, 1000);
+				const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+				const Scalar w = dot3(direction, unit);
+
+				Vector4 col = Vector4(0.2f, 0.5f, 0.85f, 0.0f) * 1.1_simd - max(direction.y(), 0.01_simd) * max(direction.y(), 0.01_simd) * 0.5_simd;
+				col = lerp(col, 0.85_simd * Vector4(0.7f, 0.75f, 0.85f), power(1.0_simd - max(direction.y(), 0.0_simd), 6.0_simd));
+				col += clamp((0.1_simd - direction.y()) * 10.0_simd, 0.0_simd, 1.0_simd) * Vector4(0.0f, 0.1f, 0.2f, 0.0f);
+
+				cl += Color4f(col * w);
+			}
+			return (cl * intensity * 2.0_simd) / 1000.0_simd;
+		});
+
+		render::SHEngine shEngine(3);
+		shEngine.generateSamplePoints(10000);
+		shEngine.generateCoefficients(&shFunction, true, *shCoeffs);
+	}
 
 	Ref< world::IrradianceGridResource > outputResource = new world::IrradianceGridResource();
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(

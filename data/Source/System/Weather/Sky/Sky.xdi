@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.IrradianceGridAsset" version="2">
+	<fileName></fileName>
+	<intensity>1</intensity>
+	<cancelSun>false</cancelSun>
+</object>
