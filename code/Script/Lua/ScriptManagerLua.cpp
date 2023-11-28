@@ -170,6 +170,7 @@ void ScriptManagerLua::destroy()
 		return;
 
 	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
+	T_FATAL_ASSERT(m_contexts.empty());
 
 	// Discard all tags from C++ rtti types.
 	for (auto& rc : m_classRegistry)
@@ -180,9 +181,6 @@ void ScriptManagerLua::destroy()
 
 	m_debugger = nullptr;
 	m_profiler = nullptr;
-
-	while (!m_contexts.empty())
-		m_contexts.back()->destroy();
 
 	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 	m_objectTableRef = LUA_NOREF;
@@ -724,15 +722,15 @@ void ScriptManagerLua::collectGarbageFull()
 void ScriptManagerLua::collectGarbageFullNoLock()
 {
 	// Repeat GC until allocated memory doesn't decrease
-	// further in ten consecutive GCs.
-	int32_t count = 10;
+	// further in multiple consecutive GCs.
+	int32_t count = 100;
 	while (count > 0)
 	{
 		const size_t memoryUseBefore = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 
 		if (m_totalMemoryUse < memoryUseBefore)
-			count = 10;
+			count = 100;
 		else
 			count--;
 	}
