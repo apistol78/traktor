@@ -429,6 +429,22 @@ bool EntityAdapter::isPrefab() const
 	return false;
 }
 
+bool EntityAdapter::isGeometry() const
+{
+	for (auto component : m_entityData->getComponents())
+	{
+		if (std::wstring(type_name(component)) == L"traktor.world.LightComponentData")
+			return false;
+		if (std::wstring(type_name(component)) == L"traktor.world.ProbeComponentData")
+			return false;
+		if (std::wstring(type_name(component)) == L"traktor.world.VolumetricFogComponentData")
+			return false;
+		if (std::wstring(type_name(component)) == L"traktor.weather.SkyComponentData")
+			return false;
+	}
+	return true;
+}
+
 AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 {
 	AlignedVector< SnapPoint > snapPoints;

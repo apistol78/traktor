@@ -209,6 +209,8 @@ public:
 
 	bool isPrefab() const;
 
+	bool isGeometry() const;
+
 	//@}
 
 	/*! \name Editor aid. */

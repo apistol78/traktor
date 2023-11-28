@@ -121,6 +121,7 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.UnlockAllEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ShowEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ShowAllEntities"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ShowOnlyEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.HideEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.FilterEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RenameAllEntityIds"));

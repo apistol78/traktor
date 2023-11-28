@@ -844,16 +844,21 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.EnlargeGuide")
 	{
-		float guideSize = m_context->getGuideSize();
+		const float guideSize = m_context->getGuideSize();
 		m_context->setGuideSize(guideSize + 0.5f);
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.ShrinkGuide")
 	{
-		float guideSize = m_context->getGuideSize();
+		const float guideSize = m_context->getGuideSize();
 		m_context->setGuideSize(std::max(guideSize - 0.5f, 0.5f));
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.ResetGuide")
+	{
 		m_context->setGuideSize(1.0f);
+		m_context->enqueueRedraw(nullptr);
+	}
 	else if (command == L"Scene.Editor.FindInDatabase")
 	{
 		const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
@@ -895,13 +900,34 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			selectedEntity->setVisible(true);
 
 		createInstanceGrid();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.ShowAllEntities")
 	{
-		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfDescendants))
-			selectedEntity->setVisible(true);
+		for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
+			entity->setVisible(true);
 
 		createInstanceGrid();
+		m_context->enqueueRedraw(nullptr);
+	}
+	else if (command == L"Scene.Editor.ShowOnlyEntities")
+	{
+		// Hide all entities, which are not lights etc.
+		for (auto entity : m_context->getEntities(SceneEditorContext::GfDescendants))
+		{
+			if (entity->isGeometry())
+				entity->setVisible(false);
+		}
+
+		// Show only selected entities.
+		for (auto selectedEntity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
+		{
+			for (auto entity = selectedEntity; entity != nullptr; entity = entity->getParent())
+				entity->setVisible(true);
+		}
+
+		createInstanceGrid();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.HideEntities")
 	{
@@ -909,6 +935,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			selectedEntity->setVisible(false);
 
 		createInstanceGrid();
+		m_context->enqueueRedraw(nullptr);
 	}
 	else if (command == L"Scene.Editor.RenameAllEntityIds")
 	{
