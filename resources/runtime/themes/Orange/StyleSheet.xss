@@ -903,6 +903,19 @@
 				</item>
 			</colors>
 		</item>
+		<item>
+			<typeName>traktor.ui.Slider</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>42, 42, 42, 255</second>
+				</item>
+				<item>
+					<first>color</first>
+					<second>224, 91, 0, 255</second>
+				</item>
+			</colors>
+		</item>
 	</entities>
 	<values>
 		<item>
