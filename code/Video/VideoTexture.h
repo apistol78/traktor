@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,8 +44,6 @@ class T_DLLCLASS VideoTexture : public render::ITexture
 	T_RTTI_CLASS;
 
 public:
-	VideoTexture();
-
 	virtual ~VideoTexture();
 
 	bool create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder);
@@ -64,14 +62,14 @@ private:
 	Ref< IVideoDecoder > m_decoder;
 	Ref< render::ITexture > m_textures[4];
 	Timer m_timer;
-	float m_rate;
+	float m_rate = 0.0f;
 	AutoPtr< uint8_t, AllocFreeAlign > m_frameBuffer;
-	uint32_t m_frameBufferPitch;
-	uint32_t m_frameBufferSize;
-	uint32_t m_lastDecodedFrame;
-	uint32_t m_lastUploadedFrame;
-	uint32_t m_current;
-	Thread* m_thread;
+	uint32_t m_frameBufferPitch = 0;
+	uint32_t m_frameBufferSize = 0;
+	uint32_t m_lastDecodedFrame = 0;
+	uint32_t m_lastUploadedFrame = 0;
+	uint32_t m_current = 0;
+	Thread* m_thread = nullptr;
 
 	void decodeThread();
 };

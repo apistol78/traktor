@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,17 +18,6 @@ namespace traktor::video
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoTexture", VideoTexture, render::ITexture)
-
-VideoTexture::VideoTexture()
-:	m_rate(0.0f)
-,	m_frameBufferPitch(0)
-,	m_frameBufferSize(0)
-,	m_lastDecodedFrame(0)
-,	m_lastUploadedFrame(0)
-,	m_current(0)
-,	m_thread(nullptr)
-{
-}
 
 VideoTexture::~VideoTexture()
 {
