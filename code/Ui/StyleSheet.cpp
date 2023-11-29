@@ -99,7 +99,7 @@ void StyleSheet::setColor(const std::wstring& typeName, const std::wstring& elem
 	}
 }
 
-Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring& element) const
+Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring_view& element) const
 {
 	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
 		return entity.typeName == typeName;
@@ -114,7 +114,7 @@ Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring& 
 	return it2->second;
 }
 
-Color4ub StyleSheet::getColor(const Object* widget, const std::wstring& element) const
+Color4ub StyleSheet::getColor(const Object* widget, const std::wstring_view& element) const
 {
 	const TypeInfo* widgetType = &type_of(widget);
 	while (widgetType != nullptr)
@@ -133,18 +133,18 @@ Color4ub StyleSheet::getColor(const Object* widget, const std::wstring& element)
 	return Color4ub(255, 255, 255);
 }
 
-void StyleSheet::setValue(const std::wstring& name, const std::wstring& value)
+void StyleSheet::setValue(const std::wstring& name, const std::wstring_view& value)
 {
 	m_values[name] = value;
 }
 
-std::wstring StyleSheet::getValueRaw(const std::wstring& name) const
+std::wstring StyleSheet::getValueRaw(const std::wstring_view& name) const
 {
 	auto it = m_values.find(name);
 	return it != m_values.end() ? it->second : L"";
 }
 
-std::wstring StyleSheet::getValue(const std::wstring& name) const
+std::wstring StyleSheet::getValue(const std::wstring_view& name) const
 {
 	auto it = m_values.find(name);
 	if (it == m_values.end())
@@ -194,28 +194,10 @@ Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
 
 void StyleSheet::serialize(ISerializer& s)
 {
-	if (s.getVersion< StyleSheet >() >= 1)
-	{
-		if (s.getVersion< StyleSheet >() >= 2)
-			s >> MemberAlignedVector< std::wstring >(L"include", m_include);
-
-		s >> MemberAlignedVector< Entity, MemberEntity >(L"entities", m_entities);
-		s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
-	}
-	else
-	{
-		AlignedVector< Group > groups;
-		AlignedVector< Value > values;
-
-		s >> MemberAlignedVector< Group, MemberComposite< Group > >(L"groups", groups);
-		s >> MemberAlignedVector< Value, MemberComposite< Value > >(L"values", values);
-
-		for (const auto& group : groups)
-			setColor(group.type, group.element, group.color);
-
-		for (const auto& value : values)
-			setValue(value.name, value.value);
-	}
+	T_FATAL_ASSERT(s.getVersion< StyleSheet >() >= 2);
+	s >> MemberAlignedVector< std::wstring >(L"include", m_include);
+	s >> MemberAlignedVector< Entity, MemberEntity >(L"entities", m_entities);
+	s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
 }
 
 Ref< StyleSheet > StyleSheet::createDefault()
