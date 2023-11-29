@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<object type="traktor.ui.StyleSheet" version="1">
+<object type="traktor.ui.StyleSheet" version="2">
+	<include/>
 	<entities/>
 	<values>
 		<item>
