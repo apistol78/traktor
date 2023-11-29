@@ -49,15 +49,15 @@ public:
 
 	void setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color);
 
-	Color4ub getColor(const std::wstring& typeName, const std::wstring& element) const;
+	Color4ub getColor(const std::wstring& typeName, const std::wstring_view& element) const;
 
-	Color4ub getColor(const Object* widget, const std::wstring& element) const;
+	Color4ub getColor(const Object* widget, const std::wstring_view& element) const;
 
-	void setValue(const std::wstring& name, const std::wstring& value);
+	void setValue(const std::wstring& name, const std::wstring_view& value);
 
-	std::wstring getValueRaw(const std::wstring& name) const;
+	std::wstring getValueRaw(const std::wstring_view& name) const;
 
-	std::wstring getValue(const std::wstring& name) const;
+	std::wstring getValue(const std::wstring_view& name) const;
 
 	/*! Merge this style sheet with another.
 	 *

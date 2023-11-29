@@ -8,11 +8,33 @@
  */
 #pragma once
 
+#include <string>
 #include <utility>
 #include "Core/Containers/AlignedVector.h"
 
 namespace traktor
 {
+
+/*! \ingroup Core */
+template < typename Key >
+struct SmallMapKeyView
+{
+	typedef const Key& view_type_t;
+};
+
+/*! \ingroup Core */
+template < >
+struct SmallMapKeyView < std::string >
+{
+	typedef const std::string_view& view_type_t;
+};
+
+/*! \ingroup Core */
+template < >
+struct SmallMapKeyView < std::wstring >
+{
+	typedef const std::wstring_view& view_type_t;
+};
 
 /*! Small directional map
  * \ingroup Core
@@ -31,6 +53,7 @@ public:
 	typedef typename AlignedVector< pair_t >::const_iterator const_iterator;
 	typedef typename AlignedVector< pair_t >::reverse_iterator reverse_iterator;
 	typedef typename AlignedVector< pair_t >::const_reverse_iterator const_reverse_iterator;
+	typedef typename SmallMapKeyView< Key >::view_type_t view_type_t;
 
 	SmallMap() = default;
 
@@ -94,7 +117,7 @@ public:
 		return m_data.rend();
 	}
 
-	iterator find(const Key& key)
+	iterator find(const view_type_t& key)
 	{
 		size_t is = 0;
 		size_t ie = m_data.size();
@@ -113,7 +136,7 @@ public:
 		return end();
 	}
 
-	const_iterator find(const Key& key) const
+	const_iterator find(const view_type_t& key) const
 	{
 		size_t is = 0;
 		size_t ie = m_data.size();
@@ -152,9 +175,9 @@ public:
 		m_data.insert(m_data.begin() + is, pair);
 	}
 
-	void insert(const Key& key, const Item& item)
+	void insert(const view_type_t& key, const Item& item)
 	{
-		insert(std::make_pair(key, item));
+		insert(std::make_pair(Key(key), item));
 	}
 
 	void insert(const const_iterator& first, const const_iterator& last)
@@ -173,7 +196,7 @@ public:
 		return m_data.erase(first, last);
 	}
 
-	bool remove(const Key& key)
+	bool remove(const view_type_t& key)
 	{
 		iterator it = find(key);
 		if (it != end())
@@ -211,7 +234,7 @@ public:
 		return m_data.size();
 	}
 
-	Item& operator [] (const Key& key)
+	Item& operator [] (const view_type_t& key)
 	{
 		size_t is = 0;
 		size_t ie = m_data.size();
@@ -227,11 +250,11 @@ public:
 				return m_data[i].second;
 		}
 
-		m_data.insert(m_data.begin() + is, std::make_pair(key, Item()));
+		m_data.insert(m_data.begin() + is, std::make_pair(Key(key), Item()));
 		return m_data[is].second;
 	}
 
-	Item operator [] (const Key& key) const
+	Item operator [] (const view_type_t& key) const
 	{
 		size_t is = 0;
 		size_t ie = m_data.size();
