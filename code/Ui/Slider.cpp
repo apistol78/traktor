@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,27 +10,18 @@
 #include "Ui/Slider.h"
 #include "Ui/StyleSheet.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
-const Unit c_margin = 16_ut;
+const Unit c_margin = 8_ut;
 const Unit c_knobWidth = 6_ut;
 const Unit c_knobMarginY = 3_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Slider", Slider, Widget)
-
-Slider::Slider()
-:	m_range(0, 100)
-,	m_value(0)
-,	m_drag(false)
-{
-}
 
 bool Slider::create(Widget* parent, int32_t style)
 {
@@ -93,6 +84,22 @@ void Slider::eventButtonDown(MouseButtonDownEvent* event)
 		m_drag = true;
 		update();
 	}
+	else if (pt.x < knobL)
+	{
+		m_value = m_range.clamp(m_value - m_range.delta() / 10);
+		update();
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
+	else if (pt.x > knobR)
+	{
+		m_value = m_range.clamp(m_value + m_range.delta() / 10);
+		update();
+
+		ContentChangeEvent contentChangeEvent(this);
+		raiseEvent(&contentChangeEvent);
+	}
 }
 
 void Slider::eventButtonUp(MouseButtonUpEvent* event)
@@ -116,7 +123,7 @@ void Slider::eventMouseMove(MouseMoveEvent* event)
 
 	const int32_t x = pt.x - pixel(c_margin);
 	const int32_t dist = sz.cx - pixel(c_margin) * 2;
-	const int32_t value = int32_t(m_range.delta() * float(x) / dist);
+	const int32_t value = int32_t(m_range.delta() * float(x) / dist + 0.5f);
 
 	m_value = m_range.clamp(value);
 	update();
@@ -157,5 +164,4 @@ void Slider::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }
