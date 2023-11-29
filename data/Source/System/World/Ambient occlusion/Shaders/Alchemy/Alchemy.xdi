@@ -589,8 +589,8 @@ Heaveside
 			<id>{6B22DEA0-A54D-1649-870B-C291992AD125}</id>
 			<comment/>
 			<position>
-				<first>1022</first>
-				<second>-567</second>
+				<first>877</first>
+				<second>-580</second>
 			</position>
 			<name>L_Obscurance</name>
 		</item>
@@ -979,8 +979,8 @@ Edge
 			<id>{C6BC1F33-6C88-174E-B821-5CE588649612}</id>
 			<comment/>
 			<position>
-				<first>1222</first>
-				<second>-563</second>
+				<first>1077</first>
+				<second>-576</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -1018,7 +1018,7 @@ Edge
 			</position>
 			<name>L_SampleCount</name>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{AD786D3A-11F0-B94B-A0D4-5B17438E962C}</id>
 			<comment/>
 			<position>
@@ -1027,7 +1027,15 @@ Edge
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
-			<inputPins/>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+					<name>Time</name>
+				</item>
+			</inputPins>
 			<outputPins>
 				<item>
 					<id>{41A73D88-906F-FF44-887E-8EAFD0B72B61}</id>
@@ -1037,17 +1045,12 @@ Edge
 			</outputPins>
 			<script>
 			<![CDATA[
-const vec2 co = vec2(gl_FragCoord.xy);
-highp float a = 12.9898;
-highp float b = 78.233;
-highp float c = 43758.5453;
-highp float dt = dot(co.xy, vec2(a, b));
-highp float sn = mod(dt, 3.14);
-$Output = fract(sin(sn) * c) * 2 * 3.14;
+$Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
+
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
 			<id>{43F91428-6EFD-D446-96FA-4E3A41B0ACC1}</id>
 			<comment/>
 			<position>
@@ -1056,6 +1059,7 @@ $Output = fract(sin(sn) * c) * 2 * 3.14;
 			</position>
 			<name>Hammersley</name>
 			<technique/>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{396FADAC-E3D6-4102-9DC0-ABBB802B77AB}</id>
@@ -1119,6 +1123,35 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{64CEBBEE-A45E-4FDC-9DE1-779A92D849CC}</id>
+			<comment/>
+			<position>
+				<first>1278</first>
+				<second>-597</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{7A076C6E-36F3-43F1-9533-2D663558D4BA}</id>
+			<comment/>
+			<position>
+				<first>1499</first>
+				<second>-175</second>
+			</position>
+			<parameterName>Random</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{788D8D13-1E68-46A3-BB7F-CE3E7957F94B}</id>
+			<comment/>
+			<position>
+				<first>1640</first>
+				<second>-151</second>
+			</position>
+			<swizzle>x</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1834,16 +1867,6 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[101]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[96]"/>
-				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[96]"/>
 				<id>{36E29D75-02C6-405F-832D-B0A91528A58A}</id>
 			</source>
@@ -2200,6 +2223,46 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[110]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[96]"/>
+				<id>{E878AB3C-E58E-48AD-92D5-75176A2DF7F7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[101]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[110]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[111]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[112]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[112]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[106]"/>
+				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
 			</destination>
 		</item>
 	</edges>
