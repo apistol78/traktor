@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,50 +21,48 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderView;
 class ScreenRenderer;
 class Shader;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class IdleEvent;
 class PaintEvent;
 class SizeEvent;
 class Widget;
 
-	}
+}
 
-	namespace video
-	{
+namespace traktor::video
+{
 
 class Video;
 class VideoAsset;
 
-/*! \brief
+/*!
  * \ingroup Video
  */
 class T_DLLCLASS VideoEditorPage : public editor::IEditorPage
@@ -72,7 +70,7 @@ class T_DLLCLASS VideoEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -104,5 +102,4 @@ private:
 	void eventIdle(ui::IdleEvent* event);
 };
 
-	}
 }

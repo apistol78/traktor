@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
+#include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
@@ -28,16 +29,14 @@
 #include "Video/Editor/VideoAsset.h"
 #include "Video/Editor/VideoEditorPage.h"
 
-namespace traktor
+namespace traktor::video
 {
-	namespace video
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< render::Shader > c_idShaderMovie(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}"));
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoEditorPage", VideoEditorPage, editor::IEditorPage)
 
@@ -148,6 +147,9 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 	if (!m_renderView)
 		return;
 
+	if (!m_renderView->beginFrame())
+		return;
+
 	render::Clear cl;
 	cl.mask = render::CfColor;
 	cl.colors[0] = Color4f(0.8f, 0.8f, 0.8f, 0.0);
@@ -159,15 +161,16 @@ void VideoEditorPage::eventPaint(ui::PaintEvent* event)
 			render::ITexture* texture = m_video->getTexture();
 			if (texture)
 			{
-				// \fixme
-				// m_shader->setTextureParameter(L"Texture", texture);
-				// m_shader->setVectorParameter(L"Bounds", Vector4(0.0f, 0.0f, 1.0f, 1.0f));
-				// m_screenRenderer->draw(m_renderView, m_shader);
+				auto program = m_shader->getProgram().program;
+				program->setTextureParameter(render::getParameterHandle(L"Texture"), texture);
+				program->setVectorParameter(render::getParameterHandle(L"Bounds"), Vector4(0.0f, 0.0f, 1.0f, 1.0f));
+				m_screenRenderer->draw(m_renderView, program);
 			}
 		}
 		m_renderView->endPass();
 	}
 
+	m_renderView->endFrame();
 	m_renderView->present();
 
 	event->consume();
@@ -187,5 +190,4 @@ void VideoEditorPage::eventIdle(ui::IdleEvent* event)
 	}
 }
 
-	}
 }
