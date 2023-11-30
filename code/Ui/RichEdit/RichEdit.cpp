@@ -1453,14 +1453,17 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 void RichEdit::eventKey(KeyEvent* event)
 {
-	const wchar_t ch = std::toupper(event->getCharacter());
-	const bool ctrl = ((event->getKeyState() & VkControl) != 0);
+	const int32_t ks = event->getKeyState();
+	const bool ctrl = ((ks & KsControl) != 0);
+
+	const wchar_t ch = event->getCharacter();
+	const wchar_t uch = std::toupper(ch);
 	
-	if (ctrl && ch == L'C' && m_clipboard)
+	if (ctrl && uch == L'C' && m_clipboard)
 		copy();
-	else if (ctrl && ch == L'V' && m_clipboard)
+	else if (ctrl && uch == L'V' && m_clipboard)
 		paste();
-	else if (ctrl && ch == L'X' && m_clipboard)
+	else if (ctrl && uch == L'X' && m_clipboard)
 		cut();
 	else if (ch != 8 && ch != 127)
 		insertCharacter(ch, true);

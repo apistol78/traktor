@@ -135,7 +135,9 @@ int32_t EventLoopWin32::getAsyncKeyState() const
 {
 	int32_t keyState = KsNone;
 
-	if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) != 0)
+	if ((GetAsyncKeyState(VK_LCONTROL) & 0x8000) != 0)
+		keyState |= KsControl | KsCommand;
+	if ((GetAsyncKeyState(VK_RCONTROL) & 0x8000) != 0)
 		keyState |= KsControl | KsCommand;
 	if ((GetAsyncKeyState(VK_MENU) & 0x8000) != 0)
 		keyState |= KsMenu;
