@@ -20,6 +20,9 @@
 #include "Editor/PropertiesView.h"
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
+#include "Script/IScriptContext.h"
+#include "Script/IScriptManager.h"
+#include "Script/ScriptFactory.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/Editor/WaveformControl.h"
@@ -161,10 +164,22 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_DELETE_NODE")));
 
+	// Get the sound player.
 	m_soundPlayer = m_editor->getStoreObject< ISoundPlayer >(L"SoundPlayer");
 
+	// Get script manager and create context, used for custom nodes.
+	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	if (!scriptManager)
+		return false;
+
+	m_scriptContext = scriptManager->createContext(false);
+	if (!m_scriptContext)
+		return false;
+
+	// Create the resource manager.
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
+	m_resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));
 
 	updateView();
 	return true;
@@ -180,6 +195,8 @@ void GraphEditor::destroy()
 	m_site->destroyAdditionalPanel(m_propertiesView);
 
 	safeDestroy(m_propertiesView);
+	safeDestroy(m_resourceManager);
+	safeDestroy(m_scriptContext);
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -264,6 +281,8 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 
 void GraphEditor::handleDatabaseEvent(db::Database* database, const Guid& eventId)
 {
+	if (m_resourceManager && database == m_editor->getOutputDatabase())
+		m_resourceManager->reload(eventId, false);
 }
 
 void GraphEditor::updateView()

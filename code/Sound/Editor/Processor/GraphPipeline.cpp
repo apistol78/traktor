@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,20 +21,17 @@
 #include "Sound/Processor/GraphResource.h"
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
+#include "Sound/Processor/Nodes/Custom.h"
 #include "Sound/Processor/Nodes/Source.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GraphPipeline", 0, GraphPipeline, editor::DefaultPipeline)
 
 TypeInfoSet GraphPipeline::getAssetTypes() const
 {
-	TypeInfoSet typeSet;
-	typeSet.insert< GraphAsset >();
-	return typeSet;
+	return makeTypeInfoSet< GraphAsset >();
 }
 
 bool GraphPipeline::buildDependencies(
@@ -56,9 +53,10 @@ bool GraphPipeline::buildDependencies(
 	const auto& nodes = graphAsset->getGraph()->getNodes();
 	for (const auto node : nodes)
 	{
-		const Source* source = dynamic_type_cast< const Source* >(node);
-		if (source)
+		if (auto source = dynamic_type_cast< const Source* >(node))
 			pipelineDepends->addDependency(source->getSound().getId(), editor::PdfBuild);
+		else if (auto custom = dynamic_type_cast< const Custom* >(node))
+			pipelineDepends->addDependency(custom->getClass().getId(), editor::PdfBuild);
 	}
 
 	return true;
@@ -131,5 +129,4 @@ bool GraphPipeline::buildOutput(
 	);
 }
 
-	}
 }
