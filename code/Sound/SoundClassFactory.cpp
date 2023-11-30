@@ -13,6 +13,7 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioSystem.h"
+#include "Sound/BoxedSoundBlock.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/IFilter.h"
@@ -59,6 +60,14 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundClassFactory", 0, SoundClass
 
 void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	auto classSoundBlock = new AutoRuntimeClass< BoxedSoundBlock >();
+	classSoundBlock->addProperty("samplesCount", &BoxedSoundBlock::getSamplesCount);
+	classSoundBlock->addProperty("sampleRate", &BoxedSoundBlock::getSampleRate);
+	classSoundBlock->addProperty("maxChannel", &BoxedSoundBlock::getMaxChannel);
+	classSoundBlock->addMethod("get", &BoxedSoundBlock::get);
+	classSoundBlock->addMethod("set", &BoxedSoundBlock::set);
+	registrar->registerClass(classSoundBlock);
+
 	auto classSound = new AutoRuntimeClass< Sound >();
 	classSound->addConstructor< ISoundBuffer*, handle_t, float, float >();
 	classSound->addProperty("buffer", &Sound::getBuffer);
