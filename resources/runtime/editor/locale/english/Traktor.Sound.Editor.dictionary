@@ -57,7 +57,6 @@
 			<first>SOUND_PROCESSOR_EDITOR_DELETE_NODE</first>
 			<second>Delete</second>
 		</item>
-
 		<item>
 			<first>SOUND_PROCESSOR_NODE_ADD</first>
 			<second>Add</second>
@@ -65,6 +64,10 @@
 		<item>
 			<first>SOUND_PROCESSOR_NODE_BLEND</first>
 			<second>Blend</second>
+		</item>
+		<item>
+			<first>SOUND_PROCESSOR_NODE_CUSTOM</first>
+			<second>Custom</second>
 		</item>
 		<item>
 			<first>SOUND_PROCESSOR_NODE_DIVIDE</first>
