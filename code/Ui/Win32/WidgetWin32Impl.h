@@ -551,7 +551,7 @@ protected:
 		VirtualKey vk = translateToVirtualKey(int(wParam));
 
 		// Seems weird but Windows send Nth character in alphabet when holding down CTRL.
-		if (vk == VkNull && (wParam > 10 && wParam < L'A' && kctrl && !kalt))
+		if (vk == VkNull && (wParam > 0 && wParam < L'A' && kctrl && !kalt))
 		{
 			wParam = L'A' - 1 + wParam;
 			vk = translateToVirtualKey(int(wParam));
