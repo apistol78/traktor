@@ -286,7 +286,13 @@ TracerProcessor::TracerProcessor(const TypeInfo* rayTracerType, const std::wstri
 
 TracerProcessor::~TracerProcessor()
 {
-	// Ensure all tasks has finished until we stop thread.
+	// Remove pending tasks.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_tasks.clear();
+	}
+
+	// Ensure running task has finished before we stop thread.
 	waitUntilIdle();
 
 	// Stop task thread.
