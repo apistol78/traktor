@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -72,7 +72,7 @@ std::wstring T_DLLCLASS replaceAll(const std::wstring& str, const std::wstring& 
  * \param func Pointer to transformation function.
  * \return Transformed string.
  */
-std::string T_DLLCLASS transform(const std::string& str, int (*func)(int c));
+std::string T_DLLCLASS transform(const std::string_view& str, int (*func)(int c));
 
 /*! Apply transformation of an entire string.
  * \ingroup Core
@@ -81,7 +81,7 @@ std::string T_DLLCLASS transform(const std::string& str, int (*func)(int c));
  * \param func Pointer to transformation function.
  * \return Transformed string.
  */
-std::wstring T_DLLCLASS transform(const std::wstring& str, int (*func)(int c));
+std::wstring T_DLLCLASS transform(const std::wstring_view& str, int (*func)(int c));
 
 /*! Implode set of strings into a single string.
  * \ingroup Core
@@ -111,7 +111,7 @@ typename Iterator::value_type implode(const Iterator& begin, const Iterator& end
  * \param str Source string.
  * \return All uppercase string.
  */
-std::string T_DLLCLASS toUpper(const std::string& str);
+std::string T_DLLCLASS toUpper(const std::string_view& str);
 
 /*! Transform a string to all uppercase.
  * \ingroup Core
@@ -119,7 +119,7 @@ std::string T_DLLCLASS toUpper(const std::string& str);
  * \param str Source string.
  * \return All uppercase string.
  */
-std::wstring T_DLLCLASS toUpper(const std::wstring& str);
+std::wstring T_DLLCLASS toUpper(const std::wstring_view& str);
 
 /*! Transform a string to all lowercase.
  * \ingroup Core
@@ -127,7 +127,7 @@ std::wstring T_DLLCLASS toUpper(const std::wstring& str);
  * \param str Source string.
  * \return All lowercase string.
  */
-std::string T_DLLCLASS toLower(const std::string& str);
+std::string T_DLLCLASS toLower(const std::string_view& str);
 
 /*! Transform a string to all lowercase.
  * \ingroup Core
@@ -135,7 +135,7 @@ std::string T_DLLCLASS toLower(const std::string& str);
  * \param str Source string.
  * \return All lowercase string.
  */
-std::wstring T_DLLCLASS toLower(const std::wstring& str);
+std::wstring T_DLLCLASS toLower(const std::wstring_view& str);
 
 /*! See if the start of a string matches a given string.
  * \ingroup Core
@@ -144,7 +144,7 @@ std::wstring T_DLLCLASS toLower(const std::wstring& str);
  * \param start Match string.
  * \return True if source string starts with given match string.
  */
-bool T_DLLCLASS startsWith(const std::string& str, const std::string& start);
+bool T_DLLCLASS startsWith(const std::string_view& str, const std::string_view& start);
 
 /*! See if the start of a string matches a given string.
  * \ingroup Core
@@ -153,7 +153,7 @@ bool T_DLLCLASS startsWith(const std::string& str, const std::string& start);
  * \param start Match string.
  * \return True if source string starts with given match string.
  */
-bool T_DLLCLASS startsWith(const std::wstring& str, const std::wstring& start);
+bool T_DLLCLASS startsWith(const std::wstring_view& str, const std::wstring_view& start);
 
 /*! See if the end of a string matches a given string.
  * \ingroup Core
@@ -162,7 +162,7 @@ bool T_DLLCLASS startsWith(const std::wstring& str, const std::wstring& start);
  * \param end Match string.
  * \return True if source string ends with given match string.
  */
-bool T_DLLCLASS endsWith(const std::string& str, const std::string& end);
+bool T_DLLCLASS endsWith(const std::string_view& str, const std::string_view& end);
 
 /*! See if the end of a string matches a given string.
  * \ingroup Core
@@ -171,7 +171,7 @@ bool T_DLLCLASS endsWith(const std::string& str, const std::string& end);
  * \param end Match string.
  * \return True if source string ends with given match string.
  */
-bool T_DLLCLASS endsWith(const std::wstring& str, const std::wstring& end);
+bool T_DLLCLASS endsWith(const std::wstring_view& str, const std::wstring_view& end);
 
 /*! Perform a lexicographically compare of strings.
  * \ingroup Core
@@ -180,7 +180,7 @@ bool T_DLLCLASS endsWith(const std::wstring& str, const std::wstring& end);
  * \param b Right hand string.
  * \return See basic_string::compare().
  */
-int T_DLLCLASS compareIgnoreCase(const std::string& a, const std::string& b);
+int T_DLLCLASS compareIgnoreCase(const std::string_view& a, const std::string_view& b);
 
 /*! Perform a lexicographically compare of strings.
  * \ingroup Core
@@ -189,7 +189,7 @@ int T_DLLCLASS compareIgnoreCase(const std::string& a, const std::string& b);
  * \param b Right hand string.
  * \return See basic_string::compare().
  */
-int T_DLLCLASS compareIgnoreCase(const std::wstring& a, const std::wstring& b);
+int T_DLLCLASS compareIgnoreCase(const std::wstring_view& a, const std::wstring_view& b);
 
 /*! Trim leading white-space.
  * \ingroup Core
@@ -296,7 +296,7 @@ inline bool parseString< bool >(const std::wstring& text)
 		return true;
 	else
 	{
-		int32_t number = parseString< int32_t >(text);
+		const int32_t number = parseString< int32_t >(text);
 		if (number > 0)
 			return true;
 	}

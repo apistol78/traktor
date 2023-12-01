@@ -256,7 +256,7 @@ Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyN
 	else if (auto propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
 		return Any::fromFloat(*propertyFloat);
 	else if (auto propertyString = dynamic_type_cast< const PropertyString* >(property))
-		return Any::fromString(*propertyString);
+		return Any::fromString((const std::wstring&)*propertyString);
 	else if (property)
 		return Any::fromObject(property);
 	else

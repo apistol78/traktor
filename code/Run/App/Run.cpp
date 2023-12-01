@@ -403,7 +403,7 @@ Any Run::getProperty(const std::wstring& fileName1, const std::wstring& fileName
 	else if (const PropertyFloat* propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
 		return Any::fromFloat(*propertyFloat);
 	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
-		return Any::fromString(*propertyString);
+		return Any::fromString((const std::wstring&)*propertyString);
 	else
 		return Any::fromObject(property);
 }

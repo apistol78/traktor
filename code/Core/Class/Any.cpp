@@ -17,10 +17,8 @@ namespace traktor
 	namespace
 	{
 
-char* refStringCreate(const char* s)
+char* refStringCreate(const char* s, size_t len)
 {
-	size_t len = strlen(s);
-
 	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return nullptr;
@@ -34,6 +32,12 @@ char* refStringCreate(const char* s)
 
 	c[len] = L'\0';
 	return c;
+}
+
+char* refStringCreate(const char* s)
+{
+	const size_t len = strlen(s);
+	return refStringCreate(s, len);
 }
 
 char* refStringInc(char* s)
@@ -136,10 +140,10 @@ Any Any::fromString(const char* value)
 	return any;
 }
 
-Any Any::fromString(const std::string& value)
+Any Any::fromString(const std::string_view& value)
 {
 	Any any(Type::String);
-	any.m_data.m_string = refStringCreate(value.c_str());
+	any.m_data.m_string = refStringCreate(value.data(), value.length());
 	return any;
 }
 
@@ -150,7 +154,7 @@ Any Any::fromString(const wchar_t* value)
 	return any;
 }
 
-Any Any::fromString(const std::wstring& value)
+Any Any::fromString(const std::wstring_view& value)
 {
 	Any any(Type::String);
 	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
