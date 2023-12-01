@@ -75,13 +75,13 @@ public:
 	static Any fromString(const char* value);
 
 	/*! Create Any from UTF-8 string. */
-	static Any fromString(const std::string& value);
+	static Any fromString(const std::string_view& value);
 
 	/*! Create Any from wide string. */
 	static Any fromString(const wchar_t* value);
 
 	/*! Create Any from wide string. */
-	static Any fromString(const std::wstring& value);
+	static Any fromString(const std::wstring_view& value);
 
 	/*! Create Any from object. */
 	static Any fromObject(ITypedObject* value);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,41 +53,41 @@ std::wstring replaceAll(const std::wstring& str, const std::wstring& ndl, const 
 	return cpy;
 }
 
-std::string transform(const std::string& str, int (*func)(int c))
+std::string transform(const std::string_view& str, int (*func)(int c))
 {
-	std::string cpy = str;
+	std::string cpy(str);
 	std::transform(cpy.begin(), cpy.end(), cpy.begin(), func);
 	return cpy;
 }
 
-std::wstring transform(const std::wstring& str, int (*func)(int c))
+std::wstring transform(const std::wstring_view& str, int (*func)(int c))
 {
-	std::wstring cpy = str;
+	std::wstring cpy(str);
 	std::transform(cpy.begin(), cpy.end(), cpy.begin(), func);
 	return cpy;
 }
 
-std::string toUpper(const std::string& str)
+std::string toUpper(const std::string_view& str)
 {
 	return transform(str, toupper);
 }
 
-std::wstring toUpper(const std::wstring& str)
+std::wstring toUpper(const std::wstring_view& str)
 {
 	return transform(str, toupper);
 }
 
-std::string toLower(const std::string& str)
+std::string toLower(const std::string_view& str)
 {
 	return transform(str, tolower);
 }
 
-std::wstring toLower(const std::wstring& str)
+std::wstring toLower(const std::wstring_view& str)
 {
 	return transform(str, tolower);
 }
 
-bool startsWith(const std::string& str, const std::string& start)
+bool startsWith(const std::string_view& str, const std::string_view& start)
 {
 	if (str.length() < start.length())
 		return false;
@@ -96,7 +96,7 @@ bool startsWith(const std::string& str, const std::string& start)
 	return (bool)(str.substr(0, start.length()) == start);
 }
 
-bool startsWith(const std::wstring& str, const std::wstring& start)
+bool startsWith(const std::wstring_view& str, const std::wstring_view& start)
 {
 	if (str.length() < start.length())
 		return false;
@@ -105,7 +105,7 @@ bool startsWith(const std::wstring& str, const std::wstring& start)
 	return (bool)(str.substr(0, start.length()) == start);
 }
 
-bool endsWith(const std::string& str, const std::string& end)
+bool endsWith(const std::string_view& str, const std::string_view& end)
 {
 	if (str.length() < end.length())
 		return false;
@@ -114,7 +114,7 @@ bool endsWith(const std::string& str, const std::string& end)
 	return (bool)(str.substr(str.length() - end.length(), end.length()) == end);
 }
 
-bool endsWith(const std::wstring& str, const std::wstring& end)
+bool endsWith(const std::wstring_view& str, const std::wstring_view& end)
 {
 	if (str.length() < end.length())
 		return false;
@@ -123,19 +123,19 @@ bool endsWith(const std::wstring& str, const std::wstring& end)
 	return (bool)(str.substr(str.length() - end.length(), end.length()) == end);
 }
 
-int compareIgnoreCase(const std::string& a, const std::string& b)
+int compareIgnoreCase(const std::string_view& a, const std::string_view& b)
 {
 	return toLower(a).compare(toLower(b));
 }
 
-int compareIgnoreCase(const std::wstring& a, const std::wstring& b)
+int compareIgnoreCase(const std::wstring_view& a, const std::wstring_view& b)
 {
 	return toLower(a).compare(toLower(b));
 }
 
 std::wstring ltrim(const std::wstring& a, const std::wstring& ws)
 {
-	size_t i = a.find_first_not_of(ws);
+	const size_t i = a.find_first_not_of(ws);
 	if (i == std::wstring::npos)
 		return L"";
 	return a.substr(i);
@@ -143,7 +143,7 @@ std::wstring ltrim(const std::wstring& a, const std::wstring& ws)
 
 std::wstring rtrim(const std::wstring& a, const std::wstring& ws)
 {
-	size_t i = a.find_last_not_of(ws);
+	const size_t i = a.find_last_not_of(ws);
 	if (i == std::wstring::npos)
 		return L"";
 	return a.substr(0, i + 1);
@@ -172,7 +172,7 @@ std::wstring toString(double value, int32_t decimals)
 
 bool split(const std::wstring& str, wchar_t delim, std::wstring& outLeft, std::wstring& outRight)
 {
-	size_t p = str.find_first_of(delim);
+	const size_t p = str.find_first_of(delim);
 	if (p == str.npos)
 		return false;
 
