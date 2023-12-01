@@ -10,6 +10,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/DoubleBuffer.h"
 #include "Sound/Types.h"
 
@@ -129,9 +130,12 @@ private:
 	float m_pitch;
 	bool m_playing;
 	bool m_allowRepeat;
+	
 	DoubleBuffer< StateFilter > m_stateFilter;
-	DoubleBuffer< StateSound > m_stateSound;
 	DoubleBuffer< StateParameter > m_stateParameters;
+	ThreadsafeFifo< StateSound > m_stateSoundFifo;
+	StateSound m_stateSound;
+
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
 };
