@@ -45,6 +45,10 @@ bool JsonMember::write(OutputStream& os) const
 		os << m_value.getFloatUnsafe();
 		break;
 
+	case Any::Type::Double:
+		os << m_value.getDoubleUnsafe();
+		break;
+
 	case Any::Type::String:
 		os << L"\"" << m_value.getWideString() << L"\"";
 		break;

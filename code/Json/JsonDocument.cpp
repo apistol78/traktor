@@ -343,6 +343,10 @@ bool JsonDocument::saveToStream(IStream* stream)
 			os << i->getFloatUnsafe();
 			break;
 
+		case Any::Type::Double:
+			os << i->getDoubleUnsafe();
+			break;
+
 		case Any::Type::String:
 			os << L"\"" << i->getWideString() << L"\"";
 			break;
