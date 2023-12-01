@@ -121,24 +121,14 @@ bool AudioChannel::isPlaying() const
 
 void AudioChannel::stop()
 {
-	StateSound& ss = m_stateSound.beginWrite();
-
-	ss.buffer = nullptr;
-	ss.cursor = nullptr;
-	ss.category = 0;
-	ss.volume = 0.0f;
-	ss.repeat = false;
-	ss.repeatFrom = 0;
-
+	m_stateSoundFifo.put({});
 	m_playing = false;
 	m_allowRepeat = false;
-
-	m_stateSound.endWrite();
 }
 
 ISoundBufferCursor* AudioChannel::getCursor()
 {
-	return m_stateSound.read().cursor;
+	return m_stateSound.cursor;
 }
 
 void AudioChannel::setParameter(handle_t id, float parameter)
@@ -168,8 +158,7 @@ bool AudioChannel::play(
 	if (!cursor)
 		return false;
 
-	StateSound& ss = m_stateSound.beginWrite();
-
+	StateSound ss;
 	ss.buffer = buffer;
 	ss.cursor = cursor;
 	ss.category = category;
@@ -180,13 +169,20 @@ bool AudioChannel::play(
 	m_allowRepeat = true;
 	m_playing = true;
 
-	m_stateSound.endWrite();
+	m_stateSoundFifo.put(ss);
 	return true;
 }
 
 bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 {
-	StateSound& ss = m_stateSound.read();
+	StateSound& ss = m_stateSound;
+
+	// Read pending sound state from fifo.
+	{
+		StateSound next;
+		if (m_stateSoundFifo.get(next))
+			ss = next;
+	}
 
 	if (!ss.buffer || !ss.cursor)
 		return false;
