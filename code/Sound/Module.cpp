@@ -25,9 +25,9 @@
 #	include "Sound/Processor/OutputPin.h"
 #	include "Sound/Processor/Nodes/Add.h"
 #	include "Sound/Processor/Nodes/Blend.h"
+#	include "Sound/Processor/Nodes/Custom.h"
 #	include "Sound/Processor/Nodes/Divide.h"
 #	include "Sound/Processor/Nodes/Filter.h"
-#	include "Sound/Processor/Nodes/Modulate.h"
 #	include "Sound/Processor/Nodes/Multiply.h"
 #	include "Sound/Processor/Nodes/Output.h"
 #	include "Sound/Processor/Nodes/Parameter.h"
@@ -87,9 +87,9 @@ extern "C" void __module__Traktor_Sound()
 	T_FORCE_LINK_REF(OutputPin);
 	T_FORCE_LINK_REF(Add);
 	T_FORCE_LINK_REF(Blend);
+	T_FORCE_LINK_REF(Custom);
 	T_FORCE_LINK_REF(Divide);
 	T_FORCE_LINK_REF(Filter);
-	T_FORCE_LINK_REF(Modulate);
 	T_FORCE_LINK_REF(Multiply);
 	T_FORCE_LINK_REF(Output);
 	T_FORCE_LINK_REF(Parameter);

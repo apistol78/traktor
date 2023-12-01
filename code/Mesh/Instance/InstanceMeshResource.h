@@ -8,6 +8,8 @@
  */
 #pragma once
 
+#include <list>
+#include <map>
 #include "Core/Guid.h"
 #include "Mesh/MeshResource.h"
 #include "Resource/Id.h"

@@ -400,7 +400,7 @@ local PACKAGES =
 		os = "linux",
 		url = "https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip",
 		patch = function()
-			run:execute(UNZIP .. "commandlinetools-linux-8512546_latest.zip")
+			run:execute(UNZIP .. " -qq commandlinetools-linux-8512546_latest.zip")
 			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
 			write_file(
 				"install.sh",
