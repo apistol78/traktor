@@ -22,13 +22,13 @@ namespace traktor
 
 const ImmutableNode::InputPinDesc c_Filter_i[] =
 {
-	{ L"Input", NptSignal, false },
+	{ L"Input", NodePinType::Signal, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Filter_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

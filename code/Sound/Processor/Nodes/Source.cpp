@@ -21,7 +21,7 @@ namespace traktor::sound
 
 const ImmutableNode::OutputPinDesc c_Source_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

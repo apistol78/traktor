@@ -17,7 +17,7 @@ namespace traktor::sound
 
 const ImmutableNode::OutputPinDesc c_Time_o[] =
 {
-	{ L"Output", NptScalar },
+	{ L"Output", NodePinType::Scalar },
 	{ 0 }
 };
 

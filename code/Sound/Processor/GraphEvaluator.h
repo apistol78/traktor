@@ -67,7 +67,6 @@ private:
 	mutable SmallMap< const OutputPin*, SoundBlock > m_cachedBlocks;
 
 	SoundBlock* copyBlock(const SoundBlock& sourceBlock) const;
-
 };
 
 }

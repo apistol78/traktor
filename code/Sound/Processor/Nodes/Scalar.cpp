@@ -20,7 +20,7 @@ namespace traktor
 
 const ImmutableNode::OutputPinDesc c_Scalar_o[] =
 {
-	{ L"Output", NptScalar },
+	{ L"Output", NodePinType::Scalar },
 	{ 0 }
 };
 

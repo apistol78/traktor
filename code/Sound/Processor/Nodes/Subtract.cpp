@@ -19,14 +19,14 @@ namespace traktor
 
 const ImmutableNode::InputPinDesc c_Subtract_i[] =
 {
-	{ L"Input1", NptScalar, false },
-	{ L"Input2", NptScalar, false },
+	{ L"Input1", NodePinType::Scalar, false },
+	{ L"Input2", NodePinType::Scalar, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Subtract_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

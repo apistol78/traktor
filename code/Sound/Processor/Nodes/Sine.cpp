@@ -21,14 +21,14 @@ namespace traktor
 
 const ImmutableNode::InputPinDesc c_Sin_i[] =
 {
-	{ L"Frequency", NptScalar, false },
-	{ L"Amplitude", NptScalar, false },
+	{ L"Frequency", NodePinType::Scalar, false },
+	{ L"Amplitude", NodePinType::Scalar, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Sine_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 
