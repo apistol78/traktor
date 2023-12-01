@@ -19,14 +19,14 @@ namespace traktor
 
 const ImmutableNode::InputPinDesc c_Pitch_i[] =
 {
-	{ L"Input", NptSignal, false },
-	{ L"Adjust", NptScalar, false },
+	{ L"Input", NodePinType::Signal, false },
+	{ L"Adjust", NodePinType::Scalar, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Pitch_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

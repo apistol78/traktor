@@ -17,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-const ImmutableNode::InputPinDesc c_Output_i[] = { { L"Input", NptSignal, false }, { 0 } };
+const ImmutableNode::InputPinDesc c_Output_i[] = { { L"Input", NodePinType::Signal, false }, { 0 } };
 
 class OutputCursor : public RefCountImpl< ISoundBufferCursor >
 {

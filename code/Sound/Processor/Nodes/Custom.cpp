@@ -22,13 +22,13 @@ namespace traktor::sound
 
 const ImmutableNode::InputPinDesc c_Custom_i[] =
 {
-	{ L"Input", NptSignal, false },
+	{ L"Input", NodePinType::Signal, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Custom_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

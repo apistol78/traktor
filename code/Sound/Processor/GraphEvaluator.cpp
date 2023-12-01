@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Processor/Graph.h"
@@ -15,10 +16,8 @@
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GraphEvaluator", GraphEvaluator, Object)
 
@@ -130,7 +129,7 @@ bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixe
 NodePinType GraphEvaluator::evaluatePinType(const InputPin* consumerPin) const
 {
 	const OutputPin* producerPin = m_graph->findSourcePin(consumerPin);
-	return producerPin ? producerPin->getPinType() : NptVoid;
+	return producerPin ? producerPin->getPinType() : NodePinType::Void;
 }
 
 float GraphEvaluator::getTime() const
@@ -164,7 +163,22 @@ SoundBlock* GraphEvaluator::copyBlock(const SoundBlock& sourceBlock) const
 		if (sourceBlock.samples[i])
 		{
 			block.samples[i] = (float*)Alloc::acquireAlign(sourceBlock.samplesCount * sizeof(float), 16, T_FILE_LINE);
-			std::memcpy(block.samples[i], sourceBlock.samples[i], sourceBlock.samplesCount * sizeof(float));
+
+			const float* sp = sourceBlock.samples[i];
+			float* dp = block.samples[i];
+
+			for (uint32_t j = 0; j < sourceBlock.samplesCount; j += 4 * 4)
+			{
+				const Vector4 s0 = Vector4::loadAligned(sp); sp += 4;
+				const Vector4 s1 = Vector4::loadAligned(sp); sp += 4;
+				const Vector4 s2 = Vector4::loadAligned(sp); sp += 4;
+				const Vector4 s3 = Vector4::loadAligned(sp); sp += 4;
+				
+				s0.storeAligned(dp); dp += 4;
+				s1.storeAligned(dp); dp += 4;
+				s2.storeAligned(dp); dp += 4;
+				s3.storeAligned(dp); dp += 4;
+			}
 		}
 		else
 			block.samples[i] = nullptr;
@@ -178,5 +192,4 @@ SoundBlock* GraphEvaluator::copyBlock(const SoundBlock& sourceBlock) const
 	return &block;
 }
 
-	}
 }

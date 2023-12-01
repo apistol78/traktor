@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,23 +19,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class Graph;
 
-/*! \brief
- */
+/*! \ingroup Sound */
 class T_DLLCLASS GraphResource : public ISoundResource
 {
 	T_RTTI_CLASS;
 
 public:
-	GraphResource();
+	GraphResource() = default;
 
-	GraphResource(
+	explicit GraphResource(
 		const std::wstring& category,
 		float gain,
 		float range,
@@ -50,10 +47,9 @@ public:
 
 private:
 	std::wstring m_category;
-	float m_gain;
-	float m_range;
+	float m_gain = 0.0f;
+	float m_range = 0.0f;
 	Ref< const Graph > m_graph;
 };
 
-	}
 }

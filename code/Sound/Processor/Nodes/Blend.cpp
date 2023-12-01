@@ -22,15 +22,15 @@ namespace traktor
 
 const ImmutableNode::InputPinDesc c_Blend_i[] =
 {
-	{ L"Input1", NptSignal, false },
-	{ L"Input2", NptSignal, false },
-	{ L"Weight", NptScalar, false },
+	{ L"Input1", NodePinType::Signal, false },
+	{ L"Input2", NodePinType::Signal, false },
+	{ L"Weight", NodePinType::Scalar, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Blend_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 

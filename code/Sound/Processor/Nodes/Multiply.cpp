@@ -18,14 +18,14 @@ namespace traktor::sound
 
 const ImmutableNode::InputPinDesc c_Multiply_i[] =
 {
-	{ L"Input1", NptScalar, false },
-	{ L"Input2", NptScalar, false },
+	{ L"Input1", NodePinType::Scalar, false },
+	{ L"Input2", NodePinType::Scalar, false },
 	{ 0 }
 };
 
 const ImmutableNode::OutputPinDesc c_Multiply_o[] =
 {
-	{ L"Output", NptSignal },
+	{ L"Output", NodePinType::Signal },
 	{ 0 }
 };
 
@@ -78,7 +78,7 @@ bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evalua
 	const NodePinType pt1 = evaluator->evaluatePinType(ip1);
 	const NodePinType pt2 = evaluator->evaluatePinType(ip2);
 
-	if (pt1 == NptSignal && pt2 == NptSignal)
+	if (pt1 == NodePinType::Signal && pt2 == NodePinType::Signal)
 	{
 		SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
 		SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
@@ -116,9 +116,9 @@ bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evalua
 				outBlock.samples[i] = nullptr;
 		}
 	}
-	else if ((pt1 == NptScalar && pt2 == NptSignal) || (pt1 == NptSignal && pt2 == NptScalar))
+	else if ((pt1 == NodePinType::Scalar && pt2 == NodePinType::Signal) || (pt1 == NodePinType::Signal && pt2 == NodePinType::Scalar))
 	{
-		if (pt1 == NptSignal)
+		if (pt1 == NodePinType::Signal)
 			std::swap(ip1, ip2);
 
 		float f;
