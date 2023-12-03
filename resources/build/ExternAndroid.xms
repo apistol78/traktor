@@ -2614,7 +2614,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Extern.VulkanMemoryAllocator</name>
 			<sourcePath>$(VMA_SDK)</sourcePath>
 			<configurations>

@@ -54,10 +54,12 @@ export BC6H_ENC_SDK=$TRAKTOR_HOME/3rdp/bc6h_enc
 #	VULKAN_SPIRVCROSS_SDK
 export VULKAN_BASE_SDK=$TRAKTOR_HOME/3rdp/vulkan-linux/latest/x86_64
 export VULKAN_SDK=$VULKAN_BASE_SDK
-export VMA_SDK=$VULKAN_BASE_SDK/include/vma
 export GLSLANG_SDK=$VULKAN_BASE_SDK/include/glslang
 export SPIRVTOOLS_SDK=$VULKAN_BASE_SDK
 export SPIRVCROSS_SDK=$VULKAN_BASE_SDK/include/spirv_cross
+
+# Vulkan Memory Allocator
+export VMA_SDK=$TRAKTOR_HOME/3rdp/VulkanMemoryAllocator
 
 # Determine platform from some simple heuristic.
 if [[ `uname -s` == Linux* ]]; then
