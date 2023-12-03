@@ -41,7 +41,9 @@ set BC6H_ENC_SDK=%TRAKTOR_HOME%\3rdp\bc6h_enc
 
 :: Vulkan SDK
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk
-set VMA_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk\include\vma
+
+:: Vulkan Memory Allocator
+set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator
 
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App

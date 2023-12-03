@@ -381,6 +381,13 @@ local PACKAGES =
 		end
 	},
 
+	-- Vulkan Memory Allocator
+	{
+		type = "GIT",
+		url = "https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator.git",
+		license = "MIT"
+	},
+
 	--[[
 	-- Steamworks SDK
 	{
