@@ -146,12 +146,12 @@ Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* ass
 		SmallMap< Guid, Guid > renamedMap;
 
 		// Rename all entities.
-		Traverser::visit(mutableSceneAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+		Traverser::visit(mutableSceneAsset, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::Result {
 			Guid newEntityId = Guid::create();
 			if (inoutEntityData->getId().isNotNull())
 				renamedMap.insert(inoutEntityData->getId(), newEntityId);
 			inoutEntityData->setId(newEntityId);
-			return Traverser::VrContinue;
+			return Traverser::Result::Continue;
 		});
 
 		// Also ensure attached data contain updated entity identities.
@@ -171,12 +171,12 @@ Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* ass
 		mutableEntityData->setId(newEntityId);
 
 		// Rename all entities.
-		Traverser::visit(mutableEntityData, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::VisitorResult {
+		Traverser::visit(mutableEntityData, [&](Ref< world::EntityData >& inoutEntityData) -> Traverser::Result {
 			Guid newEntityId = Guid::create();
 			if (inoutEntityData->getId().isNotNull())
 				renamedMap.insert(inoutEntityData->getId(), newEntityId);
 			inoutEntityData->setId(newEntityId);
-			return Traverser::VrContinue;
+			return Traverser::Result::Continue;
 		});		
 	}
 

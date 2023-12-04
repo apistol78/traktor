@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,16 +42,16 @@ namespace traktor::scene
 class T_DLLCLASS Traverser
 {
 public:
-	enum VisitorResult
+	enum class Result
 	{
-		VrContinue,
-		VrSkip,
-		VrFailed
+		Continue,
+		Skip,
+		Failed
 	};
 
-	static bool visit(const ISerializable* object, const std::function< VisitorResult(const world::EntityData*) >& visitor);
+	static bool visit(const ISerializable* object, const std::function< Result (const world::EntityData*) >& visitor);
 
-	static bool visit(ISerializable* object, const std::function< VisitorResult(Ref< world::EntityData >&) >& visitor);
+	static bool visit(ISerializable* object, const std::function< Result (Ref< world::EntityData >&) >& visitor);
 };
 
 }
