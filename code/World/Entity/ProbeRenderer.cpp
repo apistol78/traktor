@@ -512,7 +512,8 @@ void ProbeRenderer::build(
 	// Add to capture queue if probe is "dirty".
 	if (probeComponent->getDirty() && probeComponent->shouldCapture())
 	{
-		m_captureQueue.push_back(probeComponent);
+		if (std::find(m_captureQueue.begin(), m_captureQueue.end(), probeComponent) == m_captureQueue.end())
+			m_captureQueue.push_back(probeComponent);
 		probeComponent->setDirty(false);
 	}
 }
