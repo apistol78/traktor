@@ -172,14 +172,10 @@ bool GraphEditor::create(ui::Container* parent)
 	if (!scriptManager)
 		return false;
 
-	m_scriptContext = scriptManager->createContext(false);
-	if (!m_scriptContext)
-		return false;
-
 	// Create the resource manager.
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new SoundFactory());
-	m_resourceManager->addFactory(new script::ScriptFactory(m_scriptContext));
+	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager));
 
 	updateView();
 	return true;
@@ -196,7 +192,6 @@ void GraphEditor::destroy()
 
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_resourceManager);
-	safeDestroy(m_scriptContext);
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)

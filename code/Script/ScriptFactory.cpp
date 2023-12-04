@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,13 @@
  */
 #include "Core/Class/IRuntimeClass.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/TString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptContext.h"
+#include "Script/IScriptManager.h"
 #include "Script/ScriptChunk.h"
 #include "Script/ScriptFactory.h"
 #include "Script/ScriptResource.h"
@@ -24,7 +26,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptFactory", ScriptFactory, resource:
 
 ScriptFactory::ScriptFactory(IScriptContext* scriptContext)
 :	m_scriptContext(scriptContext)
+,	m_ownContext(false)
 {
+}
+
+ScriptFactory::ScriptFactory(IScriptManager* scriptManager)
+:	m_ownContext(false)
+{
+	m_scriptContext = scriptManager->createContext(false);
+	T_FATAL_ASSERT(m_scriptContext);
+	m_ownContext = true;
+}
+
+ScriptFactory::~ScriptFactory()
+{
+	if (m_ownContext)
+		safeDestroy(m_scriptContext);
 }
 
 const TypeInfoSet ScriptFactory::getResourceTypes() const
