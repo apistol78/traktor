@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,18 +36,14 @@ bool LaunchBlenderTool::launch(ui::Widget* parent, editor::IEditor* runtime, con
 	if (!OS::getInstance().whereIs(L"blender", blenderPath))
 		return false;
 
-#if defined(_WIN32)
-	std::wstring blender = blenderPath.getPathName();
-#else
-	std::wstring blender = blenderPath.getPathNameNoVolume();
-#endif
-	std::wstring commandLine = L"\"" + blender + L"\"";
+	const std::wstring blender = blenderPath.getPathNameOS();
+	const std::wstring commandLine = L"\"" + blender + L"\"";
 
 	return OS::getInstance().execute(
 		commandLine,
 		L"",
 		nullptr,
-		OS::EfMute) != nullptr;
+		OS::EfMute | OS::EfDetach) != nullptr;
 }
 
 }
