@@ -26,13 +26,6 @@ class IResourceManager;
 
 }
 
-namespace traktor::script
-{
-
-class IScriptContext;
-
-}
-
 namespace traktor::ui
 {
 	
@@ -67,7 +60,6 @@ public:
 private:
 	editor::IEditor* m_editor;
 	editor::IDocument* m_document;
-	Ref< script::IScriptContext > m_scriptContext;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< PreviewControl > m_previewControl;
 	Ref< ui::Container > m_container;

@@ -36,13 +36,6 @@ class IResourceManager;
 
 }
 
-namespace traktor::script
-{
-
-class IScriptContext;
-
-}
-
 namespace traktor::ui
 {
 
@@ -98,7 +91,6 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< ISoundPlayer > m_soundPlayer;
 	Ref< ISoundHandle > m_soundHandle;
-	Ref< script::IScriptContext > m_scriptContext;
 
 	void updateView();
 
