@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -73,6 +73,8 @@
 #include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/InputDialog.h"
+#include "Ui/PropertyList/NumericPropertyItem.h"
+#include "Ui/PropertyList/PropertyContentChangeEvent.h"
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -1562,8 +1564,8 @@ void SceneEditorPage::eventInstanceClick(ui::GridColumnClickEvent* event)
 
 void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
 {
-	std::wstring renameFrom = event->getOriginalText();
-	std::wstring renameTo = event->getItem()->getText();
+	const std::wstring renameFrom = event->getOriginalText();
+	const std::wstring renameTo = event->getItem()->getText();
 
 	if (renameFrom == renameTo)
 		return;
@@ -1588,18 +1590,27 @@ void SceneEditorPage::eventPropertiesChanging(ui::ContentChangingEvent* event)
 
 void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 {
-	updateScene();
-	createInstanceGrid();
+	RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+	const ui::PropertyContentChangeEvent* propChange = dynamic_type_cast< const ui::PropertyContentChangeEvent* >(event);
+	const bool trivialChange = (selectedEntities.size() == 1 && propChange != nullptr && is_a< ui::NumericPropertyItem >(propChange->getItem()));
 
-	// Notify controller editor as well.
-	Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-	if (controllerEditor)
-		controllerEditor->propertiesChanged();
+	if (trivialChange)
+	{
+		updateScene();
+	}
+	else
+	{
+		updateScene();
+		createInstanceGrid();
 
-	m_context->raiseSelect();
+		// Notify controller editor as well.
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor)
+			controllerEditor->propertiesChanged();
 
-	// Propagate to editor controls.
-	m_editControl->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+		// Propagate to editor controls.
+		m_editControl->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+	}
 }
 
 void SceneEditorPage::eventContextPostBuild(PostBuildEvent* event)

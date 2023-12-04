@@ -371,7 +371,7 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 					entityData->setId(Guid::create());
 				}
 				usedIds.insert(entityData->getId());
-				return Traverser::VrContinue;
+				return Traverser::Result::Continue;
 			});
 		}
 	}
@@ -439,6 +439,8 @@ void SceneEditorContext::buildEntities()
 		RefArray< const world::IEntityFactory > entityFactories;
 		for (auto editorProfile : m_editorProfiles)
 			editorProfile->createEntityFactories(this, entityFactories);
+		for (auto entityFactory : entityFactories)
+			entityBuilder->addFactory(entityFactory);
 
 		// Create root group entity as scene instances doesn't have a concept of layers.
 		Ref< world::Entity > rootEntity = new world::Entity();
@@ -447,8 +449,10 @@ void SceneEditorContext::buildEntities()
 
 		// Create entities from scene layers.
 		RefArray< world::EntityData > layers = m_sceneAsset->getLayers();
-		RefArray< world::EntityData >::iterator it = std::remove(layers.begin(), layers.end(), (world::EntityData*)nullptr);
-		layers.erase(it, layers.end());
+		layers.erase(
+			std::remove(layers.begin(), layers.end(), (world::EntityData*)nullptr),
+			layers.end()
+		);
 
 		m_layerEntityAdapters.resize(layers.size());
 		for (uint32_t i = 0; i < layers.size(); ++i)
@@ -457,8 +461,6 @@ void SceneEditorContext::buildEntities()
 			T_ASSERT(layerEntityData);
 
 			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilder, m_layerEntityAdapters[i]);
-			for (auto entityFactory : entityFactories)
-				entityAdapterBuilder->addFactory(entityFactory);
 
 			Ref< world::Entity > entity = entityAdapterBuilder->create(layerEntityData);
 			T_FATAL_ASSERT(entity != nullptr);
@@ -499,7 +501,7 @@ void SceneEditorContext::buildEntities()
 
 	// Create map from entity to adapter.
 	const RefArray< EntityAdapter > entityAdapters = getEntities();
-	m_entityAdapterMap.clear();
+	m_entityAdapterMap.reset();
 	for (auto entityAdapter : entityAdapters)
 	{
 		const auto it = m_entityAdapterMap.find(entityAdapter->getEntity());

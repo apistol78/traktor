@@ -120,7 +120,7 @@ void NumericPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Wid
 {
 	if (m_editor)
 	{
-		Rect rcEditor(rc.left, rc.top, rc.right - rc.getHeight(), rc.bottom);
+		const Rect rcEditor(rc.left, rc.top, rc.right - rc.getHeight(), rc.bottom);
 		outChildRects.push_back(WidgetRect(m_editor, rcEditor));
 	}
 }
@@ -131,7 +131,7 @@ void NumericPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 	{
 		std::wstringstream ss;
 
-		double value = getValue();
+		const double value = getValue();
 		if (m_hex)
 			ss << std::hex << uint32_t(value);
 		else
@@ -158,11 +158,7 @@ void NumericPropertyItem::mouseButtonDown(MouseButtonDownEvent* event)
 
 void NumericPropertyItem::mouseButtonUp(MouseButtonUpEvent* event)
 {
-	if (m_mouseAdjust)
-	{
-		m_mouseAdjust = false;
-		notifyChange();
-	}
+	m_mouseAdjust = false;
 }
 
 void NumericPropertyItem::mouseMove(MouseMoveEvent* event)
@@ -174,6 +170,7 @@ void NumericPropertyItem::mouseMove(MouseMoveEvent* event)
 		m_value = std::min(m_value, m_limitMax);
 		m_mouseLastPosition = event->getPosition();
 		notifyUpdate();
+		notifyChange();
 	}
 }
 

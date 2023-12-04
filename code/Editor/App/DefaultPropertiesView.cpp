@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,10 +34,8 @@
 #include "Ui/PropertyList/TextPropertyItem.h"
 #include "Ui/PropertyList/ColorPropertyItem.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultPropertiesView", DefaultPropertiesView, PropertiesView)
 
@@ -317,7 +315,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				textItem->setValue(textEditorDialog.getText());
 				m_propertyList->apply();
 
-				ui::ContentChangeEvent event(this);
+				ui::PropertyContentChangeEvent event(this, textItem);
 				raiseEvent(&event);
 			}
 			textEditorDialog.destroy();
@@ -338,7 +336,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 				colorItem->setValue(colorDialog.getColor());
 				m_propertyList->apply();
 
-				ui::ContentChangeEvent event(this);
+				ui::PropertyContentChangeEvent event(this, colorItem);
 				raiseEvent(&event);
 			}
 			colorDialog.destroy();
@@ -349,14 +347,13 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 
 void DefaultPropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* event)
 {
-	ui::ContentChangingEvent changingEvent(this);
+	ui::PropertyContentChangeEvent changingEvent(this, event->getItem());
 	raiseEvent(&changingEvent);
 
 	m_propertyList->apply();
 
-	ui::ContentChangeEvent changeEvent(this);
+	ui::PropertyContentChangeEvent changeEvent(this, event->getItem());
 	raiseEvent(&changeEvent);	
 }
 
-	}
 }

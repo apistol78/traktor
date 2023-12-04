@@ -93,12 +93,12 @@ EntityAdapterBuilder::~EntityAdapterBuilder()
 
 void EntityAdapterBuilder::addFactory(const world::IEntityFactory* entityFactory)
 {
-	m_entityBuilder->addFactory(entityFactory);
+	T_FATAL_ERROR;
 }
 
 void EntityAdapterBuilder::removeFactory(const world::IEntityFactory* entityFactory)
 {
-	m_entityBuilder->removeFactory(entityFactory);
+	T_FATAL_ERROR;
 }
 
 const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::EntityData* entityData) const
