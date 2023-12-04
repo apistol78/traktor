@@ -308,7 +308,7 @@ void MeshAssetEditor::updateModel()
 {
 	const Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 	const std::wstring importFilter = m_asset->getImportFilter();
-	m_model = model::ModelCache(m_modelCachePath).get(assetPath, importFilter);
+	m_model = model::ModelCache::getInstance().getMutable(m_modelCachePath, assetPath, importFilter);
 }
 
 void MeshAssetEditor::updateFile()

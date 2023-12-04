@@ -53,7 +53,7 @@ Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor
 
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
-	Ref< model::Model > model = model::ModelCache(modelCachePath).get(fileName, L""); //, asset->getImportFilter());
+	Ref< const model::Model > model = model::ModelCache::getInstance().get(modelCachePath, fileName, L""); //, asset->getImportFilter());
 	if (!model)
 		return nullptr;
 

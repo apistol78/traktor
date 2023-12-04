@@ -82,7 +82,7 @@ bool SkeletonPipeline::buildOutput(
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
 
 	const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + skeletonAsset->getFileName());
-	Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, L"");
+	Ref< model::Model > model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, L"");
 	if (!model)
 	{
 		log::error << L"Unable to build skeleton; no such file \"" << skeletonAsset->getFileName().getPathName() << L"\"." << Endl;

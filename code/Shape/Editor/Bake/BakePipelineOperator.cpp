@@ -106,10 +106,10 @@ const Guid c_shapeMeshAssetSeed(L"{FEC54BB1-1F55-48F5-AB87-58FE1712C42D}");
 void describeEntity(OutputStream& os, const world::EntityData* entityData)
 {
 	RefArray< const world::EntityData > children;
-	scene::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(entityData, [&](const world::EntityData* childEntityData) -> scene::Traverser::Result
 	{
 		children.push_back(childEntityData);
-		return scene::Traverser::VrSkip;
+		return scene::Traverser::Result::Skip;
 	});
 
 	os << entityData->getName() << L" " << entityData->getId().format() << Endl;
@@ -462,18 +462,18 @@ bool BakePipelineOperator::transform(
 			return false;
 
 		// Collect all entities from layer which do not get baked.
-		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 		{
 			// Check editor attributes component if we should include entity.
 			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 			{
 				if (!editorAttributes->include/* || editorAttributes->dynamic*/)
-					return scene::Traverser::VrSkip;
+					return scene::Traverser::Result::Skip;
 			}
 
 			// "Unnamed" entities do not bake.
 			if (inoutEntityData->getId().isNull())
-				return scene::Traverser::VrContinue;
+				return scene::Traverser::Result::Continue;
 
 			// Transform and keep entities which isn't included in bake.
 			RefArray< world::IEntityComponentData > componentDatas = inoutEntityData->getComponents();
@@ -496,10 +496,10 @@ bool BakePipelineOperator::transform(
 				for (auto cd : dependentComponentData)
 					inoutEntityData->removeComponent(cd);
 
-				return scene::Traverser::VrSkip;
+				return scene::Traverser::Result::Skip;
 			}
 
-			return scene::Traverser::VrContinue;
+			return scene::Traverser::Result::Continue;
 		});
 
 		// Replace with modified layer in output scene.
@@ -573,18 +573,18 @@ bool BakePipelineOperator::build(
 
 			// Collect all entities from layer which we will include in bake.
 			RefArray< world::EntityData > bakeEntityData;
-			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::VisitorResult
+			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 			{
 				// Check editor attributes component if we should include entity.
 				if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
 				{
 					if (!editorAttributes->include/* || editorAttributes->dynamic*/)
-						return scene::Traverser::VrSkip;
+						return scene::Traverser::Result::Skip;
 				}
 
 				// We only bake "named" entities.
 				if (inoutEntityData->getId().isNull())
-					return scene::Traverser::VrContinue;
+					return scene::Traverser::Result::Continue;
 
 				// Light, sky and irradiance volume must be included.
 				if (
@@ -595,7 +595,7 @@ bool BakePipelineOperator::build(
 				)
 				{
 					bakeEntityData.push_back(inoutEntityData);
-					return scene::Traverser::VrContinue;
+					return scene::Traverser::Result::Continue;
 				}
 
 				// Include in bake.
@@ -605,11 +605,11 @@ bool BakePipelineOperator::build(
 					if (m_entityReplicators.find(&type_of(componentData)) != m_entityReplicators.end())
 					{
 						bakeEntityData.push_back(inoutEntityData);
-						return scene::Traverser::VrSkip;
+						return scene::Traverser::Result::Skip;
 					}
 				}
 
-				return scene::Traverser::VrContinue;
+				return scene::Traverser::Result::Continue;
 			});
 
 			// Traverse and visit all entities in layer.

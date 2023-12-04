@@ -99,13 +99,13 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	SmallMap< std::wstring, Guid > materialShaders;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
 		// Check editor attributes component if we should include entity.
 		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
 		{
 			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::VrSkip;
+				return scene::Traverser::Result::Skip;
 		}		
 
 		if (auto meshComponentData = inEntityData->getComponent< mesh::MeshComponentData >())
@@ -116,16 +116,16 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 			if (!meshAsset)
 			{
 				log::error << L"Prefab failed; unable to read mesh asset \"" << Guid(meshComponentData->getMesh()).format() << L"\"." << Endl;
-				return scene::Traverser::VrFailed;
+				return scene::Traverser::Result::Failed;
 			}
 
 			// Load the model references by the mesh asset.
 			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-			Ref< model::Model > model = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
+			Ref< model::Model > model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, meshAsset->getImportFilter());
 			if (!model)
 			{
 				log::error << L"Prefab failed; unable to read model \"" << filePath.getPathName() << L"\"." << Endl;
-				return scene::Traverser::VrFailed;
+				return scene::Traverser::Result::Failed;
 			}
 
 			// Transform model into world space.
@@ -145,7 +145,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 				materialShaders[ms.first] = ms.second;
 		}
 
-		return scene::Traverser::VrContinue;
+		return scene::Traverser::Result::Continue;
 	});
 
 	log::info << L"Prefab replicator collected " << models.size() << L" models to be merged." << Endl;
@@ -207,39 +207,39 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	float margin = 0.0f;
 
 	// Collect all models from prefab component.
-	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
 		// Check editor attributes component if we should include entity.
 		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
 		{
 			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::VrSkip;
+				return scene::Traverser::Result::Skip;
 		}		
 
 		if (auto rigidBodyComponentData = inEntityData->getComponent< physics::RigidBodyComponentData >())
 		{
 			auto bodyDesc = dynamic_type_cast< const physics::StaticBodyDesc* >(rigidBodyComponentData->getBodyDesc());
 			if (!bodyDesc)
-				return scene::Traverser::VrContinue;
+				return scene::Traverser::Result::Continue;
 
 			auto meshShape = dynamic_type_cast< const physics::MeshShapeDesc* >(rigidBodyComponentData->getBodyDesc()->getShape());
 			if (!meshShape)
-				return scene::Traverser::VrContinue;
+				return scene::Traverser::Result::Continue;
 
 			Ref< const physics::MeshAsset > meshAsset = pipelineCommon->getObjectReadOnly< physics::MeshAsset >(meshShape->getMesh());
 			if (!meshAsset)
 			{
 				log::error << L"Prefab failed; unable to read collision mesh \"" << Guid(meshShape->getMesh()).format() << L"\"." << Endl;
-				return scene::Traverser::VrFailed;
+				return scene::Traverser::Result::Failed;
 			}
 
 			// Load the model references by the mesh asset.
 			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-			Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
+			Ref< model::Model > shapeModel = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, meshAsset->getImportFilter());
 			if (!shapeModel)
 			{
 				log::error << L"Prefab failed; unable to read collision model \"" << filePath.getPathName() << L"\"." << Endl;
-				return scene::Traverser::VrFailed;
+				return scene::Traverser::Result::Failed;
 			}
 
 			// Transform model into world space.
@@ -260,7 +260,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 			margin = std::max(margin, meshAsset->getMargin());
 		}
 
-		return scene::Traverser::VrContinue;
+		return scene::Traverser::Result::Continue;
 	});
 
 	if (models.empty())

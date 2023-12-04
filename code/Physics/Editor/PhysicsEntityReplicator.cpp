@@ -82,7 +82,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		// Read source model.
 		Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
-		Ref< model::Model > shapeModel = model::ModelCache(m_modelCachePath).get(filePath, meshAsset->getImportFilter());
+		Ref< model::Model > shapeModel = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, meshAsset->getImportFilter());
 		if (!shapeModel)
 			return nullptr;
 
