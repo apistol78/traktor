@@ -25,7 +25,7 @@ namespace traktor::shape
 	namespace
 	{
 		
-Ref< model::Model > readModel(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath, const Guid& meshAssetId)
+Ref< model::Model > readModel(db::Database* database, const Path& modelCachePath, const std::wstring& assetPath, const Guid& meshAssetId)
 {
 	// Read extrude mesh asset from database.
 	Ref< const mesh::MeshAsset > meshAsset = database->getObjectReadOnly< mesh::MeshAsset >(meshAssetId);
@@ -33,8 +33,8 @@ Ref< model::Model > readModel(db::Database* database, model::ModelCache* modelCa
 		return nullptr;
 
 	// Read model specified by mesh asset.
-	Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
-	Ref< model::Model > model = modelCache->get(filePath, meshAsset->getImportFilter());
+	const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(assetPath) + meshAsset->getFileName());
+	Ref< model::Model > model = model::ModelCache::getInstance().getMutable(modelCachePath, filePath, meshAsset->getImportFilter());
 	if (!model)
 		return nullptr;
 
@@ -53,20 +53,20 @@ ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 {
 }
 
-Ref< SplineLayerComponent > ExtrudeShapeLayerData::createComponent(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath) const
+Ref< SplineLayerComponent > ExtrudeShapeLayerData::createComponent(db::Database* database, const Path& modelCachePath, const std::wstring& assetPath) const
 {
 	Ref< model::Model > modelStart;
 	Ref< model::Model > modelRepeat;
 	Ref< model::Model > modelEnd;
 
-	modelRepeat = readModel(database, modelCache, assetPath, m_meshRepeat);
+	modelRepeat = readModel(database, modelCachePath, assetPath, m_meshRepeat);
 	if (!modelRepeat)
 		return nullptr;
 
 	if (m_meshStart.isNotNull())
-		modelStart = readModel(database, modelCache, assetPath, m_meshStart);
+		modelStart = readModel(database, modelCachePath, assetPath, m_meshStart);
 	if (m_meshEnd.isNotNull())
-		modelEnd = readModel(database, modelCache, assetPath, m_meshEnd);
+		modelEnd = readModel(database, modelCachePath, assetPath, m_meshEnd);
 
 	if (!modelStart)
 		modelStart = modelRepeat;

@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Io/Path.h"
+#include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
@@ -36,19 +36,21 @@ class Model;
 /*!
  * \ingroup Model
  */
-class T_DLLCLASS ModelCache : public Object
+class T_DLLCLASS ModelCache : public ISingleton
 {
-	T_RTTI_CLASS;
-
 public:
-	explicit ModelCache(const Path& cachePath);
+	static ModelCache& getInstance();
 
-	/*! Get model. */
-	Ref< Model > get(const Path& fileName, const std::wstring& filter);
+	virtual void destroy();
+
+	Ref< const Model > get(const Path& cachePath, const Path& fileName, const std::wstring& filter);
+
+	Ref< Model > getMutable(const Path& cachePath, const Path& fileName, const std::wstring& filter);
 
 private:
 	Semaphore m_lock;
 	Path m_cachePath;
+	SmallMap< std::pair< Path, std::wstring >, Ref< const Model > > m_models;
 };
 
 }

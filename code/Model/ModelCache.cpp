@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,8 @@
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
@@ -31,15 +33,31 @@ uint32_t hash(const std::wstring& text)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelCache", ModelCache, Object)
-
-ModelCache::ModelCache(const Path& cachePath)
-:	m_cachePath(cachePath)
+ModelCache& ModelCache::getInstance()
 {
+	static ModelCache* s_instance = nullptr;
+	if (!s_instance)
+	{
+		s_instance = new ModelCache();
+		SingletonManager::getInstance().add(s_instance);
+	}
+	return *s_instance;
 }
 
-Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
+void ModelCache::destroy()
 {
+	delete this;
+}
+
+Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, const std::wstring& filter)
+{
+	const auto key = std::make_pair(fileName, filter);
+
+	// First check if we have model loaded into memory.
+	auto it = m_models.find(key);
+	if (it != m_models.end())
+		return it->second;
+
 	// Get information about source file.
 	Ref< File > file = FileSystem::getInstance().get(fileName);
 	if (!file)
@@ -63,17 +81,26 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 	{
 		// Valid cache entry found; read from model from cache,
 		// do not use filter as it's written into cache after filter has been applied.
-		return ModelFormat::readAny(cachedFileName, L"");
+		Ref< const Model > model = ModelFormat::readAny(cachedFileName, L"");
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			m_models.insert(key, model);
+		}
+		return model;
 	}
 
 	// No cached file exist; need to read source model.
-	Ref< Model > model = ModelFormat::readAny(fileName, filter);
+	Ref< const Model > model = ModelFormat::readAny(fileName, filter);
 	if (!model)
 		return nullptr;
 
-	// Write cached copy of post-operation model.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		// Add model to memory map.
+		m_models.insert(key, model);
+
+		// Write cached copy of post-operation model.
 		const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
 
 		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
@@ -87,6 +114,12 @@ Ref< Model > ModelCache::get(const Path& fileName, const std::wstring& filter)
 
 	// Return model; should be same as one we've written to cache.
 	return model;
+}
+
+Ref< Model > ModelCache::getMutable(const Path& cachePath, const Path& fileName, const std::wstring& filter)
+{
+	Ref< const Model > model = get(cachePath, fileName, filter);
+	return model != nullptr ? DeepClone(model).create< Model >() : nullptr;
 }
 
 }

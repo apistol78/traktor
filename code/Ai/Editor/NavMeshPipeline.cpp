@@ -169,12 +169,12 @@ bool NavMeshPipeline::buildOutput(
 	float oceanHeight = -std::numeric_limits< float >::max();
 	bool oceanClip = false;
 
-	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::VisitorResult
+	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result
 	{
 		if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
 		{
 			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::VrSkip;
+				return scene::Traverser::Result::Skip;
 		}
 
 		Ref< model::Model > model;
@@ -212,7 +212,7 @@ bool NavMeshPipeline::buildOutput(
 			));
 		}
 
-		return scene::Traverser::VrContinue;
+		return scene::Traverser::Result::Continue;
 	});
 
 	// Calculate aabb and count.

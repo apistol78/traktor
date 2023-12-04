@@ -49,7 +49,7 @@ class T_DLLCLASS ExtrudeShapeLayerData : public SplineLayerComponentData
 public:
 	ExtrudeShapeLayerData();
 
-	virtual Ref< SplineLayerComponent > createComponent(db::Database* database, model::ModelCache* modelCache, const std::wstring& assetPath) const override final;
+	virtual Ref< SplineLayerComponent > createComponent(db::Database* database, const Path& modelCachePath, const std::wstring& assetPath) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

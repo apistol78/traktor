@@ -36,7 +36,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 
 	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
-	Ref< model::Model > model = model::ModelCache(modelCachePath).get(fileName, asset->getImportFilter());
+	Ref< model::Model > model = model::ModelCache::getInstance().getMutable(modelCachePath, fileName, asset->getImportFilter());
 	if (!model)
 		return false;
 

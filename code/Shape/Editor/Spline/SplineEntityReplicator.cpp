@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,6 @@
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
-#include "Model/ModelCache.h"
 #include "Model/Operations/MergeModel.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
@@ -22,10 +21,8 @@
 #include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityReplicator", 0, SplineEntityReplicator, world::IEntityReplicator)
 
@@ -118,8 +115,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 			continue;
 
 		// Create an instance of the layer component.
-		Ref< model::ModelCache > modelCache = new model::ModelCache(m_modelCachePath);
-		Ref< SplineLayerComponent > layer = layerData->createComponent(pipelineCommon->getSourceDatabase(), modelCache, m_assetPath);
+		Ref< SplineLayerComponent > layer = layerData->createComponent(pipelineCommon->getSourceDatabase(), m_modelCachePath, m_assetPath);
 		if (!layer)
 			continue;
 
@@ -136,5 +132,4 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	return outputModel;
 }
 
-	}
 }
