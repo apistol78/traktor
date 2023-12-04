@@ -81,6 +81,7 @@ private:
 	resource::Proxy< render::ITexture > m_texture;
 	float m_intensity;
 	Aabb3 m_volume;
+	Vector4 m_last;
 	bool m_local;
 	bool m_capture;
 	bool m_dirty;

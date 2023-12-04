@@ -26,6 +26,7 @@ ProbeComponent::ProbeComponent(
 ,	m_texture(texture)
 ,	m_intensity(intensity)
 ,	m_volume(volume)
+,	m_last(Vector4::zero())
 ,	m_local(local)
 ,	m_capture(capture)
 ,	m_dirty(dirty)
@@ -39,8 +40,11 @@ void ProbeComponent::destroy()
 
 void ProbeComponent::setOwner(Entity* owner)
 {
-	m_owner = owner;
-	m_dirty = true;
+	if (owner != m_owner)
+	{
+		m_owner = owner;
+		m_dirty = true;
+	}
 }
 
 void ProbeComponent::update(const UpdateParams& update)
@@ -49,7 +53,11 @@ void ProbeComponent::update(const UpdateParams& update)
 
 void ProbeComponent::setTransform(const Transform& transform)
 {
-	m_dirty = true;
+	if (!m_dirty && transform.translation() != m_last)
+	{
+		m_dirty = true;
+		m_last = transform.translation();
+	}
 }
 
 Aabb3 ProbeComponent::getBoundingBox() const
