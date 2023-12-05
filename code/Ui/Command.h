@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,13 +43,13 @@ public:
 
 	explicit Command(uint32_t id);
 
-	explicit Command(const std::wstring& name);
+	explicit Command(const std::wstring_view& name);
 
-	explicit Command(uint32_t id, const std::wstring& name);
+	explicit Command(uint32_t id, const std::wstring_view& name);
 
-	explicit Command(const std::wstring& name, Object* data);
+	explicit Command(const std::wstring_view& name, Object* data);
 
-	explicit Command(uint32_t id, const std::wstring& name, Object* data);
+	explicit Command(uint32_t id, const std::wstring_view& name, Object* data);
 
 	uint32_t getFlags() const;
 
@@ -63,7 +63,7 @@ public:
 
 	bool operator == (uint32_t id) const;
 
-	bool operator == (const std::wstring& name) const;
+	bool operator == (const std::wstring_view& name) const;
 
 private:
 	uint32_t m_flags;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,21 +25,21 @@ Command::Command(uint32_t id)
 {
 }
 
-Command::Command(const std::wstring& name)
+Command::Command(const std::wstring_view& name)
 :	m_flags(CfName)
 ,	m_id(0)
 ,	m_name(name)
 {
 }
 
-Command::Command(uint32_t id, const std::wstring& name)
+Command::Command(uint32_t id, const std::wstring_view& name)
 :	m_flags(CfId | CfName)
 ,	m_id(id)
 ,	m_name(name)
 {
 }
 
-Command::Command(const std::wstring& name, Object* data)
+Command::Command(const std::wstring_view& name, Object* data)
 :	m_flags(CfName | CfData)
 ,	m_id(0)
 ,	m_name(name)
@@ -47,7 +47,7 @@ Command::Command(const std::wstring& name, Object* data)
 {
 }
 
-Command::Command(uint32_t id, const std::wstring& name, Object* data)
+Command::Command(uint32_t id, const std::wstring_view& name, Object* data)
 :	m_flags(CfId | CfName | CfData)
 ,	m_id(id)
 ,	m_name(name)
@@ -97,7 +97,7 @@ bool Command::operator == (uint32_t id) const
 	return (m_flags & CfId) == CfId && m_id == id;
 }
 
-bool Command::operator == (const std::wstring& name) const
+bool Command::operator == (const std::wstring_view& name) const
 {
 	return (m_flags & CfName) == CfName && m_name == name;
 }
