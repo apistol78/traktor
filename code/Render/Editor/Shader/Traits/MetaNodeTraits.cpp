@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,12 +11,10 @@
 #include "Render/Editor/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/MetaNodeTraits.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
@@ -30,7 +28,7 @@ int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 	return -1;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MetaNodeTraits", 0, MetaNodeTraits, INodeTraits)
 
@@ -89,7 +87,7 @@ PinType MetaNodeTraits::getOutputPinType(
 	PinType outputPinType = PinType::Void;
 	if (is_a< Branch >(node) || is_a< Connected >(node) || is_a< Platform >(node) || is_a< Renderer >(node))
 	{
-		uint32_t inputPinCount = node->getInputPinCount();
+		const uint32_t inputPinCount = node->getInputPinCount();
 		for (uint32_t i = 0; i < inputPinCount; ++i)
 			outputPinType = std::max< PinType >(
 				outputPinType,
@@ -193,5 +191,4 @@ PinOrder MetaNodeTraits::evaluateOrder(
 	return pinOrderMax(inputPinOrders, node->getInputPinCount());
 }
 
-	}
 }

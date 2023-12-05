@@ -139,8 +139,8 @@ void SolutionPropertyPage::updateReferencedEnvironment()
 		OS::getInstance().getEnvironment(referencedEnv, value);
 
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(referencedEnv));
-		row->add(new ui::GridItem(value));
+		row->add(referencedEnv);
+		row->add(value);
 		m_environmentPreview->addRow(row);
 	}
 }

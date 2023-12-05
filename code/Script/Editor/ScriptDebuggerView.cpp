@@ -143,17 +143,17 @@ bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 Ref< ui::GridRow > ScriptDebuggerView::createVariableRow(const Variable* local)
 {
 	Ref< ui::GridRow > row = new ui::GridRow(0);
-	row->add(new ui::GridItem(local->getName()));
+	row->add(local->getName());
 
 	if (const script::Value* value = dynamic_type_cast< const script::Value* >(local->getValue()))
 	{
-		row->add(new ui::GridItem(value->getLiteral()));
-		row->add(new ui::GridItem(local->getTypeName()));
+		row->add(value->getLiteral());
+		row->add(local->getTypeName());
 	}
 	else if (const script::ValueObject* valueObject = dynamic_type_cast< const script::ValueObject* >(local->getValue()))
 	{
-		row->add(new ui::GridItem(valueObject->getValueOf()));
-		row->add(new ui::GridItem(local->getTypeName()));
+		row->add(valueObject->getValueOf());
+		row->add(local->getTypeName());
 
 		Ref< ui::GridRow > objectRow = new ui::GridRow(0);
 		objectRow->setData(L"OBJECT_REFERENCE", const_cast< script::ValueObject* >(valueObject));
@@ -209,9 +209,9 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 
 			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::GridItem(stackFrame->getFunctionName()));
-			row->add(new ui::GridItem(toString(stackFrame->getLine() + 1)));
-			row->add(new ui::GridItem(scriptInstance ? scriptInstance->getName() : L"(Unknown script)"));
+			row->add(stackFrame->getFunctionName());
+			row->add(toString(stackFrame->getLine() + 1));
+			row->add(scriptInstance ? scriptInstance->getName() : L"(Unknown script)");
 			row->setData(L"SCRIPT_ID", new PropertyString(stackFrame->getScriptId().format()));
 			row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));

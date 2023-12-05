@@ -1309,13 +1309,13 @@ void ShaderGraphEditorPage::updateGraph()
 	for (const auto& variable : variables)
 	{
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(variable.first));
+		row->add(variable.first);
 
 		if (variable.second.readCount > 0 && variable.second.writeCount == 0)
 			row->setBackground(Color4ub(255, 0, 0, 255));
 
-		row->add(new ui::GridItem(toString(variable.second.readCount)));
-		row->add(new ui::GridItem(c_pinTypeNames[(int32_t)variable.second.type]));
+		row->add(toString(variable.second.readCount));
+		row->add(c_pinTypeNames[(int32_t)variable.second.type]);
 		m_variablesGrid->addRow(row);
 	}
 
@@ -1327,23 +1327,24 @@ void ShaderGraphEditorPage::updateGraph()
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->setData(L"SHADERNODE", uniformNode);
-			row->add(new ui::GridItem(uniformNode->getParameterName()));
-			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]));
-			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
+			row->add(uniformNode->getParameterName());
+			row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
+			row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
 			m_uniformsGrid->addRow(row);
 		}
 		else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->setData(L"SHADERNODE", indexedUniformNode);
-			row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
-			row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
-			row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]));
+			row->add(indexedUniformNode->getParameterName());
+			row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
+			row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
 			m_uniformsGrid->addRow(row);
 		}
 	}
 	if (resolvedShaderGraph)
 	{
+		// Add non-local uniforms to grid as well, color coded.
 		for (auto node : resolvedShaderGraph->getNodes())
 		{
 			auto it = std::find_if(
@@ -1358,18 +1359,18 @@ void ShaderGraphEditorPage::updateGraph()
 			if (Uniform* uniformNode = dynamic_type_cast<Uniform*>(node))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
-				row->add(new ui::GridItem(uniformNode->getParameterName()));
-				row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]));
-				row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]));
+				row->add(uniformNode->getParameterName());
+				row->add(c_parameterTypeNames[(int32_t)uniformNode->getParameterType()]);
+				row->add(c_uniformFrequencyNames[(int32_t)uniformNode->getFrequency()]);
 				row->setBackground(Color4ub(90, 60, 40, 255));
 				m_uniformsGrid->addRow(row);
 			}
 			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast<IndexedUniform*>(node))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
-				row->add(new ui::GridItem(indexedUniformNode->getParameterName()));
-				row->add(new ui::GridItem(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]));
-				row->add(new ui::GridItem(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]));
+				row->add(indexedUniformNode->getParameterName());
+				row->add(c_parameterTypeNames[(int32_t)indexedUniformNode->getParameterType()]);
+				row->add(c_uniformFrequencyNames[(int32_t)indexedUniformNode->getFrequency()]);
 				row->setBackground(Color4ub(90, 60, 40, 255));
 				m_uniformsGrid->addRow(row);
 			}
@@ -1384,16 +1385,16 @@ void ShaderGraphEditorPage::updateGraph()
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->setData(L"SHADERNODE", inputPortNode);
-			row->add(new ui::GridItem(inputPortNode->getName()));
-			row->add(new ui::GridItem(L"Input"));
+			row->add(inputPortNode->getName());
+			row->add(L"Input");
 			m_portsGrid->addRow(row);
 		}
 		else if (OutputPort* outputPortNode = dynamic_type_cast< OutputPort* >(node))
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
 			row->setData(L"SHADERNODE", outputPortNode);
-			row->add(new ui::GridItem(outputPortNode->getName()));
-			row->add(new ui::GridItem(L"Output"));
+			row->add(outputPortNode->getName());
+			row->add(L"Output");
 			m_portsGrid->addRow(row);
 		}
 	}
@@ -1408,8 +1409,8 @@ void ShaderGraphEditorPage::updateGraph()
 	for (const auto& it : nodeCounts)
 	{
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(it.first->getName()));
-		row->add(new ui::GridItem(str(L"%d", it.second)));
+		row->add(it.first->getName());
+		row->add(str(L"%d", it.second));
 		m_nodeCountGrid->addRow(row);
 	}
 

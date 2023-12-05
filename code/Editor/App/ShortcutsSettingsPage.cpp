@@ -66,13 +66,9 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, const PropertyGroup* o
 			Ref< PropertyString > propertyKey = new PropertyString(PropertyString::get(constPropertyKey));
 
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(
-				shortcutCommand.getName()
-			));
-			row->add(new ui::GridItem(
-				i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED")
-			));
-			row->add(new ui::GridItem(L""));
+			row->add(shortcutCommand.getName());
+			row->add(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED"));
+			row->add(L"");
 			row->setData(L"PROPERTYKEY", propertyKey);
 			m_gridShortcuts->addRow(row);
 		}

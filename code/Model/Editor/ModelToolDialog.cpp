@@ -480,25 +480,25 @@ void ModelToolDialog::updateModel()
 			const auto& cl = i->getColor();
 
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(i->getName()));
-			row->add(new ui::GridItem(i->getDiffuseMap().name + L" [" + toString(i->getDiffuseMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getSpecularMap().name + L" [" + toString(i->getSpecularMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getRoughnessMap().name + L" [" + toString(i->getRoughnessMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getMetalnessMap().name + L" [" + toString(i->getMetalnessMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getTransparencyMap().name + L" [" + toString(i->getTransparencyMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]"));
-			row->add(new ui::GridItem(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]"));
-			row->add(new ui::GridItem( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha())));
-			row->add(new ui::GridItem(toString(i->getDiffuseTerm())));
-			row->add(new ui::GridItem(toString(i->getSpecularTerm())));
-			row->add(new ui::GridItem(toString(i->getRoughness())));
-			row->add(new ui::GridItem(toString(i->getMetalness())));
-			row->add(new ui::GridItem(toString(i->getTransparency())));
-			row->add(new ui::GridItem(toString(i->getEmissive())));
-			row->add(new ui::GridItem(toString(i->getReflective())));
-			row->add(new ui::GridItem(c_blendModes[(int32_t)i->getBlendOperator()]));
-			row->add(new ui::GridItem(i->isDoubleSided() ? L"Yes" : L"No"));
+			row->add(i->getName());
+			row->add(i->getDiffuseMap().name + L" [" + toString(i->getDiffuseMap().channel) + L"]");
+			row->add(i->getSpecularMap().name + L" [" + toString(i->getSpecularMap().channel) + L"]");
+			row->add(i->getRoughnessMap().name + L" [" + toString(i->getRoughnessMap().channel) + L"]");
+			row->add(i->getMetalnessMap().name + L" [" + toString(i->getMetalnessMap().channel) + L"]");
+			row->add(i->getTransparencyMap().name + L" [" + toString(i->getTransparencyMap().channel) + L"]");
+			row->add(i->getEmissiveMap().name + L" [" + toString(i->getEmissiveMap().channel) + L"]");
+			row->add(i->getReflectiveMap().name + L" [" + toString(i->getReflectiveMap().channel) + L"]");
+			row->add(i->getNormalMap().name + L" [" + toString(i->getNormalMap().channel) + L"]");
+			row->add( toString(cl.getRed()) + L", " + toString(cl.getGreen()) + L", " + toString(cl.getBlue()) + L", " + toString(cl.getAlpha()));
+			row->add(toString(i->getDiffuseTerm()));
+			row->add(toString(i->getSpecularTerm()));
+			row->add(toString(i->getRoughness()));
+			row->add(toString(i->getMetalness()));
+			row->add(toString(i->getTransparency()));
+			row->add(toString(i->getEmissive()));
+			row->add(toString(i->getReflective()));
+			row->add(c_blendModes[(int32_t)i->getBlendOperator()]);
+			row->add(i->isDoubleSided() ? L"Yes" : L"No");
 			m_materialGrid->addRow(row);
 		}
 
@@ -612,8 +612,8 @@ void ModelToolDialog::updateOperations(ui::TreeViewItem* itemModel)
 void ModelToolDialog::addStatistic(const std::wstring& name, const std::wstring& value)
 {
 	Ref< ui::GridRow > row = new ui::GridRow();
-	row->add(new ui::GridItem(name));
-	row->add(new ui::GridItem(value));
+	row->add(name);
+	row->add(value);
 	m_statisticGrid->addRow(row);
 }
 

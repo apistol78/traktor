@@ -103,7 +103,7 @@ void ScriptProfilerView::updateProfileGrid()
 		if (!pe.row)
 		{
 			pe.row = new ui::GridRow();
-			pe.row->add(new ui::GridItem(i->first.second));
+			pe.row->add(i->first.second);
 
 			pe.row->setData(L"SCRIPT_ID", 0);
 			pe.row->setData(L"SCRIPT_LINE", 0);
@@ -112,9 +112,9 @@ void ScriptProfilerView::updateProfileGrid()
 			{
 				Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(i->first.first);
 				if (scriptInstance)
-					pe.row->add(new ui::GridItem(scriptInstance->getName()));
+					pe.row->add(scriptInstance->getName());
 				else
-					pe.row->add(new ui::GridItem(i->first.first.format()));
+					pe.row->add(i->first.first.format());
 
 				pe.row->setData(L"SCRIPT_ID", new PropertyString(i->first.first.format()));
 
@@ -125,11 +125,11 @@ void ScriptProfilerView::updateProfileGrid()
 			else
 				pe.row->add(new ui::GridItem(i18n::Text(L"SCRIPT_PROFILER_NATIVE_FUNCTION")));
 
-			pe.row->add(new ui::GridItem(toString(pe.inclusiveDuration * 1000.0, 2)));
-			pe.row->add(new ui::GridItem(toString(pe.exclusiveDuration * 1000.0, 2)));
-			pe.row->add(new ui::GridItem(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2)));
-			pe.row->add(new ui::GridItem(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2)));
-			pe.row->add(new ui::GridItem(toString(pe.callCount)));
+			pe.row->add(toString(pe.inclusiveDuration * 1000.0, 2));
+			pe.row->add(toString(pe.exclusiveDuration * 1000.0, 2));
+			pe.row->add(toString(pe.inclusiveDuration * 100.0 / totalDuration, 2));
+			pe.row->add(toString(pe.exclusiveDuration * 100.0 / totalDuration, 2));
+			pe.row->add(toString(pe.callCount));
 
 			m_profileGrid->addRow(pe.row);
 		}

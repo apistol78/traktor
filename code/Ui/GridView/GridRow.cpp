@@ -83,6 +83,26 @@ uint32_t GridRow::add(GridItem* item)
 	return uint32_t(m_items.size() - 1);
 }
 
+uint32_t GridRow::add(const std::wstring& text)
+{
+	return add(new GridItem(text));
+}
+
+uint32_t GridRow::add(const std::wstring& text, Font* font)
+{
+	return add(new GridItem(text, font));
+}
+	
+uint32_t GridRow::add(const std::wstring& text, IBitmap* image)
+{
+	return add(new GridItem(text, image));
+}
+
+uint32_t GridRow::add(IBitmap* image)
+{
+	return add(new GridItem(image));
+}
+
 void GridRow::set(uint32_t index, GridItem* item)
 {
 	m_items.resize(std::max< uint32_t >((uint32_t)m_items.size(), index + 1));

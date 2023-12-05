@@ -137,10 +137,10 @@ void ProjectPropertyPage::updateDependencyList()
 			continue;
 
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem((*i)->getName()));
-		row->add(new ui::GridItem((*i)->getLocation()));
-		row->add(new ui::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
-		row->add(new ui::GridItem(c_link[(*i)->getLink()]));
+		row->add((*i)->getName());
+		row->add((*i)->getLocation());
+		row->add((*i)->getInheritIncludePaths() ? L"Yes" : L"No");
+		row->add(c_link[(*i)->getLink()]);
 		row->setData(L"DEPENDENCY", *i);
 		m_listDependencies->addRow(row);
 	}
@@ -152,10 +152,10 @@ void ProjectPropertyPage::updateDependencyList()
 			continue;
 
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem((*i)->getName()));
-		row->add(new ui::GridItem((*i)->getLocation()));
-		row->add(new ui::GridItem((*i)->getInheritIncludePaths() ? L"Yes" : L"No"));
-		row->add(new ui::GridItem(c_link[(*i)->getLink()]));
+		row->add((*i)->getName());
+		row->add((*i)->getLocation());
+		row->add((*i)->getInheritIncludePaths() ? L"Yes" : L"No");
+		row->add(c_link[(*i)->getLink()]);
 		row->setData(L"DEPENDENCY", *i);
 		m_listDependencies->addRow(row);
 	}

@@ -24,6 +24,8 @@
 namespace traktor::ui
 {
 
+class Font;
+class IBitmap;
 class GridItem;
 
 /*! Grid row.
@@ -63,6 +65,14 @@ public:
 	int32_t getHeight() const;
 
 	uint32_t add(GridItem* item);
+
+	uint32_t add(const std::wstring& text);
+
+	uint32_t add(const std::wstring& text, Font* font);
+	
+	uint32_t add(const std::wstring& text, IBitmap* image);
+
+	uint32_t add(IBitmap* image);
 
 	void set(uint32_t index, GridItem* item);
 

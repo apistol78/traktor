@@ -91,7 +91,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, pixel(28_ut) + connections.size() * pixel(c_performanceHeight + c_commandHeight));
+	return ui::Size(128, pixel(28_ut) + (int32_t)connections.size() * pixel(c_performanceHeight + c_commandHeight));
 }
 
 void TargetInstanceListItem::setSelected(bool selected)

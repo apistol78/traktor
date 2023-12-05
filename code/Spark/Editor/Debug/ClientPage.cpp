@@ -163,8 +163,8 @@ void ClientPage::updateSelection()
 		ss << mbstows(debugInfo->getName());
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Name"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Name");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		if (const SpriteInstanceDebugInfo* spriteDebugInfo = dynamic_type_cast< const SpriteInstanceDebugInfo* >(debugInfo))
@@ -173,23 +173,23 @@ void ClientPage::updateSelection()
 			ss << mbstows(spriteDebugInfo->getClassName());
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Class"));
-			row->add(new ui::GridItem(ss.str()));
+			row->add(L"Class");
+			row->add(ss.str());
 			m_debugGrid->addRow(row);
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Mask"));
-			row->add(new ui::GridItem(spriteDebugInfo->getMask() ? L"Yes" : L"No"));
+			row->add(L"Mask");
+			row->add(spriteDebugInfo->getMask() ? L"Yes" : L"No");
 			m_debugGrid->addRow(row);
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Clipped"));
-			row->add(new ui::GridItem(spriteDebugInfo->getClipped() ? L"Yes" : L"No"));
+			row->add(L"Clipped");
+			row->add(spriteDebugInfo->getClipped() ? L"Yes" : L"No");
 			m_debugGrid->addRow(row);
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"9Grid Scaling"));
-			row->add(new ui::GridItem(!spriteDebugInfo->getScalingGrid().empty() ? L"Yes" : L"No"));
+			row->add(L"9Grid Scaling");
+			row->add(!spriteDebugInfo->getScalingGrid().empty() ? L"Yes" : L"No");
 			m_debugGrid->addRow(row);
 		}
 
@@ -199,22 +199,22 @@ void ClientPage::updateSelection()
 			ss << editDebugInfo->getText();
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Text"));
-			row->add(new ui::GridItem(ss.str()));
+			row->add(L"Text");
+			row->add(ss.str());
 			m_debugGrid->addRow(row);
 
 			ss.reset();
 			ss << editDebugInfo->getTextColor().getRed() << L", " << editDebugInfo->getTextColor().getGreen() << L", " << editDebugInfo->getTextColor().getBlue() << L", " << editDebugInfo->getTextColor().getAlpha();
 
 			row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Text Color"));
-			row->add(new ui::GridItem(ss.str()));
+			row->add(L"Text Color");
+			row->add(ss.str());
 			m_debugGrid->addRow(row);
 		}
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Visible"));
-		row->add(new ui::GridItem(debugInfo->getVisible() ? L"Yes" : L"No"));
+		row->add(L"Visible");
+		row->add(debugInfo->getVisible() ? L"Yes" : L"No");
 		m_debugGrid->addRow(row);
 
 
@@ -224,24 +224,24 @@ void ClientPage::updateSelection()
 		ss << lm.e11 << L", " << lm.e12 << L", " << lm.e13;
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local transform [11,12,13]"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local transform [11,12,13]");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << lm.e21 << L", " << lm.e22 << L", " << lm.e23;
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local transform [21,22,23]"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local transform [21,22,23]");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << lm.e31 << L", " << lm.e32 << L", " << lm.e33;
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local transform [31,32,33]"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local transform [31,32,33]");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 
@@ -250,72 +250,72 @@ void ClientPage::updateSelection()
 		ss << int(lt.x / 20.0f) << L", " << int(lt.y / 20.0f);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local position"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local position");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << ls.x << L", " << ls.y;
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local scale"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local scale");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << rad2deg(lr);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local rotatation"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local rotatation");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(lb.mn.x / 20.0f) << L", " << int(lb.mn.y / 20.0f) << L" - " << int(lb.mx.x / 20.0f) << L", " << int(lb.mx.y / 20.0f);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Local bounds"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Local bounds");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(gt.x / 20.0f) << L", " << int(gt.y / 20.0f);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Global position"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Global position");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << gs.x << L", " << gs.y;
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Global scale"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Global scale");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << rad2deg(gr);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Global rotatation"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Global rotatation");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << int(gb.mn.x / 20.0f) << L", " << int(gb.mn.y / 20.0f) << L" - " << int(gb.mx.x / 20.0f) << L", " << int(gb.mx.y / 20.0f);
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Global bounds"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Global bounds");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 
 		ss.reset();
 		ss << L"+[" << cx.add << L"], *[" << cx.mul << L"]";
 
 		row = new ui::GridRow();
-		row->add(new ui::GridItem(L"Global color transform"));
-		row->add(new ui::GridItem(ss.str()));
+		row->add(L"Global color transform");
+		row->add(ss.str());
 		m_debugGrid->addRow(row);
 	}
 	else

@@ -199,14 +199,14 @@ void DictionaryEditorPage::updateGrid()
 		for (const auto& map : m_dictionary->get())
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(map.first));
-			row->add(new ui::GridItem(map.second));
+			row->add(map.first);
+			row->add(map.second);
 
 			if (m_referenceDictionary)
 			{
 				std::wstring referenceText;
 				if (m_referenceDictionary->get(map.first, referenceText))
-					row->add(new ui::GridItem(referenceText));
+					row->add(referenceText);
 			}
 
 			m_gridDictionary->addRow(row);
@@ -215,8 +215,8 @@ void DictionaryEditorPage::updateGrid()
 
 	// Add last empty row; double click on this and a new entry is added.
 	Ref< ui::GridRow > row = new ui::GridRow();
-	row->add(new ui::GridItem(Text(L"DICTIONARY_EDITOR_COLUMN_ADD")));
-	row->add(new ui::GridItem(L""));
+	row->add(Text(L"DICTIONARY_EDITOR_COLUMN_ADD"));
+	row->add(L"");
 	m_gridDictionary->addRow(row);
 
 	m_gridDictionary->update();
@@ -364,8 +364,8 @@ void DictionaryEditorPage::eventGridRowDoubleClick(ui::GridRowDoubleClickEvent* 
 	{
 		// Add new last empty row; double click on this and a new entry is added.
 		Ref< ui::GridRow > lastRow = new ui::GridRow();
-		lastRow->add(new ui::GridItem(Text(L"DICTIONARY_EDITOR_COLUMN_ADD")));
-		lastRow->add(new ui::GridItem(L""));
+		lastRow->add(Text(L"DICTIONARY_EDITOR_COLUMN_ADD"));
+		lastRow->add(L"");
 		m_gridDictionary->addRow(lastRow);
 
 		// Modify former last row into being a new row, begin edit id.

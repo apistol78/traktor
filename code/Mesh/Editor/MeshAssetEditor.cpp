@@ -372,7 +372,7 @@ void MeshAssetEditor::updateMaterialList()
 		for (const auto& material : materials)
 		{
 			Ref< ui::GridRow > shaderItem = new ui::GridRow();
-			shaderItem->add(new ui::GridItem(material.getName()));
+			shaderItem->add(material.getName());
 
 			// Find shader for material.
 			std::wstring materialShader = i18n::Text(L"MESHASSET_EDITOR_SHADER_NOT_ASSIGNED");
@@ -393,7 +393,7 @@ void MeshAssetEditor::updateMaterialList()
 						materialShader = i18n::Text(L"MESHASSET_EDITOR_DISABLED");
 				}
 			}
-			shaderItem->add(new ui::GridItem(materialShader));
+			shaderItem->add(materialShader);
 
 			m_materialShaderList->addRow(shaderItem);
 		}
@@ -435,8 +435,8 @@ void MeshAssetEditor::updateMaterialList()
 				}
 
 				Ref< ui::GridRow > textureItem = new ui::GridRow();
-				textureItem->add(new ui::GridItem(modelTextures[j].name));
-				textureItem->add(new ui::GridItem(materialTexture));
+				textureItem->add(modelTextures[j].name);
+				textureItem->add(materialTexture);
 
 				StringOutputStream ss;
 				if (modelTextures[j].name == material.getDiffuseMap().name)
@@ -455,7 +455,7 @@ void MeshAssetEditor::updateMaterialList()
 					ss << L" | Reflective (*)";
 				if (modelTextures[j].name == material.getNormalMap().name)
 					ss << L" | Normal";
-				textureItem->add(new ui::GridItem(ss.str().substr(3)));
+				textureItem->add(ss.str().substr(3));
 
 				textureItem->setData(L"INSTANCE", materialTextureInstance);
 				textureItem->setData(L"EMBEDDED_IMAGE", modelTextures[j].embedded);
