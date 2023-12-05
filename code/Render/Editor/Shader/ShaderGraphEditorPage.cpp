@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -97,12 +97,10 @@
 // Resources
 #include "Resources/Tools.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 const wchar_t* c_pinTypeNames[] =
 {
@@ -212,7 +210,7 @@ private:
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
 
@@ -1229,7 +1227,6 @@ Ref< ui::Group > ShaderGraphEditorPage::createEditorGroup(Group* shaderGroup)
 	);
 	editorGroup->setData(L"SHADERGROUP", shaderGroup);
 	return editorGroup;
-
 }
 
 void ShaderGraphEditorPage::createNode(const TypeInfo* nodeType, const ui::Point& at)
@@ -1356,7 +1353,7 @@ void ShaderGraphEditorPage::updateGraph()
 			if (it != m_shaderGraph->getNodes().end())
 				continue;
 
-			if (Uniform* uniformNode = dynamic_type_cast<Uniform*>(node))
+			if (Uniform* uniformNode = dynamic_type_cast< Uniform* >(node))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
 				row->add(uniformNode->getParameterName());
@@ -1365,7 +1362,7 @@ void ShaderGraphEditorPage::updateGraph()
 				row->setBackground(Color4ub(90, 60, 40, 255));
 				m_uniformsGrid->addRow(row);
 			}
-			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast<IndexedUniform*>(node))
+			else if (IndexedUniform* indexedUniformNode = dynamic_type_cast< IndexedUniform* >(node))
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
 				row->add(indexedUniformNode->getParameterName());
@@ -1420,10 +1417,10 @@ void ShaderGraphEditorPage::updateGraph()
 	
 	// Validate shader graph.
 	AlignedVector< const Node* > errorNodes;
-	ShaderGraphValidator validator(m_shaderGraph);
+	const ShaderGraphValidator validator(m_shaderGraph);
 	const bool validationResult = validator.validate(graphType, &errorNodes);
 
-	// Update validation indication of each node.
+	// Update validation status of each node.
 	for (auto editorNode : m_editorGraph->getNodes())
 	{
 		Ref< Node > shaderNode = editorNode->getData< Node >(L"SHADERNODE");
@@ -1446,16 +1443,41 @@ void ShaderGraphEditorPage::updateGraph()
 	// Evaluate output types (and partial values) if validation succeeded.
 	if (validationResult)
 	{
+		// Prepare evaluation graph, ie graph which contain less meta nodes so evaluator can process graph properly.
+		Ref< ShaderGraph > evaluationGraph = ShaderGraphStatic(resolvedShaderGraph, Guid()).getVariableResolved();
+		evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getConnectedPermutation();
+		evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getTypePermutation();
+
+		const ShaderGraphEvaluator evaluator(evaluationGraph);
+
 		for (auto editorEdge : m_editorGraph->getEdges())
 		{
 			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
 			T_ASSERT(shaderEdge);
 
+			Constant value;
+			for (auto edge : evaluationGraph->getEdges())
+			{
+				if (
+					(
+						shaderEdge->getSource()->getNode()->getId() == edge->getSource()->getNode()->getId() &&
+						shaderEdge->getSource()->getId() == edge->getSource()->getId()
+					) ||
+					(
+						shaderEdge->getDestination()->getNode()->getId() == edge->getDestination()->getNode()->getId() &&
+						shaderEdge->getDestination()->getId() == edge->getDestination()->getId()
+					)
+				)
+				{
+					value = evaluator.evaluate(edge->getSource());
+					break;
+				}
+			}
+
 			// Set default thickness first; override below for "fat" types.
 			editorEdge->setThickness(2_ut);
 
 			StringOutputStream ss;
-			const Constant value = ShaderGraphEvaluator(m_shaderGraph).evaluate(shaderEdge->getSource());
 			switch (value.getType())
 			{
 			default:
@@ -2040,5 +2062,4 @@ void ShaderGraphEditorPage::eventUniformOrPortDoubleClick(ui::GridRowDoubleClick
 	event->consume();
 }
 
-	}
 }
