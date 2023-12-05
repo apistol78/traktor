@@ -42,7 +42,7 @@ void Profiler::setListener(IReportListener* listener)
 	m_listener = listener;
 }
 
-void Profiler::beginEvent(const std::wstring& name)
+void Profiler::beginEvent(const std::wstring_view& name)
 {
 	if (!m_listener)
 		return;
@@ -90,10 +90,10 @@ void Profiler::endEvent()
 
 	// Get event queue for calling thread.
 	ThreadEvents* te = static_cast< ThreadEvents* >(m_localThreadEvents.get());
-	T_FATAL_ASSERT (te);
+	T_ASSERT(te);
 
 	// End event.
-	T_FATAL_ASSERT(!te->events.empty());
+	T_ASSERT(!te->events.empty());
 	Event& e = te->events.back();
 	e.end = m_timer.getElapsedTime();
 
@@ -119,7 +119,7 @@ void Profiler::endEvent()
 	}
 }
 
-void Profiler::addEvent(const std::wstring& name, double start, double duration)
+void Profiler::addEvent(const std::wstring_view& name, double start, double duration)
 {
 	if (!m_listener)
 		return;

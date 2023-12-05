@@ -91,14 +91,14 @@ public:
 
 	/*! Begin recording event.
 	 */
-	void beginEvent(const std::wstring& name);
+	void beginEvent(const std::wstring_view& name);
 
 	/*! End recording event.
 	 */
 	void endEvent();
 
 	/*! Add manual event. */
-	void addEvent(const std::wstring& name, double start, double duration);
+	void addEvent(const std::wstring_view& name, double start, double duration);
 
 	/*! Get current time.
 	 */
@@ -133,7 +133,7 @@ private:
 class ProfilerScoped
 {
 public:
-	ProfilerScoped(const std::wstring& name)
+	ProfilerScoped(const std::wstring_view& name)
 	{
 		Profiler::getInstance().beginEvent(name);
 	}
