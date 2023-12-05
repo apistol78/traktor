@@ -2,8 +2,6 @@
 <object type="traktor.render.ShaderModule">
 	<text>
 	<![CDATA[
-
-
 vec2 ParallaxMapping(in vec3 position, in vec2 textureCoords, float height, in vec3 normal)
 {
     vec3 tangent = normalize(dFdy(textureCoords).y * dFdx(position) - dFdx(textureCoords).y * dFdy(position));
@@ -11,7 +9,7 @@ vec2 ParallaxMapping(in vec3 position, in vec2 textureCoords, float height, in v
     tangent = cross(temp, normal);
     tangent = normalize(tangent);
 
-	const vec3 binormal = cross(-tangent, normal);
+	const vec3 binormal = cross(tangent, normal);
 	const vec3 viewTangentSpace = normalize(-position) * mat3(tangent, binormal, normal);
    
     const float scale = 0.04f;
