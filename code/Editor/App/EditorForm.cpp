@@ -550,7 +550,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
 
 	pane->split(false, ui::Unit(ww), m_paneWest, paneCenter);
-	paneCenter->split(false, -250_ut, paneCenter, m_paneEast);
+	paneCenter->split(false, -ui::Unit(we), paneCenter, m_paneEast);
 	paneCenter->split(true, -200_ut, paneCenter, paneLog);
 	paneCenter->split(true, -200_ut, paneCenter, m_paneSouth);
 
