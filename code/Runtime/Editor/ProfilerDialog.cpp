@@ -40,8 +40,8 @@ const Color4ub c_threadColors[] =
 Ref< ui::GridRow > createPerformanceRow(const std::wstring& name, const std::wstring& value)
 {
 	Ref< ui::GridRow > row = new ui::GridRow();
-	row->add(new ui::GridItem(name));
-	row->add(new ui::GridItem(value));
+	row->add(name);
+	row->add(value);
 	return row;
 }
 

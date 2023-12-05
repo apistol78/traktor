@@ -224,7 +224,7 @@ void MeshAssetEditor::updateMaterialList()
 		for (const auto& material : m_model->getMaterials())
 		{
 			Ref< ui::GridRow > shaderItem = new ui::GridRow();
-			shaderItem->add(new ui::GridItem(material.getName()));
+			shaderItem->add(material.getName());
 
 			std::wstring materialName = i18n::Text(L"PHYSICS_MESHASSET_EDITOR_MATERIAL_NOT_ASSIGNED");
 
@@ -246,7 +246,7 @@ void MeshAssetEditor::updateMaterialList()
 				}
 			}
 
-			shaderItem->add(new ui::GridItem(materialName));
+			shaderItem->add(materialName);
 
 			m_materialList->addRow(shaderItem);
 		}

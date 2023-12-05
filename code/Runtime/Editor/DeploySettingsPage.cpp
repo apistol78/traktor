@@ -112,8 +112,8 @@ bool DeploySettingsPage::create(ui::Container* parent, const PropertyGroup* orig
 			if (value)
 			{
 				Ref< ui::GridRow > row = new ui::GridRow();
-				row->add(new ui::GridItem(i->first));
-				row->add(new ui::GridItem(PropertyString::get(value)));
+				row->add(i->first);
+				row->add(PropertyString::get(value));
 				gridEnvironment->addRow(row);
 			}
 		}

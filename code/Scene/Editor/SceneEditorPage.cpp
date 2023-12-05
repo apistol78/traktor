@@ -412,8 +412,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 		m_context->setDrawGuide(guideId, shouldDraw);
 
 		Ref< ui::GridRow > row = new ui::GridRow();
-		row->add(new ui::GridItem(guideId));
-		row->add(new ui::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+		row->add(guideId);
+		row->add(shouldDraw ? m_imageVisible : m_imageHidden);
 		m_gridGuides->addRow(row);
 	}
 
@@ -1145,14 +1145,10 @@ Ref< ui::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter* entityA
 	row->add(item);
 
 	// Create "visible" check box.
-	row->add(new ui::GridItem(
-		entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden
-	));
+	row->add(entityAdapter->isVisible(false) ? m_imageVisible : m_imageHidden);
 
 	// Create "locked" check box.
-	row->add(new ui::GridItem(
-		entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked
-	));
+	row->add(entityAdapter->isLocked(false) ? m_imageLocked : m_imageUnlocked);
 
 	// Recursively add children.
 	if (
@@ -1652,38 +1648,38 @@ void SceneEditorPage::eventContextPostFrame(PostFrameEvent* event)
 
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Buffers"));
-			row->add(new ui::GridItem(str(L"%d", rss.buffers)));
+			row->add(L"Buffers");
+			row->add(str(L"%d", rss.buffers));
 			m_gridResources->addRow(row);
 		}
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Textures (2D)"));
-			row->add(new ui::GridItem(str(L"%d", rss.simpleTextures)));
+			row->add(L"Textures (2D)");
+			row->add(str(L"%d", rss.simpleTextures));
 			m_gridResources->addRow(row);
 		}
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Textures (Cube)"));
-			row->add(new ui::GridItem(str(L"%d", rss.cubeTextures)));
+			row->add(L"Textures (Cube)");
+			row->add(str(L"%d", rss.cubeTextures));
 			m_gridResources->addRow(row);
 		}
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Textures (3D)"));
-			row->add(new ui::GridItem(str(L"%d", rss.volumeTextures)));
+			row->add(L"Textures (3D)");
+			row->add(str(L"%d", rss.volumeTextures));
 			m_gridResources->addRow(row);
 		}
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Render target sets"));
-			row->add(new ui::GridItem(str(L"%d", rss.renderTargetSets)));
+			row->add(L"Render target sets");
+			row->add(str(L"%d", rss.renderTargetSets));
 			m_gridResources->addRow(row);
 		}
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(L"Programs"));
-			row->add(new ui::GridItem(str(L"%d", rss.programs)));
+			row->add(L"Programs");
+			row->add(str(L"%d", rss.programs));
 			m_gridResources->addRow(row);
 		}
 	}
@@ -1708,9 +1704,9 @@ void SceneEditorPage::eventContextMeasurement(MeasurementEvent* event)
 	total /= (double)v.size();
 
 	Ref< ui::GridRow > row = new ui::GridRow();
-	row->add(new ui::GridItem(str(L"%d [%d]", event->getPass(), event->getLevel())));
-	row->add(new ui::GridItem(event->getName()));
-	row->add(new ui::GridItem(str(L"%d \xb5s", (int32_t)(total * 1000000.0))));
+	row->add(str(L"%d [%d]", event->getPass(), event->getLevel()));
+	row->add(event->getName());
+	row->add(str(L"%d \xb5s", (int32_t)(total * 1000000.0)));
 	m_gridMeasurements->addRow(row);
 }
 

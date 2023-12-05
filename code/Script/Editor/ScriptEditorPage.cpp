@@ -553,9 +553,9 @@ void ScriptEditorPage::buildOutlineGrid(ui::GridView* grid, ui::GridRow* parent,
 		{
 			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::GridItem(fn->isLocal() ? m_bitmapFunctionLocal : m_bitmapFunction));
-			row->add(new ui::GridItem(fn->getName()));
-			row->add(new ui::GridItem(toString(fn->getLine() + 1)));
+			row->add(fn->isLocal() ? m_bitmapFunctionLocal : m_bitmapFunction);
+			row->add(fn->getName());
+			row->add(toString(fn->getLine() + 1));
 
 			buildOutlineGrid(grid, row, fn->getBody());
 
@@ -568,9 +568,9 @@ void ScriptEditorPage::buildOutlineGrid(ui::GridView* grid, ui::GridRow* parent,
 		{
 			Ref< ui::GridRow > row = new ui::GridRow(0);
 
-			row->add(new ui::GridItem(m_bitmapFunctionReference));
-			row->add(new ui::GridItem(frn->getName()));
-			row->add(new ui::GridItem(toString(frn->getLine() + 1)));
+			row->add(m_bitmapFunctionReference);
+			row->add(frn->getName());
+			row->add(toString(frn->getLine() + 1));
 
 			if (parent)
 				parent->addChild(row);

@@ -225,14 +225,14 @@ void searchInstance(db::Instance* instance, const std::wstring& needle, bool reg
 			std::wstring value = getMemberValue(foundMember);
 
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(instance->getPath()));
-			row->add(new ui::GridItem(instance->getPrimaryType()->getName()));
-			row->add(new ui::GridItem(stylizeMemberName(foundMember->getName())));
+			row->add(instance->getPath());
+			row->add(instance->getPrimaryType()->getName());
+			row->add(stylizeMemberName(foundMember->getName()));
 
 			if (value.find_first_of(L"\n\r") == value.npos)
-				row->add(new ui::GridItem(getMemberValue(foundMember)));
+				row->add(getMemberValue(foundMember));
 			else
-				row->add(new ui::GridItem(L"..."));
+				row->add(L"...");
 
 			row->setData(L"INSTANCE", instance);
 			gridResults->addRow(row);

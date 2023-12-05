@@ -94,8 +94,8 @@ void QuickOpenDialog::updateSuggestions(const std::wstring& filter)
 		if (startsWith(toLower(instanceName), toLower(filter)))
 		{
 			Ref< ui::GridRow > row = new ui::GridRow();
-			row->add(new ui::GridItem(instanceName));
-			row->add(new ui::GridItem(instance->getPath()));
+			row->add(instanceName);
+			row->add(instance->getPath());
 			row->setData(L"INSTANCE", instance);
 			m_gridSuggestions->addRow(row);
 		}

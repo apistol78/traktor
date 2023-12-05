@@ -195,7 +195,7 @@ void SongEditor::updateGrid()
 			for (int32_t row = 0; row < pattern->getDuration(); ++row)
 			{
 				Ref< ui::GridRow > patternRow = new ui::GridRow();
-				patternRow->add(new ui::GridItem(toString(row)));
+				patternRow->add(toString(row));
 
 				const auto& tracks = pattern->getTracks();
 				for (size_t i = 0; i < tracks.size(); ++i)
