@@ -222,7 +222,7 @@ void SkyComponent::setup(
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[0]);
+				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[0], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->enqueue(renderBlock);
@@ -236,7 +236,7 @@ void SkyComponent::setup(
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[1]);
+				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[1], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->enqueue(renderBlock);

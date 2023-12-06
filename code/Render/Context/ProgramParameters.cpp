@@ -188,12 +188,13 @@ void ProgramParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	write< ITexture* >(m_parameterLast, texture);
 }
 
-void ProgramParameters::setImageViewParameter(handle_t handle, ITexture* imageView)
+void ProgramParameters::setImageViewParameter(handle_t handle, ITexture* imageView, int mip)
 {
 	T_ASSERT(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int8_t >(m_parameterLast, PmtImageView);
 	write< ITexture* >(m_parameterLast, imageView);
+	write< int32_t >(m_parameterLast, mip);
 }
 
 void ProgramParameters::setBufferViewParameter(handle_t handle, const IBufferView* bufferView)
@@ -273,7 +274,8 @@ void ProgramParameters::fixup(IProgram* program) const
 		case PmtImageView:
 			{
 				auto imageView = read< ITexture* >(parameter);
-				program->setImageViewParameter(handle, imageView);
+				auto mip = read< int32_t >(parameter);
+				program->setImageViewParameter(handle, imageView, mip);
 			}
 			break;
 

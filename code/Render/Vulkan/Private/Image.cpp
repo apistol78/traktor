@@ -85,25 +85,37 @@ bool Image::createSimple(
 	}
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+	{
+		m_storageImageViews.resize(mipLevels);
+		for (uint32_t mip = 0; mip < mipLevels; ++mip)
+		{
+			VkImageViewCreateInfo ivci = {};
+			ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			ivci.image = m_image;
+			ivci.viewType = VK_IMAGE_VIEW_TYPE_2D;
+			ivci.format = format;
+			ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+			ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			ivci.subresourceRange.baseMipLevel = mip;
+			ivci.subresourceRange.levelCount = 1;
+			ivci.subresourceRange.baseArrayLayer = 0;
+			ivci.subresourceRange.layerCount = 1;
+			if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_storageImageViews[mip]) != VK_SUCCESS)
+			{
+				log::error << L"Failed to create image view; unable to create image view." << Endl;
+				return false;
+			}
+		}
+	}
+
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(
-		Context::BindlessTexturesBinding,
-		m_context->getBindlessTexturesDescriptorSet(),
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-	);
+	updateSampledResource();
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-	{
-		updateBindlessResource(
-			Context::BindlessImagesBinding,
-			m_context->getBindlessImagesDescriptorSet(),
-			VK_IMAGE_LAYOUT_GENERAL,
-			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-		);
-	}
+		updateStorageResource();
 
 	return true;
 }
@@ -164,25 +176,37 @@ bool Image::createCube(
 	}
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+	{
+		m_storageImageViews.resize(mipLevels);
+		for (uint32_t mip = 0; mip < mipLevels; ++mip)
+		{
+			VkImageViewCreateInfo ivci = {};
+			ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			ivci.image = m_image;
+			ivci.viewType = VK_IMAGE_VIEW_TYPE_CUBE;
+			ivci.format = format;
+			ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+			ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			ivci.subresourceRange.baseMipLevel = mip;
+			ivci.subresourceRange.levelCount = 1;
+			ivci.subresourceRange.baseArrayLayer = 0;
+			ivci.subresourceRange.layerCount = 1;
+			if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_storageImageViews[mip]) != VK_SUCCESS)
+			{
+				log::error << L"Failed to create image view; unable to create image view." << Endl;
+				return false;
+			}
+		}
+	}
+
 	m_mipCount = mipLevels;
 	m_layerCount = 6;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(
-		Context::BindlessTexturesBinding,
-		m_context->getBindlessTexturesDescriptorSet(),
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-	);
+	updateSampledResource();
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-	{
-		updateBindlessResource(
-			Context::BindlessImagesBinding,
-			m_context->getBindlessImagesDescriptorSet(),
-			VK_IMAGE_LAYOUT_GENERAL,
-			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-		);
-	}
+		updateStorageResource();
 
 	return true;
 }
@@ -244,25 +268,37 @@ bool Image::createVolume(
 	}
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
+	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
+	{
+		m_storageImageViews.resize(mipLevels);
+		for (uint32_t mip = 0; mip < mipLevels; ++mip)
+		{
+			VkImageViewCreateInfo ivci = {};
+			ivci.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+			ivci.image = m_image;
+			ivci.viewType = VK_IMAGE_VIEW_TYPE_3D;
+			ivci.format = format;
+			ivci.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G, VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A };
+			ivci.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			ivci.subresourceRange.baseMipLevel = mip;
+			ivci.subresourceRange.levelCount = 1;
+			ivci.subresourceRange.baseArrayLayer = 0;
+			ivci.subresourceRange.layerCount = 1;
+			if (vkCreateImageView(m_context->getLogicalDevice(), &ivci, nullptr, &m_storageImageViews[mip]) != VK_SUCCESS)
+			{
+				log::error << L"Failed to create image view; unable to create image view." << Endl;
+				return false;
+			}
+		}
+	}
+
 	m_mipCount = mipLevels;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	updateBindlessResource(
-		Context::BindlessTexturesBinding,
-		m_context->getBindlessTexturesDescriptorSet(),
-		VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-		VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-	);
+	updateSampledResource();
 	if ((usageBits & VK_IMAGE_USAGE_STORAGE_BIT) != 0)
-	{
-		updateBindlessResource(
-			Context::BindlessImagesBinding,
-			m_context->getBindlessImagesDescriptorSet(),
-			VK_IMAGE_LAYOUT_GENERAL,
-			VK_DESCRIPTOR_TYPE_STORAGE_IMAGE
-		);
-	}
+		updateStorageResource();
 
 	return true;
 }
@@ -291,7 +327,7 @@ bool Image::createTarget(
 		ici.format = format;
 		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
+		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
 		ici.flags = 0;
@@ -329,18 +365,16 @@ bool Image::createTarget(
 	}
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
+	m_storageImageViews.push_back(m_imageView);
+
 	m_mipCount = 1;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (swapChainImage == 0)
 	{
-		updateBindlessResource(
-			Context::BindlessTexturesBinding,
-			m_context->getBindlessTexturesDescriptorSet(),
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-		);
+		updateSampledResource();
+		updateStorageResource();
 	}
 
 	return true;
@@ -374,7 +408,7 @@ bool Image::createDepthTarget(
 	ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	ici.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 	if (usedAsTexture)
-		ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT;
+		ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 	ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 	ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
 	ici.flags = 0;
@@ -407,18 +441,16 @@ bool Image::createDepthTarget(
 	}
 	setObjectDebugName(m_context->getLogicalDevice(), T_FILE_LINE_W, (uint64_t)m_imageView, VK_OBJECT_TYPE_IMAGE_VIEW);
 
+	m_storageImageViews.push_back(m_imageView);
+
 	m_mipCount = 1;
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
 	if (usedAsTexture)
 	{
-		updateBindlessResource(
-			Context::BindlessTexturesBinding,
-			m_context->getBindlessTexturesDescriptorSet(),
-			VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
-			VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE
-		);
+		updateSampledResource();
+		updateStorageResource();
 	}
 
 	return true;
@@ -427,6 +459,9 @@ bool Image::createDepthTarget(
 void Image::destroy()
 {
 	T_FATAL_ASSERT(m_locked == nullptr);
+
+	const uint32_t span = (uint32_t)m_storageImageViews.size();
+
 	if (m_allocation != 0)
 	{
 		m_context->addDeferredCleanup([
@@ -436,6 +471,7 @@ void Image::destroy()
 			vmaDestroyImage(cx->getAllocator(), image, allocation);
 		});
 	}
+
 	if (m_imageView != 0)
 	{
 		m_context->addDeferredCleanup([
@@ -444,14 +480,32 @@ void Image::destroy()
 			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
 		});
 	}
-	if (m_resourceIndex != ~0U)
+
+	for (auto& storageImageView : m_storageImageViews)
 	{
-		m_context->freeResourceIndex(m_resourceIndex);
-		m_resourceIndex = ~0U;
+		m_context->addDeferredCleanup([
+			imageView = storageImageView
+		](Context* cx) {
+			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+		});
 	}
+
+	if (m_sampledResourceIndex != ~0U)
+	{
+		m_context->freeSampledResourceIndex(m_sampledResourceIndex);
+		m_sampledResourceIndex = ~0U;
+	}
+
+	if (m_storageResourceIndex != ~0U)
+	{
+		m_context->freeStorageResourceIndex(m_storageResourceIndex, span);
+		m_storageResourceIndex = ~0U;
+	}
+
 	m_allocation = 0;
 	m_image = 0;
 	m_imageView = 0;
+	m_storageImageViews.clear();
 	m_context = nullptr;
 }
 
@@ -531,17 +585,12 @@ bool Image::changeLayout(
 	return true;
 }
 
-bool Image::updateBindlessResource(
-	int32_t binding,
-	VkDescriptorSet descriptorSet,
-	VkImageLayout imageLayout,
-	VkDescriptorType imageType
-)
+bool Image::updateSampledResource()
 {
-	if (m_resourceIndex == ~0U)
+	if (m_sampledResourceIndex == ~0U)
 	{
-		m_resourceIndex = m_context->allocBindlessResourceIndex();
-		if (m_resourceIndex == ~0U)
+		m_sampledResourceIndex = m_context->allocateSampledResourceIndex();
+		if (m_sampledResourceIndex == ~0U)
 		{
 			log::error << L"Unable to allocate bindless resource index." << Endl;
 			return false;
@@ -551,17 +600,17 @@ bool Image::updateBindlessResource(
 	VkDescriptorImageInfo imageInfo = {};
 	imageInfo.sampler = 0;
 	imageInfo.imageView = m_imageView;
-	imageInfo.imageLayout = imageLayout;
+	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	VkWriteDescriptorSet write = {};
 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	write.pNext = nullptr;
-	write.dstSet = descriptorSet;
+	write.dstSet = m_context->getBindlessTexturesDescriptorSet();
 	write.descriptorCount = 1;
-	write.descriptorType = imageType;
+	write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
 	write.pImageInfo = &imageInfo;
-	write.dstArrayElement = m_resourceIndex;
-	write.dstBinding = binding;
+	write.dstArrayElement = m_sampledResourceIndex;
+	write.dstBinding = Context::BindlessTexturesBinding;
 
 	vkUpdateDescriptorSets(
 		m_context->getLogicalDevice(),
@@ -570,6 +619,49 @@ bool Image::updateBindlessResource(
 		0,
 		nullptr
 	);
+
+	return true;
+}
+
+bool Image::updateStorageResource()
+{
+	const uint32_t span = (uint32_t)m_storageImageViews.size();
+
+	if (m_storageResourceIndex == ~0U)
+	{
+		m_storageResourceIndex = m_context->allocateStorageResourceIndex(span);
+		if (m_storageResourceIndex == ~0U)
+		{
+			log::error << L"Unable to allocate bindless storage resource index." << Endl;
+			return false;
+		}
+	}
+
+	for (uint32_t i = 0; i < span; ++i)
+	{
+		VkDescriptorImageInfo imageInfo = {};
+		imageInfo.sampler = 0;
+		imageInfo.imageView = m_storageImageViews[i];
+		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+		VkWriteDescriptorSet write = {};
+		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		write.pNext = nullptr;
+		write.dstSet = m_context->getBindlessImagesDescriptorSet();
+		write.descriptorCount = 1;
+		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+		write.pImageInfo = &imageInfo;
+		write.dstArrayElement = m_storageResourceIndex + i;
+		write.dstBinding = Context::BindlessImagesBinding;
+
+		vkUpdateDescriptorSets(
+			m_context->getLogicalDevice(),
+			1,
+			&write,
+			0,
+			nullptr
+		);
+	}
 
 	return true;
 }

@@ -64,7 +64,7 @@ public:
 
 	void setTextureParameter(handle_t handle, ITexture* texture);
 
-	void setImageViewParameter(handle_t handle, ITexture* imageView);
+	void setImageViewParameter(handle_t handle, ITexture* imageView, int mip);
 
 	void setBufferViewParameter(handle_t handle, const IBufferView* bufferView);
 

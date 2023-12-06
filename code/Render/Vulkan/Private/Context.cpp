@@ -43,7 +43,7 @@ Context::Context(
 ,	m_bindlessTexturesDescriptorSet(0)
 ,	m_bindlessImagesDescriptorLayout(0)
 ,	m_bindlessImagesDescriptorSet(0)
-,	m_resourceIndexAllocator(0, MaxBindlessResources - 1)
+,	m_sampledResourceIndexAllocator(0, MaxBindlessResources - 1)
 {
 }
 
@@ -359,15 +359,27 @@ bool Context::savePipelineCache()
 	return true;
 }
 
-uint32_t Context::allocBindlessResourceIndex()
+uint32_t Context::allocateSampledResourceIndex()
 {
-	return m_resourceIndexAllocator.alloc();
+	return m_sampledResourceIndexAllocator.alloc();
 }
 
-void Context::freeResourceIndex(uint32_t& resourceIndex)
+void Context::freeSampledResourceIndex(uint32_t& resourceIndex)
 {
 	T_FATAL_ASSERT(resourceIndex != ~0U);
-	m_resourceIndexAllocator.free(resourceIndex);
+	m_sampledResourceIndexAllocator.free(resourceIndex);
+	resourceIndex = ~0U;
+}
+
+uint32_t Context::allocateStorageResourceIndex(uint32_t span)
+{
+	return m_storageResourceIndexAllocator.allocSequential(span);
+}
+
+void Context::freeStorageResourceIndex(uint32_t& resourceIndex, uint32_t span)
+{
+	T_FATAL_ASSERT(resourceIndex != ~0U);
+	m_storageResourceIndexAllocator.freeSequential(resourceIndex, span);
 	resourceIndex = ~0U;
 }
 

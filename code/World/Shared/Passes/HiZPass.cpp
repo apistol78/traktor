@@ -71,7 +71,7 @@ render::handle_t HiZPass::setup(
 	rp->addInput(gbufferTargetSetId);
 	rp->setOutput(hizTextureId);
 
-	for (int32_t i = 0; i < mipCount - 1; ++i)
+	for (int32_t i = 0; i < mipCount - 2; ++i)
 	{
 		const int32_t mipWidth = std::max(viewWidth >> (i + 1), 1);
 		const int32_t mipHeight = std::max(viewHeight >> (i + 1), 1);
@@ -91,8 +91,8 @@ render::handle_t HiZPass::setup(
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture);
-				renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture);
+				renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, i);
+				renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, i + 1);
 				renderBlock->programParams->setFloatParameter(s_handleHiZMip, i);
 				renderBlock->programParams->endParameters(renderContext);
 

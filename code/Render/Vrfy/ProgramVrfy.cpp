@@ -194,7 +194,7 @@ void ProgramVrfy::setTextureParameter(handle_t handle, ITexture* texture)
 	}
 }
 
-void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
+void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView, int mip)
 {
 	T_CAPTURE_ASSERT(m_program, L"Program destroyed.");
 
@@ -211,9 +211,9 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView)
 			T_FATAL_ERROR;
 	}
 	else
-		m_program->setImageViewParameter(handle, nullptr);
+		m_program->setImageViewParameter(handle, nullptr, 0);
 
-	m_boundImages[handle] = imageView;
+	m_boundImages[handle] = { imageView, mip };
 
 	const auto it = m_shadow.find(handle);
 	if (it != m_shadow.end())
@@ -275,13 +275,15 @@ void ProgramVrfy::verify()
 
 	for (auto i = m_boundImages.begin(); i != m_boundImages.end(); ++i)
 	{
-		if (!i->second)
+		const std::pair< Ref< ITexture >, int >& it = i->second;
+
+		if (!it.first)
 			continue;
 
-		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(i->second->resolve()))
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(it.first->resolve()))
 		{
 			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to draw with destroyed texture (" << m_tag << L").");
-			m_program->setImageViewParameter(i->first, textureVrfy->getTexture());
+			m_program->setImageViewParameter(i->first, textureVrfy->getTexture(), it.second);
 		}
 	}
 }

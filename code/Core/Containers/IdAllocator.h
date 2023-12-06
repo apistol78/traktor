@@ -34,9 +34,13 @@ public:
 
 	uint32_t alloc();
 
+	uint32_t allocSequential(uint32_t span);
+
 	bool alloc(uint32_t id);
 
 	void free(uint32_t id);
+
+	void freeSequential(uint32_t id, uint32_t span);
 
 private:
 	struct Interval

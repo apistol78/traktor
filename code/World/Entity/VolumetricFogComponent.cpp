@@ -128,7 +128,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
-		renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture);
+		renderBlock->programParams->setImageViewParameter(s_handleFogVolume, m_fogVolumeTexture, 0);
 		renderBlock->programParams->setVectorParameter(s_handleFogVolumeRange, fogRange);
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		renderBlock->programParams->setVectorParameter(s_handleFogVolumeMediumColor, m_mediumColor);

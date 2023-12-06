@@ -98,9 +98,13 @@ public:
 
 	VkDescriptorSet getBindlessImagesDescriptorSet() const { return m_bindlessImagesDescriptorSet; }
 
-	uint32_t allocBindlessResourceIndex();
+	uint32_t allocateSampledResourceIndex();
 
-	void freeResourceIndex(uint32_t &resourceIndex);
+	void freeSampledResourceIndex(uint32_t &resourceIndex);
+
+	uint32_t allocateStorageResourceIndex(uint32_t span);
+
+	void freeStorageResourceIndex(uint32_t& resourceIndex, uint32_t span);
 
 private:
 	VkPhysicalDevice m_physicalDevice;
@@ -119,7 +123,8 @@ private:
 	VkDescriptorSet m_bindlessTexturesDescriptorSet;
 	VkDescriptorSetLayout m_bindlessImagesDescriptorLayout;
 	VkDescriptorSet m_bindlessImagesDescriptorSet;
-	IdAllocator m_resourceIndexAllocator;
+	IdAllocator m_sampledResourceIndexAllocator;
+	IdAllocator m_storageResourceIndexAllocator;
 };
 
 }

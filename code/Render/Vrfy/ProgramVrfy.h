@@ -45,7 +45,7 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setImageViewParameter(handle_t handle, ITexture* imageView) override final;
+	virtual void setImageViewParameter(handle_t handle, ITexture* imageView, int mip) override final;
 
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
@@ -70,7 +70,7 @@ private:
 	std::wstring m_tag;
 	SmallMap< handle_t, Parameter > m_shadow;
 	SmallMap< handle_t, Ref< ITexture > > m_boundTextures;
-	SmallMap< handle_t, Ref< ITexture > > m_boundImages;
+	SmallMap< handle_t, std::pair< Ref< ITexture >, int > > m_boundImages;
 };
 
 }
