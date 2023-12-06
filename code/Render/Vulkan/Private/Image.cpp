@@ -481,13 +481,19 @@ void Image::destroy()
 		});
 	}
 
-	for (auto& storageImageView : m_storageImageViews)
+	if (!m_storageImageViews.empty())
 	{
-		m_context->addDeferredCleanup([
-			imageView = storageImageView
-		](Context* cx) {
-			vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
-		});
+		for (auto storageImageView : m_storageImageViews)
+		{
+			if (storageImageView == m_imageView)
+				continue;
+
+			m_context->addDeferredCleanup([
+				imageView = storageImageView
+			](Context* cx) {
+				vkDestroyImageView(cx->getLogicalDevice(), imageView, nullptr);
+			});
+		}
 	}
 
 	if (m_sampledResourceIndex != ~0U)
