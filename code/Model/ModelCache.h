@@ -49,7 +49,6 @@ public:
 
 private:
 	Semaphore m_lock;
-	Path m_cachePath;
 	SmallMap< std::pair< Path, std::wstring >, Ref< const Model > > m_models;
 };
 

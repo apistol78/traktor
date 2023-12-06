@@ -67,7 +67,7 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
 
 	// Generate file name of cached model.
-	const Path cachedFileName = m_cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
+	const Path cachedFileName = cachePath.getPathName() + L"/" + str(L"%08x.tmd", fileNameHash);
 
 	// Check if cached file exist and if it's time stamp match source file's.
 	bool haveCachedFile = false;
