@@ -8,8 +8,7 @@
  */
 #pragma once
 
-#include <set>
-#include "Core/Config.h"
+#include "Core/Containers/AlignedVector.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +17,13 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
+
+namespace traktor::test
+{
+
+class CaseIdAllocator;
+
+}
 
 namespace traktor
 {
@@ -36,24 +42,28 @@ public:
 
 	uint32_t allocSequential(uint32_t span);
 
-	bool alloc(uint32_t id);
-
 	void free(uint32_t id);
 
 	void freeSequential(uint32_t id, uint32_t span);
 
 private:
+	friend test::CaseIdAllocator;
+
 	struct Interval
 	{
 		uint32_t left;
 		uint32_t right;
 
+		Interval() = default;
+
 		Interval(uint32_t left_, uint32_t right_);
 
 		bool operator < (const Interval& rh) const;
+
+		bool operator == (const Interval& rh) const;
 	};
 
-	std::set< Interval > m_free;
+	AlignedVector< Interval > m_free;
 };
 
 }
