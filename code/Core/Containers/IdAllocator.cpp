@@ -25,8 +25,7 @@ IdAllocator::IdAllocator(uint32_t minId, uint32_t maxId)
 uint32_t IdAllocator::alloc()
 {
     Interval first = *m_free.begin();
-
-	uint32_t freeId = first.left;
+	const uint32_t freeId = first.left;
 
     m_free.erase(m_free.begin());
 
@@ -34,6 +33,26 @@ uint32_t IdAllocator::alloc()
         m_free.insert(Interval(first.left + 1 , first.right));
 
     return freeId;
+}
+
+uint32_t IdAllocator::allocSequential(uint32_t span)
+{
+	for (auto it = m_free.begin(); it != m_free.end(); ++it)
+	{
+		if (span <= (it->right - it->left))
+		{
+			Interval first = *m_free.begin();
+			const uint32_t freeId = first.left;
+
+			m_free.erase(it);
+
+			if (first.left + span <= first.right)
+				m_free.insert(Interval(first.left + span, first.right));
+
+			return freeId;
+		}
+	}
+	return ~0U;
 }
 
 bool IdAllocator::alloc(uint32_t id)
@@ -57,7 +76,7 @@ bool IdAllocator::alloc(uint32_t id)
 void IdAllocator::free(uint32_t id)
 {
 	auto it = m_free.find(Interval(id, id));
-	if (it != m_free.end()  && it->left <= id && it->right > id)
+	if (it != m_free.end() && it->left <= id && it->right > id)
 		return;
 
 	it = m_free.upper_bound(Interval(id, id));
@@ -93,6 +112,12 @@ void IdAllocator::free(uint32_t id)
 			m_free.insert(Interval(id, freeInterval.right));
 		}
 	}
+}
+
+void IdAllocator::freeSequential(uint32_t id, uint32_t span)
+{
+	for (; span-- > 0; ++id)
+		free(id);
 }
 
 IdAllocator::Interval::Interval(uint32_t left_, uint32_t right_)

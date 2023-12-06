@@ -354,11 +354,11 @@ bool ProgramVk::validate(
 
 			uint32_t resourceIndex = ~0U;
 			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getSampledResourceIndex();
 			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getSampledResourceIndex();
 			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getSampledResourceIndex();
 
 			T_FATAL_ASSERT(resourceIndex != ~0U);
 
@@ -375,16 +375,18 @@ bool ProgramVk::validate(
 				return false;
 			}
 
+			const int32_t mip = m_images[pm.imageIndex].mip;
+
 			ITexture* resolved = texture->resolve();
 			T_ASSERT(resolved);
 
 			uint32_t resourceIndex = ~0U;
 			if (is_a< TextureVk >(resolved))
-				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getResourceIndex();
+				resourceIndex = static_cast< TextureVk* >(resolved)->getImage()->getStorageResourceIndex(mip);
 			else if (is_a< RenderTargetVk >(resolved))
-				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getResourceIndex();
+				resourceIndex = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getStorageResourceIndex(mip);
 			else if (is_a< RenderTargetDepthVk >(resolved))
-				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getResourceIndex();
+				resourceIndex = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getStorageResourceIndex(mip);
 
 			T_FATAL_ASSERT(resourceIndex != ~0U);
 
@@ -571,13 +573,14 @@ void ProgramVk::setTextureParameter(handle_t handle, ITexture* texture)
 	}
 }
 
-void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView)
+void ProgramVk::setImageViewParameter(handle_t handle, ITexture* imageView, int mip)
 {
 	auto i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		T_FATAL_ASSERT(i->second.imageIndex >= 0);
 		m_images[i->second.imageIndex].texture = imageView;
+		m_images[i->second.imageIndex].mip = mip;
 	}
 }
 
@@ -773,11 +776,21 @@ bool ProgramVk::validateDescriptorSet()
 
 	 	if (is_a< TextureVk >(resolved))
 	 	{
-	 		imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getVkImageView();
+	 		imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
 	 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 	 	}
+		else if (is_a< RenderTargetVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getStorageVkImageView(image.mip);
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		}
+		else if (is_a< RenderTargetDepthVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< RenderTargetDepthVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		}
 
-	 	T_ASSERT(imageInfo.imageView != 0);
+		T_FATAL_ASSERT(imageInfo.imageView != 0);
 
 	 	auto& write = writes.push_back();
 	 	write = {};

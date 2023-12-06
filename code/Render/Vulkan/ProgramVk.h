@@ -67,7 +67,7 @@ public:
 
 	virtual void setTextureParameter(handle_t handle, ITexture* texture) override final;
 
-	virtual void setImageViewParameter(handle_t handle, ITexture* imageView) override final;
+	virtual void setImageViewParameter(handle_t handle, ITexture* imageView, int mip) override final;
 
 	virtual void setBufferViewParameter(handle_t handle, const IBufferView* bufferView) override final;
 
@@ -128,6 +128,7 @@ private:
 		std::wstring name;
 		int32_t binding;
 		Ref< ITexture > texture;
+		int32_t mip;
 	};
 
 	struct SBuffer

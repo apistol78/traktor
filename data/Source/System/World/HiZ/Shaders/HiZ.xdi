@@ -19,8 +19,8 @@
 			<id>{6E68FD9A-ACE2-9E4A-8B5B-AD54A457B107}</id>
 			<comment/>
 			<position>
-				<first>11</first>
-				<second>146</second>
+				<first>-26</first>
+				<second>268</second>
 			</position>
 			<parameterName>World_HiZInput</parameterName>
 			<type>Image2D</type>
@@ -30,8 +30,8 @@
 			<id>{FACE56FE-0DC8-4C47-A4B5-F75AF6D34A50}</id>
 			<comment/>
 			<position>
-				<first>-1</first>
-				<second>237</second>
+				<first>154</first>
+				<second>174</second>
 			</position>
 			<parameterName>World_HiZOutput</parameterName>
 			<type>Image2D</type>
@@ -41,27 +41,61 @@
 			<id>{98BDEF21-F621-1345-8078-0D18AEA33005}</id>
 			<comment/>
 			<position>
-				<first>-10</first>
-				<second>285</second>
+				<first>-207</first>
+				<second>176</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{75A93A5B-4AFA-E642-B5CB-4DBFDD319264}</id>
 			<comment/>
 			<position>
-				<first>182</first>
-				<second>302</second>
+				<first>40</first>
+				<second>202</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{3098B267-2212-8543-BF5D-70059E7F38D1}</id>
+		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+			<id>{06182E78-38C4-A74B-8741-0205C03525AF}</id>
 			<comment/>
 			<position>
-				<first>158</first>
-				<second>353</second>
+				<first>231</first>
+				<second>263</second>
 			</position>
-			<value>0.5</value>
+			<name>MaxZ</name>
+			<technique/>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{3C138D5C-5426-334C-99BF-A06F6FA6635B}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{109C1796-0BBF-CB47-B322-44901970D7F8}</id>
+					<name>Index</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{7E64C882-DF9D-C442-9D35-66B1FA5C2F61}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+
+ivec2 p = $Index * 2;
+ivec2 o = ivec2(1, 0);
+
+float z1 = imageLoad($Input, p + o.yy).x;
+float z2 = imageLoad($Input, p + o.xy).x;
+float z3 = imageLoad($Input, p + o.yx).x;
+float z4 = imageLoad($Input, p + o.xx).x;
+
+$Output = max(max(z1, z2), max(z3, z4));
+
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -97,8 +131,28 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<id>{109C1796-0BBF-CB47-B322-44901970D7F8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{3C138D5C-5426-334C-99BF-A06F6FA6635B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{7E64C882-DF9D-C442-9D35-66B1FA5C2F61}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

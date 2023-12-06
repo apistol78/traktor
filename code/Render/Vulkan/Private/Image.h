@@ -99,25 +99,28 @@ public:
 
 	VkImageView getVkImageView() const { return m_imageView; }
 
-	uint32_t getResourceIndex() const { return m_resourceIndex; }
+	VkImageView getStorageVkImageView(uint32_t mip) const { return m_storageImageViews[mip]; }
+
+	uint32_t getSampledResourceIndex() const { return m_sampledResourceIndex; }
+
+	uint32_t getStorageResourceIndex(uint32_t mip) const { return m_storageResourceIndex + mip; }
 
 private:
 	Context* m_context = nullptr;
 	VmaAllocation m_allocation = 0;
 	VkImage m_image = 0;
 	VkImageView m_imageView = 0;
+	AlignedVector< VkImageView > m_storageImageViews;
 	AlignedVector< VkImageLayout > m_imageLayouts;
 	uint32_t m_mipCount = 0;
 	uint32_t m_layerCount = 0;
-	uint32_t m_resourceIndex = ~0U;
+	uint32_t m_sampledResourceIndex = ~0U;
+	uint32_t m_storageResourceIndex = ~0U;	//!< Base index of storage resource, each mip is sequentially exposed.
 	void* m_locked = nullptr;
 
-	bool updateBindlessResource(
-		int32_t binding,
-		VkDescriptorSet descriptorSet,
-		VkImageLayout imageLayout,
-		VkDescriptorType imageType
-	);
+	bool updateSampledResource();
+
+	bool updateStorageResource();
 };
 		
 }

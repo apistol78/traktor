@@ -209,7 +209,7 @@ void OceanComponent::setup(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
-		renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTexture);
+		renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTexture, 0);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->enqueue(renderBlock);

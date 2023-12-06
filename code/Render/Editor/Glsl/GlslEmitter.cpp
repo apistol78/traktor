@@ -3000,26 +3000,35 @@ bool emitUniform(GlslContext& cx, Uniform* node)
 	}
 	else if (out->getType() >= GlslType::Image2D && out->getType() <= GlslType::ImageCube)
 	{
-		// // Image parameter; ensure a single image is created correctly.
-		// auto existing = cx.getLayout().getByName(node->getParameterName());
-		// if (existing != nullptr)
-		// {
-		// 	if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
-		// 	{
-		// 		// Image already exist.
-		// 		existingImage->addStage(getBindStage(cx));
-		// 	}
-		// 	else
-		// 	{
-		// 		// Resource already exist but is not an image.
-		// 		return false;
-		// 	}
-		// }
-		// else
-		// {
-		// 	// Image do not exist; add new image resource.
-		// 	cx.getLayout().add(new GlslImage(node->getParameterName(), getBindStage(cx), out->getType()));
-		// }
+		const auto existing = cx.getLayout().getByName(node->getParameterName());
+		if (existing != nullptr)
+		{
+			if (auto existingImage = dynamic_type_cast< GlslImage* >(existing))
+			{
+				// Image already exist; ensure type match.
+				if (existingImage->getUniformType() != out->getType())
+					return false;
+				existingImage->addStage(getBindStage(cx));
+			}
+			else
+			{
+				// Resource already exist but is not an image.
+				return false;
+			}
+		}
+		else
+		{
+			// Image do not exist; add new image resource.
+			cx.getLayout().addBindless(
+				new GlslImage(
+					node->getParameterName(),
+					GlslResource::Set::Default,
+					getBindStage(cx),
+					out->getType(),
+					false
+				)
+			);
+		}
 
 		// Image parameter; since resource index is passed to shader we define an integer uniform.
 		auto ub = cx.getLayout().getByName< GlslUniformBuffer >(L"UbDraw"); // c_uniformBufferNames[(int32_t)node->getFrequency()]);
