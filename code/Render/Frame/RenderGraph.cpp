@@ -18,6 +18,7 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderGraphBufferPool.h"
 #include "Render/Frame/RenderGraphTargetSetPool.h"
+#include "Render/Frame/RenderGraphTexturePool.h"
 
 namespace traktor::render
 {
@@ -57,6 +58,7 @@ RenderGraph::RenderGraph(
 )
 :	m_targetSetPool(new RenderGraphTargetSetPool(renderSystem))
 ,	m_bufferPool(new RenderGraphBufferPool(renderSystem))
+,	m_texturePool(new RenderGraphTexturePool(renderSystem))
 ,	m_counter(0)
 ,	m_multiSample(multiSample)
 ,	m_nextResourceId(1)
@@ -68,6 +70,7 @@ RenderGraph::~RenderGraph()
 {
 	T_FATAL_ASSERT_M(m_targetSetPool == nullptr, L"Forgot to destroy RenderGraph instance.");
 	T_FATAL_ASSERT_M(m_bufferPool == nullptr, L"Forgot to destroy RenderGraph instance.");
+	T_FATAL_ASSERT_M(m_texturePool == nullptr, L"Forgot to destroy RenderGraph instance.");
 }
 
 void RenderGraph::destroy()
@@ -79,6 +82,7 @@ void RenderGraph::destroy()
 		m_order[i].clear();
 	safeDestroy(m_targetSetPool);
 	safeDestroy(m_bufferPool);
+	safeDestroy(m_texturePool);
 }
 
 handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
@@ -170,6 +174,17 @@ handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t pe
 	return resourceId;
 }
 
+handle_t RenderGraph::addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc)
+{
+	const handle_t resourceId = m_nextResourceId++;
+
+	auto& tr = m_textures[resourceId];
+	tr.name = name;
+	tr.textureDesc = textureDesc;
+
+	return resourceId;
+}
+
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
 	auto it = m_targets.find(resource);
@@ -180,6 +195,12 @@ Buffer* RenderGraph::getBuffer(handle_t resource) const
 {
 	auto it = m_buffers.find(resource);
 	return (it != m_buffers.end()) ? it->second.buffer : nullptr;
+}
+
+ITexture* RenderGraph::getTexture(handle_t resource) const
+{
+	auto it = m_textures.find(resource);
+	return (it != m_textures.end()) ? it->second.texture : nullptr;
 }
 
 void RenderGraph::addPass(const RenderPass* pass)
@@ -298,6 +319,19 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				sbuffer.bufferSize,
 				sbuffer.persistentHandle
 			);
+			if (!sbuffer.buffer)
+				return false;
+		}
+	}
+
+	for (auto& it : m_textures)
+	{
+		auto& texture = it.second;
+		if (texture.texture == nullptr)
+		{
+			texture.texture = m_texturePool->acquire(texture.textureDesc);
+			if (!texture.texture)
+				return false;
 		}
 	}
 
@@ -540,6 +574,13 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer != nullptr)
 			m_bufferPool->release(sbuffer.buffer);
+	}
+
+	for (auto& it : m_textures)
+	{
+		auto& texture = it.second;
+		if (texture.texture != nullptr)
+			m_texturePool->release(texture.texture);
 	}
 
 	// Cleanup pool data structure.

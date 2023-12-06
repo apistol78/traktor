@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,6 @@
  */
 #include <limits>
 #include "World/WorldRenderView.h"
-
-/*! Enable screen-space culling; quite expensive but might yield less draw calls. */
-#define T_ENABLE_SCREENSPACE_CULLING 1
 
 namespace traktor::world
 {
@@ -100,73 +97,19 @@ void WorldRenderView::setTimes(double time, double deltaTime, float interval)
 	m_interval = interval;
 }
 
-bool WorldRenderView::isBoxVisible(const Aabb3& box, const Transform& worldTransform, const float minScreenArea, float& outDistance) const
+bool WorldRenderView::isBoxVisible(const Aabb3& box, const Transform& worldTransform, float& outDistance) const
 {
 	// Earliest, empty bounding boxes cannot contain anything visible.
 	if (box.empty())
 		return false;
 
 	const Matrix44 worldView = m_view * worldTransform.toMatrix44();
-
-	// Early out of bounding sphere is outside of frustum.
 	const Vector4 center = worldView * box.getCenter();
 	const Scalar radius = box.getExtent().length();
 
+	// Early out of bounding sphere is outside of frustum.
 	if (m_cullFrustum.inside(center, radius) == Frustum::Result::Outside)
 		return false;
-
-#if T_ENABLE_SCREENSPACE_CULLING
-
-	if (minScreenArea > FUZZY_EPSILON)
-	{
-		// Project bounding box extents onto view plane.
-		Vector4 extents[8];
-		box.getExtents(extents);
-
-		Vector4 mn(
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max()
-		);
-		Vector4 mx(
-			-std::numeric_limits< float >::max(),
-			-std::numeric_limits< float >::max(),
-			-std::numeric_limits< float >::max(),
-			-std::numeric_limits< float >::max()
-		);
-
-		const Matrix44 worldViewProj = m_projection * worldView;
-
-		for (int i = 0; i < sizeof_array(extents); ++i)
-		{
-			Vector4 p = worldViewProj * extents[i];
-			if (p.w() <= 0.0_simd)
-			{
-				// Bounding box clipped to view plane; assume it's visible.
-				outDistance = center.z() + radius;
-				return true;
-			}
-
-			// Homogeneous divide.
-			p /= p.w();
-
-			// Track screen space extents.
-			mn = min(mn, p);
-			mx = max(mx, p);
-		}
-
-		// Ensure we're visible.
-		if (mn.x() > 1.0_simd || mn.y() > 1.0_simd || mx.x() < -1.0_simd || mx.y() < -1.0_simd)
-			return false;
-
-		// Calculate screen area, cull if it's below threshold.
-		const Vector4 e = mx - mn;
-		if (max(e.x(), e.y()) < minScreenArea)
-			return false;
-	}
-
-#endif
 
 	outDistance = center.z() + radius;
 	return true;

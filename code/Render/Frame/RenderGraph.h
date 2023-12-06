@@ -31,9 +31,11 @@ namespace traktor::render
 
 class Buffer;
 class IRenderSystem;
+class ITexture;
 class RenderContext;
 class RenderGraphBufferPool;
 class RenderGraphTargetSetPool;
+class RenderGraphTexturePool;
 
 /*! Render graph.
  * \ingroup Render
@@ -74,6 +76,13 @@ public:
 		handle_t persistentHandle = 0;
 		Ref< Buffer > buffer;
 		uint32_t bufferSize;
+	};
+
+	struct TextureResource
+	{
+		const wchar_t* name = nullptr;
+		RenderGraphTextureDesc textureDesc;
+		Ref< ITexture > texture;
 	};
 
 	/*! */
@@ -150,6 +159,10 @@ public:
 	 */
 	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize);
 
+	/*!
+	 */
+	handle_t addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
+
 	/*! Find target ID by name.
 	 *
 	 * \param name Name of target set, used for debugging only.
@@ -170,6 +183,10 @@ public:
 	 * \return Buffer
 	 */
 	Buffer* getBuffer(handle_t resource) const;
+
+	/*!
+	 */
+	ITexture* getTexture(handle_t resource) const;
 
 	/*! Add render pass to graph.
 	 *
@@ -205,8 +222,10 @@ public:
 private:
 	Ref< RenderGraphTargetSetPool > m_targetSetPool;
 	Ref< RenderGraphBufferPool > m_bufferPool;
+	Ref< RenderGraphTexturePool > m_texturePool;
 	SmallMap< handle_t, TargetResource > m_targets;
 	SmallMap< handle_t, BufferResource > m_buffers;
+	SmallMap< handle_t, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];
 	uint32_t m_counter;

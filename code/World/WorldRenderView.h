@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -75,13 +75,7 @@ public:
 
 	/*!
 	 */
-	bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, const float minScreenArea, float& outDistance) const;
-
-	/*!
-	 */
-	T_FORCE_INLINE bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, float& outDistance) const {
-		return isBoxVisible(box, worldTransform, 0.001f, outDistance);
-	}
+	bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, float& outDistance) const;
 
 	T_FORCE_INLINE int getIndex() const {
 		return m_index;

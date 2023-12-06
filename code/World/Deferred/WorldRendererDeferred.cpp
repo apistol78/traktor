@@ -42,6 +42,7 @@
 #include "World/Shared/Passes/ContactShadowsPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
@@ -141,6 +142,7 @@ void WorldRendererDeferred::setup(
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto hiZTextureId = m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -162,6 +164,7 @@ void WorldRendererDeferred::setup(
 		visualTargetSetId.current,
 		gbufferTargetSetId,
 		dbufferTargetSetId,
+		hiZTextureId,
 		ambientOcclusionTargetSetId,
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
@@ -180,6 +183,7 @@ void WorldRendererDeferred::setupVisualPass(
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
+	render::handle_t hiZTextureId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t contactShadowsTargetSetId,
 	render::handle_t reflectionsTargetSetId,
@@ -209,6 +213,7 @@ void WorldRendererDeferred::setupVisualPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(dbufferTargetSetId);
+	rp->addInput(hiZTextureId);
 	rp->addInput(ambientOcclusionTargetSetId);
 	rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
