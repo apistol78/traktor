@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
@@ -52,12 +53,18 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	// Determine working path.
 	const std::wstring scratchPath = OS::getInstance().getWritableFolderPath() + L"/Traktor/Blender/" + threadFolder;
 	if (!FileSystem::getInstance().makeAllDirectories(scratchPath))
+	{
+		log::error << L"Unable to create scratch path \"" << scratchPath << L"\"." << Endl;
 		return nullptr;
+	}
 
 	// Create export script.
 	Ref< IStream > file = FileSystem::getInstance().open(scratchPath + L"/__export__.py", File::FmWrite);
 	if (!file)
+	{
+		log::error << L"Unable to create __export__.py" << Endl;
 		return nullptr;
+	}
 
 	FileOutputStream os(file, new Utf8Encoding());
 	os << L"import bpy" << Endl;
@@ -98,16 +105,28 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 		OS::EfMute
 	);
 	if (!process)
+	{
+		log::error << L"Unable to spawn \"" << commandLine << L"\"." << Endl;
 		return nullptr;
+	}
 	if (!process->wait())
+	{
+		log::error << L"Unknown error when waiting for process to terminate." << Endl;
 		return nullptr;
+	}
 	if (process->exitCode() != 0)
+	{
+		log::error << L"Blender terminated with error code " << process->exitCode() << Endl;
 		return nullptr;
+	}
 
 	// Import intermediate model.
 	Ref< Model > model = ModelFormat::readAny(scratchPath + L"/" + intermediate, filter);
 	if (!model)
+	{
+		log::error << L"Unable to read intermediate export, \"" << scratchPath << L"/" << intermediate << L"\", from blender." << Endl;
 		return nullptr;
+	}
 
 	// Remove unused materials.
 	AlignedVector< int32_t > materialsToRemove(model->getMaterialCount());

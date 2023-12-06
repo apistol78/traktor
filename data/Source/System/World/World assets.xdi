@@ -81,5 +81,9 @@
 			<id>{9A8273AE-06A0-8649-A24F-11D5F93255C9}</id>
 			<editorDeployOnly>false</editorDeployOnly>
 		</item>
+		<item>
+			<id>{E8879B75-F646-5D46-8873-E11A518C5256}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>

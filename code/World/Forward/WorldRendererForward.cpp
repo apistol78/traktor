@@ -42,6 +42,7 @@
 #include "World/Shared/Passes/AmbientOcclusionPass.h"
 #include "World/Shared/Passes/DBufferPass.h"
 #include "World/Shared/Passes/GBufferPass.h"
+#include "World/Shared/Passes/HiZPass.h"
 #include "World/Shared/Passes/LightClusterPass.h"
 #include "World/Shared/Passes/PostProcessPass.h"
 #include "World/Shared/Passes/ReflectionsPass.h"
@@ -139,6 +140,7 @@ void WorldRendererForward::setup(
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto hiZTargetSetId = m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);

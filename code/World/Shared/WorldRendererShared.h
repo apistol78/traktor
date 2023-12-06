@@ -32,6 +32,7 @@ class AmbientOcclusionPass;
 class ContactShadowsPass;
 class DBufferPass;
 class GBufferPass;
+class HiZPass;
 class IEntityRenderer;
 class IrradianceGrid;
 class LightClusterPass;
@@ -91,6 +92,7 @@ protected:
 	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< DBufferPass > m_dbufferPass;
+	Ref< HiZPass > m_hiZPass;
 	Ref< VelocityPass > m_velocityPass;
 	Ref< AmbientOcclusionPass > m_ambientOcclusionPass;
 	Ref< ContactShadowsPass > m_contactShadowsPass;

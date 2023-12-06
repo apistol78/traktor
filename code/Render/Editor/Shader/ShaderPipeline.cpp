@@ -282,7 +282,9 @@ bool ShaderPipeline::buildOutput(
 	uint32_t parameterBit = 1;
 
 	// Resolve all variables.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getVariableResolved");
 	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getVariableResolved();
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve variables." << Endl;
@@ -290,8 +292,10 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Link shader fragments.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline link fragments");
 	FragmentReaderAdapter fragmentReader(pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments." << Endl;
@@ -302,7 +306,9 @@ bool ShaderPipeline::buildOutput(
 	Ref< const ShaderGraph > resolvedGraph = shaderGraph;
 
 	// Resolve all bundles.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getBundleResolved");
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getBundleResolved();
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve bundles." << Endl;
@@ -310,7 +316,9 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Get connected permutation.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getConnectedPermutation");
 	shaderGraph = render::ShaderGraphStatic(shaderGraph, shaderGraphId).getConnectedPermutation();
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to resolve connected permutation." << Endl;
@@ -318,7 +326,9 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Extract platform permutation.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getPlatformPermutation");
 	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getPlatformPermutation(m_platform);
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
@@ -326,7 +336,9 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Extract renderer permutation.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getRendererPermutation");
 	shaderGraph = ShaderGraphStatic(shaderGraph, shaderGraphId).getRendererPermutation(rendererSignature);
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to get renderer \"" << rendererSignature << L"\" permutation." << Endl;
@@ -334,7 +346,9 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Remove unused branches from shader graph.
+	pipelineBuilder->getProfiler()->begin(L"ShaderPipeline removeUnusedBranches");
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches(false);
+	pipelineBuilder->getProfiler()->end();
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to remove unused branches." << Endl;
@@ -432,7 +446,9 @@ bool ShaderPipeline::buildOutput(
 				T_ASSERT(combinationGraph);
 
 				// Freeze type permutation.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getTypePermutation");
 				Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph, shaderGraphId).getTypePermutation();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << path << L"\"." << Endl;
@@ -441,7 +457,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Constant propagation; calculate constant branches.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getConstantFolded");
 				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getConstantFolded();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << path << L"\"." << Endl;
@@ -450,7 +468,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Get output state resolved.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getStateResolved");
 				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getStateResolved();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << path << L"\"." << Endl;
@@ -459,7 +479,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Merge identical branches.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline mergeBranches");
 				programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to merge branches of \"" << path << L"\"." << Endl;
@@ -468,7 +490,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Insert interpolation nodes at optimal locations.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline insertInterpolators");
 				programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << path << L"\"." << Endl;
@@ -477,7 +501,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Create swizzle nodes in order to improve compiler optimizing.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline getSwizzledPermutation");
 				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).getSwizzledPermutation();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << path << L"\"." << Endl;
@@ -486,7 +512,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Remove redundant swizzle patterns.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline cleanupRedundantSwizzles");
 				programGraph = ShaderGraphStatic(programGraph, shaderGraphId).cleanupRedundantSwizzles();
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << path << L"\"." << Endl;
@@ -495,7 +523,9 @@ bool ShaderPipeline::buildOutput(
 				}
 
 				// Remove unused branches.
+				pipelineBuilder->getProfiler()->begin(L"ShaderPipeline removeUnusedBranches");
 				programGraph = ShaderGraphOptimizer(programGraph).removeUnusedBranches(false);
+				pipelineBuilder->getProfiler()->end();
 				if (!programGraph)
 				{
 					log::error << L"ShaderPipeline failed; unable to cleanup unused branches of \"" << path << L"\"." << Endl;
@@ -641,44 +671,6 @@ bool ShaderPipeline::buildOutput(
 			log::error << L"-----------------------------------------------------" << Endl;
 			log::error << error.error.message << Endl;
 			log::error << L"-----------------------------------------------------" << Endl;
-
-			//{
-			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Resolved/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-			//	if (dumpInstance)
-			//	{
-			//		dumpInstance->setObject(error.resolvedGraph);
-			//		dumpInstance->commit();
-			//		log::error << L"Resolved: " << dumpInstance->getGuid().format() << Endl;
-			//	}
-			//	else
-			//		log::error << L"Unable to create error instance." << Endl;
-			//}
-
-			//{
-			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Combination/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-			//	if (dumpInstance)
-			//	{
-			//		dumpInstance->setObject(error.combinationGraph);
-			//		dumpInstance->commit();
-			//		log::error << L"Combination: " << dumpInstance->getGuid().format() << Endl;
-			//	}
-			//	else
-			//		log::error << L"Unable to create error instance." << Endl;
-			//}
-
-			//{
-			//	Ref< db::Instance > dumpInstance = pipelineBuilder->getSourceDatabase()->createInstance(L"Errors/Program/" + outputGuid.format() + L"/" + error.techniqueName + L"_" + str(L"%08x", error.combination), db::CifReplaceExisting);
-			//	if (dumpInstance)
-			//	{
-			//		dumpInstance->setObject(error.programGraph);
-			//		dumpInstance->commit();
-			//		log::error << L"Program: " << dumpInstance->getGuid().format() << Endl;
-			//	}
-			//	else
-			//		log::error << L"Unable to create error instance." << Endl;
-			//}
-
-			//log::error << L"-----------------------------------------------------" << Endl;
 		}
 
 		if (!status)

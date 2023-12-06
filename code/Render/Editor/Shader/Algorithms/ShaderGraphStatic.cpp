@@ -29,7 +29,11 @@ namespace traktor::render
 	namespace
 	{
 
-#define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
+#if defined(_DEBUG)
+#	define T_VALIDATE_SHADERGRAPH(sg) T_FATAL_ASSERT(ShaderGraphValidator(sg).validateIntegrity())
+#else
+#	define T_VALIDATE_SHADERGRAPH(sg)
+#endif
 
 struct ConstantFoldingVisitor
 {
