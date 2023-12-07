@@ -79,9 +79,6 @@ render::handle_t HiZPass::setup(
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				const auto inputTexture = (i == 0) ? renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0) : renderGraph.getTexture(hizTextureId);
-				const auto outputTexture = renderGraph.getTexture(hizTextureId);
-
 				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"HiZ");
 
 				renderBlock->program = m_hiZBuildShader->getProgram().program;
@@ -91,8 +88,23 @@ render::handle_t HiZPass::setup(
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, i);
-				renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, i + 1);
+
+				if (i == 0)
+				{
+					const auto inputTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
+					const auto outputTexture = renderGraph.getTexture(hizTextureId);
+
+					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, 0);
+					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, 0);
+				}
+				else
+				{
+					const auto inoutTexture = renderGraph.getTexture(hizTextureId);
+
+					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inoutTexture, i - 1);
+					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, inoutTexture, i);
+				}
+
 				renderBlock->programParams->setFloatParameter(s_handleHiZMip, i);
 				renderBlock->programParams->endParameters(renderContext);
 
