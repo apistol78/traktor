@@ -18,13 +18,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
-{
-
-class IdAllocator;
-
-}
-
 namespace traktor::test
 {
 
@@ -34,9 +27,6 @@ class T_DLLCLASS CaseIdAllocator : public Case
 
 public:
 	virtual void run() override final;
-
-private:
-    void dump(const IdAllocator& id) const;
 };
 
 }
