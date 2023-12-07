@@ -55,14 +55,31 @@ void IdAllocator::free(uint32_t id)
 {
 	Interval iv(id, id);
 
-	auto it = std::find_if(m_free.begin(), m_free.end(), [=](const IdAllocator::Interval& v) {
-		return id > v.right;
-	});
-	if (it != m_free.end())
-		m_free.insert(it, iv);
-	else
-		m_free.insert(m_free.begin(), iv);
+	// Simple case, if full then just add interval back.
+	if (m_free.empty())
+	{
+		m_free.push_back(iv);
+		return;
+	}
 
+	// Insert interval in incremental position.
+	if (id < m_free.front().left)
+		m_free.insert(m_free.begin(), iv);
+	else if (id > m_free.back().right)
+		m_free.insert(m_free.end(), iv);
+	else
+	{
+		for (size_t i = 0, j = 1; j < m_free.size(); i = j++)
+		{
+			if (m_free[i].right < id && m_free[j].left > id)
+			{
+				m_free.insert(m_free.begin() + j, iv);
+				break;
+			}
+		}
+	}
+
+	// Merge free intervals.
 	for (size_t i = 0, j = 1; j < m_free.size(); )
 	{
 		if (m_free[i].right + 1 == m_free[j].left)
@@ -71,9 +88,7 @@ void IdAllocator::free(uint32_t id)
 			m_free.erase(m_free.begin() + j);
 		}
 		else
-		{
-			j = i++;
-		}
+			i = j++;
 	}
 }
 
