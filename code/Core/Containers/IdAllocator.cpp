@@ -37,7 +37,7 @@ uint32_t IdAllocator::allocSequential(uint32_t span)
 	T_ASSERT(span > 0);
 	for (auto it = m_free.begin(); it != m_free.end(); ++it)
 	{
-		if (span <= (it->right - it->left))
+		if ((span - 1) <= (it->right - it->left))
 		{
 			const uint32_t freeId = it->left;
 			
