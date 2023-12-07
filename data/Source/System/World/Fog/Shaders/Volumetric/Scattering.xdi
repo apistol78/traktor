@@ -12,7 +12,7 @@
 			<type>Image3D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.ComputeOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
 			<id>{5287CA15-CC7D-F449-9E62-735EFAA12CCC}</id>
 			<comment/>
 			<position>
@@ -21,9 +21,9 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<item>32</item>
-				<item>1</item>
-				<item>1</item>
+				<X>32</X>
+				<Y>1</Y>
+				<Z>1</Z>
 			</localSize>
 		</item>
 		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
@@ -381,7 +381,9 @@ NDC
 			</position>
 			<name>Random</name>
 			<technique/>
-			<include/>
+			<include>
+				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{01AEDF99-A012-0D41-ABD0-0F30E561709C}</id>
@@ -397,13 +399,8 @@ NDC
 			</outputPins>
 			<script>
 			<![CDATA[
-const vec2 co = vec2($Seed.xy + $Seed.zz);
-highp float a = 12.9898;
-highp float b = 78.233;
-highp float c = 43758.5453;
-highp float dt = dot(co.xy, vec2(a, b));
-highp float sn = mod(dt, 3.14);
-$Output = fract(sin(sn) * c);
+$Output = hash13($Seed.xyz);
+
 			]]>
 			</script>
 		</item>

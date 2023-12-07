@@ -10,8 +10,8 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>32</X>
+				<Y>32</Y>
 				<Z>1</Z>
 			</localSize>
 		</item>
@@ -83,7 +83,6 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 ivec2 p = $Index * 2;
 ivec2 o = ivec2(1, 0);
 
@@ -93,7 +92,6 @@ float z3 = imageLoad($Input, p + o.yx).x;
 float z4 = imageLoad($Input, p + o.xx).x;
 
 $Output = max(max(z1, z2), max(z3, z4));
-
 			]]>
 			</script>
 		</item>
