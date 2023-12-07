@@ -14,6 +14,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
@@ -25,6 +26,7 @@
 #include "Script/ScriptFactory.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
+#include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
@@ -37,6 +39,7 @@
 #include "Sound/Processor/Node.h"
 #include "Sound/Processor/OutputPin.h"
 #include "Sound/Processor/Nodes/Scalar.h"
+#include "Sound/Processor/Nodes/Source.h"
 #include "Sound/Processor/Nodes/Output.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
@@ -196,7 +199,28 @@ void GraphEditor::destroy()
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	return false;
+	const TypeInfo* primaryType = instance->getPrimaryType();
+	T_ASSERT(primaryType);
+
+	if (is_type_of< SoundAsset >(*primaryType))
+	{
+		Ref< Source > node = new Source(
+			resource::IdProxy< Sound >(instance->getGuid())
+		);
+
+		node->setPosition(std::make_pair(
+			position.x - m_graph->getOffset().cx,
+			position.y - m_graph->getOffset().cy
+		));
+
+		m_graphAsset->getGraph()->addNode(node);
+
+		updateView();
+	}
+	else
+		return false;
+
+	return true;
 }
 
 bool GraphEditor::handleCommand(const ui::Command& command)

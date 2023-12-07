@@ -57,6 +57,12 @@ Source::Source()
 {
 }
 
+Source::Source(const resource::IdProxy< Sound >& sound)
+:	ImmutableNode(nullptr, c_Source_o)
+,	m_sound(sound)
+{
+}
+
 bool Source::bind(resource::IResourceManager* resourceManager)
 {
 	return resourceManager->bind(m_sound);

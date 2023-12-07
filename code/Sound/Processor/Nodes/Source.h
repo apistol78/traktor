@@ -31,6 +31,8 @@ class T_DLLCLASS Source : public ImmutableNode
 public:
 	Source();
 
+	explicit Source(const resource::IdProxy< Sound >& sound);
+
 	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
 	virtual Ref< ISoundBufferCursor > createCursor() const override final;
