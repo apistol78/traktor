@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,7 +32,7 @@ RenderTargetSetVrfy::~RenderTargetSetVrfy()
 
 void RenderTargetSetVrfy::destroy()
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set already destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set already destroyed.");
 
 	m_colorTextures[0].reset();
 	m_colorTextures[1].reset();
@@ -45,19 +45,19 @@ void RenderTargetSetVrfy::destroy()
 
 int32_t RenderTargetSetVrfy::getWidth() const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getWidth() : 0;
 }
 
 int32_t RenderTargetSetVrfy::getHeight() const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getHeight() : 0;
 }
 
 ITexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 
 	if (!m_renderTargetSet)
 		return nullptr;
@@ -68,7 +68,7 @@ ITexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 		if (!colorTexture)
 			return nullptr;
 
-		m_colorTextures[index] = new TextureVrfy(m_resourceTracker, colorTexture);
+		m_colorTextures[index] = new TextureVrfy(m_resourceTracker, colorTexture, true);
 	}
 
 	return m_colorTextures[index];
@@ -76,7 +76,7 @@ ITexture* RenderTargetSetVrfy::getColorTexture(int32_t index) const
 
 ITexture* RenderTargetSetVrfy::getDepthTexture() const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 
 	if (!m_renderTargetSet)
 		return nullptr;
@@ -87,7 +87,7 @@ ITexture* RenderTargetSetVrfy::getDepthTexture() const
 		if (!depthTexture)
 			return nullptr;
 
-		m_depthTexture = new TextureVrfy(m_resourceTracker, depthTexture);
+		m_depthTexture = new TextureVrfy(m_resourceTracker, depthTexture, true);
 	}
 
 	return m_depthTexture;
@@ -95,20 +95,20 @@ ITexture* RenderTargetSetVrfy::getDepthTexture() const
 
 bool RenderTargetSetVrfy::read(int32_t index, void* buffer) const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
-	T_CAPTURE_ASSERT (index >= 0, L"Incorrect read-back index.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(index >= 0, L"Incorrect read-back index.");
 	return m_renderTargetSet ? m_renderTargetSet->read(index, buffer) : false;
 }
 
 bool RenderTargetSetVrfy::haveColorTexture(int32_t index) const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getColorTexture(index) != nullptr : false;
 }
 
 bool RenderTargetSetVrfy::haveDepthTexture() const
 {
-	T_CAPTURE_ASSERT (m_renderTargetSet, L"Render target set destroyed.");
+	T_CAPTURE_ASSERT(m_renderTargetSet, L"Render target set destroyed.");
 	return m_renderTargetSet ? m_renderTargetSet->getDepthTexture() != nullptr : false;
 }
 

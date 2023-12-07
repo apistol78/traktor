@@ -175,7 +175,7 @@ Ref< ITexture > RenderSystemVrfy::createSimpleTexture(const SimpleTextureCreateD
 	if (!texture)
 		return nullptr;
 
-	return new TextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture, desc.shaderStorage);
 }
 
 Ref< ITexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc& desc, const wchar_t* const tag)
@@ -197,7 +197,7 @@ Ref< ITexture > RenderSystemVrfy::createCubeTexture(const CubeTextureCreateDesc&
 	if (!texture)
 		return nullptr;
 
-	return new TextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture, desc.shaderStorage);
 }
 
 Ref< ITexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateDesc& desc, const wchar_t* const tag)
@@ -221,7 +221,7 @@ Ref< ITexture > RenderSystemVrfy::createVolumeTexture(const VolumeTextureCreateD
 	if (!texture)
 		return nullptr;
 
-	return new TextureVrfy(m_resourceTracker, texture);
+	return new TextureVrfy(m_resourceTracker, texture, desc.shaderStorage);
 }
 
 Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag)
