@@ -134,21 +134,22 @@ bool SoundPipeline::buildOutput(
 ) const
 {
 	const SoundAsset* soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
+	const std::wstring extension = soundAsset->getFileName().getExtension();
 
 	Ref< IStreamDecoder > decoder;
-	if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"wav") == 0)
+	if (compareIgnoreCase(extension, L"wav") == 0)
 		decoder = new sound::WavStreamDecoder();
-	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"flac") == 0)
+	else if (compareIgnoreCase(extension, L"flac") == 0)
 		decoder = new sound::FlacStreamDecoder();
-	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"mp3") == 0)
+	else if (compareIgnoreCase(extension, L"mp3") == 0)
 		decoder = new sound::Mp3StreamDecoder();
-	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"ogg") == 0)
+	else if (compareIgnoreCase(extension, L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
-	else if (compareIgnoreCase(soundAsset->getFileName().getExtension(), L"tss") == 0)
+	else if (compareIgnoreCase(extension, L"tss") == 0)
 		decoder = new sound::TssStreamDecoder();
 	else
 	{
-		log::error << L"Failed to build sound asset, unable to determine decoder from extension." << Endl;
+		log::error << L"Failed to build sound asset, unable to determine decoder from extension \"" << extension << L"\"." << Endl;
 		return false;
 	}
 
