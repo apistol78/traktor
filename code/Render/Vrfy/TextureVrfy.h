@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,7 +24,7 @@ class TextureVrfy : public ITexture
 	T_RTTI_CLASS;
 
 public:
-	explicit TextureVrfy(ResourceTracker* resourceTracker, ITexture* texture);
+	explicit TextureVrfy(ResourceTracker* resourceTracker, ITexture* texture, bool shaderStorage);
 
 	virtual ~TextureVrfy();
 
@@ -40,9 +40,12 @@ public:
 
 	ITexture* getTexture() const { return m_texture; }
 
+	bool shaderStorage() const { return m_shaderStorage; }
+
 private:
 	Ref< ResourceTracker > m_resourceTracker;
 	Ref< ITexture > m_texture;
+	bool m_shaderStorage;
 	int32_t m_locked;
 };
 

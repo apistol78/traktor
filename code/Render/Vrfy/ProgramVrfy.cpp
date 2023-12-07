@@ -206,6 +206,7 @@ void ProgramVrfy::setImageViewParameter(handle_t handle, ITexture* imageView, in
 		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(imageView->resolve()))
 		{
 			T_CAPTURE_ASSERT(textureVrfy->getTexture(), L"Trying to set destroyed texture as shader parameter.");
+			T_CAPTURE_ASSERT(textureVrfy->shaderStorage(), L"Trying to set non-storage texture as image.");
 		}
 		else
 			T_FATAL_ERROR;
