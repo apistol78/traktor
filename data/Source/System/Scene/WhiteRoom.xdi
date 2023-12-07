@@ -4,7 +4,7 @@
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<exposureMode>Fixed</exposureMode>
-		<exposure>0.5</exposure>
+		<exposure>0</exposure>
 		<shadowSettings>
 			<disabled>
 				<farZ>0</farZ>
@@ -87,24 +87,14 @@
 							<name>Sky</name>
 							<transform>
 								<translation>0, 0, 0, 0</translation>
-								<rotation>0, 0, 0, 1</rotation>
+								<rotation>-0.406247, 0.249812, 0.116489, 0.871199</rotation>
 							</transform>
 							<components>
 								<item type="traktor.weather.SkyComponentData" version="4">
-									<shader>{72EA4A13-256E-B64E-8BEC-879AA076144D}</shader>
+									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
 									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
 									<intensity>1</intensity>
 								</item>
-							</components>
-						</item>
-						<item type="traktor.world.EntityData" version="1">
-							<id>{E898D2A7-8BC7-044C-A1E9-762B0B254E29}</id>
-							<name>Light</name>
-							<transform>
-								<translation>0, 0, 0, 0</translation>
-								<rotation>-0.402506, 0.255425, 0.118023, 0.871101</rotation>
-							</transform>
-							<components>
 								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
@@ -128,7 +118,7 @@
 							</transform>
 							<components>
 								<item type="traktor.world.ProbeComponentData">
-									<texture>{81D91B72-DACB-4B8D-93BA-581D4B5F12A3}</texture>
+									<texture>{00000000-0000-0000-0000-000000000000}</texture>
 									<intensity>1</intensity>
 									<local>false</local>
 									<volume>
