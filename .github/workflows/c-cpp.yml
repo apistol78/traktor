@@ -35,3 +35,7 @@ jobs:
       run: ./scripts/autobuild/autobuild-latest-linux.sh DebugShared
     - name: Build ReleaseShared
       run: ./scripts/autobuild/autobuild-latest-linux.sh ReleaseShared
+    - name: Unit tests DebugShared
+      run: ./bin/latest/linux/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+    - name: Unit tests ReleaseShared
+      run: ./bin/latest/linux/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
