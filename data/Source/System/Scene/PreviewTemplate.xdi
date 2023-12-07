@@ -87,7 +87,7 @@
 							<name>Sky</name>
 							<transform>
 								<translation>0, 0, 0, 0</translation>
-								<rotation>0, 0, 0, 1</rotation>
+								<rotation>-0.394548, -0.324792, -0.151453, 0.846111</rotation>
 							</transform>
 							<components>
 								<item type="traktor.weather.SkyComponentData" version="4">
@@ -95,16 +95,6 @@
 									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
 									<intensity>1</intensity>
 								</item>
-							</components>
-						</item>
-						<item type="traktor.world.EntityData" version="1">
-							<id>{76A7B306-20B9-B640-A5E6-51A65CEAAFA8}</id>
-							<name>Light</name>
-							<transform>
-								<translation>0, 0, 0, 0</translation>
-								<rotation>-0.391854, -0.323839, -0.149635, 0.84805</rotation>
-							</transform>
-							<components>
 								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
 									<color>1, 0.976471, 0.952941, 0</color>
