@@ -91,8 +91,8 @@ void AudioMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
 	T_ASSERT(alignUp(count, 4) == count);
 
 	const __m256 sf8 = _mm256_set1_ps(factor);
-	const __m128 sf4 = _mm_load1_ps(&factor);
 
+	const Scalar sf(factor);
 	int32_t s = 0;
 
 	for (; s < int32_t(count) - 8 * 4; s += 8 * 4)
@@ -107,16 +107,10 @@ void AudioMixerAvx::mulConst(float* sb, uint32_t count, float factor) const
 		_mm256_store_ps(&sb[s + 24], _mm256_mul_ps(s8_3, sf8));
 	}
 
-	for (; s < int32_t(count) - 8; s += 8)
+	for (; s < int32_t(count); s += 4)
 	{
-		const __m256 s8_0 = _mm256_load_ps(&sb[s]);
-		_mm256_store_ps(&sb[s], _mm256_mul_ps(s8_0, sf8));
-	}
-
-	for (; s < int32_t(count) - 4; s += 4)
-	{
-		const __m128 s4_0 = _mm_load_ps(&sb[s]);
-		_mm_store_ps(&sb[s], _mm_mul_ps(s4_0, sf4));
+		const Vector4 s4 = Vector4::loadAligned(&sb[s]);
+		(s4 * sf).storeAligned(&sb[s]);
 	}
 }
 
@@ -147,16 +141,10 @@ void AudioMixerAvx::mulConst(float* lsb, const float* rsb, uint32_t count, float
 			_mm256_store_ps(&lsb[s + 24], _mm256_mul_ps(s8_3, sf8));
 		}
 
-		for (; s < int32_t(count) - 8; s += 8)
+		for (; s < int32_t(count); s += 4)
 		{
-			const __m256 s8_0 = _mm256_load_ps(&rsb[s]);
-			_mm256_store_ps(&lsb[s], _mm256_mul_ps(s8_0, sf8));
-		}
-
-		for (; s < int32_t(count) - 4; s += 4)
-		{
-			const __m128 s4_0 = _mm_load_ps(&rsb[s]);
-			_mm_store_ps(&lsb[s], _mm_mul_ps(s4_0, sf4));
+			const Vector4 rs4 = Vector4::loadAligned(&rsb[s]);
+			(rs4 * sf).storeAligned(&lsb[s]);
 		}
 	}
 	else
