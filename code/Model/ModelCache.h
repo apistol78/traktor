@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/Date/DateTime.h"
 #include "Core/Io/Path.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/Semaphore.h"
@@ -48,8 +49,14 @@ public:
 	Ref< Model > getMutable(const Path& cachePath, const Path& fileName, const std::wstring& filter);
 
 private:
+	struct ModelWithStamp
+	{
+		Ref< const Model > model;
+		DateTime timeStamp;
+	};
+
 	Semaphore m_lock;
-	SmallMap< std::pair< Path, std::wstring >, Ref< const Model > > m_models;
+	SmallMap< std::pair< Path, std::wstring >, ModelWithStamp > m_models;
 };
 
 }
