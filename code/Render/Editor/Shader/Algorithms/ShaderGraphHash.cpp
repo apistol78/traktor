@@ -58,12 +58,18 @@ uint32_t calculateLocalNodeHash(const Node* node, bool includeTextures, bool inc
 	return DeepHash(nodeCopy).get();
 }
 
-uint32_t calculateBranchHash(const ShaderGraph* shaderGraph, const OutputPin* outputPin, SmallMap< const OutputPin*, uint32_t >& visited)
+uint32_t calculateBranchHash(
+	const ShaderGraph* shaderGraph,
+	const OutputPin* outputPin,
+	bool includeTextures,
+	bool includeTechniqueNames,
+	SmallMap< const OutputPin*, uint32_t >& visited
+)
 {
 	const Node* node = outputPin->getNode();
 	const INodeTraits* nodeTraits = INodeTraits::find(node);
 
-	uint32_t nodeHash = calculateLocalNodeHash(node, false, false);
+	uint32_t nodeHash = calculateLocalNodeHash(node, includeTextures, includeTechniqueNames);
 
 	const uint32_t inputPinCount = node->getInputPinCount();
 	for (uint32_t i = 0; i < inputPinCount; ++i)
@@ -86,7 +92,7 @@ uint32_t calculateBranchHash(const ShaderGraph* shaderGraph, const OutputPin* ou
 		else
 		{
 			visited[edge->getSource()] = 0;
-			const uint32_t inputNodeHash = calculateBranchHash(shaderGraph, edge->getSource(), visited);
+			const uint32_t inputNodeHash = calculateBranchHash(shaderGraph, edge->getSource(), includeTextures, includeTechniqueNames, visited);
 			visited[edge->getSource()] = inputNodeHash;
 			nodeHash += rotateLeft(inputNodeHash, inputPinGroup);
 		}
@@ -129,7 +135,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 		const INodeTraits* nodeTraits = INodeTraits::find(node);
 		if (nodeTraits != nullptr && nodeTraits->isRoot(shaderGraph, node))
 		{
-			hash += calculateLocalNodeHash(node, false, false);
+			hash += calculateLocalNodeHash(node, m_includeTextures, m_includeTechniqueNames);
 
 			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 			{
@@ -137,7 +143,7 @@ uint32_t ShaderGraphHash::calculate(const ShaderGraph* shaderGraph) const
 				const Edge* inputEdge = shaderGraph->findEdge(inputPin);
 				if (inputEdge)
 				{
-					const uint32_t inputHash = calculateBranchHash(shaderGraph, inputEdge->getSource(), visited);
+					const uint32_t inputHash = calculateBranchHash(shaderGraph, inputEdge->getSource(), m_includeTextures, m_includeTechniqueNames, visited);
 					const int32_t inputPinGroup = nodeTraits->getInputPinGroup(shaderGraph, node, inputPin);
 					hash += rotateLeft(inputHash, inputPinGroup);
 				}
