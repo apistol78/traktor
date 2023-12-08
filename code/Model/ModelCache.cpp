@@ -7,12 +7,14 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/Murmur3.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/JobManager.h"
 #include "Model/Model.h"
 #include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
@@ -105,14 +107,21 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 
 		// Write cached copy of post-operation model.
 		const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
+		JobManager::getInstance().add([=]() {
+			if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
+			{
+				log::error << L"Unable to create model cache directory." << Endl;
+				return;
+			}
 
-		if (!FileSystem::getInstance().makeAllDirectories(cachedFileName.getPathOnly()))
-			return nullptr;
+			if (!ModelFormat::writeAny(intermediateFileName, model))
+			{
+				log::error << L"Unable to write model into cache directory." << Endl;
+				return;
+			}
 
-		if (ModelFormat::writeAny(intermediateFileName, model))
 			FileSystem::getInstance().move(cachedFileName, intermediateFileName, true);
-		else
-			return nullptr;
+		});
 	}
 
 	// Return model; should be same as one we've written to cache.
