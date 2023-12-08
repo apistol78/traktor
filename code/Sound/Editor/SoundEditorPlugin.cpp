@@ -12,10 +12,12 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Sound/Editor/SoundEditorPlugin.h"
+#include "Sound/Editor/SoundPanel.h"
 
 namespace traktor::sound
 {
@@ -29,12 +31,24 @@ SoundEditorPlugin::SoundEditorPlugin(editor::IEditor* editor)
 
 bool SoundEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
+	m_soundPanel = new SoundPanel(m_editor);
+	m_soundPanel->create(parent);
+
+	m_site = site;
+	m_site->createAdditionalPanel(m_soundPanel, 60_ut, false);
 	return true;
 }
 
 void SoundEditorPlugin::destroy()
 {
 	Ref< AudioSystem > audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+
+	if (m_soundPanel)
+	{
+		m_site->destroyAdditionalPanel(m_soundPanel);
+		m_site = nullptr;
+		m_soundPanel = nullptr;
+	}
 
 	if (m_threadPlayer)
 	{
