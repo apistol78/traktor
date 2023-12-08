@@ -53,15 +53,18 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 {
 	const auto key = std::make_pair(fileName, filter);
 
-	// First check if we have model loaded into memory.
-	auto it = m_models.find(key);
-	if (it != m_models.end())
-		return it->second;
-
 	// Get information about source file.
 	Ref< File > file = FileSystem::getInstance().get(fileName);
 	if (!file)
 		return nullptr;
+
+	// First check if we have recent model loaded into memory.
+	auto it = m_models.find(key);
+	if (it != m_models.end())
+	{
+		if (it->second.timeStamp >= file->getLastWriteTime())
+			return it->second.model;
+	}
 
 	// Calculate hash of resolved file name.
 	const uint32_t fileNameHash = hash(fileName.getPathName() + L"!" + filter);
@@ -84,7 +87,7 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 		Ref< const Model > model = ModelFormat::readAny(cachedFileName, L"");
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			m_models.insert(key, model);
+			m_models.insert(key, { model, file->getLastWriteTime() });
 		}
 		return model;
 	}
@@ -98,7 +101,7 @@ Ref< const Model > ModelCache::get(const Path& cachePath, const Path& fileName, 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		// Add model to memory map.
-		m_models.insert(key, model);
+		m_models.insert(key, { model, file->getLastWriteTime() });
 
 		// Write cached copy of post-operation model.
 		const Path intermediateFileName = cachedFileName.getPathNameNoExtension() + L"~." + cachedFileName.getExtension();
