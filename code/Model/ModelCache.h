@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Io/Path.h"
 #include "Core/Singleton/ISingleton.h"
