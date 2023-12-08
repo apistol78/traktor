@@ -10,8 +10,8 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<X>32</X>
-				<Y>32</Y>
+				<X>8</X>
+				<Y>8</Y>
 				<Z>1</Z>
 			</localSize>
 		</item>
