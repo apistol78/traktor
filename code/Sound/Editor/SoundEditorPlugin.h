@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 
 namespace traktor
@@ -26,6 +27,8 @@ class IEditor;
 
 namespace traktor::sound
 {
+
+class SoundPanel;
 
 /*! Sound editor plugin.
  * \ingroup Sound
@@ -53,7 +56,9 @@ public:
 
 private:
 	editor::IEditor* m_editor = nullptr;
+	editor::IEditorPageSite* m_site = nullptr;
 	Thread* m_threadPlayer = nullptr;
+	Ref< SoundPanel > m_soundPanel;
 };
 
 }
