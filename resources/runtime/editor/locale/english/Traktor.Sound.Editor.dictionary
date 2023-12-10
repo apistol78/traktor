@@ -26,6 +26,10 @@
 			<second>Import sound batch...</second>
 		</item>
 		<item>
+			<first>SOUND_EDITOR_SOUND_PANEL</first>
+			<second>Audio</second>
+		</item>
+		<item>
 			<first>SOUND_PROCESSOR_EDITOR_ALIGN_LEFT</first>
 			<second>Align left</second>
 		</item>
