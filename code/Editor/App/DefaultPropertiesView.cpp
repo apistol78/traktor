@@ -347,7 +347,7 @@ void DefaultPropertiesView::eventPropertyCommand(ui::PropertyCommandEvent* event
 
 void DefaultPropertiesView::eventPropertyChange(ui::PropertyContentChangeEvent* event)
 {
-	ui::PropertyContentChangeEvent changingEvent(this, event->getItem());
+	ui::ContentChangingEvent changingEvent(this);
 	raiseEvent(&changingEvent);
 
 	m_propertyList->apply();
