@@ -207,7 +207,7 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 {
 	m_renderGraph = renderGraph;
 
-	auto glyphsTargetSetId = m_renderGraph->addTargetSet(L"Spark glyph", m_renderTargetGlyphs);
+	auto glyphsTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark glyph", m_renderTargetGlyphs);
 
 	m_renderPassOutput = new render::RenderPass(L"Spark");
 	if (m_clearBackground)

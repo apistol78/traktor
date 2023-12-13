@@ -85,7 +85,7 @@ void RenderGraph::destroy()
 	safeDestroy(m_texturePool);
 }
 
-handle_t RenderGraph::addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
+handle_t RenderGraph::addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet)
 {
 	const handle_t resourceId = m_nextResourceId++;
 
@@ -151,7 +151,7 @@ handle_t RenderGraph::addPersistentTargetSet(
 	return resourceId;
 }
 
-handle_t RenderGraph::addBuffer(const wchar_t* const name, Buffer* buffer)
+handle_t RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffer)
 {
 	const handle_t resourceId = m_nextResourceId++;
 

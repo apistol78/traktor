@@ -98,13 +98,13 @@ public:
 	/*! */
 	void destroy();
 
-	/*! Add target set resource.
+	/*! Add explicit target set resource.
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \param targetSet Render target set.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
+	handle_t addExplicitTargetSet(const wchar_t* const name, IRenderTargetSet* targetSet);
 
 	/*! Add transient target set resource.
 	 *
@@ -147,28 +147,34 @@ public:
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
-	/*! Add buffer resource.
+	/*! Add explicit buffer resource.
 	 *
 	 * \param name Name of buffer, used for debugging only.
 	 * \param buffer Buffer resource.
 	 * \return Opaque resource handle.
 	 */
-	handle_t addBuffer(const wchar_t* const name, Buffer* buffer);
+	handle_t addExplicitBuffer(const wchar_t* const name, Buffer* buffer);
 
-	/*!
+	/*! Add persistent buffer resource.
+	 *
+	 * \param name Name of buffer, used for debugging only.
+	 * \param persistentHandle Unique handle to track persistent buffer.
+	 * \param bufferSize Size of buffer in bytes.
+	 * \return Opaque resource handle.
 	 */
 	handle_t addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize);
 
-	/*!
+	/*! Add a transient texture.
+	 *
+	 * A transient texture is always created with storage texture
+	 * capabilities because it's the only reason that make sense.
+	 * Thus useful for intermediate textures between compute passes.
+	 * 
+	 * \param name Name of texture, used for debugging only.
+	 * \param textureDesc Description of transient texture.
+	 * \return Opaque resource handle.
 	 */
 	handle_t addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
-
-	/*! Find target ID by name.
-	 *
-	 * \param name Name of target set, used for debugging only.
-	 * \return ID of target set.
-	 */
-	// handle_t findTargetByName(const wchar_t* const name) const;
 
 	/*! Get target set from resource handle.
 	 *
