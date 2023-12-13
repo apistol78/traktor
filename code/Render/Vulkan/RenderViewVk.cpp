@@ -654,82 +654,14 @@ void RenderViewVk::present()
 
 bool RenderViewVk::beginPass(const Clear* clear, uint32_t load, uint32_t store)
 {
-	T_FATAL_ASSERT(m_targetRenderPass == 0);
-
-	if (m_lost)
-		return false;
-
 	const auto& frame = m_frames[m_currentImageIndex];
-	const Clear cl = clear ? *clear : Clear{};
-
-	m_targetSet = frame.primaryTarget;
-	m_targetColorIndex = 0;
-
-	// Get render pass.
-	RenderPassCache::Specification rp = {};
-	rp.msaaSampleCount = m_targetSet->getVkSampleCount();
-	rp.clear = cl.mask;
-	rp.load = (uint8_t)load;
-	rp.store = (uint8_t)store;
-	rp.colorTargetFormats[0] = m_targetSet->getColorTargetVk(0)->getVkFormat();
-	rp.depthTargetFormat = m_targetSet->getDepthTargetVk()->getVkFormat();
-	if (!m_renderPassCache->get(rp, m_targetRenderPass))
-		return false;
-
-	// Prepare render target set as targets.
-	if (!m_targetSet->prepareAsTarget(
-		frame.graphicsCommandBuffer,
-		m_targetColorIndex,
-		m_targetRenderPass,
-		frame.primaryTarget->getDepthTargetVk(),
-		
-		// Out
-		m_targetFrameBuffer
-	))
-		return false;
-
-	// Transform clear values.
-	StaticVector< VkClearValue, 2+1 > clearValues;
-	{
-		auto& cv = clearValues.push_back();
-		cl.colors[0].storeUnaligned(cv.color.float32);
-		if (m_targetSet->needResolve())
-		{
-			auto& cv = clearValues.push_back();
-			cl.colors[0].storeUnaligned(cv.color.float32);
-		}
-	}
-	{
-		auto& cv = clearValues.push_back();
-		cv.depthStencil.depth = cl.depth;
-		cv.depthStencil.stencil = cl.stencil;
-	}
-
-	// Begin render pass.
-	VkRenderPassBeginInfo rpbi = {};
-	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	rpbi.renderPass = m_targetRenderPass;
-	rpbi.framebuffer = m_targetFrameBuffer;
-	rpbi.renderArea.offset.x = 0;
-	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = m_targetSet->getWidth();
-	rpbi.renderArea.extent.height = m_targetSet->getHeight();
-	rpbi.clearValueCount = (uint32_t)clearValues.size();
-	rpbi.pClearValues = clearValues.c_ptr();
-	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
-
-	// Set viewport.
-	VkViewport vp = {};
-	vp.x = 0.0f;
-	vp.y = 0.0f;
-	vp.width = (float)m_targetSet->getWidth();
-	vp.height = (float)m_targetSet->getHeight();
-	vp.minDepth = 0.0f;
-	vp.maxDepth = 1.0f;
-	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
-
-	m_passCount++;
-	return true;
+	return beginPass(
+		frame.primaryTarget,
+		0,
+		clear,
+		load,
+		store
+	);
 }
 
 bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* clear, uint32_t load, uint32_t store)
