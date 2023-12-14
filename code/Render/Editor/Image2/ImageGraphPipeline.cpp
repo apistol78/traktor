@@ -39,7 +39,7 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 14, ImageGraphPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphPipeline", 15, ImageGraphPipeline, editor::IPipeline)
 
 bool ImageGraphPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -294,6 +294,47 @@ Ref< ISerializable > ImageGraphPipeline::buildProduct(
 
 bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, const ImgPass* pass, RefArray< ImagePassStepData >& outOpData) const
 {
+	log::info << L"Pass \"" << pass->getName() << L"\" begin" << Endl;
+
+	// Log output.
+	{
+		const OutputPin* outputPin = pass->getOutputPin(0);
+		T_FATAL_ASSERT(outputPin != nullptr);
+
+		const AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(outputPin);
+		if (destinationPins.size() != 1)
+		{
+			log::error << L"Image graph pipeline failed; pass output not connected properly." << Endl;
+			return false;
+		}
+
+		if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
+		{
+			const std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
+			if (!targetSetNode->getPersistent())
+				log::info << L"\tOutput into transient target \"" << textureId << L"\"." << Endl;
+			else
+				log::info << L"\tOutput into persistent target \"" << textureId << L"\"." << Endl;
+		}
+		else if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(destinationPins.front()->getNode()))
+		{
+			const std::wstring sbufferId = sbufferNode->getId().format() + L"/" + outputPin->getName();
+			if (!sbufferNode->getPersistent())
+				log::info << L"\tOutput into transient sbuffer \"" << sbufferId << L"\"." << Endl;
+			else
+				log::info << L"\tOutput into persistent sbuffer \"" << sbufferId << L"\"." << Endl;
+		}
+		else if (auto outputNode = dynamic_type_cast< const ImgOutput* >(destinationPins.front()->getNode()))
+		{
+			log::info << L"\tOutput into back buffer." << Endl;
+		}
+		else
+		{
+			log::error << L"Image graph pipeline failed; pass output not connected to a target." << Endl;
+			return false;
+		}
+	}
+
 	for (auto step : pass->getSteps())
 	{
 		Ref< ImagePassStepData > opData;
@@ -309,13 +350,17 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		{
 			Ref< ComputeData > c = new ComputeData();
 			c->m_shader = computeStep->m_shader;
+			c->m_workSize = computeStep->m_workSize;
+			c->m_manualWorkSize[0] = computeStep->m_manualWorkSize[0];
+			c->m_manualWorkSize[1] = computeStep->m_manualWorkSize[1];
+			c->m_manualWorkSize[2] = computeStep->m_manualWorkSize[2];
 			opData = c;
 		}
 		else if (auto directionalBlurStep = dynamic_type_cast< const ImgStepDirectionalBlur* >(step))
 		{
 			Ref< DirectionalBlurData > db = new DirectionalBlurData();
 			db->m_shader = directionalBlurStep->m_shader;
-			db->m_blurType = (DirectionalBlurData::BlurType)directionalBlurStep->m_blurType;
+			db->m_blurType = directionalBlurStep->m_blurType;
 			db->m_direction = directionalBlurStep->m_direction;
 			db->m_taps = directionalBlurStep->m_taps;
 			opData = db;
@@ -339,46 +384,7 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 		}
 		T_FATAL_ASSERT(opData);
 
-		log::info << L"\tPass \"" << pass->getName() << L"/" << type_name(opData) << L"\", shader = \"" << Guid(opData->m_shader).format() << L"\"." << Endl;
-
-		// Log output.
-		{
-			const OutputPin* outputPin = pass->getOutputPin(0);
-			T_FATAL_ASSERT(outputPin != nullptr);
-
-			const AlignedVector< const InputPin* > destinationPins = asset->findDestinationPins(outputPin);
-			if (destinationPins.size() != 1)
-			{
-				log::error << L"Image graph pipeline failed; pass output not connected properly." << Endl;
-				return false;
-			}
-
-			if (auto targetSetNode = dynamic_type_cast< const ImgTargetSet* >(destinationPins.front()->getNode()))
-			{
-				const std::wstring textureId = targetSetNode->getTargetSetId() + L"/" + outputPin->getName();
-				if (!targetSetNode->getPersistent())
-					log::info << L"\t\tOutput into transient target \"" << textureId << L"\"." << Endl;
-				else
-					log::info << L"\t\tOutput into persistent target \"" << textureId << L"\"." << Endl;
-			}
-			else if (auto sbufferNode = dynamic_type_cast< const ImgStructBuffer* >(destinationPins.front()->getNode()))
-			{
-				const std::wstring sbufferId = sbufferNode->getId().format() + L"/" + outputPin->getName();
-				if (!sbufferNode->getPersistent())
-					log::info << L"\t\tOutput into transient sbuffer \"" << sbufferId << L"\"." << Endl;
-				else
-					log::info << L"\t\tOutput into persistent sbuffer \"" << sbufferId << L"\"." << Endl;
-			}
-			else if (auto outputNode = dynamic_type_cast< const ImgOutput* >(destinationPins.front()->getNode()))
-			{
-				log::info << L"\t\tOutput into back buffer." << Endl;
-			}
-			else
-			{
-				log::error << L"Image graph pipeline failed; pass output not connected to a target." << Endl;
-				return false;
-			}
-		}
+		log::info << L"\tStep \"" << type_name(opData) << L"\", shader = \"" << Guid(opData->m_shader).format() << L"\"." << Endl;
 
 		// Setup input parameters.
 		std::set< std::wstring > inputs;
@@ -442,6 +448,8 @@ bool ImageGraphPipeline::convertAssetPassToSteps(const ImageGraphAsset* asset, c
 
 		outOpData.push_back(opData);
 	}
+
+	log::info << L"Pass \"" << pass->getName() << L"\" end" << Endl;
 	return true;
 }
 

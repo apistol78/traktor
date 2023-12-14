@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,6 +43,9 @@ public:
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
 		const ImageGraphView& view,
+		const targetSetVector_t& targetSetIds,
+		const targetSetVector_t& sbufferIds,
+		const PassOutput& output,
 		const RenderGraph& renderGraph,
 		const ProgramParameters* sharedParams,
 		RenderContext* renderContext,
@@ -53,6 +56,8 @@ private:
 	friend class ComputeData;
 
 	resource::Proxy< render::Shader > m_shader;
+	WorkSize m_workSize = WorkSize::Manual;
+	int32_t m_manualWorkSize[3] = { 1, 1, 1 };
 };
 
 }

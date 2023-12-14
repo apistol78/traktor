@@ -1011,7 +1011,14 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	if (!p->validate(frame.graphicsCommandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, nullptr))
 		return;
 
-	vkCmdDispatch(*frame.graphicsCommandBuffer, workSize[0], workSize[1], workSize[2]);
+	const int32_t* lwgs = p->getLocalWorkGroupSize();
+
+	vkCmdDispatch(
+		*frame.graphicsCommandBuffer,
+		(workSize[0] + lwgs[0] - 1) / lwgs[0],
+		(workSize[1] + lwgs[1] - 1) / lwgs[1],
+		(workSize[2] + lwgs[2] - 1) / lwgs[2]
+	);
 }
 
 void RenderViewVk::barrier()

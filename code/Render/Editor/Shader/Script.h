@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,6 +40,8 @@ class T_DLLCLASS Script : public Node
 	T_RTTI_CLASS;
 
 public:
+	Script();
+
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
@@ -47,6 +49,8 @@ public:
 	void setTechnique(const std::wstring& technique);
 
 	const std::wstring& getTechnique() const;
+
+	const int32_t* getLocalSize() const;
 
 	const AlignedVector< Guid >& getIncludes() const;
 
@@ -83,6 +87,7 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_technique;
+	int32_t m_localSize[3];
 	AlignedVector< Guid > m_includes;
 	StaticVector< InputPin, 64 > m_inputPins;
 	StaticVector< TypedOutputPin, 64 > m_outputPins;

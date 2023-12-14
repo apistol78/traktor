@@ -214,9 +214,9 @@ public:
 
 	void setTechnique(const std::wstring& technique);
 
-	const int32_t* getLocalSize() const;
-
 	const std::wstring& getTechnique() const;
+
+	const int32_t* getLocalSize() const;
 
 	virtual std::wstring getInformation() const override final;
 
@@ -356,7 +356,21 @@ class T_DLLCLASS DispatchIndex : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
+	enum class Scope
+	{
+		Global,		//!< Global thread index.
+		Local,		//!< Local thread index within work group.
+		Group		//!< Work group index.
+	};
+
 	DispatchIndex();
+
+	Scope getScope() const;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	Scope m_scope = Scope::Global;
 };
 
 /*! Divide. */

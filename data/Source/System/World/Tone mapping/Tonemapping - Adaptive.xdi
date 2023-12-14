@@ -5,8 +5,8 @@
 			<id>{6834F690-121C-C249-8191-A03A37AFC8F2}</id>
 			<comment/>
 			<position>
-				<first>90</first>
-				<second>184</second>
+				<first>315</first>
+				<second>687</second>
 			</position>
 			<textureId>InputColor</textureId>
 		</item>
@@ -17,348 +17,6 @@
 				<first>2030</first>
 				<second>632</second>
 			</position>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{3DD789DA-9DFE-694E-A135-C290CA5BCE09}</id>
-			<comment/>
-			<position>
-				<first>641</first>
-				<second>338</second>
-			</position>
-			<targetSetId>Initial luminance</targetSetId>
-			<persistent>false</persistent>
-			<width>0</width>
-			<height>0</height>
-			<screenWidthDenom>8</screenWidthDenom>
-			<screenHeightDenom>8</screenHeightDenom>
-			<maxWidth>256</maxWidth>
-			<maxHeight>256</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{A73A24F1-D4CA-8C42-B7D6-57319A0B626C}</id>
-			<comment/>
-			<position>
-				<first>657</first>
-				<second>489</second>
-			</position>
-			<targetSetId>Illum64</targetSetId>
-			<persistent>false</persistent>
-			<width>64</width>
-			<height>64</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{A9EBAEA7-960D-554D-A447-12B173CC2CF2}</id>
-			<comment/>
-			<position>
-				<first>657</first>
-				<second>640</second>
-			</position>
-			<targetSetId>Illum16</targetSetId>
-			<persistent>false</persistent>
-			<width>16</width>
-			<height>16</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{F008E0FF-3011-7D4F-8A9B-055C6DFC8FAD}</id>
-			<comment/>
-			<position>
-				<first>657</first>
-				<second>791</second>
-			</position>
-			<targetSetId>Illum4</targetSetId>
-			<persistent>false</persistent>
-			<width>4</width>
-			<height>4</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgTargetSet" version="1,traktor.render.Node:1">
-			<id>{3BA9C78C-6890-9244-A346-F23DF23C6271}</id>
-			<comment/>
-			<position>
-				<first>657</first>
-				<second>942</second>
-			</position>
-			<targetSetId>Illum1</targetSetId>
-			<persistent>false</persistent>
-			<width>1</width>
-			<height>1</height>
-			<screenWidthDenom>0</screenWidthDenom>
-			<screenHeightDenom>0</screenHeightDenom>
-			<maxWidth>0</maxWidth>
-			<maxHeight>0</maxHeight>
-			<createDepthStencil>false</createDepthStencil>
-			<ignoreStencil>false</ignoreStencil>
-			<generateMips>false</generateMips>
-			<targets>
-				<item>
-					<textureId>Output</textureId>
-					<colorFormat>TfR16F</colorFormat>
-				</item>
-			</targets>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{B8EDE013-A426-F44E-8BFF-85FCE0AD62F5}</id>
-			<comment/>
-			<position>
-				<first>337</first>
-				<second>315</second>
-			</position>
-			<name>Initial luminance</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
-					<parameters>
-						<item>ColorTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{FA8D6FCB-3331-394F-ABC2-5ECD01970E80}</id>
-			<comment/>
-			<position>
-				<first>337</first>
-				<second>463</second>
-			</position>
-			<name>Downsample -&gt; 64</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{8DF2AFDB-83A6-2B4A-B8F8-206D2880ED70}</id>
-			<comment/>
-			<position>
-				<first>337</first>
-				<second>611</second>
-			</position>
-			<name>Downsample -&gt; 16</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{72F6335D-E27B-3443-BB7E-2E4361624F46}</id>
-			<comment/>
-			<position>
-				<first>337</first>
-				<second>759</second>
-			</position>
-			<name>Downsample -&gt; 4</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{4551D26C-E6C5-314C-A5E3-FC751E5067F2}</id>
-			<comment/>
-			<position>
-				<first>337</first>
-				<second>907</second>
-			</position>
-			<name>Downsample -&gt; 1</name>
-			<clear>
-				<mask>
-					<Color>true</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepSimple">
-					<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-					</parameters>
-				</item>
-			</steps>
-		</item>
-		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
-			<id>{0A105C00-4A7B-CB44-8C7B-AD779023A80F}</id>
-			<comment/>
-			<position>
-				<first>1156</first>
-				<second>673</second>
-			</position>
-			<name>Adaptation</name>
-			<clear>
-				<mask>
-					<Color>false</Color>
-					<Depth>false</Depth>
-					<Stencil>false</Stencil>
-				</mask>
-				<colors>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-					<item>0, 0, 0, 1</item>
-				</colors>
-				<depth>1</depth>
-				<stencil>0</stencil>
-			</clear>
-			<steps>
-				<item type="traktor.render.ImgStepCompute">
-					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
-					<parameters>
-						<item>SourceTexture</item>
-						<item>CurrentIllum</item>
-					</parameters>
-				</item>
-			</steps>
 		</item>
 		<item type="traktor.render.ImgStructBuffer" version="traktor.render.Node:1">
 			<id>{91C6205C-12DB-5449-93BE-19AF3AA7EC00}</id>
@@ -399,11 +57,124 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple">
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
+					<name/>
 					<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
 					<parameters>
 						<item>ColorTexture</item>
 						<item>CurrentIllum</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgStructBuffer" version="traktor.render.Node:1">
+			<id>{D723578A-94D2-438B-A84B-3EA8BC0078A0}</id>
+			<comment/>
+			<position>
+				<first>793</first>
+				<second>597</second>
+			</position>
+			<persistent>false</persistent>
+			<elementCount>64</elementCount>
+			<elementSize>4</elementSize>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{0A105C00-4A7B-CB44-8C7B-AD779023A80F}</id>
+			<comment/>
+			<position>
+				<first>1156</first>
+				<second>673</second>
+			</position>
+			<name>Adaptation</name>
+			<clear>
+				<mask>
+					<Color>false</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
+					<name/>
+					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
+					<workSize>Manual</workSize>
+					<manualWorkSize>
+						<X>1</X>
+						<Y>1</Y>
+						<Z>1</Z>
+					</manualWorkSize>
+					<parameters>
+						<item>Histogram</item>
+						<item>CurrentIllum</item>
+						<item>InputColor</item>
+					</parameters>
+				</item>
+			</steps>
+		</item>
+		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
+			<id>{73FBEFBA-3FF9-4BCA-8E2D-84FBBA92F113}</id>
+			<comment/>
+			<position>
+				<first>577</first>
+				<second>568</second>
+			</position>
+			<name>Histogram</name>
+			<clear>
+				<mask>
+					<Color>false</Color>
+					<Depth>false</Depth>
+					<Stencil>false</Stencil>
+				</mask>
+				<colors>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+					<item>0, 0, 0, 1</item>
+				</colors>
+				<depth>1</depth>
+				<stencil>0</stencil>
+			</clear>
+			<steps>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
+					<name>Clear Histogram</name>
+					<shader>{5EAE8D7F-DB70-412E-96AB-3A9252FEC57B}</shader>
+					<workSize>Manual</workSize>
+					<manualWorkSize>
+						<X>64</X>
+						<Y>1</Y>
+						<Z>1</Z>
+					</manualWorkSize>
+					<parameters>
+						<item>Input</item>
+					</parameters>
+				</item>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
+					<name>Histogram</name>
+					<shader>{CAEC5076-5218-4EE4-A42E-7ED877EA277B}</shader>
+					<workSize>SizeOf</workSize>
+					<manualWorkSize>
+						<X>1</X>
+						<Y>1</Y>
+						<Z>1</Z>
+					</manualWorkSize>
+					<parameters>
+						<item>Input</item>
 					</parameters>
 				</item>
 			</steps>
@@ -416,143 +187,13 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{96622082-61C1-4849-95C6-44E30EACB145}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
@@ -562,11 +203,81 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{96622082-61C1-4849-95C6-44E30EACB145}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{63CE19D8-A53D-48B5-9931-3BCC4B5807AF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{96622082-61C1-4849-95C6-44E30EACB145}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>

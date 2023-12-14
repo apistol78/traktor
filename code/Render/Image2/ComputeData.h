@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Render/Image2/ImagePassStepData.h"
 
 // import/export mechanism.
@@ -30,6 +31,14 @@ class T_DLLCLASS ComputeData : public ImagePassStepData
 
 public:
 	virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
+
+	virtual void serialize(ISerializer& s) override final;
+
+private:
+	friend class ImageGraphPipeline;
+
+	WorkSize m_workSize = WorkSize::Manual;
+	int32_t m_manualWorkSize[3] = { 1, 1, 1 };
 };
 
 }

@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Math/Vector2.h"
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Render/Image2/ImagePassStepData.h"
 
 // import/export mechanism.
@@ -27,28 +28,17 @@ namespace traktor::render
  */
 class T_DLLCLASS DirectionalBlurData : public ImagePassStepData
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    DirectionalBlurData();
+	DirectionalBlurData();
 
-    virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
+	virtual Ref< const ImagePassStep > createInstance(resource::IResourceManager* resourceManager, IRenderSystem* renderSystem) const override final;
 
-    virtual void serialize(ISerializer& s) override final;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
-    friend class ImageGraphPipeline;
-
-	enum BlurType
-	{
-		// 1D separable
-		BtGaussian,
-		BtSine,
-		BtBox,
-		// 2D combined
-		BtBox2D,
-		BtCircle2D
-	};
+	friend class ImageGraphPipeline;
 
 	BlurType m_blurType;
 	Vector2 m_direction;

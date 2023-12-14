@@ -155,6 +155,14 @@ public:
 	 */
 	handle_t addExplicitBuffer(const wchar_t* const name, Buffer* buffer);
 
+	/*! Add transient buffer resource.
+	 *
+	 * \param name Name of buffer, used for debugging only.
+	 * \param bufferSize Size of buffer in bytes.
+	 * \return Opaque resource handle.
+	 */
+	handle_t addTransientBuffer(const wchar_t* const name, uint32_t bufferSize);
+
 	/*! Add persistent buffer resource.
 	 *
 	 * \param name Name of buffer, used for debugging only.

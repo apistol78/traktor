@@ -38,8 +38,8 @@ void ImageGraph::addPasses(
 	const std::function< void(const RenderGraph& renderGraph, ProgramParameters*) >& parametersFn
 ) const
 {
-	ImagePass::targetSetVector_t sbufferIds;
-	ImagePass::targetSetVector_t targetSetIds;
+	targetSetVector_t sbufferIds;
+	targetSetVector_t targetSetIds;
 
 	// Copy context and append our internal textures and targets so
 	// steps can have a single method of accessing input textures.
@@ -48,11 +48,21 @@ void ImageGraph::addPasses(
 	sbufferIds.resize(m_sbuffers.size());
 	for (int32_t i = 0; i < (int32_t)m_sbuffers.size(); ++i)
 	{
-		sbufferIds[i] = renderGraph.addPersistentBuffer(
-			m_sbuffers[i]->getName().c_str(),
-			m_sbuffers[i]->getPersistentHandle(),
-			m_sbuffers[i]->getBufferSize()
-		);
+		if (m_sbuffers[i]->getPersistentHandle() != 0)
+		{
+			sbufferIds[i] = renderGraph.addPersistentBuffer(
+				m_sbuffers[i]->getName().c_str(),
+				m_sbuffers[i]->getPersistentHandle(),
+				m_sbuffers[i]->getBufferSize()
+			);
+		}
+		else
+		{
+			sbufferIds[i] = renderGraph.addTransientBuffer(
+				m_sbuffers[i]->getName().c_str(),
+				m_sbuffers[i]->getBufferSize()
+			);
+		}
 		context.associateSBuffer(
 			m_sbuffers[i]->getId(),
 			sbufferIds[i]
@@ -130,6 +140,9 @@ void ImageGraph::addPasses(
 					this,
 					context,
 					view,
+					targetSetIds,
+					sbufferIds,
+					{ -1, -1 },
 					renderGraph,
 					sharedParams,
 					renderContext,

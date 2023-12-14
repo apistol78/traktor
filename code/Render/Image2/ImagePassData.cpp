@@ -49,8 +49,7 @@ Ref< const ImagePass > ImagePassData::createInstance(resource::IResourceManager*
 	Ref< ImagePass > instance = new ImagePass();
 
 	instance->m_name = m_name;
-	instance->m_outputTargetSet = m_outputTargetSet;
-	instance->m_outputSBuffer = m_outputSBuffer;
+	instance->m_output = { m_outputTargetSet, m_outputSBuffer };
 	instance->m_clear = m_clear;
 
 	for (auto stepData : m_steps)

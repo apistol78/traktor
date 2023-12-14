@@ -10,6 +10,7 @@
 
 #include <list>
 #include "Core/Math/Vector2.h"
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Resource/Id.h"
 
@@ -31,17 +32,6 @@ class T_DLLCLASS ImgStepDirectionalBlur : public IImgStep
     T_RTTI_CLASS;
 
 public:
-	enum BlurType
-	{
-		// 1D separable
-		BtGaussian,
-		BtSine,
-		BtBox,
-		// 2D combined
-		BtBox2D,
-		BtCircle2D
-	};
-
 	ImgStepDirectionalBlur();
 
     virtual void getInputs(std::set< std::wstring >& outInputs) const override final;

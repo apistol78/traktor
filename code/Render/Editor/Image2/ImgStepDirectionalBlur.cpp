@@ -18,10 +18,10 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepDirectionalBlur", 0, ImgStepDirectionalBlur, IImgStep)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ImgStepDirectionalBlur", 1, ImgStepDirectionalBlur, IImgStep)
 
 ImgStepDirectionalBlur::ImgStepDirectionalBlur()
-:   m_blurType(BtGaussian)
+:   m_blurType(BlurType::Gaussian)
 ,   m_direction(1.0f, 0.0f)
 ,   m_taps(15)
 {
@@ -35,19 +35,35 @@ void ImgStepDirectionalBlur::getInputs(std::set< std::wstring >& outInputs) cons
 
 void ImgStepDirectionalBlur::serialize(ISerializer& s)
 {
-	const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
-	{
-		{ L"BtGaussian", BtGaussian },
-		{ L"BtSine", BtSine },
-		{ L"BtBox", BtBox },
-		{ L"BtBox2D", BtBox2D },
-		{ L"BtCircle2D", BtCircle2D },
-		{ 0 }
-	};
-
 	IImgStep::serialize(s);
 
-	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	if (s.getVersion< ImgStepDirectionalBlur >() >= 1)
+	{
+		const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
+		{
+			{ L"Gaussian", BlurType::Gaussian },
+			{ L"Sine", BlurType::Sine },
+			{ L"Box", BlurType::Box },
+			{ L"Box2D", BlurType::Box2D },
+			{ L"Circle2D", BlurType::Circle2D },
+			{ 0 }
+		};
+		s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	}
+	else
+	{
+		const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
+		{
+			{ L"BtGaussian", BlurType::Gaussian },
+			{ L"BtSine", BlurType::Sine },
+			{ L"BtBox", BlurType::Box },
+			{ L"BtBox2D", BlurType::Box2D },
+			{ L"BtCircle2D", BlurType::Circle2D },
+			{ 0 }
+		};
+		s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	}
+
 	s >> Member< Vector2 >(L"direction", m_direction);
 	s >> Member< int32_t >(L"taps", m_taps);
     s >> resource::Member< render::Shader >(L"shader", m_shader);
