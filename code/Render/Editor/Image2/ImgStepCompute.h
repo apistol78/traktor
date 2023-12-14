@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include <list>
+#include "Render/Image2/ImageGraphTypes.h"
 #include "Render/Editor/Image2/IImgStep.h"
 #include "Resource/Id.h"
 
@@ -27,18 +28,20 @@ class Shader;
 
 class T_DLLCLASS ImgStepCompute : public IImgStep
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    virtual void getInputs(std::set< std::wstring >& outInputs) const override final;
+	virtual void getInputs(std::set< std::wstring >& outInputs) const override final;
 
-    virtual void serialize(ISerializer& s) override final;
+	virtual void serialize(ISerializer& s) override final;
 
 private:
-    friend class ImageGraphPipeline;
+	friend class ImageGraphPipeline;
 
-    resource::Id< Shader > m_shader;
-    std::list< std::wstring > m_parameters;
+	resource::Id< Shader > m_shader;
+	WorkSize m_workSize = WorkSize::Manual;
+	int32_t m_manualWorkSize[3] = { 1, 1, 1 };
+	std::list< std::wstring > m_parameters;
 };
 
 }

@@ -632,7 +632,19 @@ bool emitDispatchIndex(GlslContext& cx, DispatchIndex* node)
 	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", GlslType::Integer3);
 
 	comment(f, node);
-	assign(f, out) << L"ivec3(gl_GlobalInvocationID.xyz);" << Endl;
+
+	switch (node->getScope())
+	{
+	case DispatchIndex::Scope::Global:
+		assign(f, out) << L"ivec3(gl_GlobalInvocationID.xyz);" << Endl;
+		break;
+	case DispatchIndex::Scope::Local:
+		assign(f, out) << L"ivec3(gl_LocalInvocationID.xyz);" << Endl;
+		break;
+	case DispatchIndex::Scope::Group:
+		assign(f, out) << L"ivec3(gl_WorkGroupID.xyz);" << Endl;
+		break;
+	}
 
 	return true;
 }
@@ -2248,7 +2260,12 @@ bool emitScript(GlslContext& cx, Script* node)
 {
 	// If script is a root node then enter appropriate shader stage.
 	if (!node->getTechnique().empty())
+	{
 		cx.enterCompute();
+		cx.requirements().localSize[0] = node->getLocalSize()[0];
+		cx.requirements().localSize[1] = node->getLocalSize()[1];
+		cx.requirements().localSize[2] = node->getLocalSize()[2];
+	}
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 

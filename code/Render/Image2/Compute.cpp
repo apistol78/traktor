@@ -22,6 +22,7 @@ namespace traktor::render
 	namespace
 	{
 
+const static Handle s_handleOutput(L"Output");
 const static Handle s_handleViewEdgeTopLeft(L"ViewEdgeTopLeft");
 const static Handle s_handleViewEdgeTopRight(L"ViewEdgeTopRight");
 const static Handle s_handleViewEdgeBottomLeft(L"ViewEdgeBottomLeft");
@@ -53,6 +54,9 @@ void Compute::build(
 	const ImageGraph* graph,
 	const ImageGraphContext& context,
 	const ImageGraphView& view,
+	const targetSetVector_t& targetSetIds,
+	const targetSetVector_t& sbufferIds,
+	const PassOutput& output,
 	const RenderGraph& renderGraph,
 	const ProgramParameters* sharedParams,
 	RenderContext* renderContext,
@@ -65,6 +69,8 @@ void Compute::build(
 	const Vector4 viewEdgeTopRight = view.viewFrustum.corners[5];
 	const Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7];
 	const Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6];
+
+	auto rb = renderContext->alloc< ComputeRenderBlock >(L"Image - compute");
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
@@ -83,6 +89,48 @@ void Compute::build(
 	pp->setMatrixParameter(s_handleLastView, view.lastView);
 	pp->setMatrixParameter(s_handleLastViewInverse, view.lastView.inverse());
 
+	if (output.sbuffer >= 0)
+	{
+		auto buffer = renderGraph.getBuffer(sbufferIds[output.sbuffer]);
+		pp->setBufferViewParameter(s_handleOutput, buffer->getBufferView());
+	}
+
+	switch (m_workSize)
+	{
+	case WorkSize::Manual:
+		{
+			rb->workSize[0] = m_manualWorkSize[0];
+			rb->workSize[1] = m_manualWorkSize[1];
+			rb->workSize[2] = m_manualWorkSize[2];
+		}
+		break;
+
+	case WorkSize::Output:
+		if (output.targetSet >= 0)
+		{
+			auto targetSet = renderGraph.getTargetSet(targetSetIds[output.targetSet]);
+			rb->workSize[0] = targetSet->getWidth();
+			rb->workSize[1] = targetSet->getHeight();
+		}
+		break;
+
+	case WorkSize::SizeOf:
+		{
+			for (const auto& source : m_textureSources)
+			{
+				if (source.shaderParameter == render::getParameterHandle(L"WorkSize"))
+				{
+					const auto texture = context.findTexture(renderGraph, source.id);
+					const auto textureSize = texture->getSize();
+					rb->workSize[0] = textureSize.x;
+					rb->workSize[1] = textureSize.y;
+					break;
+				}
+			}
+		}
+		break;
+	}
+
 	bindSources(context, renderGraph, pp);
 
 	pp->endParameters(renderContext);
@@ -91,7 +139,6 @@ void Compute::build(
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< ComputeRenderBlock >(L"Image - compute");
 	rb->program = program;
 	rb->programParams = pp;
 	renderContext->compute(rb);

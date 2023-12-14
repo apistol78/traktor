@@ -28,7 +28,7 @@ Random s_random;
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DirectionalBlurData", 0, DirectionalBlurData, ImagePassStepData)
 
 DirectionalBlurData::DirectionalBlurData()
-:   m_blurType(BtGaussian)
+:   m_blurType(BlurType::Gaussian)
 ,   m_direction(1.0f, 0.0f)
 ,   m_taps(15)
 {
@@ -49,7 +49,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 
 	// Calculate kernel offset and weights.
 	instance->m_gaussianOffsetWeights.resize(m_taps);
-	if (m_blurType == BtGaussian)
+	if (m_blurType == BlurType::Gaussian)
 	{
 		float sigma = m_taps / 4.73f;
 
@@ -82,7 +82,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 			);
 		}
 	}
-	else if (m_blurType == BtSine)
+	else if (m_blurType == BlurType::Sine)
 	{
 		const float step = 1.0f / (m_taps - 1.0f);
 		const float angleMin = (PI * step) / 2.0f;
@@ -102,7 +102,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 			);
 		}
 	}
-	else if (m_blurType == BtBox)
+	else if (m_blurType == BlurType::Box)
 	{
 		for (int32_t i = 0; i < m_taps; ++i)
 		{
@@ -115,7 +115,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 		}
 		totalWeight = float(m_taps);
 	}
-	else if (m_blurType == BtBox2D)
+	else if (m_blurType == BlurType::Box2D)
 	{
 		for (int32_t i = 0; i < m_taps; ++i)
 		{
@@ -129,7 +129,7 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 			);
 		}
 	}
-	else if (m_blurType == BtCircle2D)
+	else if (m_blurType == BlurType::Circle2D)
 	{
 		for (int32_t i = 0; i < m_taps; )
 		{
@@ -167,19 +167,9 @@ Ref< const ImagePassStep > DirectionalBlurData::createInstance(resource::IResour
 
 void DirectionalBlurData::serialize(ISerializer& s)
 {
-	const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
-	{
-		{ L"BtGaussian", BtGaussian },
-		{ L"BtSine", BtSine },
-		{ L"BtBox", BtBox },
-		{ L"BtBox2D", BtBox2D },
-		{ L"BtCircle2D", BtCircle2D },
-		{ 0 }
-	};
-
 	ImagePassStepData::serialize(s);
 
-	s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	s >> MemberEnumByValue< BlurType >(L"blurType", m_blurType);
 	s >> Member< Vector2 >(L"direction", m_direction);
 	s >> Member< int32_t >(L"taps", m_taps);
 }

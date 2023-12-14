@@ -10,11 +10,13 @@
 #include "Core/Meta/Traits.h"
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePrivate.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Render/Editor/InputPin.h"
 #include "Render/Editor/Shader/Script.h"
@@ -222,7 +224,14 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 5, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 6, Script, Node)
+
+Script::Script()
+{
+	m_localSize[0] = 1;
+	m_localSize[1] = 1;
+	m_localSize[2] = 1;
+}
 
 void Script::setName(const std::wstring& name)
 {
@@ -242,6 +251,11 @@ void Script::setTechnique(const std::wstring& technique)
 const std::wstring& Script::getTechnique() const
 {
 	return m_technique;
+}
+
+const int32_t* Script::getLocalSize() const
+{
+	return m_localSize;
 }
 
 const AlignedVector< Guid >& Script::getIncludes() const
@@ -340,6 +354,12 @@ void Script::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"technique", m_technique);
+
+	if (s.getVersion< Script >() >= 6)
+	{
+		const wchar_t* c_localSizeElements[] = { L"X", L"Y", L"Z" };
+		s >> MemberStaticArray< int32_t, 3 >(L"localSize", m_localSize, AttributeRange(1), c_localSizeElements);
+	}
 
 	if (s.getVersion< Script >() >= 5)
 		s >> MemberAlignedVector< Guid >(L"include", m_includes); // , AttributeType(type_of< ShaderModule >()));

@@ -83,6 +83,8 @@ public:
 
 	VkPipelineLayout getPipelineLayout() const { return m_pipelineLayout; }
 
+	const int32_t* getLocalWorkGroupSize() const { return m_localWorkGroupSize; }
+
 	uint32_t getShaderHash() const { return m_shaderHash; }
 
 #if defined(_DEBUG)
@@ -159,6 +161,7 @@ private:
 	uint32_t m_stencilReference = 0;
 	uint32_t m_shaderHash = 0;
 	bool m_useTargetSize = false;
+	int32_t m_localWorkGroupSize[3] = { 1, 1, 1 };
 
 	bool validateDescriptorSet();
 

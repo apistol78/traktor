@@ -637,14 +637,14 @@ void ComputeOutput::setTechnique(const std::wstring& technique)
 	m_technique = technique;
 }
 
-const int32_t* ComputeOutput::getLocalSize() const
-{
-	return m_localSize;
-}
-
 const std::wstring& ComputeOutput::getTechnique() const
 {
 	return m_technique;
+}
+
+const int32_t* ComputeOutput::getLocalSize() const
+{
+	return m_localSize;
 }
 
 std::wstring ComputeOutput::getInformation() const
@@ -932,7 +932,7 @@ void Discard::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DispatchIndex", 0, DispatchIndex, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.DispatchIndex", 1, DispatchIndex, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_DispatchIndex_i[] = { { 0 } };
 const ImmutableNode::OutputPinDesc c_DispatchIndex_o[] =
@@ -944,6 +944,28 @@ const ImmutableNode::OutputPinDesc c_DispatchIndex_o[] =
 DispatchIndex::DispatchIndex()
 :	ImmutableNode(c_DispatchIndex_i, c_DispatchIndex_o)
 {
+}
+
+DispatchIndex::Scope DispatchIndex::getScope() const
+{
+	return m_scope;
+}
+
+void DispatchIndex::serialize(ISerializer& s)
+{
+	ImmutableNode::serialize(s);
+
+	if (s.getVersion< DispatchIndex >() >= 1)
+	{
+		const MemberEnum< Scope >::Key kScope_Keys[] =
+		{
+			{ L"Global", Scope::Global },
+			{ L"Local", Scope::Local },
+			{ L"Group", Scope::Group },
+			{ 0 }
+		};
+		s >> MemberEnum< Scope >(L"scope", m_scope, kScope_Keys);
+	}
 }
 
 /*---------------------------------------------------------------------------*/

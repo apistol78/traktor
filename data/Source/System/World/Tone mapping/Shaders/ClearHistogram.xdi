@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
+			<id>{84548F3F-13A0-4C7C-979E-1498E978FFBC}</id>
+			<comment/>
+			<position>
+				<first>839</first>
+				<second>277</second>
+			</position>
+			<scope>Global</scope>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{23A209F0-CBDF-45DD-95B6-A8FB3B1F9DFF}</id>
+			<comment/>
+			<position>
+				<first>831</first>
+				<second>231</second>
+			</position>
+			<parameterName>Output</parameterName>
+			<elements>
+				<item>
+					<name>B</name>
+					<type>DtInteger1</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{ED1042C7-0B7C-4274-A847-BF78B47AC778}</id>
+			<comment/>
+			<position>
+				<first>1125</first>
+				<second>212</second>
+			</position>
+			<name>Clear</name>
+			<technique>Default</technique>
+			<localSize>
+				<X>32</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{2AF22CAF-D7F6-4D9F-BAE6-7322B8A4DCD2}</id>
+					<name>Buffer</name>
+				</item>
+				<item>
+					<id>{9697F837-C045-4783-B395-0F76F25D7EE2}</id>
+					<name>Index</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script>
+			<![CDATA[
+$Buffer[$Index.x].B = 0;
+
+			]]>
+			</script>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{2AF22CAF-D7F6-4D9F-BAE6-7322B8A4DCD2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<id>{9697F837-C045-4783-B395-0F76F25D7EE2}</id>
+			</destination>
+		</item>
+	</edges>
+	<groups/>
+</object>

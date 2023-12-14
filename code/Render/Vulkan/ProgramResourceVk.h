@@ -108,6 +108,8 @@ private:
 	AlignedVector< ImageDesc > m_images;
 	AlignedVector< SBufferDesc > m_sbuffers;
 
+	int32_t m_localWorkGroupSize[3] = { 1, 1, 1 };
+
 	uint32_t m_vertexShaderHash = 0;
 	uint32_t m_fragmentShaderHash = 0;
 	uint32_t m_computeShaderHash = 0;

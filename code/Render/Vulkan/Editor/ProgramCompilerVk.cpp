@@ -423,6 +423,9 @@ Ref< ProgramResource > ProgramCompilerVk::compile(
 	Ref< ProgramResourceVk > programResource = new ProgramResourceVk();
 	programResource->m_renderState = cx.getRenderState();
 	programResource->m_useTargetSize = cx.requirements().useTargetSize;
+	programResource->m_localWorkGroupSize[0] = cx.requirements().localSize[0];
+	programResource->m_localWorkGroupSize[1] = cx.requirements().localSize[1];
+	programResource->m_localWorkGroupSize[2] = cx.requirements().localSize[2];
 
 	// Generate SPIR-V from program AST.
 	glslang::SpvOptions options;

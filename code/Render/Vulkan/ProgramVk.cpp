@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -120,6 +120,9 @@ bool ProgramVk::create(
 	m_renderState = resource->m_renderState;
 	m_shaderHash = resource->m_shaderHash;
 	m_useTargetSize = resource->m_useTargetSize;
+	m_localWorkGroupSize[0] = resource->m_localWorkGroupSize[0];
+	m_localWorkGroupSize[1] = resource->m_localWorkGroupSize[1];
+	m_localWorkGroupSize[2] = resource->m_localWorkGroupSize[2];
 
 	// Get shader modules.
 	if (!resource->m_vertexShader.empty() && !resource->m_fragmentShader.empty())

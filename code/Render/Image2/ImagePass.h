@@ -12,8 +12,7 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/StaticVector.h"
-#include "Render/Types.h"
+#include "Render/Image2/ImageGraphTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,8 +47,6 @@ class T_DLLCLASS ImagePass : public Object
 	T_RTTI_CLASS;
 
 public:
-	typedef StaticVector< handle_t, 32 > targetSetVector_t;
-
 	RenderPass* addRenderGraphPasses(
 		const ImageGraph* graph,
 		const ImageGraphContext& context,
@@ -65,8 +62,7 @@ private:
 	friend class ImagePassData;
 
 	std::wstring m_name;
-	int32_t m_outputTargetSet;
-	int32_t m_outputSBuffer;
+	PassOutput m_output;
 	Clear m_clear;
 	RefArray< const ImagePassStep > m_steps;
 };

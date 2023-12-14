@@ -162,6 +162,17 @@ handle_t RenderGraph::addExplicitBuffer(const wchar_t* const name, Buffer* buffe
 	return resourceId;
 }
 
+handle_t RenderGraph::addTransientBuffer(const wchar_t* const name, uint32_t bufferSize)
+{
+	const handle_t resourceId = m_nextResourceId++;
+
+	auto& br = m_buffers[resourceId];
+	br.name = name;
+	br.bufferSize = bufferSize;
+
+	return resourceId;	
+}
+
 handle_t RenderGraph::addPersistentBuffer(const wchar_t* const name, handle_t persistentHandle, uint32_t bufferSize)
 {
 	const handle_t resourceId = m_nextResourceId++;
