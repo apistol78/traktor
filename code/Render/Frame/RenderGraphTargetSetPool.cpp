@@ -161,6 +161,9 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 			rts->setDebugName(name);
 			pool->acquired.push_back(rts);
 		}
+		else
+			log::error << L"Failed to create render graph target set \"" << name << L"\" (" << rtscd.width << L"*" << rtscd.height << L")." << Endl;
+
 		return rts;
 	}
 }
