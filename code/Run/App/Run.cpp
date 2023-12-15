@@ -176,7 +176,7 @@ int32_t Run::execute(const std::wstring& command, const std::wstring& saveOutput
 		command,
 		workingDirectory,
 		env,
-		OS::EfMute | (elevated ? OS::EfElevated : 0)
+		OS::EfMute | OS::EfRedirectStdIO | (elevated ? OS::EfElevated : 0)
 	);
 	if (!process)
 		return -1;
