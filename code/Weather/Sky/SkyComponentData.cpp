@@ -26,7 +26,6 @@ namespace traktor::weather
 	{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
-const resource::Id< render::ITexture > c_defaultTexture(Guid(L"{93E6996B-8903-4AD0-811A-C8C03C8E38C6}"));
 
 	}
 
@@ -34,7 +33,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 4, SkyComponent
 
 SkyComponentData::SkyComponentData()
 :	m_shader(c_defaultShader)
-,	m_texture(c_defaultTexture)
 ,	m_intensity(1.0f)
 {
 }
@@ -46,7 +44,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 		return nullptr;
 		
 	resource::Proxy< render::ITexture > texture;
-	if (m_texture.isValid())
+	if (m_texture.isValid() && !m_texture.isNull())
 	{
 		if (!resourceManager->bind(m_texture, texture))
 			return nullptr;

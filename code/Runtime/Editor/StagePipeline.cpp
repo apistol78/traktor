@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #include "Runtime/Editor/StagePipeline.h"
 #include "Runtime/Engine/AudioLayerData.h"
 #include "Runtime/Engine/ScreenLayerData.h"
+#include "Runtime/Engine/SplitWorldLayerData.h"
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/VideoLayerData.h"
 #include "Runtime/Engine/WorldLayerData.h"
@@ -23,6 +24,8 @@ namespace traktor::runtime
 {
 	namespace
 	{
+
+const resource::Id< render::Shader > c_shaderSplit(L"{2445959C-5BDC-43BB-B2AB-672FCB8F6E35}");
 
 Ref< StageData > flattenInheritance(editor::IPipelineBuilder* pipelineBuilder, const StageData* stageData)
 {
@@ -122,6 +125,11 @@ bool StagePipeline::buildDependencies(
 			pipelineDepends->addDependency(audioLayer->m_sound, editor::PdfBuild);
 		else if (const ScreenLayerData* screenLayer = dynamic_type_cast< const ScreenLayerData* >(layerData))
 			pipelineDepends->addDependency(screenLayer->m_shader, editor::PdfBuild);
+		else if (const SplitWorldLayerData* splitWorldLayer = dynamic_type_cast< const SplitWorldLayerData* >(layerData))
+		{
+			pipelineDepends->addDependency(c_shaderSplit, editor::PdfBuild);
+			pipelineDepends->addDependency(splitWorldLayer->m_scene, editor::PdfBuild);
+		}
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(layerData))
 		{
 			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);
