@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.editor.Assets">
+<object type="traktor.editor.Assets" version="1">
 	<dependencies>
-		<item>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</item>
+		<item>
+			<id>{4C21D382-3338-5E43-9EB6-7520F1E7CDA4}</id>
+			<editorDeployOnly>false</editorDeployOnly>
+		</item>
 	</dependencies>
 </object>
