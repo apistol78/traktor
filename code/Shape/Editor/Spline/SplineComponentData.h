@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <set>
+#include "Core/Containers/SmallSet.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -40,13 +40,13 @@ class T_DLLCLASS SplineComponentData : public world::IEntityComponentData
 public:
 	SplineComponentData();
 
-	void setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup);
+	void setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
 
-	void setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask);
+	void setCollisionMask(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask);
 
-	const std::set< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
+	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionMask() const;
 
 	virtual int32_t getOrdinal() const override final;
 
@@ -55,8 +55,8 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
-	std::set< resource::Id< physics::CollisionSpecification > > m_collisionMask;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
+	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };
 
 }
