@@ -1,13 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/MemberSmallSet.h"
 #include "Physics/CollisionSpecification.h"
 #include "Resource/Member.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
@@ -31,22 +31,22 @@ SplineComponentData::SplineComponentData()
 	m_collisionMask.insert(c_interactableCollision);
 }
 
-void SplineComponentData::setCollisionGroup(const std::set< resource::Id< physics::CollisionSpecification > >& collisionGroup)
+void SplineComponentData::setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup)
 {
 	m_collisionGroup = collisionGroup;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionGroup() const
+const SmallSet< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionGroup() const
 {
 	return m_collisionGroup;
 }
 
-void SplineComponentData::setCollisionMask(const std::set< resource::Id< physics::CollisionSpecification > >& collisionMask)
+void SplineComponentData::setCollisionMask(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionMask)
 {
 	m_collisionMask = collisionMask;
 }
 
-const std::set< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionMask() const
+const SmallSet< resource::Id< physics::CollisionSpecification > >& SplineComponentData::getCollisionMask() const
 {
 	return m_collisionMask;
 }
@@ -62,8 +62,8 @@ void SplineComponentData::setTransform(const world::EntityData* owner, const Tra
 
 void SplineComponentData::serialize(ISerializer& s)
 {
-	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
-	s >> MemberStlSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
+	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
+	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }
 
 }

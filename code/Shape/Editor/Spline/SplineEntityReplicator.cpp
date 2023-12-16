@@ -8,11 +8,15 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Math/TransformPath.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
+#include "Physics/ShapeDesc.h"
+#include "Physics/StaticBodyDesc.h"
+#include "Physics/Editor/MeshAsset.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
@@ -127,6 +131,25 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 		// Merge all models into a single model.
 		model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
 		merge.apply(*outputModel);
+	}
+
+	// Setup collision information.
+	if (usage == Usage::Collision)
+	{
+		const SplineComponentData* splineComponentData = mandatory_non_null_type_cast< const SplineComponentData* >(componentData);
+
+		Ref< physics::MeshAsset > outputShapeMeshAsset = new physics::MeshAsset();
+		outputShapeMeshAsset->setCalculateConvexHull(false);
+		outputShapeMeshAsset->setMargin(0.0f);
+		outputModel->setProperty< PropertyObject >(type_name(outputShapeMeshAsset), outputShapeMeshAsset);
+
+		Ref< physics::ShapeDesc > outputShapeDesc = new physics::ShapeDesc();
+		outputShapeDesc->setCollisionGroup(splineComponentData->getCollisionGroup());
+		outputShapeDesc->setCollisionMask(splineComponentData->getCollisionMask());
+		outputModel->setProperty< PropertyObject >(type_name(outputShapeDesc), outputShapeDesc);
+
+		Ref< physics::StaticBodyDesc > outputBodyDesc = new physics::StaticBodyDesc();
+		outputModel->setProperty< PropertyObject >(type_name(outputBodyDesc), outputBodyDesc);
 	}
 
 	return outputModel;
