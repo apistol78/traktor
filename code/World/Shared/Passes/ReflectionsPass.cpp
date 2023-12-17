@@ -107,7 +107,6 @@ render::handle_t ReflectionsPass::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.ignoreStencil = true;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 
@@ -139,7 +138,7 @@ render::handle_t ReflectionsPass::setup(
 		break;
 	}
 
-	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, nullptr, outputTargetSetId);
+	auto reflectionsTargetSetId = renderGraph.addTransientTargetSet(L"Reflections", rgtd, ~0U, outputTargetSetId);
 
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Scalar p11 = projection.get(0, 0);

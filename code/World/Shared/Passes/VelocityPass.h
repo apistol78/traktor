@@ -18,7 +18,6 @@ namespace traktor::render
 
 class ImageGraph;
 class IRenderSystem;
-class IRenderTargetSet;
 class RenderGraph;
 class ScreenRenderer;
 
@@ -37,33 +36,31 @@ class WorldRenderView;
  */
 class VelocityPass : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    explicit VelocityPass(
-        const WorldRenderSettings& settings,
-        WorldEntityRenderers* entityRenderers,
-        render::IRenderTargetSet* sharedDepthStencil)
-    ;
+	explicit VelocityPass(
+		const WorldRenderSettings& settings,
+		WorldEntityRenderers* entityRenderers
+	);
 
-    bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
-    DoubleBufferedTarget setup(
+	DoubleBufferedTarget setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
-        uint32_t frameCount,
+		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
-        render::handle_t gbufferTargetSetId,
+		render::handle_t gbufferTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;
 
 private:
-    WorldRenderSettings m_settings;
-    Ref< WorldEntityRenderers > m_entityRenderers;
-    Ref< render::IRenderTargetSet > m_sharedDepthStencil;
-    Ref< render::ScreenRenderer > m_screenRenderer;
-    resource::Proxy< render::ImageGraph > m_velocityPrime;
+	WorldRenderSettings m_settings;
+	Ref< WorldEntityRenderers > m_entityRenderers;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::ImageGraph > m_velocityPrime;
 };
 
 }

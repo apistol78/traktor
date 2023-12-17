@@ -301,7 +301,6 @@ void TerrainSurfaceCache::setupPatch(
 		rgtsd.width = std::max< int32_t >(tile.dim >> mip, 1);
 		rgtsd.height = std::max< int32_t >(tile.dim >> mip, 1);
 		rgtsd.createDepthStencil = false;
-		rgtsd.usingPrimaryDepthStencil = false;
 		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;		// Albedo (RGB), Roughness (A)
 		rgtsd.targets[1].colorFormat = render::TfR11G11B10F;	// Normals
 		auto updateTargetSetId = renderGraph.addTransientTargetSet(L"Terrain surface intermediate", rgtsd);

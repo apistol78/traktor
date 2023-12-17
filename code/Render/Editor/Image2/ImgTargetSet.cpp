@@ -117,7 +117,6 @@ RenderGraphTargetSetDesc ImgTargetSet::getRenderGraphTargetSetDesc() const
 	desc.maxWidth = m_maxWidth;
 	desc.maxHeight = m_maxHeight;
 	desc.createDepthStencil = m_createDepthStencil;
-	desc.usingPrimaryDepthStencil = false;
 	desc.usingDepthStencilAsTexture = false;
 	desc.ignoreStencil = m_ignoreStencil;
 	desc.generateMips = m_generateMips;

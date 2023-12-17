@@ -38,6 +38,7 @@ public:
 	 * \param name Name of target, useful for debugging etc.
 	 * \param targetSetDesc Description of target required.
 	 * \param sharedDepthStencilTargetSet Optional shared depth/stencil target set.
+	 * \param sharedPrimaryDepthStencilTargetSet Optional shared depth/stencil with primary target set.
 	 * \param referenceWidth Reference width of target required.
 	 * \param referenceHeight Reference height of target required.
 	 * \param persistentHandle Persistent handle; used to track persistent targets in pool, 0 means not persistent target.
@@ -46,6 +47,7 @@ public:
 		const wchar_t* name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
 		IRenderTargetSet* sharedDepthStencilTargetSet,
+		bool sharedPrimaryDepthStencilTargetSet,
 		int32_t referenceWidth,
 		int32_t referenceHeight,
 		uint32_t multiSample,

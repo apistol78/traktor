@@ -43,12 +43,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VelocityPass", VelocityPass, Object)
 
 VelocityPass::VelocityPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
 }
 
@@ -91,14 +89,13 @@ DoubleBufferedTarget VelocityPass::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
 	const DoubleBufferedTarget velocityTargetSetId =
 	{
-		renderGraph.addPersistentTargetSet(L"Velocity Previous", s_handleVelocityTargetSet[frameCount % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Velocity Current", s_handleVelocityTargetSet[(frameCount + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Velocity Previous", s_handleVelocityTargetSet[frameCount % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Velocity Current", s_handleVelocityTargetSet[(frameCount + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
 	};
 
 	// Add Velocity render pass.

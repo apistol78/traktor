@@ -15,7 +15,6 @@
 namespace traktor::render
 {
 
-class IRenderTargetSet;
 class RenderGraph;
 
 }
@@ -31,28 +30,26 @@ class WorldRenderView;
  */
 class DBufferPass : public Object
 {
-    T_RTTI_CLASS;
+	T_RTTI_CLASS;
 
 public:
-    explicit DBufferPass(
-        const WorldRenderSettings& settings,
-        WorldEntityRenderers* entityRenderers,
-        render::IRenderTargetSet* sharedDepthStencil
-    );
+	explicit DBufferPass(
+		const WorldRenderSettings& settings,
+		WorldEntityRenderers* entityRenderers
+	);
 
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const Entity* rootEntity,
 		const GatherView& gatheredView,
 		render::RenderGraph& renderGraph,
-        render::handle_t gbufferTargetSetId,
+		render::handle_t gbufferTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;
 
 private:
-    WorldRenderSettings m_settings;
-    Ref< WorldEntityRenderers > m_entityRenderers;
-    Ref< render::IRenderTargetSet > m_sharedDepthStencil;
+	WorldRenderSettings m_settings;
+	Ref< WorldEntityRenderers > m_entityRenderers;
 };
 
 }

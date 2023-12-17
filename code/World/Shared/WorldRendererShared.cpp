@@ -102,7 +102,6 @@ bool WorldRendererShared::create(
 	// Store settings.
 	m_settings = *desc.worldRenderSettings;
 	m_shadowsQuality = desc.quality.shadows;
-	m_sharedDepthStencil = desc.sharedDepthStencil;
 	
 	// Create screen renderer.
 	m_screenRenderer = new render::ScreenRenderer();
@@ -156,14 +155,14 @@ bool WorldRendererShared::create(
 	if (!m_lightClusterPass->create(renderSystem))
 		return false;
 
-	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
-	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_gbufferPass = new GBufferPass(m_settings, m_entityRenderers);
+	m_dbufferPass = new DBufferPass(m_settings, m_entityRenderers);
 
 	m_hiZPass = new HiZPass();
 	if (!m_hiZPass->create(resourceManager))
 		return false;
 
-	m_velocityPass = new VelocityPass(m_settings, m_entityRenderers, m_sharedDepthStencil);
+	m_velocityPass = new VelocityPass(m_settings, m_entityRenderers);
 	if (!m_velocityPass->create(resourceManager, renderSystem, desc))
 		return false;
 
@@ -388,7 +387,6 @@ void WorldRendererShared::setupLightPass(
 		rgtd.width = shmw;
 		rgtd.height = shmh;
 		rgtd.createDepthStencil = true;
-		rgtd.usingPrimaryDepthStencil = false;
 		rgtd.usingDepthStencilAsTexture = true;
 		rgtd.ignoreStencil = true;
 		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(

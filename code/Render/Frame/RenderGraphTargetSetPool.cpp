@@ -50,6 +50,7 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	const wchar_t* name,
 	const RenderGraphTargetSetDesc& targetSetDesc,
 	IRenderTargetSet* sharedDepthStencilTargetSet,
+	bool sharedPrimaryDepthStencilTargetSet,
 	int32_t referenceWidth,
 	int32_t referenceHeight,
 	uint32_t multiSample,
@@ -59,30 +60,20 @@ IRenderTargetSet* RenderGraphTargetSetPool::acquire(
 	// Create descriptor for given reference size.
 	RenderTargetSetCreateDesc rtscd;
 	rtscd.count = targetSetDesc.count;
-	rtscd.width = targetSetDesc.width;
-	rtscd.height = targetSetDesc.height;
+	rtscd.width = referenceWidth;
+	rtscd.height = referenceHeight;
 	rtscd.multiSample = 0;
 	rtscd.createDepthStencil = targetSetDesc.createDepthStencil;
-	rtscd.usingPrimaryDepthStencil = targetSetDesc.usingPrimaryDepthStencil;
+	rtscd.usingPrimaryDepthStencil = sharedPrimaryDepthStencilTargetSet;
 	rtscd.usingDepthStencilAsTexture = targetSetDesc.usingDepthStencilAsTexture;
-	rtscd.ignoreStencil = targetSetDesc.usingDepthStencilAsTexture;	// Cannot have stencil on read-back depth targets.
+	rtscd.ignoreStencil = targetSetDesc.ignoreStencil || targetSetDesc.usingDepthStencilAsTexture;	// Cannot have stencil on read-back depth targets.
 	rtscd.generateMips = targetSetDesc.generateMips;
 
-	if (targetSetDesc.usingPrimaryDepthStencil)
+	if (rtscd.usingPrimaryDepthStencil)
 		rtscd.multiSample = multiSample;
 
 	for (int32_t i = 0; i < targetSetDesc.count; ++i)
 		rtscd.targets[i].format = targetSetDesc.targets[i].colorFormat;
-		
-	if (targetSetDesc.referenceWidthDenom > 0)
-		rtscd.width = (referenceWidth * targetSetDesc.referenceWidthMul + targetSetDesc.referenceWidthDenom - 1) / targetSetDesc.referenceWidthDenom;
-	if (targetSetDesc.referenceHeightDenom > 0)
-		rtscd.height = (referenceHeight * targetSetDesc.referenceHeightMul + targetSetDesc.referenceHeightDenom - 1) / targetSetDesc.referenceHeightDenom;
-
-	if (targetSetDesc.maxWidth > 0)
-		rtscd.width = min< int32_t >(rtscd.width, targetSetDesc.maxWidth);
-	if (targetSetDesc.maxHeight > 0)
-		rtscd.height = min< int32_t >(rtscd.height, targetSetDesc.maxHeight);
 
 	// Find pool matching target description.
 	auto it = std::find_if(

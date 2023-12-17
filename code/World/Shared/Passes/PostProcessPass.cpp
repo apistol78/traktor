@@ -235,11 +235,10 @@ void PostProcessPass::setup(
 			render::RenderGraphTargetSetDesc rgtd;
 			rgtd.count = 1;
 			rgtd.createDepthStencil = false;
-			rgtd.usingPrimaryDepthStencil = false;
 			rgtd.referenceWidthDenom = 1;
 			rgtd.referenceHeightDenom = 1;
 			rgtd.targets[0].colorFormat = render::TfR11G11B10F;
-			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, nullptr, outputTargetSetId);
+			intermediateTargetSetId = renderGraph.addTransientTargetSet(L"Process intermediate", rgtd, ~0U, outputTargetSetId);
 
 			rp->setOutput(intermediateTargetSetId, render::TfColor, render::TfColor);
 		}

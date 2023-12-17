@@ -126,14 +126,13 @@ void WorldRendererForward::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	const DoubleBufferedTarget visualTargetSetId =
 	{
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
 	};
 
 	// Add passes to render graph.

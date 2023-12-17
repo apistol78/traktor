@@ -105,11 +105,10 @@ render::handle_t AmbientOcclusionPass::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Ambient occlusion (R)
-	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, nullptr, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = renderGraph.addTransientTargetSet(L"Ambient occlusion", rgtd, ~0U, outputTargetSetId);
 
 	// Add ambient occlusion render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
@@ -117,8 +116,6 @@ render::handle_t AmbientOcclusionPass::setup(
 	view.projection = worldRenderView.getProjection();
 
 	render::ImageGraphContext igctx;
-	//igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
-	//igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion");
 	rp->addInput(gbufferTargetSetId);

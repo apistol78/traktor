@@ -322,6 +322,7 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	rgtsd.width = width / 2;
 	rgtsd.height = height;
 	rgtsd.createDepthStencil = true;
+	rgtsd.ignoreStencil = true;
 	rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
 
 	auto leftTargetSetId = renderGraph.addTransientTargetSet(
