@@ -37,6 +37,7 @@
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/AudioLayer.h"
 #include "Runtime/Engine/ScreenLayer.h"
+#include "Runtime/Engine/SplitWorldLayer.h"
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/StageData.h"
 #include "Runtime/Engine/StageLoader.h"
@@ -119,6 +120,16 @@ void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callb
 	}
 	else
 		self->setParameterCallback(nullptr);
+}
+
+world::Entity* SplitWorldLayer_getEntity_1(SplitWorldLayer* self, const std::wstring& name)
+{
+	return self->getEntity(name);
+}
+
+world::Entity* SplitWorldLayer_getEntity_2(SplitWorldLayer* self, const std::wstring& name, int32_t index)
+{
+	return self->getEntity(name, index);
 }
 
 world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
@@ -317,6 +328,31 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();
 	classScreenLayer->addMethod("setParameterCallback", &ScreenLayer_setParameterCallback);
 	registrar->registerClass(classScreenLayer);
+
+	auto classSplitWorldLayer = new AutoRuntimeClass< SplitWorldLayer >();
+	classSplitWorldLayer->addProperty("scene", &SplitWorldLayer::getScene);
+	classSplitWorldLayer->addProperty("worldRenderer", &SplitWorldLayer::getWorldRenderer);
+	// classSplitWorldLayer->addProperty< const Frustum& >("viewFrustum", &SplitWorldLayer::getViewFrustum);
+	classSplitWorldLayer->addProperty< float >("fieldOfView", &SplitWorldLayer::setFieldOfView, &SplitWorldLayer::getFieldOfView);
+	classSplitWorldLayer->addProperty< double >("alternateTime", &SplitWorldLayer::setAlternateTime, &SplitWorldLayer::getAlternateTime);
+	classSplitWorldLayer->addProperty< float >("feedbackScale", &SplitWorldLayer::setFeedbackScale, &SplitWorldLayer::getFeedbackScale);
+	// classSplitWorldLayer->addProperty< const world::Entity* >("camera", &SplitWorldLayer::setCamera, &SplitWorldLayer::getCamera);
+	classSplitWorldLayer->addMethod("getEntity", &SplitWorldLayer_getEntity_1);
+	classSplitWorldLayer->addMethod("getEntity", &SplitWorldLayer_getEntity_2);
+	classSplitWorldLayer->addMethod("getEntities", &SplitWorldLayer::getEntities);
+	classSplitWorldLayer->addMethod("createEntity", &SplitWorldLayer::createEntity);
+	classSplitWorldLayer->addMethod("addEntity", &SplitWorldLayer::addEntity);
+	classSplitWorldLayer->addMethod("removeEntity", &SplitWorldLayer::removeEntity);
+	classSplitWorldLayer->addMethod("isEntityAdded", &SplitWorldLayer::isEntityAdded);
+	classSplitWorldLayer->addMethod("setControllerEnable", &SplitWorldLayer::setControllerEnable);
+	classSplitWorldLayer->addMethod("resetController", &SplitWorldLayer::resetController);
+	// classSplitWorldLayer->addMethod("worldToView", &SplitWorldLayer_worldToView);
+	// classSplitWorldLayer->addMethod("viewToWorld", &SplitWorldLayer_viewToWorld);
+	// classSplitWorldLayer->addMethod("worldToScreen", &SplitWorldLayer_worldToScreen);
+	// classSplitWorldLayer->addMethod("viewToScreen", &SplitWorldLayer_viewToScreen);
+	// classSplitWorldLayer->addMethod("screenToView", &SplitWorldLayer_screenToView);
+	// classSplitWorldLayer->addMethod("screenToWorld", &SplitWorldLayer_screenToWorld);
+	registrar->registerClass(classSplitWorldLayer);
 
 	auto classVideoLayer = new AutoRuntimeClass< VideoLayer >();
 	classVideoLayer->addProperty< bool >("playing", 0, &VideoLayer::isPlaying);
