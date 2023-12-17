@@ -131,21 +131,6 @@ ProbeRenderer::ProbeRenderer(
 	// Create screen renderer used for filtering each cube surface.
 	m_screenRenderer = new render::ScreenRenderer();
 	m_screenRenderer->create(m_renderSystem);
-
-	// Create depth/stencil target which is used as "primary" depth
-	// for world renderer since otherwise the world renderer
-	// uses the frame's depth buffer.
-	render::RenderTargetSetCreateDesc rtscd = {};
-	rtscd.count = 0;
-	rtscd.width = c_faceSize;
-	rtscd.height = c_faceSize;
-	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = true;
-	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.usingDepthStencilAsTexture = false;
-	rtscd.ignoreStencil = true;
-	rtscd.generateMips = false;
-	m_depthTargetSet = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
 }
 
 ProbeRenderer::~ProbeRenderer()
@@ -154,7 +139,6 @@ ProbeRenderer::~ProbeRenderer()
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_screenRenderer);
-	safeDestroy(m_depthTargetSet);
 	m_captureQueue.clear();
 	m_capture = nullptr;
 }
@@ -237,7 +221,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.imageProcess = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
-		wcd.sharedDepthStencil = m_depthTargetSet;
 		wcd.irradianceGrid = context.getIrradianceGrid();
 
 		if (!m_worldRenderer->create(
@@ -307,7 +290,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.width = c_faceSize;
 		rgtsd.height = c_faceSize;
 		rgtsd.createDepthStencil = true;
-		rgtsd.usingPrimaryDepthStencil = false;
+		rgtsd.ignoreStencil = true;
 #if !defined(__ANDROID__)
 		rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
 #else
@@ -370,7 +353,6 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		rgtsd.width = c_faceSize >> mip;
 		rgtsd.height = c_faceSize >> mip;
 		rgtsd.createDepthStencil = false;
-		rgtsd.usingPrimaryDepthStencil = false;
 #if !defined(__ANDROID__)
 		rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
 #else

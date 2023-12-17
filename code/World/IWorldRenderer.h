@@ -73,7 +73,6 @@ struct WorldCreateDesc
 	QualitySettings quality;
 	uint32_t multiSample = 0;
 	float gamma = 2.2f;
-	render::IRenderTargetSet* sharedDepthStencil = nullptr;	/*!< Share depth with this render target for all intermediate RTs; useful when rendering to other RT than primary. */
 	const IrradianceGrid* irradianceGrid = nullptr;			/*!< Explicit irradiance grid, override settings. */
 };
 

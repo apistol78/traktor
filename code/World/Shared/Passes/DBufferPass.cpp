@@ -26,14 +26,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DBufferPass", DBufferPass, Object)
 
 DBufferPass::DBufferPass(
     const WorldRenderSettings& settings,
-    WorldEntityRenderers* entityRenderers,
-    render::IRenderTargetSet* sharedDepthStencil
+    WorldEntityRenderers* entityRenderers
 )
 :   m_settings(settings)
 ,   m_entityRenderers(entityRenderers)
-,   m_sharedDepthStencil(sharedDepthStencil)
 {
-
 }
 
 render::handle_t DBufferPass::setup(
@@ -52,13 +49,12 @@ render::handle_t DBufferPass::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 3;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGBA)
 	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Roughness (R), Metalness (B), Specular (B)
 	rgtd.targets[2].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
-	auto dbufferTargetSetId = renderGraph.addTransientTargetSet(L"DBuffer", rgtd, m_sharedDepthStencil, outputTargetSetId);
+	auto dbufferTargetSetId = renderGraph.addTransientTargetSet(L"DBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add DBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DBuffer");

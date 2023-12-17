@@ -87,8 +87,6 @@ protected:
 
 	int32_t m_count = 0;
 
-    Ref< render::IRenderTargetSet > m_sharedDepthStencil;
-
 	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< DBufferPass > m_dbufferPass;

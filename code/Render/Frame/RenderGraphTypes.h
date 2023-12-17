@@ -38,7 +38,6 @@ struct RenderGraphTargetSetDesc
 	int32_t maxWidth = 0;
 	int32_t maxHeight = 0;
 	bool createDepthStencil = false;
-	bool usingPrimaryDepthStencil = false;
 	bool usingDepthStencilAsTexture = false;
 	bool ignoreStencil = false;
 	bool generateMips = false;

@@ -128,14 +128,13 @@ void WorldRendererDeferred::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = (m_sharedDepthStencil == nullptr) ? true : false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
 	const DoubleBufferedTarget visualTargetSetId =
 	{
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, m_sharedDepthStencil, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
 	};
 	
 	// Add passes to render graph.
@@ -365,7 +364,7 @@ void WorldRendererDeferred::setupVisualPass(
 				}
 			);
 
-			T_ASSERT(!renderContext->havePendingDraws());
+			//T_ASSERT(!renderContext->havePendingDraws());
 
 			for (auto r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);

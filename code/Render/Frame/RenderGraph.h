@@ -14,6 +14,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Containers/StaticSet.h"
 #include "Core/Containers/StaticVector.h"
 #include "Render/Frame/RenderGraphTypes.h"
 #include "Render/Frame/RenderPass.h"
@@ -55,16 +56,23 @@ class T_DLLCLASS RenderGraph : public Object
 public:
 	typedef std::function< void(int32_t, int32_t, const std::wstring&, double, double) > fn_profiler_t;
 
+	struct TargetSize
+	{
+		int32_t width = 0;
+		int32_t height = 0;
+	};
+
 	struct TargetResource
 	{
 		const wchar_t* name = nullptr;
 		handle_t persistentHandle = 0;
 		bool doubleBuffered = false;
 		RenderGraphTargetSetDesc targetSetDesc;
-		Ref< IRenderTargetSet > sharedDepthStencilTargetSet;
 		Ref< IRenderTargetSet > writeTargetSet;
 		Ref< IRenderTargetSet > readTargetSet;
+		handle_t sharedDepthStencilTargetSetId = ~0U;
 		handle_t sizeReferenceTargetSetId = 0;
+		TargetSize realized = { 0, 0 };
 		int32_t inputRefCount = 0;
 		int32_t outputRefCount = 0;
 		bool external = false;
@@ -110,14 +118,14 @@ public:
 	 *
 	 * \param name Name of target set, used for debugging only.
 	 * \param targetSetDesc Render target set create description.
-	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \param sharedDepthStencilTargetSetId Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque resource handle.
 	 */
 	handle_t addTransientTargetSet(
 		const wchar_t* const name,
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		IRenderTargetSet* sharedDepthStencil = nullptr,
+		handle_t sharedDepthStencilTargetSetId = ~0U,
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
@@ -134,7 +142,7 @@ public:
 	 * \param persistentHandle Unique handle to track persistent targets.
 	 * \param doubleBuffered Double buffered target.
 	 * \param targetSetDesc Render target set create description.
-	 * \param sharedDepthStencil Share depth/stencil with target set.
+	 * \param sharedDepthStencilTargetSetId Share depth/stencil with target set.
 	 * \param sizeReferenceTargetSetId Target to get reference size from when determine target set.
 	 * \return Opaque resource handle.
 	 */
@@ -143,7 +151,7 @@ public:
 		handle_t persistentHandle,
 		bool doubleBuffered,
 		const RenderGraphTargetSetDesc& targetSetDesc,
-		IRenderTargetSet* sharedDepthStencil = nullptr,
+		handle_t sharedDepthStencilTargetSetId = ~0U,
 		handle_t sizeReferenceTargetSetId = 0
 	);
 
@@ -242,12 +250,15 @@ private:
 	SmallMap< handle_t, TextureResource > m_textures;
 	RefArray< const RenderPass > m_passes;
 	StaticVector< uint32_t, 32 > m_order[32];
+	StaticSet< handle_t, 32 > m_sharedDepthTargets;
 	uint32_t m_counter;
 	uint32_t m_multiSample;
 	handle_t m_nextResourceId;
 	fn_profiler_t m_profiler;
 
-	bool acquire(int32_t width, int32_t height, TargetResource& inoutTarget);
+	bool realizeTargetDimensions(int32_t width, int32_t height, int32_t targetId);
+
+	bool acquire(TargetResource& inoutTarget);
 
 	void cleanup();
 };

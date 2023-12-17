@@ -25,7 +25,6 @@ namespace traktor::render
 
 class Buffer;
 class IRenderSystem;
-class IRenderTargetSet;
 class IVertexLayout;
 class ScreenRenderer;
 class Shader;
@@ -101,9 +100,8 @@ private:
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	Ref< render::IRenderTargetSet > m_depthTargetSet;
 	RefArray< const ProbeComponent > m_captureQueue;	//!< Probes queued for capture.
-	Ref< const ProbeComponent > m_capture;			//!< Probe being captured.
+	Ref< const ProbeComponent > m_capture;				//!< Probe being captured.
 	int32_t m_captureState;
 	int32_t m_captureMip;
 };

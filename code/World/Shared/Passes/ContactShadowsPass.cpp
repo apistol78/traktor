@@ -99,11 +99,10 @@ render::handle_t ContactShadowsPass::setup(
 	render::RenderGraphTargetSetDesc rgtd;
 	rgtd.count = 1;
 	rgtd.createDepthStencil = false;
-	rgtd.usingPrimaryDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR8;			// Shadow (R)
-	auto contactShadowsTargetSetId = renderGraph.addTransientTargetSet(L"Contact shadows", rgtd, nullptr, outputTargetSetId);
+	auto contactShadowsTargetSetId = renderGraph.addTransientTargetSet(L"Contact shadows", rgtd, ~0U, outputTargetSetId);
 
 	// Add contact shadows render pass.
 	view.viewFrustum = worldRenderView.getViewFrustum();
