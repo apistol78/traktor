@@ -347,9 +347,17 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Split");
-	rp->setOutput(0, render::TfAll, render::TfAll);
+
+	render::Clear cl;
+	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
+	cl.colors[0] = Color4f(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);
+	cl.depth = 1.0f;
+	cl.stencil = 0;
+	rp->setOutput(0, cl, render::TfAll, render::TfAll);
+
 	rp->addInput(leftTargetSetId);
 	rp->addInput(rightTargetSetId);
+
 	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 
 		auto leftTargetSet = renderGraph.getTargetSet(leftTargetSetId);
