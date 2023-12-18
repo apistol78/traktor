@@ -497,7 +497,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				build(*this, renderContext);
 
 				// Merge all pending draws after each build step.
-				renderContext->mergeDraw(render::RpAll);
+				renderContext->mergeDraw(RenderPriority::All);
 			}
 			T_PROFILER_END();
 

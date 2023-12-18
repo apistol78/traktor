@@ -87,13 +87,13 @@ PinType PixelNodeTraits::getInputPinType(
 
 	if (!rs.blendEnable && !rs.alphaTestEnable)
 	{
-		if (rs.colorWriteMask & CwAlpha)
+		if (rs.colorWriteMask & ColorWrite::Alpha)
 			return PinType::Scalar4;
-		else if (rs.colorWriteMask & CwBlue)
+		else if (rs.colorWriteMask & ColorWrite::Blue)
 			return PinType::Scalar3;
-		else if (rs.colorWriteMask & CwGreen)
+		else if (rs.colorWriteMask & ColorWrite::Green)
 			return PinType::Scalar2;
-		else if (rs.colorWriteMask & CwRed)
+		else if (rs.colorWriteMask & ColorWrite::Red)
 			return PinType::Scalar1;
 		else
 			return PinType::Void;

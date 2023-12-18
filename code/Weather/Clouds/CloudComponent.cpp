@@ -576,7 +576,7 @@ void CloudComponent::buildCluster(
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RpAlphaBlend, renderBlock);
+		renderContext->draw(render::RenderPriority::AlphaBlend, renderBlock);
 	}
 }
 

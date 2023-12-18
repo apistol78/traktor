@@ -487,7 +487,7 @@ void TerrainComponent::build(
 		rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
 		rb->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RpOpaque, rb);
+		renderContext->draw(render::RenderPriority::Opaque, rb);
 	}
 }
 

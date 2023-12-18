@@ -203,7 +203,7 @@ void DecalRenderer::build(
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RpPostOpaque, renderBlock);
+		renderContext->draw(render::RenderPriority::PostOpaque, renderBlock);
 	}
 
 	// Flush all queued decals.
