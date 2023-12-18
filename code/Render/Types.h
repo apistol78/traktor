@@ -46,16 +46,19 @@ enum class PrecisionHint
 	High = 3
 };
 
-enum RenderPriority
+namespace RenderPriority
 {
-	RpSetup = 1,
-	RpOpaque = 2,
-	RpPostOpaque = 4,
-	RpAlphaBlend = 8,
-	RpPostAlphaBlend = 16,
-	RpOverlay = 32,
-	RpAll = (RpSetup | RpOpaque | RpPostOpaque | RpAlphaBlend | RpPostAlphaBlend | RpOverlay)
-};
+	enum
+	{
+		Setup = 1,
+		Opaque = 2,
+		PostOpaque = 4,
+		AlphaBlend = 8,
+		PostAlphaBlend = 16,
+		Overlay = 32,
+		All = (Setup | Opaque | PostOpaque | AlphaBlend | PostAlphaBlend | Overlay)
+	};
+}
 
 enum class CullMode
 {
@@ -87,13 +90,18 @@ enum class BlendFactor
 	OneMinusDestinationAlpha = 9
 };
 
-enum ColorWrite
+namespace ColorWrite
 {
-	CwRed = 1,
-	CwGreen = 2,
-	CwBlue = 4,
-	CwAlpha = 8
-};
+	enum
+	{
+		Red = 1,
+		Green = 2,
+		Blue = 4,
+		Alpha = 8,
+		RGB = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue,
+		RGBA = ColorWrite::Red | ColorWrite::Green | ColorWrite::Blue | ColorWrite::Alpha
+	};
+}
 
 enum class CompareFunction
 {
@@ -145,7 +153,7 @@ struct RenderState
 	BlendOperation blendAlphaOperation = BlendOperation::Add;
 	BlendFactor blendAlphaSource = BlendFactor::One;
 	BlendFactor blendAlphaDestination = BlendFactor::One;
-	uint32_t colorWriteMask = CwRed | CwGreen | CwBlue | CwAlpha;
+	uint32_t colorWriteMask = ColorWrite::RGBA;
 	bool depthEnable = true;
 	bool depthWriteEnable = true;
 	CompareFunction depthFunction = CompareFunction::LessEqual;

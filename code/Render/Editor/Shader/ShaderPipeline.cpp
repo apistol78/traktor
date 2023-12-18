@@ -95,11 +95,11 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 		if (node->getPriority() != 0)
 			priority |= node->getPriority();
 		else if (node->getRenderState().blendEnable)
-			priority |= RpAlphaBlend;
+			priority |= RenderPriority::AlphaBlend;
 	}
 
 	if (priority == 0)
-		priority = RpOpaque;
+		priority = RenderPriority::Opaque;
 
 	return priority;
 }

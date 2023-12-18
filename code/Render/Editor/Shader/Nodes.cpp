@@ -95,10 +95,10 @@ public:
 
 		const MemberBitMask::Bit kColorWriteBits[] =
 		{
-			{ L"red", CwRed },
-			{ L"green", CwGreen },
-			{ L"blue", CwBlue },
-			{ L"alpha", CwAlpha },
+			{ L"red", ColorWrite::Red },
+			{ L"green", ColorWrite::Green },
+			{ L"blue", ColorWrite::Blue },
+			{ L"alpha", ColorWrite::Alpha },
 			{ 0 }
 		};
 
@@ -1989,12 +1989,12 @@ void PixelOutput::serialize(ISerializer& s)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
-			{ L"setup", RpSetup },
-			{ L"opaque", RpOpaque },
-			{ L"postOpaque", RpPostOpaque },
-			{ L"alphaBlend", RpAlphaBlend },
-			{ L"postAlphaBlend", RpPostAlphaBlend },
-			{ L"overlay", RpOverlay },
+			{ L"setup", RenderPriority::Setup },
+			{ L"opaque", RenderPriority::Opaque },
+			{ L"postOpaque", RenderPriority::PostOpaque },
+			{ L"alphaBlend", RenderPriority::AlphaBlend },
+			{ L"postAlphaBlend", RenderPriority::PostAlphaBlend },
+			{ L"overlay", RenderPriority::Overlay },
 			{ 0 }
 		};
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
@@ -2092,12 +2092,12 @@ void PixelState::serialize(ISerializer& s)
 	{
 		const MemberBitMask::Bit c_RenderPriorityBits[] =
 		{
-			{ L"setup", RpSetup },
-			{ L"opaque", RpOpaque },
-			{ L"postOpaque", RpPostOpaque },
-			{ L"alphaBlend", RpAlphaBlend },
-			{ L"postAlphaBlend", RpPostAlphaBlend },
-			{ L"overlay", RpOverlay },
+			{ L"setup", RenderPriority::Setup },
+			{ L"opaque", RenderPriority::Opaque },
+			{ L"postOpaque", RenderPriority::PostOpaque },
+			{ L"alphaBlend", RenderPriority::AlphaBlend },
+			{ L"postAlphaBlend", RenderPriority::PostAlphaBlend },
+			{ L"overlay", RenderPriority::Overlay },
 			{ 0 }
 		};
 		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);

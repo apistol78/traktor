@@ -77,7 +77,7 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		if ((sp.priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
+		if ((sp.priority & (render::RenderPriority::AlphaBlend | render::RenderPriority::PostAlphaBlend)) != 0)
 		{
 			haveAlphaBlend = true;
 			continue;
@@ -151,7 +151,7 @@ void InstanceMesh::build(
 			if (!sp)
 				continue;
 
-			if ((sp.priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
+			if ((sp.priority & (render::RenderPriority::AlphaBlend | render::RenderPriority::PostAlphaBlend)) == 0)
 				continue;
 
 			// Setup batch shared parameters.

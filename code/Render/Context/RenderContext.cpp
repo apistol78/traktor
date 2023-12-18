@@ -93,17 +93,17 @@ void RenderContext::compute(ComputeRenderBlock* renderBlock)
 
 void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 {
-	if (type == RpSetup)
+	if (type == RenderPriority::Setup)
 		m_priorityQueue[0].push_back(renderBlock);
-	else if (type == RpOpaque)
+	else if (type == RenderPriority::Opaque)
 		m_priorityQueue[1].push_back(renderBlock);
-	else if (type == RpPostOpaque)
+	else if (type == RenderPriority::PostOpaque)
 		m_priorityQueue[2].push_back(renderBlock);
-	else if (type == RpAlphaBlend)
+	else if (type == RenderPriority::AlphaBlend)
 		m_priorityQueue[3].push_back(renderBlock);
-	else if (type == RpPostAlphaBlend)
+	else if (type == RenderPriority::PostAlphaBlend)
 		m_priorityQueue[4].push_back(renderBlock);
-	else if (type == RpOverlay)
+	else if (type == RenderPriority::Overlay)
 		m_priorityQueue[5].push_back(renderBlock);
 }
 
@@ -116,14 +116,14 @@ void RenderContext::mergeCompute()
 void RenderContext::mergeDraw(uint32_t priorities)
 {
 	// Merge setup blocks unsorted.
-	if (priorities & RpSetup)
+	if (priorities & RenderPriority::Setup)
 	{
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
 		m_priorityQueue[0].resize(0);
 	}
 
 	// Merge opaque blocks, sorted by shader.
-	if (priorities & RpOpaque)
+	if (priorities & RenderPriority::Opaque)
 	{
 		std::sort(m_priorityQueue[1].begin(), m_priorityQueue[1].end(), SortOpaquePredicate);
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
@@ -131,7 +131,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	}
 
 	// Merge post opaque blocks, sorted by shader.
-	if (priorities & RpPostOpaque)
+	if (priorities & RenderPriority::PostOpaque)
 	{
 		std::sort(m_priorityQueue[2].begin(), m_priorityQueue[2].end(), SortOpaquePredicate);
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
@@ -139,7 +139,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	}
 
 	// Merge alpha blend blocks back to front.
-	if (priorities & RpAlphaBlend)
+	if (priorities & RenderPriority::AlphaBlend)
 	{
 		std::sort(m_priorityQueue[3].begin(), m_priorityQueue[3].end(), SortAlphaBlendPredicate);
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
@@ -147,7 +147,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	}
 
 	// Merge post alpha blend blocks back to front.
-	if (priorities & RpPostAlphaBlend)
+	if (priorities & RenderPriority::PostAlphaBlend)
 	{
 		std::sort(m_priorityQueue[4].begin(), m_priorityQueue[4].end(), SortAlphaBlendPredicate);
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
@@ -155,7 +155,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	}
 
 	// Merge overlay blocks unsorted.
-	if (priorities & RpOverlay)
+	if (priorities & RenderPriority::Overlay)
 	{
 		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
 		m_priorityQueue[5].resize(0);
