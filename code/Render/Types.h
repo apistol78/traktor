@@ -56,27 +56,27 @@ enum class CullMode
 	CounterClockWise = 2
 };
 
-enum BlendOperation
+enum class BlendOperation
 {
-	BoAdd = 0,
-	BoSubtract = 1,
-	BoReverseSubtract = 2,
-	BoMin = 3,
-	BoMax = 4
+	Add = 0,
+	Subtract = 1,
+	ReverseSubtract = 2,
+	Min = 3,
+	Max = 4
 };
 
-enum BlendFactor
+enum class BlendFactor
 {
-	BfOne = 0,
-	BfZero = 1,
-	BfSourceColor = 2,
-	BfOneMinusSourceColor = 3,
-	BfDestinationColor = 4,
-	BfOneMinusDestinationColor = 5,
-	BfSourceAlpha = 6,
-	BfOneMinusSourceAlpha = 7,
-	BfDestinationAlpha = 8,
-	BfOneMinusDestinationAlpha = 9
+	One = 0,
+	Zero = 1,
+	SourceColor = 2,
+	OneMinusSourceColor = 3,
+	DestinationColor = 4,
+	OneMinusDestinationColor = 5,
+	SourceAlpha = 6,
+	OneMinusSourceAlpha = 7,
+	DestinationAlpha = 8,
+	OneMinusDestinationAlpha = 9
 };
 
 enum ColorWrite
@@ -87,43 +87,43 @@ enum ColorWrite
 	CwAlpha = 8
 };
 
-enum CompareFunction
+enum class CompareFunction
 {
-	CfAlways = 0,
-	CfNever = 1,
-	CfLess = 2,
-	CfLessEqual = 3,
-	CfGreater = 4,
-	CfGreaterEqual = 5,
-	CfEqual = 6,
-	CfNotEqual = 7,
-	CfNone = 8
+	Always = 0,
+	Never = 1,
+	Less = 2,
+	LessEqual = 3,
+	Greater = 4,
+	GreaterEqual = 5,
+	Equal = 6,
+	NotEqual = 7,
+	None = 8
 };
 
-enum StencilOperation
+enum class StencilOperation
 {
-	SoKeep = 0,
-	SoZero = 1,
-	SoReplace = 2,
-	SoIncrementSaturate = 3,
-	SoDecrementSaturate = 4,
-	SoInvert = 5,
-	SoIncrement = 6,
-	SoDecrement = 7
+	Keep = 0,
+	Zero = 1,
+	Replace = 2,
+	IncrementSaturate = 3,
+	DecrementSaturate = 4,
+	Invert = 5,
+	Increment = 6,
+	Decrement = 7
 };
 
-enum Filter
+enum class Filter
 {
-	FtPoint = 0,
-	FtLinear = 1
+	Point = 0,
+	Linear = 1
 };
 
-enum Address
+enum class Address
 {
-	AdWrap = 0,
-	AdMirror = 1,
-	AdClamp = 2,
-	AdBorder = 3
+	Wrap = 0,
+	Mirror = 1,
+	Clamp = 2,
+	Border = 3
 };
 
 /*! Render state. */
@@ -131,26 +131,26 @@ struct RenderState
 {
 	CullMode cullMode = CullMode::CounterClockWise;
 	bool blendEnable = false;
-	BlendOperation blendColorOperation = BoAdd;
-	BlendFactor blendColorSource = BfOne;
-	BlendFactor blendColorDestination = BfZero;
-	BlendOperation blendAlphaOperation = BoAdd;
-	BlendFactor blendAlphaSource = BfOne;
-	BlendFactor blendAlphaDestination = BfOne;
+	BlendOperation blendColorOperation = BlendOperation::Add;
+	BlendFactor blendColorSource = BlendFactor::One;
+	BlendFactor blendColorDestination = BlendFactor::Zero;
+	BlendOperation blendAlphaOperation = BlendOperation::Add;
+	BlendFactor blendAlphaSource = BlendFactor::One;
+	BlendFactor blendAlphaDestination = BlendFactor::One;
 	uint32_t colorWriteMask = CwRed | CwGreen | CwBlue | CwAlpha;
 	bool depthEnable = true;
 	bool depthWriteEnable = true;
-	CompareFunction depthFunction = CfLessEqual;
+	CompareFunction depthFunction = CompareFunction::LessEqual;
 	bool alphaTestEnable = false;
-	CompareFunction alphaTestFunction = CfLess;
+	CompareFunction alphaTestFunction = CompareFunction::Less;
 	int32_t alphaTestReference = 128;
 	bool alphaToCoverageEnable = false;
 	bool wireframe = false;
 	bool stencilEnable = false;
-	StencilOperation stencilFail = SoKeep;
-	StencilOperation stencilZFail = SoKeep;
-	StencilOperation stencilPass = SoKeep;
-	CompareFunction stencilFunction = CfAlways;
+	StencilOperation stencilFail = StencilOperation::Keep;
+	StencilOperation stencilZFail = StencilOperation::Keep;
+	StencilOperation stencilPass = StencilOperation::Keep;
+	CompareFunction stencilFunction = CompareFunction::Always;
 	uint32_t stencilReference = 0x00000000;
 	uint32_t stencilMask = 0xffffffff;
 };
@@ -158,13 +158,13 @@ struct RenderState
 /*! Sampler state. */
 struct SamplerState
 {
-	Filter minFilter = FtLinear;
-	Filter mipFilter = FtLinear;
-	Filter magFilter = FtLinear;
-	Address addressU = AdWrap;
-	Address addressV = AdWrap;
-	Address addressW = AdWrap;
-	CompareFunction compare = CfNone;
+	Filter minFilter = Filter::Linear;
+	Filter mipFilter = Filter::Linear;
+	Filter magFilter = Filter::Linear;
+	Address addressU = Address::Wrap;
+	Address addressV = Address::Wrap;
+	Address addressW = Address::Wrap;
+	CompareFunction compare = CompareFunction::None;
 	float mipBias = 0.0f;
 	bool ignoreMips = false;
 	bool useAnisotropic = false;

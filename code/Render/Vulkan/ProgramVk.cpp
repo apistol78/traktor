@@ -257,12 +257,12 @@ bool ProgramVk::create(
 	{
 		VkSamplerCreateInfo sci = {};
 		sci.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		sci.magFilter = c_filters[resourceSampler.state.magFilter];
-		sci.minFilter = c_filters[resourceSampler.state.minFilter];
-		sci.mipmapMode = c_mipMapModes[resourceSampler.state.mipFilter];
-		sci.addressModeU = c_addressModes[resourceSampler.state.addressU];
-		sci.addressModeV = c_addressModes[resourceSampler.state.addressV];
-		sci.addressModeW = c_addressModes[resourceSampler.state.addressW];
+		sci.magFilter = c_filters[(int)resourceSampler.state.magFilter];
+		sci.minFilter = c_filters[(int)resourceSampler.state.minFilter];
+		sci.mipmapMode = c_mipMapModes[(int)resourceSampler.state.mipFilter];
+		sci.addressModeU = c_addressModes[(int)resourceSampler.state.addressU];
+		sci.addressModeV = c_addressModes[(int)resourceSampler.state.addressV];
+		sci.addressModeW = c_addressModes[(int)resourceSampler.state.addressW];
 		sci.mipLodBias = resourceSampler.state.mipBias + mipBias;
 		
 		if (maxAnistropy > 0)
@@ -271,8 +271,8 @@ bool ProgramVk::create(
 			sci.anisotropyEnable = VK_FALSE;
 
 		sci.maxAnisotropy = (float)maxAnistropy;
-		sci.compareEnable = (resourceSampler.state.compare != CfNone) ? VK_TRUE : VK_FALSE;
-		sci.compareOp = c_compareOperations[resourceSampler.state.compare];
+		sci.compareEnable = (resourceSampler.state.compare != CompareFunction::None) ? VK_TRUE : VK_FALSE;
+		sci.compareOp = c_compareOperations[(int)resourceSampler.state.compare];
 		sci.minLod = 0.0f;
 		sci.maxLod = resourceSampler.state.ignoreMips ? 0.0f : std::numeric_limits< float >::max();
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;

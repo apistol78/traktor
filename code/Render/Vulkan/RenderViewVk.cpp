@@ -1578,10 +1578,10 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		mssci.alphaToOneEnable = VK_FALSE;
 
 		VkStencilOpState sops = {};
-		sops.failOp = c_stencilOperations[rs.stencilFail];
-		sops.passOp = c_stencilOperations[rs.stencilPass];
-		sops.depthFailOp = c_stencilOperations[rs.stencilZFail];
-		sops.compareOp = c_compareOperations[rs.stencilFunction];
+		sops.failOp = c_stencilOperations[(int)rs.stencilFail];
+		sops.passOp = c_stencilOperations[(int)rs.stencilPass];
+		sops.depthFailOp = c_stencilOperations[(int)rs.stencilZFail];
+		sops.compareOp = c_compareOperations[(int)rs.stencilFunction];
 		sops.compareMask = rs.stencilMask;
 		sops.writeMask = rs.stencilMask;
 		sops.reference = rs.stencilReference;
@@ -1590,7 +1590,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		dssci.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
 		dssci.depthTestEnable = rs.depthEnable ? VK_TRUE : VK_FALSE;
 		dssci.depthWriteEnable = rs.depthWriteEnable ? VK_TRUE : VK_FALSE;
-		dssci.depthCompareOp = rs.depthEnable ? c_compareOperations[rs.depthFunction] : VK_COMPARE_OP_ALWAYS;
+		dssci.depthCompareOp = rs.depthEnable ? c_compareOperations[(int)rs.depthFunction] : VK_COMPARE_OP_ALWAYS;
 		dssci.depthBoundsTestEnable = VK_FALSE;
 		dssci.stencilTestEnable = rs.stencilEnable ? VK_TRUE : VK_FALSE;
 		dssci.front = sops;
@@ -1603,12 +1603,12 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 		{
 			auto& cbas = blendAttachments.push_back();
 			cbas.blendEnable = rs.blendEnable ? VK_TRUE : VK_FALSE;
-			cbas.srcColorBlendFactor = c_blendFactors[rs.blendColorSource];
-			cbas.dstColorBlendFactor = c_blendFactors[rs.blendColorDestination];
-			cbas.colorBlendOp = c_blendOperations[rs.blendColorOperation];
-			cbas.srcAlphaBlendFactor = c_blendFactors[rs.blendAlphaSource];
-			cbas.dstAlphaBlendFactor = c_blendFactors[rs.blendAlphaDestination];
-			cbas.alphaBlendOp = c_blendOperations[rs.blendAlphaOperation];
+			cbas.srcColorBlendFactor = c_blendFactors[(int)rs.blendColorSource];
+			cbas.dstColorBlendFactor = c_blendFactors[(int)rs.blendColorDestination];
+			cbas.colorBlendOp = c_blendOperations[(int)rs.blendColorOperation];
+			cbas.srcAlphaBlendFactor = c_blendFactors[(int)rs.blendAlphaSource];
+			cbas.dstAlphaBlendFactor = c_blendFactors[(int)rs.blendAlphaDestination];
+			cbas.alphaBlendOp = c_blendOperations[(int)rs.blendAlphaOperation];
 			cbas.colorWriteMask = rs.colorWriteMask;
 		}
 

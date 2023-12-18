@@ -57,39 +57,39 @@ public:
 
 		const MemberEnum< BlendOperation >::Key kBlendOperations[] =
 		{
-			{ L"BoAdd", BoAdd },
-			{ L"BoSubtract", BoSubtract },
-			{ L"BoReverseSubtract", BoReverseSubtract },
-			{ L"BoMin", BoMin },
-			{ L"BoMax", BoMax },
+			{ L"BoAdd", BlendOperation::Add },
+			{ L"BoSubtract", BlendOperation::Subtract },
+			{ L"BoReverseSubtract", BlendOperation::ReverseSubtract },
+			{ L"BoMin", BlendOperation::Min },
+			{ L"BoMax", BlendOperation::Max },
 			{ 0 }
 		};
 
 		const MemberEnum< BlendFactor >::Key kBlendFactors[] =
 		{
-			{ L"BfOne", BfOne },
-			{ L"BfZero", BfZero },
-			{ L"BfSourceColor", BfSourceColor },
-			{ L"BfOneMinusSourceColor", BfOneMinusSourceColor },
-			{ L"BfDestinationColor", BfDestinationColor },
-			{ L"BfOneMinusDestinationColor", BfOneMinusDestinationColor },
-			{ L"BfSourceAlpha", BfSourceAlpha },
-			{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
-			{ L"BfDestinationAlpha", BfDestinationAlpha },
-			{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
+			{ L"BfOne", BlendFactor::One },
+			{ L"BfZero", BlendFactor::Zero },
+			{ L"BfSourceColor", BlendFactor::SourceColor },
+			{ L"BfOneMinusSourceColor", BlendFactor::OneMinusSourceColor },
+			{ L"BfDestinationColor", BlendFactor::DestinationColor },
+			{ L"BfOneMinusDestinationColor", BlendFactor::OneMinusDestinationColor },
+			{ L"BfSourceAlpha", BlendFactor::SourceAlpha },
+			{ L"BfOneMinusSourceAlpha", BlendFactor::OneMinusSourceAlpha },
+			{ L"BfDestinationAlpha", BlendFactor::DestinationAlpha },
+			{ L"BfOneMinusDestinationAlpha", BlendFactor::OneMinusDestinationAlpha },
 			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
 		{
-			{ L"CfAlways", CfAlways },
-			{ L"CfNever", CfNever },
-			{ L"CfLess", CfLess },
-			{ L"CfLessEqual", CfLessEqual },
-			{ L"CfGreater", CfGreater },
-			{ L"CfGreaterEqual", CfGreaterEqual },
-			{ L"CfEqual", CfEqual },
-			{ L"CfNotEqual", CfNotEqual },
+			{ L"CfAlways", CompareFunction::Always },
+			{ L"CfNever", CompareFunction::Never },
+			{ L"CfLess", CompareFunction::Less },
+			{ L"CfLessEqual", CompareFunction::LessEqual },
+			{ L"CfGreater", CompareFunction::Greater },
+			{ L"CfGreaterEqual", CompareFunction::GreaterEqual },
+			{ L"CfEqual", CompareFunction::Equal },
+			{ L"CfNotEqual", CompareFunction::NotEqual },
 			{ 0 }
 		};
 
@@ -104,14 +104,14 @@ public:
 
 		const MemberEnum< StencilOperation >::Key kStencilOperations[] =
 		{
-			{ L"SoKeep", SoKeep },
-			{ L"SoZero", SoZero },
-			{ L"SoReplace", SoReplace },
-			{ L"SoIncrementSaturate", SoIncrementSaturate },
-			{ L"SoDecrementSaturate", SoDecrementSaturate },
-			{ L"SoInvert", SoInvert },
-			{ L"SoIncrement", SoIncrement },
-			{ L"SoDecrement", SoDecrement },
+			{ L"SoKeep", StencilOperation::Keep },
+			{ L"SoZero", StencilOperation::Zero },
+			{ L"SoReplace", StencilOperation::Replace },
+			{ L"SoIncrementSaturate", StencilOperation::IncrementSaturate },
+			{ L"SoDecrementSaturate", StencilOperation::DecrementSaturate },
+			{ L"SoInvert", StencilOperation::Invert },
+			{ L"SoIncrement", StencilOperation::Increment },
+			{ L"SoDecrement", StencilOperation::Decrement },
 			{ 0 }
 		};
 
@@ -137,9 +137,9 @@ public:
 			s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendColorSource, kBlendFactors);
 			s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendColorDestination, kBlendFactors);
 
-			m_ref.blendAlphaOperation = BoAdd;
-			m_ref.blendAlphaSource = BfOne;
-			m_ref.blendAlphaDestination = BfOne;
+			m_ref.blendAlphaOperation = BlendOperation::Add;
+			m_ref.blendAlphaSource = BlendFactor::One;
+			m_ref.blendAlphaDestination = BlendFactor::One;
 		}
 
 		s >> MemberBitMask(L"colorWriteMask", m_ref.colorWriteMask, kColorWriteBits);
@@ -186,31 +186,31 @@ public:
 	{
 		const MemberEnum< Filter >::Key kFilter[] =
 		{
-			{ L"FtPoint", FtPoint },
-			{ L"FtLinear", FtLinear },
+			{ L"FtPoint", Filter::Point },
+			{ L"FtLinear", Filter::Linear },
 			{ 0 }
 		};
 
 		const MemberEnum< Address >::Key kAddress[] =
 		{
-			{ L"AdWrap", AdWrap },
-			{ L"AdMirror", AdMirror },
-			{ L"AdClamp", AdClamp },
-			{ L"AdBorder", AdBorder },
+			{ L"AdWrap", Address::Wrap },
+			{ L"AdMirror", Address::Mirror },
+			{ L"AdClamp", Address::Clamp },
+			{ L"AdBorder", Address::Border },
 			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
 		{
-			{ L"CfAlways", CfAlways },
-			{ L"CfNever", CfNever },
-			{ L"CfLess", CfLess },
-			{ L"CfLessEqual", CfLessEqual },
-			{ L"CfGreater", CfGreater },
-			{ L"CfGreaterEqual", CfGreaterEqual },
-			{ L"CfEqual", CfEqual },
-			{ L"CfNotEqual", CfNotEqual },
-			{ L"CfNone", CfNone },
+			{ L"CfAlways", CompareFunction::Always },
+			{ L"CfNever", CompareFunction::Never },
+			{ L"CfLess", CompareFunction::Less },
+			{ L"CfLessEqual", CompareFunction::LessEqual },
+			{ L"CfGreater", CompareFunction::Greater },
+			{ L"CfGreaterEqual", CompareFunction::GreaterEqual },
+			{ L"CfEqual", CompareFunction::Equal },
+			{ L"CfNotEqual", CompareFunction::NotEqual },
+			{ L"CfNone", CompareFunction::None },
 			{ 0 }
 		};
 
@@ -2443,31 +2443,31 @@ void Sampler::serialize(ISerializer& s)
 	{
 		const MemberEnum< Filter >::Key kFilter[] =
 		{
-			{ L"FtPoint", FtPoint },
-			{ L"FtLinear", FtLinear },
+			{ L"FtPoint", Filter::Point },
+			{ L"FtLinear", Filter::Linear },
 			{ 0 }
 		};
 
 		const MemberEnum< Address >::Key kAddress[] =
 		{
-			{ L"AdWrap", AdWrap },
-			{ L"AdMirror", AdMirror },
-			{ L"AdClamp", AdClamp },
-			{ L"AdBorder", AdBorder },
+			{ L"AdWrap", Address::Wrap },
+			{ L"AdMirror", Address::Mirror },
+			{ L"AdClamp", Address::Clamp },
+			{ L"AdBorder", Address::Border },
 			{ 0 }
 		};
 
 		const MemberEnum< CompareFunction >::Key kCompare[] =
 		{
-			{ L"CmNo", CfNone },
-			{ L"CmAlways", CfAlways },
-			{ L"CmNever", CfNever },
-			{ L"CmLess", CfLess },
-			{ L"CmLessEqual", CfLessEqual },
-			{ L"CmGreater", CfGreater },
-			{ L"CmGreaterEqual", CfGreaterEqual },
-			{ L"CmEqual", CfEqual },
-			{ L"CmNotEqual", CfNotEqual },
+			{ L"CmNo", CompareFunction::None },
+			{ L"CmAlways", CompareFunction::Always },
+			{ L"CmNever", CompareFunction::Never },
+			{ L"CmLess", CompareFunction::Less },
+			{ L"CmLessEqual", CompareFunction::LessEqual },
+			{ L"CmGreater", CompareFunction::Greater },
+			{ L"CmGreaterEqual", CompareFunction::GreaterEqual },
+			{ L"CmEqual", CompareFunction::Equal },
+			{ L"CmNotEqual", CompareFunction::NotEqual },
 			{ 0 }
 		};
 

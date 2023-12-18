@@ -326,7 +326,7 @@ std::wstring GlslShader::getGeneratedShader(
 
 			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 			{
-				if (sampler->getState().compare == CfNone)
+				if (sampler->getState().compare == CompareFunction::None)
 					ss << L"layout (binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L") uniform sampler " << sampler->getName() << L"; " << Endl;
 				else
 					ss << L"layout (binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L") uniform samplerShadow " << sampler->getName() << L";" << Endl;

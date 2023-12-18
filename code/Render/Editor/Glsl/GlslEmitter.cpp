@@ -2013,11 +2013,11 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	SamplerState samplerState = node->getSamplerState();
 	if (samplerState.ignoreMips)
-		samplerState.mipFilter = FtLinear;
+		samplerState.mipFilter = Filter::Linear;
 	if (texture->getType() == GlslType::Texture2D)
-		samplerState.addressW = AdWrap;
+		samplerState.addressW = Address::Wrap;
 
-	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CfNone) ? GlslType::Float4 : GlslType::Float);
+	Ref< GlslVariable > out = cx.emitOutput(node, L"Output", (samplerState.compare == CompareFunction::None) ? GlslType::Float4 : GlslType::Float);
 
 	const std::wstring textureName = texture->getName();
 	const bool needAddressW = bool(texture->getType() > GlslType::Texture2D);
@@ -2066,7 +2066,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	comment(f, node);
 	if (cx.inFragment())
 	{
-		if (samplerState.compare == CfNone)
+		if (samplerState.compare == CompareFunction::None)
 		{
 			if (!mip && !samplerState.ignoreMips)
 			{
@@ -2175,7 +2175,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.inCompute())
 	{
-		if (samplerState.compare == CfNone)
+		if (samplerState.compare == CompareFunction::None)
 		{
 			switch (texture->getType())
 			{
@@ -2304,7 +2304,7 @@ bool emitScript(GlslContext& cx, Script* node)
 		{
 			SamplerState samplerState = state->getSamplerState();
 			if (samplerState.ignoreMips)
-				samplerState.mipFilter = FtLinear;
+				samplerState.mipFilter = Filter::Linear;
 
 			std::wstring samplerName;
 
