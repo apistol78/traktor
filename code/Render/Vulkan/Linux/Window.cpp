@@ -31,7 +31,7 @@ const int32_t _NET_WM_STATE_TOGGLE = 2;
 
 Window::Window()
 :	m_display(nullptr)
-,	m_window(None)
+,	m_window(0)
 ,	m_screen(0)
 ,	m_width(0)
 ,	m_height(0)
