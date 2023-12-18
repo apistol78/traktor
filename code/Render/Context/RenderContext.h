@@ -70,6 +70,14 @@ public:
 	/*! Enqueue a render block in context. */
 	void enqueue(RenderBlock* renderBlock);
 
+	/*! Enqueue a render block in context. */
+	template < typename ObjectType >
+	void enqueue()
+	{
+		ObjectType* object = alloc< ObjectType >();
+		enqueue(object);
+	}
+
 	/*! Add compute render block to context. */
 	void compute(ComputeRenderBlock* renderBlock);
 
