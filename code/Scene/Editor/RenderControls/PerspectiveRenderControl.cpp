@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -62,9 +62,6 @@ namespace traktor::scene
 {
 	namespace
 	{
-
-const resource::Id< render::Shader > c_shaderUpscale(L"{2B8C3BF2-0179-4219-9407-85B6ABEE0AD5}");
-const render::Handle c_handleUpscaleTexture(L"UpscaleTexture");
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
@@ -160,12 +157,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(m_context->getRenderSystem()))
-	{
-		destroy();
-		return false;
-	}
-
-	if (!m_context->getResourceManager()->bind(c_shaderUpscale, m_shaderUpscale))
 	{
 		destroy();
 		return false;
@@ -601,36 +592,7 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-
-
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = true;
-	rgtd.ignoreStencil = true;
-	rgtd.referenceWidthDenom = 2;
-	rgtd.referenceHeightDenom = 2;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
-	const render::handle_t targetId = m_renderGraph->addTransientTargetSet(L"TargetZ", rgtd, ~0U, 0);
-
-	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, targetId);
-
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Upscale");
-	rp->setOutput(0, render::TfAll, render::TfAll);
-	rp->addInput(targetId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-		auto targetSet = renderGraph.getTargetSet(targetId);
-		if (!targetSet)
-			return;
-
-		auto pp = renderContext->alloc< render::ProgramParameters >();
-		pp->beginParameters(renderContext);
-		pp->setTextureParameter(c_handleUpscaleTexture, targetSet->getColorTexture(0));
-		pp->endParameters(renderContext);
-
-		m_screenRenderer->draw(renderContext, m_shaderUpscale, pp);
-	});
-	m_renderGraph->addPass(rp);
-
+	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
 
 	// Draw debug overlay, content of any target from render graph as an overlay.
 	if (m_overlay)

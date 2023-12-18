@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -98,7 +98,6 @@ private:
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	resource::Proxy< render::Shader > m_shaderUpscale;
 	const TypeInfo* m_worldRendererType = nullptr;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	uint32_t m_worldRendererHash = 0;
