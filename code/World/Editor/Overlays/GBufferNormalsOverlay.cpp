@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/GBufferNormalsOverlay.h"
 
 namespace traktor::world
@@ -22,6 +23,7 @@ namespace traktor::world
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Normals");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
+const render::Handle c_handleDebugViewInverse(L"Scene_DebugViewInverse");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
 render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
@@ -52,6 +54,8 @@ void GBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 	if (!gbufferId)
 		return;
 
+	const Matrix44 viewInverse = worldRenderView.getView().inverse();
+
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer normals overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
@@ -65,6 +69,7 @@ void GBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
+		pp->setMatrixParameter(c_handleDebugViewInverse, viewInverse);
 		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(1));
 		pp->endParameters(renderContext);
 

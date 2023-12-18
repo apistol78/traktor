@@ -12,6 +12,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
+#include "World/WorldRenderView.h"
 #include "World/Editor/Overlays/DBufferNormalsOverlay.h"
 
 namespace traktor::world
@@ -22,6 +23,7 @@ namespace traktor::world
 const resource::Id< render::Shader > c_debugShader(Guid(L"{949B3C96-0196-F24E-B36E-98DD504BCE9D}"));
 const render::Handle c_handleDebugTechnique(L"Normals");
 const render::Handle c_handleDebugAlpha(L"Scene_DebugAlpha");
+const render::Handle c_handleDebugViewInverse(L"Scene_DebugViewInverse");
 const render::Handle c_handleDebugTexture(L"Scene_DebugTexture");
 
 render::handle_t findTargetByName(const render::RenderGraph& renderGraph, const wchar_t* name)
@@ -52,6 +54,8 @@ void DBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 	if (!dbufferId)
 		return;
 
+	const Matrix44 viewInverse = worldRenderView.getView().inverse();
+
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DBuffer normals overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(dbufferId);
@@ -65,6 +69,7 @@ void DBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
+		pp->setMatrixParameter(c_handleDebugViewInverse, viewInverse);
 		pp->setTextureParameter(c_handleDebugTexture, dbufferTargetSet->getColorTexture(2));
 		pp->endParameters(renderContext);
 
