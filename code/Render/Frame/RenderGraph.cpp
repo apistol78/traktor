@@ -421,8 +421,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
-							auto te = renderContext->alloc< EndPassRenderBlock >();
-							renderContext->enqueue(te);
+							renderContext->enqueue< EndPassRenderBlock >();
 							renderContext->mergeCompute();
 						}
 
@@ -460,8 +459,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
-							auto te = renderContext->alloc< EndPassRenderBlock >();
-							renderContext->enqueue(te);
+							renderContext->enqueue< EndPassRenderBlock >();
 							renderContext->mergeCompute();
 						}
 
@@ -478,8 +476,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 			else if (currentOutput.resourceId != ~0U)
 			{
-				auto te = renderContext->alloc< EndPassRenderBlock >();
-				renderContext->enqueue(te);
+				renderContext->enqueue< EndPassRenderBlock >();
 				renderContext->mergeCompute();
 				currentOutput = RenderPass::Output();
 			}
@@ -543,10 +540,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 	if (currentOutput.resourceId != ~0U)
-	{
-		auto te = renderContext->alloc< EndPassRenderBlock >();
-		renderContext->enqueue(te);
-	}
+		renderContext->enqueue< EndPassRenderBlock >();
 
 	// Always merge any lingering compute jobs left at the end of frame.
 	if (renderContext->havePendingComputes())
@@ -554,8 +548,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		renderContext->mergeCompute();
 
 		// Enqueue a barrier to ensure compute work is done before being used as input.
-		auto rb = renderContext->alloc< BarrierRenderBlock >();
-		renderContext->enqueue(rb);
+		renderContext->enqueue< BarrierRenderBlock >();
 	}
 
 	T_FATAL_ASSERT(!renderContext->havePendingComputes());
