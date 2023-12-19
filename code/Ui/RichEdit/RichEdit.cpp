@@ -1802,6 +1802,9 @@ void RichEdit::eventSize(SizeEvent* event)
 		searchControlSize
 	));
 
+	for (auto& ch : m_text)
+		ch.width = 0;
+
 	updateCharacterWidths();
 }
 
