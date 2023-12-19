@@ -117,6 +117,6 @@ extern const render::Handle s_handleInputVelocityLast;
 extern const render::Handle s_handleInputColorGrading;
 
 // Persistent targets.
-extern const render::Handle s_handleTargetShadowMap;
+extern const render::Handle s_handleTargetShadowMap[];
 
 }

@@ -87,6 +87,7 @@ void WorldRendererForward::setup(
 )
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
+	const uint32_t count = m_state[worldRenderView.getIndex()].count;
 
 #if defined(T_WORLD_USE_TILE_JOB)
 	// Ensure tile job is finished, this should never happen since it will indicate
@@ -101,7 +102,7 @@ void WorldRendererForward::setup(
 	// Jitter projection for TAA, calculate jitter in clip space.
 	if (m_postProcessPass->needCameraJitter())
 	{
-		const Vector2 ndc = (jitter(m_count) * 2.0f) / worldRenderView.getViewSize();
+		const Vector2 ndc = (jitter(count) * 2.0f) / worldRenderView.getViewSize();
 		Matrix44 proj = immutableWorldRenderView.getProjection();
 		proj = translate(ndc.x, ndc.y, 0.0f) * proj;
 		worldRenderView.setProjection(proj);
@@ -131,8 +132,8 @@ void WorldRendererForward::setup(
 	rgtd.targets[0].colorFormat = render::TfR11G11B10F;
 	const DoubleBufferedTarget visualTargetSetId =
 	{
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[m_count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(m_count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
 	};
 
 	// Add passes to render graph.
@@ -140,7 +141,7 @@ void WorldRendererForward::setup(
 	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto hiZTargetSetId = m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
@@ -164,9 +165,9 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, m_count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
-	m_count++;
+	m_state[worldRenderView.getIndex()].count++;
 }
 
 void WorldRendererForward::setupVisualPass(
@@ -215,6 +216,8 @@ void WorldRendererForward::setupVisualPass(
 	clear.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	rp->setOutput(visualWriteTargetSetId, clear, render::TfDepth, render::TfColor | render::TfDepth);
 
+	Ref< render::Buffer > lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
+
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
@@ -254,7 +257,7 @@ void WorldRendererForward::setupVisualPass(
 
 			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
 			sharedParams->setBufferViewParameter(s_handleLightIndexSBuffer, m_lightClusterPass->getLightIndexSBuffer()->getBufferView());
-			sharedParams->setBufferViewParameter(s_handleLightSBuffer, m_lightSBuffer->getBufferView());
+			sharedParams->setBufferViewParameter(s_handleLightSBuffer, lightSBuffer->getBufferView());
 
 			if (probe)
 			{
