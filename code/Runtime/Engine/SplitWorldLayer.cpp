@@ -82,6 +82,10 @@ SplitWorldLayer::SplitWorldLayer(
 		feedbackManager->addListener(spray::FbtCamera, this);
 		feedbackManager->addListener(spray::FbtImageProcess, this);
 	}
+
+	// Set index in each view.
+	m_worldRenderViews[0].setIndex(0);
+	m_worldRenderViews[1].setIndex(1);
 }
 
 void SplitWorldLayer::destroy()

@@ -107,6 +107,12 @@ const render::Handle s_handleInputVelocityLast(L"InputVelocityLast");
 const render::Handle s_handleInputColorGrading(L"InputColorGrading");
 
 // Persistent targets.
-const render::Handle s_handleTargetShadowMap(L"World_ShadowMap");
+const render::Handle s_handleTargetShadowMap[] =
+{
+    render::Handle(L"World_ShadowMap0"),
+    render::Handle(L"World_ShadowMap1"),
+    render::Handle(L"World_ShadowMap2"),
+    render::Handle(L"World_ShadowMap3")
+};
 
 }

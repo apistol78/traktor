@@ -85,8 +85,6 @@ protected:
 	Quality m_shadowsQuality = Quality::Disabled;
 	float m_slicePositions[MaxSliceCount + 1];
 
-	int32_t m_count = 0;
-
 	Ref< LightClusterPass > m_lightClusterPass;
 	Ref< GBufferPass > m_gbufferPass;
 	Ref< DBufferPass > m_dbufferPass;
@@ -106,14 +104,19 @@ protected:
 
 	resource::Proxy< render::Shader > m_clearDepthShader;
 
-	Ref< render::Buffer > m_lightSBuffer;
 	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< Packer > m_shadowAtlasPacker;
 
-	Matrix44 m_shadowLightView[4];
-	Frustum m_shadowSlices[4];
-
 	GatherView m_gatheredView;
+
+	struct State
+	{
+		Ref< render::Buffer > lightSBuffer;
+		Frustum shadowSlices[4];
+		Matrix44 shadowLightViews[4];
+		uint32_t count = 0;
+	};
+	State m_state[4];
 
 	void gather(Entity* rootEntity);
 

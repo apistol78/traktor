@@ -114,13 +114,16 @@ bool WorldRendererShared::create(
 	m_blackCubeTexture = createCubeTexture(renderSystem, 0x00000000);
 
 	// Lights struct buffer.
-	m_lightSBuffer = renderSystem->createBuffer(
-		render::BuStructured,
-		LightClusterPass::c_maxLightCount * sizeof(LightShaderData),
-		true
-	);
-	if (!m_lightSBuffer)
-		return false;
+	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
+	{
+		m_state[i].lightSBuffer = renderSystem->createBuffer(
+			render::BuStructured,
+			LightClusterPass::c_maxLightCount * sizeof(LightShaderData),
+			true
+		);
+		if (!m_state[i].lightSBuffer)
+			return false;
+	}
 
 	const auto& shadowSettings = m_settings.shadowSettings[(int32_t)m_shadowsQuality];
 	m_shadowAtlasPacker = new Packer(
@@ -190,7 +193,9 @@ void WorldRendererShared::destroy()
 	safeDestroy(m_screenRenderer);
 	safeDestroy(m_blackTexture);
 	safeDestroy(m_whiteTexture);
-	safeDestroy(m_lightSBuffer);
+
+	for (int32_t i = 0; i < sizeof_array(m_state); ++i)
+		safeDestroy(m_state[i].lightSBuffer);
 
 	m_postProcessPass = nullptr;
 	m_reflectionsPass = nullptr;
@@ -284,7 +289,7 @@ void WorldRendererShared::setupLightPass(
 	const bool shadowsEnable = (bool)(m_shadowsQuality != Quality::Disabled);
 	const UniformShadowProjection shadowProjection(shadowSettings.resolution);
 
-	LightShaderData* lightShaderData = (LightShaderData*)m_lightSBuffer->lock();
+	LightShaderData* lightShaderData = (LightShaderData*)m_state[worldRenderView.getIndex()].lightSBuffer->lock();
 	if (!lightShaderData)
 		return;
 
@@ -296,6 +301,9 @@ void WorldRendererShared::setupLightPass(
 	const Matrix44 view = worldRenderView.getView();
 	const Matrix44 viewInverse = worldRenderView.getView().inverse();
 	const Frustum viewFrustum = worldRenderView.getViewFrustum();
+
+	Frustum* shadowSlices = m_state[worldRenderView.getIndex()].shadowSlices;
+	Matrix44* shadowLightViews = m_state[worldRenderView.getIndex()].shadowLightViews;
 
 	// Find atlas shadow lights.
 	StaticVector< int32_t, 32 > lightAtlasIndices;
@@ -391,7 +399,7 @@ void WorldRendererShared::setupLightPass(
 		rgtd.ignoreStencil = true;
 		outShadowMapAtlasTargetSetId = renderGraph.addPersistentTargetSet(
 			L"Shadow map atlas",
-			s_handleTargetShadowMap,
+			s_handleTargetShadowMap[worldRenderView.getIndex()],
 			false,
 			rgtd
 		);
@@ -424,13 +432,13 @@ void WorldRendererShared::setupLightPass(
 				if (slice != 0)
 				{
 					const Matrix44 viewDelta = view * lastView.inverse();
-					const int32_t force = (m_count % (shadowSettings.cascadingSlices - 1)) + 1;
-					if (slice != force && m_shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
+					const int32_t force = (m_state[worldRenderView.getIndex()].count % (shadowSettings.cascadingSlices - 1)) + 1;
+					if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
 						continue;
 					sliceViewFrustum.scale(1.0_simd);
 				}
 
-				m_shadowSlices[i] = sliceViewFrustum;
+				shadowSlices[i] = sliceViewFrustum;
 
 				// Calculate shadow map projection.
 				Matrix44 shadowLightView;
@@ -449,7 +457,7 @@ void WorldRendererShared::setupLightPass(
 					shadowFrustum
 				);
 
-				m_shadowLightView[slice] = shadowLightProjection * shadowLightView;
+				shadowLightViews[slice] = shadowLightProjection * shadowLightView;
 
 				rp->addBuild(
 					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -521,7 +529,7 @@ void WorldRendererShared::setupLightPass(
 			auto* lsd = lightShaderData;
 			for (int32_t slice = 0; slice < shadowSettings.cascadingSlices; ++slice)
 			{
-				const Matrix44 viewToLightSpace = m_shadowLightView[slice] * viewInverse;
+				const Matrix44 viewToLightSpace = shadowLightViews[slice] * viewInverse;
 
 				viewToLightSpace.axisX().storeUnaligned(lsd[slice].viewToLight0);
 				viewToLightSpace.axisY().storeUnaligned(lsd[slice].viewToLight1);
@@ -660,7 +668,7 @@ void WorldRendererShared::setupLightPass(
 		renderGraph.addPass(rp);
 	}
 
-	m_lightSBuffer->unlock();
+	m_state[worldRenderView.getIndex()].lightSBuffer->unlock();
 }
 
 }
