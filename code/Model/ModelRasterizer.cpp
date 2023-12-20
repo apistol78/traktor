@@ -115,12 +115,9 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 				if (z < zbuffer[offset])
 				{
 					Color4f color;
-					Vector2 tc = uv[0] * alpha + uv[1] * beta + uv[2] * gamma;
-
+					const Vector2 tc = uv[0] * alpha + uv[1] * beta + uv[2] * gamma;
 					const int32_t tu = wrap((int32_t)(tc.x * tw), tw);
 					const int32_t tv = wrap((int32_t)(tc.y * th), th);
-
-					tc *= Vector2(tw, th);
 					texture->getPixel(tu, tv, color);
 
 					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
@@ -143,7 +140,6 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 				if (z < zbuffer[offset])
 				{
 					const Color4f& color = polygonMaterial.getColor();
-
 					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
 					const Scalar d = -n.z() * 0.5_simd + 0.5_simd;
 
