@@ -86,7 +86,7 @@ public:
 
 private:
 	AlignedVector< Thread* > m_workerThreads;
-	ThreadsafeFifo< Ref< Job > > m_jobQueue;
+	ThreadsafeFifo< Job* > m_jobQueue;
 	Event m_jobQueuedEvent;
 	Event m_jobFinishedEvent;
 	std::atomic< int32_t > m_pending;
