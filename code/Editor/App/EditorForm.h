@@ -207,6 +207,7 @@ private:
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
+	Ref< ui::Tab > m_tabTools;
 	Ref< ui::Tab > m_tabOutput;
 	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	Ref< LogView > m_logView;
@@ -251,6 +252,10 @@ private:
 	void hideAdditionalPanel(ui::Widget* widget);
 
 	void updateAdditionalPanelMenu();
+
+	void createToolPanel(ui::Widget* widget);
+
+	void destroyToolPanel(ui::Widget* widget);
 
 	void buildAssetsForOpenedEditors();
 

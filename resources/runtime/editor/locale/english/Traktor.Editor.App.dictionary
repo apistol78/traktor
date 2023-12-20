@@ -682,6 +682,10 @@
 			<second>Log</second>
 		</item>
 		<item>
+			<first>TITLE_TOOLS</first>
+			<second>Tools</second>
+		</item>
+		<item>
 			<first>TITLE_OUTPUT</first>
 			<second>Output</second>
 		</item>

@@ -562,10 +562,24 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
 	m_dataBaseView->setText(i18n::Text(L"TITLE_DATABASE"));
-	if (!m_mergedSettings->getProperty< bool >(L"Editor.DatabaseVisible"))
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.DatabaseVisible", true))
 		m_dataBaseView->hide();
 
 	m_paneWest->dock(m_dataBaseView, true);
+
+	// Create tools panel.
+	m_tabTools = new ui::Tab();
+	m_tabTools->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
+	m_tabTools->setText(i18n::Text(L"TITLE_TOOLS"));
+	if (!m_mergedSettings->getProperty< bool >(L"Editor.ToolsVisible", true))
+		m_tabTools->hide();
+
+	m_paneWest->dock(
+		m_tabTools,
+		true,
+		ui::DockPane::DrSouth,
+		200_ut
+	);
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -1683,6 +1697,24 @@ void EditorForm::updateAdditionalPanelMenu()
 			m_menuItemOtherPanels->add(menuItem);
 		}
 	}
+}
+
+void EditorForm::createToolPanel(ui::Widget* widget)
+{
+	// Create tab page.
+	Ref< ui::TabPage > tabTool = new ui::TabPage();
+	tabTool->create(m_tabTools, widget->getText(), new ui::FloodLayout());
+	m_tabTools->addPage(tabTool);
+
+	// Re-attach widget as child to tab page.
+	widget->setParent(tabTool);
+}
+
+void EditorForm::destroyToolPanel(ui::Widget* widget)
+{
+	Ref< ui::TabPage > tabTool = dynamic_type_cast< ui::TabPage* >(widget->getParent());
+	if (tabTool != nullptr && tabTool->getTab() == m_tabTools)
+		m_tabTools->removePage(tabTool);
 }
 
 void EditorForm::buildAssetsForOpenedEditors()
