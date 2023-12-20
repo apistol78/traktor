@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,8 @@
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPluginSite.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorPluginSite", EditorPluginSite, IEditorPageSite)
 
@@ -66,23 +64,20 @@ Ref< PropertiesView > EditorPluginSite::createPropertiesView(ui::Widget* parent)
 
 void EditorPluginSite::createAdditionalPanel(ui::Widget* widget, ui::Unit size, bool south)
 {
-	m_editor->createAdditionalPanel(widget, size, south ? 0 : -1);
+	m_editor->createToolPanel(widget);
 }
 
 void EditorPluginSite::destroyAdditionalPanel(ui::Widget* widget)
 {
-	m_editor->destroyAdditionalPanel(widget);
+	m_editor->destroyToolPanel(widget);
 }
 
 void EditorPluginSite::showAdditionalPanel(ui::Widget* widget)
 {
-	m_editor->showAdditionalPanel(widget);
 }
 
 void EditorPluginSite::hideAdditionalPanel(ui::Widget* widget)
 {
-	m_editor->hideAdditionalPanel(widget);
 }
 
-	}
 }
