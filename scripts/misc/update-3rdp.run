@@ -135,7 +135,7 @@ local PACKAGES =
 	{
 		type = "GET",
 		name = "lua",
-		url = "http://www.lua.org/ftp/lua-5.4.6.tar.gz",
+		url = "https://lua.org/ftp/lua-5.4.6.tar.gz",
 		patch = function()
 			run:execute(TAR .. " -xzf lua-5.4.6.tar.gz")
 		end,
