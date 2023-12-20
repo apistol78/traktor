@@ -1412,7 +1412,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// Determine type of shader graph.
-	const auto graphType = ShaderGraphValidator(resolvedShaderGraph).estimateType();
+	const auto graphType = resolvedShaderGraph ? ShaderGraphValidator(resolvedShaderGraph).estimateType() : ShaderGraphValidator::SgtFragment;
 	m_editorGraph->setText(graphType == ShaderGraphValidator::SgtFragment ? L"FRAGMENT" : L"SHADER");
 	
 	// Validate shader graph.
@@ -1441,7 +1441,7 @@ void ShaderGraphEditorPage::updateGraph()
 		m_shaderViewer->reflect(m_shaderGraph);
 
 	// Evaluate output types (and partial values) if validation succeeded.
-	if (validationResult)
+	if (validationResult && resolvedShaderGraph)
 	{
 		// Prepare evaluation graph, ie graph which contain less meta nodes so evaluator can process graph properly.
 		Ref< ShaderGraph > evaluationGraph = ShaderGraphStatic(resolvedShaderGraph, Guid()).getVariableResolved();
