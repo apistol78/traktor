@@ -168,7 +168,7 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 		m_worldRenderViews[i].setPerspective(
 			float(width) / 2.0f,
 			float(height),
-			m_environment->getRender()->getAspectRatio(),
+			m_environment->getRender()->getAspectRatio() / 2.0f,
 			deg2rad(m_fieldOfView),
 			m_scene->getWorldRenderSettings()->viewNearZ,
 			m_scene->getWorldRenderSettings()->viewFarZ
@@ -197,7 +197,7 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 					m_worldRenderViews[i].setPerspective(
 						float(width) / 2.0f,
 						float(height),
-						m_environment->getRender()->getAspectRatio(),
+						m_environment->getRender()->getAspectRatio() / 2.0f,
 						camera->getFieldOfView(),
 						m_scene->getWorldRenderSettings()->viewNearZ,
 						m_scene->getWorldRenderSettings()->viewFarZ
