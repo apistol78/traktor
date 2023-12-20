@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,13 +14,13 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity(const std::wstring& name, const Transform& transform)
+Entity::Entity(const std::wstring_view& name, const Transform& transform)
 :	m_name(name)
 ,	m_transform(transform)
 {
 }
 
-Entity::Entity(const std::wstring& name, const Transform& transform, const RefArray< IEntityComponent >& components)
+Entity::Entity(const std::wstring_view& name, const Transform& transform, const RefArray< IEntityComponent >& components)
 :	m_name(name)
 ,	m_transform(transform)
 ,	m_components(components)
