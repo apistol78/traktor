@@ -58,6 +58,7 @@ void JobQueue::destroy()
 Ref< Job > JobQueue::add(const Job::task_t& task)
 {
 	Ref< Job > job = new Job(m_jobFinishedEvent, task);
+	T_SAFE_ADDREF(job);
 	m_jobQueue.put(job);
 	m_pending++;
 	m_jobQueuedEvent.pulse();
@@ -79,6 +80,7 @@ void JobQueue::fork(const Job::task_t* tasks, size_t ntasks)
 			for (size_t i = 1; i < ntasks; ++i)
 			{
 				jobs[i] = new Job(m_jobFinishedEvent, tasks[i]);
+				T_SAFE_ADDREF(jobs[i]);
 				m_jobQueue.put(jobs[i]);
 			}
 		}
@@ -123,7 +125,7 @@ void JobQueue::stop()
 void JobQueue::threadWorker()
 {
 	Thread* thread = ThreadManager::getInstance().getCurrentThread();
-	Ref< Job >job;
+	Job* job;
 
 	while (!thread->stopped())
 	{
@@ -138,7 +140,7 @@ void JobQueue::threadWorker()
 		if (job->m_task)
 			job->m_task();
 		job->m_finished = true;
-		job = nullptr;
+		T_SAFE_RELEASE(job);
 
 		// Decrement number of pending jobs and signal anyone waiting for jobs to finish.
 		m_pending--;
