@@ -19,25 +19,34 @@ namespace traktor::input
 	namespace
 	{
 
-class MemberInputDefaultControlType : public MemberEnum< InputDefaultControlType >
+class MemberDefaultControlOld : public MemberEnum< DefaultControl >
 {
 public:
-	MemberInputDefaultControlType(const wchar_t* const name, InputDefaultControlType& ref)
-	:	MemberEnum< InputDefaultControlType >(name, ref, g_InputDefaultControlType_Keys)
+	MemberDefaultControlOld(const wchar_t* const name, DefaultControl& ref)
+	:	MemberEnum< DefaultControl >(name, ref, g_DefaultControl_Keys_Old)
+	{
+	}
+};
+
+class MemberDefaultControl : public MemberEnum< DefaultControl >
+{
+public:
+	MemberDefaultControl(const wchar_t* const name, DefaultControl& ref)
+	:	MemberEnum< DefaultControl >(name, ref, g_DefaultControl_Keys)
 	{
 	}
 };
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.KeyboardInputSourceData", 0, KeyboardInputSourceData, IInputSourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.KeyboardInputSourceData", 1, KeyboardInputSourceData, IInputSourceData)
 
-void KeyboardInputSourceData::addControlType(InputDefaultControlType controlType)
+void KeyboardInputSourceData::addControlType(DefaultControl controlType)
 {
 	m_controlTypes.push_back(controlType);
 }
 
-const AlignedVector< InputDefaultControlType >& KeyboardInputSourceData::getControlTypes() const
+const AlignedVector< DefaultControl >& KeyboardInputSourceData::getControlTypes() const
 {
 	return m_controlTypes;
 }
@@ -49,7 +58,10 @@ Ref< IInputSource > KeyboardInputSourceData::createInstance(DeviceControlManager
 
 void KeyboardInputSourceData::serialize(ISerializer& s)
 {
-	s >> MemberAlignedVector< InputDefaultControlType, MemberInputDefaultControlType >(L"controlTypes", m_controlTypes);
+	if (s.getVersion() >= 1)
+		s >> MemberAlignedVector< DefaultControl, MemberDefaultControl >(L"controlTypes", m_controlTypes);
+	else
+		s >> MemberAlignedVector< DefaultControl, MemberDefaultControlOld >(L"controlTypes", m_controlTypes);
 }
 
 }

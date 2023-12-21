@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,8 +27,10 @@ namespace traktor
 
 struct SystemWindow;
 
-	namespace input
-	{
+}
+
+namespace traktor::input
+{
 
 class T_DLLCLASS InputDriverDi8 : public IInputDriver
 {
@@ -39,7 +41,7 @@ public:
 
 	void destroy();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override final;
 
 	virtual int getDeviceCount() override final;
 
@@ -53,11 +55,9 @@ private:
 	bool addDevice(const DIDEVICEINSTANCE* instance);
 
 	HWND m_hWnd = NULL;
-	uint32_t m_inputCategories = 0;
+	InputCategory m_inputCategories = InputCategory::Invalid;
 	RefArray< IInputDevice > m_devices;
 	ComRef< IDirectInput8 > m_directInput;
 };
 
-	}
 }
-

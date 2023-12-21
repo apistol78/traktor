@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,11 +16,11 @@
 namespace traktor::input
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.GenericInputSourceData", 3, GenericInputSourceData, IInputSourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.GenericInputSourceData", 4, GenericInputSourceData, IInputSourceData)
 
 GenericInputSourceData::GenericInputSourceData()
-:	m_category(CtUnknown)
-,	m_controlType(DtInvalid)
+:	m_category(InputCategory::Unknown)
+,	m_controlType(DefaultControl::Invalid)
 ,	m_analogue(false)
 ,	m_normalize(false)
 ,	m_index(-1)
@@ -29,7 +29,7 @@ GenericInputSourceData::GenericInputSourceData()
 
 GenericInputSourceData::GenericInputSourceData(
 	InputCategory category,
-	InputDefaultControlType controlType,
+	DefaultControl controlType,
 	bool analogue,
 	bool normalize
 )
@@ -44,7 +44,7 @@ GenericInputSourceData::GenericInputSourceData(
 GenericInputSourceData::GenericInputSourceData(
 	InputCategory category,
 	int32_t index,
-	InputDefaultControlType controlType,
+	DefaultControl controlType,
 	bool analogue,
 	bool normalize
 )
@@ -66,12 +66,12 @@ InputCategory GenericInputSourceData::getCategory() const
 	return m_category;
 }
 
-void GenericInputSourceData::setControlType(InputDefaultControlType controlType)
+void GenericInputSourceData::setControlType(DefaultControl controlType)
 {
 	m_controlType = controlType;
 }
 
-InputDefaultControlType GenericInputSourceData::getControlType() const
+DefaultControl GenericInputSourceData::getControlType() const
 {
 	return m_controlType;
 }
@@ -113,8 +113,17 @@ Ref< IInputSource > GenericInputSourceData::createInstance(DeviceControlManager*
 
 void GenericInputSourceData::serialize(ISerializer& s)
 {
-	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
-	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
+	if (s.getVersion() >= 4)
+	{
+		s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
+		s >> MemberEnum< DefaultControl >(L"controlType", m_controlType, g_DefaultControl_Keys);
+	}
+	else
+	{
+		s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys_Old);
+		s >> MemberEnum< DefaultControl >(L"controlType", m_controlType, g_DefaultControl_Keys_Old);
+	}
+
 	s >> Member< bool >(L"analogue", m_analogue);
 
 	if (s.getVersion() <= 2)

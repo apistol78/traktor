@@ -27,7 +27,7 @@ public:
 
 	InputCategory getCategory() const;
 
-	InputDefaultControlType getControlType() const;
+	DefaultControl getControlType() const;
 
 	bool isAnalogue() const;
 
@@ -49,7 +49,7 @@ private:
 	DeviceControl();
 
 	InputCategory m_category;
-	InputDefaultControlType m_controlType;
+	DefaultControl m_controlType;
 	bool m_analogue;
 	int32_t m_index;
 	Ref< IInputDevice > m_device;

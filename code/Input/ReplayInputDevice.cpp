@@ -62,7 +62,7 @@ bool ReplayInputDevice::getControlRange(int32_t control, float& outMin, float& o
 	return m_inputDevice->getControlRange(control, outMin, outMax);
 }
 
-bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool ReplayInputDevice::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }

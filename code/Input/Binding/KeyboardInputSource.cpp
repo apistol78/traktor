@@ -55,7 +55,7 @@ private:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardInputSource", KeyboardInputSource, IInputSource)
 
 KeyboardInputSource::KeyboardInputSource(
-	const AlignedVector< InputDefaultControlType >& controlTypes,
+	const AlignedVector< DefaultControl >& controlTypes,
 	DeviceControlManager* deviceControlManager
 )
 :	m_deviceControlManager(deviceControlManager)
@@ -101,7 +101,7 @@ std::wstring KeyboardInputSource::getDescription() const
 void KeyboardInputSource::prepare(float T, float dT)
 {
 	// Check if number of connected keyboard devices has changed since last preparation.
-	const int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(CtKeyboard);
+	const int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(InputCategory::Keyboard);
 	if (deviceCount != m_deviceCount)
 	{
 		for (auto i = m_keys.begin(); i != m_keys.end(); ++i)
@@ -110,7 +110,7 @@ void KeyboardInputSource::prepare(float T, float dT)
 			for (int32_t j = 0; j < deviceCount; ++j)
 			{
 				i->deviceControls[j] = m_deviceControlManager->getDeviceControl(
-					CtKeyboard,
+					InputCategory::Keyboard,
 					i->controlType,
 					false,
 					j

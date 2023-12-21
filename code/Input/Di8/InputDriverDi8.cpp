@@ -218,7 +218,7 @@ void InputDriverDi8::destroy()
 	m_directInput.release();
 }
 
-bool InputDriverDi8::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
+bool InputDriverDi8::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
 {
 	HRESULT hr;
 
@@ -282,17 +282,17 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	{
 	case DI8DEVTYPE_1STPERSON:
 	case DI8DEVTYPE_MOUSE:
-		inputCategory = CtMouse;
+		inputCategory = InputCategory::Mouse;
 		break;
 
 	case DI8DEVTYPE_KEYBOARD:
-		inputCategory = CtKeyboard;
+		inputCategory = InputCategory::Keyboard;
 		break;
 
 	case DI8DEVTYPE_JOYSTICK:
 	case DI8DEVTYPE_GAMEPAD:
 		{
-			inputCategory = CtJoystick;
+			inputCategory = InputCategory::Joystick;
 			if (IsXInputDevice(&deviceInstance->guidProduct))
 				return true;
 		}
@@ -302,7 +302,7 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 		return true;
 	}
 
-	if ((inputCategory & m_inputCategories) == 0)
+	if ((inputCategory & m_inputCategories) == InputCategory::Invalid)
 		return true;
 
 	log::info << L"Found DI8 device;" << Endl <<
@@ -320,13 +320,13 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	Ref< input::IInputDevice > inputDevice;
 	switch (inputCategory)
 	{
-	case CtMouse:
+	case InputCategory::Mouse:
 		inputDevice = new MouseDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
-	case CtKeyboard:
+	case InputCategory::Keyboard:
 		inputDevice = new KeyboardDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
-	case CtJoystick:
+	case InputCategory::Joystick:
 		inputDevice = new JoystickDeviceDi8(m_hWnd, device, deviceInstance);
 		break;
 	default:

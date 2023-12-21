@@ -54,7 +54,7 @@ std::vector< float > input_IInputDevice_getControlRange(IInputDevice* self, int3
 int32_t input_IInputDevice_getDefaultControl(IInputDevice* self, int32_t controlType, bool analogue)
 {
 	int32_t control = -1;
-	self->getDefaultControl((InputDefaultControlType)controlType, analogue, control);
+	self->getDefaultControl((DefaultControl)controlType, analogue, control);
 	return control;
 }
 
@@ -162,9 +162,9 @@ void InputClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classInputDevice = new AutoRuntimeClass< IInputDevice >();
 
 	for (int32_t i = 0; g_InputCategory_Keys[i].id != 0; ++i)
-		classInputDevice->addConstant(wstombs(g_InputCategory_Keys[i].id), Any::fromInt32(g_InputCategory_Keys[i].val));
-	for (int32_t i = 0; g_InputDefaultControlType_Keys[i].id != 0; ++i)
-		classInputDevice->addConstant(wstombs(g_InputDefaultControlType_Keys[i].id), Any::fromInt32(g_InputDefaultControlType_Keys[i].val));
+		classInputDevice->addConstant(wstombs(g_InputCategory_Keys[i].id), Any::fromInt32((int32_t)g_InputCategory_Keys[i].val));
+	for (int32_t i = 0; g_DefaultControl_Keys[i].id != 0; ++i)
+		classInputDevice->addConstant(wstombs(g_DefaultControl_Keys[i].id), Any::fromInt32((int32_t)g_DefaultControl_Keys[i].val));
 
 	classInputDevice->addMethod("getName", &IInputDevice::getName);
 	classInputDevice->addMethod("getCategory", &input_IInputDevice_getCategory);

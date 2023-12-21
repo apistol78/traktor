@@ -23,26 +23,26 @@ namespace traktor
 const struct MouseControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 	int32_t index;
 }
 c_mouseControlMap[] =
 {
-	{ L"Left mouse button", DtButton1, false, true, 0 },
-	{ L"Right mouse button", DtButton2, false, true, 1 },
-	{ L"Middle mouse button", DtButton3, false, true, 2 },
-	{ L"Aux 1 mouse button", DtButton3, false, true, 3 },
-	{ L"Aux 2 mouse button", DtButton4, false, true, 4 },
-	{ L"Aux 3 mouse button", DtButton5, false, true, 5 },
-	{ L"Aux 4 mouse button", DtButton6, false, true, 6 },
-	{ L"Aux 5 mouse button", DtButton7, false, true, 7 },
-	{ L"Mouse X axis", DtAxisX, true, false, 8 },
-	{ L"Mouse Y axis", DtAxisY, true, false, 9 },
-	{ L"Mouse Z axis", DtAxisZ, true, false, 10 },
-	{ L"Mouse X axis", DtPositionX, true, false, 11 },
-	{ L"Mouse Y axis", DtPositionY, true, false, 12 }
+	{ L"Left mouse button", DefaultControl::Button1, false, true, 0 },
+	{ L"Right mouse button", DefaultControl::Button2, false, true, 1 },
+	{ L"Middle mouse button", DefaultControl::Button3, false, true, 2 },
+	{ L"Aux 1 mouse button", DefaultControl::Button3, false, true, 3 },
+	{ L"Aux 2 mouse button", DefaultControl::Button4, false, true, 4 },
+	{ L"Aux 3 mouse button", DefaultControl::Button5, false, true, 5 },
+	{ L"Aux 4 mouse button", DefaultControl::Button6, false, true, 6 },
+	{ L"Aux 5 mouse button", DefaultControl::Button7, false, true, 7 },
+	{ L"Mouse X axis", DefaultControl::AxisX, true, false, 8 },
+	{ L"Mouse Y axis", DefaultControl::AxisY, true, false, 9 },
+	{ L"Mouse Z axis", DefaultControl::AxisZ, true, false, 10 },
+	{ L"Mouse X axis", DefaultControl::PositionX, true, false, 11 },
+	{ L"Mouse Y axis", DefaultControl::PositionY, true, false, 12 }
 };
 
 const float c_mouseDeltaLimit = 100.0f;
@@ -73,7 +73,7 @@ std::wstring MouseDeviceDi8::getName() const
 
 InputCategory MouseDeviceDi8::getCategory() const
 {
-	return CtMouse;
+	return InputCategory::Mouse;
 }
 
 bool MouseDeviceDi8::isConnected() const
@@ -171,7 +171,7 @@ bool MouseDeviceDi8::getControlRange(int32_t control, float& outMin, float& outM
 		return false;
 }
 
-bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool MouseDeviceDi8::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{

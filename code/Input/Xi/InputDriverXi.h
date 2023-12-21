@@ -36,7 +36,7 @@ class T_DLLCLASS InputDriverXi : public IInputDriver
 public:
 	explicit InputDriverXi(DWORD deviceCount = 4);
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override final;
 
 	virtual int getDeviceCount() override final;
 

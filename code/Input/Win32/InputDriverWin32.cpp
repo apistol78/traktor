@@ -17,14 +17,14 @@ namespace traktor::input
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverWin32", 0, InputDriverWin32, IInputDriver)
 
-bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
+bool InputDriverWin32::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
 {
-	if (inputCategories & CtKeyboard)
+	if ((inputCategories & InputCategory::Keyboard) != InputCategory::Invalid)
 	{
 		m_keyboardDevice = new KeyboardDeviceWin32((HWND)syswin.hWnd);
 		m_devices.push_back(m_keyboardDevice);
 	}
-	if (inputCategories & CtMouse)
+	if ((inputCategories & InputCategory::Mouse) != InputCategory::Invalid)
 	{
 		m_mouseDevice = new MouseDeviceWin32((HWND)syswin.hWnd);
 		m_devices.push_back(m_mouseDevice);

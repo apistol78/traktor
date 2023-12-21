@@ -31,16 +31,16 @@ class T_DLLCLASS KeyboardInputSourceData : public IInputSourceData
 	T_RTTI_CLASS;
 
 public:
-	void addControlType(InputDefaultControlType controlType);
+	void addControlType(DefaultControl controlType);
 
-	const AlignedVector< InputDefaultControlType >& getControlTypes() const;
+	const AlignedVector< DefaultControl >& getControlTypes() const;
 
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	AlignedVector< InputDefaultControlType > m_controlTypes;
+	AlignedVector< DefaultControl > m_controlTypes;
 };
 
 }
