@@ -403,11 +403,15 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 		if (!data->getDrive())
 			continue;
 
+		const Vector4 anchor = data->getAnchor().xyz1();
+		const Vector4 axis = -data->getAxis().xyz0().normalized();
+		const Vector4 position = anchor + axis * Scalar(wheel->suspensionLength);
+
 		const Vector4 direction = (wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).normalized();
 		const Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
 
 		body->addForceAt(
-			bodyTinv * wheel->contactPosition,
+			position, // bodyTinv * wheel->contactPosition,
 			direction * engineForce * grip,
 			true
 		);
