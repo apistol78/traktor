@@ -643,7 +643,7 @@ $Output = vec4(clr, 1.0f);
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
 
-float dist = 10000.0f;
+float dist = 5000.0f;
 const vec4 clr = renderClouds(
 	ro,
 	rd,

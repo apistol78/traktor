@@ -25,8 +25,8 @@ vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 #define SCENE_SCALE						(10.0f)
 #define INV_SCENE_SCALE					(0.1f)
 
-#define CLOUD_MARCH_STEPS				24
-#define CLOUD_SELF_SHADOW_STEPS			6
+#define CLOUD_MARCH_STEPS				14
+#define CLOUD_SELF_SHADOW_STEPS			4
 
 #define EARTH_RADIUS   					(50000.0f)
 #define CLOUDS_BOTTOM   					(1050.)
@@ -210,6 +210,8 @@ vec4 renderClouds(vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor
 
         d += dD;
     }
+
+	dist = end;
 
     return vec4(scatteredLight, transmittance);
 }
