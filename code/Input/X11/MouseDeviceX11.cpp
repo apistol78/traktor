@@ -18,20 +18,20 @@ namespace traktor::input
 const struct MouseControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 }
 c_mouseControlMap[] =
 {
-	{ L"Left mouse button", DtButton1, false, true },
-	{ L"Right mouse button", DtButton2, false, true },
-	{ L"Middle mouse button", DtButton3, false, true },
-	{ L"Mouse X axis", DtAxisX, true, true },
-	{ L"Mouse Y axis", DtAxisY, true, true },
-	{ L"Mouse Z axis", DtAxisZ, true, true },
-	{ L"Mouse X axis", DtPositionX, true, false },
-	{ L"Mouse Y axis", DtPositionY, true, false }
+	{ L"Left mouse button", DefaultControl::Button1, false, true },
+	{ L"Right mouse button", DefaultControl::Button2, false, true },
+	{ L"Middle mouse button", DefaultControl::Button3, false, true },
+	{ L"Mouse X axis", DefaultControl::AxisX, true, true },
+	{ L"Mouse Y axis", DefaultControl::AxisY, true, true },
+	{ L"Mouse Z axis", DefaultControl::AxisZ, true, true },
+	{ L"Mouse X axis", DefaultControl::PositionX, true, false },
+	{ L"Mouse Y axis", DefaultControl::PositionY, true, false }
 };
 
 const float c_mouseDeltaScale = 0.5f;
@@ -89,7 +89,7 @@ std::wstring MouseDeviceX11::getName() const
 
 InputCategory MouseDeviceX11::getCategory() const
 {
-	return CtMouse;
+	return InputCategory::Mouse;
 }
 
 bool MouseDeviceX11::isConnected() const
@@ -123,21 +123,21 @@ float MouseDeviceX11::getControlValue(int32_t control)
 		return 0.0f;
 
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.controlType == DtAxisX)
+	if (mc.controlType == DefaultControl::AxisX)
 		return m_axis[0];
-	else if (mc.controlType == DtAxisY)
+	else if (mc.controlType == DefaultControl::AxisY)
 		return m_axis[1];
-	else if (mc.controlType == DtAxisZ)
+	else if (mc.controlType == DefaultControl::AxisZ)
 		return m_axis[2];
-	else if (mc.controlType == DtPositionX)
+	else if (mc.controlType == DefaultControl::PositionX)
 		return float(m_position[0]);
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 		return float(m_position[1]);
-	else if (mc.controlType == DtButton1)
+	else if (mc.controlType == DefaultControl::Button1)
 		return m_button[0];
-	else if (mc.controlType == DtButton2)
+	else if (mc.controlType == DefaultControl::Button2)
 		return m_button[2];
-	else if (mc.controlType == DtButton3)
+	else if (mc.controlType == DefaultControl::Button3)
 		return m_button[1];
 	else
 		return 0.0f;
@@ -149,12 +149,12 @@ bool MouseDeviceX11::getControlRange(int32_t control, float& outMin, float& outM
 		return false;
 
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.controlType == DtPositionX)
+	if (mc.controlType == DefaultControl::PositionX)
 	{
 		outMin = 0;
 		outMax = float(m_width);
 	}
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 	{
 		outMin = 0;
 		outMax = float(m_height);
@@ -165,7 +165,7 @@ bool MouseDeviceX11::getControlRange(int32_t control, float& outMin, float& outM
 	return true;
 }
 
-bool MouseDeviceX11::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool MouseDeviceX11::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{

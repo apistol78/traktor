@@ -35,7 +35,7 @@ class T_DLLCLASS InputDriverX11 : public IInputDriver
 public:
 	InputDriverX11();
 
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override;
 
 	virtual int getDeviceCount() override;
 

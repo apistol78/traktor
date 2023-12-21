@@ -19,6 +19,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+#if defined(Button1)
+#	undef Button1
+#endif
+#if defined(Button2)
+#	undef Button2
+#endif
+#if defined(Button3)
+#	undef Button3
+#endif
+#if defined(Button4)
+#	undef Button4
+#endif
+#if defined(Button5)
+#	undef Button5
+#endif
+
 namespace traktor::input
 {
 
