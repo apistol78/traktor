@@ -1325,7 +1325,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	uint32_t desiredImageCount = 2;
 
 	// Always use 3 buffers on iOS, seems to be preferred by MoltenVK.
-#if defined(__IOS__) || defined(__ANDROID__)
+#if defined(__LINUX__) || defined(__IOS__) || defined(__ANDROID__)
 	desiredImageCount = 3;
 #endif
 
@@ -1336,8 +1336,13 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		desiredImageCount = 3;
 	}
 #else
-	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
-		presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+	if (vblanks <= 0)
+	{
+		if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
+			presentationMode = VK_PRESENT_MODE_MAILBOX_KHR;
+		else if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_FIFO_RELAXED_KHR))
+			presentationMode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
+	}
 #endif
 
 	if (vblanks <= 0)
