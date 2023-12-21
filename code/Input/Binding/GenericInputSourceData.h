@@ -34,7 +34,7 @@ public:
 
 	explicit GenericInputSourceData(
 		InputCategory category,
-		InputDefaultControlType controlType,
+		DefaultControl controlType,
 		bool analogue,
 		bool normalize
 	);
@@ -42,7 +42,7 @@ public:
 	explicit GenericInputSourceData(
 		InputCategory category,
 		int32_t index,
-		InputDefaultControlType controlType,
+		DefaultControl controlType,
 		bool analogue,
 		bool normalize
 	);
@@ -51,9 +51,9 @@ public:
 
 	InputCategory getCategory() const;
 
-	void setControlType(InputDefaultControlType controlType);
+	void setControlType(DefaultControl controlType);
 
-	InputDefaultControlType getControlType() const;
+	DefaultControl getControlType() const;
 
 	void setAnalogue(bool analogue);
 
@@ -73,7 +73,7 @@ public:
 
 private:
 	InputCategory m_category;
-	InputDefaultControlType m_controlType;
+	DefaultControl m_controlType;
 	bool m_analogue;
 	bool m_normalize;
 	int32_t m_index;

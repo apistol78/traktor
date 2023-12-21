@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,10 +16,10 @@
 namespace traktor::input
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.ControlInputSourceData", 2, ControlInputSourceData, IInputSourceData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.ControlInputSourceData", 3, ControlInputSourceData, IInputSourceData)
 
 ControlInputSourceData::ControlInputSourceData()
-:	m_category(CtUnknown)
+:	m_category(InputCategory::Unknown)
 ,	m_controlQuery(CqConnectedDevice)
 ,	m_index(-1)
 {
@@ -90,12 +90,15 @@ void ControlInputSourceData::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
+	if (s.getVersion() >= 3)
+		s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
+	else
+		s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys_Old);
 
 	if (s.getVersion() < 2)
 	{
-		InputDefaultControlType controlType;
-		s >> MemberEnum< InputDefaultControlType >(L"controlType", controlType, g_InputDefaultControlType_Keys);
+		DefaultControl controlType;
+		s >> MemberEnum< DefaultControl >(L"controlType", controlType, g_DefaultControl_Keys_Old);
 	}
 
 	if (s.getVersion() >= 1)

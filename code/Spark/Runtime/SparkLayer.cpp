@@ -49,27 +49,27 @@ namespace traktor
 
 const struct InputKeyCode
 {
-	uint32_t inputKeyCode;
+	input::DefaultControl inputKeyCode;
 	uint32_t asKeyCode;
 }
 c_inputKeyCodes[] =
 {
-	{ input::DtKeyLeftControl, Key::AkControl },
-	{ input::DtKeyRightControl, Key::AkControl },
-	{ input::DtKeyDelete, Key::AkDeleteKey },
-	{ input::DtKeyDown, Key::AkDown },
-	{ input::DtKeyEnd, Key::AkEnd },
-	{ input::DtKeyReturn, Key::AkEnter },
-	{ input::DtKeyEscape, Key::AkEscape },
-	{ input::DtKeyHome, Key::AkHome },
-	{ input::DtKeyInsert, Key::AkInsert },
-	{ input::DtKeyLeft, Key::AkLeft },
-	{ input::DtKeyRight, Key::AkRight },
-	{ input::DtKeyLeftShift, Key::AkShift },
-	{ input::DtKeyRightShift, Key::AkShift },
-	{ input::DtKeySpace, Key::AkSpace },
-	{ input::DtKeyTab, Key::AkTab },
-	{ input::DtKeyUp, Key::AkUp }
+	{ input::DefaultControl::KeyLeftControl, Key::AkControl },
+	{ input::DefaultControl::KeyRightControl, Key::AkControl },
+	{ input::DefaultControl::KeyDelete, Key::AkDeleteKey },
+	{ input::DefaultControl::KeyDown, Key::AkDown },
+	{ input::DefaultControl::KeyEnd, Key::AkEnd },
+	{ input::DefaultControl::KeyReturn, Key::AkEnter },
+	{ input::DefaultControl::KeyEscape, Key::AkEscape },
+	{ input::DefaultControl::KeyHome, Key::AkHome },
+	{ input::DefaultControl::KeyInsert, Key::AkInsert },
+	{ input::DefaultControl::KeyLeft, Key::AkLeft },
+	{ input::DefaultControl::KeyRight, Key::AkRight },
+	{ input::DefaultControl::KeyLeftShift, Key::AkShift },
+	{ input::DefaultControl::KeyRightShift, Key::AkShift },
+	{ input::DefaultControl::KeySpace, Key::AkSpace },
+	{ input::DefaultControl::KeyTab, Key::AkTab },
+	{ input::DefaultControl::KeyUp, Key::AkUp }
 };
 
 bool isWhiteSpace(wchar_t ch)
@@ -81,7 +81,7 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 {
 	for (uint32_t i = 0; i < sizeof_array(c_inputKeyCodes); ++i)
 	{
-		if (c_inputKeyCodes[i].inputKeyCode == inputKeyCode)
+		if (c_inputKeyCodes[i].inputKeyCode == (input::DefaultControl)inputKeyCode)
 			return c_inputKeyCodes[i].asKeyCode;
 	}
 	return 0;
@@ -240,7 +240,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 	if (!m_environment->getInput()->isFabricating())
 	{
 		// Propagate keyboard input to movie.
-		input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
+		input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::InputCategory::Keyboard, 0, true);
 		if (keyboardDevice)
 		{
 			input::IInputDevice::KeyEvent ke;
@@ -263,15 +263,15 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 		}
 
 		// Propagate joystick input to movie; synthesized as keyboard events.
-		int32_t joystickDeviceCount = inputSystem->getDeviceCount(input::CtJoystick, true);
+		int32_t joystickDeviceCount = inputSystem->getDeviceCount(input::InputCategory::Joystick, true);
 		for (int32_t i = 0; i < joystickDeviceCount; ++i)
 		{
-			input::IInputDevice* joystickDevice = inputSystem->getDevice(input::CtJoystick, i, true);
+			input::IInputDevice* joystickDevice = inputSystem->getDevice(input::InputCategory::Joystick, i, true);
 			T_ASSERT(joystickDevice);
 
 			int32_t up = -1, down = -1;
-			joystickDevice->getDefaultControl(input::DtUp, false, up);
-			joystickDevice->getDefaultControl(input::DtDown, false, down);
+			joystickDevice->getDefaultControl(input::DefaultControl::Up, false, up);
+			joystickDevice->getDefaultControl(input::DefaultControl::Down, false, down);
 
 			if (up != -1)
 			{
@@ -300,8 +300,8 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 			}
 
 			int32_t buttonConfirm = -1, buttonEscape = -1;
-			joystickDevice->getDefaultControl(input::DtButton1, false, buttonConfirm);
-			joystickDevice->getDefaultControl(input::DtButton2, false, buttonEscape);
+			joystickDevice->getDefaultControl(input::DefaultControl::Button1, false, buttonConfirm);
+			joystickDevice->getDefaultControl(input::DefaultControl::Button2, false, buttonEscape);
 
 			if (buttonConfirm != -1)
 			{
@@ -341,27 +341,27 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 			width = int32_t(width * aspectRatio / viewRatio);
 
-			int32_t mouseDeviceCount = inputSystem->getDeviceCount(input::CtMouse, true);
+			int32_t mouseDeviceCount = inputSystem->getDeviceCount(input::InputCategory::Mouse, true);
 			if (mouseDeviceCount >= sizeof_array(m_lastMouse))
 				mouseDeviceCount = sizeof_array(m_lastMouse);
 
 			for (int32_t i = 0; i < mouseDeviceCount; ++i)
 			{
-				input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, i, true);
+				input::IInputDevice* mouseDevice = inputSystem->getDevice(input::InputCategory::Mouse, i, true);
 				T_ASSERT(mouseDevice);
 
 				LastMouseState& last = m_lastMouse[i];
 
 				int32_t positionX = -1, positionY = -1;
-				mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
-				mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
+				mouseDevice->getDefaultControl(input::DefaultControl::PositionX, true, positionX);
+				mouseDevice->getDefaultControl(input::DefaultControl::PositionY, true, positionY);
 
 				int32_t button1 = -1, button2 = -1;
-				mouseDevice->getDefaultControl(input::DtButton1, false, button1);
-				mouseDevice->getDefaultControl(input::DtButton2, false, button2);
+				mouseDevice->getDefaultControl(input::DefaultControl::Button1, false, button1);
+				mouseDevice->getDefaultControl(input::DefaultControl::Button2, false, button2);
 
 				int32_t axisZ = -1;
-				mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
+				mouseDevice->getDefaultControl(input::DefaultControl::AxisZ, true, axisZ);
 
 				float minX, minY;
 				float maxX, maxY;

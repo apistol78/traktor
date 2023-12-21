@@ -45,7 +45,7 @@ std::wstring KeyboardDeviceWin32::getName() const
 
 InputCategory KeyboardDeviceWin32::getCategory() const
 {
-	return CtKeyboard;
+	return InputCategory::Keyboard;
 }
 
 bool KeyboardDeviceWin32::isConnected() const
@@ -103,7 +103,7 @@ bool KeyboardDeviceWin32::getControlRange(int32_t control, float& outMin, float&
 	return true;
 }
 
-bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool KeyboardDeviceWin32::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	if (analogue || !c_vkControlKeys[int32_t(controlType)])
 		return false;

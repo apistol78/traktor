@@ -32,7 +32,7 @@ class T_DLLCLASS KeyboardDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	explicit KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	void destroy();
 
@@ -54,7 +54,7 @@ public:
 
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const;
 
 	virtual bool getKeyEvent(KeyEvent& outEvent);
 

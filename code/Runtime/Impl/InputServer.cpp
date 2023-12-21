@@ -76,7 +76,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 	if (settings)
 		mergedSettings = defaultSettings->merge(settings, PropertyGroup::MmJoin);
 
-	// Instanciate input drivers.
+	// Instantiate input drivers.
 	auto driverTypes = mergedSettings->getProperty< SmallSet< std::wstring > >(L"Input.DriverTypes");
 	for (const auto& driverType : driverTypes)
 	{
@@ -87,7 +87,18 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 			continue;
 		}
 
-		if (!driver->create(sysapp, syswin, input::CtKeyboard | input::CtMouse | input::CtJoystick | input::CtWheel | input::CtTouch | input::CtGaze | input::CtAcceleration | input::CtOrientation))
+		if (!driver->create(
+			sysapp,
+			syswin,
+			input::InputCategory::Keyboard |
+			input::InputCategory::Mouse |
+			input::InputCategory::Joystick |
+			input::InputCategory::Wheel |
+			input::InputCategory::Touch |
+			input::InputCategory::Gaze |
+			input::InputCategory::Acceleration |
+			input::InputCategory::Orientation
+		))
 		{
 			log::error << L"Input server failed; unable to create driver \"" << driverType << L"\"" << Endl;
 			continue;
@@ -237,7 +248,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 	{
 		// Cannot become active as long as any mouse button is pressed
 		// in case application became active with mouse.
-		if (!anyControlPressed(m_inputSystem, input::CtMouse))
+		if (!anyControlPressed(m_inputSystem, input::InputCategory::Mouse))
 		{
 			if (m_inputMapping)
 				m_inputMapping->reset();
@@ -353,17 +364,17 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		else
 		{
 			// Abort fabrication if escape or backspace on any keyboard has been pressed.
-			const int32_t keyboardCount = m_inputSystem->getDeviceCount(input::CtKeyboard, true);
+			const int32_t keyboardCount = m_inputSystem->getDeviceCount(input::InputCategory::Keyboard, true);
 			for (int32_t i = 0; i < keyboardCount; ++i)
 			{
-				Ref< input::IInputDevice > keyboardDevice = m_inputSystem->getDevice(input::CtKeyboard, i, true);
+				Ref< input::IInputDevice > keyboardDevice = m_inputSystem->getDevice(input::InputCategory::Keyboard, i, true);
 				if (!keyboardDevice)
 					continue;
 
 				int32_t control;
 
 				if (
-					keyboardDevice->getDefaultControl(input::DtKeyEscape, false, control) &&
+					keyboardDevice->getDefaultControl(input::DefaultControl::KeyEscape, false, control) &&
 					keyboardDevice->getControlValue(control) >= 0.5f
 				)
 				{
@@ -375,7 +386,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				}
 
 				if (
-					keyboardDevice->getDefaultControl(input::DtKeyBack, false, control) &&
+					keyboardDevice->getDefaultControl(input::DefaultControl::KeyBack, false, control) &&
 					keyboardDevice->getControlValue(control) >= 0.5f
 				)
 				{
@@ -424,7 +435,7 @@ bool InputServer::createInputMapping(const input::InputMappingStateData* stateDa
 
 bool InputServer::fabricateInputSource(const std::wstring& sourceId, input::InputCategory category, bool analogue)
 {
-	if (!m_inputSystem || sourceId.empty() || category == input::CtUnknown)
+	if (!m_inputSystem || sourceId.empty() || category == input::InputCategory::Unknown)
 		return false;
 
 	// Ensure mapping are reset so no lingering states

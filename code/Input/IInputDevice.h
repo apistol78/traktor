@@ -133,7 +133,7 @@ public:
 	 * \param control Output control identifier.
 	 * \return True if device support control type and have successfully mapped identifier.
 	 */
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const = 0;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const = 0;
 
 	/*! Get keyboard event.
 	 *

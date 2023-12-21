@@ -26,7 +26,7 @@ int32_t DeviceControlManager::getDeviceControlCount(InputCategory category)
 	return m_inputSystem->getDeviceCount(category, true);
 }
 
-Ref< DeviceControl > DeviceControlManager::getDeviceControl(InputCategory category, InputDefaultControlType controlType, bool analogue, int32_t index)
+Ref< DeviceControl > DeviceControlManager::getDeviceControl(InputCategory category, DefaultControl controlType, bool analogue, int32_t index)
 {
 	for (auto deviceControl : m_deviceControls)
 	{

@@ -51,7 +51,7 @@ public:
 
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const;
 
 	virtual bool getKeyEvent(KeyEvent& outEvent);
 
@@ -69,7 +69,7 @@ private:
 	struct ControlInfo
 	{
 		std::wstring name;
-		InputDefaultControlType controlType;
+		DefaultControl controlType;
 		uint32_t offset;
 		bool analogue;
 		bool inverted;

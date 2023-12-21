@@ -11,6 +11,7 @@
 #include "Core/Object.h"
 #include "Core/Platform.h"
 #include "Core/Ref.h"
+#include "InputTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,7 +47,7 @@ public:
 	 * \param syswin Description of application's system window.
 	 * \param inputCategories Input device categories.
 	 */
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) = 0;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) = 0;
 
 	/*! Get number of devices implemented by the driver.
 	 *

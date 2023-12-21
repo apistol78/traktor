@@ -50,12 +50,12 @@ void GenericInputSource::prepare(float T, float dT)
 float GenericInputSource::read(float T, float dT)
 {
 	const InputCategory category = m_data->getCategory();
-	const InputDefaultControlType controlType = m_data->getControlType();
+	const DefaultControl controlType = m_data->getControlType();
 	const bool analogue = m_data->isAnalogue();
 	const int32_t index = m_data->getIndex();
 
 	// Abort early as no device should have this control.
-	if (controlType == DtInvalid)
+	if (controlType == DefaultControl::Invalid)
 		return 0.0f;
 
 	const int32_t deviceCount = m_deviceControlManager->getDeviceControlCount(category);

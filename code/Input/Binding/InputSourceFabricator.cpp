@@ -53,9 +53,9 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 	// Enumerate all devices and controls to see if anything has changed.
 	for (std::list< DeviceState >::iterator i = m_deviceStates.begin(); i != m_deviceStates.end(); ++i)
 	{
-		for (int32_t j = DtUp; j <= DtKeyLastIndex; ++j)
+		for (int32_t j = (int32_t)DefaultControl::Up; j <= (int32_t)DefaultControl::KeyLastIndex; ++j)
 		{
-			InputDefaultControlType controlType = (InputDefaultControlType)j;
+			DefaultControl controlType = (DefaultControl)j;
 
 			int32_t control;
 			if (!i->device->getDefaultControl(controlType, m_analogue, control))
@@ -98,7 +98,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 
 						break;
 					}
-					else if (m_category == CtKeyboard)
+					else if (m_category == InputCategory::Keyboard)
 					{
 						if (asBoolean(value))
 						{

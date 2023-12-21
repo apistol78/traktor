@@ -58,7 +58,7 @@ std::wstring KeyboardDeviceDi8::getName() const
 
 InputCategory KeyboardDeviceDi8::getCategory() const
 {
-	return CtKeyboard;
+	return InputCategory::Keyboard;
 }
 
 bool KeyboardDeviceDi8::isConnected() const
@@ -165,12 +165,12 @@ bool KeyboardDeviceDi8::getControlRange(int32_t control, float& outMin, float& o
 	return true;
 }
 
-bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool KeyboardDeviceDi8::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)
 		return false;
 
-	control = controlType;
+	control = (int32_t)controlType;
 	return c_di8ControlKeys[control] != 0;
 }
 

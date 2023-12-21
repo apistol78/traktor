@@ -46,7 +46,7 @@ private:
 	struct DeviceState
 	{
 		Ref< IInputDevice > device;
-		std::map< InputDefaultControlType, float > values;
+		std::map< DefaultControl, float > values;
 	};
 
 	InputCategory m_category;

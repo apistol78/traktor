@@ -18,19 +18,19 @@ namespace traktor::input
 const struct MouseControlMap
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	bool stable;
 }
 c_mouseControlMap[] =
 {
-	{ L"Left mouse button", DtButton1, false, true },
-	{ L"Right mouse button", DtButton2, false, true },
-	{ L"Middle mouse button", DtButton3, false, true },
-	{ L"Mouse X axis", DtAxisX, true, true },
-	{ L"Mouse Y axis", DtAxisY, true, true },
-	{ L"Mouse X axis", DtPositionX, true, false },
-	{ L"Mouse Y axis", DtPositionY, true, false }
+	{ L"Left mouse button", DefaultControl::Button1, false, true },
+	{ L"Right mouse button", DefaultControl::Button2, false, true },
+	{ L"Middle mouse button", DefaultControl::Button3, false, true },
+	{ L"Mouse X axis", DefaultControl::AxisX, true, true },
+	{ L"Mouse Y axis", DefaultControl::AxisY, true, true },
+	{ L"Mouse X axis", DefaultControl::PositionX, true, false },
+	{ L"Mouse Y axis", DefaultControl::PositionY, true, false }
 };
 
 	}
@@ -59,7 +59,7 @@ std::wstring MouseDeviceWin32::getName() const
 
 InputCategory MouseDeviceWin32::getCategory() const
 {
-	return CtMouse;
+	return InputCategory::Mouse;
 }
 
 bool MouseDeviceWin32::isConnected() const
@@ -93,19 +93,19 @@ float MouseDeviceWin32::getControlValue(int32_t control)
 		return 0.0f;
 
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.controlType == DtAxisX)
+	if (mc.controlType == DefaultControl::AxisX)
 		return m_axisX;
-	else if (mc.controlType == DtAxisY)
+	else if (mc.controlType == DefaultControl::AxisY)
 		return m_axisY;
-	else if (mc.controlType == DtPositionX)
+	else if (mc.controlType == DefaultControl::PositionX)
 		return m_positionX;
-	else if (mc.controlType == DtPositionY)
+	else if (mc.controlType == DefaultControl::PositionY)
 		return m_positionY;
-	else if (mc.controlType == DtButton1)
+	else if (mc.controlType == DefaultControl::Button1)
 		return m_button1;
-	else if (mc.controlType == DtButton2)
+	else if (mc.controlType == DefaultControl::Button2)
 		return m_button2;
-	else if (mc.controlType == DtButton3)
+	else if (mc.controlType == DefaultControl::Button3)
 		return m_button3;
 	else
 		return 0.0f;
@@ -116,7 +116,7 @@ bool MouseDeviceWin32::getControlRange(int32_t control, float& outMin, float& ou
 	return false;
 }
 
-bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool MouseDeviceWin32::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
 	{

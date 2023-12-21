@@ -14,7 +14,10 @@
 namespace traktor::input
 {
 
+extern const MemberEnum< InputCategory >::Key g_InputCategory_Keys_Old[];
 extern const MemberEnum< InputCategory >::Key g_InputCategory_Keys[];
-extern const MemberEnum< InputDefaultControlType >::Key g_InputDefaultControlType_Keys[];
+
+extern const MemberEnum< DefaultControl >::Key g_DefaultControl_Keys_Old[];
+extern const MemberEnum< DefaultControl >::Key g_DefaultControl_Keys[];
 
 }

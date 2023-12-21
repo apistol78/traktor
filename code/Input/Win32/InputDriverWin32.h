@@ -37,7 +37,7 @@ class T_DLLCLASS InputDriverWin32 : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories) override final;
+	virtual bool create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories) override final;
 
 	virtual int getDeviceCount() override final;
 

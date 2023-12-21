@@ -19,34 +19,34 @@ namespace traktor::input
 const struct ControlConfig
 {
 	const wchar_t* name;
-	InputDefaultControlType controlType;
+	DefaultControl controlType;
 	bool analogue;
 	int32_t index;
 }
 c_controlConfig[] =
 {
-	{ L"Up", DtUp, false, XINPUT_GAMEPAD_DPAD_UP },
-	{ L"Down", DtDown, false, XINPUT_GAMEPAD_DPAD_DOWN },
-	{ L"Left", DtLeft, false, XINPUT_GAMEPAD_DPAD_LEFT },
-	{ L"Right", DtRight, false, XINPUT_GAMEPAD_DPAD_RIGHT },
-	{ L"Start", DtSelect, false, XINPUT_GAMEPAD_START },
-	{ L"Back", DtCancel, false, XINPUT_GAMEPAD_BACK },
-	{ L"Left Thumb Left/Right", DtThumbLeftX, true, -1 },
-	{ L"Left Thumb Up/Down", DtThumbLeftY, true, -2 },
-	{ L"Left Thumb Push", DtThumbLeftPush, false, XINPUT_GAMEPAD_LEFT_THUMB },
-	{ L"Right Thumb Left/Right", DtThumbRightX, true, -3 },
-	{ L"Right Thumb Up/Down", DtThumbRightY, true, -4 },
-	{ L"Right Thumb Push", DtThumbRightPush, false, XINPUT_GAMEPAD_RIGHT_THUMB },
-	{ L"Left Trigger", DtTriggerLeft, true, -5 },
-	{ L"Right Trigger", DtTriggerRight, true, -6 },
-	{ L"Left Trigger", DtTriggerLeft, false, -7 },
-	{ L"Right Trigger", DtTriggerRight, false, -8 },
-	{ L"Left Shoulder", DtShoulderLeft, false, XINPUT_GAMEPAD_LEFT_SHOULDER },
-	{ L"Right Shoulder", DtShoulderRight, false, XINPUT_GAMEPAD_RIGHT_SHOULDER },
-	{ L"Button A", DtButton1, false, XINPUT_GAMEPAD_A },
-	{ L"Button B", DtButton2, false, XINPUT_GAMEPAD_B },
-	{ L"Button X", DtButton3, false, XINPUT_GAMEPAD_X },
-	{ L"Button Y", DtButton4, false, XINPUT_GAMEPAD_Y }
+	{ L"Up", DefaultControl::Up, false, XINPUT_GAMEPAD_DPAD_UP },
+	{ L"Down", DefaultControl::Down, false, XINPUT_GAMEPAD_DPAD_DOWN },
+	{ L"Left", DefaultControl::Left, false, XINPUT_GAMEPAD_DPAD_LEFT },
+	{ L"Right", DefaultControl::Right, false, XINPUT_GAMEPAD_DPAD_RIGHT },
+	{ L"Start", DefaultControl::Select, false, XINPUT_GAMEPAD_START },
+	{ L"Back", DefaultControl::Cancel, false, XINPUT_GAMEPAD_BACK },
+	{ L"Left Thumb Left/Right", DefaultControl::ThumbLeftX, true, -1 },
+	{ L"Left Thumb Up/Down", DefaultControl::ThumbLeftY, true, -2 },
+	{ L"Left Thumb Push", DefaultControl::ThumbLeftPush, false, XINPUT_GAMEPAD_LEFT_THUMB },
+	{ L"Right Thumb Left/Right", DefaultControl::ThumbRightX, true, -3 },
+	{ L"Right Thumb Up/Down", DefaultControl::ThumbRightY, true, -4 },
+	{ L"Right Thumb Push", DefaultControl::ThumbRightPush, false, XINPUT_GAMEPAD_RIGHT_THUMB },
+	{ L"Left Trigger", DefaultControl::TriggerLeft, true, -5 },
+	{ L"Right Trigger", DefaultControl::TriggerRight, true, -6 },
+	{ L"Left Trigger", DefaultControl::TriggerLeft, false, -7 },
+	{ L"Right Trigger", DefaultControl::TriggerRight, false, -8 },
+	{ L"Left Shoulder", DefaultControl::ShoulderLeft, false, XINPUT_GAMEPAD_LEFT_SHOULDER },
+	{ L"Right Shoulder", DefaultControl::ShoulderRight, false, XINPUT_GAMEPAD_RIGHT_SHOULDER },
+	{ L"Button A", DefaultControl::Button1, false, XINPUT_GAMEPAD_A },
+	{ L"Button B", DefaultControl::Button2, false, XINPUT_GAMEPAD_B },
+	{ L"Button X", DefaultControl::Button3, false, XINPUT_GAMEPAD_X },
+	{ L"Button Y", DefaultControl::Button4, false, XINPUT_GAMEPAD_Y }
 };
 
 const uint32_t c_skipReadStateNoConnect = 15;
@@ -78,7 +78,7 @@ std::wstring InputDeviceXi::getName() const
 
 InputCategory InputDeviceXi::getCategory() const
 {
-	return CtJoystick;
+	return InputCategory::Joystick;
 }
 
 bool InputDeviceXi::isConnected() const
@@ -150,7 +150,7 @@ bool InputDeviceXi::getControlRange(int32_t control, float& outMin, float& outMa
 	return false;
 }
 
-bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool InputDeviceXi::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_controlConfig); ++i)
 	{

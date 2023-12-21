@@ -13,7 +13,7 @@ namespace traktor
 	namespace input
 	{
 
-/*! InputDefaultControlType to DIK mapping. */
+/*! DefaultControl to DIK mapping. */
 const DWORD c_di8ControlKeys[] =
 {
 	0,
@@ -202,7 +202,7 @@ const DWORD c_di8ControlKeys[] =
 	DIK_MEDIASELECT
 };
 
-/*! InputDefaultControlType to VK mapping. */
+/*! DefaultControl to VK mapping. */
 const DWORD c_vkControlKeys[] =
 {
 	0,	// DtInvalid

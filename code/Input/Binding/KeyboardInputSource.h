@@ -36,7 +36,7 @@ class T_DLLCLASS KeyboardInputSource : public IInputSource
 
 public:
 	explicit KeyboardInputSource(
-		const AlignedVector< InputDefaultControlType >& controlTypes,
+		const AlignedVector< DefaultControl >& controlTypes,
 		DeviceControlManager* deviceControlManager
 	);
 
@@ -51,7 +51,7 @@ public:
 private:
 	struct Key
 	{
-		InputDefaultControlType controlType;
+		DefaultControl controlType;
 		RefArray< DeviceControl > deviceControls;
 		bool state;
 

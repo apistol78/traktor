@@ -31,7 +31,7 @@ class T_DLLCLASS MouseDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	explicit MouseDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 
@@ -51,7 +51,7 @@ public:
 
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const;
 
 	virtual bool getKeyEvent(KeyEvent& outEvent);
 

@@ -66,7 +66,7 @@ std::wstring JoystickDeviceDi8::getName() const
 
 InputCategory JoystickDeviceDi8::getCategory() const
 {
-	return CtJoystick;
+	return InputCategory::Joystick;
 }
 
 bool JoystickDeviceDi8::isConnected() const
@@ -103,7 +103,7 @@ float JoystickDeviceDi8::getControlValue(int32_t control)
 
 	switch (controlInfo.controlType)
 	{
-	case DtUp:
+	case DefaultControl::Up:
 		if (
 			povInRange(m_state.rgdwPOV[0], 31500, 36000) ||
 			povInRange(m_state.rgdwPOV[0], 0, 4500)
@@ -112,54 +112,54 @@ float JoystickDeviceDi8::getControlValue(int32_t control)
 		else
 			return 0.0f;
 
-	case DtDown:
+	case DefaultControl::Down:
 		if (povInRange(m_state.rgdwPOV[0], 13500, 22500))
 			return 1.0f;
 		else
 			return 0.0f;
 
-	case DtLeft:
+	case DefaultControl::Left:
 		if (povInRange(m_state.rgdwPOV[0], 22500, 31500))
 			return 1.0f;
 		else
 			return 0.0f;
 
-	case DtRight:
+	case DefaultControl::Right:
 		if (povInRange(m_state.rgdwPOV[0], 4500, 13500))
 			return 1.0f;
 		else
 			return 0.0f;
 
-	case DtThumbLeftX:
-	case DtThumbLeftY:
-	case DtThumbLeftZ:
-	case DtThumbRightX:
-	case DtThumbRightY:
-	case DtThumbRightZ:
-	case DtSliderLeft:
-	case DtSliderRight:
+	case DefaultControl::ThumbLeftX:
+	case DefaultControl::ThumbLeftY:
+	case DefaultControl::ThumbLeftZ:
+	case DefaultControl::ThumbRightX:
+	case DefaultControl::ThumbRightY:
+	case DefaultControl::ThumbRightZ:
+	case DefaultControl::SliderLeft:
+	case DefaultControl::SliderRight:
 		{
 			LONG stateValue = readStateValueByOffset< LONG >(m_state, controlInfo.offset);
 			float value = adjustDeadZone((stateValue - 32767.0f) / 32767.0f);
 			return controlInfo.inverted ? -value : value;
 		}
 
-	case DtSelect:
-	case DtCancel:
-	case DtButton1:
-	case DtButton2:
-	case DtButton3:
-	case DtButton4:
-	case DtButton5:
-	case DtButton6:
-	case DtButton7:
-	case DtButton8:
-	case DtThumbLeftPush:
-	case DtThumbRightPush:
-	case DtTriggerLeft:
-	case DtTriggerRight:
-	case DtShoulderLeft:
-	case DtShoulderRight:
+	case DefaultControl::Select:
+	case DefaultControl::Cancel:
+	case DefaultControl::Button1:
+	case DefaultControl::Button2:
+	case DefaultControl::Button3:
+	case DefaultControl::Button4:
+	case DefaultControl::Button5:
+	case DefaultControl::Button6:
+	case DefaultControl::Button7:
+	case DefaultControl::Button8:
+	case DefaultControl::ThumbLeftPush:
+	case DefaultControl::ThumbRightPush:
+	case DefaultControl::TriggerLeft:
+	case DefaultControl::TriggerRight:
+	case DefaultControl::ShoulderLeft:
+	case DefaultControl::ShoulderRight:
 		{
 			BYTE value = readStateValueByOffset< BYTE >(m_state, controlInfo.offset);
 			return ((value & 0x80) != 0) ? 1.0f : 0.0f;
@@ -174,7 +174,7 @@ bool JoystickDeviceDi8::getControlRange(int32_t control, float& outMin, float& o
 	return false;
 }
 
-bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool JoystickDeviceDi8::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	for (int i = 0; i < int(m_controlInfo.size()); ++i)
 	{
@@ -248,41 +248,41 @@ void JoystickDeviceDi8::collectControls(IDirectInputDevice8* device)
 {
 	struct ControlTemplate
 	{
-		InputDefaultControlType controlType;
+		DefaultControl controlType;
 		uint32_t offset;
 		bool analogue;
 		bool inverted;
 	}
 	c_controlTemplates[] =
 	{
-		{ DtUp, DIJOFS_POV(0), false, false },
-		{ DtDown, DIJOFS_POV(0), false, false },
-		{ DtLeft, DIJOFS_POV(0), false, false },
-		{ DtRight, DIJOFS_POV(0), false, false },
-		{ DtSelect, DIJOFS_BUTTON(9), false, false },
-		{ DtCancel, DIJOFS_BUTTON(8), false, false },
-		{ DtThumbLeftX, DIJOFS_X, true, false },
-		{ DtThumbLeftY, DIJOFS_Y, true, true },
-		{ DtThumbLeftZ, DIJOFS_Z, true, false },
-		{ DtThumbLeftPush, DIJOFS_BUTTON(14), false, false },
-		{ DtThumbRightX, DIJOFS_RX, true, false },
-		{ DtThumbRightY, DIJOFS_RY, true, true },
-		{ DtThumbRightZ, DIJOFS_RZ, true, false },
-		{ DtThumbRightPush, DIJOFS_BUTTON(15), false, false },
-		{ DtSliderLeft, DIJOFS_SLIDER(0), true, false },
-		{ DtSliderRight, DIJOFS_SLIDER(1), true, false },
-		{ DtTriggerLeft, DIJOFS_BUTTON(6), false, false },
-		{ DtTriggerRight, DIJOFS_BUTTON(7), false, false },
-		{ DtShoulderLeft, DIJOFS_BUTTON(4), false, false },
-		{ DtShoulderRight, DIJOFS_BUTTON(5), false, false },
-		{ DtButton1, DIJOFS_BUTTON(0), false, false },
-		{ DtButton2, DIJOFS_BUTTON(1), false, false },
-		{ DtButton3, DIJOFS_BUTTON(2), false, false },
-		{ DtButton4, DIJOFS_BUTTON(3), false, false },
-		{ DtButton5, DIJOFS_BUTTON(10), false, false },
-		{ DtButton6, DIJOFS_BUTTON(11), false, false },
-		{ DtButton7, DIJOFS_BUTTON(12), false, false },
-		{ DtButton8, DIJOFS_BUTTON(13), false, false }
+		{ DefaultControl::Up, DIJOFS_POV(0), false, false },
+		{ DefaultControl::Down, DIJOFS_POV(0), false, false },
+		{ DefaultControl::Left, DIJOFS_POV(0), false, false },
+		{ DefaultControl::Right, DIJOFS_POV(0), false, false },
+		{ DefaultControl::Select, DIJOFS_BUTTON(9), false, false },
+		{ DefaultControl::Cancel, DIJOFS_BUTTON(8), false, false },
+		{ DefaultControl::ThumbLeftX, DIJOFS_X, true, false },
+		{ DefaultControl::ThumbLeftY, DIJOFS_Y, true, true },
+		{ DefaultControl::ThumbLeftZ, DIJOFS_Z, true, false },
+		{ DefaultControl::ThumbLeftPush, DIJOFS_BUTTON(14), false, false },
+		{ DefaultControl::ThumbRightX, DIJOFS_RX, true, false },
+		{ DefaultControl::ThumbRightY, DIJOFS_RY, true, true },
+		{ DefaultControl::ThumbRightZ, DIJOFS_RZ, true, false },
+		{ DefaultControl::ThumbRightPush, DIJOFS_BUTTON(15), false, false },
+		{ DefaultControl::SliderLeft, DIJOFS_SLIDER(0), true, false },
+		{ DefaultControl::SliderRight, DIJOFS_SLIDER(1), true, false },
+		{ DefaultControl::TriggerLeft, DIJOFS_BUTTON(6), false, false },
+		{ DefaultControl::TriggerRight, DIJOFS_BUTTON(7), false, false },
+		{ DefaultControl::ShoulderLeft, DIJOFS_BUTTON(4), false, false },
+		{ DefaultControl::ShoulderRight, DIJOFS_BUTTON(5), false, false },
+		{ DefaultControl::Button1, DIJOFS_BUTTON(0), false, false },
+		{ DefaultControl::Button2, DIJOFS_BUTTON(1), false, false },
+		{ DefaultControl::Button3, DIJOFS_BUTTON(2), false, false },
+		{ DefaultControl::Button4, DIJOFS_BUTTON(3), false, false },
+		{ DefaultControl::Button5, DIJOFS_BUTTON(10), false, false },
+		{ DefaultControl::Button6, DIJOFS_BUTTON(11), false, false },
+		{ DefaultControl::Button7, DIJOFS_BUTTON(12), false, false },
+		{ DefaultControl::Button8, DIJOFS_BUTTON(13), false, false }
 	};
 
 	int32_t sliderIndex = 0;

@@ -25,7 +25,7 @@ InputCategory DeviceControl::getCategory() const
 	return m_category;
 }
 
-InputDefaultControlType DeviceControl::getControlType() const
+DefaultControl DeviceControl::getControlType() const
 {
 	return m_controlType;
 }
@@ -66,8 +66,8 @@ float DeviceControl::getCurrentValue() const
 }
 
 DeviceControl::DeviceControl()
-:	m_category(CtUnknown)
-,	m_controlType(DtInvalid)
+:	m_category(InputCategory::Unknown)
+,	m_controlType(DefaultControl::Invalid)
 ,	m_analogue(false)
 ,	m_index(0)
 ,	m_control(0)
