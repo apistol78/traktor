@@ -58,7 +58,7 @@ std::wstring KeyboardDeviceX11::getName() const
 
 InputCategory KeyboardDeviceX11::getCategory() const
 {
-	return CtKeyboard;
+	return InputCategory::Keyboard;
 }
 
 bool KeyboardDeviceX11::isConnected() const
@@ -105,7 +105,7 @@ bool KeyboardDeviceX11::getControlRange(int32_t control, float& outMin, float& o
 	return true;
 }
 
-bool KeyboardDeviceX11::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
+bool KeyboardDeviceX11::getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const
 {
 	if (analogue || !c_x11ControlKeys[int32_t(controlType)])
 		return false;

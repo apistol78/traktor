@@ -26,7 +26,7 @@ InputDriverX11::InputDriverX11()
 {
 }
 
-bool InputDriverX11::create(const SystemApplication& sysapp, const SystemWindow& syswin, uint32_t inputCategories)
+bool InputDriverX11::create(const SystemApplication& sysapp, const SystemWindow& syswin, InputCategory inputCategories)
 {
 	m_display = (Display*)syswin.display;
 	m_window = (Window)syswin.window;

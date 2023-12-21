@@ -48,7 +48,7 @@ public:
 
 	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const override final;
 
-	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const override final;
+	virtual bool getDefaultControl(DefaultControl controlType, bool analogue, int32_t& control) const override final;
 
 	virtual bool getKeyEvent(KeyEvent& outEvent) override final;
 
