@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Physics/Body.h"
@@ -16,8 +17,6 @@
 #include "Physics/World/Vehicle/Wheel.h"
 #include "Physics/World/Vehicle/WheelData.h"
 #include "World/Entity.h"
-
-#include "Core/Log/Log.h"
 
 namespace traktor::physics
 {
@@ -92,6 +91,7 @@ void VehicleComponent::update(const world::UpdateParams& update)
 
 	updateSteering(body, dT);
 	updateSuspension(body, dT);
+	updateGrip(body, dT);
 	updateFriction(body, dT);
 	updateEngine(body, dT);
 	updateWheels(body, dT);
@@ -146,15 +146,21 @@ void VehicleComponent::updateSteering(Body* body, float dT)
 		m_steerAngle -= dA;
 	}
 
+	// Calculate wheel angles for each side, inner wheels should have greater angle.
+	const float steerAngleLeft = m_steerAngle < 0.0f ? m_steerAngle * m_data->getAckermannCoeff() : m_steerAngle;
+	const float steerAngleRight = m_steerAngle > 0.0f ? m_steerAngle * m_data->getAckermannCoeff() : m_steerAngle;
+
 	// Update wheel direction from steering.
-	const Vector4 direction(std::sin(m_steerAngle), 0.0f, std::cos(m_steerAngle), 0.0f);
-	const Vector4 directionPerp(std::cos(m_steerAngle), 0.0f, -std::sin(m_steerAngle), 0.0f);
 	for (auto wheel : m_wheels)
 	{
 		if (wheel->data->getSteer())
 		{
-			wheel->direction = direction;
-			wheel->directionPerp = directionPerp;
+			const bool left = (bool)(wheel->data->getAnchor().x() < 0.0f);
+			const float steerAngle = left ? steerAngleLeft : steerAngleRight;
+
+			wheel->steer = steerAngle;
+			wheel->direction = Vector4(std::sin(steerAngle), 0.0f, std::cos(steerAngle), 0.0f);
+			wheel->directionPerp = Vector4(std::cos(steerAngle), 0.0f, -std::sin(steerAngle), 0.0f);
 		}
 	}
 }
@@ -230,6 +236,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 
 			// Save suspension state.
 			wheel->suspensionLength = suspensionLength;
+			wheel->suspensionForce = springForce + dampingForce;
 
 			// Contact attributes.
 			Vector4 contactVelocity;
@@ -262,6 +269,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 		else
 		{
 			wheel->suspensionLength = data->getSuspensionLength().max;
+			wheel->suspensionForce = 0.0f;
 
 			wheel->contact = false;
 			wheel->contactFudge = 0.0f;
@@ -270,6 +278,27 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 			wheel->contactNormal = Vector4::zero();
 			wheel->contactVelocity = Vector4::zero();
 		}
+		
+		// Object space wheel center.
+		wheel->center = (data->getAnchor() - data->getAxis() * Scalar(wheel->suspensionLength)).xyz1();
+	}
+}
+
+void VehicleComponent::updateGrip(Body* body, float dT)
+{
+	float totalSuspensionForce = 0.0f;
+	for (auto wheel : m_wheels)
+		totalSuspensionForce += max(wheel->suspensionForce, 0.0f);
+
+	if (totalSuspensionForce > 0.0f)
+	{
+		for (auto wheel : m_wheels)
+			wheel->grip = max(wheel->suspensionForce, 0.0f) / totalSuspensionForce;
+	}
+	else
+	{
+		for (auto wheel : m_wheels)
+			wheel->grip = 0.0f;
 	}
 }
 
@@ -311,8 +340,9 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 		// Calculate grip.
 		Scalar grip = 1.0_simd;
-		grip *= abs(dot3(axisW, wheel->contactNormal));
-		grip *= Scalar(wheel->contactFudge);
+		//grip *= abs(dot3(axisW, wheel->contactNormal));
+		//grip *= Scalar(wheel->contactFudge);
+		grip *= Scalar(wheel->grip);
 
 		// Determine velocities and percent of maximum velocity.
 		const Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
@@ -346,17 +376,17 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 		// Apply friction force.
 		body->addForceAt(
-			wheel->contactPosition,
-			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method),
+			bodyT * wheel->center, //wheel->contactPosition,
+			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip, // * (1.0_simd - method),
 			false
 		);
 	
 		// Apply perpendicular friction force if going slow.
-		body->addForceAt(
-			wheel->contactPosition,
-			directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
-			false
-		);
+		//body->addForceAt(
+		//	bodyT * wheel->center, //wheel->contactPosition,
+		//	directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
+		//	false
+		//);
 
 		// Accumulate rolling friction, applied at center of mass for simplicity.
 		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;
@@ -367,7 +397,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 			const Scalar f = Scalar(m_breaking * data->getBreakFactor());
 			const Scalar mag = sign(forwardVelocity) * breakingForce * f * grip;
 			body->addForceAt(
-				wheel->contactPosition,
+				bodyT * wheel->center, //wheel->contactPosition,
 				directionW * -mag,
 				false
 			);
@@ -392,6 +422,7 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 	const Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
 	const Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
 
+	const float differentialCoeff = 0.2f;
 	for (auto wheel : m_wheels)
 	{
 		if (!wheel->contact)
@@ -403,15 +434,14 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 		if (!data->getDrive())
 			continue;
 
-		const Vector4 anchor = data->getAnchor().xyz1();
-		const Vector4 axis = -data->getAxis().xyz0().normalized();
-		const Vector4 position = anchor + axis * Scalar(wheel->suspensionLength);
-
 		const Vector4 direction = (wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).normalized();
-		const Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
+		//const Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
+
+		// Apply more force on wheels with less grip, fake differential.
+		const Scalar grip = Scalar(1.0f - wheel->grip * differentialCoeff);
 
 		body->addForceAt(
-			position, // bodyTinv * wheel->contactPosition,
+			wheel->center, // bodyTinv * wheel->contactPosition,
 			direction * engineForce * grip,
 			true
 		);
@@ -436,7 +466,7 @@ void VehicleComponent::updateWheels(Body* body, float dT)
 
 		if (wheel->contact)
 		{
-			float d = dot3(wheel->contactVelocity, bodyT * wheel->direction);
+			const float d = dot3(wheel->contactVelocity, bodyT * wheel->direction);
 			wheel->velocity = lerp(d / data->getRadius(), targetVelocity, 0.25f);
 		}
 		else

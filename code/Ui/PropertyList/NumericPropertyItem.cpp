@@ -249,8 +249,8 @@ bool NumericPropertyItem::paste()
 	if (!clipboard)
 		return false;
 
-	double value = parseString< double >(clipboard->getText());
-	if (value != std::numeric_limits< double >::signaling_NaN())
+	const double value = parseString< double >(clipboard->getText());
+	if (!std::isnan(value))
 	{
 		m_value = value;
 		return true;

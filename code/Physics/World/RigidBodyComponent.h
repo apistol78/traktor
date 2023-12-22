@@ -42,7 +42,8 @@ public:
 	explicit RigidBodyComponent(
 		Body* body,
 		world::EntityEventManager* eventManager,
-		world::IEntityEvent* eventCollide
+		world::IEntityEvent* eventCollide,
+		float transformFilter
 	);
 
 	virtual void destroy() override final;
@@ -62,6 +63,8 @@ private:
 	Ref< Body > m_body;
 	Ref< world::EntityEventManager > m_eventManager;
 	Ref< world::IEntityEvent > m_eventCollide;
+	Transform m_lastTransform;
+	float m_transformFilter;
 
 	void collisionListener(const physics::CollisionInfo& collisionInfo);
 };

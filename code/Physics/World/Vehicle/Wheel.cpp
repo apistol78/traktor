@@ -16,8 +16,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Wheel", Wheel, Object)
 
 Wheel::Wheel(const WheelData* data)
 :	data(data)
+,	steer(0.0f)
 ,	angle(0.0f)
 ,	velocity(0.0f)
+,	center(Vector4::origo())
 ,	direction(0.0f, 0.0f, 1.0f)
 ,	directionPerp(1.0f, 0.0f, 0.0f)
 ,	suspensionLength(data->getSuspensionLength().max)
@@ -29,6 +31,14 @@ Wheel::Wheel(const WheelData* data)
 ,	contactVelocity(Vector4::zero())
 ,	sliding(false)
 {
+}
+
+Transform Wheel::getTransform() const
+{
+	return Transform(
+		center,
+		Quaternion::fromEulerAngles(steer, 0.0f, 0.0f) * Quaternion::fromEulerAngles(0.0f, angle, 0.0f)
+	);
 }
 
 }

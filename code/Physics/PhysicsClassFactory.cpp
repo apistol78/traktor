@@ -372,8 +372,10 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classWheel = new AutoRuntimeClass< Wheel >();
 	classWheel->addProperty("data", &Wheel::getData);
+	classWheel->addProperty("steer", &Wheel::getSteer);
 	classWheel->addProperty("angle", &Wheel::getAngle);
 	classWheel->addProperty("velocity", &Wheel::getVelocity);
+	classWheel->addProperty("center", &Wheel::getCenter);
 	classWheel->addProperty("direction", &Wheel::getDirection);
 	classWheel->addProperty("directionPerp", &Wheel::getDirectionPerp);
 	classWheel->addProperty("suspensionLength", &Wheel::getSuspensionLength);
@@ -382,6 +384,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWheel->addProperty("contactNormal", &Wheel::getContactNormal);
 	classWheel->addProperty("contactVelocity", &Wheel::getContactVelocity);
 	classWheel->addProperty("sliding", &Wheel::getSliding);
+	classWheel->addProperty("transform", &Wheel::getTransform);
 	registrar->registerClass(classWheel);
 
 	auto classVehicleComponent = new AutoRuntimeClass< VehicleComponent >();
