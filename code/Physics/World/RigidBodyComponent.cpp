@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,12 +21,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidBodyComponent", RigidBodyComponent
 RigidBodyComponent::RigidBodyComponent(
 	Body* body,
 	world::EntityEventManager* eventManager,
-	world::IEntityEvent* eventCollide
+	world::IEntityEvent* eventCollide,
+	float transformFilter
 )
 :	m_owner(nullptr)
 ,	m_body(body)
 ,	m_eventManager(eventManager)
 ,	m_eventCollide(eventCollide)
+,	m_transformFilter(transformFilter)
 {
 	if (m_body && m_eventCollide)
 		m_body->addCollisionListener(physics::createCollisionListener(this, &RigidBodyComponent::collisionListener));
@@ -47,12 +49,14 @@ void RigidBodyComponent::setOwner(world::Entity* owner)
 		const Transform transform = m_owner->getTransform();
 		m_body->setTransform(transform);
 		m_body->setEnable(true);
+		m_lastTransform = transform;
 	}
 }
 
 void RigidBodyComponent::setTransform(const Transform& transform)
 {
 	m_body->setTransform(transform);
+	m_lastTransform = transform;
 }
 
 Aabb3 RigidBodyComponent::getBoundingBox() const
@@ -62,11 +66,20 @@ Aabb3 RigidBodyComponent::getBoundingBox() const
 
 void RigidBodyComponent::update(const world::UpdateParams& update)
 {
-	if (!m_body->isActive() ||m_body->isStatic() || m_body->isKinematic())
+	if (!m_body->isActive() || m_body->isStatic() || m_body->isKinematic())
 		return;
 
 	// Body is dynamic and active; need to update owner's transform.
-	m_owner->setTransform(m_body->getTransform());
+	if (m_transformFilter >= FUZZY_EPSILON)
+	{
+		const Transform f = lerp(m_body->getTransform(), m_lastTransform, Scalar(m_transformFilter));
+		m_owner->setTransform(f);
+		m_lastTransform = f;
+	}
+	else
+	{
+		m_owner->setTransform(m_body->getTransform());
+	}
 }
 
 void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisionInfo)

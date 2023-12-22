@@ -219,12 +219,12 @@ void SkeletonComponent::updatePoseController(double time, double deltaTime)
 			m_jointTransforms,
 			m_poseTransforms
 		);
-
-		// Ensure we have same number of pose transforms as bones.
-		const size_t skeletonJointCount = m_jointTransforms.size();
-		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
-			m_poseTransforms.push_back(m_jointTransforms[i]);
 	}
+
+	// Ensure we have same number of pose transforms as bones.
+	const size_t skeletonJointCount = m_jointTransforms.size();
+	for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
+		m_poseTransforms.push_back(m_jointTransforms[i]);
 }
 
 }

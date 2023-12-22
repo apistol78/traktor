@@ -25,7 +25,7 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 1, VehicleComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.VehicleComponentData", 2, VehicleComponentData, world::IEntityComponentData)
 
 VehicleComponentData::VehicleComponentData()
 :	m_steerAngleVelocity(deg2rad(150.0f))
@@ -34,6 +34,7 @@ VehicleComponentData::VehicleComponentData()
 ,	m_maxVelocity(30.0f)
 ,	m_engineForce(140.0f)
 ,	m_breakingForce(20.0f)
+,	m_ackermannCoeff(1.0f)
 {
 }
 
@@ -76,7 +77,7 @@ Ref< VehicleComponent > VehicleComponentData::createComponent(
 
 int32_t VehicleComponentData::getOrdinal() const
 {
-	return -100;
+	return -200;
 }
 
 void VehicleComponentData::setTransform(const world::EntityData* owner, const Transform& transform)
@@ -93,8 +94,10 @@ void VehicleComponentData::serialize(ISerializer& s)
 	s >> Member< float >(L"swayBarForce", m_swayBarForce);
 	s >> Member< float >(L"maxVelocity", m_maxVelocity, AttributeUnit(UnitType::Metres, true));
 	s >> Member< float >(L"engineForce", m_engineForce);
-		if (s.getVersion< VehicleComponentData >() >= 1)
+	if (s.getVersion< VehicleComponentData >() >= 1)
 		s >> Member< float >(L"breakingForce", m_breakingForce);
+	if (s.getVersion< VehicleComponentData >() >= 2)
+		s >> Member< float >(L"ackermannCoeff", m_ackermannCoeff);
 }
 
 }

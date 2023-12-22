@@ -296,13 +296,11 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	if (!m_worldRenderer || !m_scene || !m_shader)
 		return;
 
-
 	if (!m_screenRenderer)
 	{
 		m_screenRenderer = new render::ScreenRenderer();
 		m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
 	}
-
 
 	// Build a root entity by gathering entities from containers.
 	auto group = m_rootGroup->getComponent< world::GroupComponent >();
@@ -315,11 +313,9 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	group->addEntity(m_scene->getRootEntity());
 	group->addEntity(m_dynamicEntities);
 
-
 	// Get render view dimensions.
 	const int32_t width = m_environment->getRender()->getWidth();
 	const int32_t height = m_environment->getRender()->getHeight();
-
 
 	render::RenderGraphTargetSetDesc rgtsd;
 	rgtsd.count = 1;

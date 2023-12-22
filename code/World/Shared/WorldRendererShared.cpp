@@ -427,6 +427,7 @@ void WorldRendererShared::setupLightPass(
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
 
+#if 0
 				// Check if this slice is still inside
 				// the expanded slice frustum.
 				if (slice != 0)
@@ -437,6 +438,7 @@ void WorldRendererShared::setupLightPass(
 						continue;
 					sliceViewFrustum.scale(1.0_simd);
 				}
+#endif
 
 				shadowSlices[i] = sliceViewFrustum;
 

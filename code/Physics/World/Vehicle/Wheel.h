@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include "Core/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Transform.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -30,8 +30,10 @@ class T_DLLCLASS Wheel : public Object
 
 public:
 	Ref< const WheelData > data;
+	float steer;
 	float angle;
 	float velocity;
+	Vector4 center;
 	Vector4 direction;
 	Vector4 directionPerp;
 	float suspensionLength;
@@ -42,14 +44,20 @@ public:
 	Vector4 contactNormal;
 	Vector4 contactVelocity;
 	bool sliding;
+	float suspensionForce;
+	float grip;
 
 	explicit Wheel(const WheelData* data);
 
 	const WheelData* getData() const { return data; }
 
+	float getSteer() const { return steer; }
+
 	float getAngle() const { return angle; }
 
 	float getVelocity() const { return velocity; }
+
+	const Vector4& getCenter() const { return center; }
 
 	const Vector4& getDirection() const { return direction; }
 
@@ -66,6 +74,8 @@ public:
 	const Vector4& getContactVelocity() const { return contactVelocity; }
 
 	bool getSliding() const { return sliding; }
+
+	Transform getTransform() const;
 };
 
 }

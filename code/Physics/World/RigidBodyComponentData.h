@@ -75,6 +75,7 @@ public:
 private:
 	Ref< BodyDesc > m_bodyDesc;
 	Ref< world::IEntityEventData > m_eventCollide;
+	float m_transformFilter = 0.0f;
 };
 
 }

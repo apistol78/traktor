@@ -92,6 +92,8 @@ private:
 	void updateSteering(Body* body, float dT);
 
 	void updateSuspension(Body* body, float dT);
+	
+	void updateGrip(Body* body, float dT);
 
 	void updateFriction(Body* body, float dT);
 
