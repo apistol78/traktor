@@ -199,8 +199,8 @@ bool NavMeshPipeline::buildOutput(
 		// Check for explicit volume bounds.
 		if (auto volumeComponentData = entityData->getComponent< world::VolumeComponentData >())
 		{
-			if (entityData->getName() == L"NavMesh" && !volumeComponentData->getVolumes().empty())
-				navMaximumBounds = volumeComponentData->getVolumes().front();
+			if (entityData->getName() == L"NavMesh" && !volumeComponentData->getBoundingBox().empty())
+				navMaximumBounds = volumeComponentData->getBoundingBox();
 		}
 
 		if (model)

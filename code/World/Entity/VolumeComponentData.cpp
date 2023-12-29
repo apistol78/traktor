@@ -6,9 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAabb.h"
-#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/Member.h"
 #include "World/Entity/VolumeComponentData.h"
 
 namespace traktor::world
@@ -27,7 +27,7 @@ void VolumeComponentData::setTransform(const EntityData* owner, const Transform&
 
 void VolumeComponentData::serialize(ISerializer& s)
 {
-	s >> MemberAlignedVector< Aabb3, MemberAabb3 >(L"volumes", m_volumes);
+	s >> Member< Vector4 >(L"size", m_size, AttributeDirection(false));
 }
 
 }

@@ -163,12 +163,10 @@ void DefaultComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRende
 		{
 			primitiveRenderer->pushWorld(transform.toMatrix44());
 
-			const AlignedVector< Aabb3 >& volumes = volumeComponent->getVolumes();
-			for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
-			{
-				primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
-				primitiveRenderer->drawWireAabb(*i, 1.0f, Color4ub(120, 255, 120, 255));
-			}
+			const Aabb3 boundingBox = volumeComponent->getBoundingBox();
+
+			primitiveRenderer->drawSolidAabb(boundingBox, Color4ub(120, 255, 120, 80));
+			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, Color4ub(120, 255, 120, 255));
 
 			primitiveRenderer->popWorld();
 		}
