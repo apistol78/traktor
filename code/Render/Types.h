@@ -546,6 +546,7 @@ struct RenderTargetSetCreateDesc
 	bool createDepthStencil = false;			/*!< Attach depth/stencil buffer; shared among all targets. */
 	bool usingPrimaryDepthStencil = false;		/*!< Share primary depth/stencil buffer; shared among all targets. */
 	bool usingDepthStencilAsTexture = false;	/*!< Will be using depth/stencil buffer as a texture input of shaders. */
+	bool usingDepthStencilAsStorage = false;	/*!< Will be using depth/stencil buffer as storage input or output of compute shader. */
 	bool ignoreStencil = true;					/*!< Ignoring stencil; stencil isn't used in rendering. */
 	bool generateMips = false;					/*!< Generate complete mip-chain after target been renderered onto. */
 	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */

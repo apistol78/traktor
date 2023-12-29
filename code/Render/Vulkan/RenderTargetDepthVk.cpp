@@ -41,7 +41,7 @@ bool RenderTargetDepthVk::createPrimary(
 )
 {
 	m_image = new Image(m_context);
-	if (!m_image->createDepthTarget(width, height, multiSample, format, false))
+	if (!m_image->createDepthTarget(width, height, multiSample, format, false, false))
 		return false;
 
 	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_image->getVkImage(), VK_OBJECT_TYPE_IMAGE);
@@ -75,7 +75,8 @@ bool RenderTargetDepthVk::create(const RenderTargetSetCreateDesc& setDesc, const
 		setDesc.height,
 		setDesc.multiSample,
 		format,
-		setDesc.usingDepthStencilAsTexture
+		setDesc.usingDepthStencilAsTexture,
+		setDesc.usingDepthStencilAsStorage
 	))
 		return false;
 
