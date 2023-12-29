@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,10 +37,12 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const AlignedVector< Aabb3 >& getVolumes() const { return m_volumes; }
+	const Vector4& getSize() const { return m_size; }
+
+	const Aabb3 getBoundingBox() const { return Aabb3(-m_size / 2.0_simd, m_size / 2.0_simd); }
 
 private:
-	AlignedVector< Aabb3 > m_volumes;
+	Vector4 m_size = Vector4::zero();
 };
 
 }

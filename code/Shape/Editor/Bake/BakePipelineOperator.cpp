@@ -642,7 +642,7 @@ bool BakePipelineOperator::build(
 				if (inoutEntityData->getName() == L"Irradiance")
 				{
 					if (auto volumeComponentData = inoutEntityData->getComponent< world::VolumeComponentData >())
-						irradianceBoundingBox = volumeComponentData->getVolumes().front().transform(inoutEntityData->getTransform());
+						irradianceBoundingBox = volumeComponentData->getBoundingBox().transform(inoutEntityData->getTransform());
 				}
 
 				// Calculate synthesized ids.

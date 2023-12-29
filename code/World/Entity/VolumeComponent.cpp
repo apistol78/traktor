@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,8 +19,7 @@ VolumeComponent::VolumeComponent(const VolumeComponentData* data)
 :	m_owner(nullptr)
 ,	m_data(data)
 {
-	for (const auto& volume : m_data->getVolumes())
-		m_boundingBox.contain(volume);
+	m_boundingBox = m_data->getBoundingBox();
 }
 
 void VolumeComponent::destroy()
@@ -52,13 +51,7 @@ bool VolumeComponent::inside(const Vector4& point) const
 
 	const Transform transform = m_owner->getTransform();
 	const Vector4 p = transform.inverse() * point.xyz1();
-	for (const auto& volume : m_data->getVolumes())
-	{
-		if (volume.inside(p))
-			return true;
-	}
-
-	return false;
+	return m_boundingBox.inside(p);
 }
 
 }
