@@ -145,7 +145,7 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 	auto& jointBufferLast = m_jointBuffers[0];
 	auto& jointBufferCurrent = m_jointBuffers[1];
 
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0 && worldRenderView.getIndex() == 0)
 	{
 		// Update joint buffers only for first pass of frame, buffers are implicitly double buffered
 		// and cannot be updated multiple times per frame.

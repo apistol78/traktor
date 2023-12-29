@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <atomic>
 #include "Animation/Pose.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Job.h"
@@ -76,7 +77,7 @@ private:
 	AlignedVector< Vector4 > m_skinTransforms[2];
 	Ref< render::Buffer > m_jointBuffers[2];
 	Transform m_lastWorldTransform[2];
-	int32_t m_index;
+	std::atomic< int32_t > m_index;
 };
 
 }
