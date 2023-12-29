@@ -74,7 +74,8 @@ public:
 		uint32_t height,
 		uint32_t multiSample,
 		VkFormat format,
-		bool usedAsTexture
+		bool usedAsTexture,
+		bool usedAsStorage
 	);
 
 	void destroy();

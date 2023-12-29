@@ -249,6 +249,7 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	{
 		T_CAPTURE_ASSERT(!desc.createDepthStencil, L"Invalid values in create desc.");
 		T_CAPTURE_ASSERT(!desc.usingDepthStencilAsTexture, L"Invalid values in create desc.");
+		T_CAPTURE_ASSERT(!desc.usingDepthStencilAsStorage, L"Invalid values in create desc.");
 		T_CAPTURE_ASSERT(sharedDepthStencil == nullptr, L"Invalid values in create desc.");
 	}
 

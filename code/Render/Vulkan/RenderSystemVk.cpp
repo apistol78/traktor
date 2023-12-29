@@ -579,7 +579,7 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 	if (dynamic)
 	{
 		Ref< BufferDynamicVk > buffer = new BufferDynamicVk(m_context, bufferSize, m_statistics.buffers);
-		if (buffer->create(usageBits, 2 * 3))
+		if (buffer->create(usageBits, 2 * 4))
 			return buffer;
 	}
 	else
