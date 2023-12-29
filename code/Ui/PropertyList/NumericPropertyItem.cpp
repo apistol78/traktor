@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <cmath>
 #include <sstream>
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
