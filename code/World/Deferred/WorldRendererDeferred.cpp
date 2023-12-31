@@ -213,7 +213,7 @@ void WorldRendererDeferred::setupVisualPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(dbufferTargetSetId);
-	rp->addInput(hiZTextureId);
+	// rp->addInput(hiZTextureId);
 	rp->addInput(ambientOcclusionTargetSetId);
 	rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
