@@ -72,6 +72,12 @@ public:
 	 */
 	virtual void update(const UpdateInfo& info) = 0;
 
+	/*! Update layer logic.
+	 *
+	 * info Engine update information.
+	 */
+	virtual void postUpdate(const UpdateInfo& info) = 0;
+
 	/*! Prepare layer for setup.
 	 *
 	 * \param info Engine update information.

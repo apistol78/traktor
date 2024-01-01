@@ -187,6 +187,10 @@ void AudioLayer::update(const UpdateInfo& info)
 	}
 }
 
+void AudioLayer::postUpdate(const UpdateInfo& info)
+{
+}
+
 void AudioLayer::preSetup(const UpdateInfo& info)
 {
 }

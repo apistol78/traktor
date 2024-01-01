@@ -58,6 +58,8 @@ public:
 
 	virtual void update(const UpdateInfo& info) override final;
 
+	virtual void postUpdate(const UpdateInfo& info) override final;
+
 	virtual void preSetup(const UpdateInfo& info) override final;
 
 	virtual void setup(const UpdateInfo& info, render::RenderGraph& renderGraph) override final;

@@ -138,6 +138,10 @@ void VideoLayer::update(const UpdateInfo& info)
 	}
 }
 
+void VideoLayer::postUpdate(const UpdateInfo& info)
+{
+}
+
 void VideoLayer::preSetup(const UpdateInfo& info)
 {
 }

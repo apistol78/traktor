@@ -214,16 +214,16 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
-	// Update camera transform from entity.
-	for (int32_t i = 0; i < 2; ++i)
-	{
-		if (m_cameraEntities[i])
-		{
-			const Transform cameraTransform = m_cameraEntities[i]->getTransform();
-			m_cameraTransforms[i].step();
-			m_cameraTransforms[i].set(cameraTransform);
-		}
-	}
+	// // Update camera transform from entity.
+	// for (int32_t i = 0; i < 2; ++i)
+	// {
+	// 	if (m_cameraEntities[i])
+	// 	{
+	// 		const Transform cameraTransform = m_cameraEntities[i]->getTransform();
+	// 		m_cameraTransforms[i].step();
+	// 		m_cameraTransforms[i].set(cameraTransform);
+	// 	}
+	// }
 
 	// Update scene controller.
 	if (m_controllerEnable)
@@ -259,6 +259,24 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
+}
+
+void SplitWorldLayer::postUpdate(const UpdateInfo& info)
+{
+	T_PROFILER_SCOPE(L"SplitWorldLayer post-update");
+	if (!m_worldRenderer || !m_scene)
+		return;
+
+	// Update camera transform from entity.
+	for (int32_t i = 0; i < 2; ++i)
+	{
+		if (m_cameraEntities[i])
+		{
+			const Transform cameraTransform = m_cameraEntities[i]->getTransform();
+			m_cameraTransforms[i].step();
+			m_cameraTransforms[i].set(cameraTransform);
+		}
+	}
 }
 
 void SplitWorldLayer::preSetup(const UpdateInfo& info)
@@ -319,11 +337,11 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 
 	render::RenderGraphTargetSetDesc rgtsd;
 	rgtsd.count = 1;
-	rgtsd.width = width / 2;
-	rgtsd.height = height;
+	rgtsd.width = width / 4;
+	rgtsd.height = height / 2;
 	rgtsd.createDepthStencil = true;
 	rgtsd.ignoreStencil = true;
-	rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
+	rgtsd.targets[0].colorFormat = render::TfR11G11B10F;
 
 	auto leftTargetSetId = renderGraph.addTransientTargetSet(
 		L"Split Left",

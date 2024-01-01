@@ -212,14 +212,6 @@ void WorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
-	// Update camera transform from entity.
-	if (m_cameraEntity)
-	{
-		const Transform cameraTransform = m_cameraEntity->getTransform();
-		m_cameraTransform.step();
-		m_cameraTransform.set(cameraTransform);
-	}
-
 	// Update scene controller.
 	if (m_controllerEnable)
 	{
@@ -254,6 +246,21 @@ void WorldLayer::update(const UpdateInfo& info)
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
+}
+
+void WorldLayer::postUpdate(const UpdateInfo& info)
+{
+	T_PROFILER_SCOPE(L"WorldLayer post-update");
+	if (!m_worldRenderer || !m_scene)
+		return;
+
+	// Update camera transform from entity.
+	if (m_cameraEntity)
+	{
+		const Transform cameraTransform = m_cameraEntity->getTransform();
+		m_cameraTransform.step();
+		m_cameraTransform.set(cameraTransform);
+	}
 }
 
 void WorldLayer::preSetup(const UpdateInfo& info)

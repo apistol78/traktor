@@ -418,6 +418,10 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 	m_moviePlayer->progress((float)info.getSimulationDeltaTime(), m_soundRenderer);
 }
 
+void SparkLayer::postUpdate(const runtime::UpdateInfo& info)
+{
+}
+
 void SparkLayer::preSetup(const runtime::UpdateInfo& info)
 {
 	if (m_movie.changed())

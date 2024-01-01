@@ -81,6 +81,14 @@ StageState::UpdateResult StageState::update(IStateManager* stateManager, const U
 		return UrExit;
 }
 
+StageState::UpdateResult StageState::postUpdate(IStateManager* stateManager, const UpdateInfo& info)
+{
+	if (m_stage->postUpdate(stateManager, info))
+		return UrOk;
+	else
+		return UrExit;
+}
+
 StageState::BuildResult StageState::build(uint32_t frame, const UpdateInfo& info)
 {
 	render::RenderContext* renderContext = m_frames[frame].renderContext;
