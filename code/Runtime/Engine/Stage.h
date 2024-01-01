@@ -151,6 +151,14 @@ public:
 	 */
 	bool update(IStateManager* stateManager, const UpdateInfo& info);
 
+	/*! Update, post physics, this stage.
+	 *
+	 * \param stateManager Engine state manager.
+	 * \param info Engine update information.
+	 * \return True if this update succeeded.
+	 */
+	bool postUpdate(IStateManager* stateManager, const UpdateInfo& info);
+
 	bool setup(const UpdateInfo& info, render::RenderGraph& renderGraph);
 
 	void transition();

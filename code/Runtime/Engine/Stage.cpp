@@ -250,24 +250,36 @@ bool Stage::update(IStateManager* stateManager, const UpdateInfo& info)
 		// Update each layer.
 		for (auto layer : m_layers)
 			layer->update(info);
+	}
 
-		// Issue script post update.
-		if (validateScriptContext())
+	return true;
+}
+
+bool Stage::postUpdate(IStateManager* stateManager, const UpdateInfo& info)
+{
+	if (m_pendingStage)
+		return true;
+
+	// Issue script post update.
+	if (validateScriptContext())
+	{
+		T_PROFILER_SCOPE(L"Script post update");
+		if (m_object)
 		{
-			T_PROFILER_SCOPE(L"Script post update");
-			if (m_object)
+			const Any argv[] =
 			{
-				const Any argv[] =
-				{
-					Any::fromObject(const_cast< UpdateInfo* >(&info))
-				};
+				Any::fromObject(const_cast< UpdateInfo* >(&info))
+			};
 
-				const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
-				if (methodPostUpdate != nullptr)
-					methodPostUpdate->invoke(m_object, sizeof_array(argv), argv);
-			}
+			const IRuntimeDispatch* methodPostUpdate = findRuntimeClassMethod(m_class, "postUpdate");
+			if (methodPostUpdate != nullptr)
+				methodPostUpdate->invoke(m_object, sizeof_array(argv), argv);
 		}
 	}
+
+	// Update each layer.
+	for (auto layer : m_layers)
+		layer->postUpdate(info);
 
 	return true;
 }

@@ -69,6 +69,14 @@ public:
 	 */
 	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) = 0;
 
+	/*! Post update state.
+	 *
+	 * \param stateManager State manager.
+	 * \param info Update information.
+	 * \return Update result.
+	 */
+	virtual UpdateResult postUpdate(IStateManager* stateManager, const UpdateInfo& info) = 0;
+
 	/*! Build frame.
 	 *
 	 * \param frame Build frame.

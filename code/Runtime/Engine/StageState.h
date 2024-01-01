@@ -51,6 +51,8 @@ public:
 
 	virtual UpdateResult update(IStateManager* stateManager, const UpdateInfo& info) override final;
 
+	virtual UpdateResult postUpdate(IStateManager* stateManager, const UpdateInfo& info) override final;
+
 	virtual BuildResult build(uint32_t frame, const UpdateInfo& info) override final;
 
 	virtual bool render(uint32_t frame, const UpdateInfo& info) override final;

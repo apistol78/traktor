@@ -65,6 +65,10 @@ void ScreenLayer::update(const UpdateInfo& info)
 {
 }
 
+void ScreenLayer::postUpdate(const UpdateInfo& info)
+{
+}
+
 void ScreenLayer::preSetup(const UpdateInfo& info)
 {
 }

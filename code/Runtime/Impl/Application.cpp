@@ -667,10 +667,10 @@ bool Application::update()
 
 				// Update current state for each simulation tick.
 				const double updateTimeStart = m_timer.getElapsedTime();
-				IState::UpdateResult result;
+				IState::UpdateResult updateResult;
 				{
 					T_PROFILER_SCOPE(L"Application update - State");
-					result = currentState->update(m_stateManager, m_updateInfo);
+					updateResult = currentState->update(m_stateManager, m_updateInfo);
 				}
 				const double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
@@ -684,13 +684,20 @@ bool Application::update()
 				const double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
+				// Issue post update.
+				if (updateResult == IState::UrOk)
+				{
+					T_PROFILER_SCOPE(L"Application post update - State");
+					updateResult = currentState->postUpdate(m_stateManager, m_updateInfo);
+				}
+
 				m_updateDuration = physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart;
 				m_updateInfo.m_simulationTime += dT;
 
 				m_updateInfo.m_totalTime += (dFT / updateCount);
 				m_updateInfo.m_stateTime += (dFT / updateCount);
 
-				if (result == IState::UrExit || result == IState::UrFailed)
+				if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 				{
 					// Ensure render thread is finished before we leave.
 					if (m_threadRender)
@@ -741,6 +748,13 @@ bool Application::update()
 			const double updateTimeEnd = m_timer.getElapsedTime();
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
+
+			// Issue post update.
+			if (updateResult == IState::UrOk)
+			{
+				T_PROFILER_SCOPE(L"Application post update - State");
+				updateResult = currentState->postUpdate(m_stateManager, m_updateInfo);
+			}
 
 			m_updateInfo.m_simulationTime += m_updateInfo.m_simulationDeltaTime;
 			m_updateInfo.m_totalTime += m_updateInfo.m_simulationDeltaTime;
