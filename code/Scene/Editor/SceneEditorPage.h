@@ -85,7 +85,7 @@ class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -159,6 +159,8 @@ private:
 	bool moveUp();
 
 	bool moveDown();
+
+	void placeOnGround();
 
 	void eventEntityToolClick(ui::ToolBarButtonClickEvent* event);
 
