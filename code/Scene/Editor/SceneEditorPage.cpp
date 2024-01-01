@@ -961,6 +961,11 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				renameIds(operationData, renamedMap);
 		}
 	}
+	else if (command == L"Scene.Editor.PlaceOnGround")
+	{
+		placeOnGround();
+		m_context->enqueueRedraw(nullptr);
+	}
 	else
 	{
 		result = false;
@@ -1433,6 +1438,38 @@ bool SceneEditorPage::moveDown()
 
 	parent->swapChildren(moving, nextSibling);
 	return true;
+}
+
+void SceneEditorPage::placeOnGround()
+{
+	const physics::QueryFilter filter;
+
+	for (auto entity : m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants))
+	{
+		const Transform transform = entity->getTransform();
+		const Vector4 position = transform.translation().xyz1();
+
+		physics::QueryResult result;
+		if (m_context->getPhysicsManager()->queryRay(
+			position,
+			Vector4(0.0f, -1.0f, 0.0f),
+			1000.0f,
+			filter,
+			false,
+			result
+		))
+		{
+			const Quaternion Qrot(
+				Vector4(0.0f, 1.0f, 0.0f),
+				result.normal
+			);
+
+			entity->setTransform(Transform(
+				result.position,
+				Qrot // transform.rotation()
+			));
+		}
+	}
 }
 
 void SceneEditorPage::eventEntityToolClick(ui::ToolBarButtonClickEvent* event)

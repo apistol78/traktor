@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -125,6 +125,7 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.HideEntities"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.FilterEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RenameAllEntityIds"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.PlaceOnGround"));
 
 	// Add profile commands.
 	for (auto profileType : type_of< ISceneEditorProfile >().findAllOf())
