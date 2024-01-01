@@ -197,7 +197,7 @@ int32_t TreeView::getMaxImageHeight() const
 
 void TreeView::layoutCells(const Rect& rc)
 {
-	int32_t height = getFontMetric().getHeight() + pixel(4_ut);
+	int32_t height = getFontMetric().getHeight() + pixel(6_ut);
 
 	RefArray< TreeViewItem > items;
 	getItems(items, GfDescendants | GfExpandedOnly);
