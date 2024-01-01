@@ -172,6 +172,13 @@ void ScriptManagerLua::destroy()
 	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
 	T_FATAL_ASSERT(m_contexts.empty());
 
+	// Discard member first since ScriptObjectLua check if
+	// state is valid when destroying and since we're already
+	// in the process of shutting down the state we don't
+	// want the objects to interfere with us.
+	lua_State* luaState = m_luaState;
+	m_luaState = nullptr;
+
 	// Discard all tags from C++ rtti types.
 	for (auto& rc : m_classRegistry)
 	{
@@ -182,11 +189,10 @@ void ScriptManagerLua::destroy()
 	m_debugger = nullptr;
 	m_profiler = nullptr;
 
-	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
+	luaL_unref(luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 	m_objectTableRef = LUA_NOREF;
 
-	lua_close(m_luaState);
-	m_luaState = nullptr;
+	lua_close(luaState);
 }
 
 void ScriptManagerLua::registerClass(IRuntimeClass* runtimeClass)
