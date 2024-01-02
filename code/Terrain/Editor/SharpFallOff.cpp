@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,13 +13,13 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SharpFallOff", SharpFallOff, IFallOff)
 
-float SharpFallOff::evaluate(float x, float y) const
+double SharpFallOff::evaluate(double x, double y) const
 {
-	const float d = x * x + y * y;
-	if (d >= 1.0f)
-		return 0.0f;
+	const double d = x * x + y * y;
+	if (d >= 1.0)
+		return 0.0;
 	else
-		return 1.0f;
+		return 1.0;
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,17 @@
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
+	namespace
 	{
+	
+double fraction(double n)
+{
+	return n - std::floor(n);
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.ElevateBrush", ElevateBrush, IBrush)
 
@@ -24,7 +31,7 @@ ElevateBrush::ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield
 ,	m_splatImage(splatImage)
 ,	m_radius(0)
 ,	m_fallOff(0)
-,	m_strength(0.0f)
+,	m_strength(0.0)
 ,	m_attribute(-1)
 {
 }
@@ -33,7 +40,7 @@ uint32_t ElevateBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
-	m_strength = state.strength * 0.256f / m_heightfield->getWorldExtent().y();
+	m_strength = state.strength * 0.256 / m_heightfield->getWorldExtent().y();
 	m_attribute = state.attribute;
 	return MdHeight;
 }
@@ -44,33 +51,23 @@ void ElevateBrush::apply(float x, float y)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			const float fx = float(ix) / m_radius;
-			const float fy = float(iy) / m_radius;
+			const double fx = (double)ix / m_radius;
+			const double fy = (double)iy / m_radius;
 
-			const int32_t gx = x + ix;
-			const int32_t gy = y + iy;
+			const double a = m_fallOff->evaluate(fx, fy) * m_strength;
 
-			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
+			const double gx = x + ix;
+			const double gy = y + iy;
 
-			/*
-			// Check material mask.
-			if (m_attribute >= 0)
-			{
-				Color4f targetColor;
-				m_splatImage->getPixel(gx, gy, targetColor);
+			const int32_t igx = (int32_t)gx;
+			const int32_t igy = (int32_t)gy;
 
-				float T_MATH_ALIGN16 weights[4];
-				targetColor.storeAligned(weights);
+			const double h = m_heightfield->getGridHeightBilinear(gx, gy);
 
-				a *= 1.0f - weights[m_attribute];
-			}
-			*/
+			double wl = 1.0 - fraction(gx);
+			double wt = 1.0 - fraction(gy);
 
-			if (abs(a) <= FUZZY_EPSILON)
-				continue;
-
-			const float h = m_heightfield->getGridHeightNearest(gx, gy);
-			m_heightfield->setGridHeight(gx, gy, h + a);
+			m_heightfield->setGridHeight(igx, igy, h + a * (wl * wt));
 		}
 	}
 }
@@ -79,5 +76,4 @@ void ElevateBrush::end(float x, float y)
 {
 }
 
-	}
 }

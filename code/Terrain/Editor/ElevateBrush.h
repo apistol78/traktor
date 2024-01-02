@@ -48,7 +48,7 @@ private:
 	Ref< drawing::Image > m_splatImage;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
-	float m_strength;
+	double m_strength;
 	int32_t m_attribute;
 };
 

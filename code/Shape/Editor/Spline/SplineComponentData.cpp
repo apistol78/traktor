@@ -53,7 +53,8 @@ const SmallSet< resource::Id< physics::CollisionSpecification > >& SplineCompone
 
 int32_t SplineComponentData::getOrdinal() const
 {
-	return 0;
+	// Do this before GroupComponentData since we need to access ControlPointComponentData in the pipeline.
+	return -20000;
 }
 
 void SplineComponentData::setTransform(const world::EntityData* owner, const Transform& transform)

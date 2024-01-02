@@ -7,6 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Math/TransformPath.h"
+#include "Core/Settings/PropertyObject.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayer.h"
@@ -18,15 +20,18 @@ namespace traktor::shape
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, SplineLayerComponent)
 
 ExtrudeShapeLayer::ExtrudeShapeLayer(
-	const model::Model* modelStart,
-	const model::Model* modelRepeat,
-	const model::Model* modelEnd,
-	bool automaticOrientation
+	const ExtrudeShapeLayerData* data,
+	mesh::MeshAsset* meshStart, const model::Model* modelStart,
+	mesh::MeshAsset* meshRepeat, const model::Model* modelRepeat,
+	mesh::MeshAsset* meshEnd, const model::Model* modelEnd
 )
-:	m_modelStart(modelStart)
+:	m_data(data)
+,	m_meshStart(meshStart)
+,	m_modelStart(modelStart)
+,	m_meshRepeat(meshRepeat)
 ,	m_modelRepeat(modelRepeat)
+,	m_meshEnd(meshEnd)
 ,	m_modelEnd(modelEnd)
-,	m_automaticOrientation(automaticOrientation)
 {
 }
 
@@ -117,7 +122,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 			const auto v = path.evaluate(ats);
 			Matrix44 T = v.transform().toMatrix44();
 
-			if (m_automaticOrientation)
+			if (m_data->m_automaticOrientation)
 			{
 				const float c_atDelta = 0.001f;
 				const Transform Tp = path.evaluate(std::max(ats - c_atDelta, 0.0f)).transform();
@@ -144,6 +149,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 	// Cleanup since there are probably a lot of duplicates.
 	model::CleanDuplicates(0.01f).apply(*outputModel);
 
+	outputModel->setProperty< PropertyObject >(type_name(m_meshRepeat), m_meshRepeat);
 	return outputModel;
 }
 

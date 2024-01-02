@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineLayerComponentData", SplineLayerCom
 
 int32_t SplineLayerComponentData::getOrdinal() const
 {
-	return 0;
+	return 100;
 }
 
 void SplineLayerComponentData::setTransform(const world::EntityData* owner, const Transform& transform)

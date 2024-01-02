@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,14 +19,14 @@ ImageFallOff::ImageFallOff(const drawing::Image* image)
 {
 }
 
-float ImageFallOff::evaluate(float x, float y) const
+double ImageFallOff::evaluate(double x, double y) const
 {
 	const int32_t ix = int32_t((x * 0.5f + 0.5f) * (m_image->getWidth() - 1));
 	const int32_t iy = int32_t((y * 0.5f + 0.5f) * (m_image->getHeight() - 1));
 
 	Color4f c;
 	if (!m_image->getPixel(ix, iy, c))
-		return 0.0f;
+		return 0.0;
 
 	return c.getRed();
 }
