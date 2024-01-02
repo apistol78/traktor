@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::mesh
+{
+
+class MeshAsset;
+
+}
+
 namespace traktor::shape
 {
 
@@ -33,10 +40,10 @@ class T_DLLCLASS ExtrudeShapeLayer : public SplineLayerComponent
 
 public:
 	explicit ExtrudeShapeLayer(
-		const model::Model* modelStart,
-		const model::Model* modelRepeat,
-		const model::Model* modelEnd,
-		bool automaticOrientation
+		const ExtrudeShapeLayerData* data,
+		mesh::MeshAsset* meshStart, const model::Model* modelStart,
+		mesh::MeshAsset* meshRepeat, const model::Model* modelRepeat,
+		mesh::MeshAsset* meshEnd, const model::Model* modelEnd
 	);
 
 	virtual void destroy() override final;
@@ -52,10 +59,16 @@ public:
 	virtual Ref< model::Model > createModel(const TransformPath& path) const override final;
 
 private:
+	Ref< const ExtrudeShapeLayerData > m_data;
+
+	Ref< mesh::MeshAsset > m_meshStart;
 	Ref< const model::Model > m_modelStart;
+
+	Ref< mesh::MeshAsset > m_meshRepeat;
 	Ref< const model::Model > m_modelRepeat;
+
+	Ref< mesh::MeshAsset > m_meshEnd;
 	Ref< const model::Model > m_modelEnd;
-	bool m_automaticOrientation;
 };
 
 }

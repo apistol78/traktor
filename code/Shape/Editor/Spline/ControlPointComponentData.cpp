@@ -24,7 +24,7 @@ Ref< ControlPointComponent > ControlPointComponentData::createComponent() const
 
 int32_t ControlPointComponentData::getOrdinal() const
 {
-	return 0;
+	return 1000;
 }
 
 void ControlPointComponentData::setTransform(const world::EntityData* owner, const Transform& transform)

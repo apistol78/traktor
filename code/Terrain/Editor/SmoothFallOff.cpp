@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,14 +15,14 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SmoothFallOff", SmoothFallOff, IFallOff)
 
-float SmoothFallOff::evaluate(float x, float y) const
+double SmoothFallOff::evaluate(double x, double y) const
 {
-	const float d = x * x + y * y;
-	if (d >= 1.0f)
-		return 0.0f;
+	const double d = x * x + y * y;
+	if (d >= 1.0)
+		return 0.0;
 
-	const float v = 1.0f - sqrtf(d);
-	return clamp(sinf(v * PI / 4.0f), 0.0f, 1.0f);
+	const double v = 1.0f - sqrtf(d);
+	return clamp(sin(v * PI / 4.0), 0.0, 1.0);
 }
 
 }

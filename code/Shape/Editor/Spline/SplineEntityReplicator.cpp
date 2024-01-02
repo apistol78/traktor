@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IPipelineCommon.h"
 #include "Editor/IPipelineSettings.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 #include "Physics/ShapeDesc.h"
@@ -132,6 +133,15 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 		model::MergeModel merge(*layerModel, entityData->getTransform().inverse(), 0.01f);
 		merge.apply(*outputModel);
 	}
+
+	// Setup visual mesh information.
+	//if (usage == Usage::Visual)
+	//{
+	//	Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+	//	outputMeshAsset->setMeshType(mesh::MeshAsset::MtStatic);
+	//	//outputMeshAsset->setMaterialShaders(materialShaders);
+	//	outputModel->setProperty< PropertyObject >(type_name(outputMeshAsset), outputMeshAsset);
+	//}
 
 	// Setup collision information.
 	if (usage == Usage::Collision)

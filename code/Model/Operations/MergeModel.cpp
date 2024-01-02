@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeModel", MergeModel, IModelOperation)
 
@@ -133,8 +131,11 @@ bool MergeModel::apply(Model& model) const
 	AlignedVector< Polygon >& mergedPolygons = model.getPolygons();
 	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
 	mergedPolygons.insert(mergedPolygons.end(), outputPolygons.begin(), outputPolygons.end());
+
+	// Merge properties.
+	for (auto it : m_sourceModel.getValues())
+		model.setProperty(it.first, it.second);
 	return true;
 }
 
-	}
 }

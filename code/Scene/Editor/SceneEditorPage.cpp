@@ -1604,6 +1604,9 @@ void SceneEditorPage::eventInstanceRename(ui::GridItemContentChangeEvent* event)
 		return;
 
 	ui::GridItem* item = event->getItem();
+	if (item == nullptr || item->getRow() == nullptr)
+		return;
+
 	EntityAdapter* entityAdapter = item->getRow()->getData< EntityAdapter >(L"ENTITY");
 	T_ASSERT(entityAdapter);
 

@@ -335,10 +335,11 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	const int32_t width = m_environment->getRender()->getWidth();
 	const int32_t height = m_environment->getRender()->getHeight();
 
+	const int32_t denom = 1;
 	render::RenderGraphTargetSetDesc rgtsd;
 	rgtsd.count = 1;
-	rgtsd.width = width / 4;
-	rgtsd.height = height / 2;
+	rgtsd.width = width / (2 * denom);
+	rgtsd.height = height / denom;
 	rgtsd.createDepthStencil = true;
 	rgtsd.ignoreStencil = true;
 	rgtsd.targets[0].colorFormat = render::TfR11G11B10F;

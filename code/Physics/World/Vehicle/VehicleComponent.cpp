@@ -31,6 +31,8 @@ const float c_throttleThreshold = 0.01f;
 const Scalar c_linearVelocityThreshold = 4.0_simd;
 const float c_suspensionTraceRadius = 0.25f;
 
+std::atomic< uint32_t > s_clusterId(1);
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.VehicleComponent", VehicleComponent, world::IEntityComponent)
@@ -63,7 +65,12 @@ void VehicleComponent::destroy()
 
 void VehicleComponent::setOwner(world::Entity* owner)
 {
-	m_owner = owner;
+	if ((m_owner = owner) != nullptr)
+	{
+		RigidBodyComponent* bodyComponent = m_owner->getComponent< RigidBodyComponent >();
+		if (bodyComponent && bodyComponent->getBody())
+			bodyComponent->getBody()->setClusterId(s_clusterId++);
+	}
 }
 
 void VehicleComponent::setTransform(const Transform& transform)
@@ -188,7 +195,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 			anchorW,
 			axisW,
 			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
-			physics::QueryFilter(m_traceInclude, m_traceIgnore),
+			physics::QueryFilter(m_traceInclude, m_traceIgnore, body->getClusterId()),
 			false,
 			result
 		))
@@ -339,10 +346,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		directionPerpW = directionPerpW.normalized();
 
 		// Calculate grip.
-		Scalar grip = 1.0_simd;
-		//grip *= abs(dot3(axisW, wheel->contactNormal));
-		//grip *= Scalar(wheel->contactFudge);
-		grip *= Scalar(wheel->grip);
+		const Scalar grip(wheel->grip);
 
 		// Determine velocities and percent of maximum velocity.
 		const Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
@@ -365,9 +369,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 			force = (slipAngle / maxSlipAngle) * peakSlipFriction;
 		else
 		{
-			const float c_fallOff = 2.0f;
-			const float f = clamp(rad2deg(slipAngle - maxSlipAngle) / c_fallOff, 0.0f, 1.0f);
-			force = peakSlipFriction * f;
+			force = peakSlipFriction;
 
 			// Do not tag sliding if going too slow.
 			if (abs(forwardVelocity) > 1.0f)
@@ -377,16 +379,16 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		// Apply friction force.
 		body->addForceAt(
 			bodyT * wheel->center, //wheel->contactPosition,
-			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip, // * (1.0_simd - method),
+			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method),
 			false
 		);
 	
 		// Apply perpendicular friction force if going slow.
-		//body->addForceAt(
-		//	bodyT * wheel->center, //wheel->contactPosition,
-		//	directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
-		//	false
-		//);
+		body->addForceAt(
+			bodyT * wheel->center, //wheel->contactPosition,
+			directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
+			false
+		);
 
 		// Accumulate rolling friction, applied at center of mass for simplicity.
 		rollingFriction += forwardVelocity * Scalar(data->getRollingFriction()) * grip;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 /*! Brush falloff.
  * \ingroup Terrain
@@ -29,9 +27,7 @@ public:
 	 * \param y Brush Y coordinate, -1 to 1.
 	 * \return Falloff value, 0 no brush influence, 1 full brush influence.
 	 */
-	virtual float evaluate(float x, float y) const = 0;
+	virtual double evaluate(double x, double y) const = 0;
 };
 
-	}
 }
-

@@ -90,9 +90,6 @@ public:
 		float minHeight;
 		float maxHeight;
 		float error[LodCount];
-		int32_t lastPatchLod;
-		int32_t lastSurfaceLod;
-		Vector4 surfaceOffset;
 	};
 
 	struct CullPatch
@@ -127,7 +124,7 @@ public:
 
 	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
 
-	TerrainSurfaceCache* getSurfaceCache(int32_t viewIndex) const { return m_surfaceCache[viewIndex]; }
+	TerrainSurfaceCache* getSurfaceCache(int32_t viewIndex) const { return m_view[viewIndex].surfaceCache; }
 
 	const AlignedVector< Patch >& getPatches() const { return m_patches; }
 
@@ -147,12 +144,26 @@ private:
 	friend class TerrainEditModifier;
 	friend class TerrainComponentEditor;
 
+	struct ViewPatch
+	{
+		int32_t lastPatchLod;
+		int32_t lastSurfaceLod;
+		Vector4 surfaceOffset;
+	};
+
+	struct View
+	{
+		Ref< TerrainSurfaceCache > surfaceCache;
+		AlignedVector< ViewPatch > viewPatches;
+		AlignedVector< CullPatch > visiblePatches;
+		AlignedVector< const CullPatch* > patchLodInstances[LodCount];
+	};
+
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	world::Entity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
-	Ref< TerrainSurfaceCache > m_surfaceCache[4];
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	uint32_t m_cacheSize;
@@ -171,8 +182,7 @@ private:
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
 	VisualizeMode m_visualizeMode;
-	AlignedVector< CullPatch > m_visiblePatches;
-	AlignedVector< const CullPatch* > m_patchLodInstances[LodCount];
+	View m_view[4];
 
 	bool validate(int32_t viewIndex, uint32_t cacheSize);
 

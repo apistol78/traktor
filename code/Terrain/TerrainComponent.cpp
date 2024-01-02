@@ -152,7 +152,8 @@ void TerrainComponent::setup(
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
 	// Cull patches to world frustum.
-	m_visiblePatches.resize(0);
+	AlignedVector< CullPatch >& visiblePatches = m_view[viewIndex].visiblePatches;
+	visiblePatches.resize(0);
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		Vector4 patchOrigin = patchTopLeft;
@@ -258,15 +259,17 @@ void TerrainComponent::setup(
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
 
-				m_visiblePatches.push_back(cp);
+				visiblePatches.push_back(cp);
 			}
 			else
 			{
-				m_patches[patchId].lastPatchLod = c_patchLodSteps;
-				m_patches[patchId].lastSurfaceLod = c_surfaceLodSteps;
+				ViewPatch& viewPatch = m_view[viewIndex].viewPatches[patchId];
+
+				viewPatch.lastPatchLod = c_patchLodSteps;
+				viewPatch.lastSurfaceLod = c_surfaceLodSteps;
 
 				if (!snapshot)
-					m_surfaceCache[viewIndex]->flush(patchId);
+					m_view[viewIndex].surfaceCache->flush(patchId);
 			}
 
 			patchOrigin += patchDeltaX;
@@ -275,18 +278,20 @@ void TerrainComponent::setup(
 	}
 
 	// Sort patches front to back to maximize best use of surface cache and rendering.
-	std::sort(m_visiblePatches.begin(), m_visiblePatches.end(), [](const CullPatch& lh, const CullPatch& rh) {
+	std::sort(visiblePatches.begin(), visiblePatches.end(), [](const CullPatch& lh, const CullPatch& rh) {
 		return lh.distance < rh.distance;
 	});
 
 	for (uint32_t i = 0; i < LodCount; ++i)
-		m_patchLodInstances[i].resize(0);
+		m_view[viewIndex].patchLodInstances[i].resize(0);
 
 	// Update all patch surfaces.
-	for (const auto& visiblePatch : m_visiblePatches)
+	for (const auto& visiblePatch : visiblePatches)
 	{
-		Patch& patch = m_patches[visiblePatch.patchId];
+		const Patch& patch = m_patches[visiblePatch.patchId];
 		const Vector4& patchOrigin = visiblePatch.patchOrigin;
+
+		ViewPatch& viewPatch = m_view[viewIndex].viewPatches[visiblePatch.patchId];
 
 		// Calculate which surface lod to use based one distance to patch center.
 		const float distance = max(visiblePatch.distance - detailDistance, 0.0f);
@@ -295,10 +300,10 @@ void TerrainComponent::setup(
 		int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
 
 		const float c_lodHysteresisThreshold = 0.5f;
-		if (surfaceLod != patch.lastSurfaceLod)
+		if (surfaceLod != viewPatch.lastSurfaceLod)
 		{
-			if (std::abs(surfaceLodF - patch.lastSurfaceLod) < c_lodHysteresisThreshold)
-				surfaceLod = patch.lastSurfaceLod;
+			if (std::abs(surfaceLodF - viewPatch.lastSurfaceLod) < c_lodHysteresisThreshold)
+				surfaceLod = viewPatch.lastSurfaceLod;
 		}
 
 		// Find patch lod based on screen space error.
@@ -312,33 +317,33 @@ void TerrainComponent::setup(
 			}
 		}
 
-		patch.lastPatchLod = patchLod;
-		patch.lastSurfaceLod = surfaceLod;
-		patch.surfaceOffset = Vector4::zero();
+		viewPatch.lastPatchLod = patchLod;
+		viewPatch.lastSurfaceLod = surfaceLod;
+		viewPatch.surfaceOffset = Vector4::zero();
 
 		// Update surface cache.
 		if (!snapshot)
 		{
-			m_surfaceCache[viewIndex]->setupPatch(
+			m_view[viewIndex].surfaceCache->setupPatch(
 		 		context.getRenderGraph(),
 		 		m_terrain,
 		 		-worldExtent * 0.5_simd,
 		 		worldExtent,
 		 		patchOrigin,
 		 		patchExtent,
-		 		patch.lastSurfaceLod,
+		 		viewPatch.lastSurfaceLod,
 		 		visiblePatch.patchId,
 		 		// Out
-		 		patch.surfaceOffset
+		 		viewPatch.surfaceOffset
 			 );
 		}
 
 		// Queue patch instance.
-		m_patchLodInstances[patchLod].push_back(&visiblePatch);
+		m_view[viewIndex].patchLodInstances[patchLod].push_back(&visiblePatch);
 	}
 
 	// Update base color texture.
-	m_surfaceCache[viewIndex]->setupBaseColor(
+	m_view[viewIndex].surfaceCache->setupBaseColor(
 		context.getRenderGraph(),
 		m_terrain,
 		-worldExtent * 0.5_simd,
@@ -393,12 +398,12 @@ void TerrainComponent::build(
 	
 	if (!snapshot)
 	{
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getVirtualAlbedo());
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_surfaceCache[viewIndex]->getVirtualNormals());
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getVirtualAlbedo());
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_view[viewIndex].surfaceCache->getVirtualNormals());
 	}
 	else
 	{
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_surfaceCache[viewIndex]->getBaseTexture());
+		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getBaseTexture());
 	}
 
 	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
@@ -434,12 +439,14 @@ void TerrainComponent::build(
 		auto draw = (render::IndexedIndirectDraw*)m_drawBuffer->lock();
 		auto data = (DrawData*)m_dataBuffer->lock();
 
-		for (const auto& visiblePatch : m_visiblePatches)
+		for (const auto& visiblePatch : m_view[viewIndex].visiblePatches)
 		{
 			const Patch& patch = m_patches[visiblePatch.patchId];
 			const Vector4& patchOrigin = visiblePatch.patchOrigin;
 
-			const auto& p = m_primitives[patch.lastPatchLod];
+			ViewPatch& viewPatch = m_view[viewIndex].viewPatches[visiblePatch.patchId];
+
+			const auto& p = m_primitives[viewPatch.lastPatchLod];
 
 			draw->indexCount = p.getVertexCount();
 			draw->instanceCount = 1;
@@ -450,7 +457,7 @@ void TerrainComponent::build(
 
 			patchOrigin.storeUnaligned(data->patchOrigin);
 			if (!snapshot)
-				patch.surfaceOffset.storeUnaligned(data->surfaceOffset);
+				viewPatch.surfaceOffset.storeUnaligned(data->surfaceOffset);
 			else
 			{
 				const Vector4 snapshotOffset(
@@ -481,7 +488,7 @@ void TerrainComponent::build(
 		rb->vertexLayout = m_vertexLayout;
 		rb->primitive = render::PrimitiveType::Triangles;
 		rb->drawBuffer = m_drawBuffer->getBufferView();
-		rb->drawCount = m_visiblePatches.size();
+		rb->drawCount = m_view[viewIndex].visiblePatches.size();
 
 		rb->programParams->beginParameters(renderContext);
 		rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
@@ -539,17 +546,17 @@ bool TerrainComponent::validate(int32_t viewIndex, uint32_t cacheSize)
 
 	if (cacheSize != m_cacheSize)
 	{
-		for (uint32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
-			safeDestroy(m_surfaceCache[i]);
+		for (uint32_t i = 0; i < sizeof_array(m_view); ++i)
+			safeDestroy(m_view[i].surfaceCache);
 		m_cacheSize = cacheSize;
 	}
 
-	if (!m_surfaceCache[viewIndex])
+	if (!m_view[viewIndex].surfaceCache)
 	{
-		m_surfaceCache[viewIndex] = new TerrainSurfaceCache();
-		if (!m_surfaceCache[viewIndex]->create(m_resourceManager, m_renderSystem, cacheSize))
+		m_view[viewIndex].surfaceCache = new TerrainSurfaceCache();
+		if (!m_view[viewIndex].surfaceCache->create(m_resourceManager, m_renderSystem, cacheSize))
 		{
-			m_surfaceCache[viewIndex] = nullptr;
+			m_view[viewIndex].surfaceCache = nullptr;
 			return false;
 		}
 	}
@@ -587,10 +594,10 @@ void TerrainComponent::updatePatches(const uint32_t* region, bool updateErrors, 
 
 			if (flushPatchCache)
 			{
-				for (int32_t i = 0; i < sizeof_array(m_surfaceCache); ++i)
+				for (int32_t i = 0; i < sizeof_array(m_view); ++i)
 				{
-					if (m_surfaceCache[i])
-						m_surfaceCache[i]->flush(patchId);
+					if (m_view[i].surfaceCache)
+						m_view[i].surfaceCache->flush(patchId);
 				}
 			}
 		}
@@ -646,8 +653,15 @@ bool TerrainComponent::createPatches()
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-			TerrainComponent::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, c_patchLodSteps, c_surfaceLodSteps };
-			m_patches.push_back(patch);
+			m_patches.push_back(
+				{ 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f } }
+			);
+			for (int32_t i = 0; i < sizeof_array(m_view); ++i)
+			{
+				m_view[i].viewPatches.push_back(
+					{ c_patchLodSteps, c_surfaceLodSteps, Vector4::zero() }
+				);
+			}
 		}
 	}
 

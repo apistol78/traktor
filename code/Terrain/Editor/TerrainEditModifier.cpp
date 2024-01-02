@@ -26,6 +26,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
+#include "Shape/Editor/Spline/SplineComponent.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainComponentData.h"
@@ -414,7 +415,7 @@ bool TerrainEditModifier::activate()
 	{
 		for (int32_t u = 0; u < size; ++u)
 		{
-			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
+			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
 		}
 	}
 
@@ -889,7 +890,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
+				m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
 			}
 		}
 
@@ -1134,43 +1135,44 @@ void TerrainEditModifier::flattenUnderSpline()
 {
 	Ref< IBrush > currentBrush = m_brush;
 
-	// RefArray< scene::EntityAdapter > entityAdapters;
-	// m_context->findAdaptersOfType(
-	// 	type_of< shape::SplineEntity >(),
-	// 	entityAdapters,
-	// 	scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
-	// );
+	RefArray< scene::EntityAdapter > entityAdapters;
+	m_context->findAdaptersOfType(
+		type_of< shape::SplineComponent >(),
+		entityAdapters,
+		scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
+	);
 
-	// FlattenBrush flattenBrush(m_heightfield);
-	// m_brush = &flattenBrush;
+	FlattenBrush flattenBrush(m_heightfield);
+	m_brush = &flattenBrush;
 
-	// for (auto entityAdapter : entityAdapters)
-	// {
-	// 	auto spline = mandatory_non_null_type_cast< shape::SplineEntity* >(entityAdapter->getEntity());
+	for (auto entityAdapter : entityAdapters)
+	{
+		auto splineComponent = entityAdapter->getComponent< shape::SplineComponent >();
+		T_FATAL_ASSERT(splineComponent != nullptr);
 
-	// 	const auto& path = spline->getPath();
-	// 	const auto& keys = path.getKeys();
-	// 	if (keys.empty())
-	// 		return;
+		const auto& path = splineComponent->getPath();
+		const auto& keys = path.getKeys();
+		if (keys.empty())
+			return;
 
-	// 	if (!begin(false))
-	// 		continue;
+		if (!begin(false))
+			continue;
 
-	// 	float st = keys.front().T;
-	// 	float et = keys.back().T;
+		float st = keys.front().T;
+		float et = keys.back().T;
 
-	// 	uint32_t nsteps = keys.size() * 20;
-	// 	for (uint32_t i = 0; i <= nsteps; ++i)
-	// 	{
-	// 		float t = st + (float)(i * (et - st)) / nsteps;
-	// 		auto v = path.evaluate(t);
-	// 		Vector4 center = v.position.xyz1();
-	// 		flattenBrush.setHeight(center.y());
-	// 		apply(center);
-	// 	}
+		const uint32_t nsteps = keys.size() * 20;
+		for (uint32_t i = 0; i <= nsteps; ++i)
+		{
+			const float t = st + (float)(i * (et - st)) / nsteps;
+			auto v = path.evaluate(t);
+			const Vector4 center = v.position.xyz1();
+			flattenBrush.setHeight(center.y());
+			apply(center);
+		}
 
-	// 	end();
-	// }
+		end();
+	}
 
 	m_brush = currentBrush;
 }

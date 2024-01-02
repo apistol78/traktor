@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,31 +10,27 @@
 
 #include "Terrain/Editor/IFallOff.h"
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class ImageFallOff : public IFallOff
 {
 	T_RTTI_CLASS;
 
 public:
-	ImageFallOff(const drawing::Image* image);
+	explicit ImageFallOff(const drawing::Image* image);
 
-	virtual float evaluate(float x, float y) const override final;
+	virtual double evaluate(double x, double y) const override final;
 
 private:
 	Ref< const drawing::Image > m_image;
 };
 
-	}
 }
-
