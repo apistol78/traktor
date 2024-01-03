@@ -38,6 +38,8 @@ public:
 
 	void addEntityData(EntityData* entityData);
 
+	void addEntityData(EntityData* insertAfter, EntityData* entityData);
+
 	void removeEntityData(EntityData* entityData);
 
 	void removeAllEntityData();

@@ -38,7 +38,7 @@ public:
 
 	virtual bool isChildrenPrivate() const override;
 
-	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const override;
+	virtual bool addChildEntity(EntityAdapter* insertAfterEntityAdapter, EntityAdapter* childEntityAdapter) const override;
 
 	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const override;
 

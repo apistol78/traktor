@@ -77,7 +77,7 @@ public:
 	 * \param childEntityAdapter Child entity.
 	 * \return True if successfully added child.
 	 */
-	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const = 0;
+	virtual bool addChildEntity(EntityAdapter* insertAfterEntityAdapter, EntityAdapter* childEntityAdapter) const = 0;
 
 	/*! Remove child entity.
 	 *

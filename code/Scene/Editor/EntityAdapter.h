@@ -161,7 +161,7 @@ public:
 
 	EntityAdapter* getParentContainerGroup();
 
-	void addChild(EntityAdapter* child);
+	void addChild(EntityAdapter* insertAfter, EntityAdapter* child);
 
 	void removeChild(EntityAdapter* child);
 
@@ -171,7 +171,7 @@ public:
 
 	EntityAdapter* findChildAdapterFromEntity(const world::Entity* entity) const;
 
-	void link(EntityAdapter* child);
+	void link(EntityAdapter* linkAfter, EntityAdapter* child);
 
 	void unlinkChild(EntityAdapter* child);
 

@@ -615,7 +615,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		entityAdapter->setTransform(Transform(Mworld.translation()));
 
 		// Finally add adapter to parent group.
-		parentGroupAdapter->addChild(entityAdapter);
+		parentGroupAdapter->addChild(nullptr, entityAdapter);
 
 		updateScene();
 		createInstanceGrid();
@@ -728,7 +728,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 			entityAdapter->prepare(entityData, nullptr, 0);
-			parentEntity->addChild(entityAdapter);
+			parentEntity->addChild(nullptr, entityAdapter);
 		}
 
 		updateScene();
@@ -1273,7 +1273,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 	entityAdapter->prepare(entityData, nullptr, 0);
-	parentGroupAdapter->addChild(entityAdapter);
+	parentGroupAdapter->addChild(nullptr, entityAdapter);
 
 	// Select new entity.
 	m_context->selectAllEntities(false);
@@ -1371,8 +1371,7 @@ bool SceneEditorPage::resolveExternal()
 	Ref< EntityAdapter > resolvedEntityAdapter = new EntityAdapter(m_context);
 	resolvedEntityAdapter->prepare(resolvedEntityData, nullptr, 0);
 
-	parent->addChild(resolvedEntityAdapter);
-	parent->swapChildren(externalAdapter, resolvedEntityAdapter);
+	parent->addChild(externalAdapter, resolvedEntityAdapter);
 	parent->removeChild(externalAdapter);
 
 	updateScene();

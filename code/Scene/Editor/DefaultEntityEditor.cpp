@@ -79,19 +79,12 @@ bool DefaultEntityEditor::isChildrenPrivate() const
 	return false;
 }
 
-bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
+bool DefaultEntityEditor::addChildEntity(EntityAdapter* insertAfterEntityAdapter, EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
-	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
-
 	if (auto groupComponentData = getComponentOf< world::GroupComponentData >(entityData))
 	{
-		groupComponentData->addEntityData(childEntityData);
-		return true;
-	}
-	else if (auto facadeComponentData = getComponentOf< world::GroupComponentData >(entityData))
-	{
-		facadeComponentData->addEntityData(childEntityData);
+		groupComponentData->addEntityData(insertAfterEntityAdapter->getEntityData(), childEntityAdapter->getEntityData());
 		return true;
 	}
 	else
