@@ -41,7 +41,7 @@ class T_DLLCLASS SplineLayerComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< model::Model > createModel(const TransformPath& path) const = 0;
+	virtual Ref< model::Model > createModel(const TransformPath& path, bool preview) const = 0;
 };
 
 }

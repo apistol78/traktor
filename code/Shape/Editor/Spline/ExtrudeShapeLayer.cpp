@@ -56,7 +56,7 @@ void ExtrudeShapeLayer::update(const world::UpdateParams& update)
 {
 }
 
-Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) const
+Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bool preview) const
 {
 	const auto& keys = path.getKeys();
 	if (keys.size() < 2)
@@ -124,10 +124,14 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 
 			if (m_data->m_automaticOrientation)
 			{
+				const Quaternion Qrot(T);
+
 				const float c_atDelta = 0.001f;
 				const Transform Tp = path.evaluate(std::max(ats - c_atDelta, 0.0f)).transform();
 				const Transform Tn = path.evaluate(std::min(ats + c_atDelta, 1.0f)).transform();
 				T = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
+
+				T = T * rotateZ(Qrot.toEulerAngles().y());
 			}
 
 			model::Vertex outputVertex;
@@ -147,7 +151,8 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path) co
 	}
 
 	// Cleanup since there are probably a lot of duplicates.
-	model::CleanDuplicates(0.01f).apply(*outputModel);
+	if (!preview)
+		model::CleanDuplicates(0.01f).apply(*outputModel);
 
 	outputModel->setProperty< PropertyObject >(type_name(m_meshRepeat), m_meshRepeat);
 	return outputModel;

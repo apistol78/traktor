@@ -56,7 +56,7 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual Ref< model::Model > createModel(const TransformPath& path) const override final;
+	virtual Ref< model::Model > createModel(const TransformPath& path, bool preview) const override final;
 
 private:
 	Ref< const ExtrudeShapeLayerData > m_data;

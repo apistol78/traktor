@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
-//#include "Model/Operations/Triangulate.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -120,7 +119,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 		{
 			if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
 			{
-				Ref< model::Model > layerModel = layer->createModel(m_path);
+				Ref< model::Model > layerModel = layer->createModel(m_path, true);
 				if (!layerModel)
 					continue;
 
@@ -171,9 +170,9 @@ void SplineComponent::update(const world::UpdateParams& update)
 			Vertex* vertex = (Vertex*)m_vertexBuffer->lock();
 			for (const auto& v : outputModel->getVertices())
 			{
-				Vector4 p = outputModel->getPosition(v.getPosition());
-				Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()) : Vector4::zero();
-				Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
+				const Vector4 p = outputModel->getPosition(v.getPosition());
+				const Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()) : Vector4::zero();
+				const Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
 
 				p.storeUnaligned(vertex->position);
 				n.storeUnaligned(vertex->normal);
