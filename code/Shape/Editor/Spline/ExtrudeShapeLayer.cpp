@@ -81,14 +81,11 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 	float pathLength = 0.0f;
 	for (int32_t i = 0; i < 100; ++i)
 	{
-		float t0 = (float)i / 100.0f;
-		float t1 = (float)(i + 1) / 100.0f;
+		const float t0 = (float)i / 100.0f;
+		const float t1 = (float)(i + 1) / 100.0f;
 
-		t0 = clamp(t0, 0.0f, 1.0f);
-		t1 = clamp(t1, 0.0f, 1.0f);
-
-		const auto v0 = path.evaluate(t0);
-		const auto v1 = path.evaluate(t1);
+		const auto v0 = path.evaluate(t0, true);
+		const auto v1 = path.evaluate(t1, true);
 
 		const Vector4 p0 = v0.transform().translation();
 		const Vector4 p1 = v1.transform().translation();
@@ -115,11 +112,9 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 			const Vector4 n = m_modelRepeat->getNormal(vertex.getNormal());
 
 			const Matrix44 Tc = translate(0.0f, 0.0f, p.z());
+			const float ats = at + ((p.z() - stepMin) / stepLength) * (1.0f / nrepeats);
 
-			float ats = at + ((p.z() - stepMin) / stepLength) * (1.0f / nrepeats);
-			ats = clamp(ats, 0.0f, 1.0f);
-
-			const auto v = path.evaluate(ats);
+			const auto v = path.evaluate(ats, true);
 			Matrix44 T = v.transform().toMatrix44();
 
 			if (m_data->m_automaticOrientation)
@@ -127,8 +122,8 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 				const Quaternion Qrot(T);
 
 				const float c_atDelta = 0.001f;
-				const Transform Tp = path.evaluate(std::max(ats - c_atDelta, 0.0f)).transform();
-				const Transform Tn = path.evaluate(std::min(ats + c_atDelta, 1.0f)).transform();
+				const Transform Tp = path.evaluate(ats - c_atDelta, true).transform();
+				const Transform Tn = path.evaluate(ats + c_atDelta, true).transform();
 				T = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
 
 				T = T * rotateZ(Qrot.toEulerAngles().y());
@@ -137,6 +132,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 			model::Vertex outputVertex;
 			outputVertex.setPosition(outputModel->addPosition(T * Tc.inverse() * p.xyz1()));
 			outputVertex.setNormal(outputModel->addNormal(T * n.xyz0()));
+			outputVertex.setTexCoord(0, vertex.getTexCoord(0));
 			outputModel->addVertex(outputVertex);
 		}
 

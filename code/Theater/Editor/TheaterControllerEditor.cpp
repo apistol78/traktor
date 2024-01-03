@@ -305,13 +305,13 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		}
 
 		const TransformPath& path = track->getPath();
-		int32_t steps = int32_t(duration) * 10;
+		const int32_t steps = int32_t(duration) * 10;
 
-		TransformPath::Key F0 = path.evaluate(0.0f, duration);
+		TransformPath::Key F0 = path.evaluate(0.0f, false);
 		for (int32_t i = 1; i <= steps; ++i)
 		{
-			float T = (float(i) / steps) * duration;
-			TransformPath::Key F1 = path.evaluate(T, duration);
+			const float T = (float(i) / steps) * duration;
+			const TransformPath::Key F1 = path.evaluate(T, false);
 
 			primitiveRenderer->drawLine(
 				F0.position,
@@ -324,8 +324,8 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 
 		for (int32_t i = 0; i <= steps; ++i)
 		{
-			float T = (float(i) / steps) * duration;
-			TransformPath::Key F0 = path.evaluate(T, duration);
+			const float T = (float(i) / steps) * duration;
+			const TransformPath::Key F0 = path.evaluate(T, false);
 
 			primitiveRenderer->drawSolidPoint(
 				F0.position,
@@ -343,7 +343,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			);
 		}
 
-		TransformPath::Key F = path.evaluate(cursorTime, duration);
+		const TransformPath::Key F = path.evaluate(cursorTime, false);
 		primitiveRenderer->drawWireFrame(
 			F.transform().toMatrix44(),
 			1.0f
@@ -582,8 +582,8 @@ void TheaterControllerEditor::easeVelocity()
 			const float c_measureStep = 1.0f / 1000.0f;
 			for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
 			{
-				const TransformPath::Key Fc = path.evaluate(T);
-				const TransformPath::Key Fn = path.evaluate(T + c_measureStep);
+				const TransformPath::Key Fc = path.evaluate(T, false);
+				const TransformPath::Key Fn = path.evaluate(T + c_measureStep, false);
 				totalDistance += (Fn.position - Fc.position).length();
 			}
 

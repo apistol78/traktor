@@ -42,10 +42,6 @@ public:
 		Vector4 orientation = Vector4::zero();
 		float values[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-		Key() = default;
-
-		virtual ~Key() {}
-
 		Transform transform() const;
 
 		void serialize(ISerializer& s);
@@ -65,26 +61,10 @@ public:
 	/*! Evaluate frame.
 	 *
 	 * \param at Time to evaluate.
+	 * \param closed Closed path.
 	 * \return Evaluated frame.
 	 */
-	Key evaluate(float at) const;
-
-	/*! Evaluate frame.
-	 *
-	 * \param at Time to evaluate.
-	 * \param end End time of path.
-	 * \return Evaluated frame.
-	 */
-	Key evaluate(float at, float end) const;
-
-	/*! Evaluate frame.
-	 *
-	 * \param at Time to evaluate.
-	 * \param end End time of path.
-	 * \param loop Loop time point.
-	 * \return Evaluated frame.
-	 */
-	Key evaluate(float at, float end, float loop) const;
+	Key evaluate(float at, bool closed) const;
 
 	/*! Get closest key frame from time.
 	 *
@@ -166,6 +146,7 @@ public:
 private:
 	AlignedVector< Key > m_keys;
 	mutable AutoPtr< ISpline< Key > > m_spline;
+	mutable bool m_closed = false;
 };
 
 }

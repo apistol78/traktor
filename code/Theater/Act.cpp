@@ -49,7 +49,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 
 		const TransformPath& path = m_tracks[i]->getPath();
 
-		key = path.evaluate(clamp(time, 0.0f, duration), duration);
+		key = path.evaluate(clamp(time, 0.0f, duration), false);
 		transform = key.transform();
 
 		entity->setTransform(transform);
