@@ -600,7 +600,7 @@ bool Application::update()
 
 		// Measure delta time.
 		const double deltaTime = m_timer.getDeltaTime();
-		m_updateInfo.m_frameDeltaTime = deltaTime;
+		m_updateInfo.m_frameDeltaTime = lerp(m_updateInfo.m_frameDeltaTime, deltaTime, 0.1);
 
 		// Update audio.
 		if (m_audioServer)
@@ -629,7 +629,7 @@ bool Application::update()
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
 			const double simulationEndTime = (m_updateInfo.m_stateTime + dFT);
-			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
+			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime + 0.5) / dT);
 			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
@@ -684,13 +684,6 @@ bool Application::update()
 				const double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
-				// Issue post update.
-				if (updateResult == IState::UrOk)
-				{
-					T_PROFILER_SCOPE(L"Application post update - State");
-					updateResult = currentState->postUpdate(m_stateManager, m_updateInfo);
-				}
-
 				m_updateDuration = physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart;
 				m_updateInfo.m_simulationTime += dT;
 
@@ -710,7 +703,13 @@ bool Application::update()
 					break;
 			}
 
-			if (updateCount <= 0)
+			// Issue post update.
+			if (updateCount > 0)
+			{
+				T_PROFILER_SCOPE(L"Application post update - State");
+				currentState->postUpdate(m_stateManager, m_updateInfo);
+			}
+			else
 			{
 				m_updateInfo.m_totalTime += dFT;
 				m_updateInfo.m_stateTime += dFT;
@@ -721,7 +720,7 @@ bool Application::update()
 			m_updateInfo.m_simulationTime += dT * (updateCountNoClamp - updateCount);
 
 			// Calculate interval value; interval is only required if simulation runs slower than render framerate.
-			if (dT > dFT + 0.001f)
+			if (dT > dFT + 0.01)
 				m_updateInfo.m_interval = (float)((m_updateInfo.m_stateTime - m_updateInfo.m_simulationTime) / m_updateInfo.m_simulationDeltaTime);
 			else
 				m_updateInfo.m_interval = 1.0f;
