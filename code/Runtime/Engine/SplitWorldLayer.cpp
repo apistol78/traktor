@@ -214,17 +214,6 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
-	// // Update camera transform from entity.
-	// for (int32_t i = 0; i < 2; ++i)
-	// {
-	// 	if (m_cameraEntities[i])
-	// 	{
-	// 		const Transform cameraTransform = m_cameraEntities[i]->getTransform();
-	// 		m_cameraTransforms[i].step();
-	// 		m_cameraTransforms[i].set(cameraTransform);
-	// 	}
-	// }
-
 	// Update scene controller.
 	if (m_controllerEnable)
 	{
@@ -286,11 +275,11 @@ void SplitWorldLayer::preSetup(const UpdateInfo& info)
 		return;
 
 	// Grab interpolated camera transform.
+	const float cameraInterval = info.getInterval();
 	for (int32_t i = 0; i < 2; ++i)
 	{
 		if (m_cameraEntities[i])
 		{
-			const float cameraInterval = info.getInterval();
 			m_worldRenderViews[i].setView(
 				m_worldRenderViews[i].getView(),
 				(m_cameraTransforms[i].get(cameraInterval) * m_cameraOffsets[i]).inverse().toMatrix44()
@@ -335,7 +324,11 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	const int32_t width = m_environment->getRender()->getWidth();
 	const int32_t height = m_environment->getRender()->getHeight();
 
+#if defined(__LINUX__)
+	const int32_t denom = 2;
+#else
 	const int32_t denom = 1;
+#endif
 	render::RenderGraphTargetSetDesc rgtsd;
 	rgtsd.count = 1;
 	rgtsd.width = width / (2 * denom);
@@ -369,11 +362,7 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Split");
 
 	render::Clear cl;
-	cl.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	cl.colors[0] = Color4f(46/255.0f, 56/255.0f, 92/255.0f, 1.0f);
-	cl.depth = 1.0f;
-	cl.stencil = 0;
-	rp->setOutput(0, cl, render::TfAll, render::TfAll);
+	rp->setOutput(0, cl, render::TfNone, render::TfColor);
 
 	rp->addInput(leftTargetSetId);
 	rp->addInput(rightTargetSetId);
