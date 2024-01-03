@@ -19009,5 +19009,126 @@
 				</item>
 			</dependencies>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Input.Linux</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Input/Linux</sourcePath>
+			<configurations>
+				<item type="Configuration" version="5">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_INPUT_LINUX_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Linux.so</sourceFile>
+							<targetPath>debugshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>T_INPUT_LINUX_EXPORT</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Linux.so</sourceFile>
+							<targetPath>releaseshared</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releaseshared</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Linux.a</sourceFile>
+							<targetPath>debugstatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>debugstatic</consumerLibraryPath>
+				</item>
+				<item type="Configuration" version="5">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+					<warningLevel>WlCompilerDefault</warningLevel>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+					<debugExecutable/>
+					<debugArguments/>
+					<debugEnvironment/>
+					<debugWorkingDirectory/>
+					<aggregationItems>
+						<item type="AggregationItem">
+							<sourceFile>libTraktor.Input.Linux.a</sourceFile>
+							<targetPath>releasestatic</targetPath>
+						</item>
+					</aggregationItems>
+					<consumerLibraryPath>releasestatic</consumerLibraryPath>
+				</item>
+			</configurations>
+			<items>
+				<item type="File" version="1">
+					<fileName>*.*</fileName>
+					<excludeFilter/>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="3">
+					<inheritIncludePaths>true</inheritIncludePaths>
+					<link>LnkYes</link>
+					<project ref="/object/projects/item[18]"/>
+				</item>
+			</dependencies>
+		</item>
 	</projects>
 </object>
