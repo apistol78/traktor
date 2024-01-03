@@ -1322,12 +1322,6 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	// Determine presentation mode and desired number of images.
 	VkPresentModeKHR presentationMode = VK_PRESENT_MODE_FIFO_KHR;
-	uint32_t desiredImageCount = 2;
-
-	// Always use 3 buffers on iOS, seems to be preferred by MoltenVK.
-#if defined(__LINUX__) || defined(__IOS__) || defined(__ANDROID__)
-	desiredImageCount = 3;
-#endif
 
 #if defined(__IOS__)
 	if (presentationModeSupported(m_context->getPhysicalDevice(), m_surface, VK_PRESENT_MODE_MAILBOX_KHR))
@@ -1361,6 +1355,7 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 		log::debug << L"Using MAILBOX presentation mode." << Endl;
 
 	// Check so desired image count is supported.
+	uint32_t desiredImageCount = 3;
 	uint32_t clampedImageCount = desiredImageCount;
 	if (clampedImageCount < surfaceCapabilities.minImageCount)
 		clampedImageCount = surfaceCapabilities.minImageCount;
