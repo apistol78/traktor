@@ -1165,7 +1165,7 @@ void TerrainEditModifier::flattenUnderSpline()
 		for (uint32_t i = 0; i <= nsteps; ++i)
 		{
 			const float t = st + (float)(i * (et - st)) / nsteps;
-			auto v = path.evaluate(t);
+			auto v = path.evaluate(t, true);
 			const Vector4 center = v.position.xyz1();
 			flattenBrush.setHeight(center.y());
 			apply(center);
