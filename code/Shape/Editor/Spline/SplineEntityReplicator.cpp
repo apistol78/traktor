@@ -125,7 +125,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 			continue;
 
 		// Create model from of the layer.
-		Ref< model::Model > layerModel = layer->createModel(path);
+		Ref< model::Model > layerModel = layer->createModel(path, false);
 		if (!layerModel)
 			continue;
 
