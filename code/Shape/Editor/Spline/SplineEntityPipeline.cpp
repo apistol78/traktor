@@ -85,9 +85,9 @@ bool SplineEntityPipeline::buildDependencies(
 
 	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshStart(), editor::PdfBuild);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshRepeat(), editor::PdfBuild);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshEnd(), editor::PdfBuild);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshStart(), editor::PdfUse);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshRepeat(), editor::PdfUse);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshEnd(), editor::PdfUse);
 	}
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
