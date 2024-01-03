@@ -768,7 +768,7 @@ void SceneEditorContext::cloneSelected()
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
 		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);
-		parentContainerGroup->addChild(clonedEntityAdapter);
+		parentContainerGroup->addChild(selectedEntityAdapter, clonedEntityAdapter);
 
 		selectedEntityAdapter->m_selected = false;
 		clonedEntityAdapter->m_selected = true;

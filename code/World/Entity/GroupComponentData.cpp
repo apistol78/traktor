@@ -28,6 +28,15 @@ void GroupComponentData::addEntityData(EntityData* entityData)
 	m_entityData.push_back(entityData);
 }
 
+void GroupComponentData::addEntityData(EntityData* insertAfter, EntityData* entityData)
+{
+	auto it = std::find(m_entityData.begin(), m_entityData.end(), insertAfter);
+	if (it != m_entityData.end())
+		m_entityData.insert(it + 1, entityData);
+	else
+		m_entityData.push_back(entityData);
+}
+
 void GroupComponentData::removeEntityData(EntityData* entityData)
 {
 	auto i = std::find(m_entityData.begin(), m_entityData.end(), entityData);

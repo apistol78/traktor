@@ -260,10 +260,10 @@ EntityAdapter* EntityAdapter::getParentContainerGroup()
 	return entity;
 }
 
-void EntityAdapter::addChild(EntityAdapter* child)
+void EntityAdapter::addChild(EntityAdapter* insertAfter, EntityAdapter* child)
 {
-	if (m_entityEditor->addChildEntity(child))
-		link(child);
+	if (m_entityEditor->addChildEntity(insertAfter, child))
+		link(insertAfter, child);
 }
 
 void EntityAdapter::removeChild(EntityAdapter* child)
@@ -287,7 +287,7 @@ void EntityAdapter::swapChildren(EntityAdapter* child1, EntityAdapter* child2)
 	*it2 = tmp;
 
 	for (auto child : m_children)
-		m_entityEditor->addChildEntity(child);
+		m_entityEditor->addChildEntity(nullptr, child);
 }
 
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
@@ -301,12 +301,18 @@ EntityAdapter* EntityAdapter::findChildAdapterFromEntity(const world::Entity* en
 	return i != m_childMap.end() ? i->second : nullptr;
 }
 
-void EntityAdapter::link(EntityAdapter* child)
+void EntityAdapter::link(EntityAdapter* linkAfter, EntityAdapter* child)
 {
 	T_FATAL_ASSERT_M (child->m_parent == nullptr, L"Child already linked to another parent");
 	T_FATAL_ASSERT_M (std::find(m_children.begin(), m_children.end(), child) == m_children.end(), L"Child already added");
 	child->m_parent = this;
-	m_children.push_back(child);
+
+	auto it = std::find(m_children.begin(), m_children.end(), linkAfter);
+	if (it != m_children.end())
+		m_children.insert(it + 1, child);
+	else
+		m_children.push_back(child);
+
 	m_childMap[child->getEntity()] = child;
 }
 

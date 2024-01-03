@@ -153,7 +153,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 	// Setup relationship with parent.
 	if (m_currentAdapter)
-		m_currentAdapter->link(entityAdapter);
+		m_currentAdapter->link(nullptr, entityAdapter);
 	else
 	{
 		T_FATAL_ASSERT (m_rootAdapter == nullptr);
