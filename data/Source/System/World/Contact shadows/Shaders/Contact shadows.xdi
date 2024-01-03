@@ -5,8 +5,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>525</first>
-				<second>437</second>
+				<first>813</first>
+				<second>59</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -136,7 +136,7 @@
 			<id>{9C50EAE1-B117-F046-AE7F-E738EDCBE405}</id>
 			<comment/>
 			<position>
-				<first>791</first>
+				<first>793</first>
 				<second>-351</second>
 			</position>
 			<name>ViewPosition</name>
@@ -174,8 +174,8 @@
 			<id>{C19E4880-0EF8-644F-B85B-4B62C6B3E864}</id>
 			<comment/>
 			<position>
-				<first>-270</first>
-				<second>598</second>
+				<first>-103</first>
+				<second>196</second>
 			</position>
 			<parameterName>World_GBufferDepthMap</parameterName>
 			<type>Texture2D</type>
@@ -185,8 +185,8 @@
 			<id>{995D600C-7FB4-404B-8238-1DB7E9A7AF27}</id>
 			<comment/>
 			<position>
-				<first>-189</first>
-				<second>550</second>
+				<first>-22</first>
+				<second>148</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>Matrix</type>
@@ -196,8 +196,8 @@
 			<id>{C9F88DAE-63B7-5040-A316-B7ECA2ABB6F3}</id>
 			<comment/>
 			<position>
-				<first>-203</first>
-				<second>638</second>
+				<first>-36</first>
+				<second>236</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -214,20 +214,25 @@
 			<id>{7E5773D6-9526-8542-9BDC-802856078163}</id>
 			<comment/>
 			<position>
-				<first>-205</first>
-				<second>458</second>
+				<first>-38</first>
+				<second>56</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{5A11D6CE-EC0C-4447-A1B6-B6F076063D79}</id>
 			<comment/>
 			<position>
-				<first>49</first>
-				<second>513</second>
+				<first>216</first>
+				<second>111</second>
 			</position>
 			<name>Trace</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -308,12 +313,48 @@ if (pos.z < 4.0f)
 			<id>{DB60E996-06F4-4047-B842-9A7FC90A00BC}</id>
 			<comment/>
 			<position>
-				<first>-284</first>
-				<second>500</second>
+				<first>-117</first>
+				<second>98</second>
 			</position>
 			<parameterName>World_ContactLightDirection</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Discard" version="traktor.render.Node:1">
+			<id>{77450B65-5682-4D0F-A49D-DE32FF575619}</id>
+			<comment/>
+			<position>
+				<first>537</first>
+				<second>22</second>
+			</position>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{76D56066-9486-47FB-B549-78985ED0F27B}</id>
+			<comment/>
+			<position>
+				<first>150</first>
+				<second>-36</second>
+			</position>
+			<name>ViewPosition</name>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{6587B48D-DE98-46FD-A632-EDF134987C0C}</id>
+			<comment/>
+			<position>
+				<first>361</first>
+				<second>-8</second>
+			</position>
+			<swizzle>z</swizzle>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{D4E7B6EF-A6D9-4EC5-9944-D1E2242F672E}</id>
+			<comment/>
+			<position>
+				<first>337</first>
+				<second>39</second>
+			</position>
+			<value>10</value>
 		</item>
 	</nodes>
 	<edges>
@@ -449,16 +490,6 @@ if (pos.z < 4.0f)
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{77737E13-A2EE-4B2B-BAE1-1D6299C467B1}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
@@ -495,6 +526,56 @@ if (pos.z < 4.0f)
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{77737E13-A2EE-4B2B-BAE1-1D6299C467B1}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{2A4105A4-A10B-4669-AE99-DE69647E09D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{5438A442-AF6D-45EB-8163-DF351C6DBF4B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{52792682-A02B-4627-81A2-C83D24BE7143}</id>
 			</destination>
 		</item>
 	</edges>
