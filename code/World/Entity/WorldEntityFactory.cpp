@@ -30,6 +30,8 @@
 #include "World/Entity/LightComponentData.h"
 #include "World/Entity/OccluderComponent.h"
 #include "World/Entity/OccluderComponentData.h"
+#include "World/Entity/PathComponent.h"
+#include "World/Entity/PathComponentData.h"
 #include "World/Entity/PersistentIdComponent.h"
 #include "World/Entity/PersistentIdComponentData.h"
 #include "World/Entity/ProbeComponent.h"
@@ -85,6 +87,7 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< LightComponentData >();
 	typeSet.insert< OccluderComponentData >();
+	typeSet.insert< PathComponentData >();
 	typeSet.insert< PersistentIdComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< ScriptComponentData >();
@@ -238,6 +241,13 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (auto occluderComponentData = dynamic_type_cast< const OccluderComponentData* >(&entityComponentData))
 	{
 		return occluderComponentData->createComponent();
+	}
+
+	if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
+	{
+		return new PathComponent(
+			pathComponentData->getPath()
+		);
 	}
 
 	if (auto persistentIdComponentData = dynamic_type_cast< const PersistentIdComponentData* >(&entityComponentData))
