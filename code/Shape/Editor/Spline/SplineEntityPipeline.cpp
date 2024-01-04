@@ -29,6 +29,8 @@
 #include "Shape/Editor/Spline/SplineEntityPipeline.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
 #include "World/EntityData.h"
+#include "World/Entity/GroupComponentData.h"
+#include "World/Entity/PathComponentData.h"
 
 namespace traktor::shape
 {
@@ -39,7 +41,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 5, SplineEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 6, SplineEntityPipeline, world::EntityPipeline)
 
 bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -133,6 +135,57 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 		replacementEntityData->setId(owner->getId());
 		replacementEntityData->setName(owner->getName());
 		replacementEntityData->setTransform(owner->getTransform());
+
+		// Add path component so runtime can query spline.
+		{
+			TransformPath path;
+
+			// Get group component.
+			auto group = owner->getComponent< world::GroupComponentData >();
+			if (!group)
+			{
+				log::error << L"Invalid spline; no control points found." << Endl;
+				return nullptr;
+			}
+
+			// Count number of control points as we need to estimate fraction of each.
+			int32_t controlPointCount = 0;
+			for (auto entityData : group->getEntityData())
+			{
+				for (auto componentData : entityData->getComponents())
+				{
+					if (is_a< ControlPointComponentData >(componentData))
+						controlPointCount++;
+				}
+			}
+			if (controlPointCount <= 0)
+			{
+				log::error << L"Invalid spline; no control points found." << Endl;
+				return nullptr;
+			}
+
+			// Create transformation path.
+			int32_t controlPointIndex = 0;
+			for (auto entityData : group->getEntityData())
+			{
+				auto controlPointData = entityData->getComponent< ControlPointComponentData >();
+				if (!controlPointData)
+					continue;
+
+				const Transform T = entityData->getTransform();
+
+				TransformPath::Key k;
+				k.T = (float)controlPointIndex / (controlPointCount - 1);
+				k.position = T.translation();
+				k.orientation = T.rotation().toEulerAngles();
+				k.values[0] = controlPointData->getScale();
+				path.insert(k);
+
+				++controlPointIndex;
+			}
+
+			replacementEntityData->setComponent(new world::PathComponentData(path));
+		}
 
 		{
 			const Guid outputMeshId = owner->getId();
