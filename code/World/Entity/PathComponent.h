@@ -45,6 +45,8 @@ public:
 
 	Transform evaluate(float at) const;
 
+	Transform evaluateDirectional(float at) const;
+
 	float estimateLength() const;
 
 	float findClosest(const Vector4& position) const;
