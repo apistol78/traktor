@@ -280,6 +280,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classPathComponent = new AutoRuntimeClass< PathComponent >();
 	classPathComponent->addMethod("evaluate", &PathComponent::evaluate);
+	classPathComponent->addMethod("evaluateDirectional", &PathComponent::evaluateDirectional);
 	classPathComponent->addMethod("estimateLength", &PathComponent::estimateLength);
 	classPathComponent->addMethod("findClosest", &PathComponent::findClosest);
 	registrar->registerClass(classPathComponent);
