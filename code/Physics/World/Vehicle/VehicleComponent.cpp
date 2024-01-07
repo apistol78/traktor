@@ -191,12 +191,13 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 
 		float contactFudge = 0.0f;
 
-		if (m_physicsManager->queryRay(
+		if (m_physicsManager->querySweep(
 			anchorW,
 			axisW,
 			data->getSuspensionLength().max + data->getRadius() + m_data->getFudgeDistance(),
+			0.2f,
 			physics::QueryFilter(m_traceInclude, m_traceIgnore, body->getClusterId()),
-			false,
+			//false,
 			result
 		))
 		{
