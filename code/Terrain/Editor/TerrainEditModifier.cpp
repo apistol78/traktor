@@ -11,6 +11,7 @@
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -782,133 +783,145 @@ void TerrainEditModifier::apply(const Vector4& center)
 			m_updateRegion[i] = region[i];
 	}
 
+	RefArray< Job > jobs;
+
 	// Update heights.
 	if ((m_brushMode & IBrush::MdHeight) != 0)
 	{
-		// Transfer heights to texture.
-		render::ITexture::Lock nl;
-		if (m_heightMap->lock(0, 0, nl))
-		{
-			float* ptr = (float*)nl.bits;
-			for (int32_t v = 0; v < size; ++v)
+		jobs.push_back(JobManager::getInstance().add([&](){
+			// Transfer heights to texture.
+			render::ITexture::Lock nl;
+			if (m_heightMap->lock(0, 0, nl))
 			{
-				for (int32_t u = 0; u < size; ++u)
+				float* ptr = (float*)nl.bits;
+				for (int32_t v = 0; v < size; ++v)
 				{
-					float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
-					*ptr++ = height;
+					for (int32_t u = 0; u < size; ++u)
+					{
+						float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
+						*ptr++ = height;
+					}
 				}
+				m_heightMap->unlock(0, 0);
 			}
-			m_heightMap->unlock(0, 0);
-		}
 
-		// Replace height map in resource with our texture.
-		m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
+			// Replace height map in resource with our texture.
+			m_terrainComponent->m_terrain->m_heightMap = resource::Proxy< render::ITexture >(m_heightMap);
+		}));
 	}
 
 	// Update splats.
 	if ((m_brushMode & IBrush::MdMaterial) != 0)
 	{
-		// Transfer splats to texture.
-		render::ITexture::Lock cl;
-		if (m_splatMap->lock(0, 0, cl))
-		{
-			const uint8_t* src = static_cast< const uint8_t* >(m_splatImage->getData());
-			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+		jobs.push_back(JobManager::getInstance().add([&](){
+			// Transfer splats to texture.
+			render::ITexture::Lock cl;
+			if (m_splatMap->lock(0, 0, cl))
+			{
+				const uint8_t* src = static_cast< const uint8_t* >(m_splatImage->getData());
+				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
 
-			for (int32_t y = 0; y < size; ++y)
-				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
+				for (int32_t y = 0; y < size; ++y)
+					std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
 
-			m_splatMap->unlock(0, 0);
-		}
+				m_splatMap->unlock(0, 0);
+			}
 
-		// Replace splat map in resource with our texture.
-		m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
+			// Replace splat map in resource with our texture.
+			m_terrainComponent->m_terrain->m_splatMap = resource::Proxy< render::ITexture >(m_splatMap);
+		}));
 	}
 
 	// Update colors.
 	if ((m_brushMode & IBrush::MdColor) != 0)
 	{
-		// Transfer colors to texture.
-		render::ITexture::Lock cl;
-		if (m_colorMap->lock(0, 0, cl))
-		{
-			m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
+		jobs.push_back(JobManager::getInstance().add([&](){
+			// Transfer colors to texture.
+			render::ITexture::Lock cl;
+			if (m_colorMap->lock(0, 0, cl))
+			{
+				m_colorImageLowPrecision->copy(m_colorImage, mnx, mnz, mnx, mnz, mxx - mnx, mxz - mnz);
 
-			const uint8_t* src = static_cast< const uint8_t* >(m_colorImageLowPrecision->getData());
-			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+				const uint8_t* src = static_cast< const uint8_t* >(m_colorImageLowPrecision->getData());
+				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
 
-			for (int32_t y = 0; y < size; ++y)
-				std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
+				for (int32_t y = 0; y < size; ++y)
+					std::memcpy(&dst[y * cl.pitch], &src[y * size * 4], size * 4);
 
-			m_colorMap->unlock(0, 0);
-		}
+				m_colorMap->unlock(0, 0);
+			}
 
-		// Replace color map in resource with our texture.
-		m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
+			// Replace color map in resource with our texture.
+			m_terrainComponent->m_terrain->m_colorMap = resource::Proxy< render::ITexture >(m_colorMap);
+		}));
 	}
 
 	// Update normals.
 	if ((m_brushMode & IBrush::MdHeight) != 0)
 	{
-		for (int32_t v = mnz; v <= mxz; ++v)
-		{
-			for (int32_t u = mnx; u <= mxx; ++u)
+		jobs.push_back(JobManager::getInstance().add([&](){
+			for (int32_t v = mnz; v <= mxz; ++v)
 			{
-				const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-				const uint8_t nx = uint8_t(normal.x() * 255);
-				const uint8_t ny = uint8_t(normal.y() * 255);
-				const uint8_t nz = uint8_t(normal.z() * 255);
-				uint8_t* ptr = &m_normalData[(u + v * size) * 4];
-				ptr[0] = nx;
-				ptr[1] = nz;
-				ptr[2] = ny;
-				ptr[3] = 0;
+				for (int32_t u = mnx; u <= mxx; ++u)
+				{
+					const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+					const uint8_t nx = uint8_t(normal.x() * 255);
+					const uint8_t ny = uint8_t(normal.y() * 255);
+					const uint8_t nz = uint8_t(normal.z() * 255);
+					uint8_t* ptr = &m_normalData[(u + v * size) * 4];
+					ptr[0] = nx;
+					ptr[1] = nz;
+					ptr[2] = ny;
+					ptr[3] = 0;
+				}
 			}
-		}
 
-		// Transfer normals to texture.
-		render::ITexture::Lock nl;
-		if (m_normalMap->lock(0, 0, nl))
-		{
-			const uint8_t* src = static_cast< const uint8_t* >(m_normalData.c_ptr());
-			uint8_t* dst = static_cast< uint8_t* >(nl.bits);
+			// Transfer normals to texture.
+			render::ITexture::Lock nl;
+			if (m_normalMap->lock(0, 0, nl))
+			{
+				const uint8_t* src = static_cast< const uint8_t* >(m_normalData.c_ptr());
+				uint8_t* dst = static_cast< uint8_t* >(nl.bits);
 
-			for (int32_t y = 0; y < size; ++y)
-				std::memcpy(&dst[y * nl.pitch], &src[y * size * 4], size * 4);
+				for (int32_t y = 0; y < size; ++y)
+					std::memcpy(&dst[y * nl.pitch], &src[y * size * 4], size * 4);
 
-			m_normalMap->unlock(0, 0);
-		}
+				m_normalMap->unlock(0, 0);
+			}
 
-		// Replace normal map in resource with our texture.
-		m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
+			// Replace normal map in resource with our texture.
+			m_terrainComponent->m_terrain->m_normalMap = resource::Proxy< render::ITexture >(m_normalMap);
+		}));
 	}
 
 	// Update cuts.
 	if ((m_brushMode & IBrush::MdCut) != 0)
 	{
-		for (int32_t v = mnz; v <= mxz; ++v)
-		{
-			for (int32_t u = mnx; u <= mxx; ++u)
+		jobs.push_back(JobManager::getInstance().add([&](){
+			for (int32_t v = mnz; v <= mxz; ++v)
 			{
-				m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
+				for (int32_t u = mnx; u <= mxx; ++u)
+				{
+					m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
+				}
 			}
-		}
 
-		// Transfer cuts to texture.
-		render::ITexture::Lock cl;
-		if (m_cutMap->lock(0, 0, cl))
-		{
-			const uint8_t* src = static_cast< const uint8_t* >(m_cutData.c_ptr());
-			uint8_t* dst = static_cast< uint8_t* >(cl.bits);
+			// Transfer cuts to texture.
+			render::ITexture::Lock cl;
+			if (m_cutMap->lock(0, 0, cl))
+			{
+				const uint8_t* src = static_cast< const uint8_t* >(m_cutData.c_ptr());
+				uint8_t* dst = static_cast< uint8_t* >(cl.bits);
 
-			for (int32_t y = 0; y < size; ++y)
-				std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
+				for (int32_t y = 0; y < size; ++y)
+					std::memcpy(&dst[y * cl.pitch], &src[y * size], size);
 
-			m_cutMap->unlock(0, 0);
-		}
+				m_cutMap->unlock(0, 0);
+			}
 
-		// Replace cut map in resource with our texture.
-		m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
+			// Replace cut map in resource with our texture.
+			m_terrainComponent->m_terrain->m_cutMap = resource::Proxy< render::ITexture >(m_cutMap);
+		}));
 	}
 
 	// Update material mask.
@@ -921,6 +934,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 				m_attributeData[u + v * size] = m_heightfield->getGridAttribute(u, v);
 			}
 		}
+	}
+
+	// Wait until all transfers has finished.
+	while (!jobs.empty())
+	{
+		jobs.back()->wait();
+		jobs.pop_back();
 	}
 
 	for (auto terrainLayer : m_terrainLayers)
