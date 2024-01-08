@@ -245,7 +245,7 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		if (wParam != '\r')
 		{
 			KeyEvent ke;
-			ke.type = KtCharacter;
+			ke.type = KeyEventType::Character;
 			ke.character = (wchar_t)wParam;
 			this_->m_keyEvents.push_back(ke);
 		}
@@ -256,7 +256,7 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		if (keyCode != 0)
 		{
 			KeyEvent ke;
-			ke.type = KtDown;
+			ke.type = KeyEventType::Down;
 			ke.keyCode = keyCode;
 			this_->m_keyEvents.push_back(ke);
 		}
@@ -267,7 +267,7 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 		if (keyCode != 0)
 		{
 			KeyEvent ke;
-			ke.type = KtUp;
+			ke.type = KeyEventType::Up;
 			ke.keyCode = keyCode;
 			this_->m_keyEvents.push_back(ke);
 		}

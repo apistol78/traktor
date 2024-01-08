@@ -246,16 +246,16 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 			input::IInputDevice::KeyEvent ke;
 			while (keyboardDevice->getKeyEvent(ke))
 			{
-				if (ke.type == input::IInputDevice::KtCharacter)
+				if (ke.type == input::KeyEventType::Character)
 					m_moviePlayer->postKey(ke.character);
 				else
 				{
 					uint32_t keyCode = translateInputKeyCode(ke.keyCode);
 					if (keyCode != 0)
 					{
-						if (ke.type == input::IInputDevice::KtDown)
+						if (ke.type == input::KeyEventType::Down)
 							m_moviePlayer->postKeyDown(keyCode);
-						else if (ke.type == input::IInputDevice::KtUp)
+						else if (ke.type == input::KeyEventType::Up)
 							m_moviePlayer->postKeyUp(keyCode);
 					}
 				}

@@ -265,6 +265,16 @@ enum class InputCategory : uint32_t
 constexpr InputCategory operator | (InputCategory lh, InputCategory rh) { return (InputCategory)((uint32_t)lh | (uint32_t)rh); }
 constexpr InputCategory operator & (InputCategory lh, InputCategory rh) { return (InputCategory)((uint32_t)lh & (uint32_t)rh); }
 
+/*! Key device event type.
+ * \ingroup Input
+ */
+enum class KeyEventType
+{
+	Down,
+	Up,
+	Character
+};
+
 /*! Input rumble specification.
  * \ingroup Input
  */
