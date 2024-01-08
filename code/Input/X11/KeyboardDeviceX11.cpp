@@ -254,7 +254,7 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 
 						// Push key initially down event.
 						KeyEvent ke;
-						ke.type = KtDown;
+						ke.type = KeyEventType::Down;
 						ke.character = i;
 						m_keyEvents.push_back(ke);
 						break;
@@ -265,7 +265,7 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 			for (int i = 0; i < nbuf; ++i)
 			{
 				KeyEvent ke;
-				ke.type = KtCharacter;
+				ke.type = KeyEventType::Character;
 				ke.character = wchar_t(buf[i]);
 				m_keyEvents.push_back(ke);
 			}
@@ -294,7 +294,7 @@ void KeyboardDeviceX11::consumeEvent(XEvent& evt)
 
 					// Push key up event.
 					KeyEvent ke;
-					ke.type = KtUp;
+					ke.type = KeyEventType::Up;
 					ke.character = i;
 					m_keyEvents.push_back(ke);
 					break;

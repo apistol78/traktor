@@ -34,13 +34,6 @@ class T_DLLCLASS IInputDevice : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum KeyEventType
-	{
-		KtDown,
-		KtUp,
-		KtCharacter
-	};
-
 	struct KeyEvent
 	{
 		KeyEventType type;
