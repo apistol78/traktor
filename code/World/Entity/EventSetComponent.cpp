@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,13 +41,13 @@ void EventSetComponent::update(const UpdateParams& update)
 {
 }
 
-void EventSetComponent::raise(const std::wstring& name, const Transform& offset)
+IEntityEventInstance* EventSetComponent::raise(const std::wstring& name, const Transform& offset)
 {
 	const IEntityEvent* event = getEvent(name);
-	if (!event)
-		return;
-
-	m_eventManager->raise(event, m_owner, offset);
+	if (event)
+		return m_eventManager->raise(event, m_owner, offset);
+	else
+		return nullptr;
 }
 
 const IEntityEvent* EventSetComponent::getEvent(const std::wstring& name) const
