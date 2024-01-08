@@ -629,7 +629,7 @@ bool Application::update()
 			// Calculate number of required updates in order to
 			// keep game in sync with render time.
 			const double simulationEndTime = (m_updateInfo.m_stateTime + dFT);
-			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime + 0.5) / dT);
+			const int32_t updateCountNoClamp = int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / dT);
 			updateCount = std::min(updateCountNoClamp, m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
