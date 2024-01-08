@@ -314,13 +314,17 @@ void WorldRendererForward::setupVisualPass(
 
 			sharedParams->endParameters(wc.getRenderContext());
 
+			const bool irradianceEnable = (bool)(m_irradianceGrid != nullptr);
+			const bool irradianceSingle = irradianceEnable && m_irradianceGrid->isSingle();
+
 			const WorldRenderPassShared defaultPass(
 				s_techniqueForwardColor,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::Last,
 				{
-					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
+					{ s_handleIrradianceEnable, irradianceEnable },
+					{ s_handleIrradianceSingle, irradianceSingle },
 					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr )}
 				}
 			);

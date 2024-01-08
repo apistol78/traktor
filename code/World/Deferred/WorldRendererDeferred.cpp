@@ -347,10 +347,14 @@ void WorldRendererDeferred::setupVisualPass(
 
 			sharedParams->endParameters(renderContext);
 
+			const bool irradianceEnable = (bool)(m_irradianceGrid != nullptr);
+			const bool irradianceSingle = irradianceEnable && m_irradianceGrid->isSingle();
+
 			// Analytical lights; resolve with gbuffer.
 			{
 				render::Shader::Permutation perm;
-				m_lightShader->setCombination(s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr), perm);
+				m_lightShader->setCombination(s_handleIrradianceEnable, irradianceEnable, perm);
+				m_lightShader->setCombination(s_handleIrradianceSingle, irradianceSingle, perm);
 				m_lightShader->setCombination(s_handleVolumetricFogEnable, (bool)(fog != nullptr), perm);
 				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
 			}
@@ -362,7 +366,8 @@ void WorldRendererDeferred::setupVisualPass(
 				worldRenderView,
 				IWorldRenderPass::Last,
 				{
-					{ s_handleIrradianceEnable, (bool)(m_irradianceGrid != nullptr) },
+					{ s_handleIrradianceEnable, irradianceEnable },
+					{ s_handleIrradianceSingle, irradianceSingle },
 					{ s_handleVolumetricFogEnable, (bool)(fog != nullptr)}
 				}
 			);

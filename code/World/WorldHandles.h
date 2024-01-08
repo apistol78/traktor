@@ -34,6 +34,7 @@ extern const render::Handle T_DLLCLASS s_techniqueShadow;
 
 // Permutations
 extern const render::Handle s_handleIrradianceEnable;
+extern const render::Handle s_handleIrradianceSingle;
 extern const render::Handle s_handleVolumetricFogEnable;
 
 // Shader parameters.

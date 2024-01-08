@@ -244,8 +244,8 @@ Eye direction
 			<id>{645143C2-E889-6740-AB8C-72DADC0B301C}</id>
 			<comment/>
 			<position>
-				<first>1356</first>
-				<second>-1039</second>
+				<first>1674</first>
+				<second>-1029</second>
 			</position>
 			<parameterName>World_IrradianceEnable</parameterName>
 		</item>
@@ -309,8 +309,8 @@ Eye direction
 			<id>{01AA224F-F89C-0342-895C-75C7DBADA85B}</id>
 			<comment/>
 			<position>
-				<first>888</first>
-				<second>-1042</second>
+				<first>896</first>
+				<second>-997</second>
 			</position>
 			<fragmentGuid>{ADFB49ED-56BB-4981-8121-E9154AB0B2D4}</fragmentGuid>
 			<inputPins>
@@ -355,8 +355,8 @@ Eye direction
 			<id>{9E45E1C4-945F-844A-9376-3C2DD80CFCDC}</id>
 			<comment/>
 			<position>
-				<first>1085</first>
-				<second>-951</second>
+				<first>1403</first>
+				<second>-941</second>
 			</position>
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
@@ -365,16 +365,16 @@ Eye direction
 			<id>{238000AF-946C-114F-A9E9-CAD2A9CD45FD}</id>
 			<comment/>
 			<position>
-				<first>1199</first>
-				<second>-1035</second>
+				<first>1517</first>
+				<second>-1025</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2CA9D823-652A-BC48-912E-D941CC5392DB}</id>
 			<comment/>
 			<position>
-				<first>1650</first>
-				<second>-970</second>
+				<first>1968</first>
+				<second>-960</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -848,6 +848,38 @@ Eye direction
 			</position>
 			<name>L_Metalness</name>
 		</item>
+		<item type="traktor.render.External" version="2,traktor.render.Node:1">
+			<id>{75C313B0-FB69-8D46-83EE-F13B0B43FF78}</id>
+			<comment/>
+			<position>
+				<first>897</first>
+				<second>-1075</second>
+			</position>
+			<fragmentGuid>{1F5FB15A-CCA0-264F-A150-7EDEAD93E644}</fragmentGuid>
+			<inputPins>
+				<item>
+					<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
+					<name>WorldNormal</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Branch" version="traktor.render.Node:1">
+			<id>{4EEE1732-C2AB-D74B-BA0E-EF52BB57FDFC}</id>
+			<comment/>
+			<position>
+				<first>1215</first>
+				<second>-1048</second>
+			</position>
+			<parameterName>World_IrradianceSingle</parameterName>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1028,16 +1060,6 @@ Eye direction
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
-				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1520,6 +1542,46 @@ Eye direction
 				<id>{82B29CCB-606C-2D40-BFB1-61A801861DF0}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[77]"/>
+				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[77]"/>
+				<id>{9D9FA2FC-9298-4A6F-88A9-A055F8A91F52}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{08532144-809B-4726-A819-F8E3F9CF7515}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[77]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{DE98332B-0513-442C-B08C-234969B7C79F}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups>
 		<item type="traktor.render.Group">
@@ -1530,8 +1592,8 @@ Eye direction
 				<second>-1192</second>
 			</position>
 			<size>
-				<first>1768</first>
-				<second>411</second>
+				<first>2032</first>
+				<second>428</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">
