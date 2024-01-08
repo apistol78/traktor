@@ -22,9 +22,10 @@ const resource::Id< physics::CollisionSpecification > c_interactableCollision(Gu
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineComponentData", 0, SplineComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.SplineComponentData", 1, SplineComponentData, world::IEntityComponentData)
 
 SplineComponentData::SplineComponentData()
+:	m_closed(false)
 {
 	m_collisionGroup.insert(c_defaultCollision);
 	m_collisionMask.insert(c_defaultCollision);
@@ -63,6 +64,9 @@ void SplineComponentData::setTransform(const world::EntityData* owner, const Tra
 
 void SplineComponentData::serialize(ISerializer& s)
 {
+	if (s.getVersion< SplineComponentData >() >= 1)
+		s >> Member< bool >(L"closed", m_closed);
+
 	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionGroup", m_collisionGroup);
 	s >> MemberSmallSet< resource::Id< physics::CollisionSpecification >, resource::Member< physics::CollisionSpecification > >(L"collisionMask", m_collisionMask);
 }

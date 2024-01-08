@@ -40,6 +40,8 @@ class T_DLLCLASS SplineComponentData : public world::IEntityComponentData
 public:
 	SplineComponentData();
 
+	bool isClosed() const { return m_closed; }
+
 	void setCollisionGroup(const SmallSet< resource::Id< physics::CollisionSpecification > >& collisionGroup);
 
 	const SmallSet< resource::Id< physics::CollisionSpecification > >& getCollisionGroup() const;
@@ -55,6 +57,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
+	bool m_closed;
 	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionGroup;
 	SmallSet< resource::Id< physics::CollisionSpecification > > m_collisionMask;
 };

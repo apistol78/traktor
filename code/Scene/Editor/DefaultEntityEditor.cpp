@@ -84,7 +84,10 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* insertAfterEntityAdapter
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	if (auto groupComponentData = getComponentOf< world::GroupComponentData >(entityData))
 	{
-		groupComponentData->addEntityData(insertAfterEntityAdapter->getEntityData(), childEntityAdapter->getEntityData());
+		groupComponentData->addEntityData(
+			insertAfterEntityAdapter ? insertAfterEntityAdapter->getEntityData() : nullptr,
+			childEntityAdapter->getEntityData()
+		);
 		return true;
 	}
 	else
