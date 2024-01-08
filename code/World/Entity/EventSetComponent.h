@@ -26,6 +26,7 @@ namespace traktor::world
 
 class EntityEventManager;
 class IEntityEvent;
+class IEntityEventInstance;
 
 class T_DLLCLASS EventSetComponent : public IEntityComponent
 {
@@ -44,7 +45,7 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	void raise(const std::wstring& name, const Transform& offset = Transform::identity());
+	IEntityEventInstance* raise(const std::wstring& name, const Transform& offset = Transform::identity());
 
 	const IEntityEvent* getEvent(const std::wstring& name) const;
 

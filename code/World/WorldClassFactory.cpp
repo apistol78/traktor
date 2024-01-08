@@ -117,14 +117,14 @@ int32_t CameraComponent_getProjection(CameraComponent* self)
 	return (int32_t)self->getProjection();
 }
 
-void EventSetComponent_raise_1(EventSetComponent* self, const std::wstring& name)
+IEntityEventInstance* EventSetComponent_raise_1(EventSetComponent* self, const std::wstring& name)
 {
-	self->raise(name);
+	return self->raise(name);
 }
 
-void EventSetComponent_raise_2(EventSetComponent* self, const std::wstring& name, const Transform& offset)
+IEntityEventInstance* EventSetComponent_raise_2(EventSetComponent* self, const std::wstring& name, const Transform& offset)
 {
-	self->raise(name, offset);
+	return self->raise(name, offset);
 }
 
 void Entity_update(Entity* self, double totalTime, double deltaTime)
