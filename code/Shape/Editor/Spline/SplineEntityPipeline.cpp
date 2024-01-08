@@ -22,6 +22,7 @@
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Shape/Editor/Spline/CloneShapeLayerData.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
 #include "Render/Shader.h"
@@ -60,6 +61,7 @@ bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 TypeInfoSet SplineEntityPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
+		CloneShapeLayerData,
 		ControlPointComponentData,
 		ExtrudeShapeLayerData,
 		SplineComponentData
@@ -84,6 +86,9 @@ bool SplineEntityPipeline::buildDependencies(
 		for (auto id : splineComponentData->getCollisionMask())
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
 	}
+
+	if (auto cloneShapeLayerData = dynamic_type_cast< const CloneShapeLayerData* >(sourceAsset))
+		pipelineDepends->addDependency(cloneShapeLayerData->getMesh(), editor::PdfUse);
 
 	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
 	{
@@ -256,11 +261,6 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				collisionModel
 			);
 		}
-
-		//// Replace mesh component referencing our merged mesh.
-		//return new mesh::MeshComponentData(
-		// 	resource::Id< mesh::IMesh >(outputRenderMeshGuid)
-		//);
 
 		return replacementEntityData;
 	}

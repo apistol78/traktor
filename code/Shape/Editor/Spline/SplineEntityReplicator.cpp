@@ -65,6 +65,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 	Usage usage
 ) const
 {
+	auto splineComponent = entityData->getComponent< SplineComponentData >();
 	TransformPath path;
 
 	// Get group component.
@@ -125,7 +126,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 			continue;
 
 		// Create model from of the layer.
-		Ref< model::Model > layerModel = layer->createModel(path, false);
+		Ref< model::Model > layerModel = layer->createModel(path, splineComponent->isClosed(), false);
 		if (!layerModel)
 			continue;
 

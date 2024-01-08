@@ -107,7 +107,8 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 
 		return new SplineComponent(
 			m_renderSystem,
-			shader
+			shader,
+			splineComponentData->isClosed()
 		);
 	}
 	else

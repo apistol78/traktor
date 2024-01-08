@@ -56,7 +56,7 @@ void ExtrudeShapeLayer::update(const world::UpdateParams& update)
 {
 }
 
-Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bool preview) const
+Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bool closed, bool preview) const
 {
 	const auto& keys = path.getKeys();
 	if (keys.size() < 2)
@@ -84,8 +84,8 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 		const float t0 = (float)i / 100.0f;
 		const float t1 = (float)(i + 1) / 100.0f;
 
-		const auto v0 = path.evaluate(t0, true);
-		const auto v1 = path.evaluate(t1, true);
+		const auto v0 = path.evaluate(t0, closed);
+		const auto v1 = path.evaluate(t1, closed);
 
 		const Vector4 p0 = v0.transform().translation();
 		const Vector4 p1 = v1.transform().translation();
@@ -114,7 +114,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 			const Matrix44 Tc = translate(0.0f, 0.0f, p.z());
 			const float ats = at + ((p.z() - stepMin) / stepLength) * (1.0f / nrepeats);
 
-			const auto v = path.evaluate(ats, true);
+			const auto v = path.evaluate(ats, closed);
 			Matrix44 T = v.transform().toMatrix44();
 
 			if (m_data->m_automaticOrientation)
@@ -122,8 +122,8 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 				const Quaternion Qrot(T);
 
 				const float c_atDelta = 0.001f;
-				const Transform Tp = path.evaluate(ats - c_atDelta, true).transform();
-				const Transform Tn = path.evaluate(ats + c_atDelta, true).transform();
+				const Transform Tp = path.evaluate(ats - c_atDelta, closed).transform();
+				const Transform Tn = path.evaluate(ats + c_atDelta, closed).transform();
 				T = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
 
 				T = T * rotateZ(Qrot.toEulerAngles().y());

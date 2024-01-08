@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -254,6 +254,7 @@ int main(int argc, const char** argv)
 		if (cmdLine.getCount() < 1)
 		{
 			log::info << L"Traktor.Run.App; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+			log::info << L"Visit https://github.com/apistol78/traktor for more information." << Endl;
 			log::info << Endl;
 			log::info << L"Usage: Run (option(s)) [<file>.run|<file>.template] (args ...)" << Endl;
 			log::info << Endl;

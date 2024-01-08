@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,21 +29,20 @@ class MeshAsset;
 namespace traktor::shape
 {
 
-class ExtrudeShapeLayerData;
+class CloneShapeLayerData;
 
 /*!
  * \ingroup Shape
  */
-class T_DLLCLASS ExtrudeShapeLayer : public SplineLayerComponent
+class T_DLLCLASS CloneShapeLayer : public SplineLayerComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit ExtrudeShapeLayer(
-		const ExtrudeShapeLayerData* data,
-		mesh::MeshAsset* meshStart, const model::Model* modelStart,
-		mesh::MeshAsset* meshRepeat, const model::Model* modelRepeat,
-		mesh::MeshAsset* meshEnd, const model::Model* modelEnd
+	explicit CloneShapeLayer(
+		const CloneShapeLayerData* data,
+		mesh::MeshAsset* mesh,
+		const model::Model* model
 	);
 
 	virtual void destroy() override final;
@@ -59,16 +58,9 @@ public:
 	virtual Ref< model::Model > createModel(const TransformPath& path, bool closed, bool preview) const override final;
 
 private:
-	Ref< const ExtrudeShapeLayerData > m_data;
-
-	Ref< mesh::MeshAsset > m_meshStart;
-	Ref< const model::Model > m_modelStart;
-
-	Ref< mesh::MeshAsset > m_meshRepeat;
-	Ref< const model::Model > m_modelRepeat;
-
-	Ref< mesh::MeshAsset > m_meshEnd;
-	Ref< const model::Model > m_modelEnd;
+	Ref< const CloneShapeLayerData > m_data;
+	Ref< mesh::MeshAsset > m_mesh;
+	Ref< const model::Model > m_model;
 };
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,29 +22,27 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class Buffer;
 class IRenderSystem;
 class IVertexLayout;
 class Shader;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 /*! Spline entity.
  * \ingroup Shape
@@ -56,7 +54,8 @@ class T_DLLCLASS SplineComponent : public world::IEntityComponent
 public:
 	explicit SplineComponent(
 		render::IRenderSystem* renderSystem,
-		const resource::Proxy< render::Shader >& shader
+		const resource::Proxy< render::Shader >& shader,
+		bool closed
 	);
 
 	virtual void destroy() override final;
@@ -89,6 +88,7 @@ private:
 	world::Entity* m_owner = nullptr;
 
 	TransformPath m_path;
+	bool m_closed;
 	bool m_dirty;
 
 	Ref< const render::IVertexLayout > m_vertexLayout;
@@ -97,6 +97,5 @@ private:
 	AlignedVector< MaterialBatch > m_batches;
 };
 
-	}
 }
 

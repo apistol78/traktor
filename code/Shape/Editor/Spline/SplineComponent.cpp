@@ -43,10 +43,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineComponent", SplineComponent, world:
 
 SplineComponent::SplineComponent(
 	render::IRenderSystem* renderSystem,
-	const resource::Proxy< render::Shader >& shader
+	const resource::Proxy< render::Shader >& shader,
+	bool closed
 )
 :	m_renderSystem(renderSystem)
 ,	m_shader(shader)
+,	m_closed(closed)
 ,	m_dirty(true)
 {
 }
@@ -119,7 +121,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 		{
 			if (const auto layer = dynamic_type_cast< const SplineLayerComponent* >(component))
 			{
-				Ref< model::Model > layerModel = layer->createModel(m_path, true);
+				Ref< model::Model > layerModel = layer->createModel(m_path, m_closed, true);
 				if (!layerModel)
 					continue;
 
