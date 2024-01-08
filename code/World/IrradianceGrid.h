@@ -71,6 +71,8 @@ public:
 
 	render::Buffer* getBuffer() const { return m_buffer; }
 
+	bool isSingle() const { return m_size[0] == 1 && m_size[1] == 1 && m_size[2] == 1; }
+
 private:
 	gridSize_t m_size;
 	Aabb3 m_boundingBox;

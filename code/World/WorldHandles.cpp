@@ -24,6 +24,7 @@ const render::Handle s_techniqueShadow(L"World_ShadowWrite");
 
 // Permutations
 const render::Handle s_handleIrradianceEnable(L"World_IrradianceEnable");
+const render::Handle s_handleIrradianceSingle(L"World_IrradianceSingle");
 const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 
 // Shader parameters.
