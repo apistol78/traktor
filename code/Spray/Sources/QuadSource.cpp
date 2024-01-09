@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Types.h"
 #include "Spray/Sources/QuadSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.QuadSource", QuadSource, Source)
 
@@ -53,23 +51,22 @@ void QuadSource::emit(
 	EmitterInstance& emitterInstance
 ) const
 {
-	Vector4 center = transform * m_center;
-	Vector4 axis1 = transform * m_axis1;
-	Vector4 axis2 = transform * m_axis2;
-	Vector4 normal = transform * m_normal;
+	const Vector4 center = transform * m_center;
+	const Vector4 axis1 = transform * m_axis1;
+	const Vector4 axis2 = transform * m_axis2;
+	const Vector4 normal = transform * m_normal;
 
 	Point* point = emitterInstance.addPoints(emitCount);
 
 	while (emitCount-- > 0)
 	{
-		Scalar u = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
-		Scalar v = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
+		const Scalar u = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
+		const Scalar v = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
 
 		point->position = center + u * axis1 + v * axis2;
 		point->velocity = normal * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = Vector4::one();
 		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
@@ -80,5 +77,4 @@ void QuadSource::emit(
 	}
 }
 
-	}
 }

@@ -21,14 +21,13 @@ struct T_MATH_ALIGN16 Point
 {
 	Vector4 position;
 	Vector4 velocity;
-	Vector4 color;		// 48
 	float orientation;
 	float angularVelocity;
 	float inverseMass;
 	float age;
 	float maxAge;
 	float size;
-	float random;		// 28
+	float random;
 };
 
 /*! Array of particles.

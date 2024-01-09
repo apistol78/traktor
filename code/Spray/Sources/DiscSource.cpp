@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Types.h"
 #include "Spray/Sources/DiscSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.DiscSource", DiscSource, Source)
 
@@ -53,25 +51,24 @@ void DiscSource::emit(
 {
 	const Vector4 axisZ(0.0f, 0.0f, 1.0f, 0.0f);
 
-	Vector4 wx = cross(m_normal, axisZ);
-	Vector4 wz = cross(wx, m_normal);
+	const Vector4 wx = cross(m_normal, axisZ);
+	const Vector4 wz = cross(wx, m_normal);
 
-	Vector4 position = transform * m_position;
-	Vector4 x = transform * wx;
-	Vector4 y = transform * m_normal;
-	Vector4 z = transform * wz;
+	const Vector4 position = transform * m_position;
+	const Vector4 x = transform * wx;
+	const Vector4 y = transform * m_normal;
+	const Vector4 z = transform * wz;
 
 	Point* point = emitterInstance.addPoints(emitCount);
 
 	while (emitCount-- > 0)
 	{
-		Vector4 direction = (x * Scalar(context.random.nextFloat() * 2.0f - 1.0f) + z * Scalar(context.random.nextFloat() * 2.0f - 1.0f)).normalized();
+		const Vector4 direction = (x * Scalar(context.random.nextFloat() * 2.0f - 1.0f) + z * Scalar(context.random.nextFloat() * 2.0f - 1.0f)).normalized();
 
 		point->position = position + direction * Scalar(m_radius.random(context.random));
 		point->velocity = y * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = Vector4::one();
 		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
@@ -82,5 +79,4 @@ void DiscSource::emit(
 	}
 }
 
-	}
 }

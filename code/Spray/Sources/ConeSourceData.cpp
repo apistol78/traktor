@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,10 +16,8 @@
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/ConeSourceData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSourceData", 1, ConeSourceData, SourceData)
 
@@ -78,5 +76,4 @@ void ConeSourceData::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"size", m_size);
 }
 
-	}
 }

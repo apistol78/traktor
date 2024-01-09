@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,8 @@
 #include "Spray/PointSet.h"
 #include "Spray/Sources/PointSetSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSetSource", PointSetSource, Source)
 
@@ -58,14 +56,13 @@ void PointSetSource::emit(
 
 	for (uint32_t i = 0; i < uint32_t(points.size()); ++i)
 	{
-		Vector4 position = transform * (points[i].position + m_offset).xyz1();
-		Vector4 normal = transform * points[i].normal.xyz0();
+		const Vector4 position = transform * (points[i].position + m_offset).xyz1();
+		const Vector4 normal = transform * points[i].normal.xyz0();
 
 		point->position = position;
 		point->velocity = normal * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = points[i].color;
 		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
@@ -76,5 +73,4 @@ void PointSetSource::emit(
 	}
 }
 
-	}
 }

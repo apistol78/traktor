@@ -166,12 +166,11 @@ void PointRenderer::render(
 		// \note We're assuming locked vertex buffer is 16-aligned.
 		position.storeAligned(m_point->positionAndOrientation);
 		point.velocity.storeAligned(m_point->velocityAndRandom);
-		point.color.storeAligned(m_point->colorAndAge);
 		m_point->positionAndOrientation[3] = point.orientation;
 		m_point->velocityAndRandom[3] = point.random;
-		m_point->alphaAndSize[0] = alpha;
-		m_point->alphaAndSize[1] = point.size;
-		m_point->colorAndAge[3] = age;
+		m_point->alphaSizeAge[0] = alpha;
+		m_point->alphaSizeAge[1] = point.size;
+		m_point->alphaSizeAge[2] = age;
 		m_point++;
 
 		back.distance = min(back.distance, distance);

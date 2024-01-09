@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.PixelState" version="9,traktor.render.Node:1">
 			<id>{F5BC103A-0BA4-FA4F-85E7-FB88A6531C44}</id>
@@ -115,10 +115,6 @@
 					<name>Alpha</name>
 				</item>
 				<item>
-					<id>{B9162B82-E1B1-7D47-915F-CFCE9EC690A8}</id>
-					<name>Color</name>
-				</item>
-				<item>
 					<id>{E75AC79D-AB14-2F49-8752-4B8B8744DE17}</id>
 					<name>Orientation</name>
 				</item>
@@ -173,4 +169,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>
