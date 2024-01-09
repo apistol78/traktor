@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Types.h"
 #include "Spray/Sources/ConeSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSource", ConeSource, Source)
 
@@ -55,38 +53,37 @@ void ConeSource::emit(
 	EmitterInstance& emitterInstance
 ) const
 {
-	Vector4 position = transform * m_position;
-	Vector4 normal = transform * m_normal;
+	const Vector4 position = transform * m_position;
+	const Vector4 normal = transform * m_normal;
 
-	Scalar dT(context.deltaTime);
+	const Scalar dT(context.deltaTime);
 
-	Vector4 deltaVelocity = -deltaMotion / dT;
+	const Vector4 deltaVelocity = -deltaMotion / dT;
 
-	Vector4 tx = transform.axisX() * m_angle1s;
-	Vector4 tz = transform.axisZ() * m_angle2s;
+	const Vector4 tx = transform.axisX() * m_angle1s;
+	const Vector4 tz = transform.axisZ() * m_angle2s;
 
 	Point* point = emitterInstance.addPoints(emitCount);
 	while (emitCount-- > 0)
 	{
-		float phi = context.random.nextFloat() * 2.0f * PI;
+		const float phi = context.random.nextFloat() * 2.0f * PI;
 
-		Scalar gamma(context.random.nextFloat());
-		Scalar beta(context.random.nextFloat());
+		const Scalar gamma(context.random.nextFloat());
+		const Scalar beta(context.random.nextFloat());
 
-		Scalar x(traktor::sinf(phi + HALF_PI));
-		Scalar z(traktor::sinf(phi));
+		const Scalar x(traktor::sinf(phi + HALF_PI));
+		const Scalar z(traktor::sinf(phi));
 
-		Vector4 ax = tx * x;
-		Vector4 az = tz * z;
+		const Vector4 ax = tx * x;
+		const Vector4 az = tz * z;
 
-		Vector4 extent = ax + az;
-		Vector4 direction = (normal + extent * gamma).normalized();
+		const Vector4 extent = ax + az;
+		const Vector4 direction = (normal + extent * gamma).normalized();
 
 		point->velocity = direction * Scalar(m_velocity.random(context.random)) + deltaVelocity * Scalar(m_inheritVelocity.random(context.random));
 		point->position = position + point->velocity * beta * dT;
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = Vector4::one();
 		point->age = beta;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / m_mass.random(context.random);
@@ -97,5 +94,4 @@ void ConeSource::emit(
 	}
 }
 
-	}
 }

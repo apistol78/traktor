@@ -26,8 +26,7 @@ struct EmitterPoint
 {
 	float positionAndOrientation[4];
 	float velocityAndRandom[4];
-	float alphaAndSize[4];
-	float colorAndAge[4];
+	float alphaSizeAge[4];
 };
 #pragma pack()
 

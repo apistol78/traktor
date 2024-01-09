@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Types.h"
 #include "Spray/Sources/SphereSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SphereSource", SphereSource, Source)
 
@@ -49,19 +47,18 @@ void SphereSource::emit(
 	EmitterInstance& emitterInstance
 ) const
 {
-	Vector4 position = transform * m_position;
+	const Vector4 position = transform * m_position;
 
 	Point* point = emitterInstance.addPoints(emitCount);
 
 	while (emitCount-- > 0)
 	{
-		Vector4 direction = context.random.nextUnit();
+		const Vector4 direction = context.random.nextUnit();
 
 		point->position = position - deltaMotion * Scalar(context.random.nextFloat()) + direction * Scalar(m_radius.random(context.random));
 		point->velocity = direction * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = Vector4::one();
 		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
@@ -72,5 +69,4 @@ void SphereSource::emit(
 	}
 }
 
-	}
 }

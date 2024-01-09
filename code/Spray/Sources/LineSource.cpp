@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Types.h"
 #include "Spray/Sources/LineSource.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.LineSource", LineSource, Source)
 
@@ -51,23 +49,22 @@ void LineSource::emit(
 	EmitterInstance& emitterInstance
 ) const
 {
-	Vector4 startPosition = transform * m_startPosition;
-	Vector4 endPosition = transform * m_endPosition;
-	Vector4 direction = (endPosition - startPosition).normalized();
+	const Vector4 startPosition = transform * m_startPosition;
+	const Vector4 endPosition = transform * m_endPosition;
+	const Vector4 direction = (endPosition - startPosition).normalized();
 
-	int32_t npoints = 2 + m_segments;
+	const int32_t npoints = 2 + m_segments;
 
 	Point* point = emitterInstance.addPoints(npoints);
 
 	for (int32_t i = 0; i < npoints; ++i)
 	{
-		Vector4 position = lerp(startPosition, endPosition, Scalar(float(i) / (npoints - 1)));
+		const Vector4 position = lerp(startPosition, endPosition, Scalar(float(i) / (npoints - 1)));
 
 		point->position = position;
 		point->velocity = direction * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->color = Vector4::one();
 		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
@@ -78,5 +75,4 @@ void LineSource::emit(
 	}
 }
 
-	}
 }

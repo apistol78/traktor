@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 /*! Quad particle source.
  * \ingroup Spray
@@ -33,7 +31,7 @@ class T_DLLCLASS QuadSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	QuadSource(
+	explicit QuadSource(
 		float constantRate,
 		float velocityRate,
 		const Vector4& center,
@@ -77,6 +75,4 @@ private:
 	Range< float > m_size;
 };
 
-	}
 }
-
