@@ -94,7 +94,7 @@ void VehicleComponent::update(const world::UpdateParams& update)
 	if (!body)
 		return;
 
-	const float dT = update.deltaTime;
+	const float dT = (float)update.deltaTime;
 
 	updateSteering(body, dT);
 	updateSuspension(body, dT);
@@ -317,7 +317,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 	Scalar rollingFriction = 0.0_simd;
 	const Scalar totalMass = 1.0_simd / Scalar(body->getInverseMass());
-	const Scalar massPerWheel = totalMass / Scalar(m_wheels.size());
+	const Scalar massPerWheel = totalMass / Scalar((float)m_wheels.size());
 	const Scalar breakingForce(m_data->getBreakingForce());
 
 	for (auto wheel : m_wheels)
@@ -325,7 +325,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		wheel->sliding = false;
 
 		// Do not apply friction if wheel is not in contact with ground.
-		if (!wheel->contact)
+		if (!wheel->contact || wheel->grip <= 0.0f)
 			continue;
 
 		const WheelData* data = wheel->data;
@@ -358,8 +358,7 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		const Scalar method = clamp(1.0_simd - abs(forwardVelocity) / c_methodLimit, 0.0_simd, 1.0_simd);
 
 		// Calculate slip angle.
-		const float k = std::atan2(sideVelocity, forwardVelocity);
-		const float slipAngle = abs(k);
+		const float slipAngle = std::atan2(abs(sideVelocity), abs(forwardVelocity));
 
 		// Calculate amount of force from slip angle. \fixme Should use curves.
 		const float peakSlipFriction = data->getSlipCornerForce();
@@ -379,14 +378,14 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 		// Apply friction force.
 		body->addForceAt(
-			bodyT * wheel->center, //wheel->contactPosition,
+			bodyT * wheel->center,
 			directionPerpW * Scalar(force * sign(-sideVelocity)) * grip * (1.0_simd - method),
 			false
 		);
 	
 		// Apply perpendicular friction force if going slow.
 		body->addForceAt(
-			bodyT * wheel->center, //wheel->contactPosition,
+			bodyT * wheel->center,
 			directionPerpW * -sideVelocity * Scalar(peakSlipFriction) * grip * method,
 			false
 		);
