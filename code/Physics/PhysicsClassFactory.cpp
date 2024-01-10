@@ -391,6 +391,7 @@ void PhysicsClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classVehicleComponent->addProperty("steerAngle", &VehicleComponent::setSteerAngle, &VehicleComponent::getSteerAngle);
 	classVehicleComponent->addProperty("steerAngleFiltered", &VehicleComponent::getSteerAngleFiltered);
 	classVehicleComponent->addProperty("engineThrottle", &VehicleComponent::setEngineThrottle, &VehicleComponent::getEngineThrottle);
+	classVehicleComponent->addProperty("engineBoost", &VehicleComponent::setEngineBoost, &VehicleComponent::getEngineBoost);
 	classVehicleComponent->addProperty("breaking", &VehicleComponent::setBreaking, &VehicleComponent::getBreaking);
 	classVehicleComponent->addProperty("wheels", &VehicleComponent::getWheels);
 	registrar->registerClass(classVehicleComponent);

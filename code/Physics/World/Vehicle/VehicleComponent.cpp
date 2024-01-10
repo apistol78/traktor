@@ -53,6 +53,7 @@ VehicleComponent::VehicleComponent(
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
+,	m_engineBoost(0.0f)
 ,	m_breaking(0.0f)
 ,	m_airBorn(true)
 {
@@ -127,6 +128,16 @@ void VehicleComponent::setEngineThrottle(float engineThrottle)
 float VehicleComponent::getEngineThrottle() const
 {
 	return m_engineThrottle;
+}
+
+void VehicleComponent::setEngineBoost(float engineBoost)
+{
+	m_engineBoost = engineBoost;
+}
+
+float VehicleComponent::getEngineBoost() const
+{
+	return m_engineBoost;
 }
 
 void VehicleComponent::setBreaking(float breaking)
@@ -422,7 +433,9 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 	const Transform bodyTinv = bodyT.inverse();
 
 	const Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
-	const Scalar engineForce = Scalar(m_engineThrottle * m_data->getEngineForce()) * (1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
+	const Scalar engineForce =
+		Scalar(m_engineThrottle * (m_engineBoost + 1.0f) * m_data->getEngineForce()) *
+		(1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
 
 	const float differentialCoeff = 0.2f;
 	for (auto wheel : m_wheels)
@@ -437,13 +450,12 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 			continue;
 
 		const Vector4 direction = (wheel->direction * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).normalized();
-		//const Scalar grip = clamp(wheel->contactNormal.y(), 0.0_simd, 1.0_simd) * Scalar(wheel->contactFudge);
 
 		// Apply more force on wheels with less grip, fake differential.
 		const Scalar grip = Scalar(1.0f - wheel->grip * differentialCoeff);
 
 		body->addForceAt(
-			wheel->center, // bodyTinv * wheel->contactPosition,
+			wheel->center,
 			direction * engineForce * grip,
 			true
 		);
