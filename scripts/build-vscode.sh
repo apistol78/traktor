@@ -22,8 +22,6 @@ elif [[ "$1" == "macOS" ]]; then
 
 elif [[ "$1" == "Android" ]]; then
 
-	. "`dirname \"$BASH_SOURCE\"`/config-android.sh"
-
 	pushd $TRAKTOR_HOME/build/android
 	make -s -j6 -f 'Extern Android.mak' $2
 	make -s -j6 -f 'Traktor Android.mak' $2
