@@ -90,3 +90,11 @@ elif [[ $TRAKTOR_PLATFORM == macos ]]; then
 	export SOLUTIONBUILDER="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.SolutionBuilder.App"
 	export RUN="$TRAKTOR_HOME/bin/osx/releasestatic/Traktor.Run.App"
 fi
+
+# Android SDK
+if [[ `uname -s` == Linux* ]]; then
+	export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-linux
+elif [[ `uname -s` == Darwin* ]]; then
+	export ANDROID_HOME=$TRAKTOR_HOME/3rdp/android-sdk-macOS
+fi
+export ANDROID_NDK_ROOT=$ANDROID_HOME/ndk-bundle

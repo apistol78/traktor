@@ -1,7 +1,6 @@
 @echo off
 
 call %~dp0config.bat
-call %~dp0config-android.bat
 
 :: Check prequisite.
 if "%ANDROID_NDK_ROOT%" == "" (
