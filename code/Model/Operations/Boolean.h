@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
-/*! \brief
+/*!
  * \ingroup Model
  */
 class T_DLLCLASS Boolean : public IModelOperation
@@ -39,7 +37,7 @@ public:
 		BoDifference
 	};
 
-	Boolean(
+	explicit Boolean(
 		const Model& modelA, const Transform& modelTransformA,
 		const Model& modelB, const Transform& modelTransformB,
 		BooleanOperation operation
@@ -55,6 +53,4 @@ private:
 	BooleanOperation m_operation;
 };
 
-	}
 }
-

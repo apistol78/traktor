@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,19 +14,17 @@
 #include "Model/Operations/Boolean.h"
 #include "Model/Operations/MergeModel.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 Vector4 packTexCoord(const Vector2& texCoord)
 {
 	return Vector4(texCoord.x, texCoord.y, 0.0f, 0.0f);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Boolean", Boolean, IModelOperation)
 
@@ -64,7 +62,7 @@ bool Boolean::apply(Model& model) const
 	for (uint32_t i = 0; i < m_modelA.getMaterialCount(); ++i)
 		materialMap[i] = model.addUniqueMaterial(m_modelA.getMaterial(i));
 
-	uint32_t materialOffset = m_modelA.getMaterialCount();
+	const uint32_t materialOffset = m_modelA.getMaterialCount();
 
 	for (uint32_t i = 0; i < m_modelB.getMaterialCount(); ++i)
 		materialMap[materialOffset + i] = model.addUniqueMaterial(m_modelB.getMaterial(i));
@@ -80,7 +78,7 @@ bool Boolean::apply(Model& model) const
 		for (const auto vertex : polygon.getVertices())
 		{
 			const auto& vx = m_modelA.getVertex(vertex);
-			Vector4 normal = m_modelA.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
+			const Vector4 normal = m_modelA.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
 			bp.addVertex(
 				m_modelTransformA * m_modelA.getPosition(vx.getPosition()),
 				m_modelTransformA * normal,
@@ -101,7 +99,7 @@ bool Boolean::apply(Model& model) const
 		for (const auto vertex : polygon.getVertices())
 		{
 			const auto& vx = m_modelB.getVertex(vertex);
-			Vector4 normal = m_modelB.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
+			const Vector4 normal = m_modelB.getNormal(vx.getNormal() != c_InvalidIndex ? vx.getNormal() : polygon.getNormal());
 			bp.addVertex(
 				m_modelTransformB * m_modelB.getPosition(vx.getPosition()),
 				m_modelTransformB * normal,
@@ -143,8 +141,8 @@ bool Boolean::apply(Model& model) const
 	model.reservePolygons((uint32_t)polygons.size());
 	for (const auto& bp : polygons)
 	{
-		Vector4 normal = bp.getPlane().normal();
-		uint32_t n = model.addUniqueNormal(normal);
+		const Vector4 normal = bp.getPlane().normal();
+		const uint32_t n = model.addUniqueNormal(normal);
 
 		Polygon polygon;
 		polygon.setMaterial((uint32_t)bp.getIndex());
@@ -170,5 +168,4 @@ bool Boolean::apply(Model& model) const
 	return true;
 }
 
-	}
 }
