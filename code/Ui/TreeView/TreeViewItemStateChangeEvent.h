@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,14 +18,12 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class TreeViewItem;
 
-/*! \brief
+/*!
  * \ingroup UI
  */
 class T_DLLCLASS TreeViewItemStateChangeEvent : public Event
@@ -33,7 +31,7 @@ class T_DLLCLASS TreeViewItemStateChangeEvent : public Event
 	T_RTTI_CLASS;
 
 public:
-	TreeViewItemStateChangeEvent(EventSubject* sender, TreeViewItem* item);
+	explicit TreeViewItemStateChangeEvent(EventSubject* sender, TreeViewItem* item);
 
 	TreeViewItem* getItem() const;
 
@@ -41,6 +39,4 @@ private:
 	Ref< TreeViewItem > m_item;
 };
 
-	}
 }
-
