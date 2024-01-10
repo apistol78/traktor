@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Model/Model.h"
 #include "Model/Operations/CalculateConvexHull.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
+	namespace
 	{
-		namespace
-		{
 
 struct HullFace
 {
@@ -62,8 +60,8 @@ uint32_t calculateAdjacency(const AlignedVector< HullFace >& faces, AlignedVecto
 
 		for (uint32_t j = 0; j < 3; ++j)
 		{
-			int32_t a1 = faces[i].i[j];
-			int32_t a2 = faces[i].i[(j + 1) % 3];
+			const int32_t a1 = faces[i].i[j];
+			const int32_t a2 = faces[i].i[(j + 1) % 3];
 
 			for (uint32_t k = 0; k < uint32_t(faces.size()) && adj.n[j] == ~0U; ++k)
 			{
@@ -72,8 +70,8 @@ uint32_t calculateAdjacency(const AlignedVector< HullFace >& faces, AlignedVecto
 
 				for (uint32_t m = 0; m < 3; ++m)
 				{
-					int na1 = faces[k].i[m];
-					int na2 = faces[k].i[(m + 1) % 3];
+					const int na1 = faces[k].i[m];
+					const int na2 = faces[k].i[(m + 1) % 3];
 					if (a1 == na2 && a2 == na1)
 					{
 						adj.n[j] = k;
@@ -91,7 +89,7 @@ uint32_t calculateAdjacency(const AlignedVector< HullFace >& faces, AlignedVecto
 	return errorCount;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CalculateConvexHull", CalculateConvexHull, IModelOperation)
 
@@ -102,13 +100,13 @@ bool CalculateConvexHull::apply(Model& model) const
 	AlignedVector< Vector4 > vertices = model.getPositions();
 
 	// Use first polygon as basis for tetrahedron.
-	Polygon p0 = model.getPolygons().front();
+	const Polygon p0 = model.getPolygons().front();
 
-	uint32_t i0 = model.getVertex(p0.getVertex(0)).getPosition();
-	uint32_t i1 = model.getVertex(p0.getVertex(1)).getPosition();
-	uint32_t i2 = model.getVertex(p0.getVertex(2)).getPosition();
+	const uint32_t i0 = model.getVertex(p0.getVertex(0)).getPosition();
+	const uint32_t i1 = model.getVertex(p0.getVertex(1)).getPosition();
+	const uint32_t i2 = model.getVertex(p0.getVertex(2)).getPosition();
 
-	Plane pll(
+	const Plane pll(
 		vertices[i0],
 		vertices[i1],
 		vertices[i2]
@@ -121,7 +119,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		if (i == i0 || i == i1 || i == i2)
 			continue;
 
-		Scalar d = pll.distance(vertices[i]);
+		const Scalar d = pll.distance(vertices[i]);
 		if (d < -FUZZY_EPSILON)
 		{
 			it = i;
@@ -152,7 +150,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		visible.resize(faces.size());
 		for (uint32_t j = 0; j < uint32_t(faces.size()); ++j)
 		{
-			Plane pl(
+			const Plane pl(
 				vertices[faces[j].i[0]],
 				vertices[faces[j].i[1]],
 				vertices[faces[j].i[2]]
@@ -165,7 +163,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		{
 			for (uint32_t k = 0; k < 3; ++k)
 			{
-				uint32_t n = adjacency[j].n[k];
+				const uint32_t n = adjacency[j].n[k];
 				if (n != uint32_t(~0UL) && !visible[j] && visible[n])
 				{
 					silouette.push_back(std::make_pair(
@@ -193,7 +191,7 @@ bool CalculateConvexHull::apply(Model& model) const
 		// Add new faces.
 		for (AlignedVector< std::pair< uint32_t, uint32_t > >::iterator j = silouette.begin(); j != silouette.end(); ++j)
 		{
-			uint32_t idx[] = { j->second, j->first, i };
+			const uint32_t idx[] = { j->second, j->first, i };
 			faces.push_back(HullFace(idx[0], idx[1], idx[2]));
 		}
 
@@ -212,14 +210,14 @@ bool CalculateConvexHull::apply(Model& model) const
 
 	for (AlignedVector< HullFace >::iterator i = faces.begin(); i != faces.end(); ++i)
 	{
-		Vector4 v[] =
+		const Vector4 v[] =
 		{
 			vertices[i->i[0]],
 			vertices[i->i[1]],
 			vertices[i->i[2]]
 		};
 
-		Vector4 e[] =
+		const Vector4 e[] =
 		{
 			v[1] - v[0],
 			v[2] - v[0]
@@ -245,5 +243,4 @@ bool CalculateConvexHull::apply(Model& model) const
 	return true;
 }
 
-	}
 }

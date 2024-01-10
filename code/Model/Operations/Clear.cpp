@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,10 +9,8 @@
 #include "Model/Model.h"
 #include "Model/Operations/Clear.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Clear", Clear, IModelOperation)
 
@@ -27,5 +25,4 @@ bool Clear::apply(Model& model) const
 	return true;
 }
 
-	}
 }

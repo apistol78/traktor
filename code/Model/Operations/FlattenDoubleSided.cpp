@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Model/Model.h"
 #include "Model/Operations/FlattenDoubleSided.h"
 
-namespace traktor
+namespace traktor::model
 {
-	namespace model
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.FlattenDoubleSided", FlattenDoubleSided, IModelOperation)
 
@@ -28,7 +26,7 @@ bool FlattenDoubleSided::apply(Model& model) const
 
 	for (const auto& polygon : polygons)
 	{
-		uint32_t materialId = polygon.getMaterial();
+		const uint32_t materialId = polygon.getMaterial();
 		const Material& material = model.getMaterial(materialId);
 		if (!material.isDoubleSided())
 			continue;
@@ -37,26 +35,26 @@ bool FlattenDoubleSided::apply(Model& model) const
 
 		if (flat.getNormal() != c_InvalidIndex)
 		{
-			Vector4 sourceNormal = model.getNormal(flat.getNormal());
-			Vector4 flattenNormal = -sourceNormal;
+			const Vector4 sourceNormal = model.getNormal(flat.getNormal());
+			const Vector4 flattenNormal = -sourceNormal;
 			flat.setNormal(model.addUniqueNormal(flattenNormal));
 		}
 
 		for (uint32_t i = 0; i < polygon.getVertexCount(); ++i)
 		{
-			uint32_t sourceVertexId = polygon.getVertex(i);
+			const uint32_t sourceVertexId = polygon.getVertex(i);
 
 			const Vertex& sourceVertex = model.getVertex(sourceVertexId);
 			Vertex flattenVertex = sourceVertex;
 
 			if (sourceVertex.getNormal() != c_InvalidIndex)
 			{
-				Vector4 sourceNormal = model.getNormal(sourceVertex.getNormal());
-				Vector4 flattenNormal = -sourceNormal;
+				const Vector4 sourceNormal = model.getNormal(sourceVertex.getNormal());
+				const Vector4 flattenNormal = -sourceNormal;
 				flattenVertex.setNormal(model.addUniqueNormal(flattenNormal));
 			}
 
-			uint32_t flattenVertexId = model.addUniqueVertex(flattenVertex);
+			const uint32_t flattenVertexId = model.addUniqueVertex(flattenVertex);
 			flat.setVertex(polygon.getVertexCount() - i - 1, flattenVertexId);
 		}
 
@@ -73,5 +71,4 @@ bool FlattenDoubleSided::apply(Model& model) const
 	return true;
 }
 
-	}
 }
