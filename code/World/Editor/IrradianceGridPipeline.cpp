@@ -55,7 +55,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceGridPipeline", 1, IrradianceGridPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.IrradianceGridPipeline", 4, IrradianceGridPipeline, editor::IPipeline)
 
 bool IrradianceGridPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -201,11 +201,16 @@ bool IrradianceGridPipeline::buildOutput(
 				const Vector2 uv = Quasirandom::hammersley(i, 1000);
 				const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
 				const Scalar w = dot3(direction, unit);
+				
+				// Over horizon.
+				const Vector4 OverHorizon(0.2f, 0.5f, 0.85f, 0.0f);
+				Vector4 col = OverHorizon - max(direction.y(), 0.01_simd) * max(direction.y(), 0.01_simd) * 0.5_simd;
 
-				Vector4 col = Vector4(0.2f, 0.5f, 0.85f, 0.0f) * 1.1_simd - max(direction.y(), 0.01_simd) * max(direction.y(), 0.01_simd) * 0.5_simd;
-				col = lerp(col, 0.85_simd * Vector4(0.7f, 0.75f, 0.85f), power(1.0_simd - max(direction.y(), 0.0_simd), 6.0_simd));
+				// Under horizon
+				const Vector4 UnderHorizon(0.1f, 0.1f, 0.12f, 0.0f);
+				col = lerp(col, UnderHorizon, power(1.0_simd - max(direction.y(), 0.0_simd), 6.0_simd));
+
 				col += clamp((0.1_simd - direction.y()) * 10.0_simd, 0.0_simd, 1.0_simd) * Vector4(0.0f, 0.1f, 0.2f, 0.0f);
-
 				cl += Color4f(col * w);
 			}
 			return (cl * intensity * 2.0_simd) / 1000.0_simd;
