@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,23 +21,22 @@ Timer::Timer()
 
 void Timer::reset()
 {
-	m_first = 0.0;
-	m_last = 0.0;
+	m_last =
 	m_first = getElapsedTime();
 }
 
 double Timer::getElapsedTime() const
 {
-	timespec ts = {};
+	timespec ts = { 0 };
 	clock_gettime(CLOCK_MONOTONIC, &ts);
-	double current = ts.tv_sec + ts.tv_nsec / 1e9;
+	const double current = ts.tv_sec + ts.tv_nsec / 1e9;
 	return current - m_first;
 }
 
 double Timer::getDeltaTime()
 {
-	double current = getElapsedTime();
-	double delta = current - m_last;
+	const double current = getElapsedTime();
+	const double delta = current - m_last;
 	m_last = current;
 	return delta;
 }
