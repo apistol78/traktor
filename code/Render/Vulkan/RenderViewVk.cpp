@@ -401,13 +401,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
-
 	m_counter = -1;
-
-#if defined(_WIN32)
-	if (m_window)
-		m_window->setWindowedStyle(width, height);
-#endif
 
 	if (create(width, height, m_multiSample, m_multiSampleShading, m_vblanks))
 		return true;

@@ -35,8 +35,7 @@ bool BufferDynamicVk::create(uint32_t usageBits, int32_t inFlightCount)
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
 	const uint32_t storageBufferOffsetAlignment = (uint32_t)deviceProperties.limits.minStorageBufferOffsetAlignment;
 
-	// Add an extra buffer since threaded rendering might queue an extra frame worth of rendering.
-	m_inFlightCount = inFlightCount + 1;
+	m_inFlightCount = inFlightCount;
 	m_range = alignUp(bufferSize, storageBufferOffsetAlignment);
 	
 	const uint32_t size = m_range * m_inFlightCount;
