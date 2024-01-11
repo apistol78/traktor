@@ -56,6 +56,7 @@ public:
 
 private:
 	int m_fd;
+	int m_buttons[4];
 	int m_leftThumbX;
 	int m_leftThumbY;
 	int m_rightThumbX;
