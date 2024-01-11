@@ -10,7 +10,7 @@
 #include "Model/Model.h"
 #include "Model/Operations/CleanDegenerate.h"
 
-namespace traktor
+namespace traktor::model
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.CleanDegenerate", CleanDegenerate, IModelOperation)
