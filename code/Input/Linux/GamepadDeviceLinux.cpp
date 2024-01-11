@@ -50,10 +50,10 @@ c_controlConfig[] =
 	// { L"Right Trigger", DefaultControl::TriggerRight, false, -8 },
 	// { L"Left Shoulder", DefaultControl::ShoulderLeft, false, XINPUT_GAMEPAD_LEFT_SHOULDER },
 	// { L"Right Shoulder", DefaultControl::ShoulderRight, false, XINPUT_GAMEPAD_RIGHT_SHOULDER },
-	// { L"Button A", DefaultControl::Button1, false, XINPUT_GAMEPAD_A },
-	// { L"Button B", DefaultControl::Button2, false, XINPUT_GAMEPAD_B },
-	// { L"Button X", DefaultControl::Button3, false, XINPUT_GAMEPAD_X },
-	// { L"Button Y", DefaultControl::Button4, false, XINPUT_GAMEPAD_Y }
+	{ L"Button A", DefaultControl::Button1, false, 0 },
+	{ L"Button B", DefaultControl::Button2, false, 1 },
+	{ L"Button X", DefaultControl::Button3, false, 2 },
+	{ L"Button Y", DefaultControl::Button4, false, 3 }
 };
 
 	}
@@ -110,7 +110,7 @@ float GamepadDeviceLinux::getControlValue(int32_t control)
 {
 	const ControlConfig& config = c_controlConfig[control];
 	if (config.index >= 0)
-		return 0.0f;
+		return m_buttons[config.index] != 0 ? 1.0f : 0.0f;
 	else
 	{
 		switch (config.index)
@@ -159,6 +159,10 @@ bool GamepadDeviceLinux::getKeyEvent(KeyEvent& outEvent)
 
 void GamepadDeviceLinux::resetState()
 {
+	m_buttons[0] =
+	m_buttons[1] =
+	m_buttons[2] =
+	m_buttons[3] = 0;
 	m_leftThumbX = 0;
 	m_leftThumbY = 0;
 	m_rightThumbX = 0;
@@ -181,6 +185,36 @@ void GamepadDeviceLinux::readState()
 		const auto& e = events[i];
 		switch (e.type)
 		{
+		case JS_EVENT_BUTTON:
+			{
+				//log::info << (int)e.number << L" == " << e.value << Endl;
+				switch (e.number)
+				{
+				case 0:
+					m_buttons[0] = e.value;	// A
+					break;
+				case 1:
+					m_buttons[1] = e.value;	// B
+					break;
+				case 3:
+					m_buttons[2] = e.value;	// X
+					break;
+				case 4:
+					m_buttons[3] = e.value;	// Y
+					break;
+				default:
+					/*
+					11 = Burger
+					7 = Right sh
+					6 = Left sh
+					13 = Left stick p
+					14 = Right stick p
+					*/
+					break;
+				}
+			}
+			break;
+
 		case JS_EVENT_AXIS:
 			{
 				//log::info << (int)e.number << L" == " << e.value << Endl;
