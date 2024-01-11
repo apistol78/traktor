@@ -113,19 +113,24 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 {
 	if (!m_fullScreen)
 	{
+		// Remember current position.
 		RECT rcWindow;
 		GetWindowRect(m_hWnd, &rcWindow);
-
 		m_windowPosition.x = rcWindow.left;
 		m_windowPosition.y = rcWindow.top;
 
-		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUP);
-		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
+		// Modify window style.
+		long style = GetWindowLong(m_hWnd, GWL_STYLE);
+		long styleEx = GetWindowLong(m_hWnd, GWL_EXSTYLE);
+
+		style = style & (~WS_BORDER) & (~WS_DLGFRAME) & (~WS_THICKFRAME);
+		styleEx = styleEx & (~WS_EX_WINDOWEDGE);
+
+		SetWindowLong(m_hWnd, GWL_STYLE, style | WS_POPUP);
+		SetWindowLong(m_hWnd, GWL_EXSTYLE, styleEx | WS_EX_TOPMOST);
 	}
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
-
+	ShowWindow(m_hWnd, SW_SHOWMAXIMIZED);
 	m_fullScreen = true;
 }
 
