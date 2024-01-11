@@ -426,13 +426,13 @@ local PACKAGES =
 		os = "windows",
 		url = "https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip",
 		patch = function()
-			run:execute(UNZIP .. " -qq commandlinetools-linux-11076708_latest.zip")
+			run:execute(UNZIP .. " -qq commandlinetools-win-11076708_latest.zip")
 			run:execute("./cmdline-tools/bin/sdkmanager --sdk_root=. --update")
 			write_file(
 				"install.bat",
 				{
-					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
-					"echo y | ./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. platform-tools",
+					"./cmdline-tools/bin/sdkmanager --sdk_root=. ndk-bundle"
 				}
 			)
 			run:execute("./install.bat")
