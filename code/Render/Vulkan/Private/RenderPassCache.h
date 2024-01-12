@@ -29,6 +29,8 @@ public:
 		uint8_t store;
 		VkFormat colorTargetFormats[RenderTargetSetCreateDesc::MaxTargets];
 		VkFormat depthTargetFormat;
+
+		uint32_t hash() const;
 	};
 #pragma pack()
 
@@ -41,7 +43,7 @@ public:
 
 private:
 	VkDevice m_logicalDevice;
-	SmallMap< Specification, VkRenderPass > m_renderPasses;
+	SmallMap< uint32_t, VkRenderPass > m_renderPasses;
 };
 
 }

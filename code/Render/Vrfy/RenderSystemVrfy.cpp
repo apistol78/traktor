@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -85,24 +85,29 @@ void RenderSystemVrfy::getInformation(RenderSystemInformation& outInfo) const
 	m_renderSystem->getInformation(outInfo);
 }
 
-uint32_t RenderSystemVrfy::getDisplayModeCount() const
+uint32_t RenderSystemVrfy::getDisplayCount() const
 {
-	return m_renderSystem->getDisplayModeCount();
+	return m_renderSystem->getDisplayCount();
 }
 
-DisplayMode RenderSystemVrfy::getDisplayMode(uint32_t index) const
+uint32_t RenderSystemVrfy::getDisplayModeCount(uint32_t display) const
 {
-	return m_renderSystem->getDisplayMode(index);
+	return m_renderSystem->getDisplayModeCount(display);
 }
 
-DisplayMode RenderSystemVrfy::getCurrentDisplayMode() const
+DisplayMode RenderSystemVrfy::getDisplayMode(uint32_t display, uint32_t index) const
 {
-	return m_renderSystem->getCurrentDisplayMode();
+	return m_renderSystem->getDisplayMode(display, index);
 }
 
-float RenderSystemVrfy::getDisplayAspectRatio() const
+DisplayMode RenderSystemVrfy::getCurrentDisplayMode(uint32_t display) const
 {
-	return m_renderSystem->getDisplayAspectRatio();
+	return m_renderSystem->getCurrentDisplayMode(display);
+}
+
+float RenderSystemVrfy::getDisplayAspectRatio(uint32_t display) const
+{
+	return m_renderSystem->getDisplayAspectRatio(display);
 }
 
 Ref< IRenderView > RenderSystemVrfy::createRenderView(const RenderViewDefaultDesc& desc)

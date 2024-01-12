@@ -59,6 +59,12 @@ bool RenderViewVrfy::reset(int32_t width, int32_t height)
 	return m_renderView->reset(width, height);
 }
 
+uint32_t RenderViewVrfy::getDisplay() const
+{
+	T_CAPTURE_TRACE(L"getDisplay");
+	return m_renderView->getDisplay();
+}
+
 int RenderViewVrfy::getWidth() const
 {
 	T_CAPTURE_TRACE(L"getWidth");

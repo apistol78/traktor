@@ -83,7 +83,7 @@ bool RenderViewVk::create(const RenderViewDefaultDesc& desc)
 #if defined(_WIN32) || defined(__LINUX__) || defined(__RPI__) || defined(__MAC__)
 	// Create render window.
 	m_window = new Window();
-	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
+	if (!m_window->create(desc.display, desc.displayMode.width, desc.displayMode.height))
 	{
 		log::error << L"Failed to create render view; unable to create window." << Endl;
 		return false;
@@ -409,6 +409,15 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 		return false;
 }
 
+uint32_t RenderViewVk::getDisplay() const
+{
+#if defined(_WIN32)
+	return m_window->getDisplay();
+#else
+	return 0;
+#endif
+}
+
 int RenderViewVk::getWidth() const
 {
 	if (!m_frames.empty())
@@ -686,6 +695,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	if (!m_renderPassCache->get(rp, m_targetRenderPass))
 		return false;
 
+	// Store hash of render pass specification for pipeline cache.
+	m_targetRenderPassHash = rp.hash();
+
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
 		frame.graphicsCommandBuffer,
@@ -776,6 +788,9 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 		rp.depthTargetFormat = frame.primaryTarget->getDepthTargetVk()->getVkFormat();
 	if (!m_renderPassCache->get(rp, m_targetRenderPass))
 		return false;
+
+	// Store hash of render pass specification for pipeline cache.
+	m_targetRenderPassHash = rp.hash();
 
 	// Prepare render target set as targets.
 	if (!m_targetSet->prepareAsTarget(
@@ -1493,7 +1508,7 @@ bool RenderViewVk::validateGraphicsPipeline(const VertexLayoutVk* vertexLayout, 
 	const uint8_t primitiveId = (uint8_t)pt;
 	const uint32_t declHash = vertexLayout->getHash();
 	const uint32_t shaderHash = p->getShaderHash();
-	const auto key = std::make_tuple(primitiveId, (intptr_t)m_targetRenderPass, declHash, shaderHash);
+	const auto key = std::make_tuple(primitiveId, m_targetRenderPassHash, declHash, shaderHash);
 
 	VkPipeline pipeline = 0;
 
@@ -1756,6 +1771,19 @@ bool RenderViewVk::windowListenerEvent(Window* window, UINT message, WPARAM wPar
 	{
 		RenderEvent evt;
 		evt.type = RenderEventType::Close;
+		m_eventQueue.push_back(evt);
+	}
+	else if (message == WM_MOVE)
+	{
+		// Remove all pending resize events.
+		m_eventQueue.remove_if([](const RenderEvent& evt) {
+			return evt.type == RenderEventType::Resize;
+		});
+
+		RenderEvent evt;
+		evt.type = RenderEventType::Resize;
+		evt.resize.width = getWidth();
+		evt.resize.height = getHeight();
 		m_eventQueue.push_back(evt);
 	}
 	else if (message == WM_SIZE)

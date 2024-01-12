@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,6 +48,8 @@ public:
 	virtual bool reset(const RenderViewDefaultDesc& desc) override final;
 
 	virtual bool reset(int32_t width, int32_t height) override final;
+
+	virtual uint32_t getDisplay() const override final;
 
 	virtual int getWidth() const override final;
 

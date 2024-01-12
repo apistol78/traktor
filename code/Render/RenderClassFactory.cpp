@@ -128,14 +128,14 @@ handle_t IRenderSystem_getHandle(const std::wstring& id)
 	return getParameterHandle(id);
 }
 
-Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* self)
+Ref< BoxedDisplayMode > IRenderSystem_getCurrentDisplayMode(IRenderSystem* self, uint32_t display)
 {
-	return new BoxedDisplayMode(self->getCurrentDisplayMode());
+	return new BoxedDisplayMode(self->getCurrentDisplayMode(display));
 }
 
-Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32_t index)
+Ref< BoxedDisplayMode > IRenderSystem_getDisplayMode(IRenderSystem* self, uint32_t display, uint32_t index)
 {
-	return new BoxedDisplayMode(self->getDisplayMode(index));
+	return new BoxedDisplayMode(self->getDisplayMode(display, index));
 }
 
 //Ref< StructBuffer > IRenderSystem_createStructBuffer(IRenderSystem* self, const RefArray< BoxedStructElement >& structElements, uint32_t bufferSize, bool dynamic)
@@ -219,10 +219,11 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classIRenderSystem = new AutoRuntimeClass< IRenderSystem >();
 	classIRenderSystem->addStaticMethod("getParameterHandle", &IRenderSystem_getHandle);
-	classIRenderSystem->addProperty("displayModeCount", &IRenderSystem::getDisplayModeCount);
-	classIRenderSystem->addProperty("currentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
-	classIRenderSystem->addProperty("displayAspectRatio", &IRenderSystem::getDisplayAspectRatio);
+	classIRenderSystem->addProperty("displayCount", &IRenderSystem::getDisplayCount);
+	classIRenderSystem->addMethod("getDisplayModeCount", &IRenderSystem::getDisplayModeCount);
 	classIRenderSystem->addMethod("getDisplayMode", &IRenderSystem_getDisplayMode);
+	classIRenderSystem->addMethod("getCurrentDisplayMode", &IRenderSystem_getCurrentDisplayMode);
+	classIRenderSystem->addMethod("getDisplayAspectRatio", &IRenderSystem::getDisplayAspectRatio);
 	classIRenderSystem->addMethod("createSimpleTexture", &IRenderSystem_createSimpleTexture);
 	registrar->registerClass(classIRenderSystem);
 
