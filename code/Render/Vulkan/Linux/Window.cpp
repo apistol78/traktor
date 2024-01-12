@@ -46,7 +46,7 @@ Window::~Window()
 {
 }
 
-bool Window::create(int32_t width, int32_t height)
+bool Window::create(uint32_t display, int32_t width, int32_t height)
 {
 	if ((m_display = XOpenDisplay(0)) == nullptr)
 	{
