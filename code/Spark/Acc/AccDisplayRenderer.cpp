@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,7 +43,7 @@ namespace traktor::spark
 const uint32_t c_maxCacheSize = 32;
 const uint32_t c_maxUnusedCount = 10;
 const uint32_t c_cacheGlyphSize = 128;
-const uint32_t c_cacheGlyphMargin = 0;
+const uint32_t c_cacheGlyphMargin = 1;
 const uint32_t c_cacheGlyphCountX = 16;
 const uint32_t c_cacheGlyphCountY = 8;
 const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
@@ -481,11 +481,7 @@ void AccDisplayRenderer::renderGlyph(
 	const float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 	const float cachePixelDy = 1.0f / c_cacheGlyphDimY;
 
-	// Calculate square bounds of glyph.
-	Aabb2 bounds = accShape->getBounds();
-	const Vector2 sz = bounds.getSize();
-	const float m = std::max(sz.x, sz.y);
-	bounds.mx = bounds.mn + Vector2(m, m);
+	const Aabb2& bounds = accShape->getBounds();
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)
