@@ -600,7 +600,8 @@ bool Application::update()
 
 		// Measure delta time.
 		const double deltaTime = m_timer.getDeltaTime();
-		m_updateInfo.m_frameDeltaTime = lerp(m_updateInfo.m_frameDeltaTime, deltaTime, 0.1);
+		const double deltaTimeDiff = clamp(deltaTime - m_updateInfo.m_frameDeltaTime, -0.01, 0.01);
+		m_updateInfo.m_frameDeltaTime = lerp(m_updateInfo.m_frameDeltaTime, m_updateInfo.m_frameDeltaTime + deltaTimeDiff, 0.01);
 
 		// Update audio.
 		if (m_audioServer)
@@ -684,6 +685,12 @@ bool Application::update()
 				const double physicsTimeEnd = m_timer.getElapsedTime();
 				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
+				// Post physics update state.
+				{
+					T_PROFILER_SCOPE(L"Application post update - State");
+					currentState->postUpdate(m_stateManager, m_updateInfo);
+				}
+
 				m_updateDuration = physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart;
 				m_updateInfo.m_simulationTime += dT;
 
@@ -703,13 +710,7 @@ bool Application::update()
 					break;
 			}
 
-			// Issue post update.
-			if (updateCount > 0)
-			{
-				T_PROFILER_SCOPE(L"Application post update - State");
-				currentState->postUpdate(m_stateManager, m_updateInfo);
-			}
-			else
+			if (updateCount == 0)
 			{
 				m_updateInfo.m_totalTime += dFT;
 				m_updateInfo.m_stateTime += dFT;
