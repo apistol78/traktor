@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -395,11 +395,18 @@ void AutoWidget::eventMouseMove(MouseMoveEvent* event)
 	Ref< AutoWidgetCell > hitItem = hitTest(event->getPosition());
 	if (m_hoverCell != hitItem)
 	{
+		Rect updateRect;
 		if (m_hoverCell != nullptr)
+		{
 			m_hoverCell->mouseLeave();
+			updateRect = m_hoverCell->getRect();
+		}
 		if ((m_hoverCell = hitItem) != nullptr)
+		{
 			m_hoverCell->mouseEnter();
-		update();
+			updateRect = updateRect.contain(m_hoverCell->getRect());
+		}
+		update(&updateRect);
 	}
 
 	if (m_captureCell)
@@ -449,7 +456,7 @@ void AutoWidget::eventMouseTrack(MouseTrackEvent* event)
 void AutoWidget::eventPaint(PaintEvent* event)
 {
 	Canvas& canvas = event->getCanvas();
-	const Rect innerRect = getInnerRect();
+	const Rect innerRect = event->getUpdateRect();
 	const StyleSheet* ss = getStyleSheet();
 
 	const bool enabled = isEnable(true);

@@ -185,6 +185,15 @@ public:
 		return rc;
 	}
 
+	RectBase< ValueType > contain(const RectBase< ValueType >& rc) const
+	{
+		return
+			contain(rc.getTopLeft()).
+			contain(rc.getTopRight()).
+			contain(rc.getBottomLeft()).
+			contain(rc.getBottomRight());
+	}
+
 	bool inside(const point_t& pnt, bool inclusive = true) const
 	{
 		return

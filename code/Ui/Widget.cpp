@@ -380,7 +380,7 @@ void Widget::setChildRects(const WidgetRect* childRects, uint32_t count)
 	StaticVector< IWidgetRect, 32 > internalChildRects;
 	for (uint32_t i = 0; i < count; i += 32)
 	{
-		uint32_t slice = std::min< uint32_t >(count - i, 32);
+		const uint32_t slice = std::min< uint32_t >(count - i, 32);
 		for (uint32_t j = 0; j < slice; ++j)
 		{
 			internalChildRects[j].widget = childRects[i + j].widget->getIWidget();

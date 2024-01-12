@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,7 @@ namespace traktor
 class T_DLLCLASS IRefCount
 {
 public:
-	virtual ~IRefCount() {}
+	virtual ~IRefCount() = default;
 
 	virtual void addRef(void* owner) const = 0;
 
@@ -42,19 +42,14 @@ template < typename T >
 class RefCountImpl : public T
 {
 public:
-	RefCountImpl()
-	:	m_refCount(0)
-	{
-	}
+	RefCountImpl() = default;
 
 	RefCountImpl(const RefCountImpl& object)
-	:	m_refCount(0)
 	{
 		// Do not copy reference count.
 	}
 
 	RefCountImpl(RefCountImpl&& object) noexcept
-	:	m_refCount(0)
 	{
 		// Do not move reference count.
 	}
@@ -84,7 +79,7 @@ public:
 	}
 
 protected:
-	mutable std::atomic< int32_t > m_refCount;
+	mutable std::atomic< int32_t > m_refCount = 0;
 };
 
 #if defined(T_TYPESAFE_REF)
