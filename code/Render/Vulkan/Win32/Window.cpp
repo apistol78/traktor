@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include <vector>
 #include "Render/Vulkan/Win32/Window.h"
 
 namespace traktor::render
@@ -16,6 +17,13 @@ namespace traktor::render
 
 const TCHAR* c_className = _T("TraktorRenderSystemVulkan");
 const DWORD c_classIconResource = 10000;
+
+BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
+{
+	std::vector< HMONITOR >* monitors = (std::vector< HMONITOR >*)lpUser;
+	monitors->push_back(hMonitor);
+	return TRUE;
+}
 
 	}
 
@@ -35,7 +43,7 @@ Window::~Window()
 	}
 }
 
-bool Window::create(int32_t width, int32_t height)
+bool Window::create(uint32_t display, int32_t width, int32_t height)
 {
 	T_ASSERT(!m_hWnd);
 
@@ -52,12 +60,28 @@ bool Window::create(int32_t width, int32_t height)
 	wc.lpszClassName = c_className;
 	RegisterClass(&wc);
 
+	int positionX = CW_USEDEFAULT;
+	int positionY = CW_USEDEFAULT;
+
+	std::vector< HMONITOR > monitors;
+	EnumDisplayMonitors(NULL, NULL, &enumMonitors, (LPARAM)&monitors);
+	if (display < monitors.size())
+	{
+		MONITORINFO mi = {};
+		mi.cbSize = sizeof(mi);
+		GetMonitorInfo(monitors[display], &mi);
+
+		const auto& rc = mi.rcWork;
+		positionX = rc.left + ((rc.right - rc.left) - width) / 2;
+		positionY = rc.top + ((rc.bottom - rc.top) - height) / 2;
+	}
+
 	m_hWnd = CreateWindow(
 		c_className,
 		L"",
 		WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT,
-		CW_USEDEFAULT,
+		positionX,
+		positionY,
 		width,
 		height,
 		NULL,
@@ -147,6 +171,17 @@ void Window::hide()
 bool Window::isActive() const
 {
 	return GetForegroundWindow() == m_hWnd;
+}
+
+uint32_t Window::getDisplay() const
+{
+	HMONITOR monitor = MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST);
+
+	std::vector< HMONITOR > monitors;
+	EnumDisplayMonitors(NULL, NULL, &enumMonitors, (LPARAM)&monitors);
+
+	auto it = std::find(monitors.begin(), monitors.end(), monitor);
+	return (uint32_t)std::distance(monitors.begin(), it);
 }
 
 Window::operator HWND () const

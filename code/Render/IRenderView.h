@@ -72,6 +72,8 @@ public:
 
 	virtual bool reset(int32_t width, int32_t height) = 0;
 
+	virtual uint32_t getDisplay() const = 0;
+
 	virtual int getWidth() const = 0;
 
 	virtual int getHeight() const = 0;

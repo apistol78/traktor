@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -59,13 +59,15 @@ public:
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const override final;
 
-	virtual uint32_t getDisplayModeCount() const override final;
+	virtual uint32_t getDisplayCount() const override final;
 
-	virtual DisplayMode getDisplayMode(uint32_t index) const override final;
+	virtual uint32_t getDisplayModeCount(uint32_t display) const override final;
 
-	virtual DisplayMode getCurrentDisplayMode() const override final;
+	virtual DisplayMode getDisplayMode(uint32_t display, uint32_t index) const override final;
 
-	virtual float getDisplayAspectRatio() const override final;
+	virtual DisplayMode getCurrentDisplayMode(uint32_t display) const override final;
+
+	virtual float getDisplayAspectRatio(uint32_t display) const override final;
 
 	virtual Ref< IRenderView > createRenderView(const RenderViewDefaultDesc& desc) override final;
 

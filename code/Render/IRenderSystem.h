@@ -67,28 +67,31 @@ public:
 	/*! \name Display mode enumeration. */
 	//@{
 
+	/*! Get number of displays. */
+	virtual uint32_t getDisplayCount() const = 0;
+
 	/*! Get number of available display modes.
 	 *
 	 * Return number of available display modes,
 	 * preferably display modes supported by both graphics card
 	 * and monitor.
 	 */
-	virtual uint32_t getDisplayModeCount() const = 0;
+	virtual uint32_t getDisplayModeCount(uint32_t display) const = 0;
 
 	/*! Get display mode.
 	 *
 	 * Get information about display mode from index 0 - (getDisplayMode() - 1).
 	 */
-	virtual DisplayMode getDisplayMode(uint32_t index) const = 0;
+	virtual DisplayMode getDisplayMode(uint32_t display, uint32_t index) const = 0;
 
 	/*! Get current display mode.
 	 *
 	 * Get information about currently set display mode.
 	 */
-	virtual DisplayMode getCurrentDisplayMode() const = 0;
+	virtual DisplayMode getCurrentDisplayMode(uint32_t display) const = 0;
 
 	/*! Get display aspect ratio. */
-	virtual float getDisplayAspectRatio() const = 0;
+	virtual float getDisplayAspectRatio(uint32_t display) const = 0;
 
 	//@}
 

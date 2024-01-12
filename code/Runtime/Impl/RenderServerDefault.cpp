@@ -88,16 +88,16 @@ int32_t maxAnisotropyFromQuality(int32_t quality)
 	return c_maxAnisotropy[quality];
 }
 
-bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayMode& criteria, render::DisplayMode& outBestMatch)
+bool findDisplayMode(render::IRenderSystem* renderSystem, uint32_t display, const render::DisplayMode& criteria, render::DisplayMode& outBestMatch)
 {
 	int32_t bestMatch = std::numeric_limits< int32_t >::max();
 	int32_t bestRefreshRate = 0;
 	uint32_t bestDisplayModeIndex = 0;
 
-	const uint32_t displayModeCount = renderSystem->getDisplayModeCount();
+	const uint32_t displayModeCount = renderSystem->getDisplayModeCount(display);
 	if (!displayModeCount)
 	{
-		render::DisplayMode currentMode = renderSystem->getCurrentDisplayMode();
+		const render::DisplayMode currentMode = renderSystem->getCurrentDisplayMode(display);
 		if (currentMode.width != 0 && currentMode.height != 0)
 		{
 			log::warning << L"Unable to enumerate display modes; using current display mode (" << currentMode.width << L" * " << currentMode.height << L") as fail safe" << Endl;
@@ -116,7 +116,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 	{
 		for (uint32_t j = 0; j < displayModeCount; ++j)
 		{
-			const render::DisplayMode check = renderSystem->getDisplayMode(j);
+			const render::DisplayMode check = renderSystem->getDisplayMode(display, j);
 			if (check.colorBits != c_preferColorBits[i])
 				continue;
 
@@ -141,12 +141,12 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 
 	if (bestMatch != std::numeric_limits< int32_t >::max())
 	{
-		outBestMatch = renderSystem->getDisplayMode(bestDisplayModeIndex);
+		outBestMatch = renderSystem->getDisplayMode(display, bestDisplayModeIndex);
 	}
 	else
 	{
-		log::warning << L"Unable to find matching display mode; using current display mode as fail safe" << Endl;
-		outBestMatch = renderSystem->getCurrentDisplayMode();
+		log::warning << L"Unable to find matching display mode; using current display mode as fail safe." << Endl;
+		outBestMatch = renderSystem->getCurrentDisplayMode(display);
 	}
 
 	return true;
@@ -193,9 +193,25 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 		return false;
 	}
 
-	m_originalDisplayMode = renderSystem->getCurrentDisplayMode();
+	m_renderViewDesc.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
+	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
+	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
+	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
+	m_renderViewDesc.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
+	m_renderViewDesc.display = (uint32_t)settings->getProperty< int32_t >(L"Render.Display", 0);
+	m_renderViewDesc.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 
-	m_screenAspectRatio = renderSystem->getDisplayAspectRatio();
+	// Ensure display number are still valid.
+	const uint32_t connectedDisplays = renderSystem->getDisplayCount();
+	if (m_renderViewDesc.display > connectedDisplays)
+	{
+		log::warning << L"Configured display " << m_renderViewDesc.display << L" no longer available; " << connectedDisplays << L" connected display(s)." << Endl;
+		m_renderViewDesc.display = 0;
+	}
+
+	m_originalDisplayMode = renderSystem->getCurrentDisplayMode(m_renderViewDesc.display);
+
+	m_screenAspectRatio = renderSystem->getDisplayAspectRatio(m_renderViewDesc.display);
 	if (m_screenAspectRatio <= 0.001f)
 	{
 		if (m_originalDisplayMode.width > 0 && m_originalDisplayMode.height > 0)
@@ -206,13 +222,6 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 			m_screenAspectRatio = 1.0f;
 		}
 	}
-
-	m_renderViewDesc.depthBits = settings->getProperty< int32_t >(L"Render.DepthBits", 24);
-	m_renderViewDesc.stencilBits = settings->getProperty< int32_t >(L"Render.StencilBits", 8);
-	m_renderViewDesc.multiSample = settings->getProperty< int32_t >(L"Render.MultiSample", 0);
-	m_renderViewDesc.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
-	m_renderViewDesc.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
-	m_renderViewDesc.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 
 	// Get display mode from settings; use default settings if none is provided.
 	if (m_renderViewDesc.fullscreen)
@@ -244,7 +253,7 @@ bool RenderServerDefault::create(const PropertyGroup* defaultSettings, PropertyG
 	// Ensure display mode is still supported; else find closest match.
 	if (m_renderViewDesc.fullscreen)
 	{
-		if (!findDisplayMode(renderSystem, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
+		if (!findDisplayMode(renderSystem, m_renderViewDesc.display, m_renderViewDesc.displayMode, m_renderViewDesc.displayMode))
 		{
 			log::error << L"Render server failed; unable to find an acceptable display mode." << Endl;
 			renderSystem->destroy();
@@ -310,6 +319,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	rvdd.waitVBlanks = settings->getProperty< int32_t >(L"Render.WaitVBlanks", 1);
 	rvdd.fullscreen = settings->getProperty< bool >(L"Render.FullScreen", false);
 	rvdd.title = settings->getProperty< std::wstring >(L"Render.Title", L"Traktor");
+	rvdd.display = settings->getProperty< int32_t >(L"Render.Display", 0);
 
 	if (rvdd.fullscreen)
 	{
@@ -327,9 +337,9 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 	// Ensure display mode is still supported; else find closest match.
 	if (rvdd.fullscreen)
 	{
-		if (!findDisplayMode(m_renderSystem, rvdd.displayMode, rvdd.displayMode))
+		if (!findDisplayMode(m_renderSystem, rvdd.display, rvdd.displayMode, rvdd.displayMode))
 		{
-			log::error << L"Unable to find an acceptable display mode; unable to continue" << Endl;
+			log::error << L"Unable to find an acceptable display mode; unable to continue." << Endl;
 			return CrFailed;
 		}
 	}
@@ -423,6 +433,7 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 		{
 			if (!m_renderViewDesc.fullscreen)
 			{
+				settings->setProperty< PropertyInteger >(L"Render.Display", m_renderView->getDisplay());
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", evt.resize.width);
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", evt.resize.height);
 				return UrReconfigure;

@@ -467,6 +467,7 @@ struct RenderViewDesc
 /*! Descriptor for default render views. */
 struct RenderViewDefaultDesc : public RenderViewDesc
 {
+	uint32_t display = 0;
 	DisplayMode displayMode;
 	bool fullscreen = true;
 	std::wstring title;

@@ -124,9 +124,9 @@ bool RenderServerEmbedded::create(const PropertyGroup* defaultSettings, Property
 		return false;
 	}
 
-	m_originalDisplayMode = renderSystem->getCurrentDisplayMode();
+	m_originalDisplayMode = renderSystem->getCurrentDisplayMode(0);
 
-	m_screenAspectRatio = renderSystem->getDisplayAspectRatio();
+	m_screenAspectRatio = renderSystem->getDisplayAspectRatio(0);
 	if (m_screenAspectRatio <= 0.001f)
 	{
 		if (m_originalDisplayMode.width > 0 && m_originalDisplayMode.height > 0)

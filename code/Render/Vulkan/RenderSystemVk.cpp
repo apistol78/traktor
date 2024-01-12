@@ -455,16 +455,34 @@ void RenderSystemVk::getInformation(RenderSystemInformation& outInfo) const
 	outInfo.sharedMemoryAvailable = 0;
 }
 
-uint32_t RenderSystemVk::getDisplayModeCount() const
+uint32_t RenderSystemVk::getDisplayCount() const
 {
 #if defined(_WIN32)
 	uint32_t count = 0;
 
-	DEVMODE dmgl;
-	std::memset(&dmgl, 0, sizeof(dmgl));
-	dmgl.dmSize = sizeof(dmgl);
+	DISPLAY_DEVICE dd = {};
+	dd.cb = sizeof(dd);
+	while (EnumDisplayDevices(nullptr, count, &dd, 0))
+		++count;
 
-	while (EnumDisplaySettings(nullptr, count, &dmgl))
+	return count;
+#else
+	return 1;
+#endif
+}
+
+uint32_t RenderSystemVk::getDisplayModeCount(uint32_t display) const
+{
+#if defined(_WIN32)
+	uint32_t count = 0;
+
+	DISPLAY_DEVICE dd = {};
+	dd.cb = sizeof(dd);
+	EnumDisplayDevices(nullptr, display, &dd, 0);
+
+	DEVMODE dmgl = {};
+	dmgl.dmSize = sizeof(dmgl);
+	while (EnumDisplaySettings(dd.DeviceName, count, &dmgl))
 		++count;
 
 	return count;
@@ -473,13 +491,16 @@ uint32_t RenderSystemVk::getDisplayModeCount() const
 #endif
 }
 
-DisplayMode RenderSystemVk::getDisplayMode(uint32_t index) const
+DisplayMode RenderSystemVk::getDisplayMode(uint32_t display, uint32_t index) const
 {
 #if defined(_WIN32)
-	DEVMODE dmgl;
-	std::memset(&dmgl, 0, sizeof(dmgl));
+	DISPLAY_DEVICE dd = {};
+	dd.cb = sizeof(dd);
+	EnumDisplayDevices(nullptr, display, &dd, 0);
+
+	DEVMODE dmgl = {};
 	dmgl.dmSize = sizeof(dmgl);
-	EnumDisplaySettings(nullptr, index, &dmgl);
+	EnumDisplaySettings(dd.DeviceName, index, &dmgl);
 
 	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
@@ -492,13 +513,16 @@ DisplayMode RenderSystemVk::getDisplayMode(uint32_t index) const
 #endif
 }
 
-DisplayMode RenderSystemVk::getCurrentDisplayMode() const
+DisplayMode RenderSystemVk::getCurrentDisplayMode(uint32_t display) const
 {
 #if defined(_WIN32)
-	DEVMODE dmgl;
-	std::memset(&dmgl, 0, sizeof(dmgl));
+	DISPLAY_DEVICE dd = {};
+	dd.cb = sizeof(dd);
+	EnumDisplayDevices(nullptr, display, &dd, 0);
+
+	DEVMODE dmgl = {};
 	dmgl.dmSize = sizeof(dmgl);
-	EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &dmgl);
+	EnumDisplaySettings(dd.DeviceName, ENUM_CURRENT_SETTINGS, &dmgl);
 
 	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
@@ -533,7 +557,7 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode() const
 #endif
 }
 
-float RenderSystemVk::getDisplayAspectRatio() const
+float RenderSystemVk::getDisplayAspectRatio(uint32_t display) const
 {
 	return 0.0f;
 }

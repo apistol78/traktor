@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -65,6 +65,8 @@ public:
 
 	virtual bool reset(int32_t width, int32_t height) override final;
 
+	virtual uint32_t getDisplay() const override final;
+
 	virtual int getWidth() const override final;
 
 	virtual int getHeight() const override final;
@@ -124,7 +126,7 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const override final;
 
 private:
-	typedef std::tuple< uint8_t, intptr_t, uint32_t, uint32_t > pipeline_key_t;
+	typedef std::tuple< uint8_t, uint32_t, uint32_t, uint32_t > pipeline_key_t;
 
 	struct Frame
 	{
@@ -178,6 +180,7 @@ private:
 	int32_t m_targetColorIndex = 0;
 	VkRenderPass m_targetRenderPass = 0;
 	VkFramebuffer m_targetFrameBuffer = 0;
+	uint32_t m_targetRenderPassHash = 0;
 
 	// Pipelines.
 	SmallMap< pipeline_key_t, PipelineEntry > m_pipelines;

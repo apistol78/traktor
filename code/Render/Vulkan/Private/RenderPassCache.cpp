@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <cstring>
 #include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Murmur3.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
 #include "Render/Vulkan/Private/RenderPassCache.h"
 
@@ -42,7 +43,9 @@ bool RenderPassCache::get(
 	VkRenderPass& outRenderPass
 )
 {
-	auto it = m_renderPasses.find(spec);
+	const uint32_t h = spec.hash();
+
+	auto it = m_renderPasses.find(h);
 	if (it != m_renderPasses.end())
 	{
 		outRenderPass = it->second;
@@ -218,10 +221,19 @@ bool RenderPassCache::get(
 	if (vkCreateRenderPass(m_logicalDevice, &rpci, nullptr, &outRenderPass) != VK_SUCCESS)
 		return false;
 
-	m_renderPasses.insert(spec, outRenderPass);
+	m_renderPasses.insert(h, outRenderPass);
 
 	log::debug << L"Render pass created (" << (uint32_t)m_renderPasses.size() << L" render passes)." << Endl;
 	return true;
+}
+
+uint32_t RenderPassCache::Specification::hash() const
+{
+	Murmur3 ch;
+	ch.begin();
+	ch.feed(*this);
+	ch.end();
+	return ch.get();
 }
 
 }
