@@ -63,6 +63,8 @@ private:
 	int m_rightThumbY;
 	int m_leftTrigger;
 	int m_rightTrigger;
+	int m_dpadX;
+	int m_dpadY;
 };
 
 }

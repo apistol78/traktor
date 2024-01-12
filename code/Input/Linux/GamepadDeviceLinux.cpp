@@ -32,10 +32,10 @@ const struct ControlConfig
 }
 c_controlConfig[] =
 {
-	// { L"Up", DefaultControl::Up, false, XINPUT_GAMEPAD_DPAD_UP },
-	// { L"Down", DefaultControl::Down, false, XINPUT_GAMEPAD_DPAD_DOWN },
-	// { L"Left", DefaultControl::Left, false, XINPUT_GAMEPAD_DPAD_LEFT },
-	// { L"Right", DefaultControl::Right, false, XINPUT_GAMEPAD_DPAD_RIGHT },
+	{ L"Up", DefaultControl::Up, false, -7 },
+	{ L"Down", DefaultControl::Down, false, -8 },
+	{ L"Left", DefaultControl::Left, false, -9 },
+	{ L"Right", DefaultControl::Right, false, -10 },
 	// { L"Start", DefaultControl::Select, false, XINPUT_GAMEPAD_START },
 	// { L"Back", DefaultControl::Cancel, false, XINPUT_GAMEPAD_BACK },
 	{ L"Left Thumb Left/Right", DefaultControl::ThumbLeftX, true, -1 },
@@ -127,6 +127,14 @@ float GamepadDeviceLinux::getControlValue(int32_t control)
 			return m_leftTrigger / 65535.0f;
 		case -6:
 			return m_rightTrigger / 65535.0f;
+		case -7:
+			return m_dpadY < 0 ? 1.0f : 0.0f;
+		case -8:
+			return m_dpadY > 0 ? 1.0f : 0.0f;
+		case -9:
+			return m_dpadX < 0 ? 1.0f : 0.0f;
+		case -10:
+			return m_dpadX > 0 ? 1.0f : 0.0f;
 		default:
 			break;
 		}
@@ -169,6 +177,8 @@ void GamepadDeviceLinux::resetState()
 	m_rightThumbY = 0;
 	m_leftTrigger = 0;
 	m_rightTrigger = 0;
+	m_dpadX = 0;
+	m_dpadY = 0;
 }
 
 void GamepadDeviceLinux::readState()
@@ -217,7 +227,7 @@ void GamepadDeviceLinux::readState()
 
 		case JS_EVENT_AXIS:
 			{
-				//log::info << (int)e.number << L" == " << e.value << Endl;
+				// log::info << (int)e.number << L" == " << e.value << Endl;
 				switch (e.number)
 				{
 				case 0:
@@ -237,6 +247,12 @@ void GamepadDeviceLinux::readState()
 					break;
 				case 5:
 					m_leftTrigger = (int)e.value + 32767;
+					break;
+				case 6:
+					m_dpadX = e.value;
+					break;
+				case 7:
+					m_dpadY = e.value;
 					break;
 				}
 			}
