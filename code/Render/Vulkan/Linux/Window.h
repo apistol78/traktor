@@ -28,7 +28,7 @@ public:
 
 	virtual ~Window();
 
-	bool create(int32_t width, int32_t height);
+	bool create(uint32_t display, int32_t width, int32_t height);
 
 	void setTitle(const wchar_t* title);
 
