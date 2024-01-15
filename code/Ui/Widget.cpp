@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Ui/Widget.h"
 #include "Ui/Itf/IUserWidget.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 
@@ -31,7 +29,7 @@ Widget::Widget()
 
 Widget::~Widget()
 {
-	T_ASSERT(!m_widget);
+	T_FATAL_ASSERT(!m_widget);
 }
 
 bool Widget::create(Widget* parent, int style)
@@ -553,5 +551,4 @@ IWidget* Widget::getIWidget() const
 	return m_widget;
 }
 
-	}
 }
