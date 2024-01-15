@@ -600,7 +600,9 @@ bool Application::update()
 			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
 		// Measure delta time.
-		m_updateInfo.m_frameDeltaTime = m_timer.getDeltaTime();
+		const double deltaTime = m_timer.getDeltaTime();
+		const double deltaTimeDiff = clamp(deltaTime - m_updateInfo.m_frameDeltaTime, -0.01, 0.01);
+		m_updateInfo.m_frameDeltaTime = lerp(m_updateInfo.m_frameDeltaTime, m_updateInfo.m_frameDeltaTime + deltaTimeDiff, 0.01);
 
 		// Update audio.
 		if (m_audioServer)
