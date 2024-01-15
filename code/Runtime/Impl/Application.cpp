@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -391,6 +391,7 @@ bool Application::create(
 	else
 		log::info << L"Using single threaded rendering." << Endl;
 
+	m_pauseYield = settings->getProperty< bool >(L"Runtime.PauseYield", false);
 	m_settings = settings;
 	return true;
 }
@@ -599,9 +600,7 @@ bool Application::update()
 			inputEnabled &= !m_onlineServer->getSessionManager()->requireUserAttention();
 
 		// Measure delta time.
-		const double deltaTime = m_timer.getDeltaTime();
-		const double deltaTimeDiff = clamp(deltaTime - m_updateInfo.m_frameDeltaTime, -0.01, 0.01);
-		m_updateInfo.m_frameDeltaTime = lerp(m_updateInfo.m_frameDeltaTime, m_updateInfo.m_frameDeltaTime + deltaTimeDiff, 0.01);
+		m_updateInfo.m_frameDeltaTime = m_timer.getDeltaTime();
 
 		// Update audio.
 		if (m_audioServer)
@@ -770,7 +769,7 @@ bool Application::update()
 			}
 
 			// Yield a lot of CPU if game is paused.
-			if (m_updateControl.m_pause)
+			if (m_updateControl.m_pause && m_pauseYield)
 			{
 				Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 				if (currentThread)
