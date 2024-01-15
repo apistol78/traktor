@@ -23,6 +23,7 @@
 #include "Script/ScriptChunk.h"
 #include "Script/ScriptFactory.h"
 #include "Ui/Application.h"
+#include "Ui/AspectLayout.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StatusBar/StatusBar.h"
@@ -89,9 +90,13 @@ bool PreviewEditor::create(ui::Container* parent)
 		}
 	});
 
+	// Create aspect container.
+	Ref< ui::Container > container = new ui::Container();
+	container->create(m_container, ui::WsNone, new ui::AspectLayout(16.0f / 9.0f));
+
 	// Create preview control.
 	m_previewControl = new PreviewControl(m_editor, m_resourceManager, renderSystem);
-	if (!m_previewControl->create(m_container))
+	if (!m_previewControl->create(container))
 		return false;
 	m_previewControl->addEventHandler< ui::SizeEvent >(this, &PreviewEditor::eventPreviewSize);
 
