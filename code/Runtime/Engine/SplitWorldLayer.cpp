@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -214,40 +214,30 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 	if (!m_worldRenderer)
 		return;
 
+	const double timeScale = m_environment->getControl()->getPause() ? 0.0 : 1.0;
+	const double deltaTime = info.getSimulationDeltaTime() * timeScale;
+
+	world::UpdateParams up;
+	up.contextObject = getStage();
+	up.totalTime = info.getSimulationTime();
+	up.alternateTime = m_alternateTime;
+	up.deltaTime = deltaTime;
+
 	// Update scene controller.
 	if (m_controllerEnable)
-	{
-		if (m_controllerTime < 0.0f)
-			m_controllerTime = info.getSimulationTime();
-
-		world::UpdateParams up;
-		up.contextObject = getStage();
-		up.totalTime = info.getSimulationTime() - m_controllerTime;
-		up.alternateTime = m_alternateTime;
-		up.deltaTime = info.getSimulationDeltaTime();
-
 		m_scene->updateController(up);
-	}
 
-	{
-		world::UpdateParams up;
-		up.contextObject = getStage();
-		up.totalTime = info.getSimulationTime();
-		up.alternateTime = m_alternateTime;
-		up.deltaTime = info.getSimulationDeltaTime();
+	// Update all entities.
+	m_scene->updateEntity(up);
+	m_dynamicEntities->update(up);
 
-		// Update all entities.
-		m_scene->updateEntity(up);
-		m_dynamicEntities->update(up);
-
-		// Update entity events.
-		world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-		if (eventManager)
-			eventManager->update(up);
-	}
+	// Update entity events.
+	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	if (eventManager)
+		eventManager->update(up);
 
 	// In case not explicitly set we update the alternative time also.
-	m_alternateTime += info.getSimulationDeltaTime();
+	m_alternateTime += deltaTime;
 }
 
 void SplitWorldLayer::postUpdate(const UpdateInfo& info)
@@ -589,7 +579,6 @@ void SplitWorldLayer::setControllerEnable(bool controllerEnable)
 
 void SplitWorldLayer::resetController()
 {
-	m_controllerTime = -1.0f;
 }
 
 const Frustum& SplitWorldLayer::getViewFrustum(int32_t split) const

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -40,12 +40,10 @@
 #include "Spark/Sound/SoundRenderer.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const struct InputKeyCode
 {
@@ -90,7 +88,7 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 class CustomMovieLoader : public IMovieLoader
 {
 public:
-	CustomMovieLoader(const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies)
+	explicit CustomMovieLoader(const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies)
 	:	m_externalMovies(externalMovies)
 	{
 	}
@@ -116,7 +114,7 @@ private:
 	const std::map< std::wstring, resource::Proxy< Movie > >& m_externalMovies;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SparkLayer", SparkLayer, runtime::Layer)
 
@@ -182,7 +180,7 @@ void SparkLayer::transition(Layer* fromLayer)
 	bool shouldFlush = true;
 
 	// Pass movie as well, if it's the same movie and we're allowed.
-	bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
+	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
 	if (m_movie == fromSparkLayer->m_movie)
 	{
 		if (permit)
@@ -275,7 +273,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 			if (up != -1)
 			{
-				bool upValue = bool(joystickDevice->getControlValue(up) > 0.5f);
+				const bool upValue = bool(joystickDevice->getControlValue(up) > 0.5f);
 				if (upValue != m_lastUpValue)
 				{
 					if (upValue)
@@ -288,7 +286,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 			if (down != -1)
 			{
-				bool downValue = bool(joystickDevice->getControlValue(down) > 0.5f);
+				const bool downValue = bool(joystickDevice->getControlValue(down) > 0.5f);
 				if (downValue != m_lastDownValue)
 				{
 					if (downValue)
@@ -305,7 +303,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 			if (buttonConfirm != -1)
 			{
-				bool confirmValue = bool(joystickDevice->getControlValue(buttonConfirm) > 0.5f);
+				const bool confirmValue = bool(joystickDevice->getControlValue(buttonConfirm) > 0.5f);
 				if (confirmValue != m_lastConfirmValue)
 				{
 					if (confirmValue)
@@ -318,7 +316,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 			if (buttonEscape != -1)
 			{
-				bool escapeValue = bool(joystickDevice->getControlValue(buttonEscape) > 0.5f);
+				const bool escapeValue = bool(joystickDevice->getControlValue(buttonEscape) > 0.5f);
 				if (escapeValue != m_lastEscapeValue)
 				{
 					if (escapeValue)
@@ -336,8 +334,8 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 			int32_t width = renderView->getWidth();
 			int32_t height = renderView->getHeight();
 
-			float viewRatio = m_environment->getRender()->getViewAspectRatio();
-			float aspectRatio = m_environment->getRender()->getAspectRatio();
+			const float viewRatio = m_environment->getRender()->getViewAspectRatio();
+			const float aspectRatio = m_environment->getRender()->getAspectRatio();
 
 			width = int32_t(width * aspectRatio / viewRatio);
 
@@ -376,10 +374,10 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 					x = (x - minX) / (maxX - minX);
 					y = (y - minY) / (maxY - minY);
 
-					int32_t mx = int32_t(width * x);
-					int32_t my = int32_t(height * y);
+					const int32_t mx = int32_t(width * x);
+					const int32_t my = int32_t(height * y);
 
-					int32_t mb =
+					const int32_t mb =
 						(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
 						(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
 
@@ -402,7 +400,7 @@ void SparkLayer::update(const runtime::UpdateInfo& info)
 
 					if (axisZ != -1)
 					{
-						int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
+						const int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
 						if (wheel != last.wheel)
 						{
 							m_moviePlayer->postMouseWheel(mx, my, wheel);
@@ -593,8 +591,8 @@ void SparkLayer::createMoviePlayer()
 		int32_t width = renderView->getWidth();
 		int32_t height = renderView->getHeight();
 
-		float viewRatio = m_environment->getRender()->getViewAspectRatio();
-		float aspectRatio = m_environment->getRender()->getAspectRatio();
+		const float viewRatio = m_environment->getRender()->getViewAspectRatio();
+		const float aspectRatio = m_environment->getRender()->getAspectRatio();
 
 		width = int32_t(width * aspectRatio / viewRatio);
 
@@ -635,5 +633,4 @@ void SparkLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 	m_scale = values[2] * 0.01f + 1.0f;
 }
 
-	}
 }

@@ -170,7 +170,6 @@ private:
 	Transform m_cameraOffsets[2];
 	double m_alternateTime = 0.0;
 	double m_deltaTime = 0.0;
-	double m_controllerTime = -1.0;
 	float m_fieldOfView = 70.0f;
 	float m_feedbackScale = 1.0f;
 	bool m_controllerEnable = true;
