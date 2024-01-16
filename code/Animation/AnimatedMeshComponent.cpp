@@ -68,24 +68,27 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 
 	m_jointRemap.resize(0);
 
-	auto skeletonComponent = owner->getComponent< SkeletonComponent >();
-	if (skeletonComponent && skeletonComponent->getSkeleton())
+	if (owner != nullptr)
 	{
-		auto skeleton = skeletonComponent->getSkeleton();
-
-		m_jointRemap.resize(skeleton->getJointCount());
-
-		const auto& jointMap = m_mesh->getJointMap();
-		for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+		auto skeletonComponent = owner->getComponent< SkeletonComponent >();
+		if (skeletonComponent && skeletonComponent->getSkeleton())
 		{
-			const Joint* joint = skeleton->getJoint(i);
-			auto it = jointMap.find(joint->getName());
-			if (it == jointMap.end())
+			auto skeleton = skeletonComponent->getSkeleton();
+
+			m_jointRemap.resize(skeleton->getJointCount());
+
+			const auto& jointMap = m_mesh->getJointMap();
+			for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 			{
-				m_jointRemap[i] = -1;
-				continue;
+				const Joint* joint = skeleton->getJoint(i);
+				auto it = jointMap.find(joint->getName());
+				if (it == jointMap.end())
+				{
+					m_jointRemap[i] = -1;
+					continue;
+				}
+				m_jointRemap[i] = it->second;
 			}
-			m_jointRemap[i] = it->second;
 		}
 	}
 }

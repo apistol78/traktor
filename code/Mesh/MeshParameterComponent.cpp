@@ -28,9 +28,21 @@ void MeshParameterComponent::destroy()
 
 void MeshParameterComponent::setOwner(world::Entity* owner)
 {
-	MeshComponent* mesh = owner->getComponent< MeshComponent >();
-	if (mesh)
-		mesh->setParameterCallback(this);
+	// Remove ourself from previous owner's mesh component.
+	if (m_owner != nullptr)
+	{
+		MeshComponent* mesh = m_owner->getComponent< MeshComponent >();
+		if (mesh)
+			mesh->setParameterCallback(nullptr);
+	}
+
+	// Add ourself to owner's mesh component.
+	if ((m_owner = owner) != nullptr)
+	{
+		MeshComponent* mesh = owner->getComponent< MeshComponent >();
+		if (mesh)
+			mesh->setParameterCallback(this);
+	}
 }
 
 void MeshParameterComponent::setTransform(const Transform& transform)
