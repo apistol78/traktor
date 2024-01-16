@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,8 +11,10 @@
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAlignedVector.h"
 #include "Core/Class/Boxes/BoxedIntervalTransform.h"
+#include "Core/Class/Boxes/BoxedVector4.h"
 #include "Mesh/MeshClassFactory.h"
 #include "Mesh/MeshComponent.h"
+#include "Mesh/MeshParameterComponent.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -65,6 +67,11 @@ void MeshClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classStaticMeshComponent = new AutoRuntimeClass< StaticMeshComponent >();
 	registrar->registerClass(classStaticMeshComponent);
+
+	auto classMeshParameterComponent = new AutoRuntimeClass< MeshParameterComponent >();
+	classMeshParameterComponent->addMethod("setVectorParameter", &MeshParameterComponent::setVectorParameter);
+	classMeshParameterComponent->addMethod("setTextureParameter", &MeshParameterComponent::setTextureParameter);
+	registrar->registerClass(classMeshParameterComponent);
 }
 
 }

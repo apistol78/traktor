@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -55,11 +55,16 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override;
 
+	void setVectorParameter(const render::handle_t parameter, const Vector4& value);
+
+	void setTextureParameter(const render::handle_t parameter, render::ITexture* texture);
+
 	// IMeshParameterCallback
 
 	virtual void setParameters(render::ProgramParameters* programParameters) const override final;
 
 private:
+	SmallMap< render::handle_t, Vector4 > m_values;
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_textures;
 };
 
