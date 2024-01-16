@@ -69,28 +69,18 @@ vec3 CalculateLighting(vec3 N, vec3 V, vec3 L, vec3 albedo, float metallic, floa
 	return (kD * albedo / PI + specular) * radiance * NdotL;
 }
 
-vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic, float roughness)
+vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic)
 {
 	// Use the view reflection vector as light direction.
 	const vec3 L = -reflect(V, N);
-
 	const vec3 H = normalize(V + L);
-	const float NdotL = max(dot(N, L), 0.0f);
-	const float NdotV = max(dot(N, V), 0.0f);
+	const float HdotV = max(dot(H, V), 0.0f);
 
-	const vec3 F0 = mix(vec3(0.04), albedo, metallic);
-	const vec3 F = FresnelSchlick(max(dot(H, V), 0.0), F0);
+	const vec3 F0 = mix(vec3(0.1f), albedo, metallic);
+	const vec3 F = FresnelSchlick(HdotV, F0);
 
-	const float NDF = DistributionGGX(N, H, roughness);
-	const float G = GeometrySmith(N, V, L, roughness);
-
-	const vec3 numerator = NDF * G * F;
-	const float denominator = 4.0f * NdotV * NdotL + 0.0001f;
-	const vec3 specular = numerator / denominator;
-
-	return clamp(specular, 0.0f, 1.0f);
+	return clamp(F * 1.0f, 0.0f, 1.0f);
 }
-
 
 	]]>
 	</text>
