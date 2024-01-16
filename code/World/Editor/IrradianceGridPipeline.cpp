@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -193,9 +193,12 @@ bool IrradianceGridPipeline::buildOutput(
 	{
 		// No asset specified; use dynamic sky.
 		const Scalar intensity(asset->getIntensity());
+		const Scalar saturation(asset->getSaturation());
 
 		WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 			Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+
+			// Sample over hemisphere.
 			for (int32_t i = 0; i < 1000; ++i)
 			{
 				const Vector2 uv = Quasirandom::hammersley(i, 1000);
@@ -213,6 +216,11 @@ bool IrradianceGridPipeline::buildOutput(
 				col += clamp((0.1_simd - direction.y()) * 10.0_simd, 0.0_simd, 1.0_simd) * Vector4(0.0f, 0.1f, 0.2f, 0.0f);
 				cl += Color4f(col * w);
 			}
+
+			// Apply saturation.
+			const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
+			cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
+
 			return (cl * intensity * 2.0_simd) / 1000.0_simd;
 		});
 

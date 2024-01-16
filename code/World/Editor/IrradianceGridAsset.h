@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,10 +33,13 @@ public:
 
 	float getIntensity() const { return m_intensity; }
 
+	float getSaturation() const { return m_saturation; }
+
 	bool shouldCancelSun() const { return m_cancelSun; }
 
 private:
 	float m_intensity = 1.0f;
+	float m_saturation = 1.0f;
 	bool m_cancelSun = true;
 };
 	
