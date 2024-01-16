@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -118,6 +118,12 @@ private:
 		ComRef< ID2D1Bitmap > bitmap;
 	};
 
+	struct CachedFont
+	{
+		ComRef< IDWriteTextFormat > dwTextFormat;
+		ComRef< IDWriteFont > dwFont;
+	};
+
 	bool m_inPaint = false;
 	int32_t m_dpi = 0;
 	ComRef< ID2D1DeviceContext > m_d2dDeviceContext;
@@ -131,6 +137,7 @@ private:
 	mutable ComRef< IDWriteFont > m_dwFont;
 	mutable DWRITE_FONT_METRICS m_fontMetrics;
 	SmallMap< int32_t, CachedBitmap > m_cachedBitmaps;
+	mutable SmallMap< std::pair< Font, int32_t >, CachedFont > m_cachedFonts;
 	Font m_font;
 	float m_strokeWidth = 1.0f;
 	bool m_clip = false;

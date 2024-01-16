@@ -474,13 +474,15 @@ void AutoWidget::eventPaint(PaintEvent* event)
 	if (m_headerCell)
 	{
 		const Rect rc = m_headerCell->getRect().offset(m_scrollOffset.cx, 0);
-		m_headerCell->paint(canvas, rc);
+		if (rc.intersect(innerRect))
+			m_headerCell->paint(canvas, rc);
 	}
 
 	if (m_footerCell)
 	{
 		const Rect rc = m_footerCell->getRect().offset(m_scrollOffset.cx, 0);
-		m_footerCell->paint(canvas, rc);
+		if (rc.intersect(innerRect))
+			m_footerCell->paint(canvas, rc);
 	}
 
 	event->consume();
