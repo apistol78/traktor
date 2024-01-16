@@ -64,6 +64,7 @@ public:
 	virtual void setParameters(render::ProgramParameters* programParameters) const override final;
 
 private:
+	world::Entity* m_owner = nullptr;
 	SmallMap< render::handle_t, Vector4 > m_values;
 	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_textures;
 };

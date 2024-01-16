@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 
@@ -179,6 +180,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		// Unlink all children first; new children will be added recursively.
 		entityAdapter->unlinkAllChildren();
 		T_FATAL_ASSERT (entityAdapter->getChildren().empty());
+
+		// Make all previous components orphans.
+		if (entityAdapter->getEntity() != nullptr)
+		{
+			for (auto component : entityAdapter->getComponents())
+				component->setOwner(nullptr);
+		}
 
 		// Create the concrete entity.
 		{
