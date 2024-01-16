@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,8 +46,20 @@ void MeshParameterComponent::update(const world::UpdateParams& update)
 {
 }
 
+void MeshParameterComponent::setVectorParameter(const render::handle_t parameter, const Vector4& value)
+{
+	m_values[parameter] = value;
+}
+
+void MeshParameterComponent::setTextureParameter(const render::handle_t parameter, render::ITexture* texture)
+{
+	m_textures[parameter] = resource::Proxy< render::ITexture >(texture);
+}
+
 void MeshParameterComponent::setParameters(render::ProgramParameters* programParameters) const
 {
+	for (auto it : m_values)
+		programParameters->setVectorParameter(it.first, it.second);
 	for (auto it : m_textures)
 		programParameters->setTextureParameter(it.first, it.second);
 }
