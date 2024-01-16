@@ -772,7 +772,10 @@ protected:
 		if (m_owner->hasEventHandler< PaintEvent >())
 		{
 			RECT rcUpdate = { 0 };
-			GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
+			if (false /* support partial update */)
+				GetUpdateRect(m_hWnd, &rcUpdate, FALSE);
+			else
+				GetClientRect(m_hWnd, &rcUpdate);
 
 			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_font, m_doubleBuffer, NULL))
 			{

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -850,6 +850,14 @@ bool CanvasDirect2DWin32::realizeFont() const
 
 	const int32_t fontSize = (int32_t)((m_font.getSize().get() * m_dpi) / 96.0f);
 
+	auto it = m_cachedFonts.find(std::make_pair(m_font, fontSize));
+	if (it != m_cachedFonts.end())
+	{
+		m_dwTextFormat = it->second.dwTextFormat;
+		m_dwFont = it->second.dwFont;
+		return true;
+	}
+
 	s_dwFactory->CreateTextFormat(
 		m_font.getFace().c_str(),
 		NULL,
@@ -891,7 +899,18 @@ bool CanvasDirect2DWin32::realizeFont() const
 			m_dwFont->GetMetrics(&m_fontMetrics);
 	}
 
-	return m_dwFont != nullptr;
+	if (m_dwFont == nullptr)
+		return false;
+
+	m_cachedFonts.insert(
+		std::make_pair(m_font, fontSize),
+		{
+			m_dwTextFormat,
+			m_dwFont
+		}
+	);
+
+	return true;
 }
 
 }
