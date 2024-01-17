@@ -680,6 +680,7 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>World_DepthWrite</item>
+						<item>World_DBufferWrite</item>
 						<item>World_ShadowWrite</item>
 						<item>World_SimpleColor</item>
 					</value>
