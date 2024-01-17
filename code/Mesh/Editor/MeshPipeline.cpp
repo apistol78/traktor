@@ -460,7 +460,8 @@ bool MeshPipeline::buildOutput(
 		Ref< const render::ShaderGraph > meshSurfaceShaderGraph = generator.generateSurface(
 			*models[0],
 			materialPair.second,
-			vertexColor
+			vertexColor,
+			asset->getDecalResponse()
 		);
 		pipelineBuilder->getProfiler()->end();
 		if (!meshSurfaceShaderGraph)

@@ -378,6 +378,7 @@ Tag_NormalTexCoord
 				<item>Specular</item>
 				<item>Normal</item>
 				<item>Alpha</item>
+				<item>Decal response</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -388,6 +389,19 @@ Tag_NormalTexCoord
 				<second>304</second>
 			</position>
 			<name>SurfaceAttributes</name>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{EC29B15E-9AE3-4FD1-9253-CF5C3E9C5D8A}</id>
+			<comment>
+			<![CDATA[
+Tag_DecalResponse
+			]]>
+			</comment>
+			<position>
+				<first>674</first>
+				<second>596</second>
+			</position>
+			<value>1</value>
 		</item>
 	</nodes>
 	<edges>
@@ -584,11 +598,21 @@ Tag_NormalTexCoord
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[15]"/>
-				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
+				<id>{EEB495BD-DE7F-4DE8-9B3A-7E9B220B927F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
 			</destination>
 		</item>
 	</edges>

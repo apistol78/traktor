@@ -90,7 +90,7 @@
 			<comment/>
 			<position>
 				<first>-88</first>
-				<second>125</second>
+				<second>177</second>
 			</position>
 			<color>1, 0, 0, 1</color>
 			<linear>false</linear>
@@ -112,6 +112,11 @@
 				<item>
 					<id>{53E30D04-04A2-3043-83E2-E637DD7494DF}</id>
 					<name>Cast shadow</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{BD60374C-74A9-4DFA-8C93-8FB46F07C9B0}</id>
+					<name>Decal response</name>
 					<optional>true</optional>
 				</item>
 				<item>

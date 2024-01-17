@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,7 +18,7 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 22, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 23, MeshAsset, editor::Asset)
 
 void MeshAsset::serialize(ISerializer& s)
 {
@@ -76,6 +76,9 @@ void MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 21)
 		s >> Member< bool >(L"grounded", m_grounded);
+
+	if (s.getVersion() >= 23)
+		s >> Member< bool>(L"decalResponse", m_decalResponse);
 
 	if (s.getVersion() >= 2 && s.getVersion() < 14)
 	{

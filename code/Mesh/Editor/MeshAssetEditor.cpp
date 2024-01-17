@@ -565,7 +565,8 @@ void MeshAssetEditor::createMaterialShader()
 	).generateSurface(
 		*m_model,
 		*it,
-		haveVertexColors(*m_model)
+		haveVertexColors(*m_model),
+		m_asset->getDecalResponse()
 	);
 	if (materialShader)
 	{

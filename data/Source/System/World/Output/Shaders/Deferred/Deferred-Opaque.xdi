@@ -15,6 +15,11 @@ World_DeferredGBufferWrite
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
 				<item>
+					<id>{870F030C-C903-46FF-A6D1-1F1A3BBAD32B}</id>
+					<name>DecalResponse</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<id>{7F94F69A-4243-4617-921D-F6FF7FC71D16}</id>
 					<name>Irradiance</name>
 					<optional>false</optional>
@@ -67,8 +72,8 @@ World_DeferredGBufferWrite
 			<id>{4F904B51-75A9-4D19-96EC-534FABB8BA69}</id>
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>438</second>
+				<first>25</first>
+				<second>469</second>
 			</position>
 			<name>Enable</name>
 			<connectable>true</connectable>
@@ -80,8 +85,8 @@ World_DeferredGBufferWrite
 			<id>{CA2E92C9-EAA0-4545-815F-51EE96A7A409}</id>
 			<comment/>
 			<position>
-				<first>68</first>
-				<second>208</second>
+				<first>9</first>
+				<second>239</second>
 			</position>
 			<name>Roughness</name>
 			<connectable>true</connectable>
@@ -93,8 +98,8 @@ World_DeferredGBufferWrite
 			<id>{C4793C58-4118-4914-8734-1D4FEBC4FC01}</id>
 			<comment/>
 			<position>
-				<first>36</first>
-				<second>322</second>
+				<first>-39</first>
+				<second>353</second>
 			</position>
 			<name>ViewNormalDetail</name>
 			<connectable>true</connectable>
@@ -106,8 +111,8 @@ World_DeferredGBufferWrite
 			<id>{FA893653-9994-4A8E-BDE0-55917C5B2AF7}</id>
 			<comment/>
 			<position>
-				<first>52</first>
-				<second>284</second>
+				<first>-7</first>
+				<second>315</second>
 			</position>
 			<name>SurfaceColor</name>
 			<connectable>true</connectable>
@@ -119,8 +124,8 @@ World_DeferredGBufferWrite
 			<id>{4F9F4253-5618-40FB-A8BF-9FBAF2E0CC39}</id>
 			<comment/>
 			<position>
-				<first>68</first>
-				<second>170</second>
+				<first>9</first>
+				<second>201</second>
 			</position>
 			<name>Metalness</name>
 			<connectable>true</connectable>
@@ -132,8 +137,8 @@ World_DeferredGBufferWrite
 			<id>{4C571CDA-798F-C142-867C-44B059740876}</id>
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>246</second>
+				<first>9</first>
+				<second>277</second>
 			</position>
 			<name>Specular</name>
 			<connectable>true</connectable>
@@ -145,8 +150,8 @@ World_DeferredGBufferWrite
 			<id>{C9E7EC8E-27BE-B148-8B22-54895036386B}</id>
 			<comment/>
 			<position>
-				<first>84</first>
-				<second>400</second>
+				<first>25</first>
+				<second>431</second>
 			</position>
 			<name>Discard</name>
 			<connectable>true</connectable>
@@ -308,8 +313,8 @@ World_DeferredGBufferWrite
 			<id>{638BECF5-367E-D54A-B232-14979F9BEA33}</id>
 			<comment/>
 			<position>
-				<first>138</first>
-				<second>130</second>
+				<first>63</first>
+				<second>161</second>
 			</position>
 			<name>L_Irradiance</name>
 		</item>
@@ -361,8 +366,8 @@ World_DeferredGBufferWrite
 			<id>{3342B6F0-6662-9948-A4F8-F236075FAB6A}</id>
 			<comment/>
 			<position>
-				<first>122</first>
-				<second>360</second>
+				<first>47</first>
+				<second>391</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -397,6 +402,19 @@ World_DeferredGBufferWrite
 				<second>-423</second>
 			</position>
 			<parameterName>World_IrradianceSingle</parameterName>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{7CA9EEB0-2748-4926-BEC8-603482ACA31F}</id>
+			<comment/>
+			<position>
+				<first>-23</first>
+				<second>123</second>
+			</position>
+			<name>DecalResponse</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>true</haveDefaultValue>
+			<defaultValue>1</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -688,6 +706,16 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{870F030C-C903-46FF-A6D1-1F1A3BBAD32B}</id>
 			</destination>
 		</item>
 	</edges>

@@ -54,7 +54,8 @@ public:
 	Ref< render::ShaderGraph > generateSurface(
 		const model::Model& model,
 		const model::Material& material,
-		bool vertexColor
+		bool vertexColor,
+		bool decalResponse
 	) const;
 
 	Ref< render::ShaderGraph > combineSurface(
