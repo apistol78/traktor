@@ -16,7 +16,7 @@
 #include "Core/RefArray.h"
 #include "Core/Library/Library.h"
 #include "Core/Math/Color4f.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/TicketLock.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
 #include "Render/Types.h"
@@ -108,7 +108,7 @@ private:
 	Ref< WorldServer > m_worldServer;
 	Ref< Environment > m_environment;
 	Ref< StateManager > m_stateManager;
-	Semaphore m_lockUpdate;
+	TicketLock m_lockUpdate;
 	Thread* m_threadDatabase = nullptr;
 	Thread* m_threadRender = nullptr;
 	Timer m_timer;
@@ -123,7 +123,7 @@ private:
 	double m_renderGpuDuration = 0.0;
 	int32_t m_renderGpuDurationQuery = -1;
 	uint32_t m_renderCollisions = 0;
-	Semaphore m_lockRender;
+	TicketLock m_lockRender;
 	Signal m_signalRenderBegin;
 	Signal m_signalRenderFinish;
 	uint32_t m_frameBuild = 0;

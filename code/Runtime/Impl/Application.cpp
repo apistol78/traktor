@@ -449,7 +449,7 @@ void Application::destroy()
 
 bool Application::update()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
+	T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockUpdate);
 	T_PROFILER_SCOPE(L"Application update");
 	Ref< IState > currentState;
 
@@ -472,7 +472,7 @@ bool Application::update()
 	if (updateResult == RenderServer::UrReconfigure || m_environment->shouldReconfigure())
 	{
 		// Synchronize rendering thread first as renderer might be reconfigured.
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+		T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 
 		// Emit action in current state as we're about to reconfigured servers.
 		// Also ensure state are flushed before reconfiguring.
@@ -529,7 +529,7 @@ bool Application::update()
 
 		// Ensure state transition is safe.
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+			T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 			T_FATAL_ASSERT (m_stateRender == nullptr);
 
 			// Leave current state.
@@ -816,7 +816,7 @@ bool Application::update()
 					m_signalRenderFinish.reset();
 
 					{
-						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+						T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 						T_ASSERT(m_stateRender == nullptr);
 
 						m_frameRender = m_frameBuild;
@@ -1010,7 +1010,7 @@ bool Application::update()
 
 void Application::suspend()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+	T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 	if (m_stateManager->getCurrent() != nullptr)
 	{
 		const ActiveEvent activeEvent(false);
@@ -1020,7 +1020,7 @@ void Application::suspend()
 
 void Application::resume()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+	T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 	if (m_stateManager->getCurrent() != nullptr)
 	{
 		const ActiveEvent activeEvent(true);
@@ -1054,8 +1054,8 @@ void Application::pollDatabase()
 
 	if (!currentThread->stopped() && !eventIds.empty())
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+		T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockUpdate);
+		T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 
 		if (auto currentState = m_stateManager->getCurrent())
 		{
@@ -1084,7 +1084,6 @@ void Application::threadDatabase()
 	{
 		for (uint32_t i = 0; i < c_databasePollInterval && !m_threadDatabase->stopped(); ++i)
 			m_threadDatabase->sleep(100);
-
 		pollDatabase();
 	}
 }
@@ -1105,7 +1104,7 @@ void Application::threadRender()
 
 			// Render frame.
 			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
+				T_ANONYMOUS_VAR(Acquire< TicketLock >)(m_lockRender);
 
 				const double renderBegin = m_timer.getElapsedTime();
 

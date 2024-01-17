@@ -43,10 +43,9 @@ SharedMemoryLinux::SharedMemoryLinux()
 SharedMemoryLinux::~SharedMemoryLinux()
 {
 	if (m_ptr)
-	{
 		munmap(m_ptr, m_size);
-		shm_unlink(wstombs(m_name).c_str());
-	}
+	if (m_fd)
+		close(m_fd);
 }
 
 bool SharedMemoryLinux::create(const std::wstring& name, uint32_t size)
@@ -73,7 +72,8 @@ bool SharedMemoryLinux::create(const std::wstring& name, uint32_t size)
 		// Set size of shared object.
 		if (ftruncate(m_fd, size) == -1)
 		{
-			shm_unlink(wstombs(m_name).c_str());
+			close(m_fd);
+			m_fd = 0;
 			return false;
 		}
 
@@ -84,7 +84,8 @@ bool SharedMemoryLinux::create(const std::wstring& name, uint32_t size)
 	m_ptr = mmap(nullptr, size, PROT_READ | PROT_WRITE, MAP_SHARED, m_fd, 0);
 	if (!m_ptr)
 	{
-		shm_unlink(wstombs(m_name).c_str());
+		close(m_fd);
+		m_fd = 0;
 		return false;
 	}
 
