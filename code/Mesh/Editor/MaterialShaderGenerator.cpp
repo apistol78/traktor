@@ -108,7 +108,8 @@ MaterialShaderGenerator::MaterialShaderGenerator(const std::function< Ref< const
 Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 	const model::Model& model,
 	const model::Material& material,
-	bool vertexColor
+	bool vertexColor,
+	bool decalResponse
 ) const
 {
 	// Create a mutable material surface shader.
@@ -344,6 +345,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generateSurface(
 			transparencyTextureNode->setComment(L"");
 			transparencyTextureNode->setExternal(transparencyTexture);
 			propagateAnisotropic(meshSurfaceShaderGraph, transparencyTextureNode, material.getTransparencyMap().anisotropic);
+		}
+		else if (comment == L"Tag_DecalResponse")
+		{
+			render::Scalar* decalResponseNode = mandatory_non_null_type_cast< render::Scalar* >(node);
+			decalResponseNode->setComment(L"");
+			decalResponseNode->set(decalResponse ? 1.0f : 0.0f);			
 		}
 	}
 

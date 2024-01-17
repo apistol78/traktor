@@ -44,6 +44,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{BD60374C-74A9-4DFA-8C93-8FB46F07C9B0}</id>
+					<name>Decal response</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 					<name>Discard</name>
 					<optional>true</optional>
@@ -171,6 +176,7 @@
 				<item>Specular</item>
 				<item>Normal</item>
 				<item>Alpha</item>
+				<item>Decal response</item>
 			</names>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -391,8 +397,8 @@
 			<id>{BFC530DE-6DE2-2B4C-A4A7-0F4CA291C84D}</id>
 			<comment/>
 			<position>
-				<first>2300</first>
-				<second>477</second>
+				<first>2310</first>
+				<second>494</second>
 			</position>
 			<name>Albedo</name>
 		</item>
@@ -400,8 +406,8 @@
 			<id>{E82A3FCC-B49B-F949-8460-397FA7A319CF}</id>
 			<comment/>
 			<position>
-				<first>2284</first>
-				<second>333</second>
+				<first>2294</first>
+				<second>353</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -409,8 +415,8 @@
 			<id>{389F0ADE-2A3C-B74B-8986-205F7DFBA69A}</id>
 			<comment/>
 			<position>
-				<first>2284</first>
-				<second>381</second>
+				<first>2294</first>
+				<second>400</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -563,8 +569,8 @@
 			<id>{022E4295-684C-AE48-B510-8DAAADADC3CA}</id>
 			<comment/>
 			<position>
-				<first>2300</first>
-				<second>525</second>
+				<first>2310</first>
+				<second>541</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -634,8 +640,8 @@
 			<id>{80D90961-6B94-8648-BF31-494072A15B7A}</id>
 			<comment/>
 			<position>
-				<first>2300</first>
-				<second>429</second>
+				<first>2294</first>
+				<second>447</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -652,8 +658,8 @@
 			<id>{F15A971B-B5D2-8048-967F-F856D9C4EE7C}</id>
 			<comment/>
 			<position>
-				<first>2268</first>
-				<second>621</second>
+				<first>2278</first>
+				<second>635</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -670,8 +676,8 @@
 			<id>{0EB7CD19-65D4-654F-B973-3A4639A1EF6E}</id>
 			<comment/>
 			<position>
-				<first>2268</first>
-				<second>669</second>
+				<first>2278</first>
+				<second>682</second>
 			</position>
 			<name>ViewVelocity</name>
 		</item>
@@ -787,8 +793,8 @@ Tag_LightmapTexCoord
 			<id>{612C2732-C24F-B746-BC76-B705FD62BF4C}</id>
 			<comment/>
 			<position>
-				<first>2284</first>
-				<second>285</second>
+				<first>2294</first>
+				<second>306</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -796,8 +802,8 @@ Tag_LightmapTexCoord
 			<id>{90A4E7B8-F84A-447B-9E26-0481E405B73A}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>977</second>
+				<first>433</first>
+				<second>1011</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -805,8 +811,8 @@ Tag_LightmapTexCoord
 			<id>{9CF1BAA5-3C98-4786-96D8-9D42D282475D}</id>
 			<comment/>
 			<position>
-				<first>2308</first>
-				<second>237</second>
+				<first>2318</first>
+				<second>212</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -845,10 +851,28 @@ Tag_LightmapTexCoord
 			<id>{3A67EFF2-10D5-F745-B2E1-BCC69842163C}</id>
 			<comment/>
 			<position>
-				<first>2284</first>
-				<second>573</second>
+				<first>2278</first>
+				<second>588</second>
 			</position>
 			<name>ViewNormal</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{5725F7FA-D37D-4026-8483-5BCFC9B45D73}</id>
+			<comment/>
+			<position>
+				<first>2262</first>
+				<second>259</second>
+			</position>
+			<name>DecalResponse</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{2AC1E4E5-2AFB-4C34-BAF7-DC38976756C5}</id>
+			<comment/>
+			<position>
+				<first>416</first>
+				<second>1052</second>
+			</position>
+			<name>DecalResponse</name>
 		</item>
 	</nodes>
 	<edges>
@@ -1590,6 +1614,26 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{5B462651-D228-E441-A9AA-767FB3A2F497}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[67]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{BD60374C-74A9-4DFA-8C93-8FB46F07C9B0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-C36B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[68]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
 			</destination>
 		</item>
 	</edges>

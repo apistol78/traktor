@@ -18,8 +18,8 @@
 			<id>{F66C33E8-65A1-7A46-BC9F-AC70C53799B3}</id>
 			<comment/>
 			<position>
-				<first>758</first>
-				<second>846</second>
+				<first>719</first>
+				<second>892</second>
 			</position>
 			<names>
 				<item>SurfaceColor</item>
@@ -35,6 +35,7 @@
 				<item>View position</item>
 				<item>View velocity</item>
 				<item>View detail normal</item>
+				<item>Decal response</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -60,7 +61,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>717</second>
+				<second>716</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -69,7 +70,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>768</second>
+				<second>766</second>
 			</position>
 			<name>Cast shadows</name>
 		</item>
@@ -78,7 +79,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>819</second>
+				<second>816</second>
 			</position>
 			<name>Emissive</name>
 		</item>
@@ -87,7 +88,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>870</second>
+				<second>866</second>
 			</position>
 			<name>Irradiance</name>
 		</item>
@@ -96,7 +97,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>921</second>
+				<second>916</second>
 			</position>
 			<name>Metalness</name>
 		</item>
@@ -105,7 +106,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>972</second>
+				<second>966</second>
 			</position>
 			<name>Roughness</name>
 		</item>
@@ -114,7 +115,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1023</second>
+				<second>1016</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -123,7 +124,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1074</second>
+				<second>1066</second>
 			</position>
 			<name>Discard</name>
 		</item>
@@ -132,7 +133,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1125</second>
+				<second>1116</second>
 			</position>
 			<name>View normal</name>
 		</item>
@@ -141,7 +142,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1176</second>
+				<second>1166</second>
 			</position>
 			<name>View position</name>
 		</item>
@@ -150,7 +151,7 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1227</second>
+				<second>1216</second>
 			</position>
 			<name>View velocity</name>
 		</item>
@@ -159,9 +160,18 @@
 			<comment/>
 			<position>
 				<first>1187</first>
-				<second>1278</second>
+				<second>1266</second>
 			</position>
 			<name>View detail normal</name>
+		</item>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{CD0D53B8-673F-491B-B8DE-36202C2A8E67}</id>
+			<comment/>
+			<position>
+				<first>1185</first>
+				<second>1316</second>
+			</position>
+			<name>Decal response</name>
 		</item>
 	</nodes>
 	<edges>
@@ -312,6 +322,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{D596E4E4-1A78-4D80-CA6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>

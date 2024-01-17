@@ -1236,6 +1236,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<id>{BD60374C-74A9-4DFA-8C93-8FB46F07C9B0}</id>
+					<name>Decal response</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<id>{894A4A4A-6102-7B47-BDCC-A6E89E6B6DA8}</id>
 					<name>Discard</name>
 					<optional>true</optional>

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -95,6 +95,9 @@ public:
 	/*! */
 	bool getGrounded() const { return m_grounded; }
 
+	/*! */
+	bool getDecalResponse() const { return m_decalResponse; }
+
 	/*! Set number of manual lod steps. */
 	void setLodSteps(int32_t lodSteps) { m_lodSteps = lodSteps; }
 
@@ -129,6 +132,7 @@ private:
 	bool m_renormalize = false;
 	bool m_center = false;
 	bool m_grounded = false;
+	bool m_decalResponse = true;
 	int32_t m_lodSteps = 8;
 	float m_lodMaxDistance = 100.0f;
 	float m_lodCullDistance = 200.0f;
