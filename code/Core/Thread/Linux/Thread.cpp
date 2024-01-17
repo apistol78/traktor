@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -53,32 +53,6 @@ bool Thread::start(Priority priority)
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
-
-	std::memset(&param, 0, sizeof(param));
-	switch (priority)
-	{
-	case Lowest:
-		param.sched_priority = 15;
-		break;
-
-	case Below:
-		param.sched_priority = 5;
-		break;
-
-	case Normal:
-		param.sched_priority = 0;
-		break;
-
-	case Above:
-		param.sched_priority = -6;
-		break;
-
-	case Highest:
-		param.sched_priority = -16;
-		break;
-	}
-	pthread_attr_setschedparam(&attr, &param);
 
 	rc = pthread_create(
 		&in->thread,
