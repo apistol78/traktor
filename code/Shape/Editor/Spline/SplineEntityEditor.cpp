@@ -32,14 +32,14 @@ void SplineEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer)
 	 primitiveRenderer->pushDepthState(false, false, false);
 
 	 const auto& path = splineComponent->getPath();
-	 const auto& keys = path.getKeys();
+	 const auto& keys = path.keys();
 	 if (keys.empty())
 	 	return;
 
-	 float st = 0.0f; // keys.front().T;
-	 float et = 1.0f; // keys.back().T;
+	 const float st = path.getStartTime();
+	 const float et = path.getEndTime();
 
-	 uint32_t nsteps = (uint32_t)keys.size() * 10;
+	 const uint32_t nsteps = (uint32_t)keys.size() * 10;
 	 for (uint32_t i = 0; i < nsteps; ++i)
 	 {
 	 	const float t1 = st + (float)(i * (et - st)) / nsteps;

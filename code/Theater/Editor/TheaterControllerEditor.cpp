@@ -334,7 +334,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			);
 		}
 
-		for (const auto& key : path.getKeys())
+		for (const auto& key : path.keys())
 		{
 			primitiveRenderer->drawSolidPoint(
 				key.position,
@@ -395,7 +395,7 @@ void TheaterControllerEditor::updateView()
 			Ref< ui::Sequence > trackSequence = new ui::Sequence(name);
 			trackSequence->setData(L"TRACK", track);
 
-			for (auto& key : track->getPath().getKeys())
+			for (auto& key : track->getPath().editKeys())
 			{
 				const int32_t tickTime = (int32_t)(key.T * 1000.0f);
 				Ref< ui::Tick > tick = new ui::Tick(tickTime, true);
@@ -459,21 +459,22 @@ void TheaterControllerEditor::captureEntities()
 		TransformPath& pathData = instanceTrackData->getPath();
 
 		const int32_t cki = pathData.getClosestKey(time);
-		TransformPath::Key* closestKey = (cki >= 0) ? &pathData[cki] : nullptr;
-
-		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
+		if (cki >= 0 && abs(pathData.get(cki).T - time) < c_clampKeyDistance)
 		{
-			closestKey->position = transform.translation();
-			closestKey->orientation = transform.rotation().toEulerAngles();
+			TransformPath::Key closestKey = pathData.get(cki);
+			closestKey.position = transform.translation();
+			closestKey.orientation = transform.rotation().toEulerAngles();
 
 			// Ensure orientation are "logically" fixed up to previous key.
-			if (cki > 0)
-			{
-				pathData[cki].orientation = fixupOrientation(
-					pathData[cki].orientation,
-					pathData[cki - 1].orientation
-				);
-			}
+			// if (cki > 0)
+			// {
+			// 	pathData[cki].orientation = fixupOrientation(
+			// 		pathData[cki].orientation,
+			// 		pathData[cki - 1].orientation
+			// 	);
+			// }
+
+			pathData.set(cki, closestKey);
 		}
 		else
 		{
@@ -484,13 +485,13 @@ void TheaterControllerEditor::captureEntities()
 			const size_t at = pathData.insert(key);
 
 			// Ensure orientation are "logically" fixed up to previous key.
-			if (at > 0)
-			{
-				pathData[at].orientation = fixupOrientation(
-					pathData[at].orientation,
-					pathData[at - 1].orientation
-				);
-			}
+			// if (at > 0)
+			// {
+			// 	pathData[at].orientation = fixupOrientation(
+			// 		pathData[at].orientation,
+			// 		pathData[at - 1].orientation
+			// 	);
+			// }
 		}
 	}
 
@@ -513,7 +514,7 @@ void TheaterControllerEditor::deleteSelectedKey()
 		T_ASSERT(keyWrapper);
 
 		TransformPath& path = trackData->getPath();
-		AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		AlignedVector< TransformPath::Key >& keys = path.editKeys();
 		for (auto it = keys.begin(); it != keys.end(); ++it)
 		{
 			if (&(*it) == &keyWrapper->m_key)
@@ -563,7 +564,7 @@ void TheaterControllerEditor::easeVelocity()
 		T_ASSERT(trackData);
 
 		TransformPath& path = trackData->getPath();
-		AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		AlignedVector< TransformPath::Key >& keys = path.editKeys();
 		if (keys.size() < 3)
 			continue;
 
@@ -618,12 +619,12 @@ void TheaterControllerEditor::gotoPreviousKey()
 
 	for (auto track : act->getTracks())
 	{
-		TransformPath& path = track->getPath();
+		const TransformPath& path = track->getPath();
 		const int32_t pki = path.getClosestPreviousKey(time);
 		if (pki >= 0)
 		{
-			if (path[pki].T > previousTime)
-				previousTime = path[pki].T;
+			if (path.get(pki).T > previousTime)
+				previousTime = path.get(pki).T;
 		}
 	}
 
@@ -659,8 +660,8 @@ void TheaterControllerEditor::gotoNextKey()
 		const int32_t nki = path.getClosestNextKey(time);
 		if (nki >= 0)
 		{
-			if (path[nki].T < nextTime)
-				nextTime = path[nki].T;
+			if (path.get(nki).T < nextTime)
+				nextTime = path.get(nki).T;
 		}
 	}
 
@@ -757,8 +758,13 @@ void TheaterControllerEditor::timeScaleAct()
 
 		for (auto track : act->getTracks())
 		{
-			for (auto& key : track->getPath().getKeys())
-				key.T *= f;
+			auto& path = track->getPath();
+			for (size_t i = 0; i < path.size(); ++i)
+			{
+				auto k = path.get(i);
+				k.T *= f;
+				path.set(i, k);
+			}
 		}
 
 		act->setDuration(toDuration);

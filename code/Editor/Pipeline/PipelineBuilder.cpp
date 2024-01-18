@@ -388,7 +388,18 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 	if (!sourceAsset)
 		return nullptr;
 
-	const uint32_t sourceHash = DeepHash(sourceAsset).get();
+	const TypeInfo* pipelineType;
+	uint32_t pipelineHash;
+
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
+		return nullptr;
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT(pipeline);
+
+	uint32_t sourceHash = pipeline->hashAsset(sourceAsset);
+	if (const ISerializable* sbp = dynamic_type_cast< const ISerializable* >(buildParams))
+		sourceHash += DeepHash(sbp).get();
 
 	auto it = m_builtCache.find(sourceHash);
 	if (it != m_builtCache.end())
@@ -403,15 +414,6 @@ Ref< ISerializable > PipelineBuilder::buildProduct(const db::Instance* sourceIns
 				return j->product;
 		}
 	}
-
-	const TypeInfo* pipelineType;
-	uint32_t pipelineHash;
-
-	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
-		return nullptr;
-
-	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
-	T_ASSERT(pipeline);
 
 	m_profiler->begin(*pipelineType);
 	Ref< ISerializable > product = pipeline->buildProduct(this, sourceInstance, sourceAsset, buildParams);

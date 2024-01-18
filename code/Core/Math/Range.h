@@ -29,9 +29,7 @@ public:
 	Type min;
 	Type max;
 
-	Range()
-	{
-	}
+	Range() = default;
 
 	Range(const Type& min_, const Type& max_)
 	:	min(min_)

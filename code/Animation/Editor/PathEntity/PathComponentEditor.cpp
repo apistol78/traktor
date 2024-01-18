@@ -32,7 +32,7 @@ void PathComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	{
 		// Draw entity's path.
 		const TransformPath& path = pathComponent->getPath();
-		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		const AlignedVector< TransformPath::Key >& keys = path.keys();
 
 		for (const auto& key : keys)
 		{

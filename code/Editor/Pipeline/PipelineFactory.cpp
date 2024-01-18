@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Objec
 
 PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
-	const bool verbose = settings->getProperty< bool >(L"Pipeline.Verbose", false);
+	const bool verbose = false; // settings->getProperty< bool >(L"Pipeline.Verbose", false);
 
 	const TypeInfoSet pipelineTypes = type_of< IPipeline >().findAllOf(false);
 

@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <limits>
+#include "Core/Serialization/DeepClone.h"
 #include "Model/Model.h"
 #include "Shape/Editor/Bake/Embree/SplitModel.h"
 
@@ -71,7 +72,7 @@ void split(const model::Model* model, int32_t depth, const AlignedVector< model:
 	const bool smallBounds = (size.x() <= c_smallLimit && size.y() <= c_smallLimit && size.z() <= c_smallLimit);
 	if (depth >= 3 || smallBounds)
 	{
-		Ref< model::Model > part = new model::Model();
+		Ref< model::Model > part = DeepClone(model).create< model::Model >(); // new model::Model();
 		part->setPolygons(polygons);
 		outModels.push_back(part);
 		return;
