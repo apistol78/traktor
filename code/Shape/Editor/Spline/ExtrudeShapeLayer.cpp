@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Math/Range.h"
 #include "Core/Math/TransformPath.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -16,6 +17,24 @@
 
 namespace traktor::shape
 {
+	namespace
+	{
+
+Range< float > calculateZRange(const model::Model& m)
+{
+	Range< float > rng(
+		std::numeric_limits< float >::max(),
+		-std::numeric_limits< float >::max()
+	);
+	for (const auto& position : m.getPositions())
+	{
+		rng.min = std::min< float >(rng.min, position.z());
+		rng.max = std::max< float >(rng.max, position.z());
+	}
+	return rng;	
+}
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, SplineLayerComponent)
 
@@ -56,42 +75,16 @@ void ExtrudeShapeLayer::update(const world::UpdateParams& update)
 {
 }
 
-Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bool closed, bool preview) const
+Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, bool closed, bool preview) const
 {
-	const auto& keys = path.getKeys();
-	if (keys.size() < 2)
+	if (path_.size() < 2)
 		return nullptr;
 
-	// Get all unique Z positions in model.
-	SmallSet< float > steps;
-	float stepMin = std::numeric_limits< float >::max();
-	float stepMax = -std::numeric_limits< float >::max();
-	for (const auto& position : m_modelRepeat->getPositions())
-	{
-		steps.insert(position.z());
-		stepMin = std::min< float >(stepMin, position.z());
-		stepMax = std::max< float >(stepMax, position.z());
-	}
-	if (steps.empty())
-		return nullptr;
+	const TransformPath path = path_.geometricNormalized(closed);
+	const float pathLength = path.measureLength(closed);
 
-	const float stepLength = stepMax - stepMin;
-
-	// Determine geometric length of path.
-	float pathLength = 0.0f;
-	for (int32_t i = 0; i < 100; ++i)
-	{
-		const float t0 = (float)i / 100.0f;
-		const float t1 = (float)(i + 1) / 100.0f;
-
-		const auto v0 = path.evaluate(t0, closed);
-		const auto v1 = path.evaluate(t1, closed);
-
-		const Vector4 p0 = v0.transform().translation();
-		const Vector4 p1 = v1.transform().translation();
-
-		pathLength += (p1 - p0).length();
-	}
+	const Range< float > step = calculateZRange(*m_modelRepeat);
+	const Matrix44 To = translate(m_data->m_offset, 0.0f, 0.0f);
 
 	// Extrude shape.
 	Ref< model::Model > outputModel = new model::Model();
@@ -99,7 +92,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 	outputModel->setTexCoords(m_modelRepeat->getTexCoords());
 	outputModel->setTexCoordChannels(m_modelRepeat->getTexCoordChannels());
 
-	const int32_t nrepeats = (int32_t)(pathLength / stepLength) + 1;
+	const int32_t nrepeats = (int32_t)(pathLength / step.delta()) + 1;
 	for (int32_t i = 0; i < nrepeats; ++i)
 	{
 		const float at = (float)i / nrepeats;
@@ -112,7 +105,8 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 			const Vector4 n = m_modelRepeat->getNormal(vertex.getNormal());
 
 			const Matrix44 Tc = translate(0.0f, 0.0f, p.z());
-			const float ats = at + ((p.z() - stepMin) / stepLength) * (1.0f / nrepeats);
+
+			const float ats = at + ((p.z() - step.min) / step.delta()) * (1.0f / nrepeats);
 
 			const auto v = path.evaluate(ats, closed);
 			Matrix44 T = v.transform().toMatrix44();
@@ -130,7 +124,7 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path, bo
 			}
 
 			model::Vertex outputVertex;
-			outputVertex.setPosition(outputModel->addPosition(T * Tc.inverse() * p.xyz1()));
+			outputVertex.setPosition(outputModel->addPosition(T * Tc.inverse() * To * p.xyz1()));
 			outputVertex.setNormal(outputModel->addNormal(T * n.xyz0()));
 			outputVertex.setTexCoord(0, vertex.getTexCoord(0));
 			outputModel->addVertex(outputVertex);

@@ -60,6 +60,7 @@ private:
 	Guid m_mesh;
 	bool m_automaticOrientation;
 	float m_distance;
+	float m_startEndOffset;
 	mutable Ref< model::Model > m_model;
 };
 

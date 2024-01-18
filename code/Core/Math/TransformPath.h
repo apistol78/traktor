@@ -49,7 +49,7 @@ public:
 
 	TransformPath() = default;
 
-	explicit TransformPath(const TransformPath& path);
+	TransformPath(const TransformPath& path);
 
 	/*! Insert key into path.
 	 *
@@ -87,6 +87,22 @@ public:
 	 */
 	int32_t getClosestNextKey(float at) const;
 
+	/*!
+	 */
+	float measureLength(bool closed) const;
+
+	/*!
+	 */
+	float measureSegmentLength(float from, float to, bool closed, int32_t steps = 1000) const;
+
+	/*!
+	 */
+	float estimateTimeFromDistance(bool closed, float distance, int32_t steps = 1000) const;
+
+	/*!
+	 */
+	TransformPath geometricNormalized(bool closed) const;
+
 	/*! Split path into two paths at given time.
 	 *
 	 * \param at Split at time.
@@ -94,8 +110,6 @@ public:
 	 * \param outPath2 Path after split point.
 	 */
 	void split(float at, TransformPath& outPath1, TransformPath& outPath2) const;
-
-	virtual void serialize(ISerializer& s) override final;
 
 	/*! Get time of first key frame.
 	 *
@@ -109,18 +123,6 @@ public:
 	 */
 	float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
-	/*! Get key frames.
-	 *
-	 * \return Key frames.
-	 */
-	const AlignedVector< Key >& getKeys() const { return m_keys; }
-
-	/*! Get key frames.
-	 *
-	 * \return Key frames.
-	 */
-	AlignedVector< Key >& getKeys() { return m_keys; }
-
 	/*! Get number of key frames.
 	 *
 	 * \return Number of key frames.
@@ -132,21 +134,37 @@ public:
 	 * \param at Index.
 	 * \return Key frame at index.
 	 */
-	const Key& operator [] (size_t at) const { return m_keys[at]; }
+	const Key& get(size_t at) const { return m_keys[at]; }
 
-	/*! Get key frame at index.
-	 *
-	 * \param at Index.
-	 * \return Key frame at index.
+	/*!
 	 */
-	Key& operator [] (size_t at) { return m_keys[at]; }
+	void set(size_t at, const Key& k);
 
+	/*! Get key frames.
+	 *
+	 * \return Key frames.
+	 */
+	const AlignedVector< Key >& keys() const { return m_keys; }
+
+	/*!
+	 */
+	AlignedVector< Key >& editKeys();
+
+	/*!
+	 */
 	TransformPath& operator = (const TransformPath& path);
+
+	/*!
+	 */
+	virtual void serialize(ISerializer& s) override final;
 
 private:
 	AlignedVector< Key > m_keys;
 	mutable AutoPtr< ISpline< Key > > m_spline;
 	mutable bool m_closed = false;
+	mutable float m_length = -1.0f;
+
+	void flush() const;
 };
 
 }

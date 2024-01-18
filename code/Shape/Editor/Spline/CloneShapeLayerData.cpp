@@ -40,11 +40,12 @@ Ref< model::Model > readModel(const mesh::MeshAsset* meshAsset, const Path& mode
 		
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.CloneShapeLayerData", 0, CloneShapeLayerData, SplineLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.CloneShapeLayerData", 1, CloneShapeLayerData, SplineLayerComponentData)
 
 CloneShapeLayerData::CloneShapeLayerData()
 :	m_automaticOrientation(false)
 ,	m_distance(1.0f)
+,	m_startEndOffset(0.0f)
 {
 }
 
@@ -72,6 +73,9 @@ void CloneShapeLayerData::serialize(ISerializer& s)
 	s >> Member< Guid >(L"mesh", m_mesh, AttributeType(type_of< mesh::MeshAsset >()));
 	s >> Member< bool >(L"automaticOrientation", m_automaticOrientation);
 	s >> Member< float >(L"distance", m_distance);
+
+	if (s.getVersion< CloneShapeLayerData >() >= 1)
+		s >> Member< float >(L"startEndOffset", m_startEndOffset);
 }
 
 }

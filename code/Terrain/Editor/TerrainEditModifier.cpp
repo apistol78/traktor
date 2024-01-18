@@ -1171,15 +1171,15 @@ void TerrainEditModifier::flattenUnderSpline()
 		T_FATAL_ASSERT(splineComponent != nullptr);
 
 		const auto& path = splineComponent->getPath();
-		const auto& keys = path.getKeys();
+		const auto& keys = path.keys();
 		if (keys.empty())
 			return;
 
 		if (!begin(false))
 			continue;
 
-		float st = keys.front().T;
-		float et = keys.back().T;
+	 	const float st = path.getStartTime();
+	 	const float et = path.getEndTime();
 
 		const uint32_t nsteps = keys.size() * 20;
 		for (uint32_t i = 0; i <= nsteps; ++i)

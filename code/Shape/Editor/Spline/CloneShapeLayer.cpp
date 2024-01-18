@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
 #include "Core/Math/TransformPath.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Mesh/Editor/MeshAsset.h"
@@ -52,25 +53,10 @@ void CloneShapeLayer::update(const world::UpdateParams& update)
 
 Ref< model::Model > CloneShapeLayer::createModel(const TransformPath& path, bool closed, bool preview) const
 {
-	const auto& keys = path.getKeys();
-	if (keys.size() < 2)
+	if (path.size() < 2)
 		return nullptr;
 
-	// Determine geometric length of path.
-	float pathLength = 0.0f;
-	for (int32_t i = 0; i < 100; ++i)
-	{
-		const float t0 = (float)i / 100.0f;
-		const float t1 = (float)(i + 1) / 100.0f;
-
-		const auto v0 = path.evaluate(t0, closed);
-		const auto v1 = path.evaluate(t1, closed);
-
-		const Vector4 p0 = v0.transform().translation();
-		const Vector4 p1 = v1.transform().translation();
-
-		pathLength += (p1 - p0).length();
-	}
+	const float pathLength = path.measureLength(closed);
 
 	// Extrude shape.
 	Ref< model::Model > outputModel = new model::Model();
@@ -81,7 +67,11 @@ Ref< model::Model > CloneShapeLayer::createModel(const TransformPath& path, bool
 	const int32_t nrepeats = (int32_t)(pathLength / m_data->m_distance) + 1;
 	for (int32_t i = 0; i < nrepeats; ++i)
 	{
-		const float at = (float)i / nrepeats;
+		const float f = (float)i / (nrepeats - 1);
+		const float at = path.estimateTimeFromDistance(
+			closed,
+			f * (pathLength - m_data->m_startEndOffset * 2.0f) + m_data->m_startEndOffset
+		);
 
 		const uint32_t vertexBase = outputModel->getVertexCount();
 

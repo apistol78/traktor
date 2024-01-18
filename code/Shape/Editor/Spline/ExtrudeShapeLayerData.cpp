@@ -40,10 +40,11 @@ Ref< model::Model > readModel(const mesh::MeshAsset* meshAsset, const Path& mode
 		
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 0, ExtrudeShapeLayerData, SplineLayerComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ExtrudeShapeLayerData", 1, ExtrudeShapeLayerData, SplineLayerComponentData)
 
 ExtrudeShapeLayerData::ExtrudeShapeLayerData()
 :	m_automaticOrientation(false)
+,	m_offset(0.0f)
 ,	m_detail(10.0f)
 {
 }
@@ -109,6 +110,10 @@ void ExtrudeShapeLayerData::serialize(ISerializer& s)
 	s >> Member< Guid >(L"meshRepeat", m_meshRepeat, AttributeType(type_of< mesh::MeshAsset >()));
 	s >> Member< Guid >(L"meshEnd", m_meshEnd, AttributeType(type_of< mesh::MeshAsset >()));
 	s >> Member< bool >(L"automaticOrientation", m_automaticOrientation);
+
+	if (s.getVersion< ExtrudeShapeLayerData >() >= 1)
+		s >> Member< float >(L"offset", m_offset);
+
 	s >> Member< float >(L"detail", m_detail);
 }
 

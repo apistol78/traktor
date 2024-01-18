@@ -64,6 +64,7 @@ private:
 	Guid m_meshRepeat;
 	Guid m_meshEnd;
 	bool m_automaticOrientation;
+	float m_offset;
 	float m_detail;
 	mutable Ref< model::Model > m_modelStart;
 	mutable Ref< model::Model > m_modelRepeat;	// \fixme Caching this here isn't pretty.

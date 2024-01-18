@@ -33,6 +33,8 @@
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/PathComponentData.h"
 
+#include "Shape/Editor/Bake/Embree/SplitModel.h"
+
 namespace traktor::shape
 {
 	namespace
@@ -120,7 +122,10 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 
 		const Guid& entityId = owner->getId();
 		if (entityId.isNull())
+		{
+			log::error << L"No ID on spline entity, need to ID to generate runtime meshes." << Endl;
 			return nullptr;
+		}
 
 		Ref< model::Model > visualModel = m_replicator->createModel(pipelineBuilder, owner, splineComponentData, world::IEntityReplicator::Usage::Visual);
 		if (!visualModel)
@@ -192,33 +197,54 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			replacementEntityData->setComponent(new world::PathComponentData(path));
 		}
 
+		const Guid baseOutputMeshId = owner->getId();
+		const Guid baseShapeId = owner->getId().permutation(10000);
+		log::info << L"Spline " << owner->getName() << L", mesh ID " << baseOutputMeshId.format() << L", shape ID " << baseShapeId.format() << Endl;
+
 		{
-			const Guid outputMeshId = owner->getId();
-
-			// Create static mesh component.
-			replacementEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputMeshId)));
-
-			// Build output mesh from merged model.
-			Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+			RefArray< model::Model > splitVisualModels;
+			splitModel(visualModel, splitVisualModels);
+			log::info << L"Split model into " << (int32_t)splitVisualModels.size() << L" pieces." << Endl;
 
 			Ref< const mesh::MeshAsset > meshAsset = dynamic_type_cast< const mesh::MeshAsset* >(
 				visualModel->getProperty< ISerializable >(type_name< mesh::MeshAsset >())
 			);
-			if (meshAsset)
+
+			Guid outputMeshId = baseOutputMeshId;
+
+			Ref< world::GroupComponentData > groupData = new world::GroupComponentData();
+			for (auto splitVisualModel : splitVisualModels)
 			{
-				outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
-				outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+				Ref< world::EntityData > visualEntityData = new world::EntityData();
+				visualEntityData->setId(outputMeshId.permutation(10000));
+				visualEntityData->setTransform(replacementEntityData->getTransform());
+				groupData->addEntityData(visualEntityData);
+
+				// Create static mesh component.
+				visualEntityData->setComponent(new mesh::MeshComponentData(resource::Id< mesh::IMesh >(outputMeshId)));
+
+				// Build output mesh from merged model.
+				Ref< mesh::MeshAsset > outputMeshAsset = new mesh::MeshAsset();
+				if (meshAsset)
+				{
+					outputMeshAsset->setMaterialShaders(meshAsset->getMaterialShaders());
+					outputMeshAsset->setMaterialTextures(meshAsset->getMaterialTextures());
+				}
+
+				pipelineBuilder->buildAdHocOutput(
+					outputMeshAsset,
+					outputMeshId,
+					splitVisualModel
+				);
+
+				outputMeshId.permutate();
 			}
 
-			pipelineBuilder->buildAdHocOutput(
-		 		outputMeshAsset,
-		 		outputMeshId,
-		 		visualModel
-			);
+			replacementEntityData->setComponent(groupData);
 		}
 
 		{
-			const Guid outputShapeId = owner->getId().permutation(1);
+			const Guid outputShapeId = baseShapeId;
 
 			Ref< const physics::MeshAsset > meshAsset = dynamic_type_cast< const physics::MeshAsset* >(
 				collisionModel->getProperty< ISerializable >(type_name< physics::MeshAsset >())

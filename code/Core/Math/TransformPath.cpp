@@ -272,7 +272,7 @@ size_t TransformPath::insert(const Key& key)
 		m_keys.push_back(key);
 		at = m_keys.end();
 	}
-	m_spline.release();
+	flush();
 	return std::distance(m_keys.begin(), at);
 }
 
@@ -388,6 +388,100 @@ int32_t TransformPath::getClosestNextKey(float at) const
 	return minI;
 }
 
+float TransformPath::measureLength(bool closed) const
+{
+	if (m_length < 0.0f || m_closed != closed)
+		m_length = measureSegmentLength(getStartTime(), getEndTime(), closed);
+	return m_length;
+}
+
+float TransformPath::measureSegmentLength(float from, float to, bool closed, int32_t steps) const
+{
+	float segmentLength = 0.0f;
+
+	float t0 = from;
+	Key v0 = evaluate(from, closed);
+
+	const float ds = 1.0f / steps;
+	for (int32_t i = 0; i < steps; ++i)
+	{
+		const float t1 = from + ((float)(i + 1) * ds) * (to - from);
+		const Key v1 = evaluate(t1, closed);
+
+		const Vector4 p0 = v0.transform().translation();
+		const Vector4 p1 = v1.transform().translation();
+		segmentLength += (p1 - p0).length();
+
+		t0 = t1;
+		v0 = v1;
+	}
+
+	return segmentLength;	
+}
+
+float TransformPath::estimateTimeFromDistance(bool closed, float distance, int32_t steps) const
+{
+	const float pathLength = measureLength(closed);
+	const float from = getStartTime();
+	const float to = getEndTime();
+
+	if (distance <= 0.0f)
+		return from;
+	if (distance >= pathLength)
+		return to;
+
+	float t0 = from;
+	TransformPath::Key v0 = evaluate(from, closed);
+
+	float travelDistance = 0.0f;
+
+	const float ds = 1.0f / steps;
+	for (int32_t i = 0; i < steps; ++i)
+	{
+		const float t1 = from + ((float)(i + 1) * ds) * (to - from);
+		const TransformPath::Key v1 = evaluate(t1, closed);
+
+		const Vector4 p0 = v0.transform().translation();
+		const Vector4 p1 = v1.transform().translation();
+
+		const float travelDistanceEnd = travelDistance + (p1 - p0).length();
+		if (distance <= travelDistanceEnd)
+		{
+			const float k = (distance - travelDistance) / (travelDistanceEnd - travelDistance);
+			return lerp(t0, t1, k);
+		}
+		travelDistance = travelDistanceEnd;
+
+		t0 = t1;
+		v0 = v1;
+	}
+
+	return to;
+}
+
+TransformPath TransformPath::geometricNormalized(bool closed) const
+{
+	TransformPath out(*this);
+	out.m_keys[0].T = 0.0f;
+
+	float pathLength = 0.0f;
+	for (int32_t i = 0; i < (int32_t)out.size() - 1; ++i)
+	{
+		const float segmentLength = measureSegmentLength(
+			m_keys[i].T,
+			m_keys[i + 1].T,
+			closed
+		);
+		out.m_keys[i + 1].T = pathLength + segmentLength;
+		pathLength += segmentLength;
+	}
+
+	for (int32_t i = 0; i < (int32_t)out.size(); ++i)
+		out.m_keys[i].T /= pathLength;
+
+	return out;
+}
+
 void TransformPath::split(float at, TransformPath& outPath1, TransformPath& outPath2) const
 {
 	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
@@ -406,6 +500,31 @@ void TransformPath::split(float at, TransformPath& outPath1, TransformPath& outP
 
 	f.T = 0.0f;
 	outPath2.insert(f);
+}
+
+void TransformPath::set(size_t at, const Key& k)
+{
+	m_keys[at] = k;
+	flush();
+}
+
+AlignedVector< TransformPath::Key >& TransformPath::editKeys()
+{
+	flush();
+	return m_keys;
+}
+
+TransformPath& TransformPath::operator = (const TransformPath& path)
+{
+	m_keys = path.m_keys;
+	flush();
+	return *this;
+}
+
+void TransformPath::flush() const
+{
+	m_spline.release();
+	m_length = -1.0f;
 }
 
 void TransformPath::serialize(ISerializer& s)
@@ -432,12 +551,6 @@ void TransformPath::Key::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"position", position, AttributePoint());
 	s >> Member< Vector4 >(L"orientation", orientation, AttributeUnit(UnitType::Radians));
 	s >> MemberStaticArray< float, 4 >(L"values", values);
-}
-
-TransformPath& TransformPath::operator = (const TransformPath& path)
-{
-	m_keys = path.m_keys;
-	return *this;
 }
 
 }
