@@ -16983,7 +16983,6 @@
 					<libraries>
 						<item>MachineIndependent</item>
 						<item>OSDependent</item>
-						<item>OGLCompiler</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-shared</item>
@@ -17031,7 +17030,6 @@
 					<libraries>
 						<item>MachineIndependent</item>
 						<item>OSDependent</item>
-						<item>OGLCompiler</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-shared</item>
@@ -17079,7 +17077,6 @@
 					<libraries>
 						<item>MachineIndependent</item>
 						<item>OSDependent</item>
-						<item>OGLCompiler</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-shared</item>
@@ -17127,7 +17124,6 @@
 					<libraries>
 						<item>MachineIndependent</item>
 						<item>OSDependent</item>
-						<item>OGLCompiler</item>
 						<item>SPIRV</item>
 						<item>SPIRV-Tools</item>
 						<item>SPIRV-Tools-shared</item>
