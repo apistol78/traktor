@@ -375,7 +375,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addProperty< double >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
 	classWorldLayer->addProperty< float >("feedbackScale", &WorldLayer::setFeedbackScale, &WorldLayer::getFeedbackScale);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
-	classWorldLayer->addProperty< const world::Entity* >("listener", &WorldLayer::setListener, &WorldLayer::getListener);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
 	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);

@@ -29,7 +29,7 @@ Random g_randomSeed;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectComponent", EffectComponent, world::IEntityComponent)
 
-EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
+EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager)
 :	m_transform(Transform::identity())
 ,	m_effect(effect)
 ,	m_counter(0)
@@ -38,7 +38,6 @@ EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, world:
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(g_randomSeed.next());
 	m_context.eventManager = eventManager;
-	m_context.soundPlayer = soundPlayer;
 }
 
 EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context)

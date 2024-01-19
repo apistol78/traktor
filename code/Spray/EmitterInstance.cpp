@@ -78,7 +78,6 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		{
 			Context warmContext;
 			warmContext.deltaTime = c_warmUpDeltaTime;
-			warmContext.soundPlayer = 0;
 
 			float time = 0.0f;
 			for (; time < m_emitter->getWarmUp(); time += c_warmUpDeltaTime)

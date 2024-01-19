@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Sound/Filters/SurroundEnvironment.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundEnvironment", SurroundEnvironment, Object)
 
@@ -25,8 +23,6 @@ SurroundEnvironment::SurroundEnvironment(
 ,	m_innerRadius(innerRadius)
 ,	m_fallOffExponent(fallOffExponent)
 ,	m_fullSurround(fullSurround)
-,	m_listenerTransform(Transform::identity())
-,	m_listenerTransformInv(Transform::identity())
 {
 }
 
@@ -50,11 +46,9 @@ void SurroundEnvironment::setFullSurround(bool fullSurround)
 	m_fullSurround = fullSurround;
 }
 
-void SurroundEnvironment::setListenerTransform(const Transform& listenerTransform)
+void SurroundEnvironment::setListenerTransforms(const AlignedVector< Transform >& listenerTransforms)
 {
-	m_listenerTransform = listenerTransform;
-	m_listenerTransformInv = listenerTransform.inverse();
+	m_listenerTransforms = listenerTransforms;
 }
 
-	}
 }

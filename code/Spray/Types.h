@@ -55,7 +55,7 @@ struct Context
 	RandomGeometry random;
 	world::Entity* owner = nullptr;
 	world::EntityEventManager* eventManager = nullptr;
-	sound::ISoundPlayer* soundPlayer = nullptr;
+	//sound::ISoundPlayer* soundPlayer = nullptr;
 	VirtualSourceCallback* virtualSourceCallback = nullptr;
 };
 

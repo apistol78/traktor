@@ -96,9 +96,9 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	}
 
 	// Create surround environment.
-	const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
-	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
-	const float surroundFallOffExponent = settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
+	const float surroundMaxDistance = 50.0f; // settings->getProperty< float >(L"Audio.Surround/MaxDistance", 50.0f);
+	const float surroundInnerRadius = 5.0f; // settings->getProperty< float >(L"Audio.Surround/InnerRadius", 5.0f);
+	const float surroundFallOffExponent = 4.0f; // settings->getProperty< float >(L"Audio.Surround/FallOffExponent", 4.0f);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
 		surroundMaxDistance,
 		surroundInnerRadius,
@@ -232,10 +232,10 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	}
 
 	// Configure surround environment distances.
-	const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
-	const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
-	m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
-	m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
+	//const float surroundMaxDistance = settings->getProperty< float >(L"Audio.Surround/MaxDistance", 10.0f);
+	//const float surroundInnerRadius = settings->getProperty< float >(L"Audio.Surround/InnerRadius", 1.0f);
+	//m_surroundEnvironment->setMaxDistance(surroundMaxDistance);
+	//m_surroundEnvironment->setInnerRadius(surroundInnerRadius);
 	return CrAccepted;
 }
 

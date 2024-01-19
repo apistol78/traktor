@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,13 +11,6 @@
 #include "Core/Math/Transform.h"
 #include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
-
-namespace traktor::sound
-{
-
-class ISoundPlayer;
-
-}
 
 namespace traktor::spray
 {
@@ -33,7 +26,6 @@ class SpawnEffectEvent : public world::IEntityEvent
 
 public:
 	explicit SpawnEffectEvent(
-		sound::ISoundPlayer* soundPlayer,
 		const resource::Proxy< Effect >& effect,
 		const Transform& transform,
 		bool follow,
@@ -45,7 +37,6 @@ public:
 private:
 	friend class SpawnEffectEventInstance;
 
-	Ref< sound::ISoundPlayer > m_soundPlayer;
 	resource::Proxy< Effect > m_effect;
 	Transform m_transform;
 	bool m_follow;

@@ -195,8 +195,7 @@ void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effec
 		m_effectEntity = new world::Entity();
 		m_effectEntity->setComponent(new EffectComponent(
 			resource::Proxy< Effect >(m_effect),
-			nullptr,
-			m_soundPlayer
+			nullptr
 		));
 	}
 	else
@@ -291,7 +290,7 @@ void EffectPreviewControl::syncEffect()
 	context.deltaTime = 0.0f;
 	context.random = RandomGeometry(m_randomSeed);
 	context.eventManager = nullptr;
-	context.soundPlayer = nullptr;
+	//context.soundPlayer = nullptr;
 
 	// Create new effect instance.
 	Ref< EffectInstance > effectInstance = effectComponent->getEffect()->createInstance();
@@ -322,7 +321,6 @@ void EffectPreviewControl::syncEffect()
 	}
 
 	context.eventManager = nullptr;
-	context.soundPlayer = m_soundPlayer;
 
 	m_effectEntity->setComponent(new EffectComponent(
 		effectComponent->getEffect(),
