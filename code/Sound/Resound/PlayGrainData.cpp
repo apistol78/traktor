@@ -12,7 +12,7 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Resource/Proxy.h"
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/IGrainFactory.h"
 #include "Sound/Resound/PlayGrain.h"
@@ -50,7 +50,7 @@ Ref< IGrain > PlayGrainData::createInstance(IGrainFactory* grainFactory) const
 void PlayGrainData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Sound >(L"sound", m_sound);
-	s >> MemberRefArray< IFilter >(L"filters", m_filters);
+	s >> MemberRefArray< IAudioFilter >(L"filters", m_filters);
 
 	if (s.getVersion() >= 2)
 		s >> MemberComposite< Range< float > >(L"gain", m_gain);

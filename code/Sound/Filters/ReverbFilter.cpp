@@ -54,7 +54,7 @@ private:
 	int32_t m_count;
 };
 
-struct ReverbFilterInstance : public RefCountImpl< IFilterInstance >
+struct ReverbFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	struct Channel
 	{
@@ -94,7 +94,7 @@ struct ReverbFilterInstance : public RefCountImpl< IFilterInstance >
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.ReverbFilter", 0, ReverbFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.ReverbFilter", 0, ReverbFilter, IAudioFilter)
 
 ReverbFilter::ReverbFilter()
 :	m_delay(100)
@@ -117,13 +117,13 @@ ReverbFilter::ReverbFilter(
 {
 }
 
-Ref< IFilterInstance > ReverbFilter::createInstance() const
+Ref< IAudioFilterInstance > ReverbFilter::createInstance() const
 {
 	Ref< ReverbFilterInstance > instance = new ReverbFilterInstance(m_delay);
 	return instance;
 }
 
-void ReverbFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void ReverbFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	ReverbFilterInstance* rfi = static_cast< ReverbFilterInstance* >(instance);
 

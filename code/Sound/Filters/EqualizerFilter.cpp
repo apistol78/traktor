@@ -20,7 +20,7 @@ namespace traktor::sound
 	namespace
 	{
 
-struct EqualizerFilterInstance : public RefCountImpl< IFilterInstance >
+struct EqualizerFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float m_historySamples[2][2];
 	float m_historyFiltered[2][2];
@@ -36,14 +36,14 @@ struct EqualizerFilterInstance : public RefCountImpl< IFilterInstance >
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EqualizerFilter", 0, EqualizerFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EqualizerFilter", 0, EqualizerFilter, IAudioFilter)
 
 EqualizerFilter::EqualizerFilter(float gain)
 :	m_gain(gain)
 {
 }
 
-Ref< IFilterInstance > EqualizerFilter::createInstance() const
+Ref< IAudioFilterInstance > EqualizerFilter::createInstance() const
 {
 	Ref< EqualizerFilterInstance > instance = new EqualizerFilterInstance();
 	std::memset(instance->m_historySamples, 0, sizeof(instance->m_historySamples));
@@ -51,7 +51,7 @@ Ref< IFilterInstance > EqualizerFilter::createInstance() const
 	return instance;
 }
 
-void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void EqualizerFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	EqualizerFilterInstance* efi = static_cast< EqualizerFilterInstance* >(instance);
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)

@@ -11,7 +11,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Sound/AudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -33,7 +33,7 @@ bool WaveformControl::create(ui::Widget* parent)
 	return true;
 }
 
-void WaveformControl::setBuffer(const ISoundBuffer* buffer)
+void WaveformControl::setBuffer(const IAudioBuffer* buffer)
 {
 	m_buffer = buffer;
 }
@@ -49,7 +49,7 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 	);
 	image->clear(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
-	Ref< ISoundBufferCursor > cursor;
+	Ref< IAudioBufferCursor > cursor;
 	if (m_buffer)
 		cursor = m_buffer->createCursor();
 
@@ -82,7 +82,7 @@ void WaveformControl::render(int32_t width, int32_t height, float start)
 		bool going = true;
 		while (going)
 		{
-			SoundBlock block = { { 0 }, 1024, 0, 0 };
+			AudioBlock block = { { 0 }, 1024, 0, 0 };
 			if (!m_buffer->getBlock(cursor, &mixer, block))
 				break;
 

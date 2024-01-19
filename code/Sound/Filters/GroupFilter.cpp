@@ -17,9 +17,9 @@ namespace traktor::sound
 	namespace
 	{
 
-struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
+struct GroupFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
-	RefArray< IFilterInstance > m_instances;
+	RefArray< IAudioFilterInstance > m_instances;
 
 	void* operator new (size_t size) {
 		return getAllocator()->alloc(size, 16, T_FILE_LINE);
@@ -32,22 +32,22 @@ struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GroupFilter", 0, GroupFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GroupFilter", 0, GroupFilter, IAudioFilter)
 
-GroupFilter::GroupFilter(IFilter* filter1)
+GroupFilter::GroupFilter(IAudioFilter* filter1)
 {
 	m_filters.resize(1);
 	m_filters[0] = filter1;
 }
 
-GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2)
+GroupFilter::GroupFilter(IAudioFilter* filter1, IAudioFilter* filter2)
 {
 	m_filters.resize(2);
 	m_filters[0] = filter1;
 	m_filters[1] = filter2;
 }
 
-GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3)
+GroupFilter::GroupFilter(IAudioFilter* filter1, IAudioFilter* filter2, IAudioFilter* filter3)
 {
 	m_filters.resize(3);
 	m_filters[0] = filter1;
@@ -55,23 +55,23 @@ GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3)
 	m_filters[2] = filter3;
 }
 
-void GroupFilter::addFilter(IFilter* filter)
+void GroupFilter::addFilter(IAudioFilter* filter)
 {
 	m_filters.push_back(filter);
 }
 
-Ref< IFilterInstance > GroupFilter::createInstance() const
+Ref< IAudioFilterInstance > GroupFilter::createInstance() const
 {
 	Ref< GroupFilterInstance > gfi = new GroupFilterInstance();
 	for (auto filter : m_filters)
 	{
-		Ref< IFilterInstance > instance = filter->createInstance();
+		Ref< IAudioFilterInstance > instance = filter->createInstance();
 		gfi->m_instances.push_back(instance);
 	}
 	return gfi;
 }
 
-void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void GroupFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	GroupFilterInstance* gfi = static_cast< GroupFilterInstance* >(instance);
 	const uint32_t nfilters = uint32_t(m_filters.size());
@@ -84,7 +84,7 @@ void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 void GroupFilter::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< IFilter >(L"filters", m_filters);
+	s >> MemberRefArray< IAudioFilter >(L"filters", m_filters);
 }
 
 }

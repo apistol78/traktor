@@ -193,18 +193,18 @@ void AudioDriverDs8::wait()
 		m_bufferWrite = 0;
 }
 
-void AudioDriverDs8::submit(const SoundBlock& soundBlock)
+void AudioDriverDs8::submit(const AudioBlock& block)
 {
 	uint8_t* ptr[2];
 	DWORD size[2];
 	DWORD status;
 	HRESULT hr;
 
-	T_ASSERT(m_frameSamples == soundBlock.samplesCount);
-	T_ASSERT(m_wfx.nChannels == soundBlock.maxChannel);
+	T_ASSERT(m_frameSamples == block.samplesCount);
+	T_ASSERT(m_wfx.nChannels == block.maxChannel);
 
 	uint32_t sampleSize = m_wfx.wBitsPerSample >> 3;
-	uint32_t blockSize = soundBlock.samplesCount * m_wfx.nChannels * sampleSize;
+	uint32_t blockSize = block.samplesCount * m_wfx.nChannels * sampleSize;
 
 	// Lock writable frame.
 	hr = m_dsBuffer->Lock(
@@ -229,21 +229,21 @@ void AudioDriverDs8::submit(const SoundBlock& soundBlock)
 	case 1:
 		{
 			for (uint32_t i = 0; i < m_wfx.nChannels; ++i)
-				writeSamples< uint8_t, UnsignedType< uint8_t > >(ptr[0] + sampleSize * i, soundBlock.samples[i], soundBlock.samplesCount, m_wfx.nChannels);
+				writeSamples< uint8_t, UnsignedType< uint8_t > >(ptr[0] + sampleSize * i, block.samples[i], block.samplesCount, m_wfx.nChannels);
 		}
 		break;
 
 	case 2:
 		{
 			for (uint32_t i = 0; i < m_wfx.nChannels; ++i)
-				writeSamples< int16_t, SignedType< int16_t > >(ptr[0] + sampleSize * i, soundBlock.samples[i], soundBlock.samplesCount, m_wfx.nChannels);
+				writeSamples< int16_t, SignedType< int16_t > >(ptr[0] + sampleSize * i, block.samples[i], block.samplesCount, m_wfx.nChannels);
 		}
 		break;
 
 	case 4:
 		{
 			for (uint32_t i = 0; i < m_wfx.nChannels; ++i)
-				writeSamples< int32_t, SignedType< int32_t > >(ptr[0] + sampleSize * i, soundBlock.samples[i], soundBlock.samplesCount, m_wfx.nChannels);
+				writeSamples< int32_t, SignedType< int32_t > >(ptr[0] + sampleSize * i, block.samples[i], block.samplesCount, m_wfx.nChannels);
 		}
 		break;
 

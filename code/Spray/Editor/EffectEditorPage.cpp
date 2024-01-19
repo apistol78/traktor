@@ -30,8 +30,8 @@
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Scene/SceneFactory.h"
+#include "Sound/AudioResourceFactory.h"
 #include "Sound/AudioSystem.h"
-#include "Sound/SoundFactory.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
@@ -148,7 +148,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
 	m_resourceManager->addFactory(new scene::SceneFactory(entityBuilder));
-	m_resourceManager->addFactory(new sound::SoundFactory());
+	m_resourceManager->addFactory(new sound::AudioResourceFactory());
 	m_resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
 	m_resourceManager->addFactory(new EffectFactory(nullptr));
 

@@ -9,10 +9,10 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Vector4.h"
+#include "Sound/IAudioBuffer.h"
+#include "Sound/IAudioFilter.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/IFilter.h"
-#include "Sound/ISoundBuffer.h"
-#include "Sound/ISoundResource.h"
+#include "Sound/IAudioResource.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/PlayGrain.h"
 
@@ -23,11 +23,11 @@ namespace traktor
 		namespace
 		{
 
-struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct PlayGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
-	Ref< ISoundBuffer > m_soundBuffer;
-	Ref< ISoundBufferCursor > m_soundCursor;
-	RefArray< IFilterInstance > m_filterInstances;
+	Ref< IAudioBuffer > m_soundBuffer;
+	Ref< IAudioBufferCursor > m_soundCursor;
+	RefArray< IAudioFilterInstance > m_filterInstances;
 	bool m_repeat;
 	float m_gain;
 	float m_pitch;
@@ -56,7 +56,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.PlayGrain", PlayGrain, IGrain)
 
 PlayGrain::PlayGrain(
 	const resource::Proxy< Sound >& sound,
-	const RefArray< IFilter >& filters,
+	const RefArray< IAudioFilter >& filters,
 	const Range< float >& gain,
 	const Range< float >& pitch,
 	bool repeat
@@ -69,16 +69,16 @@ PlayGrain::PlayGrain(
 {
 }
 
-Ref< ISoundBufferCursor > PlayGrain::createCursor() const
+Ref< IAudioBufferCursor > PlayGrain::createCursor() const
 {
 	if (!m_sound)
 		return 0;
 
-	Ref< ISoundBuffer > soundBuffer = m_sound->getBuffer();
+	Ref< IAudioBuffer > soundBuffer = m_sound->getBuffer();
 	if (!soundBuffer)
 		return 0;
 
-	Ref< ISoundBufferCursor > soundCursor = soundBuffer->createCursor();
+	Ref< IAudioBufferCursor > soundCursor = soundBuffer->createCursor();
 	if (!soundCursor)
 		return 0;
 
@@ -97,7 +97,7 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	return playCursor;
 }
 
-void PlayGrain::updateCursor(ISoundBufferCursor* cursor) const
+void PlayGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
 	playCursor->m_filterInstances.resize(0);
@@ -105,17 +105,17 @@ void PlayGrain::updateCursor(ISoundBufferCursor* cursor) const
 		playCursor->m_filterInstances.push_back(filter ? filter->createInstance() : nullptr);
 }
 
-const IGrain* PlayGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* PlayGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void PlayGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void PlayGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	outActiveGrains.push_back(this);
 }
 
-bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool PlayGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
 	if (!playCursor)
@@ -127,11 +127,11 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, S
 		if (!m_sound)
 			return false;
 
-		Ref< ISoundBuffer > soundBuffer = m_sound->getBuffer();
+		Ref< IAudioBuffer > soundBuffer = m_sound->getBuffer();
 		if (!soundBuffer)
 			return false;
 
-		Ref< ISoundBufferCursor > soundCursor = soundBuffer->createCursor();
+		Ref< IAudioBufferCursor > soundCursor = soundBuffer->createCursor();
 		if (!soundCursor)
 			return false;
 

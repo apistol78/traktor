@@ -8,7 +8,7 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/Nodes/Parameter.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ const ImmutableNode::OutputPinDesc c_Parameter_o[] =
 	{ nullptr }
 };
 
-class ParameterCursor : public RefCountImpl< ISoundBufferCursor >
+class ParameterCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	handle_t m_id;
@@ -61,19 +61,19 @@ bool Parameter::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Parameter::createCursor() const
+Ref< IAudioBufferCursor > Parameter::createCursor() const
 {
 	return new ParameterCursor(getParameterHandle(m_name), m_defaultValue);
 }
 
-bool Parameter::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outParameter) const
+bool Parameter::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outParameter) const
 {
 	ParameterCursor* parameterCursor = static_cast< ParameterCursor* >(cursor);
 	outParameter = parameterCursor->m_value;
 	return true;
 }
 
-bool Parameter::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Parameter::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	return false;
 }

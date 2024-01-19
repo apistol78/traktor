@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-struct NormalizationFilterInstance : public RefCountImpl< IFilterInstance >
+struct NormalizationFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float m_currentGain;
 
@@ -35,7 +35,7 @@ struct NormalizationFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.NormalizationFilter", 0, NormalizationFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.NormalizationFilter", 0, NormalizationFilter, IAudioFilter)
 
 NormalizationFilter::NormalizationFilter(float targetEnergy, float energyThreshold, float attackRate)
 :	m_targetEnergy(targetEnergy)
@@ -44,14 +44,14 @@ NormalizationFilter::NormalizationFilter(float targetEnergy, float energyThresho
 {
 }
 
-Ref< IFilterInstance > NormalizationFilter::createInstance() const
+Ref< IAudioFilterInstance > NormalizationFilter::createInstance() const
 {
 	Ref< NormalizationFilterInstance > nfi = new NormalizationFilterInstance();
 	nfi->m_currentGain = 1.0f;
 	return nfi;
 }
 
-void NormalizationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void NormalizationFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	NormalizationFilterInstance* nfi = static_cast< NormalizationFilterInstance* >(instance);
 

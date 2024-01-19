@@ -28,7 +28,7 @@ namespace traktor
 
 const int32_t c_maxTrackCount = 16;
 
-class SoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
+class SoundBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	float* m_outputSamples[SbcMaxChannelCount];
@@ -70,7 +70,7 @@ const uint32_t c_outputSamplesBlockCount = 8;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SongBuffer", SongBuffer, ISoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SongBuffer", SongBuffer, IAudioBuffer)
 
 SongBuffer::SongBuffer(const RefArray< Pattern >& patterns, int32_t bpm)
 :	m_patterns(patterns)
@@ -78,7 +78,7 @@ SongBuffer::SongBuffer(const RefArray< Pattern >& patterns, int32_t bpm)
 {
 }
 
-Ref< ISoundBufferCursor > SongBuffer::createCursor() const
+Ref< IAudioBufferCursor > SongBuffer::createCursor() const
 {
 	Ref< SoundBufferCursor > soundBufferCursor = new SoundBufferCursor();
 
@@ -103,7 +103,7 @@ Ref< ISoundBufferCursor > SongBuffer::createCursor() const
 	return soundBufferCursor;
 }
 
-bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool SongBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SoundBufferCursor* soundBufferCursor = static_cast< SoundBufferCursor* >(cursor);
 	while (soundBufferCursor->m_currentPattern < m_patterns.size())
@@ -158,7 +158,7 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 				if (!ch->isPlaying())
 					continue;
 
-				SoundBlock soundBlock = { 0 };
+				AudioBlock soundBlock = { 0 };
 				if (ch->getBlock(mixer, soundBlock))
 				{
 					outBlock.sampleRate = max(outBlock.sampleRate, soundBlock.sampleRate);
@@ -204,13 +204,13 @@ bool SongBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 	return bool(soundBufferCursor->m_currentPattern < m_patterns.size());
 }
 
-int32_t SongBuffer::getCurrentPattern(const ISoundBufferCursor* cursor) const
+int32_t SongBuffer::getCurrentPattern(const IAudioBufferCursor* cursor) const
 {
 	const SoundBufferCursor* soundBufferCursor = static_cast< const SoundBufferCursor* >(cursor);
 	return soundBufferCursor->m_currentPattern;
 }
 
-int32_t SongBuffer::getCurrentRow(const ISoundBufferCursor* cursor) const
+int32_t SongBuffer::getCurrentRow(const IAudioBufferCursor* cursor) const
 {
 	const SoundBufferCursor* soundBufferCursor = static_cast< const SoundBufferCursor* >(cursor);
 	return soundBufferCursor->m_currentRow;

@@ -59,7 +59,7 @@ void freeHistory(float* ptr)
 	s_historyAlloc->free(ptr);
 }
 
-struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
+struct EchoFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float* m_history[SbcMaxChannelCount];
 	int32_t m_count[SbcMaxChannelCount];
@@ -93,7 +93,7 @@ struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EchoFilter", 0, EchoFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EchoFilter", 0, EchoFilter, IAudioFilter)
 
 EchoFilter::EchoFilter()
 :	m_delay(0.0f)
@@ -111,7 +111,7 @@ EchoFilter::EchoFilter(float delay, float decay, float wetMix, float dryMix)
 {
 }
 
-Ref< IFilterInstance > EchoFilter::createInstance() const
+Ref< IAudioFilterInstance > EchoFilter::createInstance() const
 {
 	int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
 	int32_t samples = nechos * alignUp(int32_t(m_delay * 48000), 4);
@@ -137,7 +137,7 @@ Ref< IFilterInstance > EchoFilter::createInstance() const
 	return efi;
 }
 
-void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void EchoFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	EchoFilterInstance* efi = static_cast< EchoFilterInstance* >(instance);
 

@@ -11,7 +11,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/BlendGrain.h"
 
 namespace traktor
@@ -23,12 +23,12 @@ namespace traktor
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
-struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct BlendGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	handle_t m_id;
 	float m_parameter;
 	float m_lastP;
-	Ref< ISoundBufferCursor > m_cursors[2];
+	Ref< IAudioBufferCursor > m_cursors[2];
 	float* m_outputSamples[SbcMaxChannelCount];
 
 	BlendGrainCursor()
@@ -80,7 +80,7 @@ BlendGrain::BlendGrain(handle_t id, float response, IGrain* grain1, IGrain* grai
 	m_grains[1] = grain2;
 }
 
-Ref< ISoundBufferCursor > BlendGrain::createCursor() const
+Ref< IAudioBufferCursor > BlendGrain::createCursor() const
 {
 	Ref< BlendGrainCursor > cursor = new BlendGrainCursor();
 
@@ -106,7 +106,7 @@ Ref< ISoundBufferCursor > BlendGrain::createCursor() const
 	return cursor;
 }
 
-void BlendGrain::updateCursor(ISoundBufferCursor* cursor) const
+void BlendGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 	if (m_grains[0])
@@ -115,12 +115,12 @@ void BlendGrain::updateCursor(ISoundBufferCursor* cursor) const
 		m_grains[1]->updateCursor(blendCursor->m_cursors[1]);
 }
 
-const IGrain* BlendGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* BlendGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void BlendGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void BlendGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const BlendGrainCursor* blendCursor = static_cast< const BlendGrainCursor* >(cursor);
 
@@ -132,7 +132,7 @@ void BlendGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< con
 		m_grains[1]->getActiveGrains(blendCursor->m_cursors[1], outActiveGrains);
 }
 
-bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool BlendGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 
@@ -143,8 +143,8 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, 
 	float p = blendCursor->m_lastP * (1.0f - k) + p0 * k;
 	blendCursor->m_lastP = p;
 
-	SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
-	SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 	bool anyBlock = false;
 	if (m_grains[0])

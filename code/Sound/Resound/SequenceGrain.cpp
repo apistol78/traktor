@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/SequenceGrain.h"
 
 namespace traktor
@@ -16,10 +16,10 @@ namespace traktor
 		namespace
 		{
 
-struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct SequenceGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	int32_t m_grainIndex;
-	Ref< ISoundBufferCursor > m_grainCursor;
+	Ref< IAudioBufferCursor > m_grainCursor;
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
@@ -49,7 +49,7 @@ SequenceGrain::SequenceGrain(const RefArray< IGrain >& grains)
 {
 }
 
-Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
+Ref< IAudioBufferCursor > SequenceGrain::createCursor() const
 {
 	if (m_grains.empty())
 		return 0;
@@ -61,21 +61,21 @@ Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
 	return cursor->m_grainCursor ? cursor : 0;
 }
 
-void SequenceGrain::updateCursor(ISoundBufferCursor* cursor) const
+void SequenceGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
 	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
 	return grain->updateCursor(sequenceCursor->m_grainCursor);
 }
 
-const IGrain* SequenceGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* SequenceGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	const SequenceGrainCursor* sequenceCursor = static_cast< const SequenceGrainCursor* >(cursor);
 	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
 	return grain->getCurrentGrain(sequenceCursor->m_grainCursor);
 }
 
-void SequenceGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void SequenceGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const SequenceGrainCursor* sequenceCursor = static_cast< const SequenceGrainCursor* >(cursor);
 	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
@@ -85,7 +85,7 @@ void SequenceGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 	grain->getActiveGrains(sequenceCursor->m_grainCursor, outActiveGrains);
 }
 
-bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool SequenceGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
 

@@ -37,7 +37,7 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual bool putBlock(SoundBlock& block) override final;
+	virtual bool putBlock(AudioBlock& block) override final;
 
 private:
 	Ref< OggStreamEncoderImpl > m_impl;

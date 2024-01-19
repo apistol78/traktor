@@ -60,7 +60,7 @@ void SoundHandle::setParameter(int32_t id, float parameter)
 		m_channel->setParameter(id, parameter);
 }
 
-ISoundBufferCursor* SoundHandle::getCursor()
+IAudioBufferCursor* SoundHandle::getCursor()
 {
 	return m_channel ? m_channel->getCursor() : nullptr;
 }

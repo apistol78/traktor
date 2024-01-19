@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,21 +9,16 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Sound/IStreamDecoder.h"
-#include "Sound/StreamSoundBuffer.h"
+#include "Sound/StreamAudioBuffer.h"
 
 namespace traktor::sound
 {
 	namespace
 	{
 
-struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
+struct StreamAudioBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
-	uint64_t m_position;
-
-	StreamSoundBufferCursor()
-	:	m_position(0)
-	{
-	}
+	uint64_t m_position = 0;
 
 	virtual void setParameter(handle_t id, float parameter)
 	{
@@ -41,14 +36,14 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamAudioBuffer", StreamAudioBuffer, IAudioBuffer)
 
-StreamSoundBuffer::~StreamSoundBuffer()
+StreamAudioBuffer::~StreamAudioBuffer()
 {
 	destroy();
 }
 
-bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
+bool StreamAudioBuffer::create(IStreamDecoder* streamDecoder)
 {
 	if ((m_streamDecoder = streamDecoder) != nullptr)
 		return true;
@@ -56,19 +51,19 @@ bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 		return false;
 }
 
-void StreamSoundBuffer::destroy()
+void StreamAudioBuffer::destroy()
 {
 	safeDestroy(m_streamDecoder);
 }
 
-Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
+Ref< IAudioBufferCursor > StreamAudioBuffer::createCursor() const
 {
-	return new StreamSoundBufferCursor();
+	return new StreamAudioBufferCursor();
 }
 
-bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool StreamAudioBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
-	StreamSoundBufferCursor* ssbc = static_cast< StreamSoundBufferCursor* >(cursor);
+	StreamAudioBufferCursor* ssbc = static_cast< StreamAudioBufferCursor* >(cursor);
 	const uint64_t position = ssbc->m_position;
 
 	if (m_position > position)

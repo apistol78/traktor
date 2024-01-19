@@ -18,8 +18,8 @@
 #include "I18N/Text.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioResourceFactory.h"
 #include "Sound/AudioSystem.h"
-#include "Sound/SoundFactory.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Tracker/SongAsset.h"
 #include "Sound/Editor/Tracker/SongEditor.h"
@@ -97,7 +97,7 @@ bool SongEditor::create(ui::Container* parent)
 		log::warning << L"Unable to create preview audio system; preview unavailable." << Endl;
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), true);
-	m_resourceManager->addFactory(new SoundFactory());
+	m_resourceManager->addFactory(new AudioResourceFactory());
 
 	updateGrid();
 	return true;

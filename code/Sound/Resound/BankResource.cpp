@@ -22,7 +22,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 7, BankResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 7, BankResource, IAudioResource)
 
 BankResource::BankResource()
 :	m_gain(0.0f)

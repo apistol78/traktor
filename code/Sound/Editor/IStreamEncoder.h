@@ -39,7 +39,7 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual bool putBlock(SoundBlock& block) = 0;
+	virtual bool putBlock(AudioBlock& block) = 0;
 };
 
 	}

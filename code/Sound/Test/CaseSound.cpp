@@ -10,7 +10,7 @@
 #include "Core/Timer/Timer.h"
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioSystem.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Sound.h"
 #include "Sound/Test/CaseSound.h"
@@ -51,11 +51,11 @@ public:
 	{
 	}
 
-	virtual void submit(const sound::SoundBlock& soundBlock) override final
+	virtual void submit(const sound::AudioBlock& block) override final
 	{
-		for (uint32_t i = 0; i < soundBlock.samplesCount; ++i)
+		for (uint32_t i = 0; i < block.samplesCount; ++i)
 		{
-			if (soundBlock.samples[0][i] > 1.0f)
+			if (block.samples[0][i] > 1.0f)
 			{
 				m_signalAt = m_timer.getElapsedTime();
 				m_signal.set();
@@ -65,7 +65,7 @@ public:
 	}
 };
 
-class TestSoundBuffer : public RefCountImpl< sound::ISoundBuffer >
+class TestSoundBuffer : public RefCountImpl< sound::IAudioBuffer >
 {
 public:
 	mutable float m_block[16];
@@ -76,12 +76,12 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const override final
+	virtual Ref< sound::IAudioBufferCursor > createCursor() const override final
 	{
 		return nullptr;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const override final
+	virtual bool getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::AudioBlock& outBlock) const override final
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);
@@ -103,7 +103,7 @@ void CaseSound::run()
 	TestAudioDriver audioDriver(timer, signal);
 	sound::AudioSystem audioSystem(&audioDriver);
 
-	sound::SoundSystemCreateDesc desc;
+	sound::AudioSystemCreateDesc desc;
 	desc.channels = 1;
 	desc.driverDesc.sampleRate = 44100;
 	desc.driverDesc.bitsPerSample = 16;

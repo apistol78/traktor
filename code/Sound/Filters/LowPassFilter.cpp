@@ -22,7 +22,7 @@ namespace traktor
 		namespace
 		{
 
-struct LowPassFilterInstance : public RefCountImpl< IFilterInstance >
+struct LowPassFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	Scalar m_history[SbcMaxChannelCount];
 
@@ -37,21 +37,21 @@ struct LowPassFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.LowPassFilter", 0, LowPassFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.LowPassFilter", 0, LowPassFilter, IAudioFilter)
 
 LowPassFilter::LowPassFilter(float cutOff)
 :	m_cutOff(cutOff)
 {
 }
 
-Ref< IFilterInstance > LowPassFilter::createInstance() const
+Ref< IAudioFilterInstance > LowPassFilter::createInstance() const
 {
 	Ref< LowPassFilterInstance > lpfi = new LowPassFilterInstance();
 	std::memset(lpfi->m_history, 0, sizeof(lpfi->m_history));
 	return lpfi;
 }
 
-void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void LowPassFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
 	if (m_cutOff > FUZZY_EPSILON && m_cutOff <= 22050.0f)

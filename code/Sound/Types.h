@@ -37,17 +37,8 @@ namespace traktor::sound
 #	define T_SOUND_SPEAKERS_SETUP T_SOUND_SPEAKER_SETUP_7_1
 #endif
 
-/*! Static sound resource flags. */
-enum StaticResourceFlags
-{
-	SrfZLib = 1,
-	SrfLzo = 2,
-	SrfLzf = 4,
-	SrfDelta = 8
-};
-
 /*! Sound channel mapping. */
-enum SoundBlockChannel
+enum AudioBlockChannel
 {
 #if T_SOUND_SPEAKERS_SETUP == T_SOUND_SPEAKER_SETUP_2_0
 	SbcLeft = 0,
@@ -86,15 +77,15 @@ struct AudioDriverCreateDesc
 	uint32_t frameSamples = 0;	//!< Size of frames, i.e. size of mixed sound blocks passed to the driver.
 };
 
-/*! Sound system create description. */
-struct SoundSystemCreateDesc
+/*! Audio system create description. */
+struct AudioSystemCreateDesc
 {
 	SystemApplication sysapp;
 	uint32_t channels;									//!< Number of virtual channels.
 	AudioDriverCreateDesc driverDesc;					//!< Driver create description.
 	float cm[SbcMaxChannelCount][SbcMaxChannelCount];	//!< Final combine matrix.
 
-	SoundSystemCreateDesc()
+	AudioSystemCreateDesc()
 	:	channels(0)
 	{
 		for (int32_t i = 0; i < SbcMaxChannelCount; ++i)
@@ -104,7 +95,7 @@ struct SoundSystemCreateDesc
 };
 
 /*! Block of sound samples. */
-struct SoundBlock
+struct AudioBlock
 {
 	float* samples[SbcMaxChannelCount];	//!< Point to samples, one per channel.
 	uint32_t samplesCount;				//!< Number of samples.

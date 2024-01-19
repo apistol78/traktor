@@ -45,7 +45,7 @@ public:
 
 	virtual void wait() override final;
 
-	virtual void submit(const SoundBlock& soundBlock) override final;
+	virtual void submit(const AudioBlock& soundBlock) override final;
 
 private:
 	AudioDriverCreateDesc m_desc;

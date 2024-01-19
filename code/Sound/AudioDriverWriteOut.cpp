@@ -72,11 +72,11 @@ void AudioDriverWriteOut::wait()
 	}
 }
 
-void AudioDriverWriteOut::submit(const SoundBlock& soundBlock)
+void AudioDriverWriteOut::submit(const AudioBlock& block)
 {
 	// Submit to child driver first.
 	if (m_childDriver)
-		m_childDriver->submit(soundBlock);
+		m_childDriver->submit(block);
 
 	// Wait for first non-mute block before we start writing out
 	// in order to prevent big empty files.
@@ -84,9 +84,9 @@ void AudioDriverWriteOut::submit(const SoundBlock& soundBlock)
 	{
 		for (uint32_t i = 0; i < m_desc.hwChannels && m_wait; ++i)
 		{
-			for (uint32_t j = 0; j < soundBlock.samplesCount && m_wait; ++j)
+			for (uint32_t j = 0; j < block.samplesCount && m_wait; ++j)
 			{
-				if (abs(soundBlock.samples[i][j]) >= FUZZY_EPSILON)
+				if (abs(block.samples[i][j]) >= FUZZY_EPSILON)
 					m_wait = false;
 			}
 		}
@@ -98,16 +98,16 @@ void AudioDriverWriteOut::submit(const SoundBlock& soundBlock)
 	float* sp = m_interleaved.ptr();
 	T_ASSERT(sp);
 
-	for (uint32_t i = 0; i < soundBlock.samplesCount; ++i)
+	for (uint32_t i = 0; i < block.samplesCount; ++i)
 	{
 		for (uint32_t j = 0; j < m_desc.hwChannels; ++j)
-			*sp++ = soundBlock.samples[j] ? soundBlock.samples[j][i] : 0.0f;
+			*sp++ = block.samples[j] ? block.samples[j][i] : 0.0f;
 	}
 
 	// Write out interleaved block.
 	m_stream->write(
 		m_interleaved.c_ptr(),
-		soundBlock.samplesCount * m_desc.hwChannels * sizeof(float)
+		block.samplesCount * m_desc.hwChannels * sizeof(float)
 	);
 }
 

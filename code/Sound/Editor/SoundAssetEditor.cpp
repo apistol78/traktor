@@ -17,7 +17,7 @@
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Sound/Sound.h"
-#include "Sound/StreamSoundBuffer.h"
+#include "Sound/StreamAudioBuffer.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
@@ -157,7 +157,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 	}
 
-	Ref< StreamSoundBuffer > buffer = new StreamSoundBuffer();
+	Ref< StreamAudioBuffer > buffer = new StreamAudioBuffer();
 	if (!buffer->create(decoder))
 	{
 		log::error << L"Failed to preview sound asset; unable to create stream buffer" << Endl;

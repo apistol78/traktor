@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Sound/ISoundResource.h"
+#include "Sound/IAudioResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +26,7 @@ namespace traktor
 
 class PatternData;
 
-class T_DLLCLASS SongResource : public ISoundResource
+class T_DLLCLASS SongResource : public IAudioResource
 {
 	T_RTTI_CLASS;
 

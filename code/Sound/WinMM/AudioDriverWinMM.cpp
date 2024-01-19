@@ -134,7 +134,7 @@ void AudioDriverWinMM::wait()
 		WaitForSingleObject(m_eventNotify, INFINITE);
 }
 
-void AudioDriverWinMM::submit(const SoundBlock& soundBlock)
+void AudioDriverWinMM::submit(const AudioBlock& soundBlock)
 {
 	// Grab block to prepare.
 	WAVEHDR* block = &m_blocks[m_nextPrepareBlock];

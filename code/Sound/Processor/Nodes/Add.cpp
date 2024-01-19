@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Add.h"
 
@@ -31,7 +31,7 @@ const ImmutableNode::OutputPinDesc c_Add_o[] =
 	{ 0 }
 };
 
-class AddCursor : public RefCountImpl< ISoundBufferCursor >
+class AddCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) override final {}
@@ -55,12 +55,12 @@ bool Add::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Add::createCursor() const
+Ref< IAudioBufferCursor > Add::createCursor() const
 {
 	return new AddCursor();
 }
 
-bool Add::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Add::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	float lh, rh;
 	if (!evaluator->evaluateScalar(getInputPin(0), lh))
@@ -72,10 +72,10 @@ bool Add::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator,
 	return true;
 }
 
-bool Add::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Add::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
-	SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
-	SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 	bool anyBlocks = false;
 	anyBlocks |= evaluator->evaluateBlock(getInputPin(0), mixer, soundBlock1);

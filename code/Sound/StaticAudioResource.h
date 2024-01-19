@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "Sound/ISoundResource.h"
+#include <string>
+#include "Sound/IAudioResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,14 +22,16 @@
 namespace traktor::sound
 {
 
-/*! Stream sound resource.
+/*! Static audio resource.
  * \ingroup Sound
  */
-class T_DLLCLASS StreamSoundResource : public ISoundResource
+class T_DLLCLASS StaticAudioResource : public IAudioResource
 {
 	T_RTTI_CLASS;
 
 public:
+	StaticAudioResource();
+
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -36,11 +39,13 @@ public:
 private:
 	friend class SoundPipeline;
 
-	const TypeInfo* m_decoderType = nullptr;
 	std::wstring m_category;
-	float m_gain = 0.0f;
-	float m_range = 0.0f;
-	bool m_preload = false;
+	uint32_t m_sampleRate;
+	uint32_t m_samplesCount;
+	uint32_t m_channelsCount;
+	float m_gain;
+	float m_range;
+	const TypeInfo* m_decoderType;
 };
 
 }

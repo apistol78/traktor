@@ -49,7 +49,7 @@ public:
 		m_encoderInitialized = false;
 	}
 
-	bool putBlock(SoundBlock& block)
+	bool putBlock(AudioBlock& block)
 	{
 		// Initialize encoder with first block as it contain information about sample rate etc.
 		if (!m_encoderInitialized)
@@ -187,7 +187,7 @@ void OggStreamEncoder::destroy()
 	safeDestroy(m_impl);
 }
 
-bool OggStreamEncoder::putBlock(SoundBlock& block)
+bool OggStreamEncoder::putBlock(AudioBlock& block)
 {
 	return m_impl ? m_impl->putBlock(block) : false;
 }

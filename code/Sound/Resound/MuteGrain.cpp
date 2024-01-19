@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Timer/Timer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/MuteGrain.h"
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-struct MuteGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct MuteGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	Timer m_timer;
 	double m_end;
@@ -38,28 +38,28 @@ MuteGrain::MuteGrain(double duration)
 {
 }
 
-Ref< ISoundBufferCursor > MuteGrain::createCursor() const
+Ref< IAudioBufferCursor > MuteGrain::createCursor() const
 {
 	Ref< MuteGrainCursor > muteCursor = new MuteGrainCursor();
 	muteCursor->m_end = muteCursor->m_timer.getElapsedTime() + m_duration;
 	return muteCursor;
 }
 
-void MuteGrain::updateCursor(ISoundBufferCursor* cursor) const
+void MuteGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 }
 
-const IGrain* MuteGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* MuteGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void MuteGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void MuteGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	outActiveGrains.push_back(this);
 }
 
-bool MuteGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool MuteGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
 	return muteCursor->m_timer.getElapsedTime() <= muteCursor->m_end;

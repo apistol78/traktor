@@ -32,11 +32,11 @@ public:
 
 	virtual bool bind(resource::IResourceManager* resourceManager) override final;
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const override final;
+	virtual bool getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 };
 
 	}

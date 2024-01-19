@@ -52,11 +52,11 @@ double WavStreamDecoder::getDuration() const
 	return 0.0;
 }
 
-bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
+bool WavStreamDecoder::getBlock(AudioBlock& outBlock)
 {
 	uint8_t block[32768 * 2];
 
-	uint32_t requestBlockSize = outSoundBlock.samplesCount * (m_format.channels * m_format.bitsPerSample / 8);
+	uint32_t requestBlockSize = outBlock.samplesCount * (m_format.channels * m_format.bitsPerSample / 8);
 	T_ASSERT(requestBlockSize <= sizeof(block));
 
 	uint32_t readBlockSize = (uint32_t)m_stream->read(block, requestBlockSize);
@@ -97,15 +97,15 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 			break;
 		}
 
-		for (uint32_t i = readSamples; i < outSoundBlock.samplesCount; ++i)
+		for (uint32_t i = readSamples; i < outBlock.samplesCount; ++i)
 			samplesBuffer[i] = 0.0f;
 
-		outSoundBlock.samples[channel] = samplesBuffer;
+		outBlock.samples[channel] = samplesBuffer;
 	}
 
-	outSoundBlock.samplesCount = alignUp(readSamples, 4);
-	outSoundBlock.sampleRate = m_format.sampleRate;
-	outSoundBlock.maxChannel = m_format.channels;
+	outBlock.samplesCount = alignUp(readSamples, 4);
+	outBlock.sampleRate = m_format.sampleRate;
+	outBlock.maxChannel = m_format.channels;
 
 	return true;
 }

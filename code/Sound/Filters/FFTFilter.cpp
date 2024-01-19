@@ -142,7 +142,7 @@ struct PairAccessor
 	}
 };
 
-struct FFTFilterInstance : public RefCountImpl< IFilterInstance >
+struct FFTFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float m_history[2][FFTFilter::N];
 
@@ -157,7 +157,7 @@ struct FFTFilterInstance : public RefCountImpl< IFilterInstance >
 
 			}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FFTFilter", 0, FFTFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FFTFilter", 0, FFTFilter, IAudioFilter)
 
 FFTFilter::FFTFilter(uint32_t sampleRate)
 :	m_sampleRate(sampleRate)
@@ -216,7 +216,7 @@ void FFTFilter::setFilter(const std::vector< std::pair< float, float > >& filter
 		m_filter[i] = sqrtf(fr[i] * fr[i] + fi[i] * fi[i]);
 }
 
-Ref< IFilterInstance > FFTFilter::createInstance() const
+Ref< IAudioFilterInstance > FFTFilter::createInstance() const
 {
 	Ref< FFTFilterInstance > instance = new FFTFilterInstance();
 	for (uint32_t i = 0; i < N; ++i)
@@ -227,7 +227,7 @@ Ref< IFilterInstance > FFTFilter::createInstance() const
 	return instance;
 }
 
-void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void FFTFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	FFTFilterInstance* ffti = static_cast< FFTFilterInstance* >(instance);
 

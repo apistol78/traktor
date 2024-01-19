@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Math/Scalar.h"
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ namespace traktor
 /*! Echo filter.
  * \ingroup Sound
  */
-class T_DLLCLASS EchoFilter : public IFilter
+class T_DLLCLASS EchoFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
@@ -36,9 +36,9 @@ public:
 
 	EchoFilter(float delay, float decay, float wetMix, float dryMix);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

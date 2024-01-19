@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,8 +17,8 @@
 #include "Core/Serialization/MemberType.h"
 #include "Database/Instance.h"
 #include "Sound/Sound.h"
-#include "Sound/StaticSoundBuffer.h"
-#include "Sound/StaticSoundResource.h"
+#include "Sound/StaticAudioBuffer.h"
+#include "Sound/StaticAudioResource.h"
 #include "Sound/IStreamDecoder.h"
 
 #undef min
@@ -27,9 +27,9 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 7, StaticSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticAudioResource", 7, StaticAudioResource, IAudioResource)
 
-StaticSoundResource::StaticSoundResource()
+StaticAudioResource::StaticAudioResource()
 :	m_sampleRate(0)
 ,	m_samplesCount(0)
 ,	m_channelsCount(0)
@@ -39,7 +39,7 @@ StaticSoundResource::StaticSoundResource()
 {
 }
 
-Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
+Ref< Sound > StaticAudioResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
 {
 	Ref< IStream > stream = resourceInstance->readData(L"Data");
 	if (!stream)
@@ -55,23 +55,23 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		return 0;
 	}
 
-	Ref< StaticSoundBuffer > soundBuffer = new StaticSoundBuffer();
+	Ref< StaticAudioBuffer > soundBuffer = new StaticAudioBuffer();
 	if (!soundBuffer->create(m_sampleRate, m_samplesCount, m_channelsCount))
 	{
 		log::error << L"Failed to create sound; unable to create static sound buffer" << Endl;
 		return 0;
 	}
 
-	SoundBlock soundBlock;
-	std::memset(&soundBlock, 0, sizeof(soundBlock));
-	soundBlock.samplesCount = 4096;
+	AudioBlock block;
+	std::memset(&block, 0, sizeof(block));
+	block.samplesCount = 4096;
 
 	uint32_t offset = 0;
 
 	// Decode samples into sound buffer.
-	while (streamDecoder->getBlock(soundBlock))
+	while (streamDecoder->getBlock(block))
 	{
-		uint32_t samplesCount = std::min(soundBlock.samplesCount, m_samplesCount - offset);
+		uint32_t samplesCount = std::min(block.samplesCount, m_samplesCount - offset);
 
 		for (uint32_t i = 0; i < m_channelsCount; ++i)
 		{
@@ -80,11 +80,11 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 			samples += offset;
 
-			if (soundBlock.samples[i])
+			if (block.samples[i])
 			{
 				for (uint32_t j = 0; j < samplesCount; ++j)
 				{
-					float sample = clamp(soundBlock.samples[i][j], -1.0f, 1.0f);
+					float sample = clamp(block.samples[i][j], -1.0f, 1.0f);
 					samples[j] = int16_t(sample * 32750.0f);
 				}
 			}
@@ -97,8 +97,8 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 		offset += samplesCount;
 
-		std::memset(&soundBlock, 0, sizeof(soundBlock));
-		soundBlock.samplesCount = 4096;
+		std::memset(&block, 0, sizeof(block));
+		block.samplesCount = 4096;
 	}
 
 	// Make sure samples are zero;ed out if not fully decoded.
@@ -122,7 +122,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 	);
 }
 
-void StaticSoundResource::serialize(ISerializer& s)
+void StaticAudioResource::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT (s.getVersion() >= 7);
 	s >> Member< std::wstring >(L"category", m_category);

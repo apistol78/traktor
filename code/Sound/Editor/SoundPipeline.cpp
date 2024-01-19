@@ -21,8 +21,8 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
-#include "Sound/StaticSoundResource.h"
-#include "Sound/StreamSoundResource.h"
+#include "Sound/StaticAudioResource.h"
+#include "Sound/StreamAudioResource.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/SoundPipeline.h"
@@ -43,12 +43,12 @@ namespace traktor
 
 const float c_isMuteThreshold = 16.0f / 32767.0f;
 
-bool isMute(const SoundBlock& soundBlock, uint32_t& outMuteOffset)
+bool isMute(const AudioBlock& block, uint32_t& outMuteOffset)
 {
-	for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
+	for (uint32_t i = 0; i < block.maxChannel; ++i)
 	{
-		const float* samples = soundBlock.samples[i];
-		for (int32_t j = soundBlock.samplesCount - 1; j >= 0; --j)
+		const float* samples = block.samples[i];
+		for (int32_t j = block.samplesCount - 1; j >= 0; --j)
 		{
 			if (abs(samples[j]) > c_isMuteThreshold)
 			{
@@ -187,7 +187,7 @@ bool SoundPipeline::buildOutput(
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource();
+		Ref< StreamAudioResource > resource = new StreamAudioResource();
 
 		resource->m_decoderType = &type_of(decoder);
 		resource->m_category = configurationId;
@@ -237,7 +237,7 @@ bool SoundPipeline::buildOutput(
 	}
 	else
 	{
-		Ref< StaticSoundResource > resource = new StaticSoundResource();
+		Ref< StaticAudioResource > resource = new StaticAudioResource();
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -288,29 +288,29 @@ bool SoundPipeline::buildOutput(
 		uint32_t maxChannel = 0;
 		uint32_t mutedSamples = 0;
 
-		SoundBlock soundBlock;
-		std::memset(&soundBlock, 0, sizeof(soundBlock));
-		soundBlock.samplesCount = 4096;
+		AudioBlock block;
+		std::memset(&block, 0, sizeof(block));
+		block.samplesCount = 4096;
 
-		while (decoder->getBlock(soundBlock))
+		while (decoder->getBlock(block))
 		{
 			if (
-				soundBlock.samplesCount > 0 &&
-				soundBlock.maxChannel > 0
+				block.samplesCount > 0 &&
+				block.maxChannel > 0
 			)
 			{
 				uint32_t muteOffset;
-				if (!isMute(soundBlock, muteOffset))
+				if (!isMute(block, muteOffset))
 				{
 					T_ASSERT(muteOffset > 0);
 
 					if (mutedSamples > 0)
 					{
-						SoundBlock muteBlock;
+						AudioBlock muteBlock;
 						std::memset(&muteBlock, 0, sizeof(muteBlock));
 						muteBlock.samplesCount = mutedSamples;
-						muteBlock.sampleRate = soundBlock.sampleRate;
-						muteBlock.maxChannel = soundBlock.maxChannel;
+						muteBlock.sampleRate = block.sampleRate;
+						muteBlock.maxChannel = block.maxChannel;
 
 						if (!encoder->putBlock(muteBlock))
 						{
@@ -321,10 +321,10 @@ bool SoundPipeline::buildOutput(
 						mutedSamples = 0;
 					}
 
-					mutedSamples += soundBlock.samplesCount - muteOffset;
-					soundBlock.samplesCount = muteOffset;
+					mutedSamples += block.samplesCount - muteOffset;
+					block.samplesCount = muteOffset;
 
-					if (!encoder->putBlock(soundBlock))
+					if (!encoder->putBlock(block))
 					{
 						log::error << L"Failed to build sound asset, transcoding failed" << Endl;
 						return false;
@@ -332,16 +332,16 @@ bool SoundPipeline::buildOutput(
 				}
 				else
 				{
-					mutedSamples += soundBlock.samplesCount;
+					mutedSamples += block.samplesCount;
 				}
 			}
 
-			sampleRate = soundBlock.sampleRate;
-			samplesCount += soundBlock.samplesCount;
-			maxChannel = std::max(soundBlock.maxChannel, maxChannel);
+			sampleRate = block.sampleRate;
+			samplesCount += block.samplesCount;
+			maxChannel = std::max(block.maxChannel, maxChannel);
 
-			std::memset(&soundBlock, 0, sizeof(soundBlock));
-			soundBlock.samplesCount = 4096;
+			std::memset(&block, 0, sizeof(block));
+			block.samplesCount = 4096;
 		}
 
 		log::info << L"Discarded " << mutedSamples << L" mute post sample(s)" << Endl;

@@ -23,7 +23,7 @@
 namespace traktor::sound
 {
 
-class ISoundBuffer;
+class IAudioBuffer;
 
 /*! Sound container class.
  * \ingroup Sound
@@ -34,13 +34,13 @@ class T_DLLCLASS Sound : public Object
 
 public:
 	explicit Sound(
-		ISoundBuffer* buffer,
+		IAudioBuffer* buffer,
 		handle_t category,
 		float gain,
 		float range
 	);
 
-	ISoundBuffer* getBuffer() const { return m_buffer; }
+	IAudioBuffer* getBuffer() const { return m_buffer; }
 
 	uint32_t getCategory() const { return m_category; }
 
@@ -49,7 +49,7 @@ public:
 	float getRange() const { return m_range; }
 
 private:
-	Ref< ISoundBuffer > m_buffer;
+	Ref< IAudioBuffer > m_buffer;
 	handle_t m_category;
 	float m_gain;
 	float m_range;

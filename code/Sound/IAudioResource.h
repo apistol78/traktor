@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,6 @@
 
 #include "Core/Ref.h"
 #include "Core/Serialization/ISerializable.h"
-#include "Sound/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,27 +19,34 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::db
+{
+
+class Instance;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
 namespace traktor::sound
 {
 
-/*! Filter instance data.
-* \ingroup Sound
-*/
-struct T_DLLCLASS IFilterInstance : public IRefCount
-{
-};
+class Sound;
 
-/*! IFilter base class.
+/*! Audio resource.
  * \ingroup Sound
  */
-class T_DLLCLASS IFilter : public ISerializable
+class T_DLLCLASS IAudioResource : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IFilterInstance > createInstance() const = 0;
-
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const = 0;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const = 0;
 };
 
 }

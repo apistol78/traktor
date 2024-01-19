@@ -59,7 +59,7 @@ public:
 
 	virtual void wait() = 0;
 
-	virtual void submit(const SoundBlock& soundBlock) = 0;
+	virtual void submit(const AudioBlock& block) = 0;
 };
 
 }

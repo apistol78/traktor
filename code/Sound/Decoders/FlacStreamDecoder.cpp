@@ -85,7 +85,7 @@ public:
 		return 0.0;
 	}
 
-	bool getBlock(SoundBlock& outSoundBlock)
+	bool getBlock(AudioBlock& outBlock)
 	{
 		if (m_keepOffset > 0)
 		{
@@ -94,7 +94,7 @@ public:
 			m_decodedCount -= m_keepOffset;
 		}
 
-		while (m_decodedCount < outSoundBlock.samplesCount)
+		while (m_decodedCount < outBlock.samplesCount)
 		{
 			FLAC__bool decodeResult = FLAC__stream_decoder_process_single(m_decoder);
 			if (!decodeResult)
@@ -108,13 +108,13 @@ public:
 		if (m_decodedCount == 0)
 			return false;
 
-		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
-		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
-		outSoundBlock.samplesCount = std::min(m_decodedCount, outSoundBlock.samplesCount);
-		outSoundBlock.sampleRate = FLAC__stream_decoder_get_sample_rate(m_decoder);
-		outSoundBlock.maxChannel = FLAC__stream_decoder_get_channels(m_decoder);
+		outBlock.samples[SbcLeft] = m_decoded[SbcLeft];
+		outBlock.samples[SbcRight] = m_decoded[SbcRight];
+		outBlock.samplesCount = std::min(m_decodedCount, outBlock.samplesCount);
+		outBlock.sampleRate = FLAC__stream_decoder_get_sample_rate(m_decoder);
+		outBlock.maxChannel = FLAC__stream_decoder_get_channels(m_decoder);
 
-		m_keepOffset = outSoundBlock.samplesCount;
+		m_keepOffset = outBlock.samplesCount;
 		return true;
 	}
 
@@ -195,10 +195,10 @@ double FlacStreamDecoder::getDuration() const
 	return m_decoderImpl->getDuration();
 }
 
-bool FlacStreamDecoder::getBlock(SoundBlock& outSoundBlock)
+bool FlacStreamDecoder::getBlock(AudioBlock& outBlock)
 {
 	T_ASSERT(m_decoderImpl);
-	return m_decoderImpl->getBlock(outSoundBlock);
+	return m_decoderImpl->getBlock(outBlock);
 }
 
 void FlacStreamDecoder::rewind()

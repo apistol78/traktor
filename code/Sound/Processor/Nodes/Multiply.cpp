@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Multiply.h"
 
@@ -29,7 +29,7 @@ const ImmutableNode::OutputPinDesc c_Multiply_o[] =
 	{ 0 }
 };
 
-class MultiplyCursor : public RefCountImpl< ISoundBufferCursor >
+class MultiplyCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) override final {}
@@ -53,12 +53,12 @@ bool Multiply::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Multiply::createCursor() const
+Ref< IAudioBufferCursor > Multiply::createCursor() const
 {
 	return new MultiplyCursor();
 }
 
-bool Multiply::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Multiply::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	float lh, rh;
 	if (!evaluator->evaluateScalar(getInputPin(0), lh))
@@ -70,7 +70,7 @@ bool Multiply::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evalu
 	return true;
 }
 
-bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Multiply::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	const InputPin* ip1 = getInputPin(0);
 	const InputPin* ip2 = getInputPin(1);
@@ -80,8 +80,8 @@ bool Multiply::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evalua
 
 	if (pt1 == NodePinType::Signal && pt2 == NodePinType::Signal)
 	{
-		SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
-		SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
+		AudioBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
+		AudioBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 		bool anyBlocks = false;
 		anyBlocks |= evaluator->evaluateBlock(ip1, mixer, soundBlock1);

@@ -27,7 +27,7 @@ void TssStreamEncoder::destroy()
 	m_stream = nullptr;
 }
 
-bool TssStreamEncoder::putBlock(SoundBlock& block)
+bool TssStreamEncoder::putBlock(AudioBlock& block)
 {
 	Writer wr(m_stream);
 

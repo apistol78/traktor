@@ -47,7 +47,7 @@ Scalar angleDifference(const Scalar& angle1, const Scalar& angle2)
 	return min(min(A, B), C);
 }
 
-struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
+struct SurroundFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float* m_buffer[SbcMaxChannelCount];
 
@@ -123,7 +123,7 @@ const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IAudioFilter)
 
 SurroundFilter::SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition, float maxDistance)
 :	m_environment(environment)
@@ -142,12 +142,12 @@ void SurroundFilter::setMaxDistance(float maxDistance)
 	m_maxDistance = Scalar(maxDistance);
 }
 
-Ref< IFilterInstance > SurroundFilter::createInstance() const
+Ref< IAudioFilterInstance > SurroundFilter::createInstance() const
 {
 	return new SurroundFilterInstance();
 }
 
-void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	if (m_environment->getFullSurround())
 		applyFull(instance, outBlock);
@@ -155,7 +155,7 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 		applyStereo(instance, outBlock);
 }
 
-void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyStereo(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
@@ -222,7 +222,7 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 	outBlock.maxChannel = c_speakersStereoMaxChannel;
 }
 
-void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyFull(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 

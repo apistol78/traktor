@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,20 +26,20 @@ namespace traktor
 
 class Pattern;
 
-class T_DLLCLASS SongBuffer : public ISoundBuffer
+class T_DLLCLASS SongBuffer : public IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
 	SongBuffer(const RefArray< Pattern >& patterns, int32_t bpm);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
-	int32_t getCurrentPattern(const ISoundBufferCursor* cursor) const;
+	int32_t getCurrentPattern(const IAudioBufferCursor* cursor) const;
 
-	int32_t getCurrentRow(const ISoundBufferCursor* cursor) const;
+	int32_t getCurrentRow(const IAudioBufferCursor* cursor) const;
 
 private:
 	RefArray< Pattern > m_patterns;

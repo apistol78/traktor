@@ -32,7 +32,7 @@ void AudioDriverNull::wait()
 	ThreadManager::getInstance().getCurrentThread()->sleep(ms);
 }
 
-void AudioDriverNull::submit(const SoundBlock& soundBlock)
+void AudioDriverNull::submit(const AudioBlock& block)
 {
 }
 

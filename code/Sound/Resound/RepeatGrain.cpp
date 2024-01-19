@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/RepeatGrain.h"
 
 namespace traktor
@@ -16,9 +16,9 @@ namespace traktor
 		namespace
 		{
 
-struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct RepeatGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
-	Ref< ISoundBufferCursor > m_cursor;
+	Ref< IAudioBufferCursor > m_cursor;
 	uint32_t m_count;
 
 	virtual void setParameter(handle_t id, float parameter) override final
@@ -54,7 +54,7 @@ RepeatGrain::RepeatGrain(
 {
 }
 
-Ref< ISoundBufferCursor > RepeatGrain::createCursor() const
+Ref< IAudioBufferCursor > RepeatGrain::createCursor() const
 {
 	if (!m_grain)
 		return 0;
@@ -66,19 +66,19 @@ Ref< ISoundBufferCursor > RepeatGrain::createCursor() const
 	return cursor->m_cursor ? cursor : 0;
 }
 
-void RepeatGrain::updateCursor(ISoundBufferCursor* cursor) const
+void RepeatGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 	return m_grain->updateCursor(repeatCursor->m_cursor);
 }
 
-const IGrain* RepeatGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* RepeatGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	const RepeatGrainCursor* repeatCursor = static_cast< const RepeatGrainCursor* >(cursor);
 	return m_grain->getCurrentGrain(repeatCursor->m_cursor);
 }
 
-void RepeatGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void RepeatGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const RepeatGrainCursor* repeatCursor = static_cast< const RepeatGrainCursor* >(cursor);
 	T_ASSERT(repeatCursor);
@@ -88,7 +88,7 @@ void RepeatGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< co
 	m_grain->getActiveGrains(repeatCursor->m_cursor, outActiveGrains);
 }
 
-bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool RepeatGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 	if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))

@@ -8,8 +8,8 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Sound/IFilter.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
+#include "Sound/IAudioFilter.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Filter.h"
 
@@ -32,10 +32,10 @@ const ImmutableNode::OutputPinDesc c_Filter_o[] =
 	{ 0 }
 };
 
-class FilterCursor : public RefCountImpl< ISoundBufferCursor >
+class FilterCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
-	Ref< IFilterInstance > m_filterInstance;
+	Ref< IAudioFilterInstance > m_filterInstance;
 
 	virtual void setParameter(handle_t id, float parameter) override final {}
 
@@ -58,7 +58,7 @@ bool Filter::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Filter::createCursor() const
+Ref< IAudioBufferCursor > Filter::createCursor() const
 {
 	if (!m_filter)
 		return nullptr;
@@ -68,12 +68,12 @@ Ref< ISoundBufferCursor > Filter::createCursor() const
 	return fc;
 }
 
-bool Filter::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Filter::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	return false;
 }
 
-bool Filter::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Filter::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	FilterCursor* fc = static_cast< FilterCursor* >(cursor);
 	if (!evaluator->evaluateBlock(getInputPin(0), mixer, outBlock))
@@ -85,7 +85,7 @@ bool Filter::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 void Filter::serialize(ISerializer& s)
 {
 	ImmutableNode::serialize(s);
-	s >> MemberRef< const IFilter >(L"filter", m_filter);
+	s >> MemberRef< const IAudioFilter >(L"filter", m_filter);
 }
 
 	}

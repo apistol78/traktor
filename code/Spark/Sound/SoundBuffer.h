@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 namespace traktor
 {
@@ -17,16 +17,16 @@ namespace traktor
 
 class Sound;
 
-class SoundBuffer : public sound::ISoundBuffer
+class SoundBuffer : public sound::IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
 	SoundBuffer(const Sound* sound);
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< sound::IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const override final;
+	virtual bool getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::AudioBlock& outBlock) const override final;
 
 private:
 	Ref< const Sound > m_sound;

@@ -1,16 +1,16 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/ISoundResource.h"
+#include "Sound/IAudioBuffer.h"
 
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.ISoundResource", ISoundResource, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.IAudioBuffer", IAudioBuffer, Object)
 
 }

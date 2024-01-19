@@ -182,11 +182,11 @@ public:
 		return 0.0;
 	}
 
-	bool getBlock(SoundBlock& outSoundBlock)
+	bool getBlock(AudioBlock& outBlock)
 	{
 		uint32_t decodedCount = 0;
 
-		while (decodedCount < outSoundBlock.samplesCount)
+		while (decodedCount < outBlock.samplesCount)
 		{
 			// Read page if necessary.
 			if (m_readPage)
@@ -241,7 +241,7 @@ public:
 			int samplesCount;
 			while ((samplesCount = vorbis_synthesis_pcmout(&m_vd, &pcm)) > 0)
 			{
-				int consumeSamples = std::min(int(outSoundBlock.samplesCount - decodedCount), samplesCount);
+				int consumeSamples = std::min(int(outBlock.samplesCount - decodedCount), samplesCount);
 
 				for (int i = 0; i < m_vi.channels; ++i)
 					std::memcpy(&m_decoded[i][decodedCount], pcm[i], consumeSamples * sizeof(float));
@@ -250,7 +250,7 @@ public:
 
 				vorbis_synthesis_read(&m_vd, consumeSamples);
 
-				if (decodedCount >= outSoundBlock.samplesCount)
+				if (decodedCount >= outBlock.samplesCount)
 					break;
 			}
 
@@ -260,10 +260,10 @@ public:
 
 		// Prepare output sound block.
 		for (int i = 0; i < m_vi.channels; ++i)
-			outSoundBlock.samples[i] = m_decoded[i];
-		outSoundBlock.maxChannel = m_vi.channels;
-		outSoundBlock.sampleRate = m_vi.rate + 1400;	// \hack Why do we need this adjustment?
-		outSoundBlock.samplesCount = decodedCount;
+			outBlock.samples[i] = m_decoded[i];
+		outBlock.maxChannel = m_vi.channels;
+		outBlock.sampleRate = m_vi.rate + 1400;	// \hack Why do we need this adjustment?
+		outBlock.samplesCount = decodedCount;
 
 		return true;
 	}
@@ -394,7 +394,7 @@ public:
 		return 0.0;
 	}
 
-	bool getBlock(SoundBlock& outSoundBlock)
+	bool getBlock(AudioBlock& outBlock)
 	{
 		m_queued -= m_consume;
 		if (m_queued > 0)
@@ -407,7 +407,7 @@ public:
 		if (!m_stream)
 			return false;
 
-		while (m_stream != nullptr && m_queued < (int32_t)outSoundBlock.samplesCount)
+		while (m_stream != nullptr && m_queued < (int32_t)outBlock.samplesCount)
 		{
 			int32_t decodedSamples = 0;
 			while (decodedSamples <= 0)
@@ -435,13 +435,13 @@ public:
 		}
 
 		for (int32_t i = 0; i < m_channels; ++i)
-			outSoundBlock.samples[i] = m_decoded[i].ptr();
+			outBlock.samples[i] = m_decoded[i].ptr();
 
-		outSoundBlock.maxChannel = m_channels;
-		outSoundBlock.sampleRate = m_info.sample_rate;
-		outSoundBlock.samplesCount = min< uint32_t >(outSoundBlock.samplesCount, m_queued);
+		outBlock.maxChannel = m_channels;
+		outBlock.sampleRate = m_info.sample_rate;
+		outBlock.samplesCount = min< uint32_t >(outBlock.samplesCount, m_queued);
 
-		m_consume = outSoundBlock.samplesCount;
+		m_consume = outBlock.samplesCount;
 		return true;
 	}
 
@@ -518,7 +518,7 @@ double OggStreamDecoder::getDuration() const
 	return m_decoderImpl->getDuration();
 }
 
-bool OggStreamDecoder::getBlock(SoundBlock& outSoundBlock)
+bool OggStreamDecoder::getBlock(AudioBlock& outSoundBlock)
 {
 	T_ASSERT(m_decoderImpl);
 	return m_decoderImpl->getBlock(outSoundBlock);

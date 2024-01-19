@@ -9,7 +9,7 @@
 #pragma once
 
 #include <vector>
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ namespace traktor
 /*! FFT filter.
  * \ingroup Sound
  */
-class T_DLLCLASS FFTFilter : public IFilter
+class T_DLLCLASS FFTFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
@@ -44,9 +44,9 @@ public:
 	 */
 	void setFilter(const std::vector< std::pair< float, float > >& filter, uint32_t windowWidth);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

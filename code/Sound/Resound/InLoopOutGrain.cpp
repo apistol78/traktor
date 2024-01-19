@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Math/MathUtils.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/IAudioMixer.h"
 #include "Sound/Resound/InLoopOutGrain.h"
 
@@ -18,15 +18,15 @@ namespace traktor
 		namespace
 		{
 
-struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct InLoopOutGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	handle_t m_id;
 	bool m_parameter;
 	bool m_repeat;
 	Ref< IGrain > m_grain;
 	Ref< IGrain > m_loopGrain;
-	Ref< ISoundBufferCursor > m_cursor;
-	Ref< ISoundBufferCursor > m_loopCursor;
+	Ref< IAudioBufferCursor > m_cursor;
+	Ref< IAudioBufferCursor > m_loopCursor;
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
@@ -70,7 +70,7 @@ InLoopOutGrain::InLoopOutGrain(
 {
 }
 
-Ref< ISoundBufferCursor > InLoopOutGrain::createCursor() const
+Ref< IAudioBufferCursor > InLoopOutGrain::createCursor() const
 {
 	Ref< InLoopOutGrainCursor > iloCursor = new InLoopOutGrainCursor();
 
@@ -85,7 +85,7 @@ Ref< ISoundBufferCursor > InLoopOutGrain::createCursor() const
 	return iloCursor;
 }
 
-void InLoopOutGrain::updateCursor(ISoundBufferCursor* cursor) const
+void InLoopOutGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	InLoopOutGrainCursor* iloCursor = static_cast< InLoopOutGrainCursor* >(cursor);
 	if (iloCursor->m_grain)
@@ -94,17 +94,17 @@ void InLoopOutGrain::updateCursor(ISoundBufferCursor* cursor) const
 		iloCursor->m_loopGrain->updateCursor(iloCursor->m_loopCursor);
 }
 
-const IGrain* InLoopOutGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* InLoopOutGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void InLoopOutGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void InLoopOutGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	outActiveGrains.push_back(this);
 }
 
-bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool InLoopOutGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	InLoopOutGrainCursor* iloCursor = static_cast< InLoopOutGrainCursor* >(cursor);
 
@@ -135,7 +135,7 @@ bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mix
 
 	if (iloCursor->m_grain)
 	{
-		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
+		AudioBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
 		if (iloCursor->m_grain->getBlock(iloCursor->m_cursor, mixer, soundBlock))
 		{
 			outBlock.sampleRate = max(outBlock.sampleRate, soundBlock.sampleRate);

@@ -13,25 +13,25 @@ namespace traktor::sound
 	namespace
 	{
 
-struct DitherFilterInstance : public RefCountImpl< IFilterInstance >
+struct DitherFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 };
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.DitherFilter", 0, DitherFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.DitherFilter", 0, DitherFilter, IAudioFilter)
 
 DitherFilter::DitherFilter(uint32_t bitsPerSample)
 :	m_ditherAmplitude(1.0f / (1 << bitsPerSample))
 {
 }
 
-Ref< IFilterInstance > DitherFilter::createInstance() const
+Ref< IAudioFilterInstance > DitherFilter::createInstance() const
 {
 	return new DitherFilterInstance();
 }
 
-void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void DitherFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{

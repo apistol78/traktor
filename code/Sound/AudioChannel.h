@@ -25,12 +25,12 @@
 namespace traktor::sound
 {
 
-struct IFilterInstance;
+struct IAudioFilterInstance;
 
 class IAudioMixer;
-class IFilter;
-class ISoundBuffer;
-class ISoundBufferCursor;
+class IAudioFilter;
+class IAudioBuffer;
+class IAudioBufferCursor;
 
 /*! Virtual audio channel.
  * \ingroup Sound
@@ -62,7 +62,7 @@ public:
 	float getPitch() const;
 
 	/*! Associate filter in channel. */
-	void setFilter(const IFilter* filter);
+	void setFilter(const IAudioFilter* filter);
 
 	/*! Set cursor parameter. */
 	void setParameter(handle_t id, float parameter);
@@ -80,7 +80,7 @@ public:
 	 * \return True if sound is playing successfully.
 	 */
 	bool play(
-		const ISoundBuffer* buffer,
+		const IAudioBuffer* buffer,
 		handle_t category,
 		float gain,
 		bool repeat,
@@ -94,24 +94,24 @@ public:
 	void stop();
 
 	/*! Return current playing sound's cursor. */
-	ISoundBufferCursor* getCursor();
+	IAudioBufferCursor* getCursor();
 
 	/*! Get next mixed and prepared sound block. */
-	bool getBlock(const IAudioMixer* mixer, SoundBlock& outBlock);
+	bool getBlock(const IAudioMixer* mixer, AudioBlock& outBlock);
 
 private:
 	friend class AudioSystem;
 
 	struct StateFilter
 	{
-		Ref< const IFilter > filter;
-		Ref< IFilterInstance > filterInstance;
+		Ref< const IAudioFilter > filter;
+		Ref< IAudioFilterInstance > filterInstance;
 	};
 
 	struct StateSound
 	{
-		Ref< const ISoundBuffer > buffer;
-		Ref< ISoundBufferCursor > cursor;
+		Ref< const IAudioBuffer > buffer;
+		Ref< IAudioBufferCursor > cursor;
 		handle_t category = 0;
 		float volume = 1.0f;
 		bool repeat = false;

@@ -53,7 +53,7 @@ public:
 	 * \param desc Initialize description.
 	 * \return True if audio system created successfully.
 	 */
-	bool create(const SoundSystemCreateDesc& desc);
+	bool create(const AudioSystemCreateDesc& desc);
 
 	/*! Destroy audio system.
 	 */
@@ -128,13 +128,13 @@ public:
 private:
 	Ref< IAudioDriver > m_driver;
 	Ref< IAudioMixer > m_mixer;
-	SoundSystemCreateDesc m_desc;
+	AudioSystemCreateDesc m_desc;
 	bool m_suspended;
 	float m_volume;
 	SmallMap< handle_t, float > m_categoryVolumes;
 	Thread* m_threadMixer;
 	RefArray< AudioChannel > m_channels;
-	AlignedVector< SoundBlock > m_requestBlocks;
+	AlignedVector< AudioBlock > m_requestBlocks;
 
 	// \name Submission queue
 	// \{

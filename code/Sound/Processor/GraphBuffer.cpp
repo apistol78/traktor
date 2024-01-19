@@ -19,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-class GraphBufferCursor : public RefCountImpl< ISoundBufferCursor >
+class GraphBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	Ref< GraphEvaluator > m_evaluator;
@@ -44,7 +44,7 @@ GraphBuffer::GraphBuffer(const Graph* graph)
 {
 }
 
-Ref< ISoundBufferCursor > GraphBuffer::createCursor() const
+Ref< IAudioBufferCursor > GraphBuffer::createCursor() const
 {
 	Ref< GraphBufferCursor > graphCursor = new GraphBufferCursor();
 
@@ -72,7 +72,7 @@ Ref< ISoundBufferCursor > GraphBuffer::createCursor() const
 	return graphCursor;
 }
 
-bool GraphBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool GraphBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	GraphBufferCursor* graphCursor = static_cast< GraphBufferCursor* >(cursor);
 

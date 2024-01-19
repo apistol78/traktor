@@ -8,7 +8,7 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Memory/Alloc.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Sine.h"
 
@@ -32,7 +32,7 @@ const ImmutableNode::OutputPinDesc c_Sine_o[] =
 	{ 0 }
 };
 
-class SineCursor : public RefCountImpl< ISoundBufferCursor >
+class SineCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	float* m_outputSamples;
@@ -70,7 +70,7 @@ bool Sine::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Sine::createCursor() const
+Ref< IAudioBufferCursor > Sine::createCursor() const
 {
 	Ref< SineCursor > sineCursor = new SineCursor();
 
@@ -83,7 +83,7 @@ Ref< ISoundBufferCursor > Sine::createCursor() const
 	return sineCursor;
 }
 
-bool Sine::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Sine::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	SineCursor* sineCursor = static_cast< SineCursor* >(cursor);
 
@@ -103,7 +103,7 @@ bool Sine::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator
 	return true;
 }
 
-bool Sine::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Sine::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SineCursor* sineCursor = static_cast< SineCursor* >(cursor);
 

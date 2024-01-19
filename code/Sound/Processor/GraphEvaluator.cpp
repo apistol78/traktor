@@ -10,7 +10,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Memory/Alloc.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Node.h"
@@ -26,7 +26,7 @@ bool GraphEvaluator::create(const Graph* graph)
 	m_graph = graph;
 	for (auto node : graph->getNodes())
 	{
-		Ref< ISoundBufferCursor > nodeCursor = node->createCursor();
+		Ref< IAudioBufferCursor > nodeCursor = node->createCursor();
 		if (!nodeCursor)
 		{
 			log::error << L"Node \"" << type_name(node) << L"\" failed; no cursor." << Endl;
@@ -50,7 +50,7 @@ bool GraphEvaluator::evaluateScalar(const OutputPin* producerPin, float& outScal
 	const Node* producerNode = producerPin->getNode();
 	T_ASSERT(producerNode != nullptr);
 
-	ISoundBufferCursor* producerCursor = m_nodeCursors[producerNode];
+	IAudioBufferCursor* producerCursor = m_nodeCursors[producerNode];
 	if (!producerCursor)
 		return false;
 
@@ -69,12 +69,12 @@ bool GraphEvaluator::evaluateScalar(const InputPin* consumerPin, float& outScala
 		return false;
 }
 
-bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	const Node* producerNode = producerPin->getNode();
 	T_ASSERT(producerNode != nullptr);
 
-	ISoundBufferCursor* producerCursor = m_nodeCursors[producerNode];
+	IAudioBufferCursor* producerCursor = m_nodeCursors[producerNode];
 	if (!producerCursor)
 		return false;
 
@@ -117,7 +117,7 @@ bool GraphEvaluator::evaluateBlock(const OutputPin* producerPin, const IAudioMix
 	return true;
 }
 
-bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool GraphEvaluator::evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	const OutputPin* producerPin = m_graph->findSourcePin(consumerPin);
 	if (producerPin)
@@ -151,12 +151,12 @@ void GraphEvaluator::flushCachedBlocks()
 	m_cachedBlocks.reset();
 }
 
-SoundBlock* GraphEvaluator::copyBlock(const SoundBlock& sourceBlock) const
+AudioBlock* GraphEvaluator::copyBlock(const AudioBlock& sourceBlock) const
 {
 	if (m_blocks.full())
 		return nullptr;
 
-	SoundBlock& block = m_blocks.push_back();
+	AudioBlock& block = m_blocks.push_back();
 
 	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 	{

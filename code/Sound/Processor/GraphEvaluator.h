@@ -30,10 +30,10 @@ namespace traktor::sound
 class Graph;
 class IAudioMixer;
 class InputPin;
-class ISoundBufferCursor;
+class IAudioBufferCursor;
 class Node;
 class OutputPin;
-struct SoundBlock;
+struct AudioBlock;
 
 class T_DLLCLASS GraphEvaluator : public Object
 {
@@ -48,9 +48,9 @@ public:
 
 	bool evaluateScalar(const InputPin* consumerPin, float& outScalar) const;
 
-	bool evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const;
+	bool evaluateBlock(const OutputPin* producerPin, const IAudioMixer* mixer, AudioBlock& outBlock) const;
 
-	bool evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, SoundBlock& outBlock) const;
+	bool evaluateBlock(const InputPin* consumerPin, const IAudioMixer* mixer, AudioBlock& outBlock) const;
 
 	NodePinType evaluatePinType(const InputPin* consumerPin) const;
 
@@ -60,13 +60,13 @@ public:
 
 private:
 	Ref< const Graph > m_graph;
-	SmallMap< const Node*, Ref< ISoundBufferCursor > > m_nodeCursors;
+	SmallMap< const Node*, Ref< IAudioBufferCursor > > m_nodeCursors;
 	Timer m_timer;
 
-	mutable StaticVector< SoundBlock, 128 > m_blocks;
-	mutable SmallMap< const OutputPin*, SoundBlock > m_cachedBlocks;
+	mutable StaticVector< AudioBlock, 128 > m_blocks;
+	mutable SmallMap< const OutputPin*, AudioBlock > m_cachedBlocks;
 
-	SoundBlock* copyBlock(const SoundBlock& sourceBlock) const;
+	AudioBlock* copyBlock(const AudioBlock& sourceBlock) const;
 };
 
 }

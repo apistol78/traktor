@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,23 +23,23 @@ namespace traktor::sound
 
 class IStreamDecoder;
 
-/*! Stream sound buffer.
+/*! Stream audio buffer.
  * \ingroup Sound
  */
-class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
+class T_DLLCLASS StreamAudioBuffer : public IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual ~StreamSoundBuffer();
+	virtual ~StreamAudioBuffer();
 
 	bool create(IStreamDecoder* streamDecoder);
 
 	void destroy();
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;
