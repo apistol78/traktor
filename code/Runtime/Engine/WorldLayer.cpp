@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,7 +24,6 @@
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/WorldLayer.h"
 #include "Scene/Scene.h"
-#include "Sound/Filters/SurroundEnvironment.h"
 #include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -92,7 +91,6 @@ void WorldLayer::destroy()
 	m_rootGroup = nullptr;
 	m_renderGroup = nullptr;
 	m_cameraEntity = nullptr;
-	m_listenerEntity = nullptr;
 
 	if (m_scene)
 	{
@@ -136,7 +134,6 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 
 		// Get initial camera.
 		m_cameraEntity = getEntity(L"Camera");
-		m_listenerEntity = m_cameraEntity;
 	}
 
 	// Re-create world renderer.
@@ -187,21 +184,6 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 					m_scene->getWorldRenderSettings()->viewFarZ
 				);
 			}
-		}
-	}
-
-	// Update sound listener transform.
-	if (m_environment->getAudio())
-	{
-		sound::SurroundEnvironment* surroundEnvironment = m_environment->getAudio()->getSurroundEnvironment();
-		if (surroundEnvironment && (m_listenerEntity || m_cameraEntity))
-		{
-			Transform listenerTransform;
-			if (m_listenerEntity)
-				listenerTransform = m_listenerEntity->getTransform();
-			else
-				listenerTransform = m_cameraEntity->getTransform();
-			surroundEnvironment->setListenerTransform(listenerTransform);
 		}
 	}
 }
@@ -616,16 +598,6 @@ void WorldLayer::setCamera(const world::Entity* cameraEntity)
 const world::Entity* WorldLayer::getCamera() const
 {
 	return m_cameraEntity;
-}
-
-void WorldLayer::setListener(const world::Entity* listenerEntity)
-{
-	m_listenerEntity = listenerEntity;
-}
-
-const world::Entity* WorldLayer::getListener() const
-{
-	return m_listenerEntity;
 }
 
 void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)

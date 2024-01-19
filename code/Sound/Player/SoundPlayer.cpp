@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,6 +17,7 @@
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
 #include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundListener.h"
 #include "Sound/Player/SoundPlayer.h"
 
 namespace traktor::sound
@@ -173,10 +174,13 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
 		maxDistance = m_surroundEnvironment->getMaxDistance();
 
-	Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
-
-	// Calculate distance from listener.
-	Scalar distance = (position - listenerPosition).xyz0().length();
+	Scalar distance = Scalar(std::numeric_limits< float >::max());
+	for (const auto& listenerTransform : m_surroundEnvironment->getListenerTransforms())
+	{
+		const Vector4 listenerPosition = listenerTransform.translation().xyz1();
+		const Scalar listenerDistance = (position - listenerPosition).xyz0().length();
+		distance = std::min(distance, listenerDistance);
+	}
 	if (autoStopFar && distance > maxDistance)
 		return nullptr;
 
@@ -195,20 +199,17 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		// First check if this sound already has been recently played.
-		for (const auto& channel : m_channels)
-		{
-			if (channel.sound == sound && channel.time + c_recentTimeOffset >= time)
-				return nullptr;
-		}
+		//for (const auto& channel : m_channels)
+		//{
+		//	if (channel.sound == sound && channel.time + c_recentTimeOffset >= time)
+		//		return nullptr;
+		//}
 
-		// First try to associate sound with non-playing channel (or far away).
+		// First try to associate sound with non-playing channel.
 		for (auto& channel : m_channels)
 		{
-			const Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
-			if (
-				!channel.audioChannel->isPlaying() ||
-				(channel.position.w() > 0.5_simd && channelDistance > m_surroundEnvironment->getMaxDistance())
-			)
+			const Scalar channelDistance = (channel.position - distance).xyz0().length();
+			if (!channel.audioChannel->isPlaying())
 			{
 				if (channel.handle)
 					channel.handle->detach();
@@ -270,7 +271,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 		// Then try to associate sound with similar priority channel but further away.
 		for (auto& channel : m_channels)
 		{
-			const Scalar channelDistance = (channel.position - listenerPosition).xyz0().length();
+			const Scalar channelDistance = (channel.position - distance).xyz0().length();
 			if (
 				priority == channel.priority &&
 				channel.position.w() > 0.5_simd &&
@@ -307,20 +308,21 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	return nullptr;
 }
 
-void SoundPlayer::setListenerTransform(const Transform& listenerTransform)
+Ref< ISoundListener > SoundPlayer::createListener() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_surroundEnvironment)
-		m_surroundEnvironment->setListenerTransform(listenerTransform);
+	return new SoundListener();
 }
 
-Transform SoundPlayer::getListenerTransform() const
+void SoundPlayer::addListener(const ISoundListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_surroundEnvironment)
-		return m_surroundEnvironment->getListenerTransform();
-	else
-		return Transform::identity();
+	m_listeners.push_back(static_cast< const SoundListener* >(listener));
+}
+
+void SoundPlayer::removeListener(const ISoundListener* listener)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_listeners.remove(static_cast< const SoundListener* >(listener));
 }
 
 void SoundPlayer::update(float dT)
@@ -329,7 +331,11 @@ void SoundPlayer::update(float dT)
 
 	if (m_surroundEnvironment)
 	{
-		const Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
+		// Update listener transforms \fixme Memory allocations...
+		AlignedVector< Transform > listenerTransforms;
+		for (auto listener : m_listeners)
+			listenerTransforms.push_back(listener->getTransform());
+		m_surroundEnvironment->setListenerTransforms(listenerTransforms);
 
 		// Update surround and low pass filters on playing 3d sounds.
 		for (auto& channel : m_channels)
@@ -343,7 +349,13 @@ void SoundPlayer::update(float dT)
 				maxDistance = m_surroundEnvironment->getMaxDistance();
 
 			// Calculate distance from listener; automatically stop sounds which has moved outside max listener distance.
-			const Scalar distance = (channel.position - listenerPosition).xyz0().length();
+			Scalar distance = Scalar(std::numeric_limits< float >::max());
+			for (const auto& listenerTransform : listenerTransforms)
+			{
+				const Vector4 listenerPosition = listenerTransform.translation().xyz1();
+				const Scalar listenerDistance = (channel.position - listenerPosition).xyz0().length();
+				distance = std::min(distance, listenerDistance);
+			}
 			if (channel.autoStopFar && distance > maxDistance)
 			{
 				if (channel.handle)

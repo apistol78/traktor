@@ -105,8 +105,6 @@ void AudioClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSurroundEnvironment->addProperty("maxDistance", &SurroundEnvironment::setMaxDistance, &SurroundEnvironment::getMaxDistance);
 	classSurroundEnvironment->addProperty("innerRadius", &SurroundEnvironment::setInnerRadius, &SurroundEnvironment::getInnerRadius);
 	classSurroundEnvironment->addProperty("fullSurround", &SurroundEnvironment::setFullSurround, &SurroundEnvironment::getFullSurround);
-	classSurroundEnvironment->addProperty("listenerTransform", &SurroundEnvironment::setListenerTransform, &SurroundEnvironment::getListenerTransform);
-	classSurroundEnvironment->addProperty("listenerTransformInv", &SurroundEnvironment::getListenerTransformInv);
 	registrar->registerClass(classSurroundEnvironment);
 
 	auto classCombFilter = new AutoRuntimeClass< CombFilter >();
@@ -175,7 +173,6 @@ void AudioClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classISoundHandle);
 
 	auto classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
-	classISoundPlayer->addProperty("listenerTransform", &ISoundPlayer::setListenerTransform, &ISoundPlayer::getListenerTransform);
 	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, uint32_t >("play", &ISoundPlayer::play);
 	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, const Vector4&, uint32_t, bool >("play", &ISoundPlayer::play);
 	registrar->registerClass(classISoundPlayer);

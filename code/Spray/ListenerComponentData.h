@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
 // import/export mechanism.
@@ -19,50 +18,33 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::resource
+namespace traktor::sound
 {
 
-class IResourceManager;
-
-}
-
-namespace traktor::world
-{
-
-class EntityEventManager;
+class ISoundPlayer;
 
 }
 
 namespace traktor::spray
 {
 
-class Effect;
-class EffectComponent;
+class ListenerComponent;
 
-/*! Effect component persistent data.
+/*! Sound listener component data.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectComponentData : public world::IEntityComponentData
+class T_DLLCLASS ListenerComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	EffectComponentData() = default;
-
-	explicit EffectComponentData(const resource::Id< Effect >& effect);
-
-	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager) const;
+	Ref< ListenerComponent > createComponent(sound::ISoundPlayer* soundPlayer) const;
 
 	virtual int32_t getOrdinal() const override final;
 
 	virtual void setTransform(const world::EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
-
-	const resource::Id< Effect >& getEffect() const { return m_effect; }
-
-private:
-	resource::Id< Effect > m_effect;
 };
 
 }

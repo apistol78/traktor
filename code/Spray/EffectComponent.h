@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,13 +21,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor::sound
-{
-
-class ISoundPlayer;
-
-}
 
 namespace traktor::world
 {
@@ -53,7 +46,7 @@ class T_DLLCLASS EffectComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
+	explicit EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager);
 
 	explicit EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context);
 

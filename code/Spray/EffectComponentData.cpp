@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,7 @@ EffectComponentData::EffectComponentData(const resource::Id< Effect >& effect)
 {
 }
 
-Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const
+Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager) const
 {
 	resource::Proxy< Effect > effect;
 	if (!resourceManager->bind(m_effect, effect))
@@ -31,8 +31,7 @@ Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceM
 
 	return new EffectComponent(
 		effect,
-		eventManager,
-		soundPlayer
+		eventManager
 	);
 }
 

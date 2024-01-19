@@ -148,10 +148,6 @@ public:
 
 	const world::Entity* getCamera() const;
 
-	void setListener(const world::Entity* listenerEntity);
-
-	const world::Entity* getListener() const;
-
 protected:
 	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 
@@ -164,7 +160,6 @@ private:
 	Ref< world::Entity > m_renderGroup;
 	Ref< world::Entity > m_dynamicEntities;
 	Ref< const world::Entity > m_cameraEntity;
-	Ref< const world::Entity > m_listenerEntity;
 	IntervalTransform m_cameraTransform;
 	Transform m_cameraOffset;
 	double m_alternateTime = 0.0;

@@ -24,6 +24,7 @@ namespace traktor::sound
 {
 
 class ISoundHandle;
+class ISoundListener;
 class Sound;
 
 /*! High-level sound player.
@@ -44,13 +45,14 @@ public:
 	 */
 	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) = 0;
 
-	/*! Set listener transform.
-	 */
-	virtual void setListenerTransform(const Transform& listenerTransform) = 0;
+	/*! */
+	virtual Ref< ISoundListener > createListener() const = 0;
 
-	/*! Get listener transform.
-	 */
-	virtual Transform getListenerTransform() const = 0;
+	/*! */
+	virtual void addListener(const ISoundListener* listener) = 0;
+
+	/*! */
+	virtual void removeListener(const ISoundListener* listener) = 0;
 
 	/*! Update sound player.
 	 */

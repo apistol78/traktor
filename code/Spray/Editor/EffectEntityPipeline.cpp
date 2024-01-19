@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Editor/IPipelineDepends.h"
 #include "Spray/EffectComponentData.h"
+#include "Spray/SoundComponentData.h"
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEventData.h"
 #include "Spray/Editor/EffectEntityPipeline.h"
@@ -23,6 +24,7 @@ TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	return makeTypeInfoSet<
 		EffectComponentData,
+		SoundComponentData,
 		SoundEventData,
 		SpawnEffectEventData
 	>();
@@ -38,6 +40,8 @@ bool EffectEntityPipeline::buildDependencies(
 {
 	if (auto effectComponentData = dynamic_type_cast< const EffectComponentData* >(sourceAsset))
 		pipelineDepends->addDependency(effectComponentData->getEffect(), editor::PdfBuild | editor::PdfResource);
+	else if (auto soundComponentData = dynamic_type_cast< const SoundComponentData* >(sourceAsset))
+		pipelineDepends->addDependency(soundComponentData->getSound(), editor::PdfBuild | editor::PdfResource);
 	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
 		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
 	else if (auto spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))

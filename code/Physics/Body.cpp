@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,9 +28,7 @@ void Body::addCollisionListener(CollisionListener* collisionListener)
 
 void Body::removeCollisionListener(CollisionListener* collisionListener)
 {
-	RefArray< CollisionListener >::iterator i = std::find(m_collisionListeners.begin(), m_collisionListeners.end(), collisionListener);
-	if (i != m_collisionListeners.end())
-		m_collisionListeners.erase(i);
+	m_collisionListeners.remove(collisionListener);
 }
 
 void Body::removeAllCollisionListeners()
@@ -40,8 +38,8 @@ void Body::removeAllCollisionListeners()
 
 void Body::notifyCollisionListeners(const CollisionInfo& collisionInfo)
 {
-	for (RefArray< CollisionListener >::iterator i = m_collisionListeners.begin(); i != m_collisionListeners.end(); ++i)
-		(*i)->notify(collisionInfo);
+	for (auto listener : m_collisionListeners)
+		listener->notify(collisionInfo);
 }
 
 Body::Body(const wchar_t* const tag)

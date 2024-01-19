@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -26,32 +27,32 @@ class IResourceManager;
 
 }
 
-namespace traktor::world
+namespace traktor::sound
 {
 
-class EntityEventManager;
+class ISoundPlayer;
+class Sound;
 
 }
 
 namespace traktor::spray
 {
 
-class Effect;
-class EffectComponent;
+class SoundComponent;
 
-/*! Effect component persistent data.
+/*! Sound component data.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectComponentData : public world::IEntityComponentData
+class T_DLLCLASS SoundComponentData : public world::IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
-	EffectComponentData() = default;
+	SoundComponentData() = default;
 
-	explicit EffectComponentData(const resource::Id< Effect >& effect);
+	explicit SoundComponentData(const resource::Id< sound::Sound >& sound);
 
-	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager) const;
+	Ref< SoundComponent > createComponent(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual int32_t getOrdinal() const override final;
 
@@ -59,10 +60,10 @@ public:
 
 	virtual void serialize(ISerializer& s) override final;
 
-	const resource::Id< Effect >& getEffect() const { return m_effect; }
+	const resource::Id< sound::Sound >& getSound() const { return m_sound; }
 
 private:
-	resource::Id< Effect > m_effect;
+	resource::Id< sound::Sound > m_sound;
 };
 
 }

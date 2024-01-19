@@ -1174,23 +1174,22 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	const float dT = simulationDeltaTime * m_timeScale;
 	m_dynamicsWorld->stepSimulation(dT, 10, 1.0f / m_simulationFrequency);
 
-/*
 	// Issue collision events.
 	if (issueCollisionEvents)
 	{
 		CollisionInfo info;
 
-		int32_t manifoldCount = m_dispatcher->getNumManifolds();
+		const int32_t manifoldCount = m_dispatcher->getNumManifolds();
 		for (int32_t i = 0; i < manifoldCount; ++i)
 		{
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 			T_ASSERT(manifold);
 
 			// Only call to listeners when a new manifold has been created.
-			if (!manifold->m_fresh)
+			if (manifold->getContactPoint(0).m_userPersistentData != nullptr)
 				continue;
 
-			int32_t contacts = manifold->getNumContacts();
+			const int32_t contacts = manifold->getNumContacts();
 			if (contacts <= 0)
 				continue;
 
@@ -1226,7 +1225,7 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			if (!info.contacts.empty())
 			{
 				notifyCollisionListeners(info);
-				manifold->m_fresh = false;
+				manifold->getContactPoint(0).m_userPersistentData = (void*)1;
 
 				// Only issue one new collision per update; distribute over
 				// several updates to prevent CPU overload.
@@ -1236,16 +1235,15 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 	}
 	else
 	{
-		int32_t manifoldCount = m_dispatcher->getNumManifolds();
+		const int32_t manifoldCount = m_dispatcher->getNumManifolds();
 		for (int32_t i = 0; i < manifoldCount; ++i)
 		{
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 			T_ASSERT(manifold);
 
-			manifold->m_fresh = false;
+			manifold->getContactPoint(0).m_userPersistentData = nullptr;
 		}
 	}
-*/
 
 	m_queryCountLast = m_queryCount;
 	m_queryCount = 0;

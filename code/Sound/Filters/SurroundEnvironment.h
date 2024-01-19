@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Transform.h"
 
 // import/export mechanism.
@@ -19,17 +20,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS SurroundEnvironment : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	SurroundEnvironment(
+	explicit SurroundEnvironment(
 		float maxDistance,
 		float innerRadius,
 		float fallOffExponent,
@@ -52,21 +51,16 @@ public:
 
 	bool getFullSurround() const { return m_fullSurround; }
 
-	void setListenerTransform(const Transform& listenerTransform);
+	void setListenerTransforms(const AlignedVector< Transform >& listenerTransforms);
 
-	const Transform& getListenerTransform() const { return m_listenerTransform; }
-
-	const Transform& getListenerTransformInv() const { return m_listenerTransformInv; }
+	const AlignedVector< Transform >& getListenerTransforms() const { return m_listenerTransforms; }
 
 private:
 	Scalar m_maxDistance;
 	Scalar m_innerRadius;
 	Scalar m_fallOffExponent;
 	bool m_fullSurround;
-	Transform m_listenerTransform;
-	Transform m_listenerTransformInv;
+	AlignedVector< Transform > m_listenerTransforms;
 };
 
-	}
 }
-

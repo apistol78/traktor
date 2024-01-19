@@ -28,6 +28,7 @@ class AudioChannel;
 class AudioSystem;
 class LowPassFilter;
 class SoundHandle;
+class SoundListener;
 class SurroundEnvironment;
 class SurroundFilter;
 
@@ -49,9 +50,11 @@ public:
 
 	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) override final;
 
-	virtual void setListenerTransform(const Transform& listenerTransform) override final;
+	virtual Ref< ISoundListener > createListener() const override final;
 
-	virtual Transform getListenerTransform() const override final;
+	virtual void addListener(const ISoundListener* listener) override final;
+
+	virtual void removeListener(const ISoundListener* listener) override final;
 
 	virtual void update(float dT) override final;
 
@@ -73,6 +76,7 @@ private:
 	mutable Semaphore m_lock;
 	Ref< AudioSystem > m_audioSystem;
 	Ref< SurroundEnvironment > m_surroundEnvironment;
+	RefArray< const SoundListener > m_listeners;
 	AlignedVector< Channel > m_channels;
 	Timer m_timer;
 };
