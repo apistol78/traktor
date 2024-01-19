@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@
 #	include "Sound/OpenAL/iOS/AudioSession.h"
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 template < typename SampleType >
 struct CastSample
@@ -98,7 +96,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverOpenAL", 0, AudioDriverOpenAL, IAudioDriver)
 
@@ -220,7 +218,7 @@ void AudioDriverOpenAL::wait()
 #endif
 }
 
-void AudioDriverOpenAL::submit(const SoundBlock& soundBlock)
+void AudioDriverOpenAL::submit(const AudioBlock& block)
 {
 	ALuint buffer = 0;
 	ALCenum error;
@@ -238,29 +236,29 @@ void AudioDriverOpenAL::submit(const SoundBlock& soundBlock)
 	else
 		buffer = m_buffers[m_submitted];
 
-	T_ASSERT (soundBlock.maxChannel <= m_desc.hwChannels);
-	T_ASSERT (soundBlock.samplesCount <= m_desc.frameSamples);
+	T_ASSERT (block.maxChannel <= m_desc.hwChannels);
+	T_ASSERT (block.samplesCount <= m_desc.frameSamples);
 
 	if (m_desc.bitsPerSample == 8)
 	{
-		for (int i = 0; i < soundBlock.maxChannel; ++i)
+		for (int i = 0; i < block.maxChannel; ++i)
 		{
 			writeSamples< uint8_t >(
 				m_data.ptr() + i,
-				soundBlock.samples[i],
-				soundBlock.samplesCount,
+				block.samples[i],
+				block.samplesCount,
 				m_desc.hwChannels
 			);
 		}
 	}
 	else if (m_desc.bitsPerSample == 16)
 	{
-		for (int i = 0; i < soundBlock.maxChannel; ++i)
+		for (int i = 0; i < block.maxChannel; ++i)
 		{
 			writeSamples< int16_t >(
 				m_data.ptr() + i * sizeof(int16_t),
-				soundBlock.samples[i],
-				soundBlock.samplesCount,
+				block.samples[i],
+				block.samplesCount,
 				m_desc.hwChannels
 			);
 		}
@@ -271,7 +269,7 @@ void AudioDriverOpenAL::submit(const SoundBlock& soundBlock)
 		buffer,
 		m_format,
 		m_data.ptr(),
-		soundBlock.samplesCount * m_desc.hwChannels * m_desc.bitsPerSample / 8,
+		block.samplesCount * m_desc.hwChannels * m_desc.bitsPerSample / 8,
 		m_desc.sampleRate
 	);
 	if ((error = alGetError()) != AL_NO_ERROR)
@@ -297,5 +295,4 @@ void AudioDriverOpenAL::submit(const SoundBlock& soundBlock)
 	++m_submitted;
 }
 
-	}
 }
