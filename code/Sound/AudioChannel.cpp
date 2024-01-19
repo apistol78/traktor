@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,9 +15,9 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/IAudioBuffer.h"
+#include "Sound/IAudioFilter.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/IFilter.h"
-#include "Sound/ISoundBuffer.h"
 
 namespace traktor::sound
 {
@@ -98,7 +98,7 @@ float AudioChannel::getPitch() const
 	return m_pitch;
 }
 
-void AudioChannel::setFilter(const IFilter* filter)
+void AudioChannel::setFilter(const IAudioFilter* filter)
 {
 	StateFilter& sf = m_stateFilter.beginWrite();
 	if (filter != nullptr)
@@ -126,7 +126,7 @@ void AudioChannel::stop()
 	m_allowRepeat = false;
 }
 
-ISoundBufferCursor* AudioChannel::getCursor()
+IAudioBufferCursor* AudioChannel::getCursor()
 {
 	return m_stateSound.cursor;
 }
@@ -144,7 +144,7 @@ void AudioChannel::disableRepeat()
 }
 
 bool AudioChannel::play(
-	const ISoundBuffer* buffer,
+	const IAudioBuffer* buffer,
 	handle_t category,
 	float gain,
 	bool repeat,
@@ -154,7 +154,7 @@ bool AudioChannel::play(
 	if (!buffer)
 		return false;
 
-	Ref< ISoundBufferCursor > cursor = buffer->createCursor();
+	Ref< IAudioBufferCursor > cursor = buffer->createCursor();
 	if (!cursor)
 		return false;
 
@@ -173,7 +173,7 @@ bool AudioChannel::play(
 	return true;
 }
 
-bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
+bool AudioChannel::getBlock(const IAudioMixer* mixer, AudioBlock& outBlock)
 {
 	StateSound& ss = m_stateSound;
 
@@ -196,7 +196,7 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 		ss.cursor->setParameter(sp.set[i].first, sp.set[i].second);
 	sp.set.clear();
 
-	const ISoundBuffer* soundBuffer = ss.buffer;
+	const IAudioBuffer* soundBuffer = ss.buffer;
 	T_ASSERT(soundBuffer);
 
 	// Remove old output samples.
@@ -217,8 +217,8 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 	while (m_outputSamplesIn < m_hwFrameSamples)
 	{
 		// Request sound block from buffer.
-		SoundBlock soundBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
+		AudioBlock block = { { 0 }, m_hwFrameSamples, 0, 0 };
+		if (!soundBuffer->getBlock(ss.cursor, mixer, block))
 		{
 			// No more blocks from sound buffer.
 			if (m_allowRepeat && ss.repeat)
@@ -229,9 +229,9 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 				uint32_t skip = ss.repeatFrom;
 				while (skip > 0)
 				{
-					SoundBlock skipSoundBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
-					if (soundBuffer->getBlock(ss.cursor, mixer, skipSoundBlock))
-						skip -= min(skip, skipSoundBlock.samplesCount);
+					AudioBlock skipBlock = { { 0 }, m_hwFrameSamples, 0, 0 };
+					if (soundBuffer->getBlock(ss.cursor, mixer, skipBlock))
+						skip -= min(skip, skipBlock.samplesCount);
 					else
 					{
 						ss.buffer = nullptr;
@@ -241,7 +241,7 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 					}
 				}
 
-				if (!soundBuffer->getBlock(ss.cursor, mixer, soundBlock))
+				if (!soundBuffer->getBlock(ss.cursor, mixer, block))
 				{
 					ss.buffer = nullptr;
 					ss.cursor = nullptr;
@@ -259,33 +259,33 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 		}
 
 		// We might get a null block; does not indicate end of stream.
-		if (!soundBlock.samplesCount || !soundBlock.sampleRate || !soundBlock.maxChannel)
+		if (!block.samplesCount || !block.sampleRate || !block.maxChannel)
 			return false;
 
-		T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
+		T_ASSERT(block.samplesCount <= m_hwFrameSamples);
 
 		// Apply filter on sound block.
 		const StateFilter& sf = m_stateFilter.read();
 		if (sf.filter)
 		{
-			sf.filter->apply(sf.filterInstance, soundBlock);
-			T_ASSERT(soundBlock.samplesCount <= m_hwFrameSamples);
+			sf.filter->apply(sf.filterInstance, block);
+			T_ASSERT(block.samplesCount <= m_hwFrameSamples);
 		}
 
-		const uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
+		const uint32_t sampleRate = uint32_t(m_pitch * block.sampleRate);
 
 		// Convert sound block into hardware required sample rate.
 		if (sampleRate != m_hwSampleRate)
 		{
-			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_hwSampleRate) / sampleRate;
+			uint32_t outputSamplesCount = (block.samplesCount * m_hwSampleRate) / sampleRate;
 
 			// Ensure we produce "multiple-of-4" number of samples; slight adjust block's sample rate.
 			outputSamplesCount = alignUp(outputSamplesCount, 4);
-			soundBlock.sampleRate = (soundBlock.samplesCount * m_hwSampleRate) / outputSamplesCount;
+			block.sampleRate = (block.samplesCount * m_hwSampleRate) / outputSamplesCount;
 
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
-				const float* inputSamples = soundBlock.samples[i];
+				const float* inputSamples = block.samples[i];
 
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
 				T_ASSERT(alignUp(outputSamples, 16) == outputSamples);
@@ -296,7 +296,7 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 						outputSamples,
 						outputSamplesCount,
 						inputSamples,
-						soundBlock.samplesCount,
+						block.samplesCount,
 						m_volume * ss.volume
 					);
 				else
@@ -309,21 +309,21 @@ bool AudioChannel::getBlock(const IAudioMixer* mixer, SoundBlock& outBlock)
 		{
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
-				const float* inputSamples = soundBlock.samples[i];
+				const float* inputSamples = block.samples[i];
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
-				T_ASSERT(m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
+				T_ASSERT(m_outputSamplesIn + block.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
 					mixer->mulConst(
 						outputSamples,
 						inputSamples,
-						soundBlock.samplesCount,
+						block.samplesCount,
 						m_volume * ss.volume
 					);
 				else
-					mixer->mute(outputSamples, soundBlock.samplesCount);
+					mixer->mute(outputSamples, block.samplesCount);
 			}
-			m_outputSamplesIn += soundBlock.samplesCount;
+			m_outputSamplesIn += block.samplesCount;
 		}
 	}
 

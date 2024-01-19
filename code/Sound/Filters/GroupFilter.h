@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,29 +25,29 @@ namespace traktor::sound
 /*! Group filter.
  * \ingroup Sound
  */
-class T_DLLCLASS GroupFilter : public IFilter
+class T_DLLCLASS GroupFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
 public:
 	GroupFilter() = default;
 
-	explicit GroupFilter(IFilter* filter1);
+	explicit GroupFilter(IAudioFilter* filter1);
 
-	explicit GroupFilter(IFilter* filter1, IFilter* filter2);
+	explicit GroupFilter(IAudioFilter* filter1, IAudioFilter* filter2);
 
-	explicit GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3);
+	explicit GroupFilter(IAudioFilter* filter1, IAudioFilter* filter2, IAudioFilter* filter3);
 
-	void addFilter(IFilter* filter);
+	void addFilter(IAudioFilter* filter);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	RefArray< IFilter > m_filters;
+	RefArray< IAudioFilter > m_filters;
 };
 
 }

@@ -39,7 +39,7 @@ public:
 
 	virtual double getDuration() const override final;
 
-	virtual bool getBlock(SoundBlock& outSoundBlock) override final;
+	virtual bool getBlock(AudioBlock& outBlock) override final;
 
 	virtual void rewind() override final;
 

@@ -48,7 +48,7 @@ public:
 
 	virtual double getDuration() const = 0;
 
-	virtual bool getBlock(SoundBlock& outBlock) = 0;
+	virtual bool getBlock(AudioBlock& outBlock) = 0;
 
 	virtual void rewind() = 0;
 };

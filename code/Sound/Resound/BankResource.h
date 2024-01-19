@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Sound/ISoundResource.h"
+#include "Sound/IAudioResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class IGrainData;
 /*! Bank sound resource.
  * \ingroup Sound
  */
-class T_DLLCLASS BankResource : public ISoundResource
+class T_DLLCLASS BankResource : public IAudioResource
 {
 	T_RTTI_CLASS;
 

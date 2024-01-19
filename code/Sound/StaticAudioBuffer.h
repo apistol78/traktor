@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Misc/AutoPtr.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,15 +22,15 @@
 namespace traktor::sound
 {
 
-/*! Static sound buffer.
+/*! Static audio buffer.
  * \ingroup Sound
  */
-class T_DLLCLASS StaticSoundBuffer : public ISoundBuffer
+class T_DLLCLASS StaticAudioBuffer : public IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual ~StaticSoundBuffer();
+	virtual ~StaticAudioBuffer();
 
 	bool create(uint32_t sampleRate, uint32_t samplesCount, uint32_t channelsCount);
 
@@ -38,9 +38,9 @@ public:
 
 	int16_t* getSamplesData(uint32_t channel);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
 private:
 	int32_t m_sampleRate = 0;

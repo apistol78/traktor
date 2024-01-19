@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,16 +26,16 @@ namespace traktor
 /*! Ring modulation filter.
  * \ingroup Sound
  */
-class T_DLLCLASS RingModulationFilter : public IFilter
+class T_DLLCLASS RingModulationFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
 public:
 	RingModulationFilter(uint32_t sampleRate = 44100, uint32_t ringFrequency = 2500);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

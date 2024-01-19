@@ -10,7 +10,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,22 +27,22 @@ namespace traktor
 
 class IGrain;
 
-class T_DLLCLASS BankBuffer : public ISoundBuffer
+class T_DLLCLASS BankBuffer : public IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
 	BankBuffer(const RefArray< IGrain >& grains);
 
-	void updateCursor(ISoundBufferCursor* cursor) const;
+	void updateCursor(IAudioBufferCursor* cursor) const;
 
-	const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const;
+	const IGrain* getCurrentGrain(const IAudioBufferCursor* cursor) const;
 
-	void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const;
+	void getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const;
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
 private:
 	RefArray< IGrain > m_grains;

@@ -19,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-struct CombFilterInstance : public RefCountImpl< IFilterInstance >
+struct CombFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	AlignedVector< float > m_history[2];
 	float m_last[2];
@@ -36,7 +36,7 @@ struct CombFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.CombFilter", 0, CombFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.CombFilter", 0, CombFilter, IAudioFilter)
 
 CombFilter::CombFilter(uint32_t samplesLength, float feedback, float damp)
 :	m_samplesLength(samplesLength)
@@ -46,7 +46,7 @@ CombFilter::CombFilter(uint32_t samplesLength, float feedback, float damp)
 
 }
 
-Ref< IFilterInstance > CombFilter::createInstance() const
+Ref< IAudioFilterInstance > CombFilter::createInstance() const
 {
 	Ref< CombFilterInstance > instance = new CombFilterInstance();
 
@@ -62,7 +62,7 @@ Ref< IFilterInstance > CombFilter::createInstance() const
 	return instance;
 }
 
-void CombFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void CombFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	CombFilterInstance* cfi = static_cast< CombFilterInstance* >(instance);
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)

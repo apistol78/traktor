@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "Sound/ISoundResource.h"
+#include "Sound/IAudioResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ namespace traktor::sound
 class Graph;
 
 /*! \ingroup Sound */
-class T_DLLCLASS GraphResource : public ISoundResource
+class T_DLLCLASS GraphResource : public IAudioResource
 {
 	T_RTTI_CLASS;
 

@@ -11,7 +11,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/EnvelopeGrain.h"
 
 namespace traktor::sound
@@ -21,12 +21,12 @@ namespace traktor::sound
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
-struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct EnvelopeGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	handle_t m_id;
 	float m_parameter;
 	float m_lastP;
-	RefArray< ISoundBufferCursor > m_cursors;
+	RefArray< IAudioBufferCursor > m_cursors;
 	float* m_outputSamples[SbcMaxChannelCount];
 
 	EnvelopeGrainCursor()
@@ -75,7 +75,7 @@ EnvelopeGrain::EnvelopeGrain(handle_t id, const AlignedVector< Grain >& grains, 
 	m_envelope.addKey(1.0f, levels[2]);
 }
 
-Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
+Ref< IAudioBufferCursor > EnvelopeGrain::createCursor() const
 {
 	if (m_grains.empty())
 		return nullptr;
@@ -106,19 +106,19 @@ Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
 	return cursor;
 }
 
-void EnvelopeGrain::updateCursor(ISoundBufferCursor* cursor) const
+void EnvelopeGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 		m_grains[i].grain->updateCursor(envelopeCursor->m_cursors[i]);
 }
 
-const IGrain* EnvelopeGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* EnvelopeGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void EnvelopeGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const EnvelopeGrainCursor* envelopeCursor = static_cast< const EnvelopeGrainCursor* >(cursor);
 	T_ASSERT(envelopeCursor);
@@ -161,7 +161,7 @@ void EnvelopeGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< 
 	}
 }
 
-bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool EnvelopeGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	T_ASSERT(envelopeCursor);
@@ -205,7 +205,7 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixe
 		if (v < FUZZY_EPSILON)
 			continue;
 
-		SoundBlock soundBlock = { { nullptr }, outBlock.samplesCount, 0, 0 };
+		AudioBlock soundBlock = { { nullptr }, outBlock.samplesCount, 0, 0 };
 		if (m_grains[i].grain->getBlock(
 			envelopeCursor->m_cursors[i],
 			mixer,

@@ -24,8 +24,8 @@
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptFactory.h"
+#include "Sound/AudioResourceFactory.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundFactory.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
@@ -177,7 +177,7 @@ bool GraphEditor::create(ui::Container* parent)
 
 	// Create the resource manager.
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
-	m_resourceManager->addFactory(new SoundFactory());
+	m_resourceManager->addFactory(new AudioResourceFactory());
 	m_resourceManager->addFactory(new script::ScriptFactory(scriptManager));
 
 	updateView();

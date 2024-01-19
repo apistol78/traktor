@@ -15,8 +15,8 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Resource/ResourceManager.h"
+#include "Sound/AudioResourceFactory.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundFactory.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Sound/Player/ISoundPlayer.h"
 #include "Sound/Resound/BankBuffer.h"
@@ -191,7 +191,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_soundPlayer = m_editor->getStoreObject< ISoundPlayer >(L"SoundPlayer");
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
-	m_resourceManager->addFactory(new SoundFactory());
+	m_resourceManager->addFactory(new AudioResourceFactory());
 
 	updateBankControl();
 	updateProperties();
@@ -502,7 +502,7 @@ void BankAssetEditor::eventGrainPropertiesChange(ui::ContentChangeEvent* event)
 	// without interference otherwise filter instances will be incorrect.
 	if (m_soundHandle && m_bankBuffer)
 	{
-		ISoundBufferCursor* cursor = m_soundHandle->getCursor();
+		IAudioBufferCursor* cursor = m_soundHandle->getCursor();
 		if (cursor)
 			m_bankBuffer->updateCursor(cursor);
 	}
@@ -520,7 +520,7 @@ void BankAssetEditor::eventGrainViewChange(ui::ContentChangeEvent* event)
 	// without interference otherwise filter instances will be incorrect.
 	if (m_soundHandle && m_bankBuffer)
 	{
-		ISoundBufferCursor* cursor = m_soundHandle->getCursor();
+		IAudioBufferCursor* cursor = m_soundHandle->getCursor();
 		if (cursor)
 			m_bankBuffer->updateCursor(cursor);
 	}
@@ -564,7 +564,7 @@ void BankAssetEditor::eventTimer(ui::TimerEvent* event)
 
 	if (m_bankBuffer && m_soundHandle->isPlaying())
 	{
-		ISoundBufferCursor* cursor = m_soundHandle->getCursor();
+		IAudioBufferCursor* cursor = m_soundHandle->getCursor();
 		if (cursor)
 		{
 			RefArray< const IGrain > activeGrains;

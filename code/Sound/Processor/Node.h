@@ -35,9 +35,9 @@ class IResourceManager;
 class GraphEvaluator;
 class IAudioMixer;
 class InputPin;
-class ISoundBufferCursor;
+class IAudioBufferCursor;
 class OutputPin;
-struct SoundBlock;
+struct AudioBlock;
 
 /*! Node instance.
  */
@@ -136,15 +136,15 @@ public:
 
 	/*! \brief
 	 */
-	virtual Ref< ISoundBufferCursor > createCursor() const = 0;
+	virtual Ref< IAudioBufferCursor > createCursor() const = 0;
 
 	/*! \brief
 	 */
-	virtual bool getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const = 0;
+	virtual bool getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const = 0;
 
 	/*! \brief
 	 */
-	virtual bool getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const = 0;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const = 0;
 
 	/*! \brief
 	 */

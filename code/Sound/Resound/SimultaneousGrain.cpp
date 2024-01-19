@@ -10,7 +10,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/SimultaneousGrain.h"
 
 namespace traktor
@@ -22,9 +22,9 @@ namespace traktor
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
-struct SimultaneousGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct SimultaneousGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
-	RefArray< ISoundBufferCursor > m_grainCursors;
+	RefArray< IAudioBufferCursor > m_grainCursors;
 	float* m_outputSamples[SbcMaxChannelCount];
 
 	SimultaneousGrainCursor()
@@ -39,19 +39,19 @@ struct SimultaneousGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
-		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
+		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat() override final
 	{
-		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
+		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->disableRepeat();
 	}
 
 	virtual void reset() override final
 	{
-		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
+		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
 			(*i)->reset();
 	}
 };
@@ -65,7 +65,7 @@ SimultaneousGrain::SimultaneousGrain(const RefArray< IGrain >& grains)
 {
 }
 
-Ref< ISoundBufferCursor > SimultaneousGrain::createCursor() const
+Ref< IAudioBufferCursor > SimultaneousGrain::createCursor() const
 {
 	if (m_grains.empty())
 		return 0;
@@ -73,7 +73,7 @@ Ref< ISoundBufferCursor > SimultaneousGrain::createCursor() const
 	Ref< SimultaneousGrainCursor > cursor = new SimultaneousGrainCursor();
 	for (RefArray< IGrain >::const_iterator i = m_grains.begin(); i != m_grains.end(); ++i)
 	{
-		Ref< ISoundBufferCursor > childCursor = (*i)->createCursor();
+		Ref< IAudioBufferCursor > childCursor = (*i)->createCursor();
 		if (!childCursor)
 			return 0;
 
@@ -92,19 +92,19 @@ Ref< ISoundBufferCursor > SimultaneousGrain::createCursor() const
 	return cursor;
 }
 
-void SimultaneousGrain::updateCursor(ISoundBufferCursor* cursor) const
+void SimultaneousGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	SimultaneousGrainCursor* simultaneousCursor = static_cast< SimultaneousGrainCursor* >(cursor);
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 		m_grains[i]->updateCursor(simultaneousCursor->m_grainCursors[i]);
 }
 
-const IGrain* SimultaneousGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* SimultaneousGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	return this;
 }
 
-void SimultaneousGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void SimultaneousGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const SimultaneousGrainCursor* simultaneousCursor = static_cast< const SimultaneousGrainCursor* >(cursor);
 
@@ -114,14 +114,14 @@ void SimultaneousGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArr
 		m_grains[i]->getActiveGrains(simultaneousCursor->m_grainCursors[i], outActiveGrains);
 }
 
-bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool SimultaneousGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SimultaneousGrainCursor* simultaneousCursor = static_cast< SimultaneousGrainCursor* >(cursor);
 
 	bool playing = false;
 	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		SoundBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
+		AudioBlock soundBlock = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 		if (m_grains[i]->getBlock(
 			simultaneousCursor->m_grainCursors[i],

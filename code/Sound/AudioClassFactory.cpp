@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,13 +12,13 @@
 #include "Core/Class/Boxes/BoxedVector4.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Sound/AudioChannel.h"
+#include "Sound/AudioClassFactory.h"
 #include "Sound/AudioSystem.h"
-#include "Sound/BoxedSoundBlock.h"
+#include "Sound/BoxedAudioBlock.h"
 #include "Sound/IAudioDriver.h"
+#include "Sound/IAudioFilter.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/IFilter.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundClassFactory.h"
 #include "Sound/Filters/CombFilter.h"
 #include "Sound/Filters/DitherFilter.h"
 #include "Sound/Filters/EqualizerFilter.h"
@@ -56,20 +56,20 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundClassFactory", 0, SoundClassFactory, IRuntimeClassFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioClassFactory", 0, AudioClassFactory, IRuntimeClassFactory)
 
-void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
+void AudioClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
-	auto classSoundBlock = new AutoRuntimeClass< BoxedSoundBlock >();
-	classSoundBlock->addProperty("samplesCount", &BoxedSoundBlock::getSamplesCount);
-	classSoundBlock->addProperty("sampleRate", &BoxedSoundBlock::getSampleRate);
-	classSoundBlock->addProperty("maxChannel", &BoxedSoundBlock::getMaxChannel);
-	classSoundBlock->addMethod("get", &BoxedSoundBlock::get);
-	classSoundBlock->addMethod("set", &BoxedSoundBlock::set);
-	registrar->registerClass(classSoundBlock);
+	auto classAudioBlock = new AutoRuntimeClass< BoxedAudioBlock >();
+	classAudioBlock->addProperty("samplesCount", &BoxedAudioBlock::getSamplesCount);
+	classAudioBlock->addProperty("sampleRate", &BoxedAudioBlock::getSampleRate);
+	classAudioBlock->addProperty("maxChannel", &BoxedAudioBlock::getMaxChannel);
+	classAudioBlock->addMethod("get", &BoxedAudioBlock::get);
+	classAudioBlock->addMethod("set", &BoxedAudioBlock::set);
+	registrar->registerClass(classAudioBlock);
 
 	auto classSound = new AutoRuntimeClass< Sound >();
-	classSound->addConstructor< ISoundBuffer*, handle_t, float, float >();
+	classSound->addConstructor< IAudioBuffer*, handle_t, float, float >();
 	classSound->addProperty("buffer", &Sound::getBuffer);
 	classSound->addProperty("category", &Sound::getCategory);
 	classSound->addProperty("gain", &Sound::getGain);
@@ -89,8 +89,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioChannel->addMethod("stop", &AudioChannel::stop);
 	registrar->registerClass(classAudioChannel);
 
-	auto classISoundBuffer = new AutoRuntimeClass< ISoundBuffer >();
-	registrar->registerClass(classISoundBuffer);
+	auto classIAudioBuffer = new AutoRuntimeClass< IAudioBuffer >();
+	registrar->registerClass(classIAudioBuffer);
 
 	auto classIAudioDriver = new AutoRuntimeClass< IAudioDriver >();
 	registrar->registerClass(classIAudioDriver);
@@ -98,8 +98,8 @@ void SoundClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classIAudioMixer = new AutoRuntimeClass< IAudioMixer >();
 	registrar->registerClass(classIAudioMixer);
 
-	auto classIFilter = new AutoRuntimeClass< IFilter >();
-	registrar->registerClass(classIFilter);
+	auto classIAudioFilter = new AutoRuntimeClass< IAudioFilter >();
+	registrar->registerClass(classIAudioFilter);
 
 	auto classSurroundEnvironment = new AutoRuntimeClass< SurroundEnvironment >();
 	classSurroundEnvironment->addProperty("maxDistance", &SurroundEnvironment::setMaxDistance, &SurroundEnvironment::getMaxDistance);

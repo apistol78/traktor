@@ -44,7 +44,7 @@ AudioSystem::AudioSystem(IAudioDriver* driver)
 {
 }
 
-bool AudioSystem::create(const SoundSystemCreateDesc& desc)
+bool AudioSystem::create(const AudioSystemCreateDesc& desc)
 {
 	T_ASSERT(m_driver);
 
@@ -265,7 +265,7 @@ void AudioSystem::getThreadPerformances(double& outMixerTime) const
 
 void AudioSystem::threadMixer()
 {
-	SoundBlock frameBlock;
+	AudioBlock frameBlock;
 	Timer timerMixer;
 	uint32_t channelsCount;
 

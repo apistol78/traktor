@@ -172,7 +172,7 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 		TssStreamEncoder ose;
 		ose.create(fos);
 
-		SoundBlock sb = { 0 };
+		AudioBlock sb = { 0 };
 		sb.samples[0] = fd.ptr();
 		sb.samplesCount = fd.size();
 		sb.sampleRate = uint32_t(8287 * 6.726800183);
@@ -180,12 +180,12 @@ bool ImportMod::import(const Path& fileName, const Path& assetPath, const Path& 
 
 		// Strech samples, to give room for some filtering.
 		TimeStretchFilter stretchFlter(4.0f);
-		Ref< IFilterInstance > stretchFilterInstance = stretchFlter.createInstance();
+		Ref< IAudioFilterInstance > stretchFilterInstance = stretchFlter.createInstance();
 		stretchFlter.apply(stretchFilterInstance, sb);
 		sb.sampleRate *= 4;
 
 		LowPassFilter lowPassFilter(8287.0f);
-		Ref< IFilterInstance > lowPassFilterInstance = lowPassFilter.createInstance();
+		Ref< IAudioFilterInstance > lowPassFilterInstance = lowPassFilter.createInstance();
 		lowPassFilter.apply(lowPassFilterInstance, sb);
 
 		// Encode sound block.

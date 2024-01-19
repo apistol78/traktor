@@ -23,7 +23,7 @@ class Bitmap;
 	namespace sound
 	{
 
-class ISoundBuffer;
+class IAudioBuffer;
 
 class WaveformControl : public ui::Widget
 {
@@ -32,10 +32,10 @@ class WaveformControl : public ui::Widget
 public:
 	bool create(ui::Widget* parent);
 
-	void setBuffer(const ISoundBuffer* buffer);
+	void setBuffer(const IAudioBuffer* buffer);
 
 private:
-	Ref< const ISoundBuffer > m_buffer;
+	Ref< const IAudioBuffer > m_buffer;
 	Ref< ui::Bitmap > m_waveform;
 
 	void render(int32_t width, int32_t height, float start);

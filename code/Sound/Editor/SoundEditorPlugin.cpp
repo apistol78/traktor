@@ -88,7 +88,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	Ref< IAudioDriver > audioDriver = dynamic_type_cast< IAudioDriver* >(audioDriverType->createInstance());
 	T_ASSERT(audioDriver);
 
-	SoundSystemCreateDesc desc;
+	AudioSystemCreateDesc desc;
 	desc.channels = settings->getProperty< int32_t >(L"Editor.SoundVirtualChannels", 8);
 	desc.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Editor.SoundSampleRate", 44100);
 	desc.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Editor.SoundBitsPerSample", 16);

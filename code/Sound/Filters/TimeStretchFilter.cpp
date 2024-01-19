@@ -28,7 +28,7 @@ namespace traktor
 		namespace
 		{
 
-struct TimeStretchFilterInstance : public RefCountImpl< IFilterInstance >
+struct TimeStretchFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float* m_samples[SbcMaxChannelCount];
 
@@ -55,19 +55,19 @@ struct TimeStretchFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.TimeStretchFilter", 0, TimeStretchFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.TimeStretchFilter", 0, TimeStretchFilter, IAudioFilter)
 
 TimeStretchFilter::TimeStretchFilter(float factor)
 :	m_factor(factor)
 {
 }
 
-Ref< IFilterInstance > TimeStretchFilter::createInstance() const
+Ref< IAudioFilterInstance > TimeStretchFilter::createInstance() const
 {
 	return new TimeStretchFilterInstance();
 }
 
-void TimeStretchFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void TimeStretchFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	TimeStretchFilterInstance* fi = static_cast< TimeStretchFilterInstance* >(instance);
 

@@ -28,7 +28,7 @@ class Vector4;
 namespace traktor::sound
 {
 
-class ISoundBufferCursor;
+class IAudioBufferCursor;
 
 class T_DLLCLASS ISoundHandle : public Object
 {
@@ -49,7 +49,7 @@ public:
 
 	virtual void setParameter(int32_t id, float parameter) = 0;
 
-	virtual ISoundBufferCursor* getCursor() = 0;
+	virtual IAudioBufferCursor* getCursor() = 0;
 };
 
 }

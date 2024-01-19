@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -27,16 +27,16 @@ namespace traktor
 /*! Normalization filter.
  * \ingroup Sound
  */
-class T_DLLCLASS NormalizationFilter : public IFilter
+class T_DLLCLASS NormalizationFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
 public:
 	NormalizationFilter(float targetEnergy = 1.0f, float energyThreshold = 0.2f, float attackRate = 0.1f);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

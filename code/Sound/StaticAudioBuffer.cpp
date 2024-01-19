@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
-#include "Sound/StaticSoundBuffer.h"
+#include "Sound/StaticAudioBuffer.h"
 
 namespace traktor::sound
 {
@@ -73,20 +73,20 @@ private:
 	}
 };
 
-struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
+struct StaticAudioBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	uint32_t m_channelsCount;
 	uint32_t m_position;
 	float* m_samples[SbcMaxChannelCount];
 
-	StaticSoundBufferCursor(uint32_t channelsCount)
+	StaticAudioBufferCursor(uint32_t channelsCount)
 	:	m_channelsCount(channelsCount)
 	,	m_position(0)
 	{
 		std::memset(m_samples, 0, sizeof(m_samples));
 	}
 
-	virtual ~StaticSoundBufferCursor()
+	virtual ~StaticAudioBufferCursor()
 	{
 		StaticBufferHeap& heap = StaticBufferHeap::getInstance();
 		for (uint32_t i = 0; i < sizeof_array(m_samples); ++i)
@@ -126,14 +126,14 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StaticSoundBuffer", StaticSoundBuffer, ISoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StaticAudioBuffer", StaticAudioBuffer, IAudioBuffer)
 
-StaticSoundBuffer::~StaticSoundBuffer()
+StaticAudioBuffer::~StaticAudioBuffer()
 {
 	destroy();
 }
 
-bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint32_t channelsCount)
+bool StaticAudioBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint32_t channelsCount)
 {
 	m_sampleRate = sampleRate;
 	m_samplesCount = samplesCount;
@@ -149,29 +149,29 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 	return true;
 }
 
-void StaticSoundBuffer::destroy()
+void StaticAudioBuffer::destroy()
 {
 	for (int32_t i = 0; i < m_channelsCount; ++i)
 		m_samples[i].release();
 }
 
-int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
+int16_t* StaticAudioBuffer::getSamplesData(uint32_t channel)
 {
 	return m_samples[channel].ptr();
 }
 
-Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
+Ref< IAudioBufferCursor > StaticAudioBuffer::createCursor() const
 {
-	Ref< StaticSoundBufferCursor > cursor = new StaticSoundBufferCursor(m_channelsCount);
+	Ref< StaticAudioBufferCursor > cursor = new StaticAudioBufferCursor(m_channelsCount);
 	if (cursor->create())
 		return cursor;
 	else
 		return nullptr;
 }
 
-bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool StaticAudioBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
-	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
+	StaticAudioBufferCursor* ssbc = static_cast< StaticAudioBufferCursor* >(cursor);
 
 	int32_t position = ssbc->m_position;
 	if (position >= m_samplesCount)

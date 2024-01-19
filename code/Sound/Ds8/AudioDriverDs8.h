@@ -39,7 +39,7 @@ public:
 
 	virtual void wait() override final;
 
-	virtual void submit(const SoundBlock& soundBlock) override final;
+	virtual void submit(const AudioBlock& block) override final;
 
 private:
 	ComRef< IDirectSound8 > m_ds;

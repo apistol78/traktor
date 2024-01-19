@@ -53,27 +53,27 @@ double TssStreamDecoder::getDuration() const
 	return 0.0;
 }
 
-bool TssStreamDecoder::getBlock(SoundBlock& outSoundBlock)
+bool TssStreamDecoder::getBlock(AudioBlock& outBlock)
 {
 	if (m_stream->available() <= 0)
 		return false;
 
 	Reader rd(m_stream);
-	rd >> outSoundBlock.samplesCount;
-	rd >> outSoundBlock.sampleRate;
-	rd >> outSoundBlock.maxChannel;
+	rd >> outBlock.samplesCount;
+	rd >> outBlock.sampleRate;
+	rd >> outBlock.maxChannel;
 
-	T_FATAL_ASSERT(outSoundBlock.samplesCount <= 65535);
+	T_FATAL_ASSERT(outBlock.samplesCount <= 65535);
 
 	uint16_t channelFlags = 0;
 	rd >> channelFlags;
 
-	for (uint32_t i = 0; i < outSoundBlock.maxChannel; ++i)
+	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
 		if ((channelFlags & (1 << i)) != 0)
 		{
-			rd.read(m_samplesBuffer[i], outSoundBlock.samplesCount, sizeof(float));
-			outSoundBlock.samples[i] = m_samplesBuffer[i];
+			rd.read(m_samplesBuffer[i], outBlock.samplesCount, sizeof(float));
+			outBlock.samples[i] = m_samplesBuffer[i];
 		}
 	}
 

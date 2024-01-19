@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -29,7 +29,7 @@ class SurroundEnvironment;
 /*! Surround filter.
  * \ingroup Sound
  */
-class T_DLLCLASS SurroundFilter : public IFilter
+class T_DLLCLASS SurroundFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
@@ -40,9 +40,9 @@ public:
 
 	void setMaxDistance(float maxDistance);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -51,9 +51,9 @@ private:
 	Vector4 m_speakerPosition;
 	Scalar m_maxDistance;
 
-	void applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const;
+	void applyStereo(IAudioFilterInstance* instance, AudioBlock& outBlock) const;
 
-	void applyFull(IFilterInstance* instance, SoundBlock& outBlock) const;
+	void applyFull(IAudioFilterInstance* instance, AudioBlock& outBlock) const;
 };
 
 	}

@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -25,16 +25,16 @@ namespace traktor::sound
 /*! Dither filter.
  * \ingroup Sound
  */
-class T_DLLCLASS DitherFilter : public IFilter
+class T_DLLCLASS DitherFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
 public:
 	explicit DitherFilter(uint32_t bitsPerSample = 16);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

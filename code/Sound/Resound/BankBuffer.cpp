@@ -18,10 +18,10 @@ namespace traktor
 		namespace
 		{
 
-struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
+struct BankBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	int32_t m_grainIndex;
-	Ref< ISoundBufferCursor > m_grainCursor;
+	Ref< IAudioBufferCursor > m_grainCursor;
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
@@ -45,14 +45,14 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankBuffer", BankBuffer, ISoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankBuffer", BankBuffer, IAudioBuffer)
 
 BankBuffer::BankBuffer(const RefArray< IGrain >& grains)
 :	m_grains(grains)
 {
 }
 
-void BankBuffer::updateCursor(ISoundBufferCursor* cursor) const
+void BankBuffer::updateCursor(IAudioBufferCursor* cursor) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
@@ -60,7 +60,7 @@ void BankBuffer::updateCursor(ISoundBufferCursor* cursor) const
 	currentGrain->updateCursor(bankCursor->m_grainCursor);
 }
 
-const IGrain* BankBuffer::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* BankBuffer::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
@@ -68,7 +68,7 @@ const IGrain* BankBuffer::getCurrentGrain(const ISoundBufferCursor* cursor) cons
 	return currentGrain->getCurrentGrain(bankCursor->m_grainCursor);
 }
 
-void BankBuffer::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void BankBuffer::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
@@ -79,7 +79,7 @@ void BankBuffer::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< con
 	}
 }
 
-Ref< ISoundBufferCursor > BankBuffer::createCursor() const
+Ref< IAudioBufferCursor > BankBuffer::createCursor() const
 {
 	if (m_grains.empty())
 		return 0;
@@ -92,7 +92,7 @@ Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 	return bankCursor->m_grainCursor ? bankCursor : 0;
 }
 
-bool BankBuffer::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool BankBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

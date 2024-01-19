@@ -37,7 +37,7 @@ class T_DLLCLASS AudioDriverWriteOut : public IAudioDriver
 	T_RTTI_CLASS;
 
 public:
-	AudioDriverWriteOut(IAudioDriver* childDriver = nullptr);
+	explicit AudioDriverWriteOut(IAudioDriver* childDriver = nullptr);
 
 	virtual bool create(const SystemApplication& sysapp, const AudioDriverCreateDesc& desc, Ref< IAudioMixer >& outMixer) override final;
 
@@ -45,7 +45,7 @@ public:
 
 	virtual void wait() override final;
 
-	virtual void submit(const SoundBlock& soundBlock) override final;
+	virtual void submit(const AudioBlock& block) override final;
 
 private:
 	Ref< IAudioDriver > m_childDriver;

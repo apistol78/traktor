@@ -113,7 +113,7 @@ public:
 		return 0.0;
 	}
 
-	bool getBlock(SoundBlock& outSoundBlock)
+	bool getBlock(AudioBlock& outBlock)
 	{
 		// Discard consumed samples; those are lingering in the decoded buffer since last call.
 		if (m_consumedCount)
@@ -126,7 +126,7 @@ public:
 		}
 
 		// Read and decode until desired amount of samples have been decoded.
-		while (m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0)
+		while (m_decodedCount < outBlock.samplesCount || m_sampleRate == 0)
 		{
 			int64_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
 			if (nread <= 0)
@@ -178,15 +178,15 @@ public:
 			}
 		}
 
-		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
-		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
-		outSoundBlock.samplesCount = alignDown(std::min(m_decodedCount, outSoundBlock.samplesCount), 4);
-		outSoundBlock.sampleRate = uint32_t(m_sampleRate);
-		outSoundBlock.maxChannel = m_channels;
+		outBlock.samples[SbcLeft] = m_decoded[SbcLeft];
+		outBlock.samples[SbcRight] = m_decoded[SbcRight];
+		outBlock.samplesCount = alignDown(std::min(m_decodedCount, outBlock.samplesCount), 4);
+		outBlock.sampleRate = uint32_t(m_sampleRate);
+		outBlock.maxChannel = m_channels;
 
-		m_consumedCount = outSoundBlock.samplesCount;
+		m_consumedCount = outBlock.samplesCount;
 
-		if (!outSoundBlock.samplesCount || !outSoundBlock.sampleRate)
+		if (!outBlock.samplesCount || !outBlock.sampleRate)
 			return false;
 
 		return true;
@@ -237,10 +237,10 @@ double Mp3StreamDecoder::getDuration() const
 	return 0.0;
 }
 
-bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
+bool Mp3StreamDecoder::getBlock(AudioBlock& outBlock)
 {
 	// T_ASSERT(m_decoderImpl);
-	// return m_decoderImpl->getBlock(outSoundBlock);
+	// return m_decoderImpl->getBlock(outBlock);
 	return false;
 }
 

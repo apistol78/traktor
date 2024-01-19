@@ -14,7 +14,7 @@ namespace traktor::sound
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.Sound", Sound, Object)
 
 Sound::Sound(
-	ISoundBuffer* buffer,
+	IAudioBuffer* buffer,
 	handle_t category,
 	float gain,
 	float range

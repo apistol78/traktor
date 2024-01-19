@@ -26,7 +26,7 @@ namespace traktor
 	namespace sound
 	{
 
-class IFilter;
+class IAudioFilter;
 class Sound;
 
 /*! \brief
@@ -39,25 +39,25 @@ class T_DLLCLASS PlayGrain : public IGrain
 public:
 	PlayGrain(
 		const resource::Proxy< Sound >& sound,
-		const RefArray< IFilter >& filters,
+		const RefArray< IAudioFilter >& filters,
 		const Range< float >& gain,
 		const Range< float >& pitch,
 		bool repeat
 	);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual void updateCursor(ISoundBufferCursor* cursor) const override final;
+	virtual void updateCursor(IAudioBufferCursor* cursor) const override final;
 
-	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const override final;
+	virtual const IGrain* getCurrentGrain(const IAudioBufferCursor* cursor) const override final;
 
-	virtual void getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const override final;
+	virtual void getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
 private:
 	resource::Proxy< Sound > m_sound;
-	RefArray< IFilter > m_filters;
+	RefArray< IAudioFilter > m_filters;
 	Range< float > m_gain;
 	Range< float > m_pitch;
 	bool m_repeat;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,15 +15,15 @@
 #include "Database/Instance.h"
 #include "Sound/IStreamDecoder.h"
 #include "Sound/Sound.h"
-#include "Sound/StreamSoundBuffer.h"
-#include "Sound/StreamSoundResource.h"
+#include "Sound/StreamAudioBuffer.h"
+#include "Sound/StreamAudioResource.h"
 
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 8, StreamSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamAudioResource", 8, StreamAudioResource, IAudioResource)
 
-Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
+Ref< Sound > StreamAudioResource::createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const
 {
 	Ref< IStream > stream = resourceInstance->readData(L"Data");
 	if (!stream)
@@ -58,7 +58,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		return nullptr;
 	}
 
-	Ref< StreamSoundBuffer > soundBuffer = new StreamSoundBuffer();
+	Ref< StreamAudioBuffer > soundBuffer = new StreamAudioBuffer();
 	if (!soundBuffer->create(streamDecoder))
 	{
 		log::error << L"Unable to create sound, unable to create stream sound buffer." << Endl;
@@ -73,7 +73,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 	);
 }
 
-void StreamSoundResource::serialize(ISerializer& s)
+void StreamAudioResource::serialize(ISerializer& s)
 {
 	T_FATAL_ASSERT (s.getVersion() >= 8);
 	s >> MemberType(L"decoderType", m_decoderType);

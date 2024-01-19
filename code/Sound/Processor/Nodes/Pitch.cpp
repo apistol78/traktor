@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Pitch.h"
 
@@ -30,7 +30,7 @@ const ImmutableNode::OutputPinDesc c_Pitch_o[] =
 	{ 0 }
 };
 
-class PitchCursor : public RefCountImpl< ISoundBufferCursor >
+class PitchCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) override final {}
@@ -54,17 +54,17 @@ bool Pitch::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Pitch::createCursor() const
+Ref< IAudioBufferCursor > Pitch::createCursor() const
 {
 	return new PitchCursor();
 }
 
-bool Pitch::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Pitch::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	return false;
 }
 
-bool Pitch::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Pitch::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	float adjust;
 	if (!evaluator->evaluateScalar(getInputPin(1), adjust))

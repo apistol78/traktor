@@ -10,8 +10,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/MemberIdProxy.h"
-#include "Sound/BoxedSoundBlock.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/BoxedAudioBlock.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Custom.h"
 
@@ -32,7 +32,7 @@ const ImmutableNode::OutputPinDesc c_Custom_o[] =
 	{ 0 }
 };
 
-class CustomCursor : public RefCountImpl< ISoundBufferCursor >
+class CustomCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	Ref< ITypedObject > m_object;
@@ -64,7 +64,7 @@ bool Custom::bind(resource::IResourceManager* resourceManager)
 	return resourceManager->bind(m_class);
 }
 
-Ref< ISoundBufferCursor > Custom::createCursor() const
+Ref< IAudioBufferCursor > Custom::createCursor() const
 {
 	if (!m_class)
 		return nullptr;
@@ -79,12 +79,12 @@ Ref< ISoundBufferCursor > Custom::createCursor() const
 	return sourceCursor;
 }
 
-bool Custom::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Custom::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	return false;
 }
 
-bool Custom::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Custom::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	CustomCursor* customCursor = static_cast< CustomCursor* >(cursor);
 
@@ -93,7 +93,7 @@ bool Custom::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 
 	const Any argv[] =
 	{
-		CastAny< SoundBlock& >::set(outBlock)
+		CastAny< AudioBlock& >::set(outBlock)
 	};
 
 	const IRuntimeDispatch* apply = findRuntimeClassMethod(m_class, "apply");

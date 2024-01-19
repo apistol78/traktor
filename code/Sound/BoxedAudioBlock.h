@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,12 +26,12 @@ namespace traktor::sound
 /*!
  * \ingroup Sound
  */
-class T_DLLCLASS BoxedSoundBlock : public Boxed
+class T_DLLCLASS BoxedAudioBlock : public Boxed
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit BoxedSoundBlock(SoundBlock& value);
+	explicit BoxedAudioBlock(AudioBlock& value);
 
 	float get(uint32_t channel, uint32_t index) const;
 
@@ -43,7 +43,7 @@ public:
 
 	uint32_t getMaxChannel() const { return m_value.maxChannel; }
 
-	SoundBlock& unbox() const { return m_value; }
+	AudioBlock& unbox() const { return m_value; }
 
 	virtual std::wstring toString() const override final;
 
@@ -52,7 +52,7 @@ public:
 	void operator delete (void* ptr);
 
 private:
-	SoundBlock& m_value;
+	AudioBlock& m_value;
 };
 
 }
@@ -64,19 +64,19 @@ namespace traktor
  * \ingroup Sound
  */
 template < >
-struct CastAny < sound::SoundBlock&, false >
+struct CastAny < sound::AudioBlock&, false >
 {
 	static std::wstring typeName() {
-		return L"traktor.sound.SoundBlock";
+		return L"traktor.sound.AudioBlock";
 	}
 	static bool accept(const Any& value) {
-		return value.isObject() && is_a< sound::BoxedSoundBlock >(value.getObjectUnsafe());
+		return value.isObject() && is_a< sound::BoxedAudioBlock >(value.getObjectUnsafe());
 	}
-	static Any set(sound::SoundBlock& value) {
-		return Any::fromObject(new sound::BoxedSoundBlock(value));
+	static Any set(sound::AudioBlock& value) {
+		return Any::fromObject(new sound::BoxedAudioBlock(value));
 	}
-	static sound::SoundBlock& get(const Any& value) {
-		return static_cast< sound::BoxedSoundBlock* >(value.getObject())->unbox();
+	static sound::AudioBlock& get(const Any& value) {
+		return static_cast< sound::BoxedAudioBlock* >(value.getObject())->unbox();
 	}
 };
 

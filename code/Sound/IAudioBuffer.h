@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,10 +25,10 @@ namespace traktor::sound
 
 class IAudioMixer;
 
-/*! Sound buffer cursor interface.
+/*! Audio buffer cursor interface.
  * \ingroup Sound
  */
-class T_DLLCLASS ISoundBufferCursor : public IRefCount
+class T_DLLCLASS IAudioBufferCursor : public IRefCount
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) = 0;
@@ -38,17 +38,17 @@ public:
 	virtual void reset() = 0;
 };
 
-/*! Sound buffer base class.
+/*! Audio buffer base class.
  * \ingroup Sound
  */
-class T_DLLCLASS ISoundBuffer : public Object
+class T_DLLCLASS IAudioBuffer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISoundBufferCursor > createCursor() const = 0;
+	virtual Ref< IAudioBufferCursor > createCursor() const = 0;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const = 0;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const = 0;
 };
 
 }

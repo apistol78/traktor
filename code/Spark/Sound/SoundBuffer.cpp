@@ -17,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-struct SoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
+struct SoundBufferCursor : public RefCountImpl< sound::IAudioBufferCursor >
 {
 	int32_t m_position;
 	AutoArrayPtr< float, AllocatorFree > m_samples[2];
@@ -45,19 +45,19 @@ struct SoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SoundBuffer", SoundBuffer, sound::ISoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SoundBuffer", SoundBuffer, sound::IAudioBuffer)
 
 SoundBuffer::SoundBuffer(const Sound* sound)
 :	m_sound(sound)
 {
 }
 
-Ref< sound::ISoundBufferCursor > SoundBuffer::createCursor() const
+Ref< sound::IAudioBufferCursor > SoundBuffer::createCursor() const
 {
 	return new SoundBufferCursor();
 }
 
-bool SoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const
+bool SoundBuffer::getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::AudioBlock& outBlock) const
 {
 	SoundBufferCursor* fsbc = static_cast< SoundBufferCursor* >(cursor);
 	T_ASSERT(fsbc);

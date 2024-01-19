@@ -15,7 +15,7 @@
 #include "Online/Impl/UserCache.h"
 #include "Online/Impl/VoiceChat.h"
 #include "Online/Provider/IVoiceChatProvider.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Sound.h"
 #include "Sound/Player/ISoundHandle.h"
 #include "Sound/Player/ISoundPlayer.h"
@@ -109,7 +109,7 @@ private:
 	uint32_t m_back;
 };
 
-class VoiceSoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
+class VoiceSoundBufferCursor : public RefCountImpl< sound::IAudioBufferCursor >
 {
 public:
 	enum { OutputSize = 128 };
@@ -133,7 +133,7 @@ struct CastSample
 	float operator () (int16_t v) const { return v / 32767.0f; }
 };
 
-class VoiceSoundBuffer : public sound::ISoundBuffer
+class VoiceSoundBuffer : public sound::IAudioBuffer
 {
 public:
 	VoiceSoundBuffer()
@@ -141,12 +141,12 @@ public:
 	{
 	}
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor() const
+	virtual Ref< sound::IAudioBufferCursor > createCursor() const
 	{
 		return new VoiceSoundBufferCursor();
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudioMixer* mixer, sound::AudioBlock& outBlock) const
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

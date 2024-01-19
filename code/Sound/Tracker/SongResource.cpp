@@ -19,7 +19,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongResource", 0, SongResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SongResource", 0, SongResource, IAudioResource)
 
 SongResource::SongResource()
 :	m_gain(0.0f)

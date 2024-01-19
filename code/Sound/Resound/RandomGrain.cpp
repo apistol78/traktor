@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <ctime>
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/RandomGrain.h"
 
 namespace traktor
@@ -17,10 +17,10 @@ namespace traktor
 		namespace
 		{
 
-struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct RandomGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
 	Ref< IGrain > m_grain;
-	Ref< ISoundBufferCursor > m_grainCursor;
+	Ref< IAudioBufferCursor > m_grainCursor;
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
@@ -56,7 +56,7 @@ RandomGrain::RandomGrain(
 {
 }
 
-Ref< ISoundBufferCursor > RandomGrain::createCursor() const
+Ref< IAudioBufferCursor > RandomGrain::createCursor() const
 {
 	if (m_grains.empty())
 		return 0;
@@ -78,19 +78,19 @@ Ref< ISoundBufferCursor > RandomGrain::createCursor() const
 	return cursor->m_grainCursor ? cursor : 0;
 }
 
-void RandomGrain::updateCursor(ISoundBufferCursor* cursor) const
+void RandomGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);
 	return randomCursor->m_grain->updateCursor(randomCursor->m_grainCursor);
 }
 
-const IGrain* RandomGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* RandomGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	const RandomGrainCursor* randomCursor = static_cast< const RandomGrainCursor* >(cursor);
 	return randomCursor->m_grain->getCurrentGrain(randomCursor->m_grainCursor);
 }
 
-void RandomGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void RandomGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const RandomGrainCursor* randomCursor = static_cast< const RandomGrainCursor* >(cursor);
 	T_ASSERT(randomCursor);
@@ -100,7 +100,7 @@ void RandomGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< co
 	randomCursor->m_grain->getActiveGrains(randomCursor->m_grainCursor, outActiveGrains);
 }
 
-bool RandomGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool RandomGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);
 	return randomCursor->m_grain->getBlock(

@@ -8,7 +8,7 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Timer/Timer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/TriggerGrain.h"
 
 namespace traktor
@@ -18,9 +18,9 @@ namespace traktor
 		namespace
 		{
 
-struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
+struct TriggerGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
-	Ref< ISoundBufferCursor > m_cursor;
+	Ref< IAudioBufferCursor > m_cursor;
 	handle_t m_id;
 	float m_position;
 	float m_rate;
@@ -88,7 +88,7 @@ TriggerGrain::TriggerGrain(
 {
 }
 
-Ref< ISoundBufferCursor > TriggerGrain::createCursor() const
+Ref< IAudioBufferCursor > TriggerGrain::createCursor() const
 {
 	if (!m_grain)
 		return 0;
@@ -103,14 +103,14 @@ Ref< ISoundBufferCursor > TriggerGrain::createCursor() const
 	return cursor;
 }
 
-void TriggerGrain::updateCursor(ISoundBufferCursor* cursor) const
+void TriggerGrain::updateCursor(IAudioBufferCursor* cursor) const
 {
 	TriggerGrainCursor* triggerCursor = static_cast< TriggerGrainCursor* >(cursor);
 	if (triggerCursor->m_cursor)
 		m_grain->updateCursor(triggerCursor->m_cursor);
 }
 
-const IGrain* TriggerGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+const IGrain* TriggerGrain::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
 	const TriggerGrainCursor* triggerCursor = static_cast< const TriggerGrainCursor* >(cursor);
 	if (triggerCursor->m_cursor)
@@ -119,7 +119,7 @@ const IGrain* TriggerGrain::getCurrentGrain(const ISoundBufferCursor* cursor) co
 		return this;
 }
 
-void TriggerGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
+void TriggerGrain::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
 	const TriggerGrainCursor* triggerCursor = static_cast< const TriggerGrainCursor* >(cursor);
 
@@ -129,7 +129,7 @@ void TriggerGrain::getActiveGrains(const ISoundBufferCursor* cursor, RefArray< c
 		m_grain->getActiveGrains(triggerCursor->m_cursor, outActiveGrains);
 }
 
-bool TriggerGrain::getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool TriggerGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	TriggerGrainCursor* triggerCursor = static_cast< TriggerGrainCursor* >(cursor);
 

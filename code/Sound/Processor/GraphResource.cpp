@@ -17,7 +17,7 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.GraphResource", 0, GraphResource, ISoundResource)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.GraphResource", 0, GraphResource, IAudioResource)
 
 GraphResource::GraphResource(
 	const std::wstring& category,

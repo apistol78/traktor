@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,16 +28,16 @@ class Graph;
 
 /*! GraphBuffer instance.
  */
-class T_DLLCLASS GraphBuffer : public ISoundBuffer
+class T_DLLCLASS GraphBuffer : public IAudioBuffer
 {
 	T_RTTI_CLASS;
 
 public:
 	GraphBuffer(const Graph* graph);
 
-	virtual Ref< ISoundBufferCursor > createCursor() const override final;
+	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, const IAudioMixer* mixer, SoundBlock& outBlock) const override final;
+	virtual bool getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const override final;
 
 private:
 	Ref< const Graph > m_graph;

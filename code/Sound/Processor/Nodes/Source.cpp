@@ -10,7 +10,7 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/MemberIdProxy.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Sound.h"
 #include "Sound/Processor/Nodes/Source.h"
 
@@ -25,11 +25,11 @@ const ImmutableNode::OutputPinDesc c_Source_o[] =
 	{ 0 }
 };
 
-class SourceCursor : public RefCountImpl< ISoundBufferCursor >
+class SourceCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
-	Ref< ISoundBuffer > m_soundBuffer;
-	Ref< ISoundBufferCursor > m_soundCursor;
+	Ref< IAudioBuffer > m_soundBuffer;
+	Ref< IAudioBufferCursor > m_soundCursor;
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
@@ -68,16 +68,16 @@ bool Source::bind(resource::IResourceManager* resourceManager)
 	return resourceManager->bind(m_sound);
 }
 
-Ref< ISoundBufferCursor > Source::createCursor() const
+Ref< IAudioBufferCursor > Source::createCursor() const
 {
 	if (!m_sound)
 		return nullptr;
 
-	Ref< ISoundBuffer > soundBuffer = m_sound->getBuffer();
+	Ref< IAudioBuffer > soundBuffer = m_sound->getBuffer();
 	if (!soundBuffer)
 		return nullptr;
 
-	Ref< ISoundBufferCursor > soundCursor = soundBuffer->createCursor();
+	Ref< IAudioBufferCursor > soundCursor = soundBuffer->createCursor();
 	if (!soundCursor)
 		return nullptr;
 
@@ -88,12 +88,12 @@ Ref< ISoundBufferCursor > Source::createCursor() const
 	return sourceCursor;
 }
 
-bool Source::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Source::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	return false;
 }
 
-bool Source::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Source::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	SourceCursor* sourceCursor = static_cast< SourceCursor* >(cursor);
 	if (!sourceCursor)

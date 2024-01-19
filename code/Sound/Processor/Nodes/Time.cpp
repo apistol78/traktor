@@ -6,7 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Time.h"
 
@@ -21,7 +21,7 @@ const ImmutableNode::OutputPinDesc c_Time_o[] =
 	{ 0 }
 };
 
-class TimeCursor : public RefCountImpl< ISoundBufferCursor >
+class TimeCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) override final {}
@@ -45,18 +45,18 @@ bool Time::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Time::createCursor() const
+Ref< IAudioBufferCursor > Time::createCursor() const
 {
 	return new TimeCursor();
 }
 
-bool Time::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Time::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	outScalar = evaluator->getTime();
 	return true;
 }
 
-bool Time::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Time::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	return false;
 }

@@ -26,7 +26,7 @@ namespace traktor
 	namespace sound
 	{
 
-class IFilter;
+class IAudioFilter;
 class Sound;
 
 class T_DLLCLASS PlayGrainData : public IGrainData
@@ -50,7 +50,7 @@ public:
 
 private:
 	resource::Id< Sound > m_sound;
-	RefArray< IFilter > m_filters;
+	RefArray< IAudioFilter > m_filters;
 	Range< float > m_gain;
 	Range< float > m_pitch;
 	bool m_repeat;

@@ -8,7 +8,7 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/Nodes/Scalar.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ const ImmutableNode::OutputPinDesc c_Scalar_o[] =
 	{ 0 }
 };
 
-class ScalarCursor : public RefCountImpl< ISoundBufferCursor >
+class ScalarCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	virtual void setParameter(handle_t id, float parameter) override final {}
@@ -49,18 +49,18 @@ bool Scalar::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Scalar::createCursor() const
+Ref< IAudioBufferCursor > Scalar::createCursor() const
 {
 	return new ScalarCursor();
 }
 
-bool Scalar::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Scalar::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	outScalar = m_value;
 	return true;
 }
 
-bool Scalar::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Scalar::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	return false;
 }

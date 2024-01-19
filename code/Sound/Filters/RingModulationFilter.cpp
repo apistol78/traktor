@@ -21,7 +21,7 @@ namespace traktor
 		namespace
 		{
 
-struct RingModulationFilterInstance : public RefCountImpl< IFilterInstance >
+struct RingModulationFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	float m_time;
 
@@ -36,7 +36,7 @@ struct RingModulationFilterInstance : public RefCountImpl< IFilterInstance >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RingModulationFilter", 0, RingModulationFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RingModulationFilter", 0, RingModulationFilter, IAudioFilter)
 
 RingModulationFilter::RingModulationFilter(uint32_t sampleRate, uint32_t ringFrequency)
 :	m_sampleRate(sampleRate)
@@ -44,14 +44,14 @@ RingModulationFilter::RingModulationFilter(uint32_t sampleRate, uint32_t ringFre
 {
 }
 
-Ref< IFilterInstance > RingModulationFilter::createInstance() const
+Ref< IAudioFilterInstance > RingModulationFilter::createInstance() const
 {
 	Ref< RingModulationFilterInstance > rmfi = new RingModulationFilterInstance();
 	rmfi->m_time = 0.0f;
 	return rmfi;
 }
 
-void RingModulationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void RingModulationFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	RingModulationFilterInstance* rmfi = static_cast< RingModulationFilterInstance* >(instance);
 	const float sampleDeltaTime = 1.0f / m_sampleRate;

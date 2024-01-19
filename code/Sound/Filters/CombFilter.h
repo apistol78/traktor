@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Sound/IFilter.h"
+#include "Sound/IAudioFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,16 +26,16 @@ namespace traktor
 /*! Comb filter.
  * \ingroup Sound
  */
-class T_DLLCLASS CombFilter : public IFilter
+class T_DLLCLASS CombFilter : public IAudioFilter
 {
 	T_RTTI_CLASS;
 
 public:
 	CombFilter(uint32_t samplesLength = 10, float feedback = 0.0f, float damp = 0.0f);
 
-	virtual Ref< IFilterInstance > createInstance() const override final;
+	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
-	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const override final;
+	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

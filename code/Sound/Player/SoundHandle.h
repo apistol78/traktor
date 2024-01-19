@@ -32,7 +32,7 @@ public:
 
 	virtual void setParameter(int32_t id, float parameter) override final;
 
-	virtual ISoundBufferCursor* getCursor() override final;
+	virtual IAudioBufferCursor* getCursor() override final;
 
 private:
 	friend class SoundPlayer;

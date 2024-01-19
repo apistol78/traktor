@@ -9,7 +9,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/IAudioMixer.h"
-#include "Sound/ISoundBuffer.h"
+#include "Sound/IAudioBuffer.h"
 #include "Sound/Processor/GraphEvaluator.h"
 #include "Sound/Processor/Nodes/Blend.h"
 
@@ -34,7 +34,7 @@ const ImmutableNode::OutputPinDesc c_Blend_o[] =
 	{ 0 }
 };
 
-class BlendCursor : public RefCountImpl< ISoundBufferCursor >
+class BlendCursor : public RefCountImpl< IAudioBufferCursor >
 {
 public:
 	float* m_outputSamples[SbcMaxChannelCount];
@@ -71,7 +71,7 @@ bool Blend::bind(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-Ref< ISoundBufferCursor > Blend::createCursor() const
+Ref< IAudioBufferCursor > Blend::createCursor() const
 {
 	Ref< BlendCursor > blendCursor = new BlendCursor();
 
@@ -88,7 +88,7 @@ Ref< ISoundBufferCursor > Blend::createCursor() const
 	return blendCursor;
 }
 
-bool Blend::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
+bool Blend::getScalar(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, float& outScalar) const
 {
 	float scalar1, scalar2, weight;
 
@@ -103,7 +103,7 @@ bool Blend::getScalar(ISoundBufferCursor* cursor, const GraphEvaluator* evaluato
 	return true;
 }
 
-bool Blend::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, SoundBlock& outBlock) const
+bool Blend::getBlock(IAudioBufferCursor* cursor, const GraphEvaluator* evaluator, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
 	BlendCursor* blendCursor = static_cast< BlendCursor* >(cursor);
 
@@ -111,8 +111,8 @@ bool Blend::getBlock(ISoundBufferCursor* cursor, const GraphEvaluator* evaluator
 	if (!evaluator->evaluateScalar(getInputPin(2), weight))
 		return false;
 
-	SoundBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
-	SoundBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock1 = { { 0 }, outBlock.samplesCount, 0, 0 };
+	AudioBlock soundBlock2 = { { 0 }, outBlock.samplesCount, 0, 0 };
 
 	bool anyBlocks = false;
 	anyBlocks |= evaluator->evaluateBlock(getInputPin(0), mixer, soundBlock1);

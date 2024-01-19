@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,9 +20,9 @@
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioDriverNull.h"
 #include "Sound/AudioDriverWriteOut.h"
-#include "Sound/IAudioDriver.h"
+#include "Sound/AudioResourceFactory.h"
 #include "Sound/AudioSystem.h"
-#include "Sound/SoundFactory.h"
+#include "Sound/IAudioDriver.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Player/SoundPlayer.h"
 
@@ -50,23 +50,23 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 	// Create audio system.
 	m_audioSystem = new sound::AudioSystem(audioDriver);
 
-	sound::SoundSystemCreateDesc sscd;
-	sscd.sysapp = sysapp;
-	sscd.channels = settings->getProperty< int32_t >(L"Audio.Channels", 16);
-	sscd.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Audio.SampleRate", 44100);
-	sscd.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Audio.BitsPerSample", 16);
-	sscd.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Audio.HwChannels", 2);
+	sound::AudioSystemCreateDesc ascd;
+	ascd.sysapp = sysapp;
+	ascd.channels = settings->getProperty< int32_t >(L"Audio.Channels", 16);
+	ascd.driverDesc.sampleRate = settings->getProperty< int32_t >(L"Audio.SampleRate", 44100);
+	ascd.driverDesc.bitsPerSample = settings->getProperty< int32_t >(L"Audio.BitsPerSample", 16);
+	ascd.driverDesc.hwChannels = settings->getProperty< int32_t >(L"Audio.HwChannels", 2);
 #	if defined(__IOS__) || defined(__ANDROID__)
-	sscd.driverDesc.frameSamples = 1024;
+	ascd.driverDesc.frameSamples = 1024;
 #	else
-	sscd.driverDesc.frameSamples = 512;
+	ascd.driverDesc.frameSamples = 512;
 #	endif
 
-	if (!m_audioSystem->create(sscd))
+	if (!m_audioSystem->create(ascd))
 	{
 		audioDriver = new sound::AudioDriverNull();
 		m_audioSystem = new sound::AudioSystem(audioDriver);
-		if (!m_audioSystem->create(sscd))
+		if (!m_audioSystem->create(ascd))
 		{
 			log::error << L"Audio server failed; unable to create audio system." << Endl;
 			m_audioSystem = nullptr;
@@ -103,7 +103,7 @@ bool AudioServer::create(const PropertyGroup* settings, const SystemApplication&
 		surroundMaxDistance,
 		surroundInnerRadius,
 		surroundFallOffExponent,
-		sscd.driverDesc.hwChannels >= 5+1
+		ascd.driverDesc.hwChannels >= 5+1
 	);
 
 	// Create high-level sound player.
@@ -129,7 +129,7 @@ void AudioServer::destroy()
 void AudioServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new sound::SoundFactory());
+	resourceManager->addFactory(new sound::AudioResourceFactory());
 }
 
 void AudioServer::update(float dT, bool renderViewActive)
