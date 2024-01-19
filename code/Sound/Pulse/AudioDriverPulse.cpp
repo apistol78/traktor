@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,8 @@
 #include "Core/Misc/TString.h"
 #include "Sound/Pulse/AudioDriverPulse.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverPulse", 0, AudioDriverPulse, IAudioDriver)
 
@@ -62,21 +60,20 @@ void AudioDriverPulse::wait()
 	}
 }
 
-void AudioDriverPulse::submit(const SoundBlock& soundBlock)
+void AudioDriverPulse::submit(const AudioBlock& block)
 {
 	float* ptr = m_pending.ptr();
-	for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
+	for (uint32_t j = 0; j < block.samplesCount; ++j)
 	{
 		for (uint32_t i = 0; i < m_ss.channels; ++i)
 		{
-			if (soundBlock.samples[i])
-				*ptr++ = soundBlock.samples[i][j];
+			if (block.samples[i])
+				*ptr++ = block.samples[i][j];
 			else
 				*ptr++ = 0.0f;
 		}
 	}
-	m_pendingSize = soundBlock.samplesCount * m_ss.channels * sizeof(float);
+	m_pendingSize = block.samplesCount * m_ss.channels * sizeof(float);
 }
 
-	}
 }
