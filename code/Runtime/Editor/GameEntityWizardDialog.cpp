@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -218,7 +218,7 @@ void GameEntityWizardDialog::eventNameChange(ui::ContentChangeEvent* event)
 
 void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*", assetPath))
@@ -247,7 +247,7 @@ void GameEntityWizardDialog::eventBrowseVisualMeshClick(ui::ButtonClickEvent* ev
 
 void GameEntityWizardDialog::eventCopyVisualMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring path = m_editCollisionMesh->getText();
+	const std::wstring path = m_editCollisionMesh->getText();
 	m_editVisualMesh->setText(path);
 
 	if (!m_nameEdited)
@@ -256,7 +256,7 @@ void GameEntityWizardDialog::eventCopyVisualMeshClick(ui::ButtonClickEvent* even
 
 void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
@@ -282,13 +282,13 @@ void GameEntityWizardDialog::eventBrowseSkeletonMeshClick(ui::ButtonClickEvent* 
 
 void GameEntityWizardDialog::eventCopySkeletonMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring path = m_editVisualMesh->getText();
+	const std::wstring path = m_editVisualMesh->getText();
 	m_editSkeletonMesh->setText(path);
 }
 
 void GameEntityWizardDialog::eventBrowseAnimationMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*"))
@@ -314,13 +314,13 @@ void GameEntityWizardDialog::eventBrowseAnimationMeshClick(ui::ButtonClickEvent*
 
 void GameEntityWizardDialog::eventCopyAnimationMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring path = m_editVisualMesh->getText();
+	const std::wstring path = m_editVisualMesh->getText();
 	m_editAnimationMesh->setText(path);
 }
 
 void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, type_name(this), i18n::Text(L"GAMEENTITY_WIZARD_FILE_TITLE"), L"All files;*.*", assetPath))
@@ -346,7 +346,7 @@ void GameEntityWizardDialog::eventBrowseCollisionMeshClick(ui::ButtonClickEvent*
 
 void GameEntityWizardDialog::eventCopyCollisionMeshClick(ui::ButtonClickEvent* event)
 {
-	std::wstring path = m_editVisualMesh->getText();
+	const std::wstring path = m_editVisualMesh->getText();
 	m_editCollisionMesh->setText(path);
 }
 
@@ -354,12 +354,12 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 {
 	if ((ui::DialogResult)event->getCommand().getId() == ui::DialogResult::Ok)
 	{
-		std::wstring name = m_editName->getText();
-		std::wstring visualMesh = m_editVisualMesh->getText();
-		std::wstring skeletonMesh = m_editSkeletonMesh->getText();
-		std::wstring animationMesh = m_editAnimationMesh->getText();
-		std::wstring collisionMesh = m_editCollisionMesh->getText();
-		int32_t entityType = m_dropEntityType->getSelected();
+		const std::wstring name = m_editName->getText();
+		const std::wstring visualMesh = m_editVisualMesh->getText();
+		const std::wstring skeletonMesh = m_editSkeletonMesh->getText();
+		const std::wstring animationMesh = m_editAnimationMesh->getText();
+		const std::wstring collisionMesh = m_editCollisionMesh->getText();
+		const int32_t entityType = m_dropEntityType->getSelected();
 
 		if (name.empty())
 		{
@@ -626,7 +626,7 @@ void GameEntityWizardDialog::eventDialogClick(ui::ButtonClickEvent* event)
 
 		// Create entity asset instance.
 		Ref< db::Instance > entityDataInstance = m_group->createInstance(
-			name + L"-Entity",
+			name,
 			db::CifReplaceExisting | db::CifKeepExistingGuid
 		);
 		if (!entityDataInstance)
