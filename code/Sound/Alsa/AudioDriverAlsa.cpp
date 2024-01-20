@@ -185,12 +185,12 @@ void AudioDriverAlsa::wait()
 	snd_pcm_wait(m_handle, -1);
 }
 
-void AudioDriverAlsa::submit(const SoundBlock& soundBlock)
+void AudioDriverAlsa::submit(const AudioBlock& block)
 {
 	// Step 1) Swizzle into intermediate output buffer.
 
 	// How many samples can we consume, discard samples if not enough space.
-	int32_t samplesCount = soundBlock.samplesCount;
+	int32_t samplesCount = block.samplesCount;
 	samplesCount = std::min< int32_t >(samplesCount, m_desc.frameSamples);
 
 	// Convert samples into output buffer.
@@ -199,8 +199,8 @@ void AudioDriverAlsa::submit(const SoundBlock& soundBlock)
 	{
 		for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
 		{
-			if (soundBlock.samples[i])
-				*bufferAt++ = int16_t(clamp(soundBlock.samples[i][j], -1.0f, 1.0f) * std::numeric_limits< int16_t >::max());
+			if (block.samples[i])
+				*bufferAt++ = int16_t(clamp(block.samples[i][j], -1.0f, 1.0f) * std::numeric_limits< int16_t >::max());
 			else
 				*bufferAt++ = 0;
 		}
