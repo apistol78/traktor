@@ -70,7 +70,7 @@ void split(const model::Model* model, int32_t depth, const AlignedVector< model:
 
 	const static Scalar c_smallLimit = 2.0_simd;
 	const bool smallBounds = (size.x() <= c_smallLimit && size.y() <= c_smallLimit && size.z() <= c_smallLimit);
-	if (depth >= 3 || smallBounds)
+	if (depth >= 4 || smallBounds)
 	{
 		Ref< model::Model > part = DeepClone(model).create< model::Model >(); // new model::Model();
 		part->setPolygons(polygons);
