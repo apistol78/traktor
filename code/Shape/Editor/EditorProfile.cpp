@@ -16,7 +16,7 @@
 #include "Shape/Editor/Solid/SolidEditorPlugin.h"
 #include "Shape/Editor/Solid/SolidEntityEditorFactory.h"
 #include "Shape/Editor/Spline/ControlPointComponentEditorFactory.h"
-#include "Shape/Editor/Spline/SplineEntityEditorFactory.h"
+#include "Shape/Editor/Spline/SplineComponentEditorFactory.h"
 
 namespace traktor
 {
@@ -96,7 +96,6 @@ void EditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new SolidEntityEditorFactory());
-	outEntityEditorFactories.push_back(new SplineEntityEditorFactory());
 }
 
 void EditorProfile::createComponentEditorFactories(
@@ -105,6 +104,7 @@ void EditorProfile::createComponentEditorFactories(
 ) const
 {
 	outComponentEditorFactories.push_back(new ControlPointComponentEditorFactory());
+	outComponentEditorFactories.push_back(new SplineComponentEditorFactory());
 }
 
 Ref< world::EntityData > EditorProfile::createEntityData(
