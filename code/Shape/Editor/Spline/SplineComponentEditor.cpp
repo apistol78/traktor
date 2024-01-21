@@ -9,27 +9,23 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
-#include "Shape/Editor/Spline/SplineEntityEditor.h"
+#include "Shape/Editor/Spline/SplineComponentEditor.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineEntityEditor", SplineEntityEditor, scene::DefaultEntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SplineComponentEditor", SplineComponentEditor, scene::DefaultComponentEditor)
 
-SplineEntityEditor::SplineEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)
-:	scene::DefaultEntityEditor(context, entityAdapter)
+SplineComponentEditor::SplineComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData)
+:	scene::DefaultComponentEditor(context, entityAdapter, componentData)
 {
 }
 
-void SplineEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+void SplineComponentEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	 auto splineComponent = getEntityAdapter()->getComponent< SplineComponent >();
+	 auto splineComponent = m_entityAdapter->getComponent< SplineComponent >();
 	 if (!splineComponent)
 	 	return;
-
-	 primitiveRenderer->pushDepthState(false, false, false);
 
 	 const auto& path = splineComponent->getPath();
 	 const auto& keys = path.keys();
@@ -39,6 +35,8 @@ void SplineEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer)
 	 const float st = path.getStartTime();
 	 const float et = path.getEndTime();
 
+	 primitiveRenderer->pushDepthState(false, false, false);
+
 	 const uint32_t nsteps = (uint32_t)keys.size() * 10;
 	 for (uint32_t i = 0; i < nsteps; ++i)
 	 {
@@ -47,12 +45,11 @@ void SplineEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer)
 	 	primitiveRenderer->drawLine(
 	 		path.evaluate(t1, true).position,
 	 		path.evaluate(t2, true).position,
-	 		getEntityAdapter()->isSelected() ? Color4ub(100, 100, 255, 220) : Color4ub(255, 255, 255, 80)
+	 		m_entityAdapter->isSelected() ? Color4ub(100, 100, 255, 220) : Color4ub(255, 255, 255, 80)
 	 	);
 	 }
 
 	 primitiveRenderer->popDepthState();
 }
 
-	}
 }

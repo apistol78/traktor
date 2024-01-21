@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,25 +8,22 @@
  */
 #pragma once
 
-#include "Scene/Editor/DefaultEntityEditor.h"
+#include "Scene/Editor/DefaultComponentEditor.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 /*!
  * \ingroup Shape
  */
-class SplineEntityEditor : public scene::DefaultEntityEditor
+class SplineComponentEditor : public scene::DefaultComponentEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	SplineEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
+	explicit SplineComponentEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter, world::IEntityComponentData* componentData);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
 };
 
-	}
 }
