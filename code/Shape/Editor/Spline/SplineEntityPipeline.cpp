@@ -18,6 +18,7 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
@@ -215,6 +216,10 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 			Ref< world::GroupComponentData > groupData = new world::GroupComponentData();
 			for (auto splitVisualModel : splitVisualModels)
 			{
+				// Ensure each split doesn't contain more than what is used.
+				model::CleanDuplicates(0.01f).apply(*splitVisualModel);
+
+				// Create split output entity data.
 				Ref< world::EntityData > visualEntityData = new world::EntityData();
 				visualEntityData->setId(outputMeshId.permutation(10000));
 				visualEntityData->setTransform(replacementEntityData->getTransform());
