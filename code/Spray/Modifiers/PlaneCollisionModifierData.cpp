@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,12 +14,10 @@
 #include "Spray/Modifiers/PlaneCollisionModifier.h"
 #include "Spray/Modifiers/PlaneCollisionModifierData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 class MemberPlane : public MemberComplex
 {
@@ -56,16 +54,9 @@ private:
 	Plane& m_value;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifierData", 1, PlaneCollisionModifierData, ModifierData)
-
-PlaneCollisionModifierData::PlaneCollisionModifierData()
-:	m_plane(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_radius(1.0f)
-,	m_restitution(1.0f)
-{
-}
 
 Ref< const Modifier > PlaneCollisionModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
@@ -82,5 +73,4 @@ void PlaneCollisionModifierData::serialize(ISerializer& s)
 	s >> Member< float >(L"restitution", m_restitution);
 }
 
-	}
 }

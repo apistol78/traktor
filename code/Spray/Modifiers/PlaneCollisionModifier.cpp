@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Spray/Modifiers/PlaneCollisionModifier.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PlaneCollisionModifier", PlaneCollisionModifier, Modifier)
 
@@ -24,16 +22,16 @@ PlaneCollisionModifier::PlaneCollisionModifier(const Plane& plane, float radius,
 
 void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
-	Plane planeW = transform.toMatrix44() * m_plane;
-	Vector4 center = transform.translation();
+	const Plane planeW = transform.toMatrix44() * m_plane;
+	const Vector4 center = transform.translation();
 
 	for (size_t i = first; i < last; ++i)
 	{
-		Scalar rv = dot3(planeW.normal(), points[i].velocity);
+		const Scalar rv = dot3(planeW.normal(), points[i].velocity);
 		if (rv >= 0.0_simd)
 			continue;
 
-		Scalar rd = planeW.distance(points[i].position);
+		const Scalar rd = planeW.distance(points[i].position);
 		if (rd >= points[i].size)
 			continue;
 
@@ -44,5 +42,4 @@ void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& tr
 	}
 }
 
-	}
 }
