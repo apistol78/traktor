@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Spray/Modifiers/VortexModifier.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.VortexModifier", VortexModifier, Modifier)
 
@@ -34,21 +32,21 @@ VortexModifier::VortexModifier(
 
 void VortexModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
-	Vector4 axis = m_world ? m_axis : transform * m_axis;
-	Vector4 center = m_world ? transform.translation() : Vector4::origo();
+	const Vector4 axis = m_world ? m_axis : transform * m_axis;
+	const Vector4 center = m_world ? transform.translation() : Vector4::origo();
 
 	for (size_t i = first; i < last; ++i)
 	{
 		Vector4 pc = points[i].position - center;
 
 		// Project onto plane.
-		Scalar d = dot3(pc, axis);
+		const Scalar d = dot3(pc, axis);
 		pc -= axis * d;
 
 		// Calculate tangent vector.
-		Scalar distance = pc.length();
-		Vector4 n = pc / distance;
-		Vector4 t = cross(axis, n).normalized();
+		const Scalar distance = pc.length();
+		const Vector4 n = pc / distance;
+		const Vector4 t = cross(axis, n).normalized();
 
 		// Adjust velocity from this tangent.
 		points[i].velocity += (
@@ -58,5 +56,4 @@ void VortexModifier::update(const Scalar& deltaTime, const Transform& transform,
 	}
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,22 +12,10 @@
 #include "Spray/Modifiers/VortexModifier.h"
 #include "Spray/Modifiers/VortexModifierData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.VortexModifierData", 0, VortexModifierData, ModifierData)
-
-VortexModifierData::VortexModifierData()
-:	m_axis(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_tangentForce(0.0f)
-,	m_normalConstantForce(0.0f)
-,	m_normalDistance(0.0f)
-,	m_normalDistanceForce(0.0f)
-,	m_world(true)
-{
-}
 
 Ref< const Modifier > VortexModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
@@ -51,5 +39,4 @@ void VortexModifierData::serialize(ISerializer& s)
 	s >> Member< bool >(L"world", m_world);
 }
 
-	}
 }

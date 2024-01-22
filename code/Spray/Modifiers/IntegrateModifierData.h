@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 /*! Integrate modifier persistent data.
  * \ingroup Spray
@@ -31,18 +29,14 @@ class T_DLLCLASS IntegrateModifierData : public ModifierData
 	T_RTTI_CLASS;
 
 public:
-	IntegrateModifierData();
-
 	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	float m_timeScale;
-	bool m_linear;
-	bool m_angular;
+	float m_timeScale = 1.0f;
+	bool m_linear = true;
+	bool m_angular = true;
 };
 
-	}
 }
-

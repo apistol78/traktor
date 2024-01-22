@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Spray/Modifiers/IntegrateModifier.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.IntegrateModifier", IntegrateModifier, Modifier)
 
@@ -24,7 +22,7 @@ IntegrateModifier::IntegrateModifier(float timeScale, bool linear, bool angular)
 
 void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transform, pointVector_t& points, size_t first, size_t last) const
 {
-	Scalar scaledDeltaTime = deltaTime * m_timeScale;
+	const Scalar scaledDeltaTime = deltaTime * m_timeScale;
 	if (m_linear && m_angular)
 	{
 		for (size_t i = first; i < last; ++i)
@@ -45,5 +43,4 @@ void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transfo
 	}
 }
 
-	}
 }
