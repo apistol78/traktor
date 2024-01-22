@@ -462,6 +462,8 @@ void EffectEditorPage::updateEffectPreview()
 	}
 	else
 		m_previewControl->setEffect(nullptr, nullptr);
+
+	updateProfile();
 }
 
 void EffectEditorPage::updateSequencer()
