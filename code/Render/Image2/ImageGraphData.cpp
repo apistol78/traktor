@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,6 +18,12 @@
 
 namespace traktor::render
 {
+    namespace
+    {
+
+std::atomic< int32_t > s_instance = 0;
+
+    }
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphData", 5, ImageGraphData, ISerializable)
 
@@ -27,7 +33,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
     for (auto sbufferData : m_sbuffers)
     {
-        Ref< const ImageStructBuffer > sbuffer = sbufferData->createInstance();
+        Ref< const ImageStructBuffer > sbuffer = sbufferData->createInstance(s_instance);
         if (!sbuffer)
             return nullptr;
         instance->m_sbuffers.push_back(sbuffer);
@@ -43,7 +49,7 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
 
     for (auto targetSetData : m_targetSets)
     {
-        Ref< const ImageTargetSet > targetSet = targetSetData->createInstance();
+        Ref< const ImageTargetSet > targetSet = targetSetData->createInstance(s_instance);
         if (!targetSet)
             return nullptr;
         instance->m_targetSets.push_back(targetSet);
@@ -64,6 +70,8 @@ Ref< ImageGraph > ImageGraphData::createInstance(resource::IResourceManager* res
             return nullptr;
         instance->m_steps.push_back(step);
     }
+
+    ++s_instance;
 
     return instance;
 }

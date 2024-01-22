@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -238,6 +238,17 @@ public:
 class T_DLLCLASS BarrierRenderBlock : public RenderBlock
 {
 public:
+	Stage from = Stage::Invalid;
+	Stage to = Stage::Invalid;
+
+	BarrierRenderBlock() = default;
+
+	explicit BarrierRenderBlock(Stage from_, Stage to_)
+	:	from(from_)
+	,	to(to_)
+	{
+	}
+
 	virtual void render(IRenderView* renderView) const override final;
 };
 

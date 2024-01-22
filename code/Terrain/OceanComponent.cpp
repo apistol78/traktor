@@ -200,7 +200,7 @@ void OceanComponent::setup(
 {
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
 	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
-		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Ocean Wave");
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean Wave");
 		renderBlock->program = m_shaderWave->getProgram().program;
 		renderBlock->workSize[0] = 512;
 		renderBlock->workSize[1] = 512;
@@ -212,7 +212,8 @@ void OceanComponent::setup(
 		renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTexture, 0);
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->enqueue(renderBlock);
+		renderContext->compute(renderBlock);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex);
 	});
 	context.getRenderGraph().addPass(rp);
 }
@@ -249,7 +250,7 @@ void OceanComponent::build(
 	if (!sp)
 		return;
 
-	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Ocean");
+	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Ocean");
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = sp.program;
 	renderBlock->indexBuffer = m_indexBuffer->getBufferView();

@@ -12,7 +12,7 @@
 			<elements>
 				<item>
 					<name>value</name>
-					<type>DtFloat4</type>
+					<type>DtFloat1</type>
 				</item>
 			</elements>
 		</item>

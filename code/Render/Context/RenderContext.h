@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,44 +51,55 @@ public:
 	void* alloc(uint32_t blockSize, uint32_t align);
 
 	/*! Allocate object from context's heap. */
-	template < typename ObjectType >
-	ObjectType* alloc()
+	template < typename ObjectType, typename ... ArgumentTypes >
+	ObjectType* alloc(ArgumentTypes&& ... args)
 	{
 		void* object = alloc((uint32_t)sizeof(ObjectType), (uint32_t)alignOf< ObjectType >());
-		return new (object) ObjectType();
+		return new (object) ObjectType(std::forward< ArgumentTypes >(args) ...);
 	}
 
 	/*! Allocate named object from context's heap. */
-	template < typename ObjectType >
-	ObjectType* alloc(const std::wstring& name)
+	template < typename ObjectType, typename ... ArgumentTypes >
+	ObjectType* allocNamed(const std::wstring_view& name, ArgumentTypes&& ... args)
 	{
-		ObjectType* object = alloc< ObjectType >();
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
 		object->name = name;
 		return object;
 	}
 
-	/*! Enqueue a render block in context. */
-	void enqueue(RenderBlock* renderBlock);
+	/*! Add block to compute queue. */
+	void compute(RenderBlock* renderBlock);
 
-	/*! Enqueue a render block in context. */
-	template < typename ObjectType >
-	void enqueue()
+	/*! Add block to compute queue. */
+	template < typename ObjectType, typename ... ArgumentTypes >
+	void compute(ArgumentTypes&& ... args)
 	{
-		ObjectType* object = alloc< ObjectType >();
-		enqueue(object);
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
+		compute(object);
 	}
 
-	/*! Add compute render block to context. */
-	void compute(ComputeRenderBlock* renderBlock);
+	/*! Add a render block to draw queue. */
+	void draw(RenderBlock* renderBlock);
+
+	/*! Add a render block to draw queue. */
+	template < typename ObjectType, typename ... ArgumentTypes >
+	void draw(ArgumentTypes&& ... args)
+	{
+		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
+		draw(object);
+	}
 
 	/*! Add render block to sorting queue. */
 	void draw(uint32_t type, DrawableRenderBlock* renderBlock);
 
-	/*! Merge compute blocks into render queue. */
-	void mergeCompute();
+	/*! Merge sorting queues into draw queue. */
+	void mergePriorityIntoDraw(uint32_t priorities);
 
-	/*! Merge sorting queues into render queue. */
-	void mergeDraw(uint32_t priorities);
+	/*! Merge compute queues into render queue. */
+	void mergeComputeIntoRender();
+
+	/*! Merge draw queues into render queue. */
+	void mergeDrawIntoRender();
 
 	/*! Render blocks queued in render queue. */
 	void render(IRenderView* renderView) const;
@@ -109,9 +120,10 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	AlignedVector< ComputeRenderBlock* > m_computeQueue;
-	AlignedVector< RenderBlock* > m_renderQueue;
+	AlignedVector< RenderBlock* > m_computeQueue;
 	AlignedVector< DrawableRenderBlock* > m_priorityQueue[6];
+	AlignedVector< RenderBlock* > m_drawQueue;
+	AlignedVector< RenderBlock* > m_renderQueue;
 };
 
 }

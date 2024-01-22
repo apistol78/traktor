@@ -662,7 +662,7 @@ void AccShape::render(
 			{
 				if (programSolid)
 				{
-					auto rb = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
+					auto rb = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccShape; draw solid batch");
 					rb->program = programSolid;
 					rb->programParams = sharedParams;
 					rb->vertexBuffer = m_fillVertexRange->getBufferView();
@@ -670,14 +670,14 @@ void AccShape::render(
 					rb->primitive = batch.primitives.type;
 					rb->offset = batch.primitives.offset;
 					rb->count = batch.primitives.count;
-					renderContext->enqueue(rb);
+					renderContext->draw(rb);
 				}
 			}
 			else
 			{
 				if (programTextured)
 				{
-					auto rb = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
+					auto rb = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccShape; draw textured batch");
 					rb->program = programTextured;
 					rb->vertexBuffer = m_fillVertexRange->getBufferView();
 					rb->vertexLayout = m_fillVertexPool->getVertexLayout();
@@ -690,7 +690,7 @@ void AccShape::render(
 					rb->programParams->setTextureParameter(s_handleTexture, batch.texture->texture);
 					rb->programParams->setFloatParameter(s_handleTextureClamp, batch.textureClamp ? 1.0f : 0.0f);
 					rb->programParams->endParameters(renderContext);
-					renderContext->enqueue(rb);
+					renderContext->draw(rb);
 				}
 			}
 		}
@@ -699,7 +699,7 @@ void AccShape::render(
 		{
 			if (programLine)
 			{
-				auto rb = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
+				auto rb = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccShape; draw line batch");
 				rb->program = programLine;
 				rb->vertexBuffer = batch.vertexRange->getBufferView();
 				rb->vertexLayout = m_lineVertexPool->getVertexLayout();
@@ -712,7 +712,7 @@ void AccShape::render(
 				rb->programParams->setVectorParameter(s_handleLineColor, batch.color);
 				rb->programParams->setFloatParameter(s_handleLineWidth, batch.width);
 				rb->programParams->endParameters(renderContext);
-				renderContext->enqueue(rb);
+				renderContext->draw(rb);
 			}
 		}
 	});

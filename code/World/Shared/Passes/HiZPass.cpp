@@ -79,7 +79,7 @@ render::handle_t HiZPass::setup(
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"HiZ");
+				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"HiZ");
 
 				renderBlock->program = m_hiZBuildShader->getProgram().program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -109,6 +109,7 @@ render::handle_t HiZPass::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment | render::Stage::Compute);
 			}
 		);
 	}

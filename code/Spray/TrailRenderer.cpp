@@ -206,7 +206,7 @@ void TrailRenderer::flush(
 		if (!sp)
 			continue;
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Trail");
+		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Trail");
 
 		renderBlock->distance = -std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;

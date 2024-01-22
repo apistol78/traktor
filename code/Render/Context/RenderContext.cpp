@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -81,14 +81,14 @@ void* RenderContext::alloc(uint32_t blockSize, uint32_t align)
 	return alloc(blockSize);
 }
 
-void RenderContext::enqueue(RenderBlock* renderBlock)
-{
-	m_renderQueue.push_back(renderBlock);
-}
-
-void RenderContext::compute(ComputeRenderBlock* renderBlock)
+void RenderContext::compute(RenderBlock* renderBlock)
 {
 	m_computeQueue.push_back(renderBlock);
+}
+
+void RenderContext::draw(RenderBlock* renderBlock)
+{
+	m_drawQueue.push_back(renderBlock);
 }
 
 void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
@@ -107,18 +107,12 @@ void RenderContext::draw(uint32_t type, DrawableRenderBlock* renderBlock)
 		m_priorityQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::mergeCompute()
-{
-	m_renderQueue.insert(m_renderQueue.end(), m_computeQueue.begin(), m_computeQueue.end());
-	m_computeQueue.resize(0);
-}
-
-void RenderContext::mergeDraw(uint32_t priorities)
+void RenderContext::mergePriorityIntoDraw(uint32_t priorities)
 {
 	// Merge setup blocks unsorted.
 	if (priorities & RenderPriority::Setup)
 	{
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[0].begin(), m_priorityQueue[0].end());
 		m_priorityQueue[0].resize(0);
 	}
 
@@ -126,7 +120,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	if (priorities & RenderPriority::Opaque)
 	{
 		std::sort(m_priorityQueue[1].begin(), m_priorityQueue[1].end(), SortOpaquePredicate);
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[1].begin(), m_priorityQueue[1].end());
 		m_priorityQueue[1].resize(0);
 	}
 
@@ -134,7 +128,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	if (priorities & RenderPriority::PostOpaque)
 	{
 		std::sort(m_priorityQueue[2].begin(), m_priorityQueue[2].end(), SortOpaquePredicate);
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[2].begin(), m_priorityQueue[2].end());
 		m_priorityQueue[2].resize(0);
 	}
 
@@ -142,7 +136,7 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	if (priorities & RenderPriority::AlphaBlend)
 	{
 		std::sort(m_priorityQueue[3].begin(), m_priorityQueue[3].end(), SortAlphaBlendPredicate);
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[3].begin(), m_priorityQueue[3].end());
 		m_priorityQueue[3].resize(0);
 	}
 
@@ -150,16 +144,30 @@ void RenderContext::mergeDraw(uint32_t priorities)
 	if (priorities & RenderPriority::PostAlphaBlend)
 	{
 		std::sort(m_priorityQueue[4].begin(), m_priorityQueue[4].end(), SortAlphaBlendPredicate);
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[4].begin(), m_priorityQueue[4].end());
 		m_priorityQueue[4].resize(0);
 	}
 
 	// Merge overlay blocks unsorted.
 	if (priorities & RenderPriority::Overlay)
 	{
-		m_renderQueue.insert(m_renderQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
+		m_drawQueue.insert(m_drawQueue.end(), m_priorityQueue[5].begin(), m_priorityQueue[5].end());
 		m_priorityQueue[5].resize(0);
 	}
+}
+
+void RenderContext::mergeComputeIntoRender()
+{
+	// Merge compute blocks.
+	m_renderQueue.insert(m_renderQueue.end(), m_computeQueue.begin(), m_computeQueue.end());
+	m_computeQueue.resize(0);
+}
+
+void RenderContext::mergeDrawIntoRender()
+{
+	// Merge draw blocks.
+	m_renderQueue.insert(m_renderQueue.end(), m_drawQueue.begin(), m_drawQueue.end());
+	m_drawQueue.resize(0);
 }
 
 void RenderContext::render(IRenderView* renderView) const
@@ -189,11 +197,14 @@ void RenderContext::flush()
 
 	// As blocks are allocated from a fixed pool we need to manually call destructors.
 	for (auto renderBlock : m_computeQueue)
-		renderBlock->~ComputeRenderBlock();
+		renderBlock->~RenderBlock();
+	for (auto renderBlock : m_drawQueue)
+		renderBlock->~RenderBlock();
 	for (auto renderBlock : m_renderQueue)
 		renderBlock->~RenderBlock();
 
 	m_computeQueue.resize(0);
+	m_drawQueue.resize(0);
 	m_renderQueue.resize(0);
 
 	m_heapPtr = m_heap.ptr();

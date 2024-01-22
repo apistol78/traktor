@@ -349,7 +349,7 @@ void TerrainSurfaceCache::setupPatch(
 		copyPass->addInput(updateTargetSetId);
 		copyPass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 			auto updateTargetSet = renderGraph.getTargetSet(updateTargetSetId);
-			auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Terrain surface copy");
+			auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Terrain surface copy");
 			lrb->lambda = [=](render::IRenderView* renderView)
 			{
 				render::Region sr = {};
@@ -367,7 +367,7 @@ void TerrainSurfaceCache::setupPatch(
 				renderView->copy(m_virtualAlbedo, dr, updateTargetSet->getColorTexture(0), sr);
 				renderView->copy(m_virtualNormals, dr, updateTargetSet->getColorTexture(1), sr);
 			};
-			renderContext->enqueue(lrb);
+			renderContext->draw(lrb);
 		});
 		renderGraph.addPass(copyPass);
 	}

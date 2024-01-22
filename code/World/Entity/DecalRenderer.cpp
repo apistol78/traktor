@@ -170,7 +170,7 @@ void DecalRenderer::build(
 		const Matrix44 worldView = view * transform.toMatrix44();
 		const Matrix44 worldViewInv = worldView.inverse();
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Decal");
+		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Decal");
 
 		renderBlock->distance = 0.0f;
 		renderBlock->program = sp.program;

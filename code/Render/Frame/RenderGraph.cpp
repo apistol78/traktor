@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -392,7 +392,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 
 		auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
 		pb->queryHandle = referenceQueryHandle;
-		renderContext->enqueue(pb);
+		renderContext->draw(pb);
 	}
 #endif
 
@@ -421,8 +421,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
-							renderContext->enqueue< EndPassRenderBlock >();
-							renderContext->mergeCompute();
+							renderContext->mergeComputeIntoRender();
+							renderContext->draw< EndPassRenderBlock >();
+							renderContext->mergeDrawIntoRender();
 						}
 
 						// Begin pass if resource is a target.
@@ -440,12 +441,12 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 								}
 							}
 
-							auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+							auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
 							tb->renderTargetSet = target.writeTargetSet;
 							tb->clear = output.clear;
 							tb->load = output.load;
 							tb->store = output.store;
-							renderContext->enqueue(tb);
+							renderContext->draw(tb);
 
 							currentOutput = output;
 						}
@@ -459,16 +460,16 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 					{
 						if (currentOutput.resourceId != ~0U)
 						{
-							renderContext->enqueue< EndPassRenderBlock >();
-							renderContext->mergeCompute();
+							renderContext->mergeComputeIntoRender();
+							renderContext->draw< EndPassRenderBlock >();
+							renderContext->mergeDrawIntoRender();
 						}
 
-						auto tb = renderContext->alloc< BeginPassRenderBlock >(pass->getName());
+						auto tb = renderContext->allocNamed< BeginPassRenderBlock >(pass->getName());
 						tb->clear = output.clear;
 						tb->load = output.load;
 						tb->store = output.store;
-
-						renderContext->enqueue(tb);
+						renderContext->draw(tb);
 
 						currentOutput = output;
 					}	
@@ -476,8 +477,10 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			}
 			else if (currentOutput.resourceId != ~0U)
 			{
-				renderContext->enqueue< EndPassRenderBlock >();
-				renderContext->mergeCompute();
+				if (renderContext->havePendingComputes())
+					renderContext->mergeComputeIntoRender();
+				renderContext->draw< EndPassRenderBlock >();
+				renderContext->mergeDrawIntoRender();
 				currentOutput = RenderPass::Output();
 			}
 
@@ -486,7 +489,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			{
 				auto pb = renderContext->alloc< ProfileBeginRenderBlock >();
 				pb->queryHandle = &passQueryHandles[index];
-				renderContext->enqueue(pb);
+				renderContext->draw(pb);
 			}
 #endif
 
@@ -497,7 +500,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				build(*this, renderContext);
 
 				// Merge all pending draws after each build step.
-				renderContext->mergeDraw(RenderPriority::All);
+				renderContext->mergePriorityIntoDraw(RenderPriority::All);
 			}
 			T_PROFILER_END();
 
@@ -506,10 +509,9 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 			{
 				auto pe = renderContext->alloc< ProfileEndRenderBlock >();
 				pe->queryHandle = &passQueryHandles[index];
-				renderContext->enqueue(pe);
+				renderContext->draw(pe);
 			}
 #endif
-
 			// Decrement reference counts on input targets; release if last reference.
 			for (const auto& input : inputs)
 			{
@@ -540,26 +542,18 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 	}
 
 	if (currentOutput.resourceId != ~0U)
-		renderContext->enqueue< EndPassRenderBlock >();
-
-	// Always merge any lingering compute jobs left at the end of frame.
-	if (renderContext->havePendingComputes())
 	{
-		renderContext->mergeCompute();
-
-		// Enqueue a barrier to ensure compute work is done before being used as input.
-		renderContext->enqueue< BarrierRenderBlock >();
+		renderContext->mergeComputeIntoRender();
+		renderContext->draw< EndPassRenderBlock >();
+		renderContext->mergeDrawIntoRender();
 	}
-
-	T_FATAL_ASSERT(!renderContext->havePendingComputes());
-	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 	if (m_profiler)
 	{
 		auto pe = renderContext->alloc< ProfileEndRenderBlock >();
 		pe->queryHandle = referenceQueryHandle;
-		renderContext->enqueue(pe);
+		renderContext->draw(pe);
 
 		// Report all queries last using reference query to calculate offset.
 		int32_t ordinal = 0;
@@ -578,12 +572,17 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				pr->referenceQueryHandle = referenceQueryHandle;
 				pr->offset = referenceOffset;
 				pr->sink = [=](const std::wstring& name, double start, double duration) { m_profiler(ordinal, i, name, start, duration); };
-				renderContext->enqueue(pr);
+				renderContext->draw(pr);
 				++ordinal;
 			}
 		}
+
+		renderContext->mergeDrawIntoRender();
 	}
 #endif
+	
+	T_FATAL_ASSERT(!renderContext->havePendingComputes());
+	T_FATAL_ASSERT(!renderContext->havePendingDraws());
 
 	// Ensure all persistent targets are returned to pool, since we're
 	// manually acquiring all at the beginning.

@@ -78,7 +78,7 @@ void SkinnedMesh::build(
 		if (!sp)
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"SkinnedMesh");
+		render::SimpleRenderBlock* renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"SkinnedMesh");
 		renderBlock->distance = distance;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = programParams;

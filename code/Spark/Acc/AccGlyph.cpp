@@ -212,7 +212,7 @@ void AccGlyph::render(
 
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Flash AccGlyph");
+		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Flash AccGlyph");
 		renderBlock->program = sp.program;
 		renderBlock->indexBuffer = m_indexBuffer->getBufferView();
 		renderBlock->indexType = render::IndexType::UInt16;
@@ -237,7 +237,7 @@ void AccGlyph::render(
 
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->enqueue(renderBlock);
+		renderContext->draw(renderBlock);
 
 	});
 

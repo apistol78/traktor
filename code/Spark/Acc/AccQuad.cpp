@@ -148,7 +148,7 @@ void AccQuad::render(
 
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad");
+		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccQuad");
 		renderBlock->program = program;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
@@ -174,7 +174,7 @@ void AccQuad::render(
 
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->enqueue(renderBlock);
+		renderContext->draw(renderBlock);
 
 	});
 }
@@ -186,7 +186,7 @@ void AccQuad::blit(
 {
 	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 
-		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
+		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
 		renderBlock->program = m_shaderBlit->getProgram().program;
 		renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
 		renderBlock->vertexLayout = m_vertexLayout;
@@ -199,7 +199,7 @@ void AccQuad::blit(
 		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->enqueue(renderBlock);
+		renderContext->draw(renderBlock);
 
 	});
 }
