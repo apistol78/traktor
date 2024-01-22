@@ -275,7 +275,7 @@ void UndergrowthComponent::build(
 				instanceData2[k] = vs.plants[(j + cluster.from) * 2 + 1];
 			}
 
-			auto renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >(L"Undergrowth");
+			auto renderBlock = renderContext->allocNamed< render::IndexedInstancingRenderBlock >(L"Undergrowth");
 
 			renderBlock->distance = vs.distances[i];
 			renderBlock->program = sp.program;

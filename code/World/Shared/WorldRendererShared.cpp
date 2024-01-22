@@ -492,7 +492,7 @@ void WorldRendererShared::setupLightPass(
 							0.0f,
 							1.0f
 						);
-						renderContext->enqueue(svrb);	
+						renderContext->draw(svrb);	
 
 						// Render entities into shadow map.
 						auto sharedParams = renderContext->alloc< render::ProgramParameters >();
@@ -632,7 +632,7 @@ void WorldRendererShared::setupLightPass(
 						0.0f,
 						1.0f
 					);
-					renderContext->enqueue(svrb);	
+					renderContext->draw(svrb);	
 
 					// Render entities into shadow map.
 					auto sharedParams = renderContext->alloc< render::ProgramParameters >();

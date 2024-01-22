@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -346,6 +346,19 @@ enum class PrimitiveType
 	TriangleStrip = 3,
 	Triangles = 4
 };
+
+/*! Stage */
+enum class Stage : uint32_t
+{
+	Invalid = 0,
+	Vertex = 1,
+	Fragment = 2,
+	Compute = 4
+};
+
+/*! Stage */
+constexpr Stage operator | (const Stage lh, const Stage rh) { return (Stage)((uint32_t)lh | (uint32_t)rh); }
+constexpr Stage operator & (const Stage lh, const Stage rh) { return (Stage)((uint32_t)lh & (uint32_t)rh); }
 
 /*! Render view event. */
 struct RenderEvent

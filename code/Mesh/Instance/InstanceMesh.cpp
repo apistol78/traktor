@@ -107,7 +107,7 @@ void InstanceMesh::build(
 				instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 			}
 
-			auto renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh opaque");
+			auto renderBlock = renderContext->allocNamed< render::InstancingRenderBlock >(L"InstanceMesh opaque");
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 			renderBlock->program = sp.program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -178,7 +178,7 @@ void InstanceMesh::build(
 					instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
 				}
 
-				auto renderBlock = renderContext->alloc< render::InstancingRenderBlock >(L"InstanceMesh blend");
+				auto renderBlock = renderContext->allocNamed< render::InstancingRenderBlock >(L"InstanceMesh blend");
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
 				renderBlock->program = sp.program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

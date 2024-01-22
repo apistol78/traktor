@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -56,6 +56,18 @@ bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR sur
 			return true;
 	}
 	return false;
+}
+
+VkPipelineStageFlagBits ((convertStage))(Stage st)
+{
+	uint32_t ps = 0;
+	if ((st & Stage::Vertex) == Stage::Vertex)
+		ps |= VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
+	if ((st & Stage::Fragment) == Stage::Fragment)
+		ps |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	if ((st & Stage::Compute) == Stage::Compute)
+		ps |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+	return (VkPipelineStageFlagBits)ps;
 }
 
 	}
@@ -1030,13 +1042,13 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	);
 }
 
-void RenderViewVk::barrier()
+void RenderViewVk::barrier(Stage from, Stage to)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 	vkCmdPipelineBarrier(
 		*frame.graphicsCommandBuffer,
-		VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		VK_PIPELINE_STAGE_VERTEX_SHADER_BIT,
+		convertStage(from), // VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
+		convertStage(to), // VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
 		0,
 		0, nullptr,
 		0, nullptr,

@@ -70,7 +70,7 @@ void Compute::build(
 	const Vector4 viewEdgeBottomLeft = view.viewFrustum.corners[7];
 	const Vector4 viewEdgeBottomRight = view.viewFrustum.corners[6];
 
-	auto rb = renderContext->alloc< ComputeRenderBlock >(L"Image - compute");
+	auto rb = renderContext->allocNamed< ComputeRenderBlock >(L"Image - compute");
 
 	// Setup parameters for the shader.
 	auto pp = renderContext->alloc< ProgramParameters >();
@@ -142,6 +142,8 @@ void Compute::build(
 	rb->program = program;
 	rb->programParams = pp;
 	renderContext->compute(rb);
+
+	renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Fragment | Stage::Compute);
 }
 
 }

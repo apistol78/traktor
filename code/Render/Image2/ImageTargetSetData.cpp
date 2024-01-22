@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -118,7 +119,7 @@ private:
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageTargetSetData", 2, ImageTargetSetData, ISerializable)
 
-Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
+Ref< const ImageTargetSet > ImageTargetSetData::createInstance(int32_t instance) const
 {
 	handle_t textureIds[RenderGraphTargetSetDesc::MaxColorTargets];
 	for (int32_t i = 0; i < sizeof_array(textureIds); ++i)
@@ -126,7 +127,7 @@ Ref< const ImageTargetSet > ImageTargetSetData::createInstance() const
 
 	return new ImageTargetSet(
 		m_targetSetId,
-		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle) : 0,
+		!m_persistentHandle.empty() ? getParameterHandle(m_persistentHandle + toString(instance)) : 0,
 		textureIds,
 		m_targetSetDesc
 	);

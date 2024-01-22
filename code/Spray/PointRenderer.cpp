@@ -198,7 +198,7 @@ void PointRenderer::flush(
 			if (!sp)
 				continue;
 
-			auto renderBlock = renderContext->alloc< render::IndexedInstancingRenderBlock >(T_FILE_LINE_W);
+			auto renderBlock = renderContext->allocNamed< render::IndexedInstancingRenderBlock >(T_FILE_LINE_W);
 
 			renderBlock->distance = batch.distance;
 			renderBlock->program = sp.program;

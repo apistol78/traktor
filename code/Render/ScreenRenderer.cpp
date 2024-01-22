@@ -95,14 +95,14 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
 	rb->vertexBuffer = m_vertexBuffer->getBufferView();
 	rb->vertexLayout = m_vertexLayout;
 	rb->primitives = m_primitives;
-	renderContext->enqueue(rb);
+	renderContext->draw(rb);
 }
 
 void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams)
@@ -114,7 +114,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
@@ -133,7 +133,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 	if (!program)
 		return;
 
-	auto rb = renderContext->alloc< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;

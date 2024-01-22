@@ -116,7 +116,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 
 	//if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
 	{
-		auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Volumetric fog, inject analytical lights");
 
 		renderBlock->program = injectLightsProgram.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -138,6 +138,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
 
 		m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
 	}

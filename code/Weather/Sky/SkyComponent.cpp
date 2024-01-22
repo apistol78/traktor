@@ -214,7 +214,7 @@ void SkyComponent::setup(
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds");
 		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 			{
-				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Sky clouds 2D");
+				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 2D");
 				renderBlock->program = m_shaderClouds2D->getProgram().program;
 				renderBlock->workSize[0] = 512;
 				renderBlock->workSize[1] = 512;
@@ -225,10 +225,11 @@ void SkyComponent::setup(
 				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[0], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
-				renderContext->enqueue(renderBlock);
+				renderContext->compute(renderBlock);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
 			}
 			{
-				auto renderBlock = renderContext->alloc< render::ComputeRenderBlock >(L"Sky clouds 3D");
+				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
 				renderBlock->program = m_shaderClouds3D->getProgram().program;
 				renderBlock->workSize[0] = 64;
 				renderBlock->workSize[1] = 64;
@@ -239,7 +240,8 @@ void SkyComponent::setup(
 				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[1], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
-				renderContext->enqueue(renderBlock);
+				renderContext->compute(renderBlock);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
 			}
 		});
 		context.getRenderGraph().addPass(rp);
@@ -271,7 +273,7 @@ void SkyComponent::build(
 	const Vector4 eyePosition = worldRenderView.getEyePosition();
 	const float rotation = m_transform.rotation().toEulerAngles().x();
 
-	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"Sky");
+	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Sky");
 
 	// Render sky after all opaques but before of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();

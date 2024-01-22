@@ -198,7 +198,7 @@ void RiverComponent::build(
 	if (!sp)
 		return;			
 
-	auto renderBlock = renderContext->alloc< render::SimpleRenderBlock >(L"River");
+	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"River");
 	renderBlock->distance = 0.0f;
 	renderBlock->program = sp.program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

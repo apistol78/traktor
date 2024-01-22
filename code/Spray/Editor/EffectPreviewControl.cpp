@@ -608,11 +608,11 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 		m_primitiveRenderer->end(0);
 
-		auto rb = renderContext->alloc< render::LambdaRenderBlock >(L"Debug wire");
+		auto rb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Debug wire");
 		rb->lambda = [&](render::IRenderView* renderView) {
 			m_primitiveRenderer->render(m_renderView, 0);
 		};
-		renderContext->enqueue(rb);		
+		renderContext->draw(rb);		
 	});
 	m_renderGraph->addPass(rp);
 

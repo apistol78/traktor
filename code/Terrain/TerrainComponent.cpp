@@ -387,7 +387,7 @@ void TerrainComponent::build(
 	render::RenderContext* renderContext = context.getRenderContext();
 
 	// Setup shared shader parameters.
-	auto rb = renderContext->alloc< render::NullRenderBlock >(L"Terrain patch setup");
+	auto rb = renderContext->allocNamed< render::NullRenderBlock >(L"Terrain patch setup");
 
 	rb->program = program;
 	rb->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -430,7 +430,7 @@ void TerrainComponent::build(
 
 	rb->programParams->endParameters(renderContext);
 
-	renderContext->enqueue(rb);
+	renderContext->draw(rb);
 
 	// Update indirect draw buffers; do this only once per frame
 	// since all draws are the same for other passes.
@@ -478,7 +478,7 @@ void TerrainComponent::build(
 
 	// Render all patches using indirect draw.
 	{
-		auto rb = renderContext->alloc< render::IndirectRenderBlock >(L"Terrain patches");
+		auto rb = renderContext->allocNamed< render::IndirectRenderBlock >(L"Terrain patches");
 		rb->distance = 0.0f;
 		rb->program = program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();

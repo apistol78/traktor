@@ -465,7 +465,7 @@ void CloudComponent::buildCluster(
 
 			Vector4 haloColor = colorAsVector4(m_particleData.getHaloColor());
 
-			ImpostorUpdateRenderBlock* impostorRenderBlock = renderContext->alloc< ImpostorUpdateRenderBlock >(L"Cloud impostor update");
+			ImpostorUpdateRenderBlock* impostorRenderBlock = renderContext->allocNamed< ImpostorUpdateRenderBlock >(L"Cloud impostor update");
 			impostorRenderBlock->impostorTargetSet = m_impostorTargets[slice];
 			impostorRenderBlock->impostorClearColor = Color4f(haloColor);
 			impostorRenderBlock->particlePassCount = 0;
@@ -495,7 +495,7 @@ void CloudComponent::buildCluster(
 					auto sp = m_particleShader->getProgram(perm);
 					T_ASSERT(sp);
 
-					auto particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >(L"Cloud particles");
+					auto particleRenderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Cloud particles");
 					particleRenderBlock->distance = 0.0f;
 					particleRenderBlock->program = sp.program;
 					particleRenderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -530,7 +530,7 @@ void CloudComponent::buildCluster(
 				i += instanceCount;
 			}
 
-			renderContext->enqueue(impostorRenderBlock);
+			renderContext->draw(impostorRenderBlock);
 		}
 
 		m_lastCameraPosition = cameraPosition;
@@ -552,7 +552,7 @@ void CloudComponent::buildCluster(
 		if (sliceNearZ < nearZ + FUZZY_EPSILON)
 			sliceNearZ = nearZ + FUZZY_EPSILON;
 
-		auto renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >(L"Cloud impostors");
+		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Cloud impostors");
 		renderBlock->distance = sliceNearZ;
 		renderBlock->program = m_impostorShader->getProgram().program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();

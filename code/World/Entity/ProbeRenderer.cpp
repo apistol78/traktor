@@ -313,7 +313,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				auto faceTargetSet = renderGraph.getTargetSet(faceTargetSetId);
-				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
+				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer RT -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
 					const auto sz = probeTexture->getSize();
@@ -333,7 +333,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 					renderView->copy(probeTexture, dr, faceTargetSet->getColorTexture(0), sr);
 				};
-				renderContext->enqueue(lrb);
+				renderContext->draw(lrb);
 			}
 		);
 		renderGraph.addPass(rp);
@@ -433,7 +433,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
-				auto lrb = renderContext->alloc< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
+				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{
 					const auto sz = probeTexture->getSize();
@@ -453,7 +453,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 					renderView->copy(probeTexture, dr, filteredTargetSet->getColorTexture(0), sr);
 				};
-				renderContext->enqueue(lrb);
+				renderContext->draw(lrb);
 			}
 		);
 		renderGraph.addPass(copyPass);
