@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,12 +71,10 @@
 #include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< scene::Scene > c_previewScene(L"{84ADD065-E963-9D4D-A28D-FF44BD616B0F}");
 
@@ -86,7 +84,7 @@ const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, ui::Widget)
 
@@ -408,30 +406,27 @@ void EffectPreviewControl::eventMouseMove(ui::MouseMoveEvent* event)
 	if (!hasCapture())
 		return;
 
-	if ((event->getKeyState() & ui::KsMenu) != 0)
+	if (event->getButton() == ui::MbtRight)
 	{
-		if (event->getButton() == ui::MbtRight)
+		if ((event->getKeyState() & ui::KsControl) == 0)
 		{
-			if ((event->getKeyState() & ui::KsControl) == 0)
-			{
-				// Move X/Z direction.
-				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-				m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
-			}
-			else
-			{
-				// Move X/Y direction.
-				const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
-				const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
-				m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
-			}
+			// Move X/Z direction.
+			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+			const float dz = -float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
 		}
-		else if (event->getButton() == ui::MbtLeft)
+		else
 		{
-			m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
-			m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
+			// Move X/Y direction.
+			const float dx = -float(m_lastMousePosition.x - event->getPosition().x) * c_deltaMoveScale;
+			const float dy =  float(m_lastMousePosition.y - event->getPosition().y) * c_deltaMoveScale;
+			m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
 		}
+	}
+	else if (event->getButton() == ui::MbtLeft)
+	{
+		m_angleHead += float(m_lastMousePosition.x - event->getPosition().x) * c_deltaScaleHead;
+		m_anglePitch += float(m_lastMousePosition.y - event->getPosition().y) * c_deltaScalePitch;
 	}
 
 	m_lastMousePosition = event->getPosition();
@@ -648,5 +643,4 @@ void EffectPreviewControl::eventIdle(ui::IdleEvent* event)
 	}
 }
 
-	}
 }
