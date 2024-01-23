@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,7 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/Reader.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
@@ -45,6 +46,12 @@ namespace traktor
 {
 	namespace
 	{
+
+float Reader_readFloat(Reader* self)
+{
+	float v; *self >> v;
+	return v;
+}
 
 Ref< Path > Path_concat(Path* self, Path* rh)
 {
@@ -358,6 +365,7 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classFile->addConstant("FmRead", Any::fromInt32(File::FmRead));
 	classFile->addConstant("FmWrite", Any::fromInt32(File::FmWrite));
 	classFile->addConstant("FmAppend", Any::fromInt32(File::FmAppend));
+	classFile->addConstant("FmMapped", Any::fromInt32(File::FmMapped));
 	classFile->addConstructor();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t, const DateTime&, const DateTime&, const DateTime& >();
 	classFile->addConstructor< const Path&, uint64_t, uint32_t >();
@@ -453,6 +461,11 @@ void CoreClassFactory1::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBitWriter->addMethod("flush", &BitWriter::flush);
 	classBitWriter->addMethod("tell", &BitWriter::tell);
 	registrar->registerClass(classBitWriter);
+
+	auto classReader = new AutoRuntimeClass< Reader >();
+	classReader->addConstructor< IStream* >();
+	classReader->addMethod("readFloat", &Reader_readFloat);
+	registrar->registerClass(classReader);
 
 	auto classFileSystem = new AutoRuntimeClass< FileSystem >();
 	classFileSystem->addProperty("volumeCount", &FileSystem::getVolumeCount);

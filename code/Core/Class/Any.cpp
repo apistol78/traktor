@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,11 +60,6 @@ char* refStringDec(char* s)
 
 	}
 
-Any::Any()
-:	m_type(Type::Void)
-{
-}
-
 Any::Any(const Any& src)
 :	m_type(src.m_type)
 {
@@ -77,13 +72,6 @@ Any::Any(const Any& src)
 	}
 	else
 		m_data = src.m_data;
-}
-
-Any::Any(Any&& src) noexcept
-:	m_type(src.m_type)
-,	m_data(src.m_data)
-{
-	src.m_type = Type::Void;
 }
 
 Any::~Any()
