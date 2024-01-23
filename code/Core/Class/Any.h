@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,11 +48,19 @@ public:
 		Object
 	};
 
-	Any();
+	Any()
+	:	m_type(Type::Void)
+	{
+	}
 
 	Any(const Any& src);
 
-	Any(Any&& src) noexcept;
+	Any(Any&& src) noexcept
+	:	m_type(src.m_type)
+	,	m_data(src.m_data)
+	{
+		src.m_type = Type::Void;
+	}
 
 	virtual ~Any();
 
