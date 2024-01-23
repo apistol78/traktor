@@ -241,7 +241,7 @@ bool TerrainEditModifier::activate()
 			{
 				for (int32_t u = 0; u < size; ++u)
 				{
-					float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
+					const float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
 					*ptr++ = height;
 				}
 			}

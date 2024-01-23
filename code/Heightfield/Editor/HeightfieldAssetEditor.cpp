@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -156,6 +156,7 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	toolBar->addItem(new ui::ToolBarButton(L"Clear...", ui::Command(L"HeightfieldAssetEditor.Clear")));
 	toolBar->addItem(new ui::ToolBarButton(L"Resize...", ui::Command(L"HeightfieldAssetEditor.Resize")));
 	toolBar->addItem(new ui::ToolBarButton(L"Crop...", ui::Command(L"HeightfieldAssetEditor.Crop")));
+	toolBar->addItem(new ui::ToolBarButton(L"Remap height...", ui::Command(L"HeightfieldAssetEditor.RemapHeight")));
 	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &HeightfieldAssetEditor::eventToolBar);
 
 	m_imagePreview = new ui::Image();
@@ -375,10 +376,39 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 		}
 
 		m_heightfield = cropped;
-
 		m_editSize->setText(toString(m_heightfield->getSize()));
-		updatePreviewImage();
 
+		updatePreviewImage();
+		return true;
+	}
+	else if (command == L"HeightfieldAssetEditor.RemapHeight")
+	{
+		const Vector4 oldWorldExtent = m_heightfield->getWorldExtent();
+		const Vector4 newWorldExtent = Vector4(oldWorldExtent.x(), 128.0f, oldWorldExtent.z());
+		
+		const float scale = oldWorldExtent.y() / newWorldExtent.y();
+		const int32_t size = m_heightfield->getSize();
+
+		Ref< Heightfield > cropped = new Heightfield(
+			size,
+			newWorldExtent
+		);
+
+		for (int32_t iy = 0; iy < size; ++iy)
+		{
+			for (int32_t ix = 0; ix < size; ++ix)
+			{
+				const float h = m_heightfield->unitToWorld(m_heightfield->getGridHeightNearest(ix, iy));
+				const bool c = m_heightfield->getGridCut(ix, iy);
+
+				cropped->setGridHeight(ix, iy, cropped->worldToUnit(h));
+				cropped->setGridCut(ix, iy, c);
+			}
+		}
+
+		m_heightfield = cropped;
+
+		updatePreviewImage();
 		return true;
 	}
 	else
