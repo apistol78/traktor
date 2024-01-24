@@ -197,6 +197,9 @@ public:
 	/*! Get margin width. */
 	int32_t getMarginWidth() const;
 
+protected:
+	virtual void contentModified();
+
 private:
 	struct TextAttribute
 	{

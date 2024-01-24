@@ -156,6 +156,7 @@ void RichEdit::setText(const std::wstring& text)
 		raiseEvent(&caretEvent);
 	}
 
+	contentModified();
 	updateCharacterWidths();
 	updateScrollBars();
 
@@ -344,6 +345,7 @@ void RichEdit::clear(bool attributes, bool images, bool content, bool specialCha
 	if (specialCharacters)
 		m_specialCharacters.clear();
 
+	contentModified();
 	updateCharacterWidths();
 	updateScrollBars();
 	update();
@@ -359,6 +361,7 @@ void RichEdit::deleteSelection()
 	m_selectionStart =
 	m_selectionStop = -1;
 
+	contentModified();
 	updateCharacterWidths();
 	updateScrollBars();
 	update();
@@ -716,6 +719,10 @@ int32_t RichEdit::getMarginWidth() const
 	return m_lineMargin;
 }
 
+void RichEdit::contentModified()
+{
+}
+
 void RichEdit::updateScrollBars()
 {
 	Rect rc = getEditRect();
@@ -973,6 +980,7 @@ void RichEdit::insertAt(int32_t offset, wchar_t ch)
 		}
 	}
 
+	contentModified();
 	updateCharacterWidths();
 	santiyCheck();
 }
@@ -1816,8 +1824,8 @@ void RichEdit::eventTimer(TimerEvent* event)
 
 void RichEdit::eventScroll(ScrollEvent* event)
 {
-	Rect innerRc = getInnerRect();
-	Rect updateRc(innerRc.left, innerRc.top, m_lineMargin + m_widestLineWidth, innerRc.bottom);
+	const Rect innerRc = getInnerRect();
+	const Rect updateRc(innerRc.left, innerRc.top, m_lineMargin + m_widestLineWidth, innerRc.bottom);
 	update(&updateRc);
 }
 

@@ -253,9 +253,8 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 	setAttributes(endOffset, 0, m_attributeDefault[0], m_attributeDefault[1]);
 }
 
-void SyntaxRichEdit::setText(const std::wstring& text)
+void SyntaxRichEdit::contentModified()
 {
-	RichEdit::setText(text);
 	updateLanguage(0, getLineCount());
 }
 
