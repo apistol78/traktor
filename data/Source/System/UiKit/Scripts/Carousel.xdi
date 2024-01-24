@@ -10,15 +10,15 @@
 Carousel = class("Carousel", Widget)
 
 function Carousel:new(parent, pad)
-	local mc = Widget._createResource(parent, "MC_Carousel")
+	local mc < const > = Widget._createResource(parent, "MC_Carousel")
 	self:_initialize(parent, mc, pad)
 end
 
 function Carousel:getPreferredSize()
 	local w, h = 0, 0
-	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	local children < const > = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
-		local ps = child:getPreferredSize()
+		local ps < const > = child:getPreferredSize()
 		w = math.max(w, ps.width)
 		h = math.max(h, ps.height)
 	end
@@ -30,7 +30,7 @@ function Carousel:place(x, y, width, height)
 
 	self:_layout()
 
-	local p = self:getPlacement()
+	local p < const > = self:getPlacement()
 	self._mask_mc.width = p.width
 	self._mask_mc.height = p.height
 end
@@ -42,10 +42,14 @@ function Carousel:showPrevious()
 end
 
 function Carousel:showNext()
-	local count = #self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	local count < const > = #self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	if self._current < count - 1 then
 		self:_show(self._current + 1)
 	end
+end
+
+function Carousel:getCurrent()
+	return self._current
 end
 
 -- Private
@@ -65,7 +69,7 @@ function Carousel:_initialize(parent, mc, pad)
 end
 
 function Carousel:_layout()
-	local p = self:getPlacement()
+	local p < const > = self:getPlacement()
 	local x = 0
 	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
@@ -75,15 +79,16 @@ function Carousel:_layout()
 end
 
 function Carousel:_show(index)
-	local p = self:getPlacement()
-	local sx = -self._current * (p.width + self._pad)	
-	local ex = -index * (p.width + self._pad)
+	local p < const > = self:getPlacement()
+	local sx < const > = -self._current * (p.width + self._pad)	
+	local ex < const > = -index * (p.width + self._pad)
 	Tween(sx, ex, 0.25, function(value, last)
-		local x = value
+		local x < const > = value
 		self._inner_mc.X = x
 	end)
 	self._current = index
 end
+
 	]]>
 	</text>
 </object>
