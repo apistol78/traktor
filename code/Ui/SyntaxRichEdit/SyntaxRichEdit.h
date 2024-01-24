@@ -47,8 +47,6 @@ public:
 
 	void updateLanguage(int32_t fromLine, int32_t toLine);
 
-	virtual void setText(const std::wstring& text) override;
-
 private:
 	Ref< const SyntaxLanguage > m_language;
 	int32_t m_attributeDefault[2];
@@ -62,6 +60,8 @@ private:
 	int32_t m_attributeSpecial[2];
 	int32_t m_attributePreprocessor[2];
 	int32_t m_attributeError[2];
+
+	virtual void contentModified() override;
 
 	void eventChange(ContentChangeEvent* event);
 };

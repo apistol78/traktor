@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -56,12 +56,10 @@
 #include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/StatusBar/StatusBar.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacter >
 {
@@ -69,7 +67,7 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	Guid id;
 	std::wstring path;
 
-	DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
+	explicit DependencyCharacter(editor::IEditor* editor_, const Guid& id_, const std::wstring& path_)
 	:	editor(editor_)
 	,	id(id_)
 	,	path(path_)
@@ -105,7 +103,7 @@ struct DependencyCharacter : public RefCountImpl< ui::RichEdit::ISpecialCharacte
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPage", ScriptEditorPage, editor::IEditorPage)
 
@@ -210,7 +208,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 	// Create language specific implementations.
 	{
-		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.SyntaxLanguageType");
+		const std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.SyntaxLanguageType");
 		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName.c_str());
 		if (syntaxLanguageType)
 		{
@@ -219,7 +217,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
-		std::wstring scriptCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptCompilerType");
+		const std::wstring scriptCompilerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.ScriptCompilerType");
 		const TypeInfo* scriptCompilerType = TypeInfo::find(scriptCompilerTypeName.c_str());
 		if (scriptCompilerType)
 		{
@@ -227,7 +225,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 			T_ASSERT(m_scriptCompiler);
 		}
 
-		std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
+		const std::wstring scriptOutlineTypeName = L"traktor.script.ScriptOutlineLua";
 		const TypeInfo* scriptOutlineType = TypeInfo::find(scriptOutlineTypeName.c_str());
 		if (scriptOutlineType)
 		{
@@ -254,7 +252,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 		m_scriptDebuggerSessions->addListener(this);
 
 		// Get all breakpoints.
-		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+		const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 		for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 		{
 			if (m_scriptDebuggerSessions->haveBreakpoint(instanceGuid, i))
@@ -286,15 +284,13 @@ void ScriptEditorPage::destroy()
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	int32_t dropOffset = m_edit->getOffsetFromPosition(m_edit->screenToClient(position));
+	const int32_t dropOffset = m_edit->getOffsetFromPosition(m_edit->screenToClient(position));
 	if (dropOffset < 0)
 		return false;
 
 	const wchar_t ch = m_edit->addSpecialCharacter(new DependencyCharacter(m_editor, instance->getGuid(), instance->getPath()));
-
 	m_edit->placeCaret(dropOffset, true);
 	m_edit->insert(std::wstring(1, ch));
-
 	return true;
 }
 
@@ -484,7 +480,7 @@ void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 
 	if (!scriptDebugger->isRunning())
 	{
-		Guid instanceGuid = m_document->getInstance(0)->getGuid();
+		const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 
 		Ref< StackFrame > sf;
 		for (uint32_t depth = 0; scriptDebugger->captureStackFrame(depth, sf); ++depth)
@@ -501,7 +497,7 @@ void ScriptEditorPage::debugeeStateChange(IScriptDebugger* scriptDebugger)
 				}
 
 				// Highlight current, breaked, line.
-				int32_t line = (int32_t)sf->getLine();
+				const int32_t line = (int32_t)sf->getLine();
 				m_edit->setBackgroundAttribute(line, m_debugCurrentAttribute);
 				break;
 			}
@@ -529,7 +525,7 @@ void ScriptEditorPage::notifyRemoveBreakpoint(const Guid& scriptId, int32_t line
 
 void ScriptEditorPage::updateBreakpoints()
 {
-	Guid instanceGuid = m_document->getInstance(0)->getGuid();
+	const Guid instanceGuid = m_document->getInstance(0)->getGuid();
 	m_scriptDebuggerSessions->removeAllBreakpoints(instanceGuid);
 	for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
 	{
@@ -600,7 +596,7 @@ void ScriptEditorPage::eventScriptChange(ui::ContentChangeEvent* event)
 		return;
 
 	// Transform editor text into "escaped" text.
-	std::wstring text = m_edit->getText(
+	const std::wstring text = m_edit->getText(
 		[&] (wchar_t ch) -> std::wstring {
 			return ch != L'\\' ? std::wstring(1, ch) : L"\\\\";
 		},
@@ -625,7 +621,7 @@ void ScriptEditorPage::eventScriptButtonDown(ui::MouseButtonDownEvent* event)
 	if (event->getPosition().x >= m_edit->getMarginWidth() || event->getButton() != ui::MbtLeft)
 		return;
 
-	int32_t line = m_edit->getLineFromPosition(event->getPosition().y);
+	const int32_t line = m_edit->getLineFromPosition(event->getPosition().y);
 	if (line >= 0)
 	{
 		if (!m_edit->getLineData(line))
@@ -707,5 +703,4 @@ void ScriptEditorPage::eventTimer(ui::TimerEvent* event)
 	}
 }
 
-	}
 }
