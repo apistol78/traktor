@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include <tinyexr.h>
 
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Drawing/Formats/ImageFormatExr.h"
 #include "Drawing/Image.h"
@@ -59,7 +60,30 @@ Ref< Image > ImageFormatExr::read(IStream* stream)
 
 bool ImageFormatExr::write(IStream* stream, const Image* image)
 {
-	return false;
+	Ref< Image > img = image->clone();
+	img->convert(PixelFormat::getRGBAF32());
+
+	if (image->getPixelFormat().getAlphaBits() == 0)
+		img->clearAlpha(1.0f);
+
+	uint8_t* buffer = nullptr;
+	const int32_t size = SaveEXRToMemory(
+		(const float*)img->getData(),
+		img->getWidth(),
+		img->getHeight(),
+		4,
+		0,
+		(const unsigned char**)&buffer,
+		nullptr
+	);
+	if (size <= 0)
+		return false;
+
+	MemoryStream ms(buffer, size, true, false);
+	const bool result = StreamCopy(stream, &ms).execute();
+
+	std::free(buffer);
+	return result;
 }
 
 }
