@@ -40,11 +40,8 @@ void ProbeComponent::destroy()
 
 void ProbeComponent::setOwner(Entity* owner)
 {
-	if (owner != m_owner)
-	{
-		m_owner = owner;
-		m_dirty = true;
-	}
+	if ((m_owner = owner) != nullptr)
+		m_last = m_owner->getTransform().translation();
 }
 
 void ProbeComponent::update(const UpdateParams& update)
@@ -53,7 +50,7 @@ void ProbeComponent::update(const UpdateParams& update)
 
 void ProbeComponent::setTransform(const Transform& transform)
 {
-	if (!m_dirty && transform.translation() != m_last)
+	if (!m_dirty && (transform.translation() - m_last).length2() > 0.001_simd)
 	{
 		m_dirty = true;
 		m_last = transform.translation();
