@@ -73,7 +73,7 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	-- Disable stage scale and position, register listener of changes in stage size.
 	local stage = mc.context.stage
 	self._stageListener = stage.eventResize:add(function() self:_eventStageResize() end)
-	stage.scaleMode = "noScale"
+	stage.scaleMode = traktor.spark.Stage.NoScale
 	stage.align = "TL"
 
 	self._vwidth = vwidth
@@ -141,6 +141,7 @@ function Frame:_eventMouseWheel(delta)
 	local pt = self:getMousePosition()
 	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
+
 	]]>
 	</text>
 </object>

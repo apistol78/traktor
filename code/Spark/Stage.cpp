@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,7 +25,7 @@ Stage::Stage(Context* context)
 ,	m_viewHeight(0)
 ,	m_alignH(SaCenter)
 ,	m_alignV(SaCenter)
-,	m_scaleMode(SmShowAll)
+,	m_scaleMode(ShowAll)
 ,	m_frameTransform(0.0f, 0.0f, 0.0f, 0.0f)
 {
 	const Movie* movie = m_context->getMovie();
@@ -47,7 +47,7 @@ void Stage::eventResize(int32_t width, int32_t height)
 
 	// Only adjust stage's size when in NoScale mode.
 	if (
-		m_scaleMode != SmNoScale ||
+		m_scaleMode != NoScale ||
 		(width == m_width && height == m_height)
 	)
 	{
@@ -183,7 +183,7 @@ void Stage::updateViewOffset()
 
 	const Aabb2 bounds = movie->getFrameBounds();
 
-	if (m_scaleMode == SmShowAll)
+	if (m_scaleMode == ShowAll)
 	{
 		const float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
 		const float scaleX = frameAspect / aspectRatio;
@@ -226,7 +226,7 @@ void Stage::updateViewOffset()
 			m_frameTransform.set(0.0f, topY, 1.0f, scaleY);
 		}
 	}
-	else if (m_scaleMode == SmNoBorder)
+	else if (m_scaleMode == NoBorder)
 	{
 		const float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
 		const float scaleX = frameAspect / aspectRatio;
@@ -269,7 +269,7 @@ void Stage::updateViewOffset()
 			m_frameTransform.set(leftX, 0.0f, scaleX, 1.0f);
 		}
 	}
-	else if (m_scaleMode == SmNoScale)
+	else if (m_scaleMode == NoScale)
 	{
 		const float viewWidth = m_viewWidth * 20.0f;
 		const float viewHeight = m_viewHeight * 20.0f;
@@ -311,17 +311,12 @@ void Stage::updateViewOffset()
 	}
 }
 
-void Stage::setScaleMode(const std::wstring& scaleMode)
+void Stage::setScaleMode(ScaleMode scaleMode)
 {
-	if (compareIgnoreCase(scaleMode, L"showAll") == 0)
-		m_scaleMode = SmShowAll;
-	else if (compareIgnoreCase(scaleMode, L"noBorder") == 0)
-		m_scaleMode = SmNoBorder;
-	else if (compareIgnoreCase(scaleMode, L"exactFit") == 0)
-		m_scaleMode = SmExactFit;
-	else if (compareIgnoreCase(scaleMode, L"noScale") == 0)
+	m_scaleMode = scaleMode;
+
+	if (scaleMode == NoScale)
 	{
-		m_scaleMode = SmNoScale;
 		m_width = m_viewWidth;
 		m_height = m_viewHeight;
 	}
@@ -329,16 +324,9 @@ void Stage::setScaleMode(const std::wstring& scaleMode)
 	updateViewOffset();
 }
 
-std::wstring Stage::getScaleMode() const
+Stage::ScaleMode Stage::getScaleMode() const
 {
-	const wchar_t* tbl[] =
-	{
-		L"showAll",
-		L"noBorder",
-		L"exactFit",
-		L"noScale"
-	};
-	return tbl[m_scaleMode];
+	return m_scaleMode;
 }
 
 }
