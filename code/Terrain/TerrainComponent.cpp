@@ -608,8 +608,11 @@ bool TerrainComponent::createPatches()
 {
 	m_patches.clear();
 	m_patchCount = 0;
+
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
+	safeDestroy(m_drawBuffer);
+	safeDestroy(m_dataBuffer);
 
 	const uint32_t heightfieldSize = m_heightfield->getSize();
 	T_ASSERT(heightfieldSize > 0);
