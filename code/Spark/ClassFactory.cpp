@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -119,6 +119,16 @@ Ref< SpriteInstance > SpriteInstance_duplicateMovieClip_1(SpriteInstance* self, 
 Ref< SpriteInstance > SpriteInstance_duplicateMovieClip_2(SpriteInstance* self, const std::string& cloneName, int32_t depth, SpriteInstance* intoParent)
 {
 	return self->duplicateMovieClip(cloneName, depth, intoParent);
+}
+
+void Stage_setScaleMode(Stage* self, int32_t scaleMode)
+{
+	self->setScaleMode((Stage::ScaleMode)scaleMode);
+}
+
+int32_t Stage_getScaleMode(Stage* self)
+{
+	return (int32_t)self->getScaleMode();
 }
 
 uint32_t Shape_getPathCount(Shape* self)
@@ -554,6 +564,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classSprite = new AutoRuntimeClass< Sprite >();
 	classSprite->addProperty("frameRate", &Sprite::getFrameRate);
 	classSprite->addProperty("frameCount", &Sprite::getFrameCount);
+	classSprite->addProperty("scalingGrid", &Sprite::setScalingGrid, &Sprite::getScalingGrid);
 	classSprite->addMethod("addFrame", &Sprite::addFrame);
 	classSprite->addMethod("getFrame", &Sprite::getFrame);
 	classSprite->addMethod("findFrame", &Sprite::findFrame);
@@ -613,11 +624,19 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	// Stage
 	auto classStage = new AutoRuntimeClass< Stage >();
+	classStage->addConstant("ShowAll", Any::fromInt32(Stage::ShowAll));
+	classStage->addConstant("NoBorder", Any::fromInt32(Stage::NoBorder));
+	classStage->addConstant("ExactFit", Any::fromInt32(Stage::ExactFit));
+	classStage->addConstant("NoScale", Any::fromInt32(Stage::NoScale));
 	classStage->addProperty("width", &Stage::getWidth);
 	classStage->addProperty("height", &Stage::getHeight);
+	classStage->addProperty("viewWidth", &Stage::getViewWidth);
+	classStage->addProperty("viewHeight", &Stage::getViewHeight);
 	classStage->addProperty("align", &Stage::setAlign, &Stage::getAlign);
-	classStage->addProperty("scaleMode", &Stage::setScaleMode, &Stage::getScaleMode);
+	classStage->addProperty("scaleMode", &Stage_setScaleMode, &Stage_getScaleMode);
 	classStage->addProperty("eventResize", &Stage::getEventResize);
+	classStage->addMethod("toStage", &Stage::toStage);
+	classStage->addMethod("toScreen", &Stage::toScreen);
 	registrar->registerClass(classStage);
 
 	// SwfMovieFactory

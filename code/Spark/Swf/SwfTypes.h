@@ -446,14 +446,6 @@ enum SwfTextAlignType
 	StaJustify = 3
 };
 
-enum SwfScaleModeType
-{
-	SmShowAll = 0,
-	SmNoBorder = 1,
-	SmExactFit = 2,
-	SmNoScale = 3
-};
-
 enum SwfBlendMode
 {
 	SbmDefault = 0,

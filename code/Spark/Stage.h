@@ -26,6 +26,14 @@ class Stage : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum ScaleMode
+	{
+		ShowAll = 0,
+		NoBorder = 1,
+		ExactFit = 2,
+		NoScale = 3
+	};
+
 	explicit Stage(Context* context);
 
 	void eventResize(int32_t width, int32_t height);
@@ -60,9 +68,9 @@ public:
 
 	std::wstring getAlign() const;
 
-	void setScaleMode(const std::wstring& scaleMode);
+	void setScaleMode(ScaleMode scaleMode);
 
-	std::wstring getScaleMode() const;
+	ScaleMode getScaleMode() const;
 
 	Event* getEventResize() { return &m_eventResize; }
 
@@ -74,7 +82,7 @@ private:
 	int32_t m_viewHeight;
 	SwfAlignType m_alignH;
 	SwfAlignType m_alignV;
-	SwfScaleModeType m_scaleMode;
+	ScaleMode m_scaleMode;
 	Vector4 m_frameTransform;
 	Event m_eventResize;
 
