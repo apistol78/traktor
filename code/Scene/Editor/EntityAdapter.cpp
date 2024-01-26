@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IComponentEditor.h"
 #include "Scene/Editor/IComponentEditorFactory.h"
@@ -87,6 +88,25 @@ void EntityAdapter::prepare(
 void EntityAdapter::destroyEntity()
 {
 	safeDestroy(m_entity);
+}
+
+void EntityAdapter::setComponentProduct(const world::IEntityComponentData* componentData, world::IEntityComponent* component)
+{
+	const uint32_t hash = DeepHash(componentData).get();
+	m_componentProducts[&type_of(componentData)] = { hash, component };
+}
+
+world::IEntityComponent* EntityAdapter::findComponentProduct(const world::IEntityComponentData* componentData)
+{
+	const auto it = m_componentProducts.find(&type_of(componentData));
+	if (it == m_componentProducts.end())
+		return nullptr;
+
+	const uint32_t hash = DeepHash(componentData).get();
+	if (it->second.hash != hash)
+		return nullptr;
+
+	return it->second.component;
 }
 
 world::EntityData* EntityAdapter::getEntityData() const

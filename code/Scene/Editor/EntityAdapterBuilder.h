@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,9 @@
  */
 #pragma once
 
-#include <map>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor::scene
@@ -59,15 +59,17 @@ public:
 private:
 	struct Cache
 	{
-		RefArray< EntityAdapter > adapters;
-		std::map< uint32_t, RefArray< world::Entity > > leafEntities;
+		Ref< EntityAdapter > adapter;
+		uint32_t leafEntityHash;
+		Ref< world::Entity > leafEntity;
 	};
 
 	SceneEditorContext* m_context;
 	Ref< world::IEntityBuilder > m_entityBuilder;
-	mutable std::map< const TypeInfo*, Cache > m_cache;
+	mutable SmallMap< Guid, Cache > m_cache;
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;
+	mutable Ref< const world::EntityData > m_currentEntityData;
 	mutable uint32_t m_cacheHit;
 	mutable uint32_t m_cacheMiss;
 };

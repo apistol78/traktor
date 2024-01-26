@@ -20,6 +20,7 @@
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
 #include "World/Editor/EditorAttributesComponentData.h"
+#include "World/Entity/GroupComponentData.h"
 
 namespace traktor::scene
 {
@@ -35,6 +36,11 @@ void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >&
 
 	for (auto childAdapter : entityAdapter->getChildren())
 		collectAllAdapters(childAdapter, outEntityAdapters);
+}
+
+bool isComponentCacheable(const world::IEntityComponentData* componentData)
+{
+	return !is_a< world::GroupComponentData >(componentData);
 }
 
 	}
@@ -53,13 +59,15 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 {
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
-
 	for (auto entityAdapter : entityAdapters)
 	{
-		if (entityAdapter->getEntityData())
+		if (
+			entityAdapter->getEntityData() &&
+			entityAdapter->getEntityData()->getId().isNotNull()
+		)
 		{
-			Cache& cache = m_cache[&type_of(entityAdapter->getEntityData())];
-			cache.adapters.push_back(entityAdapter);
+			Cache& cache = m_cache[entityAdapter->getEntityData()->getId()];
+			cache.adapter = entityAdapter;
 
 			if (
 				entityAdapter->getHash() &&
@@ -67,8 +75,13 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 				entityAdapter->getChildren().empty()
 			)
 			{
-				uint32_t hash = entityAdapter->getHash();
-				cache.leafEntities[hash].push_back(entityAdapter->getEntity());
+				cache.leafEntityHash = entityAdapter->getHash();
+				cache.leafEntity = entityAdapter->getEntity();
+			}
+			else
+			{
+				cache.leafEntityHash = 0;
+				cache.leafEntity = nullptr;
 			}
 		}
 	}
@@ -81,14 +94,8 @@ EntityAdapterBuilder::~EntityAdapterBuilder()
 	// Ensure all unused entities from cache is properly destroyed.
 	for (auto ca : m_cache)
 	{
-		for (auto ue : ca.second.leafEntities)
-		{
-			for (auto e : ue.second)
-			{
-				if (e)
-					e->destroy();
-			}
-		}
+		if (ca.second.leafEntity)
+			ca.second.leafEntity->destroy();
 	}
 }
 
@@ -129,12 +136,11 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	const uint32_t hash = DeepHash(entityData).get();
 
 	// Get adapter; reuse adapters containing same type of entity.
-	Cache& cache = m_cache[&type_of(entityData)];
-	if (!cache.adapters.empty())
+	Cache& cache = m_cache[entityData->getId()];
+	if (cache.adapter != nullptr)
 	{
-		entityAdapter = cache.adapters.front();
+		entityAdapter = cache.adapter;
 		T_FATAL_ASSERT (entityAdapter != nullptr);
-		cache.adapters.pop_front();
 		T_FATAL_ASSERT (&type_of(entityAdapter->getEntityData()) == &type_of(entityData));
 		entityAdapter->unlinkFromParent();
 	}
@@ -162,16 +168,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		T_FATAL_ASSERT (m_rootAdapter->getParent() == nullptr);
 	}
 
-	// Re-use leaf entities if hash match.
-	if (!cache.leafEntities.empty())
+	// Re-use leaf entity if hash match.
+	if (hash == cache.leafEntityHash)
 	{
-		RefArray< world::Entity >& entities = cache.leafEntities[hash];
-		if (!entities.empty())
-		{
-			entity = entities.front();
-			entities.pop_front();
-			m_cacheHit++;
-		}
+		T_FATAL_ASSERT (cache.leafEntity != nullptr);
+		entity = cache.leafEntity;
+		cache.leafEntity = nullptr;
+		m_cacheHit++;
 	}
 
 	// If no leaf entity then we need to re-create the entity.
@@ -191,8 +194,11 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		// Create the concrete entity.
 		{
 			T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
+			T_ANONYMOUS_VAR(Save< Ref< const world::EntityData > >)(m_currentEntityData, entityData);
+			
 			const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityData);
 			T_FATAL_ASSERT (entityFactory);
+
 			entity = entityFactory->createEntity(this, *entityData);
 		}
 
@@ -230,11 +236,32 @@ Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEven
 
 Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntityComponentData* entityComponentData) const
 {
+	Ref< world::IEntityComponent > entityComponent;
+
+	// Try to find existing component.
+	entityComponent = m_currentAdapter->findComponentProduct(entityComponentData);
+	if (entityComponent)
+		return entityComponent;
+
+	// Create component through factory.
 	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityComponentData);
-	if (entityFactory)
-		return entityFactory->createEntityComponent(this, *entityComponentData);
-	else
+	if (!entityFactory)
 		return nullptr;
+
+	entityComponent = entityFactory->createEntityComponent(this, *entityComponentData);
+	if (!entityComponent)
+		return nullptr;
+
+	// Cache component in adapter so we can reuse it later.
+	if (isComponentCacheable(entityComponentData))
+	{
+		m_currentAdapter->setComponentProduct(
+			entityComponentData,
+			entityComponent
+		);
+	}
+
+	return entityComponent;
 }
 
 const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const

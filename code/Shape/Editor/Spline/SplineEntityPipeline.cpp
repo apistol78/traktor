@@ -90,14 +90,18 @@ bool SplineEntityPipeline::buildDependencies(
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
 	}
 
-	if (auto cloneShapeLayerData = dynamic_type_cast< const CloneShapeLayerData* >(sourceAsset))
-		pipelineDepends->addDependency(cloneShapeLayerData->getMesh(), editor::PdfUse);
+	if (auto cloneShapeLayerData = dynamic_type_cast<const CloneShapeLayerData*>(sourceAsset))
+	{
+		const uint32_t flags = m_targetEditor ? editor::PdfBuild | editor::PdfUse : editor::PdfUse;
+		pipelineDepends->addDependency(cloneShapeLayerData->getMesh(), flags);
+	}
 
 	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshStart(), editor::PdfUse);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshRepeat(), editor::PdfUse);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshEnd(), editor::PdfUse);
+		const uint32_t flags = m_targetEditor ? editor::PdfBuild | editor::PdfUse : editor::PdfUse;
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshStart(), flags);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshRepeat(), flags);
+		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshEnd(), flags);
 	}
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
