@@ -10,8 +10,8 @@
 
 #if defined(T_STATIC)
 #	include "Sound/AudioClassFactory.h"
-#	include "Sound/StaticSoundResource.h"
-#	include "Sound/StreamSoundResource.h"
+#	include "Sound/StaticAudioResource.h"
+#	include "Sound/StreamAudioResource.h"
 #	include "Sound/Decoders/FlacStreamDecoder.h"
 #	include "Sound/Decoders/Mp3StreamDecoder.h"
 #	include "Sound/Decoders/OggStreamDecoder.h"
