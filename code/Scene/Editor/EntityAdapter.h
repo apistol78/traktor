@@ -72,6 +72,10 @@ public:
 
 	void destroyEntity();
 
+	void setComponentProduct(const world::IEntityComponentData* componentData, world::IEntityComponent* component);
+
+	world::IEntityComponent* findComponentProduct(const world::IEntityComponentData* componentData);
+
 	/*! \name Accessors */
 	//@{
 
@@ -231,10 +235,17 @@ public:
 private:
 	friend class SceneEditorContext;
 
+	struct ComponentProduct
+	{
+		uint32_t hash;
+		Ref< world::IEntityComponent > component;
+	};
+
 	SceneEditorContext* m_context;
 	const TypeInfo* m_entityDataType;
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
+	SmallMap< const TypeInfo*, ComponentProduct > m_componentProducts;
 	uint32_t m_hash;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;

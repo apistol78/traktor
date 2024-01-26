@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ControlPointComponent", ControlPointComponent, world::IEntityComponent)
 
@@ -32,13 +30,16 @@ void ControlPointComponent::setOwner(world::Entity* owner)
 
 void ControlPointComponent::setTransform(const Transform& transform)
 {
-	m_dirty = true;
-	m_transform = transform;
+	if (transform != m_transform)
+	{
+		m_dirty = true;
+		m_transform = transform;
+	}
 }
 
 Aabb3 ControlPointComponent::getBoundingBox() const
 {
-	Aabb3 boundingBox(
+	const Aabb3 boundingBox(
 		Vector4(-1.0f, -1.0f, -1.0f),
 		Vector4( 1.0f,  1.0f,  1.0f)
 	);
@@ -51,10 +52,9 @@ void ControlPointComponent::update(const world::UpdateParams& update)
 
 bool ControlPointComponent::checkDirty()
 {
-	bool dirty = m_dirty;
+	const bool dirty = m_dirty;
 	m_dirty = false;
 	return dirty;
 }
 
-	}
 }

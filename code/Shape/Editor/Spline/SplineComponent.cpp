@@ -60,7 +60,6 @@ void SplineComponent::destroy()
 void SplineComponent::setOwner(world::Entity* owner)
 {
 	m_owner = owner;
-	m_dirty = true;
 }
 
 void SplineComponent::setTransform(const Transform& transform)
