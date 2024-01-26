@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -170,12 +170,12 @@ int64_t BlockFile::allocateRegion(int64_t size)
 			if (blocks[i].offset < c_dataOffset)
 				continue;
 
-			int64_t ctail = blocks[i].offset + blocks[i].size;
-			int64_t nhead = blocks[i + 1].offset;
-			int64_t gap = nhead - ctail;
+			const int64_t ctail = blocks[i].offset + blocks[i].size;
+			const int64_t nhead = blocks[i + 1].offset;
+			const int64_t gap = nhead - ctail;
 			if (gap >= size)
 			{
-				int64_t waste = gap - size;
+				const int64_t waste = gap - size;
 				if (waste < minWaste)
 				{
 					minBlock = &blocks[i];
@@ -186,7 +186,7 @@ int64_t BlockFile::allocateRegion(int64_t size)
 
 		if (minBlock != nullptr)
 		{
-			int64_t ctail = minBlock->offset + minBlock->size;
+			const int64_t ctail = minBlock->offset + minBlock->size;
 			return ctail;
 		}
 
@@ -275,7 +275,7 @@ void BlockFile::flushTOC()
 		writer << block.size;
 	}
 
-	int64_t padSize = c_dataOffset - m_stream->tell();
+	const int64_t padSize = c_dataOffset - m_stream->tell();
 	for (int64_t i = 0; i < padSize; ++i)
 	{
 		const uint8_t padDummy = 0x00;
