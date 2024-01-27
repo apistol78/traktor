@@ -33,6 +33,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/Traverser.h"
+#include "Scene/Editor/Utilities.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/ModifierChangedEvent.h"
@@ -764,7 +765,7 @@ void SceneEditorContext::cloneSelected()
 		Ref< world::EntityData > clonedEntityData = DeepClone(selectedEntityAdapter->getEntityData()).create< world::EntityData >();
 		T_ASSERT(clonedEntityData);
 
-		clonedEntityData->setId(Guid::create());
+		generateEntityIds(clonedEntityData);
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
 		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);

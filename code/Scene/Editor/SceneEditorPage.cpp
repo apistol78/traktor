@@ -51,6 +51,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/ScenePreviewControl.h"
+#include "Scene/Editor/Utilities.h"
 #include "Scene/Editor/Events/CameraMovedEvent.h"
 #include "Scene/Editor/Events/MeasurementEvent.h"
 #include "Scene/Editor/Events/PostBuildEvent.h"
@@ -724,7 +725,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		// Create new instances and adapters for each entity found in clipboard.
 		for (auto entityData : entityDatas)
 		{
-			entityData->setId(Guid::create());
+			generateEntityIds(entityData);
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
 			entityAdapter->prepare(entityData, nullptr, 0);
