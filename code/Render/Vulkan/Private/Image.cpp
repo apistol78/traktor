@@ -308,7 +308,8 @@ bool Image::createTarget(
 	uint32_t height,
 	uint32_t multiSample,
 	VkFormat format,
-	VkImage swapChainImage
+	VkImage swapChainImage,
+	bool shaderAccessible
 )
 {
 	T_FATAL_ASSERT(m_image == 0);
@@ -327,10 +328,13 @@ bool Image::createTarget(
 		ici.format = format;
 		ici.tiling = VK_IMAGE_TILING_OPTIMAL;
 		ici.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
+		ici.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		ici.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 		ici.samples = (multiSample <= 1) ? VK_SAMPLE_COUNT_1_BIT : (VkSampleCountFlagBits)multiSample;
 		ici.flags = 0;
+
+		if (shaderAccessible)
+			ici.usage |= VK_IMAGE_USAGE_SAMPLED_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 	
 		VmaAllocationCreateInfo aci = {};
 		aci.usage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -371,7 +375,7 @@ bool Image::createTarget(
 	m_layerCount = 1;
 	m_imageLayouts.resize(m_mipCount * m_layerCount, VK_IMAGE_LAYOUT_UNDEFINED);
 
-	if (swapChainImage == 0)
+	if (shaderAccessible && swapChainImage == 0)
 	{
 		updateSampledResource();
 		updateStorageResource();
