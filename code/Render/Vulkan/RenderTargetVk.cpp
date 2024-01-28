@@ -44,17 +44,17 @@ bool RenderTargetVk::createPrimary(
 	if (multiSample > 1)
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(width, height, multiSample, format, 0))
+		if (!m_imageTarget->createTarget(width, height, multiSample, format, 0, false))
 			return false;
 
 		m_imageResolved = new Image(m_context);
-		if (!m_imageResolved->createTarget(width, height, 1, format, swapChainImage))
+		if (!m_imageResolved->createTarget(width, height, 1, format, swapChainImage, false))
 			return false;
 	}
 	else
 	{
 		m_imageTarget = new Image(m_context);
-		if (!m_imageTarget->createTarget(width, height, 0, format, swapChainImage))
+		if (!m_imageTarget->createTarget(width, height, 0, format, swapChainImage, false))
 			return false;
 
 		m_imageResolved = m_imageTarget;
@@ -75,18 +75,24 @@ bool RenderTargetVk::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	if (format == VK_FORMAT_UNDEFINED)
 		return false;
 
-	m_imageTarget = new Image(m_context);
-	if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, 0))
-		return false;
-
 	if (setDesc.multiSample > 1)
 	{
+		m_imageTarget = new Image(m_context);
+		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, 0, false))
+			return false;
+
 		m_imageResolved = new Image(m_context);
-		if (!m_imageResolved->createTarget(setDesc.width, setDesc.height, 1, format, 0))
+		if (!m_imageResolved->createTarget(setDesc.width, setDesc.height, 1, format, 0, true))
 			return false;
 	}
 	else
+	{
+		m_imageTarget = new Image(m_context);
+		if (!m_imageTarget->createTarget(setDesc.width, setDesc.height, setDesc.multiSample, format, 0, true))
+			return false;
+
 		m_imageResolved = m_imageTarget;
+	}
 
 	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageTarget->getVkImage(), VK_OBJECT_TYPE_IMAGE);
 	setObjectDebugName(m_context->getLogicalDevice(), tag, (uint64_t)m_imageResolved->getVkImage(), VK_OBJECT_TYPE_IMAGE);
