@@ -15,7 +15,7 @@ function Flipboard:new(parent)
 end
 
 function Flipboard:showPage(id, arg)
-	local r < const > = 0.5
+	local r < const > = 0.2
 
 	local children = self:getChildren()
 	for _, child in ipairs(children) do
