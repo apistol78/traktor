@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,6 @@
 #include "Terrain/TerrainComponent.h"
 #include "Terrain/TerrainLayerComponent.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::terrain
 {
@@ -56,14 +55,6 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 	typeSet.insert< TerrainComponent >();
 	typeSet.insert< TerrainLayerComponent >();
 	return typeSet;
-}
-
-void EntityRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void EntityRenderer::setup(

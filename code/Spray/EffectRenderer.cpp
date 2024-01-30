@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,6 @@
 #include "Spray/TrailRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor::spray
@@ -37,14 +36,6 @@ void EffectRenderer::setLodDistances(float lod1Distance, float lod2Distance)
 const TypeInfoSet EffectRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< EffectComponent >();
-}
-
-void EffectRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void EffectRenderer::setup(

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Render/Types.h"
-#include "World/WorldTypes.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,18 +22,15 @@
 namespace traktor::world
 {
 
-class Entity;
-class IWorldRenderer;
 struct UpdateParams;
+
+class World;
 class WorldRenderSettings;
-class WorldRenderView;
 
 }
 
 namespace traktor::scene
 {
-
-class ISceneController;
 
 /*! Scene
  * \ingroup Scene
@@ -48,31 +44,25 @@ class T_DLLCLASS Scene : public Object
 
 public:
 	explicit Scene(
-		ISceneController* controller,
-		world::Entity* rootEntity,
-		const world::WorldRenderSettings* worldRenderSettings
+		const world::WorldRenderSettings* worldRenderSettings,
+		world::World* world
 	);
 
-	explicit Scene(ISceneController* controller, Scene* scene);
+	explicit Scene(Scene* scene);
 
 	virtual ~Scene();
 
 	void destroy();
 
-	void updateController(const world::UpdateParams& update);
-
-	void updateEntity(const world::UpdateParams& update);
-
-	world::Entity* getRootEntity() const;
-
-	ISceneController* getController() const;
+	void update(const world::UpdateParams& update);
 
 	const world::WorldRenderSettings* getWorldRenderSettings() const;
 
+	world::World* getWorld() const;
+
 private:
-	Ref< world::Entity > m_rootEntity;
-	Ref< ISceneController > m_controller;
 	Ref< const world::WorldRenderSettings > m_worldRenderSettings;
+	Ref< world::World > m_world;
 };
 
 }

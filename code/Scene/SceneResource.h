@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,7 +23,7 @@
 namespace traktor::world
 {
 
-class IEntityBuilder;
+class IEntityFactory;
 class EntityData;
 class WorldRenderSettings;
 
@@ -32,7 +32,6 @@ class WorldRenderSettings;
 namespace traktor::scene
 {
 
-class ISceneControllerData;
 class Scene;
 
 /*! Scene resource.
@@ -45,7 +44,7 @@ class T_DLLCLASS SceneResource : public ISerializable
 public:
 	SceneResource();
 
-	Ref< Scene > createScene(world::IEntityBuilder* entityBuilder) const;
+	Ref< Scene > createScene(const world::IEntityFactory* entityFactory) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
@@ -55,16 +54,11 @@ public:
 
 	Ref< world::EntityData > getEntityData() const;
 
-	void setControllerData(ISceneControllerData* controllerData);
-
-	Ref< ISceneControllerData > getControllerData() const;
-
 	virtual void serialize(ISerializer& s) override final;
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::EntityData > m_entityData;
-	Ref< ISceneControllerData > m_controllerData;
 };
 
 }

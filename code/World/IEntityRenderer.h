@@ -23,7 +23,6 @@ namespace traktor::world
 
 class IWorldRenderPass;
 class WorldBuildContext;
-class WorldGatherContext;
 class WorldRenderView;
 class WorldSetupContext;
 
@@ -39,18 +38,6 @@ class T_DLLCLASS IEntityRenderer : public Object
 
 public:
 	virtual const TypeInfoSet getRenderableTypes() const = 0;
-
-	/*! Gather pass. 
-	 *
-	 * Called once per frame to gather active renderables.
-	 *
-	 * \param context World context.
-	 * \param renderable Renderable instance.
-	 */
-	virtual void gather(
-		const WorldGatherContext& context,
-		Object* renderable
-	) = 0;
 
 	/*! Setup pass. */
 	virtual void setup(

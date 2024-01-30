@@ -45,6 +45,7 @@ namespace traktor::world
 
 class Entity;
 class IrradianceGrid;
+class World;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 class WorldRenderView;
@@ -106,14 +107,14 @@ public:
 
 	/*! Setup render passes.
 	 *
+	 * \param world World.
 	 * \param worldRenderView World render view.
-	 * \param rootEntity Root entity.
 	 * \param renderGraph Setup into render graph.
 	 * \param outputTargetSetId ID of output target set.
 	 */
 	virtual void setup(
+		const World* world,
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) = 0;

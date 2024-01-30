@@ -62,13 +62,11 @@
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
-#include "World/EntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupRenderer.h"
-#include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 
 namespace traktor::spray
@@ -356,9 +354,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	entityRenderers->add(new weather::CloudRenderer());
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());
-	entityRenderers->add(new world::EntityRenderer());
 	entityRenderers->add(new world::GroupRenderer());
-	entityRenderers->add(new world::LightRenderer());
 	entityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
@@ -483,15 +479,14 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	update.totalTime = time;
 	update.alternateTime = time;
 	update.deltaTime = deltaTime * m_timeScale;
-	m_sceneInstance->updateController(update);
-	m_sceneInstance->updateEntity(update);
+	m_sceneInstance->update(update);
 
 	// Build a root entity by gathering entities from containers.
-	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	Ref< world::Entity > rootEntity = new world::Entity();
-	rootEntity->setComponent(rootGroup);
+	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	//Ref< world::Entity > rootEntity = new world::Entity();
+	//rootEntity->setComponent(rootGroup);
 
-	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
 
 	if (m_effectEntity)
 	{
@@ -512,7 +507,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		m_effectEntity->setTransform(effectTransform);
 		m_effectEntity->update(update);
 
-		rootGroup->addEntity(m_effectEntity);
+		//rootGroup->addEntity(m_effectEntity);
 	}
 
 	// Setup world render passes.
@@ -527,7 +522,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
@@ -629,7 +624,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	rootGroup->removeAllEntities();
+	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

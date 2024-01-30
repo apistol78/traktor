@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -71,14 +71,14 @@ int32_t GroupComponentData::getOrdinal() const
 
 void GroupComponentData::setTransform(const EntityData* owner, const Transform& transform)
 {
-	Transform invTransform = owner->getTransform().inverse();
+	const Transform invTransform = owner->getTransform().inverse();
 	for (auto entityData : m_entityData)
 	{
 		if (entityData != nullptr)
 		{
-			Transform currentTransform = entityData->getTransform();
-			Transform Tlocal = invTransform * currentTransform;
-			Transform Tworld = transform * Tlocal;
+			const Transform currentTransform = entityData->getTransform();
+			const Transform Tlocal = invTransform * currentTransform;
+			const Transform Tworld = transform * Tlocal;
 			entityData->setTransform(Tworld);
 		}
 	}

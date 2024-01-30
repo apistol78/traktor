@@ -9,7 +9,6 @@
 #include "Weather/Clouds/CloudComponent.h"
 #include "Weather/Clouds/CloudRenderer.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::weather
 {
@@ -24,14 +23,6 @@ CloudRenderer::CloudRenderer(render::PrimitiveRenderer* primitiveRenderer)
 const TypeInfoSet CloudRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< CloudComponent >();
-}
-
-void CloudRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void CloudRenderer::setup(

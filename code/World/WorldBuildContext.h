@@ -29,7 +29,6 @@ class RenderContext;
 namespace traktor::world
 {
 
-class Entity;
 class WorldEntityRenderers;
 
 /*! World build context.
@@ -40,17 +39,14 @@ class T_DLLCLASS WorldBuildContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldBuildContext(const WorldEntityRenderers* entityRenderers, const Entity* rootEntity, render::RenderContext* renderContext);
+	explicit WorldBuildContext(const WorldEntityRenderers* entityRenderers, render::RenderContext* renderContext);
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
-
-	const Entity* getRootEntity() const { return m_rootEntity; }
 
 	render::RenderContext* getRenderContext() const { return m_renderContext; }
 
 private:
 	const WorldEntityRenderers* m_entityRenderers;
-	const Entity* m_rootEntity;
 	render::RenderContext* m_renderContext;
 };
 

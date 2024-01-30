@@ -23,7 +23,6 @@
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -146,14 +145,6 @@ ProbeRenderer::~ProbeRenderer()
 const TypeInfoSet ProbeRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< ProbeComponent >();
-}
-
-void ProbeRenderer::gather(
-	const WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void ProbeRenderer::setup(
@@ -300,8 +291,8 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 
 		// Render world to intermediate target.
 		m_worldRenderer->setup(
+			context.getWorld(),
 			worldRenderView,
-			context.getRootEntity(),
 			renderGraph,
 			faceTargetSetId
 		);

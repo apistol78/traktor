@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,9 +8,7 @@
  */
 #pragma once
 
-#include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Containers/AlignedVector.h"
 #include "World/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -24,6 +22,9 @@
 namespace traktor::world
 {
 
+class IEntityFactory;
+class World;
+
 /*! Entity builder.
  * \ingroup World
  */
@@ -32,15 +33,9 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	virtual void addFactory(const IEntityFactory* entityFactory) override final;
+	explicit EntityBuilder(const IEntityFactory* entityFactory, World* world);
 
-	virtual void removeFactory(const IEntityFactory* entityFactory) override final;
-
-	virtual const IEntityFactory* getFactory(const EntityData* entityData) const override final;
-
-	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const override final;
-
-	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const override final;
+	virtual ~EntityBuilder();
 
 	virtual Ref< Entity > create(const EntityData* entityData) const override final;
 
@@ -48,12 +43,11 @@ public:
 
 	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const override final;
 
-	virtual const IEntityBuilder* getCompositeEntityBuilder() const override final;
-
 private:
-	mutable Semaphore m_lock;
-	RefArray< const IEntityFactory > m_entityFactories;
-	mutable SmallMap< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
+	Ref< const IEntityFactory > m_entityFactory;
+	Ref< world::World > m_world;
+	mutable int32_t m_depth;
+	mutable AlignedVector< std::pair< int32_t, Ref< Entity > > > m_unsortedEntities;
 };
 
 }

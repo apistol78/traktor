@@ -1,217 +1,69 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include <limits>
-#include "Core/Log/Log.h"
-#include "Core/Thread/Acquire.h"
+#include "Core/Misc/EnterLeave.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityFactory.h"
+#include "World/World.h"
+#include "World/Entity/ExternalEntityData.h"
 
 namespace traktor::world
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilder", EntityBuilder, IEntityBuilder)
 
-void EntityBuilder::addFactory(const IEntityFactory* entityFactory)
+EntityBuilder::EntityBuilder(const IEntityFactory* entityFactory, World* world)
+:	m_entityFactory(entityFactory)
+,	m_world(world)
+,	m_depth(0)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_entityFactories.push_back(entityFactory);
-	m_resolvedFactoryCache.clear();
 }
 
-void EntityBuilder::removeFactory(const IEntityFactory* entityFactory)
+EntityBuilder::~EntityBuilder()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	auto it = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
-	if (it != m_entityFactories.end())
+	if (m_world)
 	{
-		m_entityFactories.erase(it);
-		m_resolvedFactoryCache.clear();
+		std::stable_sort(m_unsortedEntities.begin(), m_unsortedEntities.end(), [](const std::pair< int32_t, Ref< Entity > >& lh, const std::pair< int32_t, Ref< Entity > >& rh) {
+			return lh.first < rh.first;
+		});
+		for (const auto& it : m_unsortedEntities)
+			m_world->addEntity(it.second);
 	}
-}
-
-const IEntityFactory* EntityBuilder::getFactory(const EntityData* entityData) const
-{
-	if (!entityData)
-		return nullptr;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	const TypeInfo& entityDataType = type_of(entityData);
-	const IEntityFactory* entityFactory = nullptr;
-
-	auto it = m_resolvedFactoryCache.find(&entityDataType);
-	if (it != m_resolvedFactoryCache.end())
-	{
-		// This type of entity has already been created; reuse same factory.
-		entityFactory = it->second;
-	}
-	else
-	{
-		// Need to find factory best suited to create entity from it's data.
-		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
-		{
-			const TypeInfoSet& typeSet = (*it)->getEntityTypes();
-			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
-			{
-				if (is_type_of(**j, entityDataType))
-				{
-					const uint32_t classDifference = type_difference(**j, entityDataType);
-					if (classDifference < minClassDifference)
-					{
-						minClassDifference = classDifference;
-						entityFactory = *it;
-					}
-				}
-			}
-		}
-		m_resolvedFactoryCache.insert(std::make_pair(
-			&entityDataType,
-			entityFactory
-		));
-	}
-
-	if (!entityFactory)
-	{
-		log::error << L"Unable to find entity factory for \"" << entityData->getName() << L"\" of \"" << type_name(entityData) << L"\"." << Endl;
-		return nullptr;
-	}
-
-	return entityFactory;
-}
-
-const IEntityFactory* EntityBuilder::getFactory(const IEntityEventData* entityEventData) const
-{
-	if (!entityEventData)
-		return nullptr;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	const TypeInfo& entityEventDataType = type_of(entityEventData);
-	const IEntityFactory* entityFactory = nullptr;
-
-	auto it = m_resolvedFactoryCache.find(&entityEventDataType);
-	if (it != m_resolvedFactoryCache.end())
-	{
-		// This type of entity has already been created; reuse same factory.
-		entityFactory = it->second;
-	}
-	else
-	{
-		// Need to find factory best suited to create entity from it's data.
-		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
-		{
-			const TypeInfoSet& typeSet = (*it)->getEntityEventTypes();
-			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
-			{
-				if (is_type_of(**j, entityEventDataType))
-				{
-					const uint32_t classDifference = type_difference(**j, entityEventDataType);
-					if (classDifference < minClassDifference)
-					{
-						minClassDifference = classDifference;
-						entityFactory = *it;
-					}
-				}
-			}
-		}
-		m_resolvedFactoryCache.insert(std::make_pair(
-			&entityEventDataType,
-			entityFactory
-		));
-	}
-
-	if (!entityFactory)
-	{
-		log::error << L"Unable to find entity factory for event of \"" << type_name(entityEventData) << L"\"." << Endl;
-		return nullptr;
-	}
-
-	return entityFactory;
-}
-
-const IEntityFactory* EntityBuilder::getFactory(const IEntityComponentData* entityComponentData) const
-{
-	if (!entityComponentData)
-		return nullptr;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	const TypeInfo& entityComponentDataType = type_of(entityComponentData);
-	const IEntityFactory* entityFactory = nullptr;
-
-	auto it = m_resolvedFactoryCache.find(&entityComponentDataType);
-	if (it != m_resolvedFactoryCache.end())
-	{
-		// This type of entity component has already been created; reuse same factory.
-		entityFactory = it->second;
-	}
-	else
-	{
-		// Need to find factory best suited to create entity component from it's data.
-		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-		for (RefArray< const IEntityFactory >::const_iterator it = m_entityFactories.begin(); it != m_entityFactories.end() && minClassDifference > 0; ++it)
-		{
-			const TypeInfoSet& typeSet = (*it)->getEntityComponentTypes();
-			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
-			{
-				if (is_type_of(**j, entityComponentDataType))
-				{
-					const uint32_t classDifference = type_difference(**j, entityComponentDataType);
-					if (classDifference < minClassDifference)
-					{
-						minClassDifference = classDifference;
-						entityFactory = *it;
-					}
-				}
-			}
-		}
-		m_resolvedFactoryCache.insert(std::make_pair(
-			&entityComponentDataType,
-			entityFactory
-		));
-	}
-
-	if (!entityFactory)
-	{
-		log::error << L"Unable to find entity factory for component of \"" << type_name(entityComponentData) << L"\"." << Endl;
-		return nullptr;
-	}
-
-	return entityFactory;
 }
 
 Ref< Entity > EntityBuilder::create(const EntityData* entityData) const
 {
-	const IEntityFactory* entityFactory = getFactory(entityData);
-	return entityFactory ? entityFactory->createEntity(this, *entityData) : nullptr;
+	T_ANONYMOUS_VAR(EnterLeave)(
+		[this](){ m_depth++; },
+		[this](){ m_depth--; }
+	);
+
+	Ref< Entity > entity = m_entityFactory->createEntity(this, *entityData);
+	if (!entity)
+		return nullptr;
+
+	if (!is_a< ExternalEntityData >(entityData))
+		m_unsortedEntities.push_back({ m_depth, entity });
+
+	return entity;
 }
 
 Ref< IEntityEvent > EntityBuilder::create(const IEntityEventData* entityEventData) const
 {
-	const IEntityFactory* entityFactory = getFactory(entityEventData);
-	return entityFactory ? entityFactory->createEntityEvent(this, *entityEventData) : nullptr;
+	return m_entityFactory->createEntityEvent(this, *entityEventData);
 }
 
 Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entityComponentData) const
 {
-	const IEntityFactory* entityFactory = getFactory(entityComponentData);
-	return entityFactory ? entityFactory->createEntityComponent(this, *entityComponentData) : nullptr;
-}
-
-const IEntityBuilder* EntityBuilder::getCompositeEntityBuilder() const
-{
-	return this;
+	return m_entityFactory->createEntityComponent(this, *entityComponentData);
 }
 
 }

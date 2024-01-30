@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -118,11 +118,10 @@ protected:
 	};
 	State m_state[4];
 
-	void gather(Entity* rootEntity);
+	void gather(const World* world);
 
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
 		render::handle_t& outShadowMapAtlasTargetSetId

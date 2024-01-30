@@ -257,7 +257,7 @@ bool ScenePipeline::buildOutput(
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	sceneResource->setEntityData(groupEntityData);
-	sceneResource->setControllerData(controllerData);
+	//sceneResource->setControllerData(controllerData);
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{

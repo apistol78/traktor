@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,15 +41,13 @@
 #include "Weather/WeatherFactory.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
-#include "World/EntityBuilder.h"
-#include "World/EntityRenderer.h"
+#include "World/EntityFactory.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/LightComponent.h"
-#include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -93,10 +91,10 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
-	Ref< world::IEntityBuilder > entityBuilder = new world::EntityBuilder();
-	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, nullptr, true));
-	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, m_renderSystem));
-	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
+	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
+	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, nullptr, true));
+	entityFactory->addFactory(new weather::WeatherFactory(m_resourceManager, m_renderSystem));
+	entityFactory->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));
@@ -104,7 +102,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
 	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
-	m_resourceManager->addFactory(new scene::SceneFactory(entityBuilder));
+	m_resourceManager->addFactory(new scene::SceneFactory(entityFactory));
 	m_resourceManager->addFactory(new world::WorldResourceFactory(m_renderSystem, nullptr));
 	
 	render::RenderViewEmbeddedDesc desc;
@@ -243,9 +241,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
-	worldEntityRenderers->add(new world::EntityRenderer());
 	worldEntityRenderers->add(new world::GroupRenderer());
-	worldEntityRenderers->add(new world::LightRenderer());
 	worldEntityRenderers->add(new world::VolumetricFogRenderer());
 	worldEntityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
@@ -386,22 +382,21 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	update.totalTime = time;
 	update.alternateTime = time;
 	update.deltaTime = deltaTime;
-	m_sceneInstance->updateController(update);
-	m_sceneInstance->updateEntity(update);
+	m_sceneInstance->update(update);
 
 	// Build a root entity by gathering entities from containers.
-	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	Ref< world::Entity > rootEntity = new world::Entity();
-	rootEntity->setComponent(rootGroup);
+	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	//Ref< world::Entity > rootEntity = new world::Entity();
+	//rootEntity->setComponent(rootGroup);
 
-	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
 
-	// Update and add animated mesh entity.
-	if (m_entity)
-	{
-		m_entity->update(update);
-		rootGroup->addEntity(m_entity);
-	}
+	//// Update and add animated mesh entity.
+	//if (m_entity)
+	//{
+	//	m_entity->update(update);
+	//	rootGroup->addEntity(m_entity);
+	//}
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -415,7 +410,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), viewTransform);
-	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");
@@ -468,7 +463,7 @@ void AnimationPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	rootGroup->removeAllEntities();
+	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

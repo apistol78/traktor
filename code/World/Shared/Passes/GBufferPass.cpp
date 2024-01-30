@@ -36,7 +36,6 @@ GBufferPass::GBufferPass(
 
 render::handle_t GBufferPass::setup(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
     const GatherView& gatheredView,
 	const IrradianceGrid* irradianceGrid,
 	render::handle_t gbufferWriteTechnique,
@@ -77,7 +76,6 @@ render::handle_t GBufferPass::setup(
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,
-				rootEntity,
 				renderContext
 			);
 

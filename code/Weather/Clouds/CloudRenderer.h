@@ -34,14 +34,9 @@ class T_DLLCLASS CloudRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	CloudRenderer(render::PrimitiveRenderer* primitiveRenderer = nullptr);
+	explicit CloudRenderer(render::PrimitiveRenderer* primitiveRenderer = nullptr);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
-
-	virtual void gather(
-		const world::WorldGatherContext& context,
-		Object* renderable
-	) override final;
 
 	virtual void setup(
 		const world::WorldSetupContext& context,

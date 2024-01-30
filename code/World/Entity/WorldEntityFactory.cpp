@@ -116,10 +116,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		for (auto componentData : entityData.getComponents())
 			mutableEntityData->setComponent(componentData);
 
-		if (m_editor)
-			return builder->getCompositeEntityBuilder()->create(mutableEntityData);
-		else
-			return builder->create(mutableEntityData);
+		return builder->create(mutableEntityData);
 	}
 	else
 	{
@@ -201,14 +198,8 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 	if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(&entityComponentData))
 	{
 		Ref< FacadeComponent > facadeComponent = new FacadeComponent();
-		for (auto entityData : facadeComponentData->getEntityData())
-		{
-			Ref< Entity > childEntity = builder->create(entityData);
-			if (childEntity)
-				facadeComponent->addEntity(entityData->getName(), childEntity);
-		}
-		if (!facadeComponentData->getShow().empty())
-			facadeComponent->show(facadeComponentData->getShow());
+		//if (!facadeComponentData->getShow().empty())
+		//	facadeComponent->show(facadeComponentData->getShow());
 		return facadeComponent;
 	}
 

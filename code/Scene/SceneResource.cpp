@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,11 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
+#include "World/EntityBuilder.h"
 #include "World/EntityData.h"
-#include "World/EntityBuilderWithSchema.h"
-#include "World/IEntityFactory.h"
+#include "World/World.h"
 #include "World/WorldRenderSettings.h"
 
 namespace traktor::scene
@@ -27,28 +26,18 @@ SceneResource::SceneResource()
 {
 }
 
-Ref< Scene > SceneResource::createScene(world::IEntityBuilder* entityBuilder) const
+Ref< Scene > SceneResource::createScene(const world::IEntityFactory* entityFactory) const
 {
-	// Use schema builder to collect a map from ID to entity products.
-	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder);
-	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
+	Ref< world::World > world = new world::World();
 
-	// Create attached controller.
-	Ref< ISceneController > controller;
-	if (m_controllerData)
-	{
-		controller = m_controllerData->createController(entityBuilderSchema->getEntityProducts(), false);
-		if (!controller)
-		{
-			log::error << L"Failed to create scene; unable to instantiate scene controller." << Endl;
-			return nullptr;
-		}
-	}
+	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory, world);
+	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
+	if (!rootEntity)
+		return nullptr;
 
 	return new Scene(
-		controller,
-		rootEntity,
-		m_worldRenderSettings
+		m_worldRenderSettings,
+		world
 	);
 }
 
@@ -72,21 +61,10 @@ Ref< world::EntityData > SceneResource::getEntityData() const
 	return m_entityData;
 }
 
-void SceneResource::setControllerData(ISceneControllerData* controllerData)
-{
-	m_controllerData = controllerData;
-}
-
-Ref< ISceneControllerData > SceneResource::getControllerData() const
-{
-	return m_controllerData;
-}
-
 void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
-	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 }
 
 }

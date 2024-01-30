@@ -29,7 +29,7 @@ class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
-	EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize, bool terrainLayersEnable, bool oceanReflectionEnable);
+	explicit EntityRenderer(float terrainDetailDistance, uint32_t terrainCacheSize, bool terrainLayersEnable, bool oceanReflectionEnable);
 
 	void setTerrainDetailDistance(float terrainDetailDistance);
 
@@ -40,11 +40,6 @@ public:
 	void setOceanDynamicReflectionEnable(bool oceanReflectionEnable);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
-
-	virtual void gather(
-		const world::WorldGatherContext& context,
-		Object* renderable
-	) override final;
 
 	virtual void setup(
 		const world::WorldSetupContext& context,

@@ -13,7 +13,6 @@
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/DecalComponent.h"
@@ -86,14 +85,6 @@ DecalRenderer::DecalRenderer(render::IRenderSystem* renderSystem)
 const TypeInfoSet DecalRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< DecalComponent >();
-}
-
-void DecalRenderer::gather(
-	const WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void DecalRenderer::setup(

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,7 @@ class IRenderSystem;
 namespace traktor::world
 {
 
-class IEntityBuilder;
+class IEntityFactory;
 
 /*! World resource factory.
  * \ingroup World
@@ -38,7 +38,7 @@ class T_DLLCLASS WorldResourceFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	WorldResourceFactory(render::IRenderSystem* renderSystem, const IEntityBuilder* entityBuilder);
+	explicit WorldResourceFactory(render::IRenderSystem* renderSystem, const IEntityFactory* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -50,7 +50,7 @@ public:
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< const IEntityBuilder > m_entityBuilder;
+	Ref< const IEntityFactory > m_entityFactory;
 };
 
 }

@@ -29,7 +29,6 @@ class IFeedbackManager;
 namespace traktor::world
 {
 
-class IEntityBuilder;
 class EntityEventManager;
 class IEntityFactory;
 class IEntityRenderer;
@@ -60,7 +59,7 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) = 0;
 
-	virtual const world::IEntityBuilder* getEntityBuilder() = 0;
+	virtual const world::IEntityFactory* getEntityFactory() = 0;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 

@@ -12,13 +12,13 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
-#include "Scene/Editor/ExternalEntityBuilder.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
+#include "World/World.h"
 #include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 
@@ -49,14 +49,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuild
 
 EntityAdapterBuilder::EntityAdapterBuilder(
 	SceneEditorContext* context,
-	world::IEntityBuilder* entityBuilder,
+	const world::IEntityFactory* entityFactory,
+	world::World* world,
 	EntityAdapter* currentEntityAdapter
 )
 :	m_context(context)
-,	m_entityBuilder(new ExternalEntityBuilder(entityBuilder))
+,	m_entityFactory(entityFactory)
+,	m_world(world)
 ,	m_cacheHit(0)
 ,	m_cacheMiss(0)
 {
+	T_FATAL_ASSERT(m_world->getEntities().empty());
+
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
 	for (auto entityAdapter : entityAdapters)
@@ -97,31 +101,6 @@ EntityAdapterBuilder::~EntityAdapterBuilder()
 		if (ca.second.leafEntity)
 			ca.second.leafEntity->destroy();
 	}
-}
-
-void EntityAdapterBuilder::addFactory(const world::IEntityFactory* entityFactory)
-{
-	T_FATAL_ERROR;
-}
-
-void EntityAdapterBuilder::removeFactory(const world::IEntityFactory* entityFactory)
-{
-	T_FATAL_ERROR;
-}
-
-const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::EntityData* entityData) const
-{
-	return m_entityBuilder->getFactory(entityData);
-}
-
-const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::IEntityEventData* entityEventData) const
-{
-	return m_entityBuilder->getFactory(entityEventData);
-}
-
-const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::IEntityComponentData* entityComponentData) const
-{
-	return m_entityBuilder->getFactory(entityComponentData);
 }
 
 Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData) const
@@ -195,11 +174,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		{
 			T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
 			T_ANONYMOUS_VAR(Save< Ref< const world::EntityData > >)(m_currentEntityData, entityData);
-			
-			const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityData);
-			T_FATAL_ASSERT (entityFactory);
-
-			entity = entityFactory->createEntity(this, *entityData);
+			entity = m_entityFactory->createEntity(this, *entityData);
 		}
 
 		// If still no entity then we create a null placeholder.
@@ -213,6 +188,9 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	}
 
 	T_FATAL_ASSERT (entity);
+
+	m_world->addEntity(entity);
+
 	entity->setTransform(entityData->getTransform());
 
 	// Prepare entity adapter.
@@ -227,11 +205,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 Ref< world::IEntityEvent > EntityAdapterBuilder::create(const world::IEntityEventData* entityEventData) const
 {
-	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityEventData);
-	if (entityFactory)
-		return entityFactory->createEntityEvent(this, *entityEventData);
-	else
-		return nullptr;
+	return m_entityFactory->createEntityEvent(this, *entityEventData);
 }
 
 Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntityComponentData* entityComponentData) const
@@ -244,11 +218,7 @@ Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntity
 		return entityComponent;
 
 	// Create component through factory.
-	const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityComponentData);
-	if (!entityFactory)
-		return nullptr;
-
-	entityComponent = entityFactory->createEntityComponent(this, *entityComponentData);
+	entityComponent = m_entityFactory->createEntityComponent(this, *entityComponentData);
 	if (!entityComponent)
 		return nullptr;
 
@@ -262,11 +232,6 @@ Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntity
 	}
 
 	return entityComponent;
-}
-
-const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const
-{
-	return m_entityBuilder;
 }
 
 }

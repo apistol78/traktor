@@ -22,7 +22,7 @@
 namespace traktor::world
 {
 
-class IEntityBuilder;
+class IEntityFactory;
 
 }
 
@@ -38,10 +38,8 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 
 public:
 	/*! Construct scene factory.
-	 *
-	 * \param entityBuilder Entity builder.
 	 */
-	explicit SceneFactory(world::IEntityBuilder* entityBuilder);
+	explicit SceneFactory(const world::IEntityFactory* entityFactory);
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -52,7 +50,7 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 
 private:
-	Ref< world::IEntityBuilder > m_entityBuilder;
+	Ref< const world::IEntityFactory > m_entityFactory;
 };
 
 }

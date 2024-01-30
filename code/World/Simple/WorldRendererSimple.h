@@ -53,8 +53,8 @@ public:
 	virtual void destroy() override final;
 
 	virtual void setup(
+		const World* world,
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) override final;

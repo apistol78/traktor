@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentRenderer.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::mesh
 {
@@ -18,14 +17,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponentRenderer", MeshComponentRende
 const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< MeshComponent >();
-}
-
-void MeshComponentRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void MeshComponentRenderer::setup(

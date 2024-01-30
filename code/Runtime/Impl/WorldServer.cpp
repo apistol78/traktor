@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -37,16 +37,13 @@
 #include "Weather/Clouds/CloudRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
-#include "World/EntityBuilder.h"
+#include "World/EntityFactory.h"
 #include "World/EntityEventManager.h"
-#include "World/EntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/DecalRenderer.h"
-#include "World/Entity/FacadeRenderer.h"
 #include "World/Entity/GroupRenderer.h"
-#include "World/Entity/LightRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
 #include "World/Entity/WorldEntityFactory.h"
@@ -111,7 +108,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
-	m_entityBuilder = new world::EntityBuilder();
+	m_entityFactory = new world::EntityFactory();
 	m_feedbackManager = new spray::FeedbackManager();
 	m_entityRenderers = new world::WorldEntityRenderers();
 
@@ -123,7 +120,7 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 void WorldServer::destroy()
 {
-	m_entityBuilder = nullptr;
+	m_entityFactory = nullptr;
 	m_entityRenderers = nullptr;
 	m_eventManager = nullptr;
 	m_renderServer = nullptr;
@@ -139,9 +136,9 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
-	resourceManager->addFactory(new scene::SceneFactory(m_entityBuilder));
+	resourceManager->addFactory(new scene::SceneFactory(m_entityFactory));
 	resourceManager->addFactory(new terrain::TerrainFactory());
-	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityBuilder));
+	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityFactory));
 }
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
@@ -151,13 +148,13 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	m_entityBuilder->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
-	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
-	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
-	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, m_eventManager, false));
+	m_entityFactory->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
+	m_entityFactory->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
+	m_entityFactory->addFactory(new mesh::MeshEntityFactory(resourceManager, renderSystem));
+	m_entityFactory->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
+	m_entityFactory->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
+	m_entityFactory->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
+	m_entityFactory->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, m_eventManager, false));
 }
 
 void WorldServer::createEntityRenderers(IEnvironment* environment)
@@ -176,11 +173,8 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 		bool(m_oceanQuality >= world::Quality::High)
 	);
 
-	m_entityRenderers->add(new world::EntityRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
-	m_entityRenderers->add(new world::FacadeRenderer());
 	m_entityRenderers->add(new world::GroupRenderer());
-	m_entityRenderers->add(new world::LightRenderer());
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
 	m_entityRenderers->add(new world::VolumetricFogRenderer());
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
@@ -248,12 +242,12 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 
 void WorldServer::addEntityFactory(world::IEntityFactory* entityFactory)
 {
-	m_entityBuilder->addFactory(entityFactory);
+	m_entityFactory->addFactory(entityFactory);
 }
 
 void WorldServer::removeEntityFactory(world::IEntityFactory* entityFactory)
 {
-	m_entityBuilder->removeFactory(entityFactory);
+	m_entityFactory->removeFactory(entityFactory);
 }
 
 void WorldServer::addEntityRenderer(world::IEntityRenderer* entityRenderer)
@@ -266,9 +260,9 @@ void WorldServer::removeEntityRenderer(world::IEntityRenderer* entityRenderer)
 	m_entityRenderers->remove(entityRenderer);
 }
 
-const world::IEntityBuilder* WorldServer::getEntityBuilder()
+const world::IEntityFactory* WorldServer::getEntityFactory()
 {
-	return m_entityBuilder;
+	return m_entityFactory;
 }
 
 world::WorldEntityRenderers* WorldServer::getEntityRenderers()

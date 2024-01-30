@@ -46,10 +46,6 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-    void addEntity(const std::wstring& id, Entity* entity);
-
-    void removeEntity(const std::wstring& id);
-
     bool show(const std::wstring& id);
 
 	bool showOnly(const std::wstring& id);
@@ -60,15 +56,8 @@ public:
 
     bool isVisible(const std::wstring& id);
 
-	const SmallMap< std::wstring, Ref< Entity > >& getEntities() const { return m_entities; }
-
-    const SmallSet< Entity* >& getVisibleEntities() const { return m_visibleEntities; }
-
 private:
 	Entity* m_owner = nullptr;
-	Transform m_transform;
-    SmallMap< std::wstring, Ref< Entity > > m_entities;
-    SmallSet< Entity* > m_visibleEntities;
 };
 
 }

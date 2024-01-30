@@ -22,8 +22,8 @@
 namespace traktor::world
 {
 
-class IEntityBuilder;
 class IEntityEventData;
+class IEntityFactory;
 
 }
 
@@ -48,7 +48,7 @@ public:
 		void serialize(ISerializer& s);
 	};
 
-	Ref< Sequence > createSequence(const world::IEntityBuilder* entityBuilder) const;
+	Ref< Sequence > createSequence(const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

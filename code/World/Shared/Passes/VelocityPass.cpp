@@ -75,7 +75,6 @@ bool VelocityPass::create(resource::IResourceManager* resourceManager, render::I
 
 DoubleBufferedTarget VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
     const GatherView& gatheredView,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
@@ -133,7 +132,6 @@ DoubleBufferedTarget VelocityPass::setup(
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,
-				rootEntity,
 				renderContext
 			);
 

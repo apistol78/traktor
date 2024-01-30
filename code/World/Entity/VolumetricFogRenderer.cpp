@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 #include "World/Entity/VolumetricFogComponent.h"
 #include "World/Entity/VolumetricFogRenderer.h"
 
@@ -19,14 +18,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogRenderer", VolumetricFogRend
 const TypeInfoSet VolumetricFogRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< VolumetricFogComponent >();
-}
-
-void VolumetricFogRenderer::gather(
-	const WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void VolumetricFogRenderer::setup(

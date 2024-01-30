@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,9 +22,9 @@
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
 #include "World/Packer.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/LightComponent.h"
@@ -211,7 +211,7 @@ void WorldRendererShared::destroy()
 	m_irradianceGrid.clear();
 }
 
-void WorldRendererShared::gather(Entity* rootEntity)
+void WorldRendererShared::gather(const World* world)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
 	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
@@ -221,22 +221,33 @@ void WorldRendererShared::gather(Entity* rootEntity)
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fogs.resize(0);
 
-	WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
+	for (auto entity : world->getEntities())
+	{
+		if (!entity->isVisible())
+			continue;
 
-		// Filter out components used to setup frame's lighting etc.
-		if (auto lightComponent = dynamic_type_cast< const LightComponent* >(renderable))
+		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
+		if (entityRenderer)
+			m_gatheredView.renderables.push_back({ entityRenderer, entity });
+
+		for (auto component : entity->getComponents())
 		{
-			if (!lights.full())
-				lights.push_back(lightComponent);
+			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+			if (entityRenderer)
+				m_gatheredView.renderables.push_back({ entityRenderer, component });
+
+			// Filter out components used to setup frame's lighting etc.
+			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(component))
+			{
+				if (lightComponent->getLightType() != LightType::Disabled && !lights.full())
+					lights.push_back(lightComponent);
+			}
+			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
+				m_gatheredView.probes.push_back(probeComponent);
+			else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(component))
+				m_gatheredView.fogs.push_back(volumetricFogComponent);
 		}
-		else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(renderable))
-			m_gatheredView.probes.push_back(probeComponent);
-		else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(renderable))
-			m_gatheredView.fogs.push_back(volumetricFogComponent);
-
-		m_gatheredView.renderables.push_back({ entityRenderer, renderable });
-
-	}).gather(rootEntity);
+	}
 
 	// Arrange lights.
 	{
@@ -277,7 +288,6 @@ void WorldRendererShared::gather(Entity* rootEntity)
 
 void WorldRendererShared::setupLightPass(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
 	render::handle_t& outShadowMapAtlasTargetSetId
@@ -466,7 +476,6 @@ void WorldRendererShared::setupLightPass(
 					{
 						WorldBuildContext wc(
 							m_entityRenderers,
-							rootEntity,
 							renderContext
 						);
 
@@ -606,7 +615,6 @@ void WorldRendererShared::setupLightPass(
 				{
 					const WorldBuildContext wc(
 						m_entityRenderers,
-						rootEntity,
 						renderContext
 					);
 

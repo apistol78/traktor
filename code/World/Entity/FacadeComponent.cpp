@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #include "World/Entity.h"
 #include "World/Entity/FacadeComponent.h"
-#include "World/Entity/ScriptComponent.h"
+#include "World/Entity/GroupComponent.h"
 
 namespace traktor::world
 {
@@ -17,83 +17,37 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.FacadeComponent", FacadeComponent, IEntit
 
 void FacadeComponent::destroy()
 {
-	for (auto it : m_entities)
-	{
-		if (it.second)
-			it.second->destroy();
-	}
-	m_entities.clear();
-	m_visibleEntities.clear();
 }
 
 void FacadeComponent::setOwner(Entity* owner)
 {
-	T_ASSERT(m_owner == nullptr);
-	if ((m_owner = owner) != nullptr)
-		m_transform = m_owner->getTransform();
+	m_owner = owner;
 }
 
 void FacadeComponent::update(const UpdateParams& update)
 {
-	for (auto entity : m_visibleEntities)
-		entity->update(update);
 }
 
 void FacadeComponent::setTransform(const Transform& transform)
 {
-	const Transform invTransform = m_transform.inverse();
-	for (auto it : m_entities)
-	{
-		const Transform currentTransform = it.second->getTransform();
-		const Transform Tlocal = invTransform * currentTransform;
-		const Transform Tworld = transform * Tlocal;
-		it.second->setTransform(Tworld);
-	}
-	m_transform = transform;
 }
 
 Aabb3 FacadeComponent::getBoundingBox() const
 {
-	const Transform invTransform = m_transform.inverse();
-
-	Aabb3 boundingBox;
-	for (auto entity : m_visibleEntities)
-	{
-		const Aabb3 childBoundingBox = entity->getBoundingBox();
-		if (!childBoundingBox.empty())
-		{
-			const Transform childTransform = entity->getTransform();
-			const Transform intoParentTransform = invTransform * childTransform;
-			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
-		}
-	}
-
-	return boundingBox;
-}
-
-void FacadeComponent::addEntity(const std::wstring& id, Entity* entity)
-{
-	m_entities.insert(id, entity);
-}
-
-void FacadeComponent::removeEntity(const std::wstring& id)
-{
-	m_entities.remove(id);
+	return Aabb3();
 }
 
 bool FacadeComponent::show(const std::wstring& id)
 {
-	auto it = m_entities.find(id);
-	if (it == m_entities.end())
+	auto group = m_owner->getComponent< GroupComponent >();
+	if (!group)
+		return false;
+	
+	Entity* showEntity = group->getEntity(id, 0);
+	if (!showEntity)
 		return false;
 
-	if (m_visibleEntities.insert(it->second))
-	{
-		auto script = it->second->getComponent< ScriptComponent >();
-		if (script)
-			script->execute("show");
-	}
-
+	showEntity->setVisible(true);
 	return true;
 }
 
@@ -105,31 +59,39 @@ bool FacadeComponent::showOnly(const std::wstring& id)
 
 bool FacadeComponent::hide(const std::wstring& id)
 {
-	auto it = m_entities.find(id);
-	if (it == m_entities.end())
+	auto group = m_owner->getComponent< GroupComponent >();
+	if (!group)
+		return false;
+	
+	Entity* hideEntity = group->getEntity(id, 0);
+	if (!hideEntity)
 		return false;
 
-	if (m_visibleEntities.erase(it->second))
-	{
-		auto script = it->second->getComponent< ScriptComponent >();
-		if (script)
-			script->execute("hide");
-	}
-
+	hideEntity->setVisible(false);
 	return true;
 }
 
 void FacadeComponent::hideAll()
 {
-	m_visibleEntities.clear();
+	auto group = m_owner->getComponent< GroupComponent >();
+	if (!group)
+		return;
+
+	for (auto entity : group->getEntities())
+		entity->setVisible(false);
 }
 
 bool FacadeComponent::isVisible(const std::wstring& id)
 {
-	auto it = m_entities.find(id);
-	if (it == m_entities.end())
+	auto group = m_owner->getComponent< GroupComponent >();
+	if (!group)
 		return false;
-	return m_visibleEntities.find(it->second) != m_visibleEntities.end();
+	
+	const Entity* entity = group->getEntity(id, 0);
+	if (!entity)
+		return false;
+
+	return entity->isVisible();
 }
 
 }

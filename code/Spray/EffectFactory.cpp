@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,8 +19,8 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
 
-EffectFactory::EffectFactory(const world::IEntityBuilder* entityBuilder)
-:	m_entityBuilder(entityBuilder)
+EffectFactory::EffectFactory(const world::IEntityFactory* entityFactory)
+:	m_entityFactory(entityFactory)
 {
 }
 
@@ -50,7 +50,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 	{
 		Ref< const EffectData > effectData = instance->getObject< EffectData >();
 		if (effectData)
-			return effectData->createEffect(resourceManager, m_entityBuilder);
+			return effectData->createEffect(resourceManager, m_entityFactory);
 		else
 			return nullptr;
 	}

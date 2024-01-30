@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,6 @@
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor::mesh
@@ -28,14 +27,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponentRenderer", InstanceMe
 const TypeInfoSet InstanceMeshComponentRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< InstanceMeshComponent >();
-}
-
-void InstanceMeshComponentRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void InstanceMeshComponentRenderer::setup(

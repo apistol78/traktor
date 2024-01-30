@@ -26,10 +26,11 @@
 #include "Scene/Scene.h"
 #include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
+#include "World/World.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
+#include "World/EntityBuilder.h"
 #include "World/EntityData.h"
-#include "World/IEntityBuilder.h"
 #include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
@@ -59,11 +60,11 @@ WorldLayer::WorldLayer(
 ,	m_scene(scene)
 {
 	// Create management entities.
-	m_rootGroup = new world::Entity();
-	m_rootGroup->setComponent(new world::GroupComponent());
+	//m_rootGroup = new world::Entity();
+	//m_rootGroup->setComponent(new world::GroupComponent());
 
-	m_dynamicEntities = new world::Entity();
-	m_dynamicEntities->setComponent(new world::GroupComponent());
+	//m_dynamicEntities = new world::Entity();
+	//m_dynamicEntities->setComponent(new world::GroupComponent());
 
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
@@ -88,8 +89,8 @@ void WorldLayer::destroy()
 	}
 
 	m_environment = nullptr;
-	m_rootGroup = nullptr;
-	m_renderGroup = nullptr;
+	//m_rootGroup = nullptr;
+	//m_renderGroup = nullptr;
 	m_cameraEntity = nullptr;
 
 	if (m_scene)
@@ -99,7 +100,7 @@ void WorldLayer::destroy()
 	}
 
 	safeDestroy(m_worldRenderer);
-	safeDestroy(m_dynamicEntities);
+	//safeDestroy(m_dynamicEntities);
 
 	Layer::destroy();
 }
@@ -195,19 +196,19 @@ void WorldLayer::update(const UpdateInfo& info)
 		return;
 
 	// Update scene controller.
-	if (m_controllerEnable)
-	{
-		if (m_controllerTime < 0.0f)
-			m_controllerTime = info.getSimulationTime();
+	//if (m_controllerEnable)
+	//{
+	//	if (m_controllerTime < 0.0f)
+	//		m_controllerTime = info.getSimulationTime();
 
-		world::UpdateParams up;
-		up.contextObject = getStage();
-		up.totalTime = info.getSimulationTime() - m_controllerTime;
-		up.alternateTime = m_alternateTime;
-		up.deltaTime = info.getSimulationDeltaTime();
+	//	world::UpdateParams up;
+	//	up.contextObject = getStage();
+	//	up.totalTime = info.getSimulationTime() - m_controllerTime;
+	//	up.alternateTime = m_alternateTime;
+	//	up.deltaTime = info.getSimulationDeltaTime();
 
-		m_scene->updateController(up);
-	}
+	//	m_scene->updateController(up);
+	//}
 
 	{
 		world::UpdateParams up;
@@ -217,8 +218,8 @@ void WorldLayer::update(const UpdateInfo& info)
 		up.deltaTime = info.getSimulationDeltaTime();
 
 		// Update all entities.
-		m_scene->updateEntity(up);
-		m_dynamicEntities->update(up);
+		m_scene->update(up);
+		//m_dynamicEntities->update(up);
 
 		// Update entity events.
 		world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
@@ -274,21 +275,10 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	if (!m_worldRenderer || !m_scene)
 		return;
 
-	// Build a root entity by gathering entities from containers.
-	auto group = m_rootGroup->getComponent< world::GroupComponent >();
-	group->removeAllEntities();
-
-	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-	if (eventManager)
-		eventManager->gather([&](world::Entity* entity) { group->addEntity(entity); });
-
-	group->addEntity(m_scene->getRootEntity());
-	group->addEntity(m_dynamicEntities);
-
 	// Add render passes with world renderer.
 	m_worldRenderer->setup(
+		m_scene->getWorld(),
 		m_worldRenderView,
-		m_rootGroup,
 		renderGraph,
 		0
 	);		
@@ -313,19 +303,14 @@ void WorldLayer::postReconfigured()
 	// Restore entity transforms captured before reconfiguration.
 	if (m_scene)
 	{
-		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
-		if (group)
+		for (auto entity : m_scene->getWorld()->getEntities())
 		{
-			group->traverse([&](world::Entity* entity) {
-				if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
-				{
-					auto it = m_entityTransforms.find(persistentIdComponent->getId());
-					if (it != m_entityTransforms.end())
-						entity->setTransform(it->second);
-				}
-				return true;
-			});
-			log::info << L"Restored " << m_entityTransforms.size() << L" entity transforms." << Endl;
+			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
+			{
+				auto it = m_entityTransforms.find(persistentIdComponent->getId());
+				if (it != m_entityTransforms.end())
+					entity->setTransform(it->second);
+			}
 		}
 	}
 
@@ -351,16 +336,11 @@ void WorldLayer::hotReload()
 	// can restore then after reload.
 	if (m_scene)
 	{
-		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
-		if (group)
+		for (auto entity : m_scene->getWorld()->getEntities())
 		{
-			group->traverse([&](world::Entity* entity) {
-				if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
-					m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
-				return true;
-			});
+			if (auto persistentIdComponent = entity->getComponent< world::PersistentIdComponent >())
+				m_entityTransforms[persistentIdComponent->getId()] = entity->getTransform();
 		}
-		log::info << L"Captured " << m_entityTransforms.size() << L" entity transforms." << Endl;
 	}
 }
 
@@ -381,80 +361,23 @@ world::Entity* WorldLayer::getEntity(const std::wstring& name) const
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
 {
-	{
-		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
-		if (group)
-		{
-			auto entity = group->getEntity(name, index);
-			if (entity)
-				return entity;
-		}
-	}
-	{
-		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
-		if (group)
-		{
-			auto entity = group->getEntity(name, index);
-			if (entity)
-				return entity;
-		}
-	}
-	return nullptr;
+	return m_scene->getWorld()->getEntity(name, index);
 }
 
 RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
 {
-	RefArray< world::Entity > entities;
-	{
-		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
-		if (group)
-		{
-			group->traverse([&](world::Entity* entity) {
-				if (entity->getName() == name)
-					entities.push_back(entity);
-				return true;
-			});
-		}
-	}
-	{
-		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
-		if (group)
-		{
-			group->traverse([&](world::Entity* entity) {
-				if (entity->getName() == name)
-					entities.push_back(entity);
-				return true;
-			});
-		}
-	}
-	return entities;
+	return m_scene->getWorld()->getEntities(name);
 }
 
 RefArray< world::Entity > WorldLayer::getEntitiesWithinRange(const Vector4& position, float range) const
 {
 	RefArray< world::Entity > entities;
 	{
-		auto group = m_scene->getRootEntity()->getComponent< world::GroupComponent >();
-		if (group)
+		for (auto entity : m_scene->getWorld()->getEntities())
 		{
-			group->traverse([&](world::Entity* entity) {
-				const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
-				if (distance <= range)
-					entities.push_back(entity);
-				return true;
-			});
-		}
-	}
-	{
-		auto group = m_dynamicEntities->getComponent< world::GroupComponent >();
-		if (group)
-		{
-			group->traverse([&](world::Entity* entity) {
-				const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
-				if (distance <= range)
-					entities.push_back(entity);
-				return true;
-			});
+			const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+			if (distance <= range)
+				entities.push_back(entity);
 		}
 	}
 	return entities;
@@ -466,30 +389,26 @@ Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
 	if (!m_environment->getResource()->getResourceManager()->bind(resource::Id< world::EntityData >(entityDataId), entityData))
 		return nullptr;
 
-	return m_environment->getWorld()->getEntityBuilder()->create(entityData);
+	const world::EntityBuilder entityBuilder(
+		m_environment->getWorld()->getEntityFactory(),
+		m_scene->getWorld()
+	);
+	return entityBuilder.create(entityData);
 }
 
 void WorldLayer::addEntity(world::Entity* entity)
 {
-	if (m_dynamicEntities)
-		m_dynamicEntities->getComponent< world::GroupComponent >()->addEntity(entity);
+	m_scene->getWorld()->addEntity(entity);
 }
 
 void WorldLayer::removeEntity(world::Entity* entity)
 {
-	if (m_dynamicEntities)
-		m_dynamicEntities->getComponent< world::GroupComponent >()->removeEntity(entity);
+	m_scene->getWorld()->removeEntity(entity);
 }
 
 bool WorldLayer::isEntityAdded(const world::Entity* entity) const
 {
-	if (m_dynamicEntities)
-	{
-		const auto& entities = m_dynamicEntities->getComponent< world::GroupComponent >()->getEntities();
-		return std::find(entities.begin(), entities.end(), entity) != entities.end();
-	}
-	else
-		return false;
+	return m_scene->getWorld()->haveEntity(entity);
 }
 
 void WorldLayer::setControllerEnable(bool controllerEnable)
@@ -521,7 +440,7 @@ bool WorldLayer::viewToWorld(const Vector4& viewPosition, Vector4& outWorldPosit
 
 bool WorldLayer::worldToScreen(const Vector4& worldPosition, Vector2& outScreenPosition) const
 {
-	Vector4 viewPosition = m_worldRenderView.getView() * worldPosition;
+	const Vector4 viewPosition = m_worldRenderView.getView() * worldPosition;
 	return viewToScreen(viewPosition, outScreenPosition);
 }
 

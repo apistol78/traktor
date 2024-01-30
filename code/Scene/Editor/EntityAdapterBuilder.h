@@ -13,6 +13,14 @@
 #include "Core/Containers/SmallMap.h"
 #include "World/IEntityBuilder.h"
 
+namespace traktor::world
+{
+
+class IEntityFactory;
+class World;
+
+}
+
 namespace traktor::scene
 {
 
@@ -24,31 +32,20 @@ class EntityAdapterBuilder : public world::IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapterBuilder(
+	explicit EntityAdapterBuilder(
 		SceneEditorContext* context,
-		world::IEntityBuilder* entityBuilder,
+		const world::IEntityFactory* entityFactory,
+		world::World* world,
 		EntityAdapter* currentEntityAdapter
 	);
 
 	virtual ~EntityAdapterBuilder();
-
-	virtual void addFactory(const world::IEntityFactory* entityFactory) override final;
-
-	virtual void removeFactory(const world::IEntityFactory* entityFactory) override final;
-
-	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const override final;
-
-	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const override final;
-
-	virtual const world::IEntityFactory* getFactory(const world::IEntityComponentData* entityComponentData) const override final;
 
 	virtual Ref< world::Entity > create(const world::EntityData* entityData) const override final;
 
 	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > create(const world::IEntityComponentData* entityComponentData) const override final;
-
-	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const override final;
 
 	EntityAdapter* getRootAdapter() const { return m_rootAdapter; }
 
@@ -65,7 +62,11 @@ private:
 	};
 
 	SceneEditorContext* m_context;
-	Ref< world::IEntityBuilder > m_entityBuilder;
+	//Ref< world::IEntityBuilder > m_entityBuilder;
+
+	Ref< const world::IEntityFactory > m_entityFactory;
+	Ref< world::World > m_world;
+
 	mutable SmallMap< Guid, Cache > m_cache;
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;

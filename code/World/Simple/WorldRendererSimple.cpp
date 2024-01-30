@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,11 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
 #include "World/Entity.h"
+#include "World/IEntityComponent.h"
 #include "World/IEntityRenderer.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -64,8 +65,8 @@ void WorldRendererSimple::destroy()
 }
 
 void WorldRendererSimple::setup(
+	const World* world,
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
@@ -75,15 +76,28 @@ void WorldRendererSimple::setup(
 		T_PROFILER_SCOPE(L"WorldRendererSimple gather");
 
 		m_gathered.resize(0);
-		WorldGatherContext(m_entityRenderers, rootEntity, [&](IEntityRenderer* entityRenderer, Object* renderable) {
-			m_gathered.push_back({ entityRenderer, renderable });
-		}).gather(const_cast< Entity* >(rootEntity));
+		for (auto entity : world->getEntities())
+		{
+			if (!entity->isVisible())
+				continue;
+
+			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
+			if (entityRenderer)
+				m_gathered.push_back({ entityRenderer, entity });
+
+			for (auto component : entity->getComponents())
+			{
+				IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+				if (entityRenderer)
+					m_gathered.push_back({ entityRenderer, component });
+			}
+		}
 	}
 
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
-		const WorldSetupContext context(m_entityRenderers, nullptr, rootEntity, renderGraph);
+		const WorldSetupContext context(world, m_entityRenderers, nullptr, renderGraph);
 
 		for (auto gathered : m_gathered)
 			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
@@ -106,7 +120,6 @@ void WorldRendererSimple::setup(
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,
-				rootEntity,
 				renderContext
 			);
 

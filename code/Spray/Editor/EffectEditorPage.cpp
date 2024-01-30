@@ -66,7 +66,7 @@
 #include "Ui/Sequencer/Tick.h"
 #include "Ui/Splitter.h"
 #include "Weather/WeatherFactory.h"
-#include "World/EntityBuilder.h"
+#include "World/EntityFactory.h"
 #include "World/WorldResourceFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
@@ -137,17 +137,17 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
-	Ref< world::IEntityBuilder > entityBuilder = new world::EntityBuilder();
-	entityBuilder->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, nullptr, true));
-	entityBuilder->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
-	entityBuilder->addFactory(new mesh::MeshEntityFactory(m_resourceManager, renderSystem));
+	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
+	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, nullptr, true));
+	entityFactory->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
+	entityFactory->addFactory(new mesh::MeshEntityFactory(m_resourceManager, renderSystem));
 
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());
 	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
-	m_resourceManager->addFactory(new scene::SceneFactory(entityBuilder));
+	m_resourceManager->addFactory(new scene::SceneFactory(entityFactory));
 	m_resourceManager->addFactory(new sound::AudioResourceFactory());
 	m_resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
 	m_resourceManager->addFactory(new EffectFactory(nullptr));

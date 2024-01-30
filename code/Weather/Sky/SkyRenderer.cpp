@@ -9,7 +9,6 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::weather
 {
@@ -19,14 +18,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyRenderer", SkyRenderer, world::IEnti
 const TypeInfoSet SkyRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< SkyComponent >();
-}
-
-void SkyRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void SkyRenderer::setup(

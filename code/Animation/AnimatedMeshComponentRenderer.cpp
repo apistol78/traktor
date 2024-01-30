@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,35 +8,15 @@
  */
 #include "Animation/AnimatedMeshComponent.h"
 #include "Animation/AnimatedMeshComponentRenderer.h"
-#include "Animation/JointBindingComponent.h"
-#include "World/Entity.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", AnimatedMeshComponentRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", AnimatedMeshComponentRenderer, mesh::MeshComponentRenderer)
 
 const TypeInfoSet AnimatedMeshComponentRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet<
-		AnimatedMeshComponent,
-		JointBindingComponent
-	>();
-}
-
-void AnimatedMeshComponentRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	if (auto animatedMeshComponent = dynamic_type_cast< AnimatedMeshComponent* >(renderable))
-		context.include(this, animatedMeshComponent);
-	else if (auto jointBindingComponent = dynamic_type_cast< JointBindingComponent* >(renderable))
-	{
-		for (const auto& binding : jointBindingComponent->getBindings())
-			context.gather(binding.entity);
-	}
+	return makeTypeInfoSet< AnimatedMeshComponent >();
 }
 
 }

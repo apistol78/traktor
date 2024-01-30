@@ -28,6 +28,7 @@
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/World.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/FacadeComponent.h"
@@ -146,22 +147,6 @@ IEntityComponent* Entity_getComponent(Entity* self, const TypeInfo& componentTyp
 	return self->getComponent(componentType);
 }
 
-RefArray< Entity > FacadeComponent_entities(FacadeComponent* self)
-{
-	RefArray< Entity > entities;
-	for (auto entity : self->getEntities())
-		entities.push_back(entity.second);
-	return entities;
-}
-
-RefArray< Entity > FacadeComponent_visibleEntities(FacadeComponent* self)
-{
-	RefArray< Entity > entities;
-	for (auto entity : self->getVisibleEntities())
-		entities.push_back(entity);
-	return entities;
-}
-
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClassFactory, IRuntimeClassFactory)
@@ -189,13 +174,11 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIEntityFactory);
 
 	auto classIEntityBuilder = new AutoRuntimeClass< IEntityBuilder >();
-	classIEntityBuilder->addMethod("addFactory", &IEntityBuilder::addFactory);
-	classIEntityBuilder->addMethod("removeFactory", &IEntityBuilder::removeFactory);
 	classIEntityBuilder->addMethod("create", &IEntityBuilder_create);
 	registrar->registerClass(classIEntityBuilder);
 
 	auto classEntityBuilder = new AutoRuntimeClass< EntityBuilder >();
-	classEntityBuilder->addConstructor();
+	classEntityBuilder->addConstructor< const IEntityFactory*, World* >();
 	registrar->registerClass(classEntityBuilder);
 
 	auto classIEntityRenderer = new AutoRuntimeClass< IEntityRenderer >();
@@ -317,10 +300,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classFacadeComponentData);
 
 	auto classFacadeComponent = new AutoRuntimeClass< FacadeComponent >();
-	classFacadeComponent->addProperty("entities", &FacadeComponent_entities);
-	classFacadeComponent->addProperty("visibleEntities", &FacadeComponent_visibleEntities);
-	classFacadeComponent->addMethod("addEntity", &FacadeComponent::addEntity);
-	classFacadeComponent->addMethod("removeEntity", &FacadeComponent::removeEntity);
 	classFacadeComponent->addMethod("show", &FacadeComponent::show);
 	classFacadeComponent->addMethod("showOnly", &FacadeComponent::showOnly);
 	classFacadeComponent->addMethod("hide", &FacadeComponent::hide);

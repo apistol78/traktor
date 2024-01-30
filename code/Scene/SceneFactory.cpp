@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,8 +16,8 @@ namespace traktor::scene
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(world::IEntityBuilder* entityBuilder)
-:	m_entityBuilder(entityBuilder)
+SceneFactory::SceneFactory(const world::IEntityFactory* entityFactory)
+:	m_entityFactory(entityFactory)
 {
 }
 
@@ -40,7 +40,7 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 {
 	Ref< const SceneResource > sceneResource = instance->getObject< SceneResource >();
 	if (sceneResource)
-		return sceneResource->createScene(m_entityBuilder);
+		return sceneResource->createScene(m_entityFactory);
 	else
 		return nullptr;
 }

@@ -162,9 +162,11 @@ private:
 	resource::Proxy< scene::Scene > m_scene;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderViews[2];
-	Ref< world::Entity > m_rootGroup;
-	Ref< world::Entity > m_renderGroup;
-	Ref< world::Entity > m_dynamicEntities;
+	
+	//Ref< world::Entity > m_rootGroup;
+	//Ref< world::Entity > m_renderGroup;
+	//Ref< world::Entity > m_dynamicEntities;
+
 	Ref< const world::Entity > m_cameraEntities[2];
 	IntervalTransform m_cameraTransforms[2];
 	Transform m_cameraOffsets[2];

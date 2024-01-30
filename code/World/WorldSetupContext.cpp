@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,10 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldSetupContext", WorldSetupContext, Object)
 
-WorldSetupContext::WorldSetupContext(const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, const Entity* rootEntity, render::RenderGraph& renderGraph)
-:	m_entityRenderers(entityRenderers)
+WorldSetupContext::WorldSetupContext(const World* world, const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, render::RenderGraph& renderGraph)
+:	m_world(world)
+,	m_entityRenderers(entityRenderers)
 ,	m_irradianceGrid(irradianceGrid)
-,	m_rootEntity(rootEntity)
 ,	m_renderGraph(renderGraph)
 {
 }

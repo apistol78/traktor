@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,6 +30,13 @@ namespace traktor::terrain
 {
 
 class EntityRenderer;
+
+}
+
+namespace traktor::world
+{
+
+class EntityFactory;
 
 }
 
@@ -68,7 +75,7 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) override final;
 
-	virtual const world::IEntityBuilder* getEntityBuilder() override final;
+	virtual const world::IEntityFactory* getEntityFactory() override final;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() override final;
 
@@ -79,7 +86,7 @@ public:
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) override final;
 
 private:
-	Ref< world::IEntityBuilder > m_entityBuilder;
+	Ref< world::EntityFactory > m_entityFactory;
 	Ref< world::WorldEntityRenderers > m_entityRenderers;
 	Ref< world::EntityEventManager > m_eventManager;
 	Ref< IRenderServer > m_renderServer;

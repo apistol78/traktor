@@ -31,6 +31,7 @@ namespace traktor::world
 
 class Entity;
 class IrradianceGrid;
+class World;
 class WorldEntityRenderers;
 
 /*! World setup context.
@@ -41,20 +42,20 @@ class T_DLLCLASS WorldSetupContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldSetupContext(const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, const Entity* rootEntity, render::RenderGraph& renderGraph);
+	explicit WorldSetupContext(const World* world, const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, render::RenderGraph& renderGraph);
+
+	const World* getWorld() const { return m_world; }
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
 	const IrradianceGrid* getIrradianceGrid() const { return m_irradianceGrid; }
 
-	const Entity* getRootEntity() const { return m_rootEntity; }
-
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
 private:
+	const World* m_world;
 	const WorldEntityRenderers* m_entityRenderers;
 	const IrradianceGrid* m_irradianceGrid;
-	const Entity* m_rootEntity;
 	render::RenderGraph& m_renderGraph;
 };
 

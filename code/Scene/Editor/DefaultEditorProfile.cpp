@@ -31,10 +31,7 @@
 #include "World/Editor/WorldEditorEntityFactory.h"
 
 // Entity renderers
-#include "World/EntityRenderer.h"
 #include "World/Entity/DecalRenderer.h"
-#include "World/Entity/LightRenderer.h"
-#include "World/Entity/FacadeRenderer.h"
 #include "World/Entity/GroupRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
@@ -107,11 +104,8 @@ void DefaultEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new world::EntityRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
-	outEntityRenderers.push_back(new world::LightRenderer());
-	outEntityRenderers.push_back(new world::FacadeRenderer());
 	outEntityRenderers.push_back(new world::GroupRenderer());
 	outEntityRenderers.push_back(new world::VolumetricFogRenderer());
 	outEntityRenderers.push_back(new weather::CloudRenderer(primitiveRenderer));

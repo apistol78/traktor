@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,6 @@ class IEntityComponent;
 class IEntityComponentData;
 class IEntityEvent;
 class IEntityEventData;
-class IEntityFactory;
 
 /*! Entity builder interface.
  * \ingroup World
@@ -38,39 +37,6 @@ class T_DLLCLASS IEntityBuilder : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! Add entity factory to builder.
-	 *
-	 * \param entityFactory Concrete entity factory to add.
-	 */
-	virtual void addFactory(const IEntityFactory* entityFactory) = 0;
-
-	/*! Remove entity factory from builder.
-	 *
-	 * \param entityFactory Concrete entity factory to remove.
-	 */
-	virtual void removeFactory(const IEntityFactory* entityFactory) = 0;
-
-	/*! Get concrete entity factory which can create entity from given data.
-	 *
-	 * \param entityData Entity data.
-	 * \return Concrete entity factory, null if no factory found.
-	 */
-	virtual const IEntityFactory* getFactory(const EntityData* entityData) const = 0;
-
-	/*! Get concrete entity factory which can create event from given data.
-	 *
-	 * \param entityEventData Entity event data.
-	 * \return Concrete entity factory, null if no factory found.
-	 */
-	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const = 0;
-
-	/*! Get concrete entity factory which can create component from given data.
-	 *
-	 * \param entityComponentData Entity component data.
-	 * \return Concrete entity factory, null if no factory found.
-	 */
-	virtual const IEntityFactory* getFactory(const IEntityComponentData* entityComponentData) const = 0;
-
 	/*! Create entity from entity data.
 	 *
 	 * \param entityData Entity data.
@@ -92,13 +58,7 @@ public:
 	 */
 	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const = 0;
 
-	/*! Get composite entity builder.
-	 *
-	 * \return Pointer to composite entity builder.
-	 */
-	virtual const IEntityBuilder* getCompositeEntityBuilder() const = 0;
-
-	/*! \brief
+	/*!
 	 */
 	template < typename EntityType >
 	Ref< EntityType > create(const EntityData* entityData) const
@@ -106,7 +66,7 @@ public:
 		return checked_type_cast< EntityType*, true >(create(entityData));
 	}
 
-	/*! \brief
+	/*!
 	 */
 	template < typename EntityEventType >
 	Ref< EntityEventType > create(const IEntityEventData* entityEventData) const
@@ -114,7 +74,7 @@ public:
 		return checked_type_cast< EntityEventType*, true >(create(entityEventData));
 	}
 
-	/*! \brief
+	/*!
 	 */
 	template < typename EntityComponentType >
 	Ref< EntityComponentType > create(const IEntityComponentData* entityComponentData) const

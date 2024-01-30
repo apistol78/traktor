@@ -9,7 +9,6 @@
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 
 namespace traktor::weather
 {
@@ -19,14 +18,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.PrecipitationRenderer", PrecipitationRe
 const TypeInfoSet PrecipitationRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< PrecipitationComponent >();
-}
-
-void PrecipitationRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void PrecipitationRenderer::setup(

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -89,9 +89,9 @@
 #include "Ui/GridView/GridItem.h"
 #include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "World/Entity.h"
-#include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/EntityEventManager.h"
+#include "World/EntityFactory.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldRenderSettings.h"
@@ -273,16 +273,15 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->createFactories();
 
 	// Create scene instance resource factory, used by final render control etc.
-	RefArray< const world::IEntityFactory > entityFactories;
-
+	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 	for (auto editorProfile : m_context->getEditorProfiles())
+	{
+		RefArray< const world::IEntityFactory > entityFactories;
 		editorProfile->createEntityFactories(m_context, entityFactories);
-
-	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
-	for (auto entityFactory : entityFactories)
-		entityBuilder->addFactory(entityFactory);
-
-	m_context->getResourceManager()->addFactory(new SceneFactory(entityBuilder));
+		for (auto factory : entityFactories)
+			entityFactory->addFactory(factory);
+	}
+	m_context->getResourceManager()->addFactory(new SceneFactory(entityFactory));
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();

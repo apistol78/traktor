@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,15 +15,15 @@
 #include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
 #include "Spray/TrailData.h"
-#include "World/IEntityBuilder.h"
 #include "World/IEntityEventData.h"
+#include "World/IEntityFactory.h"
 
 namespace traktor::spray
 {
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 4, EffectLayerData, ISerializable)
 
-Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
+Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const
 {
 	Ref< Emitter > emitter;
 	Ref< Trail > trail;
@@ -33,7 +33,7 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 
 	if (m_emitter)
 	{
-		emitter = m_emitter->createEmitter(resourceManager, entityBuilder);
+		emitter = m_emitter->createEmitter(resourceManager, entityFactory);
 		if (!emitter)
 			return nullptr;
 	}
@@ -45,23 +45,23 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 			return nullptr;
 	}
 
-	if (m_sequence && entityBuilder)
+	if (m_sequence && entityFactory)
 	{
-		sequence = m_sequence->createSequence(entityBuilder);
+		sequence = m_sequence->createSequence(entityFactory);
 		if (!sequence)
 			return nullptr;
 	}
 
-	if (m_triggerEnable && entityBuilder)
+	if (m_triggerEnable && entityFactory)
 	{
-		triggerEnable = entityBuilder->create(m_triggerEnable);
+		triggerEnable = entityFactory->createEntityEvent(nullptr, *m_triggerEnable);
 		if (!triggerEnable)
 			return nullptr;
 	}
 
-	if (m_triggerDisable && entityBuilder)
+	if (m_triggerDisable && entityFactory)
 	{
-		triggerDisable = entityBuilder->create(m_triggerDisable);
+		triggerDisable = entityFactory->createEntityEvent(nullptr, *m_triggerDisable);
 		if (triggerDisable)
 			return nullptr;
 	}

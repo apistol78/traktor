@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,11 +25,6 @@ public:
 	explicit EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer, const std::function< bool(const EntityAdapter*) >& filter);
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
-
-	virtual void gather(
-		const world::WorldGatherContext& context,
-		Object* renderable
-	) override final;
 
 	virtual void setup(
 		const world::WorldSetupContext& context,

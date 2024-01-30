@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -44,7 +44,7 @@ class Shader;
 namespace traktor::world
 {
 
-class IEntityBuilder;
+class IEntityFactory;
 
 }
 
@@ -64,7 +64,7 @@ class T_DLLCLASS EmitterData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
+	Ref< Emitter > createEmitter(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

@@ -519,13 +519,13 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	const float height = m_magnification / ratio;
 	const Matrix44 view = getViewTransform();
 
-	// Build a root entity by gathering entities from containers.
-	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	Ref< world::Entity > rootEntity = new world::Entity();
-	rootEntity->setComponent(rootGroup);
+	//// Build a root entity by gathering entities from containers.
+	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	//Ref< world::Entity > rootEntity = new world::Entity();
+	//rootEntity->setComponent(rootGroup);
 
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	rootGroup->addEntity(sceneInstance->getRootEntity());
+	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	//rootGroup->addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
@@ -539,7 +539,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	worldRenderView.setView(view, view);
-	m_worldRenderer->setup(worldRenderView, rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(sceneInstance->getWorld(), worldRenderView, *m_renderGraph, 0);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
@@ -731,7 +731,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	rootGroup->removeAllEntities();
+	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

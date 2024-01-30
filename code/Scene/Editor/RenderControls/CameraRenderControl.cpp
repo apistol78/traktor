@@ -359,12 +359,12 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	const Matrix44 view = cameraEntity->getTransform().inverse().toMatrix44();
 
 	// Build a root entity by gathering entities from containers.
-	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	Ref< world::Entity > rootEntity = new world::Entity();
-	rootEntity->setComponent(rootGroup);
+	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	//Ref< world::Entity > rootEntity = new world::Entity();
+	//rootEntity->setComponent(rootGroup);
 
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	rootGroup->addEntity(sceneInstance->getRootEntity());
+	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	//rootGroup->addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
@@ -390,7 +390,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())
@@ -410,7 +410,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	rootGroup->removeAllEntities();
+	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

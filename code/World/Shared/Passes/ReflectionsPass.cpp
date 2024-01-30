@@ -89,7 +89,6 @@ bool ReflectionsPass::create(resource::IResourceManager* resourceManager, render
 
 render::handle_t ReflectionsPass::setup(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
     const GatherView& gatheredView,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,

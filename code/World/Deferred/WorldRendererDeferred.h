@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,8 +49,8 @@ public:
 	virtual void destroy() override final;
 
 	virtual void setup(
+		const World* world,
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId
 	) override final;
@@ -60,7 +60,6 @@ private:
 
 	void setupVisualPass(
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		render::RenderGraph& renderGraph,
 		render::handle_t visualWriteTargetSetId,
 		render::handle_t gbufferTargetSetId,

@@ -45,11 +45,6 @@ void Entity::destroy()
 	m_components.clear();
 }
 
-const std::wstring& Entity::getName() const
-{
-	return m_name;
-}
-
 void Entity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
@@ -63,6 +58,11 @@ void Entity::setTransform(const Transform& transform)
 Transform Entity::getTransform() const
 {
 	return m_transform;
+}
+
+void Entity::setVisible(bool visible)
+{
+	m_visible = visible;
 }
 
 Aabb3 Entity::getBoundingBox() const

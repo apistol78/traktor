@@ -162,7 +162,6 @@ bool PostProcessPass::create(resource::IResourceManager* resourceManager, render
 
 void PostProcessPass::setup(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
     const GatherView& gatheredView,
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,22 +25,6 @@ EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::
 const TypeInfoSet EntityRendererAdapter::getRenderableTypes() const
 {
 	return m_entityRenderer->getRenderableTypes();
-}
-
-void EntityRendererAdapter::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	EntityAdapter* entityAdapter = m_cache->begin(renderable);
-	if (!entityAdapter || m_filter(entityAdapter))
-	{
-		m_entityRenderer->gather(
-			context,
-			renderable
-		);
-	}
-	m_cache->end();
 }
 
 void EntityRendererAdapter::setup(

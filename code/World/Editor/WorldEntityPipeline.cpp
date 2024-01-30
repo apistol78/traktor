@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,6 @@
 #include "World/Entity/DecalEventData.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/FacadeComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/ProbeComponentData.h"
 #include "World/Entity/VolumetricFogComponentData.h"
@@ -33,7 +32,6 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 	typeSet.insert< DecalEventData >();
 	typeSet.insert< EventSetComponentData >();
 	typeSet.insert< ExternalEntityData >();
-	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< ProbeComponentData >();
 	typeSet.insert< VolumetricFogComponentData >();
@@ -61,11 +59,6 @@ bool WorldEntityPipeline::buildDependencies(
 	}
 	else if (auto externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
-	else if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(sourceAsset))
-	{
-		for (auto entityData : facadeComponentData->getEntityData())
-			pipelineDepends->addDependency(entityData);
-	}
 	else if (auto groupComponentData = dynamic_type_cast< const GroupComponentData* >(sourceAsset))
 	{
 		for (auto entityData : groupComponentData->getEntityData())

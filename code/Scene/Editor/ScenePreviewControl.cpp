@@ -496,9 +496,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 				update.totalTime = m_lastPhysicsTime;
 				update.alternateTime = m_lastPhysicsTime;
 				update.deltaTime = c_updateDeltaTime;
-
-				scene->updateController(update);
-				scene->updateEntity(update);
+				scene->update(update);
 
 				m_context->getEntityEventManager()->update(update);
 				m_context->getPhysicsManager()->update(c_updateDeltaTime, false);
@@ -512,9 +510,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 			update.totalTime = scaledTime;
 			update.alternateTime = scaledTime;
 			update.deltaTime = scaledDeltaTime;
-
-			scene->updateController(update);
-			scene->updateEntity(update);
+			scene->update(update);
 
 			m_context->getEntityEventManager()->update(update);
 		}

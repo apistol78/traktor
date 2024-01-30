@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,8 +28,8 @@ class IResourceManager;
 namespace traktor::world
 {
 
-class IEntityBuilder;
 class IEntityEventData;
+class IEntityFactory;
 
 }
 
@@ -49,7 +49,7 @@ class T_DLLCLASS EffectLayerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
+	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

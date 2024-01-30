@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,17 +22,19 @@
 namespace traktor::world
 {
 
-class EntityData;
-
-/*! Facade component persistent data.
+/*! Facade component data.
  * \ingroup World
  */
-class T_DLLCLASS FacadeComponentData : public GroupComponentData
+class T_DLLCLASS FacadeComponentData : public IEntityComponentData
 {
 	T_RTTI_CLASS;
 
 public:
 	const std::wstring& getShow() const;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
 

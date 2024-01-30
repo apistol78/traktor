@@ -37,12 +37,12 @@ void GroupComponent::setOwner(Entity* owner)
 void GroupComponent::update(const UpdateParams& update)
 {
 	// Update child entities; set flag to indicate we're
-	// updating 'em.
-	{
-		T_ANONYMOUS_VAR(Save< bool >)(m_update, true);
-		for (auto entity : m_entities)
-			entity->update(update);
-	}
+	//// updating 'em.
+	//{
+	//	T_ANONYMOUS_VAR(Save< bool >)(m_update, true);
+	//	for (auto entity : m_entities)
+	//		entity->update(update);
+	//}
 
 	// Add deferred entities.
 	if (!m_deferred[1].empty())
@@ -80,7 +80,7 @@ Aabb3 GroupComponent::getBoundingBox() const
 	Aabb3 boundingBox;
 	for (auto entity : m_entities)
 	{
-		Aabb3 childBoundingBox = entity->getBoundingBox();
+		const Aabb3 childBoundingBox = entity->getBoundingBox();
 		if (!childBoundingBox.empty())
 		{
 			const Transform childTransform = entity->getTransform();

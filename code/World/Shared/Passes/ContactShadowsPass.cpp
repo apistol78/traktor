@@ -67,7 +67,6 @@ bool ContactShadowsPass::create(resource::IResourceManager* resourceManager, ren
 
 render::handle_t ContactShadowsPass::setup(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
     const GatherView& gatheredView,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,

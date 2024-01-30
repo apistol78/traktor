@@ -28,7 +28,6 @@ namespace traktor::world
 
 struct WorldCreateDesc;
 
-class Entity;
 class WorldEntityRenderers;
 class WorldRenderView;
 
@@ -48,7 +47,6 @@ public:
 
 	void setup(
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		const GatherView& gatheredView,
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,8 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
+#include "World/EntityFactory.h"
+#include "World/World.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
@@ -434,19 +436,17 @@ void SceneEditorContext::buildEntities()
 
 	if (m_sceneAsset)
 	{
-		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
-
-		// Create entity factories.
-		RefArray< const world::IEntityFactory > entityFactories;
+		// Create the entity factory.
+		Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 		for (auto editorProfile : m_editorProfiles)
+		{
+			RefArray< const world::IEntityFactory > entityFactories;
 			editorProfile->createEntityFactories(this, entityFactories);
-		for (auto entityFactory : entityFactories)
-			entityBuilder->addFactory(entityFactory);
+			for (auto factory : entityFactories)
+				entityFactory->addFactory(factory);
+		}
 
-		// Create root group entity as scene instances doesn't have a concept of layers.
-		Ref< world::Entity > rootEntity = new world::Entity();
-		Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-		rootEntity->setComponent(rootGroup);
+		Ref< world::World > world = new world::World();
 
 		// Create entities from scene layers.
 		RefArray< world::EntityData > layers = m_sceneAsset->getLayers();
@@ -461,8 +461,7 @@ void SceneEditorContext::buildEntities()
 			world::EntityData* layerEntityData = layers[i];
 			T_ASSERT(layerEntityData);
 
-			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilder, m_layerEntityAdapters[i]);
-
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, m_layerEntityAdapters[i]);
 			Ref< world::Entity > entity = entityAdapterBuilder->create(layerEntityData);
 			T_FATAL_ASSERT(entity != nullptr);
 
@@ -472,29 +471,26 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntity() == entity);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
 
-			rootGroup->addEntity(entity);
-
 			log::debug << L"Layer " << i << L", cache hit " << entityAdapterBuilder->getCacheHit() << L", miss " << entityAdapterBuilder->getCacheMiss() << Endl;
 		}
 
 		// Update scene controller also.
-		Ref< ISceneController > controller;
-		if (m_sceneAsset->getControllerData())
-		{
-			SmallMap< Guid, Ref< world::Entity > > entityProducts;
-			for (auto entityAdapter : getEntities())
-				entityProducts.insert(std::make_pair(
-					entityAdapter->getId(),
-					entityAdapter->getEntity()
-				));
-			controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
-		}
+		//Ref< ISceneController > controller;
+		//if (m_sceneAsset->getControllerData())
+		//{
+		//	SmallMap< Guid, Ref< world::Entity > > entityProducts;
+		//	for (auto entityAdapter : getEntities())
+		//		entityProducts.insert(std::make_pair(
+		//			entityAdapter->getId(),
+		//			entityAdapter->getEntity()
+		//		));
+		//	controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
+		//}
 
 		// Create our scene.
 		m_scene = new Scene(
-			controller,
-			rootEntity,
-			m_sceneAsset->getWorldRenderSettings()
+			m_sceneAsset->getWorldRenderSettings(),
+			world
 		);
 	}
 	else
@@ -524,24 +520,24 @@ void SceneEditorContext::buildController()
 {
 	T_ASSERT(m_scene);
 
-	Ref< ISceneController > controller;
-	if (m_sceneAsset->getControllerData())
-	{
-		SmallMap< Guid, Ref< world::Entity > > entityProducts;
-		for (auto entityAdapter : getEntities())
-			entityProducts.insert(std::make_pair(
-				entityAdapter->getId(),
-				entityAdapter->getEntity()
-			));
+	//Ref< ISceneController > controller;
+	//if (m_sceneAsset->getControllerData())
+	//{
+	//	SmallMap< Guid, Ref< world::Entity > > entityProducts;
+	//	for (auto entityAdapter : getEntities())
+	//		entityProducts.insert(std::make_pair(
+	//			entityAdapter->getId(),
+	//			entityAdapter->getEntity()
+	//		));
 
-		controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
-	}
+	//	controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
+	//}
 
-	// Create our scene.
-	m_scene = new Scene(
-		controller,
-		m_scene
-	);
+	//// Create our scene.
+	//m_scene = new Scene(
+	//	controller,
+	//	m_scene
+	//);
 }
 
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)

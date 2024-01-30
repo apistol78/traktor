@@ -268,12 +268,12 @@ void TheaterControllerEditor::update()
 
 	// Ensure controller is up to date, we need to force it to keep in sync with editor.
 	TheaterControllerData* controllerData = mandatory_non_null_type_cast< TheaterControllerData* >(m_context->getSceneAsset()->getControllerData());
-	TheaterController* controller = mandatory_non_null_type_cast< TheaterController* >(m_context->getScene()->getController());
-	if (!controller)
-		return;
+	//TheaterController* controller = mandatory_non_null_type_cast< TheaterController* >(m_context->getScene()->getController());
+	//if (!controller)
+	//	return;
 
-	controller->play(controllerData->getActs().at(selected)->getName());
-	controller->m_timeStart = 0.0f;
+	//controller->play(controllerData->getActs().at(selected)->getName());
+	//controller->m_timeStart = 0.0f;
 }
 
 void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)

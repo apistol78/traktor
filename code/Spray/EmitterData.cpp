@@ -25,7 +25,7 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 7, EmitterData, ISerializable)
 
-Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
+Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const
 {
 	if (!m_source)
 		return nullptr;
@@ -54,7 +54,7 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 
 	Ref< const Effect > effect;
 	if (m_effect)
-		effect = m_effect->createEffect(resourceManager, entityBuilder);
+		effect = m_effect->createEffect(resourceManager, entityFactory);
 
 	return new Emitter(
 		source,

@@ -50,8 +50,8 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 
 	if (environment->getWorld())
 	{
-		const world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
-		m_resourceManager->addFactory(new spray::EffectFactory(entityBuilder));
+		const world::IEntityFactory* entityFactory = environment->getWorld()->getEntityFactory();
+		m_resourceManager->addFactory(new spray::EffectFactory(entityFactory));
 	}
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,7 @@ class IResourceManager;
 namespace traktor::world
 {
 
-class IEntityBuilder;
+class IEntityFactory;
 
 }
 
@@ -57,7 +57,7 @@ public:
 		const RefArray< EffectLayerData >& layers
 	);
 
-	Ref< Effect > createEffect(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
+	Ref< Effect > createEffect(resource::IResourceManager* resourceManager, const world::IEntityFactory* entityFactory) const;
 
 	void addLayer(EffectLayerData* layer);
 

@@ -7,7 +7,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/WorldBuildContext.h"
-#include "World/WorldGatherContext.h"
 #include "World/WorldSetupContext.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
@@ -21,16 +20,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupRenderer", GroupRenderer, IEntityRen
 const TypeInfoSet GroupRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< GroupComponent >();
-}
-
-void GroupRenderer::gather(
-	const WorldGatherContext& context,
-	Object* renderable
-)
-{
-	auto groupComponent = static_cast< const GroupComponent* >(renderable);
-	for (auto childEntity : groupComponent->getEntities())
-		context.gather(childEntity);
 }
 
 void GroupRenderer::setup(

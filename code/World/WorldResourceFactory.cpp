@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,9 +13,9 @@
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "World/EntityData.h"
-#include "World/IEntityBuilder.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
+#include "World/IEntityFactory.h"
 #include "World/IrradianceGrid.h"
 #include "World/IrradianceGridResource.h"
 #include "World/WorldResourceFactory.h"
@@ -25,9 +25,9 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldResourceFactory", WorldResourceFactory, resource::IResourceFactory)
 
-WorldResourceFactory::WorldResourceFactory(render::IRenderSystem* renderSystem, const IEntityBuilder* entityBuilder)
+WorldResourceFactory::WorldResourceFactory(render::IRenderSystem* renderSystem, const IEntityFactory* entityFactory)
 :	m_renderSystem(renderSystem)
-,	m_entityBuilder(entityBuilder)
+,	m_entityFactory(entityFactory)
 {
 }
 
@@ -65,14 +65,14 @@ Ref< Object > WorldResourceFactory::create(resource::IResourceManager* resourceM
 	}
 	else if (is_type_a< IEntityEvent >(productType))
 	{
-		if (!m_entityBuilder)
+		if (!m_entityFactory)
 			return nullptr;
 
 		Ref< const IEntityEventData > eventData = instance->getObject< IEntityEventData >();
 		if (!eventData)
 			return nullptr;
 
-		Ref< IEntityEvent > event = m_entityBuilder->create< IEntityEvent >(eventData);
+		Ref< IEntityEvent > event = m_entityFactory->createEntityEvent(nullptr, *eventData);
 		if (!event)
 			return nullptr;
 

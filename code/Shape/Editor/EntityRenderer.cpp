@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,9 @@
 #include "Shape/Editor/EntityRenderer.h"
 #include "Shape/Editor/Solid/SolidEntity.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
-#include "World/WorldGatherContext.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
@@ -24,14 +21,6 @@ const TypeInfoSet EntityRenderer::getRenderableTypes() const
 		SolidEntity,
 		SplineComponent
 	>();
-}
-
-void EntityRenderer::gather(
-	const world::WorldGatherContext& context,
-	Object* renderable
-)
-{
-	context.include(this, renderable);
 }
 
 void EntityRenderer::setup(
@@ -81,5 +70,4 @@ void EntityRenderer::build(
 {
 }
 
-	}
 }

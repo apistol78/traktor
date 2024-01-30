@@ -31,11 +31,6 @@ class T_DLLCLASS VolumetricFogRenderer : public IEntityRenderer
 public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
-	virtual void gather(
-		const WorldGatherContext& context,
-		Object* renderable
-	) override final;
-
 	virtual void setup(
 		const WorldSetupContext& context,
 		const WorldRenderView& worldRenderView,

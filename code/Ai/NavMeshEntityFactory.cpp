@@ -38,10 +38,7 @@ const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
 	return makeTypeInfoSet< NavMeshComponentData >();
 }
 
-Ref< world::Entity > NavMeshEntityFactory::createEntity(
-	const world::IEntityBuilder* builder,
-	const world::EntityData& entityData
-) const
+Ref< world::Entity > NavMeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return nullptr;
 }

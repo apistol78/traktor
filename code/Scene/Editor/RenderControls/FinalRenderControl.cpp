@@ -484,11 +484,11 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	float colorClear[4]; m_colorClear.getRGBA32F(colorClear);
-	double scaledTime = m_context->getTime();
-	float deltaTime = (float)m_timer.getDeltaTime();
-	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 view = getViewTransform();
+	const double scaledTime = m_context->getTime();
+	const float deltaTime = (float)m_timer.getDeltaTime();
+	const float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+	const Matrix44 projection = getProjectionTransform();
+	const Matrix44 view = getViewTransform();
 
 	// Update scene entities; final render control has it's own set of entities thus
 	// need to manually update those.
@@ -496,17 +496,15 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	update.totalTime = scaledTime;
 	update.alternateTime = scaledTime;
 	update.deltaTime = scaledDeltaTime;
+	m_sceneInstance->update(update);
 
-	m_sceneInstance->updateController(update);
-	m_sceneInstance->updateEntity(update);
+	//// Build a root entity by gathering entities from containers.
+	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
+	//Ref< world::Entity > rootEntity = new world::Entity();
+	//rootEntity->setComponent(rootGroup);
 
-	// Build a root entity by gathering entities from containers.
-	Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	Ref< world::Entity > rootEntity = new world::Entity();
-	rootEntity->setComponent(rootGroup);
-
-	m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	rootGroup->addEntity(m_sceneInstance->getRootEntity());
+	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
+	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -520,7 +518,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_worldRenderView, rootEntity, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
 
 	// Draw debug overlay, content of any target from render graph as an overlay.
 	if (m_overlay)
@@ -552,7 +550,7 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 
 	// Need to clear all entities from our root group since when our root entity
 	// goes out of scope it's automatically destroyed.
-	rootGroup->removeAllEntities();
+	//rootGroup->removeAllEntities();
 
 	event->consume();
 }

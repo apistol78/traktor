@@ -59,7 +59,7 @@ public:
 	virtual void destroy();
 
 	/*! Get entity name. */
-	const std::wstring& getName() const;
+	const std::wstring& getName() const { return m_name; }
 
 	/*! Set entity transform.
 	 *
@@ -72,6 +72,14 @@ public:
 	 * \return Entity transform.
 	 */
 	virtual Transform getTransform() const;
+
+	/*!
+	 */
+	void setVisible(bool visible);
+
+	/*!
+	 */
+	bool isVisible() const { return m_visible; }
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
@@ -122,6 +130,7 @@ public:
 private:
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
+	bool m_visible = true;
 	RefArray< IEntityComponent > m_components;
 	const IEntityComponent* m_updating = nullptr;
 };

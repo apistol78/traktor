@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -80,8 +80,8 @@ bool WorldRendererForward::create(
 }
 
 void WorldRendererForward::setup(
+	const World* world,
 	const WorldRenderView& immutableWorldRenderView,
-	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId
 )
@@ -109,12 +109,12 @@ void WorldRendererForward::setup(
 	}
 
 	// Gather active renderables for this frame.
-	gather(const_cast< Entity* >(rootEntity));
+	gather(world);
 
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
-		WorldSetupContext context(m_entityRenderers, m_irradianceGrid, rootEntity, renderGraph);
+		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph);
 
 		for (auto r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
@@ -138,17 +138,16 @@ void WorldRendererForward::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
-	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, outputTargetSetId);
+	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto hiZTargetSetId = m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
-	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, rootEntity, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, rootEntity, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
+	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
+	auto reflectionsTargetSetId = m_reflectionsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, dbufferTargetSetId, visualTargetSetId.previous, outputTargetSetId);
 
 	render::handle_t shadowMapAtlasTargetSetId = 0;
 	setupLightPass(
 		worldRenderView,
-		rootEntity,
 		renderGraph,
 		outputTargetSetId,
 		shadowMapAtlasTargetSetId
@@ -156,7 +155,6 @@ void WorldRendererForward::setup(
 
 	setupVisualPass(
 		worldRenderView,
-		rootEntity,
 		renderGraph,
 		visualTargetSetId.current,
 		gbufferTargetSetId,
@@ -165,14 +163,13 @@ void WorldRendererForward::setup(
 		shadowMapAtlasTargetSetId
 	);
 
-	m_postProcessPass->setup(worldRenderView, rootEntity, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
+	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
 
 	m_state[worldRenderView.getIndex()].count++;
 }
 
 void WorldRendererForward::setupVisualPass(
 	const WorldRenderView& worldRenderView,
-	const Entity* rootEntity,
 	render::RenderGraph& renderGraph,
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
@@ -223,7 +220,6 @@ void WorldRendererForward::setupVisualPass(
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,
-				rootEntity,
 				renderContext
 			);
 

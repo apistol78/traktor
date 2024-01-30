@@ -259,7 +259,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classResourceServer);
 
 	auto classWorldServer = new AutoRuntimeClass< IWorldServer >();
-	classWorldServer->addProperty< const world::IEntityBuilder* >("entityBuilder", 0, &IWorldServer::getEntityBuilder);
+	classWorldServer->addProperty< const world::IEntityFactory* >("entityFactory", 0, &IWorldServer::getEntityFactory);
 	classWorldServer->addProperty< world::WorldEntityRenderers* >("entityRenderers", 0, &IWorldServer::getEntityRenderers);
 	classWorldServer->addProperty< world::EntityEventManager* >("entityEventManager", 0, &IWorldServer::getEntityEventManager);
 	classWorldServer->addMethod("addEntityFactory", &IWorldServer::addEntityFactory);

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 #include "Scene/ISceneController.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneClassFactory.h"
-#include "World/Entity.h"
+#include "World/World.h"
 
 namespace traktor::scene
 {
@@ -24,8 +24,7 @@ void SceneClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classISceneController);
 
 	auto classScene = new AutoRuntimeClass< Scene >();
-	classScene->addProperty("rootEntity", &Scene::getRootEntity);
-	classScene->addProperty("controller", &Scene::getController);
+	classScene->addProperty("world", &Scene::getWorld);
 	registrar->registerClass(classScene);
 }
 

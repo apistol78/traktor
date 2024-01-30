@@ -31,11 +31,6 @@ class T_DLLCLASS PrecipitationRenderer : public world::IEntityRenderer
 public:
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
-	virtual void gather(
-		const world::WorldGatherContext& context,
-		Object* renderable
-	) override final;
-
 	virtual void setup(
 		const world::WorldSetupContext& context,
 		const world::WorldRenderView& worldRenderView,

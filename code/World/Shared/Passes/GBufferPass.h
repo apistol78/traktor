@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,6 @@ class RenderGraph;
 namespace traktor::world
 {
 
-class Entity;
 class IrradianceGrid;
 class WorldEntityRenderers;
 class WorldRenderView;
@@ -41,7 +40,6 @@ public:
 
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
-		const Entity* rootEntity,
 		const GatherView& gatheredView,
 		const IrradianceGrid* irradianceGrid,
 		render::handle_t gbufferWriteTechnique,
