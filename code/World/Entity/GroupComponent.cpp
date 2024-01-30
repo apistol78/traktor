@@ -1,12 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Misc/Save.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
 
@@ -17,13 +16,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupComponent", GroupComponent, IEntityC
 
 void GroupComponent::destroy()
 {
-	T_ASSERT(m_deferred[0].empty());
-	T_ASSERT(m_deferred[1].empty());
-	for (auto entity : m_entities)
-	{
-		if (entity)
-			entity->destroy();
-	}
 	m_entities.resize(0);
 }
 
@@ -36,28 +28,6 @@ void GroupComponent::setOwner(Entity* owner)
 
 void GroupComponent::update(const UpdateParams& update)
 {
-	// Update child entities; set flag to indicate we're
-	//// updating 'em.
-	//{
-	//	T_ANONYMOUS_VAR(Save< bool >)(m_update, true);
-	//	for (auto entity : m_entities)
-	//		entity->update(update);
-	//}
-
-	// Add deferred entities.
-	if (!m_deferred[1].empty())
-	{
-		m_entities.insert(m_entities.end(), m_deferred[0].begin(), m_deferred[0].end());
-		m_deferred[0].resize(0);
-	}
-
-	// Remove deferred entities.
-	if (!m_deferred[1].empty())
-	{
-		for (auto entity : m_deferred[1])
-			removeEntity(entity);
-		m_deferred[1].resize(0);
-	}
 }
 
 void GroupComponent::setTransform(const Transform& transform)
@@ -75,7 +45,7 @@ void GroupComponent::setTransform(const Transform& transform)
 
 Aabb3 GroupComponent::getBoundingBox() const
 {
-	Transform invTransform = m_transform.inverse();
+	const Transform invTransform = m_transform.inverse();
 
 	Aabb3 boundingBox;
 	for (auto entity : m_entities)
@@ -95,30 +65,13 @@ Aabb3 GroupComponent::getBoundingBox() const
 void GroupComponent::addEntity(Entity* entity)
 {
 	T_ASSERT_M (entity, L"Null entity");
-	if (m_update)
-	{
-		// Add as deferred add; cannot add while in update loop.
-		m_deferred[0].push_back(entity);
-	}
-	else
-		m_entities.push_back(entity);
+	m_entities.push_back(entity);
 }
 
 void GroupComponent::removeEntity(Entity* entity)
 {
 	T_ASSERT_M (entity, L"Null entity");
-	if (m_update)
-	{
-		// Add as deferred remove; we cannot remove while update
-		// is iterating entity array.
-		m_deferred[1].push_back(entity);
-	}
-	else
-	{
-		auto i = std::find(m_entities.begin(), m_entities.end(), entity);
-		if (i != m_entities.end())
-			m_entities.erase(i);
-	}
+	m_entities.remove(entity);
 }
 
 void GroupComponent::removeAllEntities()
@@ -154,21 +107,6 @@ RefArray< Entity > GroupComponent::getEntities(const std::wstring& name) const
 			entities.push_back(entity);
 	}
 	return entities;
-}
-
-bool GroupComponent::traverse(const std::function< bool(Entity*) >& visitor)
-{
-	for (auto entity : m_entities)
-	{
-		if (!visitor(entity))
-			return false;
-		if (auto childGroup = entity->getComponent< GroupComponent >())
-		{
-			if (!childGroup->traverse(visitor))
-				return false;
-		}
-	}
-	return true;
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include <functional>
 #include <string>
 #include "Core/RefArray.h"
 #include "World/IEntityComponent.h"
@@ -56,14 +55,10 @@ public:
 
 	RefArray< Entity > getEntities(const std::wstring& name) const;
 
-	bool traverse(const std::function< bool(Entity*) >& visitor);
-
 private:
 	Entity* m_owner = nullptr;
 	Transform m_transform;
 	RefArray< Entity > m_entities;
-	RefArray< Entity > m_deferred[2];
-	bool m_update = false;
 };
 
 }
