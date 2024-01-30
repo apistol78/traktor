@@ -76,7 +76,6 @@ void GroupComponent::removeEntity(Entity* entity)
 
 void GroupComponent::removeAllEntities()
 {
-	T_ASSERT_M (!m_update, L"Cannot remove all entities while in update; not implemented.");
 	m_entities.resize(0);
 }
 
