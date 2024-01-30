@@ -23,12 +23,8 @@ namespace traktor::render
 
 void NullRenderBlock::render(IRenderView* renderView) const
 {
-	T_CONTEXT_PUSH_MARKER(renderView, name);
-
 	if (programParams)
 		programParams->fixup(program);
-
-	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void ComputeRenderBlock::render(IRenderView* renderView) const
@@ -88,7 +84,7 @@ void InstancingRenderBlock::render(IRenderView* renderView) const
 
 void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 {
-	Primitives p(primitive, offset, count, minIndex, maxIndex);
+	const Primitives p(primitive, offset, count, minIndex, maxIndex);
 
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
@@ -110,7 +106,7 @@ void IndexedInstancingRenderBlock::render(IRenderView* renderView) const
 
 void NonIndexedRenderBlock::render(IRenderView* renderView) const
 {
-	Primitives p(primitive, offset, count);
+	const Primitives p(primitive, offset, count);
 
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
@@ -132,7 +128,7 @@ void NonIndexedRenderBlock::render(IRenderView* renderView) const
 
 void IndexedRenderBlock::render(IRenderView* renderView) const
 {
-	Primitives p(primitive, offset, count, minIndex, maxIndex);
+	const Primitives p(primitive, offset, count, minIndex, maxIndex);
 
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
@@ -259,7 +255,7 @@ void ProfileReportRenderBlock::render(IRenderView* renderView) const
 	if (!renderView->getTimeQuery(*queryHandle, false, start, end))
 		return;
 
-	double duration = end - start;
+	const double duration = end - start;
 
 	start -= offsetGPU;
 	start += offset;
