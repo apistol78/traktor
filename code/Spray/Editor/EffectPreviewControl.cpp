@@ -63,6 +63,7 @@
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderer.h"
+#include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/GroupComponent.h"
@@ -341,8 +342,7 @@ void EffectPreviewControl::updateWorldRenderer()
 	if (!m_sceneInstance)
 		return;
 
-	std::wstring worldRendererTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
-
+	const std::wstring worldRendererTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.WorldRendererType", L"traktor.world.WorldRendererDeferred");
 	const TypeInfo* worldRendererType = TypeInfo::find(worldRendererTypeName.c_str());
 	if (!worldRendererType)
 		return;
@@ -474,20 +474,6 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 
 	const Matrix44 view = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
 
-	// Update scene entities.
-	world::UpdateParams update;
-	update.totalTime = time;
-	update.alternateTime = time;
-	update.deltaTime = deltaTime * m_timeScale;
-	m_sceneInstance->update(update);
-
-	// Build a root entity by gathering entities from containers.
-	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	//Ref< world::Entity > rootEntity = new world::Entity();
-	//rootEntity->setComponent(rootGroup);
-
-	//rootGroup->addEntity(m_sceneInstance->getRootEntity());
-
 	if (m_effectEntity)
 	{
 		const float T = m_effectEntity->getComponent< EffectComponent >()->getEffectInstance()->getTime();
@@ -505,10 +491,17 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 		}
 
 		m_effectEntity->setTransform(effectTransform);
-		m_effectEntity->update(update);
 
-		//rootGroup->addEntity(m_effectEntity);
+		// Temporarily add effect entity to world.
+		m_sceneInstance->getWorld()->addEntity(m_effectEntity);
 	}
+
+	// Update scene entities.
+	world::UpdateParams update;
+	update.totalTime = time;
+	update.alternateTime = time;
+	update.deltaTime = deltaTime * m_timeScale;
+	m_sceneInstance->update(update);
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = m_sceneInstance->getWorldRenderSettings();
@@ -523,6 +516,9 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
 	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
+
+	// Remove effect entity from world.
+	m_sceneInstance->getWorld()->removeEntity(m_effectEntity);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug wire");

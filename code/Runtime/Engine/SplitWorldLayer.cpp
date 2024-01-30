@@ -223,14 +223,7 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 	up.totalTime = info.getSimulationTime();
 	up.alternateTime = m_alternateTime;
 	up.deltaTime = deltaTime;
-
-	// Update scene controller.
-	//if (m_controllerEnable)
-	//	m_scene->updateController(up);
-
-	// Update all entities.
 	m_scene->update(up);
-	//m_dynamicEntities->update(up);
 
 	// Update entity events.
 	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
@@ -316,7 +309,7 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	const int32_t height = m_environment->getRender()->getHeight();
 
 #if defined(__LINUX__)
-	const int32_t denom = 2;
+	const int32_t denom = 1;
 #else
 	const int32_t denom = 1;
 #endif
