@@ -67,7 +67,6 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/GroupComponent.h"
-#include "World/Entity/GroupRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 
 namespace traktor::spray
@@ -354,7 +353,6 @@ void EffectPreviewControl::updateWorldRenderer()
 	entityRenderers->add(new weather::CloudRenderer());
 	entityRenderers->add(new weather::PrecipitationRenderer());
 	entityRenderers->add(new weather::SkyRenderer());
-	entityRenderers->add(new world::GroupRenderer());
 	entityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,
 		m_renderSystem,
