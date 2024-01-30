@@ -35,19 +35,16 @@ EntityAdapter::EntityAdapter(SceneEditorContext* context)
 ,	m_expanded(false)
 ,	m_visible(true)
 ,	m_locked(false)
-,	m_hash(0)
 {
 }
 
 void EntityAdapter::prepare(
 	world::EntityData* entityData,
-	world::Entity* entity,
-	uint32_t hash
+	world::Entity* entity
 )
 {
 	m_entityData = entityData;
 	m_entity = entity;
-	m_hash = hash;
 
 	// If entity data type is different then ensure we re-create editors.
 	if (m_entityDataType != &type_of(m_entityData))
@@ -73,10 +70,6 @@ void EntityAdapter::prepare(
 	{
 		const IComponentEditorFactory* factory = m_context->findComponentEditorFactory(type_of(componentData));
 		T_FATAL_ASSERT (factory);
-
-		// Some cases entities need to always be rebuilt, ie not cached, when rewinding etc.
-		if (factory->alwaysRebuild(componentData))
-			m_hash = 0;
 
 		Ref< IComponentEditor > componentEditor = factory->createComponentEditor(m_context, this, componentData);
 		T_FATAL_ASSERT (componentEditor);
@@ -132,16 +125,6 @@ world::IEntityComponentData* EntityAdapter::getComponentData(const TypeInfo& com
 world::IEntityComponent* EntityAdapter::getComponent(const TypeInfo& componentType) const
 {
 	return m_entity->getComponent(componentType);
-}
-
-void EntityAdapter::dropHash()
-{
-	m_hash = 0;
-}
-
-uint32_t EntityAdapter::getHash() const
-{
-	return m_hash;
 }
 
 const Guid& EntityAdapter::getId() const

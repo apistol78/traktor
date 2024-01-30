@@ -605,13 +605,13 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Create instance and adapter.
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-		entityAdapter->prepare(entityData, nullptr, 0);
+		entityAdapter->prepare(entityData, nullptr);
 
 		// Place instance in front of perspective camera.
 		const Camera* camera = m_context->getCamera(viewIndex);
 		T_ASSERT(camera);
 
-		Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, 4.0f);
+		const Matrix44 Mworld = camera->getWorld().toMatrix44() * translate(0.0f, 0.0f, 4.0f);
 		entityAdapter->setTransform(Transform(Mworld.translation()));
 
 		// Finally add adapter to parent group.
@@ -727,7 +727,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			generateEntityIds(entityData);
 
 			Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-			entityAdapter->prepare(entityData, nullptr, 0);
+			entityAdapter->prepare(entityData, nullptr);
 			parentEntity->addChild(nullptr, entityAdapter);
 		}
 
@@ -1002,9 +1002,7 @@ void SceneEditorPage::handleDatabaseEvent(db::Database* database, const Guid& ev
 			if (externalGuid == eventId)
 			{
 				// Modified external entity detected; need to recreate the scene.
-				// Also drop hash to ensure external entity is recreated, hash doesn't include hash of external data.
 				externalModified = true;
-				entityAdapter->dropHash();
 				break;
 			}
 		}
@@ -1272,7 +1270,7 @@ bool SceneEditorPage::addEntity(const TypeInfo* entityType)
 	m_context->getDocument()->push();
 
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(m_context);
-	entityAdapter->prepare(entityData, nullptr, 0);
+	entityAdapter->prepare(entityData, nullptr);
 	parentGroupAdapter->addChild(nullptr, entityAdapter);
 
 	// Select new entity.
@@ -1369,7 +1367,7 @@ bool SceneEditorPage::resolveExternal()
 	T_FATAL_ASSERT(parent != nullptr);
 
 	Ref< EntityAdapter > resolvedEntityAdapter = new EntityAdapter(m_context);
-	resolvedEntityAdapter->prepare(resolvedEntityData, nullptr, 0);
+	resolvedEntityAdapter->prepare(resolvedEntityData, nullptr);
 
 	parent->addChild(externalAdapter, resolvedEntityAdapter);
 	parent->removeChild(externalAdapter);

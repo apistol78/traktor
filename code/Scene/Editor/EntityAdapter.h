@@ -66,8 +66,7 @@ public:
 	 */
 	void prepare(
 		world::EntityData* entityData,
-		world::Entity* entity,
-		uint32_t hash
+		world::Entity* entity
 	);
 
 	void destroyEntity();
@@ -100,10 +99,6 @@ public:
 	{
 		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
 	}
-
-	void dropHash();
-
-	uint32_t getHash() const;
 
 	//@}
 
@@ -246,7 +241,6 @@ private:
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
 	SmallMap< const TypeInfo*, ComponentProduct > m_componentProducts;
-	uint32_t m_hash;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;
 	SmallMap< const world::Entity*, EntityAdapter* > m_childMap;

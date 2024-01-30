@@ -391,7 +391,7 @@ const IEntityEditorFactory* SceneEditorContext::findEntityEditorFactory(const Ty
 		{
 			if (is_type_of(*entityEditorDataType, entityDataType))
 			{
-				uint32_t classDifference = type_difference(*entityEditorDataType, entityDataType);
+				const uint32_t classDifference = type_difference(*entityEditorDataType, entityDataType);
 				if (classDifference < minClassDifference)
 				{
 					foundEntityEditorFactory = entityEditorFactory;
@@ -415,7 +415,7 @@ const IComponentEditorFactory* SceneEditorContext::findComponentEditorFactory(co
 		{
 			if (is_type_of(*componentEditorDataType, componentDataType))
 			{
-				uint32_t classDifference = type_difference(*componentEditorDataType, componentDataType);
+				const uint32_t classDifference = type_difference(*componentEditorDataType, componentDataType);
 				if (classDifference < minClassDifference)
 				{
 					foundComponentEditorFactory = componentEditorFactory;
@@ -470,8 +470,6 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntityData() == layerEntityData);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntity() == entity);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
-
-			log::debug << L"Layer " << i << L", cache hit " << entityAdapterBuilder->getCacheHit() << L", miss " << entityAdapterBuilder->getCacheMiss() << Endl;
 		}
 
 		// Update scene controller also.
@@ -764,7 +762,7 @@ void SceneEditorContext::cloneSelected()
 		generateEntityIds(clonedEntityData);
 
 		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(this);
-		clonedEntityAdapter->prepare(clonedEntityData, 0, 0);
+		clonedEntityAdapter->prepare(clonedEntityData, nullptr);
 		parentContainerGroup->addChild(selectedEntityAdapter, clonedEntityAdapter);
 
 		selectedEntityAdapter->m_selected = false;
