@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,8 +33,6 @@
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
@@ -402,19 +400,13 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
 
 	// Create entity renderers.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
 		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
-		{
-			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter * adapter) {
-				return adapter->isVisible();
-			});
-			worldEntityRenderers->add(entityRendererAdapter);
-		}
+			worldEntityRenderers->add(entityRenderer);
 	}
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldRendererType->createInstance());

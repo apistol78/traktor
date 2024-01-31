@@ -30,8 +30,6 @@
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
@@ -251,19 +249,13 @@ void CameraRenderControl::updateWorldRenderer()
 	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
 
 	// Create entity renderers.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (auto profile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j, [&](const EntityAdapter* adapter) {
-				return adapter->isVisible();
-			});
+		profile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
+		for (auto entityRenderer : entityRenderers)
 			worldEntityRenderers->add(entityRenderer);
-		}
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();

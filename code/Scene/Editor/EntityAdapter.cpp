@@ -44,7 +44,9 @@ void EntityAdapter::prepare(
 )
 {
 	m_entityData = entityData;
-	m_entity = entity;
+	
+	if ((m_entity = entity) != nullptr)
+		m_entity->setVisible(m_visible);
 
 	// If entity data type is different then ensure we re-create editors.
 	if (m_entityDataType != &type_of(m_entityData))
@@ -369,6 +371,8 @@ bool EntityAdapter::isExpanded() const
 void EntityAdapter::setVisible(bool visible)
 {
 	m_visible = visible;
+	if (m_entity)
+		m_entity->setVisible(visible);
 }
 
 bool EntityAdapter::isVisible(bool includingParents) const

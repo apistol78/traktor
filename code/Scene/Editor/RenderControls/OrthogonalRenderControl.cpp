@@ -26,8 +26,6 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
@@ -348,19 +346,13 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
 	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
-	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (auto editorProfile : m_context->getEditorProfiles())
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
 		editorProfile->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, *m_worldRendererType, entityRenderers);
 		for (auto entityRenderer : entityRenderers)
-		{
-			Ref< EntityRendererAdapter > entityRendererAdapter = new EntityRendererAdapter(entityRendererCache, entityRenderer, [&](const EntityAdapter* adapter) {
-				return adapter->isVisible();
-			});
-			worldEntityRenderers->add(entityRendererAdapter);
-		}
+			worldEntityRenderers->add(entityRenderer);
 	}
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
