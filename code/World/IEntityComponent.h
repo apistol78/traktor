@@ -45,6 +45,11 @@ public:
 	 */
 	virtual void setTransform(const Transform& transform) = 0;
 
+	/*! Called when entity's state is modified.
+	 * \param state Entity state.
+	 */
+	virtual void setState(uint32_t state) {}
+
 	/*! Calculate bounding box of this component.
 	 * \return Bounding box.
 	 */

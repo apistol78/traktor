@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,6 +36,12 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum State
+	{
+		Visible = 1,
+		Dynamic = 2
+	};
+
 	Entity() = default;
 
 	Entity(const Entity&) = delete;
@@ -43,8 +49,6 @@ public:
 	explicit Entity(const std::wstring_view& name, const Transform& transform);
 
 	explicit Entity(const std::wstring_view& name, const Transform& transform, const RefArray< IEntityComponent >& components);
-
-	virtual ~Entity();
 
 	/*! Destroy entity resources.
 	 *
@@ -73,13 +77,29 @@ public:
 	 */
 	virtual Transform getTransform() const;
 
-	/*!
+	/*! Modify entity state.
+	 * 
+	 * \param set Set state mask.
+	 * \param clear Clear state mask.
+	 * \return Previous state.
 	 */
-	void setVisible(bool visible);
+	uint32_t modifyState(uint32_t set, uint32_t clear);
 
 	/*!
 	 */
-	bool isVisible() const { return m_visible; }
+	uint32_t setState(uint32_t state);
+
+	/*!
+	 */
+	uint32_t getState() const { return m_state; }
+
+	/*!
+	 */
+	bool isVisible() const { return (bool)((m_state & Visible) != 0); }
+
+	/*!
+	 */
+	bool isDynamic() const { return (bool)((m_state & Dynamic) != 0); }
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
@@ -130,7 +150,7 @@ public:
 private:
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
-	bool m_visible = true;
+	uint32_t m_state = Visible;
 	RefArray< IEntityComponent > m_components;
 	const IEntityComponent* m_updating = nullptr;
 };

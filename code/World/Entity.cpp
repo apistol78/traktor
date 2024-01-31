@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,10 +34,6 @@ Entity::Entity(const std::wstring_view& name, const Transform& transform, const 
 	m_updating = nullptr;
 }
 
-Entity::~Entity()
-{
-}
-
 void Entity::destroy()
 {
 	for (auto component : m_components)
@@ -60,9 +56,28 @@ Transform Entity::getTransform() const
 	return m_transform;
 }
 
-void Entity::setVisible(bool visible)
+uint32_t Entity::modifyState(uint32_t set, uint32_t clear)
 {
-	m_visible = visible;
+	const uint32_t current = m_state;
+	m_state = (m_state | set) & ~clear;
+	for (auto component : m_components)
+	{
+		if (component != m_updating)
+			component->setState(m_state);
+	}
+	return current;
+}
+
+uint32_t Entity::setState(uint32_t state)
+{
+	const uint32_t current = m_state;
+	m_state = state;
+	for (auto component : m_components)
+	{
+		if (component != m_updating)
+			component->setState(m_state);
+	}
+	return current;
 }
 
 Aabb3 Entity::getBoundingBox() const

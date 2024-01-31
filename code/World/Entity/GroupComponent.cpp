@@ -43,6 +43,12 @@ void GroupComponent::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
+void GroupComponent::setState(uint32_t state)
+{
+	for (auto entity : m_entities)
+		entity->setState(state);
+}
+
 Aabb3 GroupComponent::getBoundingBox() const
 {
 	const Transform invTransform = m_transform.inverse();
