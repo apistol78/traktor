@@ -40,7 +40,6 @@
 #include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/EntityData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -71,12 +70,6 @@ void collectMeshes(const ISerializable* object, AlignedVector< MeshAndTransform 
 
 		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
-			if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
-			{
-				if (!editorAttributes->include)
-					continue;
-			}
-
 			mesh::MeshComponentData* meshComponentData = entityData->getComponent< mesh::MeshComponentData >();
 			if (meshComponentData)
 			{

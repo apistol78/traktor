@@ -34,7 +34,6 @@
 #include "Scene/Editor/Traverser.h"
 #include "Terrain/OceanComponentData.h"
 #include "World/EntityData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/VolumeComponentData.h"
@@ -171,11 +170,9 @@ bool NavMeshPipeline::buildOutput(
 
 	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result
 	{
-		if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::Result::Skip;
-		}
+		// Dynamic layers do not get included in nav.
+		if ((entityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+			return scene::Traverser::Result::Skip;
 
 		Ref< model::Model > model;
 		for (auto componentData : entityData->getComponents())

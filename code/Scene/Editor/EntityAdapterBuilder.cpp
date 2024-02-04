@@ -18,7 +18,6 @@
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
 #include "World/World.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -93,18 +92,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		entityAdapter->unlinkFromParent();
 	}
 	else
-	{
 		entityAdapter = new EntityAdapter(m_context);
-
-		// Get visibility state from editor attributes, do this
-		// only when a new adapter is created as we want to keep
-		// editing session state.
-		if (auto editorAttributes = entityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			entityAdapter->setVisible(editorAttributes->visible);
-			entityAdapter->setLocked(editorAttributes->locked);
-		}
-	}
 
 	// Setup relationship with parent.
 	if (m_currentAdapter)

@@ -248,8 +248,6 @@ private:
 	RefArray< IComponentEditor > m_componentEditors;
 	bool m_selected;
 	bool m_expanded;
-	bool m_visible;
-	bool m_locked;
 };
 
 }

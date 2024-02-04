@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -83,7 +83,6 @@
 #include "World/EntityData.h"
 #include "World/IrradianceGridResource.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Editor/ResolveExternal.h"
 #include "World/Entity/CameraComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -439,13 +438,10 @@ bool BakePipelineOperator::transform(
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
 		// Dynamic layers do not get baked.
-		if (auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >())
+		if ((layer->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
 		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-			{
-				layers.push_back(layer);
-				continue;
-			}
+			layers.push_back(layer);
+			continue;
 		}
 
 		// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
@@ -464,13 +460,6 @@ bool BakePipelineOperator::transform(
 		// Collect all entities from layer which do not get baked.
 		scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 		{
-			// Check editor attributes component if we should include entity.
-			if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-			{
-				if (!editorAttributes->include/* || editorAttributes->dynamic*/)
-					return scene::Traverser::Result::Skip;
-			}
-
 			// "Unnamed" entities do not bake.
 			if (inoutEntityData->getId().isNull())
 				return scene::Traverser::Result::Continue;
@@ -549,13 +538,10 @@ bool BakePipelineOperator::build(
 		for (const auto layer : inoutSceneAsset->getLayers())
 		{
 			// Dynamic layers do not get baked.
-			if (auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >())
+			if ((layer->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
 			{
-				if (!editorAttributes->include || editorAttributes->dynamic)
-				{
-					layers.push_back(layer);
-					continue;
-				}
+				layers.push_back(layer);
+				continue;
 			}
 
 			// Resolve all external entities, initial seed is null since we don't want to modify entity ID on those
@@ -576,11 +562,8 @@ bool BakePipelineOperator::build(
 			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 			{
 				// Check editor attributes component if we should include entity.
-				if (auto editorAttributes = inoutEntityData->getComponent< world::EditorAttributesComponentData >())
-				{
-					if (!editorAttributes->include/* || editorAttributes->dynamic*/)
-						return scene::Traverser::Result::Skip;
-				}
+				if ((inoutEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+					return scene::Traverser::Result::Skip;
 
 				// We only bake "named" entities.
 				if (inoutEntityData->getId().isNull())

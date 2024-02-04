@@ -16,7 +16,6 @@
 #include "Scene/Editor/ScenePermutationPipeline.h"
 #include "World/EntityData.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor::scene
 {
@@ -114,15 +113,15 @@ Ref< ISerializable > ScenePermutationPipeline::buildProduct(
 	if (scenePermutationAsset->m_overrideWorldRenderSettings)
 		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
 
-	for (auto layer : scenePermutation->getLayers())
-	{
-		if (std::find(includeLayers.begin(), includeLayers.end(), layer->getName()) != includeLayers.end())
-		{
-			auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >();
-			if (editorAttributes)
-				editorAttributes->include = true;
-		}
-	}
+	//for (auto layer : scenePermutation->getLayers())
+	//{
+	//	if (std::find(includeLayers.begin(), includeLayers.end(), layer->getName()) != includeLayers.end())
+	//	{
+	//		auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >();
+	//		if (editorAttributes)
+	//			editorAttributes->include = true;
+	//	}
+	//}
 
 	return scenePermutation;
 }

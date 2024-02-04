@@ -19,7 +19,6 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor::scene
@@ -33,8 +32,6 @@ EntityAdapter::EntityAdapter(SceneEditorContext* context)
 ,	m_parent(nullptr)
 ,	m_selected(false)
 ,	m_expanded(false)
-,	m_visible(true)
-,	m_locked(false)
 {
 }
 
@@ -46,12 +43,7 @@ void EntityAdapter::prepare(
 	m_entityData = entityData;
 	
 	if ((m_entity = entity) != nullptr)
-	{
-		if (m_visible)
-			m_entity->modifyState(world::EntityState::Visible, world::EntityState::None);
-		else
-			m_entity->modifyState(world::EntityState::None, world::EntityState::Visible);
-	}
+		m_entity->setState(m_entityData->getState());
 
 	// If entity data type is different then ensure we re-create editors.
 	if (m_entityDataType != &type_of(m_entityData))
@@ -375,10 +367,14 @@ bool EntityAdapter::isExpanded() const
 
 void EntityAdapter::setVisible(bool visible)
 {
-	m_visible = visible;
+	if (visible)
+		m_entityData->setState(m_entityData->getState() | world::EntityState::Visible);
+	else
+		m_entityData->setState(m_entityData->getState() & ~world::EntityState::Visible);
+
 	if (m_entity)
 	{
-		if (m_visible)
+		if (visible)
 			m_entity->modifyState(world::EntityState::Visible, world::EntityState::None);
 		else
 			m_entity->modifyState(world::EntityState::None, world::EntityState::Visible);
@@ -387,14 +383,14 @@ void EntityAdapter::setVisible(bool visible)
 
 bool EntityAdapter::isVisible(bool includingParents) const
 {
-	if (!m_visible)
+	if ((m_entityData->getState() & world::EntityState::Visible) != world::EntityState::Visible)
 		return false;
 
 	if (includingParents)
 	{
 		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
 		{
-			if (!parent->m_visible)
+			if (!parent->isVisible(true))
 				return false;
 		}
 	}
@@ -404,21 +400,33 @@ bool EntityAdapter::isVisible(bool includingParents) const
 
 void EntityAdapter::setLocked(bool locked)
 {
-	m_locked = locked;
-	if (m_locked)
+	if (locked)
+		m_entityData->setState(m_entityData->getState() | world::EntityState::Locked);
+	else
+		m_entityData->setState(m_entityData->getState() & ~world::EntityState::Locked);
+
+	if (m_entity)
+	{
+		if (locked)
+			m_entity->modifyState(world::EntityState::Locked, world::EntityState::None);
+		else
+			m_entity->modifyState(world::EntityState::None, world::EntityState::Locked);
+	}
+
+	if (locked)
 		m_selected = false;
 }
 
 bool EntityAdapter::isLocked(bool includingParents) const
 {
-	if (m_locked)
+	if ((m_entityData->getState() & world::EntityState::Locked) == world::EntityState::Locked)
 		return true;
 
 	if (includingParents)
 	{
 		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
 		{
-			if (parent->m_locked)
+			if (parent->isLocked(true))
 				return true;
 		}
 	}
@@ -428,8 +436,7 @@ bool EntityAdapter::isLocked(bool includingParents) const
 
 bool EntityAdapter::isDynamic() const
 {
-	auto editorAttributes = m_entityData->getComponent< world::EditorAttributesComponentData >();
-	if (editorAttributes && editorAttributes->dynamic)
+	if ((m_entityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
 		return true;
 
 	if (m_parent != nullptr)

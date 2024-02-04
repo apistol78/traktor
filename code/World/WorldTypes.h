@@ -65,7 +65,7 @@ enum class EntityState : uint32_t
 	None = 0,
 	Visible = 1,
 	Dynamic = 2,
-	All = Visible | Dynamic
+	Locked = 4
 };
 
 constexpr EntityState operator ~ (const EntityState es)

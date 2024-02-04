@@ -95,7 +95,6 @@
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 #include "World/Entity/GroupComponentData.h"
 
 namespace traktor::scene
@@ -821,7 +820,6 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		m_context->getDocument()->push();
 
 		Ref< world::EntityData > layer = new world::EntityData();
-		layer->setComponent(new world::EditorAttributesComponentData());
 		layer->setComponent(new world::GroupComponentData());
 
 		auto layers = m_context->getSceneAsset()->getLayers();

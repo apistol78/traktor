@@ -26,7 +26,6 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor::scene
 {
@@ -220,38 +219,23 @@ bool ScenePipeline::buildOutput(
 		if (!layer)
 			continue;
 
-		auto editorAttributes = layer->getComponent< world::EditorAttributesComponentData >();
-		if (editorAttributes == nullptr || editorAttributes->include || m_targetEditor)
+		log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
+		log::info << IncreaseIndent;
+
+		auto layerGroupData = layer->getComponent< world::GroupComponentData >();
+		if (layerGroupData != nullptr)
 		{
-			log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
-			log::info << IncreaseIndent;
-
-			auto layerGroupData = layer->getComponent< world::GroupComponentData >();
-			if (layerGroupData != nullptr)
+			for (const auto& assetEntityData : layerGroupData->getEntityData())
 			{
-				for (const auto& assetEntityData : layerGroupData->getEntityData())
-				{
-					Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(
-						pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
-					);
-					if (outputEntityData)
-					{
-						if (editorAttributes != nullptr)
-						{
-							outputEntityData->setState(
-								world::EntityState::Visible |
-								(editorAttributes->dynamic ? world::EntityState::Dynamic : world::EntityState::None)
-							);
-						}
-						groupComponentData->addEntityData(outputEntityData);
-					}
-				}
+				Ref< world::EntityData > outputEntityData = checked_type_cast< world::EntityData*, true >(
+					pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
+				);
+				if (outputEntityData)
+					groupComponentData->addEntityData(outputEntityData);
 			}
-
-			log::info << DecreaseIndent;
 		}
-		else
-			log::info << L"Layer \"" << layer->getName() << L"\" skipped." << Endl;
+
+		log::info << DecreaseIndent;
 	}
 
 	Ref< world::EntityData > groupEntityData = new world::EntityData();

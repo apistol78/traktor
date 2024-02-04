@@ -118,7 +118,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		EntityState filter = EntityState::All
+		EntityState filter = EntityState::Visible | EntityState::Dynamic
 	) = 0;
 
 	//@}

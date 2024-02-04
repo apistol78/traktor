@@ -119,8 +119,8 @@ void EntityData::serialize(ISerializer& s)
 	{
 		const MemberBitMask::Bit c_EntityState_bits[] =
 		{
-			{ L"Visible", (uint32_t)EntityState::Visible },
-			{ L"Dynamic", (uint32_t)EntityState::Dynamic },
+			{ L"visible", (uint32_t)EntityState::Visible },
+			{ L"dynamic", (uint32_t)EntityState::Dynamic },
 			{ 0 }
 		};
 		s >> MemberBitMask(L"state", (uint32_t&)m_state, c_EntityState_bits, AttributePrivate());

@@ -29,16 +29,17 @@ class T_DLLCLASS EditorAttributesComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	bool visible = true;	//!< If entity should be visible, only affects editor not runtime.
-	bool locked = false;	//!< If entity is locked being edited.
-	bool include = true;	//!< If entity is included in build.
-	bool dynamic = true;	//!< If entity is dynamic, cannot be part of any baking process etc.
-
 	virtual int32_t getOrdinal() const override final;
 
 	virtual void setTransform(const EntityData* owner, const Transform& transform) override final;
 
 	virtual void serialize(ISerializer& s) override final;
+
+private:
+	bool visible = true;	//!< If entity should be visible, only affects editor not runtime.
+	bool locked = false;	//!< If entity is locked being edited.
+	bool include = true;	//!< If entity is included in build.
+	bool dynamic = true;	//!< If entity is dynamic, cannot be part of any baking process etc.
 };
 
 }

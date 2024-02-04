@@ -33,7 +33,6 @@
 #include "Shape/Editor/Prefab/PrefabEntityReplicator.h"
 #include "World/EntityData.h"
 #include "World/Entity/GroupComponentData.h"
-#include "World/Editor/EditorAttributesComponentData.h"
 
 namespace traktor::shape
 {
@@ -101,12 +100,9 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	// Collect all models from prefab component.
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
-		// Check editor attributes component if we should include entity.
-		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::Result::Skip;
-		}		
+		// Dynamic layers do not get included in prefab.
+		if ((inEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+			return scene::Traverser::Result::Skip;
 
 		if (auto meshComponentData = inEntityData->getComponent< mesh::MeshComponentData >())
 		{
@@ -209,12 +205,9 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	// Collect all models from prefab component.
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
-		// Check editor attributes component if we should include entity.
-		if (auto editorAttributes = inEntityData->getComponent< world::EditorAttributesComponentData >())
-		{
-			if (!editorAttributes->include || editorAttributes->dynamic)
-				return scene::Traverser::Result::Skip;
-		}		
+		// Dynamic layers do not get included in prefab.
+		if ((inEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+			return scene::Traverser::Result::Skip;
 
 		if (auto rigidBodyComponentData = inEntityData->getComponent< physics::RigidBodyComponentData >())
 		{
