@@ -14,15 +14,10 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity(const std::wstring_view& name, const Transform& transform)
+Entity::Entity(const std::wstring_view& name, const Transform& transform, EntityState state, const RefArray< IEntityComponent >& components)
 :	m_name(name)
 ,	m_transform(transform)
-{
-}
-
-Entity::Entity(const std::wstring_view& name, const Transform& transform, const RefArray< IEntityComponent >& components)
-:	m_name(name)
-,	m_transform(transform)
+,	m_state(state)
 ,	m_components(components)
 {
 	for (auto component : m_components)
@@ -56,9 +51,9 @@ Transform Entity::getTransform() const
 	return m_transform;
 }
 
-uint32_t Entity::modifyState(uint32_t set, uint32_t clear)
+EntityState Entity::modifyState(EntityState set, EntityState clear)
 {
-	const uint32_t current = m_state;
+	const EntityState current = m_state;
 	m_state = (m_state | set) & ~clear;
 	for (auto component : m_components)
 	{
@@ -68,9 +63,9 @@ uint32_t Entity::modifyState(uint32_t set, uint32_t clear)
 	return current;
 }
 
-uint32_t Entity::setState(uint32_t state)
+EntityState Entity::setState(EntityState state)
 {
-	const uint32_t current = m_state;
+	const EntityState current = m_state;
 	m_state = state;
 	for (auto component : m_components)
 	{

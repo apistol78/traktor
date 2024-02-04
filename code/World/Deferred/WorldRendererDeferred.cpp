@@ -95,7 +95,8 @@ void WorldRendererDeferred::setup(
 	const World* world,
 	const WorldRenderView& immutableWorldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId
+	render::handle_t outputTargetSetId,
+	EntityState filter
 )
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
@@ -111,7 +112,7 @@ void WorldRendererDeferred::setup(
 	}
 
 	// Gather active renderables for this frame.
-	gather(world);
+	gather(world, filter);
 
 	// Add additional passes by entity renderers.
 	{
@@ -212,7 +213,7 @@ void WorldRendererDeferred::setupVisualPass(
 	rp->addInput(dbufferTargetSetId);
 	// rp->addInput(hiZTextureId);
 	rp->addInput(ambientOcclusionTargetSetId);
-	rp->addInput(contactShadowsTargetSetId);
+	// rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMapAtlasTargetSetId);
 
@@ -234,7 +235,7 @@ void WorldRendererDeferred::setupVisualPass(
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
 			const auto dbufferTargetSet = renderGraph.getTargetSet(dbufferTargetSetId);
 			const auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionTargetSetId);
-			const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
+			// const auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsTargetSetId);
 			const auto reflectionsTargetSet = renderGraph.getTargetSet(reflectionsTargetSetId);
 			const auto shadowAtlasTargetSet = renderGraph.getTargetSet(shadowMapAtlasTargetSetId);
 
@@ -331,10 +332,10 @@ void WorldRendererDeferred::setupVisualPass(
 			else
 				sharedParams->setTextureParameter(s_handleOcclusionMap, m_whiteTexture);
 
-			if (contactShadowsTargetSet != nullptr)
-				sharedParams->setTextureParameter(s_handleContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
-			else
-				sharedParams->setTextureParameter(s_handleContactShadowsMap, m_blackTexture);
+			// if (contactShadowsTargetSet != nullptr)
+			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, contactShadowsTargetSet->getColorTexture(0));
+			// else
+			// 	sharedParams->setTextureParameter(s_handleContactShadowsMap, m_blackTexture);
 
 			if (reflectionsTargetSet != nullptr)
 				sharedParams->setTextureParameter(s_handleReflectionMap, reflectionsTargetSet->getColorTexture(0));

@@ -111,12 +111,14 @@ public:
 	 * \param worldRenderView World render view.
 	 * \param renderGraph Setup into render graph.
 	 * \param outputTargetSetId ID of output target set.
+	 * \param filter Gather only entities which match any filter bits.
 	 */
 	virtual void setup(
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId
+		render::handle_t outputTargetSetId,
+		EntityState filter = EntityState::All
 	) = 0;
 
 	//@}

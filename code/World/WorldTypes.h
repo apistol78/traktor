@@ -60,6 +60,29 @@ enum class LightType
 	Spot = 3
 };
 
+enum class EntityState : uint32_t
+{
+	None = 0,
+	Visible = 1,
+	Dynamic = 2,
+	All = Visible | Dynamic
+};
+
+constexpr EntityState operator ~ (const EntityState es)
+{
+	return (EntityState)(~(uint32_t)es);
+}
+
+constexpr EntityState operator | (const EntityState& lh, const EntityState& rh)
+{
+	return (EntityState)((uint32_t)lh | (uint32_t)rh);
+}
+
+constexpr EntityState operator & (const EntityState& lh, const EntityState& rh)
+{
+	return (EntityState)((uint32_t)lh & (uint32_t)rh);
+}
+
 /*! Update parameters. */
 struct UpdateParams
 {

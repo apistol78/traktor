@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,7 +48,7 @@ public:
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.
 	 */
-	virtual void setState(uint32_t state) {}
+	virtual void setState(EntityState state) {}
 
 	/*! Calculate bounding box of this component.
 	 * \return Bounding box.

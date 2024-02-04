@@ -193,8 +193,6 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEntityData);
 
 	auto classEntity = new AutoRuntimeClass< Entity >();
-	classEntity->addConstructor();
-	classEntity->addConstructor< const std::wstring&, const Transform& >();
 	classEntity->addProperty("name", &Entity::getName);
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);

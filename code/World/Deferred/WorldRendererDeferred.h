@@ -52,7 +52,8 @@ public:
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-		render::handle_t outputTargetSetId
+		render::handle_t outputTargetSetId,
+		EntityState filter
 	) override final;
 
 private:

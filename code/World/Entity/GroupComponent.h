@@ -41,7 +41,7 @@ public:
 
 	virtual void setTransform(const Transform& transform) override final;
 
-	virtual void setState(uint32_t state) override final;
+	virtual void setState(EntityState state) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 

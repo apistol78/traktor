@@ -43,7 +43,7 @@ void GroupComponent::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-void GroupComponent::setState(uint32_t state)
+void GroupComponent::setState(EntityState state)
 {
 	for (auto entity : m_entities)
 		entity->setState(state);

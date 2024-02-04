@@ -36,19 +36,11 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum State
-	{
-		Visible = 1,
-		Dynamic = 2
-	};
-
 	Entity() = default;
 
 	Entity(const Entity&) = delete;
 
-	explicit Entity(const std::wstring_view& name, const Transform& transform);
-
-	explicit Entity(const std::wstring_view& name, const Transform& transform, const RefArray< IEntityComponent >& components);
+	explicit Entity(const std::wstring_view& name, const Transform& transform, EntityState state, const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >());
 
 	/*! Destroy entity resources.
 	 *
@@ -83,23 +75,23 @@ public:
 	 * \param clear Clear state mask.
 	 * \return Previous state.
 	 */
-	uint32_t modifyState(uint32_t set, uint32_t clear);
+	EntityState modifyState(EntityState set, EntityState clear);
 
 	/*!
 	 */
-	uint32_t setState(uint32_t state);
+	EntityState setState(EntityState state);
 
 	/*!
 	 */
-	uint32_t getState() const { return m_state; }
+	EntityState getState() const { return m_state; }
 
 	/*!
 	 */
-	bool isVisible() const { return (bool)((m_state & Visible) != 0); }
+	bool isVisible() const { return (bool)((m_state & EntityState::Visible) == EntityState::Visible); }
 
 	/*!
 	 */
-	bool isDynamic() const { return (bool)((m_state & Dynamic) != 0); }
+	bool isDynamic() const { return (bool)((m_state & EntityState::Dynamic) == EntityState::Dynamic); }
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
@@ -150,7 +142,7 @@ public:
 private:
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
-	uint32_t m_state = Visible;
+	EntityState m_state = EntityState::Visible;
 	RefArray< IEntityComponent > m_components;
 	const IEntityComponent* m_updating = nullptr;
 };

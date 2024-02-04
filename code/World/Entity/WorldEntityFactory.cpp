@@ -111,6 +111,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		mutableEntityData->setId(externalEntityData->getId());
 		mutableEntityData->setName(externalEntityData->getName());
 		mutableEntityData->setTransform(externalEntityData->getTransform());
+		mutableEntityData->setState(externalEntityData->getState());
 
 		// Override component data.
 		for (auto componentData : entityData.getComponents())
@@ -146,7 +147,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 
 		// Create entity and attach all components to it.
-		return new Entity(entityData.getName(), entityData.getTransform(), components);
+		return new Entity(entityData.getName(), entityData.getTransform(), entityData.getState(), components);
 	}
 	return nullptr;
 }

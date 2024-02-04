@@ -294,7 +294,8 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			context.getWorld(),
 			worldRenderView,
 			renderGraph,
-			faceTargetSetId
+			faceTargetSetId,
+			EntityState::Visible
 		);
 
 		// Copy intermediate target to cubemap side.

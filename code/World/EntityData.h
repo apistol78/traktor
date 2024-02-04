@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -58,6 +59,12 @@ public:
 
 	/*! Get transform of entity data. */
 	virtual const Transform& getTransform() const;
+
+	/*! Set entity initial state. */
+	void setState(EntityState state);
+
+	/*! Get entity initial state. */
+	EntityState getState() const;
 
 	/*! Set component.
 	 *
@@ -108,6 +115,7 @@ private:
 	Guid m_id;
 	std::wstring m_name;
 	Transform m_transform;
+	EntityState m_state = EntityState::Visible;
 	RefArray< IEntityComponentData > m_components;
 };
 

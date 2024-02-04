@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "World/EntityData.h"
@@ -16,7 +17,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 1, EntityData, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 2, EntityData, ISerializable)
 
 void EntityData::setId(const Guid& id)
 {
@@ -48,6 +49,16 @@ void EntityData::setTransform(const Transform& transform)
 const Transform& EntityData::getTransform() const
 {
 	return m_transform;
+}
+
+void EntityData::setState(EntityState state)
+{
+	m_state = state;
+}
+
+EntityState EntityData::getState() const
+{
+	return m_state;
 }
 
 void EntityData::setComponent(IEntityComponentData* component)
@@ -103,6 +114,18 @@ void EntityData::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Transform >(L"transform", m_transform);
+
+	if (s.getVersion< EntityData >() >= 2)
+	{
+		const MemberBitMask::Bit c_EntityState_bits[] =
+		{
+			{ L"Visible", (uint32_t)EntityState::Visible },
+			{ L"Dynamic", (uint32_t)EntityState::Dynamic },
+			{ 0 }
+		};
+		s >> MemberBitMask(L"state", (uint32_t&)m_state, c_EntityState_bits, AttributePrivate());
+	}
+
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);
 }
 

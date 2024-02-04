@@ -18,7 +18,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEntity", PrimitiveEntity, world::Entity)
 
 PrimitiveEntity::PrimitiveEntity(const PrimitiveEntityData* data, const Transform& transform)
-:	world::Entity(data->getName(), transform)
+:	world::Entity(data->getName(), transform, world::EntityState::Visible)
 ,	m_data(data)
 ,   m_selectedMaterial(model::c_InvalidIndex)
 ,   m_dirty(true)

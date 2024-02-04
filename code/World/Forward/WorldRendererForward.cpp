@@ -83,7 +83,8 @@ void WorldRendererForward::setup(
 	const World* world,
 	const WorldRenderView& immutableWorldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t outputTargetSetId
+	render::handle_t outputTargetSetId,
+	EntityState filter
 )
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;
@@ -109,7 +110,7 @@ void WorldRendererForward::setup(
 	}
 
 	// Gather active renderables for this frame.
-	gather(world);
+	gather(world, filter);
 
 	// Add additional passes by entity renderers.
 	{

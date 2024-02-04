@@ -235,7 +235,16 @@ bool ScenePipeline::buildOutput(
 						pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
 					);
 					if (outputEntityData)
+					{
+						if (editorAttributes != nullptr)
+						{
+							outputEntityData->setState(
+								world::EntityState::Visible |
+								(editorAttributes->dynamic ? world::EntityState::Dynamic : world::EntityState::None)
+							);
+						}
 						groupComponentData->addEntityData(outputEntityData);
+					}
 				}
 			}
 

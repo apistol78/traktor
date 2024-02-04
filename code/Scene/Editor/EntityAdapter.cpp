@@ -48,9 +48,9 @@ void EntityAdapter::prepare(
 	if ((m_entity = entity) != nullptr)
 	{
 		if (m_visible)
-			m_entity->modifyState(world::Entity::Visible, 0);
+			m_entity->modifyState(world::EntityState::Visible, world::EntityState::None);
 		else
-			m_entity->modifyState(0, world::Entity::Visible);
+			m_entity->modifyState(world::EntityState::None, world::EntityState::Visible);
 	}
 
 	// If entity data type is different then ensure we re-create editors.
@@ -379,9 +379,9 @@ void EntityAdapter::setVisible(bool visible)
 	if (m_entity)
 	{
 		if (m_visible)
-			m_entity->modifyState(world::Entity::Visible, 0);
+			m_entity->modifyState(world::EntityState::Visible, world::EntityState::None);
 		else
-			m_entity->modifyState(0, world::Entity::Visible);
+			m_entity->modifyState(world::EntityState::None, world::EntityState::Visible);
 	}
 }
 

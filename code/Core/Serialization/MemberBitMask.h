@@ -35,6 +35,8 @@ public:
 
 	explicit MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit* bits);
 
+	explicit MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit* bits, const Attribute& attributes);
+
 	virtual void serialize(ISerializer& s) const override final;
 
 private:

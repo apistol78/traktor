@@ -211,7 +211,7 @@ void WorldRendererShared::destroy()
 	m_irradianceGrid.clear();
 }
 
-void WorldRendererShared::gather(const World* world)
+void WorldRendererShared::gather(const World* world, EntityState filter)
 {
 	T_PROFILER_SCOPE(L"WorldRendererShared::gather");
 	StaticVector< const LightComponent*, LightClusterPass::c_maxLightCount > lights;
@@ -223,7 +223,7 @@ void WorldRendererShared::gather(const World* world)
 
 	for (auto entity : world->getEntities())
 	{
-		if (!entity->isVisible())
+		if ((entity->getState() & filter) == EntityState::None)
 			continue;
 
 		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
