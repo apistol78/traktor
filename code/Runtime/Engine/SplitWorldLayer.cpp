@@ -66,13 +66,6 @@ SplitWorldLayer::SplitWorldLayer(
 ,	m_scene(scene)
 ,	m_shader(shader)
 {
-	// Create management entities.
-	//m_rootGroup = new world::Entity();
-	//m_rootGroup->setComponent(new world::GroupComponent());
-
-	//m_dynamicEntities = new world::Entity();
-	//m_dynamicEntities->setComponent(new world::GroupComponent());
-
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
@@ -100,8 +93,6 @@ void SplitWorldLayer::destroy()
 	}
 
 	m_environment = nullptr;
-	//m_rootGroup = nullptr;
-	//m_renderGroup = nullptr;
 	m_cameraEntities[0] = nullptr;
 	m_cameraEntities[1] = nullptr;
 
@@ -112,7 +103,6 @@ void SplitWorldLayer::destroy()
 	}
 
 	safeDestroy(m_worldRenderer);
-	//safeDestroy(m_dynamicEntities);
 
 	Layer::destroy();
 }

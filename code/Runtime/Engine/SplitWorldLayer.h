@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -155,18 +155,11 @@ protected:
 
 private:
 	IEnvironment* m_environment;
-
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shader;
-
 	resource::Proxy< scene::Scene > m_scene;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderViews[2];
-	
-	//Ref< world::Entity > m_rootGroup;
-	//Ref< world::Entity > m_renderGroup;
-	//Ref< world::Entity > m_dynamicEntities;
-
 	Ref< const world::Entity > m_cameraEntities[2];
 	IntervalTransform m_cameraTransforms[2];
 	Transform m_cameraOffsets[2];

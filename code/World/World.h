@@ -38,18 +38,25 @@ class T_DLLCLASS World : public Object
 public:
 	void destroy();
 
+	/*! Add entity to world. */
 	void addEntity(Entity* entity);
 
+	/*! Remove entity from world. */
 	void removeEntity(Entity* entity);
 
+	/*! Check if an entity is part of this world. */
 	bool haveEntity(const Entity* entity) const;
 
+	/*! Get an entity by name, and index if multiple entities are named equally. */
 	Entity* getEntity(const std::wstring_view& name, int32_t index) const;
 
+	/*! Get all entities by name. */
 	RefArray< Entity > getEntities(const std::wstring_view& name) const;
 
+	/*! Update all entities in this world. */
 	void update(const UpdateParams& update);
 
+	/*! Get all entities of this world. */
 	const RefArray< Entity >& getEntities() const { return m_entities; }
 
 private:
