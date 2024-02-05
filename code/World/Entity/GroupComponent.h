@@ -39,9 +39,9 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	virtual void setTransform(const Transform& transform) override final;
-
 	virtual void setState(const EntityState& state, const EntityState& mask) override final;
+
+	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
 

@@ -40,15 +40,15 @@ public:
 	 */
 	virtual void setOwner(Entity* owner) = 0;
 
-	/*! Called when entity's transform is modified.
-	 * \param transform New transform.
-	 */
-	virtual void setTransform(const Transform& transform) = 0;
-
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.
 	 */
 	virtual void setState(const EntityState& state, const EntityState& mask) {}
+
+	/*! Called when entity's transform is modified.
+	 * \param transform New transform.
+	 */
+	virtual void setTransform(const Transform& transform) = 0;
 
 	/*! Calculate bounding box of this component.
 	 * \return Bounding box.

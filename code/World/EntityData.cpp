@@ -63,18 +63,6 @@ const std::wstring& EntityData::getName() const
 	return m_name;
 }
 
-void EntityData::setTransform(const Transform& transform)
-{
-	for (auto component : m_components)
-		component->setTransform(this, transform);
-	m_transform = transform;
-}
-
-const Transform& EntityData::getTransform() const
-{
-	return m_transform;
-}
-
 EntityState EntityData::setState(const EntityState& state, const EntityState& mask)
 {
 	const EntityState current = m_state;
@@ -92,6 +80,18 @@ EntityState EntityData::setState(const EntityState& state, const EntityState& ma
 const EntityState& EntityData::getState() const
 {
 	return m_state;
+}
+
+void EntityData::setTransform(const Transform& transform)
+{
+	for (auto component : m_components)
+		component->setTransform(this, transform);
+	m_transform = transform;
+}
+
+const Transform& EntityData::getTransform() const
+{
+	return m_transform;
 }
 
 void EntityData::setComponent(IEntityComponentData* component)
@@ -146,11 +146,11 @@ void EntityData::serialize(ISerializer& s)
 		s >> Member< Guid >(L"id", m_id, AttributePrivate());
 
 	s >> Member< std::wstring >(L"name", m_name);
-	s >> MemberComposite< Transform >(L"transform", m_transform);
 
 	if (s.getVersion< EntityData >() >= 2)
 		s >> MemberEntityState(L"state", m_state, AttributePrivate());
 
+	s >> MemberComposite< Transform >(L"transform", m_transform);
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);
 }
 

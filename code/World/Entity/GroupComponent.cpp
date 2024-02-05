@@ -30,6 +30,12 @@ void GroupComponent::update(const UpdateParams& update)
 {
 }
 
+void GroupComponent::setState(const EntityState& state, const EntityState& mask)
+{
+	for (auto entity : m_entities)
+		entity->setState(state, mask);
+}
+
 void GroupComponent::setTransform(const Transform& transform)
 {
 	const Transform invTransform = m_transform.inverse();
@@ -41,12 +47,6 @@ void GroupComponent::setTransform(const Transform& transform)
 		entity->setTransform(Tworld);
 	}
 	m_transform = transform;
-}
-
-void GroupComponent::setState(const EntityState& state, const EntityState& mask)
-{
-	for (auto entity : m_entities)
-		entity->setState(state, mask);
 }
 
 Aabb3 GroupComponent::getBoundingBox() const

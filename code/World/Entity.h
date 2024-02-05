@@ -57,6 +57,30 @@ public:
 	/*! Get entity name. */
 	const std::wstring& getName() const { return m_name; }
 
+	/*! Set entity state. */
+	EntityState setState(const EntityState& state, const EntityState& mask);
+
+	/*! Get entity state. */
+	const EntityState& getState() const { return m_state; }
+
+	/*! Set entity visible state. */
+	void setVisible(bool visible) { setState(visible ? EntityState::All : EntityState::None, EntityState::Visible); }
+
+	/*! Check if entity is visible. */
+	bool isVisible() const { return m_state.visible; }
+
+	/*! Set entity dynamic state. */
+	void setDynamic(bool dynamic) { setState(dynamic ? EntityState::All : EntityState::None, EntityState::Dynamic); }
+
+	/*! Check if entity is dynamic. */
+	bool isDynamic() const { return m_state.dynamic; }
+
+	/*! Set entity locked state. */
+	void setLocked(bool locked) { setState(locked ? EntityState::All : EntityState::None, EntityState::Locked); }
+
+	/*! Check if entity is locked. */
+	bool isLocked() const { return m_state.locked; }
+
 	/*! Set entity transform.
 	 *
 	 * \param transform Entity transform.
@@ -68,38 +92,6 @@ public:
 	 * \return Entity transform.
 	 */
 	virtual Transform getTransform() const;
-
-	/*!
-	 */
-	EntityState setState(const EntityState& state, const EntityState& mask);
-
-	/*!
-	 */
-	const EntityState& getState() const { return m_state; }
-
-	/*!
-	 */
-	void setVisible(bool visible) { setState(visible ? EntityState::All : EntityState::None, EntityState::Visible); }
-
-	/*!
-	 */
-	bool isVisible() const { return m_state.visible; }
-
-	/*!
-	 */
-	void setDynamic(bool dynamic) { setState(dynamic ? EntityState::All : EntityState::None, EntityState::Dynamic); }
-
-	/*!
-	 */
-	bool isDynamic() const { return m_state.dynamic; }
-
-	/*!
-	 */
-	void setLocked(bool locked) { setState(locked ? EntityState::All : EntityState::None, EntityState::Locked); }
-
-	/*!
-	 */
-	bool isLocked() const { return m_state.locked; }
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.

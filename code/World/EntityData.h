@@ -54,17 +54,17 @@ public:
 	/*! Get name of entity data. */
 	const std::wstring& getName() const;
 
-	/*! Set transform of entity data. */
-	virtual void setTransform(const Transform& transform);
-
-	/*! Get transform of entity data. */
-	virtual const Transform& getTransform() const;
-
 	/*! Set entity initial state. */
 	EntityState setState(const EntityState& state, const EntityState& mask);
 
 	/*! Get entity initial state. */
 	const EntityState& getState() const;
+
+	/*! Set transform of entity data. */
+	virtual void setTransform(const Transform& transform);
+
+	/*! Get transform of entity data. */
+	virtual const Transform& getTransform() const;
 
 	/*! Set component.
 	 *
@@ -114,8 +114,8 @@ public:
 private:
 	Guid m_id;
 	std::wstring m_name;
-	Transform m_transform;
 	EntityState m_state;
+	Transform m_transform;
 	RefArray< IEntityComponentData > m_components;
 };
 

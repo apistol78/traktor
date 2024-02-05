@@ -36,21 +36,6 @@ void Entity::destroy()
 	m_components.clear();
 }
 
-void Entity::setTransform(const Transform& transform)
-{
-	m_transform = transform;
-	for (auto component : m_components)
-	{
-		if (component != m_updating)
-			component->setTransform(transform);
-	}
-}
-
-Transform Entity::getTransform() const
-{
-	return m_transform;
-}
-
 EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 {
 	const EntityState current = m_state;
@@ -69,6 +54,21 @@ EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 	}
 
 	return current;
+}
+
+void Entity::setTransform(const Transform& transform)
+{
+	m_transform = transform;
+	for (auto component : m_components)
+	{
+		if (component != m_updating)
+			component->setTransform(transform);
+	}
+}
+
+Transform Entity::getTransform() const
+{
+	return m_transform;
 }
 
 Aabb3 Entity::getBoundingBox() const
