@@ -161,8 +161,6 @@ private:
 
 	void end();
 
-	void applySpline(bool alignToGround);
-
 	void flattenUnderSpline();
 };
 

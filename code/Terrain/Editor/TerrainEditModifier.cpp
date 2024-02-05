@@ -524,12 +524,7 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
-	if (command == L"Terrain.Editor.ApplySpline")
-	{
-		applySpline(false);
-		return true;
-	}
-	else if (command == L"Terrain.Editor.FlattenUnderSpline")
+	if (command == L"Terrain.Editor.FlattenUnderSpline")
 	{
 		flattenUnderSpline();
 		return true;
@@ -1109,46 +1104,6 @@ void TerrainEditModifier::end()
 	}
 
 	m_context->raiseRedraw(nullptr);
-}
-
-void TerrainEditModifier::applySpline(bool alignToGround)
-{
-	if (!m_brush)
-		return;
-
-	// RefArray< scene::EntityAdapter > entityAdapters;
-	// m_context->findAdaptersOfType(
-	// 	type_of< shape::SplineEntity >(),
-	// 	entityAdapters,
-	// 	scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild
-	// );
-
-	// for (auto entityAdapter : entityAdapters)
-	// {
-	// 	auto spline = mandatory_non_null_type_cast< shape::SplineEntity* >(entityAdapter->getEntity());
-
-	// 	const auto& path = spline->getPath();
-	// 	const auto& keys = path.getKeys();
-	// 	if (keys.empty())
-	// 		return;
-
-	// 	if (!begin(false))
-	// 		continue;
-
-	// 	float st = keys.front().T;
-	// 	float et = keys.back().T;
-
-	// 	uint32_t nsteps = keys.size() * 20;
-	// 	for (uint32_t i = 0; i <= nsteps; ++i)
-	// 	{
-	// 		float t = st + (float)(i * (et - st)) / nsteps;
-	// 		auto v = path.evaluate(t);
-	// 		Vector4 center = v.position.xyz1();
-	// 		apply(center);
-	// 	}
-
-	// 	end();
-	// }
 }
 
 void TerrainEditModifier::flattenUnderSpline()

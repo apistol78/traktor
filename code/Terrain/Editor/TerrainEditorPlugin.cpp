@@ -146,7 +146,6 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	toolBar->addItem(m_toolGroup->addItem(m_toolMaterial));
 	toolBar->addItem(m_toolGroup->addItem(m_toolAttribute));
 	toolBar->addItem(new ui::ToolBarSeparator());
-	toolBar->addItem(m_toolGroup->addItem(new ui::ToolBarButton(L"Apply", ui::Command(L"Terrain.Editor.ApplySpline"))));
 	toolBar->addItem(m_toolGroup->addItem(new ui::ToolBarButton(L"Flatten", ui::Command(L"Terrain.Editor.FlattenUnderSpline"))));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(m_toolGroup->addItem(m_toolVisualize));
