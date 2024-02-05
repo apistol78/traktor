@@ -69,7 +69,7 @@ void WorldRendererSimple::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
-	EntityState filter
+	const std::function< bool(const EntityState& state) >& filter
 )
 {
 	// Gather active renderables for this frame.
@@ -79,7 +79,7 @@ void WorldRendererSimple::setup(
 		m_gathered.resize(0);
 		for (auto entity : world->getEntities())
 		{
-			if ((entity->getState() & filter) == EntityState::None)
+			if (filter != nullptr && filter(entity->getState()) == false)
 				continue;
 
 			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));

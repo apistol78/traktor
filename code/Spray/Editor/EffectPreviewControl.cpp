@@ -513,7 +513,7 @@ void EffectPreviewControl::eventPaint(ui::PaintEvent* event)
 	);
 	m_worldRenderView.setTimes(time, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
+	m_worldRenderer->setup(m_sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
 
 	// Remove effect entity from world.
 	m_sceneInstance->getWorld()->removeEntity(m_effectEntity);

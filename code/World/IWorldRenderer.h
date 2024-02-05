@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <vector>
+#include <functional>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Const.h"
@@ -111,14 +111,14 @@ public:
 	 * \param worldRenderView World render view.
 	 * \param renderGraph Setup into render graph.
 	 * \param outputTargetSetId ID of output target set.
-	 * \param filter Gather only entities which match any filter bits.
+	 * \param filter Gather only entities which match filter predicate.
 	 */
 	virtual void setup(
 		const World* world,
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		EntityState filter = EntityState::Visible | EntityState::Dynamic
+		const std::function< bool(const EntityState& state) >& filter
 	) = 0;
 
 	//@}

@@ -14,7 +14,7 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity(const std::wstring_view& name, const Transform& transform, EntityState state, const RefArray< IEntityComponent >& components)
+Entity::Entity(const std::wstring_view& name, const Transform& transform, const EntityState& state, const RefArray< IEntityComponent >& components)
 :	m_name(name)
 ,	m_transform(transform)
 ,	m_state(state)
@@ -51,27 +51,23 @@ Transform Entity::getTransform() const
 	return m_transform;
 }
 
-EntityState Entity::modifyState(EntityState set, EntityState clear)
+EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 {
 	const EntityState current = m_state;
-	m_state = (m_state | set) & ~clear;
-	for (auto component : m_components)
-	{
-		if (component != m_updating)
-			component->setState(m_state);
-	}
-	return current;
-}
 
-EntityState Entity::setState(EntityState state)
-{
-	const EntityState current = m_state;
-	m_state = state;
+	if (mask.visible)
+		m_state.visible = state.visible;
+	if (mask.dynamic)
+		m_state.dynamic = state.dynamic;
+	if (mask.locked)
+		m_state.locked = state.locked;
+
 	for (auto component : m_components)
 	{
 		if (component != m_updating)
-			component->setState(m_state);
+			component->setState(m_state, mask);
 	}
+
 	return current;
 }
 

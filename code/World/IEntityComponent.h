@@ -48,7 +48,7 @@ public:
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.
 	 */
-	virtual void setState(EntityState state) {}
+	virtual void setState(const EntityState& state, const EntityState& mask) {}
 
 	/*! Calculate bounding box of this component.
 	 * \return Bounding box.

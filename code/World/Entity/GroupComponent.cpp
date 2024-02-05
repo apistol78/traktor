@@ -43,10 +43,10 @@ void GroupComponent::setTransform(const Transform& transform)
 	m_transform = transform;
 }
 
-void GroupComponent::setState(EntityState state)
+void GroupComponent::setState(const EntityState& state, const EntityState& mask)
 {
 	for (auto entity : m_entities)
-		entity->setState(state);
+		entity->setState(state, mask);
 }
 
 Aabb3 GroupComponent::getBoundingBox() const

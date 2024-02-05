@@ -280,7 +280,8 @@ void WorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 		m_scene->getWorld(),
 		m_worldRenderView,
 		renderGraph,
-		0
+		0,
+		nullptr
 	);		
 }
 

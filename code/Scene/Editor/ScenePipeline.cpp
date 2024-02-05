@@ -30,7 +30,7 @@
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 18, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 19, ScenePipeline, editor::IPipeline)
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -218,6 +218,8 @@ bool ScenePipeline::buildOutput(
 	{
 		if (!layer)
 			continue;
+		if (!layer->getState().visible)
+			continue;
 
 		log::info << L"Building layer \"" << layer->getName() << L"\"..." << Endl;
 		log::info << IncreaseIndent;
@@ -231,7 +233,14 @@ bool ScenePipeline::buildOutput(
 					pipelineBuilder->buildProduct(sourceInstance, assetEntityData)
 				);
 				if (outputEntityData)
+				{
+					// Move dynamic state from layer to child.
+					outputEntityData->setState(
+						layer->getState(),
+						world::EntityState::Dynamic
+					);
 					groupComponentData->addEntityData(outputEntityData);
+				}
 			}
 		}
 

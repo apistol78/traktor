@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,14 @@
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_WORLD_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor::world
 {
@@ -60,28 +68,20 @@ enum class LightType
 	Spot = 3
 };
 
-enum class EntityState : uint32_t
+/*!
+ */
+struct T_DLLCLASS EntityState
 {
-	None = 0,
-	Visible = 1,
-	Dynamic = 2,
-	Locked = 4
+	bool visible = true;
+	bool dynamic = false;
+	bool locked = false;
+
+	const static EntityState None;
+	const static EntityState Visible;
+	const static EntityState Dynamic;
+	const static EntityState Locked;
+	const static EntityState All;
 };
-
-constexpr EntityState operator ~ (const EntityState es)
-{
-	return (EntityState)(~(uint32_t)es);
-}
-
-constexpr EntityState operator | (const EntityState& lh, const EntityState& rh)
-{
-	return (EntityState)((uint32_t)lh | (uint32_t)rh);
-}
-
-constexpr EntityState operator & (const EntityState& lh, const EntityState& rh)
-{
-	return (EntityState)((uint32_t)lh & (uint32_t)rh);
-}
 
 /*! Update parameters. */
 struct UpdateParams

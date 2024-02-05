@@ -118,7 +118,7 @@ protected:
 	};
 	State m_state[4];
 
-	void gather(const World* world, EntityState filter);
+	void gather(const World* world, const std::function< bool(const EntityState& state) >& filter);
 
 	void setupLightPass(
 		const WorldRenderView& worldRenderView,

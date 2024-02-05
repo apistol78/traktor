@@ -43,7 +43,7 @@ void EntityAdapter::prepare(
 	m_entityData = entityData;
 	
 	if ((m_entity = entity) != nullptr)
-		m_entity->setState(m_entityData->getState());
+		m_entity->setState(m_entityData->getState(), world::EntityState::All);
 
 	// If entity data type is different then ensure we re-create editors.
 	if (m_entityDataType != &type_of(m_entityData))
@@ -367,32 +367,21 @@ bool EntityAdapter::isExpanded() const
 
 void EntityAdapter::setVisible(bool visible)
 {
-	if (visible)
-		m_entityData->setState(m_entityData->getState() | world::EntityState::Visible);
-	else
-		m_entityData->setState(m_entityData->getState() & ~world::EntityState::Visible);
+	m_entityData->setState(visible ? world::EntityState::All : world::EntityState::None, world::EntityState::Visible);
 
 	if (m_entity)
-	{
-		if (visible)
-			m_entity->modifyState(world::EntityState::Visible, world::EntityState::None);
-		else
-			m_entity->modifyState(world::EntityState::None, world::EntityState::Visible);
-	}
+		m_entity->setVisible(visible);
 }
 
 bool EntityAdapter::isVisible(bool includingParents) const
 {
-	if ((m_entityData->getState() & world::EntityState::Visible) != world::EntityState::Visible)
+	if (!m_entityData->getState().visible)
 		return false;
 
 	if (includingParents)
 	{
-		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
-		{
-			if (!parent->isVisible(true))
-				return false;
-		}
+		if (m_parent != nullptr && !m_parent->isVisible(true))
+			return false;
 	}
 
 	return true;
@@ -400,18 +389,10 @@ bool EntityAdapter::isVisible(bool includingParents) const
 
 void EntityAdapter::setLocked(bool locked)
 {
-	if (locked)
-		m_entityData->setState(m_entityData->getState() | world::EntityState::Locked);
-	else
-		m_entityData->setState(m_entityData->getState() & ~world::EntityState::Locked);
+	m_entityData->setState(locked ? world::EntityState::All : world::EntityState::None, world::EntityState::Locked);
 
 	if (m_entity)
-	{
-		if (locked)
-			m_entity->modifyState(world::EntityState::Locked, world::EntityState::None);
-		else
-			m_entity->modifyState(world::EntityState::None, world::EntityState::Locked);
-	}
+		m_entity->setLocked(locked);
 
 	if (locked)
 		m_selected = false;
@@ -419,30 +400,32 @@ void EntityAdapter::setLocked(bool locked)
 
 bool EntityAdapter::isLocked(bool includingParents) const
 {
-	if ((m_entityData->getState() & world::EntityState::Locked) == world::EntityState::Locked)
-		return true;
+	if (!m_entityData->getState().locked)
+		return false;
 
 	if (includingParents)
 	{
-		for (EntityAdapter* parent = m_parent; parent; parent = parent->m_parent)
-		{
-			if (parent->isLocked(true))
-				return true;
-		}
+		if (m_parent != nullptr && m_parent->isLocked(true))
+			return true;
 	}
 
 	return false;
 }
 
+void EntityAdapter::setDynamic(bool dynamic)
+{
+	m_entityData->setState(dynamic ? world::EntityState::All : world::EntityState::None, world::EntityState::Dynamic);
+
+	if (m_entity)
+		m_entity->setDynamic(dynamic);
+}
+
 bool EntityAdapter::isDynamic() const
 {
-	if ((m_entityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+	if (m_entityData->getState().dynamic)
 		return true;
 
-	if (m_parent != nullptr)
-		return m_parent->isDynamic();
-
-	return false;
+	return m_parent != nullptr ? m_parent->isDynamic() : false;
 }
 
 bool EntityAdapter::isPrefab() const

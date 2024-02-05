@@ -96,7 +96,7 @@ void WorldRendererDeferred::setup(
 	const WorldRenderView& immutableWorldRenderView,
 	render::RenderGraph& renderGraph,
 	render::handle_t outputTargetSetId,
-	EntityState filter
+	const std::function< bool(const EntityState& state) >& filter
 )
 {
 	WorldRenderView worldRenderView = immutableWorldRenderView;

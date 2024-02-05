@@ -204,6 +204,8 @@ public:
 
 	bool isLocked(bool includingParents = true) const;
 
+	void setDynamic(bool dynamic);
+
 	bool isDynamic() const;
 
 	bool isPrefab() const;

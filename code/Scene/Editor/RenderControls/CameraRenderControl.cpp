@@ -382,7 +382,7 @@ void CameraRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 	m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	m_worldRenderView.setView(m_worldRenderView.getView(), view);
-	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0);
+	m_worldRenderer->setup(sceneInstance->getWorld(), m_worldRenderView, *m_renderGraph, 0, nullptr);
 
 	// Validate render graph.
 	if (!m_renderGraph->validate())

@@ -16,6 +16,30 @@
 
 namespace traktor::world
 {
+	namespace
+	{
+
+class MemberEntityState : public MemberComplex
+{
+public:
+	MemberEntityState(const wchar_t* const name, EntityState& ref, const Attribute& attributes)
+	:	MemberComplex(name, true, attributes)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual void serialize(ISerializer& s) const override final
+	{
+		s >> Member< bool >(L"visible", m_ref.visible);
+		s >> Member< bool >(L"dynamic", m_ref.dynamic);
+		s >> Member< bool >(L"locked", m_ref.locked);
+	}
+
+private:
+	EntityState& m_ref;
+};
+
+	}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EntityData", 2, EntityData, ISerializable)
 
@@ -51,12 +75,21 @@ const Transform& EntityData::getTransform() const
 	return m_transform;
 }
 
-void EntityData::setState(EntityState state)
+EntityState EntityData::setState(const EntityState& state, const EntityState& mask)
 {
-	m_state = state;
+	const EntityState current = m_state;
+
+	if (mask.visible)
+		m_state.visible = state.visible;
+	if (mask.dynamic)
+		m_state.dynamic = state.dynamic;
+	if (mask.locked)
+		m_state.locked = state.locked;
+
+	return current;
 }
 
-EntityState EntityData::getState() const
+const EntityState& EntityData::getState() const
 {
 	return m_state;
 }
@@ -116,16 +149,7 @@ void EntityData::serialize(ISerializer& s)
 	s >> MemberComposite< Transform >(L"transform", m_transform);
 
 	if (s.getVersion< EntityData >() >= 2)
-	{
-		const MemberBitMask::Bit c_EntityState_bits[] =
-		{
-			{ L"visible", (uint32_t)EntityState::Visible },
-			{ L"dynamic", (uint32_t)EntityState::Dynamic },
-			{ L"locked", (uint32_t)EntityState::Locked },
-			{ 0 }
-		};
-		s >> MemberBitMask(L"state", (uint32_t&)m_state, c_EntityState_bits, AttributePrivate());
-	}
+		s >> MemberEntityState(L"state", m_state, AttributePrivate());
 
 	s >> MemberRefArray< IEntityComponentData >(L"components", m_components);
 }

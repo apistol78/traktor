@@ -61,10 +61,10 @@ public:
 	virtual const Transform& getTransform() const;
 
 	/*! Set entity initial state. */
-	void setState(EntityState state);
+	EntityState setState(const EntityState& state, const EntityState& mask);
 
 	/*! Get entity initial state. */
-	EntityState getState() const;
+	const EntityState& getState() const;
 
 	/*! Set component.
 	 *
@@ -115,7 +115,7 @@ private:
 	Guid m_id;
 	std::wstring m_name;
 	Transform m_transform;
-	EntityState m_state = EntityState::Visible;
+	EntityState m_state;
 	RefArray< IEntityComponentData > m_components;
 };
 

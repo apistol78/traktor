@@ -295,10 +295,10 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 			worldRenderView,
 			renderGraph,
 			faceTargetSetId,
-			EntityState::Visible
+			[](const EntityState& state) { return !state.dynamic; }
 		);
 
-		// Copy intermediate target to cubemap side.
+		// Copy intermediate target to cube map side.
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Probe transfer");
 		rp->addInput(faceTargetSetId);
 		rp->addBuild(

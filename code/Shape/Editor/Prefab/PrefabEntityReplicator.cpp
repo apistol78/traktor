@@ -101,7 +101,7 @@ Ref< model::Model > PrefabEntityReplicator::createVisualModel(
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
 		// Dynamic layers do not get included in prefab.
-		if ((inEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+		if (!inEntityData->getState().visible || inEntityData->getState().dynamic)
 			return scene::Traverser::Result::Skip;
 
 		if (auto meshComponentData = inEntityData->getComponent< mesh::MeshComponentData >())
@@ -206,7 +206,7 @@ Ref< model::Model > PrefabEntityReplicator::createCollisionModel(
 	scene::Traverser::visit(groupComponentData, [&](const world::EntityData* inEntityData) -> scene::Traverser::Result
 	{
 		// Dynamic layers do not get included in prefab.
-		if ((inEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+		if (!inEntityData->getState().visible || inEntityData->getState().dynamic)
 			return scene::Traverser::Result::Skip;
 
 		if (auto rigidBodyComponentData = inEntityData->getComponent< physics::RigidBodyComponentData >())

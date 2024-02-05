@@ -171,7 +171,7 @@ bool NavMeshPipeline::buildOutput(
 	scene::Traverser::visit(sourceData, [&](const world::EntityData* entityData) -> scene::Traverser::Result
 	{
 		// Dynamic layers do not get included in nav.
-		if ((entityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+		if (!entityData->getState().visible || entityData->getState().dynamic)
 			return scene::Traverser::Result::Skip;
 
 		Ref< model::Model > model;

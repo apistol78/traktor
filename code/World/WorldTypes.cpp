@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,12 @@
 
 namespace traktor::world
 {
+
+const EntityState EntityState::None		= { false, false, false };
+const EntityState EntityState::Visible	= {  true, false, false };
+const EntityState EntityState::Dynamic	= { false,  true, false };
+const EntityState EntityState::Locked	= { false, false,  true };
+const EntityState EntityState::All		= {  true,  true,  true };
 
 Vector2 jitter(int32_t count)
 {

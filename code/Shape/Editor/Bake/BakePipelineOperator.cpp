@@ -438,7 +438,7 @@ bool BakePipelineOperator::transform(
 	for (const auto layer : inoutSceneAsset->getLayers())
 	{
 		// Dynamic layers do not get baked.
-		if ((layer->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+		if (!layer->getState().visible || layer->getState().dynamic)
 		{
 			layers.push_back(layer);
 			continue;
@@ -538,7 +538,7 @@ bool BakePipelineOperator::build(
 		for (const auto layer : inoutSceneAsset->getLayers())
 		{
 			// Dynamic layers do not get baked.
-			if ((layer->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+			if (!layer->getState().visible || layer->getState().dynamic)
 			{
 				layers.push_back(layer);
 				continue;
@@ -561,8 +561,8 @@ bool BakePipelineOperator::build(
 			RefArray< world::EntityData > bakeEntityData;
 			scene::Traverser::visit(flattenedLayer, [&](Ref< world::EntityData >& inoutEntityData) -> scene::Traverser::Result
 			{
-				// Check editor attributes component if we should include entity.
-				if ((inoutEntityData->getState() & world::EntityState::Dynamic) == world::EntityState::Dynamic)
+				// Check if we should include entity.
+				if (!inoutEntityData->getState().visible || inoutEntityData->getState().dynamic)
 					return scene::Traverser::Result::Skip;
 
 				// We only bake "named" entities.

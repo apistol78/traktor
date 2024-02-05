@@ -53,7 +53,7 @@ public:
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
 		render::handle_t outputTargetSetId,
-		EntityState filter
+		const std::function< bool(const EntityState& state) >& filter
 	) override final;
 
 private:

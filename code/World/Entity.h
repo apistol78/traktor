@@ -40,7 +40,7 @@ public:
 
 	Entity(const Entity&) = delete;
 
-	explicit Entity(const std::wstring_view& name, const Transform& transform, EntityState state, const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >());
+	explicit Entity(const std::wstring_view& name, const Transform& transform, const EntityState& state = EntityState(), const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >());
 
 	/*! Destroy entity resources.
 	 *
@@ -69,29 +69,37 @@ public:
 	 */
 	virtual Transform getTransform() const;
 
-	/*! Modify entity state.
-	 * 
-	 * \param set Set state mask.
-	 * \param clear Clear state mask.
-	 * \return Previous state.
+	/*!
 	 */
-	EntityState modifyState(EntityState set, EntityState clear);
+	EntityState setState(const EntityState& state, const EntityState& mask);
 
 	/*!
 	 */
-	EntityState setState(EntityState state);
+	const EntityState& getState() const { return m_state; }
 
 	/*!
 	 */
-	EntityState getState() const { return m_state; }
+	void setVisible(bool visible) { setState(visible ? EntityState::All : EntityState::None, EntityState::Visible); }
 
 	/*!
 	 */
-	bool isVisible() const { return (bool)((m_state & EntityState::Visible) == EntityState::Visible); }
+	bool isVisible() const { return m_state.visible; }
 
 	/*!
 	 */
-	bool isDynamic() const { return (bool)((m_state & EntityState::Dynamic) == EntityState::Dynamic); }
+	void setDynamic(bool dynamic) { setState(dynamic ? EntityState::All : EntityState::None, EntityState::Dynamic); }
+
+	/*!
+	 */
+	bool isDynamic() const { return m_state.dynamic; }
+
+	/*!
+	 */
+	void setLocked(bool locked) { setState(locked ? EntityState::All : EntityState::None, EntityState::Locked); }
+
+	/*!
+	 */
+	bool isLocked() const { return m_state.locked; }
 
 	/*! Get entity bounding box.
 	 * Return entity bounding box in entity space.
@@ -142,7 +150,7 @@ public:
 private:
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
-	EntityState m_state = EntityState::Visible;
+	EntityState m_state;
 	RefArray< IEntityComponent > m_components;
 	const IEntityComponent* m_updating = nullptr;
 };

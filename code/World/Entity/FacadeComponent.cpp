@@ -47,7 +47,7 @@ bool FacadeComponent::show(const std::wstring& id)
 	if (!showEntity)
 		return false;
 
-	showEntity->modifyState(EntityState::Visible, EntityState::None);
+	showEntity->setVisible(true);
 	return true;
 }
 
@@ -67,7 +67,7 @@ bool FacadeComponent::hide(const std::wstring& id)
 	if (!hideEntity)
 		return false;
 
-	hideEntity->modifyState(EntityState::None, EntityState::Visible);
+	hideEntity->setVisible(false);
 	return true;
 }
 
@@ -78,7 +78,7 @@ void FacadeComponent::hideAll()
 		return;
 
 	for (auto entity : group->getEntities())
-		entity->modifyState(EntityState::None, EntityState::Visible);
+		entity->setVisible(false);
 }
 
 bool FacadeComponent::isVisible(const std::wstring& id)

@@ -111,7 +111,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		mutableEntityData->setId(externalEntityData->getId());
 		mutableEntityData->setName(externalEntityData->getName());
 		mutableEntityData->setTransform(externalEntityData->getTransform());
-		mutableEntityData->setState(externalEntityData->getState());
+		mutableEntityData->setState(externalEntityData->getState(), EntityState::All);
 
 		// Override component data.
 		for (auto componentData : entityData.getComponents())

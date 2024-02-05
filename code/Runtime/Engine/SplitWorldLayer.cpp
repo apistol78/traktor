@@ -334,13 +334,15 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 		m_scene->getWorld(),
 		m_worldRenderViews[0],
 		renderGraph,
-		leftTargetSetId
+		leftTargetSetId,
+		nullptr
 	);
 	m_worldRenderer->setup(
 		m_scene->getWorld(),
 		m_worldRenderViews[1],
 		renderGraph,
-		rightTargetSetId
+		rightTargetSetId,
+		nullptr
 	);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Split");

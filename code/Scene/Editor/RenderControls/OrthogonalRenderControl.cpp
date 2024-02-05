@@ -531,7 +531,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	);
 	worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 	worldRenderView.setView(view, view);
-	m_worldRenderer->setup(sceneInstance->getWorld(), worldRenderView, *m_renderGraph, 0);
+	m_worldRenderer->setup(sceneInstance->getWorld(), worldRenderView, *m_renderGraph, 0, nullptr);
 
 	// Draw debug wires.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Debug");
