@@ -23,16 +23,16 @@ World::World()
 
 void World::destroy()
 {
+	for (auto component : m_components)
+		component->destroy();
+	m_components.clear();
+
 	for (auto entity : m_entities)
 	{
 		entity->m_world = nullptr;
 		entity->destroy();
 	}
 	m_entities.clear();
-
-	for (auto component : m_components)
-		component->destroy();
-	m_components.clear();
 }
 
 void World::setComponent(IWorldComponent* component)
@@ -126,7 +126,8 @@ void World::update(const UpdateParams& update)
 	for (auto component : m_components)
 		component->update(this, update);
 
-	for (auto entity : m_entities)
+	RefArray< Entity > entities = m_entities;
+	for (auto entity : entities)
 		entity->update(update);
 }
 

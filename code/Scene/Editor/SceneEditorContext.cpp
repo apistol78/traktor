@@ -47,6 +47,7 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
+#include "World/EntityEventManager.h"
 #include "World/EntityFactory.h"
 #include "World/World.h"
 #include "World/Entity/GroupComponent.h"
@@ -430,6 +431,14 @@ void SceneEditorContext::buildEntities()
 	// Reset physics before creating entities in case
 	// a new body is created with an initial velocity etc.
 	resetPhysics();
+
+	// Cancel all events.
+	if (m_scene)
+	{
+		auto eventManager = m_scene->getWorld()->getComponent< world::EntityEventManager >();
+		if (eventManager != nullptr)
+			eventManager->cancelAll(world::Cancel::Immediate);
+	}
 
 	if (m_sceneAsset)
 	{
