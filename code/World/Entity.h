@@ -27,6 +27,7 @@ namespace traktor::world
 {
 
 class IEntityComponent;
+class World;
 
 /*! World entity class.
  * \ingroup World
@@ -53,6 +54,9 @@ public:
 	 * performing the destruction.
 	 */
 	virtual void destroy();
+
+	/*! Get world entity is part of. */
+	World* getWorld() const { return m_world; }
 
 	/*! Get entity name. */
 	const std::wstring& getName() const { return m_name; }
@@ -140,6 +144,9 @@ public:
 	}
 
 private:
+	friend class World;
+
+	World* m_world = nullptr;
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
 	EntityState m_state;

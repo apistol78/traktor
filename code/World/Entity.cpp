@@ -31,6 +31,7 @@ Entity::Entity(const std::wstring_view& name, const Transform& transform, const 
 
 void Entity::destroy()
 {
+	T_FATAL_ASSERT(m_world == nullptr);
 	for (auto component : m_components)
 		component->destroy();
 	m_components.clear();

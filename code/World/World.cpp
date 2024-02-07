@@ -17,26 +17,36 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.World", World, Object)
 void World::destroy()
 {
 	for (auto entity : m_entities)
+	{
+		entity->m_world = nullptr;
 		entity->destroy();
+	}
 	m_entities.clear();
 }
 
 void World::addEntity(Entity* entity)
 {
+	T_FATAL_ASSERT(entity->m_world == nullptr);
 	m_entities.push_back(entity);
+	entity->m_world = this;
 }
 
 void World::removeEntity(Entity* entity)
 {
+	T_FATAL_ASSERT(entity->m_world == this);
 	m_entities.remove(entity);
+	entity->m_world = nullptr;
 }
 
 bool World::haveEntity(const Entity* entity) const
 {
-	return std::find(m_entities.begin(), m_entities.end(), entity) != m_entities.end();
+	if (entity->m_world == this)
+		return std::find(m_entities.begin(), m_entities.end(), entity) != m_entities.end();
+	else
+		return false;
 }
 
-Entity* World::getEntity(const std::wstring_view& name, int32_t index) const
+Entity* World::getEntity(const std::wstring& name, int32_t index) const
 {
 	for (auto entity : m_entities)
 	{
@@ -49,12 +59,24 @@ Entity* World::getEntity(const std::wstring_view& name, int32_t index) const
 	return nullptr;
 }
 
-RefArray< Entity > World::getEntities(const std::wstring_view& name) const
+RefArray< Entity > World::getEntities(const std::wstring& name) const
 {
 	RefArray< Entity > entities;
 	for (auto entity : m_entities)
 	{
 		if (entity->getName() == name)
+			entities.push_back(entity);
+	}
+	return entities;
+}
+
+RefArray< Entity > World::getEntitiesWithinRange(const Vector4& position, float range) const
+{
+	RefArray< Entity > entities;
+	for (auto entity : m_entities)
+	{
+		const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
+		if (distance <= range)
 			entities.push_back(entity);
 	}
 	return entities;

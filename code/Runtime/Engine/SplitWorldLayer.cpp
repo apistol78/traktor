@@ -137,8 +137,8 @@ void SplitWorldLayer::preUpdate(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial cameras.
-		m_cameraEntities[0] = getEntity(L"Camera0");
-		m_cameraEntities[1] = getEntity(L"Camera1");
+		m_cameraEntities[0] = m_scene->getWorld()->getEntity(L"Camera0");
+		m_cameraEntities[1] = m_scene->getWorld()->getEntity(L"Camera1");
 	}
 
 	// Re-create world renderer.
@@ -425,38 +425,14 @@ scene::Scene* SplitWorldLayer::getScene() const
 	return m_scene;
 }
 
+world::World* SplitWorldLayer::getWorld() const
+{
+	return m_scene->getWorld();
+}
+
 world::IWorldRenderer* SplitWorldLayer::getWorldRenderer() const
 {
 	return m_worldRenderer;
-}
-
-world::Entity* SplitWorldLayer::getEntity(const std::wstring& name) const
-{
-	return getEntity(name, 0);
-}
-
-world::Entity* SplitWorldLayer::getEntity(const std::wstring& name, int32_t index) const
-{
-	return m_scene->getWorld()->getEntity(name, index);
-}
-
-RefArray< world::Entity > SplitWorldLayer::getEntities(const std::wstring& name) const
-{
-	return m_scene->getWorld()->getEntities(name);
-}
-
-RefArray< world::Entity > SplitWorldLayer::getEntitiesWithinRange(const Vector4& position, float range) const
-{
-	RefArray< world::Entity > entities;
-	{
-		for (auto entity : m_scene->getWorld()->getEntities())
-		{
-			const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
-			if (distance <= range)
-				entities.push_back(entity);
-		}
-	}
-	return entities;
 }
 
 Ref< world::Entity > SplitWorldLayer::createEntity(const Guid& entityDataId) const
@@ -470,21 +446,6 @@ Ref< world::Entity > SplitWorldLayer::createEntity(const Guid& entityDataId) con
 		m_scene->getWorld()
 	);
 	return entityBuilder.create(entityData);
-}
-
-void SplitWorldLayer::addEntity(world::Entity* entity)
-{
-	m_scene->getWorld()->addEntity(entity);
-}
-
-void SplitWorldLayer::removeEntity(world::Entity* entity)
-{
-	m_scene->getWorld()->removeEntity(entity);
-}
-
-bool SplitWorldLayer::isEntityAdded(const world::Entity* entity) const
-{
-	return m_scene->getWorld()->haveEntity(entity);
 }
 
 void SplitWorldLayer::setControllerEnable(bool controllerEnable)

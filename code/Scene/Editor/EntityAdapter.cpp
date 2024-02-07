@@ -19,6 +19,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
+#include "World/World.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor::scene
@@ -79,6 +80,14 @@ void EntityAdapter::prepare(
 
 void EntityAdapter::destroyEntity()
 {
+	if (!m_entity)
+		return;
+
+	// Remove entity from world first.
+	world::World* world = m_entity->getWorld();
+	if (world)
+		world->removeEntity(m_entity);
+
 	safeDestroy(m_entity);
 }
 

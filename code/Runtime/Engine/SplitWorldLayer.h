@@ -45,6 +45,7 @@ namespace traktor::world
 class Entity;
 class EntityData;
 class IWorldRenderer;
+class World;
 
 }
 
@@ -98,23 +99,11 @@ public:
 
 	scene::Scene* getScene() const;
 
+	world::World* getWorld() const;
+
 	world::IWorldRenderer* getWorldRenderer() const;
 
-	world::Entity* getEntity(const std::wstring& name) const;
-
-	world::Entity* getEntity(const std::wstring& name, int32_t index) const;
-
-	RefArray< world::Entity > getEntities(const std::wstring& name) const;
-
-	RefArray< world::Entity > getEntitiesWithinRange(const Vector4& position, float range) const;
-
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
-
-	void addEntity(world::Entity* entity);
-
-	void removeEntity(world::Entity* entity);
-
-	bool isEntityAdded(const world::Entity* entity) const;
 
 	void setControllerEnable(bool controllerEnable);
 

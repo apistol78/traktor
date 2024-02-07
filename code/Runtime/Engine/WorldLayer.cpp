@@ -59,13 +59,6 @@ WorldLayer::WorldLayer(
 ,	m_environment(environment)
 ,	m_scene(scene)
 {
-	// Create management entities.
-	//m_rootGroup = new world::Entity();
-	//m_rootGroup->setComponent(new world::GroupComponent());
-
-	//m_dynamicEntities = new world::Entity();
-	//m_dynamicEntities->setComponent(new world::GroupComponent());
-
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
@@ -89,8 +82,6 @@ void WorldLayer::destroy()
 	}
 
 	m_environment = nullptr;
-	//m_rootGroup = nullptr;
-	//m_renderGroup = nullptr;
 	m_cameraEntity = nullptr;
 
 	if (m_scene)
@@ -100,7 +91,6 @@ void WorldLayer::destroy()
 	}
 
 	safeDestroy(m_worldRenderer);
-	//safeDestroy(m_dynamicEntities);
 
 	Layer::destroy();
 }
@@ -134,7 +124,7 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial camera.
-		m_cameraEntity = getEntity(L"Camera");
+		m_cameraEntity = m_scene->getWorld()->getEntity(L"Camera");
 	}
 
 	// Re-create world renderer.
@@ -350,38 +340,14 @@ scene::Scene* WorldLayer::getScene() const
 	return m_scene;
 }
 
+world::World* WorldLayer::getWorld() const
+{
+	return m_scene->getWorld();
+}
+
 world::IWorldRenderer* WorldLayer::getWorldRenderer() const
 {
 	return m_worldRenderer;
-}
-
-world::Entity* WorldLayer::getEntity(const std::wstring& name) const
-{
-	return getEntity(name, 0);
-}
-
-world::Entity* WorldLayer::getEntity(const std::wstring& name, int32_t index) const
-{
-	return m_scene->getWorld()->getEntity(name, index);
-}
-
-RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
-{
-	return m_scene->getWorld()->getEntities(name);
-}
-
-RefArray< world::Entity > WorldLayer::getEntitiesWithinRange(const Vector4& position, float range) const
-{
-	RefArray< world::Entity > entities;
-	{
-		for (auto entity : m_scene->getWorld()->getEntities())
-		{
-			const Scalar distance = (entity->getTransform().translation() - position).xyz0().length();
-			if (distance <= range)
-				entities.push_back(entity);
-		}
-	}
-	return entities;
 }
 
 Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
@@ -395,21 +361,6 @@ Ref< world::Entity > WorldLayer::createEntity(const Guid& entityDataId) const
 		m_scene->getWorld()
 	);
 	return entityBuilder.create(entityData);
-}
-
-void WorldLayer::addEntity(world::Entity* entity)
-{
-	m_scene->getWorld()->addEntity(entity);
-}
-
-void WorldLayer::removeEntity(world::Entity* entity)
-{
-	m_scene->getWorld()->removeEntity(entity);
-}
-
-bool WorldLayer::isEntityAdded(const world::Entity* entity) const
-{
-	return m_scene->getWorld()->haveEntity(entity);
 }
 
 void WorldLayer::setControllerEnable(bool controllerEnable)

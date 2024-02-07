@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -47,6 +47,26 @@ namespace traktor::world
 {
 	namespace
 	{
+
+Entity* World_getEntity_1(World* self, const std::wstring& name)
+{
+	return self->getEntity(name, 0);
+}
+
+Entity* World_getEntity_2(World* self, const std::wstring& name, int32_t index)
+{
+	return self->getEntity(name, index);
+}
+
+RefArray< Entity > World_getEntities_1(World* self)
+{
+	return self->getEntities();
+}
+
+RefArray< Entity > World_getEntities_2(World* self, const std::wstring& name)
+{
+	return self->getEntities(name);
+}
 
 void IEntityEventInstance_cancelImmediate(IEntityEventInstance* self)
 {
@@ -153,6 +173,17 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClass
 
 void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	auto classWorld = new AutoRuntimeClass< World >();
+	classWorld->addMethod("addEntity", &World::addEntity);
+	classWorld->addMethod("removeEntity", &World::removeEntity);
+	classWorld->addMethod("haveEntity", &World::haveEntity);
+	classWorld->addMethod("getEntity", &World_getEntity_1);
+	classWorld->addMethod("getEntity", &World_getEntity_2);
+	classWorld->addMethod("getEntities", &World_getEntities_1);
+	classWorld->addMethod("getEntities", &World_getEntities_2);
+	classWorld->addMethod("getEntitiesWithinRange", &World::getEntitiesWithinRange);
+	registrar->registerClass(classWorld);
+
 	auto classIEntityEventInstance = new AutoRuntimeClass< IEntityEventInstance >();
 	classIEntityEventInstance->addMethod("cancelImmediate", &IEntityEventInstance_cancelImmediate);
 	classIEntityEventInstance->addMethod("cancelEnd", &IEntityEventInstance_cancelEnd);
@@ -193,6 +224,7 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classEntityData);
 
 	auto classEntity = new AutoRuntimeClass< Entity >();
+	classEntity->addProperty("world", &Entity::getWorld);
 	classEntity->addProperty("name", &Entity::getName);
 	classEntity->addProperty("transform", &Entity_setTransform, &Entity_getTransform);
 	classEntity->addProperty("boundingBox", &Entity::getBoundingBox);

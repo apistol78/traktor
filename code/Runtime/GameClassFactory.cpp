@@ -54,6 +54,7 @@
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
+#include "World/World.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 
@@ -120,26 +121,6 @@ void ScreenLayer_setParameterCallback(ScreenLayer* self, IRuntimeDelegate* callb
 	}
 	else
 		self->setParameterCallback(nullptr);
-}
-
-world::Entity* SplitWorldLayer_getEntity_1(SplitWorldLayer* self, const std::wstring& name)
-{
-	return self->getEntity(name);
-}
-
-world::Entity* SplitWorldLayer_getEntity_2(SplitWorldLayer* self, const std::wstring& name, int32_t index)
-{
-	return self->getEntity(name, index);
-}
-
-world::Entity* WorldLayer_getEntity_1(WorldLayer* self, const std::wstring& name)
-{
-	return self->getEntity(name);
-}
-
-world::Entity* WorldLayer_getEntity_2(WorldLayer* self, const std::wstring& name, int32_t index)
-{
-	return self->getEntity(name, index);
 }
 
 Ref< BoxedVector4 > WorldLayer_worldToView(WorldLayer* self, const Vector4& worldPosition)
@@ -331,19 +312,14 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classSplitWorldLayer = new AutoRuntimeClass< SplitWorldLayer >();
 	classSplitWorldLayer->addProperty("scene", &SplitWorldLayer::getScene);
+	classSplitWorldLayer->addProperty("world", &SplitWorldLayer::getWorld);
 	classSplitWorldLayer->addProperty("worldRenderer", &SplitWorldLayer::getWorldRenderer);
 	// classSplitWorldLayer->addProperty< const Frustum& >("viewFrustum", &SplitWorldLayer::getViewFrustum);
 	classSplitWorldLayer->addProperty< float >("fieldOfView", &SplitWorldLayer::setFieldOfView, &SplitWorldLayer::getFieldOfView);
 	classSplitWorldLayer->addProperty< double >("alternateTime", &SplitWorldLayer::setAlternateTime, &SplitWorldLayer::getAlternateTime);
 	classSplitWorldLayer->addProperty< float >("feedbackScale", &SplitWorldLayer::setFeedbackScale, &SplitWorldLayer::getFeedbackScale);
 	// classSplitWorldLayer->addProperty< const world::Entity* >("camera", &SplitWorldLayer::setCamera, &SplitWorldLayer::getCamera);
-	classSplitWorldLayer->addMethod("getEntity", &SplitWorldLayer_getEntity_1);
-	classSplitWorldLayer->addMethod("getEntity", &SplitWorldLayer_getEntity_2);
-	classSplitWorldLayer->addMethod("getEntities", &SplitWorldLayer::getEntities);
 	classSplitWorldLayer->addMethod("createEntity", &SplitWorldLayer::createEntity);
-	classSplitWorldLayer->addMethod("addEntity", &SplitWorldLayer::addEntity);
-	classSplitWorldLayer->addMethod("removeEntity", &SplitWorldLayer::removeEntity);
-	classSplitWorldLayer->addMethod("isEntityAdded", &SplitWorldLayer::isEntityAdded);
 	classSplitWorldLayer->addMethod("setControllerEnable", &SplitWorldLayer::setControllerEnable);
 	classSplitWorldLayer->addMethod("resetController", &SplitWorldLayer::resetController);
 	// classSplitWorldLayer->addMethod("worldToView", &SplitWorldLayer_worldToView);
@@ -369,19 +345,14 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classWorldLayer = new AutoRuntimeClass< WorldLayer >();
 	classWorldLayer->addProperty("scene", &WorldLayer::getScene);
+	classWorldLayer->addProperty("world", &WorldLayer::getWorld);
 	classWorldLayer->addProperty("worldRenderer", &WorldLayer::getWorldRenderer);
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< double >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
 	classWorldLayer->addProperty< float >("feedbackScale", &WorldLayer::setFeedbackScale, &WorldLayer::getFeedbackScale);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
-	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_1);
-	classWorldLayer->addMethod("getEntity", &WorldLayer_getEntity_2);
-	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
 	classWorldLayer->addMethod("createEntity", &WorldLayer::createEntity);
-	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
-	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
-	classWorldLayer->addMethod("isEntityAdded", &WorldLayer::isEntityAdded);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
