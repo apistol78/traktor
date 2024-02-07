@@ -11,6 +11,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +35,7 @@ namespace traktor::physics
 
 class BodyBullet;
 class Joint;
+class ShapeDesc;
 
 /*!
  * \ingroup Bullet
