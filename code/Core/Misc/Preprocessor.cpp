@@ -19,25 +19,25 @@ namespace traktor
 	namespace
 	{
 
-enum PreprocessorKeyword
+enum class Keyword
 {
-	PkwUnknown,
-	PkwIf,
-	PkwElseIf,
-	PkwElse,
-	PkwEnd,
-	PkwUsing,
-	PkwDefine
+	Unknown,
+	If,
+	ElseIf,
+	Else,
+	End,
+	Using,
+	Define
 };
 
 struct Tokenizer
 {
 	enum Token
 	{
-		TkUnknown = 0,
-		TkEnd = -1,
-		TkWord = -2,
-		TkNumber = -3
+		Unknown = 0,
+		End = -1,
+		Word = -2,
+		Number = -3
 	};
 
 	std::wstring expression;
@@ -65,7 +65,7 @@ struct Tokenizer
 		}
 
 		if (current >= expression.size())
-			return (token = TkEnd);
+			return (token = End);
 
 		for (;;)
 		{
@@ -73,7 +73,7 @@ struct Tokenizer
 			if (numchr == L' ' || numchr == L'\t')
 			{
 				if (current >= expression.size())
-					return (token = TkEnd);
+					return (token = End);
 			}
 			else
 				break;
@@ -97,7 +97,7 @@ struct Tokenizer
 			}
 
 			numchr = n;
-			return (token = TkNumber);
+			return (token = Number);
 		}
 
 		else if (
@@ -122,10 +122,10 @@ struct Tokenizer
 					break;
 			}
 
-			return (token = TkWord);
+			return (token = Word);
 		}
 
-		return (token = TkUnknown);
+		return (token = Unknown);
 	}
 
 	void push()
@@ -166,15 +166,15 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, Any >& definit
 		}
 		break;
 
-	case Tokenizer::TkWord:
+	case Tokenizer::Word:
 		{
-			std::wstring fn = t.word;
+			const std::wstring fn = t.word;
 
 			if (t.next() == L'(')
 			{
-				error |= (t.next() != Tokenizer::TkWord);
+				error |= (t.next() != Tokenizer::Word);
 
-				std::wstring arg = t.word;
+				const std::wstring arg = t.word;
 
 				error |= (t.next() != L')');
 
@@ -201,7 +201,7 @@ int32_t evaluateAtoms(Tokenizer& t, const std::map< std::wstring, Any >& definit
 		}
 		break;
 
-	case Tokenizer::TkNumber:
+	case Tokenizer::Number:
 		{
 			value = t.numchr;
 		}
@@ -234,7 +234,7 @@ int32_t evaluateSummands(Tokenizer& t, const std::map< std::wstring, Any >& defi
 	int32_t left = evaluateFactors(t, definitions, error);
 	while (!error)
 	{
-		int32_t tok = t.next();
+		const int32_t tok = t.next();
 		if (tok == L'+')
 			left += evaluateFactors(t, definitions, error);
 		else if (tok == L'-')
@@ -253,7 +253,7 @@ int32_t evaluateBitwise(Tokenizer& t, const std::map< std::wstring, Any >& defin
 	int32_t left = evaluateSummands(t, definitions, error);
 	while (!error)
 	{
-		int32_t tok = t.next();
+		const int32_t tok = t.next();
 		if (tok == L'&')
 			left &= evaluateSummands(t, definitions, error);
 		else if (tok == L'|')
@@ -272,7 +272,7 @@ int32_t evaluateLogical(Tokenizer& t, const std::map< std::wstring, Any >& defin
 	int32_t left = evaluateBitwise(t, definitions, error);
 	while (!error)
 	{
-		int32_t tok = t.next();
+		const int32_t tok = t.next();
 		if (tok == L'&')
 		{
 			error |= (t.next() != L'&');
@@ -351,7 +351,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 		std::wstring line = trim(*i);
 		if (!line.empty() && line[0] == L'#')
 		{
-			int32_t keyword = PkwUnknown;
+			Keyword keyword = Keyword::Unknown;
 			std::wstring expression;
 
 			ss << Endl;
@@ -362,27 +362,27 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				const std::wstring tmp = line.substr(0, sep);
 
 				if (tmp == L"#if")
-					keyword = PkwIf;
+					keyword = Keyword::If;
 				else if (tmp == L"#elif")
-					keyword = PkwElseIf;
+					keyword = Keyword::ElseIf;
 				else if (tmp == L"#using")
-					keyword = PkwUsing;
+					keyword = Keyword::Using;
 				else if (tmp == L"#define")
-					keyword = PkwDefine;
+					keyword = Keyword::Define;
 
 				expression = line.substr(sep + 1);
 			}
 			else
 			{
 				if (line == L"#else")
-					keyword = PkwElse;
+					keyword = Keyword::Else;
 				else if (line == L"#endif")
-					keyword = PkwEnd;
+					keyword = Keyword::End;
 			}
 
 			switch (keyword)
 			{
-			case PkwIf:
+			case Keyword::If:
 				{
 					if (keep.top() == 0)
 						keep.push(
@@ -393,7 +393,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				}
 				break;
 
-			case PkwElseIf:
+			case Keyword::ElseIf:
 				{
 					if (keep.top() == 0)
 						keep.top() = 2;
@@ -402,7 +402,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				}
 				break;
 
-			case PkwElse:
+			case Keyword::Else:
 				{
 					if (keep.top() == 0)
 						keep.top() = 2;
@@ -411,7 +411,7 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				}
 				break;
 
-			case PkwEnd:
+			case Keyword::End:
 				{
 					keep.pop();
 					if (keep.empty())
@@ -422,12 +422,12 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output, st
 				}
 				break;
 
-			case PkwUsing:
+			case Keyword::Using:
 				if (keep.top() == 0)
 					usings.insert(trim(expression));
 				break;
 
-			case PkwDefine:
+			case Keyword::Define:
 				if (keep.top() == 0)
 				{
 					const size_t sep = expression.find_first_of(L" \t");
@@ -484,7 +484,7 @@ int32_t Preprocessor::evaluateExpression(const std::wstring& expression, const s
 	Tokenizer t(expression);
 	bool error = false;
 
-	int32_t result = evaluateL(t, definitions, error);
+	const int32_t result = evaluateL(t, definitions, error);
 	if (error)
 	{
 		log::error << L"Preprocessor failed; syntax error in expression \"" << expression << L"\"" << Endl;
