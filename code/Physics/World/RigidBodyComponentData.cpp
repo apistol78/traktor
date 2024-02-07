@@ -38,7 +38,6 @@ RigidBodyComponentData::RigidBodyComponentData(BodyDesc* bodyDesc, world::IEntit
 
 Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 	const world::IEntityBuilder* entityBuilder,
-	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const
@@ -57,7 +56,7 @@ Ref< RigidBodyComponent > RigidBodyComponentData::createComponent(
 			return nullptr;
 	}
 
-	return new RigidBodyComponent(body, eventManager, eventCollide, m_transformFilter);
+	return new RigidBodyComponent(body, eventCollide, m_transformFilter);
 }
 
 int32_t RigidBodyComponentData::getOrdinal() const

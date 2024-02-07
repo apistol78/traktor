@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,12 +14,29 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, IWorldComponent)
 
 EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
 :	m_maxEventInstances(maxEventInstances)
 {
 	m_eventInstances.reserve(maxEventInstances);
+}
+
+void EntityEventManager::destroy()
+{
+	cancelAll(Cancel::Immediate);
+}
+
+void EntityEventManager::update(World* world, const UpdateParams& update)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
+	{
+		if ((*it)->update(update))
+			++it;
+		else
+			it = m_eventInstances.erase(it);
+	}
 }
 
 IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
@@ -34,25 +51,6 @@ IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entit
 		m_eventInstances.push_back(eventInstance);
 
 	return eventInstance;
-}
-
-void EntityEventManager::update(const UpdateParams& update)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
-	{
-		if ((*it)->update(update))
-			++it;
-		else
-			it = m_eventInstances.erase(it);
-	}
-}
-
-void EntityEventManager::gather(const std::function< void(Entity*) >& fn) const
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (auto eventInstance : m_eventInstances)
-		eventInstance->gather(fn);
 }
 
 void EntityEventManager::cancelAll(Cancel when)

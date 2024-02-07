@@ -79,8 +79,6 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() override final;
 
-	virtual world::EntityEventManager* getEntityEventManager() override final;
-
 	virtual spray::IFeedbackManager* getFeedbackManager() override final;
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) override final;
@@ -88,7 +86,6 @@ public:
 private:
 	Ref< world::EntityFactory > m_entityFactory;
 	Ref< world::WorldEntityRenderers > m_entityRenderers;
-	Ref< world::EntityEventManager > m_eventManager;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	Ref< spray::EffectRenderer > m_effectEntityRenderer;

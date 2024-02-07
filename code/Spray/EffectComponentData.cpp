@@ -23,16 +23,13 @@ EffectComponentData::EffectComponentData(const resource::Id< Effect >& effect)
 {
 }
 
-Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager) const
+Ref< EffectComponent > EffectComponentData::createComponent(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< Effect > effect;
 	if (!resourceManager->bind(m_effect, effect))
 		return nullptr;
 
-	return new EffectComponent(
-		effect,
-		eventManager
-	);
+	return new EffectComponent(effect);
 }
 
 int32_t EffectComponentData::getOrdinal() const

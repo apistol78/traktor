@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ namespace traktor::world
 {
 
 class Entity;
-class Entity;
+class World;
 
 }
 
@@ -35,19 +35,21 @@ class SpawnEffectEventInstance : public world::IEntityEventInstance
 public:
 	explicit SpawnEffectEventInstance(
 		const SpawnEffectEvent* spawnEffect,
+		world::World* world,
 		world::Entity* sender,
 		const Transform& Toffset,
 		EffectComponent* effectComponent
 	);
 
-	virtual bool update(const world::UpdateParams& update) override final;
+	virtual ~SpawnEffectEventInstance();
 
-	virtual void gather(const std::function< void(world::Entity*) >& fn) const override final;
+	virtual bool update(const world::UpdateParams& update) override final;
 
 	virtual void cancel(world::Cancel when) override final;
 
 private:
 	const SpawnEffectEvent* m_spawnEffect;
+	Ref< world::World > m_world;
 	Ref< world::Entity > m_sender;
 	Transform m_Toffset;
 	Ref< EffectComponent > m_effectComponent;

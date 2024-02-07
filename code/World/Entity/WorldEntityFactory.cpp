@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,12 +52,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, 
 WorldEntityFactory::WorldEntityFactory(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	EntityEventManager* eventManager,
 	bool editor
 )
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
-,	m_eventManager(eventManager)
 ,	m_editor(editor)
 {
 }
@@ -193,7 +191,7 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 
 	if (auto eventSetComponentData = dynamic_type_cast< const EventSetComponentData* >(&entityComponentData))
 	{
-		return eventSetComponentData->createComponent(m_eventManager, builder);
+		return eventSetComponentData->createComponent(builder);
 	}
 
 	if (auto facadeComponentData = dynamic_type_cast< const FacadeComponentData* >(&entityComponentData))

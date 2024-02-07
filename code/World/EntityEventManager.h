@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,11 +8,10 @@
  */
 #pragma once
 
-#include <functional>
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 #include "Core/Thread/Semaphore.h"
+#include "World/IWorldComponent.h"
 #include "World/WorldTypes.h"
 
 // import/export mechanism.
@@ -30,23 +29,21 @@ class Entity;
 class IEntityEvent;
 class IEntityEventInstance;
 
-struct UpdateParams;
-
 /*!
  * \ingroup World
  */
-class T_DLLCLASS EntityEventManager : public Object
+class T_DLLCLASS EntityEventManager : public IWorldComponent
 {
 	T_RTTI_CLASS;
 
 public:
 	explicit EntityEventManager(uint32_t maxEventsInstances);
 
+	virtual void destroy() override final;
+
+	virtual void update(World* world, const UpdateParams& update) override final;
+
 	IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
-
-	void update(const UpdateParams& update);
-
-	void gather(const std::function< void(Entity*) >& fn) const;
 
 	void cancelAll(Cancel when);
 

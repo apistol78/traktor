@@ -111,9 +111,6 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_feedbackManager = new spray::FeedbackManager();
 	m_entityRenderers = new world::WorldEntityRenderers();
 
-	const int32_t maxEventInstances = settings->getProperty< int32_t >(L"World.MaxEventInstances", 512);
-	m_eventManager = new world::EntityEventManager(maxEventInstances);
-
 	return true;
 }
 
@@ -121,7 +118,6 @@ void WorldServer::destroy()
 {
 	m_entityFactory = nullptr;
 	m_entityRenderers = nullptr;
-	m_eventManager = nullptr;
 	m_renderServer = nullptr;
 	m_resourceServer = nullptr;
 	m_effectEntityRenderer = nullptr;
@@ -150,10 +146,10 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityFactory->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityFactory->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
 	m_entityFactory->addFactory(new mesh::MeshEntityFactory(resourceManager, renderSystem));
-	m_entityFactory->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
+	m_entityFactory->addFactory(new spray::EffectEntityFactory(resourceManager, soundPlayer, m_feedbackManager));
 	m_entityFactory->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityFactory->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
-	m_entityFactory->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, m_eventManager, false));
+	m_entityFactory->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, false));
 }
 
 void WorldServer::createEntityRenderers(IEnvironment* environment)
@@ -266,11 +262,6 @@ const world::IEntityFactory* WorldServer::getEntityFactory()
 world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 {
 	return m_entityRenderers;
-}
-
-world::EntityEventManager* WorldServer::getEntityEventManager()
-{
-	return m_eventManager;
 }
 
 spray::IFeedbackManager* WorldServer::getFeedbackManager()

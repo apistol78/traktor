@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,9 +19,9 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.EventSetComponentData", 0, EventSetComponentData, IEntityComponentData)
 
-Ref< EventSetComponent > EventSetComponentData::createComponent(EntityEventManager* eventManager, const IEntityBuilder* entityBuilder) const
+Ref< EventSetComponent > EventSetComponentData::createComponent(const IEntityBuilder* entityBuilder) const
 {
-	Ref< EventSetComponent > eventSet = new EventSetComponent(eventManager);
+	Ref< EventSetComponent > eventSet = new EventSetComponent();
 	for (auto eventData : m_eventData)
 	{
 		if (!eventData.second)

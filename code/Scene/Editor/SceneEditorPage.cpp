@@ -90,7 +90,6 @@
 #include "Ui/GridView/GridItemContentChangeEvent.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
-#include "World/EntityEventManager.h"
 #include "World/EntityFactory.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
@@ -183,11 +182,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	// Create world event manager.
-	Ref< world::EntityEventManager > eventManager = new world::EntityEventManager(64);
-
 	// Get physics manager type.
-	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
+	const std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< std::wstring >(L"SceneEditor.PhysicsManager");
 	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName.c_str());
 	if (!physicsManagerType)
 	{
@@ -237,7 +233,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 		m_document,
 		m_editor->getOutputDatabase(),
 		m_editor->getSourceDatabase(),
-		eventManager,
 		resourceManager,
 		renderSystem,
 		physicsManager,

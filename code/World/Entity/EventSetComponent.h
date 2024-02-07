@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,7 +24,6 @@
 namespace traktor::world
 {
 
-class EntityEventManager;
 class IEntityEvent;
 class IEntityEventInstance;
 
@@ -33,8 +32,6 @@ class T_DLLCLASS EventSetComponent : public IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit EventSetComponent(EntityEventManager* eventManager);
-
 	virtual void destroy() override final;
 
 	virtual void setOwner(Entity* owner) override final;
@@ -53,7 +50,6 @@ private:
 	friend class EventSetComponentData;
 
 	Entity* m_owner = nullptr;
-	Ref< EntityEventManager > m_eventManager;
 	SmallMap< std::wstring, Ref< const IEntityEvent > > m_events;
 };
 

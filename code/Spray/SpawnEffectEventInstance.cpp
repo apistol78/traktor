@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Spray/SpawnEffectEventInstance.h"
 #include "World/IWorldRenderer.h"
 #include "World/Entity.h"
+#include "World/World.h"
 
 namespace traktor::spray
 {
@@ -20,11 +21,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEventInstance", SpawnEffectEve
 
 SpawnEffectEventInstance::SpawnEffectEventInstance(
 	const SpawnEffectEvent* spawnEffect,
+	world::World* world,
 	world::Entity* sender,
 	const Transform& Toffset,
 	EffectComponent* effectComponent
 )
 :	m_spawnEffect(spawnEffect)
+,	m_world(world)
 ,	m_sender(sender)
 ,	m_Toffset(Toffset)
 ,	m_effectComponent(effectComponent)
@@ -42,6 +45,13 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(
 		m_effectEntity->setTransform(T);
 	else
 		m_effectEntity->setTransform(Transform(T.translation()));
+
+	m_world->addEntity(m_effectEntity);
+}
+
+SpawnEffectEventInstance::~SpawnEffectEventInstance()
+{
+	m_world->removeEntity(m_effectEntity);
 }
 
 bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
@@ -63,14 +73,7 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 			m_effectEntity->setTransform(Transform(T.translation()));
 	}
 
-	m_effectEntity->update(update);
-
 	return !m_effectComponent->isFinished();
-}
-
-void SpawnEffectEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
-{
-	fn(m_effectEntity);
 }
 
 void SpawnEffectEventInstance::cancel(world::Cancel when)

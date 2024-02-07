@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,11 +30,11 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 
 	if (index != m_index && index >= 0 && index < (int32_t)keys.size())
 	{
-		context.eventManager->raise(
-			keys[index].event,
-			context.owner,
-			context.owner ? Transform::identity() : transform
-		);
+		//context.eventManager->raise(
+		//	keys[index].event,
+		//	context.owner,
+		//	context.owner ? Transform::identity() : transform
+		//);
 		m_index = index;
 	}
 }

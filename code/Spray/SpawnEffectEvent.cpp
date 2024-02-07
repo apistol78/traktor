@@ -9,6 +9,7 @@
 #include "Spray/EffectComponent.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
+#include "World/Entity.h"
 
 namespace traktor::spray
 {
@@ -30,11 +31,8 @@ SpawnEffectEvent::SpawnEffectEvent(
 
 Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
-	Ref< EffectComponent > effectComponent = new EffectComponent(
-		m_effect,
-		eventManager
-	);
-	return new SpawnEffectEventInstance(this, sender, Toffset * m_transform, effectComponent);
+	Ref< EffectComponent > effectComponent = new EffectComponent(m_effect);
+	return new SpawnEffectEventInstance(this, sender->getWorld(), sender, Toffset * m_transform, effectComponent);
 }
 
 }

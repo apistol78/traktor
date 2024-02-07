@@ -159,7 +159,7 @@ private:
 
 	static PhysicsManagerBullet* ms_this;
 
-	Ref< Body > createBody(resource::IResourceManager* resourceManager, const ShapeDesc* shapeDesc, const BodyDesc* desc, btCollisionShape* shape, const wchar_t* const tag, Vector4 centerOfGravity, resource::Proxy< Mesh > mesh);
+	Ref< Body > createBody(resource::IResourceManager* resourceManager, const ShapeDesc* shapeDesc, const BodyDesc* desc, btCollisionShape* shape, const wchar_t* const tag, Vector4 centerOfGravity, const resource::Proxy< Mesh >& mesh);
 
 	static void nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo);
 

@@ -31,7 +31,6 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
-#include "World/EntityEventManager.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/PersistentIdComponent.h"
@@ -209,12 +208,6 @@ void WorldLayer::update(const UpdateInfo& info)
 
 		// Update all entities.
 		m_scene->update(up);
-		//m_dynamicEntities->update(up);
-
-		// Update entity events.
-		world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-		if (eventManager)
-			eventManager->update(up);
 	}
 
 	// In case not explicitly set we update the alternative time also.

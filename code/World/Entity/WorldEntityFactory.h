@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,8 +35,6 @@ class IResourceManager;
 namespace traktor::world
 {
 
-class EntityEventManager;
-
 /*! World entity factory.
  * \ingroup World
  */
@@ -48,7 +46,6 @@ public:
 	explicit WorldEntityFactory(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		EntityEventManager* eventManager,
 		bool editor
 	);
 
@@ -67,7 +64,6 @@ public:
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< EntityEventManager > m_eventManager;
 	bool m_editor;
 };
 

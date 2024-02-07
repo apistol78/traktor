@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Physics/CollisionListener.h"
 #include "Physics/World/RigidBodyComponent.h"
 #include "World/Entity.h"
+#include "World/World.h"
 #include "World/EntityEventManager.h"
 
 namespace traktor::physics
@@ -20,13 +21,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidBodyComponent", RigidBodyComponent
 
 RigidBodyComponent::RigidBodyComponent(
 	Body* body,
-	world::EntityEventManager* eventManager,
 	world::IEntityEvent* eventCollide,
 	float transformFilter
 )
 :	m_owner(nullptr)
 ,	m_body(body)
-,	m_eventManager(eventManager)
 ,	m_eventCollide(eventCollide)
 ,	m_transformFilter(transformFilter)
 {
@@ -37,7 +36,6 @@ RigidBodyComponent::RigidBodyComponent(
 void RigidBodyComponent::destroy()
 {
 	m_eventCollide = nullptr;
-	m_eventManager = nullptr;
 	safeDestroy(m_body);
 	m_owner = nullptr;
 }
@@ -84,6 +82,13 @@ void RigidBodyComponent::update(const world::UpdateParams& update)
 
 void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisionInfo)
 {
+	if (m_owner->getWorld() == nullptr)
+		return;
+
+	world::EntityEventManager* eventManager = m_owner->getWorld()->getComponent< world::EntityEventManager >();
+	if (!eventManager)
+		return;
+
 	Vector4 position = Vector4::zero();
 	Vector4 normal = Vector4::zero();
 
@@ -102,7 +107,7 @@ void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisi
 	);
 
 	const Transform T = m_body->getTransform();
-	m_eventManager->raise(m_eventCollide, m_owner, T.inverse() * Tworld);
+	eventManager->raise(m_eventCollide, m_owner, T.inverse() * Tworld);
 }
 
 }

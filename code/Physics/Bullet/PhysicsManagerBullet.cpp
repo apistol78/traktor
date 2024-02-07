@@ -1071,11 +1071,10 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			T_ASSERT(manifold);
 
 			// Only call to listeners when a new manifold has been created.
-			if (manifold->getContactPoint(0).m_userPersistentData != nullptr)
-				continue;
-
 			const int32_t contacts = manifold->getNumContacts();
 			if (contacts <= 0)
+				continue;
+			if (manifold->getContactPoint(0).m_userPersistentData != nullptr)
 				continue;
 
 			const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
@@ -1089,8 +1088,8 @@ void PhysicsManagerBullet::update(float simulationDeltaTime, bool issueCollision
 			info.contacts.resize(0);
 			info.contacts.reserve(contacts);
 
-			int32_t material1 = wrapperBody0->getMaterial();
-			int32_t material2 = wrapperBody1->getMaterial();
+			const int32_t material1 = wrapperBody0->getMaterial();
+			const int32_t material2 = wrapperBody1->getMaterial();
 
 			for (int32_t j = 0; j < contacts; ++j)
 			{
@@ -1639,7 +1638,7 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 	delete constraint;
 }
 
-Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const ShapeDesc* shapeDesc, const BodyDesc* desc, btCollisionShape* shape, const wchar_t* const tag, Vector4 centerOfGravity, resource::Proxy< Mesh > mesh)
+Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const ShapeDesc* shapeDesc, const BodyDesc* desc, btCollisionShape* shape, const wchar_t* const tag, Vector4 centerOfGravity, const resource::Proxy< Mesh >& mesh)
 {
 	// Create compound shape which has the shape's local transformation.
 	if (shapeDesc->getLocalTransform() != Transform::identity())

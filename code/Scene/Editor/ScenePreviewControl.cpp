@@ -498,7 +498,6 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 				update.deltaTime = c_updateDeltaTime;
 				scene->update(update);
 
-				m_context->getEntityEventManager()->update(update);
 				m_context->getPhysicsManager()->update(c_updateDeltaTime, false);
 
 				m_lastPhysicsTime += c_updateDeltaTime;
@@ -511,8 +510,6 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 			update.alternateTime = scaledTime;
 			update.deltaTime = scaledDeltaTime;
 			scene->update(update);
-
-			m_context->getEntityEventManager()->update(update);
 		}
 
 		// Issue updates on render controls.

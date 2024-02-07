@@ -32,13 +32,6 @@ class ISoundPlayer;
 
 }
 
-namespace traktor::world
-{
-
-class EntityEventManager;
-
-}
-
 namespace traktor::spray
 {
 
@@ -54,7 +47,6 @@ class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 public:
 	explicit EffectEntityFactory(
 		resource::IResourceManager* resourceManager,
-		world::EntityEventManager* eventManager,
 		sound::ISoundPlayer* soundPlayer,
 		IFeedbackManager* feedbackManager
 	);
@@ -73,7 +65,6 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< world::EntityEventManager > m_eventManager;
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	Ref< IFeedbackManager > m_feedbackManager;
 };

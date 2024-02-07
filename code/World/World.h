@@ -24,6 +24,7 @@ namespace traktor::world
 {
 
 class Entity;
+class IWorldComponent;
 struct UpdateParams;
 
 /*! World container.
@@ -37,7 +38,42 @@ class T_DLLCLASS World : public Object
 	T_RTTI_CLASS;
 
 public:
+	World();
+
 	void destroy();
+
+	/*! Set component in world.
+	 *
+	 * \param component Component instance.
+	 */
+	void setComponent(IWorldComponent* component);
+
+	/*! Get component of type.
+	 *
+	 * \param componentType Type of component.
+	 * \return Component instance matching type.
+	 */
+	IWorldComponent* getComponent(const TypeInfo& componentType) const;
+
+	/*! Get component of type.
+	 *
+	 * \param ComponentType Type of component.
+	 * \return Component instance matching type.
+	 */
+	template < typename ComponentType >
+	ComponentType* getComponent() const
+	{
+		return checked_type_cast< ComponentType* >(getComponent(type_of< ComponentType >()));
+	}
+
+	/*! Get components.
+	 *
+	 * \return Array of all components.
+	 */
+	const RefArray< IWorldComponent >& getComponents() const
+	{
+		return m_components;
+	}
 
 	/*! Add entity to world. */
 	void addEntity(Entity* entity);
@@ -64,6 +100,7 @@ public:
 	const RefArray< Entity >& getEntities() const { return m_entities; }
 
 private:
+	RefArray< IWorldComponent > m_components;
 	RefArray< Entity > m_entities;
 };
 

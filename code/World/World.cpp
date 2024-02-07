@@ -7,12 +7,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/Entity.h"
+#include "World/EntityEventManager.h"
+#include "World/IWorldComponent.h"
 #include "World/World.h"
 
 namespace traktor::world
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.World", World, Object)
+
+World::World()
+{
+	setComponent(new EntityEventManager(512));
+}
 
 void World::destroy()
 {
@@ -22,6 +29,38 @@ void World::destroy()
 		entity->destroy();
 	}
 	m_entities.clear();
+
+	for (auto component : m_components)
+		component->destroy();
+	m_components.clear();
+}
+
+void World::setComponent(IWorldComponent* component)
+{
+	T_FATAL_ASSERT (component);
+
+	// Replace existing component of same type.
+	for (auto comp : m_components)
+	{
+		if (is_type_of(type_of(comp), type_of(component)))
+		{
+			comp = component;
+			return;
+		}
+	}
+
+	// No such component, add last.
+	m_components.push_back(component);
+}
+
+IWorldComponent* World::getComponent(const TypeInfo& componentType) const
+{
+	for (auto component : m_components)
+	{
+		if (is_type_of(componentType, type_of(component)))
+			return component;
+	}
+	return nullptr;
 }
 
 void World::addEntity(Entity* entity)
@@ -84,6 +123,9 @@ RefArray< Entity > World::getEntitiesWithinRange(const Vector4& position, float 
 
 void World::update(const UpdateParams& update)
 {
+	for (auto component : m_components)
+		component->update(this, update);
+
 	for (auto entity : m_entities)
 		entity->update(update);
 }

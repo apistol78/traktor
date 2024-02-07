@@ -30,7 +30,6 @@ namespace traktor::world
 class Entity;
 class IEntityBuilder;
 class IEntityEventData;
-class EntityEventManager;
 
 }
 
@@ -57,7 +56,6 @@ public:
 
 	Ref< RigidBodyComponent > createComponent(
 		const world::IEntityBuilder* entityBuilder,
-		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;

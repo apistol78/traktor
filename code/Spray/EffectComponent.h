@@ -22,13 +22,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::world
-{
-
-class EntityEventManager;
-
-}
-
 namespace traktor::spray
 {
 
@@ -46,7 +39,7 @@ class T_DLLCLASS EffectComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit EffectComponent(const resource::Proxy< Effect >& effect, world::EntityEventManager* eventManager);
+	explicit EffectComponent(const resource::Proxy< Effect >& effect);
 
 	explicit EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context);
 

@@ -91,7 +91,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, nullptr, true));
+	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, true));
 	entityFactory->addFactory(new weather::WeatherFactory(m_resourceManager, m_renderSystem));
 	entityFactory->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
 

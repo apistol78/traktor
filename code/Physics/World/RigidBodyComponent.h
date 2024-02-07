@@ -21,7 +21,6 @@ namespace traktor::world
 {
 
 class IEntityEvent;
-class EntityEventManager;
 
 }
 
@@ -41,7 +40,6 @@ class T_DLLCLASS RigidBodyComponent : public world::IEntityComponent
 public:
 	explicit RigidBodyComponent(
 		Body* body,
-		world::EntityEventManager* eventManager,
 		world::IEntityEvent* eventCollide,
 		float transformFilter
 	);
@@ -61,7 +59,6 @@ public:
 private:
 	world::Entity* m_owner;
 	Ref< Body > m_body;
-	Ref< world::EntityEventManager > m_eventManager;
 	Ref< world::IEntityEvent > m_eventCollide;
 	Transform m_lastTransform;
 	float m_transformFilter;

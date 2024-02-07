@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Misc/EnterLeave.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponentData.h"
@@ -23,35 +22,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilder", EntityBuilder, IEntityBui
 EntityBuilder::EntityBuilder(const IEntityFactory* entityFactory, World* world)
 :	m_entityFactory(entityFactory)
 ,	m_world(world)
-,	m_depth(0)
 {
-}
-
-EntityBuilder::~EntityBuilder()
-{
-	if (m_world)
-	{
-		std::stable_sort(m_unsortedEntities.begin(), m_unsortedEntities.end(), [](const std::pair< int32_t, Ref< Entity > >& lh, const std::pair< int32_t, Ref< Entity > >& rh) {
-			return lh.first < rh.first;
-		});
-		for (const auto& it : m_unsortedEntities)
-			m_world->addEntity(it.second);
-	}
 }
 
 Ref< Entity > EntityBuilder::create(const EntityData* entityData) const
 {
-	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ m_depth++; },
-		[this](){ m_depth--; }
-	);
-
 	Ref< Entity > entity = m_entityFactory->createEntity(this, *entityData);
 	if (!entity)
 		return nullptr;
 
+	// Do not add if data is external, has already been added.
 	if (!is_a< ExternalEntityData >(entityData))
-		m_unsortedEntities.push_back({ m_depth, entity });
+		m_world->addEntity(entity);
 
 	return entity;
 }

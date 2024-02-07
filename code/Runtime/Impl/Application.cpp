@@ -542,10 +542,6 @@ bool Application::update()
 			if (m_scriptServer)
 				m_scriptServer->cleanup(true);
 
-			// Cancel all running events.
-			if (m_worldServer)
-				m_worldServer->getEntityEventManager()->cancelAll(world::Cancel::Immediate);
-
 			// Cleanup resources used by former state.
 			log::debug << L"Cleaning resident resources..." << Endl;
 			m_resourceServer->performCleanup();

@@ -8,7 +8,6 @@
  */
 #pragma once
 
-#include "Core/Containers/AlignedVector.h"
 #include "World/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -35,8 +34,6 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 public:
 	explicit EntityBuilder(const IEntityFactory* entityFactory, World* world);
 
-	virtual ~EntityBuilder();
-
 	virtual Ref< Entity > create(const EntityData* entityData) const override final;
 
 	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const override final;
@@ -46,8 +43,6 @@ public:
 private:
 	Ref< const IEntityFactory > m_entityFactory;
 	Ref< world::World > m_world;
-	mutable int32_t m_depth;
-	mutable AlignedVector< std::pair< int32_t, Ref< Entity > > > m_unsortedEntities;
 };
 
 }

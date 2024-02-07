@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,16 +13,14 @@
 #include "Spray/Feedback/OscillateFeedbackEventInstance.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.OscillateFeedbackEventInstance", OscillateFeedbackEventInstance, world::IEntityEventInstance)
 
@@ -43,9 +41,9 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 		const OscillateFeedbackEventData::OscillatingValue& ov = m_data->getValue(i);
 		if (m_time < ov.duration)
 		{
-			float f = m_time / ov.duration;
-			float m = (1.0f - f * f * f) * ov.magnitude;
-			float v = lerp(std::sin(ov.frequency * f * PI), s_random.nextFloat() * 2.0f - 1.0f, ov.noise) * m;
+			const float f = m_time / ov.duration;
+			const float m = (1.0f - f * f * f) * ov.magnitude;
+			const float v = lerp(std::sin(ov.frequency * f * PI), s_random.nextFloat() * 2.0f - 1.0f, ov.noise) * m;
 
 			values[i] = v;
 			finished = false;
@@ -61,13 +59,8 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 	return !finished;
 }
 
-void OscillateFeedbackEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
-{
-}
-
 void OscillateFeedbackEventInstance::cancel(world::Cancel when)
 {
 }
 
-	}
 }

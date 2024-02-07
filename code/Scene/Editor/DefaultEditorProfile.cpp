@@ -90,7 +90,7 @@ void DefaultEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager(), context->getRenderSystem(), nullptr, true));
+	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager(), context->getRenderSystem(), true));
 	outEntityFactories.push_back(new world::WorldEditorEntityFactory());
 	outEntityFactories.push_back(new weather::WeatherFactory(context->getResourceManager(), context->getRenderSystem()));
 }

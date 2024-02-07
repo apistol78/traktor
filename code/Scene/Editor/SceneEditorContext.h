@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -72,7 +72,6 @@ namespace traktor::world
 
 class Entity;
 class EntityData;
-class EntityEventManager;
 
 }
 
@@ -126,7 +125,6 @@ public:
 		editor::IDocument* document,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
-		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager,
@@ -271,8 +269,6 @@ public:
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
 
-	world::EntityEventManager* getEntityEventManager() const { return m_eventManager; }
-
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
 	render::IRenderSystem* getRenderSystem() const { return m_renderSystem; }
@@ -325,7 +321,6 @@ private:
 	editor::IDocument* m_document;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
-	Ref< world::EntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;

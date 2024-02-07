@@ -22,6 +22,7 @@
 #include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
+#include "World/IWorldComponent.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldClassFactory.h"
 #include "World/Entity/CameraComponent.h"
@@ -47,6 +48,11 @@ namespace traktor::world
 {
 	namespace
 	{
+
+IWorldComponent* World_getComponent(World* self, const TypeInfo& componentType)
+{
+	return self->getComponent(componentType);
+}
 
 Entity* World_getEntity_1(World* self, const std::wstring& name)
 {
@@ -173,7 +179,12 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldClassFactory", 0, WorldClass
 
 void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
+	auto classIWorldComponent = new AutoRuntimeClass< IWorldComponent >();
+	registrar->registerClass(classIWorldComponent);
+
 	auto classWorld = new AutoRuntimeClass< World >();
+	classWorld->addMethod("setComponent", &World::setComponent);
+	classWorld->addMethod("getComponent", &World_getComponent);
 	classWorld->addMethod("addEntity", &World::addEntity);
 	classWorld->addMethod("removeEntity", &World::removeEntity);
 	classWorld->addMethod("haveEntity", &World::haveEntity);

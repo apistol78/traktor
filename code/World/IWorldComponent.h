@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,17 +22,23 @@
 namespace traktor::world
 {
 
-/*! Entity event instance.
+class World;
+
+/*! World component.
  * \ingroup World
  */
-class T_DLLCLASS IEntityEventInstance : public Object
+class T_DLLCLASS IWorldComponent : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool update(const UpdateParams& update) = 0;
+	virtual void destroy() = 0;
 
-	virtual void cancel(Cancel when) = 0;
+	/*! Update component
+	 * \param world World instance.
+	 * \param update Update information.
+	 */
+	virtual void update(World* world, const UpdateParams& update) = 0;
 };
 
 }

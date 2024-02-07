@@ -22,12 +22,10 @@ namespace traktor::physics
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::IEntityFactory)
 
 EntityFactory::EntityFactory(
-	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 )
-:	m_eventManager(eventManager)
-,	m_resourceManager(resourceManager)
+:	m_resourceManager(resourceManager)
 ,	m_physicsManager(physicsManager)
 {
 }
@@ -72,7 +70,7 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 	else if (auto jointComponentData = dynamic_type_cast< const JointComponentData* >(&entityComponentData))
 		return jointComponentData->createComponent(m_physicsManager);
 	else if (auto rigidBodyComponentData = dynamic_type_cast< const RigidBodyComponentData* >(&entityComponentData))
-		return rigidBodyComponentData->createComponent(builder, m_eventManager, m_resourceManager, m_physicsManager);
+		return rigidBodyComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
 	else if (auto vehicleComponentData = dynamic_type_cast< const VehicleComponentData* >(&entityComponentData))
 		return vehicleComponentData->createComponent(builder, m_resourceManager, m_physicsManager);
 	else

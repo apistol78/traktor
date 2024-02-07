@@ -34,7 +34,6 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
-#include "World/EntityEventManager.h"
 #include "World/World.h"
 #include "World/Entity/CameraComponent.h"
 #include "World/Entity/GroupComponent.h"
@@ -214,11 +213,6 @@ void SplitWorldLayer::update(const UpdateInfo& info)
 	up.alternateTime = m_alternateTime;
 	up.deltaTime = deltaTime;
 	m_scene->update(up);
-
-	// Update entity events.
-	world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-	if (eventManager)
-		eventManager->update(up);
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += deltaTime;

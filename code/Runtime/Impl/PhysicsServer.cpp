@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -67,9 +67,8 @@ void PhysicsServer::createResourceFactories(IEnvironment* environment)
 
 void PhysicsServer::createEntityFactories(IEnvironment* environment)
 {
-	world::EntityEventManager* eventManger = environment->getWorld()->getEntityEventManager();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	environment->getWorld()->addEntityFactory(new physics::EntityFactory(eventManger, resourceManager, m_physicsManager));
+	environment->getWorld()->addEntityFactory(new physics::EntityFactory(resourceManager, m_physicsManager));
 }
 
 int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)

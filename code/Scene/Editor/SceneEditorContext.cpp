@@ -67,7 +67,6 @@ SceneEditorContext::SceneEditorContext(
 	editor::IDocument* document,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
-	world::EntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager,
@@ -77,7 +76,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_document(document)
 ,	m_resourceDb(resourceDb)
 ,	m_sourceDb(sourceDb)
-,	m_eventManager(eventManager)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
@@ -113,7 +111,6 @@ void SceneEditorContext::destroy()
 	m_document = nullptr;
 	m_resourceDb = nullptr;
 	m_sourceDb = nullptr;
-	m_eventManager = nullptr;
 	m_renderSystem = nullptr;
 	m_physicsManager = nullptr;
 

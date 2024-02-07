@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,6 @@ class IFeedbackManager;
 namespace traktor::world
 {
 
-class EntityEventManager;
 class IEntityFactory;
 class IEntityRenderer;
 class IWorldRenderer;
@@ -62,8 +61,6 @@ public:
 	virtual const world::IEntityFactory* getEntityFactory() = 0;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
-
-	virtual world::EntityEventManager* getEntityEventManager() = 0;
 
 	virtual spray::IFeedbackManager* getFeedbackManager() = 0;
 

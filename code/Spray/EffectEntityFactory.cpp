@@ -33,12 +33,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory
 
 EffectEntityFactory::EffectEntityFactory(
 	resource::IResourceManager* resourceManager,
-	world::EntityEventManager* eventManager,
 	sound::ISoundPlayer* soundPlayer,
 	IFeedbackManager* feedbackManager
 )
 :	m_resourceManager(resourceManager)
-,	m_eventManager(eventManager)
 ,	m_soundPlayer(soundPlayer)
 ,	m_feedbackManager(feedbackManager)
 {
@@ -111,7 +109,7 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 Ref< world::IEntityComponent > EffectEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
 	if (auto effectComponentData = dynamic_type_cast< const EffectComponentData* >(&entityComponentData))
-		return effectComponentData->createComponent(m_resourceManager, m_eventManager);
+		return effectComponentData->createComponent(m_resourceManager);
 	else if (auto listenerComponentData = dynamic_type_cast< const ListenerComponentData* >(&entityComponentData))
 		return listenerComponentData->createComponent(m_soundPlayer);
 	else if (auto soundComponentData = dynamic_type_cast< const SoundComponentData* >(&entityComponentData))

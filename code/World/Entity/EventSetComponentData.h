@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,7 +22,6 @@
 namespace traktor::world
 {
 
-class EntityEventManager;
 class EventSetComponent;
 class IEntityBuilder;
 class IEntityEventData;
@@ -35,7 +34,7 @@ class T_DLLCLASS EventSetComponentData : public IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EventSetComponent > createComponent(EntityEventManager* eventManager, const IEntityBuilder* entityBuilder) const;
+	Ref< EventSetComponent > createComponent(const IEntityBuilder* entityBuilder) const;
 
 	virtual int32_t getOrdinal() const override final;
 

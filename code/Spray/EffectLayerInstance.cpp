@@ -87,19 +87,19 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 			m_sequenceInstance->update(context, transform, time - m_start, enable);
 	}
 
-	if (enable != m_enable && context.eventManager)
-	{
-		if (m_triggerInstance)
-			m_triggerInstance->cancel(world::Cancel::Immediate);
+	//if (enable != m_enable && context.eventManager)
+	//{
+	//	if (m_triggerInstance)
+	//		m_triggerInstance->cancel(world::Cancel::Immediate);
 
-		m_triggerInstance = context.eventManager->raise(
-			enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
-			context.owner,
-			context.owner ? Transform::identity() : transform
-		);
+	//	m_triggerInstance = context.eventManager->raise(
+	//		enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
+	//		context.owner,
+	//		context.owner ? Transform::identity() : transform
+	//	);
 
-		m_enable = enable;
-	}
+	//	m_enable = enable;
+	//}
 }
 
 void EffectLayerInstance::synchronize()

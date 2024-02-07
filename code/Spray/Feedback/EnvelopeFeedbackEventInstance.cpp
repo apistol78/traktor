@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,12 +11,10 @@
 #include "Spray/Feedback/EnvelopeFeedbackEventInstance.h"
 #include "Spray/Feedback/IFeedbackManager.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 struct TimedValueAccessor
 {
@@ -42,7 +40,7 @@ struct TimedValueAccessor
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EnvelopeFeedbackEventInstance", EnvelopeFeedbackEventInstance, world::IEntityEventInstance)
 
@@ -73,17 +71,12 @@ bool EnvelopeFeedbackEventInstance::update(const world::UpdateParams& update)
 	if (m_feedbackManager)
 		m_feedbackManager->apply(m_data->getType(), values, sizeof_array(values));
 
-	m_time += update.deltaTime;
+	m_time += (float)update.deltaTime;
 	return m_time < duration;
-}
-
-void EnvelopeFeedbackEventInstance::gather(const std::function< void(world::Entity*) >& fn) const
-{
 }
 
 void EnvelopeFeedbackEventInstance::cancel(world::Cancel when)
 {
 }
 
-	}
 }

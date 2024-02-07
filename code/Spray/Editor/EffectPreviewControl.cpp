@@ -189,10 +189,7 @@ void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effec
 	if ((m_effect = effect) != nullptr)
 	{
 		m_effectEntity = new world::Entity();
-		m_effectEntity->setComponent(new EffectComponent(
-			resource::Proxy< Effect >(m_effect),
-			nullptr
-		));
+		m_effectEntity->setComponent(new EffectComponent(resource::Proxy< Effect >(m_effect)));
 		m_effectEntity->update({});
 	}
 	else
@@ -286,7 +283,6 @@ void EffectPreviewControl::syncEffect()
 	Context context;
 	context.deltaTime = 0.0f;
 	context.random = RandomGeometry(m_randomSeed);
-	context.eventManager = nullptr;
 
 	// Create new effect instance.
 	Ref< EffectInstance > effectInstance = effectComponent->getEffect()->createInstance();
@@ -315,8 +311,6 @@ void EffectPreviewControl::syncEffect()
 
 		m_effectEntity->setTransform(effectTransform);
 	}
-
-	context.eventManager = nullptr;
 
 	m_effectEntity->setComponent(new EffectComponent(
 		effectComponent->getEffect(),

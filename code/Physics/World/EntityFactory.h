@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,13 +24,6 @@ class IResourceManager;
 
 }
 
-namespace traktor::world
-{
-
-class EntityEventManager;
-
-}
-
 namespace traktor::physics
 {
 
@@ -45,7 +38,6 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 
 public:
 	explicit EntityFactory(
-		world::EntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	);
@@ -63,7 +55,6 @@ public:
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 private:
-	Ref< world::EntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< PhysicsManager > m_physicsManager;
 };

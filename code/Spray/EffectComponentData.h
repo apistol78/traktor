@@ -26,13 +26,6 @@ class IResourceManager;
 
 }
 
-namespace traktor::world
-{
-
-class EntityEventManager;
-
-}
-
 namespace traktor::spray
 {
 
@@ -51,7 +44,7 @@ public:
 
 	explicit EffectComponentData(const resource::Id< Effect >& effect);
 
-	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager, world::EntityEventManager* eventManager) const;
+	Ref< EffectComponent > createComponent(resource::IResourceManager* resourceManager) const;
 
 	virtual int32_t getOrdinal() const override final;
 

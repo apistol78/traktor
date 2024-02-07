@@ -6,18 +6,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "World/Entity.h"
 #include "World/EntityEventManager.h"
+#include "World/World.h"
 #include "World/Entity/EventSetComponent.h"
 
 namespace traktor::world
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EventSetComponent", EventSetComponent, IEntityComponent)
-
-EventSetComponent::EventSetComponent(EntityEventManager* eventManager)
-:	m_eventManager(eventManager)
-{
-}
 
 void EventSetComponent::destroy()
 {
@@ -43,11 +40,15 @@ void EventSetComponent::update(const UpdateParams& update)
 
 IEntityEventInstance* EventSetComponent::raise(const std::wstring& name, const Transform& offset)
 {
-	const IEntityEvent* event = getEvent(name);
-	if (event)
-		return m_eventManager->raise(event, m_owner, offset);
-	else
+	EntityEventManager* eventManager = m_owner->getWorld()->getComponent< EntityEventManager >();
+	if (!eventManager)
 		return nullptr;
+
+	const IEntityEvent* event = getEvent(name);
+	if (!event)
+		return nullptr;
+
+	return eventManager->raise(event, m_owner, offset);
 }
 
 const IEntityEvent* EventSetComponent::getEvent(const std::wstring& name) const

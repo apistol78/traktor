@@ -82,6 +82,7 @@ Aabb3 Entity::getBoundingBox() const
 
 void Entity::update(const UpdateParams& update)
 {
+	T_FATAL_ASSERT(m_world != nullptr);
 	for (auto component : m_components)
 	{
 		m_updating = component;
