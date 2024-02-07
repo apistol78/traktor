@@ -726,171 +726,56 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 	T_ASSERT(shape);
 
-	// Create compound shape which has the shape's local transformation.
-	if (shapeDesc->getLocalTransform() != Transform::identity())
+	return createBody(resourceManager, shapeDesc, desc, shape, tag, centerOfGravity, mesh);
+}
+
+Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, const wchar_t* const tag)
+{
+	if (!desc)
+		return nullptr;
+
+	const ShapeDesc* shapeDesc = desc->getShape();
+	if (!shapeDesc)
 	{
-		btCompoundShape* compound = new btCompoundShape();
-		compound->addChildShape(toBtTransform(shapeDesc->getLocalTransform()), shape);
-		shape = compound;
-	}
-
-	// Create rigid body.
-	Ref< Body > body;
-
-	if (const StaticBodyDesc* staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
-	{
-		// Create body.
-		btRigidBody::btRigidBodyConstructionInfo info(0.0f, new btDefaultMotionState(), shape);
-		info.m_friction = staticDesc->getFriction();
-		info.m_restitution = staticDesc->getRestitution();
-
-		btRigidBody* rigidBody = new btRigidBody(info);
-
-		// Set static flag.
-		rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
-
-		// Define body as kinematic.
-		if (staticDesc->isKinematic())
-		{
-			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
-			rigidBody->setActivationState(DISABLE_DEACTIVATION);
-		}
-
-		// Add custom material callback so we can support material per triangle.
-		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
-			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
-
-		// Resolve collision group and mask value.
-		uint32_t mergedCollisionGroup = 0;
-		for (const auto& group : shapeDesc->getCollisionGroup())
-		{
-			resource::Proxy< CollisionSpecification > collisionGroup;
-			if (!resourceManager->bind(group, collisionGroup))
-			{
-				log::error << L"Unable to bind collision group specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionGroup |= collisionGroup->getBitMask();
-		}
-
-		uint32_t mergedCollisionMask = 0;
-		for (const auto& mask : shapeDesc->getCollisionMask())
-		{
-			resource::Proxy< CollisionSpecification > collisionMask;
-			if (!resourceManager->bind(mask, collisionMask))
-			{
-				log::error << L"Unable to bind collision mask specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionMask |= collisionMask->getBitMask();
-		}
-
-		// Create our wrapper.
-		Ref< BodyBullet > staticBody = new BodyBullet(
-			tag,
-			this,
-			m_dynamicsWorld,
-			m_timeScale,
-			rigidBody,
-			shape,
-			centerOfGravity,
-			mergedCollisionGroup,
-			mergedCollisionMask,
-			shapeDesc->getMaterial(),
-			mesh
-		);
-		m_bodies.push_back(staticBody);
-
-		rigidBody->setUserPointer(staticBody);
-		body = staticBody;
-	}
-	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
-	{
-		const float mass = dynamicDesc->getMass();
-
-		// Calculate inertia from shape.
-		btVector3 localInertia(0.0f, 0.0f, 0.0f);
-		shape->calculateLocalInertia(mass, localInertia);
-
-		// Create body.
-		btRigidBody::btRigidBodyConstructionInfo info(mass, new btDefaultMotionState(), shape, localInertia);
-		info.m_linearDamping = dynamicDesc->getLinearDamping();
-		info.m_angularDamping = dynamicDesc->getAngularDamping();
-		info.m_friction = dynamicDesc->getFriction();
-		info.m_restitution = dynamicDesc->getRestitution();
-		info.m_linearSleepingThreshold = dynamicDesc->getLinearThreshold();
-		info.m_angularSleepingThreshold = dynamicDesc->getAngularThreshold();
-		btRigidBody* rigidBody = new btRigidBody(info);
-
-		if (!dynamicDesc->getActive())
-		{
-			T_ASSERT_M (dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
-			rigidBody->forceActivationState(ISLAND_SLEEPING);
-		}
-		else
-		{
-			if (!dynamicDesc->getAutoDeactivate())
-				rigidBody->forceActivationState(DISABLE_DEACTIVATION);
-			else
-				rigidBody->forceActivationState(ACTIVE_TAG);
-		}
-
-		// Resolve collision group and mask value.
-		uint32_t mergedCollisionGroup = 0;
-		for (const auto& group : shapeDesc->getCollisionGroup())
-		{
-			resource::Proxy< CollisionSpecification > collisionGroup;
-			if (!resourceManager->bind(group, collisionGroup))
-			{
-				log::error << L"Unable to bind collision group specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionGroup |= collisionGroup->getBitMask();
-		}
-
-		uint32_t mergedCollisionMask = 0;
-		for (const auto& mask : shapeDesc->getCollisionMask())
-		{
-			resource::Proxy< CollisionSpecification > collisionMask;
-			if (!resourceManager->bind(mask, collisionMask))
-			{
-				log::error << L"Unable to bind collision mask specification." << Endl;
-				return nullptr;
-			}
-			mergedCollisionMask |= collisionMask->getBitMask();
-		}
-
-		// Create our wrapper.
-		Ref< BodyBullet > dynamicBody = new BodyBullet(
-			tag,
-			this,
-			m_dynamicsWorld,
-			m_timeScale,
-			rigidBody,
-			shape,
-			centerOfGravity,
-			mergedCollisionGroup,
-			mergedCollisionMask,
-			shapeDesc->getMaterial(),
-			mesh
-		);
-		m_bodies.push_back(dynamicBody);
-
-		rigidBody->setUserPointer(dynamicBody);
-		body = dynamicBody;
-	}
-	else
-	{
-		log::error << L"Unsupported body type \"" << type_name(desc) << L"\"." << Endl;
+		log::error << L"Unable to create body, no shape defined." << Endl;
 		return nullptr;
 	}
 
-	// Ensure wrapper body is placed at origo in order
-	// to set COG offset in Bullet body.
-	if (body)
-		body->setTransform(Transform::identity());
+	// Create collision shape.
+	Vector4 centerOfGravity = Vector4::origo();
+	btCollisionShape* shape = nullptr;
 
-	return body;
+	if (is_a< DynamicBodyDesc >(desc))
+	{
+		const auto& vertices = mesh->getVertices();
+		const auto& hullIndices = mesh->getHullIndices();
+		if (vertices.empty() || hullIndices.empty())
+		{
+			log::error << L"Unable to create body, mesh hull empty." << Endl;
+			return nullptr;
+		}
+
+		// Build point list, only hull points. Add space at end for storeUnaligned always writes four floats.
+		AutoArrayPtr< float, AllocFreeAlign > hullPoints((float*)Alloc::acquireAlign(3 * sizeof(float) * (hullIndices.size() + 1), 16, T_FILE_LINE));
+		for (uint32_t i = 0; i < hullIndices.size(); ++i)
+			vertices[hullIndices[i]].storeUnaligned(&hullPoints[i * 3]);
+
+		// Create Bullet shape.
+		shape = new btConvexHullShape(
+			static_cast< const btScalar* >(hullPoints.c_ptr()),
+			(int)hullIndices.size(),
+			3 * sizeof(float)
+		);
+	}
+	else
+	{
+		MeshProxyIndexVertexArray* indexVertexArray = new MeshProxyIndexVertexArray(resource::Proxy< Mesh >(const_cast< Mesh* >(mesh)));
+		shape = new btBvhTriangleMeshShape(indexVertexArray, true);
+	}
+
+	shape->setMargin(mesh->getMargin());
+
+	return createBody(resourceManager, shapeDesc, desc, shape, tag, centerOfGravity, resource::Proxy< Mesh >(const_cast< Mesh* >(mesh)));
 }
 
 Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
@@ -1752,6 +1637,175 @@ void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* co
 	T_FATAL_ASSERT(removed);
 
 	delete constraint;
+}
+
+Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourceManager, const ShapeDesc* shapeDesc, const BodyDesc* desc, btCollisionShape* shape, const wchar_t* const tag, Vector4 centerOfGravity, resource::Proxy< Mesh > mesh)
+{
+	// Create compound shape which has the shape's local transformation.
+	if (shapeDesc->getLocalTransform() != Transform::identity())
+	{
+		btCompoundShape* compound = new btCompoundShape();
+		compound->addChildShape(toBtTransform(shapeDesc->getLocalTransform()), shape);
+		shape = compound;
+	}
+
+	// Create rigid body.
+	Ref< Body > body;
+
+	if (const StaticBodyDesc* staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
+	{
+		// Create body.
+		btRigidBody::btRigidBodyConstructionInfo info(0.0f, new btDefaultMotionState(), shape);
+		info.m_friction = staticDesc->getFriction();
+		info.m_restitution = staticDesc->getRestitution();
+
+		btRigidBody* rigidBody = new btRigidBody(info);
+
+		// Set static flag.
+		rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_STATIC_OBJECT);
+
+		// Define body as kinematic.
+		if (staticDesc->isKinematic())
+		{
+			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_KINEMATIC_OBJECT);
+			rigidBody->setActivationState(DISABLE_DEACTIVATION);
+		}
+
+		// Add custom material callback so we can support material per triangle.
+		if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			rigidBody->setCollisionFlags(rigidBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+		// Resolve collision group and mask value.
+		uint32_t mergedCollisionGroup = 0;
+		for (const auto& group : shapeDesc->getCollisionGroup())
+		{
+			resource::Proxy< CollisionSpecification > collisionGroup;
+			if (!resourceManager->bind(group, collisionGroup))
+			{
+				log::error << L"Unable to bind collision group specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionGroup |= collisionGroup->getBitMask();
+		}
+
+		uint32_t mergedCollisionMask = 0;
+		for (const auto& mask : shapeDesc->getCollisionMask())
+		{
+			resource::Proxy< CollisionSpecification > collisionMask;
+			if (!resourceManager->bind(mask, collisionMask))
+			{
+				log::error << L"Unable to bind collision mask specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionMask |= collisionMask->getBitMask();
+		}
+
+		// Create our wrapper.
+		Ref< BodyBullet > staticBody = new BodyBullet(
+			tag,
+			this,
+			m_dynamicsWorld,
+			m_timeScale,
+			rigidBody,
+			shape,
+			centerOfGravity,
+			mergedCollisionGroup,
+			mergedCollisionMask,
+			shapeDesc->getMaterial(),
+			mesh
+		);
+		m_bodies.push_back(staticBody);
+
+		rigidBody->setUserPointer(staticBody);
+		body = staticBody;
+	}
+	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast<const DynamicBodyDesc*>(desc))
+	{
+		const float mass = dynamicDesc->getMass();
+
+		// Calculate inertia from shape.
+		btVector3 localInertia(0.0f, 0.0f, 0.0f);
+		shape->calculateLocalInertia(mass, localInertia);
+
+		// Create body.
+		btRigidBody::btRigidBodyConstructionInfo info(mass, new btDefaultMotionState(), shape, localInertia);
+		info.m_linearDamping = dynamicDesc->getLinearDamping();
+		info.m_angularDamping = dynamicDesc->getAngularDamping();
+		info.m_friction = dynamicDesc->getFriction();
+		info.m_restitution = dynamicDesc->getRestitution();
+		info.m_linearSleepingThreshold = dynamicDesc->getLinearThreshold();
+		info.m_angularSleepingThreshold = dynamicDesc->getAngularThreshold();
+		btRigidBody* rigidBody = new btRigidBody(info);
+
+		if (!dynamicDesc->getActive())
+		{
+			T_ASSERT_M(dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
+			rigidBody->forceActivationState(ISLAND_SLEEPING);
+		}
+		else
+		{
+			if (!dynamicDesc->getAutoDeactivate())
+				rigidBody->forceActivationState(DISABLE_DEACTIVATION);
+			else
+				rigidBody->forceActivationState(ACTIVE_TAG);
+		}
+
+		// Resolve collision group and mask value.
+		uint32_t mergedCollisionGroup = 0;
+		for (const auto& group : shapeDesc->getCollisionGroup())
+		{
+			resource::Proxy< CollisionSpecification > collisionGroup;
+			if (!resourceManager->bind(group, collisionGroup))
+			{
+				log::error << L"Unable to bind collision group specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionGroup |= collisionGroup->getBitMask();
+		}
+
+		uint32_t mergedCollisionMask = 0;
+		for (const auto& mask : shapeDesc->getCollisionMask())
+		{
+			resource::Proxy< CollisionSpecification > collisionMask;
+			if (!resourceManager->bind(mask, collisionMask))
+			{
+				log::error << L"Unable to bind collision mask specification." << Endl;
+				return nullptr;
+			}
+			mergedCollisionMask |= collisionMask->getBitMask();
+		}
+
+		// Create our wrapper.
+		Ref< BodyBullet > dynamicBody = new BodyBullet(
+			tag,
+			this,
+			m_dynamicsWorld,
+			m_timeScale,
+			rigidBody,
+			shape,
+			centerOfGravity,
+			mergedCollisionGroup,
+			mergedCollisionMask,
+			shapeDesc->getMaterial(),
+			mesh
+		);
+		m_bodies.push_back(dynamicBody);
+
+		rigidBody->setUserPointer(dynamicBody);
+		body = dynamicBody;
+	}
+	else
+	{
+		log::error << L"Unsupported body type \"" << type_name(desc) << L"\"." << Endl;
+		return nullptr;
+	}
+
+	// Ensure wrapper body is placed at origo in order
+	// to set COG offset in Bullet body.
+	if (body)
+		body->setTransform(Transform::identity());
+
+	return body;
 }
 
 void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btCollisionDispatcher& dispatcher, const btDispatcherInfo& dispatchInfo)

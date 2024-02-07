@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,31 +19,36 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 class Database;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::physics
+{
+
+class PhysicsManager;
+
+}
+
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 
-	}
+}
 
-	namespace shape
-	{
+namespace traktor::shape
+{
 
 /*!
  * \ingroup Spray
@@ -53,10 +58,11 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(
+	explicit EntityFactory(
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
+		physics::PhysicsManager* physicsManager,
 		const std::wstring& assetPath,
 		const std::wstring& modelCachePath
 	);
@@ -77,9 +83,9 @@ private:
 	Ref< db::Database > m_database;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< physics::PhysicsManager > m_physicsManager;
 	std::wstring m_assetPath;
 	std::wstring m_modelCachePath;
 };
 
-	}
 }

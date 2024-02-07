@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,6 +41,7 @@ class BodyDesc;
 class Body;
 class JointDesc;
 class Joint;
+class Mesh;
 
 /*! Ray query result.
  * \ingroup Physics
@@ -215,7 +216,20 @@ public:
 	 * \param tag Optional name tag of body; only for debugging.
 	 * \return Rigid body instance.
 	 */
-	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag = 0) = 0;
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const wchar_t* const tag = nullptr) = 0;
+
+	/*! Create rigid body from an explicit mesh.
+	 *
+	 * \note Created body are initially disabled; need to call setEnable(true)
+	 * in order to add to simulation.
+	 *
+	 * \param resourceManager Resource manager.
+	 * \param desc Rigid body description.
+	 * \param mesh Mesh shape.
+	 * \param tag Optional name tag of body; only for debugging.
+	 * \return Rigid body instance.
+	 */
+	virtual Ref< Body > createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc, const Mesh* mesh, const wchar_t* const tag = nullptr) = 0;
 
 	/*! Create joint between bodies.
 	 *

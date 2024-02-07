@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -60,13 +60,14 @@ void EditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
-	std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
+	const std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
+	const std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
 	outEntityFactories.push_back(new EntityFactory(
 		context->getSourceDatabase(),
 		context->getResourceManager(),
 		context->getRenderSystem(),
+		context->getPhysicsManager(),
 		assetPath,
 		modelCachePath
 	));

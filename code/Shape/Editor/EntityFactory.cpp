@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,12 +38,14 @@ EntityFactory::EntityFactory(
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
+	physics::PhysicsManager* physicsManager,
 	const std::wstring& assetPath,
 	const std::wstring& modelCachePath
 )
 :	m_database(database)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
+,	m_physicsManager(physicsManager)
 ,	m_assetPath(assetPath)
 ,	m_modelCachePath(modelCachePath)
 {
@@ -106,9 +108,11 @@ Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world:
 			return nullptr;
 
 		return new SplineComponent(
+			m_resourceManager,
 			m_renderSystem,
+			m_physicsManager,
 			shader,
-			splineComponentData->isClosed()
+			splineComponentData
 		);
 	}
 	else

@@ -22,6 +22,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::physics
+{
+
+class Body;
+class PhysicsManager;
+
+}
+
 namespace traktor::render
 {
 
@@ -29,6 +37,13 @@ class Buffer;
 class IRenderSystem;
 class IVertexLayout;
 class Shader;
+
+}
+
+namespace traktor::resource
+{
+
+class IResourceManager;
 
 }
 
@@ -44,6 +59,8 @@ class WorldRenderView;
 namespace traktor::shape
 {
 
+class SplineComponentData;
+
 /*! Spline entity.
  * \ingroup Shape
  */
@@ -53,9 +70,11 @@ class T_DLLCLASS SplineComponent : public world::IEntityComponent
 
 public:
 	explicit SplineComponent(
+		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
+		physics::PhysicsManager* physicsManager,
 		const resource::Proxy< render::Shader >& shader,
-		bool closed
+		const SplineComponentData* data
 	);
 
 	virtual void destroy() override final;
@@ -82,19 +101,24 @@ private:
 		render::Primitives primitives;
 	};
 
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< physics::PhysicsManager > m_physicsManager;
+
 	resource::Proxy< render::Shader > m_shader;
 
+	Ref< const SplineComponentData > m_data;
 	world::Entity* m_owner = nullptr;
 
 	TransformPath m_path;
-	bool m_closed;
 	bool m_dirty;
 
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	AlignedVector< MaterialBatch > m_batches;
+
+	Ref< physics::Body > m_body;
 };
 
 }
