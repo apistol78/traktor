@@ -30,7 +30,7 @@ SoundPanel::SoundPanel(editor::IEditor* editor)
 
 bool SoundPanel::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"100%", 8_ut, 8_ut)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8_ut, 8_ut)))
 		return false;
 
 	setText(i18n::Text(L"SOUND_EDITOR_SOUND_PANEL"));
