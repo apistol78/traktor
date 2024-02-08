@@ -6712,6 +6712,16 @@
 													<excludeFilter/>
 													<items/>
 												</item>
+												<item type="Filter">
+													<name>IIR</name>
+													<items>
+														<item type="File" version="1">
+															<fileName>Filters/IIR/*.*</fileName>
+															<excludeFilter/>
+															<items/>
+														</item>
+													</items>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">

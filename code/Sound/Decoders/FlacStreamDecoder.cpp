@@ -87,6 +87,8 @@ public:
 
 	bool getBlock(AudioBlock& outBlock)
 	{
+		m_keepOffset = std::min(m_keepOffset, m_decodedCount);
+
 		if (m_keepOffset > 0)
 		{
 			std::memmove(&m_decoded[SbcLeft][0], &m_decoded[SbcLeft][m_keepOffset], (m_decodedCount - m_keepOffset) * sizeof(float));
