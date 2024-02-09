@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 /*! Reverb filter.
  * \ingroup Sound
@@ -33,13 +31,6 @@ class T_DLLCLASS ReverbFilter : public IAudioFilter
 public:
 	ReverbFilter();
 
-	ReverbFilter(
-		int32_t delay,
-		float duration,
-		float cutOff,
-		float wet
-	);
-
 	virtual Ref< IAudioFilterInstance > createInstance() const override final;
 
 	virtual void apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const override final;
@@ -47,12 +38,10 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	int32_t m_delay;
-	float m_duration;
-	float m_cutOff;
-	float m_wet;
+	int32_t m_delay[4];
+	float m_decay;
+	float m_feedback;
 };
 
-	}
 }
 

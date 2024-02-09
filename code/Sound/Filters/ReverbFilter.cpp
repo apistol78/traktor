@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,6 +15,7 @@
 #include "Core/Serialization/AttributeUnit.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Sound/Filters/ReverbFilter.h"
 
 namespace traktor::sound
@@ -22,16 +23,10 @@ namespace traktor::sound
 	namespace
 	{
 
-enum
-{
-	DelayCount = 8,
-	SerialCount = 2
-};
-
 class Delay
 {
 public:
-	Delay(uint32_t samples)
+	explicit Delay(uint32_t samples)
 	:	m_count(0)
 	{
 		m_buffer.resize(samples, 0.0f);
@@ -45,7 +40,7 @@ public:
 
 	float get() const
 	{
-		int32_t index = (m_count + 1) % m_buffer.size();
+		const int32_t index = (m_count + 1) % m_buffer.size();
 		return m_buffer[index];
 	}
 
@@ -58,28 +53,23 @@ struct ReverbFilterInstance : public RefCountImpl< IAudioFilterInstance >
 {
 	struct Channel
 	{
-		AutoPtr< Delay > delay[DelayCount];
-		float history;
-		float historyLF[4];
+		AutoPtr< Delay > delay[4];
 	};
 
 	Channel m_channels[SbcMaxChannelCount];
 
-	ReverbFilterInstance(int32_t delay)
+	ReverbFilterInstance(const int32_t* delay)
 	{
-		for (uint32_t i = 0; i < sizeof_array(m_channels); ++i)
+		for (auto& channel : m_channels)
 		{
-			for (int32_t j = 0; j < DelayCount; ++j)
+			for (int32_t i = 0; i < 4; ++i)
 			{
-				m_channels[i].delay[j].reset(new Delay(
-					((j + 1) * delay * 441) / (DelayCount * 10)
-				));
+				const int32_t delaySamples = (int32_t)(delay[i] * 44.1f);
+				if (delaySamples > 0)
+					channel.delay[i].reset(new Delay(delaySamples));
+				else
+					break;
 			}
-			m_channels[i].history = 0.0f;
-			m_channels[i].historyLF[0] = 0.0f;
-			m_channels[i].historyLF[1] = 0.0f;
-			m_channels[i].historyLF[2] = 0.0f;
-			m_channels[i].historyLF[3] = 0.0f;
 		}
 	}
 
@@ -97,86 +87,52 @@ struct ReverbFilterInstance : public RefCountImpl< IAudioFilterInstance >
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.ReverbFilter", 0, ReverbFilter, IAudioFilter)
 
 ReverbFilter::ReverbFilter()
-:	m_delay(100)
-,	m_duration(0.5f)
-,	m_cutOff(22050.0f)
-,	m_wet(0.25f)
+:	m_decay(0.1f)
+,	m_feedback(0.1f)
 {
-}
-
-ReverbFilter::ReverbFilter(
-	int32_t delay,
-	float duration,
-	float cutOff,
-	float wet
-)
-:	m_delay(delay)
-,	m_duration(duration)
-,	m_cutOff(cutOff)
-,	m_wet(wet)
-{
+	m_delay[0] = 17;
+	m_delay[1] = 37;
+	m_delay[2] = 61;
+	m_delay[3] = 97;
 }
 
 Ref< IAudioFilterInstance > ReverbFilter::createInstance() const
 {
-	Ref< ReverbFilterInstance > instance = new ReverbFilterInstance(m_delay);
-	return instance;
+	return new ReverbFilterInstance(m_delay);
 }
 
 void ReverbFilter::apply(IAudioFilterInstance* instance, AudioBlock& outBlock) const
 {
 	ReverbFilterInstance* rfi = static_cast< ReverbFilterInstance* >(instance);
-
-	float dT = 1.0f / outBlock.sampleRate;
-	float gain = 0.5f;
-	float Krt = 1.0f - (dT * 1000.0f) / m_duration;
-	float alpha = dT / (dT + 1.0f / m_cutOff);
-
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
 		ReverbFilterInstance::Channel& channel = rfi->m_channels[i];
 		float* samples = outBlock.samples[i];
-
 		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
 		{
-			float Sin = samples[j];
-			float Sout = 0.0f;
-
-			float S = Sin + channel.history;
-
-			for (uint32_t ii = 0; ii < 4; ++ii)
+			float S = samples[j];
+			for (uint32_t k = 0; k < 4; ++k)
 			{
-				S = (S - channel.historyLF[ii]) * alpha + channel.historyLF[ii];
-				channel.historyLF[ii] = S;
+				if (channel.delay[k].c_ptr() == nullptr)
+					break;
 
-				for (uint32_t k = 0; k < 2; ++k)
-				{
-					float Sd = channel.delay[ii * 2 + k]->get();
-					float S0 = S + Sd * -gain;
-					S = Sd + S0 * gain;
-					channel.delay[ii * 2 + k]->put(S0);
-				}
+				const float Sdelay = channel.delay[k]->get();
+				const float Sneg = Sdelay + S * -m_feedback;
+				channel.delay[k]->put(S + Sneg * m_decay);
 
-				Sout += S;
+				S = Sneg;
 
-				channel.history = S * Krt;
-
-				S = S * Krt + samples[j];
 			}
-
-			Sout /= 4.0f;
-
-			samples[j] = lerp(Sin, Sout, m_wet);
+			samples[j] = S;
 		}
 	}
 }
 
 void ReverbFilter::serialize(ISerializer& s)
 {
-	s >> Member< int32_t >(L"delay", m_delay, AttributeRange(1));
-	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f) | AttributeUnit(UnitType::Seconds));
-	s >> Member< float >(L"cutOff", m_cutOff, AttributeRange(0.0f));
-	s >> Member< float >(L"wet", m_wet, AttributeRange(0.0f, 1.0f));
+	s >> MemberStaticArray< int32_t, 4 >(L"delay", m_delay);
+	s >> Member< float >(L"decay", m_decay, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
+	s >> Member< float >(L"feedback", m_feedback, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 }
 
 }
