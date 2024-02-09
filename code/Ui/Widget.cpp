@@ -372,7 +372,7 @@ bool Widget::hitTest(const Point& pt) const
 	return m_widget->hitTest(pt);
 }
 
-void Widget::setChildRects(const WidgetRect* childRects, uint32_t count)
+void Widget::setChildRects(const WidgetRect* childRects, uint32_t count, bool redraw)
 {
 	T_ASSERT(m_widget);
 	StaticVector< IWidgetRect, 32 > internalChildRects;
@@ -384,7 +384,7 @@ void Widget::setChildRects(const WidgetRect* childRects, uint32_t count)
 			internalChildRects[j].widget = childRects[i + j].widget->getIWidget();
 			internalChildRects[j].rect = childRects[i + j].rect;
 		}
-		m_widget->setChildRects(internalChildRects.c_ptr(), slice);
+		m_widget->setChildRects(internalChildRects.c_ptr(), slice, redraw);
 	}
 }
 

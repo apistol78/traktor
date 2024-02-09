@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,14 +15,12 @@
 #include "Ui/Rect.h"
 #include "Ui/Font.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IFontMetric;
 
-/*! \brief
+/*!
  * \ingroup UI
  */
 struct IWidgetRect
@@ -97,7 +95,7 @@ public:
 
 	virtual bool hitTest(const Point& pt) const = 0;
 
-	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) = 0;
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count, bool redraw) = 0;
 
 	virtual Size getMinimumSize() const = 0;
 
@@ -116,6 +114,5 @@ public:
 	virtual SystemWindow getSystemWindow() = 0;
 };
 
-	}
 }
 

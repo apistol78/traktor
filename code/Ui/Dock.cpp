@@ -91,14 +91,11 @@ DockPane* Dock::getPane() const
 
 void Dock::update(const Rect* rc, bool immediate)
 {
+	// Update child widgets.
 	const Rect innerRect = getInnerRect();
-
-	// Update chains, calculate deferred child widget rectangles.
 	std::vector< WidgetRect > widgetRects;
 	m_pane->update(innerRect, widgetRects);
-
-	// Update child widgets.
-	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size());
+	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), false);
 
 	// Continue updating widget.
 	Widget::update(rc, immediate);
@@ -171,7 +168,12 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 	{
 		m_splittingPane->setSplitterPosition(position);
 		cursor = m_splittingPane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE;
-		update();
+
+		// Update child widgets of modified pane.
+		const Rect paneRect = m_splittingPane->getPaneRect();
+		std::vector< WidgetRect > widgetRects;
+		m_splittingPane->update(paneRect, widgetRects);
+		setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
 	}
 
 	setCursor(cursor);

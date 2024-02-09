@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -313,7 +313,7 @@ public:
 		return bool(WindowFromPoint(pnt) == m_hWnd);
 	}
 
-	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) override
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count, bool redraw) override
 	{
 		HDWP hdwp = BeginDeferWindowPos((int)count);
 		if (hdwp)
@@ -328,7 +328,7 @@ public:
 					childRects[i].rect.top,
 					childRects[i].rect.getWidth(),
 					childRects[i].rect.getHeight(),
-					SWP_NOZORDER | SWP_NOACTIVATE
+					SWP_NOZORDER | SWP_NOACTIVATE | (redraw ? 0 : SWP_NOREDRAW)
 				);
 				if (!hdwp)
 					break;
@@ -350,7 +350,7 @@ public:
 				childRects[i].rect.top,
 				childRects[i].rect.getWidth(),
 				childRects[i].rect.getHeight(),
-				SWP_NOZORDER | SWP_NOACTIVATE
+				SWP_NOZORDER | SWP_NOACTIVATE | (redraw ? 0 : SWP_NOREDRAW)
 			);
 		}
 	}
@@ -445,7 +445,6 @@ protected:
 	bool m_ownCursor;
 	bool m_tracking;
 	int32_t m_interval;
-	//int32_t m_dpi;
 
 	static
 	void getNativeStyles(int style, UINT& nativeStyle, UINT& nativeStyleEx)

@@ -288,7 +288,7 @@ void TableLayout::update(Widget* widget)
 		}
 	}
 
-	widget->setChildRects(rects.c_ptr(), (uint32_t)rects.size());
+	widget->setChildRects(rects.c_ptr(), (uint32_t)rects.size(), true);
 }
 
 	}
