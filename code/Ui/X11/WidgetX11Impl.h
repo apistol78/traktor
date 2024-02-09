@@ -394,7 +394,7 @@ public:
 		return getInnerRect().inside(cpt);
 	}
 
-	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count) override
+	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count, bool redraw) override
 	{
 		for (uint32_t i = 0; i < count; ++i)
 		{

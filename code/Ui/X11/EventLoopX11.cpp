@@ -23,6 +23,40 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+MouseMoveEvent createMouseMoveEvent(Context* context, EventSubject* owner, XEvent& e)
+{
+	int32_t button = 0;
+	if ((e.xmotion.state & Button1Mask) != 0)
+		button = MbtLeft;
+	if ((e.xmotion.state & Button2Mask) != 0)
+		button = MbtMiddle;
+	if ((e.xmotion.state & Button3Mask) != 0)
+		button = MbtRight;
+
+	Window dw; int x, y;
+	XTranslateCoordinates(
+		context->getDisplay(),
+		e.xmotion.window,
+		DefaultRootWindow(context->getDisplay()),
+		e.xmotion.x,
+		e.xmotion.y,
+		&x,
+		&y,
+		&dw
+	);
+
+	return MouseMoveEvent(
+		owner,
+		button,
+		Point(x, y)
+	);
+}
+
+
+	}
 
 EventLoopX11::EventLoopX11(Context* context)
 :	m_context(context)
@@ -95,7 +129,10 @@ bool EventLoopX11::process(EventSubject* owner)
 int32_t EventLoopX11::execute(EventSubject* owner)
 {
 	SmallSet< Window > exposeWindows;
+	XEvent pendingMotion;
 	XEvent e;
+
+	pendingMotion.type = 0;
 
 	int fd = ConnectionNumber(m_context->getDisplay());
 	bool idle = true;
@@ -114,13 +151,38 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 				if (XPending(m_context->getDisplay()))
 				{
 					XNextEvent(m_context->getDisplay(), &e);
-					if (e.type != Expose)
+
+					if (e.type == MotionNotify)
 					{
+						if (pendingMotion.type == MotionNotify)
+						{
+							if (
+								pendingMotion.xmotion.window == e.xmotion.window &&
+								pendingMotion.xmotion.state == e.xmotion.state
+							)
+								pendingMotion = e;
+							else
+							{
+								if (!preTranslateEvent(owner, pendingMotion))
+									m_context->dispatch(pendingMotion);								
+							}
+						}
+						pendingMotion = e;
+					}
+					else if (e.type == Expose)
+						exposeWindows.insert(e.xexpose.window);
+					else
+					{
+						if (pendingMotion.type == MotionNotify)
+						{
+							if (!preTranslateEvent(owner, pendingMotion))
+								m_context->dispatch(pendingMotion);
+							pendingMotion.type = 0;						
+						}
+
 						if (!preTranslateEvent(owner, e))
 							m_context->dispatch(e);
 					}
-					else
-						exposeWindows.insert(e.xexpose.window);
 				}
 				else
 				{
@@ -141,6 +203,13 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 				}
 			}
 
+			if (pendingMotion.type == MotionNotify)
+			{
+				if (!preTranslateEvent(owner, pendingMotion))
+					m_context->dispatch(pendingMotion);
+				pendingMotion.type = 0;						
+			}
+			
 			for (auto window : exposeWindows)
 			{
 				e.type = Expose;
