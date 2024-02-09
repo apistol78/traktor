@@ -73,7 +73,15 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 			m_effectEntity->setTransform(Transform(T.translation()));
 	}
 
-	return !m_effectComponent->isFinished();
+	if (m_effectComponent->isFinished())
+	{
+		m_world->removeEntity(m_effectEntity);
+		safeDestroy(m_effectEntity);
+		m_effectComponent = nullptr;
+		return false;	
+	}
+
+	return true;
 }
 
 void SpawnEffectEventInstance::cancel(world::Cancel when)
@@ -84,6 +92,7 @@ void SpawnEffectEventInstance::cancel(world::Cancel when)
 		{
 			m_world->removeEntity(m_effectEntity);
 			safeDestroy(m_effectEntity);
+			m_effectComponent = nullptr;
 		}
 	}
 	else
