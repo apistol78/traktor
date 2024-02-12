@@ -89,7 +89,11 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 			m_sequenceInstance->update(context, transform, time - m_start, enable);
 	}
 
-	if (enable != m_enable)
+	if (
+		enable != m_enable &&
+		context.owner != nullptr &&
+		context.owner->getWorld() != nullptr
+	)
 	{
 		auto eventManager = context.owner->getWorld()->getComponent< world::EntityEventManager >();
 		if (eventManager)

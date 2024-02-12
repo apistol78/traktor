@@ -190,7 +190,6 @@ void EffectPreviewControl::setEffect(const EffectData* effectData, Effect* effec
 	{
 		m_effectEntity = new world::Entity();
 		m_effectEntity->setComponent(new EffectComponent(resource::Proxy< Effect >(m_effect)));
-		m_effectEntity->update({});
 	}
 	else
 		m_effectEntity = nullptr;

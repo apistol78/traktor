@@ -228,9 +228,10 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 		else if (filter == nullptr && entity->getState().visible == false)
 			continue;
 
-		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
-		if (entityRenderer)
-			m_gatheredView.renderables.push_back({ entityRenderer, entity });
+		//#todo No longer allow entities to be rendered.
+		//IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
+		//if (entityRenderer)
+		//	m_gatheredView.renderables.push_back({ entityRenderer, entity });
 
 		for (auto component : entity->getComponents())
 		{
