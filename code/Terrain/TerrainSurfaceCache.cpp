@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,6 +27,7 @@ namespace traktor::terrain
 
 const render::Handle c_handleTerrain_ColorEnable(L"Terrain_ColorEnable");
 const render::Handle c_handleTerrain_Heightfield(L"Terrain_Heightfield");
+const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
 const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
 const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
 const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
@@ -190,6 +191,7 @@ void TerrainSurfaceCache::setupBaseColor(
 				return;
 
 			render::ITexture* heightMap = terrain->getHeightMap();
+			render::ITexture* normalMap = terrain->getNormalMap();
 			render::ITexture* colorMap = terrain->getColorMap();
 			render::ITexture* splatMap = terrain->getSplatMap();
 
@@ -203,6 +205,7 @@ void TerrainSurfaceCache::setupBaseColor(
 			auto programParams = renderContext->alloc< render::ProgramParameters >();
 			programParams->beginParameters(renderContext);
 			programParams->setTextureParameter(c_handleTerrain_Heightfield, heightMap);
+			programParams->setTextureParameter(c_handleTerrain_Normals, normalMap);
 			programParams->setTextureParameter(c_handleTerrain_ColorMap, colorMap);
 			programParams->setTextureParameter(c_handleTerrain_SplatMap, splatMap);
 			programParams->setVectorParameter(c_handleTerrain_WorldOrigin, worldOrigin);
