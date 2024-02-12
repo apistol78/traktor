@@ -90,6 +90,11 @@ bool traktorContactAdded(
 	return true;
 }
 
+bool traktorContactDestroyed(void*)
+{
+	return true;
+}
+
 class MeshProxyIndexVertexArray : public btStridingMeshInterface
 {
 public:
@@ -593,6 +598,9 @@ bool PhysicsManagerBullet::create(const PhysicsCreateDesc& desc)
 	// since no manager data is accessed this can be set by multiple managers if necessary.
 	// But we cannot remove it since it's not reference counted.
 	gContactAddedCallback = traktorContactAdded;
+
+	// Need to clear user pointer from manifold's contact points.
+	gContactDestroyedCallback = traktorContactDestroyed;
 	return true;
 }
 
