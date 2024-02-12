@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,9 +11,11 @@
 #include "Spray/EmitterInstance.h"
 #include "Spray/SequenceInstance.h"
 #include "Spray/TrailInstance.h"
+#include "World/Entity.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
 #include "World/EntityEventManager.h"
+#include "World/World.h"
 
 namespace traktor::spray
 {
@@ -87,19 +89,22 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 			m_sequenceInstance->update(context, transform, time - m_start, enable);
 	}
 
-	//if (enable != m_enable && context.eventManager)
-	//{
-	//	if (m_triggerInstance)
-	//		m_triggerInstance->cancel(world::Cancel::Immediate);
+	if (enable != m_enable)
+	{
+		auto eventManager = context.owner->getWorld()->getComponent< world::EntityEventManager >();
+		if (eventManager)
+		{
+			if (m_triggerInstance)
+				m_triggerInstance->cancel(world::Cancel::Immediate);
 
-	//	m_triggerInstance = context.eventManager->raise(
-	//		enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
-	//		context.owner,
-	//		context.owner ? Transform::identity() : transform
-	//	);
-
-	//	m_enable = enable;
-	//}
+			m_triggerInstance = eventManager->raise(
+				enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
+				context.owner,
+				context.owner ? Transform::identity() : transform
+			);
+		}
+		m_enable = enable;
+	}
 }
 
 void EffectLayerInstance::synchronize()
