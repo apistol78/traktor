@@ -21,7 +21,8 @@ Timer::Timer()
 
 void Timer::reset()
 {
-	m_last =
+	m_first = 0.0;
+	m_last = 0.0;
 	m_first = getElapsedTime();
 }
 
