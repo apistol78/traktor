@@ -123,7 +123,12 @@ bool BodyBullet::isKinematic() const
 void BodyBullet::setActive(bool active)
 {
 	if (m_body)
-		m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
+	{
+		if (active)
+			m_body->activate(true);
+		else
+			m_body->forceActivationState(ISLAND_SLEEPING);
+	}
 }
 
 bool BodyBullet::isActive() const
