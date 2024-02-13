@@ -73,7 +73,8 @@ void World::addEntity(Entity* entity)
 void World::removeEntity(Entity* entity)
 {
 	T_FATAL_ASSERT(entity->m_world == this);
-	m_entities.remove(entity);
+	const bool removed = m_entities.remove(entity);
+	T_FATAL_ASSERT(removed);
 	entity->m_world = nullptr;
 }
 
