@@ -25,6 +25,26 @@ namespace traktor::model
 	namespace
 	{
 
+std::wstring decodeString(const std::wstring& text)
+{
+	std::vector< wchar_t > chrs;
+	for (size_t i = 0; i < text.length(); )
+	{
+		if (text[i] == L'%' && i < text.length() - 2)
+		{
+			char hex[] = { char(text[i + 1]), char(text[i + 2]), 0 };
+			chrs.push_back(wchar_t(std::strtol(hex, 0, 16)));
+			i += 3;
+		}
+		else
+		{
+			chrs.push_back(wchar_t(text[i]));
+			i++;
+		}
+	}
+	return std::wstring(chrs.begin(), chrs.end());
+}
+
 Matrix44 parseTransform(const json::JsonObject* node)
 {
 	Matrix44 transform = Matrix44::identity();
@@ -302,7 +322,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			}
 			else
 			{
-				if ((bufferStreams[i] = FileSystem::getInstance().open(dirPath + Path(uri), File::FmRead)) == nullptr)
+				if ((bufferStreams[i] = FileSystem::getInstance().open(dirPath + Path(decodeString(uri)), File::FmRead)) == nullptr)
 					return nullptr;
 			}
 		}
@@ -386,7 +406,7 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 			if (pbrMetallicRoughness)
 			{
 				const float metallicFactor = pbrMetallicRoughness->getMemberFloat(L"metallicFactor", 1.0f);
-				const float roughnessFactor = pbrMetallicRoughness->getMemberFloat(L"roughnessFactor", 1.0f);
+				const float roughnessFactor = pbrMetallicRoughness->getMemberFloat(L"roughnessFactor", 0.5f);
 
 				const auto baseColorTexture = pbrMetallicRoughness->getMemberValue(L"baseColorTexture").getObject< json::JsonObject >();
 				if (baseColorTexture)
@@ -536,19 +556,12 @@ Ref< Model > ModelFormatGltf::read(const Path& filePath, const std::wstring& fil
 	//scene->getMemberInt32(L"nodes");
 
 
-	const Matrix44 TpostA(
+	const Matrix44 Tpost(
 		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, -1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
-	const Matrix44 TpostB(
-		 0.0f, 0.0f, 1.0f, 0.0f,
-		 0.0f, 1.0f, 0.0f, 0.0f,
-		-1.0f, 0.0f, 0.0f, 0.0f,
-		 0.0f, 0.0f, 0.0f, 1.0f
-	);
-	const Matrix44 Tpost = TpostB * TpostA;
 
 	// Parse skeleton.
 	auto skins = docobj->getMemberValue(L"skins").getObject< json::JsonArray >();
