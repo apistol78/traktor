@@ -22,7 +22,6 @@ SoundComponent::SoundComponent(sound::ISoundPlayer* soundPlayer, const resource:
 {
 }
 
-
 void SoundComponent::destroy()
 {
 	stop();
@@ -64,6 +63,12 @@ void SoundComponent::stop()
 
 	m_handle->stop();
 	m_handle = nullptr;
+}
+
+void SoundComponent::setVolume(float volume)
+{
+	if (m_handle != nullptr)
+		m_handle->setVolume(volume);
 }
 
 void SoundComponent::setPitch(float pitch)

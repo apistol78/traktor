@@ -29,6 +29,7 @@ void SprayClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classSoundComponent = new AutoRuntimeClass< SoundComponent >();
 	classSoundComponent->addMethod("play", &SoundComponent::play);
 	classSoundComponent->addMethod("stop", &SoundComponent::stop);
+	classSoundComponent->addMethod("setVolume", &SoundComponent::setVolume);
 	classSoundComponent->addMethod("setPitch", &SoundComponent::setPitch);
 	classSoundComponent->addMethod("setParameter", &SoundComponent::setParameter);
 	registrar->registerClass(classSoundComponent);

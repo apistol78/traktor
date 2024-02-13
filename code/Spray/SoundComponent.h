@@ -55,6 +55,8 @@ public:
 
 	void stop();
 
+	void setVolume(float volume);
+
 	void setPitch(float pitch);
 
 	void setParameter(int32_t id, float parameter);
