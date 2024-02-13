@@ -1443,115 +1443,124 @@ void ShaderGraphEditorPage::updateGraph()
 	// Evaluate output types (and partial values) if validation succeeded.
 	if (validationResult && resolvedShaderGraph)
 	{
-		// Prepare evaluation graph, ie graph which contain less meta nodes so evaluator can process graph properly.
-		Ref< ShaderGraph > evaluationGraph = ShaderGraphStatic(resolvedShaderGraph, Guid()).getVariableResolved();
-		evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getConnectedPermutation();
-		evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getTypePermutation();
-
-		const ShaderGraphEvaluator evaluator(evaluationGraph);
-
-		for (auto editorEdge : m_editorGraph->getEdges())
+		do
 		{
-			Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
-			T_ASSERT(shaderEdge);
+			// Prepare evaluation graph, ie graph which contain less meta nodes so evaluator can process graph properly.
+			Ref< ShaderGraph > evaluationGraph = ShaderGraphStatic(resolvedShaderGraph, Guid()).getVariableResolved();
+			if (!evaluationGraph)
+				break;
+			evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getConnectedPermutation();
+			if (!evaluationGraph)
+				break;
+			evaluationGraph = ShaderGraphStatic(evaluationGraph, Guid()).getTypePermutation();
+			if (!evaluationGraph)
+				break;
 
-			Constant value;
-			for (auto edge : evaluationGraph->getEdges())
+			const ShaderGraphEvaluator evaluator(evaluationGraph);
+			for (auto editorEdge : m_editorGraph->getEdges())
 			{
-				if (
-					(
-						shaderEdge->getSource()->getNode()->getId() == edge->getSource()->getNode()->getId() &&
-						shaderEdge->getSource()->getId() == edge->getSource()->getId()
-					) ||
-					(
-						shaderEdge->getDestination()->getNode()->getId() == edge->getDestination()->getNode()->getId() &&
-						shaderEdge->getDestination()->getId() == edge->getDestination()->getId()
-					)
-				)
+				Ref< Edge > shaderEdge = editorEdge->getData< Edge >(L"SHADEREDGE");
+				T_ASSERT(shaderEdge);
+
+				Constant value;
+				for (auto edge : evaluationGraph->getEdges())
 				{
-					value = evaluator.evaluate(edge->getSource());
+					if (
+						(
+							shaderEdge->getSource()->getNode()->getId() == edge->getSource()->getNode()->getId() &&
+							shaderEdge->getSource()->getId() == edge->getSource()->getId()
+						) ||
+						(
+							shaderEdge->getDestination()->getNode()->getId() == edge->getDestination()->getNode()->getId() &&
+							shaderEdge->getDestination()->getId() == edge->getDestination()->getId()
+						)
+					)
+					{
+						value = evaluator.evaluate(edge->getSource());
+						break;
+					}
+				}
+
+				// Set default thickness first; override below for "fat" types.
+				editorEdge->setThickness(2_ut);
+
+				StringOutputStream ss;
+				switch (value.getType())
+				{
+				default:
+				case PinType::Void:
+					break;
+
+				case PinType::Scalar1:
+				case PinType::Scalar2:
+				case PinType::Scalar3:
+				case PinType::Scalar4:
+					for (int32_t i = 0; i < value.getWidth(); ++i)
+					{
+						if (i > 0)
+							ss << L",";
+
+						if (value.isConst(i))
+							ss << value.getValue(i);
+						else
+							ss << L"X";
+					}
+					break;
+
+				case PinType::Matrix:
+					ss << L"Matrix";
+					break;
+
+				case PinType::Texture2D:
+					ss << L"Texture2d";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Texture3D:
+					ss << L"Texture3d";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::TextureCube:
+					ss << L"TextureCube";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::StructBuffer:
+					ss << L"StructBuffer";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Image2D:
+					ss << L"Image2d";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Image3D:
+					ss << L"Image3d";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::ImageCube:
+					ss << L"ImageCube";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::State:
+					ss << L"State";
+					editorEdge->setThickness(4_ut);
+					break;
+
+				case PinType::Bundle:
+					ss << L"Bundle";
+					editorEdge->setThickness(6_ut);
 					break;
 				}
+
+				editorEdge->setText(ss.str());
 			}
-
-			// Set default thickness first; override below for "fat" types.
-			editorEdge->setThickness(2_ut);
-
-			StringOutputStream ss;
-			switch (value.getType())
-			{
-			default:
-			case PinType::Void:
-				break;
-
-			case PinType::Scalar1:
-			case PinType::Scalar2:
-			case PinType::Scalar3:
-			case PinType::Scalar4:
-				for (int32_t i = 0; i < value.getWidth(); ++i)
-				{
-					if (i > 0)
-						ss << L",";
-
-					if (value.isConst(i))
-						ss << value.getValue(i);
-					else
-						ss << L"X";
-				}
-				break;
-
-			case PinType::Matrix:
-				ss << L"Matrix";
-				break;
-
-			case PinType::Texture2D:
-				ss << L"Texture2d";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::Texture3D:
-				ss << L"Texture3d";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::TextureCube:
-				ss << L"TextureCube";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::StructBuffer:
-				ss << L"StructBuffer";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::Image2D:
-				ss << L"Image2d";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::Image3D:
-				ss << L"Image3d";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::ImageCube:
-				ss << L"ImageCube";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::State:
-				ss << L"State";
-				editorEdge->setThickness(4_ut);
-				break;
-
-			case PinType::Bundle:
-				ss << L"Bundle";
-				editorEdge->setThickness(6_ut);
-				break;
-			}
-
-			editorEdge->setText(ss.str());
 		}
+		while (false);
 	}
 	else
 	{
