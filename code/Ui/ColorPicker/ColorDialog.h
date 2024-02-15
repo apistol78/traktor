@@ -61,7 +61,7 @@ private:
 	Ref< AlphaGradient > m_alphaGradient;
 	Color4f m_color;
 
-	void updateControls();
+	void updateTextControls();
 
 	void eventGradientColorSelect(ColorEvent* event);
 

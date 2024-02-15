@@ -44,7 +44,9 @@ public:
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 
-	void setColor(const Color4ub& color, bool updateCursor);
+	void setPrimaryColor(const Color4ub& color);
+
+	void setCursorColor(const Color4ub& color);
 
 	Color4ub getColor() const;
 

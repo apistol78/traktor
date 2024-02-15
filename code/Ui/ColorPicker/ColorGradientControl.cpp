@@ -14,14 +14,12 @@
 #include "Ui/ColorPicker/ColorGradientControl.h"
 #include "Ui/ColorPicker/ColorUtilities.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorGradientControl", ColorGradientControl, Widget)
 
-bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& color)
+bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& primaryColor)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -34,7 +32,7 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& col
 	m_gradientImage = new drawing::Image(drawing::PixelFormat::getR8G8B8(), 256, 256);
 	m_gradientBitmap = new Bitmap(256, 256);
 
-	setColor(color, true);
+	setPrimaryColor(primaryColor);
 	update();
 
 	return true;
@@ -46,7 +44,7 @@ Size ColorGradientControl::getPreferredSize(const Size& hint) const
 	return Size(size, size);
 }
 
-void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
+void ColorGradientControl::setPrimaryColor(const Color4ub& color)
 {
 	float rgba[4];
 	color.getRGBA32F(rgba);
@@ -55,14 +53,19 @@ void ColorGradientControl::setColor(const Color4ub& color, bool updateCursor)
 	RGBtoHSV(Color4f(rgba), hsv);
 
 	m_hue = hsv[0];
-
-	if (updateCursor)
-	{
-		m_cursor.x = int(hsv[2] * 255.0f);
-		m_cursor.y = int((1.0f - hsv[1]) * 255.0f);
-	}
-
 	updateGradientImage();
+}
+
+void ColorGradientControl::setCursorColor(const Color4ub& color)
+{
+	float rgba[4];
+	color.getRGBA32F(rgba);
+
+	float hsv[3];
+	RGBtoHSV(Color4f(rgba), hsv);
+	
+	m_cursor.x = int(hsv[2] * 255.0f);
+	m_cursor.y = int((1.0f - hsv[1]) * 255.0f);
 }
 
 Color4ub ColorGradientControl::getColor() const
@@ -164,5 +167,4 @@ void ColorGradientControl::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

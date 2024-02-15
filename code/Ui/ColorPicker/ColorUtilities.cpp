@@ -68,7 +68,7 @@ void RGBtoHSV(const Color4f& rgb, float outHsv[3])
 
 	outHsv[2] = c[mx];
 
-	if (mx == 0)
+	if (c[mx] == 0)
 		outHsv[1] = 0.0f;
 	else
 		outHsv[1] = 1.0f - c[mn] / c[mx];

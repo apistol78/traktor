@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,7 @@
 #include "Ui/ColorPicker/ColorSliderControl.h"
 #include "Ui/ColorPicker/ColorControl.h"
 #include "Ui/ColorPicker/ColorEvent.h"
+#include "Ui/ColorPicker/ColorUtilities.h"
 
 namespace traktor::ui
 {
@@ -163,11 +164,9 @@ Color4f ColorDialog::getColor() const
 	return m_color;
 }
 
-void ColorDialog::updateControls()
+void ColorDialog::updateTextControls()
 {
 	Color4f cl = m_color;
-
-	const float ev = cl.getEV();
 	cl.setEV(0.0_simd);
 
 	const Color4ub club = cl.saturated().toColor4ub();
@@ -180,76 +179,88 @@ void ColorDialog::updateControls()
 		m_editColor[3]->setText(toString< int32_t >(club.a));
 
 	if (m_editColor[4])
-		m_editColor[4]->setText(toString< int32_t >(int32_t(ev + 0.5f)));
-
-	if (m_alphaGradient)
-	{
-		m_alphaGradient->color = club;
-		m_sliderAlphaControl->updateGradient();
-		m_sliderAlphaControl->update();
-	}
-
-	m_colorControl->setColor(club);
-	m_colorControl->update();
-
-	m_gradientControl->setColor(club, false);
-	m_gradientControl->update();
+		m_editColor[4]->setText(toString< int32_t >(int32_t(m_color.getEV() + 0.5f)));
 }
 
 void ColorDialog::eventGradientColorSelect(ColorEvent* event)
 {
+	// Color selected from large gradient.
 	Color4ub color = event->getColor();
 	color.a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
 
 	m_color = Color4f::fromColor4ub(color);
+
 	if (m_editColor[4])
 	{
 		const int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
 		m_color.setEV(Scalar(ev));
 	}
 
-	updateControls();
+	if (m_alphaGradient)
+	{
+		m_alphaGradient->color = color;
+		m_sliderAlphaControl->updateGradient();
+		m_sliderAlphaControl->update();
+	}
+
+	m_colorControl->setColor(color);
+	m_colorControl->update();
+
+	updateTextControls();
 }
 
 void ColorDialog::eventSliderColorSelect(ColorEvent* event)
 {
-	Color4ub color = event->getColor();
+	// Color selected from primary color slider.
+	const Color4ub primaryColor = event->getColor();
 
-	m_gradientControl->setColor(color, false);
+	m_gradientControl->setPrimaryColor(primaryColor);
 	m_gradientControl->update();
 
-	// Cycle color through gradient control as gradient colors are primary HSL colors.
-	color = m_gradientControl->getColor();
+	Color4ub color = m_gradientControl->getColor();
 	color.a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
 
-	// Just copy rgb as gradient control will reset alpha.
 	m_color = Color4f::fromColor4ub(color);
+
 	if (m_editColor[4])
 	{
-		int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
+		const int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
 		m_color.setEV(Scalar(ev));
 	}
 
-	updateControls();
+	if (m_alphaGradient)
+	{
+		m_alphaGradient->color = color;
+		m_sliderAlphaControl->updateGradient();
+		m_sliderAlphaControl->update();
+	}
+
+	m_colorControl->setColor(color);
+	m_colorControl->update();
+
+	updateTextControls();
 }
 
 void ColorDialog::eventSliderAlphaSelect(ColorEvent* event)
 {
-	Color4ub alpha = event->getColor();
+	// Alpha selected from alpha slider.
+	const Color4ub alpha = event->getColor();
 
-	int32_t r = parseString< int32_t >(m_editColor[0]->getText());
-	int32_t g = parseString< int32_t >(m_editColor[1]->getText());
-	int32_t b = parseString< int32_t >(m_editColor[2]->getText());
-	int32_t a = alpha.a;
+	Color4ub color = m_gradientControl->getColor();
+	color.a = alpha.a;
 
-	m_color = Color4f::fromColor4ub(Color4ub(r, g, b, a)).saturated();
+	m_color = Color4f::fromColor4ub(color);
+
 	if (m_editColor[4])
 	{
-		int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
+		const int32_t ev = parseString< int32_t >(m_editColor[4]->getText());
 		m_color.setEV(Scalar(ev));
 	}
 
-	updateControls();
+	m_colorControl->setColor(color);
+	m_colorControl->update();
+
+	updateTextControls();
 }
 
 void ColorDialog::eventEditFocus(FocusEvent* event)
@@ -257,15 +268,42 @@ void ColorDialog::eventEditFocus(FocusEvent* event)
 	if (!event->lostFocus())
 		return;
 
-	int32_t r = parseString< int32_t >(m_editColor[0]->getText());
-	int32_t g = parseString< int32_t >(m_editColor[1]->getText());
-	int32_t b = parseString< int32_t >(m_editColor[2]->getText());
-	int32_t a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
-	int32_t ev = m_editColor[4] ? parseString< int32_t >(m_editColor[4]->getText()) : 0;
+	const int32_t r = parseString< int32_t >(m_editColor[0]->getText());
+	const int32_t g = parseString< int32_t >(m_editColor[1]->getText());
+	const int32_t b = parseString< int32_t >(m_editColor[2]->getText());
+	const int32_t a = m_editColor[3] ? parseString< int32_t >(m_editColor[3]->getText()) : 255;
+	const int32_t ev = m_editColor[4] ? parseString< int32_t >(m_editColor[4]->getText()) : 0;
 
-	m_color = Color4f::fromColor4ub(Color4ub(r, g, b, a)).saturated();
+	const Color4ub color(r, g, b, a);
+
+	// Figure out primary color.
+	float hsv[3];
+	RGBtoHSV(Color4f::fromColor4ub(color), hsv);
+
+	hsv[1] = 1.0f;
+	hsv[2] = 1.0f;
+
+	Color4f tmp;
+	HSVtoRGB(hsv, tmp);
+	Color4ub primaryColor = tmp.toColor4ub();
+
+	// Update cursors in widgets.
+	m_gradientControl->setPrimaryColor(primaryColor);
+	m_gradientControl->setCursorColor(color);
+	m_gradientControl->update();
+
+	m_color = Color4f::fromColor4ub(color);
 	m_color.setEV(Scalar(ev));
-	updateControls();
+
+	if (m_alphaGradient)
+	{
+		m_alphaGradient->color = color;
+		m_sliderAlphaControl->updateGradient();
+		m_sliderAlphaControl->update();
+	}
+
+	m_colorControl->setColor(color);
+	m_colorControl->update();
 }
 
 }
