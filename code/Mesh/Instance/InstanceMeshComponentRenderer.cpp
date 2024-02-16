@@ -53,34 +53,14 @@ void InstanceMeshComponentRenderer::build(
 	auto meshComponent = static_cast< InstanceMeshComponent* >(renderable);
 	auto mesh = meshComponent->getMesh();
 
+	//#todo Doesn't support velocity yet.
+	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
+		return;
+
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;
 
-	const Aabb3 boundingBox = meshComponent->getBoundingBox();
-	const Transform transform = meshComponent->getTransform().get(worldRenderView.getInterval());
-
-	float distance = 0.0f;
-	if (!worldRenderView.isBoxVisible(
-		boundingBox,
-		transform,
-		distance
-	))
-		return;
-
-	const Transform transformLast = meshComponent->getTransform().get(worldRenderView.getInterval() - 1.0f);
-
-	// Skip rendering velocities if mesh hasn't moved since last frame.
-	if (worldRenderPass.getTechnique() == s_techniqueVelocityWrite)
-	{
-		if (transform == transformLast)
-			return;
-	}
-
-	m_meshInstances[mesh].push_back(InstanceMesh::RenderInstance(
-		packInstanceMeshData(transform),
-		packInstanceMeshData(transformLast),
-		distance
-	));
+	m_meshes.insert(mesh);
 }
 
 void InstanceMeshComponentRenderer::build(
@@ -89,20 +69,16 @@ void InstanceMeshComponentRenderer::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	for (auto& it : m_meshInstances)
+	for (auto& it : m_meshes)
 	{
-		if (it.second.empty())
-			continue;
-
-		it.first->build(
+		it->build(
 			context.getRenderContext(),
+			worldRenderView,
 			worldRenderPass,
-			it.second,
 			nullptr
 		);
-
-		it.second.resize(0);
 	}
+	m_meshes.reset();
 }
 
 }

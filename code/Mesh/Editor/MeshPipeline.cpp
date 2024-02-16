@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -145,7 +145,7 @@ bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Mate
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 38, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 39, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -230,6 +230,9 @@ bool MeshPipeline::buildDependencies(
 		pipelineDepends->addDependency(it.second, editor::PdfBuild | editor::PdfResource);
 
 	pipelineDepends->addDependency< render::ShaderGraph >();
+
+	// Add dependencies from mesh subsystems.
+	InstanceMeshConverter::addDependencies(pipelineDepends);
 	return true;
 }
 
@@ -449,7 +452,6 @@ bool MeshPipeline::buildOutput(
 
 	const int32_t jointCount = models[0]->getJointCount();
 	const bool vertexColor = haveVertexColors(*models[0]);
-	int32_t maxInstanceCount = 0;
 
 	for (const auto& materialPair : materials)
 	{
@@ -637,13 +639,6 @@ bool MeshPipeline::buildOutput(
 					if (uniformJointCount * 2 != indexedUniform->getLength())
 						indexedUniform->setLength(uniformJointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
 				}
-				else if (indexedUniform->getParameterName() == L"InstanceWorld")
-				{
-					// Determine how many instances we can use when rendering instanced meshed
-					// based on how many entries in uniform.
-					if (maxInstanceCount <= 0 || maxInstanceCount > indexedUniform->getLength() / 2)
-						maxInstanceCount = indexedUniform->getLength() / 2;		// Length of uniform is twice of max number of instances.
-				}
 			}
 		}
 
@@ -827,7 +822,6 @@ bool MeshPipeline::buildOutput(
 		materialGuid,
 		materialTechniqueMap,
 		vertexElements,
-		maxInstanceCount,
 		resource,
 		stream
 	))

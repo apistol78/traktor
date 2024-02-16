@@ -36,6 +36,8 @@ public:
 
 	virtual void destroy() override final;
 
+	virtual void setTransform(const Transform& transform) override;
+
 	virtual Aabb3 getBoundingBox() const override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
@@ -44,6 +46,7 @@ public:
 
 private:
 	resource::Proxy< InstanceMesh > m_mesh;
+	InstanceMesh::Instance* m_meshInstance = nullptr;
 };
 
 }

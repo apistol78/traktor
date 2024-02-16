@@ -140,6 +140,7 @@ private:
 		BufferViewVk boundVertexBuffer;
 
 		std::list< std::string > markers;
+		AlignedVector< bool > markerStack;
 	};
 
 	struct PipelineEntry

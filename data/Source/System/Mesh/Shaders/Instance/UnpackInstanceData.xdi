@@ -1,86 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Instance" version="traktor.render.Node:1">
-			<id>{44CF0DB6-04EA-F346-A6ED-E24386E98551}</id>
-			<comment/>
-			<position>
-				<first>125</first>
-				<second>781</second>
-			</position>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{DC86CDCE-56A5-CF41-86FE-8D6760640B6F}</id>
-			<comment>
-			<![CDATA[
-rotation
-			]]>
-			</comment>
-			<position>
-				<first>665</first>
-				<second>700</second>
-			</position>
-			<parameterName>InstanceWorld</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-			<length>120</length>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{2A94C3EC-1065-744A-88F4-5EB24707AD6C}</id>
-			<comment>
-			<![CDATA[
-translation
-			]]>
-			</comment>
-			<position>
-				<first>665</first>
-				<second>793</second>
-			</position>
-			<parameterName>InstanceWorld</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-			<length>120</length>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{11C485C7-758B-2C4F-AB19-0F8EFB6A63BA}</id>
-			<comment/>
-			<position>
-				<first>110</first>
-				<second>886</second>
-			</position>
-			<value>1</value>
-		</item>
-		<item type="traktor.render.Add" version="traktor.render.Node:1">
-			<id>{173A545D-6F56-A64D-94E6-EB66237F789D}</id>
-			<comment/>
-			<position>
-				<first>317</first>
-				<second>873</second>
-			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{F34D68C6-C322-ED44-9E26-08E206FD0708}</id>
-			<comment/>
-			<position>
-				<first>109</first>
-				<second>835</second>
-			</position>
-			<value>2</value>
-		</item>
-		<item type="traktor.render.Mul" version="traktor.render.Node:1">
-			<id>{1F0C4F04-0FDE-FD4F-AA10-A3113A9D439A}</id>
-			<comment/>
-			<position>
-				<first>317</first>
-				<second>775</second>
-			</position>
-		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{19913397-AF16-7040-9FB5-8E57B092D98C}</id>
 			<comment/>
 			<position>
-				<first>1242</first>
-				<second>623</second>
+				<first>1362</first>
+				<second>656</second>
 			</position>
 			<name>Rotation</name>
 		</item>
@@ -88,7 +14,7 @@ translation
 			<id>{B12B5D79-F6DD-6F4E-9E62-040B6A429EAC}</id>
 			<comment/>
 			<position>
-				<first>1334</first>
+				<first>1362</first>
 				<second>721</second>
 			</position>
 			<name>Translation</name>
@@ -97,7 +23,7 @@ translation
 			<id>{5F2B1258-0CF2-E944-9F35-DCAB623B3217}</id>
 			<comment/>
 			<position>
-				<first>1363</first>
+				<first>1362</first>
 				<second>794</second>
 			</position>
 			<name>Scale</name>
@@ -106,7 +32,7 @@ translation
 			<id>{B3E7E7D8-D5D1-B540-980A-AC2301D4A734}</id>
 			<comment/>
 			<position>
-				<first>1242</first>
+				<first>1240</first>
 				<second>721</second>
 			</position>
 			<swizzle>xyz</swizzle>
@@ -124,8 +50,8 @@ translation
 			<id>{61220E81-4FE5-374B-90F4-DB8B140CF72E}</id>
 			<comment/>
 			<position>
-				<first>1239</first>
-				<second>1115</second>
+				<first>1240</first>
+				<second>1013</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -133,8 +59,8 @@ translation
 			<id>{9A93E123-A45D-1340-B936-91FF85883ECC}</id>
 			<comment/>
 			<position>
-				<first>1241</first>
-				<second>1042</second>
+				<first>1240</first>
+				<second>940</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -143,7 +69,7 @@ translation
 			<comment/>
 			<position>
 				<first>1362</first>
-				<second>1115</second>
+				<second>1020</second>
 			</position>
 			<name>ScaleLast</name>
 		</item>
@@ -151,8 +77,8 @@ translation
 			<id>{45936592-3A8C-FA45-8C08-6827D12F9FDD}</id>
 			<comment/>
 			<position>
-				<first>1333</first>
-				<second>1042</second>
+				<first>1362</first>
+				<second>947</second>
 			</position>
 			<name>TranslationLast</name>
 		</item>
@@ -160,108 +86,160 @@ translation
 			<id>{471FD3A8-9A8B-EE4B-B14F-382762CC4870}</id>
 			<comment/>
 			<position>
-				<first>1240</first>
-				<second>906</second>
+				<first>1362</first>
+				<second>874</second>
 			</position>
 			<name>RotationLast</name>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{BC627F0B-65F5-0544-8144-A7C4AA319B56}</id>
-			<comment>
-			<![CDATA[
-translation
-			]]>
-			</comment>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{BD8029D8-D20D-AE40-9895-EA83610D8339}</id>
+			<comment/>
 			<position>
-				<first>653</first>
-				<second>994</second>
+				<first>444</first>
+				<second>748</second>
 			</position>
-			<parameterName>InstanceWorldLast</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-			<length>120</length>
+			<parameterName>InstanceWorld</parameterName>
+			<elements>
+				<item>
+					<name>rotation</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>translationAndScale</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
 		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{E1854626-2EF1-D348-9D52-9685C57B84AB}</id>
-			<comment>
-			<![CDATA[
-rotation
-			]]>
-			</comment>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{5193F279-0901-F345-97E6-238E9D406009}</id>
+			<comment/>
 			<position>
-				<first>653</first>
-				<second>901</second>
+				<first>428</first>
+				<second>825</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
-			<type>Vector</type>
-			<frequency>Draw</frequency>
-			<length>120</length>
+			<elements>
+				<item>
+					<name>rotation</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>translationAndScale</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{A7010216-CD61-7C4F-9DAA-3E2A9D4DDC9B}</id>
+			<comment/>
+			<position>
+				<first>786</first>
+				<second>721</second>
+			</position>
+			<names>
+				<item>rotation</item>
+				<item>translationAndScale</item>
+			</names>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{42AD1EFE-8568-A940-AE85-5E663B1BE070}</id>
+			<comment/>
+			<position>
+				<first>781</first>
+				<second>914</second>
+			</position>
+			<names>
+				<item>rotation</item>
+				<item>translationAndScale</item>
+			</names>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{CA90CD3D-4575-BF44-A9AB-47FB337A4E60}</id>
+			<comment/>
+			<position>
+				<first>1092</first>
+				<second>709</second>
+			</position>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{3FF226A7-AF06-E349-8D56-0E8616828A7C}</id>
+			<comment/>
+			<position>
+				<first>1092</first>
+				<second>762</second>
+			</position>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{A5E9A8AD-E562-7241-B9B3-7D5DACCC2684}</id>
+			<comment/>
+			<position>
+				<first>1092</first>
+				<second>906</second>
+			</position>
+		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{AE1F4229-0E7C-E340-A5A9-517448A1C520}</id>
+			<comment/>
+			<position>
+				<first>1092</first>
+				<second>975</second>
+			</position>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{8A459FBA-5749-254B-9853-127DB9AF95F8}</id>
+			<comment/>
+			<position>
+				<first>493</first>
+				<second>894</second>
+			</position>
+			<name>gl_DrawID</name>
+			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+$Output = gl_DrawID;
+
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{61C214E2-B4D2-4905-A50C-7C38F98E8F91}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
@@ -271,8 +249,98 @@ rotation
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
@@ -282,102 +350,53 @@ rotation
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[17]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

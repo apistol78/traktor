@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,12 +8,15 @@
  */
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Buffer.h"
 #include "Render/IProgram.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor::mesh
 {
@@ -23,9 +26,31 @@ namespace traktor::mesh
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 
+render::Handle s_handleBoundingBoxMin(L"InstanceMesh_BoundingBoxMin");
+render::Handle s_handleBoundingBoxMax(L"InstanceMesh_BoundingBoxMax");
+render::Handle s_handleView(L"InstanceMesh_View");
+render::Handle s_handleViewInverse(L"InstanceMesh_ViewInverse");
+render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
+render::Handle s_handleCullFrustum(L"InstanceMesh_CullFrustum");
+
+render::Handle s_handleDraw(L"InstanceMesh_Draw");
+render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
+render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
+
+InstanceMesh::InstanceMesh(
+	render::IRenderSystem* renderSystem,
+	const resource::Proxy< render::Shader >& shaderCull,
+	const resource::Proxy< render::Shader >& shaderDraw
+)
+:	m_renderSystem(renderSystem)
+,	m_shaderCull(shaderCull)
+,	m_shaderDraw(shaderDraw)
+{
+}
 
 const Aabb3& InstanceMesh::getBoundingBox() const
 {
@@ -45,170 +70,181 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 
 void InstanceMesh::build(
 	render::RenderContext* renderContext,
+	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
-	AlignedVector< RenderInstance >& instanceWorld,
 	render::ProgramParameters* extraParameters
 ) const
 {
-	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
-	InstanceMeshData T_ALIGN16 instanceLastBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
 
-	if (instanceWorld.empty())
+	if (m_instances.empty())
 		return;
 
 	auto it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
 
-	// Sort instances by ascending distance; note we're sorting caller's vector.
-	std::sort(instanceWorld.begin(), instanceWorld.end(), [](const InstanceMesh::RenderInstance& d1, const InstanceMesh::RenderInstance& d2) {
-		return d1.distance < d2.distance;
-	});
-
 	const auto& meshParts = m_renderMesh->getParts();
 
-	// Render opaque parts front-to-back.
-	for (const auto& part : it->second)
+	// Lazy create the buffers.
+	if (!m_instanceBuffer)
 	{
+		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(InstanceMeshData), true);
+		m_visibilityBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(float), false);
+
+		m_drawBuffers.resize(4);
+		for (uint32_t i = 0; i < 4; ++i)
+			m_drawBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, m_instances.size() * sizeof(render::IndexedIndirectDraw), false);
+
+		m_instanceBufferDirty = true;
+	}
+
+	// Update buffer is any instance has moved.
+	if (m_instanceBufferDirty)
+	{
+		auto ptr = (InstanceMeshData*)m_instanceBuffer->lock();
+		for (const auto& instance : m_instances)
+			*ptr++ = packInstanceMeshData(instance->transform);
+		m_instanceBuffer->unlock();
+		m_instanceBufferDirty = false;
+	}
+
+	// Cull instances.
+	// #todo Compute blocks are executed before render pass, so for shadow map rendering all cascades
+	// are culled before being rendered.
+	{
+		Vector4 cullFrustum[6];
+
+		const Frustum& cf = worldRenderView.getCullFrustum();
+		for (int32_t i = 0; i < cf.planes.size(); ++i)
+			cullFrustum[i] = cf.planes[i].normal().xyz0() + Vector4(0.0f, 0.0f, 0.0f, cf.planes[i].distance());
+		for (int32_t i = cf.planes.size(); i < 6; ++i)
+			cullFrustum[i] = Vector4::zero();
+
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"InstanceMesh cull 1/2");
+
+		renderBlock->program = m_shaderCull->getProgram().program;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMin, m_renderMesh->getBoundingBox().mn);
+		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMax, m_renderMesh->getBoundingBox().mx);
+		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, 6);
+		renderBlock->programParams->setMatrixParameter(s_handleView, worldRenderView.getView());
+		renderBlock->programParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
+		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, m_visibilityBuffer->getBufferView());
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderBlock->workSize[0] = m_instances.size();
+
+		renderContext->compute(renderBlock);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
+	}
+
+	// Create draw buffers from visibility buffer.
+	for (uint32_t i = 0; i < it->second.size(); ++i)
+	{
+		const auto& part = it->second[i];
+
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
 		auto sp = m_shader->getProgram(permutation);
 		if (!sp)
 			continue;
 
-		if ((sp.priority & (render::RenderPriority::AlphaBlend | render::RenderPriority::PostAlphaBlend)) != 0)
-		{
-			haveAlphaBlend = true;
-			continue;
-		}
+		const auto& primitives = meshParts[part.meshPart].primitives;
 
-		// Setup batch shared parameters.
-		render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
-		batchParameters->beginParameters(renderContext);
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"InstanceMesh cull 2/2");
+
+		renderBlock->program = m_shaderDraw->getProgram().program;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
+		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
+		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, m_visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleDraw, m_drawBuffers[i]->getBufferView());
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderBlock->workSize[0] = m_instances.size();
+
+		renderContext->compute(renderBlock);
+	}
+
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex);
+
+	// Add indirect draw for each mesh part.
+	for (uint32_t i = 0; i < it->second.size(); ++i)
+	{
+		const auto& part = it->second[i];
+
+		auto permutation = worldRenderPass.getPermutation(m_shader);
+		permutation.technique = part.shaderTechnique;
+		auto sp = m_shader->getProgram(permutation);
+		if (!sp)
+			continue;
+
+		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(L"InstanceMesh draw");
+		renderBlock->distance = 0.0f;
+		renderBlock->program = sp.program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
+		renderBlock->indexType = m_renderMesh->getIndexType();
+		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
+		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
+		renderBlock->primitive = meshParts[part.meshPart].primitives.type;
+		renderBlock->drawBuffer = m_drawBuffers[i]->getBufferView();
+		renderBlock->drawCount = m_instances.size();
+
+		renderBlock->programParams->beginParameters(renderContext);
 
 		if (extraParameters)
-			batchParameters->attachParameters(extraParameters);
+			renderBlock->programParams->attachParameters(extraParameters);
 
 		worldRenderPass.setProgramParameters(
-			batchParameters,
+			renderBlock->programParams,
 			Transform::identity(),
 			Transform::identity()
 		);
-		batchParameters->endParameters(renderContext);
 
-		for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
-		{
-			const uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
+		// #todo Same world buffer
+		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorldLast, m_instanceBuffer->getBufferView());
+		renderBlock->programParams->endParameters(renderContext);
 
-			for (uint32_t j = 0; j < batchCount; ++j)
-			{
-				instanceBatch[j] = instanceWorld[batchOffset + j].data;
-				instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
-			}
-
-			auto renderBlock = renderContext->allocNamed< render::InstancingRenderBlock >(L"InstanceMesh opaque");
-			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
-			renderBlock->program = sp.program;
-			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
-			renderBlock->indexType = m_renderMesh->getIndexType();
-			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
-			renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
-			renderBlock->primitives = meshParts[part.meshPart].primitives;
-			renderBlock->count = batchCount;
-
-			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->attachParameters(batchParameters);
-			renderBlock->programParams->setVectorArrayParameter(
-				s_handleInstanceWorld,
-				reinterpret_cast< const Vector4* >(instanceBatch),
-				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
-			);
-			renderBlock->programParams->setVectorArrayParameter(
-				s_handleInstanceWorldLast,
-				reinterpret_cast< const Vector4* >(instanceLastBatch),
-				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
-			);
-			renderBlock->programParams->endParameters(renderContext);
-
-			renderContext->draw(sp.priority, renderBlock);
-
-			batchOffset += batchCount;
-		}
+		renderContext->draw(sp.priority, renderBlock);
 	}
+}
 
-	// Render alpha blend parts back-to-front.
-	if (haveAlphaBlend)
-	{
-		std::reverse(instanceWorld.begin(), instanceWorld.end());
+InstanceMesh::Instance* InstanceMesh::allocateInstance()
+{
+	Instance* instance = new Instance();
+	instance->mesh = this;
+	instance->transform = Transform::identity();
 
-		for (const auto& part : it->second)
-		{
-			auto permutation = worldRenderPass.getPermutation(m_shader);
-			permutation.technique = part.shaderTechnique;
-			auto sp = m_shader->getProgram(permutation);
-			if (!sp)
-				continue;
+	m_instances.push_back(instance);
 
-			if ((sp.priority & (render::RenderPriority::AlphaBlend | render::RenderPriority::PostAlphaBlend)) == 0)
-				continue;
+	safeDestroy(m_instanceBuffer);
 
-			// Setup batch shared parameters.
-			render::ProgramParameters* batchParameters = renderContext->alloc< render::ProgramParameters >();
-			batchParameters->beginParameters(renderContext);
+	return instance;
+}
 
-			if (extraParameters)
-				batchParameters->attachParameters(extraParameters);
+void InstanceMesh::releaseInstance(Instance* instance)
+{
+	T_FATAL_ASSERT(instance->mesh == this);
 
-			worldRenderPass.setProgramParameters(
-				batchParameters,
-				Transform::identity(),
-				Transform::identity()
-			);
-			batchParameters->endParameters(renderContext);
+	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
+	m_instances.erase(it);
+	delete instance;
 
-			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )
-			{
-				const uint32_t batchCount = std::min< uint32_t >(uint32_t(instanceWorld.size()) - batchOffset, m_maxInstanceCount);
+	safeDestroy(m_instanceBuffer);
+}
 
-				for (uint32_t j = 0; j < batchCount; ++j)
-				{
-					instanceBatch[j] = instanceWorld[batchOffset + j].data;
-					instanceLastBatch[j] = instanceWorld[batchOffset + j].data0;
-				}
-
-				auto renderBlock = renderContext->allocNamed< render::InstancingRenderBlock >(L"InstanceMesh blend");
-				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].distance;
-				renderBlock->program = sp.program;
-				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
-				renderBlock->indexType = m_renderMesh->getIndexType();
-				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
-				renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
-				renderBlock->primitives = meshParts[part.meshPart].primitives;
-				renderBlock->count = batchCount;
-
-				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->attachParameters(batchParameters);
-				renderBlock->programParams->setVectorArrayParameter(
-					s_handleInstanceWorld,
-					reinterpret_cast< const Vector4* >(instanceBatch),
-					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
-				);
-				renderBlock->programParams->setVectorArrayParameter(
-					s_handleInstanceWorldLast,
-					reinterpret_cast< const Vector4* >(instanceLastBatch),
-					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
-				);
-				renderBlock->programParams->endParameters(renderContext);
-
-				renderContext->draw(sp.priority, renderBlock);
-
-				batchOffset += batchCount;
-			}
-		}
-	}
+void InstanceMesh::Instance::setTransform(const Transform& transform)
+{
+	this->mesh->m_instanceBufferDirty = true;
+	this->transform = transform;
 }
 
 }

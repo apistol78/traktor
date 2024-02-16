@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// Frustum
+
+struct Frustum
+{
+	vec4 planes[6];
+};
+
+bool FrustumInside(in Frustum frustum, in vec3 center, in float radius)
+{
+	for (int i = 0; i < 6; ++i)
+	{
+		if (length(frustum.planes[i].xyz) < 0.1f)
+			continue;
+
+		const float distance = dot(frustum.planes[i].xyz, center) - frustum.planes[i].w;
+		if (distance < -radius)
+			return false;
+	}
+	return true;
+}
+
+
+	]]>
+	</text>
+</object>

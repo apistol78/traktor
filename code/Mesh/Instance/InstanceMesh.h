@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Containers/SmallSet.h"
 #include "Core/Math/Aabb3.h"
@@ -29,6 +30,8 @@
 namespace traktor::render
 {
 
+class Buffer;
+class IRenderSystem;
 class ProgramParameters;
 class RenderContext;
 class Mesh;
@@ -41,6 +44,7 @@ namespace traktor::world
 
 class IWorldCulling;
 class IWorldRenderPass;
+class WorldRenderView;
 
 }
 
@@ -83,6 +87,12 @@ public:
 		}
 	};
 
+	explicit InstanceMesh(
+		render::IRenderSystem* renderSystem,
+		const resource::Proxy< render::Shader >& shaderCull,
+		const resource::Proxy< render::Shader >& shaderDraw
+	);
+
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;
@@ -91,10 +101,26 @@ public:
 
 	void build(
 		render::RenderContext* renderContext,
+		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
-		AlignedVector< RenderInstance >& instanceWorld,
 		render::ProgramParameters* extraParameters
 	) const;
+
+	//
+
+	struct Instance
+	{
+		InstanceMesh* mesh;
+		Transform transform;
+
+		void setTransform(const Transform& transform);
+	};
+	
+	Instance* allocateInstance();
+
+	void releaseInstance(Instance* instance);
+
+	//
 
 private:
 	friend class InstanceMeshResource;
@@ -102,7 +128,16 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
-	int32_t m_maxInstanceCount = 0;
+
+	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
+	Ref< render::IRenderSystem > m_renderSystem;
+	resource::Proxy< render::Shader > m_shaderCull;
+	resource::Proxy< render::Shader > m_shaderDraw;
+	AlignedVector< Instance* > m_instances;
+	mutable Ref< render::Buffer > m_instanceBuffer;
+	mutable Ref< render::Buffer > m_visibilityBuffer;
+	mutable RefArray< render::Buffer > m_drawBuffers;
+	mutable bool m_instanceBufferDirty = false;
 };
 
 }

@@ -165,7 +165,7 @@ void ForestComponent::build(
 	extraParameters->setVectorParameter(s_handleTerrain_WorldExtent, terrain->getHeightfield()->getWorldExtent());
 	extraParameters->setVectorParameter(s_handleForest_Eye, eye);
 	extraParameters->endParameters(renderContext);
-
+/*
 	if (worldRenderPass.getTechnique() != s_techniqueShadowWrite)
 	{
 		for (uint32_t i = 0; i < m_lod2Indices.size(); )
@@ -254,6 +254,7 @@ void ForestComponent::build(
 			);
 		}
 	}
+*/
 }
 
 void ForestComponent::updatePatches()

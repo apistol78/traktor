@@ -1047,8 +1047,8 @@ void RenderViewVk::barrier(Stage from, Stage to)
 	const auto& frame = m_frames[m_currentImageIndex];
 	vkCmdPipelineBarrier(
 		*frame.graphicsCommandBuffer,
-		convertStage(from), // VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT,
-		convertStage(to), // VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+		convertStage(from),
+		convertStage(to),
 		0,
 		0, nullptr,
 		0, nullptr,
@@ -1218,12 +1218,19 @@ void RenderViewVk::pushMarker(const std::wstring& marker)
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
-		frame.markers.push_back(wstombs(marker));
+		if (!marker.empty())
+		{
+			frame.markers.push_back(wstombs(marker));
 
-		VkDebugUtilsLabelEXT dul = {};
-		dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
-		dul.pLabelName = frame.markers.back().c_str();
-		vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+			VkDebugUtilsLabelEXT dul = {};
+			dul.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_LABEL_EXT;
+			dul.pLabelName = frame.markers.back().c_str();
+			vkCmdBeginDebugUtilsLabelEXT(*frame.graphicsCommandBuffer, &dul);
+
+			frame.markerStack.push_back(true);
+		}
+		else
+			frame.markerStack.push_back(false);
 	}
 #endif
 }
@@ -1234,7 +1241,9 @@ void RenderViewVk::popMarker()
 	if (m_haveDebugMarkers)
 	{
 		auto& frame = m_frames[m_currentImageIndex];
-		vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
+		if (frame.markerStack.back())
+			vkCmdEndDebugUtilsLabelEXT(*frame.graphicsCommandBuffer);
+		frame.markerStack.pop_back();
 	}
 #endif
 }

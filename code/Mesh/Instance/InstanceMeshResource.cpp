@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,7 +13,6 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
-#include "Render/Buffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/SystemMeshFactory.h"
@@ -22,8 +21,15 @@
 
 namespace traktor::mesh
 {
+	namespace
+	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 7, InstanceMeshResource, MeshResource)
+const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
+const resource::Id< render::Shader > c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
+
+	}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 8, InstanceMeshResource, MeshResource)
 
 Ref< IMesh > InstanceMeshResource::createMesh(
 	const std::wstring& name,
@@ -45,7 +51,15 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
+	resource::Proxy< render::Shader > shaderCull;
+	if (!resourceManager->bind(c_shaderInstanceMeshCull, shaderCull))
+		return nullptr;
+
+	resource::Proxy< render::Shader > shaderDraw;
+	if (!resourceManager->bind(c_shaderInstanceMeshDraw, shaderDraw))
+		return nullptr;
+
+	Ref< InstanceMesh > instanceMesh = new InstanceMesh(renderSystem, shaderCull, shaderDraw);
 
 	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
 		return nullptr;
@@ -66,13 +80,12 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	instanceMesh->m_maxInstanceCount = std::min< int32_t >(m_maxInstanceCount, InstanceMesh::MaxInstanceCount);
 	return instanceMesh;
 }
 
 void InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 7, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 8, L"Incorrect version");
 
 	MeshResource::serialize(s);
 
@@ -84,7 +97,6 @@ void InstanceMeshResource::serialize(ISerializer& s)
 		Member< std::wstring >,
 		MemberStlList< Part, MemberComposite< Part > >
 	>(L"parts", m_parts);
-	s >> Member< int32_t >(L"maxInstanceCount", m_maxInstanceCount);
 }
 
 void InstanceMeshResource::Part::serialize(ISerializer& s)

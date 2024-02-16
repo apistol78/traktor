@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
+#include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/IndexRange.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
@@ -27,10 +28,15 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
+	namespace
 	{
+
+const Guid c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
+const Guid c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
+
+	}
 
 Ref< MeshResource > InstanceMeshConverter::createResource() const
 {
@@ -54,17 +60,10 @@ bool InstanceMeshConverter::convert(
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
-	int32_t maxInstanceCount,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
-	if (maxInstanceCount <= 0)
-	{
-		log::error << L"No per-instance parameter data, max instance count is zero." << Endl;
-		return false;
-	}
-
 	const model::Model* model = models[0];
 	T_FATAL_ASSERT(model != nullptr);
 
@@ -213,10 +212,14 @@ bool InstanceMeshConverter::convert(
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_haveRenderMesh = true;
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
-	checked_type_cast< InstanceMeshResource* >(meshResource)->m_maxInstanceCount = maxInstanceCount;
 
 	return true;
 }
 
-	}
+void InstanceMeshConverter::addDependencies(editor::IPipelineDepends* pipelineDepends)
+{
+	pipelineDepends->addDependency(c_shaderInstanceMeshCull, editor::PdfBuild);
+	pipelineDepends->addDependency(c_shaderInstanceMeshDraw, editor::PdfBuild);
+}
+
 }

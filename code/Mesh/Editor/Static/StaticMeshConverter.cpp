@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,10 +26,8 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
 
 Ref< MeshResource > StaticMeshConverter::createResource() const
 {
@@ -54,7 +52,6 @@ bool StaticMeshConverter::convert(
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const AlignedVector< render::VertexElement >& vertexElements,
-	int32_t maxInstanceCount,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
@@ -228,5 +225,4 @@ bool StaticMeshConverter::convert(
 	return true;
 }
 
-	}
 }

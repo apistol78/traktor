@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,12 +20,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponent", InstanceMeshCompon
 InstanceMeshComponent::InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh)
 :	m_mesh(mesh)
 {
+	m_meshInstance = m_mesh->allocateInstance();
 }
 
 void InstanceMeshComponent::destroy()
 {
+	m_mesh->releaseInstance(m_meshInstance);
 	m_mesh.clear();
 	MeshComponent::destroy();
+}
+
+void InstanceMeshComponent::setTransform(const Transform& transform)
+{
+	MeshComponent::setTransform(transform);
+
+	m_meshInstance->setTransform(transform);
 }
 
 Aabb3 InstanceMeshComponent::getBoundingBox() const

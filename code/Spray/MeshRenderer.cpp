@@ -43,6 +43,7 @@ void MeshRenderer::flush(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
+/*
 	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< pointVector_t, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
 		if (i->second.first.empty())
@@ -79,6 +80,7 @@ void MeshRenderer::flush(
 
 		i->second.first.resize(0);
 	}
+*/
 }
 
 }

@@ -58,7 +58,8 @@ public:
 	) override final;
 
 private:
-	SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
+	//SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
+	SmallSet< InstanceMesh* > m_meshes;
 };
 
 }

@@ -189,7 +189,7 @@ void RubbleComponent::build(
 	extraParameters->setVectorParameter(s_handleRubble_Eye, eye);
 	extraParameters->setFloatParameter(s_handleRubble_MaxDistance, m_data.m_spreadDistance + m_clusterSize);
 	extraParameters->endParameters(renderContext);
-
+/*
 	for (const auto& cluster : m_clusters)
 	{
 		if (!cluster.visible)
@@ -217,6 +217,7 @@ void RubbleComponent::build(
 			);
 		}
 	}
+*/
 }
 
 void RubbleComponent::updatePatches()
