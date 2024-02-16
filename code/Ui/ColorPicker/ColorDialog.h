@@ -49,6 +49,8 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text, int32_t style = WsDefaultFixed, const Color4f& initialColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
+	void setColor(const Color4f& color);
+
 	Color4f getColor() const;
 
 private:
@@ -60,6 +62,7 @@ private:
 	Ref< ColorGradient > m_colorGradient;
 	Ref< AlphaGradient > m_alphaGradient;
 	Color4f m_color;
+	Scalar m_ev = 0.0_simd;
 
 	void updateTextControls();
 
