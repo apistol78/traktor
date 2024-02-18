@@ -75,7 +75,7 @@
 			<name>WriteOut</name>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
+				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
@@ -114,7 +114,6 @@ $DrawBuffer[index].instanceCount = visible ? 1 : 0;
 $DrawBuffer[index].firstIndex = int($PrimFirstIndex);
 $DrawBuffer[index].vertexOffset = 0;
 $DrawBuffer[index].firstInstance = 0;
-
 			]]>
 			</script>
 		</item>

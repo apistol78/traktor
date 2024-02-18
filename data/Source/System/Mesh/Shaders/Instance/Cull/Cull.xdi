@@ -192,7 +192,7 @@ $Output = (inside0 && inside1) ? 1.0f : 0.0f;
 			<name>WriteOut</name>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
+				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>

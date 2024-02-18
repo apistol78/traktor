@@ -93,15 +93,17 @@ void InstanceMesh::build(
 	// Lazy create the buffers.
 	if (!m_instanceBuffer)
 	{
-		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(InstanceMeshData), true);
+		const uint32_t count = alignUp(m_instances.size(), 16);
+
+		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, count * sizeof(InstanceMeshData), true);
 
 		m_visibilityBuffers.resize(4);
 		for (uint32_t i = 0; i < 4; ++i)
-			m_visibilityBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(float), false);
+			m_visibilityBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, count * sizeof(float), false);
 
 		m_drawBuffers.resize(4 * 4);
 		for (uint32_t i = 0; i < 4 * 4; ++i)
-			m_drawBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, m_instances.size() * sizeof(render::IndexedIndirectDraw), false);
+			m_drawBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, count * sizeof(render::IndexedIndirectDraw), false);
 
 		m_instanceBufferDirty = true;
 	}
