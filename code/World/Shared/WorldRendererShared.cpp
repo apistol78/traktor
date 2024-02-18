@@ -484,6 +484,8 @@ void WorldRendererShared::setupLightPass(
 
 						// Render shadow map.
 						WorldRenderView shadowRenderView;
+						shadowRenderView.setIndex(worldRenderView.getIndex());
+						shadowRenderView.setCascade(slice);
 						shadowRenderView.setProjection(shadowLightProjection);
 						shadowRenderView.setView(shadowLightView, shadowLightView);
 						shadowRenderView.setViewFrustum(shadowFrustum);
@@ -622,7 +624,10 @@ void WorldRendererShared::setupLightPass(
 					);
 
 					// Render shadow map.
+					// #todo Cascade?
 					WorldRenderView shadowRenderView;
+					shadowRenderView.setIndex(worldRenderView.getIndex());
+					// shadowRenderView.setCascade(slice);
 					shadowRenderView.setProjection(shadowLightProjection);
 					shadowRenderView.setView(shadowLightView, shadowLightView);
 					shadowRenderView.setViewFrustum(shadowFrustum);

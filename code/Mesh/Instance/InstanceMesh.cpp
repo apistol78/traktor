@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Buffer.h"
 #include "Render/IProgram.h"
@@ -80,9 +81,12 @@ void InstanceMesh::build(
 	if (m_instances.empty())
 		return;
 
-	auto it = m_parts.find(worldRenderPass.getTechnique());
+	const auto it = m_parts.find(worldRenderPass.getTechnique());
 	if (it == m_parts.end())
 		return;
+
+	const AlignedVector< Part >& parts = it->second;
+	T_FATAL_ASSERT(parts.size() <= 4);
 
 	const auto& meshParts = m_renderMesh->getParts();
 
@@ -90,10 +94,13 @@ void InstanceMesh::build(
 	if (!m_instanceBuffer)
 	{
 		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(InstanceMeshData), true);
-		m_visibilityBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(float), false);
 
-		m_drawBuffers.resize(4);
+		m_visibilityBuffers.resize(4);
 		for (uint32_t i = 0; i < 4; ++i)
+			m_visibilityBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, m_instances.size() * sizeof(float), false);
+
+		m_drawBuffers.resize(4 * 4);
+		for (uint32_t i = 0; i < 4 * 4; ++i)
 			m_drawBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, m_instances.size() * sizeof(render::IndexedIndirectDraw), false);
 
 		m_instanceBufferDirty = true;
@@ -109,19 +116,24 @@ void InstanceMesh::build(
 		m_instanceBufferDirty = false;
 	}
 
+	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getCascade()];
+
 	// Cull instances.
 	// #todo Compute blocks are executed before render pass, so for shadow map rendering all cascades
 	// are culled before being rendered.
 	{
-		Vector4 cullFrustum[6];
+		Vector4 cullFrustum[12];
 
 		const Frustum& cf = worldRenderView.getCullFrustum();
+		T_FATAL_ASSERT(cf.planes.size() <= sizeof_array(cullFrustum));
 		for (int32_t i = 0; i < cf.planes.size(); ++i)
 			cullFrustum[i] = cf.planes[i].normal().xyz0() + Vector4(0.0f, 0.0f, 0.0f, cf.planes[i].distance());
-		for (int32_t i = cf.planes.size(); i < 6; ++i)
+		for (int32_t i = cf.planes.size(); i < sizeof_array(cullFrustum); ++i)
 			cullFrustum[i] = Vector4::zero();
 
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"InstanceMesh cull 1/2");
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
+			str(L"InstanceMesh cull %d", worldRenderView.getCascade())
+		);
 
 		renderBlock->program = m_shaderCull->getProgram().program;
 
@@ -129,11 +141,11 @@ void InstanceMesh::build(
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMin, m_renderMesh->getBoundingBox().mn);
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMax, m_renderMesh->getBoundingBox().mx);
-		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, 6);
+		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));
 		renderBlock->programParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 		renderBlock->programParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, m_visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderBlock->workSize[0] = m_instances.size();
@@ -143,9 +155,9 @@ void InstanceMesh::build(
 	}
 
 	// Create draw buffers from visibility buffer.
-	for (uint32_t i = 0; i < it->second.size(); ++i)
+	for (uint32_t i = 0; i < parts.size(); ++i)
 	{
-		const auto& part = it->second[i];
+		const auto& part = parts[i];
 
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
@@ -153,9 +165,13 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * 4 + i];
+
 		const auto& primitives = meshParts[part.meshPart].primitives;
 
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"InstanceMesh cull 2/2");
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
+			str(L"InstanceMesh draw commands %d %d", worldRenderView.getCascade(), i)
+		);
 
 		renderBlock->program = m_shaderDraw->getProgram().program;
 
@@ -163,8 +179,8 @@ void InstanceMesh::build(
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setFloatParameter(s_handleIndexCount, primitives.getVertexCount() + 0.5f);
 		renderBlock->programParams->setFloatParameter(s_handleFirstIndex, primitives.offset + 0.5f);
-		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, m_visibilityBuffer->getBufferView());
-		renderBlock->programParams->setBufferViewParameter(s_handleDraw, m_drawBuffers[i]->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderBlock->workSize[0] = m_instances.size();
@@ -172,12 +188,12 @@ void InstanceMesh::build(
 		renderContext->compute(renderBlock);
 	}
 
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex);
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect);
 
 	// Add indirect draw for each mesh part.
-	for (uint32_t i = 0; i < it->second.size(); ++i)
+	for (uint32_t i = 0; i < parts.size(); ++i)
 	{
-		const auto& part = it->second[i];
+		const auto& part = parts[i];
 
 		auto permutation = worldRenderPass.getPermutation(m_shader);
 		permutation.technique = part.shaderTechnique;
@@ -185,8 +201,12 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(L"InstanceMesh draw");
-		renderBlock->distance = 0.0f;
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * 4 + i];
+
+		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(
+			str(L"InstanceMesh draw %d %d", worldRenderView.getCascade(), i)
+		);
+		renderBlock->distance = 10000.0f;
 		renderBlock->program = sp.program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_renderMesh->getIndexBuffer()->getBufferView();
@@ -194,7 +214,7 @@ void InstanceMesh::build(
 		renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer()->getBufferView();
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 		renderBlock->primitive = meshParts[part.meshPart].primitives.type;
-		renderBlock->drawBuffer = m_drawBuffers[i]->getBufferView();
+		renderBlock->drawBuffer = drawBuffer->getBufferView();
 		renderBlock->drawCount = m_instances.size();
 
 		renderBlock->programParams->beginParameters(renderContext);

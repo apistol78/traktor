@@ -16,6 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object
 
 WorldRenderView::WorldRenderView()
 :	m_index(0)
+,	m_cascade(0)
 ,	m_snapshot(false)
 ,	m_projection(Matrix44::identity())
 ,	m_lastView(Matrix44::identity())
@@ -30,6 +31,11 @@ WorldRenderView::WorldRenderView()
 void WorldRenderView::setIndex(int32_t index)
 {
 	m_index = index;
+}
+
+void WorldRenderView::setCascade(int32_t cascade)
+{
+	m_cascade = cascade;
 }
 
 void WorldRenderView::setSnapshot(bool snapshot)

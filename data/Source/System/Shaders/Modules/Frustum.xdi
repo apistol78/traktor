@@ -23,7 +23,6 @@ bool FrustumInside(in Frustum frustum, in vec3 center, in float radius)
 	return true;
 }
 
-
 	]]>
 	</text>
 </object>

@@ -2338,6 +2338,40 @@ bool emitScript(GlslContext& cx, Script* node)
 
 			ins[i] = new GlslVariable(nullptr, samplerName, GlslType::Void);
 		}
+		else if (auto indexedUniform = dynamic_type_cast< IndexedUniform* >(inputNode))
+		{
+			const Node* indexNode = cx.getInputNode(node, L"Index");
+			if (!indexNode)
+			{
+				const auto parameterType = glsl_from_parameter_type(indexedUniform->getParameterType());
+
+				// Add uniform to layout.
+				if (parameterType < GlslType::Texture2D)
+				{
+					auto ub = cx.getLayout().getByName< GlslUniformBuffer >(c_uniformBufferNames[(int32_t)indexedUniform->getFrequency()]);
+					ub->addStage(getBindStage(cx));
+					ub->add(indexedUniform->getParameterName(), parameterType, indexedUniform->getLength());
+				}
+				else
+					return false;
+
+				// Define parameter in context.
+				cx.addParameter(
+					indexedUniform->getParameterName(),
+					indexedUniform->getParameterType(),
+					indexedUniform->getLength(),
+					indexedUniform->getFrequency()
+				);
+
+				ins[i] = new GlslVariable(nullptr, indexedUniform->getParameterName(), parameterType);
+			}
+			else
+			{
+				ins[i] = cx.emitInput(node->getInputPin(i));
+				if (!ins[i])
+					return false;
+			}
+		}
 		else
 		{
 			ins[i] = cx.emitInput(node->getInputPin(i));

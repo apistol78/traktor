@@ -48,6 +48,9 @@ public:
 	 */
 	void setIndex(int32_t index);
 
+	/*! */
+	void setCascade(int32_t cascade);
+
 	/*! Set snapshot requirement.
 	 *
 	 * Snapshot is used, for example, when rendering
@@ -77,8 +80,12 @@ public:
 	 */
 	bool isBoxVisible(const Aabb3& box, const Transform& worldTransform, float& outDistance) const;
 
-	T_FORCE_INLINE int getIndex() const {
+	T_FORCE_INLINE int32_t getIndex() const {
 		return m_index;
+	}
+
+	T_FORCE_INLINE int32_t getCascade() const {
+		return m_cascade;
 	}
 
 	T_FORCE_INLINE bool getSnapshot() const {
@@ -131,6 +138,7 @@ public:
 
 private:
 	int32_t m_index;
+	int32_t m_cascade;
 	bool m_snapshot;
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;

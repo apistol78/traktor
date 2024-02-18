@@ -353,7 +353,8 @@ enum class Stage : uint32_t
 	Invalid = 0,
 	Vertex = 1,
 	Fragment = 2,
-	Compute = 4
+	Compute = 4,
+	Indirect = 8
 };
 
 /*! Stage */

@@ -1086,7 +1086,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", 3, IndexedUnifo
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] =
 {
-	{ L"Index", L"{E457DE92-8BE5-4385-9AD3-3903238A8FD9}", false },
+	{ L"Index", L"{E457DE92-8BE5-4385-9AD3-3903238A8FD9}", true },
 	{ 0 }
 };
 const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] =

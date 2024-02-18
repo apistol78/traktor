@@ -64,7 +64,7 @@
 			<comment/>
 			<position>
 				<first>733</first>
-				<second>47</second>
+				<second>50</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -106,7 +106,7 @@
 			<comment/>
 			<position>
 				<first>723</first>
-				<second>341</second>
+				<second>339</second>
 			</position>
 			<name>Frustum</name>
 			<technique/>
@@ -137,27 +137,7 @@
 				</item>
 				<item>
 					<id>{A7438956-AAFD-EB40-ADC9-B21E773A81CD}</id>
-					<name>F0</name>
-				</item>
-				<item>
-					<id>{EF9F0E0B-30EE-9341-8696-74923053C1C6}</id>
-					<name>F1</name>
-				</item>
-				<item>
-					<id>{91A52BE7-C53B-8644-9F86-D1ED5D6D952C}</id>
-					<name>F2</name>
-				</item>
-				<item>
-					<id>{B3C725BD-B91B-1D43-9A87-FAFE0D6929E3}</id>
-					<name>F3</name>
-				</item>
-				<item>
-					<id>{68077A0E-EA55-FB4A-B2ED-E339F1DD8C75}</id>
-					<name>F4</name>
-				</item>
-				<item>
-					<id>{25AC5CD8-5141-7542-A755-2D275FEC2137}</id>
-					<name>F5</name>
+					<name>F</name>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -169,22 +149,36 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-Frustum f;
-f.planes[0] = $F0;
-f.planes[1] = $F1;
-f.planes[2] = $F2;
-f.planes[3] = $F3;
-f.planes[4] = $F4;
-f.planes[5] = $F5;
-
 const vec3 center = ($Bbmn + $Bbmx).xyz / 2.0f;
 const float radius = length(($Bbmx - $Bbmn).xyz / 2.0f);
 
 const vec3 worldCenter = $Translation.xyz + center;
 const vec4 viewCenter = $View * vec4(worldCenter, 1.0f);
 
-const bool inside = FrustumInside(f, viewCenter.xyz, radius);
-$Output = inside ? 1.0f : 0.0f;
+bool inside0, inside1;
+
+{
+	Frustum f;
+	f.planes[0] = $F[0];
+	f.planes[1] = $F[1];
+	f.planes[2] = $F[2];
+	f.planes[3] = $F[3];
+	f.planes[4] = $F[4];
+	f.planes[5] = $F[5];
+	inside0 = FrustumInside(f, viewCenter.xyz, radius);
+}
+{
+	Frustum f;
+	f.planes[0] = $F[6];
+	f.planes[1] = $F[7];
+	f.planes[2] = $F[8];
+	f.planes[3] = $F[9];
+	f.planes[4] = $F[10];
+	f.planes[5] = $F[11];
+	inside1 = FrustumInside(f, viewCenter.xyz, radius);
+}
+
+$Output = (inside0 && inside1) ? 1.0f : 0.0f;
 			]]>
 			</script>
 		</item>
@@ -245,127 +239,22 @@ $Buffer[index].visible = $Input;
 			<id>{91A8C6C3-38AF-0E49-9137-BEB73CB41DD4}</id>
 			<comment/>
 			<position>
-				<first>314</first>
-				<second>540</second>
+				<first>296</first>
+				<second>450</second>
 			</position>
 			<parameterName>InstanceMesh_CullFrustum</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
-			<length>6</length>
+			<length>12</length>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{8A540FB9-FC14-2145-9FE1-D6012392EA5A}</id>
+			<id>{132DCAD9-5472-4B66-A84F-D5C4227C923A}</id>
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>559</second>
-			</position>
-			<value>0</value>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{E69E3582-F7C5-C942-B7E8-2E8B15C86F02}</id>
-			<comment/>
-			<position>
-				<first>317</first>
-				<second>621</second>
-			</position>
-			<parameterName>InstanceMesh_CullFrustum</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-			<length>6</length>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{3CB5F1E8-F997-2248-B431-13C91B1D4269}</id>
-			<comment/>
-			<position>
-				<first>149</first>
-				<second>640</second>
+				<first>1038</first>
+				<second>370</second>
 			</position>
 			<value>1</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{A8ACFC3B-DADE-9747-B3A8-92BC9979A3D5}</id>
-			<comment/>
-			<position>
-				<first>152</first>
-				<second>723</second>
-			</position>
-			<value>2</value>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{3BC101A4-B0DB-CF4C-9FBC-E5C149087884}</id>
-			<comment/>
-			<position>
-				<first>320</first>
-				<second>704</second>
-			</position>
-			<parameterName>InstanceMesh_CullFrustum</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-			<length>6</length>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{6217607E-D6AB-9F41-BF63-2953F9B27ED2}</id>
-			<comment/>
-			<position>
-				<first>159</first>
-				<second>972</second>
-			</position>
-			<value>5</value>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{95DA8639-D579-DC47-B9B0-5A0CE8240FAC}</id>
-			<comment/>
-			<position>
-				<first>156</first>
-				<second>889</second>
-			</position>
-			<value>4</value>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{BCD4E4FF-4F86-DD4D-8D33-389A6654E31F}</id>
-			<comment/>
-			<position>
-				<first>321</first>
-				<second>789</second>
-			</position>
-			<parameterName>InstanceMesh_CullFrustum</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-			<length>6</length>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{D8271D7F-BBF1-5543-B102-9AA7ACD960FE}</id>
-			<comment/>
-			<position>
-				<first>153</first>
-				<second>808</second>
-			</position>
-			<value>3</value>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{E25F4C8F-D947-AC43-871A-0BF42773597C}</id>
-			<comment/>
-			<position>
-				<first>324</first>
-				<second>870</second>
-			</position>
-			<parameterName>InstanceMesh_CullFrustum</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-			<length>6</length>
-		</item>
-		<item type="traktor.render.IndexedUniform" version="3,traktor.render.Node:1">
-			<id>{83194908-DB49-4747-968D-A35FF36BD97C}</id>
-			<comment/>
-			<position>
-				<first>327</first>
-				<second>953</second>
-			</position>
-			<parameterName>InstanceMesh_CullFrustum</parameterName>
-			<type>Vector</type>
-			<frequency>Frame</frequency>
-			<length>6</length>
 		</item>
 	</nodes>
 	<edges>
@@ -481,76 +370,6 @@ $Buffer[index].visible = $Input;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{C2E0B588-DBCB-F04B-9978-8C1B6593F31A}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[21]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{E457DE92-8BE5-4385-9AD3-3903238A8FD9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[12]"/>
 				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
 			</source>
@@ -561,52 +380,12 @@ $Buffer[index].visible = $Input;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{C2E0B588-DBCB-F04B-9978-8C1B6593F31A}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{EF9F0E0B-30EE-9341-8696-74923053C1C6}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{91A52BE7-C53B-8644-9F86-D1ED5D6D952C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{B3C725BD-B91B-1D43-9A87-FAFE0D6929E3}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{68077A0E-EA55-FB4A-B2ED-E339F1DD8C75}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<id>{410A240E-17E1-40F0-82FE-BB8ECD086DCA}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{25AC5CD8-5141-7542-A755-2D275FEC2137}</id>
+				<node ref="/object/nodes/item[10]"/>
+				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
 			</destination>
 		</item>
 	</edges>

@@ -58,7 +58,7 @@ bool presentationModeSupported(VkPhysicalDevice physicalDevice, VkSurfaceKHR sur
 	return false;
 }
 
-VkPipelineStageFlagBits ((convertStage))(Stage st)
+VkPipelineStageFlagBits convertStage(Stage st)
 {
 	uint32_t ps = 0;
 	if ((st & Stage::Vertex) == Stage::Vertex)
@@ -67,6 +67,8 @@ VkPipelineStageFlagBits ((convertStage))(Stage st)
 		ps |= VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
 	if ((st & Stage::Compute) == Stage::Compute)
 		ps |= VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+	if ((st & Stage::Indirect) == Stage::Indirect)
+		ps |= VK_PIPELINE_STAGE_DRAW_INDIRECT_BIT;
 	return (VkPipelineStageFlagBits)ps;
 }
 
@@ -1045,15 +1047,55 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 void RenderViewVk::barrier(Stage from, Stage to)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
-	vkCmdPipelineBarrier(
-		*frame.graphicsCommandBuffer,
-		convertStage(from),
-		convertStage(to),
-		0,
-		0, nullptr,
-		0, nullptr,
-		0, nullptr
-	);
+	if (from == Stage::Compute && to == Stage::Indirect)
+	{
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		mb.dstAccessMask = VK_ACCESS_INDIRECT_COMMAND_READ_BIT;
+
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			1, &mb,
+			0, nullptr,
+			0, nullptr
+		);
+	}
+	else if (from == Stage::Compute && to == Stage::Compute)
+	{
+		VkMemoryBarrier mb = {};
+		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
+		mb.pNext = nullptr;
+		mb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		mb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			1, &mb,
+			0, nullptr,
+			0, nullptr
+		);
+	}
+	else
+	{
+		// No memory access; only add an execution barrier.
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			0, nullptr,
+			0, nullptr,
+			0, nullptr
+		);
+	}
 }
 
 bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)

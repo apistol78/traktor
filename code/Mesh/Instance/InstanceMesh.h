@@ -135,7 +135,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderDraw;
 	AlignedVector< Instance* > m_instances;
 	mutable Ref< render::Buffer > m_instanceBuffer;
-	mutable Ref< render::Buffer > m_visibilityBuffer;
+	mutable RefArray< render::Buffer > m_visibilityBuffers;
 	mutable RefArray< render::Buffer > m_drawBuffers;
 	mutable bool m_instanceBufferDirty = false;
 };
