@@ -96,8 +96,6 @@ void VehicleComponent::update(const world::UpdateParams& update)
 		return;
 
 	const float dT = (float)update.deltaTime;
-	if (dT <= 0.0f)
-		return;
 
 	updateSteering(body, dT);
 	updateSuspension(body, dT);
