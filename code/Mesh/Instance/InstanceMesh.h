@@ -137,6 +137,7 @@ private:
 	mutable Ref< render::Buffer > m_instanceBuffer;
 	mutable RefArray< render::Buffer > m_visibilityBuffers;
 	mutable RefArray< render::Buffer > m_drawBuffers;
+	mutable uint32_t m_instanceAllocatedCount = 0;
 	mutable bool m_instanceBufferDirty = false;
 };
 

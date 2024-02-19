@@ -86,27 +86,28 @@ void InstanceMesh::build(
 		return;
 
 	const AlignedVector< Part >& parts = it->second;
-	T_FATAL_ASSERT(parts.size() <= 4);
-
 	const auto& meshParts = m_renderMesh->getParts();
 
+	const uint32_t bufferItemCount = alignUp(m_instances.size(), 16);
+
 	// Lazy create the buffers.
-	if (!m_instanceBuffer)
+	if (!m_instanceBuffer || bufferItemCount > m_instanceAllocatedCount)
 	{
-		const uint32_t count = alignUp(m_instances.size(), 16);
-
-		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, count * sizeof(InstanceMeshData), true);
-
-		m_visibilityBuffers.resize(4);
-		for (uint32_t i = 0; i < 4; ++i)
-			m_visibilityBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, count * sizeof(float), false);
-
-		m_drawBuffers.resize(4 * 4);
-		for (uint32_t i = 0; i < 4 * 4; ++i)
-			m_drawBuffers[i] = m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, count * sizeof(render::IndexedIndirectDraw), false);
-
+		m_instanceBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(InstanceMeshData), true);
+		m_visibilityBuffers.resize(0);
+		m_drawBuffers.resize(0);
+		m_instanceAllocatedCount = bufferItemCount;
 		m_instanceBufferDirty = true;
 	}
+
+	const uint32_t peakCascade =  worldRenderView.getCascade();
+	const uint32_t vbSize = m_visibilityBuffers.size();
+	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
+		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false));
+
+	const uint32_t dbSize = m_drawBuffers.size();
+	for (uint32_t i = dbSize; i < (peakCascade + 1) * parts.size(); ++i)
+		m_drawBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, bufferItemCount * sizeof(render::IndexedIndirectDraw), false));
 
 	// Update buffer is any instance has moved.
 	if (m_instanceBufferDirty)
@@ -167,7 +168,7 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * 4 + i];
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
 
 		const auto& primitives = meshParts[part.meshPart].primitives;
 
@@ -203,7 +204,7 @@ void InstanceMesh::build(
 		if (!sp)
 			continue;
 
-		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * 4 + i];
+		render::Buffer* drawBuffer = m_drawBuffers[worldRenderView.getCascade() * parts.size() + i];
 
 		auto renderBlock = renderContext->allocNamed< render::IndirectRenderBlock >(
 			str(L"InstanceMesh draw %d %d", worldRenderView.getCascade(), i)
@@ -244,23 +245,16 @@ InstanceMesh::Instance* InstanceMesh::allocateInstance()
 	Instance* instance = new Instance();
 	instance->mesh = this;
 	instance->transform = Transform::identity();
-
 	m_instances.push_back(instance);
-
-	safeDestroy(m_instanceBuffer);
-
 	return instance;
 }
 
 void InstanceMesh::releaseInstance(Instance* instance)
 {
 	T_FATAL_ASSERT(instance->mesh == this);
-
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
 	m_instances.erase(it);
 	delete instance;
-
-	safeDestroy(m_instanceBuffer);
 }
 
 void InstanceMesh::Instance::setTransform(const Transform& transform)
