@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Containers/BitVector.h"
 #include "Core/Math/Vector4.h"
 #include "Resource/Proxy.h"
 #include "Terrain/TerrainLayerComponent.h"
@@ -76,14 +75,14 @@ private:
 
 	struct ViewState
 	{
-		AlignedVector< Vector4 > plants;
-		AlignedVector< float > distances;
-		BitVector pvs;
-		uint32_t count;
+		Ref< render::Buffer > plantBuffer;
+		Ref< render::Buffer > orderBuffer;
+		int32_t drawInstanceCount;
 	};
 
 	world::Entity* m_owner = nullptr;
 	UndergrowthComponentData m_layerData;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
