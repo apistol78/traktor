@@ -98,7 +98,7 @@ private:
 	float m_clusterSize = 0.0f;
 	Vector4 m_eye = Vector4::zero();
 	Vector4 m_fwd = Vector4::zero();
-	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
+	//AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 };
 
 }

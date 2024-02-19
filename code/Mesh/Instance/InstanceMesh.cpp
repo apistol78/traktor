@@ -11,6 +11,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Instance/InstanceMesh.h"
+#include "Mesh/Instance/InstanceMeshData.h"
 #include "Render/Buffer.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
@@ -26,14 +27,12 @@ namespace traktor::mesh
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
-
 render::Handle s_handleBoundingBoxMin(L"InstanceMesh_BoundingBoxMin");
 render::Handle s_handleBoundingBoxMax(L"InstanceMesh_BoundingBoxMax");
 render::Handle s_handleView(L"InstanceMesh_View");
 render::Handle s_handleViewInverse(L"InstanceMesh_ViewInverse");
 render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
 render::Handle s_handleCullFrustum(L"InstanceMesh_CullFrustum");
-
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
 render::Handle s_handleIndexCount(L"InstanceMesh_IndexCount");
 render::Handle s_handleFirstIndex(L"InstanceMesh_FirstIndex");
@@ -74,7 +73,7 @@ void InstanceMesh::build(
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
 	render::ProgramParameters* extraParameters
-) const
+)
 {
 	bool haveAlphaBlend = false;
 

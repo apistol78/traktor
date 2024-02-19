@@ -79,7 +79,7 @@ private:
 	AlignedVector< uint32_t > m_lod1Indices;
 	AlignedVector< uint32_t > m_lod2Indices;
 	AlignedVector< uint32_t > m_lodShadowIndices;
-	AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
+	//AlignedVector< mesh::InstanceMesh::RenderInstance > m_instanceData;
 	Aabb3 m_boundingBox;
 };
 

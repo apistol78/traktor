@@ -8,9 +8,8 @@
  */
 #pragma once
 
-#include "Core/Containers/SmallMap.h"
+#include "Core/Containers/SmallSet.h"
 #include "Mesh/Instance/InstanceMesh.h"
-#include "Mesh/Instance/InstanceMeshData.h"
 #include "World/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -58,7 +57,6 @@ public:
 	) override final;
 
 private:
-	//SmallMap< InstanceMesh*, AlignedVector< InstanceMesh::RenderInstance > > m_meshInstances;
 	SmallSet< InstanceMesh* > m_meshes;
 };
 

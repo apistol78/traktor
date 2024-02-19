@@ -15,7 +15,6 @@
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
 #include "Mesh/IMesh.h"
-#include "Mesh/Instance/InstanceMeshData.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 
@@ -42,7 +41,6 @@ class Shader;
 namespace traktor::world
 {
 
-class IWorldCulling;
 class IWorldRenderPass;
 class WorldRenderView;
 
@@ -71,22 +69,6 @@ public:
 		uint32_t meshPart;
 	};
 
-	struct RenderInstance
-	{
-		InstanceMeshData data;
-		InstanceMeshData data0;
-		float distance;
-
-		RenderInstance() = default;
-
-		RenderInstance(const InstanceMeshData& data_, const InstanceMeshData& data0_, float distance_)
-		:	data(data_)
-		,	data0(data0_)
-		,	distance(distance_)
-		{
-		}
-	};
-
 	explicit InstanceMesh(
 		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& shaderCull,
@@ -104,7 +86,7 @@ public:
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
 		render::ProgramParameters* extraParameters
-	) const;
+	);
 
 	//
 
@@ -134,11 +116,11 @@ private:
 	resource::Proxy< render::Shader > m_shaderCull;
 	resource::Proxy< render::Shader > m_shaderDraw;
 	AlignedVector< Instance* > m_instances;
-	mutable Ref< render::Buffer > m_instanceBuffer;
-	mutable RefArray< render::Buffer > m_visibilityBuffers;
-	mutable RefArray< render::Buffer > m_drawBuffers;
-	mutable uint32_t m_instanceAllocatedCount = 0;
-	mutable bool m_instanceBufferDirty = false;
+	Ref< render::Buffer > m_instanceBuffer;
+	RefArray< render::Buffer > m_visibilityBuffers;
+	RefArray< render::Buffer > m_drawBuffers;
+	uint32_t m_instanceAllocatedCount = 0;
+	bool m_instanceBufferDirty = false;
 };
 
 }
