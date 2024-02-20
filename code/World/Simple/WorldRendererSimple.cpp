@@ -98,7 +98,7 @@ void WorldRendererSimple::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererSimple setup extra passes");
-		const WorldSetupContext context(world, m_entityRenderers, nullptr, renderGraph);
+		const WorldSetupContext context(world, m_entityRenderers, nullptr, renderGraph, m_visualAttachments);
 
 		for (auto gathered : m_gathered)
 			gathered.entityRenderer->setup(context, worldRenderView, gathered.renderable);
@@ -115,6 +115,9 @@ void WorldRendererSimple::setup(
 	cl.colors[0] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
 	cl.depth = 1.0f;
 	rp->setOutput(outputTargetSetId, cl, render::TfNone, render::TfAll);
+
+	for (auto attachment : m_visualAttachments)
+		rp->addInput(attachment);
 
 	rp->addBuild(
 		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)

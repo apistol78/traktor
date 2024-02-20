@@ -108,6 +108,7 @@ protected:
 	Ref< Packer > m_shadowAtlasPacker;
 
 	GatherView m_gatheredView;
+	AlignedVector< render::handle_t > m_visualAttachments;
 
 	struct State
 	{

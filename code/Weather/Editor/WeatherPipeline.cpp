@@ -47,11 +47,13 @@ bool WeatherPipeline::buildDependencies(
 	{
 		const Guid c_shaderClouds2D(L"{9F52BE0A-0C1A-4928-91D9-9D32296CB8F3}");
 		const Guid c_shaderClouds3D(L"{EF88CE37-0917-4402-B2D1-6E3F2D3CCCCF}");
+		const Guid c_shaderCloudsDome(L"{151F822B-B85F-6349-B536-7663C95C43B8}");
 
 		pipelineDepends->addDependency(skyComponentData->getShader(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(skyComponentData->getTexture(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(c_shaderClouds2D, editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(c_shaderClouds3D, editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(c_shaderCloudsDome, editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

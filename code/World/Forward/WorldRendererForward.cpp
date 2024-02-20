@@ -115,7 +115,7 @@ void WorldRendererForward::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
-		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph);
+		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph, m_visualAttachments);
 
 		for (auto r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
@@ -208,6 +208,9 @@ void WorldRendererForward::setupVisualPass(
 		rp->addInput(reflectionsTargetSetId);
 	if (shadowsEnable)
 		rp->addInput(shadowMapAtlasTargetSetId);
+	
+	for (auto attachment : m_visualAttachments)
+		rp->addInput(attachment);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;

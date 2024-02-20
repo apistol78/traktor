@@ -70,6 +70,7 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::ITexture > m_depthTexture;
 	AlignedVector< Gather > m_gathered;
+	AlignedVector< render::handle_t > m_visualAttachments;
 };
 
 }

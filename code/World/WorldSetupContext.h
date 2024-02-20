@@ -42,7 +42,13 @@ class T_DLLCLASS WorldSetupContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit WorldSetupContext(const World* world, const WorldEntityRenderers* entityRenderers, const IrradianceGrid* irradianceGrid, render::RenderGraph& renderGraph);
+	explicit WorldSetupContext(
+		const World* world,
+		const WorldEntityRenderers* entityRenderers,
+		const IrradianceGrid* irradianceGrid,
+		render::RenderGraph& renderGraph,
+		AlignedVector< render::handle_t >& visualAttachments
+	);
 
 	const World* getWorld() const { return m_world; }
 
@@ -52,11 +58,14 @@ public:
 
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
+	AlignedVector< render::handle_t >& getVisualAttachments() const { return m_visualAttachments; }
+
 private:
 	const World* m_world;
 	const WorldEntityRenderers* m_entityRenderers;
 	const IrradianceGrid* m_irradianceGrid;
 	render::RenderGraph& m_renderGraph;
+	AlignedVector< render::handle_t >& m_visualAttachments;
 };
 
 }

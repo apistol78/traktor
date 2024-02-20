@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+
+#define PI 3.142f
+#define TWO_PI (PI * 2.0f)
+#define HALF_PI (PI / 2.0f)
+
+vec3 TexCoordToDirection(in vec2 texCoord)
+{
+	float theta = texCoord.x * TWO_PI;
+	float radius = texCoord.y; // cos(texCoord.y * HALF_PI);
+	return vec3(
+		cos(theta) * radius,
+		1.0f - radius,
+		sin(theta) * radius
+	);
+}
+
+vec2 DirectionToTexCoord(in vec3 direction)
+{
+	float phi = direction.y; // acos(direction.y) / HALF_PI;
+	float theta = atan(direction.z, direction.x) / TWO_PI + 0.5f;
+	return vec2( theta, 1 - phi);
+}
+
+
+	]]>
+	</text>
+</object>

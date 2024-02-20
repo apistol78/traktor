@@ -117,7 +117,7 @@ void WorldRendererDeferred::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
-		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph);
+		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph, m_visualAttachments);
 
 		for (auto r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
@@ -216,6 +216,8 @@ void WorldRendererDeferred::setupVisualPass(
 	// rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMapAtlasTargetSetId);
+	for (auto attachment : m_visualAttachments)
+		rp->addInput(attachment);
 
 	render::Clear clear;
 	clear.mask = render::CfColor;

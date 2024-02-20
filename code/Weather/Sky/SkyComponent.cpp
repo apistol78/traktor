@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/ITexture.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
@@ -30,6 +31,7 @@ namespace traktor::weather
 
 const resource::Id< render::Shader > c_shaderClouds2D(Guid(L"{9F52BE0A-0C1A-4928-91D9-9D32296CB8F3}"));
 const resource::Id< render::Shader > c_shaderClouds3D(Guid(L"{EF88CE37-0917-4402-B2D1-6E3F2D3CCCCF}"));
+const resource::Id< render::Shader > c_shaderCloudsDome(Guid(L"{151F822B-B85F-6349-B536-7663C95C43B8}"));
 
 const render::Handle s_handleWeather_SkyRadius(L"Weather_SkyRadius");
 const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
@@ -40,6 +42,7 @@ const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
 const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection");
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
 const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
+const render::Handle s_handleWeather_SkyCloudTexture(L"Weather_SkyCloudTexture");
 
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
@@ -147,12 +150,23 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	vtcd.shaderStorage = true;
 	m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
+	//render::SimpleTextureCreateDesc stcd = {};
+	stcd.width = 2048;
+	stcd.height = 512;
+	stcd.mipCount = 1;
+	stcd.format = render::TfR32G32B32A32F;
+	stcd.shaderStorage = true;
+	m_cloudDomeTexture[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+	m_cloudDomeTexture[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+
 	if (!m_cloudTextures[0] || !m_cloudTextures[1])
 		return false;
 
 	if (!resourceManager->bind(c_shaderClouds2D, m_shaderClouds2D))
 		return false;
 	if (!resourceManager->bind(c_shaderClouds3D, m_shaderClouds3D))
+		return false;
+	if (!resourceManager->bind(c_shaderCloudsDome, m_shaderCloudsDome))
 		return false;
 
 	return true;
@@ -200,7 +214,9 @@ void SkyComponent::setup(
 	const world::WorldRenderView& worldRenderView
 )
 {
+	const static render::Handle s_handleInputTexture(L"Weather_InputTexture");
 	const static render::Handle s_handleOutputTexture(L"Weather_OutputTexture");
+	render::RenderGraph& renderGraph = context.getRenderGraph();
 
 	if (m_shaderClouds2D.changed() || m_shaderClouds3D.changed())
 	{
@@ -211,7 +227,7 @@ void SkyComponent::setup(
 
 	if (m_dirty)
 	{
-		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds");
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds noise");
 		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 			{
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 2D");
@@ -226,7 +242,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
 			}
 			{
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
@@ -241,12 +257,59 @@ void SkyComponent::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
 			}
 		});
-		context.getRenderGraph().addPass(rp);
+		renderGraph.addPass(rp);
 
 		m_dirty = false;
+	}
+
+	// Generate dome projected cloud layer.
+	if (worldRenderView.getIndex() == 0)
+	{
+		render::ITexture* input = m_cloudDomeTexture[m_count & 1];
+		render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
+
+		// Get sun from directional light in same entity as sky component.
+		Vector4 sunDirection = m_transform.axisY();
+		Vector4 sunColor = Vector4(1.0f, 0.9f, 0.85f) * 1.8_simd;
+		if (m_owner != nullptr)
+		{
+			auto lightComponent = m_owner->getComponent< world::LightComponent >();
+			if (lightComponent)
+				sunColor = lightComponent->getColor();
+		}
+
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds dome");
+		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
+			renderBlock->program = m_shaderCloudsDome->getProgram().program;
+			renderBlock->workSize[0] = 2048;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+
+			renderBlock->programParams->setImageViewParameter(s_handleInputTexture, input, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, output, 0);
+
+			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
+			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
+			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
+			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
+			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
+			renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"World_Time"), worldRenderView.getTime());
+
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
+		});
+		renderGraph.addPass(rp);
+
+		m_count++;
 	}
 }
 
@@ -256,7 +319,8 @@ void SkyComponent::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	auto sp = worldRenderPass.getProgram(m_shader);
+	auto perm = worldRenderPass.getPermutation(m_shader);
+	auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
 
@@ -272,6 +336,8 @@ void SkyComponent::build(
 
 	const Vector4 eyePosition = worldRenderView.getEyePosition();
 	const float rotation = m_transform.rotation().toEulerAngles().x();
+
+	render::ITexture* cloudDomeTexture = m_cloudDomeTexture[m_count & 1];
 
 	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Sky");
 
@@ -300,6 +366,8 @@ void SkyComponent::build(
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
+
+	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTexture, cloudDomeTexture);
 
 	renderBlock->programParams->endParameters(renderContext);
 

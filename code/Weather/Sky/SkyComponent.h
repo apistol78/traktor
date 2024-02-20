@@ -105,6 +105,11 @@ private:
 	Transform m_transform;
 	float m_intensity = 1.0f;
 	bool m_dirty = true;
+
+	resource::Proxy< render::Shader > m_shaderCloudsDome;
+	Ref< render::ITexture > m_cloudDomeTexture[2];
+
+	int32_t m_count = 0;
 };
 
 }
