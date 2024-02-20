@@ -151,8 +151,8 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
 	//render::SimpleTextureCreateDesc stcd = {};
-	stcd.width = 2048;
-	stcd.height = 512;
+	stcd.width = 1024;
+	stcd.height = 256;
 	stcd.mipCount = 1;
 	stcd.format = render::TfR32G32B32A32F;
 	stcd.shaderStorage = true;
@@ -265,8 +265,10 @@ void SkyComponent::setup(
 		m_dirty = false;
 	}
 
+	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 4.0f);
+
 	// Generate dome projected cloud layer.
-	if (worldRenderView.getIndex() == 0)
+	if (worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
 	{
 		render::ITexture* input = m_cloudDomeTexture[m_count & 1];
 		render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
@@ -285,8 +287,8 @@ void SkyComponent::setup(
 		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
 			renderBlock->program = m_shaderCloudsDome->getProgram().program;
-			renderBlock->workSize[0] = 2048;
-			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[0] = 1024;
+			renderBlock->workSize[1] = 256;
 			renderBlock->workSize[2] = 1;
 
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -310,6 +312,7 @@ void SkyComponent::setup(
 		renderGraph.addPass(rp);
 
 		m_count++;
+		m_cloudFrame = cloudFrame;
 	}
 }
 

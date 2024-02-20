@@ -110,6 +110,7 @@ private:
 	Ref< render::ITexture > m_cloudDomeTexture[2];
 
 	int32_t m_count = 0;
+	int32_t m_cloudFrame = 0;
 };
 
 }
