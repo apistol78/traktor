@@ -5161,16 +5161,6 @@
 											<items/>
 										</item>
 										<item type="Filter">
-											<name>Clouds</name>
-											<items>
-												<item type="File" version="1">
-													<fileName>Clouds/*.*</fileName>
-													<excludeFilter/>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
 											<name>Sky</name>
 											<items>
 												<item type="File" version="1">
@@ -11945,16 +11935,6 @@
 					<fileName>*.*</fileName>
 					<excludeFilter/>
 					<items/>
-				</item>
-				<item type="Filter">
-					<name>Clouds</name>
-					<items>
-						<item type="File" version="1">
-							<fileName>Clouds/*.*</fileName>
-							<excludeFilter/>
-							<items/>
-						</item>
-					</items>
 				</item>
 			</items>
 			<dependencies>

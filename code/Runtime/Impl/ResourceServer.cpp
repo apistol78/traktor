@@ -18,7 +18,6 @@
 #include "Mesh/MeshResourceFactory.h"
 #include "Spray/EffectFactory.h"
 #include "Video/VideoFactory.h"
-#include "Weather/Clouds/CloudMaskFactory.h"
 #include "Resource/ResourceManager.h"
 
 namespace traktor::runtime
@@ -46,7 +45,6 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory());
 	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
-	m_resourceManager->addFactory(new weather::CloudMaskFactory());
 
 	if (environment->getWorld())
 	{

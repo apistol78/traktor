@@ -22,7 +22,6 @@
 #include "Script/ScriptFactory.h"
 #include "Sound/AudioResourceFactory.h"
 #include "Video/VideoFactory.h"
-#include "Weather/Clouds/CloudMaskFactory.h"
 #include "World/WorldResourceFactory.h"
 
 // Entity factories
@@ -34,7 +33,6 @@
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
-#include "Weather/Clouds/CloudRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 
@@ -80,7 +78,6 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::TextureFactory(context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new sound::AudioResourceFactory());
 	outResourceFactories.push_back(new video::VideoFactory(context->getRenderSystem()));
-	outResourceFactories.push_back(new weather::CloudMaskFactory());
 	outResourceFactories.push_back(new world::WorldResourceFactory(context->getRenderSystem(), nullptr));
 	outResourceFactories.push_back(new script::ScriptFactory(context->getScriptContext()));
 }
@@ -106,7 +103,6 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
 	outEntityRenderers.push_back(new world::VolumetricFogRenderer());
-	outEntityRenderers.push_back(new weather::CloudRenderer(primitiveRenderer));
 	outEntityRenderers.push_back(new weather::PrecipitationRenderer());
 	outEntityRenderers.push_back(new weather::SkyRenderer());
 }

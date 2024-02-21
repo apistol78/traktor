@@ -1,14 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Weather/WeatherFactory.h"
-#include "Weather/Clouds/CloudComponent.h"
-#include "Weather/Clouds/CloudComponentData.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationComponentData.h"
 #include "Weather/Sky/SkyComponent.h"
@@ -38,7 +36,6 @@ const TypeInfoSet WeatherFactory::getEntityEventTypes() const
 const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
-		CloudComponentData,
 		PrecipitationComponentData,
 		SkyComponentData
 	>();
@@ -56,9 +53,7 @@ Ref< world::IEntityEvent > WeatherFactory::createEntityEvent(const world::IEntit
 
 Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	if (const CloudComponentData* cloudComponentData = dynamic_type_cast< const CloudComponentData* >(&entityComponentData))
-		return cloudComponentData->createComponent(m_resourceManager, m_renderSystem);
-	else if (const PrecipitationComponentData* precipitationComponentData = dynamic_type_cast< const PrecipitationComponentData* >(&entityComponentData))
+	if (const PrecipitationComponentData* precipitationComponentData = dynamic_type_cast< const PrecipitationComponentData* >(&entityComponentData))
 		return precipitationComponentData->createComponent(m_resourceManager);
 	else if (const SkyComponentData* skyComponentData = dynamic_type_cast< const SkyComponentData* >(&entityComponentData))
 		return skyComponentData->createComponent(m_resourceManager, m_renderSystem);
