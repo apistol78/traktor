@@ -10,8 +10,8 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<X>8</X>
-				<Y>8</Y>
+				<X>1</X>
+				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
 		</item>
@@ -37,13 +37,14 @@
 			<type>Image2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{98BDEF21-F621-1345-8078-0D18AEA33005}</id>
 			<comment/>
 			<position>
 				<first>-207</first>
 				<second>176</second>
 			</position>
+			<scope>Global</scope>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{75A93A5B-4AFA-E642-B5CB-4DBFDD319264}</id>
@@ -54,7 +55,7 @@
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{06182E78-38C4-A74B-8741-0205C03525AF}</id>
 			<comment/>
 			<position>
@@ -63,7 +64,14 @@
 			</position>
 			<name>MaxZ</name>
 			<technique/>
-			<include/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{3C138D5C-5426-334C-99BF-A06F6FA6635B}</id>
@@ -86,12 +94,16 @@
 ivec2 p = $Index * 2;
 ivec2 o = ivec2(1, 0);
 
-float z1 = imageLoad($Input, p + o.yy).x;
-float z2 = imageLoad($Input, p + o.xy).x;
-float z3 = imageLoad($Input, p + o.yx).x;
-float z4 = imageLoad($Input, p + o.xx).x;
+const ivec2 sz = imageSize($Input);
+const float mxz = 1000.0f;
+
+float z1 = checkRange(p + o.yy, sz) ? imageLoad($Input, p + o.yy).x : mxz;
+float z2 = checkRange(p + o.xy, sz) ? imageLoad($Input, p + o.xy).x : mxz;
+float z3 = checkRange(p + o.yx, sz) ? imageLoad($Input, p + o.yx).x : mxz;
+float z4 = checkRange(p + o.xx, sz) ? imageLoad($Input, p + o.xx).x : mxz;
 
 $Output = max(max(z1, z2), max(z3, z4));
+
 			]]>
 			</script>
 		</item>

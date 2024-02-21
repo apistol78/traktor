@@ -42,6 +42,29 @@ ComponentDataType* getComponentOf(const world::EntityData* entityData)
 	return nullptr;
 }
 
+bool projectSphere(const Vector4& center, const Scalar& radius, const Scalar& znear, const Scalar& P00, const Scalar& P11, Vector4& aabb)
+{
+	if (center.z() < radius + znear)
+		return false;
+
+	Vector4 cr = center * radius;
+	Scalar czr2 = center.z() * center.z() - radius * radius;
+
+	Scalar vx = squareRoot(center.x() * center.x() + czr2);
+	Scalar minx = (vx * center.x() - cr.z()) / (vx * center.z() + cr.x());
+	Scalar maxx = (vx * center.x() + cr.z()) / (vx * center.z() - cr.x());
+
+	Scalar vy = squareRoot(center.y() * center.y() + czr2);
+	Scalar miny = (vy * center.y() - cr.z()) / (vy * center.z() + cr.y());
+	Scalar maxy = (vy * center.y() + cr.z()) / (vy * center.z() - cr.y());
+
+	aabb = Vector4(minx * P00, miny * P11, maxx * P00, maxy * P11);
+	//aabb = aabb.xwzy * vec4(0.5f, -0.5f, 0.5f, -0.5f) + vec4(0.5f); // clip space -> uv space
+	//aabb = aabb.shuffle< 0, 3, 2, 1 >() * Vector4(0.5f, -0.5f, 0.5f, -0.5f) + Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+
+	return true;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
@@ -219,6 +242,34 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 		else
 			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
+
+		{
+			Vector4 center = (boundingBox.mn + boundingBox.mx) / 2.0_simd;
+			Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
+			Vector4 worldCenter = transform.translation() + center;
+			Vector4 viewCenter = primitiveRenderer->getView() * worldCenter.xyz1();
+
+			Scalar znear = 0.1_simd;
+			Scalar P00 = primitiveRenderer->getProjection().get(0, 0);
+			Scalar P11 = primitiveRenderer->getProjection().get(1, 1);
+
+			Vector4 aabb;
+			if (projectSphere(viewCenter, radius, znear, P00, P11, aabb))
+			{
+				Matrix44 proj = primitiveRenderer->getProjection();
+
+				primitiveRenderer->pushWorld(Matrix44::identity());
+				primitiveRenderer->pushView(Matrix44::identity());
+				primitiveRenderer->setProjection(Matrix44::identity());
+
+				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+
+				primitiveRenderer->setProjection(proj);
+				primitiveRenderer->popView();
+				primitiveRenderer->popWorld();
+			}
+		}
 
 		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 		{

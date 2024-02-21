@@ -343,8 +343,8 @@ if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 	const float height = (aabb.w - aabb.y) * hs.y;
 	const float level = floor(log2(max(width, height)));
 	const float depth = textureLod(sampler2D($HiZTexture, $HiZState), (aabb.xy + aabb.zw) * 0.5f, level).x;
-	const float depthSphere = center.z - radius;
-	visible = depthSphere < depth;
+	const float depthSphere = viewCenter.z - radius;
+	visible = depthSphere <= depth;
 }
 
 $Output = visible ? 1.0f : 0.0f;
@@ -373,9 +373,9 @@ $Output = visible ? 1.0f : 0.0f;
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>

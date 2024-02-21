@@ -47,7 +47,6 @@ bool ProjectSphere(in vec3 center, in float radius, float znear, float P00, floa
 	return true;
 }
 
-
 	]]>
 	</text>
 </object>

@@ -147,14 +147,19 @@ void WorldRendererDeferred::setup(
 	
 	// Add Hi-Z textures.
 	const Vector2 viewSize = worldRenderView.getViewSize();
+
 	const int32_t viewWidth = (int32_t)viewSize.x;
 	const int32_t viewHeight = (int32_t)viewSize.y;
-	const int32_t mipCount = log2(std::max(viewWidth, viewHeight)) + 1;
+
+	const int32_t hiZWidth = viewWidth >> 1;
+	const int32_t hiZHeight = viewHeight >> 1;
+
+	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
 
 	render::RenderGraphTextureDesc rgtxd;
-	rgtxd.width = viewWidth >> 1;
-	rgtxd.height = viewHeight >> 1;
-	rgtxd.mipCount = mipCount - 1;
+	rgtxd.width = hiZWidth;
+	rgtxd.height = hiZHeight;
+	rgtxd.mipCount = hiZMipCount;
 	rgtxd.format = render::TfR32F;
 	const DoubleBufferedTarget hizTextureId =
 	{

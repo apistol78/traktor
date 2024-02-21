@@ -244,6 +244,9 @@ public:
 	const SmallMap< handle_t, BufferResource >& getBuffers() const { return m_buffers; }
 
 	/*! */
+	const SmallMap< handle_t, TextureResource >& getTextures() const { return m_textures; }
+
+	/*! */
 	const RefArray< const RenderPass >& getPasses() const { return m_passes; }
 
 private:

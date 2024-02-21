@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+
+bool checkRange(ivec2 p, ivec2 mx)
+{
+	if (p.x < 0 || p.y < 0)
+		return false;
+	else if (p.x >= mx.x || p.y >= mx.y)
+		return false;
+	else
+		return true;
+}
+
+
+	]]>
+	</text>
+</object>

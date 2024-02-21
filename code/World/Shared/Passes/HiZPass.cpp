@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,7 +29,6 @@ namespace traktor::world
 
 const resource::Id< render::Shader > c_hiZBuildShader(L"{E8879B75-F646-5D46-8873-E11A518C5256}");
 
-const render::Handle s_handleHiZMip(L"World_HiZMip");
 const render::Handle s_handleHiZInput(L"World_HiZInput");
 const render::Handle s_handleHiZOutput(L"World_HiZOutput");
 
@@ -57,25 +56,25 @@ void HiZPass::setup(
 	T_PROFILER_SCOPE(L"HiZPass::setup");
 
 	const Vector2 viewSize = worldRenderView.getViewSize();
+
 	const int32_t viewWidth = (int32_t)viewSize.x;
 	const int32_t viewHeight = (int32_t)viewSize.y;
-	const int32_t mipCount = log2(std::max(viewWidth, viewHeight)) + 1;
 
-	//render::RenderGraphTextureDesc rgtd;
-	//rgtd.width = viewWidth >> 1;
-	//rgtd.height = viewHeight >> 1;
-	//rgtd.mipCount = mipCount - 1;
-	//rgtd.format = render::TfR32F;
-	//auto hizTextureId = renderGraph.addTransientTexture(L"HiZ", rgtd);
+	const int32_t hiZWidth = viewWidth >> 1;
+	const int32_t hiZHeight = viewHeight >> 1;
+
+	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"HiZ");
 	rp->addInput(gbufferTargetSetId);
 	rp->setOutput(outputHiZTextureId);
 
-	for (int32_t i = 0; i < mipCount - 2; ++i)
+	for (int32_t i = 0; i < hiZMipCount; ++i)
 	{
-		const int32_t mipWidth = std::max(viewWidth >> (i + 1), 1);
-		const int32_t mipHeight = std::max(viewHeight >> (i + 1), 1);
+		const int32_t mipWidth = std::max(hiZWidth >> i, 1);
+		const int32_t mipHeight = std::max(hiZHeight >> i, 1);
+
+		const bool first = bool(i == 0);
 
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -106,18 +105,15 @@ void HiZPass::setup(
 					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, inoutTexture, i);
 				}
 
-				renderBlock->programParams->setFloatParameter(s_handleHiZMip, i);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment | render::Stage::Compute);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
 			}
 		);
 	}
 
 	renderGraph.addPass(rp);
-
-	//return hizTextureId;
 }
 
 }
