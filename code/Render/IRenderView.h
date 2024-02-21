@@ -175,7 +175,7 @@ public:
 	virtual void compute(IProgram* program, const int32_t* workSize) = 0;
 
 	/*! Enqueue a barrier. */
-	virtual void barrier(Stage from, Stage to) = 0;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) = 0;
 
 	/*! Copy texture.
 	 *

@@ -74,8 +74,6 @@ void HiZPass::setup(
 		const int32_t mipWidth = std::max(hiZWidth >> i, 1);
 		const int32_t mipHeight = std::max(hiZHeight >> i, 1);
 
-		const bool first = bool(i == 0);
-
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
@@ -89,26 +87,24 @@ void HiZPass::setup(
 
 				renderBlock->programParams->beginParameters(renderContext);
 
+				const auto outputTexture = renderGraph.getTexture(outputHiZTextureId);
+				renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, i);
+
 				if (i == 0)
 				{
 					const auto inputTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
-					const auto outputTexture = renderGraph.getTexture(outputHiZTextureId);
-
 					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, 0);
-					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, 0);
 				}
 				else
 				{
-					const auto inoutTexture = renderGraph.getTexture(outputHiZTextureId);
-
-					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inoutTexture, i - 1);
-					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, inoutTexture, i);
+					const auto inputTexture = outputTexture;
+					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, i - 1);
 				}
 
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, outputTexture, i);
 			}
 		);
 	}

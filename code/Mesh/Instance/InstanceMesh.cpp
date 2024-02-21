@@ -165,7 +165,7 @@ void InstanceMesh::build(
 		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 	}
 
 	// Create draw buffers from visibility buffer.
@@ -202,7 +202,7 @@ void InstanceMesh::build(
 		renderContext->compute(renderBlock);
 	}
 
-	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect);
+	renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Indirect, nullptr, 0);
 
 	// Add indirect draw for each mesh part.
 	for (uint32_t i = 0; i < parts.size(); ++i)

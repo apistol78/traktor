@@ -213,7 +213,7 @@ void BarrierRenderBlock::render(IRenderView* renderView) const
 {
 	T_CONTEXT_PUSH_MARKER(renderView, name);
 
-	renderView->barrier(from, to);
+	renderView->barrier(from, to, written, writtenMip);
 
 	T_CONTEXT_POP_MARKER(renderView);
 }

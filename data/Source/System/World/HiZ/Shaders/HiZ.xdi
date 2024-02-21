@@ -10,8 +10,8 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>8</X>
+				<Y>8</Y>
 				<Z>1</Z>
 			</localSize>
 		</item>
@@ -103,7 +103,6 @@ float z3 = checkRange(p + o.yx, sz) ? imageLoad($Input, p + o.yx).x : mxz;
 float z4 = checkRange(p + o.xx, sz) ? imageLoad($Input, p + o.xx).x : mxz;
 
 $Output = max(max(z1, z2), max(z3, z4));
-
 			]]>
 			</script>
 		</item>

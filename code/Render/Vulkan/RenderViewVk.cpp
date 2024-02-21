@@ -1044,7 +1044,7 @@ void RenderViewVk::compute(IProgram* program, const int32_t* workSize)
 	);
 }
 
-void RenderViewVk::barrier(Stage from, Stage to)
+void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
 {
 	const auto& frame = m_frames[m_currentImageIndex];
 	if (from == Stage::Compute && to == Stage::Indirect)
@@ -1065,7 +1065,7 @@ void RenderViewVk::barrier(Stage from, Stage to)
 			0, nullptr
 		);
 	}
-	else if (from == Stage::Compute && to == Stage::Compute)
+	else if (from == Stage::Compute && to == Stage::Compute && written == nullptr)
 	{
 		VkMemoryBarrier mb = {};
 		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
@@ -1081,6 +1081,35 @@ void RenderViewVk::barrier(Stage from, Stage to)
 			1, &mb,
 			0, nullptr,
 			0, nullptr
+		);
+	}
+	else if (from == Stage::Compute && to == Stage::Compute && written != nullptr)
+	{
+		const Image* img = mandatory_non_null_type_cast< TextureVk* >(written)->getImage();
+
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		imb.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = img->getVkImage();
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = writtenMip;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
+
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
 		);
 	}
 	else

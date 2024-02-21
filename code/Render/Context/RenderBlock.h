@@ -28,6 +28,7 @@ class IBufferView;
 class IProgram;
 class IRenderTargetSet;
 class IRenderView;
+class ITexture;
 class IVertexLayout;
 class ProgramParameters;
 
@@ -240,12 +241,16 @@ class T_DLLCLASS BarrierRenderBlock : public RenderBlock
 public:
 	Stage from = Stage::Invalid;
 	Stage to = Stage::Invalid;
+	ITexture* written = nullptr;
+	uint32_t writtenMip = 0;
 
 	BarrierRenderBlock() = default;
 
-	explicit BarrierRenderBlock(Stage from_, Stage to_)
+	explicit BarrierRenderBlock(Stage from_, Stage to_, ITexture* written_, uint32_t writtenMip_)
 	:	from(from_)
 	,	to(to_)
+	,	written(written_)
+	,	writtenMip(writtenMip_)
 	{
 	}
 

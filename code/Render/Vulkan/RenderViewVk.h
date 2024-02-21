@@ -109,7 +109,7 @@ public:
 
 	virtual void compute(IProgram* program, const int32_t* workSize) override final;
 
-	virtual void barrier(Stage from, Stage to) override final;
+	virtual void barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip) override final;
 
 	virtual bool copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion) override final;
 

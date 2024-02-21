@@ -245,7 +245,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[0], 0);
 			}
 			{
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
@@ -260,7 +260,7 @@ void SkyComponent::setup(
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[1], 0);
 			}
 		});
 		renderGraph.addPass(rp);
@@ -307,7 +307,7 @@ void SkyComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, output, 0);
 		});
 		renderGraph.addPass(rp);
 

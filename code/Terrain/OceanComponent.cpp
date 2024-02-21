@@ -213,7 +213,7 @@ void OceanComponent::setup(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
 	});
 	context.getRenderGraph().addPass(rp);
 }

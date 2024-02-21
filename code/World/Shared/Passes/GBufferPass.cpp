@@ -61,7 +61,9 @@ render::handle_t GBufferPass::setup(
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
-	rp->addInput(hiZTextureId);
+	
+	// #fixme We cannot add this input since HiZ is created from depth of this pass.
+	// rp->addInput(hiZTextureId);
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;

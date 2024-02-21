@@ -138,7 +138,7 @@ void VolumetricFogComponent::build(const WorldBuildContext& context, const World
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, m_fogVolumeTexture, 0);
 
 		m_sliceCurrent = (m_sliceCurrent + 1) % c_interleave;
 	}

@@ -350,13 +350,22 @@ void RenderViewVrfy::compute(IProgram* program, const int32_t* workSize)
 	m_renderView->compute(programVrfy->m_program, workSize);
 }
 
-void RenderViewVrfy::barrier(Stage from, Stage to)
+void RenderViewVrfy::barrier(Stage from, Stage to, ITexture* written, uint32_t writtenMip)
 {
 	T_CAPTURE_TRACE(L"barier");
 	T_CAPTURE_ASSERT(m_insideFrame, L"Cannot insert barrier outside of beginFrame/endFrame.");
 	T_CAPTURE_ASSERT(ThreadManager::getInstance().getCurrentThread() == m_threadFrame, L"Call thread inconsistent.");
 
-	m_renderView->barrier(from, to);
+	ITexture* writtenUnwrapped = nullptr;
+	if (written != nullptr)
+	{
+		if (TextureVrfy* textureVrfy = dynamic_type_cast< TextureVrfy* >(written))
+			writtenUnwrapped = textureVrfy->getTexture();
+		else
+			T_FATAL_ERROR;
+	}
+
+	m_renderView->barrier(from, to, writtenUnwrapped, writtenMip);
 }
 
 bool RenderViewVrfy::copy(ITexture* destinationTexture, const Region& destinationRegion, ITexture* sourceTexture, const Region& sourceRegion)

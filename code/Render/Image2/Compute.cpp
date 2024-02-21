@@ -143,7 +143,7 @@ void Compute::build(
 	rb->programParams = pp;
 	renderContext->compute(rb);
 
-	renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Fragment | Stage::Compute);
+	renderContext->compute< BarrierRenderBlock >(Stage::Compute, Stage::Fragment | Stage::Compute, nullptr, 0);
 }
 
 }

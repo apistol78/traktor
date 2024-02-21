@@ -49,7 +49,7 @@ bool HiZOverlay::create(resource::IResourceManager* resourceManager)
 
 void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
 {
-	const render::handle_t hiZId = findTextureByName(renderGraph, L"HiZ Current");
+	const render::handle_t hiZId = findTextureByName(renderGraph, L"HiZ");
 	if (!hiZId)
 		return;
 

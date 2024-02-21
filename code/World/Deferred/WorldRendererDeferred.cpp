@@ -61,8 +61,10 @@ const render::Handle s_persistentVisualTargetSet[] =
 
 const render::Handle s_persistentHiZTexture[] =
 {
-	render::Handle(L"World_HiZTexture_Even"),
-	render::Handle(L"World_HiZTexture_Odd")
+	render::Handle(L"World_HiZTexture_0"),
+	render::Handle(L"World_HiZTexture_1"),
+	render::Handle(L"World_HiZTexture_2"),
+	render::Handle(L"World_HiZTexture_3")
 };
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
@@ -145,15 +147,12 @@ void WorldRendererDeferred::setup(
 		renderGraph.addPersistentTargetSet(L"Current", s_persistentVisualTargetSet[(count + 1) % 2], false, rgtsd, outputTargetSetId, outputTargetSetId)
 	};
 	
-	// Add Hi-Z textures.
+	// Add Hi-Z texture.
 	const Vector2 viewSize = worldRenderView.getViewSize();
-
 	const int32_t viewWidth = (int32_t)viewSize.x;
 	const int32_t viewHeight = (int32_t)viewSize.y;
-
 	const int32_t hiZWidth = viewWidth >> 1;
 	const int32_t hiZHeight = viewHeight >> 1;
-
 	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
 
 	render::RenderGraphTextureDesc rgtxd;
@@ -161,17 +160,13 @@ void WorldRendererDeferred::setup(
 	rgtxd.height = hiZHeight;
 	rgtxd.mipCount = hiZMipCount;
 	rgtxd.format = render::TfR32F;
-	const DoubleBufferedTarget hizTextureId =
-	{
-		renderGraph.addPersistentTexture(L"HiZ Previous", s_persistentHiZTexture[count % 2], rgtxd),
-		renderGraph.addPersistentTexture(L"HiZ Current", s_persistentHiZTexture[(count + 1) % 2], rgtxd)
-	};
+	const render::handle_t hizTextureId = renderGraph.addPersistentTexture(L"HiZ", s_persistentHiZTexture[worldRenderView.getIndex()], rgtxd);
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId.previous, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId.current);
+	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -195,7 +190,7 @@ void WorldRendererDeferred::setup(
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
 		shadowMapAtlasTargetSetId,
-		hizTextureId.current
+		hizTextureId
 	);
 
 	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
