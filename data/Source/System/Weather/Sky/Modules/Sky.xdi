@@ -31,7 +31,7 @@ vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 #define INV_SCENE_SCALE					(0.1f)
 
 #define CLOUD_MARCH_STEPS				20
-#define CLOUD_SELF_SHADOW_STEPS			6
+#define CLOUD_SELF_SHADOW_STEPS			8
 
 #define EARTH_RADIUS   					(50000.0f)
 #define CLOUDS_BOTTOM   					(1050.)
@@ -39,10 +39,10 @@ vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
 
 #define CLOUDS_COVERAGE					(0.5f)
 
-#define CLOUDS_DETAIL_STRENGTH			(0.2f)
+#define CLOUDS_DETAIL_STRENGTH			(0.25f)
 #define CLOUDS_BASE_EDGE_SOFTNESS		(0.15f)
 #define CLOUDS_BOTTOM_SOFTNESS			(0.01f)
-#define CLOUDS_DENSITY					(0.1f)
+#define CLOUDS_DENSITY					(0.15f)
 #define CLOUDS_SHADOW_MARGE_STEP_SIZE	(6.0f)
 #define CLOUDS_SHADOW_MARGE_STEP_MULTIPLY	(1.3f)
 #define CLOUDS_FORWARD_SCATTERING_G		(0.8f)

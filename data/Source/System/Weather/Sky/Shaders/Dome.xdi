@@ -184,7 +184,7 @@ $Output = vec4(direction, 0.0f);
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
 
-float dist = 8000.0f;
+float dist = 9000.0f;
 const vec4 clr = renderClouds(
 	ro,
 	rd,
@@ -202,6 +202,7 @@ const vec4 clr = renderClouds(
 
 $Output = clr;
 $Distance = dist;
+
 			]]>
 			</script>
 		</item>
@@ -424,7 +425,7 @@ $Output = imageLoad($Image, $Coord.xy);
 				<first>584</first>
 				<second>530</second>
 			</position>
-			<value>0.05</value>
+			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{7352EF91-A455-4C36-8BD3-59F7838C52FE}</id>
@@ -458,7 +459,6 @@ $Output = imageLoad($Image, $Coord.xy);
 			<![CDATA[
 ivec2 sz = imageSize($Input);
 $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
-
 			]]>
 			</script>
 		</item>
