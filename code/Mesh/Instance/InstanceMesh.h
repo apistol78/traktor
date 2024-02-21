@@ -100,7 +100,7 @@ public:
 	
 	Instance* allocateInstance();
 
-	void releaseInstance(Instance* instance);
+	void releaseInstance(Instance*& instance);
 
 	//
 

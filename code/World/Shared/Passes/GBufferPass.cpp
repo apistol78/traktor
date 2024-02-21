@@ -40,6 +40,7 @@ render::handle_t GBufferPass::setup(
 	const IrradianceGrid* irradianceGrid,
 	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
+	render::handle_t hiZTextureId,
 	render::handle_t outputTargetSetId
 ) const
 {
@@ -60,6 +61,7 @@ render::handle_t GBufferPass::setup(
 
 	// Add GBuffer render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer");
+	rp->addInput(hiZTextureId);
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
@@ -93,6 +95,12 @@ render::handle_t GBufferPass::setup(
 				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, irradianceGrid->getBoundingBox().mn);
 				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, irradianceGrid->getBoundingBox().mx);
 				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, irradianceGrid->getBuffer()->getBufferView());
+			}
+
+			if (hiZTextureId != 0)
+			{
+				auto hiZTexture = renderGraph.getTexture(hiZTextureId);
+				sharedParams->setTextureParameter(s_handleHiZTexture, hiZTexture);
 			}
 
 			sharedParams->endParameters(renderContext);

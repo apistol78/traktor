@@ -18,6 +18,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor::mesh
@@ -29,8 +30,6 @@ render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 render::Handle s_handleBoundingBoxMin(L"InstanceMesh_BoundingBoxMin");
 render::Handle s_handleBoundingBoxMax(L"InstanceMesh_BoundingBoxMax");
-render::Handle s_handleView(L"InstanceMesh_View");
-render::Handle s_handleViewInverse(L"InstanceMesh_ViewInverse");
 render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
 render::Handle s_handleCullFrustum(L"InstanceMesh_CullFrustum");
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
@@ -87,7 +86,7 @@ void InstanceMesh::build(
 	const AlignedVector< Part >& parts = it->second;
 	const auto& meshParts = m_renderMesh->getParts();
 
-	const uint32_t bufferItemCount = alignUp(m_instances.size(), 16);
+	const uint32_t bufferItemCount = (uint32_t)alignUp(m_instances.size(), 16);
 
 	// Lazy create the buffers.
 	if (!m_instanceBuffer || bufferItemCount > m_instanceAllocatedCount)
@@ -100,11 +99,11 @@ void InstanceMesh::build(
 	}
 
 	const uint32_t peakCascade =  worldRenderView.getCascade();
-	const uint32_t vbSize = m_visibilityBuffers.size();
+	const uint32_t vbSize = (uint32_t)m_visibilityBuffers.size();
 	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
 		m_visibilityBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured, bufferItemCount * sizeof(float), false));
 
-	const uint32_t dbSize = m_drawBuffers.size();
+	const uint32_t dbSize = (uint32_t)m_drawBuffers.size();
 	for (uint32_t i = dbSize; i < (peakCascade + 1) * parts.size(); ++i)
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect, bufferItemCount * sizeof(render::IndexedIndirectDraw), false));
 
@@ -128,29 +127,42 @@ void InstanceMesh::build(
 
 		const Frustum& cf = worldRenderView.getCullFrustum();
 		T_FATAL_ASSERT(cf.planes.size() <= sizeof_array(cullFrustum));
-		for (int32_t i = 0; i < cf.planes.size(); ++i)
+		for (int32_t i = 0; i < (int32_t)cf.planes.size(); ++i)
 			cullFrustum[i] = cf.planes[i].normal().xyz0() + Vector4(0.0f, 0.0f, 0.0f, cf.planes[i].distance());
-		for (int32_t i = cf.planes.size(); i < sizeof_array(cullFrustum); ++i)
+		for (int32_t i = (int32_t)cf.planes.size(); i < sizeof_array(cullFrustum); ++i)
 			cullFrustum[i] = Vector4::zero();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
 			str(L"InstanceMesh cull %d", worldRenderView.getCascade())
 		);
 
-		renderBlock->program = m_shaderCull->getProgram().program;
+		render::Shader::Permutation perm;
+		if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+		{
+			// Deferred g-buffer pass has access to HiZ texture.
+			m_shaderCull->setCombination(render::getParameterHandle(L"InstanceMesh_HiZ"), true, perm);
+		}
+		else
+		{
+			// All other paths use simple frustum culling only.
+			m_shaderCull->setCombination(render::getParameterHandle(L"InstanceMesh_HiZ"), false, perm);
+		}
+
+		renderBlock->program = m_shaderCull->getProgram(perm).program;
 
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 		renderBlock->programParams->beginParameters(renderContext);
+
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
+
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMin, m_renderMesh->getBoundingBox().mn);
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMax, m_renderMesh->getBoundingBox().mx);
 		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));
-		renderBlock->programParams->setMatrixParameter(s_handleView, worldRenderView.getView());
-		renderBlock->programParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderBlock->workSize[0] = m_instances.size();
+		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute);
@@ -185,7 +197,7 @@ void InstanceMesh::build(
 		renderBlock->programParams->setBufferViewParameter(s_handleDraw, drawBuffer->getBufferView());
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderBlock->workSize[0] = m_instances.size();
+		renderBlock->workSize[0] = (int32_t)m_instances.size();
 
 		renderContext->compute(renderBlock);
 	}
@@ -217,7 +229,7 @@ void InstanceMesh::build(
 		renderBlock->vertexLayout = m_renderMesh->getVertexLayout();
 		renderBlock->primitive = meshParts[part.meshPart].primitives.type;
 		renderBlock->drawBuffer = drawBuffer->getBufferView();
-		renderBlock->drawCount = m_instances.size();
+		renderBlock->drawCount = (uint32_t)m_instances.size();
 
 		renderBlock->programParams->beginParameters(renderContext);
 
@@ -248,12 +260,13 @@ InstanceMesh::Instance* InstanceMesh::allocateInstance()
 	return instance;
 }
 
-void InstanceMesh::releaseInstance(Instance* instance)
+void InstanceMesh::releaseInstance(Instance*& instance)
 {
 	T_FATAL_ASSERT(instance->mesh == this);
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
 	m_instances.erase(it);
 	delete instance;
+	instance = nullptr;
 }
 
 void InstanceMesh::Instance::setTransform(const Transform& transform)

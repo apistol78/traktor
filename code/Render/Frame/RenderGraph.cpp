@@ -196,6 +196,18 @@ handle_t RenderGraph::addTransientTexture(const wchar_t* const name, const Rende
 	return resourceId;
 }
 
+handle_t RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc)
+{
+	const handle_t resourceId = m_nextResourceId++;
+
+	auto& tr = m_textures[resourceId];
+	tr.name = name;
+	tr.persistentHandle = persistentHandle;
+	tr.textureDesc = textureDesc;
+
+	return resourceId;
+}
+
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
 	auto it = m_targets.find(resource);
@@ -355,10 +367,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& sbuffer = it.second;
 		if (sbuffer.buffer == nullptr)
 		{
-			sbuffer.buffer = m_bufferPool->acquire(
-				sbuffer.bufferSize,
-				sbuffer.persistentHandle
-			);
+			sbuffer.buffer = m_bufferPool->acquire(sbuffer.bufferSize, sbuffer.persistentHandle);
 			if (!sbuffer.buffer)
 				return false;
 		}
@@ -369,7 +378,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 		auto& texture = it.second;
 		if (texture.texture == nullptr)
 		{
-			texture.texture = m_texturePool->acquire(texture.textureDesc);
+			texture.texture = m_texturePool->acquire(texture.textureDesc, texture.persistentHandle);
 			if (!texture.texture)
 				return false;
 		}

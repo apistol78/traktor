@@ -47,10 +47,11 @@ bool HiZPass::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-render::handle_t HiZPass::setup(
+void HiZPass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
-	render::handle_t gbufferTargetSetId
+	render::handle_t gbufferTargetSetId,
+	render::handle_t outputHiZTextureId
 ) const
 {
 	T_PROFILER_SCOPE(L"HiZPass::setup");
@@ -60,16 +61,16 @@ render::handle_t HiZPass::setup(
 	const int32_t viewHeight = (int32_t)viewSize.y;
 	const int32_t mipCount = log2(std::max(viewWidth, viewHeight)) + 1;
 
-	render::RenderGraphTextureDesc rgtd;
-	rgtd.width = viewWidth >> 1;
-	rgtd.height = viewHeight >> 1;
-	rgtd.mipCount = mipCount - 1;
-	rgtd.format = render::TfR32F;
-	auto hizTextureId = renderGraph.addTransientTexture(L"HiZ", rgtd);
+	//render::RenderGraphTextureDesc rgtd;
+	//rgtd.width = viewWidth >> 1;
+	//rgtd.height = viewHeight >> 1;
+	//rgtd.mipCount = mipCount - 1;
+	//rgtd.format = render::TfR32F;
+	//auto hizTextureId = renderGraph.addTransientTexture(L"HiZ", rgtd);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"HiZ");
 	rp->addInput(gbufferTargetSetId);
-	rp->setOutput(hizTextureId);
+	rp->setOutput(outputHiZTextureId);
 
 	for (int32_t i = 0; i < mipCount - 2; ++i)
 	{
@@ -92,14 +93,14 @@ render::handle_t HiZPass::setup(
 				if (i == 0)
 				{
 					const auto inputTexture = renderGraph.getTargetSet(gbufferTargetSetId)->getColorTexture(0);
-					const auto outputTexture = renderGraph.getTexture(hizTextureId);
+					const auto outputTexture = renderGraph.getTexture(outputHiZTextureId);
 
 					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inputTexture, 0);
 					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, 0);
 				}
 				else
 				{
-					const auto inoutTexture = renderGraph.getTexture(hizTextureId);
+					const auto inoutTexture = renderGraph.getTexture(outputHiZTextureId);
 
 					renderBlock->programParams->setImageViewParameter(s_handleHiZInput, inoutTexture, i - 1);
 					renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, inoutTexture, i);
@@ -116,7 +117,7 @@ render::handle_t HiZPass::setup(
 
 	renderGraph.addPass(rp);
 
-	return hizTextureId;
+	//return hizTextureId;
 }
 
 }

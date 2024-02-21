@@ -26,13 +26,16 @@ void RenderGraphTexturePool::destroy()
 	m_renderSystem = nullptr;
 }
 
-Ref< ITexture > RenderGraphTexturePool::acquire(const RenderGraphTextureDesc& textureDesc)
+Ref< ITexture > RenderGraphTexturePool::acquire(const RenderGraphTextureDesc& textureDesc, uint32_t persistentHandle)
 {
 	auto it = std::find_if(
 		m_pool.begin(),
 		m_pool.end(),
 		[&](const RenderGraphTexturePool::Pool& p)
 		{
+			if (p.persistentHandle != persistentHandle)
+				return false;
+
 			return std::memcmp(&p.textureDesc, &textureDesc, sizeof(textureDesc)) == 0;
 		}
 	);
@@ -45,6 +48,7 @@ Ref< ITexture > RenderGraphTexturePool::acquire(const RenderGraphTextureDesc& te
 	{
 		pool = &m_pool.push_back();
 		pool->textureDesc = textureDesc;
+		pool->persistentHandle = persistentHandle;
 	}
 
 	// Acquire free texture, if no one left we need to create a new texture.

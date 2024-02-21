@@ -31,7 +31,7 @@ public:
 
 	void destroy();
 
-	Ref< ITexture > acquire(const RenderGraphTextureDesc& textureDesc);
+	Ref< ITexture > acquire(const RenderGraphTextureDesc& textureDesc, uint32_t persistentHandle);
 
 	void release(Ref< ITexture >& texture);
 
@@ -40,6 +40,7 @@ private:
 	{
 		// Pool identification.
 		RenderGraphTextureDesc textureDesc;
+		uint32_t persistentHandle;
 
 		// Pool buffers.
 		RefArray< ITexture > free;

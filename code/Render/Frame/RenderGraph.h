@@ -89,6 +89,7 @@ public:
 	struct TextureResource
 	{
 		const wchar_t* name = nullptr;
+		handle_t persistentHandle = 0;
 		RenderGraphTextureDesc textureDesc;
 		Ref< ITexture > texture;
 	};
@@ -191,6 +192,10 @@ public:
 	 * \return Opaque resource handle.
 	 */
 	handle_t addTransientTexture(const wchar_t* const name, const RenderGraphTextureDesc& textureDesc);
+
+	/*!
+	 */
+	handle_t addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc);
 
 	/*! Get target set from resource handle.
 	 *

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,10 +42,11 @@ class HiZPass : public Object
 public:
 	bool create(resource::IResourceManager* resourceManager);
 
-	render::handle_t setup(
+	void setup(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
-        render::handle_t gbufferTargetSetId
+        render::handle_t gbufferTargetSetId,
+		render::handle_t outputHiZTextureId
 	) const;
 
 private:

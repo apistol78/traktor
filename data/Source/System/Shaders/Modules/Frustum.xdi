@@ -23,6 +23,31 @@ bool FrustumInside(in Frustum frustum, in vec3 center, in float radius)
 	return true;
 }
 
+// Sphere
+
+bool ProjectSphere(in vec3 center, in float radius, float znear, float P00, float P11, out vec4 aabb)
+{
+	if (center.z < radius + znear)
+		return false;
+
+	vec3 cr = center * radius;
+	float czr2 = center.z * center.z - radius * radius;
+
+	float vx = sqrt(center.x * center.x + czr2);
+	float minx = (vx * center.x - cr.z) / (vx * center.z + cr.x);
+	float maxx = (vx * center.x + cr.z) / (vx * center.z - cr.x);
+
+	float vy = sqrt(center.y * center.y + czr2);
+	float miny = (vy * center.y - cr.z) / (vy * center.z + cr.y);
+	float maxy = (vy * center.y + cr.z) / (vy * center.z - cr.y);
+
+	aabb = vec4(minx * P00, miny * P11, maxx * P00, maxy * P11);
+	aabb = aabb.xwzy * vec4(0.5f, -0.5f, 0.5f, -0.5f) + vec4(0.5f); // clip space -> uv space
+
+	return true;
+}
+
+
 	]]>
 	</text>
 </object>

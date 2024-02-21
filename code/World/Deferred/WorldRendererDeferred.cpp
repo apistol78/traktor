@@ -53,10 +53,16 @@ namespace traktor::world
 	namespace
 	{
 
-const render::Handle s_handleVisualTargetSet[] =
+const render::Handle s_persistentVisualTargetSet[] =
 {
 	render::Handle(L"World_VisualTargetSet_Even"),
 	render::Handle(L"World_VisualTargetSet_Odd")
+};
+
+const render::Handle s_persistentHiZTexture[] =
+{
+	render::Handle(L"World_HiZTexture_Even"),
+	render::Handle(L"World_HiZTexture_Odd")
 };
 
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
@@ -127,23 +133,40 @@ void WorldRendererDeferred::setup(
 	}
 
 	// Add visual target sets.
-	render::RenderGraphTargetSetDesc rgtd;
-	rgtd.count = 1;
-	rgtd.createDepthStencil = false;
-	rgtd.referenceWidthDenom = 1;
-	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;
+	render::RenderGraphTargetSetDesc rgtsd;
+	rgtsd.count = 1;
+	rgtsd.createDepthStencil = false;
+	rgtsd.referenceWidthDenom = 1;
+	rgtsd.referenceHeightDenom = 1;
+	rgtsd.targets[0].colorFormat = render::TfR16G16B16A16F;
 	const DoubleBufferedTarget visualTargetSetId =
 	{
-		renderGraph.addPersistentTargetSet(L"Previous", s_handleVisualTargetSet[count % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Current", s_handleVisualTargetSet[(count + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
+		renderGraph.addPersistentTargetSet(L"Previous", s_persistentVisualTargetSet[count % 2], false, rgtsd, outputTargetSetId, outputTargetSetId),
+		renderGraph.addPersistentTargetSet(L"Current", s_persistentVisualTargetSet[(count + 1) % 2], false, rgtsd, outputTargetSetId, outputTargetSetId)
 	};
 	
+	// Add Hi-Z textures.
+	const Vector2 viewSize = worldRenderView.getViewSize();
+	const int32_t viewWidth = (int32_t)viewSize.x;
+	const int32_t viewHeight = (int32_t)viewSize.y;
+	const int32_t mipCount = log2(std::max(viewWidth, viewHeight)) + 1;
+
+	render::RenderGraphTextureDesc rgtxd;
+	rgtxd.width = viewWidth >> 1;
+	rgtxd.height = viewHeight >> 1;
+	rgtxd.mipCount = mipCount - 1;
+	rgtxd.format = render::TfR32F;
+	const DoubleBufferedTarget hizTextureId =
+	{
+		renderGraph.addPersistentTexture(L"HiZ Previous", s_persistentHiZTexture[count % 2], rgtxd),
+		renderGraph.addPersistentTexture(L"HiZ Current", s_persistentHiZTexture[(count + 1) % 2], rgtxd)
+	};
+
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, m_irradianceGrid, s_techniqueDeferredGBufferWrite, renderGraph, hizTextureId.previous, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
-	auto hiZTextureId = m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
+	m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId, hizTextureId.current);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto ambientOcclusionTargetSetId = m_ambientOcclusionPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	auto contactShadowsTargetSetId = m_contactShadowsPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -163,11 +186,11 @@ void WorldRendererDeferred::setup(
 		visualTargetSetId.current,
 		gbufferTargetSetId,
 		dbufferTargetSetId,
-		hiZTextureId,
 		ambientOcclusionTargetSetId,
 		contactShadowsTargetSetId,
 		reflectionsTargetSetId,
-		shadowMapAtlasTargetSetId
+		shadowMapAtlasTargetSetId,
+		hizTextureId.current
 	);
 
 	m_postProcessPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, velocityTargetSetId, visualTargetSetId, outputTargetSetId);
@@ -181,11 +204,11 @@ void WorldRendererDeferred::setupVisualPass(
 	render::handle_t visualWriteTargetSetId,
 	render::handle_t gbufferTargetSetId,
 	render::handle_t dbufferTargetSetId,
-	render::handle_t hiZTextureId,
 	render::handle_t ambientOcclusionTargetSetId,
 	render::handle_t contactShadowsTargetSetId,
 	render::handle_t reflectionsTargetSetId,
-	render::handle_t shadowMapAtlasTargetSetId
+	render::handle_t shadowMapAtlasTargetSetId,
+	render::handle_t outputHiZTextureId
 ) const
 {
 	T_PROFILER_SCOPE(L"World setup visual");
@@ -211,11 +234,11 @@ void WorldRendererDeferred::setupVisualPass(
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Visual");
 	rp->addInput(gbufferTargetSetId);
 	rp->addInput(dbufferTargetSetId);
-	// rp->addInput(hiZTextureId);
 	rp->addInput(ambientOcclusionTargetSetId);
 	// rp->addInput(contactShadowsTargetSetId);
 	rp->addInput(reflectionsTargetSetId);
 	rp->addInput(shadowMapAtlasTargetSetId);
+	rp->addInput(outputHiZTextureId);
 	for (auto attachment : m_visualAttachments)
 		rp->addInput(attachment);
 

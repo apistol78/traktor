@@ -34,6 +34,8 @@ class T_DLLCLASS InstanceMeshComponent : public MeshComponent
 public:
 	explicit InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh);
 
+	virtual ~InstanceMeshComponent();
+
 	virtual void destroy() override final;
 
 	virtual void setTransform(const Transform& transform) override;

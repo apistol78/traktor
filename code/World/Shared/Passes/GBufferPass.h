@@ -44,6 +44,7 @@ public:
 		const IrradianceGrid* irradianceGrid,
 		render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
+		render::handle_t hiZTextureId,
 		render::handle_t outputTargetSetId
 	) const;
 

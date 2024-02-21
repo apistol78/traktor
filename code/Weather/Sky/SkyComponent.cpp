@@ -20,6 +20,7 @@
 #include "Weather/Sky/SkyComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 #include "World/Entity/LightComponent.h"
@@ -43,6 +44,8 @@ const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection")
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
 const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
 const render::Handle s_handleWeather_SkyCloudTexture(L"Weather_SkyCloudTexture");
+const render::Handle s_handleWeather_InputTexture(L"Weather_InputTexture");
+const render::Handle s_handleWeather_OutputTexture(L"Weather_OutputTexture");
 
 const int32_t c_longitudes = 16;
 const int32_t c_latitudes = 24;
@@ -134,6 +137,8 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	);
 
 	render::SimpleTextureCreateDesc stcd = {};
+	render::VolumeTextureCreateDesc vtcd = {};
+
 	stcd.width = 512;
 	stcd.height = 512;
 	stcd.mipCount = 1;
@@ -141,7 +146,6 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	stcd.shaderStorage = true;
 	m_cloudTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
-	render::VolumeTextureCreateDesc vtcd = {};
 	vtcd.width = 64;
 	vtcd.height = 64;
 	vtcd.depth = 64;
@@ -150,7 +154,6 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	vtcd.shaderStorage = true;
 	m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
-	//render::SimpleTextureCreateDesc stcd = {};
 	stcd.width = 1024;
 	stcd.height = 256;
 	stcd.mipCount = 1;
@@ -159,7 +162,7 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 	m_cloudDomeTexture[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 	m_cloudDomeTexture[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
-	if (!m_cloudTextures[0] || !m_cloudTextures[1])
+	if (!m_cloudTextures[0] || !m_cloudTextures[1] || !m_cloudDomeTexture[0] || !m_cloudDomeTexture[1])
 		return false;
 
 	if (!resourceManager->bind(c_shaderClouds2D, m_shaderClouds2D))
@@ -183,6 +186,8 @@ void SkyComponent::destroy()
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_cloudTextures[0]);
 	safeDestroy(m_cloudTextures[1]);
+	safeDestroy(m_cloudDomeTexture[0]);
+	safeDestroy(m_cloudDomeTexture[1]);
 	m_shader.clear();
 	m_texture.clear();
 	m_shaderClouds2D.clear();
@@ -214,8 +219,6 @@ void SkyComponent::setup(
 	const world::WorldRenderView& worldRenderView
 )
 {
-	const static render::Handle s_handleInputTexture(L"Weather_InputTexture");
-	const static render::Handle s_handleOutputTexture(L"Weather_OutputTexture");
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
 	if (m_shaderClouds2D.changed() || m_shaderClouds3D.changed())
@@ -238,7 +241,7 @@ void SkyComponent::setup(
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[0], 0);
+				renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[0], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
@@ -253,7 +256,7 @@ void SkyComponent::setup(
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, m_cloudTextures[1], 0);
+				renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[1], 0);
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
@@ -265,7 +268,7 @@ void SkyComponent::setup(
 		m_dirty = false;
 	}
 
-	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 4.0f);
+	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 8.0f);
 
 	// Generate dome projected cloud layer.
 	if (worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
@@ -293,17 +296,14 @@ void SkyComponent::setup(
 
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->programParams->beginParameters(renderContext);
-
-			renderBlock->programParams->setImageViewParameter(s_handleInputTexture, input, 0);
-			renderBlock->programParams->setImageViewParameter(s_handleOutputTexture, output, 0);
-
+			renderBlock->programParams->setImageViewParameter(s_handleWeather_InputTexture, input, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, output, 0);
 			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
 			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
-			renderBlock->programParams->setFloatParameter(render::getParameterHandle(L"World_Time"), worldRenderView.getTime());
-
+			renderBlock->programParams->setFloatParameter(world::s_handleTime, worldRenderView.getTime());
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
@@ -355,23 +355,17 @@ void SkyComponent::build(
 	renderBlock->primitives = m_primitives;
 
 	renderBlock->programParams->beginParameters(renderContext);
-
 	worldRenderPass.setProgramParameters(renderBlock->programParams);
-
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_intensity);
-
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
-
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
-
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTexture, cloudDomeTexture);
-
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(sp.priority, renderBlock);

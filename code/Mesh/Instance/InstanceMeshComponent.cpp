@@ -23,9 +23,17 @@ InstanceMeshComponent::InstanceMeshComponent(const resource::Proxy< InstanceMesh
 	m_meshInstance = m_mesh->allocateInstance();
 }
 
+InstanceMeshComponent::~InstanceMeshComponent()
+{
+	// Need to call destroy here since editor doesn't always call destroy on components
+	// but instead rely on reference counting to do the cleanup.
+	destroy();
+}
+
 void InstanceMeshComponent::destroy()
 {
-	m_mesh->releaseInstance(m_meshInstance);
+	if (m_mesh && m_meshInstance != nullptr)
+		m_mesh->releaseInstance(m_meshInstance);
 	m_mesh.clear();
 	MeshComponent::destroy();
 }
@@ -33,7 +41,6 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
-
 	m_meshInstance->setTransform(transform);
 }
 
