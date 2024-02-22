@@ -73,7 +73,7 @@ bool ImageFormatExr::write(IStream* stream, const Image* image)
 		img->getHeight(),
 		4,
 		0,
-		(const unsigned char**)&buffer,
+		(unsigned char**)&buffer,
 		nullptr
 	);
 	if (size <= 0)
