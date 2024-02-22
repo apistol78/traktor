@@ -328,7 +328,7 @@ $Buffer[index].visible = $Input;
 			<script>
 			<![CDATA[
 const vec3 center = ($Bbmn + $Bbmx).xyz / 2.0f;
-const float radius = length(($Bbmx - $Bbmn).xyz) / 2.0f;
+const float radius = max(length($Bbmx), length($Bbmn));
 
 const vec3 worldCenter = $Translation.xyz + center;
 const vec4 viewCenter = $View * vec4(worldCenter, 1.0f);
@@ -347,10 +347,10 @@ if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 
 	const float width = (aabb.z - aabb.x) * osz.x;
 	const float height = (aabb.w - aabb.y) * osz.y;
-	const float level = ceil(log2(max(width, height)));
+	const float level = floor(log2(max(width, height)));
 
-	vec2 s = vec2(osz) / hs;
-	vec2 p = ((aabb.xy + aabb.zw) * 0.5f) * s;
+	const vec2 s = vec2(osz) / hs;
+	const vec2 p = ((aabb.xy + aabb.zw) * 0.5f) * s;
 
 	const float depth = textureLod(sampler2D($HiZTexture, $HiZState), p, level).x;
 

@@ -243,9 +243,13 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
+		if (m_entityAdapter->isSelected())
 		{
 			Vector4 center = (boundingBox.mn + boundingBox.mx) / 2.0_simd;
-			Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
+			//Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
+
+			Scalar radius = max(boundingBox.mx.length(), boundingBox.mn.length());
+
 			Vector4 worldCenter = transform.translation() + center;
 			Vector4 viewCenter = primitiveRenderer->getView() * worldCenter.xyz1();
 
@@ -264,6 +268,8 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 
 				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
 				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+				primitiveRenderer->drawLine(Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
 
 				primitiveRenderer->setProjection(proj);
 				primitiveRenderer->popView();
