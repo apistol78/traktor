@@ -2285,7 +2285,7 @@ else
 				<first>-820</first>
 				<second>4072</second>
 			</position>
-			<value>2</value>
+			<value>6</value>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{431F1C47-067D-5042-B5DC-20EBDF01A8C7}</id>
@@ -2329,9 +2329,9 @@ else
 			</outputPins>
 			<script>
 			<![CDATA[
-ivec2 osz = ivec2($TargetSize.xy) / 2;
-ivec2 hsz = textureSize($Texture, 0);
-vec2 s = vec2(osz) / hsz;
+vec2 osz = vec2($TargetSize.xy) / 2.0f;
+vec2 hsz = textureSize($Texture, 0);
+vec2 s = osz / hsz;
 vec2 p = $TexCoord.xy * s;
 $Output = vec4(p, 0.0f, 0.0f);
 

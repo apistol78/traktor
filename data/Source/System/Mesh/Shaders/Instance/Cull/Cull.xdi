@@ -272,7 +272,7 @@ $Buffer[index].visible = $Input;
 			<comment/>
 			<position>
 				<first>721</first>
-				<second>756</second>
+				<second>755</second>
 			</position>
 			<name>HiZ</name>
 			<technique/>
@@ -342,14 +342,14 @@ const float P11 = $Projection[1][1];
 vec4 aabb;
 if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 {
-	const vec2 hs = textureSize($HiZTexture, 0);
-	const ivec2 osz = ivec2($TargetSize.xy) / 2;
+	const vec2 osz = vec2($TargetSize.xy) / 2.0f;
 
 	const float width = (aabb.z - aabb.x) * osz.x;
 	const float height = (aabb.w - aabb.y) * osz.y;
-	const float level = floor(log2(max(width, height)));
+	const float level = ceil(log2(max(width, height)));
 
-	const vec2 s = vec2(osz) / hs;
+	const vec2 hs = textureSize($HiZTexture, 0);
+	const vec2 s = osz / hs;
 	const vec2 p = ((aabb.xy + aabb.zw) * 0.5f) * s;
 
 	const float depth = textureLod(sampler2D($HiZTexture, $HiZState), p, level).x;
