@@ -72,9 +72,21 @@ public:
 
 	//! \{
 
+	/*! Add input to render pass.
+	 * 
+	 * \param resourceId ID of input resource.
+	 */
 	void addInput(handle_t resourceId);
 
-	bool requireInput(handle_t resourceId) const;
+	/*! Add weak input to render pass.
+	 * 
+	 * A weak input doesn't resolve into a dependency between
+	 * passes but only register the pass as it will use the
+	 * resource during build.
+	 * 
+	 * \param resourceId ID of input resource.
+	 */
+	void addWeakInput(handle_t resourceId);
 
 	const StaticVector< Input, 16 >& getInputs() const { return m_inputs; }
 
@@ -82,6 +94,14 @@ public:
 
 	//! \{
 
+	/*! Set output resource of render pass.
+	 * 
+	 * Resource ID 0 means the primary framebuffer and
+	 * an ID of ~0 means the render pass doesn't have an
+	 * output resource associated.
+	 *
+	 * \param resourceId ID of output resource.
+	 */
 	void setOutput(handle_t resourceId);
 
 	void setOutput(handle_t resourceId, uint32_t load, uint32_t store);

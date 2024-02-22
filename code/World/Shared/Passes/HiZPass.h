@@ -42,6 +42,8 @@ class HiZPass : public Object
 public:
 	bool create(resource::IResourceManager* resourceManager);
 
+	render::handle_t addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const;
+
 	void setup(
 		const WorldRenderView& worldRenderView,
 		render::RenderGraph& renderGraph,
@@ -50,7 +52,7 @@ public:
 	) const;
 
 private:
-resource::Proxy< render::Shader > m_hiZBuildShader;
+	resource::Proxy< render::Shader > m_hiZBuildShader;
 };
 
 }

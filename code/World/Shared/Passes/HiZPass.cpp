@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Misc/String.h"
 #include "Core/Timer/Profiler.h"
 #include "Render/Buffer.h"
@@ -32,6 +33,14 @@ const resource::Id< render::Shader > c_hiZBuildShader(L"{E8879B75-F646-5D46-8873
 const render::Handle s_handleHiZInput(L"World_HiZInput");
 const render::Handle s_handleHiZOutput(L"World_HiZOutput");
 
+const render::Handle s_persistentHiZTexture[] =
+{
+	render::Handle(L"World_HiZTexture_0"),
+	render::Handle(L"World_HiZTexture_1"),
+	render::Handle(L"World_HiZTexture_2"),
+	render::Handle(L"World_HiZTexture_3")
+};
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.HiZPass", HiZPass, Object)
@@ -46,6 +55,23 @@ bool HiZPass::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
+render::handle_t HiZPass::addTexture(const WorldRenderView& worldRenderView, render::RenderGraph& renderGraph) const
+{
+	const Vector2 viewSize = worldRenderView.getViewSize();
+	const int32_t viewWidth = (int32_t)viewSize.x;
+	const int32_t viewHeight = (int32_t)viewSize.y;
+	const int32_t hiZWidth = nearestLog2(viewWidth >> 1);
+	const int32_t hiZHeight = nearestLog2(viewHeight >> 1);
+	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
+
+	render::RenderGraphTextureDesc rgtxd;
+	rgtxd.width = hiZWidth;
+	rgtxd.height = hiZHeight;
+	rgtxd.mipCount = hiZMipCount;
+	rgtxd.format = render::TfR32F;
+	return renderGraph.addPersistentTexture(L"HiZ", s_persistentHiZTexture[worldRenderView.getIndex()], rgtxd);
+}
+
 void HiZPass::setup(
 	const WorldRenderView& worldRenderView,
 	render::RenderGraph& renderGraph,
@@ -56,13 +82,10 @@ void HiZPass::setup(
 	T_PROFILER_SCOPE(L"HiZPass::setup");
 
 	const Vector2 viewSize = worldRenderView.getViewSize();
-
 	const int32_t viewWidth = (int32_t)viewSize.x;
 	const int32_t viewHeight = (int32_t)viewSize.y;
-
-	const int32_t hiZWidth = viewWidth >> 1;
-	const int32_t hiZHeight = viewHeight >> 1;
-
+	const int32_t hiZWidth = nearestLog2(viewWidth >> 1);
+	const int32_t hiZHeight = nearestLog2(viewHeight >> 1);
 	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"HiZ");
@@ -73,6 +96,12 @@ void HiZPass::setup(
 	{
 		const int32_t mipWidth = std::max(hiZWidth >> i, 1);
 		const int32_t mipHeight = std::max(hiZHeight >> i, 1);
+
+		const int32_t workWidth = std::max(viewWidth >> (i + 1), 1);
+		const int32_t workHeight = std::max(viewHeight >> (i + 1), 1);
+
+		T_FATAL_ASSERT(workWidth <= mipWidth);
+		T_FATAL_ASSERT(workHeight <= mipHeight);
 
 		rp->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
@@ -86,6 +115,8 @@ void HiZPass::setup(
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams->beginParameters(renderContext);
+
+				renderBlock->programParams->setVectorParameter(render::getParameterHandle(L"World_HiZWorkSize"), Vector4(workWidth, workHeight, 0.0f, 0.0f));
 
 				const auto outputTexture = renderGraph.getTexture(outputHiZTextureId);
 				renderBlock->programParams->setImageViewParameter(s_handleHiZOutput, outputTexture, i);

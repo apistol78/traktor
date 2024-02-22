@@ -1,113 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
-			<id>{C7B68B59-4228-A145-8352-D63CE646F6C9}</id>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{867A7E7A-350E-944D-BC0B-5F51C7028530}</id>
 			<comment/>
 			<position>
-				<first>473</first>
-				<second>146</second>
+				<first>273</first>
+				<second>482</second>
 			</position>
+			<name>Output</name>
 			<technique>Default</technique>
 			<localSize>
-				<X>8</X>
-				<Y>8</Y>
+				<X>1</X>
+				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{D69B3EDE-00AB-2540-B217-394E11A1B0E1}</id>
+					<name>Input</name>
+				</item>
+				<item>
+					<id>{2D2D3531-DD81-1F47-90F9-DDE0C69AEF69}</id>
+					<name>Output</name>
+				</item>
+				<item>
+					<id>{98C61F79-5BF1-9D49-92B7-77AEEA0EDFAF}</id>
+					<name>WorkSize</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<script>
+			<![CDATA[
+ivec2 sz = imageSize($Output);
+ivec2 pt = ivec2(gl_GlobalInvocationID.xy);
+
+if (pt.x < sz.x && pt.y < sz.y)
+{
+//	if (pt.x < $WorkSize.x && pt.y < $WorkSize.y)
+	{
+		ivec2 o = ivec2(1, 0);
+		ivec2 p = pt * 2;
+	
+		float z1 = imageLoad($Input, p + o.yy).x;
+		float z2 = imageLoad($Input, p + o.xy).x;
+		float z3 = imageLoad($Input, p + o.yx).x;
+		float z4 = imageLoad($Input, p + o.xx).x;
+	
+		float mxz = max(max(z1, z2), max(z3, z4));
+		imageStore($Output, pt, vec4(mxz));
+	}
+}
+
+			]]>
+			</script>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{6E68FD9A-ACE2-9E4A-8B5B-AD54A457B107}</id>
+			<id>{CBB170DD-96E3-CF46-948E-47E5006E153F}</id>
 			<comment/>
 			<position>
-				<first>-26</first>
-				<second>268</second>
+				<first>-21</first>
+				<second>476</second>
 			</position>
 			<parameterName>World_HiZInput</parameterName>
 			<type>Image2D</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{FACE56FE-0DC8-4C47-A4B5-F75AF6D34A50}</id>
+			<id>{9E8F9562-547A-AA44-9F23-C243E184C92C}</id>
 			<comment/>
 			<position>
-				<first>154</first>
-				<second>174</second>
+				<first>-59</first>
+				<second>556</second>
 			</position>
 			<parameterName>World_HiZOutput</parameterName>
 			<type>Image2D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
-			<id>{98BDEF21-F621-1345-8078-0D18AEA33005}</id>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{17342A62-7710-F841-9D31-0EA156A70A34}</id>
 			<comment/>
 			<position>
-				<first>-207</first>
-				<second>176</second>
+				<first>-61</first>
+				<second>616</second>
 			</position>
-			<scope>Global</scope>
-		</item>
-		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
-			<id>{75A93A5B-4AFA-E642-B5CB-4DBFDD319264}</id>
-			<comment/>
-			<position>
-				<first>40</first>
-				<second>202</second>
-			</position>
-			<swizzle>xy</swizzle>
-		</item>
-		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
-			<id>{06182E78-38C4-A74B-8741-0205C03525AF}</id>
-			<comment/>
-			<position>
-				<first>231</first>
-				<second>263</second>
-			</position>
-			<name>MaxZ</name>
-			<technique/>
-			<localSize>
-				<X>1</X>
-				<Y>1</Y>
-				<Z>1</Z>
-			</localSize>
-			<include>
-				<item>{0E3643A0-A0DA-B649-9FD8-930F4EB6D42A}</item>
-			</include>
-			<inputPins>
-				<item>
-					<id>{3C138D5C-5426-334C-99BF-A06F6FA6635B}</id>
-					<name>Input</name>
-				</item>
-				<item>
-					<id>{109C1796-0BBF-CB47-B322-44901970D7F8}</id>
-					<name>Index</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<id>{7E64C882-DF9D-C442-9D35-66B1FA5C2F61}</id>
-					<name>Output</name>
-					<type>Scalar</type>
-				</item>
-			</outputPins>
-			<script>
-			<![CDATA[
-ivec2 p = $Index * 2;
-ivec2 o = ivec2(1, 0);
-
-const ivec2 sz = imageSize($Input);
-const float mxz = 1000.0f;
-
-float z1 = checkRange(p + o.yy, sz) ? imageLoad($Input, p + o.yy).x : mxz;
-float z2 = checkRange(p + o.xy, sz) ? imageLoad($Input, p + o.xy).x : mxz;
-float z3 = checkRange(p + o.yx, sz) ? imageLoad($Input, p + o.yx).x : mxz;
-float z4 = checkRange(p + o.xx, sz) ? imageLoad($Input, p + o.xx).x : mxz;
-
-$Output = max(max(z1, z2), max(z3, z4));
-			]]>
-			</script>
+			<parameterName>World_HiZWorkSize</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{D69B3EDE-00AB-2540-B217-394E11A1B0E1}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -115,57 +108,17 @@ $Output = max(max(z1, z2), max(z3, z4));
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+				<id>{2D2D3531-DD81-1F47-90F9-DDE0C69AEF69}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
-				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{109C1796-0BBF-CB47-B322-44901970D7F8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{3C138D5C-5426-334C-99BF-A06F6FA6635B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{7E64C882-DF9D-C442-9D35-66B1FA5C2F61}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item"/>
-				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+				<id>{98C61F79-5BF1-9D49-92B7-77AEEA0EDFAF}</id>
 			</destination>
 		</item>
 	</edges>

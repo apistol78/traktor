@@ -2225,8 +2225,8 @@ else
 			<id>{B215A6DE-86D1-2F4B-A606-D8EC68126A45}</id>
 			<comment/>
 			<position>
-				<first>-843</first>
-				<second>3988</second>
+				<first>-881</first>
+				<second>4009</second>
 			</position>
 			<parameterName>Scene_DebugTexture</parameterName>
 			<type>Texture2D</type>
@@ -2282,10 +2282,10 @@ else
 			<id>{D8AA7F23-349A-6142-9709-083B7811B53A}</id>
 			<comment/>
 			<position>
-				<first>-746</first>
-				<second>4151</second>
+				<first>-820</first>
+				<second>4072</second>
 			</position>
-			<value>4</value>
+			<value>2</value>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{431F1C47-067D-5042-B5DC-20EBDF01A8C7}</id>
@@ -2315,6 +2315,10 @@ else
 					<id>{A5895F7C-509E-0A40-870E-3E262BE78130}</id>
 					<name>TexCoord</name>
 				</item>
+				<item>
+					<id>{AFB734B7-EA74-6C4F-B0A9-16FE838CF389}</id>
+					<name>TargetSize</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -2325,14 +2329,22 @@ else
 			</outputPins>
 			<script>
 			<![CDATA[
-ivec2 sz = textureSize($Texture, int($Mip));
-vec2 d = 1.0f / sz;
-
-vec2 p = $TexCoord.xy; // / (1.0f - d);
+ivec2 osz = ivec2($TargetSize.xy) / 2;
+ivec2 hsz = textureSize($Texture, 0);
+vec2 s = vec2(osz) / hsz;
+vec2 p = $TexCoord.xy * s;
 $Output = vec4(p, 0.0f, 0.0f);
 
 			]]>
 			</script>
+		</item>
+		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
+			<id>{A5B004FC-A637-A949-9958-F404AB11CDFC}</id>
+			<comment/>
+			<position>
+				<first>-882</first>
+				<second>3942</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -3454,6 +3466,16 @@ $Output = vec4(p, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[119]"/>
 				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[125]"/>
+				<id>{853B6F75-1464-40E7-BEDC-2716C763046E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[124]"/>
+				<id>{AFB734B7-EA74-6C4F-B0A9-16FE838CF389}</id>
 			</destination>
 		</item>
 	</edges>

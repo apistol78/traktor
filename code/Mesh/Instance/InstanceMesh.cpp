@@ -28,6 +28,7 @@ namespace traktor::mesh
 
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
+render::Handle s_handleTargetSize(L"InstanceMesh_TargetSize");
 render::Handle s_handleBoundingBoxMin(L"InstanceMesh_BoundingBoxMin");
 render::Handle s_handleBoundingBoxMax(L"InstanceMesh_BoundingBoxMax");
 render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
@@ -132,6 +133,8 @@ void InstanceMesh::build(
 		for (int32_t i = (int32_t)cf.planes.size(); i < sizeof_array(cullFrustum); ++i)
 			cullFrustum[i] = Vector4::zero();
 
+		const Vector2 viewSize = worldRenderView.getViewSize();
+
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
 			str(L"InstanceMesh cull %d", worldRenderView.getCascade())
 		);
@@ -155,6 +158,7 @@ void InstanceMesh::build(
 
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
+		renderBlock->programParams->setVectorParameter(s_handleTargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMin, m_renderMesh->getBoundingBox().mn);
 		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMax, m_renderMesh->getBoundingBox().mx);
 		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));

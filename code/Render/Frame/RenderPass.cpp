@@ -40,14 +40,10 @@ void RenderPass::addInput(handle_t resourceId)
 	input.resourceId = resourceId;
 }
 
-bool RenderPass::requireInput(handle_t resourceId) const
+void RenderPass::addWeakInput(handle_t resourceId)
 {
-	for (const auto& input : m_inputs)
-	{
-		if (input.resourceId == resourceId)
-			return true;
-	}
-	return false;
+	// #todo Currently we can get away with not doing anything but
+	// we need to revisit this to ensure resource life time.
 }
 
 void RenderPass::setOutput(handle_t resourceId)

@@ -59,14 +59,6 @@ const render::Handle s_persistentVisualTargetSet[] =
 	render::Handle(L"World_VisualTargetSet_Odd")
 };
 
-const render::Handle s_persistentHiZTexture[] =
-{
-	render::Handle(L"World_HiZTexture_0"),
-	render::Handle(L"World_HiZTexture_1"),
-	render::Handle(L"World_HiZTexture_2"),
-	render::Handle(L"World_HiZTexture_3")
-};
-
 const resource::Id< render::Shader > c_lightShader(L"{707DE0B0-0E2B-A44A-9441-9B1FCFD428AA}");
 
 	}
@@ -148,19 +140,7 @@ void WorldRendererDeferred::setup(
 	};
 	
 	// Add Hi-Z texture.
-	const Vector2 viewSize = worldRenderView.getViewSize();
-	const int32_t viewWidth = (int32_t)viewSize.x;
-	const int32_t viewHeight = (int32_t)viewSize.y;
-	const int32_t hiZWidth = viewWidth >> 1;
-	const int32_t hiZHeight = viewHeight >> 1;
-	const int32_t hiZMipCount = log2(std::max(hiZWidth, hiZHeight)) + 1;
-
-	render::RenderGraphTextureDesc rgtxd;
-	rgtxd.width = hiZWidth;
-	rgtxd.height = hiZHeight;
-	rgtxd.mipCount = hiZMipCount;
-	rgtxd.format = render::TfR32F;
-	const render::handle_t hizTextureId = renderGraph.addPersistentTexture(L"HiZ", s_persistentHiZTexture[worldRenderView.getIndex()], rgtxd);
+	const render::handle_t hizTextureId = m_hiZPass->addTexture(worldRenderView, renderGraph);
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);

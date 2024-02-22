@@ -260,8 +260,8 @@ $Buffer[index].visible = $Input;
 			<id>{6FAE432D-36E8-D046-96BA-65165BB9DCCC}</id>
 			<comment/>
 			<position>
-				<first>435</first>
-				<second>918</second>
+				<first>422</first>
+				<second>818</second>
 			</position>
 			<parameterName>World_HiZTexture</parameterName>
 			<type>Texture2D</type>
@@ -313,6 +313,10 @@ $Buffer[index].visible = $Input;
 					<id>{6D0649E3-ED26-0646-A195-028038D29BD8}</id>
 					<name>HiZState</name>
 				</item>
+				<item>
+					<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
+					<name>TargetSize</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -324,7 +328,7 @@ $Buffer[index].visible = $Input;
 			<script>
 			<![CDATA[
 const vec3 center = ($Bbmn + $Bbmx).xyz / 2.0f;
-const float radius = length(($Bbmx - $Bbmn).xyz / 2.0f);
+const float radius = length(($Bbmx - $Bbmn).xyz) / 2.0f;
 
 const vec3 worldCenter = $Translation.xyz + center;
 const vec4 viewCenter = $View * vec4(worldCenter, 1.0f);
@@ -339,10 +343,17 @@ vec4 aabb;
 if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 {
 	const vec2 hs = textureSize($HiZTexture, 0);
-	const float width = (aabb.z - aabb.x) * hs.x;
-	const float height = (aabb.w - aabb.y) * hs.y;
-	const float level = floor(log2(max(width, height)));
-	const float depth = textureLod(sampler2D($HiZTexture, $HiZState), (aabb.xy + aabb.zw) * 0.5f, level).x;
+	const ivec2 osz = ivec2($TargetSize.xy) / 2;
+
+	const float width = (aabb.z - aabb.x) * osz.x;
+	const float height = (aabb.w - aabb.y) * osz.y;
+	const float level = ceil(log2(max(width, height)));
+
+	vec2 s = vec2(osz) / hs;
+	vec2 p = ((aabb.xy + aabb.zw) * 0.5f) * s;
+
+	const float depth = textureLod(sampler2D($HiZTexture, $HiZState), p, level).x;
+
 	const float depthSphere = viewCenter.z - radius;
 	visible = depthSphere <= depth;
 }
@@ -356,8 +367,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{E6AAA1C9-EEBE-3143-A4AB-7A05E14E17AB}</id>
 			<comment/>
 			<position>
-				<first>435</first>
-				<second>875</second>
+				<first>422</first>
+				<second>776</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>Matrix</type>
@@ -367,8 +378,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{7B83C271-F045-4343-9666-B5DC8E2A479D}</id>
 			<comment/>
 			<position>
-				<first>453</first>
-				<second>961</second>
+				<first>440</first>
+				<second>860</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -388,6 +399,17 @@ $Output = visible ? 1.0f : 0.0f;
 				<first>1011</first>
 				<second>651</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2095B07F-6B63-D845-B825-6F4B49DCE4DA}</id>
+			<comment/>
+			<position>
+				<first>374</first>
+				<second>902</second>
+			</position>
+			<parameterName>InstanceMesh_TargetSize</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -629,6 +651,16 @@ $Output = visible ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<id>{A1DDB166-9422-45A3-AE93-6702275DAD1C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
 			</destination>
 		</item>
 	</edges>
