@@ -202,7 +202,6 @@ const vec4 clr = renderClouds(
 
 $Output = clr;
 $Distance = dist;
-
 			]]>
 			</script>
 		</item>
@@ -347,8 +346,8 @@ $Distance = dist;
 			<id>{DC90F591-71BA-C847-AE1D-F4C651A46808}</id>
 			<comment/>
 			<position>
-				<first>565</first>
-				<second>454</second>
+				<first>445</first>
+				<second>277</second>
 			</position>
 			<name>Clouds</name>
 		</item>
@@ -356,8 +355,8 @@ $Distance = dist;
 			<id>{8FAF1B30-81D3-2746-BDCC-D5FD3B49A925}</id>
 			<comment/>
 			<position>
-				<first>488</first>
-				<second>357</second>
+				<first>403</first>
+				<second>189</second>
 			</position>
 			<name>Load image</name>
 			<technique/>
@@ -394,8 +393,8 @@ $Output = imageLoad($Image, $Coord.xy);
 			<id>{D9C14CDE-C452-E34E-9A32-5F4230153968}</id>
 			<comment/>
 			<position>
-				<first>169</first>
-				<second>335</second>
+				<first>120</first>
+				<second>173</second>
 			</position>
 			<parameterName>Weather_InputTexture</parameterName>
 			<type>Image2D</type>
@@ -405,8 +404,8 @@ $Output = imageLoad($Image, $Coord.xy);
 			<id>{247E6D6D-214D-AC42-AA23-B5FAAB60BBCC}</id>
 			<comment/>
 			<position>
-				<first>151</first>
-				<second>407</second>
+				<first>154</first>
+				<second>247</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -414,18 +413,9 @@ $Output = imageLoad($Image, $Coord.xy);
 			<id>{A104E80B-4B00-7649-BD77-81FFA82461C2}</id>
 			<comment/>
 			<position>
-				<first>801</first>
-				<second>351</second>
+				<first>634</first>
+				<second>225</second>
 			</position>
-		</item>
-		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
-			<id>{BD76988C-D735-6042-9182-D5DF1C29135A}</id>
-			<comment/>
-			<position>
-				<first>584</first>
-				<second>530</second>
-			</position>
-			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{7352EF91-A455-4C36-8BD3-59F7838C52FE}</id>
@@ -471,6 +461,17 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			</position>
 			<parameterName>Weather_OutputTexture</parameterName>
 			<type>Image2D</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{847D017F-419A-F94F-BD0A-384D79AC0B19}</id>
+			<comment/>
+			<position>
+				<first>301</first>
+				<second>327</second>
+			</position>
+			<parameterName>Weather_SkyTemporalBlend</parameterName>
+			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
 	</nodes>
@@ -707,12 +708,22 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[27]"/>
-				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{0948DA4D-40BC-4CE1-A1CA-44EAB02154B8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{82C19293-B142-4208-9902-569EDF1D9135}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -721,18 +732,8 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<id>{0948DA4D-40BC-4CE1-A1CA-44EAB02154B8}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<id>{82C19293-B142-4208-9902-569EDF1D9135}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
 			</destination>
 		</item>
 	</edges>

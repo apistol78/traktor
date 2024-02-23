@@ -44,6 +44,7 @@ const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection")
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
 const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
 const render::Handle s_handleWeather_SkyCloudTexture(L"Weather_SkyCloudTexture");
+const render::Handle s_handleWeather_SkyTemporalBlend(L"Weather_SkyTemporalBlend");
 const render::Handle s_handleWeather_InputTexture(L"Weather_InputTexture");
 const render::Handle s_handleWeather_OutputTexture(L"Weather_OutputTexture");
 
@@ -271,7 +272,10 @@ void SkyComponent::setup(
 	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 8.0f);
 
 	// Generate dome projected cloud layer.
-	if (worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
+	if (
+		worldRenderView.getSnapshot() ||
+		(worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
+	)
 	{
 		render::ITexture* input = m_cloudDomeTexture[m_count & 1];
 		render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
@@ -303,6 +307,7 @@ void SkyComponent::setup(
 			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
+			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyTemporalBlend, (worldRenderView.getSnapshot() || m_cloudFrame == 0) ? 1.0f : 0.2f);
 			renderBlock->programParams->setFloatParameter(world::s_handleTime, worldRenderView.getTime());
 			renderBlock->programParams->endParameters(renderContext);
 
@@ -312,7 +317,9 @@ void SkyComponent::setup(
 		renderGraph.addPass(rp);
 
 		m_count++;
-		m_cloudFrame = cloudFrame;
+
+		if (!worldRenderView.getSnapshot())
+			m_cloudFrame = cloudFrame;
 	}
 }
 
