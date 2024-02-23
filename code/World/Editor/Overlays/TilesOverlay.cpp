@@ -53,7 +53,7 @@ bool TilesOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void TilesOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	WorldRendererShared* worldRendererShared = dynamic_type_cast<WorldRendererShared* >(worldRenderer);
 	if (!worldRendererShared)

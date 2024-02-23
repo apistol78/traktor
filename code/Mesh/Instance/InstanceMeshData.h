@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Quaternion.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Math/Transform.h"
 
 namespace traktor::mesh
@@ -27,17 +27,19 @@ namespace traktor::mesh
 struct T_MATH_ALIGN16 InstanceMeshData
 {
 	float rotation[4];
-	float translation[3];
-	float scale;
+	float translation[4];
+	float boundingBoxMin[4];
+	float boundingBoxMax[4];
 };
 #pragma pack()
 
-inline InstanceMeshData packInstanceMeshData(const Transform& transform)
+inline InstanceMeshData packInstanceMeshData(const Transform& transform, const Aabb3& boundingBox)
 {
 	InstanceMeshData T_MATH_ALIGN16 imd;
 	transform.rotation().e.storeAligned(imd.rotation);
 	transform.translation().storeAligned(imd.translation);
-	imd.scale = 1.0f;
+	boundingBox.mn.storeAligned(imd.boundingBoxMin);
+	boundingBox.mx.storeAligned(imd.boundingBoxMax);
 	return imd;
 }
 

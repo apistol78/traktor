@@ -217,7 +217,7 @@ void OrthogonalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 }
 
-void OrthogonalRenderControl::setDebugOverlayAlpha(float alpha)
+void OrthogonalRenderControl::setDebugOverlayAlpha(float alpha, float mip)
 {
 }
 

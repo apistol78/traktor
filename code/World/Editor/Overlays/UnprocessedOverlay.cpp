@@ -46,7 +46,7 @@ bool UnprocessedOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void UnprocessedOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void UnprocessedOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t visualId = findTargetByName(renderGraph, L"Visual");
 	if (!visualId)

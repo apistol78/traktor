@@ -48,7 +48,7 @@ bool SliceOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	auto wrf = dynamic_type_cast< WorldRendererShared* >(worldRenderer);
 	if (!wrf)

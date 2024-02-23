@@ -29,8 +29,6 @@ namespace traktor::mesh
 render::Handle s_handleInstanceWorld(L"InstanceWorld");
 render::Handle s_handleInstanceWorldLast(L"InstanceWorldLast");
 render::Handle s_handleTargetSize(L"InstanceMesh_TargetSize");
-render::Handle s_handleBoundingBoxMin(L"InstanceMesh_BoundingBoxMin");
-render::Handle s_handleBoundingBoxMax(L"InstanceMesh_BoundingBoxMax");
 render::Handle s_handleVisibility(L"InstanceMesh_Visibility");
 render::Handle s_handleCullFrustum(L"InstanceMesh_CullFrustum");
 render::Handle s_handleDraw(L"InstanceMesh_Draw");
@@ -113,7 +111,12 @@ void InstanceMesh::build(
 	{
 		auto ptr = (InstanceMeshData*)m_instanceBuffer->lock();
 		for (const auto& instance : m_instances)
-			*ptr++ = packInstanceMeshData(instance->transform);
+		{
+			*ptr++ = packInstanceMeshData(
+				instance->transform,
+				m_renderMesh->getBoundingBox().transform(instance->transform)
+			);
+		}
 		m_instanceBuffer->unlock();
 		m_instanceBufferDirty = false;
 	}
@@ -159,8 +162,6 @@ void InstanceMesh::build(
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 		renderBlock->programParams->setVectorParameter(s_handleTargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
-		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMin, m_renderMesh->getBoundingBox().mn);
-		renderBlock->programParams->setVectorParameter(s_handleBoundingBoxMax, m_renderMesh->getBoundingBox().mx);
 		renderBlock->programParams->setVectorArrayParameter(s_handleCullFrustum, cullFrustum, sizeof_array(cullFrustum));
 		renderBlock->programParams->setBufferViewParameter(s_handleInstanceWorld, m_instanceBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(s_handleVisibility, visibilityBuffer->getBufferView());

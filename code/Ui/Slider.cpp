@@ -55,7 +55,7 @@ int32_t Slider::getValue() const
 
 Size Slider::getPreferredSize(const Size& hint) const
 {
-	return Size(pixel(200_ut), pixel(20_ut));
+	return Size(std::max(hint.cx, pixel(40_ut)), pixel(20_ut));
 }
 
 Size Slider::getMaximumSize() const

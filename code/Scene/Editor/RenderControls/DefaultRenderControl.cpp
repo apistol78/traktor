@@ -143,7 +143,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		guideEnable ? ui::ToolBarButton::BsDefaultToggled : ui::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 130_ut, i18n::Text(L"SCENE_EDITOR_ASPECT"));
+	m_toolAspect = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 70_ut, i18n::Text(L"SCENE_EDITOR_ASPECT"));
 	m_toolAspect->add(L"Full");
 	m_toolAspect->add(L"1:1");
 	m_toolAspect->add(L"4:3");
@@ -211,7 +211,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_menuAA->get(settings->getProperty< int32_t >(L"SceneEditor.AntiAliasQuality", 4))->setChecked(true);
 	m_toolQualityMenu->add(m_menuAA);
 
-	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), 130_ut, i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
+	m_toolWorldRenderer = new ui::ToolBarDropDown(ui::Command(1, L"Scene.Editor.WorldRenderer"), 70_ut, i18n::Text(L"SCENE_EDITOR_WORLD_RENDERER"));
 	m_toolWorldRenderer->add(L"Simple");
 	m_toolWorldRenderer->add(L"Forward");
 	m_toolWorldRenderer->add(L"Deferred");
@@ -235,6 +235,13 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_sliderDebugAlpha->create(m_toolBar);
 	m_sliderDebugAlpha->setRange(0, 100);
 	m_sliderDebugAlpha->setValue(100);
+	m_sliderDebugAlpha->addEventHandler< ui::ContentChangeEvent >(this, &DefaultRenderControl::eventSliderDebugChange);
+
+	m_sliderDebugMip= new ui::Slider();
+	m_sliderDebugMip->create(m_toolBar);
+	m_sliderDebugMip->setRange(0, 100);
+	m_sliderDebugMip->setValue(100);
+	m_sliderDebugMip->addEventHandler< ui::ContentChangeEvent >(this, &DefaultRenderControl::eventSliderDebugChange);
 
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
@@ -247,7 +254,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolWorldRenderer);
 	m_toolBar->addItem(new ui::ToolBarSeparator());
 	m_toolBar->addItem(m_toolDebugOverlay);
-	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, 50_ut));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugAlpha, 30_ut));
+	m_toolBar->addItem(new ui::ToolBarEmbed(m_sliderDebugMip, 30_ut));
 
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DefaultRenderControl::eventToolClick);
 
@@ -303,9 +311,10 @@ void DefaultRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 		m_renderControl->setDebugOverlay(overlay);
 }
 
-void DefaultRenderControl::setDebugOverlayAlpha(float alpha)
+void DefaultRenderControl::setDebugOverlayAlpha(float alpha, float mip)
 {
 	m_sliderDebugAlpha->setValue((int32_t)(alpha * 100.0f));
+	m_sliderDebugMip->setValue((int32_t)(mip * 100.0f));
 }
 
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
@@ -318,10 +327,11 @@ bool DefaultRenderControl::handleCommand(const ui::Command& command)
 
 void DefaultRenderControl::update()
 {
-	float alpha = m_sliderDebugAlpha->getValue() / 100.0f;
+	const float alpha = m_sliderDebugAlpha->getValue() / 100.0f;
+	const float mip = m_sliderDebugMip->getValue() / 100.0f;
 	if (m_renderControl)
 	{
-		m_renderControl->setDebugOverlayAlpha(alpha);
+		m_renderControl->setDebugOverlayAlpha(alpha, mip);
 		m_renderControl->update();
 	}
 }
@@ -498,6 +508,11 @@ bool DefaultRenderControl::createRenderControl(int32_t type)
 }
 
 void DefaultRenderControl::eventResize(ui::SizeEvent* event)
+{
+	m_context->enqueueRedraw(nullptr);
+}
+
+void DefaultRenderControl::eventSliderDebugChange(ui::ContentChangeEvent* event)
 {
 	m_context->enqueueRedraw(nullptr);
 }

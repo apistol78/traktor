@@ -46,7 +46,7 @@ bool ReflectionsOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void ReflectionsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void ReflectionsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t reflectionsId = findTargetByName(renderGraph, L"Reflections");
 	if (!reflectionsId)

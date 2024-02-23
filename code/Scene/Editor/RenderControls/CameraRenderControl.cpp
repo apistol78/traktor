@@ -175,7 +175,7 @@ void CameraRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 {
 }
 
-void CameraRenderControl::setDebugOverlayAlpha(float alpha)
+void CameraRenderControl::setDebugOverlayAlpha(float alpha, float mip)
 {
 }
 

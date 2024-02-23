@@ -46,7 +46,7 @@ bool ShadowMapOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void ShadowMapOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void ShadowMapOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t shadowMapId = findTargetByName(renderGraph, L"Shadow map atlas");
 	if (!shadowMapId)

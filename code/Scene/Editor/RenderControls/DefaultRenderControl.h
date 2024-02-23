@@ -49,7 +49,7 @@ public:
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) override final;
 
-	virtual void setDebugOverlayAlpha(float alpha) override final;
+	virtual void setDebugOverlayAlpha(float alpha, float mip) override final;
 	
 	virtual bool handleCommand(const ui::Command& command) override final;
 
@@ -79,6 +79,7 @@ private:
 	Ref< ui::ToolBarDropDown > m_toolWorldRenderer;
 	Ref< ui::ToolBarDropDown > m_toolDebugOverlay;
 	Ref< ui::Slider > m_sliderDebugAlpha;
+	Ref< ui::Slider > m_sliderDebugMip;
 	Ref< ui::MenuItem > m_menuPostProcess;
 	Ref< ui::MenuItem > m_menuMotionBlur;
 	Ref< ui::MenuItem > m_menuShadows;
@@ -90,6 +91,8 @@ private:
 	bool createRenderControl(int32_t type);
 
 	void eventResize(ui::SizeEvent* event);
+
+	void eventSliderDebugChange(ui::ContentChangeEvent* event);
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
 };

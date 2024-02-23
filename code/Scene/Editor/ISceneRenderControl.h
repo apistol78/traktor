@@ -62,7 +62,7 @@ public:
 
 	virtual void setDebugOverlay(world::IDebugOverlay* overlay) = 0;
 
-	virtual void setDebugOverlayAlpha(float alpha) = 0;
+	virtual void setDebugOverlayAlpha(float alpha, float mip) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 

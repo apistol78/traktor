@@ -46,7 +46,7 @@ bool HistoryOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void HistoryOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void HistoryOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t historyId = findTargetByName(renderGraph, L"History");
 	if (!historyId)

@@ -48,7 +48,7 @@ bool DBufferNormalsOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void DBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void DBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
 	if (!dbufferId)

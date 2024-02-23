@@ -48,7 +48,7 @@ bool DBufferRoughnessOverlay::create(resource::IResourceManager* resourceManager
 	return true;
 }
 
-void DBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void DBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	render::handle_t dbufferId = findTargetByName(renderGraph, L"DBuffer");
 	if (!dbufferId)

@@ -236,9 +236,10 @@ void PerspectiveRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 	m_overlay = overlay;
 }
 
-void PerspectiveRenderControl::setDebugOverlayAlpha(float alpha)
+void PerspectiveRenderControl::setDebugOverlayAlpha(float alpha, float mip)
 {
 	m_overlayAlpha = alpha;
+	m_overlayMip = mip;
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
@@ -586,7 +587,8 @@ void PerspectiveRenderControl::eventPaint(ui::PaintEvent* event)
 			m_screenRenderer,
 			m_worldRenderer,
 			m_worldRenderView,
-			m_overlayAlpha
+			m_overlayAlpha,
+			m_overlayMip
 		);
 	}
 

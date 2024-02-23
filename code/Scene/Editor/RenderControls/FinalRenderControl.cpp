@@ -213,9 +213,10 @@ void FinalRenderControl::setDebugOverlay(world::IDebugOverlay* overlay)
 	m_overlay = overlay;
 }
 
-void FinalRenderControl::setDebugOverlayAlpha(float alpha)
+void FinalRenderControl::setDebugOverlayAlpha(float alpha, float mip)
 {
 	m_overlayAlpha = alpha;
+	m_overlayMip = mip;
 }
 
 bool FinalRenderControl::handleCommand(const ui::Command& command)
@@ -528,7 +529,8 @@ void FinalRenderControl::eventPaint(ui::PaintEvent* event)
 			m_screenRenderer,
 			m_worldRenderer,
 			m_worldRenderView,
-			m_overlayAlpha
+			m_overlayAlpha,
+			m_overlayMip
 		);
 	}
 

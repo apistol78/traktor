@@ -2254,8 +2254,8 @@ else
 			<id>{65D0FCDE-495B-1840-96A1-724F2A9C3D7C}</id>
 			<comment/>
 			<position>
-				<first>-926</first>
-				<second>4161</second>
+				<first>-1183</first>
+				<second>4208</second>
 			</position>
 			<parameterName>Scene_DebugMip</parameterName>
 			<type>Scalar</type>
@@ -2282,10 +2282,10 @@ else
 			<id>{D8AA7F23-349A-6142-9709-083B7811B53A}</id>
 			<comment/>
 			<position>
-				<first>-820</first>
-				<second>4072</second>
+				<first>-1153</first>
+				<second>4154</second>
 			</position>
-			<value>6</value>
+			<value>12</value>
 		</item>
 		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{431F1C47-067D-5042-B5DC-20EBDF01A8C7}</id>
@@ -2334,7 +2334,6 @@ vec2 hsz = textureSize($Texture, 0);
 vec2 s = osz / hsz;
 vec2 p = $TexCoord.xy * s;
 $Output = vec4(p, 0.0f, 0.0f);
-
 			]]>
 			</script>
 		</item>
@@ -2344,6 +2343,22 @@ $Output = vec4(p, 0.0f, 0.0f);
 			<position>
 				<first>-882</first>
 				<second>3942</second>
+			</position>
+		</item>
+		<item type="traktor.render.Mul" version="traktor.render.Node:1">
+			<id>{434AAD5F-C9CA-F54B-BC6C-399B928F9E41}</id>
+			<comment/>
+			<position>
+				<first>-969</first>
+				<second>4158</second>
+			</position>
+		</item>
+		<item type="traktor.render.Truncate" version="traktor.render.Node:1">
+			<id>{E77815D9-B7B9-C643-A843-402A85284A99}</id>
+			<comment/>
+			<position>
+				<first>-715</first>
+				<second>4135</second>
 			</position>
 		</item>
 	</nodes>
@@ -3420,16 +3435,6 @@ $Output = vec4(p, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[123]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[119]"/>
-				<id>{A790CEB7-0729-490D-94B0-4D7982C139F9}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[117]"/>
 				<id>{75B6E28A-E83A-1B4B-9312-590487A95175}</id>
 			</source>
@@ -3450,16 +3455,6 @@ $Output = vec4(p, 0.0f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[123]"/>
-				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[124]"/>
-				<id>{CF8664BB-3E80-7A49-AED9-E30DAA02D443}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[124]"/>
 				<id>{367C3D47-755C-E146-88DA-672AB2CFFB28}</id>
 			</source>
@@ -3476,6 +3471,56 @@ $Output = vec4(p, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[124]"/>
 				<id>{AFB734B7-EA74-6C4F-B0A9-16FE838CF389}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[120]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[126]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[123]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[126]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[126]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[127]"/>
+				<id>{58E01BB0-182E-4FF2-8629-A1EA043A57F1}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[127]"/>
+				<id>{7E002805-FA4B-4EEE-9D3B-6FA3AB0B2DAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[119]"/>
+				<id>{A790CEB7-0729-490D-94B0-4D7982C139F9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[127]"/>
+				<id>{7E002805-FA4B-4EEE-9D3B-6FA3AB0B2DAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[124]"/>
+				<id>{CF8664BB-3E80-7A49-AED9-E30DAA02D443}</id>
 			</destination>
 		</item>
 	</edges>

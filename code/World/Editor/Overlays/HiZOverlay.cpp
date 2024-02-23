@@ -47,7 +47,7 @@ bool HiZOverlay::create(resource::IResourceManager* resourceManager)
 	return true;
 }
 
-void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha) const
+void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer* screenRenderer, IWorldRenderer* worldRenderer, const WorldRenderView& worldRenderView, float alpha, float mip) const
 {
 	const render::handle_t hiZId = findTextureByName(renderGraph, L"HiZ");
 	if (!hiZId)
@@ -66,7 +66,7 @@ void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer*
 		auto pp = renderContext->alloc< render::ProgramParameters >();
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
-		pp->setFloatParameter(c_handleDebugMip, 0.0f);
+		pp->setFloatParameter(c_handleDebugMip, mip);
 		pp->setTextureParameter(c_handleDebugTexture, hiZ);
 		pp->endParameters(renderContext);
 
