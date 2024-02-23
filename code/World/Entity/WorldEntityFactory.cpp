@@ -28,8 +28,6 @@
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/LightComponentData.h"
-#include "World/Entity/OccluderComponent.h"
-#include "World/Entity/OccluderComponentData.h"
 #include "World/Entity/PathComponent.h"
 #include "World/Entity/PathComponentData.h"
 #include "World/Entity/PersistentIdComponent.h"
@@ -84,7 +82,6 @@ const TypeInfoSet WorldEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< FacadeComponentData >();
 	typeSet.insert< GroupComponentData >();
 	typeSet.insert< LightComponentData >();
-	typeSet.insert< OccluderComponentData >();
 	typeSet.insert< PathComponentData >();
 	typeSet.insert< PersistentIdComponentData >();
 	typeSet.insert< ProbeComponentData >();
@@ -226,11 +223,6 @@ Ref< IEntityComponent > WorldEntityFactory::createEntityComponent(const world::I
 			lightComponentData->getFlickerAmount(),
 			lightComponentData->getFlickerFilter()
 		);
-	}
-
-	if (auto occluderComponentData = dynamic_type_cast< const OccluderComponentData* >(&entityComponentData))
-	{
-		return occluderComponentData->createComponent();
 	}
 
 	if (auto pathComponentData = dynamic_type_cast< const PathComponentData* >(&entityComponentData))
