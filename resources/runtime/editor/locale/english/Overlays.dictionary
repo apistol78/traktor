@@ -47,7 +47,7 @@
 		</item>
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_GBUFFERSKYOCCLUSIONOVERLAY</first>
-			<second>Sky occlusion</second>
+			<second>Sky Occlusion</second>
 		</item>
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_REFLECTIONSOVERLAY</first>
@@ -80,6 +80,14 @@
 		<item>
 			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_TILESOVERLAY</first>
 			<second>Tiles</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_HIZOVERLAY</first>
+			<second>HiZ</second>
+		</item>
+		<item>
+			<first>SCENE_EDITOR_OVERLAY_TRAKTOR_WORLD_CONTACTSHADOWSOVERLAY</first>
+			<second>Contact Shadows</second>
 		</item>
 	</map>
 </object>
