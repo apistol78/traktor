@@ -184,8 +184,8 @@ $Buffer[index].visible = $Input;
 			<id>{6FAE432D-36E8-D046-96BA-65165BB9DCCC}</id>
 			<comment/>
 			<position>
-				<first>422</first>
-				<second>818</second>
+				<first>425</first>
+				<second>805</second>
 			</position>
 			<parameterName>World_HiZTexture</parameterName>
 			<type>Texture2D</type>
@@ -222,10 +222,6 @@ $Buffer[index].visible = $Input;
 					<name>View</name>
 				</item>
 				<item>
-					<id>{2D477B25-59BB-AB41-AD8A-B373447C47C4}</id>
-					<name>Projection</name>
-				</item>
-				<item>
 					<id>{B53AF0D1-D6CC-9A40-9334-2C4CD642EE5B}</id>
 					<name>HiZTexture</name>
 				</item>
@@ -255,8 +251,8 @@ const vec4 viewCenter = $View * vec4(center, 1.0f);
 bool visible = true;
 
 const float znear = 0.1f;
-const float P00 = $Projection[0][0];
-const float P11 = $Projection[1][1];
+const float P00 = 1.0f;
+const float P11 = 1.0f;
 
 vec4 aabb;
 if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
@@ -265,7 +261,7 @@ if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 
 	const float width = (aabb.z - aabb.x) * osz.x;
 	const float height = (aabb.w - aabb.y) * osz.y;
-	const float level = ceil(log2(max(width, height)));
+	const float level = floor(log2(max(width, height)));
 
 	const vec2 hs = textureSize($HiZTexture, 0);
 	const vec2 s = osz / hs;
@@ -282,23 +278,12 @@ $Output = visible ? 1.0f : 0.0f;
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{E6AAA1C9-EEBE-3143-A4AB-7A05E14E17AB}</id>
-			<comment/>
-			<position>
-				<first>422</first>
-				<second>776</second>
-			</position>
-			<parameterName>World_Projection</parameterName>
-			<type>Matrix</type>
-			<frequency>Frame</frequency>
-		</item>
 		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
 			<id>{7B83C271-F045-4343-9666-B5DC8E2A479D}</id>
 			<comment/>
 			<position>
-				<first>440</first>
-				<second>860</second>
+				<first>443</first>
+				<second>847</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -323,8 +308,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{2095B07F-6B63-D845-B825-6F4B49DCE4DA}</id>
 			<comment/>
 			<position>
-				<first>374</first>
-				<second>902</second>
+				<first>377</first>
+				<second>889</second>
 			</position>
 			<parameterName>InstanceMesh_TargetSize</parameterName>
 			<type>Vector</type>
@@ -429,7 +414,7 @@ $Output = visible ? 1.0f : 0.0f;
 				<id>{5D1C8949-65AE-2046-A34D-469B22E09B20}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
@@ -439,13 +424,13 @@ $Output = visible ? 1.0f : 0.0f;
 				<id>{C2E0B588-DBCB-F04B-9978-8C1B6593F31A}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
 			</source>
 			<destination>
@@ -455,11 +440,11 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
 			</destination>
 		</item>
@@ -469,13 +454,13 @@ $Output = visible ? 1.0f : 0.0f;
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
 			</source>
 			<destination>
@@ -485,7 +470,7 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
 			</source>
 			<destination>
@@ -495,7 +480,7 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
 			</source>
 			<destination>
@@ -505,7 +490,7 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[15]"/>
+				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
 			</source>
 			<destination>
@@ -535,12 +520,12 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[2]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<id>{2D477B25-59BB-AB41-AD8A-B373447C47C4}</id>
+				<id>{38C7084D-4F8D-D749-A614-108D37B2EF5D}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -555,7 +540,7 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
 			</source>
 			<destination>
@@ -565,22 +550,12 @@ $Output = visible ? 1.0f : 0.0f;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
+				<node ref="/object/nodes/item[12]"/>
 				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{38C7084D-4F8D-D749-A614-108D37B2EF5D}</id>
 			</destination>
 		</item>
 	</edges>
