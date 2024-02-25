@@ -38,9 +38,11 @@ public:
 
 	virtual void destroy() override final;
 
-	virtual void setTransform(const Transform& transform) override;
+	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;
+
+	virtual void update(const world::UpdateParams& update) override final;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 

@@ -32,8 +32,12 @@ InstanceMeshComponent::~InstanceMeshComponent()
 
 void InstanceMeshComponent::destroy()
 {
-	if (m_mesh && m_meshInstance != nullptr)
-		m_mesh->releaseInstance(m_meshInstance);
+	// Only release instance if resource hasn't been replaced.
+	if (!m_mesh.changed())
+	{
+		if (m_mesh && m_meshInstance != nullptr)
+			m_mesh->releaseInstance(m_meshInstance);
+	}
 	m_mesh.clear();
 	MeshComponent::destroy();
 }
@@ -41,12 +45,31 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setTransform(const Transform& transform)
 {
 	MeshComponent::setTransform(transform);
+
+	// Re-allocate instance if mesh resource has been replaced.
+	if (m_mesh.changed())
+	{
+		m_meshInstance = m_mesh->allocateInstance();
+		m_mesh.consume();
+	}
+
 	m_meshInstance->setTransform(transform);
 }
 
 Aabb3 InstanceMeshComponent::getBoundingBox() const
 {
 	return m_mesh->getBoundingBox();
+}
+
+void InstanceMeshComponent::update(const world::UpdateParams& update)
+{
+	// Re-allocate instance if mesh resource has been replaced.
+	if (m_mesh.changed())
+	{
+		m_meshInstance = m_mesh->allocateInstance();
+		m_meshInstance->setTransform(getTransform().get0());
+		m_mesh.consume();
+	}
 }
 
 void InstanceMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
