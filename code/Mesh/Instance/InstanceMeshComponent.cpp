@@ -63,6 +63,8 @@ Aabb3 InstanceMeshComponent::getBoundingBox() const
 
 void InstanceMeshComponent::update(const world::UpdateParams& update)
 {
+	MeshComponent::update(update);
+
 	// Re-allocate instance if mesh resource has been replaced.
 	if (m_mesh.changed())
 	{
