@@ -1,0 +1,27 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install 3rdp dependencies
+      run: ./scripts/update-3rdp.bat
+    - name: Generate build files
+      run: ./scripts/build-projects-fbuild-win64.bat
+    - name: Build DebugShared
+      run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
+    - name: Build ReleaseShared
+      run: ./scripts/autobuild/autobuild-latest-win64.bat ReleaseShared
+    - name: Build ReleaseStatic
+      run: ./scripts/autobuild/autobuild-latest-win64.bat ReleaseStatic
+    - name: Unit tests DebugShared
+      run: ./bin/latest/win64/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+    - name: Unit tests ReleaseShared
+      run: ./bin/latest/win64/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
