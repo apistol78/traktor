@@ -27,21 +27,19 @@
 			<Directory Id="INSTALLLOCATION" Name="Traktor">
 				<Directory Id="bin" Name="bin">
 					<Directory Id="bin_latest" Name="latest">
+						<!--
 						<Directory Id="bin_latest_android" Name="android"/>
 						<Directory Id="bin_latest_linux" Name="linux"/>
 						<Directory Id="bin_latest_ios" Name="ios"/>
 						<Directory Id="bin_latest_osx" Name="osx"/>
 						<Directory Id="bin_latest_rpi" Name="rpi"/>
+						-->
 						<Directory Id="bin_latest_win64" Name="win64"/>
 					</Directory>
 				</Directory>
 				<Directory Id="data" Name="data"/>
 				<Directory Id="resources" Name="resources"/>
-				<Directory Id="scripts" Name="scripts">
-					<Component Id="cmp_scripts_config">
-						<File Id="scripts_config" Name="config-vs-x64.bat" Source="$(env.TRAKTOR_HOME)/scripts/config.bat" DiskId="1" />
-					</Component>
-				</Directory>
+				<Directory Id="scripts" Name="scripts"/>
 			</Directory>
 		</Directory>
 
@@ -63,11 +61,13 @@
 	</Directory>
 
 	<Feature Id="ProductFeature" Title="Traktor" Level="1">
+		<!--
 		<ComponentGroupRef Id="cmp_bin_latest_android" />
 		<ComponentGroupRef Id="cmp_bin_latest_linux" />
 		<ComponentGroupRef Id="cmp_bin_latest_ios" />
 		<ComponentGroupRef Id="cmp_bin_latest_osx" />
 		<ComponentGroupRef Id="cmp_bin_latest_rpi" />
+		-->
 		<ComponentGroupRef Id="cmp_bin_latest_win64" />
 		<ComponentGroupRef Id="cmp_data_assets" />
 		<ComponentGroupRef Id="cmp_data_source" />

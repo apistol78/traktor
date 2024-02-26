@@ -12,7 +12,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Install 3rdp dependencies
-      run: ./scripts/update-3rdp.bat
+      run: ./bin/win64/releasestatic/Traktor.Run.App ./scripts/misc/update-3rdp.run
     - name: Generate build files
       run: ./scripts/build-projects-vs2022-win64.bat
     - name: Build DebugShared
@@ -25,3 +25,5 @@ jobs:
       run: ./bin/latest/win64/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
     - name: Unit tests ReleaseShared
       run: ./bin/latest/win64/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+    - name: Create Installer
+      run: ./scripts/autobuild/autobuild-installer-win64.bat
