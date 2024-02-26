@@ -19483,7 +19483,6 @@
 					<libraries>
 						<item>MachineIndependent.lib</item>
 						<item>OSDependent.lib</item>
-						<item>OGLCompiler.lib</item>
 						<item>SPIRV.lib</item>
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
@@ -19585,7 +19584,6 @@
 					<libraries>
 						<item>MachineIndependent.lib</item>
 						<item>OSDependent.lib</item>
-						<item>OGLCompiler.lib</item>
 						<item>SPIRV.lib</item>
 						<item>SPIRV-Tools.lib</item>
 						<item>SPIRV-Tools-opt.lib</item>
