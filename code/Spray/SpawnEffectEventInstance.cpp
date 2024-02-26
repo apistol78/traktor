@@ -30,7 +30,6 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(
 ,	m_world(world)
 ,	m_sender(sender)
 ,	m_Toffset(Toffset)
-,	m_effectComponent(effectComponent)
 {
 	Transform T;
 	if (m_sender)
@@ -39,7 +38,7 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(
 		T = m_Toffset;
 
 	m_effectEntity = new world::Entity();
-	m_effectEntity->setComponent(m_effectComponent);
+	m_effectEntity->setComponent(effectComponent);
 
 	if (m_spawnEffect->m_useRotation)
 		m_effectEntity->setTransform(T);
@@ -73,11 +72,10 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 			m_effectEntity->setTransform(Transform(T.translation()));
 	}
 
-	if (m_effectComponent->isFinished())
+	if (m_effectEntity->getComponent< EffectComponent >()->isFinished())
 	{
 		m_world->removeEntity(m_effectEntity);
 		safeDestroy(m_effectEntity);
-		m_effectComponent = nullptr;
 		return false;	
 	}
 
@@ -86,19 +84,17 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 
 void SpawnEffectEventInstance::cancel(world::Cancel when)
 {
+	if (!m_effectEntity)
+		return;
+
 	if (when == world::Cancel::Immediate)
 	{
-		if (m_effectEntity)
-		{
-			m_world->removeEntity(m_effectEntity);
-			safeDestroy(m_effectEntity);
-			m_effectComponent = nullptr;
-		}
+		m_world->removeEntity(m_effectEntity);
+		safeDestroy(m_effectEntity);
 	}
 	else
 	{
-		if (m_effectComponent)
-			m_effectComponent->setLoopEnable(false);
+		m_effectEntity->getComponent< EffectComponent >()->setLoopEnable(false);
 	}
 }
 

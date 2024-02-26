@@ -51,9 +51,8 @@ private:
 	const SpawnEffectEvent* m_spawnEffect;
 	Ref< world::World > m_world;
 	Ref< world::Entity > m_sender;
-	Transform m_Toffset;
-	Ref< EffectComponent > m_effectComponent;
 	Ref< world::Entity > m_effectEntity;
+	Transform m_Toffset;
 };
 
 }
