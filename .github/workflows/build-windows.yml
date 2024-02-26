@@ -1,4 +1,4 @@
-name: C/C++ CI
+name: Build Windows
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
     - name: Install 3rdp dependencies
       run: ./scripts/update-3rdp.bat
     - name: Generate build files
-      run: ./scripts/build-projects-fbuild-win64.bat
+      run: ./scripts/build-projects-vs2022-win64.bat
     - name: Build DebugShared
       run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
     - name: Build ReleaseShared

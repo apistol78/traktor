@@ -1,6 +1,6 @@
 --[[
  TRAKTOR
- Copyright (c) 2022 Anders Pistol.
+ Copyright (c) 2022-2024 Anders Pistol.
 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -437,39 +437,6 @@ local PACKAGES =
 			)
 			run:execute("./install.bat")
 		end
-	},
-
-	-- FastBUILD
-	{
-		type = "GET",
-		name = "fastbuild-windows",
-		os = "windows",
-		url = "https://fastbuild.org/downloads/v1.07/FASTBuild-Windows-x64-v1.07.zip",
-		patch = function()
-			run:execute(UNZIP .. " -qq FASTBuild-Windows-x64-v1.07.zip")
-		end
-	},
-
-	-- Ninja
-	{
-		type = "GET",
-		name = "ninja-windows",
-		os = "windows",
-		url = "https://github.com/ninja-build/ninja/releases/download/v1.11.0/ninja-win.zip",
-		patch = function()
-			run:execute(UNZIP .. " -qq ninja-win.zip")
-		end		
-	},
-
-	-- JOM
-	{
-		type = "GET",
-		name = "jom-windows",
-		os = "windows",
-		url = "http://download.qt.io/official_releases/jom/jom.zip",
-		patch = function()
-			run:execute(UNZIP .. " -qq jom.zip")
-		end		
 	},
 
 	-- Lemon
