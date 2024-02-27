@@ -102,6 +102,9 @@ public:
 private:
 	RefArray< IWorldComponent > m_components;
 	RefArray< Entity > m_entities;
+	RefArray< Entity > m_deferredAdd;
+	RefArray< Entity > m_deferredRemove;
+	bool m_update = false;
 };
 
 }

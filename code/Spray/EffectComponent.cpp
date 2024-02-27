@@ -32,11 +32,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectComponent", EffectComponent, world:
 EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect)
 :	m_transform(Transform::identity())
 ,	m_effect(effect)
-,	m_counter(0)
-,	m_enable(true)
 {
+	m_effectInstance = m_effect->createInstance();
+	T_FATAL_ASSERT(m_effectInstance != nullptr);
+
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(g_randomSeed.next());
+
+	updateTechniques();
 }
 
 EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, EffectInstance* effectInstance, const Context& context)
@@ -44,8 +47,6 @@ EffectComponent::EffectComponent(const resource::Proxy< Effect >& effect, Effect
 ,	m_effect(effect)
 ,	m_effectInstance(effectInstance)
 ,	m_context(context)
-,	m_counter(0)
-,	m_enable(true)
 {
 	// Do not recreate instance if we've been provided one.
 	if (effectInstance != nullptr)
@@ -96,11 +97,17 @@ void EffectComponent::update(const world::UpdateParams& update)
 	if ((m_counter++ % c_updateDenom) != 0)
 		return;
 
-	if (m_effect.changed() || !m_effectInstance)
+	if (m_effect.changed() && m_effectInstance != nullptr)
 	{
+		const bool loopEnable = m_effectInstance->getLoopEnable();
+
 		m_effectInstance = m_effect->createInstance();
 		if (m_effectInstance)
+		{
+			m_effectInstance->setLoopEnable(loopEnable);
 			updateTechniques();
+		}
+
 		m_effect.consume();
 	}
 
@@ -142,7 +149,12 @@ Aabb3 EffectComponent::getWorldBoundingBox() const
 
 void EffectComponent::reset()
 {
-	m_effectInstance = m_effect->createInstance();
+	if (m_effectInstance != nullptr)
+	{
+		const bool loopEnable = m_effectInstance->getLoopEnable();
+		m_effectInstance = m_effect->createInstance();
+		m_effectInstance->setLoopEnable(loopEnable);
+	}
 }
 
 void EffectComponent::setLoopEnable(bool loopEnable)
@@ -158,10 +170,10 @@ bool EffectComponent::getLoopEnable() const
 
 bool EffectComponent::isFinished() const
 {
-	if (!m_effect)
+	if (!m_effect || !m_effectInstance)
 		return true;
 
-	if (!m_effectInstance || m_effectInstance->getLoopEnable())
+	if (m_effectInstance->getLoopEnable())
 		return false;
 
 	return m_effectInstance->getTime() >= m_effect->getDuration();

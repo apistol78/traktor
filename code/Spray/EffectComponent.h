@@ -90,8 +90,8 @@ private:
 	Ref< EffectInstance > m_effectInstance;
 	SmallSet< render::handle_t > m_techniques;
 	Context m_context;
-	uint32_t m_counter;
-	bool m_enable;
+	uint32_t m_counter = 0;
+	bool m_enable = true;
 
 	void updateTechniques();
 };

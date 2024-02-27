@@ -23,6 +23,9 @@ World::World()
 
 void World::destroy()
 {
+	T_FATAL_ASSERT(m_deferredAdd.empty());
+	T_FATAL_ASSERT(m_deferredRemove.empty());
+
 	for (auto component : m_components)
 		component->destroy();
 	m_components.clear();
@@ -66,15 +69,23 @@ IWorldComponent* World::getComponent(const TypeInfo& componentType) const
 void World::addEntity(Entity* entity)
 {
 	T_FATAL_ASSERT(entity->m_world == nullptr);
-	m_entities.push_back(entity);
+	if (m_update)
+		m_deferredAdd.push_back(entity);
+	else
+		m_entities.push_back(entity);
 	entity->m_world = this;
 }
 
 void World::removeEntity(Entity* entity)
 {
 	T_FATAL_ASSERT(entity->m_world == this);
-	const bool removed = m_entities.remove(entity);
-	T_FATAL_ASSERT(removed);
+	if (m_update)
+		m_deferredRemove.push_back(entity);
+	else
+	{
+		const bool removed = m_entities.remove(entity);
+		T_FATAL_ASSERT(removed);
+	}
 	entity->m_world = nullptr;
 }
 
@@ -127,9 +138,29 @@ void World::update(const UpdateParams& update)
 	for (auto component : m_components)
 		component->update(this, update);
 
-	RefArray< Entity > entities = m_entities;
-	for (auto entity : entities)
-		entity->update(update);
+	m_update = true;
+	for (auto entity : m_entities)
+	{
+		if (entity->m_world != nullptr)
+			entity->update(update);
+	}
+	m_update = false;
+	
+	if (!m_deferredAdd.empty())
+	{
+		m_entities.insert(m_entities.end(), m_deferredAdd.begin(), m_deferredAdd.end());
+		m_deferredAdd.resize(0);
+	}
+
+	if (!m_deferredRemove.empty())
+	{
+		for (auto entity : m_deferredRemove)
+		{
+			const bool removed = m_entities.remove(entity);
+			T_FATAL_ASSERT(removed);
+		}
+		m_deferredRemove.resize(0);
+	}
 }
 
 }

@@ -53,7 +53,6 @@ struct Context
 	float deltaTime = 0.0f;
 	RandomGeometry random;
 	world::Entity* owner = nullptr;
-	//world::EntityEventManager* eventManager = nullptr;
 	VirtualSourceCallback* virtualSourceCallback = nullptr;
 };
 
