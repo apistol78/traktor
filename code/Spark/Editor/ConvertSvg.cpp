@@ -271,22 +271,35 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					const int32_t width = image->getWidth() * 20;
 					const int32_t height = image->getHeight() * 20;
 
+					Vector2 pnts[2];
+					pnts[0] = is->getPosition();
+					pnts[1] = is->getPosition() + is->getSize();
+					for (auto& pnt : pnts)
+					{
+						const Vector2 viewPnt = transform * pnt;								// Point in view box.
+						const Vector2 normPnt = (viewPnt - viewBox.mn) / viewBox.getSize();		// Normalized point.
+						const Vector2 moviePnt = normPnt * movieSize;							// Point in movie.
+						pnt = moviePnt;
+					}
+
 					const uint16_t fillBitmap = 1;
 
 					movie->defineBitmap(fillBitmap, new BitmapImage(image));
 
+					const float sx = (pnts[1].x - pnts[0].x) / width;
+					const float sy = (pnts[1].y - pnts[0].y) / height;
 					const uint16_t fillStyle = spriteStack.back().shape->defineFillStyle(fillBitmap, Matrix33(
-						20.0f, 0.0f, 0.0f,
-						0.0f, 20.0f, 0.0f,
+						sx * 20.0f, 0.0f, pnts[0].x,
+						0.0f, sy * 20.0f, pnts[0].y,
 						0.0f, 0.0f, 1.0f
 					), true);
 
 					Path path;
-					path.moveTo(0, 0, Path::CmAbsolute);
-					path.lineTo(width, 0, Path::CmAbsolute);
-					path.lineTo(width, height, Path::CmAbsolute);
-					path.lineTo(0, height, Path::CmAbsolute);
-					path.lineTo(0, 0, Path::CmAbsolute);
+					path.moveTo(pnts[0].x, pnts[0].y, Path::CmAbsolute);
+					path.lineTo(pnts[1].x, pnts[0].y, Path::CmAbsolute);
+					path.lineTo(pnts[1].x, pnts[1].y, Path::CmAbsolute);
+					path.lineTo(pnts[0].x, pnts[1].y, Path::CmAbsolute);
+					path.lineTo(pnts[0].x, pnts[0].y, Path::CmAbsolute);
 					path.end(fillStyle, fillStyle, 0);
 
 					spriteStack.back().shape->addPath(path);
