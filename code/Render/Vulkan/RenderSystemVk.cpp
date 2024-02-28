@@ -515,6 +515,7 @@ DisplayMode RenderSystemVk::getDisplayMode(uint32_t display, uint32_t index) con
 
 DisplayMode RenderSystemVk::getCurrentDisplayMode(uint32_t display) const
 {
+	DisplayMode dm;
 #if defined(_WIN32)
 	DISPLAY_DEVICE dd = {};
 	dd.cb = sizeof(dd);
@@ -524,37 +525,35 @@ DisplayMode RenderSystemVk::getCurrentDisplayMode(uint32_t display) const
 	dmgl.dmSize = sizeof(dmgl);
 	EnumDisplaySettings(dd.DeviceName, ENUM_CURRENT_SETTINGS, &dmgl);
 
-	DisplayMode dm;
 	dm.width = dmgl.dmPelsWidth;
 	dm.height = dmgl.dmPelsHeight;
+	dm.dpi = 96;
 	dm.refreshRate = dmgl.dmDisplayFrequency;
 	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
-	return dm;
 #elif defined(__LINUX__) || defined(__RPI__)
-	int screen = DefaultScreen(m_display);
-	DisplayMode dm;
+	const int screen = DefaultScreen(m_display);
+	const double dpih = ((double)DisplayWidth(m_display, screen)) / (((double)DisplayWidthMM(m_display, screen)) / 25.4);
+	const double dpiv = ((double)DisplayHeight(m_display, screen)) / (((double)DisplayHeightMM(m_display, screen)) / 25.4);
+
 	dm.width = DisplayWidth(m_display, screen);
 	dm.height = DisplayHeight(m_display, screen);
+	dm.dpi = (uint16_t)(std::max(dpih, dpiv));
 	dm.refreshRate = 59.98f;
 	dm.colorBits = 32;
-	return dm;
 #elif defined(__ANDROID__)
-	DisplayMode dm;
 	dm.width = m_screenWidth;
 	dm.height = m_screenHeight;
+	dm.dpi = 96;
 	dm.refreshRate = 60.0f;
 	dm.colorBits = 32;
-	return dm;
 #elif defined(__IOS__)
-	DisplayMode dm;
 	dm.width = getScreenWidth();
 	dm.height = getScreenHeight();
+	dm.dpi = 96;
 	dm.refreshRate = 60.0f;
 	dm.colorBits = 32;
-	return dm;
-#else
-	return DisplayMode();
 #endif
+	return dm;
 }
 
 float RenderSystemVk::getDisplayAspectRatio(uint32_t display) const

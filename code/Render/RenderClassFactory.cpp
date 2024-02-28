@@ -49,6 +49,8 @@ public:
 
 	uint32_t getHeight() const { return m_displayMode.height; }
 
+	uint32_t getDPI() const { return m_displayMode.dpi; }
+
 	float getRefreshRate() const { return m_displayMode.refreshRate; }
 
 	uint16_t getColorBits() const { return m_displayMode.colorBits; }
@@ -182,6 +184,7 @@ void RenderClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classBoxedDisplayMode = new AutoRuntimeClass< BoxedDisplayMode >();
 	classBoxedDisplayMode->addProperty("width", &BoxedDisplayMode::getWidth);
 	classBoxedDisplayMode->addProperty("height", &BoxedDisplayMode::getHeight);
+	classBoxedDisplayMode->addProperty("dpi", &BoxedDisplayMode::getDPI);
 	classBoxedDisplayMode->addProperty("refreshRate", &BoxedDisplayMode::getRefreshRate);
 	classBoxedDisplayMode->addProperty("colorBits", &BoxedDisplayMode::getColorBits);
 	registrar->registerClass(classBoxedDisplayMode);
