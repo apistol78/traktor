@@ -21,6 +21,7 @@ InstanceMeshComponent::InstanceMeshComponent(const resource::Proxy< InstanceMesh
 :	m_mesh(mesh)
 {
 	m_meshInstance = m_mesh->allocateInstance();
+	m_mesh.consume();
 }
 
 InstanceMeshComponent::~InstanceMeshComponent()
