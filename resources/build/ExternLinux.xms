@@ -3076,7 +3076,7 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>false</enable>
-			<name>Extern.mpg123-1.13.2</name>
+			<name>Extern.mpg123</name>
 			<sourcePath>$(MPG123_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="5">
@@ -3086,13 +3086,18 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/include</item>
 						<item>$(MPG123_SDK)/src/compat</item>
 						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/mpg123</item>
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
 						<item>_DEBUG</item>
-						<item>OPT_I386</item>
+						<item>OPT_MULTI</item>
+						<item>OPT_GENERIC</item>
+						<item>OPT_GENERIC_DITHER</item>
+						<item>REAL_IS_FLOAT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3113,13 +3118,18 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/include</item>
 						<item>$(MPG123_SDK)/src/compat</item>
 						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/mpg123</item>
 					</includePaths>
 					<definitions>
 						<item>T_MPG123_EXPORT</item>
 						<item>NDEBUG</item>
-						<item>OPT_I386</item>
+						<item>OPT_MULTI</item>
+						<item>OPT_GENERIC</item>
+						<item>OPT_GENERIC_DITHER</item>
+						<item>REAL_IS_FLOAT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3140,13 +3150,17 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/include</item>
 						<item>$(MPG123_SDK)/src/compat</item>
 						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/mpg123</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>_DEBUG</item>
-						<item>OPT_I386</item>
+						<item>OPT_MULTI</item>
+						<item>OPT_GENERIC</item>
+						<item>OPT_GENERIC_DITHER</item>
+						<item>REAL_IS_FLOAT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3159,7 +3173,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+							<sourceFile>libExtern.mpg123.a</sourceFile>
 							<targetPath>debugstatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3172,13 +3186,17 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(MPG123_SDK)/src</item>
+						<item>$(MPG123_SDK)/src/include</item>
 						<item>$(MPG123_SDK)/src/compat</item>
 						<item>$(MPG123_SDK)/src/libmpg123</item>
+						<item>$(TRAKTOR_HOME)/resources/build/patch/mpg123</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
 						<item>NDEBUG</item>
-						<item>OPT_I386</item>
+						<item>OPT_MULTI</item>
+						<item>OPT_GENERIC</item>
+						<item>OPT_GENERIC_DITHER</item>
+						<item>REAL_IS_FLOAT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3191,7 +3209,7 @@
 					<debugWorkingDirectory/>
 					<aggregationItems>
 						<item type="AggregationItem">
-							<sourceFile>libExtern.mpg123-1.13.2.a</sourceFile>
+							<sourceFile>libExtern.mpg123.a</sourceFile>
 							<targetPath>releasestatic</targetPath>
 						</item>
 					</aggregationItems>
@@ -3204,7 +3222,7 @@
 					<items>
 						<item type="File" version="1">
 							<fileName>src/libmpg123/*.c</fileName>
-							<excludeFilter/>
+							<excludeFilter>*altivec*;*_arm*;*_i486*</excludeFilter>
 							<items/>
 						</item>
 						<item type="File" version="1">

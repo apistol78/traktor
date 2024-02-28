@@ -6546,7 +6546,9 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
 												<item>T_SOUND_USE_AVX_MIXER</item>
@@ -6582,7 +6584,9 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
 												<item>T_SOUND_USE_AVX_MIXER</item>
@@ -6618,7 +6622,9 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>T_SOUND_USE_AVX_MIXER</item>
@@ -6650,7 +6656,9 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>T_SOUND_USE_AVX_MIXER</item>

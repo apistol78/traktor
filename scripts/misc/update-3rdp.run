@@ -502,6 +502,14 @@ local PACKAGES =
 		url = "https://github.com/0xc0de/bc6h_enc.git",
 		license = "MIT"
 	},
+
+	-- minimp3
+	{
+		type = "GIT",
+		name = "minimp3",
+		url = "https://github.com/lieff/minimp3.git",
+		license = "CC0"
+	},
 }
 
 --[[

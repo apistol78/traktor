@@ -5737,6 +5737,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -5769,6 +5770,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -5801,6 +5803,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5833,6 +5836,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -5970,12 +5974,6 @@
 											<link>LnkYes</link>
 											<solutionFileName>ExternRPi.xms</solutionFileName>
 											<projectName>Extern.flac</projectName>
-										</item>
-										<item type="ExternalDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<solutionFileName>ExternRPi.xms</solutionFileName>
-											<projectName>Extern.mpg123-1.13.2</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>

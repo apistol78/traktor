@@ -38,6 +38,7 @@ set XATLAS_SDK=%TRAKTOR_HOME%\3rdp\xatlas
 set ZLIB_SDK=%TRAKTOR_HOME%\3rdp\zlib
 set DOXYGEN_SDK=%TRAKTOR_HOME%\3rdp\doxygen
 set BC6H_ENC_SDK=%TRAKTOR_HOME%\3rdp\bc6h_enc
+set MINIMP3_SDK=%TRAKTOR_HOME%\3rdp\minimp3
 
 :: Vulkan SDK
 set VULKAN_SDK=%TRAKTOR_HOME%\3rdp\vulkan-windows\vulkan-sdk

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,7 @@
 #include <algorithm>
 #include <cstdio>
 #include <cstring>
-// #include <mpg123.h>
-#include "Core/Io/IStream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/Align.h"
@@ -18,94 +17,56 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 
-namespace traktor
+#define MINIMP3_FLOAT_OUTPUT
+#define MINIMP3_IMPLEMENTATION
+#include "minimp3.h"
+#include "minimp3_ex.h"
+
+namespace traktor::sound
 {
-	namespace sound
-	{
-/*
+
 class Mp3StreamDecoderImpl : public Object
 {
 public:
-	enum
+	static size_t callbackRead(void* buf, size_t size, void* userData)
 	{
-		DecodedBufferSamples = 32768,
-		DecodedBufferSize = DecodedBufferSamples * sizeof(float),
-		ReadBufferSize = 4096
-	};
+		auto this_ = (Mp3StreamDecoderImpl*)userData;
+		return this_->m_stream->read(buf, size);
+	}
 
-	Mp3StreamDecoderImpl()
-	:	m_handle(0)
-	,	m_decodedCount(0)
-	,	m_consumedCount(0)
-	,	m_sampleRate(0)
-	,	m_channels(0)
-	,	m_encoding(0)
+	static int callbackSeek(uint64_t position, void* userData)
 	{
+		auto this_ = (Mp3StreamDecoderImpl*)userData;
+		return this_->m_stream->seek(IStream::SeekSet, position) < 0 ? 1 : 0;
 	}
 
 	bool create(IStream* stream)
 	{
-		size_t nrates;
-		const long* rates;
-		int ret;
+		m_stream = new BufferedStream(stream);
 
-		m_stream = stream;
+		m_io.read = &callbackRead;
+		m_io.read_data = this;
+		m_io.seek = &callbackSeek;
+		m_io.seek_data = this;
 
-		m_decoded[0] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16, T_FILE_LINE);
-		m_decoded[1] = (float*)Alloc::acquireAlign(DecodedBufferSize, 16, T_FILE_LINE);
-
-		if (!m_decoded[0] || !m_decoded[1])
-			return false;
-
-		if (ms_instances++ <= 0)
-			mpg123_init();
-
-		m_handle = mpg123_new(0, &ret);
-		if (!m_handle)
-			return false;
-
-		ret = mpg123_format_none(m_handle);
-		if (ret != MPG123_OK)
-			return false;
-
-		mpg123_rates(&rates, &nrates);
-		for (size_t i = 0; i < nrates; i++)
+		const int result = mp3dec_ex_open_cb(&m_dec, &m_io, MP3D_SEEK_TO_BYTE);
+		if (result < 0)
 		{
-			ret = mpg123_format(m_handle, rates[i], MPG123_MONO | MPG123_STEREO, MPG123_ENC_FLOAT_32);
-			if (ret != MPG123_OK)
-				return false;
-		}
-
-		ret = mpg123_open_feed(m_handle);
-		if (ret != MPG123_OK)
+			log::error << L"MP3 decoder failed to open, error " << result << Endl;
 			return false;
+		}
 
 		return true;
 	}
 
 	void destroy()
 	{
-		mpg123_delete(m_handle);
-
-		if (--ms_instances <= 0)
-			mpg123_exit();
-
-		Alloc::freeAlign(m_decoded[0]);
-		Alloc::freeAlign(m_decoded[1]);
+		mp3dec_ex_close(&m_dec);
 	}
 
 	void reset()
 	{
-		// Inform mpg123 that we're seeking to the beginning.
-		off_t offset = 0;
-		mpg123_feedseek(m_handle, 0, SEEK_SET, &offset);
-
-		// Move to correct position in our stream.
-		m_stream->seek(IStream::SeekSet, int(offset));
-
-		// Flush buffers.
-		m_decodedCount = 0;
-		m_consumedCount = 0;
+		mp3dec_ex_seek(&m_dec, 0);
 	}
 
 	double getDuration() const
@@ -115,140 +76,76 @@ public:
 
 	bool getBlock(AudioBlock& outBlock)
 	{
-		// Discard consumed samples; those are lingering in the decoded buffer since last call.
-		if (m_consumedCount)
-		{
-			T_ASSERT(m_consumedCount <= m_decodedCount);
-			std::memmove(m_decoded[SbcLeft], &m_decoded[SbcLeft][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
-			std::memmove(m_decoded[SbcRight], &m_decoded[SbcRight][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
-			m_decodedCount -= m_consumedCount;
-			m_consumedCount = 0;
-		}
+		T_FATAL_ASSERT(outBlock.samplesCount * m_dec.info.channels <= sizeof_array(m_buffer));
 
-		// Read and decode until desired amount of samples have been decoded.
-		while (m_decodedCount < outBlock.samplesCount || m_sampleRate == 0)
-		{
-			int64_t nread = m_stream->read(m_readBuffer, sizeof(m_readBuffer));
-			if (nread <= 0)
-			{
-				// No more bytes from source stream; if we have encoded some samples lets output them
-				// and return success.
-				if (m_decodedCount > 0)
-					break;
-				return false;
-			}
-
-			int32_t ret = mpg123_feed(m_handle, m_readBuffer, nread);
-			if (ret == MPG123_NEED_MORE)
-				continue;
-			if (ret == MPG123_ERR)
-				return false;
-
-			while (ret != MPG123_NEED_MORE)
-			{
-				uint8_t* audio;
-				size_t bytes;
-				off_t num;
-
-				ret = mpg123_decode_frame(m_handle, &num, &audio, &bytes);
-				if (ret == MPG123_ERR)
-					return false;
-				if (ret == MPG123_NEW_FORMAT)
-				{
-					mpg123_getformat(m_handle, &m_sampleRate, &m_channels, &m_encoding);
-					if (m_encoding != MPG123_ENC_FLOAT_32)
-						return false;
-				}
-
-				if (m_channels > 0)
-				{
-					int32_t sampleCount = int32_t(bytes / (m_channels * sizeof(float)));
-					int32_t channels = std::min(m_channels, 2);
-					for (int32_t i = 0; i < sampleCount * m_channels; i += m_channels)
-					{
-						for (int32_t j = 0; j < channels; ++j)
-						{
-							float s = ((const float*)audio)[i + j];
-							m_decoded[j][m_decodedCount] = s;
-						}
-						if (++m_decodedCount >= DecodedBufferSize)
-							break;
-					}
-				}
-			}
-		}
-
-		outBlock.samples[SbcLeft] = m_decoded[SbcLeft];
-		outBlock.samples[SbcRight] = m_decoded[SbcRight];
-		outBlock.samplesCount = alignDown(std::min(m_decodedCount, outBlock.samplesCount), 4);
-		outBlock.sampleRate = uint32_t(m_sampleRate);
-		outBlock.maxChannel = m_channels;
-
-		m_consumedCount = outBlock.samplesCount;
-
-		if (!outBlock.samplesCount || !outBlock.sampleRate)
+		const size_t samplesRead = mp3dec_ex_read(&m_dec, m_buffer, outBlock.samplesCount * m_dec.info.channels);
+		if (samplesRead == 0)
 			return false;
+
+		outBlock.maxChannel = m_dec.info.channels;
+		outBlock.sampleRate = m_dec.info.hz;
+		outBlock.samplesCount = samplesRead / m_dec.info.channels;
+
+		for (int32_t i = 0; i < outBlock.maxChannel; ++i)
+		{
+			for (int32_t j = 0; j < outBlock.samplesCount; ++j)
+			{
+				const float s = m_buffer[j * outBlock.maxChannel + i];
+				m_samples[i][j] = s;
+			}
+			outBlock.samples[i] = m_samples[i];
+		}
 
 		return true;
 	}
 
 private:
-	static int32_t ms_instances;
 	Ref< IStream > m_stream;
-	mpg123_handle* m_handle;
-	uint8_t m_readBuffer[ReadBufferSize];
-	float* m_decoded[2];
-	uint32_t m_decodedCount;
-	uint32_t m_consumedCount;
-	long m_sampleRate;
-	int32_t m_channels;
-	int32_t m_encoding;
+	mp3dec_io_t m_io;
+	mp3dec_ex_t m_dec;
+	mp3d_sample_t m_buffer[2 * 4096];
+	float m_samples[2][4096];
 };
 
-int32_t Mp3StreamDecoderImpl::ms_instances = 0;
-*/
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDecoder, IStreamDecoder)
 
 bool Mp3StreamDecoder::create(IStream* stream)
 {
-	if ((m_stream = stream) == 0)
+	if ((m_stream = stream) == nullptr)
 		return false;
 
-	// m_decoderImpl = new Mp3StreamDecoderImpl();
-	// if (!m_decoderImpl->create(m_stream))
-	// {
-	// 	m_decoderImpl = 0;
-	// 	m_stream = 0;
-	// 	return false;
-	// }
+	m_decoderImpl = new Mp3StreamDecoderImpl();
+	if (!m_decoderImpl->create(m_stream))
+	{
+		m_decoderImpl = nullptr;
+		m_stream = nullptr;
+		return false;
+	}
 
 	return true;
 }
 
 void Mp3StreamDecoder::destroy()
 {
-	// safeDestroy(m_decoderImpl);
+	safeDestroy(m_decoderImpl);
 }
 
 double Mp3StreamDecoder::getDuration() const
 {
-	// T_ASSERT(m_decoderImpl);
-	// return m_decoderImpl->getDuration();
-	return 0.0;
+	T_ASSERT(m_decoderImpl);
+	return m_decoderImpl->getDuration();
 }
 
 bool Mp3StreamDecoder::getBlock(AudioBlock& outBlock)
 {
-	// T_ASSERT(m_decoderImpl);
-	// return m_decoderImpl->getBlock(outBlock);
-	return false;
+	T_ASSERT(m_decoderImpl);
+	return m_decoderImpl->getBlock(outBlock);
 }
 
 void Mp3StreamDecoder::rewind()
 {
-	// T_ASSERT(m_decoderImpl);
-	// m_decoderImpl->reset();
+	T_ASSERT(m_decoderImpl);
+	m_decoderImpl->reset();
 }
 
-	}
 }

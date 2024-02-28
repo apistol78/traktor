@@ -6591,7 +6591,9 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
 												<item>_DEBUG</item>
@@ -6620,7 +6622,9 @@
 											<targetFormat>TfSharedLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
 												<item>NDEBUG</item>
@@ -6649,7 +6653,9 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
@@ -6678,7 +6684,9 @@
 											<targetFormat>TfStaticLibrary</targetFormat>
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
-											<includePaths/>
+											<includePaths>
+												<item>$(MINIMP3_SDK)</item>
+											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
@@ -6816,12 +6824,6 @@
 											<link>LnkYes</link>
 											<solutionFileName>ExternLinux.xms</solutionFileName>
 											<projectName>Extern.flac</projectName>
-										</item>
-										<item type="ExternalDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<solutionFileName>ExternLinux.xms</solutionFileName>
-											<projectName>Extern.mpg123-1.13.2</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>

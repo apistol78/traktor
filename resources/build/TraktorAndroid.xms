@@ -2546,6 +2546,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 									<item>$(STB_SDK)</item>
+									<item>$(MINIMP3_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__ANDROID__</item>
@@ -2579,6 +2580,7 @@
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 									<item>$(STB_SDK)</item>
+									<item>$(MINIMP3_SDK)</item>
 								</includePaths>
 								<definitions>
 									<item>__ANDROID__</item>
@@ -2717,12 +2719,6 @@
 								<link>LnkYes</link>
 								<solutionFileName>ExternAndroid.xms</solutionFileName>
 								<projectName>Extern.flac</projectName>
-							</item>
-							<item type="ExternalDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<solutionFileName>ExternAndroid.xms</solutionFileName>
-								<projectName>Extern.mpg123-1.13.2</projectName>
 							</item>
 							<item type="ExternalDependency" version="3">
 								<inheritIncludePaths>true</inheritIncludePaths>

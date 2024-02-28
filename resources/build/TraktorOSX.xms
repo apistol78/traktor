@@ -6511,6 +6511,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -6543,6 +6544,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_SOUND_EXPORT</item>
@@ -6575,6 +6577,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6606,6 +6609,7 @@
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
 												<item>$(STB_SDK)</item>
+												<item>$(MINIMP3_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -6747,12 +6751,6 @@
 											<inheritIncludePaths>true</inheritIncludePaths>
 											<link>LnkYes</link>
 											<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-										</item>
-										<item type="ExternalDependency" version="3">
-											<inheritIncludePaths>true</inheritIncludePaths>
-											<link>LnkYes</link>
-											<solutionFileName>ExternOSX.xms</solutionFileName>
-											<projectName>Extern.mpg123-1.13.2</projectName>
 										</item>
 										<item type="ExternalDependency" version="3">
 											<inheritIncludePaths>true</inheritIncludePaths>
