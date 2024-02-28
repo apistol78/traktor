@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2023 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -207,6 +208,11 @@ void TargetPerformance::publish(net::BidirectionalObjectTransport* transport, co
 	auto& snapshot = m_last[&performanceType];
 	snapshot.sent = time;
 	snapshot.perfSet = DeepClone(&performance).create< TargetPerfSet >();
+
+	// Ensure publishing doesn't take too long.
+	const double duration = m_timer.getElapsedTime() - time;
+	if (duration > 0.001)
+		log::warning << L"Target performance publish exceed 1 ms." << Endl;
 }
 
 }
