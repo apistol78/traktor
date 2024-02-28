@@ -101,10 +101,8 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 
 #endif
 
-namespace traktor
+namespace traktor::run
 {
-	namespace run
-	{
 
 /*! Execute run script. */
 int32_t executeRun(const std::wstring& text, const Path& fileName, const CommandLine& cmdLine)
@@ -120,7 +118,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 	// Create script context..
 	Ref< script::IScriptContext > scriptContext = g_scriptManager->createContext(false);
 	if (!scriptContext)
-		return 1;
+		return 2;
 
 	// Expose some environment variables of running script.
 	OS::getInstance().setEnvironment(L"RUN_SCRIPT", fileName.getPathName());
@@ -146,7 +144,7 @@ int32_t executeRun(const std::wstring& text, const Path& fileName, const Command
 		for (int32_t i = 1; i < cmdLine.getCount(); ++i)
 			args.push_back(cmdLine.getString(i));
 
-		Any a = CastAny< std::vector< std::wstring > >::set(args);
+		const Any a = CastAny< std::vector< std::wstring > >::set(args);
 		retval = scriptContext->executeFunction("main", 1, &a);
 	}
 
@@ -166,32 +164,32 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 
 	for (;;)
 	{
-		size_t s = text.find(L"<!--", offset);
+		const size_t s = text.find(L"<!--", offset);
 		if (s == text.npos)
 			break;
 
-		size_t e = text.find(L"--!>", s);
+		const size_t e = text.find(L"--!>", s);
 		if (e == text.npos)
 		{
 			log::error << L"Template syntax error; missing end." << Endl;
 			return 1;
 		}
 
-		int32_t id = o->addSection(text.substr(offset, s - offset));
+		const int32_t id = o->addSection(text.substr(offset, s - offset));
 		ss << L"output:printSection(" << id << L")" << Endl;
 		ss << text.substr(s + 5, e - s - 5) << Endl;
 
 		offset = e + 4;
 	}
 
-	int32_t id = o->addSection(text.substr(offset));
+	const int32_t id = o->addSection(text.substr(offset));
 	ss << L"output:printSection(" << id << L")" << Endl;
 
 	Ref< script::IScriptBlob > scriptBlob = g_scriptCompiler->compile(fileName.getFileName(), ss.str(), nullptr);
 	if (!scriptBlob)
 	{
 		log::error << L"Unable to compile script \"" << fileName.getPathName() << L"\"." << Endl;
-		return 1;
+		return 2;
 	}
 
 	// Transform arguments into script array.
@@ -201,7 +199,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 
 	Ref< script::IScriptContext > scriptContext = g_scriptManager->createContext(false);
 	if (!scriptContext)
-		return 1;
+		return 3;
 
 	// Expose some environment variables of running script.
 	OS::getInstance().setEnvironment(L"RUN_SCRIPT", fileName.getPathName());
@@ -218,7 +216,7 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	scriptContext->setGlobal("args", CastAny< std::vector< std::wstring > >::set(args));
 
 	if (!scriptContext->load(scriptBlob))
-		return 1;
+		return 4;
 
 	safeDestroy(scriptContext);
 
@@ -226,7 +224,6 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 	return 0;
 }
 
-	}
 }
 
 using namespace traktor;
