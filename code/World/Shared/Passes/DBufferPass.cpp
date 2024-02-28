@@ -51,8 +51,8 @@ render::handle_t DBufferPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGBA)
-	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Roughness (R), Metalness (B), Specular (B)
-	rgtd.targets[2].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB)
+	rgtd.targets[1].colorFormat = render::TfR11G11B10F;		// Roughness (R), Metalness (B), Specular (B)
+	rgtd.targets[2].colorFormat = render::TfR11G11B10F;		// Normals (RGB)
 	auto dbufferTargetSetId = renderGraph.addTransientTargetSet(L"DBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add DBuffer render pass.
