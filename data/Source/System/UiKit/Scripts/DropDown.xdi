@@ -153,7 +153,7 @@ function DropDown:place(x, y, width, height)
 	self._background_mc.width = p.width
 	self._background_mc.height = p.height
 
-	self._arrow_mc.X = p.width - self._arrowOffset
+	self._arrow_mc.X = p.width - self._arrow_mc.width
 	self._arrow_mc.Y = (p.height - self._arrow_mc.height) / 2
 
 	local sz = self._caption_tb.textSize
@@ -175,7 +175,6 @@ function DropDown:_initialize(parent, mc, items)
 
 	self._margin = self._caption_tb.X
 	self._textSizeMargin = mc.height - self._caption_tb:getTextFormat().size / 20
-	self._arrowOffset = self._background_mc.width - self._arrow_mc.X
 	self._preferredSize =
 	{
 		width = mc.width,
@@ -307,6 +306,7 @@ function DropDown:_onListMouseDown(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>
