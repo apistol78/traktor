@@ -59,7 +59,7 @@ public:
 
 	void setPitch(float pitch);
 
-	void setParameter(int32_t id, float parameter);
+	void setParameter(const std::wstring& id, float parameter);
 
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;

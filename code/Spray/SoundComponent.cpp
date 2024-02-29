@@ -77,10 +77,10 @@ void SoundComponent::setPitch(float pitch)
 		m_handle->setPitch(pitch);
 }
 
-void SoundComponent::setParameter(int32_t id, float parameter)
+void SoundComponent::setParameter(const std::wstring& id, float parameter)
 {
 	if (m_handle != nullptr)
-		m_handle->setParameter(id, parameter);
+		m_handle->setParameter(sound::getParameterHandle(id), parameter);
 }
 
 }
