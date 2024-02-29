@@ -167,7 +167,7 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	if (m_soundHandle)
 		m_soundHandle->stop();
 
-	m_soundHandle = m_soundPlayer->play(new Sound(buffer, 0, 1.0f, 0.0f), 0);
+	m_soundHandle = m_soundPlayer->play(new Sound(buffer, 0, m_asset->getGain(), 0.0f), 0);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
