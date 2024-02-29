@@ -318,6 +318,10 @@
             <second>Monokai</second>
         </item>
 		<item>
+			<first>EDITOR_SETTINGS_STYLESHEET_ORANGE</first>
+			<second>Orange</second>
+		</item>
+		<item>
 			<first>EDITOR_SETTINGS_SYSTEM_ROOT</first>
 			<second>System root</second>
 		</item>
