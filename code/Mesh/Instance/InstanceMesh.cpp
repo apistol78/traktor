@@ -114,7 +114,7 @@ void InstanceMesh::build(
 		{
 			*ptr++ = packInstanceMeshData(
 				instance->transform,
-				m_renderMesh->getBoundingBox().transform(instance->transform)
+				instance->boundingBox
 			);
 		}
 		m_instanceBuffer->unlock();
@@ -261,6 +261,7 @@ InstanceMesh::Instance* InstanceMesh::allocateInstance()
 	Instance* instance = new Instance();
 	instance->mesh = this;
 	instance->transform = Transform::identity();
+	instance->boundingBox = m_renderMesh->getBoundingBox();
 	m_instances.push_back(instance);
 	return instance;
 }
@@ -278,6 +279,7 @@ void InstanceMesh::Instance::setTransform(const Transform& transform)
 {
 	this->mesh->m_instanceBufferDirty = true;
 	this->transform = transform;
+	this->boundingBox = this->mesh->m_renderMesh->getBoundingBox().transform(transform);
 }
 
 }

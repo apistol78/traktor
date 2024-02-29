@@ -94,6 +94,7 @@ public:
 	{
 		InstanceMesh* mesh;
 		Transform transform;
+		Aabb3 boundingBox;
 
 		void setTransform(const Transform& transform);
 	};
