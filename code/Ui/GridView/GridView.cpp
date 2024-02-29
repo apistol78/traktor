@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 /*
  * TRAKTOR
  * Copyright (c) 2022-2023 Anders Pistol.
@@ -283,7 +285,8 @@ Ref< HierarchicalState > GridView::captureState() const
 	for (uint32_t i = 0; i < (uint32_t)m_columns.size(); ++i)
 		state->setValue(i, m_columns[i]->getWidth().get());
 
-	for (auto row : getRows(GfDescendants))
+	RefArray< GridRow > rows = getRows(GfDescendants);
+	for (auto row : rows)
 	{
 		state->addState(
 			getRowPath(row),
@@ -303,7 +306,8 @@ void GridView::applyState(const HierarchicalState* state)
 		m_columns[i]->setWidth(Unit(width));
 	}
 
-	for (auto row : getRows(GfDescendants))
+	RefArray< GridRow > rows = getRows(GfDescendants);
+	for (auto row : rows)
 	{
 		const std::wstring path = getRowPath(row);
 		row->setState(

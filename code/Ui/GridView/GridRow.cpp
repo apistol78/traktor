@@ -214,7 +214,7 @@ void GridRow::placeCells(AutoWidget* widget, const Rect& rect)
 
 		rcCell.right = rcCell.left + width;
 
-		if (m_items[i])
+		if (i < m_items.size() && m_items[i] != nullptr)
 		{
 			Rect rcCellLocal = rcCell;
 			if (i == 0)

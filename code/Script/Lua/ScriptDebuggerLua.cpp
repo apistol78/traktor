@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -162,7 +162,7 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 					if (object)
 						variable->setTypeName(type_name(object));
 
-					uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+					const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 					Boxed* b = dynamic_type_cast< Boxed* >(object);
 					if (b)
@@ -174,7 +174,7 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 				{
 					lua_pop(L, 1);
 
-					uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+					const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 					variable->setValue(new ValueObject(objectRef));
 				}
 			}
@@ -231,7 +231,7 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 						if (object)
 							variable->setTypeName(type_name(object));
 
-						uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+						const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 
 						Boxed* b = dynamic_type_cast< Boxed* >(object);
 						if (b)
@@ -243,7 +243,7 @@ bool ScriptDebuggerLua::captureLocals(uint32_t depth, RefArray< Variable >& outL
 					{
 						lua_pop(L, 1);
 
-						uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+						const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 						variable->setValue(new ValueObject(objectRef));
 					}
 				}
@@ -278,7 +278,7 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 	if (lua_getmetatable(L, -1))
 	{
 		Ref< Variable > variable = new Variable(L"(meta)", L"", 0);
-		uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+		const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 		variable->setValue(new ValueObject(objectRef));
 		outMembers.push_back(variable);
 	}
@@ -345,7 +345,7 @@ bool ScriptDebuggerLua::captureObject(uint32_t object, RefArray< Variable >& out
 			else
 				lua_pop(L, 1);
 
-			uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+			const uint32_t objectRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
 			variable->setValue(new ValueObject(objectRef));
 		}
 		else
@@ -400,7 +400,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	if (!currentContext)
 		return;
 
-	int32_t currentLine = ar->currentline - 1;
+	const int32_t currentLine = ar->currentline - 1;
 	m_breadcrumb.push_back(currentLine);
 
 	if (m_state == StRunning)

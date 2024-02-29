@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,12 +38,10 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 struct VariablePred
 {
@@ -53,7 +51,7 @@ struct VariablePred
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerView", ScriptDebuggerView, ui::Container)
 
@@ -172,9 +170,9 @@ void ScriptDebuggerView::updateLocals(int32_t depth)
 		if (m_scriptDebugger->captureLocals(depth, locals))
 		{
 			locals.sort(VariablePred());
-			for (RefArray< Variable >::const_iterator j = locals.begin(); j != locals.end(); ++j)
+			for (auto local : locals)
 			{
-				Ref< ui::GridRow > row = createVariableRow(*j);
+				Ref< ui::GridRow > row = createVariableRow(local);
 				if (row)
 					m_localsGrid->addRow(row);
 			}
@@ -187,20 +185,21 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 {
 	if (!scriptDebugger->isRunning())
 	{
+		// Capture all stack frames.
 		m_stackFrames.resize(0);
 		for (uint32_t depth = 0; ; ++depth)
 		{
 			Ref< StackFrame > sf;
 			if (!scriptDebugger->captureStackFrame(depth, sf))
 				break;
-
 			T_FATAL_ASSERT (sf);
 			m_stackFrames.push_back(sf);
 		}
 
-		m_callStackGrid->removeAllRows();
+		const bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
 
-		bool autoOpenDebuggedScript = m_editor->getSettings()->getProperty< bool >(L"Editor.AutoOpenDebuggedScript", true);
+		Ref< ui::HierarchicalState > state = m_callStackGrid->captureState();
+		m_callStackGrid->removeAllRows();
 
 		int32_t depth = 0;
 		for (auto stackFrame : m_stackFrames)
@@ -208,14 +207,12 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 			Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(stackFrame->getScriptId());
 
 			Ref< ui::GridRow > row = new ui::GridRow(0);
-
 			row->add(stackFrame->getFunctionName());
 			row->add(toString(stackFrame->getLine() + 1));
 			row->add(scriptInstance ? scriptInstance->getName() : L"(Unknown script)");
 			row->setData(L"SCRIPT_ID", new PropertyString(stackFrame->getScriptId().format()));
 			row->setData(L"SCRIPT_LINE", new PropertyInteger(stackFrame->getLine()));
 			row->setData(L"FRAME_DEPTH", new PropertyInteger(depth++));
-
 			m_callStackGrid->addRow(row);
 
 			// Open debugged script and issue a "goto line" to scroll script editor to debugged line.
@@ -232,7 +229,9 @@ void ScriptDebuggerView::debugeeStateChange(IScriptDebugger* scriptDebugger)
 		updateLocals(0);
 
 		m_callStackGrid->setEnable(true);
+		m_callStackGrid->applyState(state);
 		m_callStackGrid->update();
+
 		m_localsGrid->setEnable(true);
 		m_localsGrid->update();
 	}
@@ -258,9 +257,9 @@ void ScriptDebuggerView::eventCallStackGridDoubleClick(ui::MouseDoubleClickEvent
 	ui::GridRow* selectedRow = m_callStackGrid->getSelectedRow();
 	if (selectedRow)
 	{
-		Guid scriptId = Guid(*(selectedRow->getData< PropertyString >(L"SCRIPT_ID")));
-		int32_t line = *(selectedRow->getData< PropertyInteger >(L"SCRIPT_LINE"));
-		int32_t depth = *(selectedRow->getData< PropertyInteger >(L"FRAME_DEPTH"));
+		const Guid scriptId = Guid(*(selectedRow->getData< PropertyString >(L"SCRIPT_ID")));
+		const int32_t line = *(selectedRow->getData< PropertyInteger >(L"SCRIPT_LINE"));
+		const int32_t depth = *(selectedRow->getData< PropertyInteger >(L"FRAME_DEPTH"));
 
 		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(scriptId);
 		if (scriptInstance)
@@ -294,9 +293,9 @@ void ScriptDebuggerView::eventLocalsGridStateChange(ui::GridRowStateChangeEvent*
 			if (m_scriptDebugger->captureObject(valueObject->getObjectRef(), members))
 			{
 				members.sort(VariablePred());
-				for (RefArray< Variable >::const_iterator j = members.begin(); j != members.end(); ++j)
+				for (auto member : members)
 				{
-					Ref< ui::GridRow > childRow = createVariableRow(*j);
+					Ref< ui::GridRow > childRow = createVariableRow(member);
 					if (childRow)
 						row->addChild(childRow);
 				}
@@ -321,11 +320,10 @@ void ScriptDebuggerView::eventLocalsGridButtonDown(ui::MouseButtonDownEvent* eve
 		ui::GridRow* selectedRow = m_localsGrid->getSelectedRow();
 		if (selectedRow)
 		{
-			std::wstring value = selectedRow->get(1)->getText();
+			const std::wstring value = selectedRow->get(1)->getText();
 			ui::Application::getInstance()->getClipboard()->setText(value);
 		}
 	}
 }
 
-	}
 }
