@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,8 +48,10 @@ AnimatedMeshComponent::AnimatedMeshComponent(
 	m_jointBuffers[0] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 	m_jointBuffers[1] = mesh::SkinnedMesh::createJointBuffer(renderSystem, skinJointCount);
 
-	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+	m_jointInverseTransforms.resize(skinJointCount, Transform::identity());
+
+	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
+	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
 }
 
 void AnimatedMeshComponent::destroy()
@@ -74,6 +76,7 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 		if (skeletonComponent && skeletonComponent->getSkeleton())
 		{
 			auto skeleton = skeletonComponent->getSkeleton();
+			const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
 			m_jointRemap.resize(skeleton->getJointCount());
 
@@ -88,6 +91,7 @@ void AnimatedMeshComponent::setOwner(world::Entity* owner)
 					continue;
 				}
 				m_jointRemap[i] = it->second;
+				m_jointInverseTransforms[it->second] = jointTransforms[i].inverse();
 			}
 		}
 	}
@@ -103,8 +107,9 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 {
 	// Always ensure skin arrays are same size as mesh joints.
 	const size_t skinJointCount = m_mesh->getJointCount();
-	m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-	m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+	m_jointInverseTransforms.resize(skinJointCount);
+	m_poseTransforms[0].resize(skinJointCount, Transform::identity());
+	m_poseTransforms[1].resize(skinJointCount, Transform::identity());
 	m_index = 1 - m_index;
 
 	// Calculate skinning transforms.
@@ -123,17 +128,11 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 		{
 			const size_t skeletonJointCount = jointTransforms.size();
 			const size_t skinJointCount = m_mesh->getJointCount();
-
-			// Calculate skin transforms in delta space.
 			for (size_t i = 0; i < skeletonJointCount; ++i)
 			{
 				const int32_t jointIndex = m_jointRemap[i];
 				if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
-				{
-					const Transform skinTransform = poseTransforms[i] * jointTransforms[i].inverse();
-					m_skinTransforms[m_index][jointIndex * 2 + 0] = skinTransform.rotation().e;
-					m_skinTransforms[m_index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
-				}
+					m_poseTransforms[m_index][jointIndex] = poseTransforms[i];
 			}
 		}
 	}
@@ -160,17 +159,20 @@ void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const
 		m_lastWorldTransform[1] = m_lastWorldTransform[0];
 		m_lastWorldTransform[0] = worldTransform;
 
-		const auto& skinTransformsLastUpdate = m_skinTransforms[1 - m_index];
-		const auto& skinTransformsCurrentUpdate = m_skinTransforms[m_index];
+		const auto& poseTransformsLastUpdate = m_poseTransforms[1 - m_index];
+		const auto& poseTransformsCurrentUpdate = m_poseTransforms[m_index];
+
+		auto skeletonComponent = m_owner->getComponent< SkeletonComponent >();
+		const auto& jointTransforms = skeletonComponent->getJointTransforms();
 
 		// Interpolate between updates to get current build skin transforms.
 		mesh::SkinnedMesh::JointData* jointData = (mesh::SkinnedMesh::JointData*)jointBufferCurrent->lock();
-		for (uint32_t i = 0; i < skinTransformsCurrentUpdate.size(); i += 2)
+		for (uint32_t i = 0; i < poseTransformsCurrentUpdate.size(); ++i)
 		{
-			auto translation = lerp(skinTransformsLastUpdate[i + 1], skinTransformsCurrentUpdate[i + 1], interval);
-			auto rotation = slerp(Quaternion(skinTransformsLastUpdate[i]), Quaternion(skinTransformsCurrentUpdate[i]), interval);
-			translation.storeAligned(jointData->translation);
-			rotation.e.storeAligned(jointData->rotation);
+			const Transform poseTransform = lerp(poseTransformsLastUpdate[i], poseTransformsCurrentUpdate[i], interval);
+			const Transform skinTransform = poseTransform * m_jointInverseTransforms[i];
+			skinTransform.translation().storeAligned(jointData->translation);
+			skinTransform.rotation().e.storeAligned(jointData->rotation);
 			jointData++;
 		}
 		jointBufferCurrent->unlock();
@@ -220,13 +222,7 @@ bool AnimatedMeshComponent::getSkinTransform(render::handle_t jointName, Transfo
 	if (skinIndex < 0)
 		return false;
 
-	Quaternion tmp;
-	m_skinTransforms[m_index][skinIndex * 2 + 0].storeAligned((float*)&tmp);
-
-	outTransform = Transform(
-		m_skinTransforms[m_index][skinIndex * 2 + 1],
-		tmp
-	);
+	outTransform = m_poseTransforms[m_index][skinIndex] * m_jointInverseTransforms[skinIndex];
 	return true;
 }
 

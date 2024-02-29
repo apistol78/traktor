@@ -37,7 +37,7 @@ Transform Wheel::getTransform() const
 {
 	return Transform(
 		center,
-		Quaternion::fromEulerAngles(steer, 0.0f, 0.0f) * Quaternion::fromEulerAngles(0.0f, angle, 0.0f)
+		(Quaternion::fromEulerAngles(steer, 0.0f, 0.0f) * Quaternion::fromEulerAngles(0.0f, angle, 0.0f)).normalized()
 	);
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -167,6 +167,12 @@ T_MATH_INLINE Vector4 Vector4::xyz1() const
 {
 	static const Vector4 c_wone(0.0f, 0.0f, 0.0f, 1.0f);
 	return xyz0() + c_wone;
+}
+
+T_MATH_INLINE Vector4 Vector4::_000w() const
+{
+	static const Vector4 c_mask(0.0f, 0.0f, 0.0f, 1.0f);
+	return *this * c_mask;
 }
 
 T_MATH_INLINE Scalar Vector4::length() const

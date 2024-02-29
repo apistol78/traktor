@@ -323,7 +323,7 @@ T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 {
 	const Quaternion qv(v.xyz0());
 	const Quaternion qvp = q * qv * q.inverse();
-	return qvp.e.xyz0() + v * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	return qvp.e.xyz0() + v._000w();
 }
 
 T_MATH_INLINE Scalar dot(const Quaternion& a, const Quaternion& b)

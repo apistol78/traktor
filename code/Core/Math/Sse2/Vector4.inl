@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -127,6 +127,13 @@ T_MATH_INLINE Vector4 Vector4::xyz0() const
 T_MATH_INLINE Vector4 Vector4::xyz1() const
 {
 	return xyz0() + c_xyz1mask;
+}
+
+T_MATH_INLINE Vector4 Vector4::_000w() const
+{
+	static const uint32_t T_ALIGN16 c_xyz0mask[] = { 0x00000000, 0x00000000, 0x00000000, 0xffffffff };
+	const __m128 mask = _mm_load_ps((const float *)c_xyz0mask);
+	return Vector4(_mm_and_ps(m_data, mask));
 }
 
 T_MATH_INLINE Scalar Vector4::length() const
@@ -395,14 +402,13 @@ T_MATH_INLINE Vector4 cross(const Vector4& l, const Vector4& r)
 
 T_MATH_INLINE Vector4 lerp(const Vector4& a, const Vector4& b, const Scalar& c)
 {
-	return (Scalar(1.0f) - c) * a + c * b;
+	return (1.0_simd - c) * a + c * b;
 }
 
 T_MATH_INLINE Vector4 reflect(const Vector4& v, const Vector4& at)
 {
-	const static Scalar c_two(2.0f);
 	const Vector4 N = at.normalized();
-	const Vector4 V = N * (dot3(N, v) * c_two);
+	const Vector4 V = N * (dot3(N, v) * 2.0_simd);
 	return V - v;
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,9 +38,9 @@ class T_DLLCLASS BufferedStream : public IStream
 public:
 	enum { DefaultBufferSize = 4096 };
 
-	BufferedStream(IStream* stream, uint32_t internalBufferSize = DefaultBufferSize);
+	explicit BufferedStream(IStream* stream, uint32_t internalBufferSize = DefaultBufferSize);
 
-	BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize = DefaultBufferSize);
+	explicit BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize = DefaultBufferSize);
 
 	virtual void close() override final;
 
@@ -61,6 +61,8 @@ public:
 	virtual int64_t write(const void* block, int64_t nbytes) override final;
 
 	virtual void flush() override final;
+
+	static Ref< IStream > createIfNotAlready(IStream* stream, uint32_t internalBufferSize = DefaultBufferSize);
 
 private:
 	Ref< IStream > m_stream;

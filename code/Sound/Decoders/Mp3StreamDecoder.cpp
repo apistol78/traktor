@@ -42,7 +42,7 @@ public:
 
 	bool create(IStream* stream)
 	{
-		m_stream = new BufferedStream(stream);
+		m_stream = BufferedStream::createIfNotAlready(stream);
 
 		m_io.read = &callbackRead;
 		m_io.read_data = this;

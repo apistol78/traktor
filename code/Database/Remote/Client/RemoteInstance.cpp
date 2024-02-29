@@ -129,7 +129,7 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 	if (!s)
 		return nullptr;
 
-	return new BufferedStream(s);
+	return BufferedStream::createIfNotAlready(s);
 }
 
 Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
@@ -146,7 +146,7 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 	if (!s)
 		return nullptr;
 
-	return new BufferedStream(s);
+	return BufferedStream::createIfNotAlready(s);
 }
 
 uint32_t RemoteInstance::getDataNames(AlignedVector< std::wstring >& outDataNames) const
@@ -180,7 +180,7 @@ Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 	if (!s)
 		return nullptr;
 
-	return new BufferedStream(s);
+	return BufferedStream::createIfNotAlready(s);
 }
 
 Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
@@ -193,7 +193,7 @@ Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 	if (!s)
 		return nullptr;
 
-	return new BufferedStream(s);
+	return BufferedStream::createIfNotAlready(s);
 }
 
 }

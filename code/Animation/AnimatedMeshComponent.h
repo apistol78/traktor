@@ -74,7 +74,8 @@ public:
 private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	AlignedVector< int32_t > m_jointRemap;
-	AlignedVector< Vector4 > m_skinTransforms[2];
+	AlignedVector< Transform > m_jointInverseTransforms;
+	AlignedVector< Transform > m_poseTransforms[2];
 	Ref< render::Buffer > m_jointBuffers[2];
 	Transform m_lastWorldTransform[2];
 	std::atomic< int32_t > m_index;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -297,6 +297,14 @@ void BufferedStream::flushWriteBuffer()
 		m_stream->write(m_writeBuf.ptr(), m_writeBufCnt);
 		m_writeBufCnt = 0;
 	}
+}
+
+Ref< IStream > BufferedStream::createIfNotAlready(IStream* stream, uint32_t internalBufferSize)
+{
+	if (!is_a< BufferedStream >(stream))
+		return new BufferedStream(stream, internalBufferSize);
+	else
+		return stream;
 }
 
 }
