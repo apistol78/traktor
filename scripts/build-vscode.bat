@@ -4,22 +4,20 @@ set PLATFORM=%1
 set CONFIG=%2
 
 call %~dp0config.bat
+call %~dp0config-vs-x64.bat
 
-echo Building...
+echo Building %CONFIG%...
 echo %TRAKTOR_HOME%
-echo %FBUILD%
 
 if "%PLATFORM%" == "Windows" (
-    call %~dp0config-vs-x64.bat
-    pushd "%TRAKTOR_HOME%\build\win64"
-    %FBUILD% -config "Extern Win64.bff" -noprogress -cache %CONFIG%
-    %FBUILD% -config "Traktor Win64.bff" -noprogress -cache %CONFIG%
-    popd
+	pushd "%TRAKTOR_HOME%\build\win64"
+	msbuild -m "Traktor Win64.sln" /p:Configuration=%CONFIG% /p:Platform="x64"
+	popd
 )
 
 if "%PLATFORM%" == "Android" (
-    pushd "%TRAKTOR_HOME%\build\android"
-    %TRAKTOR_HOME%\3rdp\jom-windows\jom /L /F "Extern Android.mak" %CONFIG%
-    %TRAKTOR_HOME%\3rdp\jom-windows\jom /L /F "Traktor Android.mak" %CONFIG%
-    popd
+	pushd "%TRAKTOR_HOME%\build\android"
+	%TRAKTOR_HOME%\3rdp\jom-windows\jom /L /F "Extern Android.mak" %CONFIG%
+	%TRAKTOR_HOME%\3rdp\jom-windows\jom /L /F "Traktor Android.mak" %CONFIG%
+	popd
 )

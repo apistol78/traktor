@@ -49,12 +49,6 @@ set VMA_SDK=%TRAKTOR_HOME%\3rdp\VulkanMemoryAllocator
 :: Export name of solution builder binary.
 set SOLUTIONBUILDER=%TRAKTOR_HOME%\bin\win64\releasestatic\Traktor.SolutionBuilder.App
 
-:: Export path to Ninja binary.
-set NINJA=%TRAKTOR_HOME%\3rdp\ninja-windows\ninja
-
-:: Export path to FBuild executable.
-set FBUILD=%TRAKTOR_HOME%\3rdp\fastbuild-windows\FBuild.exe
-
 :: Android SDK
 set ANDROID_HOME=%TRAKTOR_HOME:\=/%/3rdp/android-sdk-windows
 set ANDROID_NDK_ROOT=%ANDROID_HOME:\=/%/ndk-bundle
