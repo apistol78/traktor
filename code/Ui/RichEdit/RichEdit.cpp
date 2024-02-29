@@ -1747,9 +1747,13 @@ void RichEdit::eventPaint(PaintEvent* event)
 				else
 				{
 					canvas.setForeground(txAttrib.textColor.resolve(ss));
-					solidBackground = bool(bgAttrib.backColor);
-					if (solidBackground)
+
+					const Color4ub bg = bgAttrib.backColor.resolve(ss);
+					if (bg.a != 0)
+					{
 						canvas.setBackground(bgAttrib.backColor.resolve(ss));
+						solidBackground = true;
+					}
 				}
 
 				// Draw characters.
