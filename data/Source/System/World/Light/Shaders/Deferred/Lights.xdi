@@ -740,9 +740,9 @@
 				<first>5672</first>
 				<second>1685</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
@@ -2488,7 +2488,6 @@ const vec3 r = CalculateReflection(
 );
 
 $Output = vec4(r, 0.0f);
-
 			]]>
 			</script>
 		</item>
