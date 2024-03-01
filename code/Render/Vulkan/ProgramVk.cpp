@@ -263,7 +263,7 @@ bool ProgramVk::create(
 		sci.addressModeU = c_addressModes[(int)resourceSampler.state.addressU];
 		sci.addressModeV = c_addressModes[(int)resourceSampler.state.addressV];
 		sci.addressModeW = c_addressModes[(int)resourceSampler.state.addressW];
-		sci.mipLodBias = resourceSampler.state.mipBias + mipBias;
+		sci.mipLodBias = !resourceSampler.state.ignoreMips ? resourceSampler.state.mipBias + mipBias : 0.0f;
 		
 		if (maxAnistropy > 0)
 			sci.anisotropyEnable = resourceSampler.state.useAnisotropic ? VK_TRUE : VK_FALSE;
@@ -274,7 +274,7 @@ bool ProgramVk::create(
 		sci.compareEnable = (resourceSampler.state.compare != CompareFunction::None) ? VK_TRUE : VK_FALSE;
 		sci.compareOp = c_compareOperations[(int)resourceSampler.state.compare];
 		sci.minLod = 0.0f;
-		sci.maxLod = resourceSampler.state.ignoreMips ? 0.0f : std::numeric_limits< float >::max();
+		sci.maxLod = std::numeric_limits< float >::max();
 		sci.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
 		sci.unnormalizedCoordinates = VK_FALSE;
 

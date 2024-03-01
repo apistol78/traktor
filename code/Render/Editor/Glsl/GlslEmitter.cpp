@@ -2013,7 +2013,7 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 
 	SamplerState samplerState = node->getSamplerState();
 	if (samplerState.ignoreMips)
-		samplerState.mipFilter = Filter::Linear;
+		samplerState.mipFilter = Filter::Point;
 	if (texture->getType() == GlslType::Texture2D)
 		samplerState.addressW = Address::Wrap;
 
@@ -2304,7 +2304,7 @@ bool emitScript(GlslContext& cx, Script* node)
 		{
 			SamplerState samplerState = state->getSamplerState();
 			if (samplerState.ignoreMips)
-				samplerState.mipFilter = Filter::Linear;
+				samplerState.mipFilter = Filter::Point;
 
 			std::wstring samplerName;
 
