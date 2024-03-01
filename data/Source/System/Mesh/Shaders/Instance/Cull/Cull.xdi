@@ -274,7 +274,6 @@ if (ProjectSphere(viewCenter.xyz, radius, znear, P00, P11, aabb))
 }
 
 $Output = visible ? 1.0f : 0.0f;
-
 			]]>
 			</script>
 		</item>
@@ -293,7 +292,7 @@ $Output = visible ? 1.0f : 0.0f;
 			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">

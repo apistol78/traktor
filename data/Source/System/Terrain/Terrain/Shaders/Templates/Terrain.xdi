@@ -5,8 +5,8 @@
 			<id>{EAE95A01-9DDB-9F4D-9AED-662D3D8E874D}</id>
 			<comment/>
 			<position>
-				<first>469</first>
-				<second>298</second>
+				<first>502</first>
+				<second>339</second>
 			</position>
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
@@ -15,16 +15,16 @@
 			<id>{B243D8E2-D285-C147-9002-C7532C16ADB2}</id>
 			<comment/>
 			<position>
-				<first>211</first>
-				<second>262</second>
+				<first>244</first>
+				<second>303</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform" version="traktor.render.Node:1">
 			<id>{2DC80AF2-9ECB-DC41-B8C8-90325B910D85}</id>
 			<comment/>
 			<position>
-				<first>-155</first>
-				<second>205</second>
+				<first>-35</first>
+				<second>244</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
@@ -159,8 +159,8 @@
 			<id>{17209A50-5667-6C49-9196-811BDE3EAD67}</id>
 			<comment/>
 			<position>
-				<first>-312</first>
-				<second>267</second>
+				<first>-246</first>
+				<second>293</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -170,8 +170,8 @@
 			<id>{73C87553-D473-D747-A948-E76EB7050175}</id>
 			<comment/>
 			<position>
-				<first>-2</first>
-				<second>325</second>
+				<first>56</first>
+				<second>365</second>
 			</position>
 			<parameterName>World_Projection</parameterName>
 			<type>Matrix</type>
@@ -392,8 +392,8 @@ Generated texture from surface cache.
 			<id>{533336C9-FA31-DE46-B1DC-F93F8A2A66F1}</id>
 			<comment/>
 			<position>
-				<first>203</first>
-				<second>172</second>
+				<first>236</first>
+				<second>213</second>
 			</position>
 			<name>L_ViewPosition</name>
 		</item>
@@ -1120,8 +1120,8 @@ $Output = gl_DrawID;
 			<id>{DCC6C4F8-413E-A040-BA70-ACE74679C628}</id>
 			<comment/>
 			<position>
-				<first>-218</first>
-				<second>140</second>
+				<first>-156</first>
+				<second>120</second>
 			</position>
 			<name>L_Elevation</name>
 		</item>
@@ -1129,8 +1129,8 @@ $Output = gl_DrawID;
 			<id>{7E6EB46D-E906-F948-9FFE-ACC1F5360B10}</id>
 			<comment/>
 			<position>
-				<first>-349</first>
-				<second>158</second>
+				<first>-286</first>
+				<second>138</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>

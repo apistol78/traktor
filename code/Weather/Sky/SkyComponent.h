@@ -89,8 +89,6 @@ public:
 		const world::IWorldRenderPass& worldRenderPass
 	);
 
-	render::ITexture* getTexture() const { return m_texture; }
-
 private:
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
@@ -98,19 +96,17 @@ private:
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shaderClouds2D;
 	resource::Proxy< render::Shader > m_shaderClouds3D;
+	resource::Proxy< render::Shader > m_shaderCloudsDome;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< render::ITexture > m_texture;
 	Ref< render::ITexture > m_cloudTextures[2];
+	Ref< render::ITexture > m_cloudDomeTexture[2];
 	world::Entity* m_owner = nullptr;
 	Transform m_transform;
 	float m_intensity = 1.0f;
-	bool m_dirty = true;
-
-	resource::Proxy< render::Shader > m_shaderCloudsDome;
-	Ref< render::ITexture > m_cloudDomeTexture[2];
-
 	int32_t m_count = 0;
 	int32_t m_cloudFrame = 0;
+	bool m_dirty = true;
 };
 
 }

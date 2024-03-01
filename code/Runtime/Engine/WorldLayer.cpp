@@ -123,7 +123,7 @@ void WorldLayer::preUpdate(const UpdateInfo& info)
 		m_scene.consume();
 
 		// Get initial camera.
-		m_cameraEntity = m_scene->getWorld()->getEntity(L"Camera");
+		m_cameraEntity = m_scene->getWorld()->getEntity(L"Camera0");
 	}
 
 	// Re-create world renderer.

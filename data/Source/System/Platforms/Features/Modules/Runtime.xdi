@@ -469,11 +469,10 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.OpenEXR.lib</item>
+								<item>Extern.tinyexr.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat.lib</item>
-								<item>Extern.ilmbase.lib</item>
 								<item>Extern.jpeg.lib</item>
 								<item>Extern.flac.lib</item>
 								<item>Extern.liblzf.lib</item>
@@ -632,11 +631,10 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.OpenEXR.lib</item>
+								<item>Extern.tinyexr.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat.lib</item>
-								<item>Extern.ilmbase.lib</item>
 								<item>Extern.jpeg.lib</item>
 								<item>Extern.flac.lib</item>
 								<item>Extern.liblzf.lib</item>
