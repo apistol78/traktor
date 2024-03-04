@@ -129,12 +129,6 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Static > staticExtentUnit = new ui::Static();
 	staticExtentUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_EXTENT_UNIT"));
 
-	Ref< ui::Static > staticVista = new ui::Static();
-	staticVista->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA"));
-
-	Ref< ui::Static > staticVistaUnit = new ui::Static();
-	staticVistaUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA_UNIT"));
-
 	Ref< ui::Static > staticSize = new ui::Static();
 	staticSize->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_SIZE"));
 

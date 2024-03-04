@@ -82,8 +82,11 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 		const int32_t offset = iz * outputSize;
 		for (int32_t ix = 0; ix < outputSize - 1; ++ix)
 		{
+			const int32_t gx = ix0 + ix * step;
+			const int32_t gz = iz0 + iz * step;
+
 			float wx, wz;
-            heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
+            heightfield->gridToWorld(gx, gz, wx, wz);
 
 			if (!heightfield->getWorldCut(wx, wz))
 				continue;
@@ -94,6 +97,27 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 			if (!heightfield->getWorldCut(wx, wz + step))
 				continue;
 
+			const float heights[] =
+			{
+				heightfield->getGridHeightNearest(gx, gz),
+				heightfield->getGridHeightNearest(gx + step, gz),
+				heightfield->getGridHeightNearest(gx + step, gz + step),
+				heightfield->getGridHeightNearest(gx, gz + step)
+			};
+
+			const float ch = (heights[0] + heights[1] + heights[2] + heights[3]) / 4.0f;
+			
+			const float dh[] =
+			{
+				std::abs(ch - heights[0]),
+				std::abs(ch - heights[1]),
+				std::abs(ch - heights[2]),
+				std::abs(ch - heights[3])
+			};
+
+			const auto it = std::max_element(&dh[0], &dh[4]);
+			const int32_t mdhi = (int32_t)std::distance(&dh[0], it);
+
 			const int32_t indices[] =
 			{
 				offset + ix,
@@ -102,19 +126,38 @@ Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, 
 				offset + ix + outputSize
 			};
 
-			polygon.clearVertices();
-            polygon.setMaterial(0);
-			polygon.addVertex(indices[0]);
-			polygon.addVertex(indices[1]);
-			polygon.addVertex(indices[3]);
-			model->addPolygon(polygon);
+			if (mdhi == 0 || mdhi == 2)
+			{
+				polygon.clearVertices();
+				polygon.setMaterial(0);
+				polygon.addVertex(indices[0]);
+				polygon.addVertex(indices[1]);
+				polygon.addVertex(indices[3]);
+				model->addPolygon(polygon);
 
-			polygon.clearVertices();
-            polygon.setMaterial(0);
-			polygon.addVertex(indices[1]);
-			polygon.addVertex(indices[2]);
-			polygon.addVertex(indices[3]);
-			model->addPolygon(polygon);
+				polygon.clearVertices();
+				polygon.setMaterial(0);
+				polygon.addVertex(indices[1]);
+				polygon.addVertex(indices[2]);
+				polygon.addVertex(indices[3]);
+				model->addPolygon(polygon);
+			}
+			else
+			{
+				polygon.clearVertices();
+				polygon.setMaterial(0);
+				polygon.addVertex(indices[0]);
+				polygon.addVertex(indices[1]);
+				polygon.addVertex(indices[2]);
+				model->addPolygon(polygon);
+
+				polygon.clearVertices();
+				polygon.setMaterial(0);
+				polygon.addVertex(indices[0]);
+				polygon.addVertex(indices[2]);
+				polygon.addVertex(indices[3]);
+				model->addPolygon(polygon);
+			}
 		}
 	}
 
