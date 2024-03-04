@@ -16,30 +16,17 @@ namespace traktor::hf
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.ConvertHeightfield", ConvertHeightfield, Object)
 
-Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, int32_t step, float vistaDistance) const
+Ref< model::Model > ConvertHeightfield::convert(const Heightfield* heightfield, int32_t step) const
 {
 	int32_t size = heightfield->getSize();
 
     int32_t ix0, iz0;
     int32_t ix1, iz1;
 
-    if (vistaDistance > FUZZY_EPSILON)
-    {
-        heightfield->worldToGrid(-vistaDistance / 2.0f, -vistaDistance / 2.0f, ix0, iz0);
-        heightfield->worldToGrid( vistaDistance / 2.0f,  vistaDistance / 2.0f, ix1, iz1);
-
-        ix0 = clamp(ix0, 0, size);
-        iz0 = clamp(iz0, 0, size);
-        ix1 = clamp(ix1, 0, size);
-        iz1 = clamp(iz1, 0, size);
-    }
-    else
-    {
-        ix0 = 0;
-        iz0 = 0;
-        ix1 = size;
-        iz1 = size;
-    }
+    ix0 = 0;
+    iz0 = 0;
+    ix1 = size;
+    iz1 = size;
 
     size = max(ix1 - ix0, iz1 - iz0);
 

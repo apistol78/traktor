@@ -39,13 +39,11 @@ void SoundAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() < 8)
 	{
-		float presence;
 		if (s.getVersion() >= 3)
-			s >> Member< float >(L"presence", presence);
+			s >> ObsoleteMember< float >(L"presence");
 
-		float presenceRate;
 		if (s.getVersion() >= 4)
-			s >> Member< float >(L"presenceRate", presenceRate);
+			s >> ObsoleteMember< float >(L"presenceRate");
 	}
 
 	if (s.getVersion() >= 5)

@@ -62,10 +62,7 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
 
 	if (s.getVersion() < 35)
-	{
-		bool linearLighting;
-		s >> Member< bool >(L"linearLighting", linearLighting);
-	}
+		s >> ObsoleteMember< bool >(L"linearLighting");
 
 	if (s.getVersion() >= 28)
 	{
@@ -103,25 +100,17 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	if (s.getVersion() >= 23)
 	{
 		if (s.getVersion() < 25)
-		{
-			bool dummy = false;
-			s >> Member< bool >(L"occlusionCulling", dummy);
-		}
+			s >> ObsoleteMember< bool >(L"occlusionCulling");
+
 		if (s.getVersion() < 29)
-		{
-			bool depthPass;
-			s >> Member< bool >(L"depthPass", depthPass);
-		}
+			s >> ObsoleteMember< bool >(L"depthPass");
 	}
 	else
 	{
 		if (s.getVersion() < 25)
-		{
-			bool dummy = false;
-			s >> Member< bool >(L"occlusionCullingEnabled", dummy);
-		}
-		bool depthPass;
-		s >> Member< bool >(L"depthPassEnabled", depthPass);
+			s >> ObsoleteMember< bool >(L"occlusionCullingEnabled");
+
+		s >> ObsoleteMember< bool >(L"depthPassEnabled");
 	}
 
 	if (s.getVersion() >= 19)
@@ -130,34 +119,22 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 
 	if (s.getVersion() >= 26 && s.getVersion() < 30)
-	{
-		Color4f ambientColor;
-		s >> Member< Color4f >(L"ambientColor", ambientColor, AttributeHdr());
-	}
+		s >> ObsoleteMember< Color4f >(L"ambientColor", AttributeHdr());
 	
 	if (s.getVersion() >= 23)
 	{
 		if (s.getVersion() < 24)
 		{
-			float motionBlurAmount = 0.0f;
-			bool motionBlur = false;
-
-			s >> Member< bool >(L"motionBlur", motionBlur);
-			s >> Member< float >(L"motionBlurAmount", motionBlurAmount);
+			s >> ObsoleteMember< bool >(L"motionBlur");
+			s >> ObsoleteMember< float >(L"motionBlurAmount");
 		}
 		if (s.getVersion() < 36)
-		{
-			bool fog;
-			s >> Member< bool >(L"fog", fog);
-		}
+			s >> ObsoleteMember< bool >(L"fog");
 	}
 	else
 	{
 		if (s.getVersion() < 36)
-		{
-			bool fog;
-			s >> Member< bool >(L"fogEnabled", fog);
-		}
+			s >> ObsoleteMember< bool >(L"fogEnabled");
 	}
 
 	if (s.getVersion() >= 21)
@@ -171,10 +148,9 @@ void WorldRenderSettings::serialize(ISerializer& s)
 		}
 		else
 		{
-			float fogDistanceY, fogDensityY;
-			s >> Member< float >(L"fogDistanceY", fogDistanceY, AttributeUnit(UnitType::Metres));
+			s >> ObsoleteMember< float >(L"fogDistanceY", AttributeUnit(UnitType::Metres));
 			s >> Member< float >(L"fogDistanceZ", fogDistance, AttributeRange(0.0f) | AttributeUnit(UnitType::Metres));
-			s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
+			s >> ObsoleteMember< float >(L"fogDensityY", AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
 			s >> Member< float >(L"fogDensityZ", fogDensity, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Metres));
 		}
 	}

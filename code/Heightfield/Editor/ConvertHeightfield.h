@@ -38,10 +38,9 @@ public:
      *
      * \param heightfield Heightfield to convert.
      * \param step Step size, sample heightfield every N step.
-     * \param vistaDistance Distance to vista from origo, no geometry is generated further away.
      * \return Converted model.
      */
-    Ref< model::Model > convert(const Heightfield* heightfield, int32_t step, float vistaDistance) const;
+    Ref< model::Model > convert(const Heightfield* heightfield, int32_t step) const;
 };
 
 }

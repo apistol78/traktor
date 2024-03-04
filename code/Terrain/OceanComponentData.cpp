@@ -60,9 +60,8 @@ void OceanComponentData::serialize(ISerializer& s)
 
 	if (s.getVersion() < 3)
 	{
-		Color4f reflectionTint, shadowTint;
-		s >> Member< Color4f >(L"reflectionTint", reflectionTint);
-		s >> Member< Color4f >(L"shadowTint", shadowTint);
+		s >> ObsoleteMember< Color4f >(L"reflectionTint");
+		s >> ObsoleteMember< Color4f >(L"shadowTint");
 	}
 
 	s >> Member< Color4f >(L"deepColor", m_deepColor);

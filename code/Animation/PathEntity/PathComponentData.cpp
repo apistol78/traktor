@@ -61,10 +61,7 @@ void PathComponentData::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion() < 1)
-	{
-		float timeOffset;
-		s >> Member< float >(L"timeOffset", timeOffset, AttributeUnit(UnitType::Seconds));
-	}
+		s >> ObsoleteMember< float >(L"timeOffset", AttributeUnit(UnitType::Seconds));
 }
 
 }

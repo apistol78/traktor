@@ -132,9 +132,6 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 	Ref< ui::Static > staticVista = new ui::Static();
 	staticVista->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA"));
 
-	m_editVista = new ui::Edit();
-	m_editVista->create(containerFields, toString(m_asset->getVistaDistance()), ui::WsNone, new ui::NumericEditValidator(true, 1.0f));
-
 	Ref< ui::Static > staticVistaUnit = new ui::Static();
 	staticVistaUnit->create(containerFields, i18n::Text(L"HEIGHTFIELD_ASSET_VISTA_UNIT"));
 
@@ -234,7 +231,7 @@ bool HeightfieldAssetEditor::handleCommand(const ui::Command& command)
 
 		saveAsDialog.destroy();
 
-		Ref< model::Model > model = ConvertHeightfield().convert(m_heightfield, 16, 0.0f);
+		Ref< model::Model > model = ConvertHeightfield().convert(m_heightfield, 16);
 		if (!model)
 			return false;
 

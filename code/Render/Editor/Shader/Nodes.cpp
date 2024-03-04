@@ -2003,10 +2003,7 @@ void PixelOutput::serialize(ISerializer& s)
 	s >> MemberRenderState(m_renderState, s.getVersion());
 
 	if (s.getVersion() >= 3 && s.getVersion() < 10)
-	{
-		uint32_t registerCount;
-		s >> Member< uint32_t >(L"registerCount", registerCount);
-	}
+		s >> ObsoleteMember< uint32_t >(L"registerCount");
 
 	if (s.getVersion() >= 6)
 	{

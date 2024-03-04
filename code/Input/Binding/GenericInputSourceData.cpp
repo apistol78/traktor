@@ -127,10 +127,7 @@ void GenericInputSourceData::serialize(ISerializer& s)
 	s >> Member< bool >(L"analogue", m_analogue);
 
 	if (s.getVersion() <= 2)
-	{
-		bool inverted = false;
-		s >> Member< bool >(L"inverted", inverted);
-	}
+		s >> ObsoleteMember< bool >(L"inverted");
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"normalize", m_normalize);

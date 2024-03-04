@@ -65,10 +65,7 @@ void TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"normalMap", m_normalMap);
 
 	if (s.getVersion() < 20)
-	{
-		bool generateNormalMap;
-		s >> Member< bool >(L"generateNormalMap", generateNormalMap);
-	}
+		s >> ObsoleteMember< bool >(L"generateNormalMap");
 
 	s >> Member< float >(L"scaleDepth", m_scaleDepth, AttributeRange(0.0f));
 	s >> Member< bool >(L"generateMips", m_generateMips);

@@ -131,7 +131,7 @@ Ref< model::Model > PhysicsEntityReplicator::createModel(
 
 		safeClose(sourceData);
 
-		return hf::ConvertHeightfield().convert(heightfield, 4, heightfieldAsset->getVistaDistance());
+		return hf::ConvertHeightfield().convert(heightfield, 4);
 	}
 
 	return nullptr;

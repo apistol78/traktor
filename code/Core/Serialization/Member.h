@@ -24,7 +24,6 @@ namespace traktor
 class Attribute;
 
 /*! Member serialization.
- * \ingroup Core
  *
  * Member class is a named descriptor of a member reference.
  * Serializer access named member through this object, both
@@ -241,6 +240,29 @@ private:
 	const std::function< size_t () > m_fn_getSize;
 	const std::function< bool (size_t) > m_fn_setSize;
 	const std::function< void* () > m_fn_getPointer;
+};
+
+/*! Obsolete member.
+ * 
+ * Instead of declaring dummy variables in each serialize method
+ * use this wrapper instead.
+ */
+template < typename T >
+class ObsoleteMember : public Member< T >
+{
+public:
+	explicit ObsoleteMember(const wchar_t* const name)
+	:	Member(name, m_dummy)
+	{
+	}
+
+	explicit ObsoleteMember(const wchar_t* const name, const Attribute& attributes)
+	:	Member(name, m_dummy, attributes)
+	{
+	}
+
+private:
+	value_type m_dummy;
 };
 
 //@}

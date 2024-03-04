@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@
 namespace traktor::hf
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 7, HeightfieldAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 8, HeightfieldAsset, ISerializable)
 
 HeightfieldAsset::HeightfieldAsset(const Vector4& worldExtent)
 :	m_worldExtent(worldExtent)
@@ -27,8 +27,8 @@ void HeightfieldAsset::serialize(ISerializer& s)
 	T_ASSERT(s.getVersion() >= 4);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent, AttributeDirection());
 
-	if (s.getVersion() >= 5)
-		s >> Member< float >(L"vistaDistance", m_vistaDistance, AttributeUnit(UnitType::Metres));
+	if (s.getVersion() >= 5 && s.getVersion() < 8)
+		s >> ObsoleteMember< float >(L"vistaDistance", AttributeUnit(UnitType::Metres));
 
 	if (s.getVersion() >= 6)
 		s >> Member< bool >(L"erosionEnable", m_erosionEnable);

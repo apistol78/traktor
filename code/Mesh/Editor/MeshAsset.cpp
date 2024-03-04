@@ -57,10 +57,7 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> MemberSmallMap< std::wstring, Guid >(L"materialTextures", m_materialTextures);
 
 	if (s.getVersion() >= 18 && s.getVersion() < 22)
-	{
-		Guid textureSet;
-		s >> Member< Guid >(L"textureSet", textureSet, AttributeType(type_of< render::TextureSet >()));
-	}
+		s >> ObsoleteMember< Guid >(L"textureSet", AttributeType(type_of< render::TextureSet >()));
 
 	if (s.getVersion() >= 11)
 		s >> Member< float >(L"scaleFactor", m_scaleFactor);
@@ -81,22 +78,13 @@ void MeshAsset::serialize(ISerializer& s)
 		s >> Member< bool>(L"decalResponse", m_decalResponse);
 
 	if (s.getVersion() >= 2 && s.getVersion() < 14)
-	{
-		bool bakeOcclusion = false;
-		s >> Member< bool >(L"bakeOcclusion", bakeOcclusion);
-	}
+		s >> ObsoleteMember< bool >(L"bakeOcclusion");
 	
 	if (s.getVersion() >= 3 && s.getVersion() < 15)
-	{
-		bool cullDistantFaces = false;
-		s >> Member< bool >(L"cullDistantFaces", cullDistantFaces);
-	}
+		s >> ObsoleteMember< bool >(L"cullDistantFaces");
 
 	if (s.getVersion() < 12)
-	{
-		bool generateOccluder = false;
-		s >> Member< bool >(L"generateOccluder", generateOccluder);
-	}
+		s >> ObsoleteMember< bool >(L"generateOccluder");
 
 	if (s.getVersion() >= 10)
 	{
@@ -106,16 +94,10 @@ void MeshAsset::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion() < 12)
-	{
-		Path occluderModel;
-		s >> Member< Path >(L"occluderModel", occluderModel);
-	}
+		s >> ObsoleteMember< Path >(L"occluderModel");
 
 	if (s.getVersion() <= 8)
-	{
-		float autoDetailLevel = 0.0f;
-		s >> Member< float >(L"autoDetailLevel", autoDetailLevel, AttributeRange(0.0f, 1.0f));
-	}
+		s >> ObsoleteMember< float >(L"autoDetailLevel", AttributeRange(0.0f, 1.0f));
 
 	if (s.getVersion() >= 20)
 		s >> Member< float >(L"previewAngle", m_previewAngle, AttributeNoHash());

@@ -60,7 +60,6 @@ private:
 	Ref< Heightfield > m_heightfield;
 	Ref< ui::Container > m_container;
 	Ref< ui::Edit > m_editExtent[3];
-	Ref< ui::Edit > m_editVista;
 	Ref< ui::Edit > m_editSize;
 	Ref< ui::Image > m_imagePreview;
 

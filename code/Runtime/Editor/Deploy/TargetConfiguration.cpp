@@ -116,16 +116,10 @@ void TargetConfiguration::serialize(ISerializer& s)
 	s >> Member< Guid >(L"platform", m_platform);
 
 	if (s.getVersion() < 3)
-	{
-		std::wstring systemRoot;
-		s >> Member< std::wstring >(L"systemRoot", systemRoot);
-	}
+		s >> ObsoleteMember< std::wstring >(L"systemRoot");
 
 	if (s.getVersion() < 2)
-	{
-		std::wstring executable;
-		s >> Member< std::wstring >(L"executable", executable);
-	}
+		s >> ObsoleteMember< std::wstring >(L"executable");
 
 	s >> Member< std::wstring >(L"icon", m_icon);
 	s >> MemberStlList< Guid >(L"features", m_features);
