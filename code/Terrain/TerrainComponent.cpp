@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,7 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldBuildContext.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
@@ -29,6 +30,8 @@ namespace traktor::terrain
 {
 	namespace
 	{
+
+const resource::Id< render::Shader > c_shaderCull(L"{8BA73DD8-0FD9-4C15-A772-EACC14014AEC}");
 
 const render::Handle c_handleTerrain_VisualizeLods(L"Terrain_VisualizeLods");
 const render::Handle c_handleTerrain_VisualizeMap(L"Terrain_VisualizeMap");
@@ -48,6 +51,10 @@ const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex")
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
+
+const render::Handle c_handleTerrain_TargetSize(L"Terrain_TargetSize");
+const render::Handle c_handleTerrain_DrawBuffer(L"Terrain_DrawBuffer");
+const render::Handle c_handleTerrain_CulledDrawBuffer(L"Terrain_CulledDrawBuffer");
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -99,6 +106,9 @@ TerrainComponent::TerrainComponent(resource::IResourceManager* resourceManager, 
 bool TerrainComponent::create(const TerrainComponentData& data)
 {
 	if (!m_resourceManager->bind(data.getTerrain(), m_terrain))
+		return false;
+
+	if (!m_resourceManager->bind(c_shaderCull, m_shaderCull))
 		return false;
 
 	m_heightfield = m_terrain->getHeightfield();
@@ -430,6 +440,32 @@ void TerrainComponent::build(
 		m_dataBuffer->unlock();
 	}
 
+	// Cull draw buffer to HiZ target.
+	if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+	{
+		const Vector2 viewSize = worldRenderView.getViewSize();
+
+		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Terrain cull");
+
+		renderBlock->program = m_shaderCull->getProgram().program;
+
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams->beginParameters(renderContext);
+
+		worldRenderPass.setProgramParameters(renderBlock->programParams);
+
+		renderBlock->programParams->setVectorParameter(c_handleTerrain_TargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
+		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_DrawBuffer, m_drawBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_CulledDrawBuffer, m_culledDrawBuffer->getBufferView());
+		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderBlock->workSize[0] = (int32_t)m_view[viewIndex].visiblePatches.size();
+
+		renderContext->compute(renderBlock);
+		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+	}
+
 	// Render all patches using indirect draw.
 	{
 		auto rb = renderContext->allocNamed< render::IndirectRenderBlock >(L"Terrain patches");
@@ -441,7 +477,12 @@ void TerrainComponent::build(
 		rb->vertexBuffer = m_vertexBuffer->getBufferView();
 		rb->vertexLayout = m_vertexLayout;
 		rb->primitive = render::PrimitiveType::Triangles;
-		rb->drawBuffer = m_drawBuffer->getBufferView();
+
+		if (worldRenderPass.getTechnique() == world::s_techniqueDeferredGBufferWrite)
+			rb->drawBuffer = m_culledDrawBuffer->getBufferView();
+		else
+			rb->drawBuffer = m_drawBuffer->getBufferView();
+
 		rb->drawCount = m_view[viewIndex].visiblePatches.size();
 
 		rb->programParams->beginParameters(renderContext);
@@ -799,6 +840,14 @@ bool TerrainComponent::createPatches()
 		true
 	);
 	if (!m_drawBuffer)
+		return false;
+
+	m_culledDrawBuffer = m_renderSystem->createBuffer(
+		render::BuIndirect,
+		(uint32_t)m_patches.size() * sizeof(render::IndexedIndirectDraw),
+		false
+	);
+	if (!m_culledDrawBuffer)
 		return false;
 
 	m_dataBuffer = m_renderSystem->createBuffer(

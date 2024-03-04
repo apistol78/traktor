@@ -164,6 +164,9 @@ private:
 	world::Entity* m_owner;
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+
+	resource::Proxy< render::Shader > m_shaderCull;
+
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
 	uint32_t m_cacheSize;
@@ -171,6 +174,7 @@ private:
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_drawBuffer;
+	Ref< render::Buffer > m_culledDrawBuffer;
 	Ref< render::Buffer > m_dataBuffer;
 	Ref< render::ITexture > m_defaultColorMap;
 	Ref< render::ITexture > m_defaultCutMap;
