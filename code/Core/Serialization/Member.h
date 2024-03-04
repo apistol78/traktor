@@ -262,7 +262,7 @@ public:
 	}
 
 private:
-	value_type m_dummy;
+	typename Member< T >::value_type m_dummy;
 };
 
 //@}
