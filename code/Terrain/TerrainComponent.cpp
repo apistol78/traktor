@@ -386,52 +386,6 @@ void TerrainComponent::build(
 
 	render::RenderContext* renderContext = context.getRenderContext();
 
-	// Setup shared shader parameters.
-	auto rb = renderContext->allocNamed< render::NullRenderBlock >(L"Terrain patch setup");
-
-	rb->program = program;
-	rb->programParams = renderContext->alloc< render::ProgramParameters >();
-
-	rb->programParams->beginParameters(renderContext);
-
-	rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, m_terrain->getHeightMap());
-	
-	if (!snapshot)
-	{
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getVirtualAlbedo());
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_view[viewIndex].surfaceCache->getVirtualNormals());
-	}
-	else
-	{
-		rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getBaseTexture());
-	}
-
-	rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
-	rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
-	rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
-	rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap.ptr());
-	rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
-	rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
-	rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
-	rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
-
-	if (m_visualizeMode == VmColorMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getColorMap());
-	else if (m_visualizeMode == VmNormalMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getNormalMap());
-	else if (m_visualizeMode == VmHeightMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getHeightMap());
-	else if (m_visualizeMode == VmSplatMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getSplatMap());
-	else if (m_visualizeMode == VmCutMap)
-		rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getCutMap());
-
-	worldRenderPass.setProgramParameters(rb->programParams);
-
-	rb->programParams->endParameters(renderContext);
-
-	renderContext->draw(rb);
-
 	// Update indirect draw buffers; do this only once per frame
 	// since all draws are the same for other passes.
 	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::First) != 0)
@@ -491,6 +445,39 @@ void TerrainComponent::build(
 		rb->drawCount = m_view[viewIndex].visiblePatches.size();
 
 		rb->programParams->beginParameters(renderContext);
+
+		rb->programParams->setTextureParameter(c_handleTerrain_Heightfield, m_terrain->getHeightMap());
+		if (!snapshot)
+		{
+			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getVirtualAlbedo());
+			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceNormals, m_view[viewIndex].surfaceCache->getVirtualNormals());
+		}
+		else
+		{
+			rb->programParams->setTextureParameter(c_handleTerrain_SurfaceAlbedo, m_view[viewIndex].surfaceCache->getBaseTexture());
+		}
+		rb->programParams->setTextureParameter(c_handleTerrain_ColorMap, m_terrain->getColorMap() ? m_terrain->getColorMap().getResource() : m_defaultColorMap.ptr());
+		rb->programParams->setTextureParameter(c_handleTerrain_Normals, m_terrain->getNormalMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_SplatMap, m_terrain->getSplatMap());
+		rb->programParams->setTextureParameter(c_handleTerrain_CutMap, m_terrain->getCutMap() ? m_terrain->getCutMap().getResource() : m_defaultCutMap.ptr());
+		rb->programParams->setVectorParameter(c_handleTerrain_Eye, eyePosition);
+		rb->programParams->setVectorParameter(c_handleTerrain_WorldOrigin, -worldExtent * Scalar(0.5f));
+		rb->programParams->setVectorParameter(c_handleTerrain_WorldExtent, worldExtent);
+		rb->programParams->setVectorParameter(c_handleTerrain_PatchExtent, patchExtent);
+
+		if (m_visualizeMode == VmColorMap)
+			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getColorMap());
+		else if (m_visualizeMode == VmNormalMap)
+			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getNormalMap());
+		else if (m_visualizeMode == VmHeightMap)
+			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getHeightMap());
+		else if (m_visualizeMode == VmSplatMap)
+			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getSplatMap());
+		else if (m_visualizeMode == VmCutMap)
+			rb->programParams->setTextureParameter(c_handleTerrain_DebugMap, m_terrain->getCutMap());
+
+		worldRenderPass.setProgramParameters(rb->programParams);
+
 		rb->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());
 		rb->programParams->endParameters(renderContext);
 
