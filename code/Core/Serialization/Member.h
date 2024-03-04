@@ -252,12 +252,12 @@ class ObsoleteMember : public Member< T >
 {
 public:
 	explicit ObsoleteMember(const wchar_t* const name)
-	:	Member(name, m_dummy)
+	:	Member< T >(name, m_dummy)
 	{
 	}
 
 	explicit ObsoleteMember(const wchar_t* const name, const Attribute& attributes)
-	:	Member(name, m_dummy, attributes)
+	:	Member< T >(name, m_dummy, attributes)
 	{
 	}
 
