@@ -510,6 +510,14 @@ local PACKAGES =
 		url = "https://github.com/lieff/minimp3.git",
 		license = "CC0"
 	},
+
+	-- mimalloc
+	{
+		type = "GIT",
+		name = "mimalloc",
+		url = "https://github.com/microsoft/mimalloc.git",
+		license = "MIT"
+	},
 }
 
 --[[
