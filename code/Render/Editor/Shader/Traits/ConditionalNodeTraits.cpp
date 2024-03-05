@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,12 +10,10 @@
 #include "Render/Editor/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/ConditionalNodeTraits.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
+	namespace
 	{
-		namespace
-		{
 
 int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 {
@@ -29,7 +27,7 @@ int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
 	return -1;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ConditionalNodeTraits", 0, ConditionalNodeTraits, INodeTraits)
 
@@ -296,6 +294,49 @@ bool ConditionalNodeTraits::evaluatePartial(
 			return true;
 		}
 	}
+	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
+	{
+		if (inputConstants[0].isConst(0) && inputConstants[1].isConst(0))
+		{
+			bool result = false;
+			switch (discard->getOperator())
+			{
+			case Discard::CoLess:
+				result = inputConstants[0].x() < inputConstants[1].x();
+				break;
+
+			case Discard::CoLessEqual:
+				result = inputConstants[0].x() <= inputConstants[1].x();
+				break;
+
+			case Discard::CoEqual:
+				result = inputConstants[0].x() == inputConstants[1].x();
+				break;
+
+			case Discard::CoNotEqual:
+				result = inputConstants[0].x() != inputConstants[1].x();
+				break;
+
+			case Discard::CoGreater:
+				result = inputConstants[0].x() > inputConstants[1].x();
+				break;
+
+			case Discard::CoGreaterEqual:
+				result = inputConstants[0].x() >= inputConstants[1].x();
+				break;
+
+			default:
+				return false;
+			}
+
+			if (result)
+				foldOutputPin = inputOutputPins[2];
+			else
+				foldOutputPin = nullptr;
+
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -309,5 +350,4 @@ PinOrder ConditionalNodeTraits::evaluateOrder(
 	return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
 }
 
-	}
 }
