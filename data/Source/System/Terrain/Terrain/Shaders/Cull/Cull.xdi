@@ -23,8 +23,8 @@
 			<id>{D49FA81D-23DC-4D88-89DE-2BB75B119F5C}</id>
 			<comment/>
 			<position>
-				<first>291</first>
-				<second>450</second>
+				<first>326</first>
+				<second>380</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -34,8 +34,8 @@
 			<id>{ABB90199-B133-44AE-BB92-BE5C5C381F39}</id>
 			<comment/>
 			<position>
-				<first>383</first>
-				<second>637</second>
+				<first>294</first>
+				<second>425</second>
 			</position>
 			<parameterName>World_HiZTexture</parameterName>
 			<type>Texture2D</type>
@@ -45,8 +45,8 @@
 			<id>{EBE8DE46-0230-4EFA-9298-A0D667904DAA}</id>
 			<comment/>
 			<position>
-				<first>679</first>
-				<second>587</second>
+				<first>590</first>
+				<second>375</second>
 			</position>
 			<name>HiZ</name>
 			<technique/>
@@ -131,8 +131,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{0D8D0651-6390-42B7-B095-5E135EFF0A08}</id>
 			<comment/>
 			<position>
-				<first>401</first>
-				<second>679</second>
+				<first>312</first>
+				<second>467</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -149,60 +149,19 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{068AB477-6E13-43B5-BC99-858E85F280E4}</id>
 			<comment/>
 			<position>
-				<first>376</first>
-				<second>721</second>
+				<first>294</first>
+				<second>509</second>
 			</position>
 			<parameterName>Terrain_TargetSize</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Struct" version="traktor.render.Node:1">
-			<id>{16622FDE-F912-416F-A8F5-639C65BFB41D}</id>
-			<comment/>
-			<position>
-				<first>-114</first>
-				<second>196</second>
-			</position>
-			<parameterName>InstanceWorld</parameterName>
-			<elements>
-				<item>
-					<name>rotation</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>translation</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>boundingBoxMin</name>
-					<type>DtFloat4</type>
-				</item>
-				<item>
-					<name>boundingBoxMax</name>
-					<type>DtFloat4</type>
-				</item>
-			</elements>
-		</item>
-		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
-			<id>{99FDC25F-406C-45F8-9C49-CA1ABD37CBF0}</id>
-			<comment/>
-			<position>
-				<first>225</first>
-				<second>217</second>
-			</position>
-			<names>
-				<item>rotation</item>
-				<item>translation</item>
-				<item>boundingBoxMin</item>
-				<item>boundingBoxMax</item>
-			</names>
-		</item>
-		<item type="traktor.render.Struct" version="traktor.render.Node:1">
 			<id>{0B4842AF-8301-42BA-8A59-8F749002877B}</id>
 			<comment/>
 			<position>
-				<first>-3</first>
-				<second>-11</second>
+				<first>459</first>
+				<second>136</second>
 			</position>
 			<parameterName>Terrain_DrawBuffer</parameterName>
 			<elements>
@@ -232,8 +191,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{B210749B-2773-47CC-A54F-0C4C950DB6CF}</id>
 			<comment/>
 			<position>
-				<first>-15</first>
-				<second>91</second>
+				<first>424</first>
+				<second>174</second>
 			</position>
 			<parameterName>Terrain_CulledDrawBuffer</parameterName>
 			<elements>
@@ -263,13 +222,13 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{6DE9EB4E-1DF3-4579-B9D1-FB65908F81A0}</id>
 			<comment/>
 			<position>
-				<first>520</first>
-				<second>14</second>
+				<first>982</first>
+				<second>161</second>
 			</position>
 			<name>Copy draw</name>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
+				<X>16</X>
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
@@ -287,17 +246,22 @@ $Output = visible ? 1.0f : 0.0f;
 					<id>{EC05D81B-0CB3-42B8-8FD7-9B25EB804276}</id>
 					<name>CulledDrawBuffer</name>
 				</item>
+				<item>
+					<id>{0CD162CF-AD0D-0E40-8799-99EBE074D924}</id>
+					<name>Visible</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script>
 			<![CDATA[
 const int index = int($Index);
+const bool visible = bool($Visible > 0.5f);
 
-$DrawBuffer[index].indexCount = $CulledDrawBuffer[index].indexCount;
-$DrawBuffer[index].instanceCount = $CulledDrawBuffer[index].instanceCount;
-$DrawBuffer[index].firstIndex = $CulledDrawBuffer[index].firstIndex;
-$DrawBuffer[index].vertexOffset = $CulledDrawBuffer[index].vertexOffset;
-$DrawBuffer[index].firstInstance = $CulledDrawBuffer[index].firstInstance;
+$CulledDrawBuffer[index].indexCount = $DrawBuffer[index].indexCount;
+$CulledDrawBuffer[index].instanceCount = visible ? $DrawBuffer[index].instanceCount : 0;
+$CulledDrawBuffer[index].firstIndex = $DrawBuffer[index].firstIndex;
+$CulledDrawBuffer[index].vertexOffset = $DrawBuffer[index].vertexOffset;
+$CulledDrawBuffer[index].firstInstance = $DrawBuffer[index].firstInstance;
 			]]>
 			</script>
 		</item>
@@ -305,10 +269,49 @@ $DrawBuffer[index].firstInstance = $CulledDrawBuffer[index].firstInstance;
 			<id>{C43244FA-782F-46B2-9AA7-D7987F946F96}</id>
 			<comment/>
 			<position>
-				<first>114</first>
-				<second>-86</second>
+				<first>528</first>
+				<second>95</second>
 			</position>
 			<scope>Global</scope>
+		</item>
+		<item type="traktor.render.Struct" version="traktor.render.Node:1">
+			<id>{1C9830DB-621E-714F-810F-84964217FFBB}</id>
+			<comment/>
+			<position>
+				<first>-165</first>
+				<second>254</second>
+			</position>
+			<parameterName>Terrain_PatchData</parameterName>
+			<elements>
+				<item>
+					<name>patchOrigin</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>surfaceOffset</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>patchBoundingBoxMn</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>patchBoundingBoxMx</name>
+					<type>DtFloat4</type>
+				</item>
+			</elements>
+		</item>
+		<item type="traktor.render.ReadStruct2" version="traktor.render.Node:1">
+			<id>{222E9977-DDCA-B44B-A43A-9E76BB7E0068}</id>
+			<comment/>
+			<position>
+				<first>180</first>
+				<second>264</second>
+			</position>
+			<names>
+				<item>patchBoundingBoxMn</item>
+				<item>patchBoundingBoxMx</item>
+			</names>
 		</item>
 	</nodes>
 	<edges>
@@ -320,46 +323,6 @@ $DrawBuffer[index].firstInstance = $CulledDrawBuffer[index].firstInstance;
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{38213B60-FC63-A541-BCC2-95E414C2276D}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{484ABC89-3116-A645-8DEB-1DD2AD5B66E9}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -404,32 +367,82 @@ $DrawBuffer[index].firstInstance = $CulledDrawBuffer[index].firstInstance;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{EC05D81B-0CB3-42B8-8FD7-9B25EB804276}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{6A6FC6E9-D058-4351-9FFD-E428F1765CA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<id>{AAE82FD3-522F-43C6-A594-2E13D126E5DB}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<id>{31C42332-0F95-49D2-9B49-0469F96A3AB2}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{ACC77B35-91B5-4405-ABC8-D0DA24D68178}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-850E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{38213B60-FC63-A541-BCC2-95E414C2276D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{0FF6511C-0293-41A8-860E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{484ABC89-3116-A645-8DEB-1DD2AD5B66E9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{5D1C8949-65AE-2046-A34D-469B22E09B20}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{0CD162CF-AD0D-0E40-8799-99EBE074D924}</id>
 			</destination>
 		</item>
 	</edges>

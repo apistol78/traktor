@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Terrain/TerrainComponentData.h"
 #include "Terrain/UndergrowthComponentData.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", 0, TerrainEntityPipeline, world::EntityPipeline)
 
@@ -66,6 +64,8 @@ bool TerrainEntityPipeline::buildDependencies(
 	}
 	else if (const TerrainComponentData* terrainComponentData = dynamic_type_cast< const TerrainComponentData* >(sourceAsset))
 	{
+		const Guid c_shaderCull(L"{8BA73DD8-0FD9-4C15-A772-EACC14014AEC}");
+		pipelineDepends->addDependency(c_shaderCull, editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(terrainComponentData->getTerrain(), editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const UndergrowthComponentData* undergrowthComponentData = dynamic_type_cast< const UndergrowthComponentData* >(sourceAsset))
@@ -75,5 +75,4 @@ bool TerrainEntityPipeline::buildDependencies(
 	return true;
 }
 
-	}
 }

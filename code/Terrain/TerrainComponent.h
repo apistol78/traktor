@@ -99,6 +99,7 @@ public:
 		float area;
 		uint32_t patchId;
 		Vector4 patchOrigin;
+		Aabb3 patchAabb;
 	};
 
 	explicit TerrainComponent(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);

@@ -51,7 +51,6 @@ const render::Handle c_handleTerrain_DebugPatchIndex(L"Terrain_DebugPatchIndex")
 const render::Handle c_handleTerrain_DebugMap(L"Terrain_DebugMap");
 const render::Handle c_handleTerrain_CutEnable(L"Terrain_CutEnable");
 const render::Handle c_handleTerrain_PatchData(L"Terrain_PatchData");
-
 const render::Handle c_handleTerrain_TargetSize(L"Terrain_TargetSize");
 const render::Handle c_handleTerrain_DrawBuffer(L"Terrain_DrawBuffer");
 const render::Handle c_handleTerrain_CulledDrawBuffer(L"Terrain_CulledDrawBuffer");
@@ -74,6 +73,8 @@ struct DrawData
 {
 	float patchOrigin[4];
 	float surfaceOffset[4];
+	float patchBoundingBoxMn[4];
+	float patchBoundingBoxMx[4];
 };
 
 Ref< render::ITexture > create1x1Texture(render::IRenderSystem* renderSystem, const Color4ub& value)
@@ -268,6 +269,7 @@ void TerrainComponent::setup(
 				cp.area = !clipped ? e.x() * e.y() : 1000.0_simd;
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
+				cp.patchAabb = patchAabb;
 
 				visiblePatches.push_back(cp);
 			}
@@ -432,6 +434,9 @@ void TerrainComponent::build(
 				);
 				snapshotOffset.storeUnaligned(data->surfaceOffset);
 			}
+
+			visiblePatch.patchAabb.mn.storeAligned(data->patchBoundingBoxMn);
+			visiblePatch.patchAabb.mx.storeAligned(data->patchBoundingBoxMx);
 
 			data++;
 		}
@@ -834,9 +839,11 @@ bool TerrainComponent::createPatches()
 
 	m_indexBuffer->unlock();
 
+	const uint32_t alignedPatchCount = alignUp((uint32_t)m_patches.size(), 16);
+
 	m_drawBuffer = m_renderSystem->createBuffer(
 		render::BuIndirect,
-		(uint32_t)m_patches.size() * sizeof(render::IndexedIndirectDraw),
+		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
 		true
 	);
 	if (!m_drawBuffer)
@@ -844,7 +851,7 @@ bool TerrainComponent::createPatches()
 
 	m_culledDrawBuffer = m_renderSystem->createBuffer(
 		render::BuIndirect,
-		(uint32_t)m_patches.size() * sizeof(render::IndexedIndirectDraw),
+		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
 		false
 	);
 	if (!m_culledDrawBuffer)
@@ -852,7 +859,7 @@ bool TerrainComponent::createPatches()
 
 	m_dataBuffer = m_renderSystem->createBuffer(
 		render::BuStructured,
-		(uint32_t)m_patches.size() * sizeof(DrawData),
+		alignedPatchCount * sizeof(DrawData),
 		true
 	);
 	if (!m_dataBuffer)

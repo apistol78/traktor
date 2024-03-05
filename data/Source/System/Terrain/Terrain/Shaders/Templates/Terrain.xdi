@@ -936,6 +936,14 @@ $Output = vec4(mix(t, b, f), 0.0f);
 					<name>surfaceOffset</name>
 					<type>DtFloat4</type>
 				</item>
+				<item>
+					<name>patchBoundingBoxMn</name>
+					<type>DtFloat4</type>
+				</item>
+				<item>
+					<name>patchBoundingBoxMx</name>
+					<type>DtFloat4</type>
+				</item>
 			</elements>
 		</item>
 		<item type="traktor.render.ReadStruct" version="traktor.render.Node:1">
