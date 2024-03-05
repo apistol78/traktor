@@ -105,13 +105,17 @@ render::handle_t GBufferPass::setup(
 
 			sharedParams->endParameters(renderContext);
 
+			const bool irradianceEnable = (bool)(irradianceGrid != nullptr);
+			const bool irradianceSingle = irradianceEnable && irradianceGrid->isSingle();
+
 			const WorldRenderPassShared gbufferPass(
 				gbufferWriteTechnique,
 				sharedParams,
 				worldRenderView,
 				IWorldRenderPass::First,
 				{
-					{ s_handleIrradianceEnable, (bool)(irradianceGrid != nullptr) }
+					{ s_handleIrradianceEnable, irradianceEnable },
+					{ s_handleIrradianceSingle, irradianceSingle }
 				}
 			);
 
