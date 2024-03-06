@@ -7,7 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-#if defined(_WIN32)
+#if defined(_WIN32) || defined(__LINUX__)
 #	define T_USE_MIMALLOC
 #endif
 
@@ -63,7 +63,7 @@ void* Alloc::acquire(size_t size, const char* tag)
 void Alloc::free(void* ptr)
 {
 #if defined(T_USE_MIMALLOC)
-		mi_free(ptr);
+	mi_free(ptr);
 #else
 	if (ptr)
 	{

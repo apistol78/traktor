@@ -646,7 +646,14 @@
 								</items>
 							</item>
 						</items>
-						<dependencies/>
+						<dependencies>
+							<item type="ExternalDependency" version="3">
+								<inheritIncludePaths>true</inheritIncludePaths>
+								<link>LnkYes</link>
+								<solutionFileName>ExternLinux.xms</solutionFileName>
+								<projectName>Extern.mimalloc</projectName>
+							</item>
+						</dependencies>
 					</project>
 				</item>
 				<item type="ProjectDependency" version="3">
