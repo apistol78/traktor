@@ -59,9 +59,9 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 
 	// Sort by directory first then name.
 	m_gridFiles->setSort([](const GridRow* r1, const GridRow* r2) -> bool {
-		auto f1 = r1->getData< File >(L"FILE");
+		const auto f1 = r1->getData< File >(L"FILE");
 		T_FATAL_ASSERT(f1 != nullptr);
-		auto f2 = r2->getData< File >(L"FILE");
+		const auto f2 = r2->getData< File >(L"FILE");
 		T_FATAL_ASSERT(f2 != nullptr);
 
 		if (f1->isDirectory() && !f2->isDirectory())
@@ -69,8 +69,8 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		if (!f1->isDirectory() && f2->isDirectory())
 			return false;
 
-		auto fn1 = f1->getPath().getFileNameNoExtension();
-		auto fn2 = f2->getPath().getFileNameNoExtension();
+		const std::wstring fn1 = f1->getPath().getFileNameNoExtension();
+		const std::wstring fn2 = f2->getPath().getFileNameNoExtension();
 		return compareIgnoreCase(fn1, fn2) < 0;
 	});
 
@@ -78,7 +78,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 		auto selectedRow = m_gridFiles->getSelectedRow();
 		if (selectedRow)
 		{
-			auto file = selectedRow->getData< File >(L"FILE");
+			const auto file = selectedRow->getData< File >(L"FILE");
 			T_FATAL_ASSERT(file != nullptr);
 
 			if (!file->isDirectory())
@@ -90,7 +90,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& key, const std::wstr
 	});
 
 	m_gridFiles->addEventHandler< GridRowDoubleClickEvent >([&](GridRowDoubleClickEvent* event) {
-		auto file = event->getRow()->getData< File >(L"FILE");
+		const auto file = event->getRow()->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);
 
 		if (file->isDirectory())
@@ -149,11 +149,11 @@ DialogResult FileDialog::showModal(Path& outPath)
 
 	if (!m_editFileName)
 	{
-		auto selectedRow = m_gridFiles->getSelectedRow();
+		const auto selectedRow = m_gridFiles->getSelectedRow();
 		if (selectedRow == nullptr)
 			return DialogResult::Cancel;
 
-		auto file = selectedRow->getData< File >(L"FILE");
+		const auto file = selectedRow->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);
 
 		if (file->isDirectory())
@@ -191,7 +191,7 @@ DialogResult FileDialog::showModal(std::vector< Path >& outPaths)
 
 	for (auto row : m_gridFiles->getRows(ui::GridView::GfSelectedOnly))
 	{
-		auto file = row->getData< File >(L"FILE");
+		const auto file = row->getData< File >(L"FILE");
 		T_FATAL_ASSERT(file != nullptr);
 
 		if (file->isDirectory())
@@ -266,7 +266,7 @@ void FileDialog::updateFiles()
 	m_gridFiles->removeAllRows();
 	for (auto file : files)
 	{
-		auto fn = file->getPath().getFileName();
+		const std::wstring fn = file->getPath().getFileName();
 		if (fn == L"." || fn == L".." || file->isHidden())
 			continue;
 

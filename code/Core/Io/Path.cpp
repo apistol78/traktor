@@ -199,7 +199,12 @@ Path Path::operator + (const Path& rh) const
 		return rh;
 	if (empty())
 		return rh;
-	return Path(getPathName() + L"/" + rh.getPathName());
+
+	const std::wstring lh = getPathName();
+	if (!lh.empty() && lh.back() == L'/')
+		return Path(lh + rh.getPathName());
+	else
+		return Path(lh + L"/" + rh.getPathName());
 }
 
 bool Path::operator == (const Path& rh) const
@@ -230,15 +235,15 @@ void Path::resolve()
 
 	for (;;)
 	{
-		size_t s = tmp.find(L"$(");
+		const size_t s = tmp.find(L"$(");
 		if (s == std::string::npos)
 			break;
 
-		size_t e = tmp.find(L")", s + 2);
+		const size_t e = tmp.find(L")", s + 2);
 		if (e == std::string::npos)
 			break;
 
-		std::wstring name = tmp.substr(s + 2, e - s - 2);
+		const std::wstring name = tmp.substr(s + 2, e - s - 2);
 
 		if (OS::getInstance().getEnvironment(name, env))
 			tmp = tmp.substr(0, s) + replaceAll(env, L'\\', L'/') + tmp.substr(e + 1);
@@ -256,13 +261,11 @@ void Path::resolve()
 	m_relative = true;
 	while (!tmp.empty())
 	{
-		if (tmp[0] == L'/')
+		if (tmp[0] == L'/' || tmp[0] == L'~')
 		{
 			m_relative = false;
 			tmp = tmp.substr(1);
 		}
-		else if (tmp[0] == L'~')
-			m_relative = false;
 		else
 			break;
 	}
