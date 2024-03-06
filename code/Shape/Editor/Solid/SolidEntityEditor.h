@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 /*!
  * \ingroup Shape
@@ -31,12 +29,11 @@ class T_DLLCLASS SolidEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	SolidEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
+	explicit SolidEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter);
 
 	virtual bool isPickable() const override final;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override final;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const override final;
 };
 
-	}
 }

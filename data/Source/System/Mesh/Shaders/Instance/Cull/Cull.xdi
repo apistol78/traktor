@@ -195,8 +195,8 @@ $Buffer[index].visible = $Input;
 			<id>{B3BCC5CA-6F48-3A42-BB0C-3DE19CDFE7DF}</id>
 			<comment/>
 			<position>
-				<first>721</first>
-				<second>755</second>
+				<first>717</first>
+				<second>757</second>
 			</position>
 			<name>HiZ</name>
 			<technique/>
@@ -345,8 +345,8 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{338684D8-D371-1B4B-8506-668A23A81765}</id>
 			<comment/>
 			<position>
-				<first>93</first>
-				<second>31</second>
+				<first>111</first>
+				<second>36</second>
 			</position>
 			<names>
 				<item>rotation</item>
@@ -354,6 +354,168 @@ $Output = visible ? 1.0f : 0.0f;
 				<item>boundingBoxMin</item>
 				<item>boundingBoxMax</item>
 			</names>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{1215F567-09D7-9241-B2B2-AA428BF8F819}</id>
+			<comment/>
+			<position>
+				<first>720</first>
+				<second>1015</second>
+			</position>
+			<name>HiZ</name>
+			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{45D674A1-6AC4-6B4E-B7CB-DC7F9C2EC215}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{38213B60-FC63-A541-BCC2-95E414C2276D}</id>
+					<name>Bbmn</name>
+				</item>
+				<item>
+					<id>{484ABC89-3116-A645-8DEB-1DD2AD5B66E9}</id>
+					<name>Bbmx</name>
+				</item>
+				<item>
+					<id>{38C7084D-4F8D-D749-A614-108D37B2EF5D}</id>
+					<name>ViewProjection</name>
+				</item>
+				<item>
+					<id>{B53AF0D1-D6CC-9A40-9334-2C4CD642EE5B}</id>
+					<name>HiZTexture</name>
+				</item>
+				<item>
+					<id>{6D0649E3-ED26-0646-A195-028038D29BD8}</id>
+					<name>HiZState</name>
+				</item>
+				<item>
+					<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
+					<name>TargetSize</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{5D1C8949-65AE-2046-A34D-469B22E09B20}</id>
+					<name>Output</name>
+					<type>Scalar</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+mat4 viewProjection = $ViewProjection;
+
+vec3 bboxMin = $Bbmn.xyz;
+vec3 bboxMax = $Bbmx.xyz;
+vec3 bboxSize = bboxMax - bboxMin;
+
+vec3 bboxCorners[] =
+{
+	bboxMin.xyz,
+	bboxMin.xyz + vec3(bboxSize.x, 0.0f, 0.0f),
+	bboxMin.xyz + vec3(0.0f, bboxSize.y, 0.0f),
+	bboxMin.xyz + vec3(0.0f, 0.0f, bboxSize.z),
+	bboxMin.xyz + vec3(bboxSize.xy, 0.0f),
+	bboxMin.xyz + vec3(0.0f, bboxSize.yz),
+	bboxMin.xyz + vec3(bboxSize.x, 0.0f, bboxSize.z),
+	bboxMin.xyz + bboxSize
+};
+
+float minZ = 10000.0f;
+vec2 minXY = vec2(1.0f);
+vec2 maxXY = vec2(0.0f);
+
+for (int i = 0; i < 8; ++i)
+{
+	vec4 clipPos = viewProjection * vec4(bboxCorners[i], 1.0f);
+	clipPos.xy = clipPos.xy / clipPos.w;
+	clipPos.xy = clipPos.xy * vec2(0.5f, -0.5f) + vec2(0.5f, 0.5f);
+	minXY = min(clipPos.xy, minXY);
+	maxXY = max(clipPos.xy, maxXY);
+	minZ = min(minZ, clipPos.z);
+}
+
+vec4 boxUVs = vec4(minXY, maxXY);
+
+const vec2 osz = vec2($TargetSize.xy) / 2.0f;
+const vec2 hs = textureSize($HiZTexture, 0);
+const vec2 s = osz / hs;
+
+vec2 size = ceil((maxXY - minXY) * osz);
+float mip = ceil(log2(max(size.x, size.y)));
+
+vec4 depth =
+{
+	textureLod(sampler2D($HiZTexture, $HiZState), boxUVs.xy * s, mip).x,
+	textureLod(sampler2D($HiZTexture, $HiZState), boxUVs.zy * s, mip).x,
+	textureLod(sampler2D($HiZTexture, $HiZState), boxUVs.xw * s, mip).x,
+	textureLod(sampler2D($HiZTexture, $HiZState), boxUVs.zw * s, mip).x
+};
+
+float maxDepth = max(max(max(depth.x, depth.y), depth.z), depth.w);
+
+if (minZ <= maxDepth)
+	$Output = 1.0f;
+else
+	$Output = 0.0f;
+
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{099F295D-79C3-9847-A2B5-E3BE5904F79D}</id>
+			<comment/>
+			<position>
+				<first>359</first>
+				<second>1145</second>
+			</position>
+			<parameterName>InstanceMesh_TargetSize</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+			<id>{68311C48-A517-3146-87E8-D82A66146355}</id>
+			<comment/>
+			<position>
+				<first>425</first>
+				<second>1103</second>
+			</position>
+			<minFilter>FtPoint</minFilter>
+			<mipFilter>FtPoint</mipFilter>
+			<magFilter>FtPoint</magFilter>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{51312172-C4B7-D843-A00A-5C13B2736AC2}</id>
+			<comment/>
+			<position>
+				<first>407</first>
+				<second>1061</second>
+			</position>
+			<parameterName>World_HiZTexture</parameterName>
+			<type>Texture2D</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{6F2F3BB2-96D1-7B47-9392-B2E898665813}</id>
+			<comment/>
+			<position>
+				<first>396</first>
+				<second>1015</second>
+			</position>
+			<parameterName>InstanceMesh_ViewProjection</parameterName>
+			<type>Matrix</type>
+			<frequency>Frame</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -405,16 +567,6 @@ $Output = visible ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{5D1C8949-65AE-2046-A34D-469B22E09B20}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[11]"/>
-				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -555,6 +707,76 @@ $Output = visible ? 1.0f : 0.0f;
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{B53AF0D1-D6CC-9A40-9334-2C4CD642EE5B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{6D0649E3-ED26-0646-A195-028038D29BD8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{652EFABE-595D-9D4D-BC67-5C63D6168B21}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{38213B60-FC63-A541-BCC2-95E414C2276D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{0FF6511C-0293-41A8-880E-81978BD01F7F}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{484ABC89-3116-A645-8DEB-1DD2AD5B66E9}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{38C7084D-4F8D-D749-A614-108D37B2EF5D}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{5D1C8949-65AE-2046-A34D-469B22E09B20}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
 			</destination>
 		</item>
 	</edges>

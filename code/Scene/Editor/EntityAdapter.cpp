@@ -501,13 +501,13 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 	return snapPoints;
 }
 
-void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer) const
+void EntityAdapter::drawGuides(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const
 {
 	if (!isVisible() || isLocked())
 		return;
 
 	if (m_entityEditor)
-		m_entityEditor->drawGuide(primitiveRenderer);
+		m_entityEditor->drawGuide(primitiveRenderer, clientSize);
 
 	for (auto componentEditor : m_componentEditors)
 		componentEditor->drawGuide(primitiveRenderer);

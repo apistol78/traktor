@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmArray.h"
@@ -60,7 +61,7 @@ bool projectSphere(const Vector4& center, const Scalar& radius, const Scalar& zn
 
 	aabb = Vector4(minx * P00, miny * P11, maxx * P00, maxy * P11);
 	//aabb = aabb.xwzy * vec4(0.5f, -0.5f, 0.5f, -0.5f) + vec4(0.5f); // clip space -> uv space
-	//aabb = aabb.shuffle< 0, 3, 2, 1 >() * Vector4(0.5f, -0.5f, 0.5f, -0.5f) + Vector4(0.5f, 0.5f, 0.5f, 0.5f);
+	aabb = aabb.shuffle< 0, 3, 2, 1 >() * Vector4(0.5f, -0.5f, 0.5f, -0.5f) + Vector4(0.5f, 0.5f, 0.5f, 0.5f);
 
 	return true;
 }
@@ -219,7 +220,7 @@ bool DefaultEntityEditor::handleCommand(const ui::Command& command)
 	return false;
 }
 
-void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const
 {
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
@@ -264,7 +265,37 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 
 				primitiveRenderer->pushWorld(Matrix44::identity());
 				primitiveRenderer->pushView(Matrix44::identity());
-				primitiveRenderer->setProjection(Matrix44::identity());
+
+				// Setup projection as UV space.
+				primitiveRenderer->setProjection(orthoLh(
+					-1.0f, 1.0f,
+					1.0f, -1.0f,
+					-1.0f, 1.0f
+				) * translate(-1.0f, -1.0f, 0.0f) * scale(2.0f, 2.0f, 1.0f));
+
+				const float w = (aabb.z() - aabb.x()) * clientSize.cx;
+				const float h = (aabb.w() - aabb.y()) * clientSize.cy;
+
+				const int32_t level = int32_t(std::floor(std::log2(std::max(w, h))));
+				const float step = 4096.0f / std::max(4096 >> level, 1);
+				for (float y = 0.0f; y < clientSize.cy; y += step)
+				{
+					const float fy = float(y) / clientSize.cy;
+					primitiveRenderer->drawLine(
+						Vector4(0.0f, fy, 0.0f, 1.0f),
+						Vector4(1.0f, fy, 0.0f, 1.0f),
+						Color4ub(255, 255, 0, 120)
+					);
+				}
+				for (float x = 0.0f; x < clientSize.cx; x += step)
+				{
+					const float fx = float(x) / clientSize.cx;
+					primitiveRenderer->drawLine(
+						Vector4(fx, 0.0f, 0.0f, 1.0f),
+						Vector4(fx, 1.0f, 0.0f, 1.0f),
+						Color4ub(255, 255, 0, 120)
+					);
+				}
 
 				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
 				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,6 +12,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
+#include "Ui/Size.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -125,7 +126,7 @@ public:
 	 *
 	 * \param primitiveRenderer Primitive wire renderer.
 	 */
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const = 0;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const = 0;
 
 	/*! Get status text.
 	 *

@@ -43,6 +43,7 @@ const render::Handle c_handleTerrain_ColorMap(L"Terrain_ColorMap");
 const render::Handle c_handleTerrain_SplatMap(L"Terrain_SplatMap");
 const render::Handle c_handleTerrain_CutMap(L"Terrain_CutMap");
 const render::Handle c_handleTerrain_Normals(L"Terrain_Normals");
+const render::Handle c_handleTerrain_ViewProjection(L"Terrain_ViewProjection");
 const render::Handle c_handleTerrain_Eye(L"Terrain_Eye");
 const render::Handle c_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle c_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
@@ -176,8 +177,8 @@ void TerrainComponent::setup(
 			const Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
 
 			const Aabb3 patchAabb(
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight - FUZZY_EPSILON, -patchDeltaHalf.z(), 0.0f),
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight + FUZZY_EPSILON,  patchDeltaHalf.z(), 0.0f)
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight, -patchDeltaHalf.z(), 0.0f),
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight,  patchDeltaHalf.z(), 0.0f)
 			);
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::Result::Outside)
@@ -460,6 +461,7 @@ void TerrainComponent::build(
 		worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 		renderBlock->programParams->setVectorParameter(c_handleTerrain_TargetSize, Vector4(viewSize.x, viewSize.y, 0.0f, 0.0f));
+		renderBlock->programParams->setMatrixParameter(c_handleTerrain_ViewProjection, worldRenderView.getProjection() * worldRenderView.getView());
 		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_DrawBuffer, m_drawBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_CulledDrawBuffer, m_culledDrawBuffer->getBufferView());
 		renderBlock->programParams->setBufferViewParameter(c_handleTerrain_PatchData, m_dataBuffer->getBufferView());

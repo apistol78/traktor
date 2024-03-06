@@ -15,6 +15,7 @@
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/SmallMap.h"
+#include "Ui/Size.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -225,7 +226,7 @@ public:
 
 	AlignedVector< SnapPoint > getSnapPoints() const;
 
-	void drawGuides(render::PrimitiveRenderer* primitiveRenderer) const;
+	void drawGuides(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const;
 
 	//@}
 

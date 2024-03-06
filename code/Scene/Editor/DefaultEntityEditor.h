@@ -30,7 +30,7 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter);
+	explicit DefaultEntityEditor(SceneEditorContext* context, EntityAdapter* entityAdapter);
 
 	virtual bool isPickable() const override;
 
@@ -50,7 +50,7 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command) override;
 
-	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const override;
+	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const override;
 
 	virtual bool getStatusText(std::wstring& outStatusText) const override;
 

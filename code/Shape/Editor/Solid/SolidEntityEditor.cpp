@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #include "Shape/Editor/Solid/SolidEntityEditor.h"
 #include "World/Entity/GroupComponent.h"
 
-namespace traktor
+namespace traktor::shape
 {
-	namespace shape
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.SolidEntityEditor", SolidEntityEditor, scene::DefaultEntityEditor)
 
@@ -35,7 +33,7 @@ bool SolidEntityEditor::isPickable() const
 	return false;
 }
 
-void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
+void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer, const ui::Size& clientSize) const
 {
 	SolidEntity* solidEntity = dynamic_type_cast< SolidEntity* >(getEntityAdapter()->getEntity());
 	if (!solidEntity)
@@ -76,7 +74,7 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 				}
 				for (uint32_t i = 0; i < winding.size(); ++i)
 				{
-					uint32_t j = (i + 1) % winding.size();
+					const uint32_t j = (i + 1) % winding.size();
 					primitiveRenderer->drawLine(
 						primitiveEntity->getTransform() * winding[i],
 						primitiveEntity->getTransform() * winding[j],
@@ -88,5 +86,4 @@ void SolidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	}
 }
 
-	}
 }
