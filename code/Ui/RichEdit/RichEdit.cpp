@@ -1473,6 +1473,10 @@ void RichEdit::eventKey(KeyEvent* event)
 		paste();
 	else if (ctrl && uch == L'X' && m_clipboard)
 		cut();
+	else if (ctrl && uch == L'A')
+		selectAll();
+	else if (ctrl && uch == L'D')
+		unselect();
 	else if (ch != 8 && ch != 127)
 		insertCharacter(ch, true);
 
