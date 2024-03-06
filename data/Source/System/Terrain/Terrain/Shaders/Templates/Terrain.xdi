@@ -2469,16 +2469,6 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[115]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2525,6 +2515,16 @@ $Output = gl_DrawID;
 			<destination>
 				<node ref="/object/nodes/item[116]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{4F792F72-F9F9-A945-8CAE-8F4EEEE77624}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{92AA3735-BB4C-4541-81DA-AC500930B2E6}</id>
 			</destination>
 		</item>
 	</edges>
