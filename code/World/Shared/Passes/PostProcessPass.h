@@ -51,7 +51,7 @@ public:
 		uint32_t frameCount,
 		render::RenderGraph& renderGraph,
 		render::handle_t gbufferTargetSetId,
-		const DoubleBufferedTarget& velocityTargetSetId,
+		render::handle_t velocityTargetSetId,
 		const DoubleBufferedTarget& visualTargetSetId,
 		render::handle_t outputTargetSetId
 	) const;

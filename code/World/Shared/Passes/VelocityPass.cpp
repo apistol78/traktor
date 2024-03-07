@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,12 +30,6 @@ namespace traktor::world
 	{
 
 const resource::Id< render::ImageGraph > c_velocityPrime(L"{CB34E98B-55C9-E447-BD59-5A1D91DCA88E}");
-
-const render::Handle s_handleVelocityTargetSet[] =
-{
-	render::Handle(L"World_VelocityTargetSet_Even"),
-	render::Handle(L"World_VelocityTargetSet_Odd")
-};
 
 	}
 
@@ -73,7 +67,7 @@ bool VelocityPass::create(resource::IResourceManager* resourceManager, render::I
 	return true;
 }
 
-DoubleBufferedTarget VelocityPass::setup(
+render::handle_t VelocityPass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
 	uint32_t frameCount,
@@ -91,16 +85,12 @@ DoubleBufferedTarget VelocityPass::setup(
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
 	rgtd.targets[0].colorFormat = render::TfR16G16F;
-	const DoubleBufferedTarget velocityTargetSetId =
-	{
-		renderGraph.addPersistentTargetSet(L"Velocity Previous", s_handleVelocityTargetSet[frameCount % 2], false, rgtd, outputTargetSetId, outputTargetSetId),
-		renderGraph.addPersistentTargetSet(L"Velocity Current", s_handleVelocityTargetSet[(frameCount + 1) % 2], false, rgtd, outputTargetSetId, outputTargetSetId)
-	};
+	const render::handle_t velocityTargetSetId = renderGraph.addTransientTargetSet(L"Velocity", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add Velocity render pass.
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Velocity");
 	rp->addInput(gbufferTargetSetId);
-	rp->setOutput(velocityTargetSetId.current, render::TfDepth, render::TfColor | render::TfDepth);
+	rp->setOutput(velocityTargetSetId, render::TfDepth, render::TfColor | render::TfDepth);
 
 	if (m_velocityPrime)
 	{

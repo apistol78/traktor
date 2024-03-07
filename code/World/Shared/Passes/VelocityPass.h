@@ -45,7 +45,7 @@ public:
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const WorldCreateDesc& desc);
 
-	DoubleBufferedTarget setup(
+	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
 		uint32_t frameCount,

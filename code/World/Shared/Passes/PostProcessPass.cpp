@@ -166,7 +166,7 @@ void PostProcessPass::setup(
 	uint32_t frameCount,
 	render::RenderGraph& renderGraph,
 	render::handle_t gbufferTargetSetId,
-	const DoubleBufferedTarget& velocityTargetSetId,
+	render::handle_t velocityTargetSetId,
 	const DoubleBufferedTarget& visualTargetSetId,
 	render::handle_t outputTargetSetId
 ) const
@@ -192,8 +192,7 @@ void PostProcessPass::setup(
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualTargetSetId.previous, 0);
 	igctx.associateTextureTargetSet(s_handleInputDepth, gbufferTargetSetId, 0);
 	igctx.associateTextureTargetSet(s_handleInputNormal, gbufferTargetSetId, 1);
-	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId.current, 0);
-	igctx.associateTextureTargetSet(s_handleInputVelocityLast, velocityTargetSetId.previous, 0);
+	igctx.associateTextureTargetSet(s_handleInputVelocity, velocityTargetSetId, 0);
 	igctx.associateTexture(s_handleInputColorGrading, m_colorGrading);
 
 	// Expose gamma, exposure and jitter.

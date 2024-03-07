@@ -19,11 +19,26 @@ const EntityState EntityState::All		= {  true,  true,  true };
 
 Vector2 jitter(int32_t count)
 {
-	const Vector2 kernelSize(0.5f, 0.5f);
-	return Vector2(
-		(float)((count / 2) & 1) * kernelSize.x - (2.0f * kernelSize.x) / 3.0f,
-		(float)(count & 1) * kernelSize.y - (2.0f * kernelSize.y) / 3.0f
-	);
+	const static Vector2 c_halton[] =
+	{
+		Vector2(0.500000f, 0.333333f),
+		Vector2(0.250000f, 0.666667f),
+		Vector2(0.750000f, 0.111111f),
+		Vector2(0.125000f, 0.444444f),
+		Vector2(0.625000f, 0.777778f),
+		Vector2(0.375000f, 0.222222f),
+		Vector2(0.875000f, 0.555556f),
+		Vector2(0.062500f, 0.888889f),
+		Vector2(0.562500f, 0.037037f),
+		Vector2(0.312500f, 0.370370f),
+		Vector2(0.812500f, 0.703704f),
+		Vector2(0.187500f, 0.148148f),
+		Vector2(0.687500f, 0.481481f),
+		Vector2(0.437500f, 0.814815f),
+		Vector2(0.937500f, 0.259259f),
+		Vector2(0.031250f, 0.592593f)
+	};
+	return c_halton[count % sizeof_array(c_halton)] - Vector2(0.5f, 0.5f);
 }
 
 }

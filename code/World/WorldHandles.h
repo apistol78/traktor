@@ -115,7 +115,6 @@ extern const render::Handle T_DLLCLASS s_handleInputColorLast;
 extern const render::Handle T_DLLCLASS s_handleInputDepth;
 extern const render::Handle T_DLLCLASS s_handleInputNormal;
 extern const render::Handle T_DLLCLASS s_handleInputVelocity;
-extern const render::Handle T_DLLCLASS s_handleInputVelocityLast;
 extern const render::Handle T_DLLCLASS s_handleInputColorGrading;
 
 // Persistent targets.
