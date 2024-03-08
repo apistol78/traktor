@@ -196,8 +196,6 @@ void SurroundFilter::applyStereo(IAudioFilterInstance* instance, AudioBlock& out
 		const Scalar speakerAngle = angleRange(Scalar(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI));
 
 		const Scalar& innerRadius = m_environment->getInnerRadius();
-
-		//const Scalar innerAtten = power(clamp(1.0_simd - speakerDistance / innerRadius, 0.0_simd, 1.0_simd), 1.0_simd);
 		const Scalar distanceAtten = power(clamp(1.0_simd - (speakerDistance - innerRadius) / m_maxDistance, 0.0_simd, 1.0_simd), 1.0_simd);
 
 		for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
@@ -213,12 +211,8 @@ void SurroundFilter::applyStereo(IAudioFilterInstance* instance, AudioBlock& out
 			{
 				const Vector4 sd4 = Vector4::loadAligned(&directionalSamples[j]);
 				const Vector4 s4 = sd4 * directionalAtten;
-				//s4.storeAligned(&outputSamples[j]);
-
 				(Vector4::loadAligned(&outputSamples[j]) + s4).storeAligned(&outputSamples[j]);
 			}
-
-			//outBlock.samples[c_speakersStereo[i].channel] = outputSamples;
 		}
 	}
 }

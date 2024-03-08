@@ -331,8 +331,8 @@ void SoundPlayer::update(float dT)
 
 	if (m_surroundEnvironment)
 	{
-		// Update listener transforms \fixme Memory allocations...
-		AlignedVector< Transform > listenerTransforms;
+		// Update listener transforms.
+		SurroundEnvironment::listenerTransformVector_t listenerTransforms;
 		for (auto listener : m_listeners)
 			listenerTransforms.push_back(listener->getTransform());
 		m_surroundEnvironment->setListenerTransforms(listenerTransforms);

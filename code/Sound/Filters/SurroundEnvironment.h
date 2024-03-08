@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Object.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/StaticVector.h"
 #include "Core/Math/Transform.h"
 
 // import/export mechanism.
@@ -28,6 +28,8 @@ class T_DLLCLASS SurroundEnvironment : public Object
 	T_RTTI_CLASS;
 
 public:
+	typedef StaticVector< Transform, 4 > listenerTransformVector_t;
+
 	explicit SurroundEnvironment(
 		float maxDistance,
 		float innerRadius,
@@ -51,16 +53,16 @@ public:
 
 	bool getFullSurround() const { return m_fullSurround; }
 
-	void setListenerTransforms(const AlignedVector< Transform >& listenerTransforms);
+	void setListenerTransforms(const listenerTransformVector_t& listenerTransforms);
 
-	const AlignedVector< Transform >& getListenerTransforms() const { return m_listenerTransforms; }
+	const listenerTransformVector_t& getListenerTransforms() const { return m_listenerTransforms; }
 
 private:
 	Scalar m_maxDistance;
 	Scalar m_innerRadius;
 	Scalar m_fallOffExponent;
 	bool m_fullSurround;
-	AlignedVector< Transform > m_listenerTransforms;
+	listenerTransformVector_t m_listenerTransforms;
 };
 
 }

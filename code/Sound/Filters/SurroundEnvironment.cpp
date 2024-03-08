@@ -46,7 +46,7 @@ void SurroundEnvironment::setFullSurround(bool fullSurround)
 	m_fullSurround = fullSurround;
 }
 
-void SurroundEnvironment::setListenerTransforms(const AlignedVector< Transform >& listenerTransforms)
+void SurroundEnvironment::setListenerTransforms(const listenerTransformVector_t& listenerTransforms)
 {
 	m_listenerTransforms = listenerTransforms;
 }
