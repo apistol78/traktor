@@ -96,6 +96,9 @@ public:
 	bool getGrounded() const { return m_grounded; }
 
 	/*! */
+	void setDecalResponse(bool decalResponse) { m_decalResponse = decalResponse; }
+
+	/*! */
 	bool getDecalResponse() const { return m_decalResponse; }
 
 	/*! Set number of manual lod steps. */

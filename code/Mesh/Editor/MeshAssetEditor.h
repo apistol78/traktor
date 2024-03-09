@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -86,10 +86,7 @@ private:
 	Ref< ui::CheckBox > m_checkRenormalize;
 	Ref< ui::CheckBox > m_checkCenter;
 	Ref< ui::CheckBox > m_checkGrounded;
-	//Ref< ui::Static > m_staticLodSteps;
-	//Ref< ui::Slider > m_sliderLodSteps;
-	//Ref< ui::Edit > m_editLodMaxDistance;
-	//Ref< ui::Edit > m_editLodCullDistance;
+	Ref< ui::CheckBox > m_checkDecalResponse;
 	Ref< ui::Edit > m_editScaleFactor;
 	Ref< ui::Slider > m_sliderPreviewAngle;
 	Ref< ui::Image > m_imagePreview;

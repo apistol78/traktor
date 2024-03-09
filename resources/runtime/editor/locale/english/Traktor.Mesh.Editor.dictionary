@@ -214,6 +214,10 @@
 			<second>Grounded</second>
 		</item>
 		<item>
+			<first>MESHASSET_EDITOR_DECAL_RESPONSE</first>
+			<second>Decal Response</second>
+		</item>
+		<item>
 			<first>MESHASSET_EDITOR_EXTRACT_TEXTURE</first>
 			<second>Extract texture...</second>
 		</item>

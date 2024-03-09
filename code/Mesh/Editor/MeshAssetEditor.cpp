@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -169,6 +169,10 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkGrounded->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_GROUNDED")))
 		return false;
 
+	m_checkDecalResponse = new ui::CheckBox();
+	if (!m_checkDecalResponse->create(containerLeft, i18n::Text(L"MESHASSET_EDITOR_DECAL_RESPONSE")))
+		return false;
+
 	Ref< ui::Container > containerRight = new ui::Container();
 	containerRight->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*,*", L"*", 0_ut, 4_ut));
 
@@ -251,9 +255,7 @@ void MeshAssetEditor::apply()
 	m_asset->setRenormalize(m_checkRenormalize->isChecked());
 	m_asset->setCenter(m_checkCenter->isChecked());
 	m_asset->setGrounded(m_checkGrounded->isChecked());
-	//m_asset->setLodSteps(m_sliderLodSteps->getValue());
-	//m_asset->setLodMaxDistance(parseString< float >(m_editLodMaxDistance->getText()));
-	//m_asset->setLodCullDistance(parseString< float >(m_editLodCullDistance->getText()));
+	m_asset->setDecalResponse(m_checkDecalResponse->isChecked());
 	m_asset->setScaleFactor(parseString< float >(m_editScaleFactor->getText()));
 	m_asset->setPreviewAngle(m_sliderPreviewAngle->getValue() * TWO_PI / 100.0f);
 
@@ -325,6 +327,7 @@ void MeshAssetEditor::updateFile()
 	m_checkRenormalize->setChecked(m_asset->getRenormalize());
 	m_checkCenter->setChecked(m_asset->getCenter());
 	m_checkGrounded->setChecked(m_asset->getGrounded());
+	m_checkDecalResponse->setChecked(m_asset->getDecalResponse());
 	m_editScaleFactor->setText(toString(m_asset->getScaleFactor()));
 	m_sliderPreviewAngle->setValue((int32_t)(m_asset->getPreviewAngle() * 100.0f / TWO_PI));
 }
