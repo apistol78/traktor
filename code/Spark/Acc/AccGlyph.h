@@ -60,9 +60,9 @@ public:
 
 	void render(
 		render::RenderPass* renderPass,
+		render::handle_t glyphCacheTargetSetId,
 		const Vector4& frameSize,
 		const Vector4& frameTransform,
-		render::ITexture* texture,
 		uint8_t maskReference,
 		uint8_t glyphFilter,
 		const Color4f& glyphColor,

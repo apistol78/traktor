@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,19 +11,19 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
+#include "Render/IRenderTargetSet.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Frame/RenderGraph.h"
 #include "Render/Frame/RenderPass.h"
 #include "Resource/IResourceManager.h"
 #include "Spark/Acc/AccGlyph.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 #pragma pack(1)
 struct Vertex
@@ -59,7 +59,7 @@ const render::Handle s_handleTexture(L"Spark_Texture");
 const render::Handle s_handleColor(L"Spark_Color");
 const render::Handle s_handleFilterColor(L"Spark_FilterColor");
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccGlyph", AccGlyph, Object)
 
@@ -186,9 +186,9 @@ void AccGlyph::add(
 
 void AccGlyph::render(
 	render::RenderPass* renderPass,
+	render::handle_t glyphCacheTargetSetId,
 	const Vector4& frameBounds,
 	const Vector4& frameTransform,
-	render::ITexture* texture,
 	uint8_t maskReference,
 	uint8_t glyphFilter,
 	const Color4f& glyphColor,
@@ -210,7 +210,9 @@ void AccGlyph::render(
 	uint32_t offset = m_offset;
 	uint32_t count = m_count;
 
-	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+	renderPass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+
+		auto glyphCacheTargetSet = renderGraph.getTargetSet(glyphCacheTargetSetId);
 
 		render::IndexedRenderBlock* renderBlock = renderContext->allocNamed< render::IndexedRenderBlock >(L"Flash AccGlyph");
 		renderBlock->program = sp.program;
@@ -229,7 +231,7 @@ void AccGlyph::render(
 		renderBlock->programParams->setVectorParameter(s_handleFrameBounds, frameBounds);
 		renderBlock->programParams->setVectorParameter(s_handleFrameTransform, frameTransform);
 		renderBlock->programParams->setStencilReference(maskReference);
-		renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+		renderBlock->programParams->setTextureParameter(s_handleTexture, glyphCacheTargetSet->getColorTexture(0)); // texture);
 		renderBlock->programParams->setVectorParameter(s_handleColor, glyphColor);
 
 		if (glyphFilter != 0)
@@ -245,5 +247,4 @@ void AccGlyph::render(
 	m_count = 0;
 }
 
-	}
 }

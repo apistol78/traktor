@@ -50,6 +50,8 @@ const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
 const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
+const render::Handle c_glyphsTargetSetId(L"Spark_GlyphsTargetSet");
+
 const ColorTransform c_cxfZero(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 const ColorTransform c_cxfWhite(Color4f(0.0f, 0.0f, 0.0f, 0.0f), Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 const ColorTransform c_cxfIdentity(Color4f(1.0f, 1.0f, 1.0f, 1.0f), Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -160,22 +162,6 @@ bool AccDisplayRenderer::create(
 		return false;
 	}
 
-	render::RenderTargetSetCreateDesc rtscd;
-	rtscd.count = 1;
-	rtscd.width = c_cacheGlyphDimX;
-	rtscd.height = c_cacheGlyphDimY;
-	rtscd.multiSample = 0;
-	rtscd.createDepthStencil = false;
-	rtscd.usingPrimaryDepthStencil = false;
-	rtscd.targets[0].format = render::TfR8;
-
-	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd, nullptr, T_FILE_LINE_W);
-	if (!m_renderTargetGlyphs)
-	{
-		log::error << L"Unable to create accelerated display renderer; failed to create glyph cache target." << Endl;
-		return false;
-	}
-
 	return true;
 }
 
@@ -187,7 +173,6 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_quad);
 	safeDestroy(m_gradientCache);
 	safeDestroy(m_textureCache);
-	safeDestroy(m_renderTargetGlyphs);
 
 	for (auto i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
@@ -207,9 +192,22 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 {
 	m_renderGraph = renderGraph;
 
-	auto glyphsTargetSetId = m_renderGraph->addExplicitTargetSet(L"Spark glyph", m_renderTargetGlyphs);
+	render::RenderGraphTargetSetDesc rgtsd;
+	rgtsd.count = 1;
+	rgtsd.width = c_cacheGlyphDimX;
+	rgtsd.height = c_cacheGlyphDimY;
+	rgtsd.targets[0].colorFormat = render::TfR8;
+
+	m_glyphsTargetSetId = m_renderGraph->addPersistentTargetSet(
+		L"Spark glyphs",
+		c_glyphsTargetSetId,
+		false,
+		rgtsd
+	);
 
 	m_renderPassOutput = new render::RenderPass(L"Spark");
+	m_renderPassOutput->addInput(m_glyphsTargetSetId);
+
 	if (m_clearBackground)
 	{
 		render::Clear cl;
@@ -229,13 +227,13 @@ void AccDisplayRenderer::beginSetup(render::RenderGraph* renderGraph)
 
 	m_renderPassGlyph = new render::RenderPass(L"Spark glyphs");
 	if (!m_firstFrame)
-		m_renderPassGlyph->setOutput(glyphsTargetSetId, render::TfColor, render::TfColor);
+		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, render::TfColor, render::TfColor);
 	else
 	{
 		render::Clear cl;
 		cl.mask = render::CfColor;
 		cl.colors[0] = Color4f(0.5f, 0.5f, 0.5f, 1.0);
-		m_renderPassGlyph->setOutput(glyphsTargetSetId, cl, render::TfNone, render::TfColor);
+		m_renderPassGlyph->setOutput(m_glyphsTargetSetId, cl, render::TfNone, render::TfColor);
 	}
 
 	m_frameTransform.set(0.0f, 0.0f, 1.0f, 1.0f);
@@ -667,9 +665,9 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 {
 	m_glyph->render(
 		m_renderPassOutput,
+		m_glyphsTargetSetId,
 		m_frameBounds,
 		m_frameTransform,
-		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference,
 		m_glyphFilter,
 		m_glyphColor,

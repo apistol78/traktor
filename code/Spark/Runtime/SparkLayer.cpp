@@ -177,7 +177,6 @@ void SparkLayer::destroy()
 void SparkLayer::transition(Layer* fromLayer)
 {
 	SparkLayer* fromSparkLayer = checked_type_cast< SparkLayer*, false >(fromLayer);
-	bool shouldFlush = true;
 
 	// Pass movie as well, if it's the same movie and we're allowed.
 	const bool permit = fromLayer->isTransitionPermitted() && isTransitionPermitted();
@@ -189,10 +188,6 @@ void SparkLayer::transition(Layer* fromLayer)
 			m_moviePlayer = fromSparkLayer->m_moviePlayer;
 			fromSparkLayer->m_moviePlayer = nullptr;
 		}
-
-		// Also do not flush caches if same movie will be used again;
-		// this improve performance as images and such doesn't need to be reloaded.
-		shouldFlush = false;
 	}
 
 	// Keep display and sound renderer.
@@ -202,7 +197,7 @@ void SparkLayer::transition(Layer* fromLayer)
 	fromSparkLayer->m_soundRenderer = nullptr;
 
 	// Ensure display renderer's caches are fresh.
-	if (m_displayRenderer && shouldFlush)
+	if (m_displayRenderer)
 		m_displayRenderer->flushCaches();
 
 	// Update setting on display renderer.

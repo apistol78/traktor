@@ -153,7 +153,6 @@ private:
 	Ref< render::RenderGraph > m_renderGraph;
 	Ref< render::RenderPass > m_renderPassOutput;
 	Ref< render::RenderPass > m_renderPassGlyph;
-	Ref< render::IRenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccShapeResources > m_shapeResources;
 	Ref< AccShapeVertexPool > m_fillVertexPool;
 	Ref< AccShapeVertexPool > m_lineVertexPool;
@@ -163,6 +162,7 @@ private:
 	Ref< AccQuad > m_quad;
 	SmallMap< int32_t, ShapeCache > m_shapeCache;
 	SmallMap< int32_t, GlyphCache > m_glyphCache;
+	render::handle_t m_glyphsTargetSetId;
 	int32_t m_nextIndex;
 	Vector4 m_frameBounds;			//!< [left, top, right, bottom] in twips.
 	Vector4 m_frameTransform;		//!< [offset x, offset y, scale x, scale y] in normalized values.
