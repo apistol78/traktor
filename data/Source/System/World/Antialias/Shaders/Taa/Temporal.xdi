@@ -91,7 +91,6 @@ vec4 TemporalAntiAlias(
 	if (!Clipped(uv - Vuv))
 	{
 		// Sample previous colour,
-		//const vec4 cp = texture(sampler2D(previousFrame, linearSampler), uv - Vuv);
 		const vec4 cp = CatmullRomFilterSample(previousFrame, linearSampler, uv - Vuv);
 
 		// Clamp previous colour to current color neighbourhood.

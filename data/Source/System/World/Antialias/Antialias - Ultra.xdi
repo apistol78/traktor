@@ -55,8 +55,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{55173364-8794-A94B-85B0-849D15588251}</shader>
 					<parameters>
 						<item>Input</item>
@@ -72,15 +71,6 @@
 				<second>362</second>
 			</position>
 			<textureId>InputDepth</textureId>
-		</item>
-		<item type="traktor.render.ImgInput" version="traktor.render.Node:1">
-			<id>{421322B9-1F54-384E-910A-2773B1B0F870}</id>
-			<comment/>
-			<position>
-				<first>-28</first>
-				<second>449</second>
-			</position>
-			<textureId>InputVelocityLast</textureId>
 		</item>
 		<item type="traktor.render.ImgPass" version="1,traktor.render.Node:1">
 			<id>{13E22B51-0DE0-944D-9285-C9438C6316A7}</id>
@@ -110,15 +100,13 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{380B6E43-BB30-C945-BE58-F0A4E8A427E6}</shader>
 					<parameters>
 						<item>Current</item>
 						<item>Last</item>
 						<item>Velocity</item>
 						<item>Depth</item>
-						<item>VelocityLast</item>
 					</parameters>
 				</item>
 			</steps>
@@ -166,7 +154,7 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BB66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
@@ -176,7 +164,7 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BE66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
@@ -186,23 +174,13 @@
 				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BC66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{CADCA675-68AF-45C9-8713-017957DE6968}</id>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<id>{FDFF30DE-F467-419B-BF66-68AE2FE12FA1}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
@@ -212,21 +190,21 @@
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{0102FF98-A386-435E-82C7-F1E360E1CC22}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{FDFF30DE-F467-419B-BD66-68AE2FE12FA1}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<id>{745CF81D-D35F-437A-96CA-DC1FCDB24CE6}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[7]"/>
+				<node ref="/object/nodes/item[6]"/>
 				<id>{E75F63FE-8CB0-4F01-B559-5B3BFB149271}</id>
 			</destination>
 		</item>
