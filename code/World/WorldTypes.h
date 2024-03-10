@@ -105,7 +105,7 @@ struct GatherView
     AlignedVector< Renderable > renderables;
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
-	AlignedVector< const VolumetricFogComponent* > fogs;
+	const VolumetricFogComponent* fog;
 };
 
 /*!

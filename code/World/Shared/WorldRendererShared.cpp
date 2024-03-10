@@ -219,7 +219,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.renderables.resize(0);
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
-	m_gatheredView.fogs.resize(0);
+	m_gatheredView.fog = nullptr;
 
 	for (auto entity : world->getEntities())
 	{
@@ -227,11 +227,6 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			continue;
 		else if (filter == nullptr && entity->getState().visible == false)
 			continue;
-
-		//#todo No longer allow entities to be rendered.
-		//IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(entity));
-		//if (entityRenderer)
-		//	m_gatheredView.renderables.push_back({ entityRenderer, entity });
 
 		for (auto component : entity->getComponents())
 		{
@@ -248,7 +243,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 			else if (auto probeComponent = dynamic_type_cast< const ProbeComponent* >(component))
 				m_gatheredView.probes.push_back(probeComponent);
 			else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(component))
-				m_gatheredView.fogs.push_back(volumetricFogComponent);
+				m_gatheredView.fog = volumetricFogComponent;
 		}
 	}
 
