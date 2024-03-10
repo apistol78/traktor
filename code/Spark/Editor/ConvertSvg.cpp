@@ -114,6 +114,7 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 	};
 	AlignedVector< SD > spriteStack;
 	uint32_t characterId = 1;
+	uint16_t fillBitmapId = 1;
 
 	ShapeVisitor createCharactersVisitor(
 		[&](svg::Shape* svg) -> bool
@@ -282,13 +283,11 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 						pnt = moviePnt;
 					}
 
-					const uint16_t fillBitmap = 1;
-
-					movie->defineBitmap(fillBitmap, new BitmapImage(image));
+					movie->defineBitmap(fillBitmapId, new BitmapImage(image));
 
 					const float sx = (pnts[1].x - pnts[0].x) / width;
 					const float sy = (pnts[1].y - pnts[0].y) / height;
-					const uint16_t fillStyle = spriteStack.back().shape->defineFillStyle(fillBitmap, Matrix33(
+					const uint16_t fillStyle = spriteStack.back().shape->defineFillStyle(fillBitmapId, Matrix33(
 						sx * 20.0f, 0.0f, pnts[0].x,
 						0.0f, sy * 20.0f, pnts[0].y,
 						0.0f, 0.0f, 1.0f
@@ -303,6 +302,8 @@ Ref< Movie > convertSvg(const traktor::Path& assetPath, const MovieAsset* movieA
 					path.end(fillStyle, fillStyle, 0);
 
 					spriteStack.back().shape->addPath(path);
+
+					++fillBitmapId;
 				}
 				else if (const auto ts = dynamic_type_cast< const svg::TextShape* >(svg))
 				{

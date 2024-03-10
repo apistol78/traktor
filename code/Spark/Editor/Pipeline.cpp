@@ -62,7 +62,7 @@ struct AtlasBucket
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 11, Pipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.Pipeline", 13, Pipeline, editor::IPipeline)
 
 Pipeline::Pipeline()
 :	m_generateMips(false)
@@ -78,7 +78,7 @@ bool Pipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
 	m_generateMips = settings->getPropertyIncludeHash< bool >(L"Pipeline.GenerateMips", false);
 	m_sharpenStrength = settings->getPropertyIncludeHash< bool >(L"Pipeline.SharpenStrength", false);
-	m_useTextureCompression = settings->getPropertyIncludeHash< bool >(L"Pipeline.UseTextureCompression", true);
+	m_useTextureCompression = settings->getPropertyIncludeHash< bool >(L"Pipeline.UseTextureCompression", false);
 	m_textureSizeDenom = settings->getPropertyIncludeHash< int32_t >(L"Pipeline.TextureSizeDenom", 1);
 	m_textureAtlasSize = settings->getPropertyIncludeHash< int32_t >(L"Pipeline.TextureAtlasSize", 1024);
 	return true;
