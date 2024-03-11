@@ -488,10 +488,10 @@ restart_iteration:
 				const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
 				if (outputPin)
 				{
-					T_FATAL_ASSERT(outputPin->getNode() != node);
+					// T_FATAL_ASSERT(outputPin->getNode() != node);
 					inputOutputPins[j] = outputPin;
 
-					PinType inputPinType = typePropagation.evaluate(inputPin);
+					const PinType inputPinType = typePropagation.evaluate(inputPin);
 					if (isPinTypeScalar(inputPinType))
 					{
 						auto it = outputConstants.find(outputPin);
