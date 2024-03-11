@@ -342,6 +342,10 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 	const Scalar massPerWheel = totalMass / Scalar((float)m_wheels.size());
 	const Scalar breakingForce(m_data->getBreakingForce());
 
+	// Method factor lerps between slip angle based friction and purely perpendicular friction.
+	const Scalar c_methodLimit = 2.0_simd;
+	const Scalar method = clamp(1.0_simd - abs(body->getLinearVelocity().length() / c_methodLimit), 0.0_simd, 1.0_simd);
+
 	for (auto wheel : m_wheels)
 	{
 		wheel->sliding = false;
@@ -359,12 +363,6 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		// Wheel directions in world space.
 		Vector4 directionW = bodyT * wheel->direction;
 		Vector4 directionPerpW = bodyT * wheel->directionPerp;
-
-#if 0
-		// Project wheel directions onto contact plane.
-		directionW -= wheel->contactNormal * dot3(wheel->contactNormal, directionW);
-		directionPerpW -= wheel->contactNormal * dot3(wheel->contactNormal, directionPerpW);
-#endif
 		directionW = directionW.normalized();
 		directionPerpW = directionPerpW.normalized();
 
@@ -375,10 +373,6 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		const Scalar forwardVelocity = dot3(directionW, wheel->contactVelocity);
 		const Scalar sideVelocity = dot3(directionPerpW, wheel->contactVelocity);
 
-		// Method factor lerps between slip angle based friction and purely perpendicular friction.
-		const Scalar c_methodLimit = 4.0_simd;
-		const Scalar method = clamp(1.0_simd - abs(forwardVelocity) / c_methodLimit, 0.0_simd, 1.0_simd);
-
 		// Calculate slip angle.
 		const float slipAngle = std::atan2(abs(sideVelocity), abs(forwardVelocity));
 
@@ -388,7 +382,11 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 
 		float force = 0.0f;
 		if (slipAngle < maxSlipAngle)
-			force = (slipAngle / maxSlipAngle) * peakSlipFriction;
+		{
+			const float f = slipAngle / maxSlipAngle;
+			const float b = 2.0f * f * (1.0f - 0.5f * f);
+			force = b * peakSlipFriction;
+		}
 		else
 		{
 			force = peakSlipFriction;
