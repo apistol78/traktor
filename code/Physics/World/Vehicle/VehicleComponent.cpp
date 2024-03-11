@@ -50,6 +50,7 @@ VehicleComponent::VehicleComponent(
 ,	m_wheels(wheels)
 ,	m_traceInclude(traceInclude)
 ,	m_traceIgnore(traceIgnore)
+,	m_maxVelocity(data->getMaxVelocity())
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
@@ -103,6 +104,16 @@ void VehicleComponent::update(const world::UpdateParams& update)
 	updateFriction(body, dT);
 	updateEngine(body, dT);
 	updateWheels(body, dT);
+}
+
+void VehicleComponent::setMaxVelocity(float maxVelocity)
+{
+	m_maxVelocity = maxVelocity;
+}
+
+float VehicleComponent::getMaxVelocity() const
+{
+	return m_maxVelocity;
 }
 
 void VehicleComponent::setSteerAngle(float steerAngle)
@@ -435,7 +446,7 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 	const Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
 	const Scalar engineForce =
 		Scalar(m_engineThrottle * (m_engineBoost + 1.0f) * m_data->getEngineForce()) *
-		(1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_data->getMaxVelocity()), 0.0_simd, 1.0_simd));
+		power((1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_maxVelocity), 0.0_simd, 1.0_simd)), 0.25_simd);
 
 	const float differentialCoeff = 0.2f;
 	for (auto wheel : m_wheels)
@@ -476,7 +487,7 @@ void VehicleComponent::updateWheels(Body* body, float dT)
 		if (!data->getDrive() || abs(m_engineThrottle) <= FUZZY_EPSILON)
 			targetVelocity = wheel->velocity * 0.95f;
 		else
-			targetVelocity = (m_engineThrottle * m_data->getMaxVelocity()) / data->getRadius();
+			targetVelocity = (m_engineThrottle * m_maxVelocity) / data->getRadius();
 
 		if (wheel->contact)
 		{

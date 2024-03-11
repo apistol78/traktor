@@ -60,6 +60,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void setMaxVelocity(float maxVelocity);
+
+	float getMaxVelocity() const;
+
 	void setSteerAngle(float steerAngle);
 
 	float getSteerAngle() const;
@@ -87,6 +91,7 @@ private:
 	RefArray< Wheel > m_wheels;
 	uint32_t m_traceInclude;
 	uint32_t m_traceIgnore;
+	float m_maxVelocity;
 	float m_steerAngle;
 	float m_steerAngleTarget;
 	float m_engineThrottle;
