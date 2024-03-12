@@ -796,11 +796,8 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 		grun.isSideways = FALSE;
 		grun.bidiLevel = 0;
 
-		// Remove line gap; it's being added on top of ascent.
-		const int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
-
 		m_d2dRenderTarget->DrawGlyphRun(
-			D2D1::Point2F(at.x, at.y - lineGap),
+			D2D1::Point2F(at.x, at.y),
 			&grun,
 			m_d2dForegroundBrush
 		);
