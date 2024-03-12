@@ -298,7 +298,6 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 
 	setSourceColor(m_foreground);
 	cairo_move_to(m_cr, at.x, at.y + x.ascent);
-
 	cairo_show_text(m_cr, wstombs(text).c_str());
 
 	if (m_font.isUnderline())
@@ -319,7 +318,7 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 
 void CanvasX11::drawGlyph(const Point& at, const wchar_t chr)
 {
-	T_FATAL_ERROR;
+	drawText(at, std::wstring(1, chr));
 }
 
 void* CanvasX11::getSystemHandle()
