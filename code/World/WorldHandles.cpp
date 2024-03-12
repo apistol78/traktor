@@ -28,7 +28,6 @@ const render::Handle s_handleIrradianceSingle(L"World_IrradianceSingle");
 const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 
 // Shader parameters.
-const render::Handle s_handleIrradianceMap(L"World_IrradianceMap");
 const render::Handle s_handleDecalParams(L"World_DecalParams");
 const render::Handle s_handleExposure(L"World_Exposure");
 const render::Handle s_handleFxRotate(L"World_FxRotate");
@@ -62,10 +61,10 @@ const render::Handle s_handleWorldView(L"World_WorldView");
 const render::Handle s_handleWorldViewInv(L"World_WorldViewInv");
 const render::Handle s_handleJitter(L"World_Jitter");
 const render::Handle s_handleSlicePositions(L"World_SlicePositions");
-const render::Handle s_handleGBufferColorMap(L"World_GBufferColorMap");
-const render::Handle s_handleGBufferDepthMap(L"World_GBufferDepthMap");
-const render::Handle s_handleGBufferMiscMap(L"World_GBufferMiscMap");
-const render::Handle s_handleGBufferNormalMap(L"World_GBufferNormalMap");
+const render::Handle s_handleGBufferA(L"World_GBufferA");
+const render::Handle s_handleGBufferB(L"World_GBufferB");
+const render::Handle s_handleGBufferC(L"World_GBufferC");
+const render::Handle s_handleGBufferD(L"World_GBufferD");
 const render::Handle s_handleDBufferColorMap(L"World_DBufferColorMap");
 const render::Handle s_handleDBufferMiscMap(L"World_DBufferMiscMap");
 const render::Handle s_handleDBufferNormalMap(L"World_DBufferNormalMap");

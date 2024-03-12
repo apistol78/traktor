@@ -45,8 +45,8 @@
 			<id>{55944E75-93ED-47EE-BFA1-F42097A39A49}</id>
 			<comment/>
 			<position>
-				<first>1814</first>
-				<second>158</second>
+				<first>1821</first>
+				<second>139</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
@@ -54,10 +54,10 @@
 			<id>{68A16A52-2000-40FA-B33E-B99D52FB7C50}</id>
 			<comment/>
 			<position>
-				<first>1270</first>
+				<first>1334</first>
 				<second>100</second>
 			</position>
-			<parameterName>World_GBufferNormalMap</parameterName>
+			<parameterName>World_GBufferC</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

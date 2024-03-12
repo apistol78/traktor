@@ -50,8 +50,8 @@ render::handle_t DBufferPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Albedo (RGBA)
-	rgtd.targets[1].colorFormat = render::TfR11G11B10F;		// Roughness (R), Metalness (B), Specular (B)
+	rgtd.targets[0].colorFormat = render::TfR8G8B8A8;		// Albedo (RGBA)
+	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;		// Roughness (R), Metalness (B), Specular (B)
 	rgtd.targets[2].colorFormat = render::TfR11G11B10F;		// Normals (RGB)
 	auto dbufferTargetSetId = renderGraph.addTransientTargetSet(L"DBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
@@ -93,11 +93,10 @@ render::handle_t DBufferPass::setup(
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 			sharedParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
-			sharedParams->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleGBufferMiscMap, gbufferTargetSet->getColorTexture(0));
-			sharedParams->setTextureParameter(s_handleGBufferNormalMap, gbufferTargetSet->getColorTexture(1));
-			sharedParams->setTextureParameter(s_handleGBufferColorMap, gbufferTargetSet->getColorTexture(2));
-			sharedParams->setTextureParameter(s_handleIrradianceMap, gbufferTargetSet->getColorTexture(3));
+			sharedParams->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
+			sharedParams->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
+			sharedParams->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+			sharedParams->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 
 			sharedParams->endParameters(renderContext);
 

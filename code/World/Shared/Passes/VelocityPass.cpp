@@ -104,7 +104,10 @@ render::handle_t VelocityPass::setup(
 
 		auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 			const auto gbufferTargetSet = renderGraph.getTargetSet(gbufferTargetSetId);
-			params->setTextureParameter(s_handleGBufferDepthMap, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleGBufferA, gbufferTargetSet->getColorTexture(0));
+			params->setTextureParameter(s_handleGBufferB, gbufferTargetSet->getColorTexture(1));
+			params->setTextureParameter(s_handleGBufferC, gbufferTargetSet->getColorTexture(2));
+			params->setTextureParameter(s_handleGBufferD, gbufferTargetSet->getColorTexture(3));
 		};
 
 		m_velocityPrime->addPasses(

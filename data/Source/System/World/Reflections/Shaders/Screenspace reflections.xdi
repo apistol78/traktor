@@ -475,7 +475,7 @@ for (int i = 0; i < 64; ++i)
 				<first>511</first>
 				<second>-736</second>
 			</position>
-			<parameterName>World_GBufferDepthMap</parameterName>
+			<parameterName>World_GBufferA</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

@@ -70,7 +70,7 @@ void GBufferNormalsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 		pp->beginParameters(renderContext);
 		pp->setFloatParameter(c_handleDebugAlpha, alpha);
 		pp->setMatrixParameter(c_handleDebugViewInverse, viewInverse);
-		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(1));
+		pp->setTextureParameter(c_handleDebugTexture, gbufferTargetSet->getColorTexture(0));
 		pp->endParameters(renderContext);
 
 		screenRenderer->draw(renderContext, m_shader, perm, pp);

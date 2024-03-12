@@ -132,7 +132,7 @@ void WorldRendererSimple::setup(
 			globalProgramParams->beginParameters(renderContext);
 			globalProgramParams->setFloatParameter(s_handleTime, (float)worldRenderView.getTime());
 			globalProgramParams->setMatrixParameter(s_handleProjection, worldRenderView.getProjection());
-			globalProgramParams->setTextureParameter(s_handleGBufferDepthMap, m_depthTexture);
+			globalProgramParams->setTextureParameter(s_handleGBufferA, m_depthTexture);
 			globalProgramParams->endParameters(renderContext);
 
 			// Build visual context.

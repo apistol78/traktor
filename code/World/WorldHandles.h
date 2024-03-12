@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -38,7 +38,6 @@ extern const render::Handle T_DLLCLASS s_handleIrradianceSingle;
 extern const render::Handle T_DLLCLASS s_handleVolumetricFogEnable;
 
 // Shader parameters.
-extern const render::Handle T_DLLCLASS s_handleIrradianceMap;
 extern const render::Handle T_DLLCLASS s_handleDecalParams;
 extern const render::Handle T_DLLCLASS s_handleExposure;
 extern const render::Handle T_DLLCLASS s_handleFxRotate;
@@ -72,10 +71,10 @@ extern const render::Handle T_DLLCLASS s_handleWorldView;
 extern const render::Handle T_DLLCLASS s_handleWorldViewInv;
 extern const render::Handle T_DLLCLASS s_handleJitter;
 extern const render::Handle T_DLLCLASS s_handleSlicePositions;
-extern const render::Handle T_DLLCLASS s_handleGBufferColorMap;
-extern const render::Handle T_DLLCLASS s_handleGBufferDepthMap;
-extern const render::Handle T_DLLCLASS s_handleGBufferMiscMap;
-extern const render::Handle T_DLLCLASS s_handleGBufferNormalMap;
+extern const render::Handle T_DLLCLASS s_handleGBufferA;
+extern const render::Handle T_DLLCLASS s_handleGBufferB;
+extern const render::Handle T_DLLCLASS s_handleGBufferC;
+extern const render::Handle T_DLLCLASS s_handleGBufferD;
 extern const render::Handle T_DLLCLASS s_handleDBufferColorMap;
 extern const render::Handle T_DLLCLASS s_handleDBufferMiscMap;
 extern const render::Handle T_DLLCLASS s_handleDBufferNormalMap;

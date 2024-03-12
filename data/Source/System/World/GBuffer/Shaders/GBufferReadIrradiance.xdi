@@ -27,10 +27,10 @@
 			<id>{D64C97F5-A841-4818-B43B-CB0D0B1B9A1B}</id>
 			<comment/>
 			<position>
-				<first>1209</first>
+				<first>1239</first>
 				<second>97</second>
 			</position>
-			<parameterName>World_IrradianceMap</parameterName>
+			<parameterName>World_GBufferD</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

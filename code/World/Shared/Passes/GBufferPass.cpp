@@ -53,10 +53,11 @@ render::handle_t GBufferPass::setup(
 	rgtd.createDepthStencil = false;
 	rgtd.referenceWidthDenom = 1;
 	rgtd.referenceHeightDenom = 1;
-	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// Depth (R), Roughness (G), Metalness (B), Specular (A)
-	rgtd.targets[1].colorFormat = render::TfR16G16B16A16F;	// Normals (RGB), Decal Response (A)
-	rgtd.targets[2].colorFormat = render::TfR11G11B10F;		// Albedo (RGB)
-	rgtd.targets[3].colorFormat = render::TfR16G16B16A16F;	// Irradiance (RGB), Sky occlusion (A)
+	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// (GBufferA) Depth (R), Normal (GBA)
+	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;		// (GBufferB) Albedo (RGB)
+	rgtd.targets[2].colorFormat = render::TfR8G8B8A8;		// (GBufferC) Roughness (R), Metalness (G), Specular (B), Decal Response (A)
+	rgtd.targets[3].colorFormat = render::TfR10G10B10A2;	// (GBufferD) Irradiance (RGB), Sky occlusion (A)
+
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
 	// Add GBuffer render pass.
@@ -65,9 +66,9 @@ render::handle_t GBufferPass::setup(
 	
 	render::Clear clear;
 	clear.mask = render::CfColor | render::CfDepth | render::CfStencil;
-	clear.colors[0] = Color4f(clearZ, 1.0f, 0.0f, 0.5f);
-	clear.colors[1] = Color4f(0.5f, 0.5f, 0.0f, 0.0f);
-	clear.colors[2] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
+	clear.colors[0] = Color4f(clearZ, 0.5f, 0.5f, 0.0f);
+	clear.colors[1] = Color4f(0.0f, 0.0f, 0.0f, 0.0f);
+	clear.colors[2] = Color4f(0.8f, 0.0f, 0.5f, 1.0f);
 	clear.colors[3] = Color4f(0.0f, 0.0f, 0.0f, 1.0f);
 	clear.depth = 1.0f;
 	clear.stencil = 0;

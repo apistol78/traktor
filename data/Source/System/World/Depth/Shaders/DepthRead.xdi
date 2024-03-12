@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.FragmentPosition" version="traktor.render.Node:1">
 			<id>{1495594C-A118-B742-B532-6E10C52173AB}</id>
 			<comment/>
 			<position>
-				<first>51</first>
-				<second>339</second>
+				<first>47</first>
+				<second>328</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
 			<id>{A8A5B244-60B8-694D-B957-7F4E53EA9C65}</id>
 			<comment/>
 			<position>
-				<first>760</first>
-				<second>311</second>
+				<first>729</first>
+				<second>315</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -35,43 +35,27 @@
 			</position>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
-			<id>{2D6E843A-08DC-F042-BEB4-2D60E064FF32}</id>
+			<id>{9CE6EDCF-CD61-F14D-8D1F-717A4145273B}</id>
 			<comment/>
 			<position>
-				<first>494</first>
-				<second>298</second>
+				<first>480</first>
+				<second>315</second>
 			</position>
-			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
+			<fragmentGuid>{ED628E05-EA7F-B24F-9E38-97F53A90CCDA}</fragmentGuid>
 			<inputPins>
 				<item>
-					<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
-					<name>DepthMap</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
-					<name>DepthMapUV</name>
+					<id>{CA354600-15AE-DE42-AB5A-FA83AE931572}</id>
+					<name>UV</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
+					<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
 					<name>Output</name>
 				</item>
 			</outputPins>
 			<values/>
-		</item>
-		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{635BB9F2-AC29-4742-8D29-237ECC2A82F8}</id>
-			<comment/>
-			<position>
-				<first>241</first>
-				<second>251</second>
-			</position>
-			<parameterName>World_GBufferDepthMap</parameterName>
-			<type>Texture2D</type>
-			<frequency>Once</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -102,28 +86,19 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{315B0CBC-40D3-AF48-A6A4-8A54299BFE42}</id>
+				<id>{CA354600-15AE-DE42-AB5A-FA83AE931572}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{65D75CE0-358E-3B4B-9620-C21C0710FCDC}</id>
+				<id>{68FEE0D6-C712-9F4A-8713-0869C8607AA1}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
 			</destination>
 		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{C90B489B-ADED-9F47-8C78-07B3088D3A1F}</id>
-			</destination>
-		</item>
 	</edges>
+	<groups/>
 </object>

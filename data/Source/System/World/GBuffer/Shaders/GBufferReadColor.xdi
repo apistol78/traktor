@@ -30,7 +30,7 @@
 				<first>974</first>
 				<second>75</second>
 			</position>
-			<parameterName>World_GBufferColorMap</parameterName>
+			<parameterName>World_GBufferB</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>

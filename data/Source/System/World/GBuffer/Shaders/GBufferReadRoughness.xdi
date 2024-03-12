@@ -18,8 +18,8 @@
 			<id>{DA71CC25-EA8C-574D-AFFD-02F27FC9C7F4}</id>
 			<comment/>
 			<position>
-				<first>1881</first>
-				<second>179</second>
+				<first>1889</first>
+				<second>153</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -27,10 +27,10 @@
 			<id>{E179CA16-D5BD-8D4A-8F11-66ACD4341201}</id>
 			<comment/>
 			<position>
-				<first>1242</first>
-				<second>94</second>
+				<first>1237</first>
+				<second>100</second>
 			</position>
-			<parameterName>World_GBufferMiscMap</parameterName>
+			<parameterName>World_GBufferC</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -38,8 +38,8 @@
 			<id>{8A78D031-3902-BD47-B62F-6B36A47E779E}</id>
 			<comment/>
 			<position>
-				<first>1459</first>
-				<second>107</second>
+				<first>1451</first>
+				<second>102</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -56,10 +56,10 @@
 			<id>{CF96BECE-46D6-6442-A33A-EC87F48643D0}</id>
 			<comment/>
 			<position>
-				<first>1698</first>
-				<second>159</second>
+				<first>1706</first>
+				<second>133</second>
 			</position>
-			<swizzle>y</swizzle>
+			<swizzle>x</swizzle>
 		</item>
 	</nodes>
 	<edges>

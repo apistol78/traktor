@@ -174,10 +174,10 @@
 			<id>{C19E4880-0EF8-644F-B85B-4B62C6B3E864}</id>
 			<comment/>
 			<position>
-				<first>-103</first>
+				<first>-53</first>
 				<second>196</second>
 			</position>
-			<parameterName>World_GBufferDepthMap</parameterName>
+			<parameterName>World_GBufferA</parameterName>
 			<type>Texture2D</type>
 			<frequency>Once</frequency>
 		</item>
@@ -185,7 +185,7 @@
 			<id>{995D600C-7FB4-404B-8238-1DB7E9A7AF27}</id>
 			<comment/>
 			<position>
-				<first>-22</first>
+				<first>-21</first>
 				<second>148</second>
 			</position>
 			<parameterName>Projection</parameterName>
@@ -196,7 +196,7 @@
 			<id>{C9F88DAE-63B7-5040-A316-B7ECA2ABB6F3}</id>
 			<comment/>
 			<position>
-				<first>-36</first>
+				<first>-35</first>
 				<second>236</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -214,7 +214,7 @@
 			<id>{7E5773D6-9526-8542-9BDC-802856078163}</id>
 			<comment/>
 			<position>
-				<first>-38</first>
+				<first>-37</first>
 				<second>56</second>
 			</position>
 			<name>ViewPosition</name>
