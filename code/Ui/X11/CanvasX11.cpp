@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -315,6 +315,11 @@ void CanvasX11::drawText(const Point& at, const std::wstring& text)
 
 		cairo_set_line_width(m_cr, m_thickness);
 	}
+}
+
+void CanvasX11::drawGlyph(const Point& at, const wchar_t chr)
+{
+	T_FATAL_ERROR;
 }
 
 void* CanvasX11::getSystemHandle()

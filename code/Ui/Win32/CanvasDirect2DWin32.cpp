@@ -738,70 +738,70 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	if (text.empty() || !realizeFont())
 		return;
 
-	if (text.length() > 1)
+	ComRef< IDWriteTextLayout > dwLayout;
+	s_dwFactory->CreateTextLayout(
+		text.c_str(),
+		text.length(),
+		m_dwTextFormat,
+		std::numeric_limits< FLOAT >::max(),
+		std::numeric_limits< FLOAT >::max(),
+		&dwLayout.getAssign()
+	);
+	if (!dwLayout)
+		return;
+
+	if (m_font.isUnderline())
 	{
-		ComRef< IDWriteTextLayout > dwLayout;
-		s_dwFactory->CreateTextLayout(
-			text.c_str(),
-			text.length(),
-			m_dwTextFormat,
-			std::numeric_limits< FLOAT >::max(),
-			std::numeric_limits< FLOAT >::max(),
-			&dwLayout.getAssign()
-		);
-		if (!dwLayout)
-			return;
-
-		if (m_font.isUnderline())
-		{
-			DWRITE_TEXT_RANGE range;
-			range.startPosition = 0;
-			range.length = text.length();
-			dwLayout->SetUnderline(TRUE, range);
-		}
-
-		// Remove line gap; it's being added on top of ascent.
-		const int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
-
-		m_d2dRenderTarget->DrawTextLayout(
-			D2D1::Point2F(at.x, at.y - lineGap),
-			dwLayout,
-			m_d2dForegroundBrush
-		);
+		DWRITE_TEXT_RANGE range;
+		range.startPosition = 0;
+		range.length = text.length();
+		dwLayout->SetUnderline(TRUE, range);
 	}
-	else if (text.length() == 1)
-	{
-		// Optimize for single characters since RichEdit draw each glyph one by one.
-		const int32_t fontSize = (int32_t)((m_font.getSize().get() * m_dpi) / 96.0f);
 
-		UINT32 codePoint = (UINT32)text[0];
-		UINT16 glyphIndex = 0;
-		HRESULT hr = m_dwFontFace->GetGlyphIndices(&codePoint, 1, &glyphIndex);
-		if (!SUCCEEDED(hr))
-			return;
+	// Remove line gap; it's being added on top of ascent.
+	const int32_t lineGap = m_dwTextFormat->GetFontSize() * m_fontMetrics.lineGap / m_fontMetrics.designUnitsPerEm;
 
-		FLOAT glyphAdvance = 0.0f;
+	m_d2dRenderTarget->DrawTextLayout(
+		D2D1::Point2F(at.x, at.y - lineGap),
+		dwLayout,
+		m_d2dForegroundBrush
+	);
+}
 
-		DWRITE_GLYPH_OFFSET glyphOffset = {};
-		glyphOffset.advanceOffset == 0.0f;
-		glyphOffset.ascenderOffset = -fontSize;
+void CanvasDirect2DWin32::drawGlyph(const Point& at, const wchar_t chr)
+{
+	if (!realizeFont())
+		return;
 
-		DWRITE_GLYPH_RUN grun = {};
-		grun.fontFace = m_dwFontFace;
-		grun.fontEmSize = fontSize;
-		grun.glyphCount = 1;
-		grun.glyphIndices = &glyphIndex;
-		grun.glyphAdvances = &glyphAdvance;
-		grun.glyphOffsets = &glyphOffset;
-		grun.isSideways = FALSE;
-		grun.bidiLevel = 0;
+	const int32_t fontSize = (int32_t)((m_font.getSize().get() * m_dpi) / 96.0f);
 
-		m_d2dRenderTarget->DrawGlyphRun(
-			D2D1::Point2F(at.x, at.y),
-			&grun,
-			m_d2dForegroundBrush
-		);
-	}
+	UINT32 codePoint = (UINT32)chr;
+	UINT16 glyphIndex = 0;
+	HRESULT hr = m_dwFontFace->GetGlyphIndices(&codePoint, 1, &glyphIndex);
+	if (!SUCCEEDED(hr))
+		return;
+
+	FLOAT glyphAdvance = 0.0f;
+
+	DWRITE_GLYPH_OFFSET glyphOffset = {};
+	glyphOffset.advanceOffset == 0.0f;
+	glyphOffset.ascenderOffset = -fontSize;
+
+	DWRITE_GLYPH_RUN grun = {};
+	grun.fontFace = m_dwFontFace;
+	grun.fontEmSize = fontSize;
+	grun.glyphCount = 1;
+	grun.glyphIndices = &glyphIndex;
+	grun.glyphAdvances = &glyphAdvance;
+	grun.glyphOffsets = &glyphOffset;
+	grun.isSideways = FALSE;
+	grun.bidiLevel = 0;
+
+	m_d2dRenderTarget->DrawGlyphRun(
+		D2D1::Point2F(at.x, at.y),
+		&grun,
+		m_d2dForegroundBrush
+	);
 }
 
 void* CanvasDirect2DWin32::getSystemHandle()

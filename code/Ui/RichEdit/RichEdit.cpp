@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -1771,7 +1771,7 @@ void RichEdit::eventPaint(PaintEvent* event)
 				if (k == m_specialCharacters.end())
 				{
 					if (m_text[j].ch != L'\t' && m_text[j].ch != L' ')
-						canvas.drawText(textRc, std::wstring(1, m_text[j].ch), AnLeft, AnTop);
+						canvas.drawGlyph(textRc.getTopLeft(), m_text[j].ch);
 				}
 				else
 				{

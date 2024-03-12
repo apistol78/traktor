@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -598,6 +598,11 @@ void CanvasGdiWin32::drawText(const Point& at, const std::wstring& text)
 
 	SetBkMode(m_hDC, TRANSPARENT);
 	DrawText(m_hDC, wstots(text).c_str(), int(text.length()), &wrc, format);
+}
+
+void CanvasGdiWin32::drawGlyph(const Point& at, const wchar_t chr)
+{
+	T_FATAL_ERROR;
 }
 
 void* CanvasGdiWin32::getSystemHandle()

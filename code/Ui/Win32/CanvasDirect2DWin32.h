@@ -105,6 +105,8 @@ public:
 
 	virtual void drawText(const Point& at, const std::wstring& text) override final;
 
+	virtual void drawGlyph(const Point& at, const wchar_t chr) override final;
+
 	virtual void* getSystemHandle();
 
 	static bool startup();

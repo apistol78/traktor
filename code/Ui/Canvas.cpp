@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -208,7 +208,7 @@ void Canvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Al
 	Size ex(0, 0);
 	if (halign != AnLeft || valign != AnTop)
 	{
-		FontMetric fm = getFontMetric();
+		const FontMetric fm = getFontMetric();
 		ex = fm.getExtent(text);
 	}
 
@@ -247,6 +247,11 @@ void Canvas::drawText(const Rect& rc, const std::wstring& text, Align halign, Al
 	}
 
 	m_canvas->drawText(at, text);
+}
+
+void Canvas::drawGlyph(const Point& at, const wchar_t chr)
+{
+	m_canvas->drawGlyph(at, chr);
 }
 
 }

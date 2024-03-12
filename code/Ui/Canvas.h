@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -103,6 +103,8 @@ public:
 	void drawText(const Point& at, const std::wstring& text);
 
 	void drawText(const Rect& rc, const std::wstring& text, Align halign = AnLeft, Align valign = AnTop);
+
+	void drawGlyph(const Point& at, const wchar_t chr);
 
 	ICanvas* getICanvas() const { return m_canvas; }
 
