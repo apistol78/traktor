@@ -92,14 +92,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	XInitThreads();
 #endif
 
-	// Check if environment is already set, else set to current working directory.
-	std::wstring home;
-	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
-	{
-		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
-		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
-	}
-
 	// Ensure temporary folder exist.
 	const std::wstring writableFolder = OS::getInstance().getWritableFolderPath() + L"/Traktor/Editor/Logs";
 	FileSystem::getInstance().makeAllDirectories(writableFolder);
@@ -165,6 +157,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 			log::error << L"Unable to create log file; logging only to std pipes." << Endl;
 	}
 #endif
+
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+		{
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path pwd = cwd.getPathOnly();
+			if (cwd == pwd)
+			{
+				log::error << L"No LICENSE.txt file found." << Endl;
+				return 1;
+			}
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+		}
+
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
+	}
 
 	ui::Application::getInstance()->initialize(
 		new WidgetFactoryImpl(),

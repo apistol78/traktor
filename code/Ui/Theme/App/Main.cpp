@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #endif
 #include "Core/Config.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
 #include "Core/System/OS.h"
@@ -43,6 +44,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	std::wstring home;
 	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
 	{
+		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+		{
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path pwd = cwd.getPathOnly();
+			if (cwd == pwd)
+			{
+				log::error << L"No LICENSE.txt file found." << Endl;
+				return 1;
+			}
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+		}
+
 		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", cwd.getPathNameOS());
 	}
