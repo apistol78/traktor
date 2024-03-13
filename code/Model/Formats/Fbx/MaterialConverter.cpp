@@ -102,34 +102,34 @@ namespace traktor::model
 //	return nullptr;
 //}
 
-//std::wstring getTextureName(const FbxTexture* texture)
-//{
-//	const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
-//	if (fileTexture)
-//	{
-//		const Path texturePath(mbstows(fileTexture->GetFileName()));
-//		return texturePath.getFileNameNoExtension();
-//	}
-//	else
-//		return std::wstring(mbstows(texture->GetName()));
-//}
-//
-//Ref< drawing::Image > getEmbeddedTexture(const FbxTexture* texture)
-//{
-//	const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
-//	if (fileTexture)
-//	{
-//		const Path texturePath(mbstows(fileTexture->GetFileName()));
-//		return drawing::Image::load(texturePath);
-//	}
-//	else
-//		return nullptr;
-//}
-//
-//std::wstring uvChannel(Model& outModel, const std::string& name)
-//{
-//	return mbstows(name);
-//}
+std::wstring getTextureName(const ufbx_texture* texture)
+{
+	// const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
+	if (texture->type == UFBX_TEXTURE_FILE)
+	{
+		const Path texturePath(mbstows(texture->filename.data));
+		return texturePath.getFileNameNoExtension();
+	}
+	else
+		return std::wstring(mbstows(texture->name.data));
+}
+
+Ref< drawing::Image > getEmbeddedTexture(const ufbx_texture* texture)
+{
+	//const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
+	if (/* texture->type == UFBX_TEXTURE_FILE && */ texture->content.data != nullptr)
+	{
+		// const Path texturePath(mbstows(fileTexture->GetFileName()));
+		return drawing::Image::load(texture->content.data, texture->content.size, L"png");
+	}
+	else
+		return nullptr;
+}
+
+// std::wstring uvChannel(Model& outModel, const std::string& name)
+// {
+// 	return mbstows(name);
+// }
 
 	}
 
@@ -160,19 +160,19 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		Material mm;
 		mm.setName(name);
 
-		if (material->fbx.diffuse_color.texture)
+		if (material->pbr.base_color.texture)
 		{
-			//Ref< drawing::Image > diffuseImage = getEmbeddedTexture(diffuseTexture);
-			//mm.setDiffuseMap(Material::Map(
-			//	getTextureName(diffuseTexture),
-			//	uvChannel(outModel, diffuseTexture->UVSet.Get().Buffer()),
-			//	true,
-			//	Guid(),
-			//	diffuseImage
-			//));
+			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(material->pbr.base_color.texture);
+			mm.setDiffuseMap(Material::Map(
+				getTextureName(material->pbr.base_color.texture),
+				mbstows(material->pbr.base_color.texture->uv_set.data),  // uvChannel(outModel, material->pbr.base_color.texture), // diffuseTexture->UVSet.Get().Buffer()),
+				true,
+				Guid(),
+				diffuseImage
+			));
 		}
 
-		if (material->fbx.specular_color.texture)
+		if (material->pbr.specular_color.texture)
 		{
 			//Ref< drawing::Image > specularImage = getEmbeddedTexture(specularTexture);
 			//mm.setSpecularMap(Material::Map(
@@ -185,8 +185,8 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		}
 
 		//const FbxTexture* shininessTexture = getTexture(material, FbxSurfaceMaterial::sShininess);
-		//if (shininessTexture)
-		//{
+		if (material->pbr.roughness.texture)
+		{
 		//	Ref< drawing::Image > shininessImage = getEmbeddedTexture(shininessTexture);
 		//	mm.setRoughnessMap(Material::Map(
 		//		getTextureName(shininessTexture),
@@ -196,11 +196,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//		shininessImage
 		//	));
 		//	mm.setRoughness(1.0f);
-		//}
+		}
 
 		//const FbxTexture* reflectionFactorTexture = getTexture(material, FbxSurfaceMaterial::sReflectionFactor);
-		//if (reflectionFactorTexture)
-		//{
+		if (material->pbr.metalness.texture)
+		{
 		//	Ref< drawing::Image > reflectionFactorImage = getEmbeddedTexture(reflectionFactorTexture);
 		//	mm.setMetalnessMap(Material::Map(
 		//		getTextureName(reflectionFactorTexture),
@@ -210,11 +210,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//		reflectionFactorImage
 		//	));
 		//	mm.setMetalness(1.0f);
-		//}
+		}
 
 		//const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
-		//if (normalTexture)
-		//{
+		if (material->pbr.normal_map.texture)
+		{
 		//	Ref< drawing::Image > normalImage = getEmbeddedTexture(normalTexture);
 		//	mm.setNormalMap(Material::Map(
 		//		getTextureName(normalTexture),
@@ -223,11 +223,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//		Guid(),
 		//		normalImage
 		//	));
-		//}
+		}
 
 		//const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
-		//if (transparencyTexture)
-		//{
+		if (material->pbr.opacity.texture)
+		{
 		//	Ref< drawing::Image > transparencyImage = getEmbeddedTexture(transparencyTexture);
 		//	mm.setTransparencyMap(Material::Map(
 		//		getTextureName(transparencyTexture),
@@ -237,7 +237,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//		transparencyImage
 		//	));
 		//	mm.setBlendOperator(Material::BoAlpha);
-		//}
+		}
 
 		//const FbxTexture* transparencyFactorTexture = getTexture(material, FbxSurfaceMaterial::sTransparencyFactor);
 		//if (transparencyFactorTexture)
@@ -254,8 +254,8 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//}
 
 		//const FbxTexture* emissiveTexture = getTexture(material, /*mayaExported ? FbxSurfaceMaterial::sAmbient :*/ FbxSurfaceMaterial::sEmissive);
-		//if (emissiveTexture)
-		//{
+		if (material->pbr.emission_color.texture)
+		{
 		//	Ref< drawing::Image > emissiveImage = getEmbeddedTexture(emissiveTexture);
 		//	mm.setEmissiveMap(Material::Map(
 		//		getTextureName(emissiveTexture),
@@ -264,7 +264,7 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		//		Guid(),
 		//		emissiveImage
 		//	));
-		//}
+		}
 
 		mm.setColor(Color4f(
 			material->pbr.base_color.value_vec3.x,

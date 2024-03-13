@@ -5802,21 +5802,14 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(FBX_SDK)/include</item>
 																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_MODEL_EXPORT</item>
 																		<item>_DEBUG</item>
-																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
-																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc/x64/debug</item>
-																	</libraryPaths>
-																	<libraries>
-																		<item>fbxsdk</item>
-																		<item>xml2</item>
-																	</libraries>
+																	<libraryPaths/>
+																	<libraries/>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -5839,21 +5832,14 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(FBX_SDK)/include</item>
 																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_MODEL_EXPORT</item>
 																		<item>NDEBUG</item>
-																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
-																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc/x64/release</item>
-																	</libraryPaths>
-																	<libraries>
-																		<item>fbxsdk</item>
-																		<item>xml2</item>
-																	</libraries>
+																	<libraryPaths/>
+																	<libraries/>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -5876,21 +5862,14 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(FBX_SDK)/include</item>
 																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																		<item>_DEBUG</item>
-																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
-																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc/x64/debug</item>
-																	</libraryPaths>
-																	<libraries>
-																		<item>fbxsdk</item>
-																		<item>xml2</item>
-																	</libraries>
+																	<libraryPaths/>
+																	<libraries/>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -5913,21 +5892,14 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(FBX_SDK)/include</item>
 																		<item>$(STB_SDK)</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
 																		<item>NDEBUG</item>
-																		<item>FBXSDK_NEW_API</item>
 																	</definitions>
-																	<libraryPaths>
-																		<item>$(FBX_SDK)/lib/gcc/x64/release</item>
-																	</libraryPaths>
-																	<libraries>
-																		<item>fbxsdk</item>
-																		<item>xml2</item>
-																	</libraries>
+																	<libraryPaths/>
+																	<libraries/>
 																	<warningLevel>WlCompilerDefault</warningLevel>
 																	<additionalCompilerOptions/>
 																	<additionalLinkerOptions/>
@@ -6203,6 +6175,12 @@
 																	<link>LnkYes</link>
 																	<solutionFileName>ExternLinux.xms</solutionFileName>
 																	<projectName>Extern.MikkTSpace</projectName>
+																</item>
+																<item type="ExternalDependency" version="3">
+																	<inheritIncludePaths>true</inheritIncludePaths>
+																	<link>LnkYes</link>
+																	<solutionFileName>ExternLinux.xms</solutionFileName>
+																	<projectName>Extern.ufbx</projectName>
 																</item>
 															</dependencies>
 														</project>

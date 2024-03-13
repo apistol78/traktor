@@ -13,7 +13,6 @@ set ASTCENC_SDK=%TRAKTOR_HOME%\3rdp\astc-encoder
 set BULLET_SDK=%TRAKTOR_HOME%\3rdp\bullet3
 set EMBREE_SDK=%TRAKTOR_HOME%\3rdp\embree-windows
 set EXPAT_SDK=%TRAKTOR_HOME%\3rdp\libexpat\expat
-set FBX_SDK=%TRAKTOR_HOME%\3rdp\fbx\2020.0.1
 set FLAC_SDK=%TRAKTOR_HOME%\3rdp\flac
 set FREETYPE_SDK=%TRAKTOR_HOME%\3rdp\freetype
 set JPEG_SDK=%TRAKTOR_HOME%\3rdp\jpeg\jpeg-9e

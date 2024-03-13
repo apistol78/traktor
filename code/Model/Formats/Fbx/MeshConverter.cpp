@@ -90,6 +90,18 @@ bool convertMesh(
 			ufbx_skin_cluster* cluster = skinDeformer->clusters.data[j];
 			if (!cluster)
 				continue;
+
+			std::wstring jointName = mbstows(cluster->bone_node->name.data);
+			const size_t p = jointName.find(L':');
+			if (p != std::wstring::npos)
+				jointName = jointName.substr(p + 1);
+
+			const uint32_t jointIndex = outModel.findJointIndex(jointName);
+			if (jointIndex == c_InvalidIndex)
+			{
+				log::warning << L"Unable to set vertex weight; no such joint \"" << jointName << L"\"." << Endl;
+				continue;
+			}
 		}
 	}
 
@@ -155,16 +167,6 @@ bool convertMesh(
 
 		Polygon polygon;
 
-		// Assign material; \fixme should probably create a polygon for each layer of material.
-		//for (int32_t j = 0; j < mesh->GetLayerCount(); ++j)
-		//{
-		//	FbxLayerElementMaterial* layerMaterials = mesh->GetLayer(j)->GetMaterials();
-		//	if (layerMaterials)
-		//	{
-		//		const int32_t materialIndex = layerMaterials->GetIndexArray().GetAt(i);
-		//		polygon.setMaterial(materialMap[materialIndex]);
-		//	}
-		//}
 		if (meshNode->mesh->face_material.count > 0)
 			polygon.setMaterial(materialMap[meshNode->mesh->face_material[i]]);
 

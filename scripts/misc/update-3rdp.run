@@ -225,56 +225,6 @@ local PACKAGES =
 		license = "FreeType"
 	},
 
-	-- FBX
-	{
-		type = "GET",
-		os = "linux",
-		name = "fbx",
-		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_linux.tar.gz",
-		patch = function()
-			local cwd = fileSystem:getAbsolutePath(Path(run.cwd)).pathNameOS
-			write_file(
-				"install.sh",
-				{
-					"#/bin/sh",
-					TAR .. " -xzf fbx202001_fbxsdk_linux.tar.gz",
-					"yes yes | ./fbx202001_fbxsdk_linux " .. cwd,
-				}
-			)
-			run:execute("sh ./install.sh")	
-			write_file(
-				"include/stdc-predef.h",
-				{
-					"/* Dummy */"
-				}
-			)
-		end,
-		license = "AUTODESK"
-	},
-	{
-		type = "GET",
-		os = "windows",
-		name = "fbx",
-		url = "https://damassets.autodesk.net/content/dam/autodesk/www/adn/fbx/2020-0-1/fbx202001_fbxsdk_vs2017_win.exe",
-		patch = function()
-
-			local dir < const > = (run.cwd .. "/2020.0.1"):gsub("/", "\\")
-
-			print("")
-			print("** IMPORTANT **")
-			print("FBX SDK must be installed in \"" .. dir .. "\"")
-			print("")
-
-			run:execute(
-				"fbx202001_fbxsdk_vs2017_win.exe /S /D=" .. dir,
-				nil,
-				nil,
-				true
-			)
-		end,
-		license = "AUTODESK"
-	},
-
 	-- Squish
 	{
 		type = "GIT",

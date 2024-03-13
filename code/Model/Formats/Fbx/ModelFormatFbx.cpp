@@ -70,28 +70,27 @@ bool include(ufbx_node* node, const std::wstring& filter)
 	return false;
 }
 
-//FbxNode* search(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& predicate)
-//{
-//	if (!include(node, filter))
-//		return nullptr;
-//
-//	if (predicate(node))
-//		return node;
-//
-//	const int32_t childCount = node->GetChildCount();
-//	for (int32_t i = 0; i < childCount; ++i)
-//	{
-//		FbxNode* childNode = node->GetChild(i);
-//		if (childNode)
-//		{
-//			FbxNode* foundNode = search(childNode, filter, predicate);
-//			if (foundNode)
-//				return foundNode;
-//		}
-//	}
-//
-//	return nullptr;
-//}
+ufbx_node* search(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node) >& predicate)
+{
+	if (!include(node, filter))
+		return nullptr;
+
+	if (predicate(node))
+		return node;
+
+	for (size_t i = 0; i < node->children.count; ++i)
+	{
+		ufbx_node* child = node->children.data[i];
+		if (child)
+		{
+			ufbx_node* foundNode = search(child, filter, predicate);
+			if (foundNode)
+				return foundNode;
+		}
+	}
+
+	return nullptr;
+}
 
 bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node) >& visitor)
 {
@@ -140,6 +139,16 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	bool result = true;
 
 	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
+
+	// First convert skeleton since it's used to figure out correct weight index
+	// when converting meshes.
+	ufbx_node* skeletonNode = search(scene->root_node, filter, [&](ufbx_node* node) {
+		//return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
+		return false;
+	});
+	if (skeletonNode)
+	{
+	}
 
 	// Convert and merge all meshes.
 	result &= traverse(scene->root_node, filter, [&](ufbx_node* node) {
