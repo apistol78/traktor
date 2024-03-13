@@ -2450,20 +2450,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK_LIBPATH)</item>
-					</libraryPaths>
-					<libraries>
-						<item>libfbxsdk.lib</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2492,20 +2484,12 @@
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK_LIBPATH)</item>
-					</libraryPaths>
-					<libraries>
-						<item>libfbxsdk.lib</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2534,20 +2518,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK_LIBPATH)</item>
-					</libraryPaths>
-					<libraries>
-						<item>libfbxsdk.lib</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -2572,20 +2548,12 @@
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
-					<includePaths>
-						<item>$(FBX_SDK)/include</item>
-					</includePaths>
+					<includePaths/>
 					<definitions>
 						<item>T_STATIC</item>
-						<item>FBXSDK_NEW_API</item>
-						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths>
-						<item>$(FBX_SDK_LIBPATH)</item>
-					</libraryPaths>
-					<libraries>
-						<item>libfbxsdk.lib</item>
-					</libraries>
+					<libraryPaths/>
+					<libraries/>
 					<warningLevel>WlCompilerDefault</warningLevel>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -7221,20 +7189,13 @@
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
 											<includePaths>
-												<item>$(FBX_SDK)/include</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
-												<item>FBXSDK_NEW_API</item>
-												<item>FBXSDK_SHARED</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(FBX_SDK_LIBPATH)</item>
-											</libraryPaths>
-											<libraries>
-												<item>libfbxsdk.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<warningLevel>WlCompilerDefault</warningLevel>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -7268,20 +7229,13 @@
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
 											<includePaths>
-												<item>$(FBX_SDK)/include</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
-												<item>FBXSDK_NEW_API</item>
-												<item>FBXSDK_SHARED</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(FBX_SDK_LIBPATH)</item>
-											</libraryPaths>
-											<libraries>
-												<item>libfbxsdk.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<warningLevel>WlCompilerDefault</warningLevel>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -7315,20 +7269,13 @@
 											<targetProfile>TpDebug</targetProfile>
 											<precompiledHeader/>
 											<includePaths>
-												<item>$(FBX_SDK)/include</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>FBXSDK_NEW_API</item>
-												<item>FBXSDK_SHARED</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(FBX_SDK_LIBPATH)</item>
-											</libraryPaths>
-											<libraries>
-												<item>libfbxsdk.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<warningLevel>WlCompilerDefault</warningLevel>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -7358,20 +7305,13 @@
 											<targetProfile>TpRelease</targetProfile>
 											<precompiledHeader/>
 											<includePaths>
-												<item>$(FBX_SDK)/include</item>
 												<item>$(STB_SDK)</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
-												<item>FBXSDK_NEW_API</item>
-												<item>FBXSDK_SHARED</item>
 											</definitions>
-											<libraryPaths>
-												<item>$(FBX_SDK_LIBPATH)</item>
-											</libraryPaths>
-											<libraries>
-												<item>libfbxsdk.lib</item>
-											</libraries>
+											<libraryPaths/>
+											<libraries/>
 											<warningLevel>WlCompilerDefault</warningLevel>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -7670,6 +7610,12 @@
 											<link>LnkYes</link>
 											<solutionFileName>ExternWin64.xms</solutionFileName>
 											<projectName>Extern.MikkTSpace</projectName>
+										</item>
+										<item type="ExternalDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<solutionFileName>ExternWin64.xms</solutionFileName>
+											<projectName>Extern.ufbx</projectName>
 										</item>
 									</dependencies>
 								</project>

@@ -1,13 +1,16 @@
+#pragma optimize( "", off )
+
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <functional>
-#include <fbxsdk.h>
+//#include <fbxsdk.h>
+#include "ufbx.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/IMappedFile.h"
@@ -21,32 +24,27 @@
 #include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/Conversion.h"
-#include "Model/Formats/Fbx/IStreamWrapper.h"
+//#include "Model/Formats/Fbx/IStreamWrapper.h"
 #include "Model/Formats/Fbx/MeshConverter.h"
 #include "Model/Formats/Fbx/ModelFormatFbx.h"
-#include "Model/Formats/Fbx/SkeletonConverter.h"
+//#include "Model/Formats/Fbx/SkeletonConverter.h"
 
 namespace traktor::model
 {
 	namespace
 	{
 
-Semaphore s_fbxLock;
-FbxManager* s_fbxManager = nullptr;
-FbxIOSettings* s_ioSettings = nullptr;
-FbxScene* s_scene = nullptr;
-
-bool include(FbxNode* node, const std::wstring& filter)
+bool include(ufbx_node* node, const std::wstring& filter)
 {
 	if (!node)
 		return false;
 
 	// Always accept root nodes.
-	if (!node->GetParent())
+	if (node->is_root)
 		return true;
 
 	// Only filter on first level of child nodes.
-	if (node->GetParent()->GetParent())
+	if (!node->parent->is_root)
 		return true;
 
 	// Empty filter means everything is included.
@@ -54,7 +52,7 @@ bool include(FbxNode* node, const std::wstring& filter)
 		return true;
 
 	// Check if node's name match filter tag.
-	const std::wstring name = mbstows(node->GetName());
+	const std::wstring name = mbstows(node->name.data);
 	for (auto s : StringSplit< std::wstring >(filter, L",;"))
 	{
 		if (s.front() != L'!')
@@ -72,30 +70,30 @@ bool include(FbxNode* node, const std::wstring& filter)
 	return false;
 }
 
-FbxNode* search(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& predicate)
-{
-	if (!include(node, filter))
-		return nullptr;
+//FbxNode* search(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& predicate)
+//{
+//	if (!include(node, filter))
+//		return nullptr;
+//
+//	if (predicate(node))
+//		return node;
+//
+//	const int32_t childCount = node->GetChildCount();
+//	for (int32_t i = 0; i < childCount; ++i)
+//	{
+//		FbxNode* childNode = node->GetChild(i);
+//		if (childNode)
+//		{
+//			FbxNode* foundNode = search(childNode, filter, predicate);
+//			if (foundNode)
+//				return foundNode;
+//		}
+//	}
+//
+//	return nullptr;
+//}
 
-	if (predicate(node))
-		return node;
-
-	const int32_t childCount = node->GetChildCount();
-	for (int32_t i = 0; i < childCount; ++i)
-	{
-		FbxNode* childNode = node->GetChild(i);
-		if (childNode)
-		{
-			FbxNode* foundNode = search(childNode, filter, predicate);
-			if (foundNode)
-				return foundNode;
-		}
-	}
-
-	return nullptr;
-}
-
-bool traverse(FbxNode* node, const std::wstring& filter, const std::function< bool (FbxNode* node) >& visitor)
+bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node) >& visitor)
 {
 	if (!include(node, filter))
 		return true;
@@ -103,81 +101,17 @@ bool traverse(FbxNode* node, const std::wstring& filter, const std::function< bo
 	if (!visitor(node))
 		return false;
 
-	const int32_t childCount = node->GetChildCount();
-	for (int32_t i = 0; i < childCount; ++i)
+	for (size_t i = 0; i < node->children.count; ++i)
 	{
-		FbxNode* childNode = node->GetChild(i);
-		if (childNode)
+		ufbx_node* child = node->children.data[i];
+		if (child)
 		{
-			if (!traverse(childNode, filter, visitor))
+			if (!traverse(child, filter, visitor))
 				return false;
 		}
 	}
 
 	return true;
-}
-
-void dump(FbxNode* node)
-{
-	log::info << L"Node \"" << mbstows(node->GetName()) << L"\" " << uint64_t(node) << Endl;
-
-	if (node->GetNodeAttribute())
-	{
-		FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
-		log::info << L"Attribute type " << int32_t(attributeType) << Endl;
-
-		if (attributeType == FbxNodeAttribute::eMesh)
-		{
-			log::info << L"Mesh" << Endl;
-
-			FbxMesh* mesh = static_cast< FbxMesh* >(node->GetNodeAttribute());
-
-			const int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
-			log::info << L"Deformer count " << deformerCount << Endl;
-
-			for (int32_t i = 0; i < deformerCount; ++i)
-			{
-				FbxSkin* skinDeformer = (FbxSkin*)mesh->GetDeformer(i, FbxDeformer::eSkin);
-				if (!skinDeformer)
-					continue;
-
-				const int32_t clusterCount = skinDeformer->GetClusterCount();
-				log::info << L"deformer[" << i << L"].cluserCount " << clusterCount << Endl;
-
-				for (int32_t j = 0; j < clusterCount; ++j)
-				{
-					FbxCluster* cluster = skinDeformer->GetCluster(j);
-					if (!cluster)
-						continue;
-
-					const FbxNode* jointNode = cluster->GetLink();
-					T_ASSERT(jointNode);
-
-					log::info << L"deformer[" << i << L"].cluser[" << j << L"].joint = " << uint64_t(jointNode) << Endl;
-				}
-			}
-		}
-	}
-
-	if (node->GetVisibility())
-		log::info << L"Visible" << Endl;
-	else
-		log::info << L"Hidden" << Endl;
-
-	const int32_t childCount = node->GetChildCount();
-	for (int32_t i = 0; i < childCount; ++i)
-	{
-		FbxNode* childNode = node->GetChild(i);
-		if (!childNode)
-			continue;
-
-		log::info << L"Child " << i << L":" << Endl;
-		log::info << IncreaseIndent;
-
-		dump(childNode);
-
-		log::info << DecreaseIndent;
-	}
 }
 
 	}
@@ -186,7 +120,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFb
 
 void ModelFormatFbx::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
-	outDescription = L"Autodesk FBX";
+	outDescription = L"FBX";
 	outExtensions.push_back(L"fbx");
 }
 
@@ -197,142 +131,136 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_fbxLock);
-
-	if (!s_fbxManager)
-	{
-		s_fbxManager = FbxManager::Create();
-		if (!s_fbxManager)
-		{
-			log::error << L"Unable to import FBX model; failed to create FBX SDK instance." << Endl;
-			return nullptr;
-		}
-
-		s_ioSettings = FbxIOSettings::Create(s_fbxManager, IOSROOT);
-		s_fbxManager->SetIOSettings(s_ioSettings);
-
-		s_scene = FbxScene::Create(s_fbxManager, "");
-	}
-
-	FbxIOPluginRegistry* registry = s_fbxManager->GetIOPluginRegistry();
-	int readerID = registry->FindReaderIDByExtension("fbx");
-    if (readerID < 0)
-	{
-		log::error << L"Unable to import FBX model; no reader for \"fbx\" extension registered." << Endl;
+	ufbx_load_opts opts = {};
+	ufbx_scene* scene = ufbx_load_file(wstombs(filePath.getPathNameOS()).c_str(), &opts, nullptr);
+	if (!scene)
 		return nullptr;
-	}
-
-	FbxImporter* importer = FbxImporter::Create(s_fbxManager, "");
-	if (!importer)
-	{
-		log::error << L"Unable to import FBX model; failed to create FBX importer instance." << Endl;
-		return nullptr;
-	}
-
-	// Ensure embedded resources are extracted at a known location.
-	const Path embeddedPath(OS::getInstance().getWritableFolderPath() + L"/Traktor/Fbx");
-	FileSystem::getInstance().makeAllDirectories(embeddedPath);
-	importer->SetEmbeddingExtractionFolder(wstombs(embeddedPath.getPathNameOS()).c_str());
-
-	Ref< IMappedFile > mf = FileSystem::getInstance().map(filePath);
-	if (!mf)
-		return nullptr;
-
-	MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
-
-	AutoPtr< FbxStream > fbxStream(new IStreamWrapper());
-	bool status = importer->Initialize(fbxStream.ptr(), &ms, readerID, s_fbxManager->GetIOSettings());
-	if (!status)
-	{
-		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-		return nullptr;
-	}
-
-	s_scene->Clear();
-
-	status = importer->Import(s_scene);
-	if (!status)
-	{
-		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-		return nullptr;
-	}
-
-	FbxNode* rootNode = s_scene->GetRootNode();
-	if (!rootNode)
-		return nullptr;
-
-#if defined(_DEBUG)
-	// Dump fbx hierarchy.
-	dump(rootNode);
-#endif
-
-	Matrix44 axisTransform = calculateAxisTransform(
-		s_scene->GetGlobalSettings().GetAxisSystem()
-	);
 
 	Ref< Model > model = new Model();
-	AlignedVector< std::string > channels;
 	bool result = true;
 
-	// Convert skeleton and animations.
-	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
-		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
-	});
-	if (skeletonNode)
-	{
-		if (!convertSkeleton(*model, s_scene, skeletonNode, axisTransform))
-			return nullptr;
-
-		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++)
-		{
-			FbxAnimStack* animStack = s_scene->GetSrcObject< FbxAnimStack >(i);
-			if (!animStack)
-				continue;
-
-			s_scene->SetCurrentAnimationStack(animStack);
-
-			std::wstring takeName = mbstows(animStack->GetName());
-			size_t p = takeName.find(L'|');
-			if (p != std::wstring::npos)
-				takeName = takeName.substr(p + 1);
-
-			FbxTime start = animStack->LocalStart;
-			FbxTime end = animStack->LocalStop;
-
-			int32_t startFrame = start.GetFrameCount(FbxTime::eFrames30);
-			int32_t endFrame = end.GetFrameCount(FbxTime::eFrames30);
-
-			Ref< Animation > anim = new Animation();
-			anim->setName(takeName);
-			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
-			{
-				FbxTime time;
-				time.SetFrame(frame, FbxTime::eFrames30);
-
-				Ref< Pose > pose = convertPose(*model, s_scene, skeletonNode, time, axisTransform);
-				if (!pose)
-					return nullptr;
-
-				anim->insertKeyFrame(frame / 30.0f, pose);
-			}
-			model->addAnimation(anim);
-		}
-	}
+	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
 
 	// Convert and merge all meshes.
-	result &= traverse(rootNode, filter, [&](FbxNode* node) {
-		if (node->GetNodeAttribute() && node->GetVisibility())
+	result &= traverse(scene->root_node, filter, [&](ufbx_node* node) {
+		if (node->visible)
 		{
-			FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
-			if (attributeType == FbxNodeAttribute::eMesh)
+			if (node->mesh != nullptr)
 			{
-				if (!convertMesh(*model, s_scene, node, axisTransform))
+				if (!convertMesh(*model, scene, node, axisTransform))
 					return false;
 			}
 		}
 		return true;
 	});
 
+
+	ufbx_free_scene(scene);
+
+//	// Ensure embedded resources are extracted at a known location.
+//	const Path embeddedPath(OS::getInstance().getWritableFolderPath() + L"/Traktor/Fbx");
+//	FileSystem::getInstance().makeAllDirectories(embeddedPath);
+//	importer->SetEmbeddingExtractionFolder(wstombs(embeddedPath.getPathNameOS()).c_str());
+//
+//	Ref< IMappedFile > mf = FileSystem::getInstance().map(filePath);
+//	if (!mf)
+//		return nullptr;
+//
+//	MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
+//
+//	AutoPtr< FbxStream > fbxStream(new IStreamWrapper());
+//	bool status = importer->Initialize(fbxStream.ptr(), &ms, readerID, s_fbxManager->GetIOSettings());
+//	if (!status)
+//	{
+//		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
+//		return nullptr;
+//	}
+//
+//	s_scene->Clear();
+//
+//	status = importer->Import(s_scene);
+//	if (!status)
+//	{
+//		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
+//		return nullptr;
+//	}
+//
+//	FbxNode* rootNode = s_scene->GetRootNode();
+//	if (!rootNode)
+//		return nullptr;
+//
+//#if defined(_DEBUG)
+//	// Dump fbx hierarchy.
+//	dump(rootNode);
+//#endif
+//
+//	Matrix44 axisTransform = calculateAxisTransform(
+//		s_scene->GetGlobalSettings().GetAxisSystem()
+//	);
+//
+//	Ref< Model > model = new Model();
+//	AlignedVector< std::string > channels;
+//	bool result = true;
+//
+//	// Convert skeleton and animations.
+//	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
+//		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
+//	});
+//	if (skeletonNode)
+//	{
+//		if (!convertSkeleton(*model, s_scene, skeletonNode, axisTransform))
+//			return nullptr;
+//
+//		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++)
+//		{
+//			FbxAnimStack* animStack = s_scene->GetSrcObject< FbxAnimStack >(i);
+//			if (!animStack)
+//				continue;
+//
+//			s_scene->SetCurrentAnimationStack(animStack);
+//
+//			std::wstring takeName = mbstows(animStack->GetName());
+//			size_t p = takeName.find(L'|');
+//			if (p != std::wstring::npos)
+//				takeName = takeName.substr(p + 1);
+//
+//			FbxTime start = animStack->LocalStart;
+//			FbxTime end = animStack->LocalStop;
+//
+//			int32_t startFrame = start.GetFrameCount(FbxTime::eFrames30);
+//			int32_t endFrame = end.GetFrameCount(FbxTime::eFrames30);
+//
+//			Ref< Animation > anim = new Animation();
+//			anim->setName(takeName);
+//			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
+//			{
+//				FbxTime time;
+//				time.SetFrame(frame, FbxTime::eFrames30);
+//
+//				Ref< Pose > pose = convertPose(*model, s_scene, skeletonNode, time, axisTransform);
+//				if (!pose)
+//					return nullptr;
+//
+//				anim->insertKeyFrame(frame / 30.0f, pose);
+//			}
+//			model->addAnimation(anim);
+//		}
+//	}
+//
+//	// Convert and merge all meshes.
+//	result &= traverse(rootNode, filter, [&](FbxNode* node) {
+//		if (node->GetNodeAttribute() && node->GetVisibility())
+//		{
+//			FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
+//			if (attributeType == FbxNodeAttribute::eMesh)
+//			{
+//				if (!convertMesh(*model, s_scene, node, axisTransform))
+//					return false;
+//			}
+//		}
+//		return true;
+//	});
+//
 	// Create and assign default material if anonymous faces has been created.
 	uint32_t defaultMaterialIndex = c_InvalidIndex;
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
@@ -347,16 +275,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 				material.setColor(Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 				material.setDiffuseTerm(1.0f);
 				material.setSpecularTerm(1.0f);
-
-				//if (true /* has uv */)
-				//{
-				//	material.setNormalMap(Material::Map(L"Normals", L"default", false));
-				//	material.setDiffuseMap(Material::Map(L"Albedo", L"default", true));
-				//	material.setMetalnessMap(Material::Map(L"Metalness", L"default", false));
-				//	material.setRoughnessMap(Material::Map(L"Roughness", L"default", false));
-				//	material.setSpecularMap(Material::Map(L"Specular", L"default", false));
-				//}
-
 				defaultMaterialIndex = model->addMaterial(material);
 			}
 
@@ -366,10 +284,10 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		}
 	}
 
-	// \fixme Destroy when failing...
-	importer->Destroy();
-	importer = nullptr;
-
+//	// \fixme Destroy when failing...
+//	importer->Destroy();
+//	importer = nullptr;
+//
 	return model;
 }
 

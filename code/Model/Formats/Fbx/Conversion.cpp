@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,83 +11,148 @@
 namespace traktor::model
 {
 
-Vector2 convertVector2(const FbxVector2& v)
+Vector2 convertVector2(const ufbx_vec2& v)
 {
-	return Vector2(float(v[0]), float(v[1]));
+	return Vector2(v.x, v.y);
 }
 
-Vector4 convertVector4(const FbxVector4& v)
+Vector4 convertPosition(const ufbx_vec3& v)
 {
-	return Vector4(float(v[0]), float(v[1]), float(v[2]), float(v[3]));
+	return Vector4(v.x, v.y, v.z, 1.0f);
 }
 
-Vector4 convertNormal(const FbxVector4& v)
+Vector4 convertNormal(const ufbx_vec3& v)
 {
-	return Vector4(float(v[0]), float(v[1]), float(v[2]), 0.0f);
+	return Vector4(v.x, v.y, v.z, 0.0f);
 }
 
-Vector4 convertPosition(const FbxVector4& v)
-{
-	return Vector4(float(v[0]), float(v[1]), float(v[2]), 1.0f);
-}
+//Vector4 convertPosition(const FbxVector4& v)
+//{
+//	return Vector4(float(v[0]), float(v[1]), float(v[2]), 1.0f);
+//}
+//
+//Quaternion convertQuaternion(const FbxQuaternion& v)
+//{
+//	return Quaternion(float(v[0]), float(v[1]), float(v[2]), float(v[3]));
+//}
 
-Quaternion convertQuaternion(const FbxQuaternion& v)
-{
-	return Quaternion(float(v[0]), float(v[1]), float(v[2]), float(v[3]));
-}
-
-Matrix44 convertMatrix(const FbxMatrix& m)
+Matrix44 convertMatrix(const ufbx_matrix& m)
 {
 	return Matrix44(
-		convertVector4(m.GetRow(0)),
-		convertVector4(m.GetRow(1)),
-		convertVector4(m.GetRow(2)),
-		convertVector4(m.GetRow(3))
+		Vector4(m.cols[0].x, m.cols[0].y, m.cols[0].z, 0.0f),
+		Vector4(m.cols[1].x, m.cols[1].y, m.cols[1].z, 0.0f),
+		Vector4(m.cols[2].x, m.cols[2].y, m.cols[2].z, 0.0f),
+		Vector4(m.cols[3].x, m.cols[3].y, m.cols[3].z, 1.0f)
 	);
 }
 
-Matrix44 convertMatrix(const FbxAMatrix& m)
+//Matrix44 convertMatrix(const FbxAMatrix& m)
+//{
+//	return Matrix44(
+//		convertVector4(m.GetRow(0)),
+//		convertVector4(m.GetRow(1)),
+//		convertVector4(m.GetRow(2)),
+//		convertVector4(m.GetRow(3))
+//	);
+//}
+//
+//traktor::Transform convertTransform(const FbxAMatrix& m)
+//{
+//	return traktor::Transform(
+//		convertVector4(m.GetT()),
+//		convertQuaternion(m.GetQ())
+//	);
+//}
+
+Color4f convertColor(const ufbx_vec4& c)
 {
-	return Matrix44(
-		convertVector4(m.GetRow(0)),
-		convertVector4(m.GetRow(1)),
-		convertVector4(m.GetRow(2)),
-		convertVector4(m.GetRow(3))
-	);
+	return Color4f(c.x, c.y, c.z, c.w);
 }
 
-traktor::Transform convertTransform(const FbxAMatrix& m)
+Matrix44 calculateAxisTransform(ufbx_coordinate_axes axisSystem)
 {
-	return traktor::Transform(
-		convertVector4(m.GetT()),
-		convertQuaternion(m.GetQ())
-	);
-}
+	int upAxis;
+	int upSign;
 
-Color4f convertColor(const FbxColor& c)
-{
-	return Color4f(float(c.mRed), float(c.mGreen), float(c.mBlue), float(c.mAlpha));
-}
+	switch (axisSystem.up)
+	{
+	case UFBX_COORDINATE_AXIS_POSITIVE_X:
+		upAxis = 0;
+		upSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_X:
+		upAxis = 0;
+		upSign = -1;
+		break;
 
-Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem)
-{
+	case UFBX_COORDINATE_AXIS_POSITIVE_Y:
+		upAxis = 1;
+		upSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_Y:
+		upAxis = 1;
+		upSign = -1;
+		break;
+
+	case UFBX_COORDINATE_AXIS_POSITIVE_Z:
+		upAxis = 2;
+		upSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_Z:
+		upAxis = 2;
+		upSign = -1;
+		break;
+
+	default:
+		return Matrix44::identity();
+	}
+
+	int frontAxis;
+	int frontSign;
+
+	switch (axisSystem.front)
+	{
+	case UFBX_COORDINATE_AXIS_POSITIVE_X:
+		frontAxis = 0;
+		frontSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_X:
+		frontAxis = 0;
+		frontSign = -1;
+		break;
+
+	case UFBX_COORDINATE_AXIS_POSITIVE_Y:
+		frontAxis = 1;
+		frontSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_Y:
+		frontAxis = 1;
+		frontSign = -1;
+		break;
+
+	case UFBX_COORDINATE_AXIS_POSITIVE_Z:
+		frontAxis = 2;
+		frontSign = 1;
+		break;
+	case UFBX_COORDINATE_AXIS_NEGATIVE_Z:
+		frontAxis = 2;
+		frontSign = -1;
+		break;
+
+	default:
+		return Matrix44::identity();
+	}
+
 	Matrix44 axisTransform = Matrix44::identity();
 
-	int upSign;
-	FbxAxisSystem::EUpVector up = axisSystem.GetUpVector(upSign);
+	bool leftHanded = false;
 
-	int frontSign;
-	FbxAxisSystem::EFrontVector front = axisSystem.GetFrontVector(frontSign);
+	const float sign = upSign < 0 ? -1.0f : 1.0f;
+	const float scale = leftHanded ? 1.0f : -1.0f;
 
-	auto coordSystem = axisSystem.GetCoorSystem();
-	bool leftHanded = bool(coordSystem == FbxAxisSystem::eLeftHanded);
-
-	float sign = upSign < 0 ? -1.0f : 1.0f;
-	float scale = leftHanded ? 1.0f : -1.0f;
-
-	switch (up)
+	switch (upAxis)
 	{
-	case FbxAxisSystem::eXAxis:
+	case 0:
 		axisTransform = Matrix44(
 			0.0f, sign, 0.0f, 0.0f,
 			-sign, 0.0f, 0.0f, 0.0f,
@@ -96,7 +161,7 @@ Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem)
 		);
 		break;
 
-	case FbxAxisSystem::eYAxis:
+	case 1:
 		axisTransform = Matrix44(
 			sign * scale, 0.0f, 0.0f, 0.0f,
 			0.0f, sign, 0.0f, 0.0f,
@@ -105,7 +170,7 @@ Matrix44 calculateAxisTransform(const FbxAxisSystem& axisSystem)
 		);
 		break;
 
-	case FbxAxisSystem::eZAxis:
+	case 2:
 		axisTransform = Matrix44(
 			1.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, -sign * scale, 0.0f,

@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <fbxsdk.h>
+//#include <fbxsdk.h>
 #include "Core/Ref.h"
 
 namespace traktor
@@ -24,19 +24,19 @@ namespace traktor::model
 class Model;
 class Pose;
 
-bool convertSkeleton(
-	Model& outModel,
-	FbxScene* scene,
-	FbxNode* skeletonNode,
-	const Matrix44& axisTransform
-);
-
-Ref< Pose > convertPose(
-	const Model& model,
-	FbxScene* scene,
-	FbxNode* skeletonNode,
-	const FbxTime& time,
-	const Matrix44& axisTransform
-);
+//bool convertSkeleton(
+//	Model& outModel,
+//	FbxScene* scene,
+//	FbxNode* skeletonNode,
+//	const Matrix44& axisTransform
+//);
+//
+//Ref< Pose > convertPose(
+//	const Model& model,
+//	FbxScene* scene,
+//	FbxNode* skeletonNode,
+//	const FbxTime& time,
+//	const Matrix44& axisTransform
+//);
 
 }

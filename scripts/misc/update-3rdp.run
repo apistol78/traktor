@@ -518,6 +518,14 @@ local PACKAGES =
 		url = "https://github.com/microsoft/mimalloc.git",
 		license = "MIT"
 	},
+
+	-- ufbx
+	{
+		type = "GIT",
+		name = "ufbx",
+		url = "https://github.com/ufbx/ufbx.git",
+		license = "MIT"
+	},
 }
 
 --[[

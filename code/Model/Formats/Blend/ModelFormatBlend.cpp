@@ -133,7 +133,10 @@ Ref< Model > ModelFormatBlend::read(const Path& filePath, const std::wstring& fi
 	for (uint32_t i = 0; i < model->getMaterialCount(); ++i)
 		materialsToRemove[i] = i;
 	for (const auto& polygon : model->getPolygons())
-		materialsToRemove[polygon.getMaterial()] = c_InvalidIndex;
+	{
+		if (polygon.getMaterial() != model::c_InvalidIndex)
+			materialsToRemove[polygon.getMaterial()] = c_InvalidIndex;
+	}
 	auto it = std::remove(materialsToRemove.begin(), materialsToRemove.end(), c_InvalidIndex);
 	materialsToRemove.erase(it, materialsToRemove.end());
 	for (auto it = materialsToRemove.rbegin(); it != materialsToRemove.rend(); ++it)
