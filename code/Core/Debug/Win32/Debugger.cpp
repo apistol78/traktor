@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include <csignal>
 #include <set>
 #include <sstream>
+#include "Core/Debug/CallStack.h"
 #include "Core/Debug/Debugger.h"
 #include "Core/Debug/Win32/Resource.h"
 #include "Core/Misc/TString.h"
@@ -104,7 +105,31 @@ void Debugger::assertionFailed(const char* const expression, const char* const f
 	if (s_ignored.find(fileId.str()) != s_ignored.end())
 		return;
 
-	DialogParams params = { expression, file, line, message };
+	// Show callstack if no message was given.
+	std::wstring msg = message ? message : L"";
+	if (msg.empty())
+	{
+		std::wstringstream cs;
+
+		void* callstack[8];
+		const uint32_t depth = getCallStack(8, callstack, 1);
+
+		for (int32_t i = 0; i < depth; ++i)
+		{
+			std::wstring symbol;
+			getSymbolFromAddress(callstack[i], symbol);
+
+			std::wstring fileName;
+			int32_t line;
+			getSourceFromAddress(callstack[i], fileName, line);
+
+			cs << symbol << L"    " << fileName << L"(" << line << L")" << std::endl;
+		}
+
+		msg = cs.str();
+	}
+
+	DialogParams params = { expression, file, line, msg.c_str() };
 
 	INT_PTR result = DialogBoxParam(
 		hInstance,
