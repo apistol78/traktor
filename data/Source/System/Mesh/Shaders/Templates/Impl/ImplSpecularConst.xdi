@@ -18,8 +18,8 @@ Tag_Specular
 			]]>
 			</comment>
 			<position>
-				<first>468</first>
-				<second>392</second>
+				<first>386</first>
+				<second>389</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -27,8 +27,8 @@ Tag_Specular
 			<id>{6D0CCCA7-1A3E-5141-B7E9-B78AB5105627}</id>
 			<comment/>
 			<position>
-				<first>238</first>
-				<second>392</second>
+				<first>156</first>
+				<second>389</second>
 			</position>
 			<name>T_Attributes</name>
 			<connectable>true</connectable>
@@ -36,12 +36,33 @@ Tag_Specular
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{3C8FE5EA-229D-49D3-B7A1-82C983870169}</id>
+			<comment/>
+			<position>
+				<first>556</first>
+				<second>405</second>
+			</position>
+			<parameterName>Mesh_Specular</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

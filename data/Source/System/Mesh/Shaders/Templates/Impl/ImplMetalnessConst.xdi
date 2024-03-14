@@ -18,8 +18,8 @@ Tag_Metalness
 			]]>
 			</comment>
 			<position>
-				<first>320</first>
-				<second>457</second>
+				<first>160</first>
+				<second>419</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -36,12 +36,33 @@ Tag_Metalness
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2C6270B1-F543-4DB3-8586-6F2AAE44C19F}</id>
+			<comment/>
+			<position>
+				<first>349</first>
+				<second>459</second>
+			</position>
+			<parameterName>Mesh_Metalness</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>

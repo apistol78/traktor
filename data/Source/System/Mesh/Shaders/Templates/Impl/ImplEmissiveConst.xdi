@@ -5,8 +5,8 @@
 			<id>{EAE0EEE3-AF24-2741-B4F5-54BB986B9DD3}</id>
 			<comment/>
 			<position>
-				<first>916</first>
-				<second>444</second>
+				<first>950</first>
+				<second>421</second>
 			</position>
 			<name>T_Emissive</name>
 		</item>
@@ -18,8 +18,8 @@ Tag_Emissive
 			]]>
 			</comment>
 			<position>
-				<first>712</first>
-				<second>416</second>
+				<first>553</first>
+				<second>357</second>
 			</position>
 			<value>0</value>
 		</item>
@@ -36,16 +36,37 @@ Tag_Emissive
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{1CFC5D71-338B-4628-A9B8-43C380B106F4}</id>
+			<comment/>
+			<position>
+				<first>744</first>
+				<second>386</second>
+			</position>
+			<parameterName>Mesh_Emissive</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{CDD51665-CD39-444D-8D5C-5FD37C1646B7}</id>
 			</destination>
 		</item>
 	</edges>
