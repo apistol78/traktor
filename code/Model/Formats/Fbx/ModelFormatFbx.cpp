@@ -120,6 +120,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filter) const
 {
 	ufbx_load_opts opts = {};
+	opts.load_external_files = true;
 	ufbx_scene* scene = ufbx_load_file(wstombs(filePath.getPathNameOS()).c_str(), &opts, nullptr);
 	if (!scene)
 		return nullptr;

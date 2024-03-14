@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/Path.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -90,7 +91,7 @@ Ref< drawing::Image > getEmbeddedTexture(const ufbx_texture* texture)
 			return drawing::Image::load(texture->content.data, texture->content.size, L"png");
 		else
 		{
-			const Path fileName(mbstows(texture->filename.data));
+			const Path fileName(mbstows(texture->absolute_filename.data));
 			return drawing::Image::load(fileName);
 		}
 	}
