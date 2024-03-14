@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-//#include <fbxsdk.h>
+#include "ufbx.h"
 #include "Core/Ref.h"
 
 namespace traktor
@@ -24,13 +24,13 @@ namespace traktor::model
 class Model;
 class Pose;
 
-//bool convertSkeleton(
-//	Model& outModel,
-//	FbxScene* scene,
-//	FbxNode* skeletonNode,
-//	const Matrix44& axisTransform
-//);
-//
+bool convertSkeleton(
+	Model& outModel,
+	ufbx_scene* scene,
+	ufbx_node* skeletonNode,
+	const Matrix44& axisTransform
+);
+
 //Ref< Pose > convertPose(
 //	const Model& model,
 //	FbxScene* scene,

@@ -18,6 +18,4 @@ class Model;
 
 bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterialMap, ufbx_node* meshNode);
 
-//void fixMaterialUvSets(Model& outModel);
-
 }

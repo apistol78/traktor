@@ -8,7 +8,6 @@
  */
 #pragma once
 
-//#include <fbxsdk.h>
 #include "ufbx.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Matrix44.h"
@@ -24,15 +23,7 @@ Vector4 convertPosition(const ufbx_vec3& v);
 
 Vector4 convertNormal(const ufbx_vec3& v);
 
-//Vector4 convertPosition(const FbxVector4& v);
-//
-//Quaternion convertQuaternion(const FbxQuaternion& v);
-
 Matrix44 convertMatrix(const ufbx_matrix& m);
-
-//Matrix44 convertMatrix(const FbxAMatrix& m);
-//
-//traktor::Transform convertTransform(const FbxAMatrix& m);
 
 Color4f convertColor(const ufbx_vec4& c);
 

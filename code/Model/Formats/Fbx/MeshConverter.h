@@ -8,7 +8,6 @@
  */
 #pragma once
 
-//#include <fbxsdk.h>
 #include "ufbx.h"
 
 namespace traktor

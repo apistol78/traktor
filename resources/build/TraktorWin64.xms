@@ -7216,10 +7216,6 @@
 													<sourceFile>Traktor.Model.dll</sourceFile>
 													<targetPath>debugshared</targetPath>
 												</item>
-												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
-													<targetPath>debugshared</targetPath>
-												</item>
 											</aggregationItems>
 											<consumerLibraryPath>debugshared</consumerLibraryPath>
 										</item>
@@ -7256,10 +7252,6 @@
 													<sourceFile>Traktor.Model.dll</sourceFile>
 													<targetPath>releaseshared</targetPath>
 												</item>
-												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
-													<targetPath>releaseshared</targetPath>
-												</item>
 											</aggregationItems>
 											<consumerLibraryPath>releaseshared</consumerLibraryPath>
 										</item>
@@ -7292,10 +7284,6 @@
 													<sourceFile>Traktor.Model.lib</sourceFile>
 													<targetPath>debugstatic</targetPath>
 												</item>
-												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
-													<targetPath>debugstatic</targetPath>
-												</item>
 											</aggregationItems>
 											<consumerLibraryPath>debugstatic</consumerLibraryPath>
 										</item>
@@ -7326,10 +7314,6 @@
 												</item>
 												<item type="AggregationItem">
 													<sourceFile>Traktor.Model.lib</sourceFile>
-													<targetPath>releasestatic</targetPath>
-												</item>
-												<item type="AggregationItem">
-													<sourceFile>$(FBX_SDK_LIBPATH)\*.dll</sourceFile>
 													<targetPath>releasestatic</targetPath>
 												</item>
 											</aggregationItems>

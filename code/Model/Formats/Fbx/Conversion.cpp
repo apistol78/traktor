@@ -26,16 +26,6 @@ Vector4 convertNormal(const ufbx_vec3& v)
 	return Vector4(v.x, v.y, v.z, 0.0f);
 }
 
-//Vector4 convertPosition(const FbxVector4& v)
-//{
-//	return Vector4(float(v[0]), float(v[1]), float(v[2]), 1.0f);
-//}
-//
-//Quaternion convertQuaternion(const FbxQuaternion& v)
-//{
-//	return Quaternion(float(v[0]), float(v[1]), float(v[2]), float(v[3]));
-//}
-
 Matrix44 convertMatrix(const ufbx_matrix& m)
 {
 	return Matrix44(
@@ -45,24 +35,6 @@ Matrix44 convertMatrix(const ufbx_matrix& m)
 		Vector4(m.cols[3].x, m.cols[3].y, m.cols[3].z, 1.0f)
 	);
 }
-
-//Matrix44 convertMatrix(const FbxAMatrix& m)
-//{
-//	return Matrix44(
-//		convertVector4(m.GetRow(0)),
-//		convertVector4(m.GetRow(1)),
-//		convertVector4(m.GetRow(2)),
-//		convertVector4(m.GetRow(3))
-//	);
-//}
-//
-//traktor::Transform convertTransform(const FbxAMatrix& m)
-//{
-//	return traktor::Transform(
-//		convertVector4(m.GetT()),
-//		convertQuaternion(m.GetQ())
-//	);
-//}
 
 Color4f convertColor(const ufbx_vec4& c)
 {

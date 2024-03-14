@@ -183,7 +183,7 @@ private:
 	Map m_normalMap;
 	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 	float m_diffuseTerm = 1.0f;
-	float m_specularTerm = 1.0f;
+	float m_specularTerm = 0.5f;
 	float m_roughness = 0.8f;
 	float m_metalness = 0.0f;
 	float m_transparency = 0.0f;

@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -9,25 +7,16 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <functional>
-//#include <fbxsdk.h>
 #include "ufbx.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/MemoryStream.h"
-#include "Core/Io/IMappedFile.h"
 #include "Core/Log/Log.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
-#include "Core/Settings/PropertyBoolean.h"
-#include "Core/System/OS.h"
-#include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/Formats/Fbx/Conversion.h"
-//#include "Model/Formats/Fbx/IStreamWrapper.h"
 #include "Model/Formats/Fbx/MeshConverter.h"
 #include "Model/Formats/Fbx/ModelFormatFbx.h"
-//#include "Model/Formats/Fbx/SkeletonConverter.h"
+#include "Model/Formats/Fbx/SkeletonConverter.h"
 
 namespace traktor::model
 {
@@ -135,19 +124,20 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	if (!scene)
 		return nullptr;
 
+	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
+
 	Ref< Model > model = new Model();
 	bool result = true;
-
-	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
 
 	// First convert skeleton since it's used to figure out correct weight index
 	// when converting meshes.
 	ufbx_node* skeletonNode = search(scene->root_node, filter, [&](ufbx_node* node) {
-		//return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
-		return false;
+		return (node->bind_pose != nullptr);
 	});
 	if (skeletonNode)
 	{
+		if (!convertSkeleton(*model, scene, skeletonNode, axisTransform))
+			return nullptr;
 	}
 
 	// Convert and merge all meshes.
@@ -163,54 +153,8 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		return true;
 	});
 
-
 	ufbx_free_scene(scene);
 
-//	// Ensure embedded resources are extracted at a known location.
-//	const Path embeddedPath(OS::getInstance().getWritableFolderPath() + L"/Traktor/Fbx");
-//	FileSystem::getInstance().makeAllDirectories(embeddedPath);
-//	importer->SetEmbeddingExtractionFolder(wstombs(embeddedPath.getPathNameOS()).c_str());
-//
-//	Ref< IMappedFile > mf = FileSystem::getInstance().map(filePath);
-//	if (!mf)
-//		return nullptr;
-//
-//	MemoryStream ms(mf->getBase(), mf->getSize(), true, false);
-//
-//	AutoPtr< FbxStream > fbxStream(new IStreamWrapper());
-//	bool status = importer->Initialize(fbxStream.ptr(), &ms, readerID, s_fbxManager->GetIOSettings());
-//	if (!status)
-//	{
-//		log::error << L"Unable to import FBX model; failed to initialize FBX importer (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-//		return nullptr;
-//	}
-//
-//	s_scene->Clear();
-//
-//	status = importer->Import(s_scene);
-//	if (!status)
-//	{
-//		log::error << L"Unable to import FBX model; FBX importer failed (" << mbstows(importer->GetStatus().GetErrorString()) << L")." << Endl;
-//		return nullptr;
-//	}
-//
-//	FbxNode* rootNode = s_scene->GetRootNode();
-//	if (!rootNode)
-//		return nullptr;
-//
-//#if defined(_DEBUG)
-//	// Dump fbx hierarchy.
-//	dump(rootNode);
-//#endif
-//
-//	Matrix44 axisTransform = calculateAxisTransform(
-//		s_scene->GetGlobalSettings().GetAxisSystem()
-//	);
-//
-//	Ref< Model > model = new Model();
-//	AlignedVector< std::string > channels;
-//	bool result = true;
-//
 //	// Convert skeleton and animations.
 //	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
 //		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
@@ -255,21 +199,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 //			model->addAnimation(anim);
 //		}
 //	}
-//
-//	// Convert and merge all meshes.
-//	result &= traverse(rootNode, filter, [&](FbxNode* node) {
-//		if (node->GetNodeAttribute() && node->GetVisibility())
-//		{
-//			FbxNodeAttribute::EType attributeType = node->GetNodeAttribute()->GetAttributeType();
-//			if (attributeType == FbxNodeAttribute::eMesh)
-//			{
-//				if (!convertMesh(*model, s_scene, node, axisTransform))
-//					return false;
-//			}
-//		}
-//		return true;
-//	});
-//
+
 	// Create and assign default material if anonymous faces has been created.
 	uint32_t defaultMaterialIndex = c_InvalidIndex;
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
@@ -293,10 +223,65 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		}
 	}
 
-//	// \fixme Destroy when failing...
-//	importer->Destroy();
-//	importer = nullptr;
-//
+	const auto& channels = model->getTexCoordChannels();
+	if (!channels.empty())
+	{
+		const std::wstring& channel = channels[0];
+		auto materials = model->getMaterials();
+		for (auto& material : materials)
+		{
+			{
+				auto map = material.getDiffuseMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setDiffuseMap(map);
+			}
+			{
+				auto map = material.getSpecularMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setSpecularMap(map);
+			}
+			{
+				auto map = material.getRoughnessMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setRoughnessMap(map);
+			}
+			{
+				auto map = material.getMetalnessMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setMetalnessMap(map);
+			}
+			{
+				auto map = material.getTransparencyMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setTransparencyMap(map);
+			}
+			{
+				auto map = material.getEmissiveMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setEmissiveMap(map);
+			}
+			{
+				auto map = material.getReflectiveMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setReflectiveMap(map);
+			}
+			{
+				auto map = material.getNormalMap();
+				if (map.channel == L"")
+					map.channel = channel;
+				material.setNormalMap(map);
+			}
+		}
+		model->setMaterials(materials);
+	}
+
 	return model;
 }
 
