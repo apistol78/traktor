@@ -29,7 +29,7 @@
 				<red>true</red>
 				<green>true</green>
 				<blue>true</blue>
-				<alpha>false</alpha>
+				<alpha>true</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
@@ -1717,6 +1717,15 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{4642DBFC-C038-6344-AD1C-591A1E064062}</id>
+			<comment/>
+			<position>
+				<first>2728</first>
+				<second>1042</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -2367,16 +2376,6 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[103]"/>
 				<id>{5438A442-AF6D-45EB-8163-DF351C6DBF4B}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[103]"/>
-				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3047,6 +3046,26 @@ $Output = vec4(combined * $Occlusion, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<id>{EA66BEFA-15E3-2547-950A-06888A3BA8BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[103]"/>
+				<id>{291502CF-D8D7-4CEC-8457-E867D70CD04E}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[148]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[148]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

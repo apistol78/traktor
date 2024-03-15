@@ -5,8 +5,8 @@
 			<id>{563711FC-4CBE-D842-8C2C-91C25DD6891A}</id>
 			<comment/>
 			<position>
-				<first>3247</first>
-				<second>-620</second>
+				<first>3480</first>
+				<second>-617</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -1018,7 +1018,7 @@ Edge
 			</position>
 			<name>L_SampleCount</name>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{AD786D3A-11F0-B94B-A0D4-5B17438E962C}</id>
 			<comment/>
 			<position>
@@ -1027,6 +1027,11 @@ Edge
 			</position>
 			<name>RandomAngle</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -1046,11 +1051,10 @@ Edge
 			<script>
 			<![CDATA[
 $Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{43F91428-6EFD-D446-96FA-4E3A41B0ACC1}</id>
 			<comment/>
 			<position>
@@ -1059,6 +1063,11 @@ $Output = hash13(vec3(gl_FragCoord.xy, $Time)) * 2 * 3.14;
 			</position>
 			<name>Hammersley</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include/>
 			<inputPins>
 				<item>
@@ -1150,6 +1159,15 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<position>
 				<first>1640</first>
 				<second>-151</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{A8A90B7B-D97D-C149-B30D-BA4312CBC8CD}</id>
+			<comment/>
+			<position>
+				<first>3178</first>
+				<second>-531</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -2117,16 +2135,6 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[70]"/>
-				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[57]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2263,6 +2271,26 @@ $Output = vec4(float($Index) / $Count, radicalInverseVDC, 0, 0);
 			<destination>
 				<node ref="/object/nodes/item[106]"/>
 				<id>{2F15EAF1-E617-4931-AF16-BA52D9315156}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[70]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[113]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[113]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

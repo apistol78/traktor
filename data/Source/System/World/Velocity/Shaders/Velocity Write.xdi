@@ -28,8 +28,8 @@
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
-				<blue>false</blue>
-				<alpha>false</alpha>
+				<blue>true</blue>
+				<alpha>true</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
@@ -52,8 +52,8 @@
 			<id>{55606599-DA57-584A-9A22-85DB6F4829EF}</id>
 			<comment/>
 			<position>
-				<first>1050</first>
-				<second>644</second>
+				<first>1012</first>
+				<second>711</second>
 			</position>
 			<name>ViewVelocity</name>
 			<connectable>true</connectable>
@@ -74,18 +74,17 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{1F2263E4-899A-A346-BCDE-3B70152CE7AE}</id>
+			<comment/>
+			<position>
+				<first>1272</first>
+				<second>708</second>
+			</position>
+			<swizzle>xy</swizzle>
+		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -94,6 +93,26 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{185C5A67-11F2-4641-B007-2EA8FCB020D7}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

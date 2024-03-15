@@ -201,7 +201,7 @@ W
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{95E1E131-C36E-6241-921E-BEE81E849E0E}</id>
 			<comment/>
 			<position>
@@ -210,6 +210,12 @@ W
 			</position>
 			<name>Filmic</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{C9DDDC32-8B49-5749-AC70-4A65FE284600}</id>
@@ -235,9 +241,17 @@ $Output = vec4(
 	clamp((x * (a * x + b)) / (x * (c * x + d) + e), vec3(0.0f, 0.0f, 0.0f), vec3(1.0f, 1.0f, 1.0f)),
 	1.0f
 );
-
 			]]>
 			</script>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{84DFB728-2233-0747-B74D-BCEA40C34DC7}</id>
+			<comment/>
+			<position>
+				<first>1653</first>
+				<second>817</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -355,6 +369,16 @@ $Output = vec4(
 			<source>
 				<node ref="/object/nodes/item[12]"/>
 				<id>{F321640D-E63E-154A-B1E5-C131ADE3E119}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>

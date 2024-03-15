@@ -16,8 +16,8 @@
 			<id>{996080CB-909C-314F-9033-80D11CD16912}</id>
 			<comment/>
 			<position>
-				<first>1675</first>
-				<second>369</second>
+				<first>1867</first>
+				<second>374</second>
 			</position>
 			<technique>Default</technique>
 			<priority>
@@ -159,7 +159,6 @@ for (int i = 0; i < 16; ++i)
 tcl /= tw;
 
 $Output = tcl;
-
 			]]>
 			</script>
 		</item>
@@ -198,6 +197,15 @@ $Output = tcl;
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{3C0B1377-4995-CC47-B248-7F6320956815}</id>
+			<comment/>
+			<position>
+				<first>1625</first>
+				<second>413</second>
+			</position>
+			<swizzle>xyz</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -255,6 +263,16 @@ $Output = tcl;
 			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{965B4C51-D924-476A-A8F5-61736483840C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>

@@ -28,8 +28,8 @@
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
-				<blue>false</blue>
-				<alpha>false</alpha>
+				<blue>true</blue>
+				<alpha>true</alpha>
 			</colorWriteMask>
 			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>

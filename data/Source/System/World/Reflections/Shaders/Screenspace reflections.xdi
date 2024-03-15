@@ -318,7 +318,7 @@ for (int i = 0; i < 64; ++i)
 				<red>true</red>
 				<green>true</green>
 				<blue>true</blue>
-				<alpha>false</alpha>
+				<alpha>true</alpha>
 			</colorWriteMask>
 			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
