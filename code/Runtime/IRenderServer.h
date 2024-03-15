@@ -66,6 +66,10 @@ public:
 
 	virtual float getRefreshRate() const = 0;
 
+	virtual double getCPUDuration() const = 0;
+
+	virtual double getGPUDuration() const = 0;
+
 	virtual int32_t getFrameRate() const = 0;
 
 	virtual int32_t getThreadFrameQueueCount() const = 0;

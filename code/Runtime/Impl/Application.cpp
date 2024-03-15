@@ -887,6 +887,7 @@ bool Application::update()
 				const double renderEnd = m_timer.getElapsedTime();
 				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
+				m_renderServer->setDurations(m_renderCpuDurations[0], m_renderGpuDuration);
 				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
 			}
 		}
@@ -1165,6 +1166,7 @@ void Application::threadRender()
 				const double renderEnd = m_timer.getElapsedTime();
 				m_renderCpuDurations[1] = renderEnd - renderBegin;
 
+				m_renderServer->setDurations(m_renderCpuDurations[0], m_renderGpuDuration);
 				m_renderServer->setFrameRate(int32_t(1.0 / m_renderCpuDurations[1]));
 				m_stateRender = nullptr;
 			}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,9 +52,15 @@ public:
 
 	virtual UpdateResult update(PropertyGroup* settings);
 
+	virtual double getCPUDuration() const;
+
+	virtual double getGPUDuration() const;
+
 	virtual int32_t getFrameRate() const override final;
 
 	virtual int32_t getThreadFrameQueueCount() const override final;
+
+	void setDurations(double cpuDuration, double gpuDuration);
 
 	void setFrameRate(int32_t frameRate);
 
@@ -64,7 +70,9 @@ protected:
 	Ref< render::TextureFactory > m_textureFactory;
 
 private:
-	int32_t m_frameRate = 0;
+	std::atomic< double > m_cpuDuration = 0.0;
+	std::atomic< double > m_gpuDuration = 0.0;
+	std::atomic< int32_t > m_frameRate = 0;
 };
 
 }

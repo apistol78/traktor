@@ -232,6 +232,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRenderServer->addProperty< float >("viewAspectRatio", 0, &IRenderServer::getViewAspectRatio);
 	classRenderServer->addProperty< float >("aspectRatio", 0, &IRenderServer::getAspectRatio);
 	classRenderServer->addProperty< int32_t >("multiSample", 0, &IRenderServer::getMultiSample);
+	classRenderServer->addProperty< int32_t >("cpuDuration", 0, &IRenderServer::getCPUDuration);
+	classRenderServer->addProperty< int32_t >("gpuDuration", 0, &IRenderServer::getGPUDuration);
 	classRenderServer->addProperty< int32_t >("frameRate", 0, &IRenderServer::getFrameRate);
 	registrar->registerClass(classRenderServer);
 
