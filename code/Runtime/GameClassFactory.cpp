@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
 #include "Core/Class/Boxes/BoxedAabb2.h"
+#include "Core/Class/Boxes/BoxedColor4f.h"
 #include "Core/Class/Boxes/BoxedFrustum.h"
 #include "Core/Class/Boxes/BoxedGuid.h"
 #include "Core/Class/Boxes/BoxedRay3.h"
@@ -36,6 +37,7 @@
 #include "Runtime/UpdateControl.h"
 #include "Runtime/UpdateInfo.h"
 #include "Runtime/Engine/AudioLayer.h"
+#include "Runtime/Engine/DebugLayer.h"
 #include "Runtime/Engine/ScreenLayer.h"
 #include "Runtime/Engine/SplitWorldLayer.h"
 #include "Runtime/Engine/Stage.h"
@@ -306,6 +308,12 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classAudioLayer->addMethod("tweenParameter", &AudioLayer_tweenParameter_1);
 	classAudioLayer->addMethod("tweenParameter", &AudioLayer_tweenParameter_2);
 	registrar->registerClass(classAudioLayer);
+
+	auto classDebugLayer = new AutoRuntimeClass< DebugLayer >();
+	classDebugLayer->addProperty("color", &DebugLayer::setColor, &DebugLayer::getColor);
+	classDebugLayer->addProperty("size", &DebugLayer::setSize, &DebugLayer::getSize);
+	classDebugLayer->addMethod("addPoint", &DebugLayer::addPoint);
+	registrar->registerClass(classDebugLayer);
 
 	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();
 	classScreenLayer->addMethod("setParameterCallback", &ScreenLayer_setParameterCallback);

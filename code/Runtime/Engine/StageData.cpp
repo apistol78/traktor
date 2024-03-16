@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Runtime/IEnvironment.h"
+#include "Runtime/Engine/DebugLayer.h"
 #include "Runtime/Engine/LayerData.h"
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/StageData.h"
@@ -64,8 +65,9 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	if (m_shaderFade && !resourceManager->bind(m_shaderFade, shaderFade))
 		return nullptr;
 
-	// Create layers.
 	Ref< Stage > stage = new Stage(m_name, environment, clazz, shaderFade, m_fadeOutUpdate, m_fadeRate, m_transitions, params);
+
+	// Create layers.
 	for (auto layerData : m_layers)
 	{
 		Ref< Layer > layer = layerData->createInstance(stage, environment);
@@ -74,6 +76,10 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 
 		stage->addLayer(layer);
 	}
+
+	// Add debug layer when started from editor.
+	if (true)
+		stage->addLayer(new DebugLayer(stage, environment));
 
 	return stage;
 }

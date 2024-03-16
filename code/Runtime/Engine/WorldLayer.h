@@ -101,6 +101,8 @@ public:
 
 	world::IWorldRenderer* getWorldRenderer() const;
 
+	const world::WorldRenderView& getWorldRenderView() const { return m_worldRenderView; }
+
 	Ref< world::Entity > createEntity(const Guid& entityDataId) const;
 
 	void setControllerEnable(bool controllerEnable);

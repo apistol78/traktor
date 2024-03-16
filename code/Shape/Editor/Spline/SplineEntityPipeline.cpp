@@ -45,7 +45,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 6, SplineEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 7, SplineEntityPipeline, world::EntityPipeline)
 
 bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -198,6 +198,8 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 
 				++controlPointIndex;
 			}
+
+			path = path.geometricNormalized(splineComponentData->isClosed());
 
 			replacementEntityData->setComponent(new world::PathComponentData(path));
 		}
