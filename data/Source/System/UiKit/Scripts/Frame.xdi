@@ -33,6 +33,16 @@ function Frame:remove()
 		self._mouseListener = nil
 	end
 
+	if self._keyDownListener ~= nil then
+		cx.key.eventMouseWheel:remove(self._keyDownListener)
+		self._keyDownListener = nil
+	end
+
+	if self._keyUpListener ~= nil then
+		cx.key.eventMouseWheel:remove(self._keyUpListener)
+		self._keyUpListener = nil
+	end
+
 	if self._stageListener ~= nil then
 		cx.stage.eventResize:remove(self._stageListener)
 		self._stageListener = nil
@@ -96,8 +106,12 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._mc.eventMouseUp:add(function() self:_eventMouseUp() end)
 	self._mc.eventMouseMove:add(function() self:_eventMouseMove() end)
 
-	local mouse = mc.context.mouse
+	local mouse < const > = mc.context.mouse
 	self._mouseListener = mouse.eventMouseWheel:add(function(delta) self:_eventMouseWheel(delta) end)
+
+	local key < const > = mc.context.key
+	self._keyDownListener = key.eventKeyDown:add(function() self:_eventKeyDown() end)
+	self._keyUpListener = key.eventKeyUp:add(function() self:_eventKeyUp() end)
 
 #if defined(_DEBUG)
 	if Frame.ShowDebugCursor then
@@ -141,6 +155,17 @@ function Frame:_eventMouseWheel(delta)
 	local pt = self:getMousePosition()
 	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
+
+function Frame:_eventKeyDown()
+	local key < const > = self._mc.context.key
+	self:_dispatchEvent(KeyDownEvent(key.code))
+end
+
+function Frame:_eventKeyUp()
+	local key < const > = self._mc.context.key
+	self:_dispatchEvent(KeyUpEvent(key.code))
+end
+
 
 	]]>
 	</text>
