@@ -162,13 +162,13 @@ bool SkeletonComponent::setPoseTransform(render::handle_t jointName, const Trans
 	if (m_poseTransforms.empty())
 		m_poseTransforms = m_jointTransforms;
 
-	const Transform Tdelta = transform * m_poseTransforms[index].inverse();
-	m_poseTransforms[index] = Tdelta * m_poseTransforms[index];
+	m_poseTransforms[index] = transform; // Tdelta * m_poseTransforms[index];
 
 	if (inclusive)
 	{
-		m_skeleton->findAllChildren(index, [&](uint32_t child){
-			m_poseTransforms[child] = Tdelta * m_poseTransforms[child];
+		const Transform Tdelta = transform * m_jointTransforms[index].inverse();
+		m_skeleton->findAllChildren(index, [&](uint32_t child) {
+			m_poseTransforms[child] = Tdelta * m_jointTransforms[child];
 		});
 	}
 
