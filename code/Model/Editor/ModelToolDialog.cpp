@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,6 +13,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -273,6 +274,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	modelRootPopupAdd->add(new ui::MenuItem(ui::Command(L"ModelTool.ExecuteScript"), L"Execute script..."));
 	m_modelRootPopup->add(modelRootPopupAdd);
 	m_modelRootPopup->add(new ui::MenuItem(L"-"));
+	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Reload"), i18n::Text(L"MODEL_TOOL_RELOAD")));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.SaveAs"), i18n::Text(L"MODEL_TOOL_SAVE_AS")));
 	m_modelRootPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
@@ -317,6 +319,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 
 			Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName, 0);
 			item->setData(L"MODEL", model);
+			item->setData(L"PATH", new PropertyString(fileName));
 			item->select();
 
 			updateModel();
@@ -369,6 +372,7 @@ bool ModelToolDialog::loadModel()
 
 		Ref< ui::TreeViewItem > item = m_modelTree->createItem(0, fileName.getFileName(), 0);
 		item->setData(L"MODEL", model);
+		item->setData(L"PATH", new PropertyString(fileName.getPathName()));
 	}
 
 	m_modelTree->update();
@@ -409,6 +413,22 @@ bool ModelToolDialog::loadTexture()
 	m_texturePreview = m_renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
 	return (bool)(m_texturePreview != nullptr);
+}
+
+bool ModelToolDialog::reloadModel(ui::TreeViewItem* itemModel)
+{
+	const PropertyString* ps = itemModel->getData< PropertyString >(L"PATH");
+	if (!ps)
+		return false;
+
+	Ref< Model > model = ModelFormat::readAny(PropertyString::get(ps));
+	if (!model)
+		return false;
+
+	itemModel->setData(L"MODEL", model);
+
+	updateModel();
+	return true;
 }
 
 bool ModelToolDialog::saveModel(Model* model)
@@ -788,6 +808,10 @@ void ModelToolDialog::eventModelTreeButtonDown(ui::MouseButtonDownEvent* event)
 				itemOperation->setData(L"SCRIPT_INSTANCE", scriptInstance);
 				itemOperation->setData(L"OPERATION", new ExecuteScript(scriptClass));
 				updateOperations(itemModel);
+			}
+			else if (command == L"ModelTool.Reload")
+			{
+				reloadModel(itemModel);
 			}
 			else if (command == L"ModelTool.SaveAs")
 			{
