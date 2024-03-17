@@ -124,6 +124,7 @@ float PathComponent::findClosest(const Vector4& position) const
 	const float TstepB = (TstepA * 2.0f) / 10.0f;
 	const float TstepC = (TstepB * 2.0f) / 10.0f;
 	const float TstepD = (TstepC * 2.0f) / 10.0f;
+	const float TstepE = (TstepD * 2.0f) / 10.0f;
 
 	float Tmin;
 	Tmin = findClosestRange(m_path, m_closed, position, Tstart, Tend, 100);
@@ -131,6 +132,7 @@ float PathComponent::findClosest(const Vector4& position) const
 	Tmin = findClosestRange(m_path, m_closed, position, Tmin - TstepB, Tmin + TstepB, 10);
 	Tmin = findClosestRange(m_path, m_closed, position, Tmin - TstepC, Tmin + TstepC, 10);
 	Tmin = findClosestRange(m_path, m_closed, position, Tmin - TstepD, Tmin + TstepD, 10);
+	Tmin = findClosestRange(m_path, m_closed, position, Tmin - TstepE, Tmin + TstepE, 10);
 
 	while (Tmin < 0.0f)
 		Tmin += Tduration;
