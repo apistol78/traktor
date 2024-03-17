@@ -51,6 +51,8 @@ void DebugLayer::transition(Layer* fromLayer)
 
 void DebugLayer::preUpdate(const UpdateInfo& info)
 {
+	m_points.resize(0);
+	m_lines.resize(0);
 }
 
 void DebugLayer::update(const UpdateInfo& info)
@@ -87,7 +89,17 @@ void DebugLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 			point.color.toColor4ub()
 		);
 	}
-	
+
+	for (const auto& line : m_lines)
+	{
+		m_primitiveRenderer->drawLine(
+			line.from.xyz1(), 
+			line.to.xyz1(), 
+			line.width,
+			line.color.toColor4ub()
+		);
+	}
+
 	m_primitiveRenderer->popDepthState();
 	m_primitiveRenderer->popView();
 	m_primitiveRenderer->end(m_count);
@@ -104,7 +116,6 @@ void DebugLayer::setup(const UpdateInfo& info, render::RenderGraph& renderGraph)
 	renderGraph.addPass(rp);
 
 	m_count = (m_count + 1) % 16;
-	m_points.resize(0);
 }
 
 void DebugLayer::preReconfigured()
@@ -127,9 +138,14 @@ void DebugLayer::hotReload()
 {
 }
 
-void DebugLayer::addPoint(const Vector4& position)
+void DebugLayer::point(const Vector4& position, float size, const Color4f& color)
 {
-	m_points.push_back({ position, m_color, m_size });
+	m_points.push_back({ position, color, size });
+}
+
+void DebugLayer::line(const Vector4& from, const Vector4& to, float width, const Color4f& color)
+{
+	m_lines.push_back({ from, to, color, width });
 }
 
 }

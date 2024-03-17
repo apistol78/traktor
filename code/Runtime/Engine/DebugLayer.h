@@ -67,15 +67,9 @@ public:
 
 	virtual void hotReload() override final;
 
-	void setColor(const Color4f& color) { m_color = color; }
+	void point(const Vector4& position, float size, const Color4f& color);
 
-	const Color4f& getColor() const { return m_color; }
-
-	void setSize(float size) { m_size = size; }
-
-	float getSize() const { return m_size; }
-
-	void addPoint(const Vector4& position);
+	void line(const Vector4& from, const Vector4& to, float width, const Color4f& color);
 
 private:
 	struct Point
@@ -85,13 +79,18 @@ private:
 		float size;
 	};
 
+	struct Line
+	{
+		Vector4 from;
+		Vector4 to;
+		Color4f color;
+		float width;
+	};
+
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	int32_t m_count = 0;
-
-	Color4f m_color = Color4f(1.0f, 1.0f, 1.0f, 1.0f);
-	float m_size = 10.0f;
-
 	AlignedVector< Point > m_points;
+	AlignedVector< Line > m_lines;
 };
 
 }

@@ -78,7 +78,7 @@ Ref< Stage > StageData::createInstance(IEnvironment* environment, const Object* 
 	}
 
 	// Add debug layer when started from editor.
-	if (true)
+	if (environment->getSettings()->getProperty< bool >(L"Runtime.DebugLayer", false))
 		stage->addLayer(new DebugLayer(stage, environment));
 
 	return stage;

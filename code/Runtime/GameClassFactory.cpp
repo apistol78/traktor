@@ -310,9 +310,8 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classAudioLayer);
 
 	auto classDebugLayer = new AutoRuntimeClass< DebugLayer >();
-	classDebugLayer->addProperty("color", &DebugLayer::setColor, &DebugLayer::getColor);
-	classDebugLayer->addProperty("size", &DebugLayer::setSize, &DebugLayer::getSize);
-	classDebugLayer->addMethod("addPoint", &DebugLayer::addPoint);
+	classDebugLayer->addMethod("point", &DebugLayer::point);
+	classDebugLayer->addMethod("line", &DebugLayer::line);
 	registrar->registerClass(classDebugLayer);
 
 	auto classScreenLayer = new AutoRuntimeClass< ScreenLayer >();

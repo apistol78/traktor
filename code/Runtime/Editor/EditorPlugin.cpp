@@ -173,6 +173,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
 	m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
+	m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
 	m_toolBar->addItem(m_toolTweaks);
 
 	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
@@ -506,6 +507,8 @@ Ref< PropertyGroup > EditorPlugin::getTweakSettings() const
 		tweakSettings->setProperty< PropertyStringSet >(L"Runtime.Modules", modules);
 		tweakSettings->setProperty< PropertyString >(L"Render.CaptureType", L"traktor.render.RenderSystemVrfy");
 	}
+	if (m_toolTweaks->get(12)->isChecked())
+		tweakSettings->setProperty< PropertyBoolean >(L"Runtime.DebugLayer", true);
 
 	const int32_t language = m_toolLanguage->getSelected();
 	if (language > 0)
