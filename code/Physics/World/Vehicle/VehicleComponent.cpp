@@ -384,7 +384,8 @@ void VehicleComponent::updateFriction(Body* body, float dT)
 		if (slipAngle < maxSlipAngle)
 		{
 			const float f = slipAngle / maxSlipAngle;
-			const float b = 2.0f * f * (1.0f - 0.5f * f);
+			// const float b = 2.0f * f * (1.0f - 0.5f * f);
+			const float b = 1.5f * std::pow(f, 0.5f) * (1.0f - 0.33f * f);
 			force = b * peakSlipFriction;
 		}
 		else
