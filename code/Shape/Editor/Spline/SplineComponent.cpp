@@ -158,6 +158,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 			safeDestroy(m_body);
 
 			AlignedVector< Vector4 > positions;
+			positions.reserve(outputModel->getVertices().size());
 			for (const auto& vertex : outputModel->getVertices())
 			{
 				const Vector4 position = outputModel->getPosition(vertex.getPosition());
@@ -165,6 +166,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 			}
 
 			AlignedVector< physics::Mesh::Triangle > triangles;
+			triangles.reserve(outputModel->getPolygons().size());
 			for (const auto& polygon : outputModel->getPolygons())
 			{
 				T_FATAL_ASSERT(polygon.getVertexCount() == 3);

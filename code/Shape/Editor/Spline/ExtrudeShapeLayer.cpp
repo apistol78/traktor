@@ -93,6 +93,12 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, b
 	outputModel->setTexCoordChannels(m_modelRepeat->getTexCoordChannels());
 
 	const int32_t nrepeats = (int32_t)(pathLength / step.delta()) + 1;
+
+	outputModel->reservePositions(nrepeats * m_modelRepeat->getVertices().size());
+	outputModel->reserveNormals(nrepeats * m_modelRepeat->getVertices().size());
+	outputModel->reserveVertices(nrepeats * m_modelRepeat->getVertices().size());
+	outputModel->reservePolygons(nrepeats * m_modelRepeat->getPolygons().size());
+
 	for (int32_t i = 0; i < nrepeats; ++i)
 	{
 		const float at = (float)i / nrepeats;

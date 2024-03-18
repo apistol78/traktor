@@ -11,6 +11,7 @@
 #include "Core/Settings/PropertyObject.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Model/Operations/CleanDuplicates.h"
 #include "Shape/Editor/Spline/CloneShapeLayer.h"
 #include "Shape/Editor/Spline/CloneShapeLayerData.h"
 
@@ -65,6 +66,12 @@ Ref< model::Model > CloneShapeLayer::createModel(const TransformPath& path, bool
 	outputModel->setTexCoordChannels(m_model->getTexCoordChannels());
 
 	const int32_t nrepeats = (int32_t)(pathLength / m_data->m_distance) + 1;
+
+	outputModel->reservePositions(nrepeats * m_model->getVertices().size());
+	outputModel->reserveNormals(nrepeats * m_model->getVertices().size());
+	outputModel->reserveVertices(nrepeats * m_model->getVertices().size());
+	outputModel->reservePolygons(nrepeats * m_model->getPolygons().size());
+
 	for (int32_t i = 0; i < nrepeats; ++i)
 	{
 		const float f = (float)i / (nrepeats - 1);
@@ -111,6 +118,10 @@ Ref< model::Model > CloneShapeLayer::createModel(const TransformPath& path, bool
 			outputModel->addPolygon(outputPolygon);
 		}
 	}
+
+	// Cleanup since there are probably a lot of duplicates.
+	if (!preview)
+		model::CleanDuplicates(0.01f).apply(*outputModel);
 
 	outputModel->setProperty< PropertyObject >(type_name(m_mesh), m_mesh);
 	return outputModel;
