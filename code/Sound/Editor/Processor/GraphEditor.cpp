@@ -508,7 +508,17 @@ void GraphEditor::eventEdgeConnected(ui::EdgeConnectEvent* event)
 
 	Edge* currentEdge = m_graphAsset->getGraph()->findEdge(destinationPin);
 	if (currentEdge != nullptr)
+	{
+		for (auto editorEdge : m_graph->getEdges())
+		{
+			if (editorEdge->getData(L"EDGE") == currentEdge)
+			{
+				m_graph->removeEdge(editorEdge);
+				break;
+			}
+		}
 		m_graphAsset->getGraph()->removeEdge(currentEdge);
+	}
 
 	Ref< Edge > edge = new Edge(
 		sourcePin,
