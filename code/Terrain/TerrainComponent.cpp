@@ -476,7 +476,7 @@ void TerrainComponent::build(
 	// Render all patches using indirect draw.
 	{
 		auto rb = renderContext->allocNamed< render::IndirectRenderBlock >(L"Terrain patches");
-		rb->distance = 0.0f;
+		rb->distance = 10000.0f;
 		rb->program = program;
 		rb->programParams = renderContext->alloc< render::ProgramParameters >();
 		rb->indexBuffer = m_indexBuffer->getBufferView();
