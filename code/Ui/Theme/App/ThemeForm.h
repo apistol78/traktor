@@ -45,6 +45,7 @@ private:
 	Ref< TreeView > m_treeTheme;
 	Ref< TreeViewItem > m_pinnedElementItem;
 	Ref< GridView > m_gridPalette;
+	Ref< GridView > m_gridValues;
 	Ref< Container > m_containerPreview;
 	Ref< StyleSheet > m_styleSheet;
 	Path m_styleSheetPath;
@@ -53,6 +54,8 @@ private:
 	void updateTree();
 
 	void updatePalette();
+
+	void updateValues();
 
 	void updatePreview();
 

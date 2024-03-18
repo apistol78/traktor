@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,6 +19,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/FileDialog.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
@@ -26,6 +27,8 @@
 #include "Ui/Splitter.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
+#include "Ui/Tab.h"
+#include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ColorPicker/ColorDialog.h"
 #include "Ui/GridView/GridColumn.h"
@@ -213,11 +216,29 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 	m_treeTheme->addEventHandler< MouseButtonDownEvent >(this, &ThemeForm::eventTreeButtonDown);
 	m_treeTheme->addEventHandler< TreeViewContentChangeEvent >(this, &ThemeForm::eventTreeChange);
 
+	Ref< Tab > tab = new Tab();
+	tab->create(splitter2, ui::WsNone);
+
+	Ref< TabPage > tabPagePalette = new TabPage();
+	tabPagePalette->create(tab, L"Palette", new FloodLayout());
+
 	m_gridPalette = new GridView();
-	m_gridPalette->create(splitter2, WsDoubleBuffer | GridView::WsColumnHeader);
+	m_gridPalette->create(tabPagePalette, WsDoubleBuffer | GridView::WsColumnHeader);
 	m_gridPalette->addColumn(new GridColumn(L"Color", 70_ut));
 	m_gridPalette->addColumn(new GridColumn(L"Hex", 150_ut));
 	m_gridPalette->addEventHandler< MouseDoubleClickEvent >(this, &ThemeForm::eventPaletteDoubleClick);
+
+	Ref< TabPage > tabPageValues = new TabPage();
+	tabPageValues->create(tab, L"Values", new FloodLayout());
+
+	m_gridValues = new GridView();
+	m_gridValues->create(tabPageValues, WsDoubleBuffer | GridView::WsColumnHeader);
+	m_gridValues->addColumn(new GridColumn(L"ID", 70_ut));
+	m_gridValues->addColumn(new GridColumn(L"Value", 150_ut));
+
+	tab->addPage(tabPagePalette);
+	tab->addPage(tabPageValues);
+	tab->setActivePage(tabPagePalette);
 
 	m_containerPreview = new Container();
 	m_containerPreview->create(splitter, WsAccelerated, new TableLayout(L"100%", L"100%", 16_ut, 0_ut));
@@ -234,6 +255,7 @@ bool ThemeForm::create(const CommandLine& cmdLine)
 			updateTitle();
 			updateTree();
 			updatePalette();
+			updateValues();
 			updatePreview();
 		}
 		else
@@ -295,9 +317,25 @@ void ThemeForm::updatePalette()
 
 		Ref< GridRow > row = new GridRow();
 		row->setData(L"COLOR", new PropertyColor(color));
-		row->add(new GridItem(new Bitmap(imageColor)));
-		row->add(new GridItem(str(L"#%02x%02x%02x%02x", color.r, color.g, color.b, color.a)));
+		row->add(new Bitmap(imageColor));
+		row->add(str(L"#%02x%02x%02x%02x", color.r, color.g, color.b, color.a));
 		m_gridPalette->addRow(row);
+	}
+}
+
+void ThemeForm::updateValues()
+{
+	m_gridValues->removeAllRows();
+
+	if (!m_styleSheet)
+		return;
+
+	for (const auto& it : m_styleSheet->getValues())
+	{
+		Ref< GridRow > row = new GridRow();
+		row->add(it.first);
+		row->add(it.second);
+		m_gridValues->addRow(row);
 	}
 }
 
@@ -375,6 +413,7 @@ void ThemeForm::handleCommand(const Command& command)
 				updateTitle();
 				updateTree();
 				updatePalette();
+				updateValues();
 				updatePreview();
 			}
 			else
@@ -431,7 +470,7 @@ void ThemeForm::handleCommand(const Command& command)
 		if (isElement(selectedItem))
 		{
 			// Copy element.
-			Color4ub color = m_styleSheet->getColor(
+			const Color4ub color = m_styleSheet->getColor(
 				selectedItem->getParent()->getText(),
 				selectedItem->getText()
 			);
@@ -455,11 +494,11 @@ void ThemeForm::handleCommand(const Command& command)
 		Ref< TreeViewItem > selectedItem = selectedItems.front();
 		if (isEntity(selectedItem))
 		{
-			std::wstring element = props->getProperty< std::wstring >(L"element", L"");
+			const std::wstring element = props->getProperty< std::wstring >(L"element", L"");
 			if (element.empty())
 				return;
 
-			Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
+			const Color4ub color = props->getProperty< Color4ub >(L"color", Color4ub(255, 255, 255));
 
 			m_styleSheet->setColor(
 				selectedItem->getText(),
@@ -507,7 +546,7 @@ void ThemeForm::eventTreeActivateItem(TreeViewItemActivateEvent* event)
 	colorDialog.create(this, L"Set Element Color", Dialog::WsDefaultFixed | ColorDialog::WsAlpha);
 	if (colorDialog.showModal() == ui::DialogResult::Ok)
 	{
-		int32_t imageIndex = itemElement->getImage(0);
+		const int32_t imageIndex = itemElement->getImage(0);
 
 		Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 		imageColor->clear(colorDialog.getColor().rgb1());
@@ -655,7 +694,7 @@ void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
 	if (selectedRow == nullptr)
 		return;
 
-	Color4ub color = PropertyColor::get(selectedRow->getData< PropertyColor >(L"COLOR"));
+	const Color4ub color = PropertyColor::get(selectedRow->getData< PropertyColor >(L"COLOR"));
 
 	RefArray< ui::TreeViewItem > selectedItems;
 	m_treeTheme->getItems(selectedItems, TreeView::GfDescendants | TreeView::GfSelectedOnly);
@@ -669,7 +708,7 @@ void ThemeForm::eventPaletteDoubleClick(MouseDoubleClickEvent* event)
 	auto itemEntity = getEntity(itemElement);
 	T_ASSERT(itemEntity);
 
-	int32_t imageIndex = itemElement->getImage(0);
+	const int32_t imageIndex = itemElement->getImage(0);
 
 	Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 	imageColor->clear(Color4f::fromColor4ub(color).rgb1());
