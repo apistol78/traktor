@@ -35,7 +35,7 @@ const float c_warmUpDeltaTime = 1.0f / 5.0f;
 const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
 #else
-const uint32_t c_maxEmitPerUpdate = 16;
+const uint32_t c_maxEmitPerUpdate = 64;
 const uint32_t c_maxEmitSingleShot = 400;
 #endif
 
@@ -48,7 +48,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 :	m_emitter(emitter)
 ,	m_transform(Transform::identity())
-,	m_sortPlane(Vector4(0.0f, 0.0f, -1.0f), Scalar(0.0f))
+,	m_sortPlane(Vector4(0.0f, 0.0f, -1.0f), 0.0_simd)
 ,	m_totalTime(0.0f)
 ,	m_emitFraction(0.0f)
 ,	m_warm(false)
@@ -137,19 +137,19 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				const float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				const float emitConstant = source->getConstantRate() * context.deltaTime;
 				const float emit = emitVelocity + emitConstant + m_emitFraction;
-				const uint32_t emitCountFrame = uint32_t(emit);
+				uint32_t emitCountFrame = uint32_t(emit);
 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)
 				{
-					const uint32_t emitCount = min< uint32_t >(emitCountFrame, avail, c_maxEmitPerUpdate);
-					if (emitCount > 0)
+					emitCountFrame = min< uint32_t >(emitCountFrame, avail, c_maxEmitPerUpdate);
+					if (emitCountFrame > 0)
 					{
 						source->emit(
 							context,
 							m_emitter->worldSpace() ? m_transform : Transform::identity(),
 							dm,
-							emitCount,
+							emitCountFrame,
 							*this
 						);
 					}

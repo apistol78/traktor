@@ -84,7 +84,7 @@ void ConeSource::emit(
 		point->position = position + point->velocity * beta * dT;
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
-		point->age = beta;
+		point->age = 0.0f;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / m_mass.random(context.random);
 		point->size = m_size.random(context.random);
