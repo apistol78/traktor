@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmPrimitive.h"
 #include "Core/Reflection/RfpMemberType.h"
@@ -21,22 +22,22 @@
 #include "Editor/IEditor.h"
 #include "Editor/App/LogView.h"
 #include "I18N/Text.h"
-#include "Ui/StyleBitmap.h"
+#include "Ui/Edit.h"
 #include "Ui/Menu.h"
 #include "Ui/MenuItem.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Events/LogActivateEvent.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
+#include "Ui/ToolBar/ToolBarEmbed.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
+	namespace
 	{
-		namespace
-		{
 
 class LogListTarget : public ILogTarget
 {
@@ -55,7 +56,7 @@ private:
 	ui::LogList* m_logList;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.LogView", LogView, ui::Container)
 
@@ -101,6 +102,13 @@ bool LogView::create(ui::Widget* parent)
 	m_toolFilter->addItem(m_toolToggleError);
 	m_toolFilter->addItem(new ui::ToolBarSeparator());
 	m_toolFilter->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 0, ui::Command(L"Editor.Log.Copy")));
+	m_toolFilter->addItem(new ui::ToolBarSeparator());
+	
+	m_editFind = new ui::Edit();
+	m_editFind->create(m_toolFilter, L"", ui::WsNone);
+	m_editFind->addEventHandler< ui::KeyEvent >(this, &LogView::eventFindKey);
+	m_toolFilter->addItem(new ui::ToolBarEmbed(m_editFind, 130_ut));
+
 	m_toolFilter->addEventHandler< ui::ToolBarButtonClickEvent >(this, &LogView::eventToolClick);
 
 	m_log = new ui::LogList();
@@ -140,6 +148,24 @@ void LogView::eventToolClick(ui::ToolBarButtonClickEvent* event)
 	}
 	else if (cmd == L"Editor.Log.Copy")
 		m_log->copyLog();
+}
+
+void LogView::eventFindKey(ui::KeyEvent* event)
+{
+	const std::wstring needle = toLower(m_editFind->getText());
+	if (!needle.empty())
+	{
+		AlignedVector< int32_t > lines;
+		m_log->forEachFilteredLine([&](int32_t line,  const std::wstring& text) {
+			if (toLower(text).find(needle) != text.npos)
+				lines.push_back(line);
+		});
+		if (!lines.empty())
+		{
+			m_log->selectLine(lines.front());
+			m_log->showLine(lines.front());
+		}
+	}
 }
 
 void LogView::eventButtonDown(ui::MouseButtonDownEvent* event)
@@ -211,5 +237,4 @@ bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) con
 	return true;
 }
 
-	}
 }

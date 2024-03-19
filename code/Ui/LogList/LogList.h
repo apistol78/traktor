@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Containers/StaticMap.h"
@@ -22,10 +23,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class IBitmap;
 class ScrollBar;
@@ -61,7 +60,15 @@ public:
 
 	uint8_t getFilter() const;
 
+	void selectLine(int32_t line);
+
+	void showLine(int32_t line);
+
 	bool copyLog(uint8_t filter = ~0);
+
+	void forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
+
+	void forEachFilteredLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 
@@ -107,6 +114,4 @@ private:
 	void eventScroll(ScrollEvent* event);
 };
 
-	}
 }
-

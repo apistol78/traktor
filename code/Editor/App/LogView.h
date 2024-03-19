@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,19 +16,22 @@ namespace traktor
 
 class ILogTarget;
 
-	namespace ui
-	{
+}
 
+namespace traktor::ui
+{
+
+class Edit;
 class LogActivateEvent;
 class Menu;
 class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
@@ -39,7 +42,7 @@ class LogView
 	T_RTTI_CLASS;
 
 public:
-	LogView(IEditor* editor);
+	explicit LogView(IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -53,11 +56,14 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleWarning;
 	Ref< ui::ToolBarButton > m_toolToggleError;
 	Ref< ui::ToolBar > m_toolFilter;
+	Ref< ui::Edit > m_editFind;
 	Ref< ui::LogList > m_log;
 	Ref< ui::Menu > m_popup;
 	Ref< ILogTarget > m_logTarget;
 
 	void eventToolClick(ui::ToolBarButtonClickEvent* event);
+
+	void eventFindKey(ui::KeyEvent* event);
 
 	void eventButtonDown(ui::MouseButtonDownEvent* event);
 
@@ -66,6 +72,4 @@ private:
 	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const override final;
 };
 
-	}
 }
-

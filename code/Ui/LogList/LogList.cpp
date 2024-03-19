@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -146,6 +146,21 @@ uint8_t LogList::getFilter() const
 	return m_filter;
 }
 
+void LogList::selectLine(int32_t line)
+{
+	m_selectedEntry = line;
+	update();
+}
+
+void LogList::showLine(int32_t line)
+{
+	if (!m_scrollBar->isVisible(false))
+		return;
+
+	m_scrollBar->setPosition(line);
+	update();
+}
+
 bool LogList::copyLog(uint8_t filter)
 {
 	StringOutputStream ss;
@@ -155,6 +170,18 @@ bool LogList::copyLog(uint8_t filter)
 			ss << log.text << Endl;
 	}
 	return Application::getInstance()->getClipboard()->setText(ss.str());
+}
+
+void LogList::forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const
+{
+	for (int32_t line = 0; line < (int32_t)m_logFull.size(); ++line)
+		fn(line, m_logFull[line].text);
+}
+
+void LogList::forEachFilteredLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const
+{
+	for (int32_t line = 0; line < (int32_t)m_logFiltered.size(); ++line)
+		fn(line, m_logFiltered[line].text);
 }
 
 Size LogList::getPreferredSize(const Size& hint) const
@@ -393,9 +420,7 @@ void LogList::eventMouseButtonDown(MouseButtonDownEvent* event)
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 
 	const int32_t row = advanceCount + event->getPosition().y / pixel(m_itemHeight);
-	m_selectedEntry = row;
-
-	update();
+	selectLine(row);
 }
 
 void LogList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
