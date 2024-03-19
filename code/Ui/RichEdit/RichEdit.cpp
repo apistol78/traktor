@@ -1806,7 +1806,7 @@ void RichEdit::eventSize(SizeEvent* event)
 
 	updateScrollBars();
 
-	const Rect rcV(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight() - height));
+	const Rect rcV(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
 	m_scrollBarV->setRect(rcV);
 
 	const Rect rcH(Point(0, inner.getHeight() - height), Size(inner.getWidth() - width, height));

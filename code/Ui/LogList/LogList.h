@@ -84,7 +84,8 @@ private:
 	typedef AlignedVector< Entry > log_list_t;
 
 	const ISymbolLookup* m_lookup = nullptr;
-	Ref< ScrollBar > m_scrollBar;
+	Ref< ScrollBar > m_scrollBarH;
+	Ref< ScrollBar > m_scrollBarV;
 	Ref< IBitmap > m_icons;
 	log_list_t m_pending;
 	Semaphore m_pendingLock;
@@ -93,6 +94,7 @@ private:
 	uint32_t m_logCount[3] = { 0, 0, 0 };
 	StaticMap< uint32_t, uint32_t, 128 > m_threadIndices;
 	Unit m_itemHeight = 0_ut;
+	int32_t m_maxLineWidth = 0;
 	uint8_t m_filter = LvInfo | LvWarning | LvError;
 	uint32_t m_nextThreadIndex = 0;
 	int32_t m_selectedEntry = -1;

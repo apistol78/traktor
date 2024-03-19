@@ -38,18 +38,23 @@ bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 	addEventHandler< MouseDoubleClickEvent >(this, &LogList::eventMouseDoubleClick);
 	addEventHandler< MouseWheelEvent >(this, &LogList::eventMouseWheel);
     addEventHandler< TimerEvent >(this, &LogList::eventTimer);
-    
-	m_scrollBar = new ScrollBar();
-	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
+
+	m_scrollBarH = new ScrollBar();
+	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
 		return false;
 
-	m_scrollBar->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
+	m_scrollBarV = new ScrollBar();
+	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
+		return false;
+
+	m_scrollBarH->setVisible(false);
+	m_scrollBarV->setVisible(false);
+
+	m_scrollBarH->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
+	m_scrollBarV->addEventHandler< ScrollEvent >(this, &LogList::eventScroll);
 
 	m_icons = new StyleBitmap(L"UI.Log");
-
 	m_itemHeight = getFont().getSize() + 4_ut;
-	//m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize(this).cy);
-
 	m_lookup = lookup;
     
 #if defined(__APPLE__)
@@ -118,6 +123,7 @@ void LogList::removeAll()
 	m_logFiltered.clear();
 	m_logCount[0] = m_logCount[1] = m_logCount[2] = 0;
 	m_threadIndices.clear();
+	m_maxLineWidth = 0;
 	m_nextThreadIndex = 0;
 	m_selectedEntry = -1;
 
@@ -154,10 +160,10 @@ void LogList::selectLine(int32_t line)
 
 void LogList::showLine(int32_t line)
 {
-	if (!m_scrollBar->isVisible(false))
+	if (!m_scrollBarV->isVisible(false))
 		return;
 
-	m_scrollBar->setPosition(line);
+	m_scrollBarV->setPosition(line);
 	update();
 }
 
@@ -196,10 +202,21 @@ void LogList::updateScrollBar()
 	const int32_t logCount = (int32_t)m_logFiltered.size();
 	const int32_t pageCount = inner.getHeight() / pixel(m_itemHeight);
 
-	m_scrollBar->setRange(logCount);
-	m_scrollBar->setPage(pageCount);
-	m_scrollBar->setVisible(logCount > pageCount);
-	m_scrollBar->update();
+	const int32_t horizRange = m_maxLineWidth - inner.getSize().cx;
+	if (horizRange > 0)
+	{
+		m_scrollBarH->setRange(horizRange);
+		m_scrollBarH->setPage(horizRange / 10);
+		m_scrollBarH->setVisible(true);
+	}
+	else
+		m_scrollBarH->setVisible(false);
+	m_scrollBarH->update();
+
+	m_scrollBarV->setRange(logCount);
+	m_scrollBarV->setPage(pageCount);
+	m_scrollBarV->setVisible(logCount > pageCount);
+	m_scrollBarV->update();
 }
 
 void LogList::eventPaint(PaintEvent* event)
@@ -208,25 +225,33 @@ void LogList::eventPaint(PaintEvent* event)
 	const StyleSheet* ss = getStyleSheet();
 
 	// Coalesce pending log statements.
-	int32_t added = 0;
+	bool needUpdateScrollBars = false;
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
 		for (const auto& log : m_pending)
 		{
+			const Size sz = canvas.getFontMetric().getExtent(log.text);
+			if (sz.cx > m_maxLineWidth)
+			{
+				m_maxLineWidth = sz.cx;
+				needUpdateScrollBars = true;
+			}
+
 			m_logFull.push_back(log);
 			if ((log.level & m_filter) != 0)
 			{
 				m_logFiltered.push_back(log);
-				++added;
+				needUpdateScrollBars = true;
 			}
 		}
 
 		m_pending.clear();
 	}
-	if (added > 0)
+
+	if (needUpdateScrollBars)
 	{
 		updateScrollBar();
-		m_scrollBar->setPosition((int32_t)m_logFiltered.size());
+		m_scrollBarV->setPosition((int32_t)m_logFiltered.size());
 	}
 
 	const Color4ub selectedColor = ss->getColor(this, L"color-selected");
@@ -245,13 +270,15 @@ void LogList::eventPaint(PaintEvent* event)
 		ss->getColor(this, L"background-color-error")
 	};
 
-	// Get inner rectangle, adjust for scrollbar.
 	Rect inner = getInnerRect();
-	if (m_scrollBar->isVisible(false))
-		inner.right -= m_scrollBar->getPreferredSize(inner.getSize()).cx;
-
 	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(inner);
+
+	// Adjust inner rectangle from scrollbars.
+	if (m_scrollBarH->isVisible(false))
+		inner.bottom -= m_scrollBarH->getPreferredSize(inner.getSize()).cy;
+	if (m_scrollBarV->isVisible(false))
+		inner.right -= m_scrollBarV->getPreferredSize(inner.getSize()).cx;
 
 	Rect rc(inner.getTopLeft(), Size(inner.getWidth(), pixel(m_itemHeight)));
 
@@ -259,7 +286,8 @@ void LogList::eventPaint(PaintEvent* event)
 	const int32_t threadIdWidth = canvas.getFontMetric().getExtent(L"000>").cx;
 
 	// Advance by scroll offset, keep a page worth of lines.
-	int32_t advanceCount = m_scrollBar->getPosition();
+	int32_t offsetX = m_scrollBarH->getPosition();
+	int32_t advanceCount = m_scrollBarV->getPosition();
 	advanceCount = std::max(0, advanceCount);
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 
@@ -326,7 +354,7 @@ void LogList::eventPaint(PaintEvent* event)
 			break;
 		}
 
-		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
+		Rect textRect(rc.left + iconSize.cx - offsetX, rc.top, rc.right, rc.bottom);
 
 		canvas.drawText(textRect, str(L"%d>", threadIndex), AnLeft, AnCenter);
 		textRect.left += threadIdWidth;
@@ -405,17 +433,27 @@ void LogList::eventPaint(PaintEvent* event)
 void LogList::eventSize(SizeEvent* event)
 {
 	const Rect inner = getInnerRect();
-	const int32_t width = m_scrollBar->getPreferredSize(inner.getSize()).cx;
+	const int32_t width = m_scrollBarV->getPreferredSize(inner.getSize()).cx;
+	const int32_t height = m_scrollBarH->getPreferredSize(inner.getSize()).cy;
 
-	Rect rc(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
-	m_scrollBar->setRect(rc);
+	{
+		Rect rc(Point(0, inner.getHeight() - height), Size(inner.getWidth(), height));
+		if (m_scrollBarV->isVisible(false))
+			rc.right -= width;
+		m_scrollBarH->setRect(rc);
+	}
+
+	{
+		Rect rc(Point(inner.getWidth() - width, 0), Size(width, inner.getHeight()));
+		m_scrollBarV->setRect(rc);
+	}
 
 	updateScrollBar();
 }
 
 void LogList::eventMouseButtonDown(MouseButtonDownEvent* event)
 {
-	int32_t advanceCount = m_scrollBar->getPosition();
+	int32_t advanceCount = m_scrollBarV->getPosition();
 	advanceCount = std::max(0, advanceCount);
 	advanceCount = std::min(advanceCount, int32_t(m_logFiltered.size()));
 
@@ -438,9 +476,9 @@ void LogList::eventMouseDoubleClick(MouseDoubleClickEvent* event)
 
 void LogList::eventMouseWheel(MouseWheelEvent* event)
 {
-	int32_t position = m_scrollBar->getPosition();
+	int32_t position = m_scrollBarV->getPosition();
 	position -= event->getRotation() * 4;
-	m_scrollBar->setPosition(position);
+	m_scrollBarV->setPosition(position);
 	update();
 }
     
