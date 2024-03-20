@@ -10,6 +10,7 @@
 #include "Core/Debug/CallStack.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
@@ -220,7 +221,24 @@ int32_t executeTemplate(const std::wstring& text, const Path& fileName, const Co
 
 	safeDestroy(scriptContext);
 
-	log::info << o->getProduct() << Endl;
+	if (cmdLine.hasOption('o', L"output"))
+	{
+		const std::wstring fileName = cmdLine.getOption('o', L"output").getString();
+		Ref< IStream > fs = FileSystem::getInstance().open(fileName, File::FmWrite);
+		if (fs)
+		{
+			FileOutputStream(fs, new Utf8Encoding()) << o->getProduct() << Endl;
+			fs->close();
+		}
+		else
+		{
+			log::error << L"Unable to create output file \"" << fileName << L"\"." << Endl;
+			return 5;
+		}
+	}
+	else
+		log::info << o->getProduct() << Endl;
+
 	return 0;
 }
 
