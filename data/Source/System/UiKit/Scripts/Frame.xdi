@@ -34,12 +34,12 @@ function Frame:remove()
 	end
 
 	if self._keyDownListener ~= nil then
-		cx.key.eventMouseWheel:remove(self._keyDownListener)
+		cx.key.eventKeyDown:remove(self._keyDownListener)
 		self._keyDownListener = nil
 	end
 
 	if self._keyUpListener ~= nil then
-		cx.key.eventMouseWheel:remove(self._keyUpListener)
+		cx.key.eventKeyUp:remove(self._keyUpListener)
 		self._keyUpListener = nil
 	end
 
@@ -86,8 +86,8 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	stage.scaleMode = traktor.spark.Stage.NoScale
 	stage.align = "TL"
 
-	self._vwidth = vwidth
-	self._vheight = vheight
+	self._vwidth = 1280 -- vwidth
+	self._vheight = 720 -- vheight
 
 	-- Calculate first virtual scale factor.
 	-- \\tbd This currently "freezes" output size based on inital size of screen...
@@ -98,7 +98,7 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	self._vscale = math.min(xscale, yscale)
 
 	-- \\tbd Determine which mode...
-	self._vscaleDynamic = false
+	self._vscaleDynamic = true
 
 	-- Setup event source listeners.
 	self._mc.eventEnterFrame:add(function() self:_eventEnterFrame() end)
@@ -165,7 +165,6 @@ function Frame:_eventKeyUp()
 	local key < const > = self._mc.context.key
 	self:_dispatchEvent(KeyUpEvent(key.code))
 end
-
 
 	]]>
 	</text>
