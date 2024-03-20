@@ -145,6 +145,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 
 	// Calculate node hashes.
 	SmallMap< const Node*, uint32_t > hash;
+	hash.reserve(nodes.size());
 	for (auto node : nodes)
 		hash[node] = ShaderGraphHash(true, true).calculate(node);
 
