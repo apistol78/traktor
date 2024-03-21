@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="2">
+	<text>
+	<![CDATA[
+-- https://github.com/semitable/easing-functions/blob/master/easing_functions/easing.py
+
+-- Ease
+
+Ease = Ease or class("Ease")
+
+-- Sine
+
+function Ease.inSine(f)
+end
+
+function Ease.outSine(f)
+end
+
+function Ease.inOutSine(f)
+end
+
+-- Quad
+
+function Ease.inQuad(f)
+	return f * f
+end
+
+function Ease.outQuad(f)
+	return -(f * (f - 2))
+end
+
+function Ease.inOutQuad(f)
+	if f < 0.5 then return 2 * f * f end
+	return (-2 * f * f) + (4 * f) - 1
+end
+
+-- Cubic
+
+function Ease.inCubic(f)
+	return f * f * f
+end
+
+function Ease.outCubic(f)
+	return (f - 1) * (f - 1) * (f - 1) + 1
+end
+
+function Ease.inOutCubic(f)
+	if f < 0.5 then return 4 * f * f * f end
+	local p = 2 * f - 2
+	return 0.5 * p * p * p + 1
+end
+
+-- Quart
+
+function Ease.inQuart(f)
+	return f * f * f * f
+end
+
+function Ease.outQuart(f)
+	return (f - 1) * (f - 1) * (f - 1) * (1 - f) + 1
+end
+
+function Ease.inOutQuart(f)
+	if f < 0.5 then return 8 * f * f * f * f end
+	local p = f - 1
+	return -8 * p * p * p * p + 1
+end
+
+-- Quint
+
+function Ease.inQuint(f)
+end
+
+function Ease.outQuint(f)
+end
+
+function Ease.inOutQuint(f)
+end
+
+-- Expo
+
+function Ease.inExpo(f)
+end
+
+function Ease.outExpo(f)
+end
+
+function Ease.inOutExpo(f)
+end
+
+-- Circ
+
+function Ease.inCirc(f)
+end
+
+function Ease.outCirc(f)
+end
+
+function Ease.inOutCirc(f)
+end
+
+-- Back
+
+function Ease.inBack(f)
+end
+
+function Ease.outBack(f)
+end
+
+function Ease.inOutBack(f)
+end
+
+-- Elastic
+
+function Ease.inElastic(f)
+	return math.sin(13 * math.pi / 2 * f) * (2 ^ (10 * (f - 1)))
+end
+
+function Ease.outElastic(f)
+	return math.sin(-13 * math.pi / 2 * (f + 1)) * (2 ^ (-10 * f)) + 1
+end
+
+function Ease.inOutElastic(f)
+	if f < 0.5 then
+		return
+			0.5 *
+			math.sin(13 * math.pi / 2 * (2 * f)) *
+			(2 ^ (10 * ((2 * f) - 1)))
+	else
+		return
+			0.5 *
+			(
+				math.sin(-13 * math.pi / 2 * ((2 * f - 1) + 1)) *
+				(2 ^ (-10 * (2 * f - 1))) +
+				2
+			)
+	end
+end
+
+-- Bounce
+
+function Ease.inBounce(f)
+end
+
+function Ease.outBounce(f)
+end
+
+function Ease.inOutBounce(f)
+end
+
+	]]>
+	</text>
+</object>

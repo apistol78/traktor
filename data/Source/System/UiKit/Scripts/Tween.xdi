@@ -3,6 +3,7 @@
 	<text>
 	<![CDATA[
 -- Tween
+#using \{69AA52D0-3FC4-C94B-BF72-E93F230F2E9C}
 
 Tween = Tween or class("Tween")
 
@@ -66,6 +67,7 @@ function Tween.update(dT)
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>
