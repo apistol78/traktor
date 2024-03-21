@@ -31,12 +31,13 @@ bool convertSkeleton(
 	const Matrix44& axisTransform
 );
 
-//Ref< Pose > convertPose(
-//	const Model& model,
-//	FbxScene* scene,
-//	FbxNode* skeletonNode,
-//	const FbxTime& time,
-//	const Matrix44& axisTransform
-//);
+Ref< Pose > convertPose(
+	const Model& model,
+	ufbx_scene* scene,
+	ufbx_node* skeletonNode,
+	ufbx_anim* anim,
+	double time,
+	const Matrix44& axisTransform
+);
 
 }

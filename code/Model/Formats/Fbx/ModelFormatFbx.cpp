@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -154,9 +156,43 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		return true;
 	});
 
+	// Convert animations.
+	if (skeletonNode)
+	{
+		for (size_t i = 0; i < scene->anim_stacks.count; ++i)
+		{
+			ufbx_anim_stack* animStack = scene->anim_stacks.data[i];
+			if (!animStack)
+				continue;
+
+			std::wstring takeName = mbstows(animStack->name.data);
+			const size_t p = takeName.find_last_of(L'|');
+			if (p != std::wstring::npos)
+				takeName = takeName.substr(p + 1);
+
+			Ref< Animation > anim = new Animation();
+			anim->setName(takeName);
+
+			const int32_t startFrame = int32_t(animStack->time_begin * 30.0);
+			const int32_t endFrame = int32_t(animStack->time_end * 30.0);
+
+			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
+			{
+				const double time = double(frame) / 30.0;
+
+				Ref< Pose > pose = convertPose(*model, scene, skeletonNode, animStack->anim, time, axisTransform);
+				if (!pose)
+					return nullptr;
+
+				anim->insertKeyFrame(frame / 30.0f, pose);
+			}
+
+			model->addAnimation(anim);
+		}
+	}
+
 	ufbx_free_scene(scene);
 
-//	// Convert skeleton and animations.
 //	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
 //		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
 //	});
