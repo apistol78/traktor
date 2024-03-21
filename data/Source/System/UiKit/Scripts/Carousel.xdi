@@ -82,8 +82,9 @@ function Carousel:_show(index)
 	local p < const > = self:getPlacement()
 	local sx < const > = -self._current * (p.width + self._pad)	
 	local ex < const > = -index * (p.width + self._pad)
-	Tween(sx, ex, 0.25, function(value, last)
-		local x < const > = value
+	Tween(0, 1, 1, function(value, last)
+		local f = Ease.outElastic(value)
+		local x < const > = sx * (1 - f) + ex * f
 		self._inner_mc.X = x
 	end)
 	self._current = index
