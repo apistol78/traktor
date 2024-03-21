@@ -323,18 +323,14 @@ void PreviewControl::eventPaint(ui::PaintEvent* event)
 
 void PreviewControl::eventIdle(ui::IdleEvent* event)
 {
-	if (!m_moviePlayer)
-		return;
-
-	if (isVisible(true))
+	if (m_moviePlayer && isVisible(true))
 	{
 		const float deltaTime = (float)m_timer.getDeltaTime();
-
-		if (m_moviePlayer->progress(deltaTime, nullptr))
-			update();
-
-		event->requestMore();
+		m_moviePlayer->progress(deltaTime, nullptr);
+		update();
 	}
+
+	event->requestMore();
 }
 
 void PreviewControl::eventKey(ui::KeyEvent* event)
