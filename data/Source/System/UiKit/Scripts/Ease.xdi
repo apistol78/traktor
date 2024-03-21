@@ -11,12 +11,15 @@ Ease = Ease or class("Ease")
 -- Sine
 
 function Ease.inSine(f)
+	return math.sin((f - 1) * math.pi / 2) + 1
 end
 
 function Ease.outSine(f)
+	return math.sin(f * math.pi / 2)
 end
 
 function Ease.inOutSine(f)
+	return 0.5 * (1 - math.cos(f * math.pi))
 end
 
 -- Quad
@@ -91,12 +94,16 @@ end
 -- Circ
 
 function Ease.inCirc(f)
+	return 1 - math.sqrt(1 - (f * f))
 end
 
 function Ease.outCirc(f)
+	return math.sqrt((2 - f) * f)
 end
 
 function Ease.inOutCirc(f)
+	if f < 0.5 then return 0.5 * (1 - math.sqrt(1 - 4 * (f * f))) end
+	return 0.5 * (math.sqrt(-((2 * f) - 3) * ((2 * f) - 1)) + 1)
 end
 
 -- Back
@@ -140,9 +147,14 @@ end
 -- Bounce
 
 function Ease.inBounce(f)
+	return 1 - Ease.outBounce(1 - f)
 end
 
 function Ease.outBounce(f)
+	if f < 4 / 11 then return 121 * f * f / 16 end
+	if f < 8 / 11 then return (363 / 40 * f * f) - (99 / 10 * f) + 17 / 5 end
+	if f < 9 / 10 then return (4356 / 361 * f * f) - (35442 / 1805 * f) + 16061 / 1805 end
+	return (54 / 5 * f * f) - (513 / 25 * f) + 268 / 25
 end
 
 function Ease.inOutBounce(f)
