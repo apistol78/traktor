@@ -131,6 +131,31 @@ int main(int argc, const char** argv)
 		return 1;
 	}
 
+	// Check if environment is already set, else set to current working directory.
+	std::wstring home;
+	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
+	{
+		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+
+		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
+		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
+		{
+			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
+			const Path pwd = cwd.getPathOnly();
+			if (cwd == pwd)
+			{
+				log::error << L"No LICENSE.txt file found." << Endl;
+				return 1;
+			}
+			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+		}
+
+		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", FileSystem::getInstance().getCurrentVolumeAndDirectory().getPathNameOS());
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(cwd);
+	}
+
 	std::wstring settingsFile = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config";
 	if (cmdLine.hasOption('s', L"settings"))
 		settingsFile = cmdLine.getOption('s', L"settings").getString();
