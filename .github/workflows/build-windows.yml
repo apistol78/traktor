@@ -31,7 +31,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: Archive
-        path: build/archive/Traktor.zip
+        path: |
+          build/archive/
     - name: Create Installer
       run: ./scripts/autobuild/autobuild-installer-win64.bat
     - name: Archive Installer

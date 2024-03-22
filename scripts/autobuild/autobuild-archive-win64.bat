@@ -13,6 +13,6 @@ xcopy "%TRAKTOR_HOME%\resources\runtime\" "resources\runtime\" /S /E /Y /R
 xcopy "%TRAKTOR_HOME%\scripts\runtime\" "scripts\runtime\" /S /E /Y /R
 xcopy "%TRAKTOR_HOME%\LICENSE.txt" "." /Y /R
 xcopy "%TRAKTOR_HOME%\README.md" "." /Y /R
-powershell Compress-Archive . ..\Traktor.zip
+:: powershell Compress-Archive . ..\Traktor.zip
 
 popd
