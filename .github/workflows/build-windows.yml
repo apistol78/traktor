@@ -25,6 +25,13 @@ jobs:
       run: ./bin/latest/win64/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
     - name: Unit tests ReleaseShared
       run: ./bin/latest/win64/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+    - name: Create ZIP
+      run: ./scripts/autobuild/autobuild-archive-win64.bat
+    - name: Archive ZIP
+      uses: actions/upload-artifact@v4
+      with:
+        name: Archive
+        path: build/archive/Traktor.zip
     - name: Create Installer
       run: ./scripts/autobuild/autobuild-installer-win64.bat
     - name: Archive Installer
