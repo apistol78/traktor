@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -84,7 +84,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	wchar_t file[MAX_PATH] = L"";
 	GetModuleFileName(NULL, file, sizeof_array(file));
-	CommandLine cmdLine(file, mbstows(szCmdLine));
+	const CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
 #if defined(__LINUX__) || defined(__RPI__)
@@ -162,6 +162,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	std::wstring home;
 	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
 	{
+		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
 		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
 		{
 			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();

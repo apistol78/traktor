@@ -37,13 +37,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	wchar_t file[MAX_PATH] = L"";
 	GetModuleFileName(NULL, file, sizeof(file));
 
-	CommandLine cmdLine(file, mbstows(szCmdLine));
+	const CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
 	// Check if environment is already set, else set to current working directory.
 	std::wstring home;
 	if (!OS::getInstance().getEnvironment(L"TRAKTOR_HOME", home))
 	{
+		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
+		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+
 		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
 		{
 			const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
