@@ -161,6 +161,8 @@ private:
 #endif
 	bool m_lost = true;
 
+	VkPhysicalDeviceProperties m_deviceProperties;
+
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
 	VkSemaphore m_imageAvailableSemaphore = 0;

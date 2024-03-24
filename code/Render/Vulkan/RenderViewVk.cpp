@@ -1244,7 +1244,7 @@ int32_t RenderViewVk::beginTimeQuery()
 
 	auto& frame = m_frames[m_currentImageIndex];
 	const int32_t query = m_nextQueryIndex;
-	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 0);
+	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
 
 	return query;
@@ -1274,7 +1274,7 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 	if (result != VK_SUCCESS)
 		return false;
 
-	const double c_divend = 1000000000.0;
+	const double c_divend = 1000000000.0 / m_deviceProperties.limits.timestampPeriod;
 	outStart = (double)stamps[0] / c_divend;
 	outEnd = (double)stamps[1] / c_divend;
 	return true;
@@ -1328,12 +1328,15 @@ void RenderViewVk::getStatistics(RenderViewStatistics& outStatistics) const
 
 bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample, float multiSampleShading, int32_t vblanks)
 {
+	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &m_deviceProperties);
+
 	log::debug << L"Vulkan; Render view create:" << Endl;
 	log::debug << L"\twidth " << width << Endl;
 	log::debug << L"\theight " << height << Endl;
 	log::debug << L"\tmultiSample " << multiSample << Endl;
 	log::debug << L"\tmultiSampleShading " << multiSampleShading << Endl;
 	log::debug << L"\tvblanks " << vblanks << Endl;
+	log::debug << L"\ttimestampPeriod " << m_deviceProperties.limits.timestampPeriod << Endl;
 
 	// In case we fail to create make sure we're lost.
 	m_lost = true;
