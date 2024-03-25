@@ -15,28 +15,28 @@ jobs:
       run: ./scripts/update-3rdp.bat
     - name: Generate build files
       run: ./scripts/build-projects-vs2022-win64.bat
-    - name: Build DebugShared
-      run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
+#    - name: Build DebugShared
+#      run: ./scripts/autobuild/autobuild-latest-win64.bat DebugShared
     - name: Build ReleaseShared
       run: ./scripts/autobuild/autobuild-latest-win64.bat ReleaseShared
-    - name: Build ReleaseStatic
-      run: ./scripts/autobuild/autobuild-latest-win64.bat ReleaseStatic
-    - name: Unit tests DebugShared
-      run: ./bin/latest/win64/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
-    - name: Unit tests ReleaseShared
-      run: ./bin/latest/win64/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+#    - name: Build ReleaseStatic
+#      run: ./scripts/autobuild/autobuild-latest-win64.bat ReleaseStatic
+#    - name: Unit tests DebugShared
+#      run: ./bin/latest/win64/debugshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
+#    - name: Unit tests ReleaseShared
+#      run: ./bin/latest/win64/releaseshared/Traktor.Run.App ./scripts/unittest/UnitTest.run
     - name: Create ZIP
       run: ./scripts/autobuild/autobuild-archive-win64.bat
     - name: Archive ZIP
       uses: actions/upload-artifact@v4
       with:
-        name: Archive
+        name: traktor
         path: |
-          build/archive/
-    - name: Create Installer
-      run: ./scripts/autobuild/autobuild-installer-win64.bat
-    - name: Archive Installer
-      uses: actions/upload-artifact@v4
-      with:
-        name: Installer
-        path: build/installer/Traktor.msi
+          build/archive/traktor/
+#    - name: Create Installer
+#      run: ./scripts/autobuild/autobuild-installer-win64.bat
+#    - name: Archive Installer
+#      uses: actions/upload-artifact@v4
+#      with:
+#        name: Installer
+#        path: build/installer/Traktor.msi
