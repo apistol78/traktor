@@ -39,11 +39,13 @@ const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
 const render::Handle s_handleWeather_SkyCloud2D(L"Weather_SkyCloud2D");
 const render::Handle s_handleWeather_SkyCloud3D(L"Weather_SkyCloud3D");
+const render::Handle s_handleWeather_SkyCloudBlend(L"Weather_SkyCloudBlend");
 const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
 const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection");
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
 const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
 const render::Handle s_handleWeather_SkyCloudTexture(L"Weather_SkyCloudTexture");
+const render::Handle s_handleWeather_SkyCloudTextureLast(L"Weather_SkyCloudTextureLast");
 const render::Handle s_handleWeather_SkyTemporalBlend(L"Weather_SkyTemporalBlend");
 const render::Handle s_handleWeather_InputTexture(L"Weather_InputTexture");
 const render::Handle s_handleWeather_OutputTexture(L"Weather_OutputTexture");
@@ -270,6 +272,7 @@ void SkyComponent::setup(
 	}
 
 	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 8.0f);
+	m_cloudBlend = (worldRenderView.getTime() * 8.0f) - cloudFrame;
 
 	// Generate dome projected cloud layer.
 	if (
@@ -348,6 +351,7 @@ void SkyComponent::build(
 	const float rotation = m_transform.rotation().toEulerAngles().x();
 
 	render::ITexture* cloudDomeTexture = m_cloudDomeTexture[m_count & 1];
+	render::ITexture* cloudDomeTextureLast = m_cloudDomeTexture[1 - (m_count & 1)];
 
 	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Sky");
 
@@ -366,6 +370,7 @@ void SkyComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_intensity);
+	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyCloudBlend, m_cloudBlend);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
@@ -373,6 +378,7 @@ void SkyComponent::build(
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTexture, cloudDomeTexture);
+	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTextureLast, cloudDomeTextureLast);
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(sp.priority, renderBlock);
