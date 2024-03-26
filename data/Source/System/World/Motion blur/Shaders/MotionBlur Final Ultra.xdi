@@ -96,7 +96,7 @@
 			<comment/>
 			<position>
 				<first>1258</first>
-				<second>365</second>
+				<second>364</second>
 			</position>
 			<name>MotionBlur</name>
 			<technique/>
@@ -144,21 +144,24 @@ vec2 uv = $UV;
 vec4 tcl = vec4(0.0f);
 float tw = 0.0f;
 
+const vec4 vl = texture(sampler2D($Velocity, $VelocitySampler), uv);
+
 for (int i = 0; i < 16; ++i)
 {
 	const vec4 cl = texture(sampler2D($Color, $ColorSampler), uv);
-	const vec4 vl = texture(sampler2D($Velocity, $VelocitySampler), uv);
+//	const vec4 vl = texture(sampler2D($Velocity, $VelocitySampler), uv);
 
 	const float w = 1.0f - i / 16.0f;
 	tcl += cl * w;
 	tw += w;
 
-	uv += vl.xy * vec2(1, -1) * (0.5f / 16);
+	uv += vl.xy * vec2(1, -1) * (0.6f / 16);
 }
 
 tcl /= tw;
 
 $Output = tcl;
+
 			]]>
 			</script>
 		</item>
@@ -187,9 +190,9 @@ $Output = tcl;
 				<first>980</first>
 				<second>410</second>
 			</position>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
-			<magFilter>FtPoint</magFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
