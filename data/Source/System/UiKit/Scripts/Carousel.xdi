@@ -89,7 +89,6 @@ function Carousel:_show(index)
 	end)
 	self._current = index
 end
-
 	]]>
 	</text>
 </object>

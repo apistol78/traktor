@@ -49,7 +49,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{2EF61F74-709E-2C43-9CC9-C0AD2147E2C3}</id>
 			<comment/>
 			<position>
@@ -58,6 +58,12 @@
 			</position>
 			<name>FogFactor</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{86BFF8D8-7B18-5A4E-8277-6C6223F5A448}</id>
@@ -83,8 +89,6 @@
 			<![CDATA[
 float t = 1.0f - 1.0f / exp($Distance * $Density);
 $Output = clamp(t, 0.0f, $Clamp);
-
-
 			]]>
 			</script>
 		</item>

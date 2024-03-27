@@ -46,8 +46,6 @@ vec4 CatmullRomFilterSample(in texture2D tx, in sampler smp, vec2 uv)
 
 	return color / weight;
 }
-
-
 	]]>
 	</text>
 </object>

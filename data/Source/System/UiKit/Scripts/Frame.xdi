@@ -165,7 +165,6 @@ function Frame:_eventKeyUp()
 	local key < const > = self._mc.context.key
 	self:_dispatchEvent(KeyUpEvent(key.code))
 end
-
 	]]>
 	</text>
 </object>

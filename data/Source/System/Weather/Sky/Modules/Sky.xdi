@@ -320,7 +320,6 @@ float tilableFbm(vec3 p, const int octaves, float tile)
 
     return c / w;
 }
-
 	]]>
 	</text>
 </object>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{83CCB0DA-FB60-A847-8DA5-F03F9E988F97}</id>
@@ -181,7 +181,7 @@
 				<second>482</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DC838B07-7B6F-0D4B-93CB-90B4944B612A}</id>
 			<comment/>
 			<position>
@@ -189,7 +189,6 @@
 				<second>444</second>
 			</position>
 			<name>TexCoord</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{545A8FD9-5ECD-2640-9962-25EC1A847D37}</id>
@@ -240,7 +239,7 @@
 				<second>521</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{ADE4C899-2D61-1A4E-9A6E-5A9857D9A6A0}</id>
 			<comment/>
 			<position>
@@ -248,7 +247,6 @@
 				<second>895</second>
 			</position>
 			<name>TexCoord</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{255F7F6A-F7C4-CF4F-95E9-5F75DA3A8CE3}</id>
@@ -549,4 +547,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

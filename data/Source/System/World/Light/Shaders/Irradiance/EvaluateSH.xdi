@@ -62,7 +62,7 @@
 			<haveDefaultValue>false</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{57C4947D-BD2D-44FC-A467-3AAC61DD0747}</id>
 			<comment/>
 			<position>
@@ -71,6 +71,12 @@
 			</position>
 			<name>EvaluateSH</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{62018406-6AE5-45EE-9E3F-2F9C4DCA7AE9}</id>
@@ -127,7 +133,6 @@ $Output =
 	$Sh4_7.z * pSH[6] +
 	$Sh4_7.w * pSH[7] +
 	$Sh8.x * pSH[8];
-
 			]]>
 			</script>
 		</item>

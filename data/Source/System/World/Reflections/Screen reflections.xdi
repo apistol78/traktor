@@ -46,8 +46,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name>Screenspace reflections</name>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{F04EEA34-85E0-974F-BE97-79D24C6ACFBD}</shader>
 					<parameters>
 						<item>Color</item>

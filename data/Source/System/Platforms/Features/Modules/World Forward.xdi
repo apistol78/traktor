@@ -679,8 +679,8 @@
 				<first>ShaderPipeline.IncludeOnlyTechniques</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>World_DepthWrite</item>
 						<item>World_DBufferWrite</item>
+						<item>World_DepthWrite</item>
 						<item>World_ForwardColor</item>
 						<item>World_ForwardGBufferWrite</item>
 						<item>World_IrradianceWrite</item>

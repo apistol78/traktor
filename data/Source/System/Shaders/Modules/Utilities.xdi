@@ -2,7 +2,6 @@
 <object type="traktor.render.ShaderModule">
 	<text>
 	<![CDATA[
-
 bool checkRange(ivec2 p, ivec2 mx)
 {
 	if (p.x < 0 || p.y < 0)
@@ -12,8 +11,6 @@ bool checkRange(ivec2 p, ivec2 mx)
 	else
 		return true;
 }
-
-
 	]]>
 	</text>
 </object>

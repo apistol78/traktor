@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="20">
+<object type="traktor.mesh.MeshAsset" version="23">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Scene/Meshes/ReferenceGround.gltf</fileName>
 	<importFilter/>
 	<meshType>MtStatic</meshType>
-	<materialTemplates/>
 	<materialShaders/>
 	<materialTextures/>
-	<textureSet>{00000000-0000-0000-0000-000000000000}</textureSet>
 	<scaleFactor>1</scaleFactor>
 	<offset>0, 0, 0, 0</offset>
 	<renormalize>false</renormalize>
 	<center>false</center>
+	<grounded>false</grounded>
+	<decalResponse>true</decalResponse>
 	<lodSteps>8</lodSteps>
 	<lodMaxDistance>100</lodMaxDistance>
 	<lodCullDistance>200</lodCullDistance>

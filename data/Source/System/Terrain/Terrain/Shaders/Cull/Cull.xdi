@@ -420,7 +420,6 @@ if (minZ <= maxDepth)
 	$Output = 1.0f;
 else
 	$Output = 0.0f;
-
 			]]>
 			</script>
 		</item>

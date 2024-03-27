@@ -31,7 +31,6 @@ function PushButtonScaffolding:setup(frame)
 
 	Slider(ct)
 end
-
 	]]>
 	</text>
 </object>

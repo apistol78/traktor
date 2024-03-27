@@ -54,7 +54,6 @@
 			<script>
 			<![CDATA[
 $Buffer[$Index.x].B = 0;
-
 			]]>
 			</script>
 		</item>

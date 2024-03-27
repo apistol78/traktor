@@ -23,7 +23,6 @@ vec2 DirectionToTexCoord(in vec3 direction)
 	float theta = atan(-direction.z, -direction.x) / TWO_PI + 0.5f;
 	return vec2( theta, 1 - phi);
 }
-
 	]]>
 	</text>
 </object>

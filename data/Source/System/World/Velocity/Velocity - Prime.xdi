@@ -37,8 +37,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{944AD06D-240F-4E4A-AF0C-3AEEB50A6FBC}</shader>
 					<parameters/>
 				</item>

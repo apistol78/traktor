@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.world.IrradianceGridAsset" version="2">
+<object type="traktor.world.IrradianceGridAsset" version="3">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Hdri/BlueSky.hdr</fileName>
 	<intensity>1</intensity>
+	<saturation>1</saturation>
 	<cancelSun>true</cancelSun>
 </object>

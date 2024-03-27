@@ -76,15 +76,15 @@
 								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat.a</item>
-								<item>libExtern.jpeg.a</item>
 								<item>libExtern.flac.a</item>
+								<item>libExtern.jpeg.a</item>
 								<item>libExtern.liblzf.a</item>
-								<item>libExtern.ogg.a</item>
-								<item>libExtern.theora.a</item>
-								<item>libExtern.vorbis.a</item>
 								<item>libExtern.lpng.a</item>
+								<item>libExtern.ogg.a</item>
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb.a</item>
+								<item>libExtern.theora.a</item>
+								<item>libExtern.vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
 								<item>libTraktor.Animation.a</item>
@@ -469,19 +469,19 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.tinyexr.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat.lib</item>
-								<item>Extern.jpeg.lib</item>
 								<item>Extern.flac.lib</item>
+								<item>Extern.jpeg.lib</item>
 								<item>Extern.liblzf.lib</item>
-								<item>Extern.ogg.lib</item>
-								<item>Extern.theora.lib</item>
-								<item>Extern.vorbis.lib</item>
 								<item>Extern.lpng.lib</item>
+								<item>Extern.ogg.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb.lib</item>
+								<item>Extern.theora.lib</item>
+								<item>Extern.tinyexr.lib</item>
+								<item>Extern.vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Animation.lib</item>
@@ -631,19 +631,19 @@
 						<first>DEPLOY_STATIC</first>
 						<second type="traktor.PropertyStringSet">
 							<value>
-								<item>Extern.tinyexr.lib</item>
 								<item>Extern.agg.lib</item>
 								<item>Extern.detour.lib</item>
 								<item>Extern.expat.lib</item>
-								<item>Extern.jpeg.lib</item>
 								<item>Extern.flac.lib</item>
+								<item>Extern.jpeg.lib</item>
 								<item>Extern.liblzf.lib</item>
-								<item>Extern.ogg.lib</item>
-								<item>Extern.theora.lib</item>
-								<item>Extern.vorbis.lib</item>
 								<item>Extern.lpng.lib</item>
+								<item>Extern.ogg.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb.lib</item>
+								<item>Extern.theora.lib</item>
+								<item>Extern.tinyexr.lib</item>
+								<item>Extern.vorbis.lib</item>
 								<item>Extern.zlib.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Animation.lib</item>
@@ -766,10 +766,10 @@
 								<item>Extern.expat.lib</item>
 								<item>Extern.flac.lib</item>
 								<item>Extern.ogg.lib</item>
-								<item>Extern.theora.lib</item>
-								<item>Extern.vorbis.lib</item>
 								<item>Extern.recast.lib</item>
 								<item>Extern.stb.lib</item>
+								<item>Extern.theora.lib</item>
+								<item>Extern.vorbis.lib</item>
 								<item>Traktor.Ai.lib</item>
 								<item>Traktor.Animation.lib</item>
 								<item>Traktor.Core.lib</item>
@@ -890,10 +890,10 @@
 								<item>libExtern.flac.a</item>
 								<item>libExtern.liblzf.a</item>
 								<item>libExtern.ogg.a</item>
-								<item>libExtern.theora.a</item>
-								<item>libExtern.vorbis.a</item>
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb.a</item>
+								<item>libExtern.theora.a</item>
+								<item>libExtern.vorbis.a</item>
 								<item>libTraktor.Ai.a</item>
 								<item>libTraktor.Animation.a</item>
 								<item>libTraktor.Core.a</item>
@@ -1011,15 +1011,15 @@
 								<item>libExtern.agg.a</item>
 								<item>libExtern.detour.a</item>
 								<item>libExtern.expat.a</item>
-								<item>libExtern.jpeg.a</item>
 								<item>libExtern.flac.a</item>
+								<item>libExtern.jpeg.a</item>
 								<item>libExtern.liblzf.a</item>
-								<item>libExtern.ogg.a</item>
-								<item>libExtern.theora.a</item>
-								<item>libExtern.vorbis.a</item>
 								<item>libExtern.lpng.a</item>
+								<item>libExtern.ogg.a</item>
 								<item>libExtern.recast.a</item>
 								<item>libExtern.stb.a</item>
+								<item>libExtern.theora.a</item>
+								<item>libExtern.vorbis.a</item>
 								<item>libExtern.zlib.a</item>
 								<item>libTraktor.Ai.a</item>
 								<item>libTraktor.Animation.a</item>

@@ -153,7 +153,7 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{78B1A031-CFE0-4D49-8DA9-A4F1687F816A}</id>
 			<comment>
 			<![CDATA[
@@ -166,6 +166,12 @@ Normal distribution function
 			</position>
 			<name>NDF GGX</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{38E5BD75-D308-094A-A140-826B3D21E9E7}</id>
@@ -191,7 +197,7 @@ $Output = k * k * (1.0f / 3.142f);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{B557DCC7-E641-2E46-80A5-9A9C0CFC061A}</id>
 			<comment>
 			<![CDATA[
@@ -204,6 +210,12 @@ Geometric shadowing function
 			</position>
 			<name>GS Smitt-GGX</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{65E0B930-97A3-C440-B642-B162D65CCD91}</id>
@@ -234,7 +246,7 @@ $Output = 0.5f / (V + L);
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{1A4550A0-F9E4-8942-8DDD-D3A4DE84A0A4}</id>
 			<comment>
 			<![CDATA[
@@ -247,6 +259,12 @@ Fresnel function
 			</position>
 			<name>F Schlick 2</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{A98F2827-9111-B24A-ACD0-8B30EE518D03}</id>
@@ -268,11 +286,10 @@ Fresnel function
 			<![CDATA[
 const float f = pow(1.0f - $U, 5.0f);
 $Output = f + $F0 * (1.0f - f);
-
 			]]>
 			</script>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{29607F22-22C2-9541-A86D-232E4180F2D3}</id>
 			<comment/>
 			<position>
@@ -281,6 +298,12 @@ $Output = f + $F0 * (1.0f - f);
 			</position>
 			<name>Combine</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{42A16DB8-C343-9C48-964E-506B4E846AC7}</id>
@@ -317,7 +340,6 @@ const float g = $G;
 const vec4 f = $F;
 
 $Output = (d * g * f); // / 4.0f; // (4.0f * $NoV * $NoL);
-
 			]]>
 			</script>
 		</item>

@@ -37,8 +37,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name>Probe reflections</name>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{CF025DA4-6B94-BB4D-B7B6-FE02C8B933BC}</shader>
 					<parameters/>
 				</item>

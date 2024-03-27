@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{E2E9BF0A-2AA5-E845-B52B-159984AB604C}</id>
@@ -66,14 +66,14 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Switch" version="2,traktor.render.Node:1">
+		<item type="traktor.render.Switch" version="3,traktor.render.Node:1">
 			<id>{4E8D8572-E02D-6F4E-B386-D219B5A24932}</id>
 			<comment/>
 			<position>
 				<first>541</first>
 				<second>462</second>
 			</position>
-			<branch>BrAuto</branch>
+			<branch>Auto</branch>
 			<width>2</width>
 			<cases>
 				<item>0</item>
@@ -455,4 +455,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

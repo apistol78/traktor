@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{AA980B87-902C-0C41-B948-B65E95841777}</id>
@@ -33,7 +33,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{BDE1429E-2901-464A-B1AD-4BED79345F37}</id>
 			<comment/>
 			<position>
@@ -78,7 +78,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.VertexOutput" version="3,traktor.render.Node:1">
@@ -114,4 +113,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

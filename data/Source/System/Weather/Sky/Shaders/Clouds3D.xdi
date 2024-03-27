@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.ComputeOutput" version="1,traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
 			<id>{DD8D52C6-6F12-4C50-A189-02BCE8B4047E}</id>
 			<comment/>
 			<position>
@@ -10,9 +10,9 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<item>32</item>
-				<item>1</item>
-				<item>1</item>
+				<X>32</X>
+				<Y>1</Y>
+				<Z>1</Z>
 			</localSize>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
@@ -26,15 +26,16 @@
 			<type>Image3D</type>
 			<frequency>Frame</frequency>
 		</item>
-		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{62F46E4C-D707-4965-A012-ED6131428982}</id>
 			<comment/>
 			<position>
 				<first>58</first>
 				<second>132</second>
 			</position>
+			<scope>Global</scope>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{876F6205-6F0C-4B95-A9E9-BBBDD2F3FE5A}</id>
 			<comment/>
 			<position>
@@ -43,6 +44,11 @@
 			</position>
 			<name>Noise</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include>
 				<item>{2103B1F3-97E1-4D94-A8C0-48E7D4C0C6A9}</item>
 			</include>

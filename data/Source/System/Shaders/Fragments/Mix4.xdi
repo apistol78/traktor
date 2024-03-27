@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{EB43D2AC-467C-164F-8AE2-0F55393DB9BC}</id>
@@ -142,7 +142,7 @@
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9D9B6169-E816-5A4D-91AB-14F800CD63DE}</id>
 			<comment/>
 			<position>
@@ -150,9 +150,8 @@
 				<second>-384</second>
 			</position>
 			<name>L_WeightX</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{AF33A019-240D-FD4B-8F51-B494283A81B5}</id>
 			<comment/>
 			<position>
@@ -160,9 +159,8 @@
 				<second>-745</second>
 			</position>
 			<name>L_WeightX</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9832FA0D-40A8-A141-BAC3-05DE6EC30EB9}</id>
 			<comment/>
 			<position>
@@ -170,7 +168,6 @@
 				<second>-218</second>
 			</position>
 			<name>L_WeightX</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Color" version="2,traktor.render.Node:1">
 			<id>{230C62C9-482F-8549-BBDC-D29AD9CF393F}</id>
@@ -182,7 +179,7 @@
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EF26FB07-3887-6B44-AAFE-5B519653C8BD}</id>
 			<comment/>
 			<position>
@@ -190,7 +187,6 @@
 				<second>-701</second>
 			</position>
 			<name>L_WeightY</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{765DDC89-94CD-CD48-927B-D83E1149E441}</id>
@@ -221,7 +217,7 @@
 			<branch>BrDynamic</branch>
 			<operator>CoGreater</operator>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{06D0453B-80C7-F542-BA6D-A23F4516E788}</id>
 			<comment/>
 			<position>
@@ -229,9 +225,8 @@
 				<second>-128</second>
 			</position>
 			<name>L_WeightY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{08AE0A2E-9791-5544-A7B4-798576254F09}</id>
 			<comment/>
 			<position>
@@ -239,9 +234,8 @@
 				<second>51</second>
 			</position>
 			<name>L_WeightY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C6A31C3F-D63F-1944-8D61-3E28A21A49D0}</id>
 			<comment/>
 			<position>
@@ -249,9 +243,8 @@
 				<second>-659</second>
 			</position>
 			<name>L_WeightZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0A62AC31-816C-314F-85C4-03C543CD196F}</id>
 			<comment/>
 			<position>
@@ -259,9 +252,8 @@
 				<second>-611</second>
 			</position>
 			<name>L_WeightW</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{504E0E62-0BBE-CD4A-9873-79031A3EB0C4}</id>
 			<comment/>
 			<position>
@@ -269,9 +261,8 @@
 				<second>328</second>
 			</position>
 			<name>L_WeightZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{DB5135DC-0CA6-6645-8F96-8ABE72225EEC}</id>
 			<comment/>
 			<position>
@@ -279,7 +270,6 @@
 				<second>148</second>
 			</position>
 			<name>L_WeightZ</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{DFCBDB6E-622A-1645-A5D2-2B6DBAA0611F}</id>
@@ -345,7 +335,7 @@
 			<color>0, 0, 0, 0</color>
 			<linear>false</linear>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{21DBFFD2-0D80-C74D-8C33-8ADC3D2F19D2}</id>
 			<comment/>
 			<position>
@@ -353,9 +343,8 @@
 				<second>414</second>
 			</position>
 			<name>L_WeightW</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3A437D44-C8F9-C948-8348-1386B20848CF}</id>
 			<comment/>
 			<position>
@@ -363,7 +352,6 @@
 				<second>588</second>
 			</position>
 			<name>L_WeightW</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Conditional" version="1,traktor.render.Node:1">
 			<id>{77D243F5-B3EB-A145-8B23-B14BC9981623}</id>
@@ -738,4 +726,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

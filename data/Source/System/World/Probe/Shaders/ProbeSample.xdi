@@ -95,7 +95,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{438930E4-FDFE-714A-A4D6-690F169C66E6}</id>
 			<comment/>
 			<position>
@@ -104,6 +104,12 @@
 			</position>
 			<name>RoughnessMip</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{8591349A-E2B3-A448-AA70-E4B8DBBF9894}</id>
@@ -125,7 +131,6 @@
 			<![CDATA[
 const int mip = int(pow($Roughness, 1) * $Mips);
 $Mip = clamp(mip, 0, int($Mips) - 1);
-
 			]]>
 			</script>
 		</item>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.ComputeOutput" version="traktor.render.Node:1">
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
 			<id>{095A17AD-C3B2-4D45-BD20-E7FACDCC696F}</id>
 			<comment/>
 			<position>
@@ -9,6 +9,11 @@
 				<second>183</second>
 			</position>
 			<technique>Default</technique>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{3CDB2372-CEE8-FC46-ACD2-740B4FE1D4E1}</id>
@@ -21,13 +26,14 @@
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{1FCEB2B2-BA09-234B-947F-E99C6B643718}</id>
 			<comment/>
 			<position>
 				<first>-531</first>
 				<second>95</second>
 			</position>
+			<scope>Global</scope>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{C0056A3C-0E63-4642-8376-09BE53451402}</id>
@@ -66,7 +72,7 @@
 			<type>Scalar</type>
 			<frequency>Once</frequency>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{47AC186D-AE65-6A44-B6DE-67EF1A808C8E}</id>
 			<comment/>
 			<position>
@@ -75,6 +81,12 @@
 			</position>
 			<name>Waves</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{0251C710-E6D5-1745-9186-28E3773397DC}</id>
@@ -94,7 +106,6 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 float v = 0.0f;
 for (int i = 0; i < 4; ++i)
 {
@@ -104,8 +115,6 @@ for (int i = 0; i < 4; ++i)
 	v += (a * b) * sin($Time * (1.0f + i / 7.0f)) * 1.0f / (i + 1.0f);
 }
 $Output = 1.0f * v;
-
-
 			]]>
 			</script>
 		</item>
@@ -118,7 +127,7 @@ $Output = 1.0f * v;
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EA7BB59F-0745-1D49-947E-D8AB961202C4}</id>
 			<comment/>
 			<position>
@@ -126,9 +135,8 @@ $Output = 1.0f * v;
 				<second>169</second>
 			</position>
 			<name>L_Position</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{6D27C168-8298-0B40-8DF4-F351DA9055BF}</id>
 			<comment/>
 			<position>
@@ -136,7 +144,6 @@ $Output = 1.0f * v;
 				<second>356</second>
 			</position>
 			<name>L_Position</name>
-			<global>false</global>
 		</item>
 	</nodes>
 	<edges>
@@ -241,4 +248,5 @@ $Output = 1.0f * v;
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

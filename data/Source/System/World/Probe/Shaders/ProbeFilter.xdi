@@ -329,7 +329,7 @@
 				<second>-955</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{74BFAEEC-093B-9442-B674-B26145AE7B66}</id>
 			<comment/>
 			<position>
@@ -338,6 +338,12 @@
 			</position>
 			<name>Hammersley</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{F5281BE6-FB8B-EB41-85DB-E46035956B65}</id>
@@ -428,7 +434,7 @@ $Output = vec4(
 			</position>
 			<name>L_N</name>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{9F5C44E5-F20A-1048-A1D7-DF1CE8361B80}</id>
 			<comment/>
 			<position>
@@ -437,6 +443,12 @@ $Output = vec4(
 			</position>
 			<name>ImportanceSampleGGX</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{52FE773F-EF3A-1A49-9C53-C2DBE6E2C545}</id>

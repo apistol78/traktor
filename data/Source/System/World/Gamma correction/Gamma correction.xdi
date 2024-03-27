@@ -46,7 +46,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple">
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{FC562574-333A-264B-BBAC-531D00653824}</shader>
 					<parameters>
 						<item>Source</item>

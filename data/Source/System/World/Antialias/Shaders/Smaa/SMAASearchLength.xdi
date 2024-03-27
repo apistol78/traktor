@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{3A098A1E-0DEB-114C-B039-0C93189C8EA4}</id>
@@ -122,7 +122,7 @@
 			</position>
 			<value>0.5, -1, 0, 0</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EBE9927E-F4C2-8545-9D3B-09DAA50C9765}</id>
 			<comment/>
 			<position>
@@ -130,7 +130,6 @@
 				<second>251</second>
 			</position>
 			<name>Scale</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{B7FF0FC9-476A-C947-9B36-5503C56EF521}</id>
@@ -140,7 +139,7 @@
 				<second>493</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{036F268A-845C-DE44-A058-A75EBBEAB2D9}</id>
 			<comment/>
 			<position>
@@ -148,7 +147,6 @@
 				<second>416</second>
 			</position>
 			<name>Bias</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{0168C46D-CEE2-F04B-A666-5D3918C4EDA6}</id>
@@ -263,7 +261,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{0D2ADB8E-E364-994F-8ABF-83DC171CB740}</id>
 			<comment/>
 			<position>
@@ -271,9 +269,8 @@
 				<second>752</second>
 			</position>
 			<name>Scale</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A63E9C63-C0F7-D947-B5F5-351C4EA0E416}</id>
 			<comment/>
 			<position>
@@ -281,7 +278,6 @@
 				<second>917</second>
 			</position>
 			<name>Bias</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{67963DA3-27B3-4E4B-BFA2-0B4B4925934C}</id>
@@ -562,4 +558,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

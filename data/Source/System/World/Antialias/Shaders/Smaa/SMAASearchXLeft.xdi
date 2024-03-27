@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Repeat" version="traktor.render.Node:1">
 			<id>{B3D83EF7-0A76-7747-9A44-649DC9EC352F}</id>
@@ -308,7 +308,7 @@
 				<second>1565</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{05228033-9822-9341-A7E7-2CD3ACD9147D}</id>
 			<comment/>
 			<position>
@@ -316,9 +316,8 @@
 				<second>403</second>
 			</position>
 			<name>TexCoord</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{8D68FFA0-559A-3644-A107-BBFF7E5400DA}</id>
 			<comment/>
 			<position>
@@ -326,7 +325,6 @@
 				<second>1125</second>
 			</position>
 			<name>e</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{9FC250C2-E6FD-7847-A16B-3A03581D2DE5}</id>
@@ -374,7 +372,7 @@
 			<haveDefaultValue>true</haveDefaultValue>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{CDCC58C1-4E07-F540-ACCB-706483CDDF16}</id>
 			<comment/>
 			<position>
@@ -382,7 +380,6 @@
 				<second>1682</second>
 			</position>
 			<name>e</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{F829FCD2-C0DC-9E4D-AFF9-DC51D065E2F9}</id>
@@ -402,7 +399,7 @@
 			</position>
 			<value>3.25</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4E1C7E12-98C0-CF42-ACF4-D17D69FC8C03}</id>
 			<comment/>
 			<position>
@@ -410,7 +407,6 @@
 				<second>1602</second>
 			</position>
 			<name>Offset</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{175D4E94-3807-FE4F-B9EB-C60B7C88A88B}</id>
@@ -446,7 +442,7 @@
 				<second>2018</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{3D7C05CF-657B-D54B-A1EB-0EC0F2941D1C}</id>
 			<comment/>
 			<position>
@@ -454,9 +450,8 @@
 				<second>2037</second>
 			</position>
 			<name>Offset</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{668ACFC0-8450-6744-83C7-AD8A8A45E7E2}</id>
 			<comment/>
 			<position>
@@ -464,7 +459,6 @@
 				<second>2128</second>
 			</position>
 			<name>TexCoord</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{9B493794-00D2-A149-83FF-6B81BB43FE72}</id>
@@ -957,4 +951,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

@@ -122,7 +122,7 @@
 				<second>130</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{D49A7073-405D-A342-B2D2-86A29141FA8B}</id>
 			<comment/>
 			<position>
@@ -131,6 +131,12 @@
 			</position>
 			<name>Range</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{56B15558-4D1E-F940-B168-2870420A67D4}</id>

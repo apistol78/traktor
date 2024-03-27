@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.Sin" version="traktor.render.Node:1">
 			<id>{31C114AB-6A43-0D45-BAC5-0769CB7147D5}</id>
@@ -471,4 +471,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

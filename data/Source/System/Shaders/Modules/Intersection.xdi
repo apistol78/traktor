@@ -101,8 +101,6 @@ bool IntersectBox(vec3 r0, vec3 rd, vec3 bmn, vec3 bmx, out Hit hit)
 	hit.position = r0 + rd * tmin;
     return true; 
 }
-
-
 	]]>
 	</text>
 </object>

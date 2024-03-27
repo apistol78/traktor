@@ -37,8 +37,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name>Contact shadows</name>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{316B5CE6-6AD4-BF4E-8B11-C11560191F65}</shader>
 					<parameters/>
 				</item>

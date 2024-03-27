@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{61E3D180-FD03-094F-BFBB-4BE2B1CA2ECA}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Sum" version="traktor.render.Node:1">
@@ -358,7 +357,7 @@
 			</position>
 			<swizzle>y</swizzle>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{C80FA868-250A-4B08-BCA0-105B14275A66}</id>
 			<comment/>
 			<position>
@@ -366,7 +365,6 @@
 				<second>304</second>
 			</position>
 			<name>Z0</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{5C73353E-6B25-4CAF-9DF6-22DE89772298}</id>
@@ -415,7 +413,7 @@
 				<second>68</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9FC20951-ED4D-4E58-9C3F-ABF9D103FED3}</id>
 			<comment/>
 			<position>
@@ -423,7 +421,6 @@
 				<second>120</second>
 			</position>
 			<name>Z0</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
 			<id>{C939EAE3-DCB4-4A2A-A68F-EC991CDE766E}</id>
@@ -481,7 +478,7 @@
 			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{2F92715B-2506-4D1F-8097-FBC30E0D01F8}</id>
 			<comment/>
 			<position>
@@ -489,7 +486,6 @@
 				<second>-342</second>
 			</position>
 			<name>C0</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{CB032FD4-C712-4826-A55E-6B17BE817368}</id>
@@ -499,7 +495,7 @@
 				<second>-32</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{524E0C96-D858-4BB3-AFC2-A428D3EA1305}</id>
 			<comment/>
 			<position>
@@ -507,9 +503,8 @@
 				<second>-58</second>
 			</position>
 			<name>C0</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{95C58B15-1B1B-483F-A177-4D6E7F044269}</id>
 			<comment/>
 			<position>
@@ -517,9 +512,8 @@
 				<second>174</second>
 			</position>
 			<name>DisZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{BBA69D8B-896A-4B2A-BC44-A117FD20F5E6}</id>
 			<comment/>
 			<position>
@@ -527,9 +521,8 @@
 				<second>25</second>
 			</position>
 			<name>DisZ</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{4A6B0EBE-81B8-49F3-BB91-5CB7BD1E22F5}</id>
 			<comment/>
 			<position>
@@ -537,9 +530,8 @@
 				<second>394</second>
 			</position>
 			<name>Radius</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{83ECDE23-980B-45C5-8523-7F4CE7CE44A8}</id>
 			<comment/>
 			<position>
@@ -547,7 +539,6 @@
 				<second>-390</second>
 			</position>
 			<name>Radius</name>
-			<global>false</global>
 		</item>
 	</nodes>
 	<edges>
@@ -1072,4 +1063,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

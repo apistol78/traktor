@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="9,traktor.render.Node:1">
+		<item type="traktor.render.PixelOutput" version="10,traktor.render.Node:1">
 			<id>{EF3C0A42-D7FF-8E45-AA5B-6C11F03312C4}</id>
 			<comment/>
 			<position>
@@ -46,7 +46,6 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
-			<registerCount>0</registerCount>
 			<precisionHint>Low</precisionHint>
 		</item>
 		<item type="traktor.render.Max" version="traktor.render.Node:1">
@@ -152,7 +151,7 @@
 			<fromY>0</fromY>
 			<toY>1</toY>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EC1B071D-B694-4E75-ABB8-1F2BBEC2CF5B}</id>
 			<comment/>
 			<position>
@@ -160,9 +159,8 @@
 				<second>518</second>
 			</position>
 			<name>XY</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{FFA14B05-2318-42F4-AB21-0A15624EEABA}</id>
 			<comment/>
 			<position>
@@ -170,7 +168,6 @@
 				<second>396</second>
 			</position>
 			<name>XY</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{2BBF56A4-E262-4C4D-85F3-49521DF070BE}</id>
@@ -363,4 +360,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

@@ -57,8 +57,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{EB500331-8E43-4540-A742-9E88EF4ABBF9}</shader>
 					<parameters>
 						<item>ColorTexture</item>
@@ -106,8 +105,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:2">
 					<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
 					<workSize>Manual</workSize>
 					<manualWorkSize>
@@ -151,8 +149,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
-					<name>Clear Histogram</name>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:2">
 					<shader>{5EAE8D7F-DB70-412E-96AB-3A9252FEC57B}</shader>
 					<workSize>Manual</workSize>
 					<manualWorkSize>
@@ -164,8 +161,7 @@
 						<item>Input</item>
 					</parameters>
 				</item>
-				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:1">
-					<name>Histogram</name>
+				<item type="traktor.render.ImgStepCompute" version="1,traktor.render.IImgStep:2">
 					<shader>{CAEC5076-5218-4EE4-A42E-7ED877EA277B}</shader>
 					<workSize>SizeOf</workSize>
 					<manualWorkSize>

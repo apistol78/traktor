@@ -18,7 +18,6 @@ vec2 ParallaxMapping(in vec3 position, in vec2 textureCoords, float height, in v
     
 	return textureCoords + textureOffset; 
 }
-
 	]]>
 	</text>
 </object>

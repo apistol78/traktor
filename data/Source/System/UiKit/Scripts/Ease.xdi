@@ -159,7 +159,6 @@ end
 
 function Ease.inOutBounce(f)
 end
-
 	]]>
 	</text>
 </object>

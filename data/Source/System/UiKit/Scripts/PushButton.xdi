@@ -245,7 +245,6 @@ function PushButton:_onMouseLeave(event)
 	self:_updateState()
 	return true
 end
-
 	]]>
 	</text>
 </object>

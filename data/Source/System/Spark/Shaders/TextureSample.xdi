@@ -243,14 +243,11 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 $Output = CatmullRomFilterSample(
 	$Texture,
 	$Sampler,
 	$TexCoord
 );
-
-
 			]]>
 			</script>
 		</item>

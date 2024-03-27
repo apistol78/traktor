@@ -11,7 +11,6 @@ KeyUpEvent.mask = 0x00001000
 function KeyUpEvent:new(code)
 	self.code = code
 end
-
 	]]>
 	</text>
 </object>

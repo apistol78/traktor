@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{75DD0C65-19CD-47E0-AFF8-33CD09EC9E1B}</id>
 			<comment/>
 			<position>
@@ -10,6 +10,12 @@
 			</position>
 			<name>Random</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{01AEDF99-A012-0D41-ABD0-0F30E561709C}</id>
@@ -73,7 +79,6 @@ $Output = fract(sin(sn) * c);
 Pseudo random number generator.
 Seed should be a 3-component vector.
 Output is a scalar in 0-1 range.
-
 			]]>
 			</comment>
 			<position>

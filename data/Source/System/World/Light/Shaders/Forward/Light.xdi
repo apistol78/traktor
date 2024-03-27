@@ -1380,7 +1380,7 @@
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{14AC015B-D5AA-7C4D-B341-901DC9B574F1}</id>
 			<comment/>
 			<position>
@@ -1389,6 +1389,12 @@
 			</position>
 			<name>GetSlice</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{1DF0A7F6-939F-4341-B9FA-5E76341B831F}</id>

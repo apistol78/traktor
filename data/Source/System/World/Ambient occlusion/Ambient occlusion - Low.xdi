@@ -37,8 +37,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepSimple" version="traktor.render.IImgStep:2">
 					<shader>{01AAA8D7-E528-A44D-AF01-78CD5B18F178}</shader>
 					<parameters>
 						<item>AO</item>
@@ -74,8 +73,7 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepAmbientOcclusion" version="traktor.render.IImgStep:1">
-					<name/>
+				<item type="traktor.render.ImgStepAmbientOcclusion" version="traktor.render.IImgStep:2">
 					<shader>{C4F79F8D-43EF-6D43-993E-6A3B83F60B0B}</shader>
 					<parameters/>
 				</item>
@@ -159,9 +157,8 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepDirectionalBlur" version="traktor.render.IImgStep:1">
-					<name/>
-					<blurType>BtGaussian</blurType>
+				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
+					<blurType>Gaussian</blurType>
 					<direction>3, 0</direction>
 					<taps>16</taps>
 					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
@@ -199,9 +196,8 @@
 				<stencil>0</stencil>
 			</clear>
 			<steps>
-				<item type="traktor.render.ImgStepDirectionalBlur" version="traktor.render.IImgStep:1">
-					<name/>
-					<blurType>BtGaussian</blurType>
+				<item type="traktor.render.ImgStepDirectionalBlur" version="1,traktor.render.IImgStep:2">
+					<blurType>Gaussian</blurType>
 					<direction>0, 3</direction>
 					<taps>16</taps>
 					<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>

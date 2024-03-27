@@ -81,7 +81,6 @@ vec3 CalculateReflection(vec3 N, vec3 V, vec3 albedo, float metallic)
 
 	return clamp(F * 1.0f, 0.0f, 1.0f);
 }
-
 	]]>
 	</text>
 </object>

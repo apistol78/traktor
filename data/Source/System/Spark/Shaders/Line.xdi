@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.MulAdd" version="traktor.render.Node:1">
 			<id>{BE256AA1-5086-134C-8A92-DEA4CBABCC80}</id>
@@ -120,7 +120,7 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.Script" version="4,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{19749137-9CB2-374F-B260-623743177045}</id>
 			<comment/>
 			<position>
@@ -129,6 +129,12 @@
 			</position>
 			<name>DistanceToLine</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
 			<inputPins>
 				<item>
 					<id>{0161B8E0-D38C-40FF-B501-57E8789084A1}</id>
@@ -152,7 +158,6 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-
 const vec2 D = $LineEnd.xy - $LineStart.xy;
 const float D_ln = length(D);
 
@@ -172,8 +177,6 @@ else
 	const float E_distance = length($Position.xy - $LineEnd.xy);
 	$Distance = min(S_distance, E_distance);
 }
-
-
 			]]>
 			</script>
 		</item>
@@ -398,7 +401,7 @@ else
 				<second>-639</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{520147B2-2027-BF45-9E6C-DC1C36B95B39}</id>
 			<comment/>
 			<position>
@@ -406,9 +409,8 @@ else
 				<second>-1176</second>
 			</position>
 			<name>L_DistanceToLine</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7F782B81-7217-4943-808D-4D7ABC58C68D}</id>
 			<comment/>
 			<position>
@@ -416,7 +418,6 @@ else
 				<second>-342</second>
 			</position>
 			<name>L_DistanceToLine</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{C307616C-BBE3-AF4C-B403-0CB5940B4DEA}</id>
@@ -798,4 +799,5 @@ else
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

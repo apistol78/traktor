@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
 			<id>{AF66CE3F-B7C8-0F47-95FB-2020E482C042}</id>
@@ -107,7 +107,7 @@
 				<second>521</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{EA0BD5EB-F636-DB41-8C76-5EEABEB21048}</id>
 			<comment/>
 			<position>
@@ -115,9 +115,8 @@
 				<second>498</second>
 			</position>
 			<name>Delta</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{171CA818-9FA8-2746-890C-9C2DC02C276B}</id>
 			<comment/>
 			<position>
@@ -125,7 +124,6 @@
 				<second>863</second>
 			</position>
 			<name>Delta</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Step" version="traktor.render.Node:1">
 			<id>{5111C6F0-A093-5545-BC2A-04B3F856AF73}</id>
@@ -180,7 +178,7 @@
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{F3D74041-B3FE-9442-B868-2EE37DD1821C}</id>
 			<comment/>
 			<position>
@@ -188,9 +186,8 @@
 				<second>770</second>
 			</position>
 			<name>Edges</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{33B339FB-C715-A440-BA10-B0A890352652}</id>
 			<comment/>
 			<position>
@@ -198,7 +195,6 @@
 				<second>1177</second>
 			</position>
 			<name>Edges</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Discard" version="traktor.render.Node:1">
 			<id>{59CDB6FA-4A2B-5645-8553-E8B6718356B5}</id>
@@ -427,4 +423,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

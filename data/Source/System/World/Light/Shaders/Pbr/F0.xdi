@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.ShaderGraph">
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
 	<nodes>
 		<item type="traktor.render.External" version="2,traktor.render.Node:1">
 			<id>{2F61DB4D-1D06-124B-A7F5-6075F623E31F}</id>
@@ -153,7 +153,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{7D532A6D-95E0-4E4F-902C-DFB897E1A114}</id>
 			<comment/>
 			<position>
@@ -161,9 +161,8 @@
 				<second>650</second>
 			</position>
 			<name>FresnelDiffuse90</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{65CEBE5E-F334-144E-B4F7-0D35BEFC4091}</id>
 			<comment/>
 			<position>
@@ -171,7 +170,6 @@
 				<second>824</second>
 			</position>
 			<name>FresnelDiffuse90</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{1EB091DB-6DD3-9A44-B788-6868F2148FEC}</id>
@@ -181,7 +179,7 @@
 				<second>1066</second>
 			</position>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{320779C0-0BB4-1E48-8A95-97D044C32B8B}</id>
 			<comment/>
 			<position>
@@ -189,9 +187,8 @@
 				<second>322</second>
 			</position>
 			<name>FresnelLight</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{E3C4F835-3039-D04F-9BE9-5E6C0AE5133D}</id>
 			<comment/>
 			<position>
@@ -199,9 +196,8 @@
 				<second>398</second>
 			</position>
 			<name>FresnelView</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{9BA50BB0-0067-6444-A0D7-0C633B478FEC}</id>
 			<comment/>
 			<position>
@@ -209,9 +205,8 @@
 				<second>898</second>
 			</position>
 			<name>FresnelLight</name>
-			<global>false</global>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{A8B8EE55-BEA7-7F4A-A947-A3968A11F10C}</id>
 			<comment/>
 			<position>
@@ -219,7 +214,6 @@
 				<second>1140</second>
 			</position>
 			<name>FresnelView</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C718BB24-4C87-444B-8E2A-09404A5F90FD}</id>
@@ -230,7 +224,7 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Variable" version="1,traktor.render.Node:1">
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
 			<id>{36D4407C-B4D2-5F48-B4FB-5923DD91A393}</id>
 			<comment/>
 			<position>
@@ -238,7 +232,6 @@
 				<second>1060</second>
 			</position>
 			<name>FresnelDiffuse90</name>
-			<global>false</global>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{EFE17D01-7425-4B4A-96A0-85A292B475EC}</id>
@@ -493,4 +486,5 @@
 			</destination>
 		</item>
 	</edges>
+	<groups/>
 </object>

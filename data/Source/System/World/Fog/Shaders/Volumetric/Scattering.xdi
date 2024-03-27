@@ -26,13 +26,14 @@
 				<Z>1</Z>
 			</localSize>
 		</item>
-		<item type="traktor.render.DispatchIndex" version="traktor.render.Node:1">
+		<item type="traktor.render.DispatchIndex" version="1,traktor.render.Node:1">
 			<id>{0B6344A1-ECF2-6F45-8DF8-10A5AD0A9157}</id>
 			<comment/>
 			<position>
 				<first>-533</first>
 				<second>713</second>
 			</position>
+			<scope>Global</scope>
 		</item>
 		<item type="traktor.render.Div" version="traktor.render.Node:1">
 			<id>{52CC0FA9-D187-D04E-BA29-F81CD37563B5}</id>
@@ -372,7 +373,7 @@ NDC
 			</position>
 			<name>L_FogVolumeSize</name>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{7A92A631-7E62-D345-9BBB-81EE22D1AF92}</id>
 			<comment/>
 			<position>
@@ -381,6 +382,11 @@ NDC
 			</position>
 			<name>Random</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include>
 				<item>{921BBC45-4C75-624A-AA78-9B5FEC80645B}</item>
 			</include>
@@ -400,7 +406,6 @@ NDC
 			<script>
 			<![CDATA[
 $Output = hash13($Seed.xyz);
-
 			]]>
 			</script>
 		</item>
@@ -565,7 +570,7 @@ $Output = hash13($Seed.xyz);
 				<second>879</second>
 			</position>
 		</item>
-		<item type="traktor.render.Script" version="5,traktor.render.Node:1">
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
 			<id>{AF10E59E-248D-434D-901A-F22C29885AC2}</id>
 			<comment/>
 			<position>
@@ -574,6 +579,11 @@ $Output = hash13($Seed.xyz);
 			</position>
 			<name>Mie Scattering Phase</name>
 			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
 			<include/>
 			<inputPins>
 				<item>
