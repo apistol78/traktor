@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,13 +42,13 @@ public:
 		}
 		else if (level == 1)
 		{
-			fwprintf(stdout, L"\x1B[0;33m%ls\x1B[0m\n", str);
+			fwprintf(stdout, L"%ls\n", str);
 			fflush(stdout);
 		}
 		else
 		{
 			fflush(stdout);
-			fwprintf(stderr, L"\x1B[0;31m%ls\x1B[0m\n", str);
+			fwprintf(stdout, L"%ls\n", str);
 			fflush(stderr);
 		}
 #if defined(__IOS__)
@@ -63,6 +63,8 @@ public:
 
 private:
 	Semaphore m_lock;
+	bool m_colorStdOut;
+	bool m_colorStdErr;
 };
 
 /*! Debug log target, OS specific debug channel. */
@@ -293,8 +295,10 @@ void LogStream::setLocalTarget(ILogTarget* target)
 	localBuffer->setTarget(target);
 }
 
-	namespace log
-	{
+}
+
+namespace traktor::log
+{
 
 static LogTargetConsole infoTarget;
 static LogTargetConsole warningTarget;
@@ -306,5 +310,4 @@ LogStream warning(1, &warningTarget);
 LogStream error(2, &errorTarget);
 LogStream debug(3, &debugTarget);
 
-	}
 }
