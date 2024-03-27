@@ -223,16 +223,18 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 
 	for (auto entity : world->getEntities())
 	{
-		if (filter != nullptr && filter(entity->getState()) == false)
+		const EntityState state = entity->getState();
+
+		if (filter != nullptr && filter(state) == false)
 			continue;
-		else if (filter == nullptr && entity->getState().visible == false)
+		else if (filter == nullptr && state.visible == false)
 			continue;
 
 		for (auto component : entity->getComponents())
 		{
 			IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
 			if (entityRenderer)
-				m_gatheredView.renderables.push_back({ entityRenderer, component });
+				m_gatheredView.renderables.push_back({ entityRenderer, component, state });
 
 			// Filter out components used to setup frame's lighting etc.
 			if (auto lightComponent = dynamic_type_cast< const LightComponent* >(component))
@@ -429,21 +431,31 @@ void WorldRendererShared::setupLightPass(
 				const int32_t slice = i;
 				const Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
 				const Scalar zf(min(m_slicePositions[slice + 1], shadowSettings.farZ));
+				const bool includeDynamic = bool(slice < shadowSettings.cascadingSlices - 1);
 
 				// Create sliced view frustum.
 				Frustum sliceViewFrustum = viewFrustum;
 				sliceViewFrustum.setNearZ(zn);
 				sliceViewFrustum.setFarZ(zf);
 
-#if 0
+#if 1
 				// Check if this slice is still inside
 				// the expanded slice frustum.
 				if (slice != 0)
 				{
 					const Matrix44 viewDelta = view * lastView.inverse();
-					const int32_t force = (m_state[worldRenderView.getIndex()].count % (shadowSettings.cascadingSlices - 1)) + 1;
-					if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
-						continue;
+					if (includeDynamic)
+					{
+						const int32_t force = (m_state[worldRenderView.getIndex()].count % (shadowSettings.cascadingSlices - 1)) + 1;
+						if (slice != force && shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
+							continue;
+					}
+					else
+					{
+						// Slices with no dynamic entities should be safe to always ignore if camera is stationary.
+						if (shadowSlices[i].inside(viewDelta, sliceViewFrustum) == Frustum::Result::Inside)
+							continue;
+					}
 					sliceViewFrustum.scale(1.0_simd);
 				}
 #endif
@@ -527,8 +539,11 @@ void WorldRendererShared::setupLightPass(
 							m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 						}
 
-						for (auto r : m_gatheredView.renderables)
-							r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+						for (const auto& r : m_gatheredView.renderables)
+						{
+							if (includeDynamic || !r.state.dynamic)
+								r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
+						}
 	
 						for (auto entityRenderer : m_entityRenderers->get())
 							entityRenderer->build(wc, shadowRenderView, shadowPass);
@@ -669,7 +684,7 @@ void WorldRendererShared::setupLightPass(
 						m_screenRenderer->draw(renderContext, m_clearDepthShader, perm, nullptr);
 					}
 
-					for (auto r : m_gatheredView.renderables)
+					for (const auto& r : m_gatheredView.renderables)
 						r.renderer->build(wc, shadowRenderView, shadowPass, r.renderable);
 	
 					for (auto entityRenderer : m_entityRenderers->get())

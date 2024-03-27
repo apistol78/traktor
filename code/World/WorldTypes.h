@@ -100,6 +100,7 @@ struct GatherView
 	{
 		IEntityRenderer* renderer;
 		Object* renderable;
+		EntityState state;
 	};	
 
     AlignedVector< Renderable > renderables;

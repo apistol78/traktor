@@ -119,7 +119,7 @@ void WorldRendererDeferred::setup(
 		T_PROFILER_SCOPE(L"WorldRendererDeferred setup extra passes");
 		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph, m_visualAttachments);
 
-		for (auto r : m_gatheredView.renderables)
+		for (const auto& r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
 	
 		for (auto entityRenderer : m_entityRenderers->get())
@@ -375,7 +375,7 @@ void WorldRendererDeferred::setupVisualPass(
 
 			//T_ASSERT(!renderContext->havePendingDraws());
 
-			for (auto r : m_gatheredView.renderables)
+			for (const auto& r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, deferredColorPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())

@@ -117,7 +117,7 @@ void WorldRendererForward::setup(
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
 		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph, m_visualAttachments);
 
-		for (auto r : m_gatheredView.renderables)
+		for (const auto& r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
 	
 		for (auto entityRenderer : m_entityRenderers->get())
@@ -334,7 +334,7 @@ void WorldRendererForward::setupVisualPass(
 
 			T_ASSERT(!wc.getRenderContext()->havePendingDraws());
 
-			for (auto r : m_gatheredView.renderables)
+			for (const auto& r : m_gatheredView.renderables)
 				r.renderer->build(wc, worldRenderView, defaultPass, r.renderable);
 	
 			for (auto entityRenderer : m_entityRenderers->get())

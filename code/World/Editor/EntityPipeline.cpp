@@ -258,16 +258,16 @@ Ref< ISerializable > EntityPipeline::buildProduct(
 		reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 		while (!objectMembers.empty())
 		{
-			Ref< RfmObject > objectMember = checked_type_cast<RfmObject*, false>(objectMembers.front());
+			Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
 			objectMembers.pop_front();
 
-			if (auto entityData = dynamic_type_cast<const EntityData*>(objectMember->get()))
+			if (auto entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 			{
 				// Build entity trough pipeline; replace entity with product.
 				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityData);
 				objectMember->set(product);
 			}
-			else if (auto entityEventData = dynamic_type_cast<const IEntityEventData*>(objectMember->get()))
+			else if (auto entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
 			{
 				// Build event trough pipeline; replace event with product.
 				Ref< ISerializable > product = pipelineBuilder->buildProduct(sourceInstance, entityEventData, ownerEntityData);
