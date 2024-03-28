@@ -47,13 +47,10 @@ public:
 
 private:
 	ComRef< ITaskbarList3 > m_taskBarList;
-	HWND m_hWndLastFocus;
 
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventDestroy(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
-
-	LRESULT eventActivate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 
 	LRESULT eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 };

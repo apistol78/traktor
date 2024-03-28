@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,17 +12,10 @@
 #include "Ui/ToolForm.h"
 #include "Ui/Itf/IToolForm.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolForm", ToolForm, Container)
-
-ToolForm::ToolForm()
-:	m_modal(false)
-{
-}
 
 bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout)
 {
@@ -101,5 +94,4 @@ bool ToolForm::acceptLayout() const
 	return false;
 }
 
-	}
 }

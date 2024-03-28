@@ -192,18 +192,24 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 		MouseMoveEvent m(owner, button, pt);
 		owner->raiseEvent(&m);
 	}
-	else if (msg.message == WM_LBUTTONDOWN || msg.message == WM_MBUTTONDOWN || msg.message == WM_RBUTTONDOWN)
+	else if (
+		msg.message == WM_LBUTTONDOWN || msg.message == WM_MBUTTONDOWN || msg.message == WM_RBUTTONDOWN ||
+		msg.message == WM_NCLBUTTONDOWN || msg.message == WM_NCMBUTTONDOWN || msg.message == WM_NCRBUTTONDOWN
+	)
 	{
 		int32_t button = MbtNone;
 		switch (msg.message)
 		{
 		case WM_LBUTTONDOWN:
+		case WM_NCLBUTTONDOWN:
 			button = MbtLeft;
 			break;
 		case WM_MBUTTONDOWN:
+		case WM_NCMBUTTONDOWN:
 			button = MbtMiddle;
 			break;
 		case WM_RBUTTONDOWN:
+		case WM_NCRBUTTONDOWN:
 			button = MbtRight;
 			break;
 		}
@@ -215,18 +221,24 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 		MouseButtonDownEvent m(owner, button, pt);
 		owner->raiseEvent(&m);
 	}
-	else if (msg.message == WM_LBUTTONUP || msg.message == WM_MBUTTONUP || msg.message == WM_RBUTTONUP)
+	else if (
+		msg.message == WM_LBUTTONUP || msg.message == WM_MBUTTONUP || msg.message == WM_RBUTTONUP ||
+		msg.message == WM_NCLBUTTONUP || msg.message == WM_NCMBUTTONUP || msg.message == WM_NCRBUTTONUP 
+	)
 	{
 		int32_t button = MbtNone;
 		switch (msg.message)
 		{
 		case WM_LBUTTONUP:
+		case WM_NCLBUTTONUP:
 			button = MbtLeft;
 			break;
 		case WM_MBUTTONUP:
+		case WM_NCMBUTTONUP:
 			button = MbtMiddle;
 			break;
 		case WM_RBUTTONUP:
+		case WM_NCRBUTTONUP:
 			button = MbtRight;
 			break;
 		}
