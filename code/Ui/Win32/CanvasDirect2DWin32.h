@@ -146,6 +146,9 @@ private:
 	float m_strokeWidth = 1.0f;
 	bool m_clip = false;
 
+	mutable Font m_fontOffScreen;
+	mutable ComRef< IDWriteTextFormat > m_dwTextFormatOffScreen;
+
 	ID2D1Bitmap* getCachedBitmap(const ISystemBitmap* bm);
 
 	void flushCachedBitmaps();

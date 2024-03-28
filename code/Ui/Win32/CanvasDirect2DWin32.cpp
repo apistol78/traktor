@@ -214,32 +214,36 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 {
 	if (!m_inPaint)
 	{
-		const int32_t dpi = hWnd.dpi();
-		const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
+		if (font != m_fontOffScreen)
+		{
+			const int32_t dpi = hWnd.dpi();
+			const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
 
-		ComRef< IDWriteTextFormat > dwTextFormat;
-		s_dwFactory->CreateTextFormat(
-			font.getFace().c_str(),
-			NULL,
-			font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
-			font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
-			DWRITE_FONT_STRETCH_NORMAL,
-			fontSize,
-			L"",
-			&dwTextFormat.getAssign()
-		);
-		if (!dwTextFormat)
-			return Size(0, 0);
+			s_dwFactory->CreateTextFormat(
+				font.getFace().c_str(),
+				NULL,
+				font.isBold() ? DWRITE_FONT_WEIGHT_BOLD : DWRITE_FONT_WEIGHT_NORMAL,
+				font.isItalic() ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL,
+				DWRITE_FONT_STRETCH_NORMAL,
+				fontSize,
+				L"",
+				&m_dwTextFormatOffScreen.getAssign()
+			);
+			if (!m_dwTextFormatOffScreen)
+				return Size(0, 0);
 
-		dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
-		dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
-		dwTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+			m_dwTextFormatOffScreen->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+			m_dwTextFormatOffScreen->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			m_dwTextFormatOffScreen->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+
+			m_fontOffScreen = font;
+		}
 
 		ComRef< IDWriteTextLayout > dwLayout;
 		s_dwFactory->CreateTextLayout(
 			text.c_str(),
 			text.length(),
-			dwTextFormat,
+			m_dwTextFormatOffScreen,
 			std::numeric_limits< FLOAT >::max(),
 			std::numeric_limits< FLOAT >::max(),
 			&dwLayout.getAssign()
