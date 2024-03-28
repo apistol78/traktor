@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -156,6 +156,7 @@ bool Tab::removePage(TabPage* page)
 		{
 			m_selectedPage = newPageState->page;
 			m_selectedPage->setVisible(true);
+			m_selectedPage->setRect(m_innerRect);
 		}
 		else
 			m_selectedPage = nullptr;
@@ -192,6 +193,7 @@ void Tab::setActivePage(TabPage* page)
 		state->depth = 0;
 
 		m_selectedPage->setVisible(true);
+		m_selectedPage->setRect(m_innerRect);
 	}
 }
 
@@ -232,6 +234,7 @@ TabPage* Tab::cycleActivePage(bool forward)
 
 	m_selectedPage = pageState->page;
 	m_selectedPage->setVisible(true);
+	m_selectedPage->setRect(m_innerRect);
 
 	update();
 
@@ -350,6 +353,7 @@ void Tab::eventButtonDown(MouseButtonDownEvent* event)
 				}
 				selectedPageState->depth = 0;
 				m_selectedPage->setVisible(true);
+				m_selectedPage->setRect(m_innerRect);
 			}
 		}
 
@@ -369,8 +373,8 @@ void Tab::eventSize(SizeEvent* event)
 	if (m_drawBorder)
 		m_innerRect = m_innerRect.inflate(-1, -1);
 
-	for (Widget* child = getFirstChild(); child != 0; child = child->getNextSibling())
-		child->setRect(m_innerRect);
+	if (m_selectedPage)
+		m_selectedPage->setRect(m_innerRect);
 
 	update();
 
