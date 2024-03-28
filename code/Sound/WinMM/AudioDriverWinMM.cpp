@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,12 +15,10 @@
 #undef min
 #undef max
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 template < typename SampleType >
 struct UnsignedType
@@ -53,7 +51,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioDriverWinMM", 0, AudioDriverWinMM, IAudioDriver)
 
@@ -145,7 +143,7 @@ void AudioDriverWinMM::submit(const AudioBlock& soundBlock)
 
 	// Fill block's buffer with samples.
 	uint8_t* data = (uint8_t*)block->lpData;
-	uint32_t sampleSize = m_wfx.wBitsPerSample >> 3;
+	const uint32_t sampleSize = m_wfx.wBitsPerSample >> 3;
 
 	switch (sampleSize)
 	{
@@ -168,5 +166,4 @@ void AudioDriverWinMM::submit(const AudioBlock& soundBlock)
 	waveOutWrite(m_wo, block, sizeof(WAVEHDR));
 }
 
-	}
 }
