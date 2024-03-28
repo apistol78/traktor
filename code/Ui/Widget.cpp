@@ -201,7 +201,6 @@ void Widget::setRect(const Rect& rect)
 {
 	T_ASSERT(m_widget);
 	m_widget->setRect(rect);
-	update();
 }
 
 Rect Widget::getRect() const
