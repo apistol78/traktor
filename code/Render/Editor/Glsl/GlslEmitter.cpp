@@ -2261,10 +2261,39 @@ bool emitScript(GlslContext& cx, Script* node)
 	// If script is a root node then enter appropriate shader stage.
 	if (!node->getTechnique().empty())
 	{
-		cx.enterCompute();
-		cx.requirements().localSize[0] = node->getLocalSize()[0];
-		cx.requirements().localSize[1] = node->getLocalSize()[1];
-		cx.requirements().localSize[2] = node->getLocalSize()[2];
+		switch (node->getDomain())
+		{
+		case Script::Vertex:
+			cx.enterVertex();
+			break;
+
+		case Script::Pixel:
+			cx.enterFragment();
+			break;
+
+		case Script::Compute:
+			cx.enterCompute();
+			cx.requirements().localSize[0] = node->getLocalSize()[0];
+			cx.requirements().localSize[1] = node->getLocalSize()[1];
+			cx.requirements().localSize[2] = node->getLocalSize()[2];
+			break;
+
+		case Script::RayGen:
+			cx.enterRayGen();
+			break;
+
+		case Script::RayHit:
+			cx.enterRayHit();
+			break;
+
+		case Script::RayMiss:
+			cx.enterRayMiss();
+			break;
+
+		default:
+			cx.pushError(L"Invalid domain");
+			return false;
+		}
 	}
 
 	auto& f = cx.getShader().getOutputStream(GlslShader::BtBody);

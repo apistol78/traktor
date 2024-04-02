@@ -51,6 +51,16 @@ public:
 		std::wstring source;
 	};
 
+	struct Output
+	{
+		std::wstring vertex;
+		std::wstring pixel;
+		std::wstring compute;
+		std::wstring rayGen;
+		std::wstring rayHit;
+		std::wstring rayMiss;
+	};
+
 	typedef std::function< std::wstring (const Guid& id) > resolveModule_fn;
 
 	/*!
@@ -86,9 +96,7 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param settings Compiler settings.
 	 * \param name Program name, useful for debugging.
-	 * \param outVertexShader Output render specific shader.
-	 * \param outPixelShader Output render specific shader.
-	 * \param outComputeShader Output compute specific shader.
+	 * \param output Shader outputs.
 	 * \return True if shader was successfully generated.
 	 */
 	virtual bool generate(
@@ -96,9 +104,7 @@ public:
 		const PropertyGroup* settings,
 		const std::wstring& name,
 		const resolveModule_fn& resolveModule,
-		std::wstring& outVertexShader,
-		std::wstring& outPixelShader,
-		std::wstring& outComputeShader
+		Output& output
 	) const = 0;
 };
 

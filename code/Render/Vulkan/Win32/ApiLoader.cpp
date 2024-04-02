@@ -143,6 +143,15 @@ T_DEFINE_VK(vkCmdBeginDebugUtilsLabelEXT);
 T_DEFINE_VK(vkCmdEndDebugUtilsLabelEXT);
 T_DEFINE_VK(vkGetBufferMemoryRequirements2KHR);
 T_DEFINE_VK(vkGetImageMemoryRequirements2KHR);
+T_DEFINE_VK(vkGetBufferDeviceAddressKHR);
+T_DEFINE_VK(vkCreateRayTracingPipelinesKHR);
+T_DEFINE_VK(vkGetAccelerationStructureBuildSizesKHR);
+T_DEFINE_VK(vkCreateAccelerationStructureKHR);
+T_DEFINE_VK(vkDestroyAccelerationStructureKHR);
+T_DEFINE_VK(vkGetAccelerationStructureDeviceAddressKHR);
+T_DEFINE_VK(vkCmdBuildAccelerationStructuresKHR);
+T_DEFINE_VK(vkGetRayTracingShaderGroupHandlesKHR);
+T_DEFINE_VK(vkCmdTraceRaysKHR);
 
 namespace traktor
 {
@@ -283,7 +292,16 @@ bool initializeVulkanExtensions(VkInstance instance)
 	T_RESOLVE_VK_EXT(vkCmdBeginDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkCmdEndDebugUtilsLabelEXT);
 	T_RESOLVE_VK_EXT(vkGetBufferMemoryRequirements2KHR);
-	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);	
+	T_RESOLVE_VK_EXT(vkGetImageMemoryRequirements2KHR);
+	T_RESOLVE_VK_EXT(vkGetBufferDeviceAddressKHR);
+	T_RESOLVE_VK_EXT(vkCreateRayTracingPipelinesKHR);
+	T_RESOLVE_VK_EXT(vkGetAccelerationStructureBuildSizesKHR);
+	T_RESOLVE_VK_EXT(vkCreateAccelerationStructureKHR);
+	T_RESOLVE_VK_EXT(vkDestroyAccelerationStructureKHR);
+	T_RESOLVE_VK_EXT(vkGetAccelerationStructureDeviceAddressKHR);
+	T_RESOLVE_VK_EXT(vkCmdBuildAccelerationStructuresKHR);
+	T_RESOLVE_VK_EXT(vkGetRayTracingShaderGroupHandlesKHR);
+	T_RESOLVE_VK_EXT(vkCmdTraceRaysKHR);
 	return true;
 }
 

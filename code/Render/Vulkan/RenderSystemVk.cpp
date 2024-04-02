@@ -18,6 +18,7 @@
 #include "Core/Misc/StringSplit.h"
 #include "Core/Misc/TString.h"
 #include "Render/VertexElement.h"
+#include "Render/Vulkan/AccelerationStructureVk.h"
 #include "Render/Vulkan/BufferDynamicVk.h"
 #include "Render/Vulkan/BufferStaticVk.h"
 #include "Render/Vulkan/ProgramVk.h"
@@ -76,11 +77,14 @@ const char* c_deviceExtensions[] =
 	"VK_KHR_8bit_storage",
 	"VK_KHR_shader_non_semantic_info",
 	"VK_KHR_shader_float16_int8",
-#if !defined(__ANDROID__)
 	"VK_EXT_shader_subgroup_ballot",
-#endif
 	"VK_EXT_memory_budget",
-	"VK_EXT_descriptor_indexing"
+	"VK_EXT_descriptor_indexing",
+	"VK_KHR_buffer_device_address",
+
+	// Ray tracing
+	"VK_KHR_ray_tracing_pipeline",
+	"VK_KHR_acceleration_structure"
 };
 #endif
 
@@ -344,6 +348,28 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	di.descriptorBindingVariableDescriptorCount = VK_TRUE;
 	f16.pNext = &di;
 
+	VkPhysicalDeviceBufferDeviceAddressFeatures daf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_BUFFER_DEVICE_ADDRESS_FEATURES };
+	daf.bufferDeviceAddress = VK_TRUE;
+	daf.bufferDeviceAddressCaptureReplay = VK_FALSE;
+	daf.bufferDeviceAddressMultiDevice = VK_FALSE;
+	di.pNext = &daf;
+
+	VkPhysicalDeviceAccelerationStructureFeaturesKHR asf{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_FEATURES_KHR };
+	asf.accelerationStructure = VK_TRUE;
+	asf.accelerationStructureCaptureReplay = VK_FALSE;
+	asf.accelerationStructureIndirectBuild = VK_FALSE;
+	asf.accelerationStructureHostCommands = VK_FALSE;
+	asf.descriptorBindingAccelerationStructureUpdateAfterBind = VK_FALSE;
+	daf.pNext = &asf;
+
+	VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtp{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR };
+	rtp.rayTracingPipeline = VK_TRUE;
+	rtp.rayTracingPipelineShaderGroupHandleCaptureReplay = VK_FALSE;
+	rtp.rayTracingPipelineShaderGroupHandleCaptureReplayMixed = VK_FALSE;
+	rtp.rayTracingPipelineTraceRaysIndirect = VK_FALSE;
+	rtp.rayTraversalPrimitiveCulling = VK_FALSE;
+	asf.pNext = &rtp;
+
 	VkPhysicalDeviceVulkan11Features v11 = {};
 	v11.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
 	v11.storageBuffer16BitAccess = VK_TRUE;
@@ -358,7 +384,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	v11.protectedMemory = VK_FALSE;
 	v11.samplerYcbcrConversion = VK_FALSE;
 	v11.shaderDrawParameters = VK_TRUE;
-	di.pNext = &v11;
+	rtp.pNext = &v11;
 #endif
 
     if ((result = vkCreateDevice(m_physicalDevice, &dci, 0, &m_logicalDevice)) != VK_SUCCESS)
@@ -623,13 +649,19 @@ Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVecto
 	vibd.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
 	AlignedVector< VkVertexInputAttributeDescription > vads;
+	int32_t positionElementIndex = -1;
+
 	for (auto vertexElement : vertexElements)
 	{
 		auto& vad = vads.push_back();
+
 		vad.location = VertexAttributes::getLocation(vertexElement.getDataUsage(), vertexElement.getIndex());
 		vad.binding = 0;
 		vad.format = c_vkVertexElementFormats[vertexElement.getDataType()];
 		vad.offset = vertexElement.getOffset();
+
+		if (vertexElement.getDataUsage() == DataUsage::Position && vertexElement.getIndex() == 0)
+			positionElementIndex = int32_t(vads.size() - 1);
 	}
 
 	Murmur3 cs;
@@ -637,7 +669,7 @@ Ref< const IVertexLayout > RenderSystemVk::createVertexLayout(const AlignedVecto
 	cs.feedBuffer(vertexElements.c_ptr(), vertexElements.size() * sizeof(VertexElement));
 	cs.end();
 
-	return new VertexLayoutVk(vibd, vads, cs.get());
+	return new VertexLayoutVk(vibd, vads, positionElementIndex, cs.get());
 }
 
 Ref< ITexture > RenderSystemVk::createSimpleTexture(const SimpleTextureCreateDesc& desc, const wchar_t* const tag)
@@ -674,6 +706,59 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 		return renderTargetSet;
 	else
 		return nullptr;
+}
+
+Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure()
+{
+	return new AccelerationStructureVk(m_context);
+}
+
+Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
+{
+	const VertexLayoutVk* vertexLayoutVk = mandatory_non_null_type_cast< const VertexLayoutVk* >(vertexLayout);
+	const int32_t pidx = vertexLayoutVk->getPositionElementIndex();
+	if (pidx < 0)
+		return nullptr;
+
+	const VkVertexInputAttributeDescription& piad = vertexLayoutVk->getVkVertexInputAttributeDescriptions()[pidx];
+
+	const BufferViewVk* vb = mandatory_non_null_type_cast< const BufferViewVk* >(vertexBuffer->getBufferView());
+	const BufferViewVk* ib = mandatory_non_null_type_cast< const BufferViewVk* >(indexBuffer->getBufferView());
+
+	VkBufferDeviceAddressInfo vdai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
+	vdai.buffer = vb->getVkBuffer();
+	const VkDeviceAddress vaddr = vkGetBufferDeviceAddressKHR(m_logicalDevice, &vdai) + vb->getVkBufferOffset();
+
+	VkBufferDeviceAddressInfo idai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
+	idai.buffer = vb->getVkBuffer();
+	const VkDeviceAddress iaddr = vkGetBufferDeviceAddressKHR(m_logicalDevice, &idai) + ib->getVkBufferOffset();
+
+	VkAccelerationStructureGeometryTrianglesDataKHR triangles{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR };
+	triangles.vertexFormat = piad.format;
+	triangles.vertexData.deviceAddress = vaddr;
+	triangles.vertexStride = vertexLayoutVk->getVkVertexInputBindingDescription().stride;
+	triangles.indexType = (indexType == IndexType::UInt32) ? VK_INDEX_TYPE_UINT32 : VK_INDEX_TYPE_UINT16;
+	triangles.indexData.deviceAddress = iaddr;
+	triangles.maxVertex = vb->getVkBufferSize() / vertexLayoutVk->getVkVertexInputBindingDescription().stride;
+
+	VkAccelerationStructureGeometryKHR geom{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR };
+	geom.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
+	geom.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
+	geom.geometry.triangles = triangles;
+
+	for (const auto& primitive : primitives)
+	{
+		if (primitive.type != PrimitiveType::Triangles)
+			continue;
+
+		VkAccelerationStructureBuildRangeInfoKHR offset;
+		offset.firstVertex = primitive.offset;
+		offset.primitiveCount = primitive.count;
+		offset.primitiveOffset = 0;
+		offset.transformOffset = 0;
+	}
+
+	return new AccelerationStructureVk(m_context);
 }
 
 Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programResource, const wchar_t* const tag)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2022 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -51,8 +51,31 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor::render
+namespace traktor
 {
+	namespace render
+	{
+		namespace
+		{
+
+class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
+{
+public:
+	FragmentReaderAdapter(db::Database* db)
+	:	m_db(db)
+	{
+	}
+
+	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
+	{
+		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+	}
+
+private:
+	Ref< db::Database > m_db;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderViewer", ShaderViewer, ui::Container)
 
@@ -161,38 +184,34 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_tab = new ui::Tab();
 	m_tab->create(this, ui::Tab::WsBottom);
 
-	Ref< ui::TabPage > tabPageVertex = new ui::TabPage();
-	tabPageVertex->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_VERTEX"), new ui::FloodLayout());
-	m_tab->addPage(tabPageVertex);
-
-	Ref< ui::TabPage > tabPagePixel = new ui::TabPage();
-	tabPagePixel->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_PIXEL"), new ui::FloodLayout());
-	m_tab->addPage(tabPagePixel);
-
-	Ref< ui::TabPage > tabPageCompute = new ui::TabPage();
-	tabPageCompute->create(m_tab, i18n::Text(L"SHADERGRAPH_VIEWER_COMPUTE"), new ui::FloodLayout());
-	m_tab->addPage(tabPageCompute);
-
-	m_tab->setActivePage(tabPageVertex);
-
 	// Create read-only syntax rich editors.
-	m_shaderEditVertex = new ui::SyntaxRichEdit();
-	m_shaderEditVertex->create(tabPageVertex, L"", ui::WsDoubleBuffer);
-	m_shaderEditVertex->setLanguage(new ui::SyntaxLanguageGlsl());
-
-	m_shaderEditPixel = new ui::SyntaxRichEdit();
-	m_shaderEditPixel->create(tabPagePixel, L"", ui::WsDoubleBuffer);
-	m_shaderEditPixel->setLanguage(new ui::SyntaxLanguageGlsl());
-
-	m_shaderEditCompute = new ui::SyntaxRichEdit();
-	m_shaderEditCompute->create(tabPageCompute, L"", ui::WsDoubleBuffer);
-	m_shaderEditCompute->setLanguage(new ui::SyntaxLanguageGlsl());
-
 	const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 	const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
-	m_shaderEditVertex->setFont(ui::Font(font, fontSize));
-	m_shaderEditPixel->setFont(ui::Font(font, fontSize));
-	m_shaderEditCompute->setFont(ui::Font(font, fontSize));
+
+	for (int32_t i = 0; i < 6; ++i)
+	{
+		const wchar_t* names[] =
+		{
+			L"SHADERGRAPH_VIEWER_VERTEX",
+			L"SHADERGRAPH_VIEWER_PIXEL",
+			L"SHADERGRAPH_VIEWER_COMPUTE",
+			L"SHADERGRAPH_VIEWER_RAYGEN",
+			L"SHADERGRAPH_VIEWER_RAYHIT",
+			L"SHADERGRAPH_VIEWER_RAYMISS"
+		};
+
+		Ref< ui::TabPage > tabPage = new ui::TabPage();
+		tabPage->create(m_tab, i18n::Text(names[i]), new ui::FloodLayout());
+		m_tab->addPage(tabPage);
+
+		m_shaderEditors[i] = new ui::SyntaxRichEdit();
+		m_shaderEditors[i]->create(tabPage, L"", ui::WsDoubleBuffer);
+		m_shaderEditors[i]->setLanguage(new ui::SyntaxLanguageGlsl());
+		m_shaderEditors[i]->setFont(ui::Font(font, fontSize));
+
+		if (i == 0)
+			m_tab->setActivePage(tabPage);
+	}
 
 	addEventHandler< ui::TimerEvent >(this, &ShaderViewer::eventTimer);
 	startTimer(200);
@@ -211,10 +230,12 @@ bool ShaderViewer::handleCommand(const ui::Command& command)
 	{
 		const std::wstring font = m_editor->getSettings()->getProperty< std::wstring >(L"Editor.Font", L"Consolas");
 		const ui::Unit fontSize = ui::Unit(m_editor->getSettings()->getProperty< int32_t >(L"Editor.FontSize", 11));
-		m_shaderEditVertex->setFont(ui::Font(font, fontSize));
-		m_shaderEditPixel->setFont(ui::Font(font, fontSize));
-		m_shaderEditVertex->update();
-		m_shaderEditPixel->update();
+
+		for (int32_t i = 0; i < 6; ++i)
+		{
+			m_shaderEditors[i]->setFont(ui::Font(font, fontSize));
+			m_shaderEditors[i]->update();
+		}
 	}
 	else
 		return false;
@@ -239,7 +260,7 @@ void ShaderViewer::updateTechniques()
 	if (m_techniques.size() == 1)
 		m_dropTechniques->select(0);
 
-	// Last fallback to Default as it's the most common.
+	// Last fall back to Default as it's the most common.
 	m_dropTechniques->select(L"Default");
 }
 
@@ -248,7 +269,7 @@ void ShaderViewer::updateCombinations()
 	// Remove all previous checkboxes.
 	m_dropCombinations->removeAll();
 
-	// Create checkboxes for combination in selected technique.
+	// Create check boxes for combination in selected technique.
 	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
 	const auto it = m_techniques.find(techniqueName);
 	if (it != m_techniques.end())
@@ -270,38 +291,34 @@ void ShaderViewer::updateShaders()
 	for (auto index : selectedCombinations)
 		value |= 1 << index;
 
-	const int32_t vertexOffset = m_shaderEditVertex->getScrollLine();
-	const int32_t pixelOffset = m_shaderEditPixel->getScrollLine();
-	const int32_t computeOffset = m_shaderEditCompute->getScrollLine();
-
-	m_shaderEditVertex->setText(L"");
-	m_shaderEditPixel->setText(L"");
-	m_shaderEditCompute->setText(L"");
+	int32_t scrollOffsets[6];
+	for (int32_t i = 0; i < 6; ++i)
+	{
+		scrollOffsets[i] = m_shaderEditors[i]->getScrollLine();
+		m_shaderEditors[i]->setText(L"");
+	}
 
 	// Find matching shader combination.
-	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
-	const auto it = m_techniques.find(techniqueName);
-	if (it != m_techniques.end())
+	std::wstring techniqueName = m_dropTechniques->getSelectedItem();
+	std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
+	if (i != m_techniques.end())
 	{
-		for (const auto& combination : it->second.combinations)
+		for (std::vector< CombinationInfo >::const_iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
 		{
-			if ((combination.mask & value) == combination.value)
+			if ((j->mask & value) == j->value)
 			{
-				m_shaderEditVertex->setText(combination.vertexShader);
-				m_shaderEditPixel->setText(combination.pixelShader);
-				m_shaderEditCompute->setText(combination.computeShader);
+				for (int32_t i = 0; i < 6; ++i)
+					m_shaderEditors[i]->setText(j->shaders[i]);
 				break;
 			}
 		}
 	}
 
-	m_shaderEditVertex->scrollToLine(vertexOffset);
-	m_shaderEditPixel->scrollToLine(pixelOffset);
-	m_shaderEditCompute->scrollToLine(computeOffset);
-
-	m_shaderEditVertex->update();
-	m_shaderEditPixel->update();
-	m_shaderEditCompute->update();
+	for (int32_t i = 0; i < 6; ++i)
+	{
+		m_shaderEditors[i]->scrollToLine(scrollOffsets[i]);
+		m_shaderEditors[i]->update();
+	}
 }
 
 void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
@@ -318,7 +335,7 @@ void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 
 		ui::FileDialog fileDialog;
 		fileDialog.create(this, type_name(this), L"Save shader as", L"Shader;*.*", L"", true);
-		const bool cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
+		bool cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
 		fileDialog.destroy();
 
 		if (!cancelled)
@@ -392,10 +409,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Link shader fragments.
-	const auto fragmentReader = [=, this](const Guid& fragmentGuid) -> Ref< const ShaderGraph >
-	{
-		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-	};
+	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
 
@@ -531,7 +545,7 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 					programGraph->rewire(textureNodeOutput, textureUniformOutput);
 				}
 
-				auto reolveModule = [&](const Guid& moduleId) -> std::wstring {
+				auto resolveModule = [&](const Guid& moduleId) -> std::wstring {
 					Ref< const ShaderModule > shaderModule = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderModule >(moduleId);
 					if (shaderModule)
 						return shaderModule->escape([](const Guid& id) -> std::wstring {
@@ -542,22 +556,29 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 				};
 
 				// Finally ready to compile program graph.
-				std::wstring vertexShader, pixelShader, computeShader;
-				if (compiler->generate(programGraph, settings, techniqueName, reolveModule, vertexShader, pixelShader, computeShader))
+				IProgramCompiler::Output output;
+				if (compiler->generate(programGraph, settings, techniqueName, resolveModule, output))
 				{
-					ci.vertexShader = vertexShader;
-					ci.pixelShader = pixelShader;
-					ci.computeShader = computeShader;
+					ci.shaders[0] = output.vertex;
+					ci.shaders[1] = output.pixel;
+					ci.shaders[2] = output.compute;
+					ci.shaders[3] = output.rayGen;
+					ci.shaders[4] = output.rayHit;
+					ci.shaders[5] = output.rayMiss;
 				}
 				else
 				{
-					ci.vertexShader = L"Failed to generate vertex shader!";
-					ci.pixelShader = L"Failed to generate pixel shader!";;
-					ci.computeShader = L"Failed to generate compute shader!";
+					ci.shaders[0] = L"Failed to generate vertex shader!";
+					ci.shaders[1] = L"Failed to generate pixel shader!";;
+					ci.shaders[2] = L"Failed to generate compute shader!";
+					ci.shaders[3] = L"Failed to generate ray-gen shader!";
+					ci.shaders[4] = L"Failed to generate ray-hit shader!";
+					ci.shaders[5] = L"Failed to generate ray-miss shader!";
 				}
 			}
 		}
 	}
 }
 
+	}
 }

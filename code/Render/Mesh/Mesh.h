@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IVertexLayout;
 
 /*! Render mesh.
@@ -58,6 +59,8 @@ public:
 
 	void setBoundingBox(const Aabb3& boundingBox);
 
+	void setAccelerationStructure(IAccelerationStructure* accelerationStructure);
+	
 	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
 	const IVertexLayout* getVertexLayout() const { return m_vertexLayout; }
@@ -70,6 +73,8 @@ public:
 
 	Buffer* getAuxBuffer() const { return m_auxBuffer; }
 
+	IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+
 	const AlignedVector< Part >& getParts() const { return m_parts; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
@@ -81,6 +86,7 @@ private:
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
 	Ref< Buffer > m_auxBuffer;
+	Ref< IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };

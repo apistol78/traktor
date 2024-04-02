@@ -760,217 +760,165 @@ bool ProgramCompilerVk::generate(
 	const PropertyGroup* settings,
 	const std::wstring& name,
 	const resolveModule_fn& resolveModule,
-	std::wstring& outVertexShader,
-	std::wstring& outPixelShader,
-	std::wstring& outComputeShader
+	Output& output
 ) const
 {
-	const std::wstring crossDialect = settings->getProperty< std::wstring >(L"Glsl.Vulkan.CrossDialect");
-
 	auto resolveModuleText = [&](const Guid& moduleId) -> std::wstring {
 		return resolveModule(moduleId);
 	};
 
-	// No dialect means we should output our generated GLSL.
-	if (crossDialect.empty())
+	RefArray< VertexOutput > vertexOutputs;
+	RefArray< PixelOutput > pixelOutputs;
+	RefArray< ComputeOutput > computeOutputs;
+	RefArray< Script > scriptOutputs;
+
+	for (auto node : shaderGraph->getNodes())
 	{
-		RefArray< VertexOutput > vertexOutputs;
-		RefArray< PixelOutput > pixelOutputs;
-		RefArray< ComputeOutput > computeOutputs;
-		RefArray< Script > scriptOutputs;
-
-		for (auto node : shaderGraph->getNodes())
+		if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
+			vertexOutputs.push_back(vertexOutput);
+		else if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
+			pixelOutputs.push_back(pixelOutput);
+		else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
+			computeOutputs.push_back(computeOutput);
+		else if (auto script = dynamic_type_cast< Script* >(node))
 		{
-			if (auto vertexOutput = dynamic_type_cast< VertexOutput* >(node))
-				vertexOutputs.push_back(vertexOutput);
-			else if (auto pixelOutput = dynamic_type_cast< PixelOutput* >(node))
-				pixelOutputs.push_back(pixelOutput);
-			else if (auto computeOutput = dynamic_type_cast< ComputeOutput* >(node))
-				computeOutputs.push_back(computeOutput);
-			else if (auto script = dynamic_type_cast< Script* >(node))
-			{
-				if (!script->getTechnique().empty())
-					scriptOutputs.push_back(script);
-			}
+			if (!script->getTechnique().empty())
+				scriptOutputs.push_back(script);
 		}
+	}
 
-		GlslContext cx(shaderGraph, settings);
+	GlslContext cx(shaderGraph, settings);
 
-		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+	{
+		bool result = true;
+		result &= cx.getEmitter().emit(cx, pixelOutputs[0]);
+		result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
+		if (!result)
 		{
-			bool result = true;
-			result &= cx.getEmitter().emit(cx, pixelOutputs[0]);
-			result &= cx.getEmitter().emit(cx, vertexOutputs[0]);
-			if (!result)
-			{
-				log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
-				return false;
-			}
-		}
-		else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
-		{
-			bool result = true;
-			for (auto computeOutput : computeOutputs)
-				result &= cx.getEmitter().emit(cx, computeOutput);
-			for (auto scriptOutput : scriptOutputs)
-				result &= cx.getEmitter().emit(cx, scriptOutput);
-			if (!result)
-			{
-				log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); incorrect number of outputs (" << 
-				vertexOutputs.size() << L", " <<
-				pixelOutputs.size() << L", " <<
-				computeOutputs.size() <<
-			L"):" << Endl;
-			for (auto pixelOutput : pixelOutputs)
-				log::error << L"P " << pixelOutput->getId().format() << Endl;
-			for (auto vertexOutput : vertexOutputs)
-				log::error << L"V " << vertexOutput->getId().format() << Endl;
-			for (auto computeOutput : computeOutputs)
-				log::error << L"C " << computeOutput->getId().format() << Endl;
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
 			return false;
 		}
-
-		const auto& layout = cx.getLayout();
-		StringOutputStream ss;
-
-#if 1
-		ss << L"// Layout" << Endl;
-		for (auto resource : layout.get())
+	}
+	else if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
+	{
+		bool result = true;
+		for (auto computeOutput : computeOutputs)
+			result &= cx.getEmitter().emit(cx, computeOutput);
+		for (auto scriptOutput : scriptOutputs)
+			result &= cx.getEmitter().emit(cx, scriptOutput);
+		if (!result)
 		{
-			if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
-			{
-				ss << L"// [binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L"] = sampler" << Endl;
-				ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
-			}
-			else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
-			{
-				ss << L"// [binding = " << texture->getBinding() << L", set = " << (int32_t)texture->getSet() << L"] = texture" << Endl;
-				ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
-				ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
-			}
-			else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
-			{
-				ss << L"// [binding = " << uniformBuffer->getBinding() << L", set = " << (int32_t)uniformBuffer->getSet() << L"] = uniform buffer" << Endl;
-				ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
-				ss << L"//   .uniforms = {" << Endl;
-				for (auto uniform : uniformBuffer->get())
-				{
-					ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
-				}
-				ss << L"//   }" << Endl;
-			}
-			else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
-			{
-				ss << L"// [binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L"] = image" << Endl;
-				ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
-				ss << L"//   .type = " << int32_t(image->getUniformType()) << Endl;
-			}
-			else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
-			{
-				ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L"] = storage buffer" << Endl;
-				ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
-				ss << L"//   .elements = {" << Endl;
-				for (auto element : storageBuffer->get())
-				{
-					ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
-				}
-				ss << L"//   }" << Endl;
-			}
-		}
-
-		ss << Endl;
-		ss << L"// Parameters" << Endl;
-		for (auto p : cx.getParameters())
-		{
-			const wchar_t* c_parameterTypeNames[] = { L"scalar", L"vector", L"matrix", L"texture2d", L"texture3d", L"textureCube", L"sbuffer", L"image2d", L"image3d", L"imageCube" };
-			ss << L"// " << c_parameterTypeNames[(int32_t)p.type] << L" " << p.name << L", length = " << p.length << L", frequency = " << (int32_t)p.frequency << Endl;
-		}
-#endif
-
-		GlslRequirements requirements = cx.requirements();
-
-		// Vertex
-		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
-		{
-			StringOutputStream vss;
-			vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
-			vss << Endl;
-			vss << ss.str();
-			vss << Endl;
-			outVertexShader = vss.str();
-		}
-
-		// Pixel
-		if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
-		{
-			StringOutputStream fss;
-			fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
-			fss << Endl;
-			fss << ss.str();
-			fss << Endl;
-			outPixelShader = fss.str();
-		}
-
-		// Compute
-		if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
-		{
-			StringOutputStream css;
-			css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
-			css << Endl;
-			css << ss.str();
-			css << Endl;
-			outComputeShader = css.str();
+			log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); GLSL emitter failed." << Endl;
+			return false;
 		}
 	}
 	else
 	{
-		std::list< IProgramCompiler::Error > errors;
-		Ref< ProgramResourceVk > programResource = checked_type_cast< ProgramResourceVk* >(compile(
-			shaderGraph,
-			settings,
-			name,
-			resolveModule,
-			errors
-		));
-		if (!programResource)
-			return false;
+		log::error << L"Unable to generate Vulkan GLSL shader (" << name << L"); incorrect number of outputs (" << 
+			vertexOutputs.size() << L", " <<
+			pixelOutputs.size() << L", " <<
+			computeOutputs.size() <<
+		L"):" << Endl;
+		for (auto pixelOutput : pixelOutputs)
+			log::error << L"P " << pixelOutput->getId().format() << Endl;
+		for (auto vertexOutput : vertexOutputs)
+			log::error << L"V " << vertexOutput->getId().format() << Endl;
+		for (auto computeOutput : computeOutputs)
+			log::error << L"C " << computeOutput->getId().format() << Endl;
+		return false;
+	}
 
-		if (crossDialect == L"SPIRV")
+	const auto& layout = cx.getLayout();
+	StringOutputStream ss;
+
+#if 1
+	ss << L"// Layout" << Endl;
+	for (auto resource : layout.get())
+	{
+		if (const auto sampler = dynamic_type_cast< const GlslSampler* >(resource))
 		{
-			//if (!programResource->m_vertexShader.empty())
-			//{
-			//	std::stringstream ss;
-			//	std::vector< uint32_t > v(programResource->m_vertexShader.begin(), programResource->m_vertexShader.end());
-			//	spv::Disassemble(ss, v);
-			//	outVertexShader = mbstows(ss.str());
-			//}
-			//if (!programResource->m_fragmentShader.empty())
-			//{
-			//	std::stringstream ss;
-			//	std::vector< uint32_t > f(programResource->m_fragmentShader.begin(), programResource->m_fragmentShader.end());
-			//	spv::Disassemble(ss, f);
-			//	outPixelShader = mbstows(ss.str());
-			//}
-			//if (!programResource->m_computeShader.empty())
-			//{
-			//	std::stringstream ss;
-			//	std::vector< uint32_t > c(programResource->m_computeShader.begin(), programResource->m_computeShader.end());
-			//	spv::Disassemble(ss, c);
-			//	outComputeShader = mbstows(ss.str());
-			//}
-			return true;
+			ss << L"// [binding = " << sampler->getBinding() << L", set = " << (int32_t)sampler->getSet() << L"] = sampler" << Endl;
+			ss << L"//   .name = \"" << sampler->getName() << L"\"" << Endl;
 		}
-		else
+		else if (const auto texture = dynamic_type_cast< const GlslTexture* >(resource))
 		{
-			log::error << L"Unknown cross compile dialect \"" << crossDialect << L"\"." << Endl;
-			return false;
+			ss << L"// [binding = " << texture->getBinding() << L", set = " << (int32_t)texture->getSet() << L"] = texture" << Endl;
+			ss << L"//   .name = \"" << texture->getName() << L"\"" << Endl;
+			ss << L"//   .type = " << int32_t(texture->getUniformType()) << Endl;
 		}
+		else if (const auto uniformBuffer = dynamic_type_cast< const GlslUniformBuffer* >(resource))
+		{
+			ss << L"// [binding = " << uniformBuffer->getBinding() << L", set = " << (int32_t)uniformBuffer->getSet() << L"] = uniform buffer" << Endl;
+			ss << L"//   .name = \"" << uniformBuffer->getName() << L"\"" << Endl;
+			ss << L"//   .uniforms = {" << Endl;
+			for (auto uniform : uniformBuffer->get())
+			{
+				ss << L"//      " << int32_t(uniform.type) << L" \"" << uniform.name << L"\" " << uniform.length << Endl;
+			}
+			ss << L"//   }" << Endl;
+		}
+		else if (const auto image = dynamic_type_cast< const GlslImage* >(resource))
+		{
+			ss << L"// [binding = " << image->getBinding() << L", set = " << (int32_t)image->getSet() << L"] = image" << Endl;
+			ss << L"//   .name = \"" << image->getName() << L"\"" << Endl;
+			ss << L"//   .type = " << int32_t(image->getUniformType()) << Endl;
+		}
+		else if (const auto storageBuffer = dynamic_type_cast< const GlslStorageBuffer* >(resource))
+		{
+			ss << L"// [binding = " << storageBuffer->getBinding() << L", set = " << (int32_t)storageBuffer->getSet() << L"] = storage buffer" << Endl;
+			ss << L"//   .name = \"" << storageBuffer->getName() << L"\"" << Endl;
+			ss << L"//   .elements = {" << Endl;
+			for (auto element : storageBuffer->get())
+			{
+				ss << L"//      " << int32_t(element.type) << L" \"" << element.name << Endl;
+			}
+			ss << L"//   }" << Endl;
+		}
+	}
+
+	ss << Endl;
+	ss << L"// Parameters" << Endl;
+	for (auto p : cx.getParameters())
+	{
+		const wchar_t* c_parameterTypeNames[] = { L"scalar", L"vector", L"matrix", L"texture2d", L"texture3d", L"textureCube", L"sbuffer", L"image2d", L"image3d", L"imageCube" };
+		ss << L"// " << c_parameterTypeNames[(int32_t)p.type] << L" " << p.name << L", length = " << p.length << L", frequency = " << (int32_t)p.frequency << Endl;
+	}
+#endif
+
+	GlslRequirements requirements = cx.requirements();
+
+	// Vertex
+	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+	{
+		StringOutputStream vss;
+		vss << cx.getVertexShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		vss << Endl;
+		vss << ss.str();
+		vss << Endl;
+		output.vertex = vss.str();
+	}
+
+	// Pixel
+	if (vertexOutputs.size() == 1 && pixelOutputs.size() == 1)
+	{
+		StringOutputStream fss;
+		fss << cx.getFragmentShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		fss << Endl;
+		fss << ss.str();
+		fss << Endl;
+		output.pixel = fss.str();
+	}
+
+	// Compute
+	if (computeOutputs.size() >= 1 || scriptOutputs.size() >= 1)
+	{
+		StringOutputStream css;
+		css << cx.getComputeShader().getGeneratedShader(settings, layout, requirements, resolveModuleText);
+		css << Endl;
+		css << ss.str();
+		css << Endl;
+		output.compute = css.str();
 	}
 
 	return true;

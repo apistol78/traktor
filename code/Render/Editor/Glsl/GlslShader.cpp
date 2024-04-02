@@ -190,6 +190,9 @@ std::wstring GlslShader::getGeneratedShader(
 		ss << L"#extension GL_EXT_shader_explicit_arithmetic_types_float16 : enable" << Endl;
 	}
 
+	if (m_shaderType == StRayGen || m_shaderType == StRayHit || m_shaderType == StRayMiss)
+		ss << L"#extension GL_EXT_ray_tracing : require" << Endl;
+
 	ss << Endl;
 
 	PrecisionHint precisionHint = PrecisionHint::Undefined;
@@ -239,10 +242,35 @@ std::wstring GlslShader::getGeneratedShader(
 	else if (m_shaderType == StCompute)
 		stageMask = GlslResource::BsCompute;
 
+	if (m_shaderType == StRayGen)
+	{
+		ss << L"// Ray tracing pay load." << Endl;
+		ss << L"layout (location = 0) rayPayloadEXT rt" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+		ss << L"vec3 rayOrigin;" << Endl;
+		ss << L"vec3 rayDirection;" << Endl;
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+	else if (m_shaderType == StRayHit || m_shaderType == StRayMiss)
+	{
+		ss << L"// Ray tracing pay load." << Endl;
+		ss << L"layout (location = 0) rayPayloadInEXT rt" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+		ss << L"vec3 rayOrigin;" << Endl;
+		ss << L"vec3 rayDirection;" << Endl;
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
 	if (requirements.useTargetSize)
 	{
 		ss << L"// Push constants." << Endl;
-		ss << L"layout( push_constant ) uniform constants" << Endl;
+		ss << L"layout (push_constant) uniform constants" << Endl;
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 		ss << L"vec4 _vk_targetSize;" << Endl;

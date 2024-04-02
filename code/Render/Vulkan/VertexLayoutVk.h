@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,6 +22,7 @@ public:
 	explicit VertexLayoutVk(
 		const VkVertexInputBindingDescription& vertexBindingDescription,
 		const AlignedVector< VkVertexInputAttributeDescription >& vertexAttributeDescriptions,
+		int32_t positionElementIndex,
 		uint32_t hash
 	);
 
@@ -29,10 +30,14 @@ public:
 
 	const AlignedVector< VkVertexInputAttributeDescription >& getVkVertexInputAttributeDescriptions() const { return m_vertexAttributeDescriptions; }
 
+	int32_t getPositionElementIndex() const { return m_positionElementIndex; }
+
 	uint32_t getHash() const { return m_hash; }
 
+private:
 	VkVertexInputBindingDescription m_vertexBindingDescription;
 	AlignedVector< VkVertexInputAttributeDescription > m_vertexAttributeDescriptions;
+	int32_t m_positionElementIndex;
 	uint32_t m_hash;
 };
 

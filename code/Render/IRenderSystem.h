@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,6 +25,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IProgram;
 class IRenderTargetSet;
 class IRenderView;
@@ -142,6 +143,12 @@ public:
 	 * \return Render target set.
 	 */
 	virtual Ref< IRenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag) = 0;
+
+	/*! */
+	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure() = 0;
+
+	/*! */
+	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) = 0;
 
 	/*! Create program from program resource.
 	 *
