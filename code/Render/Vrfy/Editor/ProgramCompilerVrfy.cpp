@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -63,15 +63,17 @@ Ref< ProgramResource > ProgramCompilerVrfy::compile(
 	}
 
 	// Keep copy of readable shader in capture.
+	Output output;
 	m_compiler->generate(
 		shaderGraph,
 		settings,
 		name,
 		resolveModule,
-		resourceVrfy->m_vertexShader,
-		resourceVrfy->m_pixelShader,
-		resourceVrfy->m_computeShader
+		output
 	);
+	resourceVrfy->m_vertexShader = output.vertex;
+	resourceVrfy->m_pixelShader = output.pixel;
+	resourceVrfy->m_computeShader = output.compute;
 
 	return resourceVrfy;
 }
@@ -81,13 +83,11 @@ bool ProgramCompilerVrfy::generate(
 	const PropertyGroup* settings,
 	const std::wstring& name,
 	const resolveModule_fn& resolveModule,
-	std::wstring& outVertexShader,
-	std::wstring& outPixelShader,
-	std::wstring& outComputeShader
+	Output& output
 ) const
 {
 	// Just let the wrapped compiler generate source.
-	return m_compiler->generate(shaderGraph, settings, name, resolveModule, outVertexShader, outPixelShader, outComputeShader);
+	return m_compiler->generate(shaderGraph, settings, name, resolveModule, output);
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,25 +8,22 @@
  */
 #pragma once
 
-#include "Render/Buffer.h"
+#include "Render/IAccelerationStructure.h"
 
 namespace traktor::render
 {
 
 class Context;
 
-class BufferVk : public Buffer
+class AccelerationStructureVk : public IAccelerationStructure
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit BufferVk(Context* context, uint32_t bufferSize, uint32_t& instances);
-
-	virtual ~BufferVk();
+	explicit AccelerationStructureVk(Context* context);
 
 protected:
 	Context* m_context = nullptr;
-	uint32_t& m_instances;
 };
 
 }
