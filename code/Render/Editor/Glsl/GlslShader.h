@@ -49,7 +49,10 @@ public:
 	{
 		StVertex,
 		StFragment,
-		StCompute
+		StCompute,
+		StRayGen,
+		StRayHit,
+		StRayMiss
 	};
 
 	enum BlockType

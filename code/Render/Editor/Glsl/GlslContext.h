@@ -80,15 +80,27 @@ public:
 
 	void enterVertex();
 
-	void enterFragment();
-
-	void enterCompute();
-
 	bool inVertex() const;
+
+	void enterFragment();
 
 	bool inFragment() const;
 
+	void enterCompute();
+
 	bool inCompute() const;
+
+	void enterRayGen();
+
+	bool inRayGen() const;
+
+	void enterRayHit();
+
+	bool inRayHit() const;
+
+	void enterRayMiss();
+
+	bool inRayMiss() const;
 
 	GlslShader& getShader() { return *m_currentShader; }
 
@@ -191,6 +203,9 @@ private:
 	GlslShader m_vertexShader;
 	GlslShader m_fragmentShader;
 	GlslShader m_computeShader;
+	GlslShader m_rayGenShader;
+	GlslShader m_rayHitShader;
+	GlslShader m_rayMissShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
 	GlslRequirements m_requirements;

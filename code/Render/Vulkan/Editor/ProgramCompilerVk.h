@@ -46,9 +46,7 @@ public:
 		const PropertyGroup* settings,
 		const std::wstring& name,
 		const resolveModule_fn& resolveModule,
-		std::wstring& outVertexShader,
-		std::wstring& outPixelShader,
-		std::wstring& outComputeShader
+		Output& output
 	) const override final;
 };
 
