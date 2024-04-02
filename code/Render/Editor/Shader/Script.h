@@ -40,6 +40,17 @@ class T_DLLCLASS Script : public Node
 	T_RTTI_CLASS;
 
 public:
+	enum Domain
+	{
+		Undefined,
+		Vertex,
+		Pixel,
+		Compute,
+		RayGen,
+		RayHit,
+		RayMiss
+	};
+
 	Script();
 
 	void setName(const std::wstring& name);
@@ -49,6 +60,10 @@ public:
 	void setTechnique(const std::wstring& technique);
 
 	const std::wstring& getTechnique() const;
+
+	void setDomain(Domain domain);
+
+	Domain getDomain() const;
 
 	const int32_t* getLocalSize() const;
 
@@ -87,6 +102,7 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_technique;
+	Domain m_domain = Undefined;
 	int32_t m_localSize[3];
 	AlignedVector< Guid > m_includes;
 	StaticVector< InputPin, 64 > m_inputPins;

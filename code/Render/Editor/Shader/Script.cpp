@@ -224,7 +224,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 6, Script, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Script", 7, Script, Node)
 
 Script::Script()
 {
@@ -251,6 +251,16 @@ void Script::setTechnique(const std::wstring& technique)
 const std::wstring& Script::getTechnique() const
 {
 	return m_technique;
+}
+
+void Script::setDomain(Domain domain)
+{
+	m_domain = domain;
+}
+
+Script::Domain Script::getDomain() const
+{
+	return m_domain;
 }
 
 const int32_t* Script::getLocalSize() const
@@ -354,6 +364,22 @@ void Script::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"technique", m_technique);
+
+	if (s.getVersion< Script >() >= 7)
+	{
+		const MemberEnum< Domain >::Key c_Domain_Keys[] =
+		{
+			{ L"Undefined", Domain::Undefined },
+			{ L"Vertex", Domain::Vertex },
+			{ L"Pixel", Domain::Pixel },
+			{ L"Compute", Domain::Compute },
+			{ L"RayGen", Domain::RayGen },
+			{ L"RayHit", Domain::RayHit },
+			{ L"RayMiss", Domain::RayMiss },
+			{ 0 }
+		};
+		s >> MemberEnum< Domain >(L"domain", m_domain, c_Domain_Keys);
+	}
 
 	if (s.getVersion< Script >() >= 6)
 	{

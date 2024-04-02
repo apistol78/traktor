@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -26,6 +26,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IVertexLayout;
 
 /*! Render mesh.
@@ -44,29 +45,33 @@ public:
 
 	void setVertexElements(const AlignedVector< VertexElement >& vertexDeclaration);
 
-	void setVertexLayout(const IVertexLayout* vertexLayout);
-
-	void setVertexBuffer(Buffer* vertexBuffer);
-
-	void setIndexType(IndexType indexType);
-
-	void setIndexBuffer(Buffer* indexBuffer);
-
-	void setParts(const AlignedVector< Part >& parts);
-
-	void setBoundingBox(const Aabb3& boundingBox);
-
 	const AlignedVector< VertexElement >& getVertexElements() const { return m_vertexElements; }
+
+	void setVertexLayout(const IVertexLayout* vertexLayout);
 
 	const IVertexLayout* getVertexLayout() const { return m_vertexLayout; }
 
+	void setVertexBuffer(Buffer* vertexBuffer);
+
 	Buffer* getVertexBuffer() const { return m_vertexBuffer; }
+
+	void setIndexType(IndexType indexType);
 
 	IndexType getIndexType() const { return m_indexType; }
 
+	void setIndexBuffer(Buffer* indexBuffer);
+
 	Buffer* getIndexBuffer() const { return m_indexBuffer; }
 
+	void setAccelerationStructure(IAccelerationStructure* accelerationStructure);
+
+	IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
+
+	void setParts(const AlignedVector< Part >& parts);
+
 	const AlignedVector< Part >& getParts() const { return m_parts; }
+
+	void setBoundingBox(const Aabb3& boundingBox);
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
@@ -76,6 +81,7 @@ private:
 	Ref< Buffer > m_vertexBuffer;
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
+	Ref< IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };
