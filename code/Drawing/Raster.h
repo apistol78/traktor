@@ -102,7 +102,11 @@ public:
 
 	void close();
 
+	void rect(const Vector2& p, const Vector2& sz, float radius) { rect(p.x, p.y, sz.x, sz.y, radius); }
+
 	void rect(float x, float y, float width, float height, float radius);
+
+	void circle(const Vector2& p, float radius) { circle(p.x, p.y, radius); }
 
 	void circle(float x, float y, float radius);
 

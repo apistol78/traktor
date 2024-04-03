@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <agg_alpha_mask_u8.h>
 #include <agg_conv_curve.h>
 #include <agg_conv_stroke.h>
+#include <agg_ellipse.h>
 #include <agg_path_storage.h>
 #include <agg_pixfmt_gray.h>
 #include <agg_pixfmt_rgba.h>
@@ -17,6 +18,7 @@
 #include <agg_renderer_base.h>
 #include <agg_renderer_scanline.h>
 #include <agg_rendering_buffer.h>
+#include <agg_rounded_rect.h>
 #include <agg_scanline_p.h>
 #include <agg_scanline_u.h>
 #include <agg_span_allocator.h>
@@ -508,10 +510,15 @@ public:
 
 	virtual void rect(float x, float y, float width, float height, float radius) override final
 	{
+		agg::rounded_rect r(x, y, x + width, y + height, radius);
+		r.normalize_radius();
+		m_path.concat_path(r);
 	}
 
 	virtual void circle(float x, float y, float radius) override final
 	{
+		agg::ellipse e(x, y, radius, radius);
+		m_path.concat_path(e);
 	}
 
 	virtual void fill(int32_t style0, int32_t style1, Raster::FillRule fillRule) override final

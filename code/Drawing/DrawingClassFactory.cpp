@@ -394,8 +394,10 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classRaster->addMethod("cubicTo", &Raster_cubicTo_6);
 	classRaster->addMethod("cubicTo", &Raster_cubicTo_4);
 	classRaster->addMethod("close", &Raster::close);
-	classRaster->addMethod("rect", &Raster::rect);
-	classRaster->addMethod("circle", &Raster::circle);
+	classRaster->addMethod< void, const Vector2&, const Vector2&, float >("rect", &Raster::rect);
+	classRaster->addMethod< void, float, float, float, float, float >("rect", &Raster::rect);
+	classRaster->addMethod< void, const Vector2&, float >("circle", &Raster::circle);
+	classRaster->addMethod< void, float, float, float >("circle", &Raster::circle);
 	classRaster->addMethod("fill", &Raster_fill);
 	classRaster->addMethod("stroke", &Raster_stroke);
 	classRaster->addMethod("submit", &Raster::submit);
