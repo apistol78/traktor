@@ -83,12 +83,12 @@ ufbx_node* search(ufbx_node* node, const std::wstring& filter, const std::functi
 	return nullptr;
 }
 
-bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node) >& visitor)
+bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< bool (ufbx_node* node, int32_t) >& visitor, int32_t depth = 0)
 {
 	if (!include(node, filter))
 		return true;
 
-	if (!visitor(node))
+	if (!visitor(node, depth))
 		return false;
 
 	for (size_t i = 0; i < node->children.count; ++i)
@@ -96,7 +96,7 @@ bool traverse(ufbx_node* node, const std::wstring& filter, const std::function< 
 		ufbx_node* child = node->children.data[i];
 		if (child)
 		{
-			if (!traverse(child, filter, visitor))
+			if (!traverse(child, filter, visitor, depth + 1))
 				return false;
 		}
 	}
@@ -127,6 +127,14 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	if (!scene)
 		return nullptr;
 
+	traverse(scene->root_node, L"", [](ufbx_node* node, int32_t depth) {
+		for (int32_t i = 0; i < depth; ++i)
+			log::info << L" ";
+		log::info << mbstows(node->name.data) << L" " << (node->bind_pose != nullptr ? L"Y" : L"N"
+		) << Endl;
+		return true;
+	});
+
 	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
 
 	Ref< Model > model = new Model();
@@ -135,7 +143,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	// First convert skeleton since it's used to figure out correct weight index
 	// when converting meshes.
 	ufbx_node* skeletonNode = search(scene->root_node, filter, [&](ufbx_node* node) {
-		return (node->bind_pose != nullptr);
+		return (node->children.count > 0 && node->bind_pose != nullptr);
 	});
 	if (skeletonNode)
 	{
@@ -144,7 +152,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	}
 
 	// Convert and merge all meshes.
-	result &= traverse(scene->root_node, filter, [&](ufbx_node* node) {
+	result &= traverse(scene->root_node, filter, [&](ufbx_node* node, int32_t) {
 		if (node->visible)
 		{
 			if (node->mesh != nullptr)

@@ -52,6 +52,17 @@ std::wstring getJointName(ufbx_node* node)
 	return jointName;
 }
 
+ufbx_bone_pose* findBonePose(ufbx_pose* bindPose, ufbx_node* node)
+{
+	for (size_t i = 0; i < bindPose->bone_poses.count; ++i)
+	{
+		ufbx_bone_pose& pose = bindPose->bone_poses.data[i];
+		if (pose.bone_node == node)
+			return &pose;
+	}
+	return nullptr;	
+}
+
 	}
 
 bool convertSkeleton(
@@ -74,8 +85,21 @@ bool convertSkeleton(
 
 		const std::wstring jointName = getJointName(node);
 
+		Matrix44 Mnode = Matrix44::identity();
+
+		ufbx_bone_pose* pose = findBonePose(bindPose, node);
+		if (pose)
+		{
+			Mnode = convertMatrix(pose->bone_to_world);
+		}
+		else
+		{
+			pose = findBonePose(bindPose, parent);
+			if (pose)
+				Mnode = convertMatrix(pose->bone_to_world) * convertMatrix(node->node_to_parent);
+		}
+
 		// Calculate joint transformation.
-		const Matrix44 Mnode = convertMatrix(node->geometry_to_world);
 		Matrix44 Mjoint = Mnode * Mrx90;
 
 		const Vector4 S(
@@ -87,7 +111,7 @@ bool convertSkeleton(
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
 		uint32_t parentId = c_InvalidIndex;
-		if (parent != nullptr)
+		if (parent != nullptr && parent != skeletonNode)
 		{
 			const std::wstring parentJointName = getJointName(parent);
 			parentId = outModel.findJointIndex(parentJointName);
@@ -141,28 +165,31 @@ Ref< Pose > convertPose(
 		const ufbx_matrix gm = ufbx_transform_to_matrix(&gt);
 
 		const Matrix44 Mnode = convertMatrix(gm);
-		Matrix44 Mjoint = Mnode * Mrx90;
+		Matrix44 Mjoint = Mnode; // * Mrx90;
 
-		const Vector4 S(
-			1.0f / Mjoint.axisX().length(),
-			1.0f / Mjoint.axisY().length(),
-			1.0f / Mjoint.axisZ().length()
-		);
-		Mjoint = Mjoint * scale(S);
+		if (!parent || parent == skeletonNode)
+			Mjoint = Mjoint * Mrx90.inverse();
+
+		// const Vector4 S(
+		// 	1.0f / Mjoint.axisX().length(),
+		// 	1.0f / Mjoint.axisY().length(),
+		// 	1.0f / Mjoint.axisZ().length()
+		// );
+		// Mjoint = Mjoint * scale(S);
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
-		if (parent != nullptr)
-		{
-			const std::wstring parentJointName = getJointName(parent);
-			const uint32_t parentId = model.findJointIndex(parentJointName);
-			if (parentId != c_InvalidIndex)
-			{
-				const Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
-				Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
-			}
-			else
-				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
-		}
+		// if (parent != nullptr && parent != skeletonNode)
+		// {
+		// 	const std::wstring parentJointName = getJointName(parent);
+		// 	const uint32_t parentId = model.findJointIndex(parentJointName);
+		// 	if (parentId != c_InvalidIndex)
+		// 	{
+		// 		const Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
+		// 		Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
+		// 	}
+		// 	else
+		// 		log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
+		// }
 
 		pose->setJointTransform(jointId, Transform(Mjoint));
 		return true;
