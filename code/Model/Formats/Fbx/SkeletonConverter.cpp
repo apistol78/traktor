@@ -203,7 +203,7 @@ Ref< Pose > convertPose(
 		Mjoint = Mjoint * scale(S);
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
-		if (parent != nullptr && parent != skeletonNode)
+		if (parent != nullptr && parent != eskeletonNode)
 		{
 			const std::wstring parentJointName = getJointName(parent);
 			const uint32_t parentId = model.findJointIndex(parentJointName);
