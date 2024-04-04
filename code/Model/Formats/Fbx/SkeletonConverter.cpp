@@ -20,6 +20,25 @@ namespace traktor::model
 	namespace
 	{
 
+ufbx_node* search(ufbx_node* node, const std::function< bool (ufbx_node* node) >& predicate)
+{
+	if (predicate(node))
+		return node;
+
+	for (size_t i = 0; i < node->children.count; ++i)
+	{
+		ufbx_node* child = node->children.data[i];
+		if (child)
+		{
+			ufbx_node* foundNode = search(child, predicate);
+			if (foundNode)
+				return foundNode;
+		}
+	}
+
+	return nullptr;
+}
+
 bool traverse(ufbx_node* parent, ufbx_node* node, const std::function< bool (ufbx_node* parent, ufbx_node* node) >& visitor)
 {
 	if (!node)
@@ -144,13 +163,24 @@ Ref< Pose > convertPose(
 	const Matrix44& axisTransform
 )
 {
+	ufbx_evaluate_opts opts = {};
+	ufbx_scene* escene = ufbx_evaluate_scene(scene, anim, time, &opts, nullptr);
+	if (!escene)
+		return nullptr;
+
+	// Find evaluated skeleton.
+	//#fixme Ensure it's the same skeleton...
+	ufbx_node* eskeletonNode = search(escene->root_node, [&](ufbx_node* node) {
+		return (node->children.count > 0 && node->bind_pose != nullptr);
+	});
+
 	const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
 	Ref< Pose > pose = new Pose();
-	const bool result = traverse(nullptr, skeletonNode, [&](ufbx_node* parent, ufbx_node* node) {
+	const bool result = traverse(nullptr, eskeletonNode, [&](ufbx_node* parent, ufbx_node* node) {
 
 		// Skip armature node.
-		if (node == skeletonNode)
+		if (node == eskeletonNode)
 			return true;
 
 		const std::wstring jointName = getJointName(node);
@@ -161,40 +191,36 @@ Ref< Pose > convertPose(
 			return true;
 		}
 
-		const ufbx_transform gt = ufbx_evaluate_transform(anim, node, time);
-		const ufbx_matrix gm = ufbx_transform_to_matrix(&gt);
+		// Calculate joint transformation.
+		const Matrix44 Mnode = convertMatrix(node->geometry_to_world);
+		Matrix44 Mjoint = Mnode * Mrx90;
 
-		const Matrix44 Mnode = convertMatrix(gm);
-		Matrix44 Mjoint = Mnode; // * Mrx90;
-
-		if (!parent || parent == skeletonNode)
-			Mjoint = Mjoint * Mrx90.inverse();
-
-		// const Vector4 S(
-		// 	1.0f / Mjoint.axisX().length(),
-		// 	1.0f / Mjoint.axisY().length(),
-		// 	1.0f / Mjoint.axisZ().length()
-		// );
-		// Mjoint = Mjoint * scale(S);
+		const Vector4 S(
+			1.0f / Mjoint.axisX().length(),
+			1.0f / Mjoint.axisY().length(),
+			1.0f / Mjoint.axisZ().length()
+		);
+		Mjoint = Mjoint * scale(S);
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
-		// if (parent != nullptr && parent != skeletonNode)
-		// {
-		// 	const std::wstring parentJointName = getJointName(parent);
-		// 	const uint32_t parentId = model.findJointIndex(parentJointName);
-		// 	if (parentId != c_InvalidIndex)
-		// 	{
-		// 		const Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
-		// 		Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
-		// 	}
-		// 	else
-		// 		log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
-		// }
+		if (parent != nullptr && parent != skeletonNode)
+		{
+			const std::wstring parentJointName = getJointName(parent);
+			const uint32_t parentId = model.findJointIndex(parentJointName);
+			if (parentId != c_InvalidIndex)
+			{
+				const Matrix44 Mparent = pose->getJointGlobalTransform(&model, parentId).toMatrix44();
+				Mjoint = Mparent.inverse() * Mjoint;	// Cl = Bg-1 * Cg
+			}
+			else
+				log::warning << L"Unable to bind parent joint; no such joint \"" << parentJointName << L"\"." << Endl;
+		}
 
 		pose->setJointTransform(jointId, Transform(Mjoint));
 		return true;
 	});
 
+	ufbx_free_scene(escene);
 	return pose;
 }
 
