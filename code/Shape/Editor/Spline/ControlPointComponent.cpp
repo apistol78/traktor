@@ -13,10 +13,10 @@ namespace traktor::shape
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ControlPointComponent", ControlPointComponent, world::IEntityComponent)
 
-ControlPointComponent::ControlPointComponent(float scale)
+ControlPointComponent::ControlPointComponent(const ControlPointComponentData* data)
 :	m_dirty(true)
 ,	m_transform(Transform::identity())
-,	m_scale(scale)
+,	m_data(data)
 {
 }
 

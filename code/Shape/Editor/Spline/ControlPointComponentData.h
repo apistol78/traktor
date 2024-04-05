@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -42,8 +42,11 @@ public:
 
 	float getScale() const { return m_scale; }
 
+	float getAutomaticOrientationWeight() const { return m_automaticOrientationWeight; }
+
 private:
 	float m_scale = 1.0f;
+	float m_automaticOrientationWeight = 1.0f;
 };
 
 }

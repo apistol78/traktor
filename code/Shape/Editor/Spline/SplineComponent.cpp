@@ -10,12 +10,18 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
+#include "Physics/Body.h"
+#include "Physics/Mesh.h"
+#include "Physics/MeshShapeDesc.h"
+#include "Physics/PhysicsManager.h"
+#include "Physics/StaticBodyDesc.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
+#include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineLayerComponent.h"
@@ -23,12 +29,6 @@
 #include "World/WorldBuildContext.h"
 #include "World/Entity.h"
 #include "World/Entity/GroupComponent.h"
-
-#include "Physics/Body.h"
-#include "Physics/Mesh.h"
-#include "Physics/MeshShapeDesc.h"
-#include "Physics/PhysicsManager.h"
-#include "Physics/StaticBodyDesc.h"
 
 namespace traktor::shape
 {
@@ -120,7 +120,8 @@ void SplineComponent::update(const world::UpdateParams& update)
 			k.T = (float)i / (controlPoints.size() - 1);
 			k.position = T.translation();
 			k.orientation = T.rotation().toEulerAngles();
-			k.values[0] = controlPoints[i]->getScale();
+			k.values[0] = controlPoints[i]->getData()->getScale();
+			k.values[1] = controlPoints[i]->getData()->getAutomaticOrientationWeight();
 			m_path.insert(k);
 		}
 

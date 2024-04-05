@@ -117,16 +117,27 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, b
 			const auto v = path.evaluate(ats, closed);
 			Matrix44 T = v.transform().toMatrix44();
 
-			if (m_data->m_automaticOrientation)
+			const float automaticOrientationWeight = v.values[1];
+			if (m_data->m_automaticOrientation && automaticOrientationWeight > FUZZY_EPSILON)
 			{
 				const Quaternion Qrot(T);
+
+				Matrix44 Tao = T;
 
 				const float c_atDelta = 0.001f;
 				const Transform Tp = path.evaluate(ats - c_atDelta, closed).transform();
 				const Transform Tn = path.evaluate(ats + c_atDelta, closed).transform();
-				T = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
+				Tao = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
+				Tao = Tao * rotateZ(Qrot.toEulerAngles().y());
 
-				T = T * rotateZ(Qrot.toEulerAngles().y());
+				if (automaticOrientationWeight < 1.0f)
+				{
+					const Quaternion QaoRot(Tao);
+					const Quaternion Qr = lerp(Qrot, QaoRot, Scalar(automaticOrientationWeight));
+					T = translate(Tao.translation()) * Qr.toMatrix44();
+				}
+				else
+					T = Tao;
 			}
 
 			model::Vertex outputVertex;

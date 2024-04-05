@@ -21,6 +21,8 @@
 namespace traktor::shape
 {
 
+class ControlPointComponentData;
+
 /*!
  * \ingroup Shape
  */
@@ -29,7 +31,7 @@ class T_DLLCLASS ControlPointComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit ControlPointComponent(float scale);
+	explicit ControlPointComponent(const ControlPointComponentData* data);
 
 	virtual void destroy() override final;
 
@@ -45,12 +47,12 @@ public:
 
 	const Transform& getTransform() const { return m_transform; }
 
-	float getScale() const { return m_scale; }
+	const ControlPointComponentData* getData() const { return m_data; }
 
 private:
 	bool m_dirty;
 	Transform m_transform;
-	float m_scale;
+	Ref< const ControlPointComponentData > m_data;
 };
 
 }

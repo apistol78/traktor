@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,11 +15,11 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ControlPointComponentData", 0, ControlPointComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.shape.ControlPointComponentData", 1, ControlPointComponentData, world::IEntityComponentData)
 
 Ref< ControlPointComponent > ControlPointComponentData::createComponent() const
 {
-	return new ControlPointComponent(m_scale);
+	return new ControlPointComponent(this);
 }
 
 int32_t ControlPointComponentData::getOrdinal() const
@@ -34,6 +34,9 @@ void ControlPointComponentData::setTransform(const world::EntityData* owner, con
 void ControlPointComponentData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"scale", m_scale, AttributeUnit(UnitType::Percent));
+
+	if (s.getVersion< ControlPointComponentData >() >= 1)
+		s >> Member< float >(L"automaticOrientationWeight", m_automaticOrientationWeight, AttributeUnit(UnitType::Percent));
 }
 
 }

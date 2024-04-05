@@ -107,6 +107,7 @@ Ref< model::Model > SplineEntityReplicator::createModel(
 		k.position = T.translation();
 		k.orientation = T.rotation().toEulerAngles();
 		k.values[0] = controlPointData->getScale();
+		k.values[1] = controlPointData->getAutomaticOrientationWeight();
 		path.insert(k);
 
 		++controlPointIndex;
