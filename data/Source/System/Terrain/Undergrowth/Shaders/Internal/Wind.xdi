@@ -62,7 +62,7 @@
 				<first>1469</first>
 				<second>38</second>
 			</position>
-			<swizzle>x00</swizzle>
+			<swizzle>00x</swizzle>
 		</item>
 		<item type="traktor.render.Mul" version="traktor.render.Node:1">
 			<id>{45C77FE9-A1D5-F746-982E-D558F4D37173}</id>

@@ -379,6 +379,7 @@ Tag_NormalTexCoord
 				<item>Normal</item>
 				<item>Alpha</item>
 				<item>Decal response</item>
+				<item>World position offset</item>
 			</names>
 		</item>
 		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
@@ -398,8 +399,8 @@ Tag_DecalResponse
 			]]>
 			</comment>
 			<position>
-				<first>674</first>
-				<second>596</second>
+				<first>670</first>
+				<second>576</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -598,7 +599,7 @@ Tag_DecalResponse
 		<item type="traktor.render.Edge" version="1">
 			<source>
 				<node ref="/object/nodes/item[15]"/>
-				<id>{EEB495BD-DE7F-4DE8-9B3A-7E9B220B927F}</id>
+				<id>{EEB495BD-DE7F-4DE8-9C3A-7E9B220B927F}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
