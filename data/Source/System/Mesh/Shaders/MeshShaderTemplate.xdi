@@ -425,8 +425,8 @@
 			<id>{1F7BA6A5-17E1-134B-A711-E7AEA9A07291}</id>
 			<comment/>
 			<position>
-				<first>924</first>
-				<second>1348</second>
+				<first>923</first>
+				<second>1368</second>
 			</position>
 			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
 			<inputPins>
@@ -543,8 +543,8 @@
 			<id>{9742EDE4-0AEC-6847-B72C-D233D30A8BA1}</id>
 			<comment/>
 			<position>
-				<first>998</first>
-				<second>1491</second>
+				<first>983</first>
+				<second>1493</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
@@ -990,6 +990,14 @@ Tag_LightmapTexCoord
 				<second>854</second>
 			</position>
 		</item>
+		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
+			<id>{957AB9E8-9B15-4CC3-8EA8-3FF0B013F9EA}</id>
+			<comment/>
+			<position>
+				<first>956</first>
+				<second>1320</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1380,16 +1388,6 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[38]"/>
 				<id>{324A6471-CD60-4928-A4E2-2B085856B91C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1880,6 +1878,26 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[50]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{93DEEDC9-D4C7-47F8-8D6A-A79DABD6BA6A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{8FFB3BDB-A00E-4406-994C-0D52FAF04871}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
 			</destination>
 		</item>
 	</edges>

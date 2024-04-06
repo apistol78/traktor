@@ -784,32 +784,12 @@ Object
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{EEB495BD-DE7F-4DE8-993A-7E9B220B927F}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{EEB495BD-DE7F-4DE8-953A-7E9B220B927F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{EEB495BD-DE7F-4DE8-963A-7E9B220B927F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -824,11 +804,31 @@ Object
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
-				<id>{EEB495BD-DE7F-4DE8-993A-7E9B220B927F}</id>
+				<node ref="/object/nodes/item[12]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{EEB495BD-DE7F-4DE8-963A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{EEB495BD-DE7F-4DE8-953A-7E9B220B927F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
 				<id>{EEB495BD-DE7F-4DE8-943A-7E9B220B927F}</id>
 			</destination>
 		</item>
