@@ -50,7 +50,7 @@ end
 
 -- Private
 
-function CheckBox:_initialize(parent, mc, caption)
+function CheckBox:_initialize(parent, mc)
 	Widget._initialize(self, parent, mc)
 
 	self._background_mc = mc:getMember("background_mc")
@@ -88,6 +88,7 @@ function CheckBox:_onMouseRelease(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>
