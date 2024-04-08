@@ -30,7 +30,8 @@ class RefArray
 {
 	enum
 	{
-		ExpandSize = 32
+		MaxCapacityAlignment = 256 * 1024,
+		MinCapacity = 32
 	};
 
 public:
@@ -265,12 +266,7 @@ public:
 	};
 
 	/*! Construct empty array. */
-	RefArray()
-	:	m_items(nullptr)
-	,	m_size(0)
-	,	m_capacity(0)
-	{
-	}
+	RefArray() = default;
 
 	/*! Construct array with size. */
 	RefArray(size_type size)
@@ -418,8 +414,8 @@ public:
 	{
 		T_SAFE_ADDREF(val);
 
-		size_type size = m_size;
-		size_type offset = size_type(at.m_item - m_items);
+		const size_type size = m_size;
+		const size_type offset = size_type(at.m_item - m_items);
 
 		grow(1);
 
@@ -432,13 +428,13 @@ public:
 	/*! Insert elements at specified location. */
 	iterator insert(iterator at, iterator first, iterator last)
 	{
-		size_type size = m_size;
-		size_type offset = size_type(at.m_item - m_items);
-		size_type count = size_type(last.m_item - first.m_item);
+		const size_type size = m_size;
+		const size_type offset = size_type(at.m_item - m_items);
+		const size_type count = size_type(last.m_item - first.m_item);
 
 		grow(count);
 
-		int32_t move = int32_t(size - offset);
+		const int32_t move = int32_t(size - offset);
 		for (int32_t i = move - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);
@@ -458,13 +454,13 @@ public:
 	/*! Insert elements at specified location. */
 	iterator insert(iterator at, const_iterator first, const_iterator last)
 	{
-		size_type size = m_size;
-		size_type offset = size_type(at.m_item - m_items);
-		size_type count = size_type(last.m_item - first.m_item);
+		const size_type size = m_size;
+		const size_type offset = size_type(at.m_item - m_items);
+		const size_type count = size_type(last.m_item - first.m_item);
 
 		grow(count);
 
-		int32_t move = int32_t(size - offset);
+		const int32_t move = int32_t(size - offset);
 		for (int32_t i = move - 1; i >= 0; --i)
 		{
 			T_ASSERT(i + offset < size);
@@ -489,7 +485,7 @@ public:
 
 		T_SAFE_RELEASE(*iter.m_item);
 
-		size_type offset = size_type(iter.m_item - m_items);
+		const size_type offset = size_type(iter.m_item - m_items);
 		T_ASSERT(offset < m_size);
 
 		for (size_type i = offset; i < m_size - 1; ++i)
@@ -517,9 +513,9 @@ public:
 	/*! Erase range of elements from array. */
 	void erase(iterator first, iterator last)
 	{
-		size_type offset = size_type(first.m_item - m_items);
-		size_type count = size_type(last.m_item - first.m_item);
-		size_type size = m_size - count;
+		const size_type offset = size_type(first.m_item - m_items);
+		const size_type count = size_type(last.m_item - first.m_item);
+		const size_type size = m_size - count;
 
 		for (size_type i = offset; i < size; ++i)
 		{
@@ -563,10 +559,7 @@ public:
 		if (size > m_size)
 		{
 			if (size > m_capacity)
-			{
-				size_t capacity = (size & ~(ExpandSize - 1)) + ExpandSize;
-				reserve(capacity);
-			}
+				reserve(size);
 
 			for (size_t i = m_size; i < size; ++i)
 				m_items[i] = nullptr;
@@ -591,22 +584,28 @@ public:
 	}
 
 	/*! Reserve capacity of array. */
-	void reserve(size_type size)
+	void reserve(size_type capacity)
 	{
-		if (size > m_capacity)
+		if (capacity > m_capacity)
 		{
-			value_type* items = new value_type [size];
+			size_t capacityAlignment = (m_capacity > MinCapacity ? m_capacity : MinCapacity);
+			if (capacityAlignment > MaxCapacityAlignment)
+				capacityAlignment = MaxCapacityAlignment;
+
+			const size_t newCapacity = alignUp(capacity, capacityAlignment);
+
+			value_type* items = new value_type [newCapacity];
 			T_FATAL_ASSERT (items);
 
 			for (size_type i = 0; i < m_size; ++i)
 				items[i] = m_items[i];
-			for (size_type i = m_size; i < size; ++i)
+			for (size_type i = m_size; i < newCapacity; ++i)
 				items[i] = nullptr;
 
 			delete[] m_items;
 
 			m_items = items;
-			m_capacity = size;
+			m_capacity = newCapacity;
 		}
 	}
 
@@ -686,18 +685,15 @@ public:
 	}
 
 private:
-	value_type* m_items;
-	size_type m_size;
-	size_type m_capacity;
+	value_type* m_items = nullptr;
+	size_type m_size = 0;
+	size_type m_capacity = 0;
 
 	void grow(size_t count)
 	{
-		size_t newSize = m_size + count;
+		const size_t newSize = m_size + count;
 		if (newSize > m_capacity)
-		{
-			size_t capacity = (newSize & ~(ExpandSize - 1)) + ExpandSize;
-			reserve(capacity);
-		}
+			reserve(newSize);
 		m_size = newSize;
 	}
 
