@@ -337,8 +337,8 @@ World_SimpleColor
 			<id>{FE3DDB42-3FAC-384B-9C0F-7CC6973F26F5}</id>
 			<comment/>
 			<position>
-				<first>-1926</first>
-				<second>1322</second>
+				<first>-1900</first>
+				<second>1404</second>
 			</position>
 			<name>V_Roughness</name>
 		</item>
@@ -373,8 +373,8 @@ World_SimpleColor
 			<id>{2CC7EAFD-CB71-3649-A67C-0AB2278C99CD}</id>
 			<comment/>
 			<position>
-				<first>-1926</first>
-				<second>1048</second>
+				<first>-1900</first>
+				<second>1177</second>
 			</position>
 			<name>V_SurfaceColor</name>
 		</item>
@@ -442,8 +442,8 @@ Opaque
 			]]>
 			</comment>
 			<position>
-				<first>-2084</first>
-				<second>1220</second>
+				<first>-2059</first>
+				<second>1306</second>
 			</position>
 			<name>E_Opaque</name>
 		</item>
@@ -504,8 +504,8 @@ World_ShadowWrite
 			<id>{336A89C9-F9D6-D243-8FE7-99822DF4AF4B}</id>
 			<comment/>
 			<position>
-				<first>-1936</first>
-				<second>1216</second>
+				<first>-1910</first>
+				<second>1300</second>
 			</position>
 			<fragmentGuid>{819D0D66-7FB8-4EA0-9D8D-445F3EBC2E8D}</fragmentGuid>
 			<inputPins>
@@ -531,11 +531,16 @@ World_DeferredColor
 			]]>
 			</comment>
 			<position>
-				<first>-1709</first>
-				<second>1123</second>
+				<first>-1684</first>
+				<second>1209</second>
 			</position>
 			<fragmentGuid>{AE1F1751-0133-426A-9F69-2DE781788F0C}</fragmentGuid>
 			<inputPins>
+				<item>
+					<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
+					<name>Alpha</name>
+					<optional>false</optional>
+				</item>
 				<item>
 					<id>{3B4F6A9B-6DE3-124D-9E92-F5182DCB42BA}</id>
 					<name>SurfaceColor</name>
@@ -550,11 +555,6 @@ World_DeferredColor
 					<id>{505DD2CD-E305-084F-8673-848F43B149F0}</id>
 					<name>ViewPosition</name>
 					<optional>false</optional>
-				</item>
-				<item>
-					<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
-					<name>Alpha</name>
-					<optional>true</optional>
 				</item>
 				<item>
 					<id>{72048415-F7D0-42B2-BF26-7F7F4D97A902}</id>
@@ -578,12 +578,7 @@ World_DeferredColor
 				</item>
 			</inputPins>
 			<outputPins/>
-			<values>
-				<item>
-					<first>Alpha</first>
-					<second>0</second>
-				</item>
-			</values>
+			<values/>
 		</item>
 		<item type="traktor.render.Connected" version="traktor.render.Node:1">
 			<id>{0309576C-2944-864A-A027-EB7FCA5B8A35}</id>
@@ -817,8 +812,8 @@ Opaque
 			<id>{0267BF19-23C6-44BC-8666-7121EE8CB3DB}</id>
 			<comment/>
 			<position>
-				<first>-1958</first>
-				<second>1090</second>
+				<first>-1932</first>
+				<second>1218</second>
 			</position>
 			<name>V_ViewNormalDetail</name>
 		</item>
@@ -954,8 +949,8 @@ Opaque
 			<id>{A0E9C141-A4BD-6042-83FA-C2725330DE6D}</id>
 			<comment/>
 			<position>
-				<first>-1926</first>
-				<second>1132</second>
+				<first>-1900</first>
+				<second>1259</second>
 			</position>
 			<name>V_ViewPosition</name>
 		</item>
@@ -1191,8 +1186,8 @@ World_DeferredGBufferWrite
 			<id>{2AEB8F7D-09FD-A44F-8417-D78F938D3569}</id>
 			<comment/>
 			<position>
-				<first>-1894</first>
-				<second>1174</second>
+				<first>-2051</first>
+				<second>1076</second>
 			</position>
 			<name>V_Alpha</name>
 		</item>
@@ -1200,8 +1195,8 @@ World_DeferredGBufferWrite
 			<id>{B186C62E-99F6-AF49-B6AC-360FF1AD9BBE}</id>
 			<comment/>
 			<position>
-				<first>-1926</first>
-				<second>1280</second>
+				<first>-1900</first>
+				<second>1363</second>
 			</position>
 			<name>V_Metalness</name>
 		</item>
@@ -1209,8 +1204,8 @@ World_DeferredGBufferWrite
 			<id>{D29F7495-3701-6C40-8688-F1ACF0DA9BDA}</id>
 			<comment/>
 			<position>
-				<first>-1910</first>
-				<second>1364</second>
+				<first>-1884</first>
+				<second>1445</second>
 			</position>
 			<name>V_Specular</name>
 		</item>
@@ -1231,6 +1226,23 @@ World_DeferredGBufferWrite
 				<second>1184</second>
 			</position>
 			<name>V_DecalResponse</name>
+		</item>
+		<item type="traktor.render.Connected" version="traktor.render.Node:1">
+			<id>{16CB0D25-E94E-8449-B92D-80534014833F}</id>
+			<comment/>
+			<position>
+				<first>-1894</first>
+				<second>1050</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
+			<id>{B6FEEE51-915B-7642-A568-ED5923700A1B}</id>
+			<comment/>
+			<position>
+				<first>-2073</first>
+				<second>1121</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1976,26 +1988,6 @@ World_DeferredGBufferWrite
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[81]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[82]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -2032,6 +2024,56 @@ World_DeferredGBufferWrite
 			<destination>
 				<node ref="/object/nodes/item[85]"/>
 				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{197CC347-3580-4502-8AA1-976E476EA843}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[87]"/>
+				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[81]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[86]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{D2DE1271-56BA-EC4B-8888-11763D0E783F}</id>
 			</destination>
 		</item>
 	</edges>
@@ -2080,8 +2122,8 @@ World_DeferredGBufferWrite
 				<second>916</second>
 			</position>
 			<size>
-				<first>664</first>
-				<second>523</second>
+				<first>736</first>
+				<second>606</second>
 			</size>
 		</item>
 		<item type="traktor.render.Group">

@@ -174,7 +174,7 @@
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
-				<postOpaque>false</postOpaque>
+				<postOpaque>true</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
@@ -313,7 +313,7 @@
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
-				<postOpaque>false</postOpaque>
+				<postOpaque>true</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>
@@ -360,7 +360,7 @@
 			<priority>
 				<setup>false</setup>
 				<opaque>false</opaque>
-				<postOpaque>false</postOpaque>
+				<postOpaque>true</postOpaque>
 				<alphaBlend>false</alphaBlend>
 				<postAlphaBlend>false</postAlphaBlend>
 				<overlay>false</overlay>

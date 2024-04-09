@@ -90,12 +90,12 @@ void ScreenRenderer::draw(IRenderView* renderView, const Shader* shader, const S
 	draw(renderView, program);
 }
 
-void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams)
+void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams, const wchar_t* name)
 {
 	if (!program)
 		return;
 
-	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(name != nullptr ? name : L"Screen renderer");
 	rb->program = program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
@@ -105,7 +105,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, IProgram* program, Progr
 	renderContext->draw(rb);
 }
 
-void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams)
+void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams, const wchar_t* name)
 {
 	if (!shader)
 		return;
@@ -114,7 +114,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	if (!program)
 		return;
 
-	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(name != nullptr ? name : L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;
@@ -124,7 +124,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, Pr
 	renderContext->draw(program.priority, rb);
 }
 
-void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams)
+void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams, const wchar_t* name)
 {
 	if (!shader)
 		return;
@@ -133,7 +133,7 @@ void ScreenRenderer::draw(RenderContext* renderContext, const Shader* shader, co
 	if (!program)
 		return;
 
-	auto rb = renderContext->allocNamed< SimpleRenderBlock >(L"Screen renderer");
+	auto rb = renderContext->allocNamed< SimpleRenderBlock >(name != nullptr ? name : L"Screen renderer");
 	rb->program = program.program;
 	rb->programParams = programParams;
 	rb->indexBuffer = nullptr;

@@ -159,6 +159,12 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 		if (material->pbr.metalness.has_value)
 			mm.setMetalness(material->pbr.metalness.value_real);
 
+		if (material->pbr.opacity.has_value)
+		{
+			mm.setTransparency(material->pbr.opacity.value_real);
+			mm.setBlendOperator(Material::BoAlpha);
+		}
+
 		if (material->pbr.base_color.texture)
 		{
 			Ref< drawing::Image > diffuseImage = getEmbeddedTexture(material->pbr.base_color.texture);

@@ -616,6 +616,16 @@ Tag_DecalResponse
 				<id>{EEB495BD-DE7F-4DE8-9A3A-7E9B220B927F}</id>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{8A2A237F-D870-E045-9FCE-2243FBBE172B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{EEB495BD-DE7F-4DE8-993A-7E9B220B927F}</id>
+			</destination>
+		</item>
 	</edges>
 	<groups/>
 </object>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph" version="traktor.render.Graph:1">
+	<nodes>
+		<item type="traktor.render.OutputPort" version="traktor.render.Node:1">
+			<id>{BD990C29-CEBC-D84C-A153-A32874E6017F}</id>
+			<comment/>
+			<position>
+				<first>940</first>
+				<second>441</second>
+			</position>
+			<name>T_Transparency</name>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{C6891A64-7E4B-614A-B312-C458A39732BD}</id>
+			<comment/>
+			<position>
+				<first>480</first>
+				<second>429</second>
+			</position>
+			<name>T_Attributes</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
+		</item>
+	</nodes>
+	<edges/>
+	<groups/>
+</object>

@@ -60,11 +60,11 @@ public:
 	// \name Context queued draws.
 	// !{
 
-	void draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams);
+	void draw(RenderContext* renderContext, IProgram* program, ProgramParameters* programParams, const wchar_t* name = nullptr);
 
-	void draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams);
+	void draw(RenderContext* renderContext, const Shader* shader, ProgramParameters* programParams, const wchar_t* name = nullptr);
 
-	void draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams);
+	void draw(RenderContext* renderContext, const Shader* shader, const Shader::Permutation& permutation, ProgramParameters* programParams, const wchar_t* name = nullptr);
 
 	// !}
 

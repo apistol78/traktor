@@ -357,7 +357,7 @@ void WorldRendererDeferred::setupVisualPass(
 				m_lightShader->setCombination(s_handleIrradianceEnable, irradianceEnable, perm);
 				m_lightShader->setCombination(s_handleIrradianceSingle, irradianceSingle, perm);
 				m_lightShader->setCombination(s_handleVolumetricFogEnable, (bool)(fog != nullptr), perm);
-				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams);
+				m_screenRenderer->draw(renderContext, m_lightShader, perm, sharedParams, L"GBuffer resolve");
 			}
 
 			// Forward visuals; not included in GBuffer.
