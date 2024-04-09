@@ -154,8 +154,8 @@
 			<id>{E26349BA-AC44-B54F-902D-39E9FBEA759E}</id>
 			<comment/>
 			<position>
-				<first>3011</first>
-				<second>443</second>
+				<first>2999</first>
+				<second>273</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -163,8 +163,8 @@
 			<id>{463E68F6-5985-EB4C-9F82-3C842AD6DE50}</id>
 			<comment/>
 			<position>
-				<first>3027</first>
-				<second>403</second>
+				<first>3015</first>
+				<second>405</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -172,8 +172,8 @@
 			<id>{C748925A-7998-764A-8AED-A2D33FEBC3D1}</id>
 			<comment/>
 			<position>
-				<first>3027</first>
-				<second>363</second>
+				<first>3015</first>
+				<second>229</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -181,8 +181,8 @@
 			<id>{92EB8BFF-FF78-DC44-BBD6-FFFBA0B9749C}</id>
 			<comment/>
 			<position>
-				<first>3196</first>
-				<second>-316</second>
+				<first>3220</first>
+				<second>-476</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -190,8 +190,8 @@
 			<id>{EF868FA6-C7AF-2A4B-965D-63F60D8D8044}</id>
 			<comment/>
 			<position>
-				<first>3212</first>
-				<second>-357</second>
+				<first>3236</first>
+				<second>-374</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -199,8 +199,8 @@
 			<id>{B8CAD56A-9E9C-294D-8CBD-E8B5C0414532}</id>
 			<comment/>
 			<position>
-				<first>3212</first>
-				<second>-398</second>
+				<first>3236</first>
+				<second>-510</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -208,8 +208,8 @@
 			<id>{87E006FB-B6AF-3A40-B149-4B02D2BD9081}</id>
 			<comment/>
 			<position>
-				<first>3204</first>
-				<second>-1167</second>
+				<first>3283</first>
+				<second>-1345</second>
 			</position>
 			<name>L_ViewDirection</name>
 		</item>
@@ -217,8 +217,8 @@
 			<id>{23C6739E-572F-8A48-8AF4-A75BB3C3894F}</id>
 			<comment/>
 			<position>
-				<first>3220</first>
-				<second>-1210</second>
+				<first>3299</first>
+				<second>-1185</second>
 			</position>
 			<name>L_Roughness</name>
 		</item>
@@ -226,8 +226,8 @@
 			<id>{ED4DE7CE-1AC0-8F4C-824F-0F852AAD902B}</id>
 			<comment/>
 			<position>
-				<first>3220</first>
-				<second>-1253</second>
+				<first>3299</first>
+				<second>-1385</second>
 			</position>
 			<name>L_ViewNormal</name>
 		</item>
@@ -395,8 +395,8 @@
 			<id>{7183EFD7-B364-7A42-B5E5-56FB0F80A347}</id>
 			<comment/>
 			<position>
-				<first>3059</first>
-				<second>283</second>
+				<first>3047</first>
+				<second>449</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -504,8 +504,8 @@
 			<id>{D6D80254-329B-074F-8E61-401A40EB1C58}</id>
 			<comment/>
 			<position>
-				<first>3244</first>
-				<second>-480</second>
+				<first>3268</first>
+				<second>-340</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -522,8 +522,8 @@
 			<id>{15C7C6B1-6472-ED47-B0A5-31DF2CF79B06}</id>
 			<comment/>
 			<position>
-				<first>3236</first>
-				<second>-1339</second>
+				<first>3315</first>
+				<second>-1305</second>
 			</position>
 			<name>L_Direction</name>
 		</item>
@@ -575,8 +575,8 @@
 			<id>{ED46BBB4-7143-1C45-BB50-47BD01BA4CE7}</id>
 			<comment/>
 			<position>
-				<first>3252</first>
-				<second>-1382</second>
+				<first>3331</first>
+				<second>-1145</second>
 			</position>
 			<name>L_Color</name>
 		</item>
@@ -1695,8 +1695,8 @@ Eye direction
 			<id>{D7715944-974F-3C49-925D-01298D53CBEF}</id>
 			<comment/>
 			<position>
-				<first>3236</first>
-				<second>-1296</second>
+				<first>3315</first>
+				<second>-1225</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1704,8 +1704,8 @@ Eye direction
 			<id>{BB5FF138-C3F0-4246-8A27-DC5F5E7C079C}</id>
 			<comment/>
 			<position>
-				<first>3228</first>
-				<second>-439</second>
+				<first>3252</first>
+				<second>-408</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -1713,8 +1713,8 @@ Eye direction
 			<id>{017B6022-5602-974C-8AE2-55C57DB07FE0}</id>
 			<comment/>
 			<position>
-				<first>3043</first>
-				<second>323</second>
+				<first>3031</first>
+				<second>361</second>
 			</position>
 			<name>L_Metalness</name>
 		</item>
@@ -2224,8 +2224,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{8B62D0BF-501A-7542-9B0B-832A55CA363E}</id>
 			<comment/>
 			<position>
-				<first>3252</first>
-				<second>-1124</second>
+				<first>3331</first>
+				<second>-1265</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -2317,8 +2317,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{33C92827-9CE9-1246-8393-7DD033BCB0B0}</id>
 			<comment/>
 			<position>
-				<first>3249</first>
-				<second>-521</second>
+				<first>3268</first>
+				<second>-442</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
@@ -2401,8 +2401,8 @@ $Output = vec4(Lout.xyz, 0.0f);
 			<id>{A2A9B3D9-BC4F-1847-97D6-7E534B813886}</id>
 			<comment/>
 			<position>
-				<first>3059</first>
-				<second>243</second>
+				<first>3047</first>
+				<second>317</second>
 			</position>
 			<name>L_Albedo</name>
 		</item>
