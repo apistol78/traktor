@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,7 @@ class ScriptDebuggerLua : public IScriptDebugger
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerLua(ScriptManagerLua* scriptManager, lua_State* luaState);
+	explicit ScriptDebuggerLua(ScriptManagerLua* scriptManager, lua_State* luaState);
 
 	virtual ~ScriptDebuggerLua();
 
@@ -63,13 +63,13 @@ public:
 private:
 	friend class ScriptManagerLua;
 
-	enum State
+	enum class State
 	{
-		StRunning,
-		StHalted,
-		StBreak,
-		StStepInto,
-		StStepOver
+		Running,
+		Halted,
+		Break,
+		StepInto,
+		StepOver
 	};
 
 	ScriptManagerLua* m_scriptManager;

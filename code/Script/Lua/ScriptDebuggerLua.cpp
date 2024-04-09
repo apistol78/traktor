@@ -44,7 +44,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerLua", ScriptDebuggerLua, I
 ScriptDebuggerLua::ScriptDebuggerLua(ScriptManagerLua* scriptManager, lua_State* luaState)
 :	m_scriptManager(scriptManager)
 ,	m_luaState(luaState)
-,	m_state(StRunning)
+,	m_state(State::Running)
 {
 }
 
@@ -80,7 +80,7 @@ void ScriptDebuggerLua::removeListener(IListener* listener)
 	// If all listeners have been removed then automatically continue running;
 	// don't want the application to be kept locking up running thread.
 	if (m_listeners.empty())
-		m_state = StRunning;
+		m_state = State::Running;
 }
 
 bool ScriptDebuggerLua::captureStackFrame(uint32_t depth, Ref< StackFrame >& outStackFrame)
@@ -367,30 +367,30 @@ bool ScriptDebuggerLua::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcr
 
 bool ScriptDebuggerLua::isRunning() const
 {
-	return m_state == StRunning;
+	return m_state == State::Running;
 }
 
 bool ScriptDebuggerLua::actionBreak()
 {
-	m_state = StBreak;
+	m_state = State::Break;
 	return true;
 }
 
 bool ScriptDebuggerLua::actionContinue()
 {
-	m_state = StRunning;
+	m_state = State::Running;
 	return true;
 }
 
 bool ScriptDebuggerLua::actionStepInto()
 {
-	m_state = StStepInto;
+	m_state = State::StepInto;
 	return false;
 }
 
 bool ScriptDebuggerLua::actionStepOver()
 {
-	m_state = StStepOver;
+	m_state = State::StepOver;
 	return false;
 }
 
@@ -403,7 +403,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 	const int32_t currentLine = ar->currentline - 1;
 	m_breadcrumb.push_back(currentLine);
 
-	if (m_state == StRunning)
+	if (m_state == State::Running)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Guid currentId;
@@ -420,7 +420,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 				// so we halt and trigger "breakpoint reached".
 				if (it->second.find(currentId) != it->second.end())
 				{
-					m_state = StHalted;
+					m_state = State::Halted;
 					m_lastId = currentId;
 
 					for (auto listener : m_listeners)
@@ -429,7 +429,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 			}
 		}
 	}
-	else if (m_state == StBreak)
+	else if (m_state == State::Break)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Guid currentId;
@@ -438,13 +438,13 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		lua_getinfo(L, "S", ar);
 		if (currentId.create(mbstows(ar->source)))
 		{
-			m_state = StHalted;
+			m_state = State::Halted;
 			m_lastId = currentId;
 			for (auto listener : m_listeners)
 				listener->debugeeStateChange(this);
 		}
 	}
-	else if (m_state == StStepInto)
+	else if (m_state == State::StepInto)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Guid currentId;
@@ -453,13 +453,13 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		lua_getinfo(L, "S", ar);
 		if (currentId.create(mbstows(ar->source)))
 		{
-			m_state = StHalted;
+			m_state = State::Halted;
 			m_lastId = currentId;
 			for (auto listener : m_listeners)
 				listener->debugeeStateChange(this);
 		}
 	}
-	else if (m_state == StStepOver)
+	else if (m_state == State::StepOver)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		Guid currentId;
@@ -470,7 +470,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			if (currentId == m_lastId)
 			{
-				m_state = StHalted;
+				m_state = State::Halted;
 				m_lastId = currentId;
 				for (auto listener : m_listeners)
 					listener->debugeeStateChange(this);
@@ -478,15 +478,15 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		}
 	}
 
-	if (m_state == StHalted)
+	if (m_state == State::Halted)
 	{
 		// Wait until state is no longer halted.
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-		while (m_state == StHalted && !m_listeners.empty() && !currentThread->stopped())
+		while (m_state == State::Halted && !m_listeners.empty() && !currentThread->stopped())
 			currentThread->sleep(100);
 
-		if (m_state == StHalted)
-			m_state = StRunning;
+		if (m_state == State::Halted)
+			m_state = State::Running;
 
 		m_breadcrumb.clear();
 
