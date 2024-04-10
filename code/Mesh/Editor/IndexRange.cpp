@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,19 +9,8 @@
 #include <algorithm>
 #include "Mesh/Editor/IndexRange.h"
 
-namespace traktor
+namespace traktor::mesh
 {
-	namespace mesh
-	{
-
-IndexRange::IndexRange()
-:	offsetFirst(0)
-,	offsetLast(0)
-,	minIndex(0)
-,	maxIndex(0)
-,	opaque(true)
-{
-}
 
 void IndexRange::mergeInto(AlignedVector< IndexRange >& ranges) const
 {
@@ -53,5 +42,4 @@ bool IndexRange::operator < (const IndexRange& rh) const
 	return offsetFirst < rh.offsetFirst;
 }
 
-	}
 }
