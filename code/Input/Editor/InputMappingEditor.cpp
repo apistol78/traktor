@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -62,7 +62,6 @@
 #include "Ui/EditList.h"
 #include "Ui/EditListEditEvent.h"
 #include "Ui/InputDialog.h"
-#include "Ui/Splitter.h"
 #include "Ui/Graph/DefaultNodeShape.h"
 #include "Ui/Graph/Edge.h"
 #include "Ui/Graph/EdgeConnectEvent.h"
@@ -203,16 +202,8 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"INPUT_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Input.Editor.EventSpaceHorizontally")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &InputMappingEditor::eventToolBarGraphClick);
 
-	Ref< ui::Splitter > splitter = new ui::Splitter();
-	splitter->create(container, true, 20_ut, true);
-
-	m_listValueSources = new ui::EditList();
-	m_listValueSources->create(splitter, ui::ListBox::WsSingle | ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
-	m_listValueSources->addEventHandler< ui::SelectionChangeEvent >(this, &InputMappingEditor::eventListValueSourceSelect);
-	m_listValueSources->addEventHandler< ui::EditListEditEvent >(this, &InputMappingEditor::eventListValueEdit);
-
 	m_graph = new ui::GraphControl();
-	m_graph->create(splitter);
+	m_graph->create(container);
 	m_graph->setText(L"INPUT");
 	m_graph->addEventHandler< ui::MouseButtonDownEvent >(this, &InputMappingEditor::eventButtonDown);
 	m_graph->addEventHandler< ui::SelectEvent >(this, &InputMappingEditor::eventNodeSelect);
@@ -221,6 +212,20 @@ bool InputMappingEditor::create(ui::Container* parent)
 	m_graph->addEventHandler< ui::EdgeConnectEvent >(this, &InputMappingEditor::eventEdgeConnected);
 	m_graph->addEventHandler< ui::EdgeDisconnectEvent >(this, &InputMappingEditor::eventEdgeDisconnected);
 
+	// Create properties view.
+	m_propertiesView = m_site->createPropertiesView(parent);
+	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
+	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
+	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
+
+	// Create "sources" view.
+	m_listValueSources = new ui::EditList();
+	m_listValueSources->create(parent, ui::ListBox::WsSingle | ui::EditList::WsAutoAdd | ui::EditList::WsAutoRemove);
+	m_listValueSources->setText(i18n::Text(L"INPUT_EDITOR_SOURCES"));
+	m_listValueSources->addEventHandler< ui::SelectionChangeEvent >(this, &InputMappingEditor::eventListValueSourceSelect);
+	m_listValueSources->addEventHandler< ui::EditListEditEvent >(this, &InputMappingEditor::eventListValueEdit);
+	m_site->createAdditionalPanel(m_listValueSources, 400_ut, false);
+
 	InputMappingSourceData* sourceData = m_mappingAsset->getSourceData();
 	if (sourceData)
 	{
@@ -228,13 +233,7 @@ bool InputMappingEditor::create(ui::Container* parent)
 			m_listValueSources->add(it.first, it.second);
 	}
 
-	// Create properties view.
-	m_propertiesView = m_site->createPropertiesView(parent);
-	m_propertiesView->addEventHandler< ui::ContentChangingEvent >(this, &InputMappingEditor::eventPropertiesChanging);
-	m_propertiesView->addEventHandler< ui::ContentChangeEvent >(this, &InputMappingEditor::eventPropertiesChanged);
-	m_site->createAdditionalPanel(m_propertiesView, 400_ut, false);
-
-	// Build popup menu.
+	// Build pop-up menu.
 	m_menuPopup = new ui::Menu();
 
 	Ref< ui::MenuItem > menuItemCreate = new ui::MenuItem(i18n::Text(L"INPUT_EDITOR_CREATE_NODE"));
