@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include <list>
 #include "Core/Object.h"
+#include "Core/Ref.h"
 #include "Ui/SyntaxRichEdit/SyntaxTypes.h"
 
 // import/export mechanism.
@@ -20,10 +21,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Syntax highlight language.
  * \ingroup UI
@@ -40,7 +39,8 @@ public:
 		StString,
 		StNumber,
 		StSelf,
-		StComment,
+		StLineComment,
+		StBlockComment,
 		StFunction,
 		StType,
 		StKeyword,
@@ -48,18 +48,24 @@ public:
 		StPreprocessor
 	};
 
+	class IContext : public IRefCount {};
+
 	/*! Return line comment token.
 	 */
 	virtual std::wstring lineComment() const = 0;
 
+	/*! Create consume context. */
+	virtual Ref< SyntaxLanguage::IContext > createContext() const = 0;
+
 	/*! Consume line text.
 	 *
+	 * \param context Consume context.
 	 * \param text Single line of text, same line will continue until fully consumed.
 	 * \param outState Output text state.
 	 * \param outConsumedChars Number of consumed characters.
 	 * \return True if successful.
 	 */
-	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars) const = 0;
+	virtual bool consume(SyntaxLanguage::IContext* context, const std::wstring& text, State& outState, int& outConsumedChars) const = 0;
 
 	/*! Extract code outline.
 	 *
@@ -70,6 +76,4 @@ public:
 	virtual void outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const = 0;
 };
 
-	}
 }
-

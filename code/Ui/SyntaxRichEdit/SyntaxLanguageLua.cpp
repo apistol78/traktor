@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,32 @@
 #include "Core/Misc/String.h"
 #include "Ui/SyntaxRichEdit/SyntaxLanguageLua.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
+
+bool match(const std::wstring_view& text, const std::wstring_view& patt)
+{
+	if (text.length() < patt.length())
+		return false;
+
+	for (size_t i = 0; i < patt.length(); ++i)
+	{
+		if (text[i] != patt[i])
+			return false;
+	}
+
+	return true;
+}
+
+class SyntaxLanguageContextLua : public RefCountImpl< SyntaxLanguage::IContext >
+{
+public:
+	bool m_blockComment = false;
+};
+
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.SyntaxLanguageLua", 0, SyntaxLanguageLua, SyntaxLanguage)
 
@@ -22,26 +44,58 @@ std::wstring SyntaxLanguageLua::lineComment() const
 	return L"--";
 }
 
-bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
+Ref< SyntaxLanguage::IContext > SyntaxLanguageLua::createContext() const
 {
+	return new SyntaxLanguageContextLua();
+}
+
+bool SyntaxLanguageLua::consume(SyntaxLanguage::IContext* context, const std::wstring& text, State& outState, int& outConsumedChars) const
+{
+	SyntaxLanguageContextLua* cx = static_cast< SyntaxLanguageContextLua* >(context);
 	const int32_t ln = (int32_t)text.length();
 	T_ASSERT(ln > 0);
 
-	// Line comment.
-	if (ln >= 2)
+	if (cx->m_blockComment)
 	{
-		if (text[0] == L'-' && text[1] == L'-')
+		if (match(text, L"]]"))
 		{
-			outState = StComment;
+			cx->m_blockComment = false;
+
+			outState = StBlockComment;
 			outConsumedChars = 2;
-			for (int i = 2; i < ln; ++i)
-			{
-				if (text[i] == L'\n' || text[i] == L'\r')
-					break;
-				++outConsumedChars;
-			}
 			return true;
 		}
+		else
+		{
+			outState = StBlockComment;
+			outConsumedChars = 1;
+			return true;
+		}
+	}
+
+	// Beginning of comment.
+	if (match(text, L"--"))
+	{
+		if (match(text, L"--[["))
+		{
+			cx->m_blockComment = true;
+
+			outState = StBlockComment;
+			outConsumedChars = 4;
+			return true;
+		}
+
+		outState = StLineComment;
+		outConsumedChars = 2;
+
+		for (int32_t i = 2; i < ln; ++i)
+		{
+			if (text[i] == L'\n' || text[i] == L'\r')
+				break;
+			++outConsumedChars;
+		}
+
+		return true;
 	}
 
 	// Preprocessor
@@ -49,7 +103,7 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	{
 		outState = StPreprocessor;
 		outConsumedChars = 1;
-		for (int i = 1; i < ln; ++i)
+		for (int32_t i = 1; i < ln; ++i)
 		{
 			if (text[i] == L'\n' || text[i] == L'\r')
 				break;
@@ -192,5 +246,4 @@ void SyntaxLanguageLua::outline(int32_t line, const std::wstring& text, std::lis
 	}
 }
 
-	}
 }

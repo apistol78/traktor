@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Ui/SyntaxRichEdit/SyntaxLanguageJs.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.SyntaxLanguageJs", 0, SyntaxLanguageJs, SyntaxLanguage)
 
@@ -20,7 +18,12 @@ std::wstring SyntaxLanguageJs::lineComment() const
 	return L"//";
 }
 
-bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
+Ref< SyntaxLanguage::IContext > SyntaxLanguageJs::createContext() const
+{
+	return nullptr;
+}
+
+bool SyntaxLanguageJs::consume(SyntaxLanguage::IContext* context, const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
 	T_ASSERT(ln > 0);
@@ -30,7 +33,7 @@ bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& o
 	{
 		if (text[0] == L'/' && text[1] == L'/')
 		{
-			outState = StComment;
+			outState = StLineComment;
 			outConsumedChars = 2;
 			for (int i = 2; i < ln; ++i)
 			{
@@ -119,5 +122,4 @@ void SyntaxLanguageJs::outline(int32_t line, const std::wstring& text, std::list
 {
 }
 
-	}
 }

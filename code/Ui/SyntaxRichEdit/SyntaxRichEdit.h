@@ -45,7 +45,7 @@ public:
 
 	void getOutline(std::list< SyntaxOutline >& outOutline) const;
 
-	void updateLanguage(int32_t fromLine, int32_t toLine);
+	void updateLanguage();
 
 private:
 	Ref< const SyntaxLanguage > m_language;

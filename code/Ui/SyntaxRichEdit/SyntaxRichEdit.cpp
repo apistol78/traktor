@@ -78,7 +78,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t st
 void SyntaxRichEdit::setLanguage(const SyntaxLanguage* language)
 {
 	m_language = language;
-	updateLanguage(0, getLineCount() - 1);
+	updateLanguage();
 }
 
 const SyntaxLanguage* SyntaxRichEdit::getLanguage() const
@@ -88,7 +88,7 @@ const SyntaxLanguage* SyntaxRichEdit::getLanguage() const
 
 void SyntaxRichEdit::setErrorHighlight(int32_t line)
 {
-	updateLanguage(0, getLineCount() - 1);
+	updateLanguage();
 	if (line >= 0)
 	{
 		const int32_t offset = getLineOffset(line);
@@ -112,24 +112,29 @@ void SyntaxRichEdit::getOutline(std::list< SyntaxOutline >& outOutline) const
 	}
 }
 
-void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
+void SyntaxRichEdit::updateLanguage()
 {
 	if (!m_language)
 		return;
 
+	const int32_t fromLine = 0;
+	const int32_t toLine = getLineCount() - 1;
+
 	SyntaxLanguage::State currentState = SyntaxLanguage::StInvalid;
 	int32_t startOffset = getLineOffset(fromLine);
 	int32_t endOffset = startOffset;
+
+	Ref< SyntaxLanguage::IContext > context = m_language->createContext();
 
 	for (int32_t line = fromLine; line <= toLine; ++line)
 	{
 		const std::wstring text = getLine(line);
 		for (int32_t i = 0; i < int32_t(text.length()); )
 		{
-			SyntaxLanguage::State state = SyntaxLanguage::StInvalid;
+			SyntaxLanguage::State state = currentState;
 			int32_t consumedChars = 0;
 
-			if (!m_language->consume(text.substr(i), state, consumedChars))
+			if (!m_language->consume(context, text.substr(i), state, consumedChars))
 				break;
 
 			if (state != currentState)
@@ -154,7 +159,11 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 						setAttributes(startOffset, endOffset - startOffset, m_attributeSelf[0], m_attributeSelf[1]);
 						break;
 
-					case SyntaxLanguage::StComment:
+					case SyntaxLanguage::StLineComment:
+						setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
+						break;
+
+					case SyntaxLanguage::StBlockComment:
 						setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
 						break;
 
@@ -221,7 +230,11 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 			setAttributes(startOffset, endOffset - startOffset, m_attributeSelf[0], m_attributeSelf[1]);
 			break;
 
-		case SyntaxLanguage::StComment:
+		case SyntaxLanguage::StLineComment:
+			setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
+			break;
+
+		case SyntaxLanguage::StBlockComment:
 			setAttributes(startOffset, endOffset - startOffset, m_attributeComment[0], m_attributeComment[1]);
 			break;
 
@@ -255,14 +268,12 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 
 void SyntaxRichEdit::contentModified()
 {
-	updateLanguage(0, getLineCount());
+	updateLanguage();
 }
 
 void SyntaxRichEdit::eventChange(ContentChangeEvent* event)
 {
-	const int32_t caretOffset = getCaretOffset();
-	const int32_t caretLine = getLineFromOffset(caretOffset);
-	updateLanguage(caretLine, caretLine);
+	updateLanguage();
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Syntax highlight GLSL language.
  * \ingroup UI
@@ -33,11 +31,11 @@ class T_DLLCLASS SyntaxLanguageGlsl : public SyntaxLanguage
 public:
 	virtual std::wstring lineComment() const override final;
 
-	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars) const override final;
+	virtual Ref< SyntaxLanguage::IContext > createContext() const override final;
+
+	virtual bool consume(SyntaxLanguage::IContext* context, const std::wstring& text, State& outState, int& outConsumedChars) const override final;
 
 	virtual void outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const override final;
 };
 
-	}
 }
-

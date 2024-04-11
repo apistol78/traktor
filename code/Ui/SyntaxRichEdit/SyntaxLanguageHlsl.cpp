@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,8 @@
  */
 #include "Ui/SyntaxRichEdit/SyntaxLanguageHlsl.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.SyntaxLanguageHlsl", 0, SyntaxLanguageHlsl, SyntaxLanguage)
 
@@ -20,7 +18,12 @@ std::wstring SyntaxLanguageHlsl::lineComment() const
 	return L"//";
 }
 
-bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
+Ref< SyntaxLanguage::IContext > SyntaxLanguageHlsl::createContext() const
+{
+	return nullptr;
+}
+
+bool SyntaxLanguageHlsl::consume(SyntaxLanguage::IContext* context, const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
 	T_ASSERT(ln > 0);
@@ -30,7 +33,7 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 	{
 		if (text[0] == L'/' && text[1] == L'/')
 		{
-			outState = StComment;
+			outState = StLineComment;
 			outConsumedChars = 2;
 			for (int i = 2; i < ln; ++i)
 			{
@@ -250,5 +253,4 @@ void SyntaxLanguageHlsl::outline(int32_t line, const std::wstring& text, std::li
 {
 }
 
-	}
 }
