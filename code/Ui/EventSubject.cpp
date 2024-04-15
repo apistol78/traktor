@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,7 +33,7 @@ void EventSubject::raiseEvent(Event* event)
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
 		const auto& eventHandlers = i->second;
-		for (int32_t j = (int32_t)eventHandlers.handlers.size() - 1; j >= 0; --j)
+		for (size_t j = 0; j < eventHandlers.handlers.size(); ++j)
 		{
 			for (Ref< IEventHandler > eventHandler : eventHandlers.handlers[j])
 			{
@@ -71,8 +71,9 @@ void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eve
 	if (depth >= (int32_t)eventHandlers.handlers.size())
 		eventHandlers.handlers.resize(depth + 1);
 
-	// Insert event handler into vector.
-	eventHandlers.handlers[depth].push_back(eventHandler);
+	// Insert event handler first to ensure it's called before previously added handlers.
+	auto& handlers = eventHandlers.handlers[depth];
+	handlers.insert(handlers.begin(), eventHandler);
 }
 
 void EventSubject::removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)

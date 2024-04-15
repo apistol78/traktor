@@ -29,8 +29,6 @@ class T_DLLCLASS WidgetFactoryWin32 : public IWidgetFactory
 public:
 	virtual IEventLoop* createEventLoop(EventSubject* owner) override final;
 
-	virtual IContainer* createContainer(EventSubject* owner) override final;
-
 	virtual IDialog* createDialog(EventSubject* owner) override final;
 
 	virtual IForm* createForm(EventSubject* owner) override final;

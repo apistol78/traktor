@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -49,7 +49,7 @@ public:
 	public:
 		typedef void (*function_t)(EventType*);
 
-		FunctionEventHandler(function_t fn)
+		explicit FunctionEventHandler(function_t fn)
 		:	m_fn(fn)
 		{
 		}
@@ -71,7 +71,7 @@ public:
 	public:
 		typedef void (ClassType::*method_t)(EventType*);
 
-		MethodEventHandler(ClassType* target, method_t method)
+		explicit MethodEventHandler(ClassType* target, method_t method)
 		:	m_target(target)
 		,	m_method(method)
 		{
@@ -94,7 +94,7 @@ public:
 	class LambdaEventHandler : public RefCountImpl< IEventHandler >
 	{
 	public:
-		LambdaEventHandler(const std::function< void( EventType* ) >& fn)
+		explicit LambdaEventHandler(const std::function< void( EventType* ) >& fn)
 		:	m_fn(fn)
 		{
 		}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,14 +14,11 @@
 #include "Ui/Enums.h"
 #include "Ui/Rect.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 
-class IContainer;
 class IDialog;
 class IEventLoop;
 class IForm;
@@ -41,8 +38,6 @@ public:
 	virtual ~IWidgetFactory() {}
 
 	virtual IEventLoop* createEventLoop(EventSubject* owner) = 0;
-
-	virtual IContainer* createContainer(EventSubject* owner) = 0;
 
 	virtual IDialog* createDialog(EventSubject* owner) = 0;
 
@@ -65,6 +60,4 @@ public:
 	virtual void getDesktopRects(std::list< Rect >& outRects) const = 0;
 };
 
-	}
 }
-

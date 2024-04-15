@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,7 +11,7 @@
 #include "Ui/Container.h"
 #include "Ui/Layout.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Itf/IContainer.h"
+#include "Ui/Itf/IUserWidget.h"
 
 namespace traktor::ui
 {
@@ -24,20 +24,20 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 
 	if (!m_widget)
 	{
-		IContainer* container = Application::getInstance()->getWidgetFactory()->createContainer(this);
-		if (!container)
+		IUserWidget* widget = Application::getInstance()->getWidgetFactory()->createUserWidget(this);
+		if (!widget)
 		{
 			log::error << L"Failed to create native widget peer (Container)" << Endl;
 			return false;
 		}
 
-		if (!container->create(parent->getIWidget(), style))
+		if (!widget->create(parent->getIWidget(), style))
 		{
-			container->destroy();
+			widget->destroy();
 			return false;
 		}
 
-		m_widget = container;
+		m_widget = widget;
 	}
 
 	addEventHandler< SizeEvent >(this, &Container::eventSize);

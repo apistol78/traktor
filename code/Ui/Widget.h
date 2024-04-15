@@ -57,8 +57,6 @@ class T_DLLCLASS Widget
 	T_RTTI_CLASS;
 
 public:
-	Widget();
-
 	virtual ~Widget();
 
 	bool create(Widget* parent, int style = WsNone);
@@ -205,15 +203,15 @@ public:
 	IWidget* getIWidget() const;
 
 protected:
-	IWidget* m_widget;
-	Widget* m_parent;
+	IWidget* m_widget = nullptr;
+	Widget* m_parent = nullptr;
 	Ref< Widget > m_previousSibling;
 	Ref< Widget > m_nextSibling;
 	Ref< Widget > m_firstChild;
 	Ref< Widget > m_lastChild;
 	Ref< const StyleSheet > m_styleSheet;
-	Align m_halign;
-	Align m_valign;
+	Align m_halign = AnLeft;
+	Align m_valign = AnTop;
 };
 
 }

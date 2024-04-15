@@ -8,7 +8,6 @@
  */
 #include <set>
 #include "Ui/Win32/WidgetFactoryWin32.h"
-#include "Ui/Win32/ContainerWin32.h"
 #include "Ui/Win32/DialogWin32.h"
 #include "Ui/Win32/EventLoopWin32.h"
 #include "Ui/Win32/FormWin32.h"
@@ -43,11 +42,6 @@ BOOL enumMonitors(HMONITOR hMonitor, HDC hDC, LPRECT lpRect, LPARAM lpUser)
 IEventLoop* WidgetFactoryWin32::createEventLoop(EventSubject* owner)
 {
 	return new EventLoopWin32();
-}
-
-IContainer* WidgetFactoryWin32::createContainer(EventSubject* owner)
-{
-	return new ContainerWin32(owner);
 }
 
 IDialog* WidgetFactoryWin32::createDialog(EventSubject* owner)

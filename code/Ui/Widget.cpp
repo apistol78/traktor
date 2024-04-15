@@ -19,14 +19,6 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 
-Widget::Widget()
-:	m_widget(nullptr)
-,	m_parent(nullptr)
-,	m_halign(AnLeft)
-,	m_valign(AnTop)
-{
-}
-
 Widget::~Widget()
 {
 	T_FATAL_ASSERT(!m_widget);
