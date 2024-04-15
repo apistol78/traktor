@@ -33,10 +33,10 @@ jobs:
         name: traktor
         path: |
           build/archive/traktor/
-#    - name: Create Installer
-#      run: ./scripts/autobuild/autobuild-installer-win64.bat
-#    - name: Archive Installer
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: Installer
-#        path: build/installer/Traktor.msi
+    - name: Create Installer
+      run: ./scripts/autobuild/autobuild-installer-win64.bat
+    - name: Archive Installer
+      uses: actions/upload-artifact@v4
+      with:
+        name: Installer
+        path: build/installer/Traktor.msi
