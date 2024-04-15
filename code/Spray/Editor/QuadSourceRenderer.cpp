@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 #include "Spray/Editor/QuadSourceRenderer.h"
 #include "Spray/Sources/QuadSourceData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.QuadSourceRenderer", QuadSourceRenderer, SourceRenderer)
 
@@ -21,12 +19,12 @@ void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 {
 	const QuadSourceData* quadSource = checked_type_cast< const QuadSourceData* >(sourceData);
 
-	Vector4 center = quadSource->m_center;
-	Vector4 axis1 = quadSource->m_axis1;
-	Vector4 axis2 = quadSource->m_axis2;
-	Vector4 normal = quadSource->m_normal;
+	const Vector4 center = quadSource->m_center;
+	const Vector4 axis1 = quadSource->m_axis1;
+	const Vector4 axis2 = quadSource->m_axis2;
+	const Vector4 normal = quadSource->m_normal;
 
-	Vector4 corners[] =
+	const Vector4 corners[] =
 	{
 		center - axis1 - axis2,
 		center + axis1 - axis2,
@@ -43,5 +41,4 @@ void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, co
 	primitiveRenderer->drawArrowHead(center + normal, center + normal * 1.2_simd, 0.8f, Color4ub(255, 255, 0));
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,10 +11,8 @@
 #include "Spray/Sources/PointSetSourceData.h"
 #include "Render/PrimitiveRenderer.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSetSourceRenderer", PointSetSourceRenderer, SourceRenderer)
 
@@ -31,5 +29,4 @@ void PointSetSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer
 	//	primitiveRenderer->drawSolidPoint(i->position + pointSetSource->getOffset(), 3.0f, Color4ub(255, 255, 0));
 }
 
-	}
 }

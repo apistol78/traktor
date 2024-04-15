@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,15 @@
 
 #include "Core/Object.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class SourceData;
 
@@ -33,6 +31,4 @@ public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const SourceData* sourceData) const = 0;
 };
 
-	}
 }
-

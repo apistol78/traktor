@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,10 @@
 #include "Core/Serialization/Member.h"
 #include "Spray/Editor/PointSetAsset.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.PointSetAsset", 0, PointSetAsset, editor::Asset)
-
-PointSetAsset::PointSetAsset()
-:	m_fromFaces(false)
-{
-}
 
 bool PointSetAsset::fromFaces() const
 {
@@ -33,5 +26,4 @@ void PointSetAsset::serialize(ISerializer& s)
 	s >> Member< bool >(L"fromFaces", m_fromFaces);
 }
 
-	}
 }
