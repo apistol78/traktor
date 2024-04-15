@@ -147,6 +147,9 @@ public:
 						m_data.mapped = false;
 					}
 				}
+
+				SizeEvent sizeEvent(m_owner, m_rect.getSize());
+				m_owner->raiseEvent(&sizeEvent);
 			}
 			else	// Becoming hidden.
 			{

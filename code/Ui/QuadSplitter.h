@@ -40,7 +40,7 @@ public:
 	 */
 	bool create(Widget* parent, const Point& position, bool relative, int border = 16);
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) override;
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 	virtual Size getMinimumSize() const override;
 

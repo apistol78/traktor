@@ -43,7 +43,7 @@ public:
 
 	virtual void fit(uint32_t axis);
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) override;
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 	virtual Size getMinimumSize() const override;
 

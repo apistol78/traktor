@@ -39,7 +39,7 @@ public:
 
 	DockPane* getPane() const;
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) override;
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 private:
 	Ref< DockPane > m_pane;

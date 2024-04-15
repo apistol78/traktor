@@ -43,7 +43,7 @@ public:
 
 	virtual void destroy() override;
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) override;
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 	virtual Rect getInnerRect() const override;
 

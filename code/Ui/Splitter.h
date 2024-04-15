@@ -41,7 +41,7 @@ public:
 	 */
 	bool create(Widget* parent, bool vertical = true, Unit position = 100_ut, bool relative = false, Unit border = 16_ut);
 
-	virtual void update(const Rect* rc = 0, bool immediate = false) override;
+	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 	virtual Size getMinimumSize() const override;
 
