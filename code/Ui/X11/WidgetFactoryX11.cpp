@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,7 +12,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Ui/X11/BitmapX11.h"
-#include "Ui/X11/ContainerX11.h"
 #include "Ui/X11/ClipboardX11.h"
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/EventLoopX11.h"
@@ -84,11 +83,6 @@ WidgetFactoryX11::~WidgetFactoryX11()
 IEventLoop* WidgetFactoryX11::createEventLoop(EventSubject* owner)
 {
 	return new EventLoopX11(m_context);
-}
-
-IContainer* WidgetFactoryX11::createContainer(EventSubject* owner)
-{
-	return new ContainerX11(m_context, owner);
 }
 
 IDialog* WidgetFactoryX11::createDialog(EventSubject* owner)
