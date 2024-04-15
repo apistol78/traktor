@@ -722,8 +722,9 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	return minEntityAdapter;
 }
 
-uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const
+RefArray< EntityAdapter > SceneEditorContext::queryFrustum(const Frustum& worldFrustum, bool onlyPickable) const
 {
+	RefArray< EntityAdapter > outEntityAdapters;
 	for (auto entityAdapter : getEntities())
 	{
 		// Must be public, unlocked, visible and no child of external.
@@ -747,7 +748,7 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 		if (entityEditor->queryFrustum(worldFrustum))
 			outEntityAdapters.push_back(entityAdapter);
 	}
-	return (uint32_t)outEntityAdapters.size();
+	return outEntityAdapters;
 }
 
 void SceneEditorContext::cloneSelected()

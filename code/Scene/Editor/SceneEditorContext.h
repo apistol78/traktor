@@ -241,7 +241,7 @@ public:
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable, bool throughSelected) const;
 
-	uint32_t queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const;
+	RefArray< EntityAdapter > queryFrustum(const Frustum& worldFrustum, bool onlyPickable) const;
 
 	void cloneSelected();
 

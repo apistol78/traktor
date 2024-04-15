@@ -96,8 +96,8 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 
 	T_ASSERT(m_modify == MtNothing);
 
-	ui::Rect innerRect = renderWidget->getInnerRect();
-	Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
+	const ui::Rect innerRect = renderWidget->getInnerRect();
+	const Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
 
 	if (m_mouseButton == 2)
 		m_modify = MtCamera;
@@ -173,15 +173,14 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 
 	if (m_modify == MtSelection)
 	{
-		ui::Rect selectionRectangle = ui::Rect(m_mousePosition0, m_mousePosition).getUnified();
+		const ui::Rect selectionRectangle = ui::Rect(m_mousePosition0, m_mousePosition).getUnified();
 		if (selectionRectangle.area() > 0)
 		{
 			// Selection rectangle was drawn; use frustum query to find new selection set.
 			Frustum worldFrustum;
 			if (renderControl->calculateFrustum(selectionRectangle, worldFrustum))
 			{
-				RefArray< EntityAdapter > intersectingEntities;
-				context->queryFrustum(worldFrustum, intersectingEntities, true);
+				RefArray< EntityAdapter > intersectingEntities = context->queryFrustum(worldFrustum, true);
 
 				// De-select all other if shift isn't held.
 				if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) == 0)
@@ -289,7 +288,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			// Notify modifier about modification begun.
 			if (modifier)
 			{
-				Vector2 screenPosition0(
+				const Vector2 screenPosition0(
 					2.0f * float(m_mousePosition0.x) / innerRect.getWidth() - 1.0f,
 					1.0f - 2.0f * float(m_mousePosition0.y) / innerRect.getHeight()
 				);
