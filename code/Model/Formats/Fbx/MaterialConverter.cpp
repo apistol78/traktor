@@ -161,8 +161,11 @@ bool convertMaterials(Model& outModel, SmallMap< int32_t, int32_t >& outMaterial
 
 		if (material->pbr.opacity.has_value)
 		{
-			mm.setTransparency(material->pbr.opacity.value_real);
-			mm.setBlendOperator(Material::BoAlpha);
+			if (material->pbr.opacity.value_real < 1.0f - FUZZY_EPSILON)
+			{
+				mm.setTransparency(material->pbr.opacity.value_real);
+				mm.setBlendOperator(Material::BoAlpha);
+			}
 		}
 
 		if (material->pbr.base_color.texture)

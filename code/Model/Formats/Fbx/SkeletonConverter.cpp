@@ -169,10 +169,11 @@ Ref< Pose > convertPose(
 		return nullptr;
 
 	// Find evaluated skeleton.
-	//#fixme Ensure it's the same skeleton...
 	ufbx_node* eskeletonNode = search(escene->root_node, [&](ufbx_node* node) {
-		return (node->children.count > 0 && node->bind_pose != nullptr);
+		return node->element_id == skeletonNode->element_id;
 	});
+	if (!eskeletonNode)
+		return nullptr;
 
 	const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
