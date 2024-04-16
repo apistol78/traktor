@@ -55,6 +55,7 @@ VehicleComponent::VehicleComponent(
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
 ,	m_engineBoost(0.0f)
+,	m_engineTorque(0.0f)
 ,	m_breaking(0.0f)
 ,	m_airBorn(true)
 {
@@ -149,6 +150,11 @@ void VehicleComponent::setEngineBoost(float engineBoost)
 float VehicleComponent::getEngineBoost() const
 {
 	return m_engineBoost;
+}
+
+float VehicleComponent::getEngineTorque() const
+{
+	return m_engineTorque;
 }
 
 void VehicleComponent::setBreaking(float breaking)
@@ -477,6 +483,9 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 			true
 		);
 	}
+
+	// Save engine force so user can query momentus force.
+	m_engineTorque = engineForce;
 }
 
 void VehicleComponent::updateWheels(Body* body, float dT)
