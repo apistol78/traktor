@@ -34,6 +34,72 @@ Range< float > calculateZRange(const model::Model& m)
 	return rng;	
 }
 
+void extrude(
+	const TransformPath& path,
+	bool closed,
+	bool automaticOrientation,
+	float fromT,
+	float toT,
+	const Matrix44& Toffset,
+	const model::Model* extrudeModel,
+	model::Model* outputModel
+)
+{
+	const Range< float > step = calculateZRange(*extrudeModel);
+	const uint32_t vertexBase = outputModel->getVertexCount();
+
+	for (const auto& vertex : extrudeModel->getVertices())
+	{
+		const Vector4 p = extrudeModel->getPosition(vertex.getPosition());
+		const Vector4 n = extrudeModel->getNormal(vertex.getNormal());
+
+		const Matrix44 Tc = translate(0.0f, 0.0f, p.z());
+
+		const float ats = fromT + ((p.z() - step.min) / step.delta()) * (toT - fromT);
+
+		const auto v = path.evaluate(ats, closed);
+		Matrix44 T = v.transform().toMatrix44();
+
+		const float automaticOrientationWeight = v.values[1];
+		if (automaticOrientation && automaticOrientationWeight > FUZZY_EPSILON)
+		{
+			const Quaternion Qrot(T);
+
+			Matrix44 Tao = T;
+
+			const float c_atDelta = 0.001f;
+			const Transform Tp = path.evaluate(ats - c_atDelta, closed).transform();
+			const Transform Tn = path.evaluate(ats + c_atDelta, closed).transform();
+			Tao = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
+			Tao = Tao * rotateZ(Qrot.toEulerAngles().y());
+
+			if (automaticOrientationWeight < 1.0f)
+			{
+				const Quaternion QaoRot(Tao);
+				const Quaternion Qr = lerp(Qrot, QaoRot, Scalar(automaticOrientationWeight));
+				T = translate(Tao.translation()) * Qr.toMatrix44();
+			}
+			else
+				T = Tao;
+		}
+
+		model::Vertex outputVertex;
+		outputVertex.setPosition(outputModel->addPosition(T * Tc.inverse() * Toffset * p.xyz1()));
+		outputVertex.setNormal(outputModel->addNormal(T * n.xyz0()));
+		outputVertex.setTexCoord(0, vertex.getTexCoord(0));
+		outputModel->addVertex(outputVertex);
+	}
+
+	for (const auto& polygon : extrudeModel->getPolygons())
+	{
+		model::Polygon outputPolygon;
+		outputPolygon.setMaterial(polygon.getMaterial());
+		for (auto id : polygon.getVertices())
+			outputPolygon.addVertex(id + vertexBase);
+		outputModel->addPolygon(outputPolygon);
+	}
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.ExtrudeShapeLayer", ExtrudeShapeLayer, SplineLayerComponent)
@@ -83,8 +149,11 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, b
 	const TransformPath path = path_.geometricNormalized(closed);
 	const float pathLength = path.measureLength(closed);
 
-	const Range< float > step = calculateZRange(*m_modelRepeat);
-	const Matrix44 To = translate(m_data->m_offset, 0.0f, 0.0f);
+	const Range< float > stepStart = calculateZRange(*m_modelStart);
+	const Range< float > stepRepeat = calculateZRange(*m_modelRepeat);
+	const Range< float > stepEnd = calculateZRange(*m_modelEnd);
+
+	const Matrix44 Toffset = translate(m_data->m_offset, 0.0f, 0.0f);
 
 	// Extrude shape.
 	Ref< model::Model > outputModel = new model::Model();
@@ -92,68 +161,78 @@ Ref< model::Model > ExtrudeShapeLayer::createModel(const TransformPath& path_, b
 	outputModel->setTexCoords(m_modelRepeat->getTexCoords());
 	outputModel->setTexCoordChannels(m_modelRepeat->getTexCoordChannels());
 
-	const int32_t nrepeats = (int32_t)(pathLength / step.delta()) + 1;
+	const float repeatPathLength = pathLength - stepStart.delta() - stepEnd.delta();
+
+	int32_t nrepeats;
+	if (!closed && repeatPathLength > 0.0f)
+		nrepeats = (int32_t)(repeatPathLength / stepRepeat.delta()) + 1;
+	else
+		nrepeats = (int32_t)(pathLength / stepRepeat.delta()) + 1;
 
 	outputModel->reservePositions(nrepeats * m_modelRepeat->getVertices().size());
 	outputModel->reserveNormals(nrepeats * m_modelRepeat->getVertices().size());
 	outputModel->reserveVertices(nrepeats * m_modelRepeat->getVertices().size());
 	outputModel->reservePolygons(nrepeats * m_modelRepeat->getPolygons().size());
 
-	for (int32_t i = 0; i < nrepeats; ++i)
+	if (!closed && repeatPathLength > 0.0f)
 	{
-		const float at = (float)i / nrepeats;
+		const float repeatBeginT = stepStart.delta() / pathLength;
+		const float repeatEndT = 1.0f - stepEnd.delta() / pathLength;
+		const float dT = (1.0f / nrepeats) * (repeatEndT - repeatBeginT);
 
-		const uint32_t vertexBase = outputModel->getVertexCount();
+		extrude(
+			path,
+			false,
+			m_data->m_automaticOrientation,
+			0.0f,
+			repeatBeginT,
+			Toffset,
+			m_modelStart,
+			outputModel
+		);
 
-		for (const auto& vertex : m_modelRepeat->getVertices())
+		for (int32_t i = 0; i < nrepeats; ++i)
 		{
-			const Vector4 p = m_modelRepeat->getPosition(vertex.getPosition());
-			const Vector4 n = m_modelRepeat->getNormal(vertex.getNormal());
+			float at = repeatBeginT + i * dT;
 
-			const Matrix44 Tc = translate(0.0f, 0.0f, p.z());
-
-			const float ats = at + ((p.z() - step.min) / step.delta()) * (1.0f / nrepeats);
-
-			const auto v = path.evaluate(ats, closed);
-			Matrix44 T = v.transform().toMatrix44();
-
-			const float automaticOrientationWeight = v.values[1];
-			if (m_data->m_automaticOrientation && automaticOrientationWeight > FUZZY_EPSILON)
-			{
-				const Quaternion Qrot(T);
-
-				Matrix44 Tao = T;
-
-				const float c_atDelta = 0.001f;
-				const Transform Tp = path.evaluate(ats - c_atDelta, closed).transform();
-				const Transform Tn = path.evaluate(ats + c_atDelta, closed).transform();
-				Tao = lookAt(Tp.translation().xyz1(), Tn.translation().xyz1()).inverse();
-				Tao = Tao * rotateZ(Qrot.toEulerAngles().y());
-
-				if (automaticOrientationWeight < 1.0f)
-				{
-					const Quaternion QaoRot(Tao);
-					const Quaternion Qr = lerp(Qrot, QaoRot, Scalar(automaticOrientationWeight));
-					T = translate(Tao.translation()) * Qr.toMatrix44();
-				}
-				else
-					T = Tao;
-			}
-
-			model::Vertex outputVertex;
-			outputVertex.setPosition(outputModel->addPosition(T * Tc.inverse() * To * p.xyz1()));
-			outputVertex.setNormal(outputModel->addNormal(T * n.xyz0()));
-			outputVertex.setTexCoord(0, vertex.getTexCoord(0));
-			outputModel->addVertex(outputVertex);
+			extrude(
+				path,
+				false,
+				m_data->m_automaticOrientation,
+				at,
+				at + dT,
+				Toffset,
+				m_modelRepeat,
+				outputModel
+			);
 		}
 
-		for (const auto& polygon : m_modelRepeat->getPolygons())
+		extrude(
+			path,
+			false,
+			m_data->m_automaticOrientation,
+			repeatEndT,
+			1.0f,
+			Toffset,
+			m_modelEnd,
+			outputModel
+		);
+	}
+	else
+	{
+		for (int32_t i = 0; i < nrepeats; ++i)
 		{
-			model::Polygon outputPolygon;
-			outputPolygon.setMaterial(polygon.getMaterial());
-			for (auto id : polygon.getVertices())
-				outputPolygon.addVertex(id + vertexBase);
-			outputModel->addPolygon(outputPolygon);
+			const float at = (float)i / nrepeats;
+			extrude(
+				path,
+				closed,
+				m_data->m_automaticOrientation,
+				at,
+				at + (1.0f / nrepeats),
+				Toffset,
+				m_modelRepeat,
+				outputModel
+			);
 		}
 	}
 
