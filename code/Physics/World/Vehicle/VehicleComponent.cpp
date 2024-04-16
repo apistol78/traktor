@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -242,51 +242,58 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 			else if (suspensionLength > data->getSuspensionLength().max)
 				suspensionLength = data->getSuspensionLength().max;
 
-			// Suspension velocity.
-			const float suspensionVelocity = (wheel->suspensionLength - suspensionLength) / dT;
+			if (dT > FUZZY_EPSILON)
+			{
+				// Suspension velocity.
+				const float suspensionVelocity = (wheel->suspensionLength - suspensionLength) / dT;
 
-			// Suspension forces.
-			const float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
-			const float springForce = clamp(t * data->getSuspensionSpring(), 0.0f, c_maxSuspensionForce);
-			const float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
+				// Suspension forces.
+				const float t = 1.0f - (suspensionLength - data->getSuspensionLength().min) / (data->getSuspensionLength().max - data->getSuspensionLength().min);
+				const float springForce = clamp(t * data->getSuspensionSpring(), 0.0f, c_maxSuspensionForce);
+				const float dampingForce = clamp(suspensionVelocity * data->getSuspensionDamping(), -c_maxDampingForce, c_maxDampingForce);
 
-			// Apply forces.
-			body->addForceAt(
-				anchorW,
-				normal * Scalar(springForce + dampingForce),
-				false
-			);
+				// Apply forces.
+				body->addForceAt(
+					anchorW,
+					normal * Scalar(springForce + dampingForce),
+					false
+				);
 
-			// Apply sway-bar force on the opposite side.
-			body->addForceAt(
-				bodyT * (data->getAnchor() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)),
-				normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForce()),
-				false
-			);
+				// Apply sway-bar force on the opposite side.
+				body->addForceAt(
+					bodyT * (data->getAnchor() * Vector4(-1.0f, 1.0f, 1.0f, 1.0f)),
+					normal * -Scalar((springForce + dampingForce) * m_data->getSwayBarForce()),
+					false
+				);
+
+				wheel->suspensionForce = springForce + dampingForce;
+			}
 
 			// Save suspension state.
 			wheel->suspensionLength = suspensionLength;
-			wheel->suspensionForce = springForce + dampingForce;
 
 			// Contact attributes.
-			Vector4 contactVelocity;
-			if (!wheel->contact)
+			Vector4 contactVelocity = Vector4::zero();
+			if (dT > FUZZY_EPSILON)
 			{
-				// If no previous contact then we estimate velocity by projecting onto ground.
-				const Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
-				const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
-				const Vector4 velocity = wheelVelocity - groundVelocity;
-				const Scalar k = dot3(normal, velocity);
-				contactVelocity = velocity - normal * (-k);
+				if (!wheel->contact)
+				{
+					// If no previous contact then we estimate velocity by projecting onto ground.
+					const Vector4 wheelVelocity = body->getVelocityAt(result.position.xyz1(), false);
+					const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+					const Vector4 velocity = wheelVelocity - groundVelocity;
+					const Scalar k = dot3(normal, velocity);
+					contactVelocity = velocity - normal * (-k);
+				}
+				else
+				{
+					// Calculate explicit velocity based on contact movement.
+					const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
+					const Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
+					contactVelocity = contactMovement / Scalar(dT);
+				}
 			}
-			else
-			{
-				// Calculate explicit velocity based on contact movement.
-				const Vector4 groundVelocity = result.body->getVelocityAt(result.position.xyz1(), false);
-				const Vector4 contactMovement = (result.position - wheel->contactPosition - groundVelocity * Scalar(dT)).xyz0();
-				contactVelocity = contactMovement / Scalar(dT);
-			}
-			
+
 			wheel->contact = true;
 			wheel->contactFudge = contactFudge;
 			wheel->contactMaterial = result.material;
@@ -314,7 +321,7 @@ void VehicleComponent::updateSuspension(Body* body, float dT)
 	}
 }
 
-void VehicleComponent::updateGrip(Body* body, float dT)
+void VehicleComponent::updateGrip(Body* body, float /*dT*/)
 {
 	float totalSuspensionForce = 0.0f;
 	for (auto wheel : m_wheels)
@@ -332,7 +339,7 @@ void VehicleComponent::updateGrip(Body* body, float dT)
 	}
 }
 
-void VehicleComponent::updateFriction(Body* body, float dT)
+void VehicleComponent::updateFriction(Body* body, float /*dT*/)
 {
 	const Transform bodyT = body->getTransform();
 	const Transform bodyTinv = bodyT.inverse();
