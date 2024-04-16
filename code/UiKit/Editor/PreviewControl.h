@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,22 +17,24 @@ namespace traktor
 
 class IRuntimeClass;
 
-	namespace db
-	{
+}
+
+namespace traktor::db
+{
 
 class Database;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class IEditor;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 class AccDisplayRenderer;
 class Movie;
@@ -40,27 +42,27 @@ class MoviePlayer;
 class MovieRenderer;
 class WireDisplayRenderer;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderView;
 class RenderContext;
 class RenderGraph;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace uikit
-	{
+namespace traktor::uikit
+{
 
 class Scaffolding;
 
@@ -124,6 +126,4 @@ private:
 	void eventMouseWheel(ui::MouseWheelEvent* event);
 };
 
-	}
 }
-
