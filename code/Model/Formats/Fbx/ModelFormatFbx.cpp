@@ -201,50 +201,6 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 
 	ufbx_free_scene(scene);
 
-//	FbxNode* skeletonNode = search(rootNode, filter, [&](FbxNode* node) {
-//		return (node->GetNodeAttribute() != nullptr && node->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eSkeleton);
-//	});
-//	if (skeletonNode)
-//	{
-//		if (!convertSkeleton(*model, s_scene, skeletonNode, axisTransform))
-//			return nullptr;
-//
-//		for(int32_t i = 0; i < importer->GetAnimStackCount(); i++)
-//		{
-//			FbxAnimStack* animStack = s_scene->GetSrcObject< FbxAnimStack >(i);
-//			if (!animStack)
-//				continue;
-//
-//			s_scene->SetCurrentAnimationStack(animStack);
-//
-//			std::wstring takeName = mbstows(animStack->GetName());
-//			size_t p = takeName.find(L'|');
-//			if (p != std::wstring::npos)
-//				takeName = takeName.substr(p + 1);
-//
-//			FbxTime start = animStack->LocalStart;
-//			FbxTime end = animStack->LocalStop;
-//
-//			int32_t startFrame = start.GetFrameCount(FbxTime::eFrames30);
-//			int32_t endFrame = end.GetFrameCount(FbxTime::eFrames30);
-//
-//			Ref< Animation > anim = new Animation();
-//			anim->setName(takeName);
-//			for (int32_t frame = startFrame; frame <= endFrame; ++frame)
-//			{
-//				FbxTime time;
-//				time.SetFrame(frame, FbxTime::eFrames30);
-//
-//				Ref< Pose > pose = convertPose(*model, s_scene, skeletonNode, time, axisTransform);
-//				if (!pose)
-//					return nullptr;
-//
-//				anim->insertKeyFrame(frame / 30.0f, pose);
-//			}
-//			model->addAnimation(anim);
-//		}
-//	}
-
 	// Create and assign default material if anonymous faces has been created.
 	uint32_t defaultMaterialIndex = c_InvalidIndex;
 	for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
