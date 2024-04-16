@@ -109,8 +109,7 @@ void DefaultEditorProfile::createEntityRenderers(
 
 void DefaultEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-) const
+	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
-/*! \brief
+/*!
  */
 class T_DLLCLASS TheaterEditorProfile : public scene::ISceneEditorProfile
 {
@@ -63,7 +61,7 @@ public:
 
 	virtual void createControllerEditorFactories(
 		scene::SceneEditorContext* context,
-		RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+		RefArray< const scene::IWorldComponentEditorFactory >& outControllerEditorFactories
 	) const override final;
 
 	virtual void createEntityEditorFactories(
@@ -82,6 +80,4 @@ public:
 	) const override final;
 };
 
-	}
 }
-

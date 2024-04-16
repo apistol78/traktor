@@ -52,7 +52,7 @@ public:
 
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
-		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
+		RefArray< const IWorldComponentEditorFactory >& outControllerEditorFactories
 	) const override final;
 
 	virtual void createEntityEditorFactories(

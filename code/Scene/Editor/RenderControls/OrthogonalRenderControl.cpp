@@ -28,7 +28,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
@@ -655,7 +655,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 				entityAdapter->drawGuides(m_primitiveRenderer, sz);
 
 			// Draw controller guides.
-			Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+			Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
 			if (controllerEditor)
 				controllerEditor->draw(m_primitiveRenderer);
 		}

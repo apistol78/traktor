@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Core/Ref.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 
 namespace traktor
 {
@@ -35,9 +36,9 @@ class SequencerControl;
 	namespace theater
 	{
 
-/*! Theater controller editor
+/*! Theater component editor
  */
-class TheaterControllerEditor : public scene::ISceneControllerEditor
+class TheaterComponentEditor : public scene::IWorldComponentEditor
 {
 	T_RTTI_CLASS;
 

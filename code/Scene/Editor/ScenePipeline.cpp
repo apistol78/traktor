@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,7 @@
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/Traverser.h"
+#include "World/IWorldComponentData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupComponentData.h"
@@ -30,7 +31,7 @@
 namespace traktor::scene
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 19, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 20, ScenePipeline, editor::IPipeline)
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -129,18 +130,16 @@ bool ScenePipeline::buildDependencies(
 	}
 
 	// Add dependencies from scene asset.
+	for (const auto& worldComponent : mutableSceneAsset->getWorldComponents())
+		pipelineDepends->addDependency(worldComponent);
 	for (const auto& layer : mutableSceneAsset->getLayers())
 		pipelineDepends->addDependency(layer);
-
-	pipelineDepends->addDependency(mutableSceneAsset->getControllerData());
 
 	// In case we're building for the editor we also need to add dependencies to the unmodified scene.
 	if (m_targetEditor)
 	{
 		for (const auto& layer : sceneAsset->getLayers())
 			pipelineDepends->addDependency(layer);
-
-		pipelineDepends->addDependency(sceneAsset->getControllerData());
 	}
 
 	const world::WorldRenderSettings* wrs = mutableSceneAsset->getWorldRenderSettings();
@@ -250,16 +249,11 @@ bool ScenePipeline::buildOutput(
 	Ref< world::EntityData > groupEntityData = new world::EntityData();
 	groupEntityData->setComponent(groupComponentData);
 
-	// Build controller data.
-	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(
-		pipelineBuilder->buildProduct(sourceInstance, sceneAsset->getControllerData())
-	);
-
 	// Create output scene resource.
 	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
+	sceneResource->setWorldComponents(sceneAsset->getWorldComponents());
 	sceneResource->setEntityData(groupEntityData);
-	//sceneResource->setControllerData(controllerData);
 
 	for (uint32_t i = 0; i < (int32_t)world::Quality::Last; ++i)
 	{

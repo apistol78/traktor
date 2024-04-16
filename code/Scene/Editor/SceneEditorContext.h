@@ -83,7 +83,7 @@ class EntityAdapter;
 class IComponentEditorFactory;
 class IEntityEditorFactory;
 class IModifier;
-class ISceneControllerEditor;
+class IWorldComponentEditor;
 class ISceneEditorPlugin;
 class ISceneEditorProfile;
 class ISceneRenderControl;
@@ -141,7 +141,7 @@ public:
 
 	void createFactories();
 
-	void setControllerEditor(ISceneControllerEditor* controllerEditor);
+	void setControllerEditor(IWorldComponentEditor* controllerEditor);
 
 	/*! \name State management. */
 	//@{
@@ -281,7 +281,7 @@ public:
 
 	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
 
-	Ref< ISceneControllerEditor >& getControllerEditor() { return m_controllerEditor; }
+	Ref< IWorldComponentEditor >& getControllerEditor() { return m_controllerEditor; }
 
 	SceneAsset* getSceneAsset() { return m_sceneAsset; }
 
@@ -329,7 +329,7 @@ private:
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
 	RefArray< const IComponentEditorFactory > m_componentEditorFactories;
-	Ref< ISceneControllerEditor > m_controllerEditor;
+	Ref< IWorldComponentEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
 	SmallMap< std::wstring, bool > m_drawGuide;
 	float m_guideSize;

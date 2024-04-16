@@ -44,8 +44,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityDependencyInvestigator.h"
-#include "Scene/Editor/ISceneControllerEditorFactory.h"
-#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/IWorldComponentEditorFactory.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -948,8 +948,6 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			}
 
 			// Also ensure attached data contain updated entity identities.
-			if (m_context->getSceneAsset()->getControllerData() != nullptr)
-				renameIds(m_context->getSceneAsset()->getControllerData(), renamedMap);
 			for (auto operationData : m_context->getSceneAsset()->getOperationData())
 				renameIds(operationData, renamedMap);
 		}
@@ -1046,46 +1044,46 @@ void SceneEditorPage::createControllerEditor()
 	m_site->hideAdditionalPanel(m_controllerPanel);
 
 	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
-	if (sceneAsset)
-	{
-		Ref< ISceneControllerData > controllerData = sceneAsset->getControllerData();
-		if (controllerData)
-		{
-			RefArray< const ISceneControllerEditorFactory > controllerEditorFactories;
-			Ref< ISceneControllerEditor > controllerEditor;
+	// if (sceneAsset)
+	// {
+	// 	Ref< ISceneControllerData > controllerData = sceneAsset->getControllerData();
+	// 	if (controllerData)
+	// 	{
+	// 		RefArray< const IWorldComponentEditorFactory > controllerEditorFactories;
+	// 		Ref< IWorldComponentEditor > controllerEditor;
 
-			// Create controller editor factories.
-			for (auto profile : m_context->getEditorProfiles())
-				profile->createControllerEditorFactories(m_context, controllerEditorFactories);
+	// 		// Create controller editor factories.
+	// 		for (auto profile : m_context->getEditorProfiles())
+	// 			profile->createControllerEditorFactories(m_context, controllerEditorFactories);
 
-			for (auto controllerEditorFactory : controllerEditorFactories)
-			{
-				TypeInfoSet typeSet = controllerEditorFactory->getControllerDataTypes();
-				if (typeSet.find(&type_of(controllerData)) != typeSet.end())
-				{
-					controllerEditor = controllerEditorFactory->createControllerEditor(type_of(controllerData));
-					if (controllerEditor)
-						break;
-				}
-			}
+	// 		for (auto controllerEditorFactory : controllerEditorFactories)
+	// 		{
+	// 			TypeInfoSet typeSet = controllerEditorFactory->getControllerDataTypes();
+	// 			if (typeSet.find(&type_of(controllerData)) != typeSet.end())
+	// 			{
+	// 				controllerEditor = controllerEditorFactory->createControllerEditor(type_of(controllerData));
+	// 				if (controllerEditor)
+	// 					break;
+	// 			}
+	// 		}
 
-			if (controllerEditor)
-			{
-				if (controllerEditor->create(
-					m_context,
-					m_controllerPanel
-				))
-				{
-					m_context->setControllerEditor(controllerEditor);
-					m_site->showAdditionalPanel(m_controllerPanel);
-				}
-				else
-					log::error << L"Unable to create controller editor; create failed" << Endl;
-			}
-			else
-				T_DEBUG(L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"");
-		}
-	}
+	// 		if (controllerEditor)
+	// 		{
+	// 			if (controllerEditor->create(
+	// 				m_context,
+	// 				m_controllerPanel
+	// 			))
+	// 			{
+	// 				m_context->setControllerEditor(controllerEditor);
+	// 				m_site->showAdditionalPanel(m_controllerPanel);
+	// 			}
+	// 			else
+	// 				log::error << L"Unable to create controller editor; create failed" << Endl;
+	// 		}
+	// 		else
+	// 			T_DEBUG(L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"");
+	// 	}
+	// }
 
 	m_controllerPanel->update();
 }
@@ -1630,7 +1628,7 @@ void SceneEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 		createInstanceGrid();
 
 		// Notify controller editor as well.
-		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor)
 			controllerEditor->propertiesChanged();
 

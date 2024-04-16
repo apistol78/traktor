@@ -90,8 +90,7 @@ void TerrainEditorProfile::createEntityRenderers(
 
 void TerrainEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-) const
+	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 

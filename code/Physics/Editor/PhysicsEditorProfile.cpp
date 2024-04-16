@@ -69,8 +69,7 @@ void PhysicsEditorProfile::createEntityRenderers(
 
 void PhysicsEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-) const
+	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 

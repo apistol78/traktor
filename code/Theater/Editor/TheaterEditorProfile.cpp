@@ -1,20 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Theater/Editor/TheaterEditorProfile.h"
-#include "Theater/Editor/TheaterControllerEditorFactory.h"
+#include "Theater/Editor/TheaterComponentEditorFactory.h"
 #include "Ui/Command.h"
 #include "Core/Serialization/ISerializable.h"
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEditorProfile", 0, TheaterEditorProfile, scene::ISceneEditorProfile)
 
@@ -70,10 +68,9 @@ void TheaterEditorProfile::createEntityRenderers(
 
 void TheaterEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-) const
+	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
-	outControllerEditorFactories.push_back(new TheaterControllerEditorFactory());
+	outComponentEditorFactories.push_back(new TheaterComponentEditorFactory());
 }
 
 void TheaterEditorProfile::createEntityEditorFactories(
@@ -98,5 +95,4 @@ Ref< world::EntityData > TheaterEditorProfile::createEntityData(
 	return nullptr;
 }
 
-	}
 }

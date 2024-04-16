@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 #include "World/WorldRenderSettings.h"
@@ -24,6 +25,7 @@ namespace traktor::world
 {
 
 class IEntityFactory;
+class IWorldComponentData;
 class EntityData;
 class WorldRenderSettings;
 
@@ -50,6 +52,10 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
+	void setWorldComponents(const RefArray< world::IWorldComponentData >& worldComponents);
+
+	const RefArray< world::IWorldComponentData >& getWorldComponents() const;
+	
 	void setEntityData(world::EntityData* entityData);
 
 	Ref< world::EntityData > getEntityData() const;
@@ -58,6 +64,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
+	RefArray< world::IWorldComponentData > m_worldComponents;
 	Ref< world::EntityData > m_entityData;
 };
 

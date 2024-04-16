@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,27 +22,27 @@
 namespace traktor::scene
 {
 
-class ISceneControllerEditor;
+class IWorldComponentEditor;
 
 /*!
  * \ingroup Scene
  */
-class T_DLLCLASS ISceneControllerEditorFactory : public Object
+class T_DLLCLASS IWorldComponentEditorFactory : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	/*! Get supported set of controller data types.
+	/*! Get supported set of component data types.
 	 *
-	 * \return Set of controller data types.
+	 * \return Set of component data types.
 	 */
-	virtual const TypeInfoSet getControllerDataTypes() const = 0;
+	virtual const TypeInfoSet getComponentDataTypes() const = 0;
 
-	/*! Create controller editor instance.
+	/*! Create component editor instance.
 	 *
-	 * \param controllerDataType Controller data type.
+	 * \param controllerDataType Component data type.
 	 */
-	virtual Ref< ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const = 0;
+	virtual Ref< IWorldComponentEditor > createComponentEditor(const TypeInfo& componentDataType) const = 0;
 };
 
 }

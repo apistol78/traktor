@@ -160,7 +160,7 @@ void SceneEditorContext::createFactories()
 	}
 }
 
-void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerEditor)
+void SceneEditorContext::setControllerEditor(IWorldComponentEditor* controllerEditor)
 {
 	m_controllerEditor = controllerEditor;
 }

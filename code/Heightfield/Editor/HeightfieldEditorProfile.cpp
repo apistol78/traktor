@@ -61,8 +61,7 @@ void HeightfieldEditorProfile::createEntityRenderers(
 
 void HeightfieldEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
-) const
+	RefArray< const scene::IWorldComponentEditorFactory >& outComponentEditorFactories) const
 {
 }
 

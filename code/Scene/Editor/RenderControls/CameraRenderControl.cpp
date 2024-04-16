@@ -31,7 +31,7 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"

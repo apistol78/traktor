@@ -9,10 +9,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
+#include "World/IWorldComponentData.h"
 #include "World/World.h"
 #include "World/WorldRenderSettings.h"
 
@@ -29,6 +31,8 @@ SceneResource::SceneResource()
 Ref< Scene > SceneResource::createScene(const world::IEntityFactory* entityFactory) const
 {
 	Ref< world::World > world = new world::World();
+
+	//#fixme Create world components.
 
 	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory, world);
 	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
@@ -51,6 +55,16 @@ Ref< world::WorldRenderSettings > SceneResource::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
+void SceneResource::setWorldComponents(const RefArray< world::IWorldComponentData >& worldComponents)
+{
+	m_worldComponents = worldComponents;
+}
+
+const RefArray< world::IWorldComponentData >& SceneResource::getWorldComponents() const
+{
+	return m_worldComponents;
+}
+
 void SceneResource::setEntityData(world::EntityData* entityData)
 {
 	m_entityData = entityData;
@@ -64,6 +78,7 @@ Ref< world::EntityData > SceneResource::getEntityData() const
 void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
+	s >> MemberRefArray< world::IWorldComponentData >(L"worldComponents", m_worldComponents);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 }
 

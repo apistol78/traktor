@@ -22,7 +22,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/IWorldComponentEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ScenePreviewControl.h"
@@ -474,7 +474,7 @@ void ScenePreviewControl::eventRedraw(RedrawEvent* event)
 		const double scaledTime = m_context->getTime();
 
 		// Update scene controller editor.
-		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		Ref< IWorldComponentEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor)
 			controllerEditor->update();
 

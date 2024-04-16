@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include <string>
 #include "Core/RefArray.h"
-#include "Scene/ISceneController.h"
+#include "World/IWorldComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,22 +25,24 @@ namespace traktor::theater
 
 class Act;
 
-/*! Theater scene controller.
+/*! Theater world component.
  * \ingroup Theater
  */
-class T_DLLCLASS TheaterController : public scene::ISceneController
+class T_DLLCLASS TheaterComponent : public world::IWorldComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit TheaterController(const RefArray< const Act >& acts, float totalDuration);
+	explicit TheaterComponent(const RefArray< const Act >& acts, float totalDuration);
+
+	virtual void destroy() override final;
+
+	virtual void update(world::World* world, const world::UpdateParams& update) override final;
 
 	bool play(const std::wstring& actName);
 
-	virtual void update(scene::Scene* scene, double time, double deltaTime) override final;
-
 private:
-	friend class TheaterControllerEditor;
+	friend class TheaterComponentEditor;
 
 	RefArray< const Act > m_acts;
 	double m_totalDuration = 0.0f;

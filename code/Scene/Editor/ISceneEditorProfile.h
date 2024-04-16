@@ -68,7 +68,7 @@ namespace traktor::scene
 class SceneEditorContext;
 class IComponentEditorFactory;
 class ISceneEditorPlugin;
-class ISceneControllerEditorFactory;
+class IWorldComponentEditorFactory;
 class IEntityEditorFactory;
 
 /*! Scene editor profile.
@@ -149,7 +149,7 @@ public:
 	 */
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
-		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
+		RefArray< const IWorldComponentEditorFactory >& outControllerEditorFactories
 	) const = 0;
 
 	/*! Create entity editor factories.

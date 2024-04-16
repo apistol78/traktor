@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,43 +10,41 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Theater/ActData.h"
-#include "Theater/TheaterControllerData.h"
+#include "Theater/TheaterComponentData.h"
 #include "Theater/TrackData.h"
-#include "Theater/Editor/TheaterControllerPipeline.h"
+#include "Theater/Editor/TheaterComponentPipeline.h"
 #include "World/EntityData.h"
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerPipeline", 2, TheaterControllerPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterComponentPipeline", 2, TheaterComponentPipeline, editor::IPipeline)
 
-bool TheaterControllerPipeline::create(const editor::IPipelineSettings* settings)
+bool TheaterComponentPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }
 
-void TheaterControllerPipeline::destroy()
+void TheaterComponentPipeline::destroy()
 {
 }
 
-TypeInfoSet TheaterControllerPipeline::getAssetTypes() const
+TypeInfoSet TheaterComponentPipeline::getAssetTypes() const
 {
-	return makeTypeInfoSet< TheaterControllerData >();
+	return makeTypeInfoSet< TheaterComponentData >();
 }
 
-bool TheaterControllerPipeline::shouldCache() const
+bool TheaterComponentPipeline::shouldCache() const
 {
 	return false;
 }
 
-uint32_t TheaterControllerPipeline::hashAsset(const ISerializable* sourceAsset) const
+uint32_t TheaterComponentPipeline::hashAsset(const ISerializable* sourceAsset) const
 {
 	return DeepHash(sourceAsset).get();
 }
 
-bool TheaterControllerPipeline::buildDependencies(
+bool TheaterComponentPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -57,7 +55,7 @@ bool TheaterControllerPipeline::buildDependencies(
 	return true;
 }
 
-bool TheaterControllerPipeline::buildOutput(
+bool TheaterComponentPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const editor::PipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
@@ -72,21 +70,21 @@ bool TheaterControllerPipeline::buildOutput(
 	return false;
 }
 
-Ref< ISerializable > TheaterControllerPipeline::buildProduct(
+Ref< ISerializable > TheaterComponentPipeline::buildProduct(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const Object* buildParams
 ) const
 {
-	const TheaterControllerData* sourceControllerData = checked_type_cast< const TheaterControllerData*, false >(sourceAsset);
-	const RefArray< ActData >& sourceActs = sourceControllerData->getActs();
+	const TheaterComponentData* sourceComponentData = checked_type_cast< const TheaterComponentData*, false >(sourceAsset);
+	const RefArray< ActData >& sourceActs = sourceComponentData->getActs();
 
-	Ref< TheaterControllerData > controllerData = new TheaterControllerData();
-	controllerData->m_repeatActs = sourceControllerData->m_repeatActs;
-	controllerData->m_randomizeActs = sourceControllerData->m_randomizeActs;
+	Ref< TheaterComponentData > componentData = new TheaterComponentData();
+	componentData->m_repeatActs = sourceComponentData->m_repeatActs;
+	componentData->m_randomizeActs = sourceComponentData->m_randomizeActs;
 
-	RefArray< ActData >& acts = controllerData->getActs();
+	RefArray< ActData >& acts = componentData->getActs();
 	acts.resize(sourceActs.size());
 
 	for (uint32_t i = 0; i < sourceActs.size(); ++i)
@@ -101,8 +99,7 @@ Ref< ISerializable > TheaterControllerPipeline::buildProduct(
 			tracks[j] = new TrackData(*sourceTracks[j]);
 	}
 
-	return controllerData;
+	return componentData;
 }
 
-	}
 }

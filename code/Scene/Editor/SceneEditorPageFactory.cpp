@@ -156,8 +156,6 @@ Ref< ISerializable > SceneEditorPageFactory::cloneAsset(const ISerializable* ass
 		});
 
 		// Also ensure attached data contain updated entity identities.
-		if (mutableSceneAsset->getControllerData() != nullptr)
-			renameIds(mutableSceneAsset->getControllerData(), renamedMap);
 		for (auto operationData : mutableSceneAsset->getOperationData())
 			renameIds(operationData, renamedMap);
 	}
