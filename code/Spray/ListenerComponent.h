@@ -49,6 +49,10 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	void setEnable(bool enable);
+
+	bool isEnable() const;
+
 private:
 	Ref< sound::ISoundPlayer > m_soundPlayer;
 	Ref< sound::ISoundListener > m_soundListener;

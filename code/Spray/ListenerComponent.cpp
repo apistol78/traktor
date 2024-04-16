@@ -53,4 +53,26 @@ void ListenerComponent::update(const world::UpdateParams& update)
 {
 }
 
+void ListenerComponent::setEnable(bool enable)
+{
+	if (m_soundPlayer == nullptr || enable == isEnable())
+		return;
+
+	if (enable)
+	{
+		m_soundListener = m_soundPlayer->createListener();
+		m_soundPlayer->addListener(m_soundListener);
+	}
+	else
+	{
+		m_soundPlayer->removeListener(m_soundListener);
+		m_soundPlayer = nullptr;
+	}
+}
+
+bool ListenerComponent::isEnable() const
+{
+	return m_soundListener != nullptr;
+}
+
 }

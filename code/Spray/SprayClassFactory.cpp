@@ -9,6 +9,7 @@
 #include "Core/Class/AutoRuntimeClass.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Spray/EffectComponent.h"
+#include "Spray/ListenerComponent.h"
 #include "Spray/SoundComponent.h"
 #include "Spray/SprayClassFactory.h"
 
@@ -25,6 +26,10 @@ void SprayClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classEffectComponent->addProperty("enable", &EffectComponent::setEnable, &EffectComponent::isEnable);
 	classEffectComponent->addMethod("reset", &EffectComponent::reset);
 	registrar->registerClass(classEffectComponent);
+
+	auto classListenerComponent = new AutoRuntimeClass< ListenerComponent >();
+	classListenerComponent->addProperty("enable", &ListenerComponent::setEnable, &ListenerComponent::isEnable);
+	registrar->registerClass(classListenerComponent);
 
 	auto classSoundComponent = new AutoRuntimeClass< SoundComponent >();
 	classSoundComponent->addMethod("play", &SoundComponent::play);
