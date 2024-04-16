@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,7 +14,7 @@ namespace traktor::world
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalComponent", DecalComponent, IEntityComponent)
 
 DecalComponent::DecalComponent(
-	float size,
+	const Vector2& size,
 	float thickness,
 	float alpha,
 	float cullDistance,
@@ -45,8 +45,8 @@ void DecalComponent::setTransform(const Transform& transform)
 Aabb3 DecalComponent::getBoundingBox() const
 {
 	return Aabb3(
-		Vector4(-m_size, -m_thickness, -m_size, 1.0f),
-		Vector4(m_size, m_thickness, m_size, 1.0f)
+		Vector4(-m_size.x, -m_thickness, -m_size.y, 1.0f),
+		Vector4(m_size.x, m_thickness, m_size.y, 1.0f)
 	);
 }
 

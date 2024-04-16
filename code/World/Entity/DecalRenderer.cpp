@@ -111,7 +111,7 @@ void DecalRenderer::build(
 	const DecalComponent* decalComponent = static_cast< const DecalComponent* >(renderable);
 	const Transform& transform = decalComponent->getTransform();
 
-	const float s = decalComponent->getSize();
+	const Vector2& s = decalComponent->getSize();
 	const float t = decalComponent->getThickness();
 	const float d = decalComponent->getCullDistance();
 
@@ -119,7 +119,7 @@ void DecalRenderer::build(
 	if (center.length2() > d * d)
 		return;
 
-	const Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
+	const Scalar radius = Scalar(std::sqrt(s.x * s.x + s.y * s.y + t * t));
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::Result::Outside)
 		return;
 
@@ -184,11 +184,17 @@ void DecalRenderer::build(
 			transform
 		);
 
-		renderBlock->programParams->setVectorParameter(s_handleDecalParams, Vector4(
-			decalComponent->getSize(),
+		renderBlock->programParams->setVectorParameter(s_handleDecalParamsA, Vector4(
+			decalComponent->getSize().x,
+			decalComponent->getSize().y,
 			decalComponent->getThickness(),
+			0.0f
+		));
+		renderBlock->programParams->setVectorParameter(s_handleDecalParamsB, Vector4(
 			decalComponent->getAlpha(),
-			decalComponent->getAge()
+			decalComponent->getAge(),
+			0.0f,
+			0.0f
 		));
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);

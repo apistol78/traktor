@@ -31,7 +31,7 @@ class T_DLLCLASS DecalComponent : public IEntityComponent
 
 public:
 	explicit DecalComponent(
-		float size,
+		const Vector2& size,
 		float thickness,
 		float alpha,
 		float cullDistance,
@@ -48,7 +48,7 @@ public:
 
 	virtual void update(const UpdateParams& update) override final;
 
-	float getSize() const { return m_size; }
+	const Vector2& getSize() const { return m_size; }
 
 	float getThickness() const { return m_thickness; }
 
@@ -64,7 +64,7 @@ public:
 
 private:
 	Transform m_transform;
-	float m_size;
+	Vector2 m_size;
 	float m_thickness;
 	float m_alpha;
 	float m_cullDistance;

@@ -38,7 +38,8 @@ extern const render::Handle T_DLLCLASS s_handleIrradianceSingle;
 extern const render::Handle T_DLLCLASS s_handleVolumetricFogEnable;
 
 // Shader parameters.
-extern const render::Handle T_DLLCLASS s_handleDecalParams;
+extern const render::Handle T_DLLCLASS s_handleDecalParamsA;
+extern const render::Handle T_DLLCLASS s_handleDecalParamsB;
 extern const render::Handle T_DLLCLASS s_handleExposure;
 extern const render::Handle T_DLLCLASS s_handleFxRotate;
 extern const render::Handle T_DLLCLASS s_handleExtent;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
 #include "World/IEntityEventData.h"
 
@@ -39,7 +40,7 @@ class T_DLLCLASS DecalEventData : public IEntityEventData
 public:
 	virtual void serialize(ISerializer& s) override final;
 
-	float getSize() const { return m_size; }
+	const Vector2& getSize() const { return m_size; }
 
 	float getThickness() const { return m_thickness; }
 
@@ -50,7 +51,7 @@ public:
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	float m_size = 1.0f;
+	Vector2 m_size = Vector2(1.0f, 1.0f);
 	float m_thickness = 1.0f;
 	float m_alpha = 2.0f;
 	float m_cullDistance = 100.0f;

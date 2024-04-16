@@ -28,7 +28,8 @@ const render::Handle s_handleIrradianceSingle(L"World_IrradianceSingle");
 const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 
 // Shader parameters.
-const render::Handle s_handleDecalParams(L"World_DecalParams");
+const render::Handle s_handleDecalParamsA(L"World_DecalParamsA");
+const render::Handle s_handleDecalParamsB(L"World_DecalParamsB");
 const render::Handle s_handleExposure(L"World_Exposure");
 const render::Handle s_handleFxRotate(L"World_FxRotate");
 const render::Handle s_handleExtent(L"World_Extent");
