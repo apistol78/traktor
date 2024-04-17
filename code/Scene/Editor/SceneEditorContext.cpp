@@ -18,8 +18,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
-#include "Scene/ISceneController.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
@@ -478,18 +476,14 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
 		}
 
-		// Update scene controller also.
-		//Ref< ISceneController > controller;
-		//if (m_sceneAsset->getControllerData())
-		//{
-		//	SmallMap< Guid, Ref< world::Entity > > entityProducts;
-		//	for (auto entityAdapter : getEntities())
-		//		entityProducts.insert(std::make_pair(
-		//			entityAdapter->getId(),
-		//			entityAdapter->getEntity()
-		//		));
-		//	controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
-		//}
+		// Create world components.
+		for (auto worldComponentData : m_sceneAsset->getWorldComponents())
+		{
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
+			Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
+			if (worldComponent)
+				world->setComponent(worldComponent);
+		}
 
 		// Create our scene.
 		m_scene = new Scene(
@@ -522,26 +516,26 @@ void SceneEditorContext::buildEntities()
 
 void SceneEditorContext::buildController()
 {
-	T_ASSERT(m_scene);
+	T_FATAL_ASSERT(m_scene);
 
-	//Ref< ISceneController > controller;
-	//if (m_sceneAsset->getControllerData())
-	//{
-	//	SmallMap< Guid, Ref< world::Entity > > entityProducts;
-	//	for (auto entityAdapter : getEntities())
-	//		entityProducts.insert(std::make_pair(
-	//			entityAdapter->getId(),
-	//			entityAdapter->getEntity()
-	//		));
+	// Create the entity factory.
+	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
+	for (auto editorProfile : m_editorProfiles)
+	{
+		RefArray< const world::IEntityFactory > entityFactories;
+		editorProfile->createEntityFactories(this, entityFactories);
+		for (auto factory : entityFactories)
+			entityFactory->addFactory(factory);
+	}
 
-	//	controller = m_sceneAsset->getControllerData()->createController(entityProducts, true);
-	//}
-
-	//// Create our scene.
-	//m_scene = new Scene(
-	//	controller,
-	//	m_scene
-	//);
+	// Create all world components.
+	for (auto worldComponentData : m_sceneAsset->getWorldComponents())
+	{
+		Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, m_scene->getWorld(), nullptr);
+		Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
+		if (worldComponent)
+			m_scene->getWorld()->setComponent(worldComponent);
+	}
 }
 
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)

@@ -14,8 +14,15 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
-Entity::Entity(const std::wstring_view& name, const Transform& transform, const EntityState& state, const RefArray< IEntityComponent >& components)
-:	m_name(name)
+Entity::Entity(
+	const Guid& id,
+	const std::wstring_view& name,
+	const Transform& transform,
+	const EntityState& state,
+	const RefArray< IEntityComponent >& components
+)
+:	m_id(id)
+,	m_name(name)
 ,	m_transform(transform)
 ,	m_state(state)
 ,	m_components(components)

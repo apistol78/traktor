@@ -6,10 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/ISerializable.h"
+#include "Theater/TheaterEntityFactory.h"
 #include "Theater/Editor/TheaterEditorProfile.h"
 #include "Theater/Editor/TheaterComponentEditorFactory.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor::theater
 {
@@ -54,6 +55,7 @@ void TheaterEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
+	outEntityFactories.push_back(new TheaterEntityFactory());
 }
 
 void TheaterEditorProfile::createEntityRenderers(

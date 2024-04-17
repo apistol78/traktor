@@ -10,7 +10,6 @@
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "World/IWorldComponentData.h"
 
 // import/export mechanism.
@@ -20,13 +19,6 @@
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
-
-namespace traktor::world
-{
-
-class Entity;
-
-}
 
 namespace traktor::theater
 {
@@ -42,7 +34,7 @@ class T_DLLCLASS TheaterComponentData : public world::IWorldComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< TheaterComponent > createInstance(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const;
+	Ref< TheaterComponent > createInstance(bool editor) const;
 
 	virtual void serialize(ISerializer& s) override final;
 

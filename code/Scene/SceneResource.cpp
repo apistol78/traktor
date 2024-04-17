@@ -31,10 +31,19 @@ SceneResource::SceneResource()
 Ref< Scene > SceneResource::createScene(const world::IEntityFactory* entityFactory) const
 {
 	Ref< world::World > world = new world::World();
-
-	//#fixme Create world components.
-
 	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory, world);
+
+	// Create world components.
+	for (auto worldComponentData : m_worldComponents)
+	{
+		Ref< world::IWorldComponent > worldComponent = entityBuilder->create(worldComponentData);
+		if (!worldComponent)
+			return nullptr;
+
+		world->setComponent(worldComponent);
+	}
+
+	// Create world entities.
 	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
 	if (!rootEntity)
 		return nullptr;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/IEntityFactory.h"
+#include "World/AbstractEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +40,7 @@ class IFeedbackManager;
 /*! Effect entity factory.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
+class T_DLLCLASS EffectEntityFactory : public world::AbstractEntityFactory
 {
 	T_RTTI_CLASS;
 
@@ -51,13 +51,9 @@ public:
 		IFeedbackManager* feedbackManager
 	);
 
-	virtual const TypeInfoSet getEntityTypes() const override final;
-
 	virtual const TypeInfoSet getEntityEventTypes() const override final;
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
-
-	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const override final;
 
 	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 

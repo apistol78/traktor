@@ -27,6 +27,8 @@ class IEntityComponent;
 class IEntityComponentData;
 class IEntityEvent;
 class IEntityEventData;
+class IWorldComponent;
+class IWorldComponentData;
 class Entity;
 class EntityData;
 
@@ -44,11 +46,15 @@ public:
 
 	virtual const TypeInfoSet getEntityComponentTypes() const = 0;
 
+	virtual const TypeInfoSet getWorldComponentTypes() const = 0;
+
 	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const = 0;
 
 	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const = 0;
 
 	virtual Ref< IEntityComponent > createEntityComponent(const IEntityBuilder* builder, const IEntityComponentData& entityComponentData) const = 0;
+
+	virtual Ref< IWorldComponent > createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const = 0;
 };
 
 }

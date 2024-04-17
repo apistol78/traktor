@@ -128,6 +128,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	{
 		log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using empty entity as placeholder." << Endl;
 		entity = new world::Entity(
+			entityData->getId(),
 			entityData->getName(),
 			entityData->getTransform(),
 			entityData->getState()
@@ -177,6 +178,11 @@ Ref< world::IEntityComponent > EntityAdapterBuilder::create(const world::IEntity
 	}
 
 	return entityComponent;
+}
+
+Ref< world::IWorldComponent > EntityAdapterBuilder::create(const world::IWorldComponentData* worldComponentData) const
+{
+	return m_entityFactory->createWorldComponent(this, *worldComponentData);
 }
 
 }

@@ -48,6 +48,24 @@ public:
 
 	const RefArray< world::IWorldComponentData >& getWorldComponents() const;
 
+	/*! Get component of type.
+	 *
+	 * \param componentType Type of component.
+	 * \return Component instance matching type.
+	 */
+	world::IWorldComponentData* getWorldComponent(const TypeInfo& componentType) const;
+
+	/*! Get component of type.
+	 *
+	 * \param ComponentDataType Type of component.
+	 * \return Component instance matching type.
+	 */
+	template < typename ComponentDataType >
+	ComponentDataType* getWorldComponent() const
+	{
+		return checked_type_cast< ComponentDataType* >(getWorldComponent(type_of< ComponentDataType >()));
+	}
+
 	void setLayers(const RefArray< world::EntityData >& layers);
 
 	const RefArray< world::EntityData >& getLayers() const;

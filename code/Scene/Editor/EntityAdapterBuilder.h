@@ -45,6 +45,8 @@ public:
 
 	virtual Ref< world::IEntityComponent > create(const world::IEntityComponentData* entityComponentData) const override final;
 
+	virtual Ref< world::IWorldComponent > create(const world::IWorldComponentData* worldComponentData) const override final;
+
 	EntityAdapter* getRootAdapter() const { return m_rootAdapter; }
 
 private:

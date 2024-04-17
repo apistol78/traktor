@@ -48,4 +48,9 @@ Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entity
 	return m_entityFactory->createEntityComponent(this, *entityComponentData);
 }
 
+Ref< IWorldComponent > EntityBuilder::create(const IWorldComponentData* worldComponentData) const
+{
+	return nullptr;
+}
+
 }

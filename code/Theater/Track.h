@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Math/TransformPath.h"
 
@@ -19,17 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace world
-	{
-
-class Entity;
-
-	}
-
-	namespace theater
-	{
 
 /*! Track
  * \ingroup Theater
@@ -39,30 +31,24 @@ class T_DLLCLASS Track : public Object
 	T_RTTI_CLASS;
 
 public:
-	Track(
-		world::Entity* entity,
-		world::Entity* lookAtEntity,
+	explicit Track(
+		const Guid& entityId,
+		const Guid& lookAtEntityId,
 		const TransformPath& path
 	);
 
-	void setEntity(world::Entity* entity);
+	const Guid& getEntityId() const;
 
-	world::Entity* getEntity() const;
-
-	void setLookAtEntity(world::Entity* entity);
-
-	world::Entity* getLookAtEntity() const;
+	const Guid& getLookAtEntityId() const;
 
 	const TransformPath& getPath() const;
 
 	TransformPath& getPath();
 
 private:
-	world::Entity* m_entity;
-	world::Entity* m_lookAtEntity;
+	Guid m_entityId;
+	Guid m_lookAtEntityId;
 	TransformPath m_path;
 };
 
-	}
 }
-

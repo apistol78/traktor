@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,11 +10,10 @@
 #include "Theater/Act.h"
 #include "Theater/Track.h"
 #include "World/Entity.h"
+#include "World/World.h"
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Act", Act, Object)
 
@@ -26,7 +25,7 @@ Act::Act(const std::wstring& name, float start, float end, const RefArray< const
 {
 }
 
-bool Act::update(scene::Scene* scene, float time, float deltaTime) const
+bool Act::update(world::World* world, float time, float deltaTime) const
 {
 	const uint32_t ntracks = (uint32_t)m_tracks.size();
 	if (!ntracks)
@@ -44,7 +43,7 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 	// Calculate transforms.
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
-		world::Entity* entity = m_tracks[i]->getEntity();
+		world::Entity* entity = world->getEntity(m_tracks[i]->getEntityId());
 		T_ASSERT(entity);
 
 		const TransformPath& path = m_tracks[i]->getPath();
@@ -56,29 +55,28 @@ bool Act::update(scene::Scene* scene, float time, float deltaTime) const
 	}
 
 	// Fix-up orientation of "looking" entities.
-	for (uint32_t i = 0; i < ntracks; ++i)
-	{
-		world::Entity* entity = m_tracks[i]->getEntity();
-		T_ASSERT(entity);
+	//for (uint32_t i = 0; i < ntracks; ++i)
+	//{
+	//	world::Entity* entity = m_tracks[i]->getEntity();
+	//	T_ASSERT(entity);
 
-		transform = entity->getTransform();
+	//	transform = entity->getTransform();
 
-		world::Entity* lookAtEntity = m_tracks[i]->getLookAtEntity();
-		if (lookAtEntity)
-		{
-			lookAtTransform = lookAtEntity->getTransform();
-			const Matrix44 m = lookAt(
-				transform.translation().xyz1(),
-				lookAtTransform.translation().xyz1()
-			);
-			transform = Transform(m.inverse());
-		}
+	//	world::Entity* lookAtEntity = m_tracks[i]->getLookAtEntity();
+	//	if (lookAtEntity)
+	//	{
+	//		lookAtTransform = lookAtEntity->getTransform();
+	//		const Matrix44 m = lookAt(
+	//			transform.translation().xyz1(),
+	//			lookAtTransform.translation().xyz1()
+	//		);
+	//		transform = Transform(m.inverse());
+	//	}
 
-		entity->setTransform(transform);
-	}
+	//	entity->setTransform(transform);
+	//}
 
 	return true;
 }
 
-	}
 }

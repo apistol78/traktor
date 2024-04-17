@@ -36,8 +36,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/ResourceManager.h"
-#include "Scene/ISceneController.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
 #include "Scene/Editor/Camera.h"
@@ -93,6 +91,7 @@
 #include "World/EntityFactory.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityComponentData.h"
+#include "World/IWorldComponentData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/GroupComponentData.h"
 
@@ -1044,46 +1043,45 @@ void SceneEditorPage::createControllerEditor()
 	m_site->hideAdditionalPanel(m_controllerPanel);
 
 	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// if (sceneAsset)
-	// {
-	// 	Ref< ISceneControllerData > controllerData = sceneAsset->getControllerData();
-	// 	if (controllerData)
-	// 	{
-	// 		RefArray< const IWorldComponentEditorFactory > controllerEditorFactories;
-	// 		Ref< IWorldComponentEditor > controllerEditor;
+	if (sceneAsset)
+	{
+		for (auto worldComponentData : sceneAsset->getWorldComponents())
+		{
+	 		RefArray< const IWorldComponentEditorFactory > componentEditorFactories;
+	 		Ref< IWorldComponentEditor > componentEditor;
 
-	// 		// Create controller editor factories.
-	// 		for (auto profile : m_context->getEditorProfiles())
-	// 			profile->createControllerEditorFactories(m_context, controllerEditorFactories);
+	 		// Create world component editor factories.
+	 		for (auto profile : m_context->getEditorProfiles())
+	 			profile->createControllerEditorFactories(m_context, componentEditorFactories);
 
-	// 		for (auto controllerEditorFactory : controllerEditorFactories)
-	// 		{
-	// 			TypeInfoSet typeSet = controllerEditorFactory->getControllerDataTypes();
-	// 			if (typeSet.find(&type_of(controllerData)) != typeSet.end())
-	// 			{
-	// 				controllerEditor = controllerEditorFactory->createControllerEditor(type_of(controllerData));
-	// 				if (controllerEditor)
-	// 					break;
-	// 			}
-	// 		}
+	 		for (auto controllerEditorFactory : componentEditorFactories)
+	 		{
+	 			TypeInfoSet typeSet = controllerEditorFactory->getComponentDataTypes();
+	 			if (typeSet.find(&type_of(worldComponentData)) != typeSet.end())
+	 			{
+	 				componentEditor = controllerEditorFactory->createComponentEditor(type_of(worldComponentData));
+	 				if (componentEditor)
+	 					break;
+	 			}
+	 		}
 
-	// 		if (controllerEditor)
-	// 		{
-	// 			if (controllerEditor->create(
-	// 				m_context,
-	// 				m_controllerPanel
-	// 			))
-	// 			{
-	// 				m_context->setControllerEditor(controllerEditor);
-	// 				m_site->showAdditionalPanel(m_controllerPanel);
-	// 			}
-	// 			else
-	// 				log::error << L"Unable to create controller editor; create failed" << Endl;
-	// 		}
-	// 		else
-	// 			T_DEBUG(L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"");
-	// 	}
-	// }
+	 		if (componentEditor)
+	 		{
+	 			if (componentEditor->create(
+	 				m_context,
+	 				m_controllerPanel
+	 			))
+	 			{
+	 				m_context->setControllerEditor(componentEditor);
+	 				m_site->showAdditionalPanel(m_controllerPanel);
+	 			}
+	 			else
+	 				log::error << L"Unable to create world component editor; create failed." << Endl;
+	 		}
+	 		else
+	 			T_DEBUG(L"Unable to find world component editor for type \"" << type_name(worldComponentData) << L"\".");
+	 	}
+	}
 
 	m_controllerPanel->update();
 }

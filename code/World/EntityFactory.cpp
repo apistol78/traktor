@@ -11,6 +11,7 @@
 #include "World/EntityFactory.h"
 #include "World/IEntityComponentData.h"
 #include "World/IEntityEventData.h"
+#include "World/IWorldComponentData.h"
 
 namespace traktor::world
 {
@@ -62,6 +63,17 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet EntityFactory::getWorldComponentTypes() const
+{
+	TypeInfoSet typeSet;
+	for (auto factory : m_factories)
+	{
+		const TypeInfoSet factoryTypeSet = factory->getWorldComponentTypes();
+		typeSet.insert(factoryTypeSet.begin(), factoryTypeSet.end());
+	}
+	return typeSet;
+}
+
 Ref< Entity > EntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
 {
 	const IEntityFactory* factory = getFactory(&entityData);
@@ -78,6 +90,12 @@ Ref< IEntityComponent > EntityFactory::createEntityComponent(const IEntityBuilde
 {
 	const IEntityFactory* factory = getFactory(&entityComponentData);
 	return factory != nullptr ? factory->createEntityComponent(builder, entityComponentData) : nullptr;
+}
+
+Ref< IWorldComponent > EntityFactory::createWorldComponent(const IEntityBuilder* builder, const IWorldComponentData& worldComponentData) const
+{
+	const IEntityFactory* factory = getFactory(&worldComponentData);
+	return factory != nullptr ? factory->createWorldComponent(builder, worldComponentData) : nullptr;
 }
 
 const IEntityFactory* EntityFactory::getFactory(const EntityData* entityData) const
@@ -221,6 +239,55 @@ const IEntityFactory* EntityFactory::getFactory(const IEntityComponentData* enti
 	if (!entityFactory)
 	{
 		log::error << L"Unable to find entity factory for component of \"" << type_name(entityComponentData) << L"\"." << Endl;
+		return nullptr;
+	}
+
+	return entityFactory;
+}
+
+const IEntityFactory* EntityFactory::getFactory(const IWorldComponentData* worldComponentData) const
+{
+	if (!worldComponentData)
+		return nullptr;
+
+	const TypeInfo& worldComponentDataType = type_of(worldComponentData);
+	const IEntityFactory* entityFactory = nullptr;
+
+	auto it = m_resolvedFactoryCache.find(&worldComponentDataType);
+	if (it != m_resolvedFactoryCache.end())
+	{
+		// This type of entity component has already been created; reuse same factory.
+		entityFactory = it->second;
+	}
+	else
+	{
+		// Need to find factory best suited to create entity component from it's data.
+		uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+		for (RefArray< const IEntityFactory >::const_iterator it = m_factories.begin(); it != m_factories.end() && minClassDifference > 0; ++it)
+		{
+			const TypeInfoSet& typeSet = (*it)->getWorldComponentTypes();
+			for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
+			{
+				if (is_type_of(**j, worldComponentDataType))
+				{
+					const uint32_t classDifference = type_difference(**j, worldComponentDataType);
+					if (classDifference < minClassDifference)
+					{
+						minClassDifference = classDifference;
+						entityFactory = *it;
+					}
+				}
+			}
+		}
+		m_resolvedFactoryCache.insert(std::make_pair(
+			&worldComponentDataType,
+			entityFactory
+		));
+	}
+
+	if (!entityFactory)
+	{
+		log::error << L"Unable to find entity factory for component of \"" << type_name(worldComponentData) << L"\"." << Endl;
 		return nullptr;
 	}
 

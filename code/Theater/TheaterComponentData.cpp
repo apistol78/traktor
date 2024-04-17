@@ -19,7 +19,7 @@ namespace traktor::theater
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterComponentData", 0, TheaterComponentData, world::IWorldComponentData)
 
-Ref< TheaterComponent > TheaterComponentData::createInstance(const SmallMap< Guid, Ref< world::Entity > >& entityProducts, bool editor) const
+Ref< TheaterComponent > TheaterComponentData::createInstance(bool editor) const
 {
 	float time = 0.0f;
 
@@ -31,7 +31,7 @@ Ref< TheaterComponent > TheaterComponentData::createInstance(const SmallMap< Gui
 		if (duration < 0.0f)
 			return nullptr;
 
-		acts[i] = m_acts[i]->createInstance(time, time + duration, entityProducts);
+		acts[i] = m_acts[i]->createInstance(time, time + duration);
 		if (!acts[i])
 			return nullptr;
 

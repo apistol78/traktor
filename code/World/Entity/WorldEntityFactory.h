@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/IEntityFactory.h"
+#include "World/AbstractEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,7 +38,7 @@ namespace traktor::world
 /*! World entity factory.
  * \ingroup World
  */
-class T_DLLCLASS WorldEntityFactory : public IEntityFactory
+class T_DLLCLASS WorldEntityFactory : public AbstractEntityFactory
 {
 	T_RTTI_CLASS;
 

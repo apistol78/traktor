@@ -15,22 +15,12 @@
 namespace traktor::weather
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherFactory", WeatherFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherFactory", WeatherFactory, world::AbstractEntityFactory)
 
 WeatherFactory::WeatherFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {
-}
-
-const TypeInfoSet WeatherFactory::getEntityTypes() const
-{
-	return TypeInfoSet();
-}
-
-const TypeInfoSet WeatherFactory::getEntityEventTypes() const
-{
-	return TypeInfoSet();
 }
 
 const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
@@ -39,16 +29,6 @@ const TypeInfoSet WeatherFactory::getEntityComponentTypes() const
 		PrecipitationComponentData,
 		SkyComponentData
 	>();
-}
-
-Ref< world::Entity > WeatherFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
-{
-	return nullptr;
-}
-
-Ref< world::IEntityEvent > WeatherFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityComponent > WeatherFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

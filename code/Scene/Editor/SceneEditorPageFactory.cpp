@@ -13,7 +13,6 @@
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IEditor.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/SceneAsset.h"

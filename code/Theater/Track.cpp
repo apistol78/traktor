@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,42 +8,30 @@
  */
 #include "Theater/Track.h"
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace theater
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Track", Track, Object)
 
 Track::Track(
-	world::Entity* entity,
-	world::Entity* lookAtEntity,
+	const Guid& entityId,
+	const Guid& lookAtEntityId,
 	const TransformPath& path
 )
-:	m_entity(entity)
-,	m_lookAtEntity(lookAtEntity)
+:	m_entityId(entityId)
+,	m_lookAtEntityId(lookAtEntityId)
 ,	m_path(path)
 {
 }
 
-void Track::setEntity(world::Entity* entity)
+const Guid& Track::getEntityId() const
 {
-	m_entity = entity;
+	return m_entityId;
 }
 
-world::Entity* Track::getEntity() const
+const Guid& Track::getLookAtEntityId() const
 {
-	return m_entity;
-}
-
-void Track::setLookAtEntity(world::Entity* entity)
-{
-	m_lookAtEntity = entity;
-}
-
-world::Entity* Track::getLookAtEntity() const
-{
-	return m_lookAtEntity;
+	return m_lookAtEntityId;
 }
 
 const TransformPath& Track::getPath() const
@@ -56,5 +44,4 @@ TransformPath& Track::getPath()
 	return m_path;
 }
 
-	}
 }

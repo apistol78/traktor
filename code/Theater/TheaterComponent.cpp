@@ -48,8 +48,7 @@ void TheaterComponent::update(world::World* world, const world::UpdateParams& up
 		return;
 
 	// Evaluate current act.
-	//#fixme
-	//m_act->update(scene, update.totalTime - m_timeStart, deltaTime);
+	m_act->update(world, update.totalTime - m_timeStart, update.deltaTime);
 
 	m_timeLast = update.totalTime;
 }

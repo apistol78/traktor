@@ -16,7 +16,6 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Editor/Pipeline/PipelineProfiler.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
 #include "Scene/Editor/ExternalOperationData.h"
 #include "Scene/Editor/IScenePipelineOperator.h"

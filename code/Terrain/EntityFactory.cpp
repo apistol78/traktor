@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,22 +23,12 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::AbstractEntityFactory)
 
 EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {
-}
-
-const TypeInfoSet EntityFactory::getEntityTypes() const
-{
-	return TypeInfoSet();
-}
-
-const TypeInfoSet EntityFactory::getEntityEventTypes() const
-{
-	return TypeInfoSet();
 }
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
@@ -51,16 +41,6 @@ const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 	typeSet.insert< TerrainComponentData >();
 	typeSet.insert< UndergrowthComponentData >();
 	return typeSet;
-}
-
-Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
-{
-	return nullptr;
-}
-
-Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

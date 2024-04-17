@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,23 +29,13 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityFactory", AnimationEntityFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityFactory", AnimationEntityFactory, world::AbstractEntityFactory)
 
 AnimationEntityFactory::AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
 {
-}
-
-const TypeInfoSet AnimationEntityFactory::getEntityTypes() const
-{
-	return TypeInfoSet();
-}
-
-const TypeInfoSet AnimationEntityFactory::getEntityEventTypes() const
-{
-	return TypeInfoSet();
 }
 
 const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
@@ -63,16 +53,6 @@ const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const
 	typeSet.insert< SkeletonComponentData >();
 	typeSet.insert< WobbleComponentData >();
 	return typeSet;
-}
-
-Ref< world::Entity > AnimationEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
-{
-	return nullptr;
-}
-
-Ref< world::IEntityEvent > AnimationEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityComponent > AnimationEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

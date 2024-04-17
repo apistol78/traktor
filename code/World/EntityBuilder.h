@@ -40,6 +40,8 @@ public:
 
 	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const override final;
 
+	virtual Ref< IWorldComponent > create(const IWorldComponentData* worldComponentData) const override final;
+
 private:
 	Ref< const IEntityFactory > m_entityFactory;
 	Ref< world::World > m_world;

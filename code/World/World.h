@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
@@ -83,6 +84,9 @@ public:
 
 	/*! Check if an entity is part of this world. */
 	bool haveEntity(const Entity* entity) const;
+
+	/*! Get an entity by id. */
+	Entity* getEntity(const Guid& id) const;
 
 	/*! Get an entity by name, and index if multiple entities are named equally. */
 	Entity* getEntity(const std::wstring& name, int32_t index = 0) const;

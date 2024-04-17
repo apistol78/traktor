@@ -14,7 +14,6 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Render/ITexture.h"
 #include "Resource/Member.h"
-#include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/EntityData.h"
@@ -51,6 +50,16 @@ const RefArray< world::IWorldComponentData >& SceneAsset::getWorldComponents() c
 	return m_worldComponents;
 }
 
+world::IWorldComponentData* SceneAsset::getWorldComponent(const TypeInfo& componentType) const
+{
+	for (auto component : m_worldComponents)
+	{
+		if (is_type_a(componentType, type_of(component)))
+			return component;
+	}
+	return nullptr;
+}
+
 void SceneAsset::setLayers(const RefArray< world::EntityData >& layers)
 {
 	m_layers = layers;
@@ -73,29 +82,12 @@ const RefArray< ISerializable >& SceneAsset::getOperationData() const
 
 void SceneAsset::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT (s.getVersion< SceneAsset >() >= 7);
+	T_FATAL_ASSERT (s.getVersion< SceneAsset >() >= 10);
 
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-
-	if (s.getVersion< SceneAsset >() >= 10)
-		s >> MemberRefArray< world::IWorldComponentData >(L"worldComponents", m_worldComponents);
-
-	if (s.getVersion< SceneAsset >() < 9)
-	{
-		SmallMap< std::wstring, resource::Id< render::ITexture > > imageProcessParams;
-		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"imageProcessParams", imageProcessParams);
-	}
-
+	s >> MemberRefArray< world::IWorldComponentData >(L"worldComponents", m_worldComponents);
 	s >> MemberRefArray< world::EntityData >(L"layers", m_layers, AttributePrivate());
-
-	if (s.getVersion< SceneAsset >() < 10)
-	{
-		Ref< ISceneControllerData > controllerData;
-		s >> MemberRef< ISceneControllerData >(L"controllerData", controllerData);
-	}
-
-	if (s.getVersion< SceneAsset >() >= 8)
-		s >> MemberRefArray< ISerializable >(L"operationData", m_operationData);
+	s >> MemberRefArray< ISerializable >(L"operationData", m_operationData);
 }
 
 }

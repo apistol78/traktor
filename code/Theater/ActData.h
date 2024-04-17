@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -20,18 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::theater
 {
-	namespace world
-	{
-
-class Entity;
-class EntityData;
-
-	}
-
-	namespace theater
-	{
 
 class Act;
 class TrackData;
@@ -44,9 +33,7 @@ class T_DLLCLASS ActData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	ActData() = default;
-
-	Ref< Act > createInstance(float start, float end, const SmallMap< Guid, Ref< world::Entity > >& entityProducts) const;
+	Ref< Act > createInstance(float start, float end) const;
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -68,6 +55,4 @@ private:
 	RefArray< TrackData > m_tracks;
 };
 
-	}
 }
-

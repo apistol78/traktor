@@ -28,6 +28,8 @@ class IEntityComponent;
 class IEntityComponentData;
 class IEntityEvent;
 class IEntityEventData;
+class IWorldComponent;
+class IWorldComponentData;
 
 /*! Entity builder interface.
  * \ingroup World
@@ -58,6 +60,13 @@ public:
 	 */
 	virtual Ref< IEntityComponent > create(const IEntityComponentData* entityComponentData) const = 0;
 
+	/*! Create world component from world component data.
+	 *
+	 * \param worldComponentData World component data.
+	 * \return Component instance, null if unable to create instance.
+	 */
+	virtual Ref< IWorldComponent > create(const IWorldComponentData* worldComponentData) const = 0;
+
 	/*!
 	 */
 	template < typename EntityType >
@@ -80,6 +89,14 @@ public:
 	Ref< EntityComponentType > create(const IEntityComponentData* entityComponentData) const
 	{
 		return checked_type_cast< EntityComponentType*, true >(create(entityComponentData));
+	}
+
+	/*!
+	 */
+	template < typename WorldComponentType >
+	Ref< WorldComponentType > create(const IWorldComponentData* worldComponentData) const
+	{
+		return checked_type_cast< WorldComponentType*, true >(create(worldComponentData));
 	}
 };
 

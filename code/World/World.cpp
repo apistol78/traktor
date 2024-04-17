@@ -97,6 +97,16 @@ bool World::haveEntity(const Entity* entity) const
 		return false;
 }
 
+Entity* World::getEntity(const Guid& id) const
+{
+	for (auto entity : m_entities)
+	{
+		if (entity->getId() == id)
+			return entity;
+	}
+	return nullptr;
+}
+
 Entity* World::getEntity(const std::wstring& name, int32_t index) const
 {
 	for (auto entity : m_entities)

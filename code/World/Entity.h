@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string>
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
@@ -41,7 +42,13 @@ public:
 
 	Entity(const Entity&) = delete;
 
-	explicit Entity(const std::wstring_view& name, const Transform& transform, const EntityState& state = EntityState(), const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >());
+	explicit Entity(
+		const Guid& id,
+		const std::wstring_view& name,
+		const Transform& transform,
+		const EntityState& state = EntityState(),
+		const RefArray< IEntityComponent >& components = RefArray< IEntityComponent >()
+	);
 
 	/*! Destroy entity resources.
 	 *
@@ -57,6 +64,9 @@ public:
 
 	/*! Get world entity is part of. */
 	World* getWorld() const { return m_world; }
+
+	/*! Get entity id. */
+	const Guid& getId() const { return m_id; }
 
 	/*! Get entity name. */
 	const std::wstring& getName() const { return m_name; }
@@ -147,6 +157,7 @@ private:
 	friend class World;
 
 	World* m_world = nullptr;
+	Guid m_id;
 	std::wstring m_name;
 	Transform m_transform = Transform::identity();
 	EntityState m_state;

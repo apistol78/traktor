@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/IEntityFactory.h"
+#include "World/AbstractEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,22 +45,14 @@ namespace traktor::animation
 /*! Animation entity factory.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimationEntityFactory : public world::IEntityFactory
+class T_DLLCLASS AnimationEntityFactory : public world::AbstractEntityFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager);
-
-	virtual const TypeInfoSet getEntityTypes() const override final;
-
-	virtual const TypeInfoSet getEntityEventTypes() const override final;
+	explicit AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager);
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
-
-	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const override final;
-
-	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 

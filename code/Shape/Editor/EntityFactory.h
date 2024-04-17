@@ -9,7 +9,7 @@
 #pragma once
 
 #include "Core/Ref.h"
-#include "World/IEntityFactory.h"
+#include "World/AbstractEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -53,7 +53,7 @@ namespace traktor::shape
 /*!
  * \ingroup Spray
  */
-class T_DLLCLASS EntityFactory : public world::IEntityFactory
+class T_DLLCLASS EntityFactory : public world::AbstractEntityFactory
 {
 	T_RTTI_CLASS;
 
@@ -69,13 +69,9 @@ public:
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
-	virtual const TypeInfoSet getEntityEventTypes() const override final;
-
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
 
 	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const override final;
-
-	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 

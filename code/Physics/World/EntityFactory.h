@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "World/IEntityFactory.h"
+#include "World/AbstractEntityFactory.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -32,7 +32,7 @@ class PhysicsManager;
 /*! Physics entity factory.
  * \ingroup Physics
  */
-class T_DLLCLASS EntityFactory : public world::IEntityFactory
+class T_DLLCLASS EntityFactory : public world::AbstractEntityFactory
 {
 	T_RTTI_CLASS;
 
@@ -42,15 +42,7 @@ public:
 		PhysicsManager* physicsManager
 	);
 
-	virtual const TypeInfoSet getEntityTypes() const override final;
-
-	virtual const TypeInfoSet getEntityEventTypes() const override final;
-
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
-
-	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const override final;
-
-	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 

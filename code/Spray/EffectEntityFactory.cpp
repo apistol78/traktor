@@ -29,7 +29,7 @@
 namespace traktor::spray
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::AbstractEntityFactory)
 
 EffectEntityFactory::EffectEntityFactory(
 	resource::IResourceManager* resourceManager,
@@ -40,11 +40,6 @@ EffectEntityFactory::EffectEntityFactory(
 ,	m_soundPlayer(soundPlayer)
 ,	m_feedbackManager(feedbackManager)
 {
-}
-
-const TypeInfoSet EffectEntityFactory::getEntityTypes() const
-{
-	return TypeInfoSet();
 }
 
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
@@ -64,11 +59,6 @@ const TypeInfoSet EffectEntityFactory::getEntityComponentTypes() const
 		ListenerComponentData,
 		SoundComponentData
 	>();
-}
-
-Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const

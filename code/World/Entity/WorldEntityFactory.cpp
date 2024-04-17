@@ -45,7 +45,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, AbstractEntityFactory)
 
 WorldEntityFactory::WorldEntityFactory(
 	resource::IResourceManager* resourceManager,
@@ -142,7 +142,13 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		}
 
 		// Create entity and attach all components to it.
-		return new Entity(entityData.getName(), entityData.getTransform(), entityData.getState(), components);
+		return new Entity(
+			entityData.getId(),
+			entityData.getName(),
+			entityData.getTransform(),
+			entityData.getState(),
+			components
+		);
 	}
 	return nullptr;
 }

@@ -32,7 +32,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::AbstractEntityFactory)
 
 EntityFactory::EntityFactory(
 	db::Database* database,
@@ -59,11 +59,6 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	>();
 }
 
-const TypeInfoSet EntityFactory::getEntityEventTypes() const
-{
-	return TypeInfoSet();
-}
-
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet<
@@ -82,11 +77,6 @@ Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* bu
 		return solidEntityData->createEntity(builder, m_resourceManager, m_renderSystem);
 	else
 		return nullptr;
-}
-
-Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityComponent > EntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

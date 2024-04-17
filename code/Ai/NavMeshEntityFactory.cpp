@@ -15,7 +15,7 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityFactory", NavMeshEntityFactory, world::IEntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityFactory", NavMeshEntityFactory, world::AbstractEntityFactory)
 
 NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress)
 :	m_resourceManager(resourceManager)
@@ -23,29 +23,9 @@ NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceM
 {
 }
 
-const TypeInfoSet NavMeshEntityFactory::getEntityTypes() const
-{
-	return TypeInfoSet();
-}
-
-const TypeInfoSet NavMeshEntityFactory::getEntityEventTypes() const
-{
-	return TypeInfoSet();
-}
-
 const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
 {
 	return makeTypeInfoSet< NavMeshComponentData >();
-}
-
-Ref< world::Entity > NavMeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
-{
-	return nullptr;
-}
-
-Ref< world::IEntityEvent > NavMeshEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
-{
-	return nullptr;
 }
 
 Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const

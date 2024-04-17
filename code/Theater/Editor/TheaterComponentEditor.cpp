@@ -42,6 +42,7 @@
 #include "Ui/Sequencer/Sequence.h"
 #include "Ui/Sequencer/Tick.h"
 #include "World/EntityData.h"
+#include "World/World.h"
 
 namespace traktor::theater
 {
@@ -139,19 +140,18 @@ void TheaterComponentEditor::destroy()
 
 void TheaterComponentEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 {
-	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
-	// TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// for (auto act : controllerData->getActs())
-	// {
-	// 	RefArray< TrackData >& tracks = act->getTracks();
-	// 	for (auto it = tracks.begin(); it != tracks.end(); )
-	// 	{
-	// 		if ((*it)->getEntityId() == entityAdapter->getId())
-	// 			it = tracks.erase(it);
-	// 		else
-	// 			++it;
-	// 	}
-	// }
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	for (auto act : componentData->getActs())
+	{
+	 	RefArray< TrackData >& tracks = act->getTracks();
+	 	for (auto it = tracks.begin(); it != tracks.end(); )
+	 	{
+	 		if ((*it)->getEntityId() == entityAdapter->getId())
+	 			it = tracks.erase(it);
+	 		else
+	 			++it;
+	 	}
+	}
 	updateView();
 }
 
@@ -173,10 +173,9 @@ bool TheaterComponentEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Theater.AddAct")
 	{
-		Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-		// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-		// controllerData->getActs().push_back(new ActData());
-		// m_context->buildController();
+		TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+		componentData->getActs().push_back(new ActData());
+		m_context->buildController();
 		updateView();
 	}
 	else if (command == L"Theater.RenameAct")
@@ -199,10 +198,9 @@ bool TheaterComponentEditor::handleCommand(const ui::Command& command)
 			);
 			if (inputDialog.showModal() == ui::DialogResult::Ok && !fields[0].value.empty())
 			{
-				Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-				// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-				// ActData* act = controllerData->getActs().at(selected);
-				// act->setName(fields[0].value);
+				TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+				ActData* act = componentData->getActs().at(selected);
+				act->setName(fields[0].value);
 				updateView();
 			}
 			inputDialog.destroy();
@@ -221,11 +219,10 @@ bool TheaterComponentEditor::handleCommand(const ui::Command& command)
 			);
 			if (result == ui::DialogResult::Yes)
 			{
-				Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-				// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-				// RefArray< ActData >& acts = controllerData->getActs();
-				// acts.erase(acts.begin() + selected);
-				// m_context->buildController();
+				TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+				RefArray< ActData >& acts = componentData->getActs();
+				acts.erase(acts.begin() + selected);
+				m_context->buildController();
 				updateView();
 			}
 		}
@@ -265,13 +262,13 @@ void TheaterComponentEditor::update()
 		return;
 
 	// Ensure controller is up to date, we need to force it to keep in sync with editor.
-	//TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(m_context->getSceneAsset()->getControllerData());
-	//TheaterComponent* controller = mandatory_non_null_type_cast< TheaterComponent* >(m_context->getScene()->getController());
-	//if (!controller)
-	//	return;
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	TheaterComponent* component = m_context->getScene()->getWorld()->getComponent< TheaterComponent >();
+	if (!componentData || !component)
+		return;
 
-	//controller->play(controllerData->getActs().at(selected)->getName());
-	//controller->m_timeStart = 0.0f;
+	component->play(componentData->getActs().at(selected)->getName());
+	component->m_timeStart = 0.0f;
 }
 
 void TheaterComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
@@ -280,133 +277,132 @@ void TheaterComponentEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	if (selected < 0)
 		return;
 
-	// scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
-	// TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// ActData* act = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	ActData* act = componentData->getActs().at(selected);
 
-	// RefArray< ui::SequenceItem > items = m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
+	RefArray< ui::SequenceItem > items = m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly);
 
-	// int32_t cursorTick = m_trackSequencer->getCursor();
-	// float cursorTime = float(cursorTick / 1000.0f);
-	// float duration = act->getDuration();
+	int32_t cursorTick = m_trackSequencer->getCursor();
+	float cursorTime = float(cursorTick / 1000.0f);
+	float duration = act->getDuration();
 
-	// for (auto track : act->getTracks())
-	// {
-	// 	Color4ub pathColor(180, 180, 80, 120);
-	// 	for (auto item : items)
-	// 	{
-	// 		if (item->getData(L"TRACK") == track)
-	// 		{
-	// 			pathColor = Color4ub(255, 255, 0, 200);
-	// 			break;
-	// 		}
-	// 	}
+	for (auto track : act->getTracks())
+	{
+		Color4ub pathColor(180, 180, 80, 120);
+		for (auto item : items)
+		{
+			if (item->getData(L"TRACK") == track)
+			{
+				pathColor = Color4ub(255, 255, 0, 200);
+				break;
+			}
+		}
 
-	// 	const TransformPath& path = track->getPath();
-	// 	const int32_t steps = int32_t(duration) * 10;
+		const TransformPath& path = track->getPath();
+		const int32_t steps = int32_t(duration) * 10;
 
-	// 	TransformPath::Key F0 = path.evaluate(0.0f, false);
-	// 	for (int32_t i = 1; i <= steps; ++i)
-	// 	{
-	// 		const float T = (float(i) / steps) * duration;
-	// 		const TransformPath::Key F1 = path.evaluate(T, false);
+		TransformPath::Key F0 = path.evaluate(0.0f, false);
+		for (int32_t i = 1; i <= steps; ++i)
+		{
+			const float T = (float(i) / steps) * duration;
+			const TransformPath::Key F1 = path.evaluate(T, false);
 
-	// 		primitiveRenderer->drawLine(
-	// 			F0.position,
-	// 			F1.position,
-	// 			pathColor
-	// 		);
+			primitiveRenderer->drawLine(
+				F0.position,
+				F1.position,
+				pathColor
+			);
 
-	// 		F0 = F1;
-	// 	}
+			F0 = F1;
+		}
 
-	// 	for (int32_t i = 0; i <= steps; ++i)
-	// 	{
-	// 		const float T = (float(i) / steps) * duration;
-	// 		const TransformPath::Key F0 = path.evaluate(T, false);
+		for (int32_t i = 0; i <= steps; ++i)
+		{
+			const float T = (float(i) / steps) * duration;
+			const TransformPath::Key F0 = path.evaluate(T, false);
 
-	// 		primitiveRenderer->drawSolidPoint(
-	// 			F0.position,
-	// 			4.0f,
-	// 			Color4ub(255, 255, 255, 200)
-	// 		);
-	// 	}
+			primitiveRenderer->drawSolidPoint(
+				F0.position,
+				4.0f,
+				Color4ub(255, 255, 255, 200)
+			);
+		}
 
-	// 	for (const auto& key : path.keys())
-	// 	{
-	// 		primitiveRenderer->drawSolidPoint(
-	// 			key.position,
-	// 			8.0f,
-	// 			pathColor
-	// 		);
-	// 	}
+		for (const auto& key : path.keys())
+		{
+			primitiveRenderer->drawSolidPoint(
+				key.position,
+				8.0f,
+				pathColor
+			);
+		}
 
-	// 	const TransformPath::Key F = path.evaluate(cursorTime, false);
-	// 	primitiveRenderer->drawWireFrame(
-	// 		F.transform().toMatrix44(),
-	// 		1.0f
-	// 	);
-	// }
+		const TransformPath::Key F = path.evaluate(cursorTime, false);
+		primitiveRenderer->drawWireFrame(
+			F.transform().toMatrix44(),
+			1.0f
+		);
+	}
 }
 
 void TheaterComponentEditor::updateView()
 {
 	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
-	// TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
 
-	// RefArray< ActData >& acts = controllerData->getActs();
+	RefArray< ActData >& acts = componentData->getActs();
 
-	// int32_t selected = m_dropDownActs->getSelected();
-	// if (selected >= (int32_t)acts.size())
-	// 	selected = (int32_t)acts.size() - 1;
-	// else if (selected < 0 && !acts.empty())
-	// 	selected = 0;
+	int32_t selected = m_dropDownActs->getSelected();
+	if (selected >= (int32_t)acts.size())
+		selected = (int32_t)acts.size() - 1;
+	else if (selected < 0 && !acts.empty())
+		selected = 0;
 
-	// m_dropDownActs->removeAll();
-	// for (auto act : acts)
-	// {
-	// 	std::wstring actName = act->getName();
-	// 	if (actName.empty())
-	// 		actName = i18n::Text(L"THEATER_EDITOR_UNNAMED_ACT");
-	// 	m_dropDownActs->add(actName, act);
-	// }
+	m_dropDownActs->removeAll();
+	for (auto act : acts)
+	{
+		std::wstring actName = act->getName();
+		if (actName.empty())
+			actName = i18n::Text(L"THEATER_EDITOR_UNNAMED_ACT");
+		m_dropDownActs->add(actName, act);
+	}
 
-	// m_dropDownActs->select(selected);
+	m_dropDownActs->select(selected);
 
-	// m_trackSequencer->removeAllSequenceItems();
+	m_trackSequencer->removeAllSequenceItems();
 
-	// if (selected >= 0)
-	// {
-	// 	RefArray< scene::EntityAdapter > entities = m_context->getEntities();
-	// 	for (auto track : acts[selected]->getTracks())
-	// 	{
-	// 		auto it = std::find_if(entities.begin(), entities.end(), [&](scene::EntityAdapter* entity) {
-	// 			return entity->getId() == track->getEntityId();
-	// 		});
+	if (selected >= 0)
+	{
+		RefArray< scene::EntityAdapter > entities = m_context->getEntities();
+		for (auto track : acts[selected]->getTracks())
+		{
+			auto it = std::find_if(entities.begin(), entities.end(), [&](scene::EntityAdapter* entity) {
+				return entity->getId() == track->getEntityId();
+				});
 
-	// 		std::wstring name;
-	// 		if (it != entities.end())
-	// 			name = it->getName();
-	// 		else
-	// 			name = L"[N/A]";
+			std::wstring name;
+			if (it != entities.end())
+				name = it->getName();
+			else
+				name = L"[N/A]";
 
-	// 		Ref< ui::Sequence > trackSequence = new ui::Sequence(name);
-	// 		trackSequence->setData(L"TRACK", track);
+			Ref< ui::Sequence > trackSequence = new ui::Sequence(name);
+			trackSequence->setData(L"TRACK", track);
 
-	// 		for (auto& key : track->getPath().editKeys())
-	// 		{
-	// 			const int32_t tickTime = (int32_t)(key.T * 1000.0f);
-	// 			Ref< ui::Tick > tick = new ui::Tick(tickTime, true);
-	// 			tick->setData(L"KEY", new TransformPathKeyWrapper(key));
-	// 			trackSequence->addKey(tick);
-	// 		}
+			for (auto& key : track->getPath().editKeys())
+			{
+				const int32_t tickTime = (int32_t)(key.T * 1000.0f);
+				Ref< ui::Tick > tick = new ui::Tick(tickTime, true);
+				tick->setData(L"KEY", new TransformPathKeyWrapper(key));
+				trackSequence->addKey(tick);
+			}
 
-	// 		m_trackSequencer->addSequenceItem(trackSequence);
-	// 	}
+			m_trackSequencer->addSequenceItem(trackSequence);
+		}
 
-	// 	m_trackSequencer->setLength((int32_t)(acts[selected]->getDuration() * 1000.0f));
-	// 	m_trackSequencer->setCursor((int32_t)(m_context->getTime() * 1000.0f));
-	// }
+		m_trackSequencer->setLength((int32_t)(acts[selected]->getDuration() * 1000.0f));
+		m_trackSequencer->setCursor((int32_t)(m_context->getTime() * 1000.0f));
+	}
 
 	m_trackSequencer->update();
 }
@@ -427,71 +423,70 @@ void TheaterComponentEditor::captureEntities()
 		return;
 	}
 
-	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
-	// TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// ActData* act = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	ActData* act = componentData->getActs().at(selected);
 
-	// const double time = m_context->getTime();
+	const double time = m_context->getTime();
 
-	// RefArray< TrackData >& tracks = act->getTracks();
-	// for (auto selectedEntity : selectedEntities)
-	// {
-	// 	const Guid& selectedId = selectedEntity->getId();
-	// 	Transform transform = selectedEntity->getTransform();
+	RefArray< TrackData >& tracks = act->getTracks();
+	for (auto selectedEntity : selectedEntities)
+	{
+		const Guid& selectedId = selectedEntity->getId();
+		Transform transform = selectedEntity->getTransform();
 
-	// 	Ref< TrackData > instanceTrackData;
+		Ref< TrackData > instanceTrackData;
 
-	// 	auto it = std::find_if(tracks.begin(), tracks.end(), [&](const TrackData* trackData) {
-	// 		return trackData->getEntityId() == selectedId;
-	// 	});
-	// 	if (it != tracks.end())
-	// 		instanceTrackData = *it;
-	// 	else
-	// 	{
-	// 		instanceTrackData = new TrackData();
-	// 		instanceTrackData->setEntityId(selectedId);
-	// 		tracks.push_back(instanceTrackData);
-	// 	}
+		auto it = std::find_if(tracks.begin(), tracks.end(), [&](const TrackData* trackData) {
+	 		return trackData->getEntityId() == selectedId;
+		});
+		if (it != tracks.end())
+	 		instanceTrackData = *it;
+		else
+		{
+	 		instanceTrackData = new TrackData();
+	 		instanceTrackData->setEntityId(selectedId);
+	 		tracks.push_back(instanceTrackData);
+		}
 
-	// 	T_ASSERT(instanceTrackData);
-	// 	TransformPath& pathData = instanceTrackData->getPath();
+		T_ASSERT(instanceTrackData);
+		TransformPath& pathData = instanceTrackData->getPath();
 
-	// 	const int32_t cki = pathData.getClosestKey(time);
-	// 	if (cki >= 0 && abs(pathData.get(cki).T - time) < c_clampKeyDistance)
-	// 	{
-	// 		TransformPath::Key closestKey = pathData.get(cki);
-	// 		closestKey.position = transform.translation();
-	// 		closestKey.orientation = transform.rotation().toEulerAngles();
+		const int32_t cki = pathData.getClosestKey(time);
+		if (cki >= 0 && abs(pathData.get(cki).T - time) < c_clampKeyDistance)
+		{
+	 		TransformPath::Key closestKey = pathData.get(cki);
+	 		closestKey.position = transform.translation();
+	 		closestKey.orientation = transform.rotation().toEulerAngles();
 
-	// 		// Ensure orientation are "logically" fixed up to previous key.
-	// 		// if (cki > 0)
-	// 		// {
-	// 		// 	pathData[cki].orientation = fixupOrientation(
-	// 		// 		pathData[cki].orientation,
-	// 		// 		pathData[cki - 1].orientation
-	// 		// 	);
-	// 		// }
+	 		// Ensure orientation are "logically" fixed up to previous key.
+	 		// if (cki > 0)
+	 		// {
+	 		// 	pathData[cki].orientation = fixupOrientation(
+	 		// 		pathData[cki].orientation,
+	 		// 		pathData[cki - 1].orientation
+	 		// 	);
+	 		// }
 
-	// 		pathData.set(cki, closestKey);
-	// 	}
-	// 	else
-	// 	{
-	// 		TransformPath::Key key;
-	// 		key.T = time;
-	// 		key.position = transform.translation();
-	// 		key.orientation = transform.rotation().toEulerAngles();
-	// 		const size_t at = pathData.insert(key);
+	 		pathData.set(cki, closestKey);
+		}
+		else
+		{
+	 		TransformPath::Key key;
+	 		key.T = time;
+	 		key.position = transform.translation();
+	 		key.orientation = transform.rotation().toEulerAngles();
+	 		const size_t at = pathData.insert(key);
 
-	// 		// Ensure orientation are "logically" fixed up to previous key.
-	// 		// if (at > 0)
-	// 		// {
-	// 		// 	pathData[at].orientation = fixupOrientation(
-	// 		// 		pathData[at].orientation,
-	// 		// 		pathData[at - 1].orientation
-	// 		// 	);
-	// 		// }
-	// 	}
-	// }
+	 		// Ensure orientation are "logically" fixed up to previous key.
+	 		// if (at > 0)
+	 		// {
+	 		// 	pathData[at].orientation = fixupOrientation(
+	 		// 		pathData[at].orientation,
+	 		// 		pathData[at - 1].orientation
+	 		// 	);
+	 		// }
+		}
+	}
 
 	m_context->buildController();
 }
@@ -528,72 +523,70 @@ void TheaterComponentEditor::deleteSelectedKey()
 
 void TheaterComponentEditor::setLookAtEntity()
 {
-	scene::SceneAsset* sceneAsset = m_context->getSceneAsset();
-	// TheaterComponentData* controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
 
-	// RefArray< scene::EntityAdapter > selectedEntities = m_context->getEntities(scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
-	// if (selectedEntities.size() > 1)
-	// 	return;
+	RefArray< scene::EntityAdapter > selectedEntities = m_context->getEntities(scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
+	if (selectedEntities.size() > 1)
+		return;
 
-	// for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
-	// {
-	// 	ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
-	// 	TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");
-	// 	T_ASSERT(trackData);
+	for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
+	{
+		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
+		TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");
+		T_ASSERT(trackData);
 
-	// 	if (!selectedEntities.empty())
-	// 		trackData->setLookAtEntityId(selectedEntities[0]->getId());
-	// 	else
-	// 		trackData->setLookAtEntityId(Guid::null);
-	// }
+		if (!selectedEntities.empty())
+			trackData->setLookAtEntityId(selectedEntities[0]->getId());
+		else
+			trackData->setLookAtEntityId(Guid::null);
+	}
 
 	m_context->buildController();
 }
 
 void TheaterComponentEditor::easeVelocity()
 {
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
 
-	// for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
-	// {
-	// 	ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
-	// 	TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");
-	// 	T_ASSERT(trackData);
+	for (auto sequenceItem : m_trackSequencer->getSequenceItems(ui::SequencerControl::GfSelectedOnly | ui::SequencerControl::GfDescendants))
+	{
+		ui::Sequence* selectedSequence = checked_type_cast< ui::Sequence*, false >(sequenceItem);
+		TrackData* trackData = selectedSequence->getData< TrackData >(L"TRACK");
+		T_ASSERT(trackData);
 
-	// 	TransformPath& path = trackData->getPath();
-	// 	AlignedVector< TransformPath::Key >& keys = path.editKeys();
-	// 	if (keys.size() < 3)
-	// 		continue;
+		TransformPath& path = trackData->getPath();
+		AlignedVector< TransformPath::Key >& keys = path.editKeys();
+		if (keys.size() < 3)
+	 		continue;
 
-	// 	const float Ts = keys.front().T;
-	// 	const float Te = keys.back().T;
+		const float Ts = keys.front().T;
+		const float Te = keys.back().T;
 
-	// 	// Measure euclidean distance of keys.
-	// 	std::vector< float > distances(keys.size(), 0.0f);
-	// 	float totalDistance = 0.0f;
+		// Measure euclidean distance of keys.
+		std::vector< float > distances(keys.size(), 0.0f);
+		float totalDistance = 0.0f;
 
-	// 	for (uint32_t i = 1; i < keys.size(); ++i)
-	// 	{
-	// 		const float T0 = keys[i - 1].T;
-	// 		const float T1 = keys[i].T;
+		for (uint32_t i = 1; i < keys.size(); ++i)
+		{
+	 		const float T0 = keys[i - 1].T;
+	 		const float T1 = keys[i].T;
 
-	// 		const float c_measureStep = 1.0f / 1000.0f;
-	// 		for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
-	// 		{
-	// 			const TransformPath::Key Fc = path.evaluate(T, false);
-	// 			const TransformPath::Key Fn = path.evaluate(T + c_measureStep, false);
-	// 			totalDistance += (Fn.position - Fc.position).length();
-	// 		}
+	 		const float c_measureStep = 1.0f / 1000.0f;
+	 		for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
+	 		{
+	 			const TransformPath::Key Fc = path.evaluate(T, false);
+	 			const TransformPath::Key Fn = path.evaluate(T + c_measureStep, false);
+	 			totalDistance += (Fn.position - Fc.position).length();
+	 		}
 
-	// 		distances[i] = totalDistance;
-	// 	}
+	 		distances[i] = totalDistance;
+		}
 
-	// 	// Distribute keys according to distances in time.
-	// 	const float c_smoothFactor = 0.1f;
-	// 	for (uint32_t i = 1; i < keys.size(); ++i)
-	// 		keys[i].T = lerp(keys[i].T, Ts + (distances[i] / totalDistance) * (Te - Ts), c_smoothFactor);
-	// }
+		// Distribute keys according to distances in time.
+		const float c_smoothFactor = 0.1f;
+		for (uint32_t i = 1; i < keys.size(); ++i)
+	 		keys[i].T = lerp(keys[i].T, Ts + (distances[i] / totalDistance) * (Te - Ts), c_smoothFactor);
+	}
 
 	updateView();
 	m_context->buildController();
@@ -608,32 +601,31 @@ void TheaterComponentEditor::gotoPreviousKey()
 		return;
 	}
 
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// Ref< TheaterComponentData > controllerData = checked_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// Ref< ActData > act = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	Ref< ActData > act = componentData->getActs().at(selected);
 
-	// double time = m_context->getTime();
-	// double previousTime = 0.0;
+	double time = m_context->getTime();
+	double previousTime = 0.0;
 
-	// for (auto track : act->getTracks())
-	// {
-	// 	const TransformPath& path = track->getPath();
-	// 	const int32_t pki = path.getClosestPreviousKey(time);
-	// 	if (pki >= 0)
-	// 	{
-	// 		if (path.get(pki).T > previousTime)
-	// 			previousTime = path.get(pki).T;
-	// 	}
-	// }
+	for (auto track : act->getTracks())
+	{
+		const TransformPath& path = track->getPath();
+		const int32_t pki = path.getClosestPreviousKey(time);
+		if (pki >= 0)
+		{
+			if (path.get(pki).T > previousTime)
+				previousTime = path.get(pki).T;
+		}
+	}
 
-	// const int32_t cursorTick = (int32_t)(previousTime * 1000.0);
+	const int32_t cursorTick = (int32_t)(previousTime * 1000.0);
 
-	// m_trackSequencer->setCursor(cursorTick);
-	// m_trackSequencer->update();
+	m_trackSequencer->setCursor(cursorTick);
+	m_trackSequencer->update();
 
-	// m_context->setTime(previousTime);
-	// m_context->setPhysicsEnable(false);
-	// m_context->setPlaying(false);
+	m_context->setTime(previousTime);
+	m_context->setPhysicsEnable(false);
+	m_context->setPlaying(false);
 }
 
 void TheaterComponentEditor::gotoNextKey()
@@ -645,32 +637,31 @@ void TheaterComponentEditor::gotoNextKey()
 		return;
 	}
 
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// Ref< TheaterComponentData > controllerData = checked_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// Ref< ActData > act = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	Ref< ActData > act = componentData->getActs().at(selected);
 
-	// const double time = m_context->getTime();
-	// double nextTime = act->getDuration();
+	const double time = m_context->getTime();
+	double nextTime = act->getDuration();
 
-	// for (auto track : act->getTracks())
-	// {
-	// 	const TransformPath& path = track->getPath();
-	// 	const int32_t nki = path.getClosestNextKey(time);
-	// 	if (nki >= 0)
-	// 	{
-	// 		if (path.get(nki).T < nextTime)
-	// 			nextTime = path.get(nki).T;
-	// 	}
-	// }
+	for (auto track : act->getTracks())
+	{
+		const TransformPath& path = track->getPath();
+		const int32_t nki = path.getClosestNextKey(time);
+		if (nki >= 0)
+		{
+	 		if (path.get(nki).T < nextTime)
+	 			nextTime = path.get(nki).T;
+		}
+	}
 
-	// const int32_t cursorTick = int32_t(nextTime * 1000.0);
+	const int32_t cursorTick = int32_t(nextTime * 1000.0);
 
-	// m_trackSequencer->setCursor(cursorTick);
-	// m_trackSequencer->update();
+	m_trackSequencer->setCursor(cursorTick);
+	m_trackSequencer->update();
 
-	// m_context->setTime(nextTime);
-	// m_context->setPhysicsEnable(false);
-	// m_context->setPlaying(false);
+	m_context->setTime(nextTime);
+	m_context->setPhysicsEnable(false);
+	m_context->setPlaying(false);
 }
 
 void TheaterComponentEditor::splitAct()
@@ -684,49 +675,48 @@ void TheaterComponentEditor::splitAct()
 	if (cursorTime < FUZZY_EPSILON)
 		return;
 
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// Ref< ActData > actLeft = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	Ref< ActData > actLeft = componentData->getActs().at(selected);
 
-	// const float actTotalDuration = actLeft->getDuration();
-	// const std::wstring actName = actLeft->getName();
+	const float actTotalDuration = actLeft->getDuration();
+	const std::wstring actName = actLeft->getName();
 
-	// actLeft->setName(actName + L" (Left)");
-	// actLeft->setDuration(cursorTime);
+	actLeft->setName(actName + L" (Left)");
+	actLeft->setDuration(cursorTime);
 
-	// Ref< ActData > actRight = new ActData();
-	// actRight->setName(actName + L" (Right)");
-	// actRight->setDuration(actTotalDuration - cursorTime);
+	Ref< ActData > actRight = new ActData();
+	actRight->setName(actName + L" (Right)");
+	actRight->setDuration(actTotalDuration - cursorTime);
 
-	// // Remove looping and split paths.
-	// for (size_t i = 0; i < actLeft->getTracks().size(); ++i)
-	// {
-	// 	TrackData* trackLeft = actLeft->getTracks().at(i);
+	// Remove looping and split paths.
+	for (size_t i = 0; i < actLeft->getTracks().size(); ++i)
+	{
+		TrackData* trackLeft = actLeft->getTracks().at(i);
 
-	// 	Ref< TrackData > trackRight = new TrackData();
-	// 	trackRight->setEntityId(trackLeft->getEntityId());
-	// 	trackRight->setLookAtEntityId(trackLeft->getLookAtEntityId());
+		Ref< TrackData > trackRight = new TrackData();
+		trackRight->setEntityId(trackLeft->getEntityId());
+		trackRight->setLookAtEntityId(trackLeft->getLookAtEntityId());
 
-	// 	TransformPath pathLeft, pathRight;
-	// 	trackLeft->getPath().split(cursorTime, pathLeft, pathRight);
-	// 	trackLeft->setPath(pathLeft);
-	// 	trackRight->setPath(pathRight);
+		TransformPath pathLeft, pathRight;
+		trackLeft->getPath().split(cursorTime, pathLeft, pathRight);
+		trackLeft->setPath(pathLeft);
+		trackRight->setPath(pathRight);
 
-	// 	actRight->getTracks().push_back(trackRight);
-	// }
+		actRight->getTracks().push_back(trackRight);
+	}
 
-	// // Add new act after splitted act.
-	// RefArray< ActData >& acts = controllerData->getActs();
-	// acts.insert(acts.begin() + selected + 1, actRight);
+	// Add new act after splitted act.
+	RefArray< ActData >& acts = componentData->getActs();
+	acts.insert(acts.begin() + selected + 1, actRight);
 
-	// // Update UI and scene editor.
-	// m_context->setTime(cursorTime);
-	// m_context->setPhysicsEnable(false);
-	// m_context->setPlaying(false);
+	// Update UI and scene editor.
+	m_context->setTime(cursorTime);
+	m_context->setPhysicsEnable(false);
+	m_context->setPlaying(false);
 
-	// updateView();
+	updateView();
 
-	// m_context->buildController();
+	m_context->buildController();
 }
 
 void TheaterComponentEditor::timeScaleAct()
@@ -735,42 +725,41 @@ void TheaterComponentEditor::timeScaleAct()
 	if (selected < 0)
 		return;
 
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	// Ref< TheaterComponentData > controllerData = mandatory_non_null_type_cast< TheaterComponentData* >(sceneAsset->getControllerData());
-	// Ref< ActData > act = controllerData->getActs().at(selected);
+	TheaterComponentData* componentData = m_context->getSceneAsset()->getWorldComponent< TheaterComponentData >();
+	Ref< ActData > act = componentData->getActs().at(selected);
 
-	// const float fromDuration = act->getDuration();
+	const float fromDuration = act->getDuration();
 
-	// ui::InputDialog::Field fields[] =
-	// {
-	// 	ui::InputDialog::Field(i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f))
-	// };
+	ui::InputDialog::Field fields[] =
+	{
+		ui::InputDialog::Field(i18n::Text(L"THEATER_EDITOR_TIME_SCALE_NEW_TIME"), toString(fromDuration), new ui::NumericEditValidator(true, 0.0f))
+	};
 
-	// ui::InputDialog enterTimeDialog;
-	// enterTimeDialog.create(m_toolBar, i18n::Text(L"THEATER_EDITOR_TIME_SCALE_TITLE"), i18n::Text(L"THEATER_EDITOR_TIME_SCALE_MESSAGE"), fields, sizeof_array(fields));
+	ui::InputDialog enterTimeDialog;
+	enterTimeDialog.create(m_toolBar, i18n::Text(L"THEATER_EDITOR_TIME_SCALE_TITLE"), i18n::Text(L"THEATER_EDITOR_TIME_SCALE_MESSAGE"), fields, sizeof_array(fields));
 
-	// if (enterTimeDialog.showModal() == ui::DialogResult::Ok)
-	// {
-	// 	const float toDuration = parseString< float >(fields[0].value);
-	// 	const float f = toDuration / fromDuration;
+	if (enterTimeDialog.showModal() == ui::DialogResult::Ok)
+	{
+		const float toDuration = parseString< float >(fields[0].value);
+		const float f = toDuration / fromDuration;
 
-	// 	for (auto track : act->getTracks())
-	// 	{
-	// 		auto& path = track->getPath();
-	// 		for (size_t i = 0; i < path.size(); ++i)
-	// 		{
-	// 			auto k = path.get(i);
-	// 			k.T *= f;
-	// 			path.set(i, k);
-	// 		}
-	// 	}
+		for (auto track : act->getTracks())
+		{
+			auto& path = track->getPath();
+			for (size_t i = 0; i < path.size(); ++i)
+			{
+				auto k = path.get(i);
+				k.T *= f;
+				path.set(i, k);
+			}
+		}
 
-	// 	act->setDuration(toDuration);
-	// 	updateView();
-	// 	m_context->buildController();
-	// }
+		act->setDuration(toDuration);
+		updateView();
+		m_context->buildController();
+	}
 
-	// enterTimeDialog.destroy();
+	enterTimeDialog.destroy();
 }
 
 void TheaterComponentEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
