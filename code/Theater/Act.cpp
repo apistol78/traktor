@@ -44,7 +44,8 @@ bool Act::update(world::World* world, float time, float deltaTime) const
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
 		world::Entity* entity = world->getEntity(m_tracks[i]->getEntityId());
-		T_ASSERT(entity);
+		if (!entity)
+			continue;
 
 		const TransformPath& path = m_tracks[i]->getPath();
 
@@ -55,26 +56,29 @@ bool Act::update(world::World* world, float time, float deltaTime) const
 	}
 
 	// Fix-up orientation of "looking" entities.
-	//for (uint32_t i = 0; i < ntracks; ++i)
-	//{
-	//	world::Entity* entity = m_tracks[i]->getEntity();
-	//	T_ASSERT(entity);
+	for (uint32_t i = 0; i < ntracks; ++i)
+	{
+		if (m_tracks[i]->getLookAtEntityId().isNull())
+			continue;
 
-	//	transform = entity->getTransform();
+		world::Entity* entity = world->getEntity(m_tracks[i]->getEntityId());
+		if (!entity)
+			continue;
 
-	//	world::Entity* lookAtEntity = m_tracks[i]->getLookAtEntity();
-	//	if (lookAtEntity)
-	//	{
-	//		lookAtTransform = lookAtEntity->getTransform();
-	//		const Matrix44 m = lookAt(
-	//			transform.translation().xyz1(),
-	//			lookAtTransform.translation().xyz1()
-	//		);
-	//		transform = Transform(m.inverse());
-	//	}
+		world::Entity* lookAtEntity = world->getEntity(m_tracks[i]->getLookAtEntityId());
+		if (!lookAtEntity)
+			continue;
 
-	//	entity->setTransform(transform);
-	//}
+		transform = entity->getTransform();
+		lookAtTransform = lookAtEntity->getTransform();
+		const Matrix44 m = lookAt(
+			transform.translation().xyz1(),
+			lookAtTransform.translation().xyz1()
+		);
+		transform = Transform(m.inverse());
+
+		entity->setTransform(transform);
+	}
 
 	return true;
 }

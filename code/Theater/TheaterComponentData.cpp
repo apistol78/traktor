@@ -8,6 +8,7 @@
  */
 #include <algorithm>
 #include <random>
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Theater/ActData.h"
@@ -27,7 +28,7 @@ Ref< TheaterComponent > TheaterComponentData::createInstance(bool editor) const
 	RefArray< const Act > acts(m_acts.size());
 	for (size_t i = 0; i < m_acts.size(); ++i)
 	{
-		float duration = m_acts[i]->getDuration();
+		const float duration = m_acts[i]->getDuration();
 		if (duration < 0.0f)
 			return nullptr;
 
@@ -72,7 +73,7 @@ float TheaterComponentData::getActStartTime(int32_t act) const
 
 void TheaterComponentData::serialize(ISerializer& s)
 {
-	s >> MemberRefArray< ActData >(L"acts", m_acts);
+	s >> MemberRefArray< ActData >(L"acts", m_acts, AttributePrivate());
 	s >> Member< bool >(L"repeatActs", m_repeatActs);
 	s >> Member< bool >(L"randomizeActs", m_randomizeActs);
 }
