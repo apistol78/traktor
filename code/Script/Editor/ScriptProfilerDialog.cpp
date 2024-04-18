@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
@@ -17,10 +18,8 @@
 #include "Ui/Tab.h"
 #include "Ui/TabPage.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptProfilerDialog", ScriptProfilerDialog, ui::Dialog)
 
@@ -54,7 +53,7 @@ bool ScriptProfilerDialog::create(ui::Widget* parent)
 	m_tabSessions = new ui::Tab();
 	m_tabSessions->create(this);
 
-	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+	m_scriptDebuggerSessions = m_editor->getObjectStore()->get< IScriptDebuggerSessions >();
 	if (m_scriptDebuggerSessions)
 		m_scriptDebuggerSessions->addListener(this);
 
@@ -79,7 +78,7 @@ void ScriptProfilerDialog::notifyBeginSession(IScriptDebugger* scriptDebugger, I
 
 void ScriptProfilerDialog::notifyEndSession(IScriptDebugger* scriptDebugger, IScriptProfiler* scriptProfiler)
 {
-	int32_t pageCount = m_tabSessions->getPageCount();
+	const int32_t pageCount = m_tabSessions->getPageCount();
 	for (int32_t i = 0; i < pageCount; ++i)
 	{
 		ui::TabPage* tabPageSession = m_tabSessions->getPage(i);
@@ -102,5 +101,4 @@ void ScriptProfilerDialog::notifyRemoveBreakpoint(const Guid& scriptId, int32_t 
 {
 }
 
-	}
 }

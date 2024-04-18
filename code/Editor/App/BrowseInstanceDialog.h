@@ -53,7 +53,7 @@ class BrowseInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	explicit BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings);
+	explicit BrowseInstanceDialog(IEditor* editor, PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
@@ -62,7 +62,7 @@ public:
 	Ref< db::Instance > getInstance();
 
 private:
-	const IEditor* m_editor;
+	IEditor* m_editor;
 	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::PreviewList > m_listInstances;

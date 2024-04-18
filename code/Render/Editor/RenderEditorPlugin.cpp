@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -41,11 +42,11 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 
 void RenderEditorPlugin::destroy()
 {
-	Ref< IRenderSystem > renderSystem = m_editor->getStoreObject< IRenderSystem >(L"RenderSystem");
+	Ref< IRenderSystem > renderSystem = m_editor->getObjectStore()->get< IRenderSystem >();
 	if (renderSystem)
 	{
+		m_editor->getObjectStore()->unset(renderSystem);
 		safeDestroy(renderSystem);
-		m_editor->setStoreObject(L"RenderSystem", nullptr);
 	}
 }
 
@@ -58,7 +59,7 @@ bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)
 	}
 	else if (command == L"Render.PrintMemoryUsage")
 	{
-		Ref< IRenderSystem > renderSystem = m_editor->getStoreObject< IRenderSystem >(L"RenderSystem");
+		Ref< IRenderSystem > renderSystem = m_editor->getObjectStore()->get< IRenderSystem >();
 		if (renderSystem)
 		{
 			RenderSystemStatistics rss;
@@ -96,12 +97,12 @@ void RenderEditorPlugin::handleWorkspaceOpened()
 {
 	m_tracker = new ShaderDependencyTracker();
 	m_tracker->scan(m_editor->getSourceDatabase());
-	m_editor->setStoreObject(L"ShaderDependencyTracker", m_tracker);
+	m_editor->getObjectStore()->set(m_tracker);
 }
 
 void RenderEditorPlugin::handleWorkspaceClosed()
 {
-	m_editor->setStoreObject(L"ShaderDependencyTracker", nullptr);
+	m_editor->getObjectStore()->unset(m_tracker);
 	safeDestroy(m_tracker);
 }
 
@@ -117,10 +118,9 @@ bool RenderEditorPlugin::createRenderSystem()
 	const std::wstring renderSystemTypeName = settings->getProperty< std::wstring >(L"Editor.RenderSystem");
 
 	// Check if render system is already instantiated.
-	auto renderSystemUnsafe = m_editor->getStoreObject< IRenderSystem >(L"RenderSystemUnsafe");
-	if (renderSystemUnsafe != nullptr)
+	if (m_renderSystem != nullptr)
 	{
-		if (type_name(renderSystemUnsafe) == renderSystemTypeName)
+		if (type_name(m_renderSystem) == renderSystemTypeName)
 			return true;
 	}
 
@@ -131,13 +131,13 @@ bool RenderEditorPlugin::createRenderSystem()
 		return false;
 	}
 
-	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
-	T_ASSERT(renderSystem);
+	m_renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
+	T_ASSERT(m_renderSystem);
 
 	Ref< RenderSystemVrfy > renderSystemVrfy = new RenderSystemVrfy(settings->getProperty< bool >(L"Editor.UseRenderDoc", false));
 
 	RenderSystemDesc desc;
-	desc.capture = renderSystem;
+	desc.capture = m_renderSystem;
 	desc.mipBias = settings->getProperty< float >(L"Editor.MipBias", 0.0f);
 	desc.maxAnisotropy = settings->getProperty< int32_t >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);
@@ -149,8 +149,7 @@ bool RenderEditorPlugin::createRenderSystem()
 		return false;
 	}
 
-	m_editor->setStoreObject(L"RenderSystem", renderSystemVrfy);
-	m_editor->setStoreObject(L"RenderSystemUnsafe", renderSystem);
+	m_editor->getObjectStore()->set(renderSystemVrfy);
 	return true;
 }
 

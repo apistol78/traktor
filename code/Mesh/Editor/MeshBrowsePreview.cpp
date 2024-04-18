@@ -26,7 +26,7 @@ TypeInfoSet MeshBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< MeshAsset >();
 }
 
-Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::Bitmap > MeshBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const MeshAsset > asset = instance->getObject< MeshAsset >();
 	if (!asset)

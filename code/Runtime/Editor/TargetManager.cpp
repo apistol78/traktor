@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -145,7 +146,7 @@ bool TargetManager::update()
 					Ref< ILogTarget > targetLog = m_editor->createLogTarget(logName);
 
 					// Create connection object and add to instance.
-					Ref< script::IScriptDebuggerSessions > debuggerSessions = m_editor->getStoreObject< script::IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+					Ref< script::IScriptDebuggerSessions > debuggerSessions = m_editor->getObjectStore()->get< script::IScriptDebuggerSessions >();
 					instance->addConnection(new TargetConnection(targetId->getName(), transport, targetLog, debuggerSessions));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -16,10 +17,8 @@
 #include "Script/Editor/ScriptDebuggerSessions.h"
 #include "Script/Editor/ScriptEditorPlugin.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPlugin", ScriptEditorPlugin, editor::IEditorPlugin)
 
@@ -49,20 +48,20 @@ bool ScriptEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 		registrar.registerClassesInOrder(m_scriptManager);
 
 		// Expose script manager to other editors.
-		m_editor->setStoreObject(L"ScriptManager", m_scriptManager);
+		m_editor->getObjectStore()->set(m_scriptManager);
 	}
 
 	// Create target script debugger dispatcher.
 	m_debuggerSessions = new script::ScriptDebuggerSessions();
-	m_editor->setStoreObject(L"ScriptDebuggerSessions", m_debuggerSessions);
+	m_editor->getObjectStore()->set(m_debuggerSessions);
 
 	return true;
 }
 
 void ScriptEditorPlugin::destroy()
 {
-	m_editor->setStoreObject(L"ScriptDebuggerSessions", nullptr);
-	m_editor->setStoreObject(L"ScriptManager", nullptr);
+	m_editor->getObjectStore()->unset(m_debuggerSessions);
+	m_editor->getObjectStore()->unset(m_scriptManager);
 	safeDestroy(m_scriptManager);
 }
 
@@ -77,14 +76,14 @@ void ScriptEditorPlugin::handleDatabaseEvent(db::Database* database, const Guid&
 
 void ScriptEditorPlugin::handleWorkspaceOpened()
 {
-	IScriptDebuggerSessions* scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+	IScriptDebuggerSessions* scriptDebuggerSessions = m_editor->getObjectStore()->get< IScriptDebuggerSessions >();
 	if (scriptDebuggerSessions)
 		scriptDebuggerSessions->addListener(this);
 }
 
 void ScriptEditorPlugin::handleWorkspaceClosed()
 {
-	IScriptDebuggerSessions* scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+	IScriptDebuggerSessions* scriptDebuggerSessions = m_editor->getObjectStore()->get< IScriptDebuggerSessions >();
 	if (scriptDebuggerSessions)
 		scriptDebuggerSessions->removeListener(this);
 }
@@ -114,5 +113,4 @@ void ScriptEditorPlugin::notifyRemoveBreakpoint(const Guid& scriptId, int32_t li
 {
 }
 
-	}
 }

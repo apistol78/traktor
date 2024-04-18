@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include <map>
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -168,10 +169,10 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_DELETE_NODE")));
 
 	// Get the sound player.
-	m_soundPlayer = m_editor->getStoreObject< ISoundPlayer >(L"SoundPlayer");
+	m_soundPlayer = m_editor->getObjectStore()->get< ISoundPlayer >();
 
 	// Get script manager and create context, used for custom nodes.
-	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	Ref< script::IScriptManager > scriptManager = m_editor->getObjectStore()->get< script::IScriptManager >();
 	if (!scriptManager)
 		return false;
 

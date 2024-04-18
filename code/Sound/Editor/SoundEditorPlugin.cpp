@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -41,7 +42,7 @@ bool SoundEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site
 
 void SoundEditorPlugin::destroy()
 {
-	Ref< AudioSystem > audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	Ref< AudioSystem > audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
 
 	if (m_soundPanel)
 	{
@@ -59,8 +60,8 @@ void SoundEditorPlugin::destroy()
 
 	safeDestroy(audioSystem);
 
-	m_editor->setStoreObject(L"AudioSystem", nullptr);
-	m_editor->setStoreObject(L"SoundPlayer", nullptr);
+	m_editor->getObjectStore()->unset(audioSystem);
+	m_editor->getObjectStore()->unset< SoundPlayer >();
 }
 
 bool SoundEditorPlugin::handleCommand(const ui::Command& command, bool result)
@@ -77,7 +78,7 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT(settings);
 
-	if (m_editor->getStoreObject(L"AudioSystem") != nullptr)
+	if (m_editor->getObjectStore()->get< AudioSystem >() != nullptr)
 		return;
 
 	const std::wstring audioDriverTypeName = settings->getProperty< std::wstring >(L"Editor.AudioDriver");
@@ -103,8 +104,8 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 	if (!soundPlayer->create(audioSystem, nullptr))
 		return;
 
-	m_editor->setStoreObject(L"AudioSystem", audioSystem);
-	m_editor->setStoreObject(L"SoundPlayer", soundPlayer);
+	m_editor->getObjectStore()->set(audioSystem);
+	m_editor->getObjectStore()->set(soundPlayer);
 
 	m_threadPlayer = ThreadManager::getInstance().create(
 		[this, soundPlayer]()

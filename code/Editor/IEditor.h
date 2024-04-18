@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,6 +23,7 @@ class Guid;
 class ILogTarget;
 class ISerializable;
 class Object;
+class ObjectStore;
 class PropertyGroup;
 class TypeInfo;
 
@@ -155,30 +156,8 @@ public:
 	 */
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) = 0;
 
-	/*! Set object in object store.
-	 *
-	 * \param name Name of object.
-	 * \param object Object.
-	 */
-	virtual void setStoreObject(const std::wstring& name, Object* object) = 0;
-
-	/*! Get object from object store.
-	 *
-	 * \param name Name of object.
-	 * \return Object, null if no such named object exists in store.
-	 */
-	virtual Object* getStoreObject(const std::wstring& name) const = 0;
-
-	/*! Get object from object store.
-	 *
-	 * \param name Name of object.
-	 * \return Object, null if no such named object exists in store.
-	 */
-	template < typename ObjectType >
-	ObjectType* getStoreObject(const std::wstring& name) const
-	{
-		return dynamic_type_cast< ObjectType* >(getStoreObject(name));
-	}
+	/*! Get object store. */
+	virtual ObjectStore* getObjectStore() = 0;
 };
 
 }

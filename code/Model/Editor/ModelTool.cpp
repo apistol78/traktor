@@ -1,11 +1,12 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -58,11 +59,11 @@ bool ModelTool::launch(ui::Widget* parent, editor::IEditor* editor, const Proper
 	if (!database)
 		return false;
 
-	Ref< render::IRenderSystem > renderSystem = editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	Ref< render::IRenderSystem > renderSystem = editor->getObjectStore()->get< render::IRenderSystem >();
 	if (!renderSystem)
 		return false;
 
-	Ref< script::IScriptManager > scriptManager = editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	Ref< script::IScriptManager > scriptManager = editor->getObjectStore()->get< script::IScriptManager >();
 	if (!scriptManager)
 		return false;
 

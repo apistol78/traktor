@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -27,13 +28,13 @@ TypeInfoSet TextureBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< TextureAsset >();
 }
 
-Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::Bitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const TextureAsset > textureAsset = instance->getObject< TextureAsset >();
 	if (!textureAsset)
 		return nullptr;
 
-	Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
+	Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getObjectStore()->get< editor::IThumbnailGenerator >();
 	if (!thumbnailGenerator)
 		return nullptr;
 

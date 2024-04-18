@@ -71,7 +71,7 @@ bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
-BrowseInstanceDialog::BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings)
+BrowseInstanceDialog::BrowseInstanceDialog(IEditor* editor, PropertyGroup* settings)
 :	m_editor(editor)
 ,	m_settings(settings)
 ,	m_threadGeneratePreview(nullptr)

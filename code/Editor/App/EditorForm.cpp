@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Log/LogRedirectTarget.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -648,6 +649,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_buildProgress->create(m_statusBar);
 	m_buildProgress->setVisible(false);
 
+	// Create object store.
+	m_objectStore = new ObjectStore();
+
 	// Create editor page factories.
 	for (const auto& editorPageFactoryType : type_of< IEditorPageFactory >().findAllOf(false))
 	{
@@ -783,7 +787,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create auxiliary tools.
 	Path thumbsPath = m_mergedSettings->getProperty< std::wstring >(L"Editor.ThumbsPath");
-	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
+	m_objectStore->set(new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings, if desktop size still match.
 	int32_t x = 0, y = 0, width = 1280, height = 900;
@@ -1549,8 +1553,8 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	}
 
 	// Expose servers as stock objects.
-	setStoreObject(L"StreamServer", m_streamServer);
-	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
+	m_objectStore->set(m_streamServer);
+	m_objectStore->set(m_dbConnectionManager);
 
 	// Notify plugins about opened workspace.
 	for (auto editorPluginSite : m_editorPluginSites)
@@ -1600,8 +1604,8 @@ void EditorForm::closeWorkspace()
 	}
 
 	// Remove store objects.
-	setStoreObject(L"StreamServer", nullptr);
-	setStoreObject(L"DbConnectionManager", nullptr);
+	m_objectStore->unset(m_dbConnectionManager);
+	m_objectStore->unset(m_streamServer);
 
 	// Shutdown agents manager.
 	safeDestroy(m_dbConnectionManager);
@@ -1996,15 +2000,9 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 	);
 }
 
-void EditorForm::setStoreObject(const std::wstring& name, Object* object)
+ObjectStore* EditorForm::getObjectStore()
 {
-	m_objectStore[name] = object;
-}
-
-Object* EditorForm::getStoreObject(const std::wstring& name) const
-{
-	const auto it = m_objectStore.find(name);
-	return it != m_objectStore.end() ? it->second : nullptr;
+	return m_objectStore;
 }
 
 void EditorForm::beginBuild(int32_t index, int32_t count, const PipelineDependency* dependency)

@@ -35,7 +35,7 @@ TypeInfoSet AnimationBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< AnimationAsset, SkeletonAsset >();
 }
 
-Ref< ui::Bitmap > AnimationBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::Bitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const editor::Asset > asset = instance->getObject< editor::Asset >();
 	if (!asset)

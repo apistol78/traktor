@@ -160,9 +160,7 @@ public:
 
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
-	virtual void setStoreObject(const std::wstring& name, Object* object) override final;
-
-	virtual Object* getStoreObject(const std::wstring& name) const override final;
+	virtual ObjectStore* getObjectStore() override final;
 
 	//@}
 
@@ -188,7 +186,7 @@ private:
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Ref< IPipelineDb > m_pipelineDb;
 	Ref< IPipelineCache > m_pipelineCache;
-	std::map< std::wstring, Ref< Object > > m_objectStore;
+	Ref< ObjectStore > m_objectStore;
 	Ref< MRU > m_mru;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;

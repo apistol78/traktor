@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/FileSystem.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -135,7 +136,7 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 			std::wstring assetPath = editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
 			Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
-			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
+			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getObjectStore()->get< editor::IThumbnailGenerator >();
 			if (thumbnailGenerator)
 			{
 				const bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);

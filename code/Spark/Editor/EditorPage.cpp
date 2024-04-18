@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Math/Format.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -69,11 +70,11 @@ EditorPage::EditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, e
 
 bool EditorPage::create(ui::Container* parent)
 {
-	Ref< render::IRenderSystem > renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	Ref< render::IRenderSystem > renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
 	if (!renderSystem)
 		return false;
 
-	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getStoreObject< sound::ISoundPlayer >(L"SoundPlayer");
+	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getObjectStore()->get< sound::ISoundPlayer >();
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	// Read movie from output database.

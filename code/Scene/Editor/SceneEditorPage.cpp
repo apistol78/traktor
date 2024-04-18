@@ -8,6 +8,7 @@
  */
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -177,7 +178,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	std::set< std::wstring > guideIds;
 
 	// Get render system from store.
-	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	render::IRenderSystem* renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
 	if (!renderSystem)
 		return false;
 
@@ -206,7 +207,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
 
 	// Create script context.
-	Ref< script::IScriptManager > scriptManager = m_editor->getStoreObject< script::IScriptManager >(L"ScriptManager");
+	Ref< script::IScriptManager > scriptManager = m_editor->getObjectStore()->get< script::IScriptManager >();
 	if (!scriptManager)
 	{
 		log::error << L"Unable to create scene editor; failed to get script manager." << Endl;

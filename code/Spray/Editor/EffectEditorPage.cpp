@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Reflection/Reflection.h"
@@ -126,11 +127,11 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor, editor::IEditorPageS
 
 bool EffectEditorPage::create(ui::Container* parent)
 {
-	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	render::IRenderSystem* renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
 	if (!renderSystem)
 		return false;
 
-	m_audioSystem = m_editor->getStoreObject< sound::AudioSystem >(L"AudioSystem");
+	m_audioSystem = m_editor->getObjectStore()->get< sound::AudioSystem >();
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT(database);

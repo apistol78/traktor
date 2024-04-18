@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
@@ -43,7 +44,7 @@ bool SoundPanel::create(ui::Widget* parent)
 	m_sliderVolume->setRange(0, 100);
 	m_sliderVolume->setValue(100);
 	m_sliderVolume->addEventHandler< ui::ContentChangeEvent >([&](ui::ContentChangeEvent* event) {
-		AudioSystem* audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+		AudioSystem* audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
 		if (audioSystem)
 			audioSystem->setVolume(m_sliderVolume->getValue() / 100.0f);
 	});
@@ -59,7 +60,7 @@ bool SoundPanel::create(ui::Widget* parent)
 		sliderParameter->setRange(0, 100);
 		sliderParameter->setValue(0);
 		sliderParameter->addEventHandler< ui::ContentChangeEvent >([=](ui::ContentChangeEvent* event) {
-			AudioSystem* audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+			AudioSystem* audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
 			if (audioSystem)
 			{
 				const auto handle = getParameterHandle(parameters[i]);

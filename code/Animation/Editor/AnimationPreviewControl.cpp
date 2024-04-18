@@ -14,6 +14,7 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
@@ -80,7 +81,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	if (!Widget::create(parent, ui::WsNoCanvas))
 		return false;
 
-	m_renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	m_renderSystem = m_editor->getObjectStore()->get< render::IRenderSystem >();
 	if (!m_renderSystem)
 		return false;
 

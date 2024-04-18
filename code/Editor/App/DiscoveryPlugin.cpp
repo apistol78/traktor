@@ -1,3 +1,12 @@
+/*
+ * TRAKTOR
+ * Copyright (c) 2024 Anders Pistol.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -26,13 +35,13 @@ bool DiscoveryPlugin::create(ui::Widget* parent, IEditorPageSite* site)
 	m_discoveryManager = new net::DiscoveryManager();
 	m_discoveryManager->create(mode);
 	
-	m_editor->setStoreObject(L"DiscoveryManager", m_discoveryManager);
+	m_editor->getObjectStore()->set(m_discoveryManager);
 	return true;
 }
 
 void DiscoveryPlugin::destroy()
 {
-	m_editor->setStoreObject(L"DiscoveryManager", nullptr);
+	m_editor->getObjectStore()->unset(m_discoveryManager);
 	safeDestroy(m_discoveryManager);
 }
 

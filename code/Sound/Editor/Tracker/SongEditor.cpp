@@ -8,10 +8,9 @@
  */
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
-// #include "Core/Settings/PropertyString.h"
-// #include "Core/Serialization/DeepClone.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
@@ -23,19 +22,13 @@
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Tracker/SongAsset.h"
 #include "Sound/Editor/Tracker/SongEditor.h"
-
 #include "Sound/Tracker/IEventData.h"
 #include "Sound/Tracker/PatternData.h"
 #include "Sound/Tracker/PlayData.h"
 #include "Sound/Tracker/SongBuffer.h"
 #include "Sound/Tracker/TrackData.h"
-
 #include "Ui/Application.h"
 #include "Ui/Container.h"
-// #include "Ui/Menu.h"
-// #include "Ui/MenuItem.h"
-// #include "Ui/Splitter.h"
-// #include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
@@ -86,7 +79,7 @@ bool SongEditor::create(ui::Container* parent)
 		m_patternGrid->addColumn(new ui::GridColumn(L"Channel " + toString(i), 100_ut));
 
 	// Get audio system for preview.
-	m_audioSystem = m_editor->getStoreObject< AudioSystem >(L"AudioSystem");
+	m_audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
 	if (m_audioSystem)
 	{
 		m_audioChannel = m_audioSystem->getChannel(0);

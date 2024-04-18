@@ -31,7 +31,7 @@ class T_DLLCLASS AnimationBrowsePreview : public editor::IBrowsePreview
 public:
 	virtual TypeInfoSet getPreviewTypes() const override final;
 
-	virtual Ref< ui::Bitmap > generate(const editor::IEditor* editor, db::Instance* instance) const override final;
+	virtual Ref< ui::Bitmap > generate(editor::IEditor* editor, db::Instance* instance) const override final;
 };
 
 }

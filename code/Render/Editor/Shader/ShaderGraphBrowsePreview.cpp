@@ -33,7 +33,7 @@ TypeInfoSet ShaderGraphBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< ShaderGraph >();
 }
 
-Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(const editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
 	if (!shaderGraph)

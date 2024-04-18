@@ -8,6 +8,7 @@
  */
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
 #include "Render/PrimitiveRenderer.h"
@@ -82,7 +83,7 @@ SHEditorPage::SHEditorPage(editor::IEditor* editor)
 
 bool SHEditorPage::create(ui::Container* parent)
 {
-	IRenderSystem* renderSystem = m_editor->getStoreObject< IRenderSystem >(L"RenderSystem");
+	IRenderSystem* renderSystem = m_editor->getObjectStore()->get< IRenderSystem >();
 	if (!renderSystem)
 		return false;
 

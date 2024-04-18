@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -92,9 +92,7 @@ public:
 
 	virtual Ref< IPipelineDepends> createPipelineDepends(PipelineDependencySet* dependencySet, uint32_t recursionDepth) override final;
 
-	virtual void setStoreObject(const std::wstring& name, Object* object) override final;
-
-	virtual Object* getStoreObject(const std::wstring& name) const override final;
+	virtual ObjectStore* getObjectStore() override final;
 
 private:
 	IEditor* m_editor;

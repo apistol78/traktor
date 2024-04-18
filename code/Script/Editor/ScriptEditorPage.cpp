@@ -11,6 +11,7 @@
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/Preprocessor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -246,7 +247,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 	m_preprocessor = new Preprocessor();
 
 	// Get debugger implementation.
-	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+	m_scriptDebuggerSessions = m_editor->getObjectStore()->get< IScriptDebuggerSessions >();
 	if (m_scriptDebuggerSessions)
 	{
 		m_scriptDebuggerSessions->addListener(this);

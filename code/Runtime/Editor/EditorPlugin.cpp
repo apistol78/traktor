@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
@@ -141,7 +142,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_site = site;
 
 	// Create host enumerator.
-	m_discoveryManager = m_editor->getStoreObject< net::DiscoveryManager >(L"DiscoveryManager");
+	m_discoveryManager = m_editor->getObjectStore()->get< net::DiscoveryManager >();
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create panel.
@@ -343,7 +344,7 @@ void EditorPlugin::handleWorkspaceOpened()
 	}
 
 	// Get connection manager.
-	m_connectionManager = m_editor->getStoreObject< db::ConnectionManager >(L"DbConnectionManager");
+	m_connectionManager = m_editor->getObjectStore()->get< db::ConnectionManager >();
 
 	// Enable widgets.
 	m_toolBar->setEnable(true);

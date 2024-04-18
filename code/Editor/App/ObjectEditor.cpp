@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -190,14 +190,9 @@ Ref< IPipelineDepends> ObjectEditor::createPipelineDepends(PipelineDependencySet
 	return m_editor->createPipelineDepends(dependencySet, recursionDepth);
 }
 
-void ObjectEditor::setStoreObject(const std::wstring& name, Object* object)
+ObjectStore* ObjectEditor::getObjectStore()
 {
-	m_editor->setStoreObject(name, object);
-}
-
-Object* ObjectEditor::getStoreObject(const std::wstring& name) const
-{
-	return m_editor->getStoreObject(name);
+	return m_editor->getObjectStore();
 }
 
 }
