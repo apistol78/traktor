@@ -29,6 +29,8 @@ class T_DLLCLASS AbstractEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) override;
+
 	virtual const TypeInfoSet getEntityTypes() const override;
 
 	virtual const TypeInfoSet getEntityEventTypes() const override;

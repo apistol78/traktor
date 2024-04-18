@@ -6,6 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/IResourceManager.h"
 #include "Weather/WeatherFactory.h"
 #include "Weather/Precipitation/PrecipitationComponent.h"
 #include "Weather/Precipitation/PrecipitationComponentData.h"
@@ -21,6 +24,13 @@ WeatherFactory::WeatherFactory(resource::IResourceManager* resourceManager, rend
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {
+}
+
+bool WeatherFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet WeatherFactory::getEntityComponentTypes() const

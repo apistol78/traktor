@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,24 @@
 #include "Ai/NavMeshComponent.h"
 #include "Ai/NavMeshComponentData.h"
 #include "Ai/NavMeshEntityFactory.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshEntityFactory", NavMeshEntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityFactory", 0, NavMeshEntityFactory, world::AbstractEntityFactory)
 
 NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress)
 :	m_resourceManager(resourceManager)
 ,	m_suppress(suppress)
 {
+}
+
+bool NavMeshEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	return true;
 }
 
 const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
@@ -30,18 +37,13 @@ const TypeInfoSet NavMeshEntityFactory::getEntityComponentTypes() const
 
 Ref< world::IEntityComponent > NavMeshEntityFactory::createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const
 {
-	if (!m_suppress)
-	{
-		auto navMeshComponentData = checked_type_cast< const NavMeshComponentData* >(&entityComponentData);
+	auto navMeshComponentData = checked_type_cast<const NavMeshComponentData*>(&entityComponentData);
 
-		resource::Proxy< NavMesh > navMesh;
-		if (!m_resourceManager->bind(navMeshComponentData->get(), navMesh))
-			return nullptr;
+	resource::Proxy< NavMesh > navMesh;
+	if (!m_resourceManager->bind(navMeshComponentData->get(), navMesh))
+		return nullptr;
 
-		return new NavMeshComponent(navMesh);
-	}
-	else
-		return new NavMeshComponent();
+	return new NavMeshComponent(navMesh);
 }
 
 }

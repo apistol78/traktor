@@ -18,6 +18,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityFactory", EntityFactory, IEntityFactory)
 
+bool EntityFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 void EntityFactory::addFactory(const IEntityFactory* entityFactory)
 {
 	m_factories.push_back(entityFactory);

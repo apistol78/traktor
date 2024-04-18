@@ -36,7 +36,11 @@ class T_DLLCLASS NavMeshEntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	NavMeshEntityFactory() = default;
+
 	explicit NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
 
@@ -44,7 +48,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	bool m_suppress;
+	bool m_suppress = false;
 };
 
 }

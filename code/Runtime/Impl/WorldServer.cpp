@@ -6,7 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ai/NavMeshEntityFactory.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Impl/AudioServer.h"
 #include "Runtime/Impl/PhysicsServer.h"
@@ -14,26 +13,25 @@
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
 #include "Animation/AnimatedMeshComponentRenderer.h"
-#include "Animation/AnimationEntityFactory.h"
 #include "Animation/Cloth/ClothRenderer.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Mesh/MeshComponentRenderer.h"
-#include "Mesh/MeshEntityFactory.h"
 #include "Mesh/Instance/InstanceMeshComponentRenderer.h"
+#include "Physics/PhysicsManager.h"
+#include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
-#include "Spray/EffectEntityFactory.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Spray/EffectRenderer.h"
 #include "Spray/Feedback/FeedbackManager.h"
-#include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
-#include "Weather/WeatherFactory.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityFactory.h"
@@ -44,7 +42,6 @@
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
-#include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor::runtime
 {
@@ -137,18 +134,34 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
 {
-	physics::PhysicsManager* physicsManager = environment->getPhysics() ? environment->getPhysics()->getPhysicsManager() : nullptr;
-	sound::ISoundPlayer* soundPlayer = environment->getAudio() ? environment->getAudio()->getSoundPlayer() : nullptr;
-	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
-	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
 
-	m_entityFactory->addFactory(new animation::AnimationEntityFactory(resourceManager, renderSystem, physicsManager));
-	m_entityFactory->addFactory(new ai::NavMeshEntityFactory(resourceManager, false));
-	m_entityFactory->addFactory(new mesh::MeshEntityFactory(resourceManager, renderSystem));
-	m_entityFactory->addFactory(new spray::EffectEntityFactory(resourceManager, soundPlayer, m_feedbackManager));
-	m_entityFactory->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
-	m_entityFactory->addFactory(new weather::WeatherFactory(resourceManager, renderSystem));
-	m_entityFactory->addFactory(new world::WorldEntityFactory(resourceManager, renderSystem, false));
+	if (environment->getPhysics())
+		objectStore.set(environment->getPhysics()->getPhysicsManager());
+	if (environment->getAudio())
+		objectStore.set(environment->getAudio()->getSoundPlayer());
+
+	objectStore.set(environment->getRender()->getRenderSystem());
+	objectStore.set(environment->getResource()->getResourceManager());
+
+	// Create instances of all entity factories.
+	const TypeInfoSet entityFactoryTypes = type_of< world::IEntityFactory >().findAllOf(false);
+	for (const auto& entityFactoryType : entityFactoryTypes)
+	{
+		if (!entityFactoryType->isInstantiable())
+			continue;
+
+		Ref< world::IEntityFactory > entityFactory = dynamic_type_cast< world::IEntityFactory* >(entityFactoryType->createInstance());
+		if (!entityFactory)
+			continue;
+
+		if (!entityFactory->initialize(objectStore))
+			continue;
+
+		m_entityFactory->addFactory(entityFactory);
+		T_DEBUG(L"Entity factory \"" << type_name(entityFactory) << L"\" initialized.");
+	}
 }
 
 void WorldServer::createEntityRenderers(IEnvironment* environment)

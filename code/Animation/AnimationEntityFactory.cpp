@@ -25,17 +25,28 @@
 #include "Animation/Rotator/PendulumComponentData.h"
 #include "Animation/Rotator/RotatorComponentData.h"
 #include "Animation/Rotator/WobbleComponentData.h"
+#include "Core/Misc/ObjectStore.h"
+#include "Physics/PhysicsManager.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityFactory", AnimationEntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEntityFactory", 0, AnimationEntityFactory, world::AbstractEntityFactory)
 
 AnimationEntityFactory::AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
 {
+}
+
+bool AnimationEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	m_physicsManager = objectStore.get< physics::PhysicsManager >();
+	return true;
 }
 
 const TypeInfoSet AnimationEntityFactory::getEntityComponentTypes() const

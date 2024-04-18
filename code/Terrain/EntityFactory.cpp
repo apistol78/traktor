@@ -6,6 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/IResourceManager.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/ForestComponent.h"
 #include "Terrain/ForestComponentData.h"
@@ -23,12 +26,19 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.EntityFactory", 0, EntityFactory, world::AbstractEntityFactory)
 
 EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {
+}
+
+bool EntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const

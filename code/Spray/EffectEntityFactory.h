@@ -45,11 +45,15 @@ class T_DLLCLASS EffectEntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	EffectEntityFactory() = default;
+
 	explicit EffectEntityFactory(
 		resource::IResourceManager* resourceManager,
 		sound::ISoundPlayer* soundPlayer,
 		IFeedbackManager* feedbackManager
 	);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityEventTypes() const override final;
 

@@ -6,6 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
+#include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
 #include "Physics/World/JointComponent.h"
 #include "Physics/World/JointComponentData.h"
@@ -15,11 +17,12 @@
 #include "Physics/World/Character/CharacterComponentData.h"
 #include "Physics/World/Vehicle/VehicleComponent.h"
 #include "Physics/World/Vehicle/VehicleComponentData.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.EntityFactory", 0, EntityFactory, world::AbstractEntityFactory)
 
 EntityFactory::EntityFactory(
 	resource::IResourceManager* resourceManager,
@@ -28,6 +31,13 @@ EntityFactory::EntityFactory(
 :	m_resourceManager(resourceManager)
 ,	m_physicsManager(physicsManager)
 {
+}
+
+bool EntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_physicsManager = objectStore.get< PhysicsManager >();
+	return true;
 }
 
 const TypeInfoSet EntityFactory::getEntityComponentTypes() const

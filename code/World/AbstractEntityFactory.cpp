@@ -13,6 +13,11 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.AbstractEntityFactory", AbstractEntityFactory, IEntityFactory)
 
+bool AbstractEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 const TypeInfoSet AbstractEntityFactory::getEntityTypes() const
 {
 	return TypeInfoSet();

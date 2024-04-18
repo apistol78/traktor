@@ -6,21 +6,31 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Mesh/MeshComponent.h"
 #include "Mesh/MeshComponentData.h"
 #include "Mesh/MeshParameterComponent.h"
 #include "Mesh/MeshParameterComponentData.h"
 #include "Mesh/MeshEntityFactory.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityFactory", MeshEntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityFactory", 0, MeshEntityFactory, world::AbstractEntityFactory)
 
 MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {
+}
+
+bool MeshEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet MeshEntityFactory::getEntityComponentTypes() const

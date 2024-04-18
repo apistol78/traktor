@@ -13,7 +13,7 @@
 namespace traktor::theater
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterEntityFactory", TheaterEntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEntityFactory", 0, TheaterEntityFactory, world::AbstractEntityFactory)
 
 const TypeInfoSet TheaterEntityFactory::getWorldComponentTypes() const
 {

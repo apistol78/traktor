@@ -6,8 +6,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/Sound.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectComponentData.h"
@@ -22,6 +24,7 @@
 #include "Spray/SpawnEffectEventData.h"
 #include "Spray/Feedback/EnvelopeFeedbackEvent.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventData.h"
+#include "Spray/Feedback/IFeedbackManager.h"
 #include "Spray/Feedback/OscillateFeedbackEvent.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "World/IEntityBuilder.h"
@@ -29,7 +32,7 @@
 namespace traktor::spray
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityFactory", 0, EffectEntityFactory, world::AbstractEntityFactory)
 
 EffectEntityFactory::EffectEntityFactory(
 	resource::IResourceManager* resourceManager,
@@ -40,6 +43,14 @@ EffectEntityFactory::EffectEntityFactory(
 ,	m_soundPlayer(soundPlayer)
 ,	m_feedbackManager(feedbackManager)
 {
+}
+
+bool EffectEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_soundPlayer = objectStore.get< sound::ISoundPlayer >();
+	m_feedbackManager = objectStore.get< IFeedbackManager >();
+	return true;
 }
 
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const

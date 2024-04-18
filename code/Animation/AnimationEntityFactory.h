@@ -50,16 +50,20 @@ class T_DLLCLASS AnimationEntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
+	AnimationEntityFactory() = default;
+
 	explicit AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;
 
 	virtual Ref< world::IEntityComponent > createEntityComponent(const world::IEntityBuilder* builder, const world::IEntityComponentData& entityComponentData) const override final;
 
 private:
-	resource::IResourceManager* m_resourceManager;
-	render::IRenderSystem* m_renderSystem;
-	physics::PhysicsManager* m_physicsManager;
+	resource::IResourceManager* m_resourceManager = nullptr;
+	render::IRenderSystem* m_renderSystem = nullptr;
+	physics::PhysicsManager* m_physicsManager = nullptr;
 };
 
 }

@@ -50,7 +50,7 @@ Ref< IEntityComponent > EntityBuilder::create(const IEntityComponentData* entity
 
 Ref< IWorldComponent > EntityBuilder::create(const IWorldComponentData* worldComponentData) const
 {
-	return nullptr;
+	return m_entityFactory->createWorldComponent(this, *worldComponentData);
 }
 
 }

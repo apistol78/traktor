@@ -19,6 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class ObjectStore;
+
+}
+
 namespace traktor::world
 {
 
@@ -40,6 +47,8 @@ class T_DLLCLASS IEntityFactory : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) = 0;
+
 	virtual const TypeInfoSet getEntityTypes() const = 0;
 
 	virtual const TypeInfoSet getEntityEventTypes() const = 0;

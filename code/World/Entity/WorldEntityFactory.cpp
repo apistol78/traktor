@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -45,7 +46,7 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, AbstractEntityFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityFactory", 0, WorldEntityFactory, AbstractEntityFactory)
 
 WorldEntityFactory::WorldEntityFactory(
 	resource::IResourceManager* resourceManager,
@@ -56,6 +57,13 @@ WorldEntityFactory::WorldEntityFactory(
 ,	m_renderSystem(renderSystem)
 ,	m_editor(editor)
 {
+}
+
+bool WorldEntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet WorldEntityFactory::getEntityTypes() const

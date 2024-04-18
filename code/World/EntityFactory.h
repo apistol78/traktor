@@ -35,6 +35,8 @@ public:
 
 	void removeFactory(const IEntityFactory* entityFactory);
 
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getEntityTypes() const override final;
 
 	virtual const TypeInfoSet getEntityEventTypes() const override final;
