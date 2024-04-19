@@ -22,7 +22,6 @@ namespace traktor::spray
 {
 
 class EffectRenderer;
-class FeedbackManager;
 
 }
 
@@ -79,8 +78,6 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() override final;
 
-	virtual spray::IFeedbackManager* getFeedbackManager() override final;
-
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) override final;
 
 private:
@@ -89,7 +86,6 @@ private:
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	Ref< spray::EffectRenderer > m_effectEntityRenderer;
-	Ref< spray::FeedbackManager > m_feedbackManager;
 	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
 	const TypeInfo* m_worldType = nullptr;
 	world::Quality m_motionBlurQuality = world::Quality::Medium;

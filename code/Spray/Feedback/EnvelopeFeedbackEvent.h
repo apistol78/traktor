@@ -10,28 +10,23 @@
 
 #include "World/IEntityEvent.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class EnvelopeFeedbackEventData;
-class IFeedbackManager;
 
 class EnvelopeFeedbackEvent : public world::IEntityEvent
 {
 	T_RTTI_CLASS;
 
 public:
-	EnvelopeFeedbackEvent(const EnvelopeFeedbackEventData* data, IFeedbackManager* feedbackManager);
+	explicit EnvelopeFeedbackEvent(const EnvelopeFeedbackEventData* data);
 
 	virtual Ref< world::IEntityEventInstance > createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
 
 private:
 	Ref< const EnvelopeFeedbackEventData > m_data;
-	IFeedbackManager* m_feedbackManager;
 };
 
-	}
 }
 

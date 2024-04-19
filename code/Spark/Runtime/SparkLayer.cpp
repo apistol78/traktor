@@ -38,7 +38,6 @@
 #include "Spark/Debug/MovieDebugger.h"
 #include "Spark/Runtime/SparkLayer.h"
 #include "Spark/Sound/SoundRenderer.h"
-#include "Spray/Feedback/IFeedbackManager.h"
 
 namespace traktor::spark
 {
@@ -145,23 +144,23 @@ SparkLayer::SparkLayer(
 ,	m_lastMouseY(-1)
 {
 	// Register ourself for UI shake.
-	if (m_environment->getWorld())
-	{
-		spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-		if (feedbackManager)
-			feedbackManager->addListener(spray::FbtUI, this);
-	}
+	//if (m_environment->getWorld())
+	//{
+	//	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//	if (feedbackManager)
+	//		feedbackManager->addListener(spray::FbtUI, this);
+	//}
 }
 
 void SparkLayer::destroy()
 {
 	// Remove ourself from feedback manager.
-	if (m_environment && m_environment->getWorld())
-	{
-		spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-		if (feedbackManager)
-			feedbackManager->removeListener(spray::FbtUI, this);
-	}
+	//if (m_environment && m_environment->getWorld())
+	//{
+	//	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//	if (feedbackManager)
+	//		feedbackManager->removeListener(spray::FbtUI, this);
+	//}
 
 	m_environment = nullptr;
 	m_movie.clear();

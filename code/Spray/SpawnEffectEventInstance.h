@@ -43,7 +43,7 @@ public:
 
 	virtual ~SpawnEffectEventInstance();
 
-	virtual bool update(const world::UpdateParams& update) override final;
+	virtual bool update(world::World* world, const world::UpdateParams& update) override final;
 
 	virtual void cancel(world::Cancel when) override final;
 

@@ -24,7 +24,6 @@
 #include "Spray/SpawnEffectEventData.h"
 #include "Spray/Feedback/EnvelopeFeedbackEvent.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventData.h"
-#include "Spray/Feedback/IFeedbackManager.h"
 #include "Spray/Feedback/OscillateFeedbackEvent.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "World/IEntityBuilder.h"
@@ -36,12 +35,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityFactory", 0, EffectEn
 
 EffectEntityFactory::EffectEntityFactory(
 	resource::IResourceManager* resourceManager,
-	sound::ISoundPlayer* soundPlayer,
-	IFeedbackManager* feedbackManager
+	sound::ISoundPlayer* soundPlayer
 )
 :	m_resourceManager(resourceManager)
 ,	m_soundPlayer(soundPlayer)
-,	m_feedbackManager(feedbackManager)
 {
 }
 
@@ -49,7 +46,6 @@ bool EffectEntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();
 	m_soundPlayer = objectStore.get< sound::ISoundPlayer >();
-	m_feedbackManager = objectStore.get< IFeedbackManager >();
 	return true;
 }
 
@@ -76,11 +72,11 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 {
 	if (auto envelopeFeedbackEventData = dynamic_type_cast< const EnvelopeFeedbackEventData* >(&entityEventData))
 	{
-		return new EnvelopeFeedbackEvent(envelopeFeedbackEventData, m_feedbackManager);
+		return new EnvelopeFeedbackEvent(envelopeFeedbackEventData);
 	}
 	else if (auto oscillateFeedbackEventData = dynamic_type_cast< const OscillateFeedbackEventData* >(&entityEventData))
 	{
-		return new OscillateFeedbackEvent(oscillateFeedbackEventData, m_feedbackManager);
+		return new OscillateFeedbackEvent(oscillateFeedbackEventData);
 	}
 	else if (auto soundEventData = dynamic_type_cast< const SoundEventData* >(&entityEventData))
 	{

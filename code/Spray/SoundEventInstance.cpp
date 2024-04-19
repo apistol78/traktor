@@ -45,7 +45,7 @@ SoundEventInstance::SoundEventInstance(
 		m_handle = m_soundPlayer->play(m_sound, 16);
 }
 
-bool SoundEventInstance::update(const world::UpdateParams& update)
+bool SoundEventInstance::update(world::World* world, const world::UpdateParams& update)
 {
 	if (!m_handle || !m_handle->isPlaying())
 	{

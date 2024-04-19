@@ -24,7 +24,6 @@
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/WorldLayer.h"
 #include "Scene/Scene.h"
-#include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/World.h"
 #include "World/WorldRenderSettings.h"
@@ -62,23 +61,23 @@ WorldLayer::WorldLayer(
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
 	// Register ourself for camera shake.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-	{
-		feedbackManager->addListener(spray::FbtCamera, this);
-		feedbackManager->addListener(spray::FbtImageProcess, this);
-	}
+	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//if (feedbackManager)
+	//{
+	//	feedbackManager->addListener(spray::FbtCamera, this);
+	//	feedbackManager->addListener(spray::FbtImageProcess, this);
+	//}
 }
 
 void WorldLayer::destroy()
 {
 	// Remove ourself from feedback manager.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-	{
-		feedbackManager->removeListener(spray::FbtImageProcess, this);
-		feedbackManager->removeListener(spray::FbtCamera, this);
-	}
+	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//if (feedbackManager)
+	//{
+	//	feedbackManager->removeListener(spray::FbtImageProcess, this);
+	//	feedbackManager->removeListener(spray::FbtCamera, this);
+	//}
 
 	m_environment = nullptr;
 	m_cameraEntity = nullptr;

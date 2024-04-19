@@ -34,7 +34,7 @@ DecalEventInstance::DecalEventInstance(const DecalEvent* event, World* world, co
 	m_world->addEntity(m_entity);
 }
 
-bool DecalEventInstance::update(const UpdateParams& update)
+bool DecalEventInstance::update(world::World* world, const UpdateParams& update)
 {
 	if (m_entity)
 	{

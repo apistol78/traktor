@@ -14,17 +14,10 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EnvelopeFeedbackEventData", 0, EnvelopeFeedbackEventData, world::IEntityEventData)
-
-EnvelopeFeedbackEventData::EnvelopeFeedbackEventData()
-:	m_type(FbtNone)
-{
-}
 
 void EnvelopeFeedbackEventData::serialize(ISerializer& s)
 {
@@ -41,17 +34,10 @@ void EnvelopeFeedbackEventData::serialize(ISerializer& s)
 	s >> MemberStaticArray< std::vector< TimedValue >, 4, MemberStlVector< TimedValue, MemberComposite< TimedValue > > >(L"envelopes", m_envelopes);
 }
 
-EnvelopeFeedbackEventData::TimedValue::TimedValue()
-:	at(0.0f)
-,	value(0.0f)
-{
-}
-
 void EnvelopeFeedbackEventData::TimedValue::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"at", at);
 	s >> Member< float >(L"value", value);
 }
 
-	}
 }

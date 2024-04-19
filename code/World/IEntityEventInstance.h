@@ -22,6 +22,8 @@
 namespace traktor::world
 {
 
+class World;
+
 /*! Entity event instance.
  * \ingroup World
  */
@@ -30,7 +32,7 @@ class T_DLLCLASS IEntityEventInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool update(const UpdateParams& update) = 0;
+	virtual bool update(World* world, const UpdateParams& update) = 0;
 
 	virtual void cancel(Cancel when) = 0;
 };

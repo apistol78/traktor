@@ -29,7 +29,6 @@
 #include "Scene/SceneFactory.h"
 #include "Sound/Player/ISoundPlayer.h"
 #include "Spray/EffectRenderer.h"
-#include "Spray/Feedback/FeedbackManager.h"
 #include "Terrain/EntityRenderer.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
@@ -103,7 +102,6 @@ bool WorldServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
 	m_entityFactory = new world::EntityFactory();
-	m_feedbackManager = new spray::FeedbackManager();
 	m_entityRenderers = new world::WorldEntityRenderers();
 
 	return true;
@@ -116,7 +114,6 @@ void WorldServer::destroy()
 	m_renderServer = nullptr;
 	m_resourceServer = nullptr;
 	m_effectEntityRenderer = nullptr;
-	m_feedbackManager = nullptr;
 	m_terrainEntityRenderer = nullptr;
 	m_worldType = nullptr;
 }
@@ -271,11 +268,6 @@ world::IEntityFactory* WorldServer::getEntityFactory()
 world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 {
 	return m_entityRenderers;
-}
-
-spray::IFeedbackManager* WorldServer::getFeedbackManager()
-{
-	return m_feedbackManager;
 }
 
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings)

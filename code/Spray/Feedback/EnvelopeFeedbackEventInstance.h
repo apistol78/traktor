@@ -14,22 +14,20 @@ namespace traktor::spray
 {
 
 class EnvelopeFeedbackEventData;
-class IFeedbackManager;
 
 class EnvelopeFeedbackEventInstance : public world::IEntityEventInstance
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit EnvelopeFeedbackEventInstance(const EnvelopeFeedbackEventData* data, IFeedbackManager* feedbackManager);
+	explicit EnvelopeFeedbackEventInstance(const EnvelopeFeedbackEventData* data);
 
-	virtual bool update(const world::UpdateParams& update) override final;
+	virtual bool update(world::World* world, const world::UpdateParams& update) override final;
 
 	virtual void cancel(world::Cancel when) override final;
 
 private:
 	const EnvelopeFeedbackEventData* m_data;
-	IFeedbackManager* m_feedbackManager;
 	float m_time;
 };
 

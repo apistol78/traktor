@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class T_DLLCLASS OscillateFeedbackEventData : public world::IEntityEventData
 {
@@ -31,17 +29,13 @@ class T_DLLCLASS OscillateFeedbackEventData : public world::IEntityEventData
 public:
 	struct OscillatingValue
 	{
-		float duration;
-		int32_t frequency;
-		float magnitude;
-		float noise;
-
-		OscillatingValue();
+		float duration = 0.0f;
+		int32_t frequency = 0;
+		float magnitude = 0.0f;
+		float noise = 0.0f;
 
 		void serialize(ISerializer& s);
 	};
-
-	OscillateFeedbackEventData();
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -50,10 +44,8 @@ public:
 	const OscillatingValue& getValue(int32_t index) const { return m_values[index]; }
 
 private:
-	FeedbackType m_type;
+	FeedbackType m_type = FbtNone;
 	OscillatingValue m_values[4];
 };
 
-	}
 }
-

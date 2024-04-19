@@ -20,10 +20,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 class T_DLLCLASS EnvelopeFeedbackEventData : public world::IEntityEventData
 {
@@ -32,15 +30,11 @@ class T_DLLCLASS EnvelopeFeedbackEventData : public world::IEntityEventData
 public:
 	struct TimedValue
 	{
-		float at;
-		float value;
-
-		TimedValue();
+		float at = 0.0f;
+		float value = 0.0f;
 
 		void serialize(ISerializer& s);
 	};
-
-	EnvelopeFeedbackEventData();
 
 	virtual void serialize(ISerializer& s) override final;
 
@@ -49,10 +43,8 @@ public:
 	const std::vector< TimedValue >& getEnvelope(int32_t index) const { return m_envelopes[index]; }
 
 private:
-	FeedbackType m_type;
+	FeedbackType m_type = FbtNone;
 	std::vector< TimedValue > m_envelopes[4];
 };
 
-	}
 }
-

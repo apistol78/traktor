@@ -14,17 +14,10 @@
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.OscillateFeedbackEventData", 1, OscillateFeedbackEventData, world::IEntityEventData)
-
-OscillateFeedbackEventData::OscillateFeedbackEventData()
-:	m_type(FbtNone)
-{
-}
 
 void OscillateFeedbackEventData::serialize(ISerializer& s)
 {
@@ -41,14 +34,6 @@ void OscillateFeedbackEventData::serialize(ISerializer& s)
 	s >> MemberStaticArray< OscillatingValue, 4, MemberComposite< OscillatingValue > >(L"values", m_values);
 }
 
-OscillateFeedbackEventData::OscillatingValue::OscillatingValue()
-:	duration(0.0f)
-,	frequency(0)
-,	magnitude(0.0f)
-,	noise(0.0f)
-{
-}
-
 void OscillateFeedbackEventData::OscillatingValue::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", duration, AttributeRange(0.0f));
@@ -58,5 +43,4 @@ void OscillateFeedbackEventData::OscillatingValue::serialize(ISerializer& s)
 		s >> Member< float >(L"noise", noise, AttributeRange(0.0f, 1.0f));
 }
 
-	}
 }

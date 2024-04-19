@@ -28,7 +28,6 @@
 #include "Runtime/Engine/SplitWorldLayer.h"
 #include "Scene/Scene.h"
 #include "Sound/Filters/SurroundEnvironment.h"
-#include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
@@ -69,12 +68,12 @@ SplitWorldLayer::SplitWorldLayer(
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
 
 	// Register ourself for camera shake.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-	{
-		feedbackManager->addListener(spray::FbtCamera, this);
-		feedbackManager->addListener(spray::FbtImageProcess, this);
-	}
+	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//if (feedbackManager)
+	//{
+	//	feedbackManager->addListener(spray::FbtCamera, this);
+	//	feedbackManager->addListener(spray::FbtImageProcess, this);
+	//}
 
 	// Set index in each view.
 	m_worldRenderViews[0].setIndex(0);
@@ -84,12 +83,12 @@ SplitWorldLayer::SplitWorldLayer(
 void SplitWorldLayer::destroy()
 {
 	// Remove ourself from feedback manager.
-	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	if (feedbackManager)
-	{
-		feedbackManager->removeListener(spray::FbtImageProcess, this);
-		feedbackManager->removeListener(spray::FbtCamera, this);
-	}
+	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	//if (feedbackManager)
+	//{
+	//	feedbackManager->removeListener(spray::FbtImageProcess, this);
+	//	feedbackManager->removeListener(spray::FbtCamera, this);
+	//}
 
 	m_environment = nullptr;
 	m_cameraEntities[0] = nullptr;

@@ -53,7 +53,7 @@ SpawnEffectEventInstance::~SpawnEffectEventInstance()
 	cancel(world::Cancel::Immediate);
 }
 
-bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
+bool SpawnEffectEventInstance::update(world::World* world, const world::UpdateParams& update)
 {
 	if (!m_effectEntity)
 		return false;

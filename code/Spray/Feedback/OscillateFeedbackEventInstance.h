@@ -14,22 +14,20 @@ namespace traktor::spray
 {
 
 class OscillateFeedbackEventData;
-class IFeedbackManager;
 
 class OscillateFeedbackEventInstance : public world::IEntityEventInstance
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit OscillateFeedbackEventInstance(const OscillateFeedbackEventData* data, IFeedbackManager* feedbackManager);
+	explicit OscillateFeedbackEventInstance(const OscillateFeedbackEventData* data);
 
-	virtual bool update(const world::UpdateParams& update) override final;
+	virtual bool update(world::World* world, const world::UpdateParams& update) override final;
 
 	virtual void cancel(world::Cancel when) override final;
 
 private:
 	const OscillateFeedbackEventData* m_data;
-	IFeedbackManager* m_feedbackManager;
 	float m_time;
 };
 

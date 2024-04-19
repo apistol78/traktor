@@ -35,8 +35,6 @@ class ISoundPlayer;
 namespace traktor::spray
 {
 
-class IFeedbackManager;
-
 /*! Effect entity factory.
  * \ingroup Spray
  */
@@ -49,8 +47,7 @@ public:
 
 	explicit EffectEntityFactory(
 		resource::IResourceManager* resourceManager,
-		sound::ISoundPlayer* soundPlayer,
-		IFeedbackManager* feedbackManager
+		sound::ISoundPlayer* soundPlayer
 	);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
@@ -66,7 +63,6 @@ public:
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< sound::ISoundPlayer > m_soundPlayer;
-	Ref< IFeedbackManager > m_feedbackManager;
 };
 
 }

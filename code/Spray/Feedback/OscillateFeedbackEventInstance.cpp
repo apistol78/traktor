@@ -9,9 +9,10 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Random.h"
+#include "Spray/Feedback/FeedbackComponent.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "Spray/Feedback/OscillateFeedbackEventInstance.h"
-#include "Spray/Feedback/IFeedbackManager.h"
+#include "World/World.h"
 
 namespace traktor::spray
 {
@@ -24,14 +25,13 @@ Random s_random;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.OscillateFeedbackEventInstance", OscillateFeedbackEventInstance, world::IEntityEventInstance)
 
-OscillateFeedbackEventInstance::OscillateFeedbackEventInstance(const OscillateFeedbackEventData* data, IFeedbackManager* feedbackManager)
+OscillateFeedbackEventInstance::OscillateFeedbackEventInstance(const OscillateFeedbackEventData* data)
 :	m_data(data)
-,	m_feedbackManager(feedbackManager)
 ,	m_time(0.0f)
 {
 }
 
-bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
+bool OscillateFeedbackEventInstance::update(world::World* world, const world::UpdateParams& update)
 {
 	bool finished = true;
 	float values[4];
@@ -52,8 +52,9 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 			values[i] = 0.0f;
 	}
 
-	if (m_feedbackManager)
-		m_feedbackManager->apply(m_data->getType(), values, sizeof_array(values));
+	Ref< FeedbackComponent > feedback = world->getComponent< FeedbackComponent >();
+	if (feedback)
+		feedback->apply(m_data->getType(), values, sizeof_array(values));
 
 	m_time += update.deltaTime;
 	return !finished;

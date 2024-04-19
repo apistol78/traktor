@@ -9,7 +9,8 @@
 #include "Core/Math/Hermite.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventData.h"
 #include "Spray/Feedback/EnvelopeFeedbackEventInstance.h"
-#include "Spray/Feedback/IFeedbackManager.h"
+#include "Spray/Feedback/FeedbackComponent.h"
+#include "World/World.h"
 
 namespace traktor::spray
 {
@@ -44,14 +45,13 @@ struct TimedValueAccessor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EnvelopeFeedbackEventInstance", EnvelopeFeedbackEventInstance, world::IEntityEventInstance)
 
-EnvelopeFeedbackEventInstance::EnvelopeFeedbackEventInstance(const EnvelopeFeedbackEventData* data, IFeedbackManager* feedbackManager)
+EnvelopeFeedbackEventInstance::EnvelopeFeedbackEventInstance(const EnvelopeFeedbackEventData* data)
 :	m_data(data)
-,	m_feedbackManager(feedbackManager)
 ,	m_time(0.0f)
 {
 }
 
-bool EnvelopeFeedbackEventInstance::update(const world::UpdateParams& update)
+bool EnvelopeFeedbackEventInstance::update(world::World* world, const world::UpdateParams& update)
 {
 	float duration = 0.0f;
 	float values[4];
@@ -68,8 +68,9 @@ bool EnvelopeFeedbackEventInstance::update(const world::UpdateParams& update)
 			values[i] = 0.0f;
 	}
 
-	if (m_feedbackManager)
-		m_feedbackManager->apply(m_data->getType(), values, sizeof_array(values));
+	Ref< FeedbackComponent > feedback = world->getComponent< FeedbackComponent >();
+	if (feedback)
+		feedback->apply(m_data->getType(), values, sizeof_array(values));
 
 	m_time += (float)update.deltaTime;
 	return m_time < duration;

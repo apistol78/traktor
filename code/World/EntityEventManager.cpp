@@ -32,7 +32,7 @@ void EntityEventManager::update(World* world, const UpdateParams& update)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
 	{
-		if ((*it)->update(update))
+		if ((*it)->update(world, update))
 			++it;
 		else
 			it = m_eventInstances.erase(it);

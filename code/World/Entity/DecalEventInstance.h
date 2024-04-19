@@ -27,7 +27,7 @@ class DecalEventInstance : public IEntityEventInstance
 public:
 	explicit DecalEventInstance(const DecalEvent* event, World* world, const Transform& Toffset);
 
-	virtual bool update(const UpdateParams& update) override final;
+	virtual bool update(world::World* world, const UpdateParams& update) override final;
 
 	virtual void cancel(Cancel when) override final;
 

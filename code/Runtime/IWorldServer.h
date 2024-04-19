@@ -19,13 +19,6 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::spray
-{
-
-class IFeedbackManager;
-
-}
-
 namespace traktor::world
 {
 
@@ -61,8 +54,6 @@ public:
 	virtual world::IEntityFactory* getEntityFactory() = 0;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
-
-	virtual spray::IFeedbackManager* getFeedbackManager() = 0;
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) = 0;
 };
