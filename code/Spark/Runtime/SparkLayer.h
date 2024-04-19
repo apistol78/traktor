@@ -13,7 +13,6 @@
 #include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
-#include "Spray/Feedback/IFeedbackListener.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,24 +22,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
-	{
 
 class IEnvironment;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderTargetSet;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 class AccDisplayRenderer;
 class Context;
@@ -53,14 +50,12 @@ class ISoundRenderer;
 /*! Stage Spark layer.
  * \ingroup Spark
  */
-class T_DLLCLASS SparkLayer
-:	public runtime::Layer
-,	public spray::IFeedbackListener
+class T_DLLCLASS SparkLayer : public runtime::Layer
 {
 	T_RTTI_CLASS;
 
 public:
-	SparkLayer(
+	explicit SparkLayer(
 		runtime::Stage* stage,
 		const std::wstring& name,
 		bool permitTransition,
@@ -168,10 +163,6 @@ private:
 	int32_t m_lastMouseY;
 
 	void createMoviePlayer();
-
-	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 };
 
-	}
 }
-

@@ -143,25 +143,10 @@ SparkLayer::SparkLayer(
 ,	m_lastMouseX(-1)
 ,	m_lastMouseY(-1)
 {
-	// Register ourself for UI shake.
-	//if (m_environment->getWorld())
-	//{
-	//	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	//	if (feedbackManager)
-	//		feedbackManager->addListener(spray::FbtUI, this);
-	//}
 }
 
 void SparkLayer::destroy()
 {
-	// Remove ourself from feedback manager.
-	//if (m_environment && m_environment->getWorld())
-	//{
-	//	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	//	if (feedbackManager)
-	//		feedbackManager->removeListener(spray::FbtUI, this);
-	//}
-
 	m_environment = nullptr;
 	m_movie.clear();
 	m_externalMovies.clear();
@@ -618,13 +603,6 @@ void SparkLayer::createMoviePlayer()
 		// All success, replace instances.
 		m_moviePlayer = moviePlayer;
 	}
-}
-
-void SparkLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
-{
-	T_ASSERT(count >= 3);
-	m_offset = Vector2(values[0] * 0.01f, values[1] * 0.01f);
-	m_scale = values[2] * 0.01f + 1.0f;
 }
 
 }

@@ -13,7 +13,6 @@
 #include "Core/Math/IntervalTransform.h"
 #include "Core/Math/Ray3.h"
 #include "Resource/Proxy.h"
-#include "Spray/Feedback/IFeedbackListener.h"
 #include "World/WorldRenderView.h"
 
 // import/export mechanism.
@@ -56,9 +55,7 @@ class IEnvironment;
 /*! World stage layer.
  * \ingroup Runtime
  */
-class T_DLLCLASS WorldLayer
-:	public Layer
-,	public spray::IFeedbackListener
+class T_DLLCLASS WorldLayer : public Layer
 {
 	T_RTTI_CLASS;
 
@@ -131,16 +128,9 @@ public:
 
 	double getAlternateTime() const;
 
-	void setFeedbackScale(float feedbackScale);
-
-	float getFeedbackScale() const;
-
 	void setCamera(const world::Entity* cameraEntity);
 
 	const world::Entity* getCamera() const;
-
-protected:
-	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count) override final;
 
 private:
 	IEnvironment* m_environment;
@@ -154,7 +144,6 @@ private:
 	double m_deltaTime = 0.0;
 	double m_controllerTime = -1.0;
 	float m_fieldOfView = 70.0f;
-	float m_feedbackScale = 1.0f;
 	bool m_controllerEnable = true;
 	SmallMap< Guid, Transform > m_entityTransforms;
 };

@@ -59,26 +59,10 @@ WorldLayer::WorldLayer(
 {
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< float >(L"World.FieldOfView", 70.0f);
-
-	// Register ourself for camera shake.
-	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	//if (feedbackManager)
-	//{
-	//	feedbackManager->addListener(spray::FbtCamera, this);
-	//	feedbackManager->addListener(spray::FbtImageProcess, this);
-	//}
 }
 
 void WorldLayer::destroy()
 {
-	// Remove ourself from feedback manager.
-	//spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
-	//if (feedbackManager)
-	//{
-	//	feedbackManager->removeListener(spray::FbtImageProcess, this);
-	//	feedbackManager->removeListener(spray::FbtCamera, this);
-	//}
-
 	m_environment = nullptr;
 	m_cameraEntity = nullptr;
 
@@ -443,16 +427,6 @@ double WorldLayer::getAlternateTime() const
 	return m_alternateTime;
 }
 
-void WorldLayer::setFeedbackScale(float feedbackScale)
-{
-	m_feedbackScale = feedbackScale;
-}
-
-float WorldLayer::getFeedbackScale() const
-{
-	return m_feedbackScale;
-}
-
 void WorldLayer::setCamera(const world::Entity* cameraEntity)
 {
 	m_cameraEntity = cameraEntity;
@@ -461,27 +435,6 @@ void WorldLayer::setCamera(const world::Entity* cameraEntity)
 const world::Entity* WorldLayer::getCamera() const
 {
 	return m_cameraEntity;
-}
-
-void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
-{
-	if (type == spray::FbtCamera)
-	{
-		T_ASSERT(count >= 4);
-		m_cameraOffset = Transform(
-			Vector4(values[0], values[1], values[2]) * Scalar(m_feedbackScale),
-			Quaternion::fromEulerAngles(0.0f, 0.0f, values[3] * m_feedbackScale)
-		);
-	}
-	else if (type == spray::FbtImageProcess)
-	{
-		T_ASSERT(count >= 4);
-
-		// \fixme
-		// render::ImageProcess* postProcess = m_worldRenderer->getVisualImageProcess();
-		// if (postProcess)
-		// 	postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
-	}
 }
 
 }

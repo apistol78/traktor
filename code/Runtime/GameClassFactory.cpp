@@ -325,7 +325,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	// classSplitWorldLayer->addProperty< const Frustum& >("viewFrustum", &SplitWorldLayer::getViewFrustum);
 	classSplitWorldLayer->addProperty< float >("fieldOfView", &SplitWorldLayer::setFieldOfView, &SplitWorldLayer::getFieldOfView);
 	classSplitWorldLayer->addProperty< double >("alternateTime", &SplitWorldLayer::setAlternateTime, &SplitWorldLayer::getAlternateTime);
-	classSplitWorldLayer->addProperty< float >("feedbackScale", &SplitWorldLayer::setFeedbackScale, &SplitWorldLayer::getFeedbackScale);
 	// classSplitWorldLayer->addProperty< const world::Entity* >("camera", &SplitWorldLayer::setCamera, &SplitWorldLayer::getCamera);
 	classSplitWorldLayer->addMethod("createEntity", &SplitWorldLayer::createEntity);
 	classSplitWorldLayer->addMethod("setControllerEnable", &SplitWorldLayer::setControllerEnable);
@@ -358,7 +357,6 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classWorldLayer->addProperty< const Frustum& >("viewFrustum", &WorldLayer::getViewFrustum);
 	classWorldLayer->addProperty< float >("fieldOfView", &WorldLayer::setFieldOfView, &WorldLayer::getFieldOfView);
 	classWorldLayer->addProperty< double >("alternateTime", &WorldLayer::setAlternateTime, &WorldLayer::getAlternateTime);
-	classWorldLayer->addProperty< float >("feedbackScale", &WorldLayer::setFeedbackScale, &WorldLayer::getFeedbackScale);
 	classWorldLayer->addProperty< const world::Entity* >("camera", &WorldLayer::setCamera, &WorldLayer::getCamera);
 	classWorldLayer->addMethod("createEntity", &WorldLayer::createEntity);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
