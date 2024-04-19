@@ -31,6 +31,11 @@ WorldResourceFactory::WorldResourceFactory(render::IRenderSystem* renderSystem, 
 {
 }
 
+bool WorldResourceFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 const TypeInfoSet WorldResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeInfoSet;

@@ -58,7 +58,7 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) = 0;
 
-	virtual const world::IEntityFactory* getEntityFactory() = 0;
+	virtual world::IEntityFactory* getEntityFactory() = 0;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 

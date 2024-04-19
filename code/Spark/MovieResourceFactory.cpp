@@ -13,7 +13,12 @@
 namespace traktor::spark
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.MovieResourceFactory", MovieResourceFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.MovieResourceFactory", 0, MovieResourceFactory, resource::IResourceFactory)
+
+bool MovieResourceFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet MovieResourceFactory::getResourceTypes() const
 {

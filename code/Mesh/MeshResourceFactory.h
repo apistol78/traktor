@@ -37,7 +37,11 @@ class T_DLLCLASS MeshResourceFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	MeshResourceFactory() = default;
+
 	explicit MeshResourceFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = nullptr);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

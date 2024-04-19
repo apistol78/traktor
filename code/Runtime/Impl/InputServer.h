@@ -51,8 +51,6 @@ public:
 
 	void destroy();
 
-	void createResourceFactories(IEnvironment* environment);
-
 	int32_t reconfigure(const PropertyGroup* settings);
 
 	void update(float deltaTime, bool renderViewActive);

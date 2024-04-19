@@ -31,7 +31,11 @@ class T_DLLCLASS ShaderFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	ShaderFactory() = default;
+
 	explicit ShaderFactory(IRenderSystem* renderSystem);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

@@ -31,11 +31,15 @@ class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	TextureFactory() = default;
+
 	explicit TextureFactory(IRenderSystem* renderSystem, int32_t skipMips);
 
 	void setSkipMips(int32_t skipMips);
 
 	int32_t getSkipMips() const;
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
@@ -47,7 +51,7 @@ public:
 
 private:
 	Ref< IRenderSystem > m_renderSystem;
-	int32_t m_skipMips;
+	int32_t m_skipMips = 0;
 };
 
 }

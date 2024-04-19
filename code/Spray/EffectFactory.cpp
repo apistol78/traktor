@@ -7,21 +7,29 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Io/Reader.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/PointSet.h"
 #include "Spray/PointSetResource.h"
+#include "World/IEntityFactory.h"
 
 namespace traktor::spray
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectFactory", 0, EffectFactory, resource::IResourceFactory)
 
 EffectFactory::EffectFactory(const world::IEntityFactory* entityFactory)
 :	m_entityFactory(entityFactory)
 {
+}
+
+bool EffectFactory::initialize(const ObjectStore& objectStore)
+{
+	m_entityFactory = objectStore.get< world::IEntityFactory >();
+	return true;
 }
 
 const TypeInfoSet EffectFactory::getResourceTypes() const

@@ -40,6 +40,8 @@ class T_DLLCLASS WorldResourceFactory : public resource::IResourceFactory
 public:
 	explicit WorldResourceFactory(render::IRenderSystem* renderSystem, const IEntityFactory* entityBuilder);
 
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
 	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const override final;

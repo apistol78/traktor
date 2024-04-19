@@ -29,6 +29,8 @@ class T_DLLCLASS TerrainFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
 	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const override final;

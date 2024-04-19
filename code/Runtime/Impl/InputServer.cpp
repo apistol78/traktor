@@ -24,7 +24,6 @@
 #include "Input/IInputDevice.h"
 #include "Input/IInputDriver.h"
 #include "Input/InputSystem.h"
-#include "Input/RumbleEffectFactory.h"
 #include "Input/RumbleEffectPlayer.h"
 #include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
@@ -163,12 +162,6 @@ void InputServer::destroy()
 {
 	m_rumbleEffectPlayer = nullptr;
 	m_inputSystem = nullptr;
-}
-
-void InputServer::createResourceFactories(IEnvironment* environment)
-{
-	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new input::RumbleEffectFactory());
 }
 
 int32_t InputServer::reconfigure(const PropertyGroup* settings)

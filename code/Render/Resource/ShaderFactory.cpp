@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
 #include "Render/IProgram.h"
 #include "Render/IRenderSystem.h"
@@ -51,11 +52,17 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderFactory", 0, ShaderFactory, resource::IResourceFactory)
 
 ShaderFactory::ShaderFactory(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
+}
+
+bool ShaderFactory::initialize(const ObjectStore& objectStore)
+{
+	m_renderSystem = objectStore.get< IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet ShaderFactory::getResourceTypes() const

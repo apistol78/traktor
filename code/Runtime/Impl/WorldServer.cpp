@@ -31,7 +31,6 @@
 #include "Spray/EffectRenderer.h"
 #include "Spray/Feedback/FeedbackManager.h"
 #include "Terrain/EntityRenderer.h"
-#include "Terrain/TerrainFactory.h"
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityFactory.h"
@@ -128,7 +127,6 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
 	resourceManager->addFactory(new scene::SceneFactory(m_entityFactory));
-	resourceManager->addFactory(new terrain::TerrainFactory());
 	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityFactory));
 }
 
@@ -265,7 +263,7 @@ void WorldServer::removeEntityRenderer(world::IEntityRenderer* entityRenderer)
 	m_entityRenderers->remove(entityRenderer);
 }
 
-const world::IEntityFactory* WorldServer::getEntityFactory()
+world::IEntityFactory* WorldServer::getEntityFactory()
 {
 	return m_entityFactory;
 }

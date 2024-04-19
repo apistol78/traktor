@@ -75,7 +75,7 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) override final;
 
-	virtual const world::IEntityFactory* getEntityFactory() override final;
+	virtual world::IEntityFactory* getEntityFactory() override final;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() override final;
 

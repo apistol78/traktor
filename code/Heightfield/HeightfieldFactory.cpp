@@ -16,7 +16,12 @@
 namespace traktor::hf
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldFactory", 0, HeightfieldFactory, resource::IResourceFactory)
+
+bool HeightfieldFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet HeightfieldFactory::getResourceTypes() const
 {

@@ -6,10 +6,12 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneResource.h"
+#include "World/IEntityFactory.h"
 
 namespace traktor::scene
 {
@@ -19,6 +21,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IR
 SceneFactory::SceneFactory(const world::IEntityFactory* entityFactory)
 :	m_entityFactory(entityFactory)
 {
+}
+
+bool SceneFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
 }
 
 const TypeInfoSet SceneFactory::getResourceTypes() const

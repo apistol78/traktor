@@ -9,16 +9,18 @@
 #include "Compress/Lzf/InflateStreamLzf.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
 #include "Mesh/IMesh.h"
 #include "Mesh/MeshResource.h"
 #include "Mesh/MeshResourceFactory.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshResourceFactory", MeshResourceFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshResourceFactory", 0, MeshResourceFactory, resource::IResourceFactory)
 
 MeshResourceFactory::MeshResourceFactory(render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_renderSystem(renderSystem)
@@ -26,6 +28,17 @@ MeshResourceFactory::MeshResourceFactory(render::IRenderSystem* renderSystem, re
 {
 	if (!m_meshFactory)
 		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
+}
+
+bool MeshResourceFactory::initialize(const ObjectStore& objectStore)
+{
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	m_meshFactory = objectStore.get< render::MeshFactory >();
+
+	if (!m_meshFactory)
+		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
+
+	return true;
 }
 
 const TypeInfoSet MeshResourceFactory::getResourceTypes() const

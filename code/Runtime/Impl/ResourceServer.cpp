@@ -6,19 +6,17 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Ai/NavMeshFactory.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Runtime/IEnvironment.h"
 #include "Runtime/Impl/ResourceServer.h"
-#include "Animation/AnimationResourceFactory.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Spark/MovieResourceFactory.h"
-#include "Heightfield/HeightfieldFactory.h"
-#include "Mesh/MeshResourceFactory.h"
-#include "Spray/EffectFactory.h"
-#include "Video/VideoFactory.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/IResourceFactory.h"
 #include "Resource/ResourceManager.h"
+#include "World/IEntityFactory.h"
 
 namespace traktor::runtime
 {
@@ -38,18 +36,27 @@ void ResourceServer::destroy()
 
 void ResourceServer::createResourceFactories(IEnvironment* environment)
 {
-	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(environment->getRender()->getRenderSystem());
+	objectStore.set(environment->getWorld()->getEntityFactory());
 
-	m_resourceManager->addFactory(new ai::NavMeshFactory());
-	m_resourceManager->addFactory(new animation::AnimationResourceFactory());
-	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
-	m_resourceManager->addFactory(new hf::HeightfieldFactory());
-	m_resourceManager->addFactory(new video::VideoFactory(renderSystem));
-
-	if (environment->getWorld())
+	// Create instances of all resource factories.
+	const TypeInfoSet resourceFactoryTypes = type_of< resource::IResourceFactory >().findAllOf(false);
+	for (const auto& resourceFactoryType : resourceFactoryTypes)
 	{
-		const world::IEntityFactory* entityFactory = environment->getWorld()->getEntityFactory();
-		m_resourceManager->addFactory(new spray::EffectFactory(entityFactory));
+		if (!resourceFactoryType->isInstantiable())
+			continue;
+
+		Ref< resource::IResourceFactory > resourceFactory = dynamic_type_cast< resource::IResourceFactory* >(resourceFactoryType->createInstance());
+		if (!resourceFactory)
+			continue;
+
+		if (!resourceFactory->initialize(objectStore))
+			continue;
+
+		m_resourceManager->addFactory(resourceFactory);
+		T_DEBUG(L"Resource factory \"" << type_name(resourceFactory) << L"\" initialized.");
 	}
 }
 

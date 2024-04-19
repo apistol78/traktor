@@ -44,6 +44,11 @@ ScriptFactory::~ScriptFactory()
 		safeDestroy(m_scriptContext);
 }
 
+bool ScriptFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 const TypeInfoSet ScriptFactory::getResourceTypes() const
 {
 	return makeTypeInfoSet< ScriptResource >();

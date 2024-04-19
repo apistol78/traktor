@@ -36,7 +36,11 @@ class T_DLLCLASS VideoFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	VideoFactory() = default;
+
 	explicit VideoFactory(render::IRenderSystem* renderSystem);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

@@ -15,7 +15,12 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.AliasTextureFactory", AliasTextureFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.AliasTextureFactory", 0, AliasTextureFactory, resource::IResourceFactory)
+
+bool AliasTextureFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet AliasTextureFactory::getResourceTypes() const
 {

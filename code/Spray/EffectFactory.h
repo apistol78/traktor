@@ -36,7 +36,11 @@ class T_DLLCLASS EffectFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	EffectFactory() = default;
+
 	explicit EffectFactory(const world::IEntityFactory* entityFactory);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

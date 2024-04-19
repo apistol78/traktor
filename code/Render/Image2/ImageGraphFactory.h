@@ -32,7 +32,11 @@ class T_DLLCLASS ImageGraphFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
+	ImageGraphFactory() = default;
+
 	explicit ImageGraphFactory(IRenderSystem* renderSystem);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

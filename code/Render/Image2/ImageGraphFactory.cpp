@@ -6,7 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Image2/ImageGraph.h"
 #include "Render/Image2/ImageGraphData.h"
 #include "Render/Image2/ImageGraphFactory.h"
@@ -14,11 +16,17 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ImageGraphFactory", ImageGraphFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ImageGraphFactory", 0, ImageGraphFactory, resource::IResourceFactory)
 
 ImageGraphFactory::ImageGraphFactory(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
+}
+
+bool ImageGraphFactory::initialize(const ObjectStore& objectStore)
+{
+	m_renderSystem = objectStore.get< IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet ImageGraphFactory::getResourceTypes() const

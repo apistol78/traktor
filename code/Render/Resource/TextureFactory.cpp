@@ -11,6 +11,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/TextureFactory.h"
@@ -35,7 +36,7 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureFactory", 0, TextureFactory, resource::IResourceFactory)
 
 TextureFactory::TextureFactory(IRenderSystem* renderSystem, int32_t skipMips)
 :	m_renderSystem(renderSystem)
@@ -51,6 +52,12 @@ void TextureFactory::setSkipMips(int32_t skipMips)
 int32_t TextureFactory::getSkipMips() const
 {
 	return m_skipMips;
+}
+
+bool TextureFactory::initialize(const ObjectStore& objectStore)
+{
+	m_renderSystem = objectStore.get< IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet TextureFactory::getResourceTypes() const

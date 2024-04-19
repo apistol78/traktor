@@ -20,6 +20,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class ObjectStore;
+
+}
+
 namespace traktor::db
 {
 
@@ -48,6 +55,9 @@ class T_DLLCLASS IResourceFactory : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! */
+	virtual bool initialize(const ObjectStore& objectStore) = 0;
+
 	/*! Get resource types.
 	 *
 	 * Return a set of resource types this factory

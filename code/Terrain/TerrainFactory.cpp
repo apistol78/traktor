@@ -18,7 +18,12 @@
 namespace traktor::terrain
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainFactory", TerrainFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainFactory", 0, TerrainFactory, resource::IResourceFactory)
+
+bool TerrainFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet TerrainFactory::getResourceTypes() const
 {

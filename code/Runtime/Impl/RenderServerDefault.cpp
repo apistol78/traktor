@@ -21,9 +21,6 @@
 #include "Core/Settings/PropertyString.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/Image2/ImageGraphFactory.h"
-#include "Render/Resource/AliasTextureFactory.h"
-#include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
 
@@ -302,9 +299,6 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 	m_textureFactory = new render::TextureFactory(m_renderSystem, skipMips);
 
 	resourceManager->addFactory(m_textureFactory);
-	resourceManager->addFactory(new render::AliasTextureFactory());
-	resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
-	resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
 }
 
 int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const PropertyGroup* settings)

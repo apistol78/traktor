@@ -14,7 +14,12 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.AudioResourceFactory", AudioResourceFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.AudioResourceFactory", 0, AudioResourceFactory, resource::IResourceFactory)
+
+bool AudioResourceFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet AudioResourceFactory::getResourceTypes() const
 {

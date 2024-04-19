@@ -18,7 +18,12 @@
 namespace traktor::ai
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ai.NavMeshFactory", NavMeshFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshFactory", 0, NavMeshFactory, resource::IResourceFactory)
+
+bool NavMeshFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet NavMeshFactory::getResourceTypes() const
 {

@@ -277,12 +277,6 @@ bool Application::create(
 
 	// Resource factories
 	T_DEBUG(L"Creating resource factories...");
-	if (m_audioServer)
-		m_audioServer->createResourceFactories(m_environment);
-	if (m_inputServer)
-		m_inputServer->createResourceFactories(m_environment);
-	if (m_physicsServer)
-		m_physicsServer->createResourceFactories(m_environment);
 	if (m_renderServer)
 		m_renderServer->createResourceFactories(m_environment);
 	if (m_resourceServer)
@@ -296,8 +290,6 @@ bool Application::create(
 	T_DEBUG(L"Creating entity factories...");
 	if (m_worldServer)
 		m_worldServer->createEntityFactories(m_environment);
-	if (m_worldServer && m_physicsServer)
-		m_physicsServer->createEntityFactories(m_environment);
 
 	// Entity renderers.
 	T_DEBUG(L"Creating entity renderers...");

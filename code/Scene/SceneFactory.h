@@ -37,9 +37,12 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	/*! Construct scene factory.
-	 */
+	SceneFactory() = default;
+
+	/*! Construct scene factory. */
 	explicit SceneFactory(const world::IEntityFactory* entityFactory);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getResourceTypes() const override final;
 

@@ -17,7 +17,12 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationResourceFactory", AnimationResourceFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationResourceFactory", 0, AnimationResourceFactory, resource::IResourceFactory)
+
+bool AnimationResourceFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet AnimationResourceFactory::getResourceTypes() const
 {

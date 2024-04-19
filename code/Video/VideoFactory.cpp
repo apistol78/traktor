@@ -6,7 +6,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Database/Instance.h"
+#include "Render/IRenderSystem.h"
 #include "Video/Video.h"
 #include "Video/VideoFactory.h"
 #include "Video/VideoResource.h"
@@ -16,11 +18,17 @@
 namespace traktor::video
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoFactory", VideoFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.video.VideoFactory", 0, VideoFactory, resource::IResourceFactory)
 
 VideoFactory::VideoFactory(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
+}
+
+bool VideoFactory::initialize(const ObjectStore& objectStore)
+{
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	return true;
 }
 
 const TypeInfoSet VideoFactory::getResourceTypes() const

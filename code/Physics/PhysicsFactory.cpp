@@ -16,7 +16,12 @@
 namespace traktor::physics
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsFactory", PhysicsFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsFactory", 0, PhysicsFactory, resource::IResourceFactory)
+
+bool PhysicsFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet PhysicsFactory::getResourceTypes() const
 {

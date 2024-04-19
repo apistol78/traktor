@@ -20,7 +20,6 @@
 #include "Sound/AudioChannel.h"
 #include "Sound/AudioDriverNull.h"
 #include "Sound/AudioDriverWriteOut.h"
-#include "Sound/AudioResourceFactory.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/IAudioDriver.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -124,12 +123,6 @@ void AudioServer::destroy()
 	m_surroundEnvironment = nullptr;
 	safeDestroy(m_soundPlayer);
 	safeDestroy(m_audioSystem);
-}
-
-void AudioServer::createResourceFactories(IEnvironment* environment)
-{
-	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	resourceManager->addFactory(new sound::AudioResourceFactory());
 }
 
 void AudioServer::update(float dT, bool renderViewActive)

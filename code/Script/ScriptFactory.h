@@ -38,6 +38,8 @@ public:
 
 	virtual ~ScriptFactory();
 
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getResourceTypes() const override final;
 
 	virtual const TypeInfoSet getProductTypes(const TypeInfo& resourceType) const override final;

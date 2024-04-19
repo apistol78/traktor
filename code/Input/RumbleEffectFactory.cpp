@@ -13,7 +13,12 @@
 namespace traktor::input
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RumbleEffectFactory", RumbleEffectFactory, resource::IResourceFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RumbleEffectFactory", 0, RumbleEffectFactory, resource::IResourceFactory)
+
+bool RumbleEffectFactory::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet RumbleEffectFactory::getResourceTypes() const
 {
