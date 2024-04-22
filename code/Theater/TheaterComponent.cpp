@@ -48,7 +48,8 @@ void TheaterComponent::update(world::World* world, const world::UpdateParams& up
 		return;
 
 	// Evaluate current act.
-	m_act->update(world, update.totalTime - m_timeStart, update.deltaTime);
+	if (!m_act->update(world, update.totalTime - m_timeStart, update.deltaTime))
+		m_act = nullptr;
 
 	m_timeLast = update.totalTime;
 }
@@ -72,6 +73,11 @@ bool TheaterComponent::play(const std::wstring& actName)
 
 	m_timeStart = -1.0;
 	return true;
+}
+
+void TheaterComponent::stop()
+{
+	m_act = nullptr;
 }
 
 }

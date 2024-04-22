@@ -19,7 +19,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.TheaterClassFactory", 0, TheaterC
 void TheaterClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 {
 	auto classTheaterComponent = new AutoRuntimeClass< TheaterComponent >();
+	classTheaterComponent->addProperty("playing", &TheaterComponent::isPlaying);
 	classTheaterComponent->addMethod("play", &TheaterComponent::play);
+	classTheaterComponent->addMethod("stop", &TheaterComponent::stop);
 	registrar->registerClass(classTheaterComponent);
 }
 

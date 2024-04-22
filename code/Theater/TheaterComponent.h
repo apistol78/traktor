@@ -41,6 +41,10 @@ public:
 
 	bool play(const std::wstring& actName);
 
+	void stop();
+
+	bool isPlaying() const { return m_act != nullptr; }
+
 private:
 	friend class TheaterComponentEditor;
 
