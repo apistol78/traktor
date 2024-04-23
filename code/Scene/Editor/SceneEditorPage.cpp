@@ -447,7 +447,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_controllerPanel->create(parent, ui::WsNone, new ui::FloodLayout());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_site->createAdditionalPanel(m_controllerPanel, 280_ut, true);
+	m_site->createAdditionalPanel(m_controllerPanel, 140_ut, true);
 
 	// Create the scene, loads textures etc, using a background job since it might take significant amount of time.
 	Ref< Job > job = JobManager::getInstance().add([&]() {

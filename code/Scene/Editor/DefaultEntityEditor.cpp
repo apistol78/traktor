@@ -244,69 +244,69 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			primitiveRenderer->drawWireAabb(boundingBox, 1.0f, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
-		if (m_entityAdapter->isSelected())
-		{
-			Vector4 center = (boundingBox.mn + boundingBox.mx) / 2.0_simd;
-			//Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
+		// if (m_entityAdapter->isSelected())
+		// {
+		// 	Vector4 center = (boundingBox.mn + boundingBox.mx) / 2.0_simd;
+		// 	//Scalar radius = ((boundingBox.mx - boundingBox.mn) / 2.0_simd).length();
 
-			Scalar radius = max(boundingBox.mx.length(), boundingBox.mn.length());
+		// 	Scalar radius = max(boundingBox.mx.length(), boundingBox.mn.length());
 
-			Vector4 worldCenter = transform.translation() + center;
-			Vector4 viewCenter = primitiveRenderer->getView() * worldCenter.xyz1();
+		// 	Vector4 worldCenter = transform.translation() + center;
+		// 	Vector4 viewCenter = primitiveRenderer->getView() * worldCenter.xyz1();
 
-			Scalar znear = 0.1_simd;
-			Scalar P00 = primitiveRenderer->getProjection().get(0, 0);
-			Scalar P11 = primitiveRenderer->getProjection().get(1, 1);
+		// 	Scalar znear = 0.1_simd;
+		// 	Scalar P00 = primitiveRenderer->getProjection().get(0, 0);
+		// 	Scalar P11 = primitiveRenderer->getProjection().get(1, 1);
 
-			Vector4 aabb;
-			if (projectSphere(viewCenter, radius, znear, P00, P11, aabb))
-			{
-				Matrix44 proj = primitiveRenderer->getProjection();
+		// 	Vector4 aabb;
+		// 	if (projectSphere(viewCenter, radius, znear, P00, P11, aabb))
+		// 	{
+		// 		Matrix44 proj = primitiveRenderer->getProjection();
 
-				primitiveRenderer->pushWorld(Matrix44::identity());
-				primitiveRenderer->pushView(Matrix44::identity());
+		// 		primitiveRenderer->pushWorld(Matrix44::identity());
+		// 		primitiveRenderer->pushView(Matrix44::identity());
 
-				// Setup projection as UV space.
-				primitiveRenderer->setProjection(orthoLh(
-					-1.0f, 1.0f,
-					1.0f, -1.0f,
-					-1.0f, 1.0f
-				) * translate(-1.0f, -1.0f, 0.0f) * scale(2.0f, 2.0f, 1.0f));
+		// 		// Setup projection as UV space.
+		// 		primitiveRenderer->setProjection(orthoLh(
+		// 			-1.0f, 1.0f,
+		// 			1.0f, -1.0f,
+		// 			-1.0f, 1.0f
+		// 		) * translate(-1.0f, -1.0f, 0.0f) * scale(2.0f, 2.0f, 1.0f));
 
-				const float w = (aabb.z() - aabb.x()) * clientSize.cx;
-				const float h = (aabb.w() - aabb.y()) * clientSize.cy;
+		// 		const float w = (aabb.z() - aabb.x()) * clientSize.cx;
+		// 		const float h = (aabb.w() - aabb.y()) * clientSize.cy;
 
-				const int32_t level = int32_t(std::floor(std::log2(std::max(w, h))));
-				const float step = 4096.0f / std::max(4096 >> level, 1);
-				for (float y = 0.0f; y < clientSize.cy; y += step)
-				{
-					const float fy = float(y) / clientSize.cy;
-					primitiveRenderer->drawLine(
-						Vector4(0.0f, fy, 0.0f, 1.0f),
-						Vector4(1.0f, fy, 0.0f, 1.0f),
-						Color4ub(255, 255, 0, 120)
-					);
-				}
-				for (float x = 0.0f; x < clientSize.cx; x += step)
-				{
-					const float fx = float(x) / clientSize.cx;
-					primitiveRenderer->drawLine(
-						Vector4(fx, 0.0f, 0.0f, 1.0f),
-						Vector4(fx, 1.0f, 0.0f, 1.0f),
-						Color4ub(255, 255, 0, 120)
-					);
-				}
+		// 		const int32_t level = int32_t(std::floor(std::log2(std::max(w, h))));
+		// 		const float step = 4096.0f / std::max(4096 >> level, 1);
+		// 		for (float y = 0.0f; y < clientSize.cy; y += step)
+		// 		{
+		// 			const float fy = float(y) / clientSize.cy;
+		// 			primitiveRenderer->drawLine(
+		// 				Vector4(0.0f, fy, 0.0f, 1.0f),
+		// 				Vector4(1.0f, fy, 0.0f, 1.0f),
+		// 				Color4ub(255, 255, 0, 120)
+		// 			);
+		// 		}
+		// 		for (float x = 0.0f; x < clientSize.cx; x += step)
+		// 		{
+		// 			const float fx = float(x) / clientSize.cx;
+		// 			primitiveRenderer->drawLine(
+		// 				Vector4(fx, 0.0f, 0.0f, 1.0f),
+		// 				Vector4(fx, 1.0f, 0.0f, 1.0f),
+		// 				Color4ub(255, 255, 0, 120)
+		// 			);
+		// 		}
 
-				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-				primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
-				primitiveRenderer->drawLine(Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+		// 		primitiveRenderer->drawLine(Vector4(aabb.x(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.x(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
+		// 		primitiveRenderer->drawLine(Vector4(aabb.z(), aabb.y(), 0.0f, 1.0f), Vector4(aabb.z(), aabb.w(), 0.0f, 1.0f), Color4ub(255, 0, 0, 255));
 
-				primitiveRenderer->setProjection(proj);
-				primitiveRenderer->popView();
-				primitiveRenderer->popWorld();
-			}
-		}
+		// 		primitiveRenderer->setProjection(proj);
+		// 		primitiveRenderer->popView();
+		// 		primitiveRenderer->popWorld();
+		// 	}
+		// }
 
 		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
 		{
