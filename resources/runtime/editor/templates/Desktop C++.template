@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <template>
-	<description>Native</description>
+	<description>Desktop / C++</description>
 	<image>Native/meta/Preview.png</image>
 	<path>Native</path>
 	<rules>
