@@ -271,9 +271,9 @@ void SwDisplayRenderer::renderShape(const Dictionary& dictionary, const Matrix33
 			if (ls >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
+					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Square);
 				else
-					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeCap::Square);
+					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Square);
 			}
 		}
 
@@ -504,9 +504,9 @@ void SwDisplayRenderer::renderCanvas(const Matrix33& transform, const Canvas& ca
 			if (ls >= 0)
 			{
 				if (!m_writeMask)
-					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
+					m_raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Square);
 				else
-					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeCap::Square);
+					m_raster->stroke(0, lineStyles[ls].getLineWidth(), drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Square);
 			}
 		}
 

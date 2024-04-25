@@ -41,6 +41,13 @@ class T_DLLCLASS Raster : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum class StrokeJoin
+	{
+		Miter,
+		Round,
+		Bevel
+	};
+
 	enum class StrokeCap
 	{
 		Butt,
@@ -112,7 +119,7 @@ public:
 
 	void fill(int32_t style0, int32_t style1, FillRule fillRule);
 
-	void stroke(int32_t style, float width, StrokeCap cap);
+	void stroke(int32_t style, float width, StrokeJoin join, StrokeCap cap);
 
 	void submit();
 

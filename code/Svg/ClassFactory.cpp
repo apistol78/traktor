@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Class/Boxes/BoxedRefArray.h"
 #include "Core/Class/IRuntimeClassRegistrar.h"
 #include "Core/Class/IRuntimeDelegate.h"
+#include "Drawing/Image.h"
 #include "Svg/ClassFactory.h"
 #include "Svg/Document.h"
 #include "Svg/Gradient.h"
@@ -21,6 +22,7 @@
 #include "Svg/Parser.h"
 #include "Svg/Path.h"
 #include "Svg/PathShape.h"
+#include "Svg/Rasterizer.h"
 #include "Svg/Shape.h"
 #include "Svg/Style.h"
 #include "Xml/Document.h"
@@ -135,7 +137,12 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classDocument);
 
 	auto classGradient = new AutoRuntimeClass< Gradient >();
+	classGradient->addProperty("bounds", &Gradient::setBounds, &Gradient::getBounds);
+	classGradient->addProperty("transform", &Gradient::setTransform, &Gradient::getTransform);
+	classGradient->addProperty("stopCount", &Gradient::getStopCount);
 	classGradient->addMethod("addStop", &Gradient::addStop);
+	classGradient->addMethod("getStopOffset", &Gradient::getStopOffset);
+	classGradient->addMethod("getStopColor", &Gradient::getStopColor);
 	registrar->registerClass(classGradient);
 
 	auto classIShapeVisitor = new AutoRuntimeClass< IShapeVisitor >();
@@ -201,6 +208,11 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classStyle->addProperty("stroke", &Style::setStroke, &Style::getStroke);
 	classStyle->addProperty("opacity", &Style::setOpacity, &Style::getOpacity);
 	registrar->registerClass(classStyle);
+
+	auto classRasterizer = new AutoRuntimeClass< Rasterizer >();
+	classRasterizer->addConstructor();
+	classRasterizer->addMethod("raster", &Rasterizer::raster);
+	registrar->registerClass(classRasterizer);
 }
 
 }

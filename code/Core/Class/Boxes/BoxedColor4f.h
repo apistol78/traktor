@@ -59,6 +59,16 @@ public:
 
 	void setAlpha(float alpha) { m_value.setAlpha(Scalar(alpha)); }
 
+	Color4f rgb0() const { return m_value.rgb0(); }
+
+	Color4f rgb1() const { return m_value.rgb1(); }
+
+	Color4f aaa0() const { return m_value.aaa0(); }
+
+	Color4f aaa1() const { return m_value.aaa1(); }
+
+	Color4f aaaa() const { return m_value.aaaa(); }
+
 	inline Color4f add(const BoxedColor4f* v) const { return m_value + v->m_value; }
 
 	inline Color4f sub(const BoxedColor4f* v) const { return m_value - v->m_value; }

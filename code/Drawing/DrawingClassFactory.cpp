@@ -184,9 +184,9 @@ void Raster_fill(Raster* self, int32_t style0, int32_t style1, int32_t fillRule)
 	self->fill(style0, style1, (Raster::FillRule)fillRule);
 }
 
-void Raster_stroke(Raster* self, int32_t style, float width, int32_t cap)
+void Raster_stroke(Raster* self, int32_t style, float width, int32_t join, int32_t cap)
 {
-	self->stroke(style, width, (Raster::StrokeCap)cap);
+	self->stroke(style, width, (Raster::StrokeJoin)join, (Raster::StrokeCap)cap);
 }
 
 	}
@@ -369,9 +369,12 @@ void DrawingClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classBlendFunction);
 
 	auto classRaster = new AutoRuntimeClass< Raster >();
-	classRaster->addConstant("Butt", Any::fromInt32((int32_t)Raster::StrokeCap::Butt));
-	classRaster->addConstant("Square", Any::fromInt32((int32_t)Raster::StrokeCap::Square));
-	classRaster->addConstant("Round", Any::fromInt32((int32_t)Raster::StrokeCap::Round));
+	classRaster->addConstant("JoinMiter", Any::fromInt32((int32_t)Raster::StrokeJoin::Miter));
+	classRaster->addConstant("JoinRound", Any::fromInt32((int32_t)Raster::StrokeJoin::Round));
+	classRaster->addConstant("JoinBevel", Any::fromInt32((int32_t)Raster::StrokeJoin::Bevel));
+	classRaster->addConstant("CapButt", Any::fromInt32((int32_t)Raster::StrokeCap::Butt));
+	classRaster->addConstant("CapSquare", Any::fromInt32((int32_t)Raster::StrokeCap::Square));
+	classRaster->addConstant("CapRound", Any::fromInt32((int32_t)Raster::StrokeCap::Round));
 	classRaster->addConstant("OddEven", Any::fromInt32((int32_t)Raster::FillRule::OddEven));
 	classRaster->addConstant("NonZero", Any::fromInt32((int32_t)Raster::FillRule::NonZero));
 	classRaster->addConstructor();

@@ -14,8 +14,8 @@ namespace traktor::svg
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Style", Style, Object)
 
 Style::Style()
-:	m_fillEnable(false)
-,	m_fill(1.0f, 1.0f, 1.0f, 1.0f)
+:	m_fillEnable(true)
+,	m_fill(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_strokeEnable(false)
 ,	m_strokeWidth(1.0f)
 ,	m_stroke(0.0f, 0.0f, 0.0f, 1.0f)

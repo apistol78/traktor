@@ -75,7 +75,7 @@ public:
 
 	virtual void fill(int32_t style0, int32_t style1, Raster::FillRule fillRule) = 0;
 
-	virtual void stroke(int32_t style, float width, Raster::StrokeCap cap) = 0;
+	virtual void stroke(int32_t style, float width, Raster::StrokeJoin join, Raster::StrokeCap cap) = 0;
 
 	virtual void submit() = 0;
 };
@@ -431,10 +431,11 @@ template < typename pixfmt_type, typename color_type >
 class RasterImpl : public RefCountImpl< IRasterImpl >
 {
 public:
-	RasterImpl(Image* image)
+	explicit RasterImpl(Image* image)
 	:	m_rbuffer((agg::int8u*)image->getData(), image->getWidth(), image->getHeight(), image->getWidth() * image->getPixelFormat().getByteSize())
 	,	m_pf(m_rbuffer)
 	,	m_renderer(m_pf)
+	// ,	m_closed(false)
 	{
 	}
 
@@ -470,96 +471,132 @@ public:
 
 	virtual void clear() override final
 	{
-		m_path.remove_all();
+		m_paths.resize(0);
+		m_current = nullptr;
 	}
 
 	virtual void moveTo(float x, float y) override final
 	{
-		m_path.move_to(x, y);
+		current().move_to(x, y);
 	}
 
 	virtual void lineTo(float x, float y) override final
 	{
-		m_path.line_to(x, y);
+		current().line_to(x, y);
 	}
 
 	virtual void quadricTo(float x1, float y1, float x, float y) override final
 	{
-		m_path.curve3(x1, y1, x, y);
+		current().curve3(x1, y1, x, y);
 	}
 
 	virtual void quadricTo(float x, float y) override final
 	{
-		m_path.curve3(x, y);
+		current().curve3(x, y);
 	}
 
 	virtual void cubicTo(float x1, float y1, float x2, float y2, float x, float y) override final
 	{
-		m_path.curve4(x1, y1, x2, y2, x, y);
+		current().curve4(x1, y1, x2, y2, x, y);
 	}
 
 	virtual void cubicTo(float x2, float y2, float x, float y) override final
 	{
-		m_path.curve4(x2, y2, x, y);
+		current().curve4(x2, y2, x, y);
 	}
 
 	virtual void close() override final
 	{
-		m_path.close_polygon();
+		m_current->second = true;
+		m_current = nullptr;
 	}
 
 	virtual void rect(float x, float y, float width, float height, float radius) override final
 	{
 		agg::rounded_rect r(x, y, x + width, y + height, radius);
 		r.normalize_radius();
-		m_path.concat_path(r);
+		current().concat_path(r);
 	}
 
 	virtual void circle(float x, float y, float radius) override final
 	{
 		agg::ellipse e(x, y, radius, radius);
-		m_path.concat_path(e);
+		current().concat_path(e);
 	}
 
 	virtual void fill(int32_t style0, int32_t style1, Raster::FillRule fillRule) override final
 	{
-		agg::conv_curve< agg::path_storage > curve(m_path);
+		for (auto& path : m_paths)
+		{
+			agg::path_storage p = path.first;
+			p.align_all_paths();
 
-		if (fillRule == Raster::FillRule::NonZero)
-			m_rasterizer.filling_rule(agg::fill_non_zero);
-		else // Raster::FillRule::OddEven
-			m_rasterizer.filling_rule(agg::fill_even_odd);
+			agg::conv_curve< agg::path_storage > curve(p);
 
-		m_rasterizer.styles(style0, style1);
-		m_rasterizer.add_path(curve);
+			if (fillRule == Raster::FillRule::NonZero)
+				m_rasterizer.filling_rule(agg::fill_non_zero);
+			else // Raster::FillRule::OddEven
+				m_rasterizer.filling_rule(agg::fill_even_odd);
+
+			m_rasterizer.styles(style0, style1);
+			m_rasterizer.add_path(curve);
+		}
 	}
 
-	virtual void stroke(int32_t style, float width, Raster::StrokeCap cap) override final
+	virtual void stroke(int32_t style, float width, Raster::StrokeJoin join, Raster::StrokeCap cap) override final
 	{
-		agg::conv_stroke< agg::path_storage > outline(m_path);
-		outline.width(width);
-
-		switch (cap)
+		for (auto& path : m_paths)
 		{
-		case Raster::StrokeCap::Butt:
-			outline.line_cap(agg::butt_cap);
-			break;
+			agg::path_storage p = path.first;
+			p.align_all_paths();
+			
+			if (path.second)
+				p.close_polygon();
 
-		case Raster::StrokeCap::Square:
-			outline.line_cap(agg::square_cap);
-			break;
+			agg::conv_curve< agg::path_storage > curve(p);
+			agg::conv_stroke< agg::conv_curve< agg::path_storage > > outline(curve);
+			outline.width(width);
 
-		case Raster::StrokeCap::Round:
-			outline.line_cap(agg::round_cap);
-			break;
+			switch (join)
+			{
+			case Raster::StrokeJoin::Miter:
+				outline.line_join(agg::miter_join);
+				break;
 
-		default:
-			break;
+			case Raster::StrokeJoin::Round:
+				outline.line_join(agg::round_join);
+				break;
+
+			case Raster::StrokeJoin::Bevel:
+				outline.line_join(agg::bevel_join);
+				break;
+
+			default:
+				break;
+			}
+
+			switch (cap)
+			{
+			case Raster::StrokeCap::Butt:
+				outline.line_cap(agg::butt_cap);
+				break;
+
+			case Raster::StrokeCap::Square:
+				outline.line_cap(agg::square_cap);
+				break;
+
+			case Raster::StrokeCap::Round:
+				outline.line_cap(agg::round_cap);
+				break;
+
+			default:
+				break;
+			}
+
+			m_rasterizer.filling_rule(agg::fill_non_zero);
+			m_rasterizer.styles(-1, style);
+			m_rasterizer.add_path(outline);
 		}
-
-		m_rasterizer.filling_rule(agg::fill_non_zero);
-		m_rasterizer.styles(-1, style);
-		m_rasterizer.add_path(outline);
 	}
 
 	virtual void submit() override final
@@ -587,7 +624,19 @@ private:
 	pixfmt_type m_pf;
 	agg::renderer_base< pixfmt_type > m_renderer;
 	agg::rasterizer_compound_aa<> m_rasterizer;
-	agg::path_storage m_path;
+	AlignedVector< std::pair< agg::path_storage, bool > > m_paths;
+	std::pair< agg::path_storage, bool >* m_current = nullptr;
+
+	agg::path_storage& current()
+	{
+		if (!m_current)
+		{
+			m_paths.push_back();
+			m_current = &m_paths.back();
+			m_current->second = false;
+		}
+		return m_current->first;
+	}
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Raster", Raster, Object)
@@ -705,9 +754,9 @@ void Raster::fill(int32_t style0, int32_t style1, FillRule fillRule)
 	m_impl->fill(style0, style1, fillRule);
 }
 
-void Raster::stroke(int32_t style, float width, StrokeCap cap)
+void Raster::stroke(int32_t style, float width, StrokeJoin join, StrokeCap cap)
 {
-	m_impl->stroke(style, width, cap);
+	m_impl->stroke(style, width, join, cap);
 }
 
 void Raster::submit()

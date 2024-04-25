@@ -134,6 +134,11 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedColor4f->addProperty("green", &BoxedColor4f::setGreen, &BoxedColor4f::getGreen);
 	classBoxedColor4f->addProperty("blue", &BoxedColor4f::setBlue, &BoxedColor4f::getBlue);
 	classBoxedColor4f->addProperty("alpha", &BoxedColor4f::setAlpha, &BoxedColor4f::getAlpha);
+	classBoxedColor4f->addProperty("rgb0", &BoxedColor4f::rgb0);
+	classBoxedColor4f->addProperty("rgb1", &BoxedColor4f::rgb1);
+	classBoxedColor4f->addProperty("aaa0", &BoxedColor4f::aaa0);
+	classBoxedColor4f->addProperty("aaa1", &BoxedColor4f::aaa1);
+	classBoxedColor4f->addProperty("aaaa", &BoxedColor4f::aaaa);
 	classBoxedColor4f->addMethod("get", &BoxedColor4f::get);
 	classBoxedColor4f->addMethod("set", &BoxedColor4f::set);
 	classBoxedColor4f->addStaticMethod("lerp", &BoxedColor4f::lerp);

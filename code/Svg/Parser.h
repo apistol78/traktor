@@ -45,9 +45,12 @@ class T_DLLCLASS Parser : public Object
 	T_RTTI_CLASS;
 
 public:
+	Parser();
+
 	Ref< Shape > parse(xml::Document* doc);
 
 private:
+	Ref< Style > m_defaultStyle;
 	std::map< std::wstring, Ref< Gradient > > m_gradients;
 	std::map< std::wstring, Ref< Shape > > m_shapeDefs;
 
@@ -75,9 +78,11 @@ private:
 
 	void parseDefs(xml::Element* elm);
 
+	Ref< Gradient > parseGradientDef(const xml::Element* defs, const xml::Element* elm) const;
+
 	Ref< Style > parseStyle(xml::Element* elm);
 
-	Matrix33 parseTransform(xml::Element* elm);
+	Matrix33 parseTransform(const xml::Element* elm, const std::wstring& attrName) const;
 
 	float parseAttr(const xml::Element* elm, const std::wstring& attrName, float defValue = 0.0f) const;
 };

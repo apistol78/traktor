@@ -68,8 +68,8 @@ void Path::quadricTo(float x1, float y1, float x, float y, bool relative)
 
 void Path::quadricTo(float x, float y, bool relative)
 {
-	float x1 = 0.0f;
-	float y1 = 0.0f;
+	const float x1 = 0.0f;
+	const float y1 = 0.0f;
 	quadricTo(x1, y1, x, y, relative);
 }
 
@@ -97,8 +97,8 @@ void Path::cubicTo(float x1, float y1, float x2, float y2, float x, float y, boo
 
 void Path::cubicTo(float x2, float y2, float x, float y, bool relative)
 {
-	float x1 = (relative ? 0.0f : m_cursor.x) - (x2 - x);
-	float y1 = (relative ? 0.0f : m_cursor.y) - (y2 - y);
+	const float x1 = (relative ? 0.0f : m_cursor.x) - (x2 - x);
+	const float y1 = (relative ? 0.0f : m_cursor.y) - (y2 - y);
 	cubicTo(x1, y1, x2, y2, x, y, relative);
 }
 

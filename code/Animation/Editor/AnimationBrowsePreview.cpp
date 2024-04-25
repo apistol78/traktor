@@ -122,7 +122,7 @@ Ref< ui::Bitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::
 			raster.lineTo(e);
 		}
 	}
-	raster.stroke(ls, 2.0f, drawing::Raster::StrokeCap::Round);
+	raster.stroke(ls, 2.0f, drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Round);
 	raster.submit();
 
 	drawing::ScaleFilter scaleFilter(

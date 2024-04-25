@@ -96,6 +96,7 @@ void skipUntil(std::wstring::iterator& i, std::wstring::iterator end, bool (*isP
 	while (i != end && !isProc(*i))
 		++i;
 }
+
 void skipUntilNot(std::wstring::iterator& i, std::wstring::iterator end, bool (*isProc)(wchar_t))
 {
 	while (i != end && isProc(*i))
@@ -104,37 +105,58 @@ void skipUntilNot(std::wstring::iterator& i, std::wstring::iterator end, bool (*
 
 float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 {
-	skipUntilNot(i, end, isWhiteSpace);
-
-	std::wstring::iterator j = i;
-
-	if (i != end && (*i == L'-' || *i == L'+'))
+	while (i != end && (isWhiteSpace(*i) || *i == '.' || *i == ','))
 		++i;
-
-	skipUntilNot(i, end, isDigit);
-
-	if (i != end && *i == L'.' && isDigit(*(i+1)))
-	{
-		++i;
-		skipUntilNot(i, end, isDigit);
-	}
-	else if (i != end && *i == L'e' && ( *(i+1) == L'-' || *(i+1) == L'+' || isDigit(*(i+1)) ))
-	{
-		++i;
-		if (i != end && (*i == L'-' || *i == L'+'))
-			++i;
-		skipUntilNot(i, end, isDigit);
-	}
 
 	float number = 0.0f;
-	std::wstringstream(std::wstring(j, i)) >> number;
+	try
+	{
+		size_t n = 0;
+		number = std::stof(std::wstring(i, end), &n);
+		i += n;
+	}
+	catch(const std::exception& e)
+	{
+		log::error << L"Exception while parsing number; \"" << std::wstring(i, end) << L"\"." << Endl;
+		i = end;
+	}
 
 	return number;
+}
+
+bool parseUrl(const std::wstring& value, std::wstring& outURL)
+{
+	const size_t s = value.find(L"url(#");
+	const size_t e = value.find(L")");
+	if (s != value.npos && e != value.npos)
+	{
+		outURL = value.substr(s + 5, e - s - 5);
+		return true;
+	}
+	else
+		return false;
+}
+
+float parseNumber(const std::wstring& value, float defaultValue = 0.0f)
+{
+	try
+	{
+		return std::stof(value);
+	}
+	catch(const std::exception& e)
+	{
+		return defaultValue;
+	}
 }
 
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Parser", Parser, Object)
+
+Parser::Parser()
+{
+	m_defaultStyle = new Style();
+}
 
 Ref< Shape > Parser::parse(xml::Document* doc)
 {
@@ -178,10 +200,10 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 
 		if (!shape->getStyle())
 			shape->setStyle(parseStyle(elm));
+		if (!shape->getStyle())
+			shape->setStyle(m_defaultStyle);
 
-		shape->setTransform(
-			parseTransform(elm)
-		);
+		shape->setTransform(parseTransform(elm, L"transform"));
 
 		for (xml::Node* child = elm->getFirstChild(); child; child = child->getNextSibling())
 		{
@@ -350,7 +372,7 @@ Ref< Shape > Parser::parsePolygon(xml::Element* elm)
 	Path path;
 	bool first = true;
 
-	std::wstring points = elm->getAttribute(L"points")->getValue();
+	std::wstring points = trim(elm->getAttribute(L"points")->getValue());
 	std::wstring::iterator i = points.begin();
 	while (i != points.end())
 	{
@@ -378,7 +400,7 @@ Ref< Shape > Parser::parsePolyLine(xml::Element* elm)
 	Path path;
 	bool first = true;
 
-	std::wstring points = elm->getAttribute(L"points")->getValue();
+	std::wstring points = trim(elm->getAttribute(L"points")->getValue());
 	std::wstring::iterator i = points.begin();
 	while (i != points.end())
 	{
@@ -401,7 +423,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 	if (!elm || !elm->hasAttribute(L"d"))
 		return nullptr;
 
-	std::wstring def = elm->getAttribute(L"d")->getValue();
+	std::wstring def = trim(elm->getAttribute(L"d")->getValue());
 	std::wstring::iterator i = def.begin();
 	wchar_t cmdLead = 0;
 
@@ -424,8 +446,17 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 				cmd = isupper(cmdLead) ? L'L' : L'l';
 			else if (toupper(cmdLead) == L'Q')
 				cmd = isupper(cmdLead) ? L'Q' : L'q';
+			else if (toupper(cmdLead) == L'A')
+				cmd = isupper(cmdLead) ? L'A' : L'a';
+			else if (toupper(cmdLead) == L'H')
+				cmd = isupper(cmdLead) ? L'H' : L'h';
+			else if (toupper(cmdLead) == L'V')
+				cmd = isupper(cmdLead) ? L'V' : L'v';
 			else
+			{
+				log::info << L"Invalid path, lead command \"" << cmdLead << L"\"." << Endl;
 				return nullptr;
+			}
 		}
 		else
 		{
@@ -433,7 +464,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 			++i;
 		}
 
-		bool relative = islower(cmd);
+		const bool relative = islower(cmd);
 		switch (toupper(cmd))
 		{
 		case L'M':	// Move to
@@ -454,19 +485,21 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 
 		case L'V':	// Vertical line to
 			{
-				float y = parseDecimalNumber(i, def.end());
-				if (relative)				
-					y = path.getAbsoluteY(y);
-				path.lineTo(path.getCursor().x, y, false);
+				const float y = parseDecimalNumber(i, def.end());
+				if (relative)
+					path.lineTo(0, y, true);
+				else
+					path.lineTo(path.getCursor().x, y, false);
 			}
 			break;
 
 		case L'H':	// Horizontal line to
 			{
-				float x = parseDecimalNumber(i, def.end());
+				const float x = parseDecimalNumber(i, def.end());
 				if (relative)
-					x = path.getAbsoluteX(x);
-				path.lineTo(x, path.getCursor().y, false);
+					path.lineTo(x, 0, true);
+				else
+					path.lineTo(x, path.getCursor().y, false);
 			}
 			break;
 
@@ -485,6 +518,7 @@ Ref< Shape > Parser::parsePath(xml::Element* elm)
 				const float x = parseDecimalNumber(i, def.end());
 				const float y = parseDecimalNumber(i, def.end());
 				path.quadricTo(x, y, relative);
+				log::warning << L"Shorthand quadric not implemented properly!" << Endl;
 			}
 			break;
 
@@ -603,57 +637,97 @@ void Parser::parseDefs(xml::Element* elm)
 			if (rect)
 				m_shapeDefs[id] = rect;
 		}
-		else if (name == L"linearGradient")
+		else if (name == L"linearGradient" || name == L"radialGradient")
 		{
-			RefArray< xml::Element > stops;
-			elm->get(L"stop", stops);
-
-			if (!stops.empty())
-			{
-				Ref< Gradient > gradient = new Gradient(Gradient::GtLinear);
-				for (auto stop : stops)
-				{
-					if (!stop->hasAttribute(L"offset") || !stop->hasAttribute(L"stop-color"))
-						continue;
-
-					float offset;
-					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
-
-					Color4f color;
-					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
-
-					gradient->addStop(offset, color);
-				}
+			Ref< Gradient > gradient = parseGradientDef(elm, ch);
+			if (gradient)
 				m_gradients[id] = gradient;
-			}
-		}
-		else if (name == L"radialGradient")
-		{
-			RefArray< xml::Element > stops;
-			elm->get(L"stop", stops);
-
-			if (!stops.empty())
-			{
-				Ref< Gradient > gradient = new Gradient(Gradient::GtRadial);
-				for (auto stop : stops)
-				{
-					if (!stop->hasAttribute(L"offset") || !stop->hasAttribute(L"stop-color"))
-						continue;
-
-					float offset;
-					std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
-
-					Color4f color;
-					parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
-
-					gradient->addStop(offset, color);
-				}
-				m_gradients[id] = gradient;
-			}
 		}
 		else
 			log::debug << L"Unknown definition element \"" << name << L"\"" << Endl;
 	}
+}
+
+Ref< Gradient > Parser::parseGradientDef(const xml::Element* defs, const xml::Element* elm) const
+{
+	const std::wstring name = elm->getName();
+	const std::wstring id = elm->getAttribute(L"id")->getValue();
+
+	if (name != L"linearGradient" && name != L"radialGradient")
+		return nullptr;
+
+	Ref< Gradient > gradient = new Gradient(name == L"linearGradient" ? Gradient::GtLinear : Gradient::GtRadial);
+
+	if (elm->hasAttribute(L"xlink:href"))
+	{
+		const std::wstring ref = elm->getAttribute(L"xlink:href")->getValue().substr(1);
+		const xml::Element* xref = defs->getSingle(str(L"*[@id=%S]", ref.c_str()));
+		if (xref != nullptr)
+		{
+			Ref< Gradient > refGradient = parseGradientDef(defs, xref);
+			if (refGradient)
+				gradient->setStops(refGradient->getStops());
+		}
+		else
+			log::error << L"Unable to resolve reference \"" << ref << L"\"; no such element." << Endl;
+	}
+
+	RefArray< xml::Element > stops;
+	elm->get(L"stop", stops);
+	for (auto stop : stops)
+	{
+		if (!stop->hasAttribute(L"offset"))
+			continue;
+
+		float offset;
+		std::wstringstream(stop->getAttribute(L"offset")->getValue()) >> offset;
+
+		Color4f color(0.0f, 0.0f, 0.0f, 1.0f);
+		if (stop->hasAttribute(L"stop-color"))
+			parseColor(stop->getAttribute(L"stop-color")->getValue(), color);
+		else if (stop->hasAttribute(L"style"))
+		{
+			std::vector< std::wstring > styles;
+			Split< std::wstring >::any(stop->getAttribute(L"style")->getValue(), L";", styles);
+			for (const auto& st : styles)
+			{
+				std::wstring::size_type i = st.find(L':');
+				if (i == std::string::npos)
+					continue;
+
+				const std::wstring key = trim(st.substr(0, i));
+				const std::wstring value = trim(st.substr(i + 1));
+
+				if (key == L"stop-color")
+				{
+					Color4f stopColor;
+					if (parseColor(value, stopColor))
+					{
+						stopColor.setAlpha(color.getAlpha());
+						color = stopColor;
+					}
+				}
+				else if (key == L"stop-opacity")
+				{
+					const float opacity = parseNumber(value);
+					color.setAlpha(Scalar(opacity));
+				}
+			}
+		}
+
+		gradient->addStop(offset, color);
+	}
+
+	const float x1 = parseAttr(elm, L"x1");
+	const float y1 = parseAttr(elm, L"y1");
+	const float x2 = parseAttr(elm, L"x2");
+	const float y2 = parseAttr(elm, L"y2");
+	gradient->setBounds(Aabb2(Vector2(x1, y1), Vector2(x2, y2)));
+
+	const Matrix33 gradientTransform = parseTransform(elm, L"gradientTransform");
+	gradient->setTransform(gradientTransform);
+
+	return gradient;
 }
 
 Ref< Style > Parser::parseStyle(xml::Element* elm)
@@ -683,29 +757,42 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 
 		std::vector< std::wstring > styles;
 		Split< std::wstring >::any(elm->getAttribute(L"style")->getValue(), L";", styles);
-
-		for (std::vector< std::wstring >::iterator i = styles.begin(); i != styles.end(); ++i)
+		for (const auto& st : styles)
 		{
-			std::wstring::size_type j = i->find(L':');
-			if (j == std::string::npos)
+			std::wstring::size_type i = st.find(L':');
+			if (i == std::string::npos)
 				continue;
 
-			const std::wstring key = trim(i->substr(0, j));
-			const std::wstring value = trim(i->substr(j + 1));
+			const std::wstring key = trim(st.substr(0, i));
+			const std::wstring value = trim(st.substr(i + 1));
 
 			if (key == L"display")
 				;
 			else if (key == L"opacity")
 			{
-				float opacity;
-				std::wstringstream(value) >> opacity;
+				const float opacity = parseNumber(value);
 				style->setOpacity(opacity);
 			}
 			else if (key == L"fill")
 			{
-				if (parseColor(value, color))
+				std::wstring id;
+				if (parseUrl(value, id))
+				{
+					auto it = m_gradients.find(id);
+					if (it != m_gradients.end())
+					{
+						style->setFillEnable(true);
+						style->setFillGradient(it->second);
+					}
+					else
+						log::error << L"Invalid style; no such gradient \"" << id << L"\"." << Endl;
+				}
+				else if (parseColor(value, color))
 				{
 					style->setFillEnable(true);
+
+					const Color4f fillColor = style->getFill();
+					color.setAlpha(fillColor.getAlpha());
 					style->setFill(color);
 				}
 				else
@@ -715,18 +802,16 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 				;
 			else if (key == L"fill-opacity")
 			{
-				float fillOpacity;
-				std::wstringstream(value) >> fillOpacity;
-				style->setOpacity(fillOpacity);
+				const float fillOpacity = parseNumber(value);
+				Color4f fillColor = style->getFill();
+				fillColor.setAlpha(Scalar(fillOpacity));
+				style->setFill(fillColor);
 			}
 			else if (key == L"shape-inside")
 			{
-				const size_t s = value.find(L"url(#");
-				const size_t e = value.find(L")");
-				if (s != value.npos && e != value.npos)
+				std::wstring id;
+				if (parseUrl(value, id))
 				{
-					const std::wstring id = value.substr(s + 5, e - s - 5);
-					log::info << id << Endl;
 					const auto it = m_shapeDefs.find(id);
 					if (it != m_shapeDefs.end())
 						style->setShapeInside(it->second);
@@ -739,6 +824,9 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 				if (parseColor(value, color))
 				{
 					style->setStrokeEnable(true);
+
+					const Color4f strokeColor = style->getStroke();
+					color.setAlpha(strokeColor.getAlpha());
 					style->setStroke(color);
 				}
 				else
@@ -746,8 +834,7 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 			}
 			else if (key == L"stroke-width")
 			{
-				float strokeWidth;
-				std::wstringstream(value) >> strokeWidth;
+				const float strokeWidth = parseNumber(value);
 				style->setStrokeWidth(strokeWidth);
 			}
 			else if (key == L"stroke-dasharray")
@@ -755,7 +842,12 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 			else if (key == L"stroke-dashoffset")
 				;
 			else if (key == L"stroke-opacity")
-				;
+			{
+				const float strokeOpacity = parseNumber(value);
+				Color4f strokeColor = style->getStroke();
+				strokeColor.setAlpha(Scalar(strokeOpacity));
+				style->setStroke(strokeColor);
+			}
 			else if (key == L"stroke-linecap")
 				;
 			else if (key == L"stroke-linejoin")
@@ -766,8 +858,7 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 				style->setFontFamily(value);
 			else if (key == L"font-size")
 			{
-				float fontSize;
-				std::wstringstream(value) >> fontSize;
+				const float fontSize = parseNumber(value);
 				style->setFontSize(fontSize);
 			}
 			else
@@ -778,14 +869,14 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 	return style;
 }
 
-Matrix33 Parser::parseTransform(xml::Element* elm)
+Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& attrName) const
 {
-	if (!elm || !elm->hasAttribute(L"transform"))
+	if (!elm || !elm->hasAttribute(attrName))
 		return Matrix33::identity();
 
 	Matrix33 transform = Matrix33::identity();
 
-	std::wstring transformDesc = elm->getAttribute(L"transform")->getValue();
+	std::wstring transformDesc = elm->getAttribute(attrName)->getValue();
 	std::wstring::iterator i = transformDesc.begin();
 
 	while (i != transformDesc.end())
@@ -818,7 +909,7 @@ Matrix33 Parser::parseTransform(xml::Element* elm)
 			Split< std::wstring, float >::any(args, L",", argv);
 
 			if (argv.size() >= 6)
-				transform *= Matrix33(
+				transform = transform * Matrix33(
 					argv[0], argv[1], 0.0f,
 					argv[2], argv[3], 0.0f,
 					argv[4], argv[5], 1.0f
@@ -830,7 +921,7 @@ Matrix33 Parser::parseTransform(xml::Element* elm)
 			Split< std::wstring, float >::any(args, L",", argv);
 
 			if (argv.size() >= 2)
-				transform *= translate(argv[0], argv[1]);
+				transform = transform * translate(argv[0], argv[1]);
 		}
 		else if (fnc == L"rotate")
 		{
@@ -838,15 +929,15 @@ Matrix33 Parser::parseTransform(xml::Element* elm)
 			Split< std::wstring, float >::any(args, L",", argv);
 
 			if (argv.size() >= 1)
-				transform *= rotate(deg2rad(argv[0]));
+				transform = transform * rotate(deg2rad(argv[0]));
 		}
 		else if (fnc == L"scale")
 		{
 			std::vector< float > argv;
 			Split< std::wstring, float >::any(args, L",", argv);
 
-			if (argv.size() >= 1)
-				transform * scale(argv[0], argv[0]);
+			if (argv.size() >= 2)
+				transform = transform * scale(argv[0], argv[1]);
 		}
 		else
 			log::error << L"Unknown transform function \"" << fnc << L"\"" << Endl;

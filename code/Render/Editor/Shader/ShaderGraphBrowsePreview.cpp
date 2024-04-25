@@ -108,7 +108,7 @@ Ref< ui::Bitmap > ShaderGraphBrowsePreview::generate(editor::IEditor* editor, db
 			raster.clear();
 			raster.moveTo(x1, y1);
 			raster.lineTo(x2, y2);
-			raster.stroke(edgeStyle, sw, drawing::Raster::StrokeCap::Round);
+			raster.stroke(edgeStyle, sw, drawing::Raster::StrokeJoin::Round, drawing::Raster::StrokeCap::Round);
 		}
 
 		for (auto node : nodes)
