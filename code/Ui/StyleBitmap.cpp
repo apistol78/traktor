@@ -18,6 +18,11 @@
 #include "Ui/Widget.h"
 #include "Ui/Itf/ISystemBitmap.h"
 
+#include "Svg/Document.h"
+#include "Svg/Parser.h"
+#include "Svg/Rasterizer.h"
+#include "Xml/Document.h"
+
 namespace traktor::ui
 {
 	namespace
@@ -92,39 +97,58 @@ bool StyleBitmap::resolve(int32_t dpi) const
 	m_fileName = L"";
 	m_dpi = -1;
 
-	if (fileName.empty() || fileName.getExtension() != L"image")
+	if (fileName.empty())
 		return false;
 
-	Ref< IStream > s = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!s)
-		return false;
+	Ref< drawing::Image > image;
 
-	DynamicMemoryStream dms(false, true);
-	StreamCopy(&dms, s).execute();
-
-	safeClose(s);
-
-	const void* resource = &dms.getBuffer()[0];
-	const uint32_t size = (uint32_t)dms.getBuffer().size();
-
-	int32_t bestFit = std::numeric_limits< int32_t >::max();
-	int32_t bestFitIndex = 0;
-
-	const ImageHeader* h = static_cast<const ImageHeader*>(resource);
-	for (uint32_t i = 0; i < h->count; ++i)
+	if (fileName.getExtension() == L"svg")
 	{
-		if (abs(dpi - h->entry[i].dpi) < bestFit)
+		xml::Document xd;
+		if (!xd.loadFromFile(fileName))
+			return false;
+
+		Ref< svg::Document > sd = dynamic_type_cast< svg::Document* >(svg::Parser().parse(&xd));
+		if (!sd)
+			return false;
+
+		const float scale = float(dpi) / 96.0f;
+		image = svg::Rasterizer().raster(sd, scale);
+	}
+	else if (fileName.getExtension() == L"image")
+	{
+		Ref< IStream > s = FileSystem::getInstance().open(fileName, File::FmRead);
+		if (!s)
+			return false;
+
+		DynamicMemoryStream dms(false, true);
+		StreamCopy(&dms, s).execute();
+
+		safeClose(s);
+
+		const void* resource = &dms.getBuffer()[0];
+		const uint32_t size = (uint32_t)dms.getBuffer().size();
+
+		int32_t bestFit = std::numeric_limits< int32_t >::max();
+		int32_t bestFitIndex = 0;
+
+		const ImageHeader* h = static_cast<const ImageHeader*>(resource);
+		for (uint32_t i = 0; i < h->count; ++i)
 		{
-			bestFit = abs(dpi - h->entry[i].dpi);
-			bestFitIndex = i;
+			if (abs(dpi - h->entry[i].dpi) < bestFit)
+			{
+				bestFit = abs(dpi - h->entry[i].dpi);
+				bestFitIndex = i;
+			}
 		}
+
+		MemoryStream ms(
+			static_cast<const uint8_t*>(resource) + h->entry[bestFitIndex].offset,
+			size - h->entry[bestFitIndex].offset
+		);
+		image = drawing::Image::load(&ms, L"png");
 	}
 
-	MemoryStream ms(
-		static_cast<const uint8_t*>(resource) + h->entry[bestFitIndex].offset,
-		size - h->entry[bestFitIndex].offset
-	);
-	Ref< drawing::Image > image = drawing::Image::load(&ms, L"png");
 	if (!image)
 		return false;
 

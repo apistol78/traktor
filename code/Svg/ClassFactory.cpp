@@ -211,7 +211,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classRasterizer = new AutoRuntimeClass< Rasterizer >();
 	classRasterizer->addConstructor();
-	classRasterizer->addMethod("raster", &Rasterizer::raster);
+	// classRasterizer->addMethod("raster", &Rasterizer::raster);
 	registrar->registerClass(classRasterizer);
 }
 

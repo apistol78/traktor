@@ -39,6 +39,8 @@ class T_DLLCLASS Rasterizer : public Object
 
 public:
 	bool raster(const Document* document, drawing::Image* image) const;
+
+	Ref< drawing::Image > raster(const Document* document, float scale = 1.0f) const;
 };
 
 }

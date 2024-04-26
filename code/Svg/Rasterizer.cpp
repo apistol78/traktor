@@ -164,4 +164,20 @@ bool Rasterizer::raster(const Document* document, drawing::Image* image) const
 	return true;
 }
 
+Ref< drawing::Image > Rasterizer::raster(const Document* document, float scale) const
+{
+	const int32_t width = (int32_t)(document->getSize().x * scale);
+	const int32_t height = (int32_t)(document->getSize().y * scale);
+	if (width <= 0 || height <= 0)
+		return nullptr;
+
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+	image->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
+	
+	if (!raster(document, image))
+		return nullptr;
+
+	return image;
+}
+
 }

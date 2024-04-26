@@ -20,10 +20,6 @@
 			<second>$(Images.Path)/Images/Animation/Skeleton.image</second>
 		</item>
 		<item>
-			<first>Drone.Icon</first>
-			<second>$(Images.Path)/Images/Drone/Icon.image</second>
-		</item>
-		<item>
 			<first>Editor.Database.Favorites</first>
 			<second>$(Images.Path)/Images/Editor/Favorites.image</second>
 		</item>
@@ -57,7 +53,7 @@
 		</item>
 		<item>
 			<first>Editor.Icon</first>
-			<second>$(Images.Path)/Images/Editor/Icon.image</second>
+			<second>$(Images.Path)/New/Editor/Icon.svg</second>
 		</item>
 		<item>
 			<first>Editor.Log.Error</first>
@@ -595,7 +591,7 @@
 		</item>
 		<item>
 			<first>UI.Graph.Background</first>
-			<second>$(Images.Path)/Images/UI/Graph/Background.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Background.svg</second>
 		</item>
 		<item>
 			<first>UI.Graph.Comment</first>
@@ -679,7 +675,7 @@
 		</item>
 		<item>
 			<first>UI.Graph.Node</first>
-			<second>$(Images.Path)/Images/UI/Graph/Node.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Node.svg</second>
 		</item>
 		<item>
 			<first>UI.Graph.NodeError</first>

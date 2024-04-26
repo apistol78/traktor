@@ -3440,6 +3440,193 @@
 												</dependencies>
 											</project>
 										</item>
+										<item type="ProjectDependency" version="3">
+											<inheritIncludePaths>true</inheritIncludePaths>
+											<link>LnkYes</link>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Svg</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Svg</sourcePath>
+												<configurations>
+													<item type="Configuration" version="5">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_SVG_EXPORT</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.lib</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.dll</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>debugshared</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>debugshared</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_SVG_EXPORT</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.lib</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.dll</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>releaseshared</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>releaseshared</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.lib</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>debugstatic</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>debugstatic</consumerLibraryPath>
+													</item>
+													<item type="Configuration" version="5">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<warningLevel>WlCompilerDefault</warningLevel>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+														<debugExecutable/>
+														<debugArguments/>
+														<debugEnvironment/>
+														<debugWorkingDirectory/>
+														<aggregationItems>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.lib</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
+															<item type="AggregationItem">
+																<sourceFile>Traktor.Svg.pdb</sourceFile>
+																<targetPath>releasestatic</targetPath>
+															</item>
+														</aggregationItems>
+														<consumerLibraryPath>releasestatic</consumerLibraryPath>
+													</item>
+												</configurations>
+												<items>
+													<item type="File" version="1">
+														<fileName>*.*</fileName>
+														<excludeFilter/>
+														<items/>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+													</item>
+													<item type="ProjectDependency" version="3">
+														<inheritIncludePaths>true</inheritIncludePaths>
+														<link>LnkYes</link>
+														<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -9411,189 +9598,7 @@
 				<item type="ProjectDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
 					<link>LnkYes</link>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Svg</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Svg</sourcePath>
-						<configurations>
-							<item type="Configuration" version="5">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_SVG_EXPORT</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.lib</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.dll</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>debugshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_SVG_EXPORT</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.lib</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.dll</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>releaseshared</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releaseshared</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.lib</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>debugstatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>debugstatic</consumerLibraryPath>
-							</item>
-							<item type="Configuration" version="5">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<warningLevel>WlCompilerDefault</warningLevel>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-								<debugExecutable/>
-								<debugArguments/>
-								<debugEnvironment/>
-								<debugWorkingDirectory/>
-								<aggregationItems>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.lib</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-									<item type="AggregationItem">
-										<sourceFile>Traktor.Svg.pdb</sourceFile>
-										<targetPath>releasestatic</targetPath>
-									</item>
-								</aggregationItems>
-								<consumerLibraryPath>releasestatic</consumerLibraryPath>
-							</item>
-						</configurations>
-						<items>
-							<item type="File" version="1">
-								<fileName>*.*</fileName>
-								<excludeFilter/>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="3">
-								<inheritIncludePaths>true</inheritIncludePaths>
-								<link>LnkYes</link>
-								<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ExternalDependency" version="3">
 					<inheritIncludePaths>true</inheritIncludePaths>
@@ -20360,7 +20365,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[10]/dependencies/item[14]/project"/>
+		<item ref="/object/projects/item[1]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Remote.Server</name>
