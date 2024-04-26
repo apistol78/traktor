@@ -38,9 +38,9 @@ class T_DLLCLASS Rasterizer : public Object
 	T_RTTI_CLASS;
 
 public:
-	bool raster(const Document* document, drawing::Image* image) const;
+	bool raster(const Document* document, drawing::Image* image, float pageOffsetX = 0.0f, float pageOffsetY = 0.0f) const;
 
-	Ref< drawing::Image > raster(const Document* document, float scale = 1.0f) const;
+	Ref< drawing::Image > raster(const Document* document, float scale = 1.0f, float pageOffsetX = 0.0f, float pageOffsetY = 0.0f) const;
 };
 
 }

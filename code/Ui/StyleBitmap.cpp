@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,6 +11,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/Split.h"
 #include "Drawing/Image.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
@@ -21,7 +22,6 @@
 #include "Svg/Document.h"
 #include "Svg/Parser.h"
 #include "Svg/Rasterizer.h"
-#include "Xml/Document.h"
 
 namespace traktor::ui
 {
@@ -88,10 +88,26 @@ bool StyleBitmap::resolve(int32_t dpi) const
 	if (!ss)
 		return false;
 
-	const Path fileName = ss->getValue(m_name);
+	const std::wstring key = ss->getValue(m_name);
 
-	if (m_bitmap != nullptr && dpi == m_dpi && fileName.getPathName() == m_fileName)
+	if (m_bitmap != nullptr && dpi == m_dpi && key == m_fileName)
 		return true;
+
+	Path fileName;
+	int32_t pageColumn = 0;
+	int32_t pageRow = 0;
+
+	const size_t sep = key.find(L'|');
+	if (sep != key.npos)
+	{
+		StaticVector< int32_t, 2 > offsets;
+		Split< std::wstring, int32_t >::any(key.substr(sep + 1), L",;", offsets, false, 2);
+		pageColumn = offsets.size() >= 1 ? offsets[0] : 0;
+		pageRow = offsets.size() >= 2 ? offsets[1] : 0;
+		fileName = key.substr(0, sep);
+	}
+	else
+		fileName = key;
 
 	safeDestroy(m_bitmap);
 	m_fileName = L"";
@@ -104,16 +120,12 @@ bool StyleBitmap::resolve(int32_t dpi) const
 
 	if (fileName.getExtension() == L"svg")
 	{
-		xml::Document xd;
-		if (!xd.loadFromFile(fileName))
-			return false;
-
-		Ref< svg::Document > sd = dynamic_type_cast< svg::Document* >(svg::Parser().parse(&xd));
+		Ref< svg::Document > sd = dynamic_type_cast< svg::Document* >(svg::Parser().parse(fileName));
 		if (!sd)
 			return false;
 
 		const float scale = float(dpi) / 96.0f;
-		image = svg::Rasterizer().raster(sd, scale);
+		image = svg::Rasterizer().raster(sd, scale, pageColumn, pageRow);
 	}
 	else if (fileName.getExtension() == L"image")
 	{
@@ -187,7 +199,7 @@ bool StyleBitmap::resolve(int32_t dpi) const
 	}
 
 	m_bitmap = bm;
-	m_fileName = fileName.getPathName();
+	m_fileName = key;
 	m_dpi = dpi;
 	return true;
 }

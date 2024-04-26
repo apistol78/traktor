@@ -43,14 +43,14 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Rasterizer", Rasterizer, Object)
 
-bool Rasterizer::raster(const Document* document, drawing::Image* image) const
+bool Rasterizer::raster(const Document* document, drawing::Image* image, float pageOffsetX, float pageOffsetY) const
 {
 	const Aabb2& viewBox = document->getViewBox();
 
 	const float sx = image->getWidth() / viewBox.getSize().x;
 	const float sy = image->getHeight() / viewBox.getSize().y;
 
-	const Matrix33 Mview = scale(sx, sy);
+	const Matrix33 Mview = scale(sx, sy) * translate(-pageOffsetX * viewBox.getSize().x, -pageOffsetY * viewBox.getSize().y);
 
 	drawing::Raster raster(image);
 
@@ -164,7 +164,7 @@ bool Rasterizer::raster(const Document* document, drawing::Image* image) const
 	return true;
 }
 
-Ref< drawing::Image > Rasterizer::raster(const Document* document, float scale) const
+Ref< drawing::Image > Rasterizer::raster(const Document* document, float scale, float pageOffsetX, float pageOffsetY) const
 {
 	const int32_t width = (int32_t)(document->getSize().x * scale);
 	const int32_t height = (int32_t)(document->getSize().y * scale);
@@ -174,7 +174,7 @@ Ref< drawing::Image > Rasterizer::raster(const Document* document, float scale) 
 	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
 	image->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
 	
-	if (!raster(document, image))
+	if (!raster(document, image, pageOffsetX, pageOffsetY))
 		return nullptr;
 
 	return image;

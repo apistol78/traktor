@@ -163,6 +163,15 @@ Ref< Shape > Parser::parse(xml::Document* doc)
 	return traverse(doc->getDocumentElement());
 }
 
+Ref< Shape > Parser::parse(const traktor::Path& fileName)
+{
+	xml::Document xd;
+	if (xd.loadFromFile(fileName))
+		return parse(&xd);
+	else
+		return nullptr;
+}
+
 Ref< Shape > Parser::traverse(xml::Element* elm)
 {
 	Ref< Shape > shape;

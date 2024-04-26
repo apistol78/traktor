@@ -3,53 +3,53 @@
 	<include/>
 	<entities/>
 	<values>
+
+		<!-- Animation -->
 		<item>
 			<first>Animation.Alignment</first>
-			<second>$(Images.Path)/Images/Animation/Alignment.image</second>
+			<second>$(Images.Path)/New/Animation/Alignment.svg</second>
 		</item>
 		<item>
 			<first>Animation.Bones</first>
-			<second>$(Images.Path)/Images/Animation/Bones.image</second>
+			<second>$(Images.Path)/New/Animation/Bones.svg</second>
 		</item>
 		<item>
 			<first>Animation.Playback</first>
-			<second>$(Images.Path)/Images/Animation/Playback.image</second>
+			<second>$(Images.Path)/New/Animation/Playback.svg</second>
 		</item>
 		<item>
 			<first>Animation.Skeleton</first>
-			<second>$(Images.Path)/Images/Animation/Skeleton.image</second>
+			<second>$(Images.Path)/New/Animation/Skeleton.svg</second>
 		</item>
+
+		<!-- Editor -->
 		<item>
 			<first>Editor.Database.Favorites</first>
-			<second>$(Images.Path)/Images/Editor/Favorites.image</second>
+			<second>$(Images.Path)/New/Editor/Favorites.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.Folders</first>
-			<second>$(Images.Path)/Images/Editor/Folders.image</second>
+			<second>$(Images.Path)/New/Editor/Folders.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.NameFilter</first>
-			<second>$(Images.Path)/Images/Editor/NameFilter.image</second>
+			<second>$(Images.Path)/New/Editor/NameFilter.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.ShowFiltered</first>
-			<second>$(Images.Path)/Images/Editor/ShowFiltered.image</second>
-		</item>
-		<item>
-			<first>Editor.Database.TreeColors</first>
-			<second>$(Images.Path)/Images/Editor/TreeColors.image</second>
+			<second>$(Images.Path)/New/Editor/ShowFiltered.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.TypeFilter</first>
-			<second>$(Images.Path)/Images/Editor/TypeFilter.image</second>
+			<second>$(Images.Path)/New/Editor/TypeFilter.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.Types</first>
-			<second>$(Images.Path)/Images/Editor/Types.image</second>
+			<second>$(Images.Path)/New/Editor/Types.svg</second>
 		</item>
 		<item>
 			<first>Editor.Database.TypesHidden</first>
-			<second>$(Images.Path)/Images/Editor/TypesHidden.image</second>
+			<second>$(Images.Path)/New/Editor/TypesHidden.svg</second>
 		</item>
 		<item>
 			<first>Editor.Icon</first>
@@ -57,821 +57,825 @@
 		</item>
 		<item>
 			<first>Editor.Log.Error</first>
-			<second>$(Images.Path)/Images/Editor/LogError.image</second>
+			<second>$(Images.Path)/New/Editor/LogError.svg</second>
 		</item>
 		<item>
 			<first>Editor.Log.Info</first>
-			<second>$(Images.Path)/Images/Editor/LogInfo.image</second>
+			<second>$(Images.Path)/New/Editor/LogInfo.svg</second>
 		</item>
 		<item>
 			<first>Editor.Log.Warning</first>
-			<second>$(Images.Path)/Images/Editor/LogWarning.image</second>
+			<second>$(Images.Path)/New/Editor/LogWarning.svg</second>
 		</item>
 		<item>
 			<first>Editor.Tool.Search</first>
-			<second>$(Images.Path)/Images/Editor/ToolSearch.image</second>
+			<second>$(Images.Path)/New/Editor/ToolSearch.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Build</first>
-			<second>$(Images.Path)/Images/Editor/Build.image</second>
+			<second>$(Images.Path)/New/Editor/Build.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.CancelBuild</first>
-			<second>$(Images.Path)/Images/Editor/CancelBuild.image</second>
+			<second>$(Images.Path)/New/Editor/CancelBuild.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Copy</first>
-			<second>$(Images.Path)/Images/Editor/Copy.image</second>
+			<second>$(Images.Path)/New/Editor/Copy.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Cut</first>
-			<second>$(Images.Path)/Images/Editor/Cut.image</second>
+			<second>$(Images.Path)/New/Editor/Cut.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Paste</first>
-			<second>$(Images.Path)/Images/Editor/Paste.image</second>
+			<second>$(Images.Path)/New/Editor/Paste.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Redo</first>
-			<second>$(Images.Path)/Images/Editor/Redo.image</second>
+			<second>$(Images.Path)/New/Editor/Redo.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Save</first>
-			<second>$(Images.Path)/Images/Editor/Save.image</second>
+			<second>$(Images.Path)/New/Editor/Save.svg</second>
 		</item>
 		<item>
 			<first>Editor.ToolBar.Undo</first>
-			<second>$(Images.Path)/Images/Editor/Undo.image</second>
+			<second>$(Images.Path)/New/Editor/Undo.svg</second>
 		</item>
-		<item>
-			<first>Editor.Web.Navigate</first>
-			<second>$(Images.Path)/Images/Editor/Navigate.image</second>
-		</item>
+
+		<!-- Spark -->
 		<item>
 			<first>Flash.Button</first>
-			<second>$(Images.Path)/Images/Flash/Button.image</second>
+			<second>$(Images.Path)/New/Spark/Button.svg</second>
 		</item>
 		<item>
 			<first>Flash.Edit</first>
-			<second>$(Images.Path)/Images/Flash/Edit.image</second>
-		</item>
-		<item>
-			<first>Flash.Flash</first>
-			<second>$(Images.Path)/Images/Flash/Flash.image</second>
+			<second>$(Images.Path)/New/Spark/Edit.svg</second>
 		</item>
 		<item>
 			<first>Flash.MorphShape</first>
-			<second>$(Images.Path)/Images/Flash/MorphShape.image</second>
+			<second>$(Images.Path)/New/Spark/MorphShape.svg</second>
 		</item>
 		<item>
 			<first>Flash.MovieClip</first>
-			<second>$(Images.Path)/Images/Flash/MovieClip.image</second>
+			<second>$(Images.Path)/New/Spark/MovieClip.svg</second>
 		</item>
 		<item>
 			<first>Flash.NextFrame</first>
-			<second>$(Images.Path)/Images/Flash/NextFrame.image</second>
+			<second>$(Images.Path)/New/Spark/NextFrame.svg</second>
 		</item>
 		<item>
 			<first>Flash.Pivot</first>
-			<second>$(Images.Path)/Images/Flash/Pivot.image</second>
+			<second>$(Images.Path)/New/Spark/Pivot.svg</second>
 		</item>
 		<item>
 			<first>Flash.Playback</first>
-			<second>$(Images.Path)/Images/Flash/Playback.image</second>
+			<second>$(Images.Path)/New/Spark/Playback.svg</second>
 		</item>
 		<item>
 			<first>Flash.PlusMinus</first>
-			<second>$(Images.Path)/Images/Flash/PlusMinus.image</second>
+			<second>$(Images.Path)/New/Spark/PlusMinus.svg</second>
 		</item>
 		<item>
 			<first>Flash.PreviousFrame</first>
-			<second>$(Images.Path)/Images/Flash/PreviousFrame.image</second>
+			<second>$(Images.Path)/New/Spark/PreviousFrame.svg</second>
 		</item>
 		<item>
 			<first>Flash.Shape</first>
-			<second>$(Images.Path)/Images/Flash/Shape.image</second>
+			<second>$(Images.Path)/New/Spark/Shape.svg</second>
 		</item>
 		<item>
 			<first>Flash.Text</first>
-			<second>$(Images.Path)/Images/Flash/Text.image</second>
+			<second>$(Images.Path)/New/Spark/Text.svg</second>
 		</item>
 		<item>
 			<first>Flash.Tool.Debugger</first>
-			<second>$(Images.Path)/Images/Flash/ToolDebugger.image</second>
+			<second>$(Images.Path)/New/Spark/ToolDebugger.svg</second>
 		</item>
+
+		<!-- Input -->
 		<item>
 			<first>Input.Alignment</first>
-			<second>$(Images.Path)/Images/Input/Alignment.image</second>
+			<second>$(Images.Path)/New/Input/Alignment.svg</second>
 		</item>
+
+		<!-- Runtime -->
 		<item>
 			<first>Runtime.Blender</first>
-			<second>$(Images.Path)/Images/Runtime/Blender.image</second>
+			<second>$(Images.Path)/New/Runtime/Blender.svg</second>
 		</item>
 		<item>
 			<first>Runtime.Logos</first>
-			<second>$(Images.Path)/Images/Runtime/Logos.image</second>
+			<second>$(Images.Path)/New/Runtime/Logos.svg</second>
 		</item>
 		<item>
 			<first>Runtime.RenderDoc</first>
-			<second>$(Images.Path)/Images/Runtime/RenderDoc.image</second>
+			<second>$(Images.Path)/New/Runtime/RenderDoc.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetBrowse</first>
-			<second>$(Images.Path)/Images/Runtime/TargetBrowse.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetBrowse.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetBuild</first>
-			<second>$(Images.Path)/Images/Runtime/TargetBuild.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetBuild.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetMigrate</first>
-			<second>$(Images.Path)/Images/Runtime/TargetMigrate.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetMigrate.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetPlay</first>
-			<second>$(Images.Path)/Images/Runtime/TargetPlay.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetPlay.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetProfile</first>
-			<second>$(Images.Path)/Images/Runtime/TargetProfile.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetProfile.svg</second>
 		</item>
 		<item>
 			<first>Runtime.TargetStop</first>
-			<second>$(Images.Path)/Images/Runtime/TargetStop.image</second>
+			<second>$(Images.Path)/New/Runtime/TargetStop.svg</second>
 		</item>
+
+		<!-- Scene -->
 		<item>
 			<first>Scene.DualView</first>
-			<second>$(Images.Path)/Images/Scene/DualView.image</second>
+			<second>$(Images.Path)/New/Scene/DualView.svg</second>
 		</item>
 		<item>
 			<first>Scene.FilterEntity</first>
-			<second>$(Images.Path)/Images/Scene/FilterEntity.image</second>
+			<second>$(Images.Path)/New/Scene/FilterEntity.svg</second>
 		</item>
 		<item>
 			<first>Scene.Folders</first>
-			<second>$(Images.Path)/Images/Scene/Folders.image</second>
+			<second>$(Images.Path)/New/Scene/Folders.svg</second>
 		</item>
 		<item>
 			<first>Scene.LayerAdd</first>
-			<second>$(Images.Path)/Images/Scene/LayerAdd.image</second>
+			<second>$(Images.Path)/New/Scene/LayerAdd.svg</second>
 		</item>
 		<item>
 			<first>Scene.LayerHidden</first>
-			<second>$(Images.Path)/Images/Scene/LayerHidden.image</second>
+			<second>$(Images.Path)/New/Scene/LayerHidden.svg</second>
 		</item>
 		<item>
 			<first>Scene.LayerLocked</first>
-			<second>$(Images.Path)/Images/Scene/LayerLocked.image</second>
+			<second>$(Images.Path)/New/Scene/LayerLocked.svg</second>
 		</item>
 		<item>
 			<first>Scene.LayerUnlocked</first>
-			<second>$(Images.Path)/Images/Scene/LayerUnlocked.image</second>
+			<second>$(Images.Path)/New/Scene/LayerUnlocked.svg</second>
 		</item>
 		<item>
 			<first>Scene.LayerVisible</first>
-			<second>$(Images.Path)/Images/Scene/LayerVisible.image</second>
+			<second>$(Images.Path)/New/Scene/LayerVisible.svg</second>
 		</item>
 		<item>
 			<first>Scene.MoveDownEntity</first>
-			<second>$(Images.Path)/Images/Scene/MoveDown.image</second>
+			<second>$(Images.Path)/New/Scene/MoveDown.svg</second>
 		</item>
 		<item>
 			<first>Scene.MoveToEntity</first>
-			<second>$(Images.Path)/Images/Scene/MoveToEntity.image</second>
+			<second>$(Images.Path)/New/Scene/MoveToEntity.svg</second>
 		</item>
 		<item>
 			<first>Scene.MoveUpEntity</first>
-			<second>$(Images.Path)/Images/Scene/MoveUp.image</second>
+			<second>$(Images.Path)/New/Scene/MoveUp.svg</second>
 		</item>
 		<item>
 			<first>Scene.Play</first>
-			<second>$(Images.Path)/Images/Scene/Play.image</second>
+			<second>$(Images.Path)/New/Scene/Play.svg</second>
 		</item>
 		<item>
 			<first>Scene.Pointer</first>
-			<second>$(Images.Path)/Images/Scene/Pointer.image</second>
+			<second>$(Images.Path)/New/Scene/Pointer.svg</second>
 		</item>
 		<item>
 			<first>Scene.QuadView</first>
-			<second>$(Images.Path)/Images/Scene/QuadView.image</second>
+			<second>$(Images.Path)/New/Scene/QuadView.svg</second>
 		</item>
 		<item>
 			<first>Scene.RemoveEntity</first>
-			<second>$(Images.Path)/Images/Scene/RemoveEntity.image</second>
+			<second>$(Images.Path)/New/Scene/RemoveEntity.svg</second>
 		</item>
 		<item>
 			<first>Scene.Rewind</first>
-			<second>$(Images.Path)/Images/Scene/Rewind.image</second>
+			<second>$(Images.Path)/New/Scene/Rewind.svg</second>
 		</item>
 		<item>
 			<first>Scene.Rotate</first>
-			<second>$(Images.Path)/Images/Scene/Rotate.image</second>
+			<second>$(Images.Path)/New/Scene/Rotate.svg</second>
 		</item>
 		<item>
 			<first>Scene.Scale</first>
-			<second>$(Images.Path)/Images/Scene/Scale.image</second>
+			<second>$(Images.Path)/New/Scene/Scale.svg</second>
 		</item>
 		<item>
 			<first>Scene.SingleView</first>
-			<second>$(Images.Path)/Images/Scene/SingleView.image</second>
+			<second>$(Images.Path)/New/Scene/SingleView.svg</second>
 		</item>
 		<item>
 			<first>Scene.Snap</first>
-			<second>$(Images.Path)/Images/Scene/Snap.image</second>
+			<second>$(Images.Path)/New/Scene/Snap.svg</second>
 		</item>
 		<item>
 			<first>Scene.Stop</first>
-			<second>$(Images.Path)/Images/Scene/Stop.image</second>
+			<second>$(Images.Path)/New/Scene/Stop.svg</second>
 		</item>
 		<item>
 			<first>Scene.ToggleGrid</first>
-			<second>$(Images.Path)/Images/Scene/ToggleGrid.image</second>
+			<second>$(Images.Path)/New/Scene/ToggleGrid.svg</second>
 		</item>
 		<item>
 			<first>Scene.ToggleGuide</first>
-			<second>$(Images.Path)/Images/Scene/ToggleGuide.image</second>
+			<second>$(Images.Path)/New/Scene/ToggleGuide.svg</second>
 		</item>
 		<item>
 			<first>Scene.Translate</first>
-			<second>$(Images.Path)/Images/Scene/Translate.image</second>
+			<second>$(Images.Path)/New/Scene/Translate.svg</second>
 		</item>
 		<item>
 			<first>Scene.Types</first>
-			<second>$(Images.Path)/Images/Scene/Types.image</second>
+			<second>$(Images.Path)/New/Scene/Types.svg</second>
 		</item>
 		<item>
 			<first>Scene.EntityAttributeExternal</first>
-			<second>$(Images.Path)/Images/Scene/EntityAttributeExternal.image</second>
+			<second>$(Images.Path)/New/Scene/EntityAttributeExternal.svg</second>
 		</item>
 		<item>
 			<first>Scene.EntityAttributeDynamic</first>
-			<second>$(Images.Path)/Images/Scene/EntityAttributeDynamic.image</second>
+			<second>$(Images.Path)/New/Scene/EntityAttributeDynamic.svg</second>
 		</item>
 		<item>
 			<first>Scene.EntityAttributePrefab</first>
-			<second>$(Images.Path)/Images/Scene/EntityAttributePrefab.image</second>
+			<second>$(Images.Path)/New/Scene/EntityAttributePrefab.svg</second>
 		</item>
+
+		<!-- Script -->
 		<item>
 			<first>Script.AddDependency</first>
-			<second>$(Images.Path)/Images/Script/AddDependency.image</second>
+			<second>$(Images.Path)/New/Script/AddDependency.svg</second>
 		</item>
 		<item>
 			<first>Script.Breakpoint</first>
-			<second>$(Images.Path)/Images/Script/Breakpoint.image</second>
-		</item>
-		<item>
-			<first>Script.Current</first>
-			<second>$(Images.Path)/Images/Script/Current.image</second>
+			<second>$(Images.Path)/New/Script/Breakpoint.svg</second>
 		</item>
 		<item>
 			<first>Script.DebugContinue</first>
-			<second>$(Images.Path)/Images/Script/DebugContinue.image</second>
+			<second>$(Images.Path)/New/Script/DebugContinue.svg</second>
 		</item>
 		<item>
 			<first>Script.DebugStepInto</first>
-			<second>$(Images.Path)/Images/Script/DebugStepInto.image</second>
+			<second>$(Images.Path)/New/Script/DebugStepInto.svg</second>
 		</item>
 		<item>
 			<first>Script.DebugStepOver</first>
-			<second>$(Images.Path)/Images/Script/DebugStepOver.image</second>
+			<second>$(Images.Path)/New/Script/DebugStepOver.svg</second>
 		</item>
 		<item>
 			<first>Script.DebugStop</first>
-			<second>$(Images.Path)/Images/Script/DebugStop.image</second>
+			<second>$(Images.Path)/New/Script/DebugStop.svg</second>
 		</item>
 		<item>
 			<first>Script.DefineGlobalFunction</first>
-			<second>$(Images.Path)/Images/Script/DefineGlobalFunction.image</second>
+			<second>$(Images.Path)/New/Script/DefineGlobalFunction.svg</second>
 		</item>
 		<item>
 			<first>Script.DefineLocalFunction</first>
-			<second>$(Images.Path)/Images/Script/DefineLocalFunction.image</second>
+			<second>$(Images.Path)/New/Script/DefineLocalFunction.svg</second>
 		</item>
 		<item>
 			<first>Script.Icon.Debugger</first>
-			<second>$(Images.Path)/Images/Script/IconDebugger.image</second>
+			<second>$(Images.Path)/New/Script/IconDebugger.svg</second>
 		</item>
 		<item>
 			<first>Script.Icon.Profiler</first>
-			<second>$(Images.Path)/Images/Script/IconProfiler.image</second>
+			<second>$(Images.Path)/New/Script/IconProfiler.svg</second>
 		</item>
 		<item>
 			<first>Script.MoveDependencyDown</first>
-			<second>$(Images.Path)/Images/Script/MoveDependencyDown.image</second>
+			<second>$(Images.Path)/New/Script/MoveDependencyDown.svg</second>
 		</item>
 		<item>
 			<first>Script.MoveDependencyUp</first>
-			<second>$(Images.Path)/Images/Script/MoveDependencyUp.image</second>
+			<second>$(Images.Path)/New/Script/MoveDependencyUp.svg</second>
 		</item>
 		<item>
 			<first>Script.ProfilerClear</first>
-			<second>$(Images.Path)/Images/Script/ProfilerClear.image</second>
+			<second>$(Images.Path)/New/Script/ProfilerClear.svg</second>
 		</item>
 		<item>
 			<first>Script.ReferenceFunction</first>
-			<second>$(Images.Path)/Images/Script/ReferenceFunction.image</second>
+			<second>$(Images.Path)/New/Script/ReferenceFunction.svg</second>
 		</item>
 		<item>
 			<first>Script.RemoveBreakpoints</first>
-			<second>$(Images.Path)/Images/Script/RemoveBreakpoints.image</second>
+			<second>$(Images.Path)/New/Script/RemoveBreakpoints.svg</second>
 		</item>
 		<item>
 			<first>Script.RemoveDependency</first>
-			<second>$(Images.Path)/Images/Script/RemoveDependency.image</second>
+			<second>$(Images.Path)/New/Script/RemoveDependency.svg</second>
 		</item>
 		<item>
 			<first>Script.ToggleComments</first>
-			<second>$(Images.Path)/Images/Script/ToggleComments.image</second>
+			<second>$(Images.Path)/New/Script/ToggleComments.svg</second>
 		</item>
 		<item>
 			<first>Script.Tool.Debugger</first>
-			<second>$(Images.Path)/Images/Script/ToolDebugger.image</second>
+			<second>$(Images.Path)/New/Script/ToolDebugger.svg</second>
 		</item>
 		<item>
 			<first>Script.Tool.Profiler</first>
-			<second>$(Images.Path)/Images/Script/ToolProfiler.image</second>
+			<second>$(Images.Path)/New/Script/ToolProfiler.svg</second>
 		</item>
 		<item>
 			<first>Shader.Tools</first>
-			<second>$(Images.Path)/Images/Shader/Tools.image</second>
+			<second>$(Images.Path)/New/Shader/Tools.svg</second>
 		</item>
+
+		<!-- SolutionBuilder -->
 		<item>
 			<first>SolutionBuilder.Aggregation</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Aggregation.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Aggregation.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.AggregationRule</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/AggregationRule.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/AggregationRule.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.Configuration</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Configuration.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Configuration.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.File</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/File.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/File.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.Folders</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Folders.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Folders.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.Icon</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Icon.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Icon.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.Project</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Project.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Project.svg</second>
 		</item>
 		<item>
 			<first>SolutionBuilder.Solution</first>
-			<second>$(Images.Path)/Images/SolutionBuilder/Solution.image</second>
+			<second>$(Images.Path)/New/SolutionBuilder/Solution.svg</second>
 		</item>
 
 		<!-- Sound -->
 		<item>
 			<first>Sound.Play</first>
-			<second>$(Images.Path)/Images/Sound/Play.image</second>
+			<second>$(Images.Path)/New/Sound/Play.svg</second>
 		</item>
 		<item>
 			<first>Sound.PlusMinus</first>
-			<second>$(Images.Path)/Images/Sound/PlusMinus.image</second>
+			<second>$(Images.Path)/New/Sound/PlusMinus.svg</second>
 		</item>
-
-		<!-- Resound -->
 		<item>
 			<first>Sound.Grain</first>
-			<second>$(Images.Path)/Images/Sound/Grain.image</second>
+			<second>$(Images.Path)/New/Sound/Grain.svg</second>
 		</item>
 		<item>
 			<first>Sound.GrainA</first>
-			<second>$(Images.Path)/Images/Sound/GrainA.image</second>
+			<second>$(Images.Path)/New/Sound/GrainA.svg</second>
 		</item>
 		<item>
 			<first>Sound.GrainF</first>
-			<second>$(Images.Path)/Images/Sound/GrainF.image</second>
+			<second>$(Images.Path)/New/Sound/GrainF.svg</second>
 		</item>
 		<item>
 			<first>Sound.GrainAF</first>
-			<second>$(Images.Path)/Images/Sound/GrainAF.image</second>
+			<second>$(Images.Path)/New/Sound/GrainAF.svg</second>
 		</item>
 		<item>
 			<first>Sound.BlendGrain</first>
-			<second>$(Images.Path)/Images/Sound/BlendGrain.image</second>
+			<second>$(Images.Path)/New/Sound/BlendGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.EnvelopeGrain</first>
-			<second>$(Images.Path)/Images/Sound/EnvelopeGrain.image</second>
+			<second>$(Images.Path)/New/Sound/EnvelopeGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.PlayGrain</first>
-			<second>$(Images.Path)/Images/Sound/PlayGrain.image</second>
+			<second>$(Images.Path)/New/Sound/PlayGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.RandomGrain</first>
-			<second>$(Images.Path)/Images/Sound/RandomGrain.image</second>
+			<second>$(Images.Path)/New/Sound/RandomGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.RepeatGrain</first>
-			<second>$(Images.Path)/Images/Sound/RepeatGrain.image</second>
+			<second>$(Images.Path)/New/Sound/RepeatGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.SequenceGrain</first>
-			<second>$(Images.Path)/Images/Sound/SequenceGrain.image</second>
+			<second>$(Images.Path)/New/Sound/SequenceGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.SimultaneousGrain</first>
-			<second>$(Images.Path)/Images/Sound/SimultaneousGrain.image</second>
+			<second>$(Images.Path)/New/Sound/SimultaneousGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.InLoopOutGrain</first>
-			<second>$(Images.Path)/Images/Sound/InLoopOutGrain.image</second>
+			<second>$(Images.Path)/New/Sound/InLoopOutGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.MuteGrain</first>
-			<second>$(Images.Path)/Images/Sound/MuteGrain.image</second>
+			<second>$(Images.Path)/New/Sound/MuteGrain.svg</second>
 		</item>
 		<item>
 			<first>Sound.TriggerGrain</first>
-			<second>$(Images.Path)/Images/Sound/TriggerGrain.image</second>
+			<second>$(Images.Path)/New/Sound/TriggerGrain.svg</second>
 		</item>
 
 		<!-- Spray -->
 		<item>
 			<first>Spray.BrowseBackground</first>
-			<second>$(Images.Path)/Images/Spray/BrowseBackground.image</second>
+			<second>$(Images.Path)/New/Spray/BrowseBackground.svg</second>
 		</item>
 		<item>
 			<first>Spray.BrowseImageProcess</first>
-			<second>$(Images.Path)/Images/Spray/BrowseImageProcess.image</second>
+			<second>$(Images.Path)/New/Spray/BrowseImageProcess.svg</second>
 		</item>
 		<item>
 			<first>Spray.LayerAdd</first>
-			<second>$(Images.Path)/Images/Spray/LayerAdd.image</second>
+			<second>$(Images.Path)/New/Spray/LayerAdd.svg</second>
 		</item>
 		<item>
 			<first>Spray.LayerDelete</first>
-			<second>$(Images.Path)/Images/Spray/LayerDelete.image</second>
+			<second>$(Images.Path)/New/Spray/LayerDelete.svg</second>
 		</item>
 		<item>
 			<first>Spray.LayerHidden</first>
-			<second>$(Images.Path)/Images/Spray/LayerHidden.image</second>
+			<second>$(Images.Path)/New/Spray/LayerHidden.svg</second>
 		</item>
 		<item>
 			<first>Spray.LayerVisible</first>
-			<second>$(Images.Path)/Images/Spray/LayerVisible.image</second>
+			<second>$(Images.Path)/New/Spray/LayerVisible.svg</second>
 		</item>
 		<item>
 			<first>Spray.Playback</first>
-			<second>$(Images.Path)/Images/Spray/Playback.image</second>
+			<second>$(Images.Path)/New/Spray/Playback.svg</second>
 		</item>
 		<item>
 			<first>Spray.Randomize</first>
-			<second>$(Images.Path)/Images/Spray/Randomize.image</second>
+			<second>$(Images.Path)/New/Spray/Randomize.svg</second>
 		</item>
 		<item>
 			<first>Spray.ToggleGroundClip</first>
-			<second>$(Images.Path)/Images/Spray/ToggleGroundClip.image</second>
+			<second>$(Images.Path)/New/Spray/ToggleGroundClip.svg</second>
 		</item>
 		<item>
 			<first>Spray.ToggleGuideLines</first>
-			<second>$(Images.Path)/Images/Spray/ToggleGuideLines.image</second>
+			<second>$(Images.Path)/New/Spray/ToggleGuideLines.svg</second>
 		</item>
 		<item>
 			<first>Spray.ToggleMoveEmitter</first>
-			<second>$(Images.Path)/Images/Spray/ToggleMoveEmitter.image</second>
+			<second>$(Images.Path)/New/Spray/ToggleMoveEmitter.svg</second>
 		</item>
+
+		<!-- Terrain -->
 		<item>
 			<first>Terrain.Terrain</first>
-			<second>$(Images.Path)/Images/Terrain/Terrain.image</second>
+			<second>$(Images.Path)/New/Terrain/Terrain.svg</second>
 		</item>
+
+		<!-- Texture -->
 		<item>
 			<first>Texture.PlusMinus</first>
-			<second>$(Images.Path)/Images/Texture/PlusMinus.image</second>
+			<second>$(Images.Path)/New/Texture/PlusMinus.svg</second>
 		</item>
+
+		<!-- Theme editor -->
         <item>
             <first>ThemeEditor.Icon</first>
-            <second>$(Images.Path)/Images/Editor/Icon.image</second>
-        </item>        
+            <second>$(Images.Path)/New/Editor/Icon.svg</second>
+        </item>
+
+        <!-- Theater -->
 		<item>
 			<first>Theater.Theater</first>
-			<second>$(Images.Path)/Images/Theater/Theater.image</second>
+			<second>$(Images.Path)/New/Theater/Theater.svg</second>
 		</item>
+
+		<!-- UI -->
 		<item>
 			<first>UI.CaptionClose</first>
-			<second>$(Images.Path)/Images/UI/Close.image</second>
+			<second>$(Images.Path)/New/UI/Close.svg</second>
 		</item>
 		<item>
 			<first>UI.CaptionMinimize</first>
-			<second>$(Images.Path)/Images/UI/Minimize.image</second>
+			<second>$(Images.Path)/New/UI/Minimize.svg</second>
 		</item>
 		<item>
 			<first>UI.CaptionMaximize</first>
-			<second>$(Images.Path)/Images/UI/Maximize.image</second>
+			<second>$(Images.Path)/New/UI/Maximize.svg</second>
 		</item>
 		<item>
 			<first>UI.Checked</first>
-			<second>$(Images.Path)/Images/UI/Checked.image</second>
+			<second>$(Images.Path)/New/UI/Checked.svg</second>
 		</item>
 		<item>
 			<first>UI.DockClose</first>
-			<second>$(Images.Path)/Images/UI/DockClose.image</second>
+			<second>$(Images.Path)/New/UI/DockClose.svg</second>
 		</item>
 		<item>
 			<first>UI.DockGripper</first>
-			<second>$(Images.Path)/Images/UI/DockGripper.image</second>
+			<second>$(Images.Path)/New/UI/DockGripper.svg</second>
 		</item>
 		<item>
 			<first>UI.FileDialog.Directory</first>
-			<second>$(Images.Path)/Images/UI/Directory.image</second>
+			<second>$(Images.Path)/New/UI/Directory.svg</second>
 		</item>
 		<item>
 			<first>UI.FileDialog.File</first>
-			<second>$(Images.Path)/Images/UI/File.image</second>
-		</item>
-		<item>
-			<first>UI.Graph.Background</first>
-			<second>$(Images.Path)/New/UI/Graph/Background.svg</second>
+			<second>$(Images.Path)/New/UI/File.svg</second>
 		</item>
 		<item>
 			<first>UI.Graph.Comment</first>
-			<second>$(Images.Path)/Images/UI/Graph/Comment.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Comment.svg</second>
 		</item>
 		<item>
 			<first>UI.Graph.External</first>
-			<second>$(Images.Path)/Images/UI/Graph/External.image</second>
+			<second>$(Images.Path)/New/UI/Graph/External.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.ExternalError</first>
-			<second>$(Images.Path)/Images/UI/Graph/ExternalError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/External.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.ExternalErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/ExternalErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/External.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.ExternalSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/ExternalSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/External.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.InOut</first>
-			<second>$(Images.Path)/Images/UI/Graph/InOut.image</second>
+			<second>$(Images.Path)/New/UI/Graph/InOut.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.InOutError</first>
-			<second>$(Images.Path)/Images/UI/Graph/InOutError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/InOut.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.InOutErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/InOutErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/InOut.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.InOutSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/InOutSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/InOut.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Input</first>
-			<second>$(Images.Path)/Images/UI/Graph/Input.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Input.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.InputError</first>
-			<second>$(Images.Path)/Images/UI/Graph/InputError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Input.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.InputErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/InputErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Input.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.InputSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/InputSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Input.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Ipol</first>
-			<second>$(Images.Path)/Images/UI/Graph/Ipol.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Ipol.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.IpolError</first>
-			<second>$(Images.Path)/Images/UI/Graph/IpolError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Ipol.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.IpolErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/IpolErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Ipol.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.IpolSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/IpolSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Ipol.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Label</first>
-			<second>$(Images.Path)/Images/UI/Graph/Label.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Label.svg</second>
 		</item>
 		<item>
 			<first>UI.Graph.Group</first>
-			<second>$(Images.Path)/Images/UI/Graph/Group.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Group.svg|0</second>
 		</item>
 		<item>
 			<first>UI.Graph.GroupSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/GroupSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Group.svg|1</second>
 		</item>
 		<item>
 			<first>UI.Graph.Node</first>
-			<second>$(Images.Path)/New/UI/Graph/Node.svg</second>
+			<second>$(Images.Path)/New/UI/Graph/Node.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.NodeError</first>
-			<second>$(Images.Path)/Images/UI/Graph/NodeError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Node.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.NodeErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/NodeErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Node.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.NodeSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/NodeSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Node.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Output</first>
-			<second>$(Images.Path)/Images/UI/Graph/Output.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Output.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.OutputError</first>
-			<second>$(Images.Path)/Images/UI/Graph/OutputError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Output.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.OutputErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/OutputErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Output.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.OutputSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/OutputSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Output.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Pin</first>
-			<second>$(Images.Path)/Images/UI/Graph/Pin.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Pin.svg|0</second>
 		</item>
 		<item>
 			<first>UI.Graph.PinError</first>
-			<second>$(Images.Path)/Images/UI/Graph/PinError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Pin.svg|2</second>
 		</item>
 		<item>
 			<first>UI.Graph.PinHot</first>
-			<second>$(Images.Path)/Images/UI/Graph/PinHot.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Pin.svg|1</second>
 		</item>
 		<item>
 			<first>UI.Graph.Script</first>
-			<second>$(Images.Path)/Images/UI/Graph/Script.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Script.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.ScriptError</first>
-			<second>$(Images.Path)/Images/UI/Graph/ScriptError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Script.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.ScriptErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/ScriptErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Script.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.ScriptSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/ScriptSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Script.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Uniform</first>
-			<second>$(Images.Path)/Images/UI/Graph/Uniform.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Uniform.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.UniformError</first>
-			<second>$(Images.Path)/Images/UI/Graph/UniformError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Uniform.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.UniformErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/UniformErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Uniform.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.UniformSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/UniformSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Uniform.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.Variable</first>
-			<second>$(Images.Path)/Images/UI/Graph/Variable.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Variable.svg|0,0</second>
 		</item>
 		<item>
 			<first>UI.Graph.VariableError</first>
-			<second>$(Images.Path)/Images/UI/Graph/VariableError.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Variable.svg|0,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.VariableErrorSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/VariableErrorSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Variable.svg|1,1</second>
 		</item>
 		<item>
 			<first>UI.Graph.VariableSelected</first>
-			<second>$(Images.Path)/Images/UI/Graph/VariableSelected.image</second>
+			<second>$(Images.Path)/New/UI/Graph/Variable.svg|1,0</second>
 		</item>
 		<item>
 			<first>UI.GridView</first>
-			<second>$(Images.Path)/Images/UI/GridView.image</second>
+			<second>$(Images.Path)/New/UI/GridView.svg</second>
 		</item>
 		<item>
 			<first>UI.IconExclamation</first>
-			<second>$(Images.Path)/Images/UI/IconExclamation.image</second>
+			<second>$(Images.Path)/New/UI/MessageBox.svg|0</second>
 		</item>
 		<item>
 			<first>UI.IconHand</first>
-			<second>$(Images.Path)/Images/UI/IconHand.image</second>
+			<second>$(Images.Path)/New/UI/MessageBox.svg|1</second>
 		</item>
 		<item>
 			<first>UI.IconError</first>
-			<second>$(Images.Path)/Images/UI/IconError.image</second>
+			<second>$(Images.Path)/New/UI/MessageBox.svg|2</second>
 		</item>
 		<item>
 			<first>UI.IconQuestion</first>
-			<second>$(Images.Path)/Images/UI/IconQuestion.image</second>
+			<second>$(Images.Path)/New/UI/MessageBox.svg|3</second>
 		</item>
 		<item>
 			<first>UI.IconInformation</first>
-			<second>$(Images.Path)/Images/UI/IconInformation.image</second>
+			<second>$(Images.Path)/New/UI/MessageBox.svg|4</second>
 		</item>
 		<item>
 			<first>UI.LayerHidden</first>
-			<second>$(Images.Path)/Images/UI/LayerHidden.image</second>
+			<second>$(Images.Path)/New/UI/LayerHidden.svg</second>
 		</item>
 		<item>
 			<first>UI.LayerVisible</first>
-			<second>$(Images.Path)/Images/UI/LayerVisible.image</second>
+			<second>$(Images.Path)/New/UI/LayerVisible.svg</second>
 		</item>
 		<item>
 			<first>UI.Log</first>
-			<second>$(Images.Path)/Images/UI/Log.image</second>
+			<second>$(Images.Path)/New/UI/LogList.svg</second>
 		</item>
         <item>
             <first>UI.Preview.Background</first>
-            <second>$(Images.Path)/Images/UI/Preview/Background.image</second>
+            <second>$(Images.Path)/New/UI/Preview/Background.svg</second>
         </item>
 		<item>
 			<first>UI.PropertyList</first>
-			<second>$(Images.Path)/Images/UI/PropertyList.image</second>
+			<second>$(Images.Path)/New/UI/PropertyList.svg</second>
 		</item>
 		<item>
 			<first>UI.SearchCaseSensitive</first>
-			<second>$(Images.Path)/Images/UI/SearchCaseSensitive.image</second>
+			<second>$(Images.Path)/New/UI/SearchCaseSensitive.svg</second>
 		</item>
 		<item>
 			<first>UI.SearchWholeWord</first>
-			<second>$(Images.Path)/Images/UI/SearchWholeWord.image</second>
+			<second>$(Images.Path)/New/UI/SearchWholeWord.svg</second>
 		</item>
 		<item>
 			<first>UI.SearchWildCard</first>
-			<second>$(Images.Path)/Images/UI/SearchWildCard.image</second>
+			<second>$(Images.Path)/New/UI/SearchWildCard.svg</second>
 		</item>
 		<item>
 			<first>UI.SequenceCollapse</first>
-			<second>$(Images.Path)/Images/UI/SequenceCollapse.image</second>
+			<second>$(Images.Path)/New/UI/SequenceCollapse.svg</second>
 		</item>
 		<item>
 			<first>UI.SequenceExpand</first>
-			<second>$(Images.Path)/Images/UI/SequenceExpand.image</second>
+			<second>$(Images.Path)/New/UI/SequenceExpand.svg</second>
 		</item>
 		<item>
 			<first>UI.SmallCross</first>
-			<second>$(Images.Path)/Images/UI/SmallCross.image</second>
+			<second>$(Images.Path)/New/UI/SmallCross.svg</second>
 		</item>
 		<item>
 			<first>UI.SmallDots</first>
-			<second>$(Images.Path)/Images/UI/SmallDots.image</second>
+			<second>$(Images.Path)/New/UI/SmallDots.svg</second>
 		</item>
 		<item>
 			<first>UI.SmallPen</first>
-			<second>$(Images.Path)/Images/UI/SmallPen.image</second>
+			<second>$(Images.Path)/New/UI/SmallPen.svg</second>
 		</item>
 		<item>
 			<first>UI.SmallPlus</first>
-			<second>$(Images.Path)/Images/UI/SmallPlus.image</second>
+			<second>$(Images.Path)/New/UI/SmallPlus.svg</second>
 		</item>
 		<item>
 			<first>UI.UpDown0</first>
-			<second>$(Images.Path)/Images/UI/UpDown0.image</second>
+			<second>$(Images.Path)/New/UI/UpDown0.svg</second>
 		</item>
 		<item>
 			<first>UI.UpDown1</first>
-			<second>$(Images.Path)/Images/UI/UpDown1.image</second>
+			<second>$(Images.Path)/New/UI/UpDown1.svg</second>
 		</item>
 		<item>
 			<first>UI.UpDown2</first>
-			<second>$(Images.Path)/Images/UI/UpDown2.image</second>
+			<second>$(Images.Path)/New/UI/UpDown2.svg</second>
 		</item>
 		<item>
 			<first>UI.UpDown3</first>
-			<second>$(Images.Path)/Images/UI/UpDown3.image</second>
+			<second>$(Images.Path)/New/UI/UpDown3.svg</second>
 		</item>
 		<item>
 			<first>UI.TabClose</first>
-			<second>$(Images.Path)/Images/UI/TabClose.image</second>
+			<second>$(Images.Path)/New/UI/TabClose.svg</second>
 		</item>
 		<item>
 			<first>UI.Tree</first>
-			<second>$(Images.Path)/Images/UI/Tree.image</second>
+			<second>$(Images.Path)/New/UI/TreeView.svg</second>
 		</item>
 		<item>
 			<first>UI.Unchecked</first>
-			<second>$(Images.Path)/Images/UI/Unchecked.image</second>
+			<second>$(Images.Path)/New/UI/Unchecked.svg</second>
 		</item>
 	</values>
 </object>

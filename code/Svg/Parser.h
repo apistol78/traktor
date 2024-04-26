@@ -12,6 +12,7 @@
 #include <string>
 #include "Core/Ref.h"
 #include "Core/Object.h"
+#include "Core/Io/Path.h"
 #include "Core/Math/Matrix33.h"
 
 // import/export mechanism.
@@ -48,6 +49,8 @@ public:
 	Parser();
 
 	Ref< Shape > parse(xml::Document* doc);
+
+	Ref< Shape > parse(const traktor::Path& fileName);
 
 private:
 	Ref< Style > m_defaultStyle;

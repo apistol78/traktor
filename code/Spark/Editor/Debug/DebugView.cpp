@@ -271,7 +271,7 @@ void paintInstance(ui::Canvas& canvas, std::map< void*, DebugView::ShapeCache >&
 							raster->fill(fs0, fs1, drawing::Raster::FillRule::NonZero);
 
 						if (ls >= 0)
-							raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeCap::Square);
+							raster->stroke(lineStyleBase + ls, lineStyles[ls].getLineWidth() * strokeScale, drawing::Raster::StrokeJoin::Miter, drawing::Raster::StrokeCap::Square);
 					}
 
 					raster->submit();

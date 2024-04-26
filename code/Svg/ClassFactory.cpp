@@ -150,7 +150,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classParser = new AutoRuntimeClass< Parser >();
 	classParser->addConstructor();
-	classParser->addMethod("parse", &Parser::parse);
+	//classParser->addMethod("parse", &Parser::parse);
 	registrar->registerClass(classParser);
 
 	auto classPath = new AutoRuntimeClass< Path >();
