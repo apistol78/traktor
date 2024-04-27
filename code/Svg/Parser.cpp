@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include <locale>
 #include <sstream>
+#include "Core/Containers/StaticVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Base64.h"
@@ -347,7 +348,7 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	const float y = parseAttr(elm, L"y");
 	const float width = parseAttr(elm, L"width");
 	const float height = parseAttr(elm, L"height");
-	const float round = parseAttr(elm, L"ry") * 2.0f;
+	const float round = parseAttr(elm, L"ry");
 
 	Path path;
 
@@ -361,16 +362,16 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	}
 	else
 	{
-		path.moveTo (x + round, y);
-		path.lineTo (x + width - round, y);
-		path.cubicTo(x + width, y, x + width, y, x + width, y + round);
-		path.lineTo (x + width, y + height - round);
-		path.cubicTo(x + width, y + height, x + width, y + height, x + width - round, y + height);
-		path.lineTo (x + round, y + height);
-		path.cubicTo(x, y + height, x, y + height, x, y + height - round);
-		path.lineTo (x, y + round);
-		path.cubicTo(x, y, x, y, x + round, y);
-		path.close  ();
+		path.moveTo   (x + round, y);
+		path.lineTo   (x + width - round, y);
+		path.quadricTo(x + width, y, x + width, y + round);
+		path.lineTo   (x + width, y + height - round);
+		path.quadricTo(x + width, y + height, x + width - round, y + height);
+		path.lineTo   (x + round, y + height);
+		path.quadricTo(x, y + height, x, y + height - round);
+		path.lineTo   (x, y + round);
+		path.quadricTo(x, y, x + round, y);
+		path.close    ();
 	}
 
 	return new PathShape(path);
@@ -914,8 +915,8 @@ Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& att
 
 		if (fnc == L"matrix")
 		{
-			std::vector< float > argv;
-			Split< std::wstring, float >::any(args, L",", argv);
+			StaticVector< float, 6 > argv;
+			Split< std::wstring, float >::any(args, L",", argv, false, 6);
 
 			if (argv.size() >= 6)
 				transform = transform * Matrix33(
@@ -926,27 +927,31 @@ Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& att
 		}
 		else if (fnc == L"translate")
 		{
-			std::vector< float > argv;
-			Split< std::wstring, float >::any(args, L",", argv);
+			StaticVector< float, 2 > argv;
+			Split< std::wstring, float >::any(args, L",", argv, false, 2);
 
 			if (argv.size() >= 2)
 				transform = transform * translate(argv[0], argv[1]);
+			else if (argv.size() >= 1)
+				transform = transform * translate(argv[0], 0.0f);
 		}
 		else if (fnc == L"rotate")
 		{
-			std::vector< float > argv;
-			Split< std::wstring, float >::any(args, L",", argv);
+			StaticVector< float, 1 > argv;
+			Split< std::wstring, float >::any(args, L",", argv, false, 1);
 
 			if (argv.size() >= 1)
 				transform = transform * rotate(deg2rad(argv[0]));
 		}
 		else if (fnc == L"scale")
 		{
-			std::vector< float > argv;
-			Split< std::wstring, float >::any(args, L",", argv);
+			StaticVector< float, 2 > argv;
+			Split< std::wstring, float >::any(args, L",", argv, false, 2);
 
 			if (argv.size() >= 2)
 				transform = transform * scale(argv[0], argv[1]);
+			else if (argv.size() >= 1)
+				transform = transform * scale(argv[0], 0.0f);
 		}
 		else
 			log::error << L"Unknown transform function \"" << fnc << L"\"" << Endl;
