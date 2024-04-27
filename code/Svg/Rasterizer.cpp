@@ -9,6 +9,7 @@
 #include <functional>
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
+#include "Drawing/Filters/ScaleFilter.h"
 #include "Svg/Document.h"
 #include "Svg/Gradient.h"
 #include "Svg/IShapeVisitor.h"
@@ -171,11 +172,28 @@ Ref< drawing::Image > Rasterizer::raster(const Document* document, float scale, 
 	if (width <= 0 || height <= 0)
 		return nullptr;
 
-	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
-	image->clear(Color4f(1.0f, 1.0f, 1.0f, 0.0f));
+	const int32_t ss = 1;
+
+	Ref< drawing::Image > image = new drawing::Image(
+		drawing::PixelFormat::getR8G8B8A8(),
+		width * ss,
+		height * ss
+	);
+	image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 	
 	if (!raster(document, image, pageOffsetX, pageOffsetY))
 		return nullptr;
+
+	if (ss > 1)
+	{
+		const drawing::ScaleFilter scaleFilter(
+			width,
+			height,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		image->apply(&scaleFilter);
+	}
 
 	return image;
 }

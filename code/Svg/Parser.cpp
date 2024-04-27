@@ -347,7 +347,7 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	const float y = parseAttr(elm, L"y");
 	const float width = parseAttr(elm, L"width");
 	const float height = parseAttr(elm, L"height");
-	const float round = parseAttr(elm, L"ry");
+	const float round = parseAttr(elm, L"ry") * 2.0f;
 
 	Path path;
 

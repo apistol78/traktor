@@ -24,9 +24,25 @@
 #include <agg_span_allocator.h>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Envelope.h"
 #include "Core/Misc/Align.h"
 #include "Drawing/Image.h"
 #include "Drawing/Raster.h"
+
+namespace traktor
+{
+
+Color4f operator * (float v, const Color4f& c)
+{
+	return c * Scalar(v);
+}
+
+Color4f operator * (const Color4f& c, float v)
+{
+	return c * Scalar(v);
+}
+
+}
 
 namespace traktor::drawing
 {
@@ -141,29 +157,25 @@ private:
 class LinearGradientStyle : public IStyle< agg::rgba8 >
 {
 public:
-	LinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	explicit LinearGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
 	:	m_gradientMatrix(gradientMatrix)
-	,	m_colors(colors)
 	{
-		// Premultiply to be in "byte range".
-		for (AlignedVector< std::pair< Color4f, float > >::iterator i = m_colors.begin(); i != m_colors.end(); ++i)
-			i->first *= Scalar(255.0f);
+		for (const auto& p : colors)
+			m_envelope.addKey(p.second, p.first * 255.0_simd);
 	}
 
 	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
-		float s = m_colors.front().second;
-		float e = m_colors.back().second;
-		float n = 1.0f / (e - s);
+		float s = 0.0f;
+		float n = 1.0f;
 
 		Vector2 pt = m_gradientMatrix * Vector2(float(x), float(y));
 		Vector2 dt = m_gradientMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			float f = clamp((pt.x - s) * n, 0.0f, 1.0f);
-
-			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
+			const float f = clamp((pt.x - s) * n, 0.0f, 1.0f);
+			const Color4f c = m_envelope(f);
 
 			span[i] = agg::rgba8(
 				agg::int8u(c.getRed()),
@@ -178,36 +190,32 @@ public:
 
 private:
 	Matrix33 m_gradientMatrix;
-	AlignedVector< std::pair< Color4f, float > > m_colors;
+	Envelope< Color4f, LinearEvaluator< Color4f > > m_envelope;
 };
 
 /*! Radial gradient style for 32-bit colors. */
 class RadialGradientStyle : public IStyle< agg::rgba8 >
 {
 public:
-	RadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
+	explicit RadialGradientStyle(const Matrix33& gradientMatrix, const AlignedVector< std::pair< Color4f, float > >& colors)
 	:	m_gradientMatrix(gradientMatrix)
-	,	m_colors(colors)
 	{
-		// Premultiply to be in "byte range".
-		for (AlignedVector< std::pair< Color4f, float > >::iterator i = m_colors.begin(); i != m_colors.end(); ++i)
-			i->first *= Scalar(255.0f);
+		for (const auto& p : colors)
+			m_envelope.addKey(p.second, p.first * 255.0_simd);
 	}
 
 	virtual void generateSpan(agg::rgba8* span, int x, int y, unsigned len) const override final
 	{
-		float s = m_colors.front().second;
-		float e = m_colors.back().second;
-		float n = 1.0f / (e - s);
+		float s = 0.0f;
+		float n = 1.0f;
 
 		Vector2 pt = m_gradientMatrix * Vector2(float(x), float(y));
 		Vector2 dt = m_gradientMatrix * Vector2(float(x + 1.0f), float(y)) - pt;
 
 		for (unsigned i = 0; i < len; ++i)
 		{
-			float f = clamp(((pt * pt).length() - s) * n, 0.0f, 1.0f);
-
-			Color4f c(lerp(m_colors.front().first, m_colors.back().first, Scalar(f)));
+			const float f = clamp(((pt * pt).length() - s) * n, 0.0f, 1.0f);
+			const Color4f c = m_envelope(f);
 
 			span[i] = agg::rgba8(
 				agg::int8u(c.getRed()),
@@ -222,7 +230,7 @@ public:
 
 private:
 	Matrix33 m_gradientMatrix;
-	AlignedVector< std::pair< Color4f, float > > m_colors;
+	Envelope< Color4f, LinearEvaluator< Color4f > > m_envelope;
 };
 
 /*! Image style for 32-bit colors. */
@@ -435,7 +443,6 @@ public:
 	:	m_rbuffer((agg::int8u*)image->getData(), image->getWidth(), image->getHeight(), image->getWidth() * image->getPixelFormat().getByteSize())
 	,	m_pf(m_rbuffer)
 	,	m_renderer(m_pf)
-	// ,	m_closed(false)
 	{
 	}
 
@@ -656,13 +663,13 @@ bool Raster::setImage(Image* image)
 	m_impl = nullptr;
 
 	if (image->getPixelFormat() == PixelFormat::getA8B8G8R8())
-		m_impl = new RasterImpl< agg::pixfmt_rgba32, agg::rgba8 >(image);
+		m_impl = new RasterImpl< agg::pixfmt_rgba32_plain, agg::rgba8 >(image);
 	else if (image->getPixelFormat() == PixelFormat::getB8G8R8A8())
-		m_impl = new RasterImpl< agg::pixfmt_argb32, agg::rgba8 >(image);
+		m_impl = new RasterImpl< agg::pixfmt_argb32_plain, agg::rgba8 >(image);
 	else if (image->getPixelFormat() == PixelFormat::getA8R8G8B8())
-		m_impl = new RasterImpl< agg::pixfmt_bgra32, agg::rgba8 >(image);
+		m_impl = new RasterImpl< agg::pixfmt_bgra32_plain, agg::rgba8 >(image);
 	else if (image->getPixelFormat() == PixelFormat::getR8G8B8A8())
-		m_impl = new RasterImpl< agg::pixfmt_abgr32, agg::rgba8 >(image);
+		m_impl = new RasterImpl< agg::pixfmt_abgr32_plain, agg::rgba8 >(image);
 	else if (image->getPixelFormat() == PixelFormat::getA8())
 		m_impl = new RasterImpl< agg::pixfmt_gray8, agg::gray8 >(image);
 

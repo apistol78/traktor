@@ -90,6 +90,11 @@ private:
 	Ref< IRuntimeDelegate > m_delegateLeave;
 };
 
+Ref< Shape > Parser_parse(Parser* self, xml::Document* doc)
+{
+	return self->parse(doc);
+}
+
 RefArray< BoxedSubPath > Path_getSubPaths(Path* self)
 {
 	RefArray< BoxedSubPath > bsp;
@@ -124,6 +129,11 @@ void Shape_visit(Shape* self, IRuntimeDelegate* enter, IRuntimeDelegate* leave)
 	self->visit(&visitor);
 }
 
+Ref< drawing::Image > Rasterizer_raster(Rasterizer* self, const Document* document)
+{
+	return self->raster(document);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.svg.ClassFactory", 0, ClassFactory, IRuntimeClassFactory)
@@ -150,7 +160,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classParser = new AutoRuntimeClass< Parser >();
 	classParser->addConstructor();
-	//classParser->addMethod("parse", &Parser::parse);
+	classParser->addMethod("parse", &Parser_parse);
 	registrar->registerClass(classParser);
 
 	auto classPath = new AutoRuntimeClass< Path >();
@@ -211,7 +221,7 @@ void ClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classRasterizer = new AutoRuntimeClass< Rasterizer >();
 	classRasterizer->addConstructor();
-	// classRasterizer->addMethod("raster", &Rasterizer::raster);
+	classRasterizer->addMethod("raster", &Rasterizer_raster);
 	registrar->registerClass(classRasterizer);
 }
 
