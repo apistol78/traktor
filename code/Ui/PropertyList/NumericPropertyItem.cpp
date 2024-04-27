@@ -231,7 +231,8 @@ void NumericPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const
 		Point(x, y),
 		Point(0, 0),
 		upDown->getSize(parent),
-		upDown
+		upDown,
+		BlendMode::Alpha
 	);
 }
 

@@ -642,6 +642,7 @@ private:
 			m_current = &m_paths.back();
 			m_current->second = false;
 		}
+		T_FATAL_ASSERT(m_current->second == false);
 		return m_current->first;
 	}
 };

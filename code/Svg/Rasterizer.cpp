@@ -101,6 +101,7 @@ bool Rasterizer::raster(const Document* document, drawing::Image* image, float p
 					if (subPath.closed)
 					{
 						raster.lineTo(Mshape * subPath.origin);
+						raster.moveTo(Mshape * subPath.origin);
 						raster.close();
 					}
 				}
