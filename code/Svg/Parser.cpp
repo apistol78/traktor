@@ -937,10 +937,15 @@ Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& att
 		}
 		else if (fnc == L"rotate")
 		{
-			StaticVector< float, 1 > argv;
-			Split< std::wstring, float >::any(args, L",", argv, false, 1);
+			StaticVector< float, 3 > argv;
+			Split< std::wstring, float >::any(args, L",", argv, false, 3);
 
-			if (argv.size() >= 1)
+			if (argv.size() >= 3)
+			{
+				const Matrix33 Mt = translate(argv[1], argv[2]);
+				transform = transform * (Mt * rotate(deg2rad(argv[0])) * Mt.inverse());
+			}
+			else if (argv.size() >= 1)
 				transform = transform * rotate(deg2rad(argv[0]));
 		}
 		else if (fnc == L"scale")
