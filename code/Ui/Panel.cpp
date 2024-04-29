@@ -70,6 +70,7 @@ void Panel::eventPaint(PaintEvent* event)
 	const Rect rcInner = Widget::getInnerRect();
 	const StyleSheet* ss = getStyleSheet();
 
+	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(rcInner);
 
 	const bool focus = containFocus();
@@ -89,17 +90,6 @@ void Panel::eventPaint(PaintEvent* event)
 		AnLeft,
 		AnCenter
 	);
-
-	const Point pntBorder[5] =
-	{
-		Point(rcInner.left, rcInner.top),
-		Point(rcInner.right - 1, rcInner.top),
-		Point(rcInner.right - 1, rcInner.bottom - 1),
-		Point(rcInner.left, rcInner.bottom - 1),
-		Point(rcInner.left, rcInner.top)
-	};
-	canvas.setForeground(Color4ub(128, 128, 128));
-	canvas.drawLines(pntBorder, 5);
 
 	event->consume();
 }
