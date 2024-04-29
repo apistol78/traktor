@@ -679,7 +679,7 @@ Ref< Gradient > Parser::parseGradientDef(const xml::Element* defs, const xml::El
 				gradient->setStops(refGradient->getStops());
 		}
 		else
-			log::error << L"Unable to resolve reference \"" << ref << L"\"; no such element." << Endl;
+			log::debug << L"Unable to resolve reference \"" << ref << L"\"; no such element." << Endl;
 	}
 
 	RefArray< xml::Element > stops;
@@ -795,7 +795,7 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 						style->setFillGradient(it->second);
 					}
 					else
-						log::error << L"Invalid style; no such gradient \"" << id << L"\"." << Endl;
+						log::debug << L"Invalid style; no such gradient \"" << id << L"\"." << Endl;
 				}
 				else if (parseColor(value, color))
 				{
