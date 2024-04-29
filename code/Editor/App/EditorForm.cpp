@@ -59,7 +59,6 @@
 #include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
 #include "Editor/App/EditorForm.h"
-#include "Editor/App/EditorPageForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
 #include "Editor/App/LogView.h"
@@ -1143,13 +1142,13 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		const auto& icons = iconsGroup->getValues();
 
-		int32_t iconIndex = 2;
+		int32_t iconIndex = 0;
 		for (auto i = icons.begin(); i != icons.end(); ++i)
 		{
 			const TypeInfo* iconType = TypeInfo::find(i->first.c_str());
 			if (iconType && is_type_of(*iconType, type_of(object)))
 			{
-				iconIndex = PropertyInteger::get(i->second);
+				iconIndex = PropertyInteger::get(i->second) - 2;
 				break;
 			}
 		}
