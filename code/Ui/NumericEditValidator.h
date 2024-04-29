@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -33,11 +33,11 @@ class T_DLLCLASS NumericEditValidator : public EditValidator
 	T_RTTI_CLASS;
 
 public:
-	NumericEditValidator(
+	explicit NumericEditValidator(
 		bool floatPoint,
 		float min = -std::numeric_limits< float >::max(),
 		float max = std::numeric_limits< float >::max(),
-		int decimals = 8
+		int32_t decimals = 8
 	);
 
 	virtual EditValidator::Result validate(const std::wstring& text) const override;
@@ -46,7 +46,7 @@ private:
 	bool m_floatPoint;
 	float m_min;
 	float m_max;
-	int m_decimals;
+	int32_t m_decimals;
 };
 
 }

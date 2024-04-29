@@ -572,10 +572,8 @@ Tab::PageState* Tab::findPageState(int32_t depth)
 	return nullptr;
 }
 
-Tab::PageState::PageState(TabPage* page_, int32_t right_)
+Tab::PageState::PageState(TabPage* page_)
 :	page(page_)
-,	right(right_)
-,	depth(0)
 {
 }
 

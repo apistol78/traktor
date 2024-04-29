@@ -14,7 +14,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.NumericEditValidator", NumericEditValidator, EditValidator)
 
-NumericEditValidator::NumericEditValidator(bool floatPoint, float min, float max, int decimals)
+NumericEditValidator::NumericEditValidator(bool floatPoint, float min, float max, int32_t decimals)
 :	m_floatPoint(floatPoint)
 ,	m_min(min)
 ,	m_max(max)
@@ -25,12 +25,12 @@ NumericEditValidator::NumericEditValidator(bool floatPoint, float min, float max
 EditValidator::Result NumericEditValidator::validate(const std::wstring& text) const
 {
 	EditValidator::Result result = EditValidator::VrOk;
-	int state = 0;
-	int pos = 0;
-	int dec = 0;
+	int32_t state = 0;
+	int32_t pos = 0;
+	int32_t dec = 0;
 	bool dot = false;
 
-	while (state >= 0 && pos < int(text.length()))
+	while (state >= 0 && pos < int32_t(text.length()))
 	{
 		const wchar_t ch = text[pos];
 		switch (state)

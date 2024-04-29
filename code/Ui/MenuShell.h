@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -32,8 +32,6 @@ class T_DLLCLASS MenuShell : public Widget
 	T_RTTI_CLASS;
 
 public:
-	MenuShell();
-
 	bool create(Widget* parent, int32_t maxItems = -1);
 
 	virtual void destroy() override;
@@ -49,7 +47,7 @@ public:
 	virtual Size getPreferredSize(const Size& hint) const override final;
 
 private:
-	int32_t m_maxItems;
+	int32_t m_maxItems = -1;
 	RefArray< MenuItem > m_items;
 	Ref< MenuItem > m_activeItem;
 	Ref< ScrollBar > m_scrollBar;

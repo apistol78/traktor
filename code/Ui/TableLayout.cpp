@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,33 +10,30 @@
 #include <numeric>
 #include <functional>
 #include "Core/Containers/StaticVector.h"
-#include "Core/Misc/Split.h"
+#include "Core/Misc/StringSplit.h"
+#include "Core/Misc/TString.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Rect.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 typedef StaticVector< Widget*, 32 * 32 > childrenVector_t;
 typedef StaticVector< int32_t, 32 > dimensionVector_t;
 
 void parseDefinition(const std::wstring& def, AlignedVector< int32_t >& out)
 {
-	std::vector< std::wstring > tmp;
-	if (!Split< std::wstring >::any(def, L",;", tmp))
-		return;
-	for (const auto& str : tmp)
+	out.reserve(32);
+	for (auto str : StringSplit< std::wstring >(def,  L",;"))
 	{
 		if (str == L"*")
 			out.push_back(0);
 		else
 		{
-			int32_t n = abs(atoi(wstombs(str).c_str()));
+			const int32_t n = abs(atoi(wstombs(str).c_str()));
 			if (*(str.end() - 1) == '%')
 				out.push_back(-n);
 			else
@@ -54,8 +51,8 @@ void calculate(
 	dimensionVector_t& h
 )
 {
-	int32_t nc = (int32_t)cdef.size();
-	int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
+	const int32_t nc = (int32_t)cdef.size();
+	const int32_t nr = (int32_t)((children.size() + nc - 1) / std::max(nc, 1));
 
 	w.resize(nc);
 	for (int32_t c = 0; c < nc; ++c)
@@ -78,7 +75,7 @@ void calculate(
 		}
 	}
 
-	// Calculate occupied width by either child prefered size or absolute size.
+	// Calculate occupied width by either child preferred size or absolute size.
 	int32_t wt = 0;
 	int32_t wrt = 0;
 	for (int c = 0; c < nc; ++c)
@@ -138,7 +135,7 @@ void calculate(
 	}
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TableLayout", TableLayout, Layout)
 
@@ -291,5 +288,4 @@ void TableLayout::update(Widget* widget)
 	widget->setChildRects(rects.c_ptr(), (uint32_t)rects.size(), true);
 }
 
-	}
 }

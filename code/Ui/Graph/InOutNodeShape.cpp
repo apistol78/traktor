@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@
 #include "Ui/Graph/PaintSettings.h"
 #include "Ui/Graph/Pin.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_marginWidth = 3_ut;	/*< Distance from image edge to "visual" edge. */
 const Unit c_textMargin = 16_ut;
@@ -57,7 +55,7 @@ Unit getQuantizedTextWidth(Widget* widget, const std::wstring& txt)
 		alignUp(x, widget->pixel(16_ut))
 	);
 }
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.InOutNodeShape", InOutNodeShape, INodeShape)
 
@@ -223,5 +221,4 @@ UnitSize InOutNodeShape::calculateSize(GraphControl* graph, const Node* node) co
 	return UnitSize(width, graph->unit(sz.cy));
 }
 
-	}
 }

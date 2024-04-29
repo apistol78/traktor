@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -20,12 +20,10 @@
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/PaintSettings.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_margin = 16_ut;
 
@@ -39,7 +37,7 @@ struct Dim
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CommentNodeShape", CommentNodeShape, INodeShape)
 
@@ -71,7 +69,7 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 	{
 		const int32_t lineHeight = canvas->getTextExtent(L"W").cy;
 
-		std::vector< std::wstring > lines;
+		AlignedVector< std::wstring > lines;
 		Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 		Size textSize(0, 0);
@@ -115,7 +113,7 @@ UnitSize CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) 
 	const Dim dim(graph);
 	const Unit lineHeight = graph->unit(graph->getFontMetric().getExtent(L"W").cy);
 
-	std::vector< std::wstring > lines;
+	AlignedVector< std::wstring > lines;
 	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
 
 	UnitSize textSize(0_ut, 0_ut);
@@ -129,5 +127,4 @@ UnitSize CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) 
 	return textSize + UnitSize(c_margin * 2_ut, c_margin * 2_ut);
 }
 
-	}
 }

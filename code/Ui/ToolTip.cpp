@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,25 +12,17 @@
 #include "Ui/ToolTipEvent.h"
 #include "Ui/Itf/IEventLoop.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const Unit c_margin = 4_ut;
 const Unit c_cursorHeight = 16_ut;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolTip", ToolTip, ToolForm)
-
-ToolTip::ToolTip()
-:	m_tracking(false)
-,	m_counter(0)
-{
-}
 
 bool ToolTip::create(Widget* parent)
 {
@@ -79,7 +71,7 @@ void ToolTip::eventTimer(TimerEvent* event)
 
 	if (mousePosition.x >= 0 && mousePosition.y >= 0)
 	{
-		Size parentSize = parent->getRect().getSize();
+		const Size parentSize = parent->getRect().getSize();
 		if (mousePosition.x < parentSize.cx && mousePosition.y < parentSize.cy)
 			inside = true;
 	}
@@ -128,5 +120,4 @@ void ToolTip::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

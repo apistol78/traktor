@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,12 +21,10 @@
 #include "Ui/Graph/Pin.h"
 #include "Ui/Graph/PaintSettings.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 struct Dim
 {
@@ -108,7 +106,7 @@ void calculateLinearSpline(const GraphControl* graph, Point s1, Point d1, Aligne
 	outSpline[5] = Point(d1.x - graph->pixel(6_ut), d1.y);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Edge", Edge, Object)
 
@@ -252,9 +250,9 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	const Point at = graph->pixel(m_destination->getPosition()) + offset;
 	const Point arrow[] =
 	{
-		Point(at.x - graph->pixel(12_ut), at.y - graph->pixel(5_ut)),
-		Point(at.x - graph->pixel(2_ut) , at.y),
-		Point(at.x - graph->pixel(12_ut), at.y + graph->pixel(5_ut))
+		Point(at.x - graph->pixel(10_ut), at.y - graph->pixel(5_ut)),
+		Point(at.x , at.y),
+		Point(at.x - graph->pixel(10_ut), at.y + graph->pixel(5_ut))
 	};
 	canvas->fillPolygon(arrow, 3);
 
@@ -310,5 +308,4 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	}
 }
 
-	}
 }

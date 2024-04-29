@@ -66,10 +66,6 @@ public:
 
 	TabPage* cycleActivePage(bool forward);
 
-	void addSelChangeEventHandler(EventHandler* eventHandler);
-
-	void addCloseEventHandler(EventHandler* eventHandler);
-
 	virtual Size getMinimumSize() const override;
 
 	virtual Size getPreferredSize(const Size& hint) const override;
@@ -78,10 +74,12 @@ private:
 	struct PageState
 	{
 		Ref< TabPage > page;
-		int32_t right;
-		int32_t depth;
+		int32_t right = 0;
+		int32_t depth = 0;
 
-		PageState(TabPage* page = nullptr, int32_t right = 0);
+		PageState() = default;
+
+		explicit PageState(TabPage* pag);
 
 		bool operator == (const PageState& rh) const;
 	};
