@@ -116,7 +116,7 @@ float parseDecimalNumber(std::wstring::iterator& i, std::wstring::iterator end)
 		number = std::stof(std::wstring(i, end), &n);
 		i += n;
 	}
-	catch(const std::exception& e)
+	catch (const std::exception&)
 	{
 		log::error << L"Exception while parsing number; \"" << std::wstring(i, end) << L"\"." << Endl;
 		i = end;
@@ -144,7 +144,7 @@ float parseNumber(const std::wstring& value, float defaultValue = 0.0f)
 	{
 		return std::stof(value);
 	}
-	catch(const std::exception& e)
+	catch (const std::exception&)
 	{
 		return defaultValue;
 	}
@@ -614,7 +614,7 @@ Ref< Shape > Parser::parseImage(xml::Element* elm)
 		if (startsWith(value, L"data:image/png;base64,"))
 		{
 			AlignedVector< uint8_t > data = Base64().decode(value.substr(22));
-			image = drawing::Image::load(data.c_ptr(), data.size(), L"png");
+			image = drawing::Image::load(data.c_ptr(), (uint32_t)data.size(), L"png");
 		}
 	}
 
@@ -671,7 +671,7 @@ Ref< Gradient > Parser::parseGradientDef(const xml::Element* defs, const xml::El
 	if (elm->hasAttribute(L"xlink:href"))
 	{
 		const std::wstring ref = elm->getAttribute(L"xlink:href")->getValue().substr(1);
-		const xml::Element* xref = defs->getSingle(str(L"*[@id=%S]", ref.c_str()));
+		const xml::Element* xref = defs->getSingle(std::wstring(L"*[@id=") + ref + std::wstring(L"]"));
 		if (xref != nullptr)
 		{
 			Ref< Gradient > refGradient = parseGradientDef(defs, xref);

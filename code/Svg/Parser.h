@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,10 @@
  */
 #pragma once
 
-#include <map>
 #include <string>
 #include "Core/Ref.h"
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Matrix33.h"
 
@@ -54,8 +54,8 @@ public:
 
 private:
 	Ref< Style > m_defaultStyle;
-	std::map< std::wstring, Ref< Gradient > > m_gradients;
-	std::map< std::wstring, Ref< Shape > > m_shapeDefs;
+	SmallMap< std::wstring, Ref< Gradient > > m_gradients;
+	SmallMap< std::wstring, Ref< Shape > > m_shapeDefs;
 
 	Ref< Shape > traverse(xml::Element* elm);
 
