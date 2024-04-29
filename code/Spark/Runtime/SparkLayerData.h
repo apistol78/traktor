@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <map>
+#include "Core/Containers/SmallMap.h"
 #include "Runtime/Engine/LayerData.h"
 #include "Resource/Id.h"
 
@@ -43,9 +43,9 @@ private:
 	friend class SparkLayerPipeline;
 
 	resource::Id< Movie > m_movie;
-	std::map< std::wstring, resource::Id< Movie > > m_externalMovies;
-	bool m_clearBackground;
-	bool m_enableSound;
+	SmallMap< std::wstring, resource::Id< Movie > > m_externalMovies;
+	bool m_clearBackground = false;
+	bool m_enableSound = false;
 };
 
 }

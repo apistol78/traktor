@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Spark/Runtime/SparkClassFactory.h"
 #include "Spark/Runtime/SparkLayer.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spark.SparkClassFactory", 0, SparkClassFactory, IRuntimeClassFactory)
 
@@ -34,5 +32,4 @@ void SparkClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classSparkLayer);
 }
 
-	}
 }

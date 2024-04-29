@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,6 +10,7 @@
 
 #include "Runtime/Engine/Layer.h"
 #include "Core/Class/Any.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Vector2.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
@@ -61,7 +62,7 @@ public:
 		bool permitTransition,
 		runtime::IEnvironment* environment,
 		const resource::Proxy< Movie >& movie,
-		const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
+		const SmallMap< std::wstring, resource::Proxy< Movie > >& externalMovies,
 		bool clearBackground,
 		bool enableSound
 	);
@@ -144,7 +145,7 @@ private:
 
 	Ref< runtime::IEnvironment > m_environment;
 	resource::Proxy< Movie > m_movie;
-	std::map< std::wstring, resource::Proxy< Movie > > m_externalMovies;
+	SmallMap< std::wstring, resource::Proxy< Movie > > m_externalMovies;
 	Ref< MoviePlayer > m_moviePlayer;
 	Ref< MovieRenderer > m_movieRenderer;
 	Ref< AccDisplayRenderer > m_displayRenderer;

@@ -87,7 +87,7 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 class CustomMovieLoader : public IMovieLoader
 {
 public:
-	explicit CustomMovieLoader(const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies)
+	explicit CustomMovieLoader(const SmallMap< std::wstring, resource::Proxy< Movie > >& externalMovies)
 	:	m_externalMovies(externalMovies)
 	{
 	}
@@ -110,7 +110,7 @@ public:
 	}
 
 private:
-	const std::map< std::wstring, resource::Proxy< Movie > >& m_externalMovies;
+	const SmallMap< std::wstring, resource::Proxy< Movie > >& m_externalMovies;
 };
 
 	}
@@ -123,7 +123,7 @@ SparkLayer::SparkLayer(
 	bool permitTransition,
 	runtime::IEnvironment* environment,
 	const resource::Proxy< Movie >& movie,
-	const std::map< std::wstring, resource::Proxy< Movie > >& externalMovies,
+	const SmallMap< std::wstring, resource::Proxy< Movie > >& externalMovies,
 	bool clearBackground,
 	bool enableSound
 )

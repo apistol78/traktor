@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,10 +13,8 @@
 #	include "Spark/Runtime/SparkClassFactory.h"
 #	include "Spark/Runtime/SparkLayerData.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 extern "C" void __module__Traktor_Spark_Runtime()
 {
@@ -25,7 +23,6 @@ extern "C" void __module__Traktor_Spark_Runtime()
 	T_FORCE_LINK_REF(RuntimePlugin);
 }
 
-	}
 }
 
 #endif
