@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,6 @@
 #pragma once
 
 #include "Core/RefArray.h"
-#include "Core/Thread/Semaphore.h"
 #include "Sound/IAudioBuffer.h"
 
 // import/export mechanism.
@@ -20,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IGrain;
 
@@ -32,7 +29,7 @@ class T_DLLCLASS BankBuffer : public IAudioBuffer
 	T_RTTI_CLASS;
 
 public:
-	BankBuffer(const RefArray< IGrain >& grains);
+	explicit BankBuffer(const RefArray< IGrain >& grains);
 
 	void updateCursor(IAudioBufferCursor* cursor) const;
 
@@ -46,9 +43,6 @@ public:
 
 private:
 	RefArray< IGrain > m_grains;
-	mutable Semaphore m_lock;
 };
 
-	}
 }
-

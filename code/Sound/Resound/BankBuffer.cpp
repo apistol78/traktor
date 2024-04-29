@@ -1,22 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Thread/Acquire.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/IGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct BankBufferCursor : public RefCountImpl< IAudioBufferCursor >
 {
@@ -43,7 +40,7 @@ struct BankBufferCursor : public RefCountImpl< IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankBuffer", BankBuffer, IAudioBuffer)
 
@@ -54,7 +51,6 @@ BankBuffer::BankBuffer(const RefArray< IGrain >& grains)
 
 void BankBuffer::updateCursor(IAudioBufferCursor* cursor) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
 	const IGrain* currentGrain = m_grains[bankCursor->m_grainIndex];
 	currentGrain->updateCursor(bankCursor->m_grainCursor);
@@ -62,7 +58,6 @@ void BankBuffer::updateCursor(IAudioBufferCursor* cursor) const
 
 const IGrain* BankBuffer::getCurrentGrain(const IAudioBufferCursor* cursor) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
 	const IGrain* currentGrain = m_grains[bankCursor->m_grainIndex];
 	return currentGrain->getCurrentGrain(bankCursor->m_grainCursor);
@@ -70,7 +65,6 @@ const IGrain* BankBuffer::getCurrentGrain(const IAudioBufferCursor* cursor) cons
 
 void BankBuffer::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< const IGrain >& outActiveGrains) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
 	if (bankCursor && bankCursor->m_grainCursor)
 	{
@@ -82,28 +76,25 @@ void BankBuffer::getActiveGrains(const IAudioBufferCursor* cursor, RefArray< con
 Ref< IAudioBufferCursor > BankBuffer::createCursor() const
 {
 	if (m_grains.empty())
-		return 0;
+		return nullptr;
 
 	Ref< BankBufferCursor > bankCursor = new BankBufferCursor();
 
 	bankCursor->m_grainIndex = 0;
 	bankCursor->m_grainCursor = m_grains[0]->createCursor();
 
-	return bankCursor->m_grainCursor ? bankCursor : 0;
+	return bankCursor->m_grainCursor ? bankCursor : nullptr;
 }
 
 bool BankBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, AudioBlock& outBlock) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
 
-	int32_t ngrains = int32_t(m_grains.size());
+	const int32_t ngrains = int32_t(m_grains.size());
 	if (bankCursor->m_grainIndex >= ngrains)
 		return false;
 
 	Ref< IGrain > grain = m_grains[bankCursor->m_grainIndex];
-
 	for (;;)
 	{
 		if (grain->getBlock(
@@ -117,12 +108,10 @@ bool BankBuffer::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, 
 			return false;
 
 		grain = m_grains[bankCursor->m_grainIndex];
-
 		bankCursor->m_grainCursor = grain->createCursor();
 	}
 
 	return true;
 }
 
-	}
 }
