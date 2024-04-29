@@ -475,7 +475,7 @@ void Tab::eventPaint(PaintEvent* event)
 						m_bitmapImages,
 						BlendMode::Alpha
 					);
-					textOffset += bitmapSize.cy;
+					textOffset += bitmapSize.cy + pixel(2_ut);
 				}
 
 				// Draw close button.
