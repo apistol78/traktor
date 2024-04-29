@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,25 +23,16 @@
 
 #define T_MEASURE_THROUGHPUT 0
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 const int32_t c_preloadSmallStreamSize = 8 * 1024 * 1024;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.StreamServer", StreamServer, Object)
-
-StreamServer::StreamServer()
-:	m_listenPort(0)
-,	m_serverThread(0)
-,	m_nextId(1)
-{
-}
 
 bool StreamServer::create()
 {
@@ -78,7 +69,7 @@ void StreamServer::destroy()
 uint32_t StreamServer::publish(IStream* stream)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
-	uint32_t id = m_nextId;
+	const uint32_t id = m_nextId;
 	m_streams[id] = stream;
 	if (++m_nextId == 0)
 		m_nextId = 1;
@@ -273,13 +264,13 @@ void StreamServer::threadServer()
 
 						while (nrequest > 0)
 						{
-							int64_t navail = min< int64_t >(nrequest, sizeof(buffer.data));
-							int64_t nread = client.stream->read(buffer.data, navail);
+							const int64_t navail = min< int64_t >(nrequest, sizeof(buffer.data));
+							const int64_t nread = client.stream->read(buffer.data, navail);
 
 							if (nread > 0)
 							{
 								buffer.size = nread;
-								client.socket->send(&buffer, sizeof(int64_t) + nread);
+								client.socket->send(&buffer, (int32_t)(sizeof(int64_t) + nread));
 							}
 							else
 							{
@@ -302,8 +293,8 @@ void StreamServer::threadServer()
 
 						while (nbytes > 0)
 						{
-							int64_t nread = min< int64_t >(nbytes, sizeof(buffer.data));
-							int32_t nrecv = client.socket->recv(buffer.data, nread);
+							const int64_t nread = min< int64_t >(nbytes, sizeof(buffer.data));
+							const int32_t nrecv = client.socket->recv(buffer.data, (int32_t)nread);
 							if (nrecv <= 0)
 								break;
 
@@ -331,5 +322,4 @@ void StreamServer::threadServer()
 	}
 }
 
-	}
 }

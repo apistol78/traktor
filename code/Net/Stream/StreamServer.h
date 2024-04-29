@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,8 +9,8 @@
 #pragma once
 
 #include <list>
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
@@ -27,12 +27,14 @@ namespace traktor
 class IStream;
 class Thread;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class TcpSocket;
 
-/*! \brief
+/*!
  * \ingroup Net
  */
 class T_DLLCLASS StreamServer : public Object
@@ -40,8 +42,6 @@ class T_DLLCLASS StreamServer : public Object
 	T_RTTI_CLASS;
 
 public:
-	StreamServer();
-
 	bool create();
 
 	void destroy();
@@ -62,17 +62,16 @@ private:
 		uint32_t streamId;
 	};
 
-	uint16_t m_listenPort;
+	uint16_t m_listenPort = 0;
 	Ref< TcpSocket > m_listenSocket;
 	AlignedVector< Client > m_clients;
 	mutable Semaphore m_streamsLock;
-	std::map< uint32_t, Ref< IStream > > m_streams;
-	Thread* m_serverThread;
-	uint32_t m_nextId;
+	SmallMap< uint32_t, Ref< IStream > > m_streams;
+	Thread* m_serverThread = nullptr;
+	uint32_t m_nextId = 1;
 
 	void threadServer();
 };
 
-	}
 }
 

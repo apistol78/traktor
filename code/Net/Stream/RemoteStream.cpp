@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #include "Net/TcpSocket.h"
 #include "Net/Stream/RemoteStream.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 class ConnectionPool : public ISingleton
 {
@@ -109,12 +107,7 @@ private:
 	{
 		SocketAddressIPv4 addr;
 		Ref< TcpSocket > socket;
-		bool inuse;
-
-		SocketEntry()
-		:	inuse(false)
-		{
-		}
+		bool inuse = false;
 	};
 
 	Semaphore m_lock;
@@ -123,7 +116,7 @@ private:
 
 ConnectionPool* ConnectionPool::ms_instance = nullptr;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.RemoteStream", RemoteStream, IStream)
 
@@ -166,8 +159,8 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 		uint8_t* ptr = &buffer[0];
 		for (int64_t nread = 0; nread < avail; )
 		{
-			int32_t read = int32_t(std::min< int64_t >(avail - nread, 1024 * 1024));
-			int32_t result = socket->recv(ptr, read);
+			const int32_t read = int32_t(std::min< int64_t >(avail - nread, 1024 * 1024));
+			const int32_t result = socket->recv(ptr, read);
 			if (result <= 0)
 			{
 				log::error << L"RemoteStream; unexpected disconnect from server." << Endl;
@@ -270,7 +263,7 @@ int64_t RemoteStream::read(void* block, int64_t nbytes)
 		int64_t nread = 0;
 		while (nread < navail)
 		{
-			int32_t result = m_socket->recv(rp, navail - nread);
+			const int32_t result = m_socket->recv(rp, navail - nread);
 			if (result > 0)
 			{
 				nread += result;
@@ -302,8 +295,8 @@ int64_t RemoteStream::write(const void* block, int64_t nbytes)
 
 	while (nwritten < nbytes)
 	{
-		int32_t write = (int32_t)std::min< int64_t >(nbytes - nwritten, 65536);
-		int32_t result = m_socket->send(&ptr[nwritten], write);
+		const int32_t write = (int32_t)std::min< int64_t >(nbytes - nwritten, 65536);
+		const int32_t result = m_socket->send(&ptr[nwritten], write);
 		if (result != write)
 			break;
 		nwritten += write;
@@ -324,5 +317,4 @@ RemoteStream::RemoteStream()
 {
 }
 
-	}
 }

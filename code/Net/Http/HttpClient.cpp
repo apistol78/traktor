@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,12 +24,10 @@
 #include "Net/Http/HttpResponse.h"
 #include "Net/Http/IHttpRequestContent.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpRequestContent > content, Ref< HttpClientResult > result)
 {
@@ -58,11 +56,11 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 	// Build GET string.
 	std::wstring resource = url.getPath();
 
-	std::wstring query = url.getQuery();
+	const std::wstring query = url.getQuery();
 	if (!query.empty())
 		resource += L"?" + query;
 
-	std::wstring ref = url.getRef();
+	const std::wstring ref = url.getRef();
 	if (!ref.empty())
 		resource += L"#" + ref;
 
@@ -121,7 +119,7 @@ void executeRequestJob(std::wstring method, net::Url url, Ref< const IHttpReques
 	result->succeed(response, stream);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpClient", HttpClient, Object)
 
@@ -161,5 +159,4 @@ Ref< HttpClientResult > HttpClient::post(const net::Url& url, const IHttpRequest
 		return nullptr;
 }
 
-	}
 }
