@@ -98,7 +98,7 @@ public:
 	 * \param directory New current directory.
 	 * \return True if successfully changed.
 	 */
-	bool setCurrentVolumeAndDirectory(const Path& directory);
+	[[nodiscard]] bool setCurrentVolumeAndDirectory(const Path& directory);
 
 	/*! Get current volume and directory.
 	 */

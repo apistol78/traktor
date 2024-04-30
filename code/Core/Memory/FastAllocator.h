@@ -29,7 +29,7 @@ public:
 
 	virtual ~FastAllocator();
 
-	virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
+	[[nodiscard]] virtual void* alloc(size_t size, size_t align, const char* const tag) override final;
 
 	virtual void free(void* ptr) override final;
 

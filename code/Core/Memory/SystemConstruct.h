@@ -15,21 +15,21 @@ namespace traktor
 {
 
 template < typename T >
-T* allocConstruct()
+[[nodiscard]] T* allocConstruct()
 {
 	void* p = Alloc::acquireAlign(sizeof(T), alignOf< T >(), "global");
 	return new (p) T();
 }
 
 template < typename T, typename A >
-T* allocConstruct(A a)
+[[nodiscard]] T* allocConstruct(A a)
 {
 	void* p = Alloc::acquireAlign(sizeof(T), alignOf< T >(), "global");
 	return new (p) T(a);
 }
 
 template < typename T, typename A, typename B, typename C >
-T* allocConstruct(A a, B b, C c)
+[[nodiscard]] T* allocConstruct(A a, B b, C c)
 {
 	void* p = Alloc::acquireAlign(sizeof(T), alignOf< T >(), "global");
 	return new (p) T(a, b, c);

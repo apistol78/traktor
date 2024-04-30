@@ -45,14 +45,14 @@ public:
 	virtual ~RenderContext();
 
 	/*! Allocate a unaligned block of memory from context's heap. */
-	void* alloc(uint32_t blockSize);
+	[[nodiscard]] void* alloc(uint32_t blockSize);
 
 	/*! Allocate a aligned block of memory from context's heap. */
-	void* alloc(uint32_t blockSize, uint32_t align);
+	[[nodiscard]] void* alloc(uint32_t blockSize, uint32_t align);
 
 	/*! Allocate object from context's heap. */
 	template < typename ObjectType, typename ... ArgumentTypes >
-	ObjectType* alloc(ArgumentTypes&& ... args)
+	[[nodiscard]] ObjectType* alloc(ArgumentTypes&& ... args)
 	{
 		void* object = alloc((uint32_t)sizeof(ObjectType), (uint32_t)alignOf< ObjectType >());
 		return new (object) ObjectType(std::forward< ArgumentTypes >(args) ...);
@@ -60,7 +60,7 @@ public:
 
 	/*! Allocate named object from context's heap. */
 	template < typename ObjectType, typename ... ArgumentTypes >
-	ObjectType* allocNamed(const std::wstring_view& name, ArgumentTypes&& ... args)
+	[[nodiscard]] ObjectType* allocNamed(const std::wstring_view& name, ArgumentTypes&& ... args)
 	{
 		ObjectType* object = alloc< ObjectType, ArgumentTypes... >(std::forward< ArgumentTypes >(args) ...);
 		object->name = name;

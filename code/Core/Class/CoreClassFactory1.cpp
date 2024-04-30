@@ -25,6 +25,7 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyArray.h"
@@ -85,7 +86,8 @@ int64_t IStream_seek(IStream* self, int64_t origin, int64_t offset)
 
 void FileSystem_setCurrentVolumeAndDirectory(FileSystem* self, const Path& directory)
 {
-	self->setCurrentVolumeAndDirectory(directory);
+	if (!self->setCurrentVolumeAndDirectory(directory))
+		log::warning << L"Unable to set current volume and directory \"" << directory.getPathName() << L"\"." << Endl;
 }
 
 Path FileSystem_getCurrentVolumeAndDirectory(FileSystem* self)

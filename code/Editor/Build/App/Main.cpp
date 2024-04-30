@@ -138,7 +138,8 @@ int main(int argc, const char** argv)
 		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();
 
 		const Path executablePath = OS::getInstance().getExecutable().getPathOnly();
-		FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath);
+		if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(executablePath))
+			return 1;
 
 		while (!FileSystem::getInstance().exist(L"LICENSE.txt"))
 		{
@@ -153,7 +154,8 @@ int main(int argc, const char** argv)
 		}
 
 		OS::getInstance().setEnvironment(L"TRAKTOR_HOME", FileSystem::getInstance().getCurrentVolumeAndDirectory().getPathNameOS());
-		FileSystem::getInstance().setCurrentVolumeAndDirectory(cwd);
+		if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(cwd))
+			return 1;
 	}
 
 	std::wstring settingsFile = L"$(TRAKTOR_HOME)/resources/runtime/configurations/Traktor.Editor.config";

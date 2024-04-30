@@ -34,7 +34,7 @@ public:
 
 	void* top() { return m_top; }
 
-	void* alloc();
+	[[nodiscard]] void* alloc();
 
 	bool free(void* p);
 

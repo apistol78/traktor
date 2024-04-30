@@ -56,7 +56,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 				log::error << L"No LICENSE.txt file found." << Endl;
 				return 1;
 			}
-			FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd);
+			if (!FileSystem::getInstance().setCurrentVolumeAndDirectory(pwd))
+				return 1;
 		}
 
 		const Path cwd = FileSystem::getInstance().getCurrentVolumeAndDirectory();

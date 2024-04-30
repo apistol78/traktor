@@ -33,7 +33,7 @@ public:
 			Alloc::freeAlign(allocator.top());
 	}
 
-	BoxedType* alloc()
+	[[nodiscard]] BoxedType* alloc()
 	{
 #if defined(T_BOXES_USE_MT_LOCK)
 		T_ANONYMOUS_VAR(Acquire< SpinLock >)(m_lock);

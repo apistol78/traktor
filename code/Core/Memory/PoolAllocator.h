@@ -66,14 +66,14 @@ public:
 	 * \param align Alignment of chunk.
 	 * \return Pointer to chunk.
 	 */
-	void* alloc(uint32_t size, uint32_t align);
+	[[nodiscard]] void* alloc(uint32_t size, uint32_t align);
 
 	/*! Allocate object.
 	 *
 	 * \return Pointer to object.
 	 */
 	template < typename Type >
-	Type* alloc()
+	[[nodiscard]] Type* alloc()
 	{
 		void* ptr = alloc((uint32_t)sizeof(Type), (uint32_t)alignOf< Type >());
 		return new (ptr) Type();
@@ -85,7 +85,7 @@ public:
 	 * \return Pointer to first object.
 	 */
 	template < typename Type >
-	Type* alloc(uint32_t count)
+	[[nodiscard]] Type* alloc(uint32_t count)
 	{
 		if (!count)
 			return nullptr;
@@ -100,7 +100,7 @@ public:
 	 * \return Pointer to first object pointer.
 	 */
 	template < typename Type >
-	Type** allocArray(uint32_t count)
+	[[nodiscard]] Type** allocArray(uint32_t count)
 	{
 		if (!count)
 			return nullptr;

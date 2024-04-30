@@ -28,13 +28,13 @@ class T_DLLCLASS Alloc
 {
 public:
 	/*! Allocate chunk of memory. */
-	static void* acquire(size_t size, const char* tag);
+	[[nodiscard]] static void* acquire(size_t size, const char* tag);
 
 	/*! Free chunk of memory. */
 	static void free(void* ptr);
 
 	/*! Allocate aligned chunk of memory. */
-	static void* acquireAlign(size_t size, size_t align, const char* tag);
+	[[nodiscard]] static void* acquireAlign(size_t size, size_t align, const char* tag);
 
 	/*! Free aligned chunk of memory. */
 	static void freeAlign(void* ptr);
