@@ -1992,7 +1992,7 @@ Ref< IPipelineDepends> EditorForm::createPipelineDepends(PipelineDependencySet* 
 		m_sourceDatabase,
 		m_outputDatabase,
 		dependencySet,
-		m_pipelineDb,
+		nullptr,
 		instanceCache,
 		nullptr,
 		recursionDepth
