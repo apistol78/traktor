@@ -254,7 +254,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(m_container);
-	for (int32_t i = 0; i < 18; ++i)
+	for (int32_t i = 0; i < 20; ++i)
 		m_toolBar->addImage(new ui::StyleBitmap(L"Shader.Tools", i));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), 7, ui::Command(L"ShaderGraph.Editor.Center")));
 	m_toolBar->addItem(new ui::ToolBarSeparator());
@@ -273,14 +273,13 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), 10, ui::Command(L"ShaderGraph.Editor.UpdateFragments")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), 11, ui::Command(L"ShaderGraph.Editor.ConstantFold")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_SWIZZLED_PERMUTATION"), 12, ui::Command(L"ShaderGraph.Editor.SwizzledPermutation")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 12, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), 18, ui::Command(L"ShaderGraph.Editor.CleanupSwizzles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), 13, ui::Command(L"ShaderGraph.Editor.InsertInterpolators")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_VARIABLES"), 16, ui::Command(L"ShaderGraph.Editor.ResolveVariables")));
-	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_BUNDLES"), 16, ui::Command(L"ShaderGraph.Editor.ResolveBundles")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_BUNDLES"), 19, ui::Command(L"ShaderGraph.Editor.ResolveBundles")));
 	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"SHADERGRAPH_RESOLVE_EXTERNALS"), 17, ui::Command(L"ShaderGraph.Editor.ResolveExternals")));
 
 	m_toolBar->addItem(new ui::ToolBarSeparator());
-
 	m_toolPlatform = new ui::ToolBarDropDown(ui::Command(), 100_ut, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
 	m_toolPlatform->add(L"Android");
 	m_toolPlatform->add(L"iOS");
