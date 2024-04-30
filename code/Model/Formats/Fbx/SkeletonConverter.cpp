@@ -97,11 +97,6 @@ bool convertSkeleton(
 	const Matrix44 Mrx90 = rotateX(deg2rad(-90.0f));
 
 	const bool result = traverse(nullptr, skeletonNode, [&](ufbx_node* parent, ufbx_node* node) {
-
-		// Skip armature node.
-		if (node == skeletonNode)
-			return true;
-
 		const std::wstring jointName = getJointName(node);
 
 		Matrix44 Mnode = Matrix44::identity();
@@ -130,7 +125,7 @@ bool convertSkeleton(
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
 		uint32_t parentId = c_InvalidIndex;
-		if (parent != nullptr && parent != skeletonNode)
+		if (parent != nullptr)
 		{
 			const std::wstring parentJointName = getJointName(parent);
 			parentId = outModel.findJointIndex(parentJointName);
@@ -179,11 +174,6 @@ Ref< Pose > convertPose(
 
 	Ref< Pose > pose = new Pose();
 	const bool result = traverse(nullptr, eskeletonNode, [&](ufbx_node* parent, ufbx_node* node) {
-
-		// Skip armature node.
-		if (node == eskeletonNode)
-			return true;
-
 		const std::wstring jointName = getJointName(node);
 		const uint32_t jointId = model.findJointIndex(jointName);
 		if (jointId == c_InvalidIndex)
@@ -204,7 +194,7 @@ Ref< Pose > convertPose(
 		Mjoint = Mjoint * scale(S);
 		Mjoint = axisTransform * Mjoint * axisTransform.inverse();
 
-		if (parent != nullptr && parent != eskeletonNode)
+		if (parent != nullptr)
 		{
 			const std::wstring parentJointName = getJointName(parent);
 			const uint32_t parentId = model.findJointIndex(parentJointName);
