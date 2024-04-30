@@ -214,10 +214,11 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 {
 	if (!m_inPaint)
 	{
-		if (font != m_fontOffScreen)
+		const int32_t dpi = hWnd.dpi();
+		const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
+
+		if (font != m_fontOffScreen || fontSize != m_fontOffScreenSize)
 		{
-			const int32_t dpi = hWnd.dpi();
-			const int32_t fontSize = (font.getSize().get() * dpi) / 96.0f;
 
 			s_dwFactory->CreateTextFormat(
 				font.getFace().c_str(),
@@ -237,6 +238,7 @@ Size CanvasDirect2DWin32::getExtent(Window& hWnd, const Font& font, const std::w
 			m_dwTextFormatOffScreen->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 
 			m_fontOffScreen = font;
+			m_fontOffScreenSize = fontSize;
 		}
 
 		ComRef< IDWriteTextLayout > dwLayout;
