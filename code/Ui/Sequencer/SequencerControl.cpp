@@ -20,17 +20,16 @@
 #include "Ui/Sequencer/SequenceItem.h"
 #include "Ui/Sequencer/SequenceMovedEvent.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
+const Unit c_preferedHeightMargin = 2_ut;
 const Unit c_sequenceHeight = 25_ut;
 const int c_endWidth = 200;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.SequencerControl", SequencerControl, Widget)
 
@@ -568,9 +567,10 @@ void SequencerControl::eventPaint(PaintEvent* event)
 	}
 
 	// Draw time information.
+	const int32_t infoHeight = getFontMetric().getHeight() + pixel(c_preferedHeightMargin) * 2;
 	const Rect rcTime(
 		rc.left,
-		rc.bottom - pixel(23_ut),
+		rc.bottom - infoHeight,
 		rc.left + m_separator,
 		rc.bottom
 	);
@@ -599,5 +599,4 @@ void SequencerControl::eventScroll(ScrollEvent* event)
 	event->consume();
 }
 
-	}
 }
