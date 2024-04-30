@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,17 +18,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::drawing
 {
-	namespace drawing
-	{
 
 class Image;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Bitmap;
 
@@ -53,9 +51,11 @@ private:
 	Ref< drawing::Image > m_previewImage;
 	Ref< Bitmap > m_previewBitmap;
 
+	void updatePreview();
+
+	void eventSize(SizeEvent* event);
+
 	void eventPaint(PaintEvent* event);
 };
 
-	}
 }
-
