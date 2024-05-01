@@ -3,17 +3,12 @@
 	<name>Main</name>
 	<inherit>{00000000-0000-0000-0000-000000000000}</inherit>
 	<layers>
-		<item type="traktor.runtime.WorldLayerData">
-			<name>world</name>
-			<permitTransition>true</permitTransition>
-			<scene>{646C7F9F-A386-A74E-9279-DD00117958A2}</scene>
-		</item>
 		<item type="traktor.spark.SparkLayerData" version="1">
 			<name>ui</name>
 			<permitTransition>true</permitTransition>
 			<movie>{E7EB59C5-57F9-BE42-93A3-FE38268D507D}</movie>
 			<externalMovies/>
-			<clearBackground>false</clearBackground>
+			<clearBackground>true</clearBackground>
 			<enableSound>true</enableSound>
 		</item>
 	</layers>

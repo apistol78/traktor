@@ -131,13 +131,16 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 		const int32_t tw = sz.cx / 3;
 
+		const int32_t dw = rc.getWidth() - dim.marginWidth * 2;
+		const int32_t dh = rc.getHeight();
+
 		const int32_t sx[] = { 0, tw, sz.cx - tw, sz.cx };
-		const int32_t dx[] = { 0, tw, rc.getWidth() - tw, rc.getWidth() };
+		const int32_t dx[] = { 0, tw, dw - tw, dw };
 
 		for (int32_t ix = 0; ix < 3; ++ix)
 		{
 			canvas->drawBitmap(
-				rc.getTopLeft() + Size(dx[ix], 0),
+				rc.getTopLeft() + Size(dim.marginWidth, 0) + Size(dx[ix], 0),
 				Size(dx[ix + 1] - dx[ix], sz.cy),
 				Point(sx[ix], 0),
 				Size(sx[ix + 1] - sx[ix], sz.cy),
@@ -152,7 +155,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	canvas->setBackground(Color4ub(255, 255, 255));
 
 	const Point inputPinPos(
-		rc.left - pinSize.cx / 2 + dim.marginWidth,
+		rc.left,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
@@ -166,7 +169,7 @@ void InOutNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	);
 
 	const Point outputPinPos(
-		rc.right - pinSize.cx / 2 - dim.marginWidth,
+		rc.right - pinSize.cx,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 

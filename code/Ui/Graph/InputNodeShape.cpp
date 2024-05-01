@@ -104,7 +104,7 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 	const PaintSettings& settings = canvas->getPaintSettings();
 	const Dim dim(graph);
 
-	Rect rc = graph->pixel(node->calculateRect()).offset(offset);
+	const Rect rc = graph->pixel(node->calculateRect()).offset(offset);
 
 	// Draw node shape.
 	{
@@ -136,13 +136,13 @@ void InputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* c
 
 	canvas->setBackground(Color4ub(255, 255, 255));
 
-	const Point pos(
+	const Point outputPinPos(
 		rc.right - pinSize.cx,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
 	canvas->drawBitmap(
-		pos,
+		outputPinPos,
 		pinSize,
 		Point(0, 0),
 		pinSize,

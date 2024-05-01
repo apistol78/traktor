@@ -132,13 +132,13 @@ void OutputNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas* 
 
 	canvas->setBackground(Color4ub(255, 255, 255));
 
-	const Point pos(
+	const Point inputPinPos(
 		rc.left,
 		rc.getCenter().y - pinSize.cy / 2
 	);
 
 	canvas->drawBitmap(
-		pos,
+		inputPinPos,
 		pinSize,
 		Point(0, 0),
 		pinSize,
