@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #include "Ui/Itf/ISystemBitmap.h"
 #include "Ui/X11/FormX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 bool haveProperty(Display* display, const Atom* properties, unsigned long nproperties, const char* tokenName)
 {
@@ -36,7 +34,7 @@ bool haveProperty(Display* display, const Atom* properties, unsigned long nprope
 	return false;
 }
 
-		}
+	}
 
 FormX11::FormX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IForm >(context, owner)
@@ -95,7 +93,7 @@ void FormX11::setText(const std::wstring& text)
 {
 	WidgetX11Impl< IForm >::setText(text);
 
-	std::string cs = wstombs(text);
+	const std::string cs = wstombs(text);
 	const char* csp = cs.c_str();
 
 	XTextProperty tp;
@@ -176,7 +174,7 @@ void FormX11::maximize()
 
 void FormX11::minimize()
 {
-	XEvent event;
+	XEvent event = {};
 	event.xclient.type = ClientMessage;
 	event.xclient.window = m_data.window;
 	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
@@ -189,7 +187,7 @@ void FormX11::minimize()
 
 void FormX11::restore()
 {
-	XEvent event;
+	XEvent event = {};
 	event.xclient.type = ClientMessage;
 	event.xclient.window = m_data.window;
 	event.xclient.message_type = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
@@ -268,6 +266,4 @@ void FormX11::showProgress(int32_t current, int32_t total)
 {
 }
 
-	}
 }
-

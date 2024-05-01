@@ -120,7 +120,7 @@ bool EventLoopX11::process(EventSubject* owner)
 		m_context->dispatch(e);
 	}
 
-	double dt = m_timer.getDeltaTime();
+	const double dt = m_timer.getDeltaTime();
 	Timers::getInstance().update(dt);
 
 	return !m_terminated;
@@ -134,7 +134,7 @@ int32_t EventLoopX11::execute(EventSubject* owner)
 
 	pendingMotion.type = 0;
 
-	int fd = ConnectionNumber(m_context->getDisplay());
+	const int fd = ConnectionNumber(m_context->getDisplay());
 	bool idle = true;
 
 	while (!m_terminated)

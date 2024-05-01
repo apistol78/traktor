@@ -140,7 +140,7 @@ void Context::setFocus(WidgetData* widget)
 
 		m_focused->focus = false;
 
-		XEvent xevent;
+		XEvent xevent = {};
 		xevent.type = FocusOut;
 		dispatch(m_focused->window, FocusOut, true, xevent);
 
@@ -154,7 +154,7 @@ void Context::setFocus(WidgetData* widget)
 
 		XSetInputFocus(m_display, m_focused->window, RevertToNone, CurrentTime);
 
-		XEvent xevent;
+		XEvent xevent = {};
 		xevent.type = FocusIn;
 		dispatch(m_focused->window, FocusIn, true, xevent);
 	}
@@ -180,7 +180,7 @@ void Context::dispatch(XEvent& xe)
 
 				m_focused->focus = false;
 
-				XEvent xevent;
+				XEvent xevent = {};
 				xevent.type = FocusOut;
 				dispatch(m_focused->window, FocusOut, true, xevent);
 
@@ -191,7 +191,7 @@ void Context::dispatch(XEvent& xe)
 				m_focused = b->second.widget;
 				m_focused->focus = true;
 
-				XEvent xevent;
+				XEvent xevent = {};
 				xevent.type = FocusIn;
 				dispatch(focusWindow, FocusIn, true, xevent);
 			}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,10 +14,8 @@
 #include "Ui/X11/DialogX11.h"
 #include "Ui/X11/Timers.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 DialogX11::DialogX11(Context* context, EventSubject* owner)
 :	WidgetX11Impl< IDialog >(context, owner)
@@ -174,7 +172,7 @@ void DialogX11::setMinSize(const Size& minSize)
 
 void DialogX11::setText(const std::wstring& text)
 {
-	std::string cs = wstombs(text);
+	const std::string cs = wstombs(text);
 	const char* csp = cs.c_str();
 
 	XTextProperty tp;
@@ -217,5 +215,4 @@ void DialogX11::setVisible(bool visible)
 	}
 }
 
-	}
 }

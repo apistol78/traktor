@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -29,10 +29,8 @@
 #include "Ui/X11/TypesX11.h"
 #include "Ui/X11/UtilitiesX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class EventSubject;
 
@@ -433,7 +431,7 @@ public:
 
 			m_pendingExposure = true;
 
-			XEvent xe = { 0 };
+			XEvent xe = {};
         	xe.type = Expose;
         	xe.xexpose.window = m_data.window;
         	XSendEvent(m_context->getDisplay(), m_data.window, False, ExposureMask, &xe);
@@ -526,20 +524,15 @@ protected:
 
 	Ref< Context > m_context;
 	EventSubject* m_owner = nullptr;
-
 	WidgetData m_data;
 	XIC m_xic = 0;
-
 	Rect m_rect;
 	Font m_font;
 	int32_t m_currentShape = -1;
-
 	cairo_surface_t* m_surface = nullptr;
 	cairo_t* m_cairo = nullptr;
-
 	std::wstring m_text;
 	int32_t m_timer = -1;
-
 	int32_t m_lastMousePress = 0;
 	int32_t m_lastMouseButton = 0;
 	bool m_pendingExposure = false;
@@ -900,7 +893,7 @@ protected:
 
 	void setWmProperty(const char* const property, int32_t value)
 	{
-		XEvent evt = { 0 };
+		XEvent evt = {};
 
 		Atom atomWmState = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
 		Atom atomWmProperty = XInternAtom(m_context->getDisplay(), property, False);
@@ -926,7 +919,7 @@ protected:
 
 	void setWmProperty(const char* const property1, const char* const property2, int32_t value)
 	{
-		XEvent evt = { 0 };
+		XEvent evt = {};
 
 		Atom atomWmState = XInternAtom(m_context->getDisplay(), "_NET_WM_STATE", False);
 		Atom atomWmProperty1 = XInternAtom(m_context->getDisplay(), property1, False);
@@ -952,5 +945,4 @@ protected:
 	}
 };
 
-	}
 }

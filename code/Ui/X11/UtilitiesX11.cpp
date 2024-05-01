@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include <X11/keysymdef.h>
 #include "Ui/X11/UtilitiesX11.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 const struct { uint32_t keySym; VirtualKey vkey; } c_translateTable[] =
 {
@@ -119,7 +117,7 @@ const struct { uint32_t keySym; VirtualKey vkey; } c_translateTable[] =
 	{ XK_0, Vk0 },
 };
 
-		}
+	}
 
 VirtualKey translateToVirtualKey(const KeySym* keySym, int nkeySyms)
 {
@@ -134,5 +132,4 @@ VirtualKey translateToVirtualKey(const KeySym* keySym, int nkeySyms)
 	return VkNull;
 }
 
-	}
 }
