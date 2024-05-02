@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,7 +39,7 @@ class AvlTree
 		KeyType key;
 		ItemType item;
 
-		Node(const KeyType& key, const ItemType& item)
+		explicit Node(const KeyType& key, const ItemType& item)
 		:	left(nullptr)
 		,	right(nullptr)
 		,	key(key)
@@ -60,7 +60,7 @@ public:
 	{
 		Node* node;
 
-		Iterator(Node* node_)
+		explicit iterator(Node* node_)
 		:	node(node_)
 		{
 		}

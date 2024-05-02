@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,15 @@
  */
 #pragma once
 
-#if 0
-#	include "Core/Serialization/DeepHash.h"
-#	include "Core/Serialization/ISerializable.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 
+/*! Helper to ensure object hasn't been modified.
+ * \ingroup Core
+ */
 class ImmutableCheck
 {
 public:
@@ -26,7 +28,7 @@ public:
 
 	~ImmutableCheck()
 	{
-		uint32_t hash = DeepHash(m_imm).get();
+		const uint32_t hash = DeepHash(m_imm).get();
 		T_FATAL_ASSERT_M(hash == m_hash, L"Immutable object modified.");
 	}
 
@@ -37,6 +39,7 @@ private:
 
 }
 
+#if 0
 #	define T_IMMUTABLE_CHECK(imm) T_ANONYMOUS_VAR(ImmutableCheck)(imm);
 #else
 #	define T_IMMUTABLE_CHECK(imm)

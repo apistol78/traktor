@@ -76,7 +76,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 		T_ASSERT(typeInfo2);
 
 		const wchar_t* typeName2 = typeInfo2->getName();
-		int32_t res = safeStringCompare(typeName2, typeName);
+		const int32_t res = safeStringCompare(typeName2, typeName);
 		if (res > 0)
 			break;
 
