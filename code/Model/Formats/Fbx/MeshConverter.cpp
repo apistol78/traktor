@@ -97,6 +97,20 @@ bool convertMesh(
 		}
 	}
 
+	// Setup all texcoord channels.
+	StaticVector< uint32_t, 64 > texCoordChannels;
+	texCoordChannels.resize(meshNode->mesh->uv_sets.count);
+	for (size_t k = 0; k < meshNode->mesh->uv_sets.count; ++k)
+	{
+		const ufbx_uv_set& uvSet = meshNode->mesh->uv_sets.data[k];
+		if (uvSet.vertex_uv.exists)
+		{
+			const std::wstring channelName = mbstows(uvSet.name.data);
+			const uint32_t channel = outModel.addUniqueTexCoordChannel(channelName);
+			texCoordChannels[k] = channel;
+		}
+	}
+
 	// Convert polygons.
 	for (size_t i = 0; i < meshNode->mesh->num_faces; ++i)
 	{
@@ -139,8 +153,7 @@ bool convertMesh(
 				const ufbx_uv_set& uvSet = meshNode->mesh->uv_sets.data[k];
 				if (uvSet.vertex_uv.exists)
 				{
-					const std::wstring channelName = mbstows(uvSet.name.data);
-					const uint32_t channel = outModel.addUniqueTexCoordChannel(channelName);
+					const uint32_t channel = texCoordChannels[k];
 					vertex.setTexCoord(channel, outModel.addUniqueTexCoord(convertVector2(
 						ufbx_get_vertex_vec2(&uvSet.vertex_uv, vertexIndex)
 					) * Vector2(1.0f, -1.0f) + Vector2(0.0f, 1.0f)));
