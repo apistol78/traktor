@@ -4,7 +4,7 @@
    inkscape:export-xdpi="90"
    inkscape:export-filename="C:\private\traktor\res\icons-new\g4486.png"
    sodipodi:docname="DualView.svg"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
    version="1.1"
    id="svg2"
    viewBox="0 0 32 32"
@@ -26,8 +26,8 @@
      inkscape:showpageshadow="false"
      units="px"
      inkscape:window-maximized="0"
-     inkscape:window-y="293"
-     inkscape:window-x="1220"
+     inkscape:window-y="1760"
+     inkscape:window-x="1269"
      inkscape:window-height="1003"
      inkscape:window-width="1275"
      inkscape:snap-to-guides="false"
@@ -36,9 +36,9 @@
      showgrid="true"
      inkscape:current-layer="Dark"
      inkscape:document-units="px"
-     inkscape:cy="74.750004"
-     inkscape:cx="83.750004"
-     inkscape:zoom="1.9999999"
+     inkscape:cy="7.4375005"
+     inkscape:cx="-3.1875002"
+     inkscape:zoom="15.999999"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      borderopacity="1"
@@ -49,13 +49,13 @@
      inkscape:deskcolor="#384a52">
     <inkscape:grid
        snapvisiblegridlinesonly="false"
-       empspacing="16"
+       empspacing="1"
        id="grid4490"
        type="xygrid"
-       originx="0"
-       originy="0"
-       spacingy="1"
-       spacingx="1"
+       originx="1"
+       originy="1"
+       spacingy="2"
+       spacingx="2"
        units="px"
        visible="true" />
   </sodipodi:namedview>
@@ -78,17 +78,17 @@
      inkscape:label="Dark"
      style="display:inline;opacity:1">
     <rect
-       y="6"
-       x="6"
-       height="20"
-       width="20"
+       y="5"
+       x="5"
+       height="24"
+       width="24"
        id="rect8510"
        style="display:inline;fill:none;fill-opacity:1;stroke:#c7c7c7;stroke-width:1.5;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        sodipodi:nodetypes="cc"
        inkscape:connector-curvature="0"
        id="path8512"
-       d="m 16,6.000008 v 19.9375"
+       d="M 17,5 V 29"
        style="display:inline;fill:none;fill-rule:evenodd;stroke:#c7c7c7;stroke-width:1.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
   </g>
 </svg>
