@@ -25,7 +25,7 @@ const Attribute* Attribute::find(const TypeInfo& type) const
 
 const Attribute& Attribute::operator | (const Attribute& rh)
 {
-	m_next = rh.clone();
+	m_next = &rh;
 	return *this;
 }
 
