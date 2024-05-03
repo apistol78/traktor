@@ -228,7 +228,7 @@ void SequencerControl::eventSize(SizeEvent* event)
 	m_scrollBarH->setRect(Rect(
 		rc.left + m_separator,
 		rc.bottom - scrollHeight,
-		rc.right - scrollWidth,
+		rc.right,
 		rc.bottom
 	));
 
@@ -522,7 +522,6 @@ void SequencerControl::eventPaint(PaintEvent* event)
 
 	canvas.setBackground(ss->getColor(this, isEnable(true) ? L"background-color" : L"background-color-disabled"));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
-	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
 	// Right sequence edge.
 	const int32_t end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
