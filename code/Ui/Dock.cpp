@@ -220,6 +220,7 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 			form->setIcon(ancestor->getIcon());
 
 		form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
+		form->addEventHandler< NcMouseButtonDownEvent >(this, &Dock::eventFormNcButtonDown);
 		form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
 
 		// Reparent widget into floating form.
@@ -285,8 +286,18 @@ void Dock::eventFormMove(MoveEvent* event)
 	}
 }
 
+void Dock::eventFormNcButtonDown(NcMouseButtonDownEvent* event)
+{
+	// Ensure up is from the same sender as down to prevent docking when only up
+	// event is issued.
+	m_ncButtonDownSender = event->getSender();
+}
+
 void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 {
+	if (m_ncButtonDownSender != event->getSender())
+		return;
+
 	const Point position = screenToClient(event->getPosition());
 
 	// Ensure hint form isn't visible.
@@ -304,7 +315,7 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 		Ref< Widget > widget = form->getData< Widget >(L"WIDGET");
 		const Size widgetSize = widget->getRect().getSize();
 
-		// Reparent widget back to dock.
+		// Re-parent widget back to dock.
 		if (widget)
 			widget->setParent(this);
 

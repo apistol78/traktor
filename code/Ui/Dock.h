@@ -51,6 +51,7 @@ private:
 	Ref< Image > m_hintRight;
 	Ref< Image > m_hintTop;
 	Ref< Image > m_hintBottom;
+	EventSubject* m_ncButtonDownSender = nullptr;
 
 	void eventSize(SizeEvent* event);
 
@@ -65,6 +66,8 @@ private:
 	void eventPaint(PaintEvent* event);
 
 	void eventFormMove(MoveEvent* event);
+
+	void eventFormNcButtonDown(NcMouseButtonDownEvent* event);
 
 	void eventFormNcButtonUp(NcMouseButtonUpEvent* event);
 
