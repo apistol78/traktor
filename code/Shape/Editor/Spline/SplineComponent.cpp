@@ -8,6 +8,7 @@
  */
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 #include "Physics/Body.h"
@@ -20,6 +21,7 @@
 #include "Render/Shader.h"
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 #include "Shape/Editor/Spline/ControlPointComponent.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/SplineComponent.h"
@@ -39,7 +41,7 @@ namespace traktor::shape
 struct Vertex
 {
 	float position[3];
-	float normal[3];
+	float normal[4];
 	float texCoord[2];
 };
 #pragma pack()
@@ -52,13 +54,13 @@ SplineComponent::SplineComponent(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager,
-	const resource::Proxy< render::Shader >& shader,
+	const resource::Proxy< render::Shader >& defaultShader,
 	const SplineComponentData* data
 )
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
-,	m_shader(shader)
+,	m_defaultShader(defaultShader)
 ,	m_data(data)
 ,	m_dirty(true)
 {
@@ -222,7 +224,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 
 					AlignedVector< render::VertexElement > vertexElements;
 					vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat3, offsetof(Vertex, position)));
-					vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat3, offsetof(Vertex, normal)));
+					vertexElements.push_back(render::VertexElement(render::DataUsage::Normal, render::DtFloat4, offsetof(Vertex, normal)));
 					vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat2, offsetof(Vertex, texCoord)));
 					m_vertexLayout = m_renderSystem->createVertexLayout(vertexElements);
 
@@ -237,7 +239,7 @@ void SplineComponent::update(const world::UpdateParams& update)
 				for (const auto& v : outputModel->getVertices())
 				{
 					const Vector4 p = outputModel->getPosition(v.getPosition());
-					const Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()) : Vector4::zero();
+					const Vector4 n = (v.getNormal() != model::c_InvalidIndex) ? outputModel->getNormal(v.getNormal()).xyz0() : Vector4::zero();
 					const Vector2 uv = (v.getTexCoord(0) != model::c_InvalidIndex) ? outputModel->getTexCoord(v.getTexCoord(0)) : Vector2::zero();
 
 					p.storeUnaligned(vertex->position);
@@ -277,6 +279,13 @@ void SplineComponent::update(const world::UpdateParams& update)
 						continue;
 
 					auto& batch = m_batches.push_back();
+
+					const uint32_t materialHash = DeepHash(&outputModel->getMaterial(i)).get();
+					const Guid materialId = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
+
+					if (!m_resourceManager->bind(resource::Id< render::Shader >(materialId), batch.shader))
+						batch.shader = m_defaultShader;
+
 					batch.primitives.setIndexed(
 						render::PrimitiveType::Triangles,
 						offset,
@@ -309,13 +318,13 @@ void SplineComponent::build(
 	if (!m_indexBuffer || !m_vertexBuffer)
 		return;
 
-	auto sp = worldRenderPass.getProgram(m_shader);
-	if (!sp)
-		return;
-
 	auto renderContext = context.getRenderContext();
 	for (const auto& batch : m_batches)
 	{
+		auto sp = worldRenderPass.getProgram(batch.shader);
+		if (!sp)
+			continue;
+
 		auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Solid");
 		renderBlock->distance = std::numeric_limits< float >::max();
 		renderBlock->program = sp.program;

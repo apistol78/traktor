@@ -73,7 +73,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager,
-		const resource::Proxy< render::Shader >& shader,
+		const resource::Proxy< render::Shader >& defaultShader,
 		const SplineComponentData* data
 	);
 
@@ -98,6 +98,7 @@ public:
 private:
 	struct MaterialBatch
 	{
+		resource::Proxy< render::Shader > shader;
 		render::Primitives primitives;
 	};
 
@@ -105,7 +106,7 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
 
-	resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< render::Shader > m_defaultShader;
 
 	Ref< const SplineComponentData > m_data;
 	world::Entity* m_owner = nullptr;

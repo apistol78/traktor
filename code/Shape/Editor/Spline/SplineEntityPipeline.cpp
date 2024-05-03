@@ -6,27 +6,36 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyObject.h"
 #include "Core/Settings/PropertyString.h"
+#include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshComponentData.h"
+#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
+#include "Model/ModelCache.h"
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CleanDuplicates.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/StaticBodyDesc.h"
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/World/RigidBodyComponentData.h"
+#include "Render/Shader.h"
+#include "Render/Editor/Shader/ShaderGraph.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Shape/Editor/Spline/CloneShapeLayerData.h"
 #include "Shape/Editor/Spline/ControlPointComponentData.h"
 #include "Shape/Editor/Spline/ExtrudeShapeLayerData.h"
-#include "Render/Shader.h"
+#include "Shape/Editor/Bake/Embree/SplitModel.h"
 #include "Shape/Editor/Spline/SplineComponentData.h"
 #include "Shape/Editor/Spline/SplineEntityPipeline.h"
 #include "Shape/Editor/Spline/SplineEntityReplicator.h"
@@ -34,7 +43,12 @@
 #include "World/Entity/GroupComponentData.h"
 #include "World/Entity/PathComponentData.h"
 
-#include "Shape/Editor/Bake/Embree/SplitModel.h"
+#include "Render/Editor/Shader/FragmentLinker.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphHash.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphTechniques.h"
+#include "Render/Editor/Shader/Algorithms/ShaderGraphValidator.h"
 
 namespace traktor::shape
 {
@@ -43,17 +57,74 @@ namespace traktor::shape
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-9A17-899B44D5414E}"));
 
+class FragmentReaderAdapter : public render::FragmentLinker::IFragmentReader
+{
+public:
+	explicit FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
+	:	m_pipelineBuilder(pipelineBuilder)
+	{
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 7, SplineEntityPipeline, world::EntityPipeline)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid) const
+	{
+		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+	}
+
+private:
+	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
+};
+
+AlignedVector< Guid > gatherMeshIds(const ISerializable* sourceAsset)
+{
+	AlignedVector< Guid > meshIds;
+	if (auto cloneShapeLayerData = dynamic_type_cast< const CloneShapeLayerData* >(sourceAsset))
+		meshIds.push_back(cloneShapeLayerData->getMesh());
+	else if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
+	{
+		meshIds.push_back(extrudeShapeLayerData->getMeshStart());
+		meshIds.push_back(extrudeShapeLayerData->getMeshRepeat());
+		meshIds.push_back(extrudeShapeLayerData->getMeshEnd());
+	}
+	return meshIds;
+}
+
+bool buildEmbeddedTexture(editor::IPipelineBuilder* pipelineBuilder, model::Material::Map& map, bool normalMap)
+{
+	if (map.image == nullptr || map.texture.isNotNull())
+		return true;
+
+	const uint32_t hash = DeepHash(map.image).get();
+	const Guid outputGuid = Guid(L"{6E6346F6-4665-42DC-BE69-58D8B7A475E4}").permutation(hash);
+
+	Ref< render::TextureOutput > output = new render::TextureOutput();
+	output->m_textureType = render::Tt2D;
+	output->m_normalMap = normalMap;
+	output->m_assumeLinearGamma = normalMap;
+
+	if (!pipelineBuilder->buildAdHocOutput(
+		output,
+		outputGuid,
+		map.image
+	))
+		return false;
+
+	map.texture = outputGuid;
+	return true;
+}
+
+	}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.SplineEntityPipeline", 10, SplineEntityPipeline, world::EntityPipeline)
 
 bool SplineEntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	if (!world::EntityPipeline::create(settings))
 		return false;
 
-	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath");
-	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor");
+	m_assetPath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.AssetPath", L"");
+	m_modelCachePath = settings->getPropertyExcludeHash< std::wstring >(L"Pipeline.ModelCache.Path", L"");
+	m_platform = settings->getPropertyIncludeHash< std::wstring >(L"ShaderPipeline.Platform");
+	m_targetEditor = settings->getPropertyIncludeHash< bool >(L"Pipeline.TargetEditor", false);
 	
 	m_replicator = new SplineEntityReplicator();
 	m_replicator->create(settings);
@@ -79,8 +150,7 @@ bool SplineEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (m_targetEditor)
-		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
+	AlignedVector< Guid > meshIds;
 
 	if (auto splineComponentData = dynamic_type_cast< const SplineComponentData* >(sourceAsset))
 	{
@@ -90,19 +160,14 @@ bool SplineEntityPipeline::buildDependencies(
 			pipelineDepends->addDependency(id, editor::PdfBuild | editor::PdfResource);	
 	}
 
-	if (auto cloneShapeLayerData = dynamic_type_cast<const CloneShapeLayerData*>(sourceAsset))
+	for (const auto& meshId : gatherMeshIds(sourceAsset))
 	{
 		const uint32_t flags = m_targetEditor ? editor::PdfBuild | editor::PdfUse : editor::PdfUse;
-		pipelineDepends->addDependency(cloneShapeLayerData->getMesh(), flags);
+		pipelineDepends->addDependency(meshId, flags);
 	}
 
-	if (auto extrudeShapeLayerData = dynamic_type_cast< const ExtrudeShapeLayerData* >(sourceAsset))
-	{
-		const uint32_t flags = m_targetEditor ? editor::PdfBuild | editor::PdfUse : editor::PdfUse;
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshStart(), flags);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshRepeat(), flags);
-		pipelineDepends->addDependency(extrudeShapeLayerData->getMeshEnd(), flags);
-	}
+	if (m_targetEditor)
+		pipelineDepends->addDependency(c_defaultShader, editor::PdfBuild | editor::PdfResource);
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
@@ -116,6 +181,122 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 {
 	if (m_targetEditor)
 	{
+		mesh::MaterialShaderGenerator materialGenerator(
+			[&](const Guid& fragmentId) { return pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentId); }
+		);
+
+		for (const auto& meshId : gatherMeshIds(sourceAsset))
+		{
+			Ref< const mesh::MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< mesh::MeshAsset >(meshId);
+			if (!meshAsset)
+				continue;
+
+			// Read model specified by mesh asset.
+			const Path filePath = FileSystem::getInstance().getAbsolutePath(Path(m_assetPath) + meshAsset->getFileName());
+			Ref< model::Model > model = model::ModelCache::getInstance().getMutable(m_modelCachePath, filePath, meshAsset->getImportFilter());
+			if (!model)
+				continue;
+
+			for (uint32_t i = 0; i < model->getMaterialCount(); ++i)
+			{
+				model::Material material = model->getMaterial(i);
+
+				const uint32_t materialHash = DeepHash(&material).get();
+				const Guid outputGuid = Guid(L"{8BB018D2-7AAC-4F9D-A5A4-DE396604862C}").permutation(materialHash);
+
+				buildEmbeddedTexture(pipelineBuilder, material.getDiffuseMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getSpecularMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getRoughnessMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getMetalnessMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getTransparencyMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getEmissiveMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getReflectiveMap(), false);
+				buildEmbeddedTexture(pipelineBuilder, material.getNormalMap(), true);
+
+				Ref< const render::ShaderGraph > meshSurfaceShaderGraph = materialGenerator.generateSurface(
+					*model,
+					material,
+					false,
+					true
+				);
+
+				Ref< const render::ShaderGraph > materialShaderGraph = materialGenerator.generateMesh(
+					*model,
+					material,
+					meshSurfaceShaderGraph,
+					Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}")
+				);
+
+				// Resolve all variables.
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getVariableResolved();
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to resolve variables." << Endl;
+					return false;
+				}
+
+				// Link shader fragments.
+				FragmentReaderAdapter fragmentReader(pipelineBuilder);
+				materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to link shader fragments." << Endl;
+					return false;
+				}
+
+				// Resolve all bundles.
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getBundleResolved();
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to resolve bundles." << Endl;
+					return false;
+				}
+
+				// Get connected permutation.
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getConnectedPermutation();
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to freeze connected conditionals." << Endl;
+					return false;
+				}
+
+				// Extract platform permutation.
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getPlatformPermutation(m_platform);
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
+					return false;
+				}
+
+				// Extract renderer permutation.
+				const wchar_t* rendererSignature = L"Vulkan"; // programCompiler->getRendererSignature();
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getRendererPermutation(rendererSignature);
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to get renderer permutation." << Endl;
+					return false;
+				}
+
+				// Freeze types, get typed permutation.
+				materialShaderGraph = render::ShaderGraphStatic(materialShaderGraph, outputGuid).getTypePermutation();
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to freeze types." << Endl;
+					return false;
+				}
+
+				// Cleanup unused branches.
+				materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches(true);
+				if (!materialShaderGraph)
+				{
+					log::error << L"SplineEntityPipeline failed; unable to cleanup shader." << Endl;
+					return false;
+				}
+
+				pipelineBuilder->buildAdHocOutput(materialShaderGraph, outputGuid);
+			}
+		}
+
 		// In editor we generate spline geometry dynamically thus
 		// not necessary to explicitly build mesh when building for editor.
 		return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
