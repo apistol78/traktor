@@ -232,7 +232,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to resolve variables." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Link shader fragments.
@@ -241,7 +241,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to link shader fragments." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Resolve all bundles.
@@ -249,7 +249,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to resolve bundles." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Get connected permutation.
@@ -257,7 +257,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to freeze connected conditionals." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Extract platform permutation.
@@ -265,7 +265,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to get platform \"" << m_platform << L"\" permutation." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Extract renderer permutation.
@@ -274,7 +274,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to get renderer permutation." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Freeze types, get typed permutation.
@@ -282,7 +282,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to freeze types." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				// Cleanup unused branches.
@@ -290,7 +290,7 @@ Ref< ISerializable > SplineEntityPipeline::buildProduct(
 				if (!materialShaderGraph)
 				{
 					log::error << L"SplineEntityPipeline failed; unable to cleanup shader." << Endl;
-					return false;
+					return nullptr;
 				}
 
 				pipelineBuilder->buildAdHocOutput(materialShaderGraph, outputGuid);
