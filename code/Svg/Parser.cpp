@@ -348,11 +348,27 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	const float y = parseAttr(elm, L"y");
 	const float width = parseAttr(elm, L"width");
 	const float height = parseAttr(elm, L"height");
-	const float round = parseAttr(elm, L"ry");
+
+	float rx = 0.0f, ry = 0.0f;
+	if (elm->hasAttribute(L"rx") && elm->hasAttribute(L"ry"))
+	{
+		rx = parseAttr(elm, L"rx");
+		ry = parseAttr(elm, L"ry");
+	}
+	else if (elm->hasAttribute(L"rx"))
+	{
+		rx =
+		ry = parseAttr(elm, L"rx");
+	}
+	else if (elm->hasAttribute(L"ry"))
+	{
+		rx =
+		ry = parseAttr(elm, L"ry");
+	}
 
 	Path path;
 
-	if (round <= 0.0f)
+	if (rx <= FUZZY_EPSILON && ry <= FUZZY_EPSILON)
 	{
 		path.moveTo(x, y);
 		path.lineTo(x + width, y);
@@ -362,15 +378,15 @@ Ref< Shape > Parser::parseRect(const xml::Element* elm)
 	}
 	else
 	{
-		path.moveTo   (x + round, y);
-		path.lineTo   (x + width - round, y);
-		path.quadricTo(x + width, y, x + width, y + round);
-		path.lineTo   (x + width, y + height - round);
-		path.quadricTo(x + width, y + height, x + width - round, y + height);
-		path.lineTo   (x + round, y + height);
-		path.quadricTo(x, y + height, x, y + height - round);
-		path.lineTo   (x, y + round);
-		path.quadricTo(x, y, x + round, y);
+		path.moveTo   (x + rx, y);
+		path.lineTo   (x + width - rx, y);
+		path.quadricTo(x + width, y, x + width, y + ry);
+		path.lineTo   (x + width, y + height - ry);
+		path.quadricTo(x + width, y + height, x + width - rx, y + height);
+		path.lineTo   (x + rx, y + height);
+		path.quadricTo(x, y + height, x, y + height - ry);
+		path.lineTo   (x, y + ry);
+		path.quadricTo(x, y, x + rx, y);
 		path.close    ();
 	}
 

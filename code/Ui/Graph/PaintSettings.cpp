@@ -17,7 +17,7 @@ PaintSettings::PaintSettings(const ui::Font& font)
 :	m_font(font.getFace(), font.getSize(), false, false, false)
 ,	m_fontBold(font.getFace(), font.getSize(), true, false, false)
 ,	m_fontUnderline(font.getFace(), font.getSize(), false, false, true)
-,	m_fontLabel(font.getFace(), (font.getSize() * 2_ut) / 3_ut, false, false, false)
+,	m_fontLabel(font.getFace(), font.getSize() / 2_ut, false, false, false)
 ,	m_fontGroup(font.getFace(), font.getSize() * 3_ut, true, false, false)
 {
 }
