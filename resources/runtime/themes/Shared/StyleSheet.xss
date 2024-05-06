@@ -149,10 +149,6 @@
 			<first>Flash.Text</first>
 			<second>$(Images.Path)/New/Spark/Text.svg</second>
 		</item>
-		<item>
-			<first>Flash.Tool.Debugger</first>
-			<second>$(Images.Path)/New/Spark/ToolDebugger.svg</second>
-		</item>
 
 		<!-- Input -->
 		<item>

@@ -25,7 +25,7 @@ std::wstring LaunchSolutionBuilderTool::getDescription() const
 
 Ref< ui::IBitmap > LaunchSolutionBuilderTool::getIcon() const
 {
-	return new ui::StyleBitmap(L"Runtime.SolutionBuilder");
+	return nullptr;
 }
 
 bool LaunchSolutionBuilderTool::needOutputResources(std::set< Guid >& outDependencies) const

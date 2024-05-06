@@ -26,7 +26,7 @@ std::wstring DebuggerTool::getDescription() const
 
 Ref< ui::IBitmap > DebuggerTool::getIcon() const
 {
-	return new ui::StyleBitmap(L"Flash.Tool.Debugger");
+	return nullptr;
 }
 
 bool DebuggerTool::needOutputResources(std::set< Guid >& outDependencies) const

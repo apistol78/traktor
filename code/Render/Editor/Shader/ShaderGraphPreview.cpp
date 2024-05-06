@@ -44,6 +44,9 @@ Ref< drawing::Image > ShaderGraphPreview::generate(const ShaderGraph* shaderGrap
 
 	const InputPin* inputPin = previewOutputs.front()->getInputPin(0);
 	const OutputPin* outputPin = resolvedShaderGraph->findSourcePin(inputPin);
+	if (outputPin == nullptr)
+		return nullptr;
+
 	if (auto colorNode = dynamic_type_cast< const Color* >(outputPin->getNode()))
 	{
 		image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);

@@ -25,7 +25,7 @@ std::wstring LaunchThemeEditorTool::getDescription() const
 
 Ref< ui::IBitmap > LaunchThemeEditorTool::getIcon() const
 {
-	return new ui::StyleBitmap(L"Runtime.ThemeEditor");
+	return nullptr;
 }
 
 bool LaunchThemeEditorTool::needOutputResources(std::set< Guid >& outDependencies) const

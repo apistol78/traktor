@@ -476,7 +476,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		1280_ut,
 		900_ut,
 		ui::WsResizable | ui::Form::WsDefault | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,100%,*", 0_ut, 0_ut)
+		new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -535,6 +535,32 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
 	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->addItem(menuBuild);
+
+	 // Create toolbar.
+	 m_toolBar = new ui::ToolBar();
+	 m_toolBar->create(this, ui::WsNone);
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"));
+	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"));
+
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
+	 m_toolBar->addItem(new ui::ToolBarSeparator());
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
+	 m_toolBar->addItem(new ui::ToolBarSeparator());
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
+	 m_toolBar->addItem(new ui::ToolBarSeparator());
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
+	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
+	 m_toolBar->addItem(new ui::ToolBarSeparator());
+	 m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
 	updateMRU();
@@ -701,12 +727,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 			m_menuTools->add(new ui::MenuItem(ui::Command(i), desc));
 
-			// Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
-			// if (toolIcon)
-			// {
-			// 	int32_t iconIndex = m_toolBar->addImage(toolIcon, 1);
-			// 	m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
-			// }
+			Ref< ui::IBitmap > toolIcon = m_editorTools[i]->getIcon();
+			if (toolIcon)
+			{
+				const int32_t iconIndex = m_toolBar->addImage(toolIcon);
+				m_toolBar->addItem(new ui::ToolBarButton(desc, iconIndex, ui::Command(i)));
+			}
 		}
 
 		if (!m_editorTools.empty())
@@ -841,7 +867,7 @@ void EditorForm::destroy()
 	// Destroy widgets.
 	safeDestroy(m_dock);
 	safeDestroy(m_statusBar);
-	// safeDestroy(m_toolBar);
+	safeDestroy(m_toolBar);
 	safeDestroy(m_menuBar);
 
 	Form::destroy();
