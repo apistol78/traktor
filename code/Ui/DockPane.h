@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -46,15 +46,28 @@ public:
 
 	virtual ~DockPane();
 
+	/*! Split pane into two sub panes.
+	 * Pane to be split cannot contain a docked widget.
+	 */
 	void split(bool vertical, Unit split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
 
-	void dock(Widget* widget, bool detachable);
+	/*! Dock widget onto pane.
+	 */
+	void dock(Widget* widget);
 
-	void dock(Widget* widget, bool detachable, Direction direction, Unit split);
+	/*! Dock widget onto pane, if pane already contain a widget then split pane first.
+	 */
+	void dock(Widget* widget, Direction direction, Unit split);
 
+	/*! Un-dock widget from pane.
+	 */
 	void undock(Widget* widget);
 
+	/*! Detach pane, ie make it floating.
+	 */
 	void detach();
+
+	void showTab(int32_t tab);
 
 	DockPane* findWidgetPane(Widget* widget);
 
@@ -68,11 +81,17 @@ public:
 
 	bool hitSplitter(const Point& position) const;
 
+	int32_t hitTab(const Point& position) const;
+
 	void setSplitterPosition(const Point& position);
 
 	bool isSplitter() const { return m_child[0] != nullptr && m_child[1] != nullptr; }
 
 	const Rect& getPaneRect() const { return m_rect; }
+
+	void setDetachable(bool detachable);
+
+	bool isDetachable() const;
 
 	void setAlwaysVisible(bool alwaysVisible);
 
@@ -81,26 +100,29 @@ public:
 private:
 	friend class Dock;
 
-	Ref< EventSubject::IEventHandler > m_focusEventHandler;
-	Widget* m_owner;
-	DockPane* m_parent;
-	Ref< Widget > m_widget;
+	struct WidgetInfo
+	{
+		Ref< Widget > widget;
+		int32_t tabMin;
+		int32_t tabMax;
+	};
+
+	Widget* m_owner = nullptr;
+	DockPane* m_parent = nullptr;
+	AlignedVector< WidgetInfo > m_widgets;
 	Ref< IBitmap > m_bitmapClose;
 	Ref< IBitmap > m_bitmapGripper;
-	bool m_detachable;
 	Ref< DockPane > m_child[2];
-	bool m_vertical;
-	Unit m_split;
-	Unit m_gripperDim;
+	Unit m_split = 0_ut;
+	Unit m_gripperDim = 0_ut;
 	Rect m_rect;
-	bool m_focus;
-	bool m_alwaysVisible;
+	bool m_detachable = true;
+	bool m_alwaysVisible = false;
+	bool m_vertical = false;
 
 	void update(const Rect& rect, std::vector< WidgetRect >& outWidgetRects);
 
 	void draw(Canvas& canvas);
-
-	void eventFocus(FocusEvent* event);
 };
 
 }

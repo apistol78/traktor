@@ -177,32 +177,7 @@
 		</item>
 		<item>
 			<typeName>traktor.ui.Dock</typeName>
-			<colors>
-				<item>
-					<first>caption-background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>caption-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>caption-color-no-focus</first>
-					<second>208, 208, 208, 255</second>
-				</item>
-				<item>
-					<first>gripper-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>gripper-color-no-focus</first>
-					<second>90, 90, 90, 255</second>
-				</item>
-				<item>
-					<first>splitter-color</first>
-					<second>63, 63, 70, 255</second>
-				</item>
-			</colors>
+			<colors/>
 		</item>
 		<item>
 			<typeName>traktor.ui.DropDown</typeName>
@@ -993,6 +968,27 @@
 				<item>
 					<first>color-selected-disabled</first>
 					<second>180, 180, 180, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DockPane</typeName>
+			<colors>
+				<item>
+					<first>splitter-color</first>
+					<second>63, 63, 70, 255</second>
+				</item>
+				<item>
+					<first>tab-background-color</first>
+					<second>45, 45, 45, 255</second>
+				</item>
+				<item>
+					<first>tab-selected-background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>gripper-color</first>
+					<second>90, 90, 90, 255</second>
 				</item>
 			</colors>
 		</item>

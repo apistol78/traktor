@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -115,13 +115,20 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		if (pane->hitGripperClose(position))
 		{
-			if (pane->m_widget)
-				pane->m_widget->hide();
+			//if (pane->m_widget)
+			//	pane->m_widget->hide();
 			update();
 		}
 
-		if (pane->m_widget)
-			pane->m_widget->setFocus();
+		//if (pane->m_widget)
+		//	pane->m_widget->setFocus();
+
+		const int32_t tabIndex = pane->hitTab(position);
+		if (tabIndex >= 0)
+		{
+			pane->showTab(tabIndex);
+			update();
+		}
 
 		event->consume();
 		return;
@@ -192,46 +199,46 @@ void Dock::eventDoubleClick(MouseDoubleClickEvent* event)
 		!pane->hitGripperClose(position)
 	)
 	{
-		T_ASSERT(pane->m_detachable);
+		//T_ASSERT(pane->m_detachable);
 
-		Ref< Widget > widget = pane->m_widget;
+		////Ref< Widget > widget = pane->m_widget;
 
-		pane->detach();
+		//pane->detach();
 
-		// Determine size of form.
-		const Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
-		const Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
-		const Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
+		//// Determine size of form.
+		//const Size widgetSize = widget ? widget->getRect().getSize() : Size(0, 0);
+		//const Size preferredSize = widget ? widget->getPreferredSize(widgetSize) : Size(100, 100);
+		//const Size formSize(std::max(widgetSize.cx, preferredSize.cx), std::max(widgetSize.cy, preferredSize.cy));
 
-		// Create floating form.
-		Ref< ToolForm > form = new ToolForm();
-		form->create(
-			this,
-			widget ? widget->getText() : L"",
-			Unit(formSize.cx),
-			Unit(formSize.cy),
-			ToolForm::WsDefault,
-			new FloodLayout()
-		);
+		//// Create floating form.
+		//Ref< ToolForm > form = new ToolForm();
+		//form->create(
+		//	this,
+		//	widget ? widget->getText() : L"",
+		//	Unit(formSize.cx),
+		//	Unit(formSize.cy),
+		//	ToolForm::WsDefault,
+		//	new FloodLayout()
+		//);
 
-		// Use same icon as ancestor.
-		Form* ancestor = dynamic_type_cast< Form* >(getAncestor());
-		if (ancestor)
-			form->setIcon(ancestor->getIcon());
+		//// Use same icon as ancestor.
+		//Form* ancestor = dynamic_type_cast< Form* >(getAncestor());
+		//if (ancestor)
+		//	form->setIcon(ancestor->getIcon());
 
-		form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
-		form->addEventHandler< NcMouseButtonDownEvent >(this, &Dock::eventFormNcButtonDown);
-		form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
+		//form->addEventHandler< MoveEvent >(this, &Dock::eventFormMove);
+		//form->addEventHandler< NcMouseButtonDownEvent >(this, &Dock::eventFormNcButtonDown);
+		//form->addEventHandler< NcMouseButtonUpEvent >(this, &Dock::eventFormNcButtonUp);
 
-		// Reparent widget into floating form.
-		if (widget)
-			widget->setParent(form);
+		//// Re-parent widget into floating form.
+		//if (widget)
+		//	widget->setParent(form);
 
-		form->setData(L"WIDGET", widget);
-		form->update();
-		form->show();
+		//form->setData(L"WIDGET", widget);
+		//form->update();
+		//form->show();
 
-		update();
+		//update();
 	}
 }
 
@@ -342,7 +349,6 @@ void Dock::eventFormNcButtonUp(NcMouseButtonUpEvent* event)
 
 		pane->dock(
 			widget,
-			true,
 			direction,
 			unit(size)
 		);
@@ -399,7 +405,6 @@ void Dock::eventHintButtonUp(MouseButtonUpEvent* event)
 
 	m_hintDockPane->dock(
 		widget,
-		true,
 		direction,
 		unit(size)
 	);

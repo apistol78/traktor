@@ -382,14 +382,14 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_HIERARCHY"));
 	m_toolViewMode->add(i18n::Text(L"DATABASE_VIEW_MODE_SPLIT"));
 	m_toolViewMode->select(
-		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 0)
+		m_editor->getSettings()->getProperty< int32_t >(L"Editor.DatabaseView", 1)
 	);
 	m_toolSelection->addItem(m_toolViewMode);
 
 	m_toolSelection->addEventHandler< ui::ToolBarButtonClickEvent >(this, &DatabaseView::eventToolSelectionClicked);
 
 	m_splitter = new ui::Splitter();
-	m_splitter->create(this, false, 50_ut, true);
+	m_splitter->create(this, false, 30_ut, true);
 
 	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(m_splitter, (ui::TreeView::WsDefault | ui::TreeView::WsDrag | ui::WsAccelerated) & ~ui::WsClientBorder))

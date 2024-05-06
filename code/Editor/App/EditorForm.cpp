@@ -544,18 +544,17 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Define docking panes.
 	Ref< ui::DockPane > pane = m_dock->getPane();
-	Ref< ui::DockPane > paneCenter, paneLog;
+	Ref< ui::DockPane > paneCenter;
 
 	const int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", 350);
 	const int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
 
 	pane->split(false, ui::Unit(ww), m_paneWest, paneCenter);
 	paneCenter->split(false, -ui::Unit(we), paneCenter, m_paneEast);
-	paneCenter->split(true, -200_ut, paneCenter, paneLog);
-	paneCenter->split(true, -200_ut, paneCenter, m_paneSouth);
+	paneCenter->split(true, -350_ut, paneCenter, m_paneSouth);
+	paneCenter->setDetachable(false);
 
-	// Both west and east panes are always visible to ensure consistent UI when switching editors.
-	m_paneWest->setAlwaysVisible(true);
+	// Both east panes are always visible to ensure consistent UI when switching editors.
 	m_paneEast->setAlwaysVisible(true);
 
 	// Create panes.
@@ -565,21 +564,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< bool >(L"Editor.DatabaseVisible", true))
 		m_dataBaseView->hide();
 
-	m_paneWest->dock(m_dataBaseView, true);
-
-	// Create tools panel.
-	m_tabTools = new ui::Tab();
-	m_tabTools->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
-	m_tabTools->setText(i18n::Text(L"TITLE_TOOLS"));
-	if (!m_mergedSettings->getProperty< bool >(L"Editor.ToolsVisible", true))
-		m_tabTools->hide();
-
-	m_paneWest->dock(
-		m_tabTools,
-		true,
-		ui::DockPane::DrSouth,
-		200_ut
-	);
+	m_paneSouth->dock(m_dataBaseView);
 
 	// Create output panel.
 	m_tabOutput = new ui::Tab();
@@ -607,7 +592,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_tabOutput->addPage(tabPageLog);
 	m_tabOutput->setActivePage(tabPageLog);
 
-	paneLog->dock(m_tabOutput, true);
+	m_paneSouth->dock(m_tabOutput);
 
 	// Create tab groups; only add one by default, user needs to add more groups manually.
 	m_tabGroupContainer = new ui::MultiSplitter();
@@ -623,7 +608,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_tabGroups.push_back(tab);
 	m_tabGroupLastFocus = tab;
 
-	paneCenter->dock(m_tabGroupContainer, false);
+	paneCenter->dock(m_tabGroupContainer);
 
 	// Create tab pop up.
 	m_menuTab = new ui::Menu();
@@ -1637,7 +1622,6 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, ui::Unit size, int32_
 	{
 		m_paneWest->dock(
 			widget,
-			true,
 			ui::DockPane::DrSouth,
 			size
 		);
@@ -1646,19 +1630,13 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, ui::Unit size, int32_
 	{
 		m_paneEast->dock(
 			widget,
-			true,
 			ui::DockPane::DrSouth,
 			size
 		);
 	}
 	else
 	{
-		m_paneSouth->dock(
-			widget,
-			true,
-			ui::DockPane::DrEast,
-			size
-		);
+		m_paneSouth->dock(widget);
 	}
 }
 
@@ -1704,20 +1682,13 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::createToolPanel(ui::Widget* widget)
 {
-	// Create tab page.
-	Ref< ui::TabPage > tabTool = new ui::TabPage();
-	tabTool->create(m_tabTools, widget->getText(), new ui::FloodLayout());
-	m_tabTools->addPage(tabTool);
-
-	// Re-attach widget as child to tab page.
-	widget->setParent(tabTool);
+	widget->setParent(m_dock);
+	m_paneSouth->dock(widget);
 }
 
 void EditorForm::destroyToolPanel(ui::Widget* widget)
 {
-	Ref< ui::TabPage > tabTool = dynamic_type_cast< ui::TabPage* >(widget->getParent());
-	if (tabTool != nullptr && tabTool->getTab() == m_tabTools)
-		m_tabTools->removePage(tabTool);
+	m_paneSouth->undock(widget);
 }
 
 void EditorForm::buildAssetsForOpenedEditors()
