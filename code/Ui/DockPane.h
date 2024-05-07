@@ -103,8 +103,6 @@ public:
 
 	bool isStackable() const;
 
-	void setAlwaysVisible(bool alwaysVisible);
-
 	bool isVisible() const;
 
 private:
@@ -130,7 +128,6 @@ private:
 	Rect m_rect;
 	bool m_detachable = true;
 	bool m_stackable = false;
-	bool m_alwaysVisible = false;
 	bool m_vertical = false;
 
 	void synchronizeVisibility();

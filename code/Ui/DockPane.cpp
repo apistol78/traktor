@@ -174,7 +174,7 @@ void DockPane::dock(Widget* widget, Direction direction, Unit split)
 			T_ASSERT(!m_child[0] && !m_child[1]);
 			dock(widget);
 
-			if (m_parent && !m_alwaysVisible)
+			if (m_parent)
 			{
 				if (m_parent->m_split < 0_ut)
 					m_parent->m_split = Unit(-traktor::abs(split.get()));
@@ -230,7 +230,6 @@ void DockPane::undock(Widget* widget)
 			m_widgets = m_child[1]->m_widgets;
 			m_detachable = m_child[1]->m_detachable;
 			m_stackable = m_child[1]->m_stackable;
-			m_alwaysVisible = m_child[1]->m_alwaysVisible;
 
 			m_child[0] = nullptr;
 			m_child[1] = nullptr;
@@ -246,7 +245,6 @@ void DockPane::undock(Widget* widget)
 			m_widgets = m_child[0]->m_widgets;
 			m_detachable = m_child[0]->m_detachable;
 			m_stackable = m_child[0]->m_stackable;
-			m_alwaysVisible = m_child[0]->m_alwaysVisible;
 
 			m_child[0] = nullptr;
 			m_child[1] = nullptr;
@@ -277,7 +275,6 @@ void DockPane::detach()
 		m_parent->m_split = childPane->m_split;
 		m_parent->m_detachable = childPane->m_detachable;
 		m_parent->m_stackable = childPane->m_stackable;
-		m_parent->m_alwaysVisible = childPane->m_alwaysVisible;
 		m_parent->m_vertical = childPane->m_vertical;
 
 		if (m_parent->m_child[0])
@@ -494,16 +491,8 @@ bool DockPane::isStackable() const
 	return m_stackable;
 }
 
-void DockPane::setAlwaysVisible(bool alwaysVisible)
-{
-	m_alwaysVisible = alwaysVisible;
-}
-
 bool DockPane::isVisible() const
 {
-	if (m_alwaysVisible)
-		return true;
-
 	if (isSplitter())
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
