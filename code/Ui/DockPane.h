@@ -44,8 +44,6 @@ public:
 
 	explicit DockPane(Widget* owner, DockPane* parent);
 
-	virtual ~DockPane();
-
 	/*! Split pane into two sub panes.
 	 * Pane to be split cannot contain a docked widget.
 	 */
@@ -69,7 +67,15 @@ public:
 
 	void showTab(int32_t tab);
 
-	DockPane* findWidgetPane(Widget* widget);
+
+	void showWidget(Widget* widget);
+
+	void hideWidget(Widget* widget);
+
+	bool isWidgetVisible(const Widget* widget) const;
+
+
+	DockPane* findWidgetPane(const Widget* widget);
 
 	DockPane* getPaneFromPosition(const Point& position);
 
@@ -93,6 +99,10 @@ public:
 
 	bool isDetachable() const;
 
+	void setStackable(bool stackable);
+
+	bool isStackable() const;
+
 	void setAlwaysVisible(bool alwaysVisible);
 
 	bool isVisible() const;
@@ -105,6 +115,8 @@ private:
 		Ref< Widget > widget;
 		int32_t tabMin;
 		int32_t tabMax;
+		int32_t tabDepth;
+		bool visible;
 	};
 
 	Widget* m_owner = nullptr;
@@ -117,10 +129,13 @@ private:
 	Unit m_gripperDim = 0_ut;
 	Rect m_rect;
 	bool m_detachable = true;
+	bool m_stackable = false;
 	bool m_alwaysVisible = false;
 	bool m_vertical = false;
 
-	void update(const Rect& rect, std::vector< WidgetRect >& outWidgetRects);
+	void synchronizeVisibility();
+
+	void update(const Rect& rect, AlignedVector< WidgetRect >& outWidgetRects);
 
 	void draw(Canvas& canvas);
 };

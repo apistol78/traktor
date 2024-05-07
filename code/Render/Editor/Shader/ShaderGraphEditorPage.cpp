@@ -342,9 +342,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create shader graph output view.
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
-	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true));
 	m_shaderViewer->setEnable(false);
 	m_site->createAdditionalPanel(m_shaderViewer, 400_ut, false);
+	if (!m_editor->getSettings()->getProperty< bool >(L"ShaderEditor.ShaderViewVisible", true))
+		m_site->hideAdditionalPanel(m_shaderViewer);
 
 	// Create "data" view.
 	m_dataContainer = new ui::Container();
@@ -495,7 +496,8 @@ void ShaderGraphEditorPage::destroy()
 {
 	if (m_shaderViewer)
 	{
-		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(false));
+		const bool viewerVisible = m_site->isAdditionalPanelVisible(m_shaderViewer);
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", viewerVisible);
 		m_editor->commitGlobalSettings();
 		m_site->destroyAdditionalPanel(m_shaderViewer);
 	}

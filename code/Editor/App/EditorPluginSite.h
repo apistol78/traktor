@@ -60,6 +60,8 @@ public:
 
 	virtual void hideAdditionalPanel(ui::Widget* widget) override final;
 
+	virtual bool isAdditionalPanelVisible(const ui::Widget* widget) const override final;
+
 private:
 	EditorForm* m_editor;
 	Ref< IEditorPlugin > m_editorPlugin;

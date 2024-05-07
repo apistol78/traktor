@@ -54,6 +54,9 @@ public:
 
 	/*! Hide additional docking panel. */
 	virtual void hideAdditionalPanel(ui::Widget* widget) = 0;
+
+	/*! Check if additional docking panel is visible. */
+	virtual bool isAdditionalPanelVisible(const ui::Widget* widget) const = 0;
 };
 
 }

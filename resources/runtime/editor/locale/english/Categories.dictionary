@@ -114,6 +114,10 @@
 			<second>Shader</second>
 		</item>
 		<item>
+			<first>TRAKTOR_RENDER_SHADERMODULE</first>
+			<second>Shader module</second>
+		</item>
+		<item>
 			<first>TRAKTOR_RENDER_TEXTUREASSET</first>
 			<second>Texture</second>
 		</item>
@@ -182,7 +186,7 @@
 			<second>Song</second>
 		</item>
 		<item>
-			<first>TRAKTOR_UIKIT_WIDGETSCAFFOLDING</first>
+			<first>TRAKTOR_UIKIT_SCAFFOLDING</first>
 			<second>UI scaffolding</second>
 		</item>
 		<item>

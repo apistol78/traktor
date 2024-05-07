@@ -89,11 +89,34 @@ DockPane* Dock::getPane() const
 	return m_pane;
 }
 
+void Dock::showWidget(Widget* widget)
+{
+	DockPane* widgetPane = m_pane->findWidgetPane(widget);
+	T_FATAL_ASSERT_M(widgetPane != nullptr, L"Widget not docked.");
+	widgetPane->showWidget(widget);
+	update();
+}
+
+void Dock::hideWidget(Widget* widget)
+{
+	DockPane* widgetPane = m_pane->findWidgetPane(widget);
+	T_FATAL_ASSERT_M(widgetPane != nullptr, L"Widget not docked.");
+	widgetPane->hideWidget(widget);
+	update();
+}
+
+bool Dock::isWidgetVisible(const Widget* widget) const
+{
+	DockPane* widgetPane = m_pane->findWidgetPane(widget);
+	T_FATAL_ASSERT_M(widgetPane != nullptr, L"Widget not docked.");
+	return widgetPane->isWidgetVisible(widget);
+}
+
 void Dock::update(const Rect* rc, bool immediate)
 {
 	// Update child widgets.
 	const Rect innerRect = getInnerRect();
-	std::vector< WidgetRect > widgetRects;
+	AlignedVector< WidgetRect > widgetRects;
 	m_pane->update(innerRect, widgetRects);
 	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), false);
 
@@ -115,13 +138,11 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 	{
 		if (pane->hitGripperClose(position))
 		{
-			//if (pane->m_widget)
-			//	pane->m_widget->hide();
+			Widget* widget = !pane->m_widgets.empty() ? pane->m_widgets.front().widget : nullptr;
+			if (widget)
+				pane->hideWidget(widget);
 			update();
 		}
-
-		//if (pane->m_widget)
-		//	pane->m_widget->setFocus();
 
 		const int32_t tabIndex = pane->hitTab(position);
 		if (tabIndex >= 0)
@@ -178,7 +199,7 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 
 		// Update child widgets of modified pane.
 		const Rect paneRect = m_splittingPane->getPaneRect();
-		std::vector< WidgetRect > widgetRects;
+		AlignedVector< WidgetRect > widgetRects;
 		m_splittingPane->update(paneRect, widgetRects);
 		setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
 	}

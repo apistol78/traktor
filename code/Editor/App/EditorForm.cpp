@@ -580,8 +580,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->split(true, -350_ut, paneCenter, m_paneSouth);
 	paneCenter->setDetachable(false);
 
-	// Both east panes are always visible to ensure consistent UI when switching editors.
+	// Set pane styles.
 	m_paneEast->setAlwaysVisible(true);
+	m_paneSouth->setStackable(true);
 
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -1677,15 +1678,19 @@ void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 void EditorForm::showAdditionalPanel(ui::Widget* widget)
 {
 	T_ASSERT(widget);
-	widget->show();
-	m_dock->update();
+	m_dock->showWidget(widget);
 }
 
 void EditorForm::hideAdditionalPanel(ui::Widget* widget)
 {
 	T_ASSERT(widget);
-	widget->hide();
-	m_dock->update();
+	m_dock->hideWidget(widget);
+}
+
+bool EditorForm::isAdditionalPanelVisible(const ui::Widget* widget) const
+{
+	T_ASSERT(widget);
+	return m_dock->isWidgetVisible(widget);
 }
 
 void EditorForm::updateAdditionalPanelMenu()
@@ -2731,13 +2736,11 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.ViewDatabase")
 	{
-		m_dataBaseView->show();
-		m_dock->update();
+		m_dock->showWidget(m_dataBaseView);
 	}
 	else if (command == L"Editor.ViewLog")
 	{
-		m_tabOutput->show();
-		m_dock->update();
+		m_dock->showWidget(m_tabOutput);
 	}
 	else if (command == L"Editor.ViewOther")
 	{

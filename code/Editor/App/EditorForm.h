@@ -249,6 +249,8 @@ private:
 
 	void hideAdditionalPanel(ui::Widget* widget);
 
+	bool isAdditionalPanelVisible(const ui::Widget* widget) const;
+
 	void updateAdditionalPanelMenu();
 
 	void createToolPanel(ui::Widget* widget);

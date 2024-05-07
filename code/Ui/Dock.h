@@ -39,6 +39,12 @@ public:
 
 	DockPane* getPane() const;
 
+	void showWidget(Widget* widget);
+
+	void hideWidget(Widget* widget);
+
+	bool isWidgetVisible(const Widget* widget) const;
+
 	virtual void update(const Rect* rc = nullptr, bool immediate = false) override;
 
 private:

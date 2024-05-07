@@ -80,4 +80,9 @@ void EditorPluginSite::hideAdditionalPanel(ui::Widget* widget)
 {
 }
 
+bool EditorPluginSite::isAdditionalPanelVisible(const ui::Widget* widget) const
+{
+	return true;
+}
+
 }

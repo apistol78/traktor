@@ -262,8 +262,10 @@ bool InputMappingEditor::create(ui::Container* parent)
 void InputMappingEditor::destroy()
 {
 	m_site->destroyAdditionalPanel(m_propertiesView);
+	m_site->destroyAdditionalPanel(m_listValueSources);
 
 	safeDestroy(m_propertiesView);
+	safeDestroy(m_listValueSources);
 }
 
 bool InputMappingEditor::dropInstance(db::Instance* instance, const ui::Point& position)

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,13 +8,10 @@
  */
 #pragma once
 
-#include <map>
 #include "Editor/IEditorPageSite.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class EditorForm;
 
@@ -34,7 +31,7 @@ class EditorPageSite : public IEditorPageSite
 	T_RTTI_CLASS;
 
 public:
-	explicit EditorPageSite(EditorForm* editor, bool active);
+	explicit EditorPageSite(EditorForm* editor, bool siteVisible);
 
 	void show();
 
@@ -50,14 +47,14 @@ public:
 
 	virtual void hideAdditionalPanel(ui::Widget* widget) override final;
 
-	const std::map< ui::Widget*, bool >& getPanelWidgets() const { return m_panelWidgets; }
+	virtual bool isAdditionalPanelVisible(const ui::Widget* widget) const override final;
+
+	const AlignedVector< std::pair< ui::Widget*, bool > >& getPanelWidgets() const { return m_panelWidgets; }
 
 private:
 	EditorForm* m_editor;
-	std::map< ui::Widget*, bool > m_panelWidgets;
-	bool m_active;
+	AlignedVector< std::pair< ui::Widget*, bool > > m_panelWidgets;
+	bool m_siteVisible;
 };
 
-	}
 }
-
