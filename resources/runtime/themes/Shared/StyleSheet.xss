@@ -879,5 +879,9 @@
 			<first>traktor.Object</first>
 			<second>$(Images.Path)/New/Thumbnails/Object.svg</second>
 		</item>
+		<item>
+			<first>traktor.script.Script</first>
+			<second>$(Images.Path)/New/Thumbnails/script_Script.svg</second>
+		</item>
 	</values>
 </object>
