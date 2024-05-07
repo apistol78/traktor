@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <functional>
 #include "Core/Math/Triangle.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/GammaFilter.h"
 #include "Model/Model.h"
 #include "Model/ModelRasterizer.h"
 
@@ -149,6 +150,10 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			});
 		}
 	}
+
+	// Convert image from linear gamma to sRGB.
+	drawing::GammaFilter gammaFilter(1.0f, 2.2f);
+	outImage->apply(&gammaFilter);
 
 	return true;
 }
