@@ -26,9 +26,9 @@
      borderopacity="1"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="15.262174"
-     inkscape:cx="12.842207"
-     inkscape:cy="13.464661"
+     inkscape:zoom="1.9077718"
+     inkscape:cx="-36.954106"
+     inkscape:cy="8.1246617"
      inkscape:document-units="px"
      inkscape:current-layer="Dark"
      showgrid="true"
@@ -82,13 +82,13 @@
        inkscape:connector-curvature="0"
        id="path9070"
        d="M 10.999178,28.999178 11.81926,7.2901763 22.999178,6.9991782 l 4,3.9999998 v 18 z"
-       style="display:inline;opacity:1;fill:#dbdbdb;fill-opacity:1;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;opacity:1;fill:#878787;fill-opacity:1;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        sodipodi:nodetypes="cccccc" />
     <path
        inkscape:connector-curvature="0"
        id="path9072"
        d="M 2.9991781,2.9991781 H 14.999178 l 4,4.0000001 -8,-1e-7 V 24.999178 H 2.9991778 Z"
-       style="display:inline;opacity:0.5;fill:#b4b4b4;fill-opacity:0.61324;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;opacity:0.5;fill:#939393;fill-opacity:0.61324;stroke:none;stroke-width:2;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        sodipodi:nodetypes="ccccccc" />
     <g
        transform="matrix(0.07363889,0,0,0.07363889,-25.921903,-2.17486)"
@@ -96,7 +96,7 @@
        style="display:inline">
       <path
          id="path9144"
-         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:23.3349;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="fill:none;fill-rule:evenodd;stroke:#cccccc;stroke-width:23.3349;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="M 501.38019,423.33661 V 124.58143 h 162.95738 l 54.31912,54.31912 v 244.43606 z m 0,-54.31912 H 392.74195 V 70.262304 h 162.95737 l 54.31912,54.319126"
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="ccccccccccc" />
