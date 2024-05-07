@@ -1274,9 +1274,10 @@ void DatabaseView::updateGridInstances()
 
 		// Get thumbnail preview of instance.
 		const TypeInfo* instanceType = childInstance->getPrimaryType();
+
 		for (auto browsePreview : m_browsePreview)
 		{
-			TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
+			const TypeInfoSet previewTypes = browsePreview->getPreviewTypes();
 			if (previewTypes.find(instanceType) != previewTypes.end())
 			{
 				item->setImage(browsePreview->generate(
@@ -1284,6 +1285,19 @@ void DatabaseView::updateGridInstances()
 					childInstance
 				));
 				break;
+			}
+		}
+
+		if (item->getImage() == nullptr)
+		{
+			for (const TypeInfo* type = instanceType; type != nullptr; type = type->getSuper())
+			{
+				Ref< ui::StyleBitmap > itemImage = new ui::StyleBitmap(type->getName());
+				if (itemImage->getSystemBitmap(m_listInstances) != nullptr)
+				{
+					item->setImage(itemImage);
+					break;
+				}
 			}
 		}
 	}

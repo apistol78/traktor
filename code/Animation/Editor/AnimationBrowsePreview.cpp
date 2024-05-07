@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -35,7 +35,7 @@ TypeInfoSet AnimationBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< AnimationAsset, SkeletonAsset >();
 }
 
-Ref< ui::Bitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const editor::Asset > asset = instance->getObject< editor::Asset >();
 	if (!asset)

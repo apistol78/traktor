@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,7 +31,7 @@ class T_DLLCLASS ShaderGraphBrowsePreview : public editor::IBrowsePreview
 public:
 	virtual TypeInfoSet getPreviewTypes() const override final;
 
-	virtual Ref< ui::Bitmap > generate(editor::IEditor* editor, db::Instance* instance) const override final;
+	virtual Ref< ui::IBitmap > generate(editor::IEditor* editor, db::Instance* instance) const override final;
 };
 
 }

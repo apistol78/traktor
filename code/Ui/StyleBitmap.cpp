@@ -13,15 +13,14 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Split.h"
 #include "Drawing/Image.h"
+#include "Svg/Document.h"
+#include "Svg/Parser.h"
+#include "Svg/Rasterizer.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
 #include "Ui/Widget.h"
 #include "Ui/Itf/ISystemBitmap.h"
-
-#include "Svg/Document.h"
-#include "Svg/Parser.h"
-#include "Svg/Rasterizer.h"
 
 namespace traktor::ui
 {

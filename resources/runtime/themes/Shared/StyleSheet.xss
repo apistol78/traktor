@@ -873,5 +873,11 @@
 			<first>UI.Unchecked</first>
 			<second>$(Images.Path)/New/UI/Unchecked.svg</second>
 		</item>
+		
+		<!-- Thumbnails -->
+		<item>
+			<first>traktor.Object</first>
+			<second>$(Images.Path)/New/Thumbnails/Object.svg</second>
+		</item>
 	</values>
 </object>

@@ -28,7 +28,7 @@ TypeInfoSet TextureBrowsePreview::getPreviewTypes() const
 	return makeTypeInfoSet< TextureAsset >();
 }
 
-Ref< ui::Bitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
+Ref< ui::IBitmap > TextureBrowsePreview::generate(editor::IEditor* editor, db::Instance* instance) const
 {
 	Ref< const TextureAsset > textureAsset = instance->getObject< TextureAsset >();
 	if (!textureAsset)

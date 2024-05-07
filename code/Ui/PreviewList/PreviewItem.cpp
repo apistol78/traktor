@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,12 +52,12 @@ const std::wstring& PreviewItem::getSubText() const
 	return m_subText;
 }
 
-void PreviewItem::setImage(ui::Bitmap* image)
+void PreviewItem::setImage(ui::IBitmap* image)
 {
 	m_bitmapImage = image;
 }
 
-ui::Bitmap* PreviewItem::getImage() const
+ui::IBitmap* PreviewItem::getImage() const
 {
 	return m_bitmapImage;
 }
@@ -124,17 +124,17 @@ void PreviewItem::paint(Canvas& canvas, const Rect& rect)
 
 	if (m_bitmapImage)
 	{
-		if (m_imageBackground)
-		{
-			canvas.drawBitmap(
-				thumbPosition,
-				thumbSize,
-				Point(0, 0),
-				m_imageBackground->getSize(getWidget()),
-				m_imageBackground,
-				BlendMode::Opaque
-			);
-		}
+		//if (m_imageBackground)
+		//{
+		//	canvas.drawBitmap(
+		//		thumbPosition,
+		//		thumbSize,
+		//		Point(0, 0),
+		//		m_imageBackground->getSize(getWidget()),
+		//		m_imageBackground,
+		//		BlendMode::Opaque
+		//	);
+		//}
 
 		canvas.drawBitmap(
 			thumbPosition,

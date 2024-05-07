@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,7 +21,7 @@
 namespace traktor::ui
 {
 
-class Bitmap;
+class IBitmap;
 class StyleBitmap;
 
 class T_DLLCLASS PreviewItem : public AutoWidgetCell
@@ -41,9 +41,9 @@ public:
 
 	const std::wstring& getSubText() const;
 
-	void setImage(ui::Bitmap* image);
+	void setImage(ui::IBitmap* image);
 
-	ui::Bitmap* getImage() const;
+	ui::IBitmap* getImage() const;
 
 	void setSelected(bool selected);
 
@@ -55,7 +55,7 @@ private:
 	std::wstring m_text;
 	std::wstring m_subText;
 	Ref< ui::StyleBitmap > m_imageBackground;
-	Ref< ui::Bitmap > m_bitmapImage;
+	Ref< ui::IBitmap > m_bitmapImage;
 	bool m_selected;
 };
 

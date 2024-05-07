@@ -29,7 +29,7 @@ class Instance;
 namespace traktor::ui
 {
 
-class Bitmap;
+class IBitmap;
 
 }
 
@@ -48,7 +48,7 @@ class T_DLLCLASS IBrowsePreview : public Object
 public:
 	virtual TypeInfoSet getPreviewTypes() const = 0;
 
-	virtual Ref< ui::Bitmap > generate(IEditor* editor, db::Instance* instance) const = 0;
+	virtual Ref< ui::IBitmap > generate(IEditor* editor, db::Instance* instance) const = 0;
 };
 
 }
