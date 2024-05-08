@@ -582,7 +582,7 @@ void DatabaseView::updateView()
 		setEnable(false);
 
 	m_treeDatabase->applyState(treeState);
-	if (viewMode == 2)
+	if (viewMode == 1)
 		updateGridInstances();
 
 	m_splitter->update();
