@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -22,20 +22,14 @@
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
-#include "Net/Url.h"
-#include "Net/Http/HttpClient.h"
-#include "Net/Http/HttpClientResult.h"
-#include "Store/Editor/BrowseAssetDialog.h"
 #include "Store/Editor/ImportAssetTool.h"
 #include "Ui/BackgroundWorkerDialog.h"
 #include "Ui/FileDialog.h"
 
-namespace traktor
+namespace traktor::store
 {
-	namespace store
+	namespace
 	{
-		namespace
-		{
 
 bool migrateInstance(Ref< db::Instance > sourceInstance, Ref< db::Group > targetGroup)
 {
@@ -175,7 +169,7 @@ bool copyFiles(const Path& targetPath, db::Group* sourceGroup)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.store.ImportAssetTool", 0, ImportAssetTool, IEditorTool)
 
@@ -196,56 +190,22 @@ bool ImportAssetTool::needOutputResources(std::set< Guid >& outDependencies) con
 
 bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const PropertyGroup* param)
 {
-	RefArray< net::Url > urls;
+	std::vector< Path > fileNames;
 
-	std::wstring serverHost = editor->getSettings()->getProperty< std::wstring >(L"Store.Server", L"localhost:80");
-	if (serverHost.empty())
-		return false;
-
-	// Let user selected packages to import.
-	BrowseAssetDialog browseAssetDialog(serverHost);
-	if (!browseAssetDialog.create(parent))
-		return false;
-	if (browseAssetDialog.showModal(urls) != ui::DialogResult::Ok)
-	{
-		browseAssetDialog.destroy();
-		return false;
-	}
-	browseAssetDialog.destroy();
-
-	// Ensure temporary folder for download exist.
-	if (!FileSystem::getInstance().makeAllDirectories(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download")))
+	ui::FileDialog fileDialog;
+	fileDialog.create(parent, L"", L"Import package(s)...", L"Package files (*.compact);*.compact;All files (*.*);*.*");
+	if (fileDialog.showModalThenDestroy(fileNames) != ui::DialogResult::Ok)
 		return false;
 
 	bool importResult = false;
 
 	// Create download task.
 	auto fn = [&]() {
-
-		// Download and each selected package.
-		Ref< net::HttpClient > httpClient = new net::HttpClient();
-		for (auto url : urls)
-		{	
-			auto downloadQuery = httpClient->get(*url);
-			if (!downloadQuery)
-				return;
-			if (!downloadQuery->succeeded())
-				return;
-
-			auto tempFile = FileSystem::getInstance().open(Path(L"$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact"), File::FmWrite);
-			if (!tempFile)
-				return;
-
-			auto stream = downloadQuery->getStream();
-			if (!StreamCopy(tempFile, stream).execute())
-				return;
-
-			tempFile->close();
-			tempFile = nullptr;
-
+		for (const auto& fileName : fileNames)
+		{
 			// Migrate instances from bundle's database into workspace source database.
 			Ref< db::Database > database = new db::Database();
-			if (!database->open(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=$(TRAKTOR_HOME)/data/Temp/Store/Download/Database.compact;readOnly=true")))
+			if (!database->open(db::ConnectionString(L"provider=traktor.db.CompactDatabase;fileName=" + fileName.getPathName() + L";readOnly=true")))
 				return;
 
 			log::info << L"Merging instances from database..." << Endl;
@@ -258,7 +218,7 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 					return;
 			}
 
-			// Copy embedded assets from bundle into workspace's assets.
+			// Copy embedded assets from bundle into workspace assets.
 			log::info << L"Unpacking assets from database..." << Endl;
 
 			Ref< db::Group > assetGroup = database->getGroup(L"Assets");
@@ -272,7 +232,6 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 			database->close();
 			database = nullptr;
 		}
-
 		importResult = true;
 	};
 
@@ -304,5 +263,4 @@ bool ImportAssetTool::launch(ui::Widget* parent, editor::IEditor* editor, const 
 		return false;
 }
 
-	}
 }

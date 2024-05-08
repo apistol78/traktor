@@ -52,6 +52,20 @@ public:
 
 	DialogResult showModal(std::vector< Path >& outPaths);
 
+	DialogResult showModalThenDestroy(Path& outPath)
+	{
+		const DialogResult result = showModal(outPath);
+		destroy();
+		return result;
+	}
+
+	DialogResult showModalThenDestroy(std::vector< Path >& outPaths)
+	{
+		const DialogResult result = showModal(outPaths);
+		destroy();
+		return result;
+	}
+
 private:
 	Ref< Container > m_containerPath;
 	Ref< GridView > m_gridFiles;
