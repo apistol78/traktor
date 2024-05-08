@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -135,13 +135,13 @@ AutoWidgetCell* GridItem::hitTest(const Point& position)
 void GridItem::paint(Canvas& canvas, const Rect& rect)
 {
 	const StyleSheet* ss = getStyleSheet();
-	Rect rcText(rect.left + 2, rect.top, rect.right, rect.bottom);
+	Rect rcText(rect.left + pixel(2_ut), rect.top, rect.right, rect.bottom);
 
 	if (m_text.empty())
 	{
 		int32_t w = 0;
 		for (auto image : m_images)
-			w += image->getSize(getWidget()).cx + 2;
+			w += image->getSize(getWidget()).cx + pixel(2_ut);
 		rcText.left += (rcText.getWidth() - w) / 2;
 	}
 
@@ -161,7 +161,7 @@ void GridItem::paint(Canvas& canvas, const Rect& rect)
 			BlendMode::Alpha
 		);
 
-		rcText.left += szImage.cx + 2;
+		rcText.left += szImage.cx + pixel(2_ut);
 	}
 
 	if (!m_text.empty())

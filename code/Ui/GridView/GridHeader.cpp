@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,14 +9,12 @@
 #include "Ui/Application.h"
 #include "Ui/Canvas.h"
 #include "Ui/StyleSheet.h"
-#include "Ui/Auto/AutoWidget.h"
 #include "Ui/GridView/GridHeader.h"
 #include "Ui/GridView/GridColumn.h"
+#include "Ui/GridView/GridView.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridHeader", GridHeader, AutoWidgetCell)
 
@@ -27,7 +25,7 @@ void GridHeader::setColumns(const RefArray< GridColumn >& columns)
 
 void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 {
-	if (m_columns.size() < 2)
+	if (event->getButton() != MbtLeft || m_columns.size() < 2)
 		return;
 
 	int32_t dx = pixel(2_ut);
@@ -50,6 +48,26 @@ void GridHeader::mouseDown(MouseButtonDownEvent* event, const Point& position)
 void GridHeader::mouseUp(MouseButtonUpEvent* event, const Point& position)
 {
 	m_resizeColumn = 0;
+}
+
+void GridHeader::mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position)
+{
+	if (event->getButton() != MbtLeft || m_columns.size() < 2)
+		return;
+
+	int32_t dx = pixel(2_ut);
+	int32_t x = 0;
+
+	for (uint32_t i = 0; i < m_columns.size(); ++i)
+	{
+		GridColumn* column = m_columns[i];
+		x += pixel(column->getWidth());
+		if (position.x >= x - dx && position.x <= x + dx)
+		{
+			getWidget< GridView >()->fitColumn(i);
+			break;
+		}
+	}
 }
 
 void GridHeader::mouseMove(MouseMoveEvent* event, const Point& position)
@@ -100,5 +118,4 @@ void GridHeader::paint(Canvas& canvas, const Rect& rect)
 	canvas.drawLine(left, rect.top + 4, left, rect.bottom - 4);
 }
 
-	}
 }

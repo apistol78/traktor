@@ -1,8 +1,6 @@
-#pragma optimize( "", off )
-
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -276,6 +274,28 @@ void GridView::deselectAll()
 void GridView::setMultiSelect(bool multiSelect)
 {
 	m_multiSelect = multiSelect;
+}
+
+void GridView::fitColumn(int32_t columnIndex)
+{
+	if (columnIndex < 0 || columnIndex >= (int32_t)m_columns.size())
+		return;
+
+	const auto fm = getFontMetric();
+
+	int maxWidth = pixel(16_ut);
+	for (auto row : getRows(GfDescendants))
+	{
+		const GridItem* item = row->get(columnIndex);
+		if (item)
+		{
+			const int32_t width = fm.getExtent(item->getText()).cx;
+			maxWidth = std::max(maxWidth, width);
+		}
+	}
+
+	m_columns[columnIndex]->setWidth(unit(maxWidth) + 4_ut);
+	requestUpdate();
 }
 
 Ref< HierarchicalState > GridView::captureState() const

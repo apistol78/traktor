@@ -97,6 +97,8 @@ public:
 
 	void setMultiSelect(bool multiSelect);
 
+	void fitColumn(int32_t columnIndex);
+
 	Ref< HierarchicalState > captureState() const;
 
 	void applyState(const HierarchicalState* state);
