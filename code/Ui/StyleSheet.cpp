@@ -116,7 +116,7 @@ Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring_v
 
 Color4ub StyleSheet::getColor(const Object* widget, const std::wstring_view& element) const
 {
-	const TypeInfo* widgetType = &type_of(widget);
+	const TypeInfo* widgetType = widget ? &type_of(widget) : &type_of< Object >();
 	while (widgetType != nullptr)
 	{
 		auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {

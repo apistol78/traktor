@@ -53,7 +53,7 @@ private:
 	mutable std::wstring m_fileName;
 	mutable int32_t m_dpi = -1;
 
-	bool resolve(int32_t dpi) const;
+	bool resolve(const Widget* reference, int32_t dpi) const;
 };
 
 }

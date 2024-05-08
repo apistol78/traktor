@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include <string>
 #include "Core/Ref.h"
 #include "Core/Object.h"
@@ -46,14 +47,16 @@ class T_DLLCLASS Parser : public Object
 	T_RTTI_CLASS;
 
 public:
-	Parser();
+	typedef std::function< Ref< const Style >(const std::wstring_view&) > class_style_fn;
+
+	explicit Parser(const class_style_fn& classStyleFn = class_style_fn());
 
 	Ref< Shape > parse(xml::Document* doc);
 
 	Ref< Shape > parse(const traktor::Path& fileName);
 
 private:
-	Ref< Style > m_defaultStyle;
+	class_style_fn m_classStyleFn;
 	SmallMap< std::wstring, Ref< Gradient > > m_gradients;
 	SmallMap< std::wstring, Ref< Shape > > m_shapeDefs;
 
@@ -83,7 +86,7 @@ private:
 
 	Ref< Gradient > parseGradientDef(const xml::Element* defs, const xml::Element* elm) const;
 
-	Ref< Style > parseStyle(xml::Element* elm);
+	void parseStyle(const xml::Element* elm, Style* style);
 
 	Matrix33 parseTransform(const xml::Element* elm, const std::wstring& attrName) const;
 

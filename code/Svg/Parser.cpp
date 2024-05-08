@@ -154,9 +154,9 @@ float parseNumber(const std::wstring& value, float defaultValue = 0.0f)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.svg.Parser", Parser, Object)
 
-Parser::Parser()
+Parser::Parser(const class_style_fn& classStyleFn)
+:	m_classStyleFn(classStyleFn)
 {
-	m_defaultStyle = new Style();
 }
 
 Ref< Shape > Parser::parse(xml::Document* doc)
@@ -208,11 +208,18 @@ Ref< Shape > Parser::traverse(xml::Element* elm)
 		for (const xml::Attribute* attr = elm->getFirstAttribute(); attr != nullptr; attr = attr->getNext())
 			shape->setAttribute(attr->getName(), Any::fromString(attr->getValue()));
 
-		if (!shape->getStyle())
-			shape->setStyle(parseStyle(elm));
-		if (!shape->getStyle())
-			shape->setStyle(m_defaultStyle);
+		Ref< Style > style = new Style();
 
+		if (m_classStyleFn && elm->getAttribute(L"class") != nullptr)
+		{
+			Ref< const Style > classStyle = m_classStyleFn(elm->getAttribute(L"class")->getValue());
+			if (classStyle)
+				style = new Style(*classStyle);
+		}
+
+		parseStyle(elm, style);
+
+		shape->setStyle(style);
 		shape->setTransform(parseTransform(elm, L"transform"));
 
 		for (xml::Node* child = elm->getFirstChild(); child; child = child->getNextSibling())
@@ -756,18 +763,15 @@ Ref< Gradient > Parser::parseGradientDef(const xml::Element* defs, const xml::El
 	return gradient;
 }
 
-Ref< Style > Parser::parseStyle(xml::Element* elm)
+void Parser::parseStyle(const xml::Element* elm, Style* style)
 {
 	if (!elm)
-		return nullptr;
+		return;
 
-	Ref< Style > style;
 	Color4f color;
 
 	if (elm->hasAttribute(L"fill"))
 	{
-		style = new Style();
-
 		const std::wstring fillDesc = elm->getAttribute(L"fill")->getValue();
 		if (parseColor(fillDesc, color))
 		{
@@ -779,8 +783,6 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 	}
 	else if (elm->hasAttribute(L"style"))
 	{
-		style = new Style();
-
 		std::vector< std::wstring > styles;
 		Split< std::wstring >::any(elm->getAttribute(L"style")->getValue(), L";", styles);
 		for (const auto& st : styles)
@@ -891,8 +893,6 @@ Ref< Style > Parser::parseStyle(xml::Element* elm)
 				log::debug << L"Unknown CSS style \"" << key << L"\"" << Endl;
 		}
 	}
-
-	return style;
 }
 
 Matrix33 Parser::parseTransform(const xml::Element* elm, const std::wstring& attrName) const

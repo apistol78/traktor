@@ -8,6 +8,10 @@
 			<typeName>traktor.Object</typeName>
 			<colors>
 				<item>
+					<first>theme-color</first>
+					<second>204, 204, 204, 255</second>
+				</item>
+				<item>
 					<first>background-color</first>
 					<second>45, 45, 45, 255</second>
 				</item>

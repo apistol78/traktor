@@ -16,6 +16,7 @@
 #include "Svg/Document.h"
 #include "Svg/Parser.h"
 #include "Svg/Rasterizer.h"
+#include "Svg/Style.h"
 #include "Ui/Application.h"
 #include "Ui/StyleBitmap.h"
 #include "Ui/StyleSheet.h"
@@ -66,22 +67,22 @@ void StyleBitmap::destroy()
 Size StyleBitmap::getSize(const Widget* reference) const
 {
 	const int32_t dpi = reference != nullptr ? reference->dpi() : 96;
-	return resolve(dpi) ? m_bitmap->getSize() : Size();
+	return resolve(reference, dpi) ? m_bitmap->getSize() : Size();
 }
 
 Ref< drawing::Image > StyleBitmap::getImage(const Widget* reference) const
 {
 	const int32_t dpi = reference != nullptr ? reference->dpi() : 96;
-	return resolve(dpi) ? m_bitmap->getImage() : nullptr;
+	return resolve(reference, dpi) ? m_bitmap->getImage() : nullptr;
 }
 
 ISystemBitmap* StyleBitmap::getSystemBitmap(const Widget* reference) const
 {
 	const int32_t dpi = reference != nullptr ? reference->dpi() : 96;
-	return resolve(dpi) ? m_bitmap : nullptr;
+	return resolve(reference, dpi) ? m_bitmap : nullptr;
 }
 
-bool StyleBitmap::resolve(int32_t dpi) const
+bool StyleBitmap::resolve(const Widget* reference, int32_t dpi) const
 {
 	const StyleSheet* ss = Application::getInstance()->getStyleSheet();
 	if (!ss)
@@ -119,7 +120,27 @@ bool StyleBitmap::resolve(int32_t dpi) const
 
 	if (fileName.getExtension() == L"svg")
 	{
-		Ref< svg::Document > sd = dynamic_type_cast< svg::Document* >(svg::Parser().parse(fileName));
+		const Color4f themeColor = Color4f::fromColor4ub(ss->getColor(reference, L"theme-color"));
+
+		Ref< svg::Style > themeFill = new svg::Style();
+		themeFill->setFillEnable(true);
+		themeFill->setFill(themeColor);
+
+		Ref< svg::Style > themeStroke = new svg::Style();
+		themeStroke->setStrokeEnable(true);
+		themeStroke->setStroke(themeColor);
+
+		auto classStyle = [&](const std::wstring_view& className) -> Ref< const svg::Style >
+		{
+			if (className == L"theme_fill")
+				return themeFill;
+			else if (className == L"theme_stroke")
+				return themeStroke;
+			else
+				return nullptr;
+		};
+
+		Ref< svg::Document > sd = dynamic_type_cast< svg::Document* >(svg::Parser(classStyle).parse(fileName));
 		if (!sd)
 			return false;
 
