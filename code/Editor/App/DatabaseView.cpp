@@ -1253,18 +1253,6 @@ void DatabaseView::updateGridInstances()
 				continue;
 		}
 
-		int32_t iconIndex = getIconIndex(primaryType);
-		if (!showFiltered)
-		{
-			if (!m_filter->acceptInstance(childInstance))
-				continue;
-		}
-		else
-		{
-			if (!m_filter->acceptInstance(childInstance))
-				iconIndex += 23;
-		}
-
 		Ref< ui::PreviewItem > item = new ui::PreviewItem();
 		item->setText(childInstance->getName());
 		item->setSubText(getCategoryText(primaryType));
@@ -1451,7 +1439,7 @@ void DatabaseView::eventToolSelectionClicked(ui::ToolBarButtonClickEvent* event)
 			m_filter.reset(new GuidSetFilter(guidSet));
 			m_toolFilterType->setToggled(false);
 		}
-		if (!m_toolFilterAssets->isToggled())
+		else
 			m_filter.reset(new DefaultFilter());
 	}
 	else if (cmd == L"Database.ViewModes")
@@ -1503,7 +1491,6 @@ void DatabaseView::eventTimer(ui::TimerEvent* event)
 void DatabaseView::eventInstanceActivate(ui::TreeViewItemActivateEvent* event)
 {
 	Ref< ui::TreeViewItem > item = event->getItem();
-
 	Ref< db::Instance > instance = item->getData< db::Instance >(L"INSTANCE");
 	if (!instance)
 		return;
