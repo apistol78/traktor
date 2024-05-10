@@ -12,6 +12,7 @@
 // Preview widgets.
 #include "Ui/Button.h"
 #include "Ui/Dock.h"
+#include "Ui/DockPane.h"
 #include "Ui/DropDown.h"
 #include "Ui/Edit.h"
 #include "Ui/MenuItem.h"
@@ -104,11 +105,17 @@ Ref< Widget > PreviewWidgetFactory::create(Widget* parent, const StyleSheet* sty
 		button->create(parent, L"Preview");
 		return button;
 	}
-	else if (typeName == L"traktor.ui.Dock")
+	else if (typeName == L"traktor.ui.Dock" || typeName == L"traktor.ui.DockPane")
 	{
 		Ref< Dock > dock = new Dock();
 		dock->setStyleSheet(styleSheet);
 		dock->create(parent);
+
+		Ref< Widget > widget = new Widget();
+		widget->create(dock);
+		widget->setText(L"Dock");
+		dock->getPane()->dock(widget);
+
 		return dock;
 	}
 	else if (typeName == L"traktor.ui.DropDown")
