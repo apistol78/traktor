@@ -1007,7 +1007,7 @@
 	<values>
 		<item>
 			<first>Images.Path</first>
-			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Dark</second>
+			<second>$(TRAKTOR_HOME)/resources/runtime/themes/Shared/Images</second>
 		</item>
 	</values>
 </object>

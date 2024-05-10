@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="16" height="16" viewBox="0 0 32 32" version="1.1" id="svg1" inkscape:version="1.2.2 (732a01da63, 2022-12-09)" sodipodi:docname="ToolProfiler.svg" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+	<style>
+	.theme_fill {
+		fill: green;
+	}
+	.theme_stroke {
+		stroke: green;
+	}
+	</style>
+	<sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#111111" borderopacity="1" inkscape:showpageshadow="0" inkscape:pageopacity="0" inkscape:pagecheckerboard="1" inkscape:deskcolor="#d1d1d1" inkscape:document-units="px" inkscape:zoom="21.649371" inkscape:cx="4.3650228" inkscape:cy="9.2843342" inkscape:window-width="1294" inkscape:window-height="797" inkscape:window-x="2639" inkscape:window-y="2861" inkscape:window-maximized="0" inkscape:current-layer="layer1" showgrid="false"/>
+	<defs id="defs1"/>
+	<g inkscape:label="Layer 1" inkscape:groupmode="layer" id="layer1">
+		<path style="stroke:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:miter;stop-color:#000000" d="M 24.268137,3.1127902 16.785242,15.491903 14.937613,8.0090063 3.2975525,29.811024 13.274747,18.910015 14.845232,24.360519 28.610066,11.057594 Z" id="path343" sodipodi:nodetypes="cccccccc" class="theme_fill"/>
+	</g>
+</svg>

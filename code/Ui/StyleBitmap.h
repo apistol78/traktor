@@ -52,6 +52,7 @@ private:
 	mutable ISystemBitmap* m_bitmap = nullptr;
 	mutable std::wstring m_fileName;
 	mutable int32_t m_dpi = -1;
+	mutable const class StyleSheet* m_styleSheet = nullptr;
 
 	bool resolve(const Widget* reference, int32_t dpi) const;
 };

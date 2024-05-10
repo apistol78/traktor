@@ -90,7 +90,7 @@ bool StyleBitmap::resolve(const Widget* reference, int32_t dpi) const
 
 	const std::wstring key = ss->getValue(m_name);
 
-	if (m_bitmap != nullptr && dpi == m_dpi && key == m_fileName)
+	if (m_bitmap != nullptr && dpi == m_dpi && key == m_fileName && ss == m_styleSheet)
 		return true;
 
 	Path fileName;
@@ -221,6 +221,7 @@ bool StyleBitmap::resolve(const Widget* reference, int32_t dpi) const
 	m_bitmap = bm;
 	m_fileName = key;
 	m_dpi = dpi;
+	m_styleSheet = ss;
 	return true;
 }
 
