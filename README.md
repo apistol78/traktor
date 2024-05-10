@@ -1,7 +1,7 @@
 # Traktor
 Traktor is an open-source C++ engine, it has powered several successful commercial titles across various platforms including Steam, PSN, iOS, and the Mac Store.
 
-![image info](resources/documentation/images/screenshot%20-%20editor%20-%2003.png)
+![image info](resources/documentation/images/screenshot%20-%20editor%20-%2004.png)
 
 # Why?
 Traktor isn't just another engine; it's a meticulously crafted toolkit designed for optimal performance and flexibility. Here's why it stands out:
@@ -35,6 +35,7 @@ See [releases](https://github.com/apistol78/traktor/releases) for prebuilt binar
 - Clean separation of editor code, easy to add new editors etc.
 - Undo/redo, localization, themes etc.
 - Formalized pipeline/flow to cook assets to runtime optimized data; highly parallized and easy to add new pipelines.
+- Light and dark themes, easily customizable.
 
 ## Rendering
 
