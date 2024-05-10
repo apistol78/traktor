@@ -194,16 +194,37 @@
 					<first>caption-color-no-focus</first>
 					<second>200, 200, 200, 255</second>
 				</item>
-				<item>
-					<first>gripper-color-no-focus</first>
-					<second>224, 91, 0, 255</second>
-				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DockPane</typeName>
+			<colors>
 				<item>
 					<first>splitter-color</first>
 					<second>63, 63, 70, 255</second>
 				</item>
+				<item>
+					<first>tab-background-color</first>
+					<second>45, 45, 45, 255</second>
+				</item>
+				<item>
+					<first>tab-selected-background-color</first>
+					<second>224, 91, 0, 255</second>
+				</item>
+				<item>
+					<first>gripper-color</first>
+					<second>224, 91, 0, 255</second>
+				</item>
+				<item>
+					<first>tab-color-active</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>255, 255, 255, 255</second>
+				</item>
 			</colors>
-		</item>
+		</item>			
 		<item>
 			<typeName>traktor.ui.DropDown</typeName>
 			<colors>

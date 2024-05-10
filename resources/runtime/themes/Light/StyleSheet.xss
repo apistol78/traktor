@@ -8,10 +8,6 @@
 			<typeName>traktor.Object</typeName>
 			<colors>
 				<item>
-					<first>theme-color</first>
-					<second>0, 0, 0, 255</second>
-				</item>
-				<item>
 					<first>background-color</first>
 					<second>239, 239, 242, 255</second>
 				</item>
@@ -38,6 +34,10 @@
 				<item>
 					<first>color-disabled</first>
 					<second>142, 140, 140, 255</second>
+				</item>
+				<item>
+					<first>theme-color</first>
+					<second>0, 0, 0, 255</second>
 				</item>
 			</colors>
 		</item>
@@ -164,17 +164,34 @@
 					<first>caption-color-no-focus</first>
 					<second>30, 30, 30, 255</second>
 				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DockPane</typeName>
+			<colors>
 				<item>
-					<first>gripper-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>gripper-color-no-focus</first>
+					<first>gripper-color</first>
 					<second>160, 160, 160, 255</second>
 				</item>
 				<item>
 					<first>splitter-color</first>
 					<second>204, 200, 219, 255</second>
+				</item>
+				<item>
+					<first>tab-background-color</first>
+					<second>239, 239, 242, 255</second>
+				</item>
+				<item>
+					<first>tab-selected-background-color</first>
+					<second>0, 122, 204, 255</second>
+				</item>
+				<item>
+					<first>tab-color</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>30, 30, 30, 255</second>
 				</item>
 			</colors>
 		</item>

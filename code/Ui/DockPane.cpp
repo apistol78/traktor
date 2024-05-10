@@ -655,12 +655,12 @@ void DockPane::draw(Canvas& canvas)
 				const bool visible = w.widget->isVisible(false);
 				if (visible)
 				{
-					canvas.setForeground(ss->getColor(this, L"color"));
+					canvas.setForeground(ss->getColor(this, L"tab-color-active"));
 					canvas.setBackground(ss->getColor(this, L"tab-selected-background-color"));
 				}
 				else
 				{
-					canvas.setForeground(ss->getColor(this, L"color-disabled"));
+					canvas.setForeground(ss->getColor(this, L"tab-color-inactive"));
 					canvas.setBackground(ss->getColor(this, L"tab-background-color"));
 				}
 				canvas.fillRect(rcTab);

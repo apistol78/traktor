@@ -991,6 +991,14 @@
 					<second>0, 122, 204, 255</second>
 				</item>
 				<item>
+					<first>tab-color-active</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>255, 255, 255, 255</second>
+				</item>
+				<item>
 					<first>gripper-color</first>
 					<second>90, 90, 90, 255</second>
 				</item>
