@@ -13,10 +13,8 @@
 #include "Spray/SpawnEffectEventData.h"
 #include "Spray/Editor/EffectEntityPipeline.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectEntityPipeline, world::EntityPipeline)
 
@@ -71,5 +69,4 @@ Ref< ISerializable > EffectEntityPipeline::buildProduct(
 	return world::EntityPipeline::buildProduct(pipelineBuilder, sourceInstance, sourceAsset, buildParams);
 }
 
-	}
 }

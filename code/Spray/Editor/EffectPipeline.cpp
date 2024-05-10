@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@
 #include "Spray/Sources/PointSetSourceData.h"
 #include "World/IEntityEventData.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 void buildEffectDependencies(editor::IPipelineDepends* pipelineDepends, const EffectData* effectData)
 {
@@ -103,7 +101,7 @@ bool effectLayerPred(EffectLayerData* layerData)
 	return true;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 4, EffectPipeline, editor::IPipeline)
 
@@ -193,5 +191,4 @@ Ref< ISerializable > EffectPipeline::buildProduct(
 	return nullptr;
 }
 
-	}
 }

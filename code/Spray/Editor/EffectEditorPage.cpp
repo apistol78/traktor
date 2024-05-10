@@ -83,19 +83,17 @@
 #include "Resources/ToggleGuideLines.h"
 #include "Resources/ToggleMoveEmitter.h"
 
-namespace traktor
+namespace traktor::spray
 {
-	namespace spray
+	namespace
 	{
-		namespace
-		{
 
 class SequenceDataKey : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	SequenceDataKey(SequenceData* sequenceData, int32_t key)
+	explicit SequenceDataKey(SequenceData* sequenceData, int32_t key)
 	:	m_sequenceData(sequenceData)
 	,	m_key(key)
 	{
@@ -112,7 +110,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceDataKey", SequenceDataKey, Object)
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::IEditorPage)
 
@@ -721,5 +719,4 @@ void EffectEditorPage::eventPropertiesChanged(ui::ContentChangeEvent* event)
 	updateEffectPreview();
 }
 
-	}
 }

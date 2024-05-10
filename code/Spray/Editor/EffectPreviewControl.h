@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -25,24 +25,22 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class IRenderSystem;
 class IRenderView;
@@ -50,32 +48,32 @@ class RenderContext;
 class RenderGraph;
 class PrimitiveRenderer;
 
-	}
+}
 
-	namespace scene
-	{
+namespace traktor::scene
+{
 	
 class Scene;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class SoundPlayer;
 class AudioSystem;
 
-	}
+}
 
-	namespace world
-	{
+namespace traktor::world
+{
 	
 class IWorldRenderer;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class Effect;
 class EffectData;
@@ -87,7 +85,7 @@ class T_DLLCLASS EffectPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	EffectPreviewControl(editor::IEditor* editor);
+	explicit EffectPreviewControl(editor::IEditor* editor);
 
 	bool create(
 		ui::Widget* parent,
@@ -165,6 +163,4 @@ private:
 	void eventIdle(ui::IdleEvent* event);
 };
 
-	}
 }
-

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,20 +19,18 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 class IEditorPageSite;
 class IDocument;
 class PropertiesView;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Container;
 class ContentChangeEvent;
@@ -47,24 +45,24 @@ class ToolBar;
 class ToolBarButton;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace resource
-	{
+namespace traktor::resource
+{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace sound
-	{
+namespace traktor::sound
+{
 
 class AudioSystem;
 
-	}
+}
 
-	namespace spray
-	{
+namespace traktor::spray
+{
 
 class EffectData;
 class EffectPreviewControl;
@@ -74,7 +72,7 @@ class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 	T_RTTI_CLASS;
 
 public:
-	EffectEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit EffectEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -131,6 +129,4 @@ private:
 	void eventPropertiesChanged(ui::ContentChangeEvent* event);
 };
 
-	}
 }
-
