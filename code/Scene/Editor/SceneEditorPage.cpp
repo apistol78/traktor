@@ -524,9 +524,12 @@ void SceneEditorPage::destroy()
 		m_context->getControllerEditor()->destroy();
 
 	// Destroy panels.
-	m_site->destroyAdditionalPanel(m_entityPanel);
-	m_site->destroyAdditionalPanel(m_tabMisc);
-	m_site->destroyAdditionalPanel(m_controllerPanel);
+	if (m_entityPanel)
+		m_site->destroyAdditionalPanel(m_entityPanel);
+	if (m_tabMisc)
+		m_site->destroyAdditionalPanel(m_tabMisc);
+	if (m_controllerPanel)
+		m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
 	safeDestroy(m_editPanel);
@@ -542,6 +545,7 @@ void SceneEditorPage::destroy()
 		m_context->getPhysicsManager()->destroy();
 
 	safeDestroy(m_context);
+	m_site = nullptr;
 }
 
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

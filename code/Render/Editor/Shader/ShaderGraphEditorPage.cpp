@@ -502,8 +502,10 @@ void ShaderGraphEditorPage::destroy()
 		m_site->destroyAdditionalPanel(m_shaderViewer);
 	}
 
-	m_site->destroyAdditionalPanel(m_dataContainer);
-	m_site->destroyAdditionalPanel(m_propertiesView);
+	if (m_dataContainer)
+		m_site->destroyAdditionalPanel(m_dataContainer);
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
 
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
@@ -512,6 +514,8 @@ void ShaderGraphEditorPage::destroy()
 	safeDestroy(m_dataContainer);
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_menuQuick);
+
+	m_site = nullptr;
 }
 
 bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

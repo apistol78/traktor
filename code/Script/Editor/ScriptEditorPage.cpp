@@ -269,7 +269,7 @@ bool ScriptEditorPage::create(ui::Container* parent)
 
 void ScriptEditorPage::destroy()
 {
-	if (m_scriptDebuggerSessions != nullptr)
+	if (m_scriptDebuggerSessions)
 	{
 		m_scriptDebuggerSessions->removeListener(this);
 		m_scriptDebuggerSessions = nullptr;
@@ -279,8 +279,11 @@ void ScriptEditorPage::destroy()
 	m_scriptCompiler = nullptr;
 
 	// Destroy panels.
-	m_site->destroyAdditionalPanel(m_containerExplorer);
+	if (m_containerExplorer)
+		m_site->destroyAdditionalPanel(m_containerExplorer);
+	
 	safeDestroy(m_containerExplorer);
+	m_site = nullptr;
 }
 
 bool ScriptEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

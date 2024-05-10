@@ -192,10 +192,13 @@ void GraphEditor::destroy()
 
 	m_soundPlayer = nullptr;
 
-	m_site->destroyAdditionalPanel(m_propertiesView);
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
 
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_resourceManager);
+
+	m_site = nullptr;
 }
 
 bool GraphEditor::dropInstance(db::Instance* instance, const ui::Point& position)

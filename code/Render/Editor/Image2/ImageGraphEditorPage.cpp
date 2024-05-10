@@ -120,10 +120,13 @@ bool ImageGraphEditorPage::create(ui::Container* parent)
 
 void ImageGraphEditorPage::destroy()
 {
-	m_site->destroyAdditionalPanel(m_propertiesView);
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
 
 	safeDestroy(m_propertiesView);	
 	safeDestroy(m_editorGraph);
+
+	m_site = nullptr;
 }
 
 bool ImageGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

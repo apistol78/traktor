@@ -238,14 +238,18 @@ void EffectEditorPage::destroy()
 	m_audioSystem = nullptr;
 
 	// Destroy panels.
-	m_site->destroyAdditionalPanel(m_containerSequencer);
-	m_site->destroyAdditionalPanel(m_propertiesView);
+	if (m_containerSequencer)
+		m_site->destroyAdditionalPanel(m_containerSequencer);
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
 
 	// Destroy widgets.
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_containerSequencer);
 	safeDestroy(m_previewControl);
 	safeDestroy(m_resourceManager);
+
+	m_site = nullptr;
 }
 
 bool EffectEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

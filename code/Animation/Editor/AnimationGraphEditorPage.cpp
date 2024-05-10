@@ -143,12 +143,16 @@ bool AnimationGraphEditorPage::create(ui::Container* parent)
 
 void AnimationGraphEditorPage::destroy()
 {
-	m_site->destroyAdditionalPanel(m_propertiesView);
-	m_site->destroyAdditionalPanel(m_containerPreview);
+	if (m_propertiesView)
+		m_site->destroyAdditionalPanel(m_propertiesView);
+	if (m_containerPreview)
+		m_site->destroyAdditionalPanel(m_containerPreview);
 
 	safeDestroy(m_propertiesView);
 	safeDestroy(m_containerPreview);
 	safeDestroy(m_editorGraph);
+
+	m_site = nullptr;
 }
 
 bool AnimationGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)

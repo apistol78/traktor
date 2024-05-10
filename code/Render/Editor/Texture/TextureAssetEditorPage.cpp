@@ -90,6 +90,7 @@ void TextureAssetEditorPage::destroy()
 	safeDestroy(m_propertiesView);
 
 	m_asset = nullptr;
+	m_site = nullptr;
 }
 
 bool TextureAssetEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
