@@ -63,6 +63,7 @@
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
+#include "Ui/Splitter.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -145,56 +146,70 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_discoveryManager = m_editor->getObjectStore()->get< net::DiscoveryManager >();
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
-	// Create panel.
-	m_container = new ui::Container();
-	m_container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
-	m_container->setText(i18n::Text(L"RUNTIME_TARGETS_TITLE"));
+	m_splitter = new ui::Splitter();
+	m_splitter->create(m_parent, true, 400_ut);
+	m_splitter->setText(i18n::Text(L"RUNTIME_TARGETS_TITLE"));
 
-	// Create toolbar; add all targets as drop down items.
-	m_toolBar = new ui::ToolBar();
-	m_toolBar->create(m_container);
-	m_toolBar->setEnable(false);
-	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
+	// Targets panel.
+	{
+		Ref< ui::Container > container = new ui::Container();
+		container->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0_ut, 0_ut));
 
-	m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), 120_ut, i18n::Text(L"RUNTIME_TARGETS"));
-	m_toolBar->addItem(m_toolTargets);
+		// Create toolbar; add all targets as drop down items.
+		m_toolBar = new ui::ToolBar();
+		m_toolBar->create(container);
+		m_toolBar->setEnable(false);
+		m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorPlugin::eventToolBarClick);
 
-	m_toolBar->addItem(new ui::ToolBarSeparator());
+		m_toolTargets = new ui::ToolBarDropDown(ui::Command(L"Runtime.Targets"), 120_ut, i18n::Text(L"RUNTIME_TARGETS"));
+		m_toolBar->addItem(m_toolTargets);
 
-	m_toolTweaks = new ui::ToolBarDropMenu(70_ut, i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
-	m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
-	m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
-	m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
-	m_toolBar->addItem(m_toolTweaks);
+		m_toolBar->addItem(new ui::ToolBarSeparator());
 
-	m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
-	m_toolLanguage->add(i18n::Text(L"RUNTIME_LANGUAGE_DEFAULT"));
-	for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
-		m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
-	m_toolLanguage->select(0);
-	m_toolBar->addItem(m_toolLanguage);
+		m_toolTweaks = new ui::ToolBarDropMenu(70_ut, i18n::Text(L"RUNTIME_TWEAKS"), true, i18n::Text(L"RUNTIME_TWEAKS_TOOLTIP"));
+		m_toolTweaks->add(createTweakMenuItem(L"Mute Audio", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Audio \"Write Out\"", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Force Render Thread Off", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Force VBlank Off", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Physics 2*dT", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Debugger", true));
+		m_toolTweaks->add(createTweakMenuItem(L"Attach Script Profiler", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Disable All DLC", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Disable Adaptive Updates", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Launch With 1/4 Window", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Disable Baked Lighting", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Validate Rendering", false));
+		m_toolTweaks->add(createTweakMenuItem(L"Debug Layer", true));
+		m_toolBar->addItem(m_toolTweaks);
 
-	// Create target configuration list control.
-	m_targetList = new TargetListControl();
-	m_targetList->create(m_container);
-	m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
-	m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
-	m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
-	m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
-	m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
-	m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
+		m_toolLanguage = new ui::ToolBarDropDown(ui::Command(L"Runtime.Language"), 85_ut, i18n::Text(L"RUNTIME_LANGUAGE"));
+		m_toolLanguage->add(i18n::Text(L"RUNTIME_LANGUAGE_DEFAULT"));
+		for (uint32_t i = 0; i < sizeof_array(c_languageCodes); ++i)
+			m_toolLanguage->add(i18n::Text(c_languageCodes[i].human));
+		m_toolLanguage->select(0);
+		m_toolBar->addItem(m_toolLanguage);
 
-	m_site->createAdditionalPanel(m_container, 200_ut, false);
+		// Create target configuration list control.
+		m_targetList = new TargetListControl();
+		m_targetList->create(container);
+		m_targetList->addEventHandler< TargetBuildEvent >(this, &EditorPlugin::eventTargetListBuild);
+		m_targetList->addEventHandler< TargetCaptureEvent >(this, &EditorPlugin::eventTargetListShowProfiler);
+		m_targetList->addEventHandler< TargetMigrateEvent >(this, &EditorPlugin::eventTargetListMigrate);
+		m_targetList->addEventHandler< TargetPlayEvent >(this, &EditorPlugin::eventTargetListPlay);
+		m_targetList->addEventHandler< TargetStopEvent >(this, &EditorPlugin::eventTargetListStop);
+		m_targetList->addEventHandler< TargetCommandEvent >(this, &EditorPlugin::eventTargetListCommand);
+
+		container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
+		container->startTimer(30);
+	}
+
+	// Performance panel
+	{
+		Ref< ui::Container > container = new ui::Container();
+		container->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
+	}
+
+	m_site->createAdditionalPanel(m_splitter, 200_ut, false);
 
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create([this](){ threadHostEnumerator(); }, L"Host enumerator");
@@ -202,9 +217,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_threadTargetActions = ThreadManager::getInstance().create([this](){ threadTargetActions(); }, L"Targets");
 	m_threadTargetActions->start();
-
-	m_container->addEventHandler< ui::TimerEvent >(this, &EditorPlugin::eventTimer);
-	m_container->startTimer(30);
 
 	return true;
 }
@@ -234,12 +246,12 @@ void EditorPlugin::destroy()
 	m_targetInstances.clear();
 	m_targets.clear();
 
-	if (m_container)
-		m_site->destroyAdditionalPanel(m_container);
+	if (m_splitter)
+		m_site->destroyAdditionalPanel(m_splitter);
 
 	safeDestroy(m_targetList);
 	safeDestroy(m_toolBar);
-	safeDestroy(m_container);
+	safeDestroy(m_splitter);
 
 	m_site = nullptr;
 	m_parent = nullptr;

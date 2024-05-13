@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -36,7 +36,6 @@ namespace traktor::runtime
 
 const ui::Unit c_performanceLineHeight = 18_ut;
 const ui::Unit c_performanceHeight = c_performanceLineHeight * 3_ut;
-const ui::Unit c_commandHeight = 22_ut;
 
 const struct
 {
@@ -91,7 +90,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 ui::Size TargetInstanceListItem::getSize() const
 {
 	RefArray< TargetConnection > connections = m_instance->getConnections();
-	return ui::Size(128, pixel(28_ut) + (int32_t)connections.size() * pixel(c_performanceHeight + c_commandHeight));
+	return ui::Size(128, pixel(28_ut) + (int32_t)connections.size() * pixel(c_performanceHeight));
 }
 
 void TargetInstanceListItem::setSelected(bool selected)
@@ -166,7 +165,6 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 
 	m_stopCells.resize(connections.size());
 	m_captureCells.resize(connections.size());
-	m_editCells.resize(connections.size());
 
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
@@ -180,14 +178,6 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 		{
 			m_captureCells[i] = new ButtonCell(new ui::StyleBitmap(L"Runtime.TargetProfile"), ui::Command(i));
 			m_captureCells[i]->addEventHandler< ui::ButtonClickEvent >(this, &TargetInstanceListItem::eventCaptureButtonClick);
-		}
-
-		if (!m_editCells[i])
-		{
-			Ref< ui::Edit > edit = new ui::Edit();
-			edit->create(widget, L"", ui::WsNone | ui::WsWantAllInput);
-			edit->addEventHandler< ui::KeyDownEvent >(this, &TargetInstanceListItem::eventCommandEditKeyDown);
-			m_editCells[i] = new ui::ChildWidgetCell(edit);
 		}
 
 		widget->placeCell(
@@ -210,17 +200,7 @@ void TargetInstanceListItem::placeCells(ui::AutoWidget* widget, const ui::Rect& 
 			)
 		);
 
-		widget->placeCell(
-			m_editCells[i],
-			ui::Rect(
-				controlRect.left,
-				controlRect.bottom,
-				controlRect.right,
-				controlRect.bottom + pixel(c_commandHeight)
-			)
-		);
-
-		controlRect = controlRect.offset(0, controlRect.getHeight() + pixel(c_commandHeight));
+		controlRect = controlRect.offset(0, controlRect.getHeight());
 	}
 
 	AutoWidgetCell::placeCells(widget, rect);
@@ -242,7 +222,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 
 	ui::Rect performanceRect = rect;
 	performanceRect.top = rect.top + pixel(28_ut);
-	performanceRect.bottom = performanceRect.top + pixel(c_performanceHeight + c_commandHeight);
+	performanceRect.bottom = performanceRect.top + pixel(c_performanceHeight);
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		canvas.setBackground(ss->getColor(widget, L"item-connection-background-color"));
@@ -356,7 +336,7 @@ void TargetInstanceListItem::paint(ui::Canvas& canvas, const ui::Rect& rect)
 		middleRect.left += pixel(110_ut);
 		canvas.drawText(middleRect, str(L"GC: %.1f ms", runtime.garbageCollect * 1000.0f), ui::AnLeft, ui::AnCenter);
 
-		performanceRect = performanceRect.offset(0, pixel(c_performanceHeight + c_commandHeight));
+		performanceRect = performanceRect.offset(0, pixel(c_performanceHeight));
 	}
 
 	canvas.resetClipRect();
@@ -395,27 +375,6 @@ void TargetInstanceListItem::eventCaptureButtonClick(ui::ButtonClickEvent* event
 {
 	TargetCaptureEvent captureEvent(this, m_instance, event->getCommand().getId());
 	raiseWidgetEvent(&captureEvent);
-}
-
-void TargetInstanceListItem::eventCommandEditKeyDown(ui::KeyDownEvent* event)
-{
-	ui::Edit* edit = mandatory_non_null_type_cast< ui::Edit* >(event->getSender());
-	int32_t connectionIndex = 0;	// \fixme
-
-	if (event->getVirtualKey() == ui::VkEscape)
-	{
-		edit->setText(L"");
-	}
-	else if (event->getVirtualKey() == ui::VkReturn)
-	{
-		const std::wstring command = edit->getText();
-		if (!command.empty())
-		{
-			TargetCommandEvent commandEvent(this, m_instance, connectionIndex, command);
-			raiseEvent(&commandEvent);
-			edit->setText(L"");
-		}
-	}
 }
 
 }

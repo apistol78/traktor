@@ -31,6 +31,7 @@ namespace traktor::ui
 {
 
 class Container;
+class Splitter;
 class TimerEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -106,7 +107,7 @@ private:
 
 	// \name UI
 	// \{
-	Ref< ui::Container > m_container;
+	Ref< ui::Splitter > m_splitter;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::ToolBarDropDown > m_toolTargets;
 	Ref< ui::ToolBarDropMenu > m_toolTweaks;

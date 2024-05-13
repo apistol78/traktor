@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,7 +10,7 @@
 
 #include "Core/RefArray.h"
 #include "Runtime/Editor/TargetInstance.h"
-#include "Ui/Auto/ChildWidgetCell.h"
+#include "Ui/Auto/AutoWidgetCell.h"
 
 namespace traktor::ui
 {
@@ -55,7 +55,6 @@ private:
 	Ref< ButtonCell > m_migrateCell;
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
-	RefArray< ui::ChildWidgetCell > m_editCells;
 	Ref< TargetInstance > m_instance;
 	TargetState m_lastInstanceState;
 	bool m_selected;
@@ -66,13 +65,9 @@ private:
 
 	void eventMigrateButtonClick(ui::ButtonClickEvent* event);
 
-	void eventBrowseButtonClick(ui::ButtonClickEvent* event);
-
 	void eventStopButtonClick(ui::ButtonClickEvent* event);
 
 	void eventCaptureButtonClick(ui::ButtonClickEvent* event);
-
-	void eventCommandEditKeyDown(ui::KeyDownEvent* event);
 };
 
 }
