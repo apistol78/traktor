@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,10 +15,8 @@
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptSettingsPage", 0, ScriptSettingsPage, editor::ISettingsPage)
 
@@ -51,5 +49,4 @@ bool ScriptSettingsPage::apply(PropertyGroup* settings)
 	return true;
 }
 
-	}
 }

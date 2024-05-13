@@ -1,29 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#ifndef traktor_script_ScriptEditorPlugin_H
-#define traktor_script_ScriptEditorPlugin_H
+#pragma once
 
 #include "Core/Ref.h"
 #include "Editor/IEditorPlugin.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptManager;
 class ScriptDebuggerSessions;
@@ -38,7 +35,7 @@ class ScriptEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	ScriptEditorPlugin(editor::IEditor* editor);
+	explicit ScriptEditorPlugin(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
@@ -73,8 +70,4 @@ private:
 	Ref< script::ScriptDebuggerSessions > m_debuggerSessions;
 };
 
-	}
 }
-
-#endif	// traktor_script_ScriptEditorPlugin_H
-

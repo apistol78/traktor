@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Script/Editor/ScriptEditorPageFactory.h"
 #include "Ui/Command.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorPageFactory", 0, ScriptEditorPageFactory, editor::IEditorPageFactory)
 
@@ -47,5 +45,4 @@ Ref< ISerializable > ScriptEditorPageFactory::cloneAsset(const ISerializable* as
 	return DeepClone(asset).create();
 }
 
-	}
 }

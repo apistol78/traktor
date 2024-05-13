@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,12 +19,10 @@ void *ParseAlloc(void *(*mallocProc)(size_t));
 void ParseFree(void *p, void (*freeProc)(void*));
 void Parse(void *yyp, int yymajor, traktor::script::LuaGrammarToken* yyminor, const traktor::script::ScriptOutlineLua* outline);
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
+	namespace
 	{
-		namespace
-		{
 
 const std::map< wchar_t, int32_t >& getSingles()
 {
@@ -94,29 +92,28 @@ const std::map< std::wstring, int32_t >& getTuples()
 	return tuples;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptOutlineLua", 0, ScriptOutlineLua, IScriptOutline)
 
 Ref< IScriptOutline::Node > ScriptOutlineLua::parse(const std::wstring& text) const
 {
-	Lexer lx(text.c_str(), text.length());
+	Lexer lx(text.c_str(), (uint32_t)text.length());
 
 	void* parser = ParseAlloc(malloc);
 	if (!parser)
-		return 0;
+		return nullptr;
 
-	const std::map< wchar_t, int32_t >& single = getSingles();
-	const std::map< std::wstring, int32_t >& tuples = getTuples();
+	const auto& single = getSingles();
+	const auto& tuples = getTuples();
 
 	int32_t type;
 	while ((type = lx.next()) != Lexer::LtEndOfFile)
 	{
 		if (type == Lexer::LtWord)
 		{
-			std::wstring word = lx.getWord();
-
-			std::map< std::wstring, int32_t >::const_iterator it = tuples.find(word);
+			const std::wstring word = lx.getWord();
+			const auto it = tuples.find(word);
 			if (it != tuples.end())
 				Parse(parser, it->second, 0, this);
 			else
@@ -124,23 +121,23 @@ Ref< IScriptOutline::Node > ScriptOutlineLua::parse(const std::wstring& text) co
 		}
 		else if (type == Lexer::LtString)
 		{
-			std::wstring str = lx.getString();
+			const std::wstring str = lx.getString();
 			Parse(parser, TOKEN_STRING, new LuaGrammarToken(str, lx.getLine()), this);
 		}
 		else if (type == Lexer::LtNumber)
 		{
-			double number = lx.getNumber();
+			const double number = lx.getNumber();
 			Parse(parser, TOKEN_NUMBER, new LuaGrammarToken(L"", lx.getLine()), this);
 		}
 		else
 		{
-			std::map< wchar_t, int32_t >::const_iterator it = single.find(type);
+			const auto it = single.find(type);
 			if (it != single.end())
 				Parse(parser, it->second, new LuaGrammarToken(L"", lx.getLine()), this);
 		}
 	}
 
-	Parse(parser, 0, 0, this);
+	Parse(parser, 0, nullptr, this);
 	ParseFree(parser, free);
 
 	return m_result;
@@ -155,5 +152,4 @@ void ScriptOutlineLua::syntaxError() const
 {
 }
 
-	}
 }

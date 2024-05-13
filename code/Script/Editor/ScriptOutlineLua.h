@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 
 #include "Script/Editor/IScriptOutline.h"
 
-namespace traktor
+namespace traktor::script
 {
-	namespace script
-	{
 
 /*! LUA script outline parser.
  * \ingroup Script
@@ -33,6 +31,4 @@ private:
 	mutable Ref< Node > m_result;
 };
 
-	}
 }
-

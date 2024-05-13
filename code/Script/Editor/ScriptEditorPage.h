@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,17 +30,19 @@ namespace traktor
 
 class Preprocessor;
 
-	namespace editor
-	{
+}
+
+namespace traktor::editor
+{
 
 class IDocument;
 class IEditor;
 class IEditorPageSite;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class IBitmap;
 class GridRow;
@@ -53,10 +55,10 @@ class Tab;
 class ToolBar;
 class ToolBarButtonClickEvent;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptCompiler;
 class IScriptContext;
@@ -73,7 +75,7 @@ class T_DLLCLASS ScriptEditorPage
 	T_RTTI_CLASS;
 
 public:
-	ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
+	explicit ScriptEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document);
 
 	virtual bool create(ui::Container* parent) override final;
 
@@ -153,6 +155,4 @@ private:
 	void eventTimer(ui::TimerEvent* event);
 };
 
-	}
 }
-

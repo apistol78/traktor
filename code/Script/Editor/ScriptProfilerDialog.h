@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,24 +11,22 @@
 #include "Script/Editor/IScriptDebuggerSessions.h"
 #include "Ui/Dialog.h"
 
-namespace traktor
+namespace traktor::editor
 {
-	namespace editor
-	{
 
 class IEditor;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class Tab;
 
-	}
+}
 
-	namespace script
-	{
+namespace traktor::script
+{
 
 class IScriptDebuggerSessions;
 
@@ -39,7 +37,7 @@ class ScriptProfilerDialog
 	T_RTTI_CLASS;
 
 public:
-	ScriptProfilerDialog(editor::IEditor* editor);
+	explicit ScriptProfilerDialog(editor::IEditor* editor);
 
 	virtual void destroy() override final;
 
@@ -59,6 +57,4 @@ private:
 	virtual void notifyRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber) override final;
 };
 
-	}
 }
-
