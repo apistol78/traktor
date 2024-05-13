@@ -49,7 +49,7 @@ const render::Handle s_handleOcclusionMap(L"World_OcclusionMap");
 const render::Handle s_handleContactShadowsMap(L"World_ContactShadowsMap");
 const render::Handle s_handleProjection(L"World_Projection");
 const render::Handle s_handleReflectionMap(L"World_ReflectionMap");
-const render::Handle s_handleScreenMap(L"World_ScreenMap");
+const render::Handle s_handleVisualCopyMap(L"World_VisualCopyMap");
 const render::Handle s_handleShadowMapAtlas(L"World_ShadowMapAtlas");
 const render::Handle s_handleShadowBias(L"World_ShadowBias");
 const render::Handle s_handleTileSBuffer(L"World_TileSBuffer");

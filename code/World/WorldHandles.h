@@ -59,7 +59,7 @@ extern const render::Handle T_DLLCLASS s_handleOcclusionMap;
 extern const render::Handle T_DLLCLASS s_handleContactShadowsMap;
 extern const render::Handle T_DLLCLASS s_handleProjection;
 extern const render::Handle T_DLLCLASS s_handleReflectionMap;
-extern const render::Handle T_DLLCLASS s_handleScreenMap;
+extern const render::Handle T_DLLCLASS s_handleVisualCopyMap;
 extern const render::Handle T_DLLCLASS s_handleShadowMapAtlas;
 extern const render::Handle T_DLLCLASS s_handleShadowBias;
 extern const render::Handle T_DLLCLASS s_handleTileSBuffer;
