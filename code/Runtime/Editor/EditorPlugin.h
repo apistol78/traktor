@@ -63,12 +63,14 @@ class EditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	explicit EditorPlugin(editor::IEditor* editor);
-
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
+	virtual bool create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
 	virtual void destroy() override final;
 
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
+	
 	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
 	virtual void handleDatabaseEvent(db::Database* database, const Guid& eventId) override final;
@@ -101,7 +103,7 @@ private:
 
 	typedef std::list< ActionChain > action_queue_t;
 
-	editor::IEditor* m_editor;
+	editor::IEditor* m_editor = nullptr;
 	Ref< ui::Widget > m_parent;
 	Ref< editor::IEditorPageSite > m_site;
 
@@ -137,8 +139,8 @@ private:
 	action_queue_t m_targetActionQueue;
 	// \}
 
-	Thread* m_threadHostEnumerator;
-	Thread* m_threadTargetActions;
+	Thread* m_threadHostEnumerator = nullptr;
+	Thread* m_threadTargetActions = nullptr;
 
 	void updateTargetLists();
 

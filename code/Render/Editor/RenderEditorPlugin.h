@@ -32,11 +32,13 @@ class RenderEditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	explicit RenderEditorPlugin(editor::IEditor* editor);
-
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
+	virtual bool create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
 	virtual void destroy() override final;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
@@ -49,7 +51,7 @@ public:
 	virtual void handleEditorClosed() override final;
 
 private:
-	editor::IEditor* m_editor;
+	editor::IEditor* m_editor = nullptr;
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< ShaderDependencyTracker > m_tracker;
 

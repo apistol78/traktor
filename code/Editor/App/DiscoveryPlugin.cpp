@@ -17,15 +17,12 @@
 namespace traktor::editor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DiscoveryPlugin", DiscoveryPlugin, IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DiscoveryPlugin", 0, DiscoveryPlugin, IEditorPlugin)
 
-DiscoveryPlugin::DiscoveryPlugin(IEditor* editor)
-:	m_editor(editor)
+bool DiscoveryPlugin::create(IEditor* editor, ui::Widget* parent, IEditorPageSite* site)
 {
-}
+	m_editor = editor;
 
-bool DiscoveryPlugin::create(ui::Widget* parent, IEditorPageSite* site)
-{
 	const PropertyGroup* settings = m_editor->getSettings();
 
 	uint32_t mode = net::MdFindServices;
@@ -43,6 +40,15 @@ void DiscoveryPlugin::destroy()
 {
 	m_editor->getObjectStore()->unset(m_discoveryManager);
 	safeDestroy(m_discoveryManager);
+}
+
+int32_t DiscoveryPlugin::getOrdinal() const
+{
+	return 0;
+}
+
+void DiscoveryPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
 }
 
 bool DiscoveryPlugin::handleCommand(const ui::Command& command, bool result)

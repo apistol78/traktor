@@ -20,15 +20,12 @@
 namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditorPlugin", ScriptEditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorPlugin", 0, ScriptEditorPlugin, editor::IEditorPlugin)
 
-ScriptEditorPlugin::ScriptEditorPlugin(editor::IEditor* editor)
-:	m_editor(editor)
+bool ScriptEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
+	m_editor = editor;
 
-bool ScriptEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
 	const TypeInfo* scriptManagerType = TypeInfo::find(L"traktor.script.ScriptManagerLua");
 	if (scriptManagerType)
 	{
@@ -63,6 +60,15 @@ void ScriptEditorPlugin::destroy()
 	m_editor->getObjectStore()->unset(m_debuggerSessions);
 	m_editor->getObjectStore()->unset(m_scriptManager);
 	safeDestroy(m_scriptManager);
+}
+
+int32_t ScriptEditorPlugin::getOrdinal() const
+{
+	return 0;
+}
+
+void ScriptEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
 }
 
 bool ScriptEditorPlugin::handleCommand(const ui::Command& command, bool result)

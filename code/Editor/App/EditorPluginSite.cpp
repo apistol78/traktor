@@ -24,12 +24,17 @@ EditorPluginSite::EditorPluginSite(EditorForm* editor, IEditorPlugin* editorPlug
 
 bool EditorPluginSite::create(ui::Widget* parent)
 {
-	return m_editorPlugin->create(parent, this);
+	return m_editorPlugin->create(m_editor, parent, this);
 }
 
 void EditorPluginSite::destroy()
 {
 	safeDestroy(m_editorPlugin);
+}
+
+void EditorPluginSite::getCommands(std::list< ui::Command >& outCommands) const
+{
+	m_editorPlugin->getCommands(outCommands);
 }
 
 bool EditorPluginSite::handleCommand(const ui::Command& command, bool result)

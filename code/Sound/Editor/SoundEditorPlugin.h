@@ -38,11 +38,13 @@ class SoundEditorPlugin : public editor::IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	explicit SoundEditorPlugin(editor::IEditor* editor);
-
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
+	virtual bool create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
 	virtual void destroy() override final;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 

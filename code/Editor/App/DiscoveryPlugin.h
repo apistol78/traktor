@@ -28,11 +28,13 @@ class DiscoveryPlugin : public IEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	explicit DiscoveryPlugin(IEditor* editor);
-
-	virtual bool create(ui::Widget* parent, IEditorPageSite* site) override final;
+	virtual bool create(IEditor* editor, ui::Widget* parent, IEditorPageSite* site) override final;
 
 	virtual void destroy() override final;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
@@ -45,7 +47,7 @@ public:
 	virtual void handleEditorClosed() override final;
 
 private:
-	IEditor* m_editor;
+	IEditor* m_editor = nullptr;
 	Ref< net::DiscoveryManager > m_discoveryManager;
 };
 

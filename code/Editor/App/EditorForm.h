@@ -69,7 +69,6 @@ class EditorPageSite;
 class EditorPluginSite;
 class IEditorPage;
 class IEditorPageFactory;
-class IEditorPluginFactory;
 class IEditorTool;
 class IObjectEditor;
 class IObjectEditorFactory;
@@ -179,7 +178,6 @@ private:
 
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
-	RefArray< IEditorPluginFactory > m_editorPluginFactories;
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
 	Ref< net::StreamServer > m_streamServer;

@@ -128,17 +128,11 @@ Ref< ui::MenuItem > createTweakMenuItem(const std::wstring& text, bool initially
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.EditorPlugin", EditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.EditorPlugin", 0, EditorPlugin, editor::IEditorPlugin)
 
-EditorPlugin::EditorPlugin(editor::IEditor* editor)
-:	m_editor(editor)
-,	m_threadHostEnumerator(0)
-,	m_threadTargetActions(0)
+bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
-
-bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
+	m_editor = editor;
 	m_parent = parent;
 	m_site = site;
 
@@ -256,6 +250,16 @@ void EditorPlugin::destroy()
 	m_site = nullptr;
 	m_parent = nullptr;
 	m_editor = nullptr;
+}
+
+int32_t EditorPlugin::getOrdinal() const
+{
+	return 100;
+}
+
+void EditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
+	outCommands.push_back(ui::Command(L"Runtime.Editor.LaunchLast"));
 }
 
 bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)

@@ -44,7 +44,6 @@
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPlugin.h"
-#include "Editor/IEditorPluginFactory.h"
 #include "Editor/IEditorTool.h"
 #include "Editor/IObjectEditor.h"
 #include "Editor/IObjectEditorFactory.h"
@@ -678,26 +677,23 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			m_objectEditorFactories.push_back(objectEditorFactory);
 	}
 
-	// Create editor plugin factories.
-	for (const auto& editorPluginFactoryType : type_of< IEditorPluginFactory >().findAllOf(false))
+	// Instantiate editor plugins.
+	RefArray< IEditorPlugin > editorPlugins;
+	for (const auto& editorPluginType : type_of< IEditorPlugin >().findAllOf(false))
 	{
-		Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >(editorPluginFactoryType->createInstance());
-		if (editorPluginFactory)
-			m_editorPluginFactories.push_back(editorPluginFactory);
+		Ref< IEditorPlugin > editorPlugin = dynamic_type_cast< IEditorPlugin* >(editorPluginType->createInstance());
+		if (editorPlugin)
+			editorPlugins.push_back(editorPlugin);
 	}
 
-	// Sort factories by ordinal; this will ensure creation order of plugins.
-	m_editorPluginFactories.sort([](IEditorPluginFactory* lh, IEditorPluginFactory* rh) {
+	// Sort plugins by ordinal; this will ensure creation order of plugins.
+	editorPlugins.sort([](IEditorPlugin* lh, IEditorPlugin* rh) {
 		return lh->getOrdinal() < rh->getOrdinal();
 	});
 
 	// Create editor plugins.
-	for (auto editorPluginFactory : m_editorPluginFactories)
+	for (auto editorPlugin : editorPlugins)
 	{
-		Ref< IEditorPlugin > editorPlugin = editorPluginFactory->createEditorPlugin(this);
-		if (!editorPlugin)
-			continue;
-
 		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
 		if (site->create(this))
 			m_editorPluginSites.push_back(site);
@@ -778,10 +774,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		m_shortcutCommands.insert(m_shortcutCommands.end(), editorPageCommands.begin(), editorPageCommands.end());
 	}
 
-	for (auto editorPluginFactory : m_editorPluginFactories)
+	for (auto editorPluginSite : m_editorPluginSites)
 	{
 		std::list< ui::Command > editorPluginCommands;
-		editorPluginFactory->getCommands(editorPluginCommands);
+		editorPluginSite->getCommands(editorPluginCommands);
 		m_shortcutCommands.insert(m_shortcutCommands.end(), editorPluginCommands.begin(), editorPluginCommands.end());
 	}
 

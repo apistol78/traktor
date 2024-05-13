@@ -21,16 +21,12 @@
 namespace traktor::remote
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.RemoteEditorPlugin", RemoteEditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.RemoteEditorPlugin", 0, RemoteEditorPlugin, editor::IEditorPlugin)
 
-RemoteEditorPlugin::RemoteEditorPlugin(editor::IEditor* editor)
-:	m_editor(editor)
-,   m_threadServer(nullptr)
+bool RemoteEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
+	m_editor = editor;
 
-bool RemoteEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
 	if (!m_editor->getSettings()->getProperty< bool >(L"Editor.RemoteServer", true))
 		return true;
 
@@ -64,6 +60,15 @@ void RemoteEditorPlugin::destroy()
 	}
  
     safeDestroy(m_server);
+}
+
+int32_t RemoteEditorPlugin::getOrdinal() const
+{
+	return 100;
+}
+
+void RemoteEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
 }
 
 bool RemoteEditorPlugin::handleCommand(const ui::Command& command, bool result)

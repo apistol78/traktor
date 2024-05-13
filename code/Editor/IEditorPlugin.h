@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <list>
 #include "Core/Object.h"
 #include "Core/Guid.h"
 
@@ -37,6 +38,7 @@ class Widget;
 namespace traktor::editor
 {
 
+class IEditor;
 class IEditorPageSite;
 
 /*! Editor plugin.
@@ -52,14 +54,28 @@ class T_DLLCLASS IEditorPlugin : public Object
 public:
 	/*! Create plugin.
 	 *
+	 * \param editor Editor implementation.
 	 * \param parent UI parent widget.
 	 * \param site Editor site interface.
 	 * \return True if created successfully.
 	 */
-	virtual bool create(ui::Widget* parent, IEditorPageSite* site) = 0;
+	virtual bool create(IEditor* editor, ui::Widget* parent, IEditorPageSite* site) = 0;
 
 	/*! Destroy plugin. */
 	virtual void destroy() = 0;
+
+	/*! Get creation ordinal.
+	 * \note This is allowed to be called before create.
+	 *
+	 * \return Creation ordinal.
+	 */
+	virtual int32_t getOrdinal() const = 0;
+
+	/*! Get list of shortcut commands supported by this plugin.
+	 *
+	 * \param outCommands List of commands.
+	 */
+	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
 
 	/*! Handle shortcut command.
 	 *

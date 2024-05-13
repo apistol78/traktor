@@ -23,19 +23,16 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundEditorPlugin", SoundEditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundEditorPlugin", 0, SoundEditorPlugin, editor::IEditorPlugin)
 
-SoundEditorPlugin::SoundEditorPlugin(editor::IEditor* editor)
-:	m_editor(editor)
+bool SoundEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
+	m_editor = editor;
+	m_site = site;
 
-bool SoundEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
 	m_soundPanel = new SoundPanel(m_editor);
 	m_soundPanel->create(parent);
 
-	m_site = site;
 	m_site->createAdditionalPanel(m_soundPanel, 60_ut, false);
 	return true;
 }
@@ -62,6 +59,15 @@ void SoundEditorPlugin::destroy()
 
 	m_editor->getObjectStore()->unset(audioSystem);
 	m_editor->getObjectStore()->unset< SoundPlayer >();
+}
+
+int32_t SoundEditorPlugin::getOrdinal() const
+{
+	return 0;
+}
+
+void SoundEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
 }
 
 bool SoundEditorPlugin::handleCommand(const ui::Command& command, bool result)

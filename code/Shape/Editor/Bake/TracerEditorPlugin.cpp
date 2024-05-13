@@ -20,16 +20,11 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.TracerEditorPlugin", TracerEditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.TracerEditorPlugin", 0, TracerEditorPlugin, editor::IEditorPlugin)
 
-TracerEditorPlugin::TracerEditorPlugin(editor::IEditor* editor)
-:   m_editor(editor)
-,	m_site(nullptr)
+bool TracerEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
-
-bool TracerEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
+	m_editor = editor;
 	m_site = site;
 
 	m_tracerPanel = new TracerPanel(m_editor);
@@ -47,6 +42,15 @@ void TracerEditorPlugin::destroy()
 		m_site = nullptr;
 		m_tracerPanel = nullptr;
 	}
+}
+
+int32_t TracerEditorPlugin::getOrdinal() const
+{
+	return 100;
+}
+
+void TracerEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
 }
 
 bool TracerEditorPlugin::handleCommand(const ui::Command& command, bool result)

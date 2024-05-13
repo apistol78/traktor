@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,18 +10,16 @@
 
 #include "Editor/IEditorPageSite.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class Command;
 class Widget;
 
-	}
+}
 
-	namespace editor
-	{
+namespace traktor::editor
+{
 
 class EditorForm;
 class IEditorPlugin;
@@ -39,6 +37,8 @@ public:
 	bool create(ui::Widget* parent);
 
 	void destroy();
+
+	void getCommands(std::list< ui::Command >& outCommands) const;
 
 	bool handleCommand(const ui::Command& command, bool result);
 
@@ -67,6 +67,4 @@ private:
 	Ref< IEditorPlugin > m_editorPlugin;
 };
 
-	}
 }
-

@@ -25,15 +25,12 @@
 namespace traktor::render
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderEditorPlugin", RenderEditorPlugin, editor::IEditorPlugin)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderEditorPlugin", 0, RenderEditorPlugin, editor::IEditorPlugin)
 
-RenderEditorPlugin::RenderEditorPlugin(editor::IEditor* editor)
-:	m_editor(editor)
+bool RenderEditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site)
 {
-}
+	m_editor = editor;
 
-bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
-{
 	if (!createRenderSystem())
 		return false;
 
@@ -48,6 +45,16 @@ void RenderEditorPlugin::destroy()
 		m_editor->getObjectStore()->unset(renderSystem);
 		safeDestroy(renderSystem);
 	}
+}
+
+int32_t RenderEditorPlugin::getOrdinal() const
+{
+	return 0;
+}
+
+void RenderEditorPlugin::getCommands(std::list< ui::Command >& outCommands) const
+{
+	outCommands.push_back(ui::Command(L"Render.PrintMemoryUsage"));
 }
 
 bool RenderEditorPlugin::handleCommand(const ui::Command& command, bool result)

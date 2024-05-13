@@ -35,11 +35,13 @@ class ScriptEditorPlugin
 	T_RTTI_CLASS;
 
 public:
-	explicit ScriptEditorPlugin(editor::IEditor* editor);
-
-	virtual bool create(ui::Widget* parent, editor::IEditorPageSite* site) override final;
+	virtual bool create(editor::IEditor* editor, ui::Widget* parent, editor::IEditorPageSite* site) override final;
 
 	virtual void destroy() override final;
+
+	virtual int32_t getOrdinal() const override final;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const override final;
 
 	virtual bool handleCommand(const ui::Command& command, bool result) override final;
 
@@ -65,7 +67,7 @@ public:
 	// \}
 
 private:
-	editor::IEditor* m_editor;
+	editor::IEditor* m_editor = nullptr;
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::ScriptDebuggerSessions > m_debuggerSessions;
 };
