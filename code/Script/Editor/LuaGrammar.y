@@ -25,12 +25,12 @@ LuaGrammarToken* copy(LuaGrammarToken* A)
 	if (A)
 		return new LuaGrammarToken(*A);
 	else
-		return 0;
+		return nullptr;
 }
 
 bool is_node(const LuaGrammarToken* A)
 {
-	return A != 0 && A->node != 0;
+	return A != nullptr && A->node != nullptr;
 }
 
 LuaGrammarToken* merge(LuaGrammarToken* A, LuaGrammarToken* B)
