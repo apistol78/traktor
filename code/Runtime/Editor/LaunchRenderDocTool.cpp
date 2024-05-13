@@ -13,8 +13,6 @@
 namespace traktor::runtime
 {
 
-#if defined(_WIN32)
-
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.LaunchRenderDocTool", 0, LaunchRenderDocTool, IEditorTool)
 
 std::wstring LaunchRenderDocTool::getDescription() const
@@ -36,10 +34,21 @@ bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, c
 {
 	Path renderDocPath;
 	if (!OS::getInstance().whereIs(L"renderdocui", renderDocPath))
-		return false;
+	{
+#if defined(_WIN32)
+		// Get path to installed RenderDoc.
+		std::wstring iconPath;
+		if (!OS::getInstance().getRegistry(L"HKEY_LOCAL_MACHINE", L"SOFTWARE\\Classes\\RenderDoc.RDCCapture.1\\DefaultIcon", L"", iconPath))
+			return false;
 
-	std::wstring renderDoc = renderDocPath.getPathName();
-	std::wstring commandLine = L"\"" + renderDoc + L"\"";
+		renderDocPath = Path(iconPath).getPathOnlyOS() + L"/renderdocui";
+#else
+		return false;
+#endif
+	}
+
+	const std::wstring renderDoc = renderDocPath.getPathName();
+	const std::wstring commandLine = L"\"" + renderDoc + L"\"";
 
 	return OS::getInstance().execute(
 		commandLine,
@@ -47,7 +56,5 @@ bool LaunchRenderDocTool::launch(ui::Widget* parent, editor::IEditor* runtime, c
 		nullptr,
 		OS::EfMute) != nullptr;
 }
-
-#endif
 
 }

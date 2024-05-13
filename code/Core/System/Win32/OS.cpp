@@ -586,6 +586,10 @@ bool OS::getRegistry(const std::wstring& key, const std::wstring& subKey, const 
 		outValue = std::wstring((wchar_t*)data);
 		return true;
 
+	case REG_EXPAND_SZ:
+		outValue = std::wstring((wchar_t*)data);
+		return true;
+
 	default:
 		log::error << L"Unsupported reg value type." << Endl;
 		break;
