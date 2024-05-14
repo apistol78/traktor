@@ -57,7 +57,7 @@ RenderPass* ImagePass::addRenderGraphPasses(
 
 	// Add this pass build which setup shared parameters for all steps.
 	rp->addBuild(
-		[=](const RenderGraph& renderGraph, RenderContext* renderContext)
+		[=, this](const RenderGraph& renderGraph, RenderContext* renderContext)
 		{
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);

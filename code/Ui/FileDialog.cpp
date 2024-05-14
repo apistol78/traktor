@@ -223,7 +223,7 @@ void FileDialog::updatePath()
 				dropVolume->select(index);
 		}
 
-		dropVolume->addEventHandler< SelectionChangeEvent >([=](SelectionChangeEvent* event) {
+		dropVolume->addEventHandler< SelectionChangeEvent >([=, this](SelectionChangeEvent* event) {
 			m_currentPath = dropVolume->getSelectedItem();
 			updatePath();
 			updateFiles();
@@ -236,7 +236,7 @@ void FileDialog::updatePath()
 	// Add root button first.
 	Ref< Button > buttonPath = new Button();
 	buttonPath->create(m_containerPath, L"/");
-	buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
+	buttonPath->addEventHandler< ButtonClickEvent >([=, this](ButtonClickEvent* event) {
 		m_currentPath = p;
 		updatePath();
 		updateFiles();
@@ -249,7 +249,7 @@ void FileDialog::updatePath()
 
 		Ref< Button > buttonPath = new Button();
 		buttonPath->create(m_containerPath, s);
-		buttonPath->addEventHandler< ButtonClickEvent >([=](ButtonClickEvent* event) {
+		buttonPath->addEventHandler< ButtonClickEvent >([=, this](ButtonClickEvent* event) {
 			m_currentPath = p;
 			updatePath();
 			updateFiles();

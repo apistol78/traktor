@@ -210,7 +210,7 @@ void AccGlyph::render(
 	uint32_t offset = m_offset;
 	uint32_t count = m_count;
 
-	renderPass->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	renderPass->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 
 		auto glyphCacheTargetSet = renderGraph.getTargetSet(glyphCacheTargetSetId);
 

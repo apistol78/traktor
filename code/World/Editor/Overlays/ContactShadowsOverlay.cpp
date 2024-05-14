@@ -55,7 +55,7 @@ void ContactShadowsOverlay::setup(render::RenderGraph& renderGraph, render::Scre
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Contact shadows overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(contactShadowsId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto contactShadowsTargetSet = renderGraph.getTargetSet(contactShadowsId);
 		if (!contactShadowsTargetSet)
 			return;

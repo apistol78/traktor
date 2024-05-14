@@ -56,7 +56,7 @@ void HiZOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRenderer*
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Hi-Z overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(hiZId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto hiZ = renderGraph.getTexture(hiZId);
 		if (!hiZ)
 			return;

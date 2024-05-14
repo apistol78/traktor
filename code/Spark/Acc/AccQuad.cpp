@@ -146,7 +146,7 @@ void AccQuad::render(
 	if (!program)
 		return;
 
-	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+	renderPass->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccQuad");
 		renderBlock->program = program;
@@ -184,7 +184,7 @@ void AccQuad::blit(
 	render::ITexture* texture
 ) const
 {
-	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+	renderPass->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		auto renderBlock = renderContext->allocNamed< render::NonIndexedRenderBlock >(L"Flash AccQuad (blit)");
 		renderBlock->program = m_shaderBlit->getProgram().program;

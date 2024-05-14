@@ -55,7 +55,7 @@ void UnprocessedOverlay::setup(render::RenderGraph& renderGraph, render::ScreenR
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Unprocessed overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(visualId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto visualTargetSet = renderGraph.getTargetSet(visualId);
 		if (!visualTargetSet)
 			return;

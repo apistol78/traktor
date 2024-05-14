@@ -61,7 +61,7 @@ void SliceOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRendere
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Slice overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);
 		if (!gbufferTargetSet)
 			return;

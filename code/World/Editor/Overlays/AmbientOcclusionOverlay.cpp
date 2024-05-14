@@ -55,7 +55,7 @@ void AmbientOcclusionOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Ambient occlusion overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(ambientOcclusionId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto ambientOcclusionTargetSet = renderGraph.getTargetSet(ambientOcclusionId);
 		if (!ambientOcclusionTargetSet)
 			return;

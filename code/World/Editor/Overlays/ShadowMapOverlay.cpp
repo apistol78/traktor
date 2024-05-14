@@ -55,7 +55,7 @@ void ShadowMapOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRen
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Shadow map overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(shadowMapId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto shadowMapTargetSet = renderGraph.getTargetSet(shadowMapId);
 		if (!shadowMapTargetSet)
 			return;

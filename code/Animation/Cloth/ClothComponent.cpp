@@ -278,7 +278,7 @@ void ClothComponent::update(const world::UpdateParams& update)
 	const Vector4 movement = m_lastPosition.w() > 0.0f ? transformInv * (m_transform.translation() - m_lastPosition).xyz0() : Vector4::zero();
 	m_lastPosition = m_transform.translation().xyz1();
 
-	m_updateClothJob = JobManager::getInstance().add([=](){
+	m_updateClothJob = JobManager::getInstance().add([=, this](){
 #if !defined(__IOS__)
 		const float c_updateDeltaTime = 1.0f / 30.0f;
 #else

@@ -100,7 +100,7 @@ bool Video::update(float deltaTime)
 		}
 
 		// Enqueue new decoding job.
-		m_job = JobManager::getInstance().add([=](){
+		m_job = JobManager::getInstance().add([=, this](){
 			decodeFrame(frame);
 		});
 

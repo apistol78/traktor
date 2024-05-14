@@ -643,7 +643,7 @@ void AccShape::render(
 		}
 	}
 
-	renderPass->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+	renderPass->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 
 		render::ProgramParameters* sharedParams = renderContext->alloc < render::ProgramParameters >();
 		sharedParams->beginParameters(renderContext);

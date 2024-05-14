@@ -57,7 +57,7 @@ void GBufferMetalnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer metalness overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(gbufferId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto gbufferTargetSet = renderGraph.getTargetSet(gbufferId);
 		if (!gbufferTargetSet || gbufferTargetSet->getColorTexture(2) == nullptr)
 			return;

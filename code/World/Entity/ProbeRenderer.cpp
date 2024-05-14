@@ -355,7 +355,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
 		filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
 		filterPass->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				// Each mip represent one step rougher surface.
 				const float roughness = std::pow((float)mip / mipCount, 0.5f);

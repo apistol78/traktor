@@ -201,7 +201,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	if (size >= 64)
 	{
 		JobManager& jobManager = JobManager::getInstance();
-		m_job = jobManager.add([=](){
+		m_job = jobManager.add([=, this](){
 			updateTask(context.deltaTime);
 		});
 	}

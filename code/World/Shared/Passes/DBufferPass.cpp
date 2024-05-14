@@ -70,7 +70,7 @@ render::handle_t DBufferPass::setup(
 	rp->setOutput(dbufferTargetSetId, clear, render::TfAll, render::TfAll);
 
 	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,

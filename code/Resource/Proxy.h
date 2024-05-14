@@ -25,24 +25,24 @@ template < typename ResourceType >
 class Proxy
 {
 public:
-	Proxy< ResourceType >() = default;
+	Proxy() = default;
 
-	Proxy< ResourceType >(const Proxy< ResourceType >& rs)
+	Proxy(const Proxy< ResourceType >& rs)
 	:	m_handle(rs.m_handle)
 	{
 	}
 
-	Proxy< ResourceType >(Proxy< ResourceType >&& rs) noexcept
+	Proxy(Proxy< ResourceType >&& rs) noexcept
 	{
 		m_handle = std::move(rs.m_handle);
 	}
 
-	explicit Proxy< ResourceType >(ResourceHandle* handle)
+	explicit Proxy(ResourceHandle* handle)
 	:	m_handle(handle)
 	{
 	}
 
-	explicit Proxy< ResourceType >(ResourceType* resource)
+	explicit Proxy(ResourceType* resource)
 	:	m_handle(new ExplicitResourceHandle(resource))
 	{
 	}

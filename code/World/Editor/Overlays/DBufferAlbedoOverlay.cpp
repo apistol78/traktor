@@ -55,7 +55,7 @@ void DBufferAlbedoOverlay::setup(render::RenderGraph& renderGraph, render::Scree
 	Ref< render::RenderPass > rp = new render::RenderPass(L"DBuffer albedo overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(dbufferId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto dbufferTargetSet = renderGraph.getTargetSet(dbufferId);
 		if (!dbufferTargetSet || dbufferTargetSet->getColorTexture(0) == nullptr)
 			return;

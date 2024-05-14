@@ -23,7 +23,7 @@ template < typename T >
 class Acquire
 {
 public:
-	Acquire< T >(const Acquire< T >&) = delete;
+	Acquire(const Acquire< T >&) = delete;
 
 	T_FORCE_INLINE Acquire< T >(T& lock)
 	:	m_lock(lock)
@@ -32,7 +32,7 @@ public:
 		T_FATAL_ASSERT(result == true);
 	}
 
-	T_FORCE_INLINE ~Acquire< T >()
+	T_FORCE_INLINE ~Acquire()
 	{
 		m_lock.release();
 	}
@@ -51,15 +51,15 @@ template < typename T >
 class Release
 {
 public:
-	Release< T >(const Release< T >&) = delete;
+	Release(const Release< T >&) = delete;
 
-	T_FORCE_INLINE Release< T >(T& lock)
+	T_FORCE_INLINE Release(T& lock)
 	:	m_lock(lock)
 	{
 		m_lock.release();
 	}
 
-	T_FORCE_INLINE ~Release< T >()
+	T_FORCE_INLINE ~Release()
 	{
 		const bool result = m_lock.wait();
 		T_FATAL_ASSERT(result == true);

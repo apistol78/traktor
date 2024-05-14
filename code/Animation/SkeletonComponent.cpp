@@ -101,7 +101,7 @@ void SkeletonComponent::update(const world::UpdateParams& update)
 	}
 
 #if defined(T_USE_UPDATE_JOBS)
-	m_updatePoseControllerJob = JobManager::getInstance().add([=](){
+	m_updatePoseControllerJob = JobManager::getInstance().add([=, this](){
 		updatePoseController(update.alternateTime, update.deltaTime);
 	});
 #else

@@ -57,7 +57,7 @@ void DBufferRoughnessOverlay::setup(render::RenderGraph& renderGraph, render::Sc
 	Ref< render::RenderPass > rp = new render::RenderPass(L"GBuffer roughness overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(dbufferId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto dbufferTargetSet = renderGraph.getTargetSet(dbufferId);
 		if (!dbufferTargetSet || dbufferTargetSet->getColorTexture(1) == nullptr)
 			return;

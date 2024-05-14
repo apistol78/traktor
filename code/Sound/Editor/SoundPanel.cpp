@@ -59,7 +59,7 @@ bool SoundPanel::create(ui::Widget* parent)
 		sliderParameter->create(this);
 		sliderParameter->setRange(0, 100);
 		sliderParameter->setValue(0);
-		sliderParameter->addEventHandler< ui::ContentChangeEvent >([=](ui::ContentChangeEvent* event) {
+		sliderParameter->addEventHandler< ui::ContentChangeEvent >([=, this](ui::ContentChangeEvent* event) {
 			AudioSystem* audioSystem = m_editor->getObjectStore()->get< AudioSystem >();
 			if (audioSystem)
 			{

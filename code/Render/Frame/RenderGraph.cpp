@@ -580,7 +580,7 @@ bool RenderGraph::build(RenderContext* renderContext, int32_t width, int32_t hei
 				pr->queryHandle = &passQueryHandles[index];
 				pr->referenceQueryHandle = referenceQueryHandle;
 				pr->offset = referenceOffset;
-				pr->sink = [=](const std::wstring& name, double start, double duration) { m_profiler(ordinal, i, name, start, duration); };
+				pr->sink = [=, this](const std::wstring& name, double start, double duration) { m_profiler(ordinal, i, name, start, duration); };
 				renderContext->draw(pr);
 				++ordinal;
 			}

@@ -127,7 +127,7 @@ void ImageGraph::addPasses(
 		step->addRenderPassInputs(this, context, *pass);
 
 	pass->addBuild(
-		[=](const RenderGraph& renderGraph, RenderContext* renderContext)
+		[=, this](const RenderGraph& renderGraph, RenderContext* renderContext)
 		{
 			auto sharedParams = renderContext->alloc< ProgramParameters >();
 			sharedParams->beginParameters(renderContext);

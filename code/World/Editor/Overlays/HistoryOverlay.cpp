@@ -55,7 +55,7 @@ void HistoryOverlay::setup(render::RenderGraph& renderGraph, render::ScreenRende
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Unprocessed overlay");
 	rp->setOutput(0, render::TfColor, render::TfColor);
 	rp->addInput(historyId);
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 		auto historyTargetSet = renderGraph.getTargetSet(historyId);
 		if (!historyTargetSet)
 			return;
