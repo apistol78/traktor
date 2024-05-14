@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,8 @@
 namespace traktor::render
 {
 
+class Context;
+
 /*!
  * \ingroup Vulkan
  */
@@ -25,6 +27,8 @@ public:
 	BufferViewVk() = default;
 
 	explicit BufferViewVk(VkBuffer buffer, uint32_t offset, uint32_t range, uint32_t size);
+
+	VkDeviceAddress getDeviceAddress(Context* context) const;
 
 	VkBuffer getVkBuffer() const { return m_buffer; }
 
