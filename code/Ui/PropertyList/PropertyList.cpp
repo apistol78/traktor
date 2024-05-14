@@ -119,7 +119,7 @@ PropertyList::PropertyList()
 	m_columnNames[1] = L"Value";
 }
 
-bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guidResolver)
+bool PropertyList::create(Widget* parent, uint32_t style, IPropertyGuidResolver* guidResolver)
 {
 	if (!Widget::create(parent, style))
 		return false;

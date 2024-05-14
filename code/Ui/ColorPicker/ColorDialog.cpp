@@ -61,7 +61,7 @@ struct AlphaGradient : public ColorSliderControl::IGradient
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorDialog", ColorDialog, ConfigDialog)
 
-bool ColorDialog::create(Widget* parent, const std::wstring& text, int32_t style, const Color4f& initialColor)
+bool ColorDialog::create(Widget* parent, const std::wstring& text, uint32_t style, const Color4f& initialColor)
 {
 	if (!ConfigDialog::create(
 		parent,

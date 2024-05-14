@@ -34,14 +34,11 @@ class T_DLLCLASS TreeView : public AutoWidget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsAutoEdit = WsUser,
-		WsDrag = WsUser << 1,
-		WsTreeButtons = WsUser << 2,
-		WsTreeLines = WsUser << 3,
-		WsDefault = WsAutoEdit | WsTreeButtons | WsTreeLines
-	};
+	constexpr static uint32_t WsAutoEdit = WsUser;
+	constexpr static uint32_t WsDrag = WsUser << 1;
+	constexpr static uint32_t WsTreeButtons = WsUser << 2;
+	constexpr static uint32_t WsTreeLines = WsUser << 3;
+	constexpr static uint32_t WsDefault = WsAutoEdit | WsTreeButtons | WsTreeLines;
 
 	enum GetFlags
 	{
@@ -51,7 +48,7 @@ public:
 		GfSelectedOnly = 4
 	};
 
-	bool create(Widget* parent, int32_t style);
+	bool create(Widget* parent, uint32_t style);
 
 	int32_t addImage(IBitmap* image);
 

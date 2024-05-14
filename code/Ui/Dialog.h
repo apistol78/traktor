@@ -33,15 +33,12 @@ class T_DLLCLASS Dialog : public Container
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsCenterParent = WsUser,
-		WsCenterDesktop = (WsUser << 1),
-		WsDefaultFixed = WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption,
-		WsDefaultResizable = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
-	};
+	constexpr static uint32_t WsCenterParent = WsUser;
+	constexpr static uint32_t WsCenterDesktop = (WsUser << 1);
+	constexpr static uint32_t WsDefaultFixed = WsSystemBox | WsMinimizeBox | WsCloseBox | WsCaption;
+	constexpr static uint32_t WsDefaultResizable = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption;
 
-	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style = WsDefaultResizable, Layout* layout = 0);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, uint32_t style = WsDefaultResizable, Layout* layout = 0);
 
 	void setIcon(IBitmap* icon);
 

@@ -40,7 +40,7 @@ class T_DLLCLASS AutoWidget : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(ui::Widget* parent, int32_t style);
+	bool create(ui::Widget* parent, uint32_t style);
 
 	void setFocusCell(AutoWidgetCell* focusCell);
 

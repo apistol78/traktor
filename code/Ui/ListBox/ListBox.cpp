@@ -36,7 +36,7 @@ ListBox::ListBox()
 {
 }
 
-bool ListBox::create(Widget* parent, int32_t style)
+bool ListBox::create(Widget* parent, uint32_t style)
 {
 	if (!AutoWidget::create(parent, style | WsDoubleBuffer))
 		return false;

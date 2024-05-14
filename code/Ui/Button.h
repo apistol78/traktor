@@ -29,13 +29,10 @@ class T_DLLCLASS Button : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsDefaultButton	= WsUser,
-		WsToggle = (WsUser << 1)
-	};
+	constexpr static uint32_t WsDefaultButton = WsUser;
+	constexpr static uint32_t WsToggle = (WsUser << 1);
 
-	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
+	bool create(Widget* parent, const std::wstring& text, uint32_t style = WsNone);
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 

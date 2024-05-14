@@ -15,7 +15,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ProgressBar", ProgressBar, Widget)
 
-bool ProgressBar::create(Widget* parent, int32_t style, int32_t minProgress, int32_t maxProgress)
+bool ProgressBar::create(Widget* parent, uint32_t style, int32_t minProgress, int32_t maxProgress)
 {
 	if (!Widget::create(parent, style))
 		return false;

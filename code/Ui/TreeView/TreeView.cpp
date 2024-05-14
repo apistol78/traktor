@@ -23,7 +23,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeView", TreeView, AutoWidget)
 
-bool TreeView::create(Widget* parent, int32_t style)
+bool TreeView::create(Widget* parent, uint32_t style)
 {
 	if (!AutoWidget::create(parent, style | WsWantAllInput))
 		return false;

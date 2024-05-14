@@ -35,7 +35,7 @@ public:
 
 	EditList();
 
-	bool create(Widget* parent, int32_t style = traktor::ui::ListBox::WsDefault);
+	bool create(Widget* parent, uint32_t style = traktor::ui::ListBox::WsDefault);
 
 private:
 	Ref< Edit > m_editItem;

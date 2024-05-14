@@ -16,7 +16,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MiniButton", MiniButton, Widget)
 
-bool MiniButton::create(Widget* parent, const std::wstring& text, int style)
+bool MiniButton::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

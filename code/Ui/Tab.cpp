@@ -30,7 +30,7 @@ Tab::Tab()
 {
 }
 
-bool Tab::create(Widget* parent, int32_t style)
+bool Tab::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style & ~WsBorder))
 		return false;

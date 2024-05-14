@@ -39,7 +39,7 @@ public:
 		Both = (Horizontal | Vertical)
 	};
 
-	bool create(Widget* parent, int style = WsNone, Layout* layout = nullptr);
+	bool create(Widget* parent, uint32_t style = WsNone, Layout* layout = nullptr);
 
 	virtual void fit(uint32_t axis);
 

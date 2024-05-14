@@ -20,7 +20,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.DropDown", DropDown, Widget)
 
-bool DropDown::create(Widget* parent, int32_t style)
+bool DropDown::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

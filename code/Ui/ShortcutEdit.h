@@ -33,7 +33,7 @@ class T_DLLCLASS ShortcutEdit : public Widget
 public:
 	ShortcutEdit();
 
-	bool create(Widget* parent, int32_t keyState, VirtualKey virtualKey, int style = WsNone);
+	bool create(Widget* parent, int32_t keyState, VirtualKey virtualKey, uint32_t style = WsNone);
 
 	virtual std::wstring getText() const override;
 

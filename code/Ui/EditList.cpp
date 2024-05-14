@@ -22,7 +22,7 @@ EditList::EditList()
 {
 }
 
-bool EditList::create(Widget* parent, int32_t style)
+bool EditList::create(Widget* parent, uint32_t style)
 {
 	if (!ListBox::create(parent, style))
 		return false;

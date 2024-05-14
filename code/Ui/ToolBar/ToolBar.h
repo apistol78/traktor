@@ -40,7 +40,7 @@ class T_DLLCLASS ToolBar : public Widget
 public:
 	ToolBar();
 
-	bool create(Widget* parent, int32_t style = WsNone);
+	bool create(Widget* parent, uint32_t style = WsNone);
 
 	virtual void destroy() override;
 

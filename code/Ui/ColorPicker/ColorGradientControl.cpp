@@ -19,7 +19,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorGradientControl", ColorGradientControl, Widget)
 
-bool ColorGradientControl::create(Widget* parent, int style, const Color4ub& primaryColor)
+bool ColorGradientControl::create(Widget* parent, uint32_t style, const Color4ub& primaryColor)
 {
 	if (!Widget::create(parent, style))
 		return false;

@@ -42,7 +42,7 @@ public:
 
 	Tab();
 
-	bool create(Widget* parent, int32_t style = WsDefault);
+	bool create(Widget* parent, uint32_t style = WsDefault);
 
 	virtual Rect getInnerRect() const override;
 

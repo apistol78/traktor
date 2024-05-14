@@ -38,7 +38,7 @@ class T_DLLCLASS ColorControl : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int style);
+	bool create(Widget* parent, uint32_t style);
 
 	void setColor(const Color4ub& color);
 

@@ -17,7 +17,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Form", Form, Container)
 
-bool Form::create(const std::wstring& text, Unit width, Unit height, int style, Layout* layout, Widget* parent)
+bool Form::create(const std::wstring& text, Unit width, Unit height, uint32_t style, Layout* layout, Widget* parent)
 {
 	IForm* form = Application::getInstance()->getWidgetFactory()->createForm(this);
 	if (!form)

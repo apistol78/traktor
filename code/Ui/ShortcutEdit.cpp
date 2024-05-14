@@ -30,7 +30,7 @@ ShortcutEdit::ShortcutEdit()
 {
 }
 
-bool ShortcutEdit::create(Widget* parent, int32_t keyState, VirtualKey virtualKey, int style)
+bool ShortcutEdit::create(Widget* parent, int32_t keyState, VirtualKey virtualKey, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

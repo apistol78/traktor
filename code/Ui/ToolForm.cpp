@@ -17,7 +17,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolForm", ToolForm, Container)
 
-bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout)
+bool ToolForm::create(Widget* parent, const std::wstring& text, Unit width, Unit height, uint32_t style, Layout* layout)
 {
 	IToolForm* toolForm = Application::getInstance()->getWidgetFactory()->createToolForm(this);
 	if (!toolForm)

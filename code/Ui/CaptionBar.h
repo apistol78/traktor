@@ -31,7 +31,7 @@ class T_DLLCLASS CaptionBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, uint32_t style = WsNone);
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 

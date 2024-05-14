@@ -35,10 +35,7 @@ class T_DLLCLASS SequencerControl : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsDragTrack = (WsUser << 1)
-	};
+	constexpr static uint32_t WsDragTrack = (WsUser << 1);
 
 	enum GetSequenceFlags
 	{
@@ -50,7 +47,7 @@ public:
 
 	SequencerControl();
 
-	bool create(Widget* parent, int style = WsDoubleBuffer | WsDragTrack);
+	bool create(Widget* parent, uint32_t style = WsDoubleBuffer | WsDragTrack);
 
 	void setSeparator(int32_t separator);
 

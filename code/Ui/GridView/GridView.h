@@ -38,12 +38,9 @@ class T_DLLCLASS GridView : public AutoWidget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsColumnHeader = WsUser,
-		WsAutoEdit = WsUser << 1,
-		WsMultiSelect = WsUser << 2
-	};
+	constexpr static uint32_t WsColumnHeader = WsUser;
+	constexpr static uint32_t WsAutoEdit = WsUser << 1;
+	constexpr static uint32_t WsMultiSelect = WsUser << 2;
 
 	enum GetFlags
 	{

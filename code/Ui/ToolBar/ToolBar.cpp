@@ -34,7 +34,7 @@ ToolBar::ToolBar()
 {
 }
 
-bool ToolBar::create(Widget* parent, int32_t style)
+bool ToolBar::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, WsDoubleBuffer))
 		return false;

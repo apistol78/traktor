@@ -1877,7 +1877,7 @@ void EditorForm::buildAssets(const AlignedVector< Guid >& assetGuids, bool rebui
 	buildWaitUntilFinished();
 
 	// Create build thread.
-	m_threadBuild = ThreadManager::getInstance().create([=](){ buildAssetsThread(assetGuids, rebuild); }, L"Pipeline thread");
+	m_threadBuild = ThreadManager::getInstance().create([=, this](){ buildAssetsThread(assetGuids, rebuild); }, L"Pipeline thread");
 	if (m_threadBuild)
 	{
 		m_threadBuild->start(Thread::Above);

@@ -34,18 +34,15 @@ class T_DLLCLASS ListBox : public AutoWidget
 	T_RTTI_CLASS;
 
 public:
-	enum Styles
-	{
-		WsSingle = 0,
-		WsMultiple = WsUser,
-		WsExtended = (WsUser << 1),
-		WsSort = (WsUser << 2),
-		WsDefault = WsSingle
-	};
+	constexpr static uint32_t WsSingle = 0;
+	constexpr static uint32_t WsMultiple = WsUser;
+	constexpr static uint32_t WsExtended = (WsUser << 1);
+	constexpr static uint32_t WsSort = (WsUser << 2);
+	constexpr static uint32_t WsDefault = WsSingle;
 
 	ListBox();
 
-	bool create(Widget* parent, int32_t style = WsDefault);
+	bool create(Widget* parent, uint32_t style = WsDefault);
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 

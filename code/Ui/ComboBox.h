@@ -34,7 +34,7 @@ class T_DLLCLASS ComboBox : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
+	bool create(Widget* parent, const std::wstring& text, uint32_t style = WsNone);
 
 	int add(const std::wstring& item);
 

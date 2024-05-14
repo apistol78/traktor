@@ -29,7 +29,7 @@ class T_DLLCLASS ProgressBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int32_t style = WsNone, int32_t minProgress = 0, int32_t maxProgress = 100);
+	bool create(Widget* parent, uint32_t style = WsNone, int32_t minProgress = 0, int32_t maxProgress = 100);
 
 	void setRange(int32_t minProgress, int32_t maxProgress);
 

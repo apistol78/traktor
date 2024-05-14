@@ -50,7 +50,7 @@ public:
 		virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const = 0;
 	};
 
-	bool create(Widget* parent, int style, const ISymbolLookup* lookup);
+	bool create(Widget* parent, uint32_t style, const ISymbolLookup* lookup);
 
 	void add(uint32_t threadId, LogLevel level, const std::wstring& text);
 

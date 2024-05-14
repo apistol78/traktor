@@ -24,7 +24,7 @@ const Unit c_height = 24_ut;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorControl", ColorControl, Widget)
 
-bool ColorControl::create(Widget* parent, int style)
+bool ColorControl::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

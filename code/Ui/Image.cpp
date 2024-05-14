@@ -16,7 +16,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Image", Image, Widget)
 
-bool Image::create(Widget* parent, IBitmap* image, int style)
+bool Image::create(Widget* parent, IBitmap* image, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

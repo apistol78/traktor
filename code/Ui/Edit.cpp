@@ -43,7 +43,7 @@ Edit::Edit()
 {
 }
 
-bool Edit::create(Widget* parent, const std::wstring& text, int style, const EditValidator* validator)
+bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, const EditValidator* validator)
 {
 	if (!Widget::create(parent, style | WsDoubleBuffer))
 		return false;

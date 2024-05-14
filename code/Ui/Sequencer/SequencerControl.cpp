@@ -44,7 +44,7 @@ SequencerControl::SequencerControl()
 {
 }
 
-bool SequencerControl::create(Widget* parent, int style)
+bool SequencerControl::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

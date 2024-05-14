@@ -59,7 +59,7 @@ class T_DLLCLASS Widget
 public:
 	virtual ~Widget();
 
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, uint32_t style = WsNone);
 
 	virtual void destroy();
 

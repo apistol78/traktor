@@ -18,7 +18,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Container", Container, Widget)
 
-bool Container::create(Widget* parent, int style, Layout* layout)
+bool Container::create(Widget* parent, uint32_t style, Layout* layout)
 {
 	m_layout = layout;
 

@@ -33,7 +33,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 	m_attributeError[0] = m_attributeError[1] = 0;
 }
 
-bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
+bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
 	if (!RichEdit::create(parent, text, style))
 		return false;

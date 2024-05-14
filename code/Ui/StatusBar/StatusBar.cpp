@@ -22,7 +22,7 @@ const Unit c_preferedHeightMargin = 2_ut;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.StatusBar", StatusBar, Widget)
 
-bool StatusBar::create(Widget* parent, int style)
+bool StatusBar::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

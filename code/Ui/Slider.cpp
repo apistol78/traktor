@@ -23,9 +23,9 @@ const Unit c_knobMarginY = 3_ut;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Slider", Slider, Widget)
 
-bool Slider::create(Widget* parent, int32_t style)
+bool Slider::create(Widget* parent, uint32_t style)
 {
-	if (!Widget::create(parent))
+	if (!Widget::create(parent, style))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &Slider::eventButtonDown);

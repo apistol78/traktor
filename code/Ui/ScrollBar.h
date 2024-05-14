@@ -29,13 +29,10 @@ class T_DLLCLASS ScrollBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsHorizontal = 0,
-		WsVertical = WsUser
-	};
+	constexpr static uint32_t WsHorizontal = 0;
+	constexpr static uint32_t WsVertical = WsUser;
 
-	bool create(Widget* parent, int32_t style = WsHorizontal);
+	bool create(Widget* parent, uint32_t style = WsHorizontal);
 
 	void setRange(int32_t range);
 

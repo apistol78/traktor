@@ -30,7 +30,7 @@ class T_DLLCLASS Slider : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int32_t style = WsNone);
+	bool create(Widget* parent, uint32_t style = WsNone);
 
 	void setRange(int32_t minValue, int32_t maxValue);
 

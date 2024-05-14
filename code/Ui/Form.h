@@ -35,10 +35,7 @@ class T_DLLCLASS Form : public Container
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsDefault = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption
-	};
+	constexpr static uint32_t WsDefault = WsResizable | WsSystemBox | WsMinimizeBox | WsMaximizeBox | WsCloseBox | WsCaption;
 
 	enum NotifyStyle
 	{
@@ -46,7 +43,7 @@ public:
 		NsSystemTray = 2
 	};
 
-	bool create(const std::wstring& text, Unit width, Unit height, int style = WsDefault, Layout* layout = 0, Widget* parent = 0);
+	bool create(const std::wstring& text, Unit width, Unit height, uint32_t style = WsDefault, Layout* layout = 0, Widget* parent = 0);
 
 	void setIcon(IBitmap* icon);
 

@@ -24,7 +24,7 @@ const Unit c_preferedHeightMargin = 8_ut;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CaptionBar", CaptionBar, Widget)
 
-bool CaptionBar::create(Widget* parent, int style)
+bool CaptionBar::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

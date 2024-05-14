@@ -33,7 +33,7 @@ BuildChartControl::BuildChartControl()
 {
 }
 
-bool BuildChartControl::create(Widget* parent, uint32_t laneCount, int style)
+bool BuildChartControl::create(Widget* parent, uint32_t laneCount, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

@@ -29,12 +29,9 @@ class T_DLLCLASS MiniButton : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsNoBorder = WsUser
-	};
+	constexpr static uint32_t WsNoBorder = WsUser;
 
-	bool create(Widget* parent, const std::wstring& text, int style = WsNone);
+	bool create(Widget* parent, const std::wstring& text, uint32_t style = WsNone);
 
 	bool create(Widget* parent, IBitmap* image, int style = WsNone);
 

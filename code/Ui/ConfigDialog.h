@@ -32,14 +32,11 @@ class T_DLLCLASS ConfigDialog : public Dialog
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsOkCancelButtons = 0,
-		WsYesNoButtons = (WsUser << 1),
-		WsApplyButton = (WsUser << 2)
-	};
+	constexpr static uint32_t WsOkCancelButtons = 0;
+	constexpr static uint32_t WsYesNoButtons = (WsUser << 1);
+	constexpr static uint32_t WsApplyButton = (WsUser << 2);
 
-	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, uint32_t style, Layout* layout);
 
 	virtual void destroy() override;
 

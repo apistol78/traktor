@@ -27,7 +27,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.LogList", LogList, Widget)
 
-bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
+bool LogList::create(Widget* parent, uint32_t style, const ISymbolLookup* lookup)
 {
 	if (!Widget::create(parent, style | WsDoubleBuffer | WsAccelerated))
 		return false;

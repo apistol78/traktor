@@ -31,7 +31,7 @@ class T_DLLCLASS StatusBar : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, uint32_t style = WsNone);
 
 	void setAlert(bool alert);
 

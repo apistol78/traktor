@@ -19,7 +19,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorSliderControl", ColorSliderControl, Widget)
 
-bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
+bool ColorSliderControl::create(Widget* parent, uint32_t style, IGradient* gradient)
 {
 	if (!Widget::create(parent, style))
 		return false;

@@ -31,7 +31,7 @@ int32_t getPrimarySize(const Size& s, bool vertical)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ScrollBar", ScrollBar, Widget)
 
-bool ScrollBar::create(Widget* parent, int32_t style)
+bool ScrollBar::create(Widget* parent, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

@@ -17,9 +17,9 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Button", Button, Widget)
 
-bool Button::create(Widget* parent, const std::wstring& text, int style)
+bool Button::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
-	if (!Widget::create(parent))
+	if (!Widget::create(parent, style))
 		return false;
 
 	addEventHandler< MouseTrackEvent >(this, &Button::eventMouseTrack);

@@ -137,7 +137,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderGraph = new render::RenderGraph(
 		m_context->getRenderSystem(),
 		m_multiSample,
-		[=](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
+		[=, this](int32_t pass, int32_t level, const std::wstring& name, double start, double duration) {
 			m_context->raiseMeasurement(pass, level, name, start, duration);
 		}
 	);

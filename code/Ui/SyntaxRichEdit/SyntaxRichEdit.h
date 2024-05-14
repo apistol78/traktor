@@ -35,7 +35,7 @@ class T_DLLCLASS SyntaxRichEdit : public RichEdit
 public:
 	SyntaxRichEdit();
 
-	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsDoubleBuffer);
+	bool create(Widget* parent, const std::wstring& text = L"", uint32_t style = WsDoubleBuffer);
 
 	void setLanguage(const SyntaxLanguage* language);
 

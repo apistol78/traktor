@@ -32,12 +32,9 @@ class T_DLLCLASS ToolForm : public Container
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsDefault = WsResizable | WsSystemBox | WsCloseBox | WsCaption
-	};
+	constexpr static uint32_t WsDefault = WsResizable | WsSystemBox | WsCloseBox | WsCaption;
 
-	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style = WsDefault, Layout* layout = 0);
+	bool create(Widget* parent, const std::wstring& text, Unit width, Unit height, uint32_t style = WsDefault, Layout* layout = 0);
 
 	void setIcon(IBitmap* icon);
 

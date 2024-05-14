@@ -50,7 +50,7 @@ RichEdit::RichEdit()
 {
 }
 
-bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
+bool RichEdit::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
 	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer))
 		return false;

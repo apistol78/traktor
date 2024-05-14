@@ -43,7 +43,7 @@ public:
 		virtual Color4ub get(int32_t at) const = 0;
 	};
 
-	bool create(Widget* parent, int style, IGradient* gradient);
+	bool create(Widget* parent, uint32_t style, IGradient* gradient);
 
 	void setMarker(int32_t marker);
 

@@ -24,7 +24,7 @@ Widget::~Widget()
 	T_FATAL_ASSERT(!m_widget);
 }
 
-bool Widget::create(Widget* parent, int style)
+bool Widget::create(Widget* parent, uint32_t style)
 {
 	if (!m_widget)
 	{

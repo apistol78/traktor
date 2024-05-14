@@ -41,13 +41,10 @@ class T_DLLCLASS ColorDialog : public ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsAlpha = WsUser,
-		WsHDR = (WsUser << 1)
-	};
+	constexpr static uint32_t WsAlpha = WsUser;
+	constexpr static uint32_t WsHDR = (WsUser << 1);
 
-	bool create(Widget* parent, const std::wstring& text, int32_t style = WsDefaultFixed, const Color4f& initialColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f));
+	bool create(Widget* parent, const std::wstring& text, uint32_t style = WsDefaultFixed, const Color4f& initialColor = Color4f(1.0f, 1.0f, 1.0f, 1.0f));
 
 	void setColor(const Color4f& color);
 

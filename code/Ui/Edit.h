@@ -31,14 +31,11 @@ class T_DLLCLASS Edit : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum Styles
-	{
-		WsReadOnly = WsUser
-	};
+	constexpr static uint32_t WsReadOnly = WsUser;
 
 	Edit();
 
-	bool create(Widget* parent, const std::wstring& text = L"", int style = WsNone, const EditValidator* validator = nullptr);
+	bool create(Widget* parent, const std::wstring& text = L"", uint32_t style = WsNone, const EditValidator* validator = nullptr);
 
 	virtual void destroy() override;
 

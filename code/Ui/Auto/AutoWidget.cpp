@@ -18,7 +18,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidget", AutoWidget, Widget)
 
-bool AutoWidget::create(ui::Widget* parent, int32_t style)
+bool AutoWidget::create(ui::Widget* parent, uint32_t style)
 {
 	if (!ui::Widget::create(parent, style))
 		return false;

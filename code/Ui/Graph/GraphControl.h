@@ -40,10 +40,7 @@ class T_DLLCLASS GraphControl : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum Styles
-	{
-		WsEdgeSelectable = WsUser
-	};
+	constexpr static uint32_t WsEdgeSelectable = WsUser;
 
 	enum Alignment
 	{
@@ -61,7 +58,7 @@ public:
 
 	GraphControl();
 
-	bool create(ui::Widget* parent, int style = WsDoubleBuffer | WsAccelerated);
+	bool create(Widget* parent, uint32_t style = WsDoubleBuffer | WsAccelerated);
 
 	virtual void destroy() override;
 

@@ -29,7 +29,7 @@ float scaleValue(float value, float minValue, float maxValue)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EnvelopeControl", EnvelopeControl, Widget)
 
-bool EnvelopeControl::create(Widget* parent, EnvelopeEvaluator* evaluator, float minValue, float maxValue, int style)
+bool EnvelopeControl::create(Widget* parent, EnvelopeEvaluator* evaluator, float minValue, float maxValue, uint32_t style)
 {
 	if (!Widget::create(parent, style))
 		return false;

@@ -57,7 +57,7 @@ public:
 
 	RichEdit();
 
-	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsDoubleBuffer);
+	bool create(Widget* parent, const std::wstring& text = L"", uint32_t style = WsDoubleBuffer);
 
 	/*! Set text content of text editor. */
 	virtual void setText(const std::wstring& text) override;

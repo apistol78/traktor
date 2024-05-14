@@ -248,7 +248,7 @@ void BrowseInstanceDialog::updatePreviewList()
 				ui::PreviewItem* item = previewItems->get(i);
 				if (!item->getImage())
 				{
-					m_previewTasks.put([=](){ taskGeneratePreview(item); });
+					m_previewTasks.put([=, this](){ taskGeneratePreview(item); });
 					m_previewTaskEvent.pulse();
 				}
 			}

@@ -29,7 +29,7 @@ class T_DLLCLASS AspectLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
-	AspectLayout(float ratio = -1.0f);
+	explicit AspectLayout(float ratio = -1.0f);
 
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result) override;
 

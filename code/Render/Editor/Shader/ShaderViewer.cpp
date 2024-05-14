@@ -378,7 +378,7 @@ void ShaderViewer::eventTimer(ui::TimerEvent* event)
 			return;
 
 		Ref< ShaderGraph > shaderGraph = m_pendingShaderGraph;
-		m_reflectJob = JobManager::getInstance().add([=](){
+		m_reflectJob = JobManager::getInstance().add([=, this](){
 			jobReflect(shaderGraph, compiler);
 		});
 

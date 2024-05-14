@@ -40,10 +40,7 @@ class T_DLLCLASS PropertyList : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum StyleFlags
-	{
-		WsColumnHeader = WsUser
-	};
+	constexpr static uint32_t WsColumnHeader = WsUser;
 
 	enum GetPropertyItemFlags
 	{
@@ -61,7 +58,7 @@ public:
 
 	PropertyList();
 
-	bool create(Widget* parent, int style = WsDoubleBuffer, IPropertyGuidResolver* guidResolver = 0);
+	bool create(Widget* parent, uint32_t style = WsDoubleBuffer, IPropertyGuidResolver* guidResolver = 0);
 
 	virtual void destroy() override;
 

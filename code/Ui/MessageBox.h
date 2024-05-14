@@ -34,11 +34,11 @@ class T_DLLCLASS MessageBox : public ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
+	bool create(Widget* parent, const std::wstring& message, const std::wstring& caption, uint32_t style);
 
-	static DialogResult show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style);
+	static DialogResult show(Widget* parent, const std::wstring& message, const std::wstring& caption, uint32_t style);
 
-	static DialogResult show(const std::wstring& message, const std::wstring& caption, int style);
+	static DialogResult show(const std::wstring& message, const std::wstring& caption, uint32_t style);
 };
 
 }

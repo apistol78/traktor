@@ -19,9 +19,9 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MessageBox", MessageBox, ConfigDialog)
 
-bool MessageBox::create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
+bool MessageBox::create(Widget* parent, const std::wstring& message, const std::wstring& caption, uint32_t style)
 {
-	int dialogStyle = WsCenterParent | WsSystemBox | WsCloseBox | WsCaption;
+	uint32_t dialogStyle = WsCenterParent | WsSystemBox | WsCloseBox | WsCaption;
 	if (style & MbYesNo)
 		dialogStyle |= ConfigDialog::WsYesNoButtons;
 
@@ -66,7 +66,7 @@ bool MessageBox::create(Widget* parent, const std::wstring& message, const std::
 	return true;
 }
 
-DialogResult MessageBox::show(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
+DialogResult MessageBox::show(Widget* parent, const std::wstring& message, const std::wstring& caption, uint32_t style)
 {
 	MessageBox mb;
 	if (!mb.create(parent, message, caption, style))
@@ -78,7 +78,7 @@ DialogResult MessageBox::show(Widget* parent, const std::wstring& message, const
 	return result;
 }
 
-DialogResult MessageBox::show(const std::wstring& message, const std::wstring& caption, int style)
+DialogResult MessageBox::show(const std::wstring& message, const std::wstring& caption, uint32_t style)
 {
 	return show(nullptr, message, caption, style);
 }

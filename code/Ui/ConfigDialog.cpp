@@ -16,7 +16,7 @@ namespace traktor::ui
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ConfigDialog", ConfigDialog, Dialog)
 
-bool ConfigDialog::create(Widget* parent, const std::wstring& text, Unit width, Unit height, int style, Layout* layout)
+bool ConfigDialog::create(Widget* parent, const std::wstring& text, Unit width, Unit height, uint32_t style, Layout* layout)
 {
 	if (!Dialog::create(parent, text, width, height, style, layout))
 		return false;

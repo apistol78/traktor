@@ -30,14 +30,11 @@ class T_DLLCLASS DropDown : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum Styles
-	{
-		WsSingle = 0,
-		WsMultiple = WsUser,
-		WsDefault = WsSingle
-	};
+	constexpr static uint32_t WsSingle = 0;
+	constexpr static uint32_t WsMultiple = WsUser;
+	constexpr static uint32_t WsDefault = WsSingle;
 
-	bool create(Widget* parent, int32_t style = WsDefault);
+	bool create(Widget* parent, uint32_t style = WsDefault);
 
 	int32_t add(const std::wstring& item, Object* data = 0);
 

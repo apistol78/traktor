@@ -40,7 +40,7 @@ class T_DLLCLASS ColorGradientControl : public Widget
 	T_RTTI_CLASS;
 
 public:
-	bool create(Widget* parent, int style, const Color4ub& color = Color4ub(0, 0, 0, 255));
+	bool create(Widget* parent, uint32_t style, const Color4ub& color = Color4ub(0, 0, 0, 255));
 
 	virtual Size getPreferredSize(const Size& hint) const override;
 

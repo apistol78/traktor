@@ -20,40 +20,34 @@ namespace traktor::ui
 /*! \ingroup UI */
 //@{
 
-enum WidgetStyles : uint32_t
-{
-	WsNone				= 0,
-	WsBorder			= 1 << 0,
-	WsClientBorder		= 1 << 1,
-	WsResizable			= 1 << 2,
-	WsSystemBox			= 1 << 3,
-	WsMinimizeBox		= 1 << 4,
-	WsMaximizeBox		= 1 << 5,
-	WsCloseBox			= 1 << 6,
-	WsCaption			= 1 << 7,
-	WsTop				= 1 << 8,
-	WsDoubleBuffer		= 1 << 9,
-	WsAccelerated		= 1 << 10,
-	WsAcceptFileDrop	= 1 << 11,
-	WsTabStop			= 1 << 12,
-	WsWantAllInput		= 1 << 13,
-	WsNoCanvas			= 1 << 14,	//!< Don't allocate a graphics canvas; useful for 3d rendering widgets etc.
-	WsUser				= 1 << 15
-};
+constexpr static uint32_t WsNone			= 0;
+constexpr static uint32_t WsBorder			= 1 << 0;
+constexpr static uint32_t WsClientBorder	= 1 << 1;
+constexpr static uint32_t WsResizable		= 1 << 2;
+constexpr static uint32_t WsSystemBox		= 1 << 3;
+constexpr static uint32_t WsMinimizeBox		= 1 << 4;
+constexpr static uint32_t WsMaximizeBox		= 1 << 5;
+constexpr static uint32_t WsCloseBox		= 1 << 6;
+constexpr static uint32_t WsCaption			= 1 << 7;
+constexpr static uint32_t WsTop				= 1 << 8;
+constexpr static uint32_t WsDoubleBuffer	= 1 << 9;
+constexpr static uint32_t WsAccelerated		= 1 << 10;
+constexpr static uint32_t WsAcceptFileDrop	= 1 << 11;
+constexpr static uint32_t WsTabStop			= 1 << 12;
+constexpr static uint32_t WsWantAllInput	= 1 << 13;
+constexpr static uint32_t WsNoCanvas		= 1 << 14;	//!< Don't allocate a graphics canvas; useful for 3d rendering widgets etc.
+constexpr static uint32_t WsUser			= 1 << 15;
 
-enum MessageBoxStyles : uint32_t
-{
-	MbOk				= 1 << 0,
-	MbCancel			= 1 << 1,
-	MbYesNo				= 1 << 2,
-	MbNoDefault			= 1 << 3,
-	MbIconExclamation	= 1 << 4,
-	MbIconHand			= 1 << 5,
-	MbIconError			= 1 << 6,
-	MbIconQuestion		= 1 << 7,
-	MbIconInformation	= 1 << 8,
-	MbStayOnTop			= 1 << 9
-};
+constexpr static uint32_t MbOk				= 1 << 0;
+constexpr static uint32_t MbCancel			= 1 << 1;
+constexpr static uint32_t MbYesNo			= 1 << 2;
+constexpr static uint32_t MbNoDefault		= 1 << 3;
+constexpr static uint32_t MbIconExclamation	= 1 << 4;
+constexpr static uint32_t MbIconHand		= 1 << 5;
+constexpr static uint32_t MbIconError		= 1 << 6;
+constexpr static uint32_t MbIconQuestion	= 1 << 7;
+constexpr static uint32_t MbIconInformation	= 1 << 8;
+constexpr static uint32_t MbStayOnTop		= 1 << 9;
 
 enum class DialogResult
 {

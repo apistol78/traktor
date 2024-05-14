@@ -33,7 +33,7 @@ class T_DLLCLASS ChildWidgetCell : public AutoWidgetCell
 	T_RTTI_CLASS;
 
 public:
-	ChildWidgetCell(Widget* child);
+	explicit ChildWidgetCell(Widget* child);
 
 	virtual ~ChildWidgetCell();
 

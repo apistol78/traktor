@@ -32,21 +32,15 @@ class T_DLLCLASS BuildChartControl : public Widget
 public:
 	struct Task
 	{
-		double time0;
-		double time1;
+		double time0 = -1.0;
+		double time1 = -1.0;
 		std::wstring text;
 		Color4ub color;
-
-		Task()
-		:	time0(-1.0)
-		,	time1(-1.0)
-		{
-		}
 	};
 
 	BuildChartControl();
 
-	bool create(Widget* parent, uint32_t laneCount, int style = WsDoubleBuffer);
+	bool create(Widget* parent, uint32_t laneCount, uint32_t style = WsDoubleBuffer);
 
 	void showRange(double fromTime, double toTime);
 

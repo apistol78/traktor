@@ -95,7 +95,7 @@ bool DialogX11::create(IWidget* parent, const std::wstring& text, int width, int
 	if (!WidgetX11Impl< IDialog >::create(nullptr, style, window, rc, false, true))
 		return false;
 
-	m_context->bind(&m_data, ClientMessage, [=](XEvent& xe){
+	m_context->bind(&m_data, ClientMessage, [=, this](XEvent& xe){
 		if ((Atom)xe.xclient.data.l[0] == m_atomWmDeleteWindow)
 		{
 			CloseEvent closeEvent(m_owner);

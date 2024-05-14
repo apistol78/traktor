@@ -31,15 +31,12 @@ class T_DLLCLASS Image : public Widget
 	T_RTTI_CLASS;
 
 public:
-	enum Styles
-	{
-		WsTransparent = WsUser,
-		WsScale = (WsUser << 1),
-		WsScaleKeepAspect = (WsUser << 2),
-		WsNearestFilter = (WsUser << 3)
-	};
+	constexpr static uint32_t WsTransparent = WsUser;
+	constexpr static uint32_t WsScale = (WsUser << 1);
+	constexpr static uint32_t WsScaleKeepAspect = (WsUser << 2);
+	constexpr static uint32_t WsNearestFilter = (WsUser << 3);
 
-	bool create(Widget* parent, IBitmap* image = nullptr, int style = WsNone);
+	bool create(Widget* parent, IBitmap* image = nullptr, uint32_t style = WsNone);
 
 	virtual Size getMinimumSize() const override;
 
