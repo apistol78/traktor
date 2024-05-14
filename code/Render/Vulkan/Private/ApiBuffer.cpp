@@ -31,8 +31,7 @@ bool ApiBuffer::create(uint32_t bufferSize, uint32_t usageBits, bool cpuAccess, 
 	T_FATAL_ASSERT(m_buffer == 0);
 	T_FATAL_ASSERT(bufferSize > 0);
 
-	VkBufferCreateInfo bci = {};
-	bci.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+	VkBufferCreateInfo bci{ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO };
 	bci.size = bufferSize;
 	bci.usage = usageBits;
 	bci.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
@@ -86,6 +85,13 @@ void ApiBuffer::unlock()
 	T_FATAL_ASSERT_M(m_locked != nullptr, L"Buffer not locked.");
 	vmaUnmapMemory(m_context->getAllocator(), m_allocation);
 	m_locked = nullptr;
+}
+
+VkDeviceAddress ApiBuffer::getDeviceAddress()
+{
+	VkBufferDeviceAddressInfo bdai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
+	bdai.buffer = m_buffer;
+	return vkGetBufferDeviceAddressKHR(m_context->getLogicalDevice(), &bdai);
 }
 
 }

@@ -1,6 +1,9 @@
+#pragma optimize( "", off )
+// https://github.com/WilliamLewww/vulkan_ray_tracing_minimal_abstraction/blob/master/headless/src/main.cpp
+
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,6 +34,7 @@
 #include "Render/Vulkan/TextureVk.h"
 #include "Render/Vulkan/VertexLayoutVk.h"
 #include "Render/Vulkan/Private/ApiLoader.h"
+#include "Render/Vulkan/Private/CommandBuffer.h"
 #include "Render/Vulkan/Private/Context.h"
 #include "Render/Vulkan/Private/PipelineLayoutCache.h"
 #include "Render/Vulkan/Private/Queue.h"
@@ -83,6 +87,7 @@ const char* c_deviceExtensions[] =
 	"VK_KHR_buffer_device_address",
 
 	// Ray tracing
+	"VK_KHR_deferred_host_operations",
 	"VK_KHR_ray_tracing_pipeline",
 	"VK_KHR_acceleration_structure"
 };
@@ -423,7 +428,7 @@ bool RenderSystemVk::create(const RenderSystemDesc& desc)
 	//if (vf.vkGetBufferMemoryRequirements2KHR != nullptr && vf.vkGetImageMemoryRequirements2KHR != nullptr)
 	//	aci.vulkanApiVersion = VK_API_VERSION_1_2;
 
-	aci.flags = VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
+	aci.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT | VMA_ALLOCATOR_CREATE_EXT_MEMORY_BUDGET_BIT;
 #endif
 	aci.physicalDevice = m_physicalDevice;
 	aci.device = m_logicalDevice;
@@ -615,9 +620,9 @@ Ref< Buffer > RenderSystemVk::createBuffer(uint32_t usage, uint32_t bufferSize, 
 {
 	uint32_t usageBits = 0;
 	if ((usage & BuVertex) != 0)
-		usageBits |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+		usageBits |= VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
 	if ((usage & BuIndex) != 0)
-		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
+		usageBits |= VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
 	if ((usage & BuStructured) != 0)
 		usageBits |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 	if ((usage & BuIndirect) != 0)
@@ -710,11 +715,13 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 
 Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure()
 {
-	return new AccelerationStructureVk(m_context);
+	return nullptr;
 }
 
 Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
 {
+	VkResult result;
+
 	const VertexLayoutVk* vertexLayoutVk = mandatory_non_null_type_cast< const VertexLayoutVk* >(vertexLayout);
 	const int32_t pidx = vertexLayoutVk->getPositionElementIndex();
 	if (pidx < 0)
@@ -725,14 +732,17 @@ Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const 
 	const BufferViewVk* vb = mandatory_non_null_type_cast< const BufferViewVk* >(vertexBuffer->getBufferView());
 	const BufferViewVk* ib = mandatory_non_null_type_cast< const BufferViewVk* >(indexBuffer->getBufferView());
 
+	// Get device address of vertex buffer.
 	VkBufferDeviceAddressInfo vdai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
 	vdai.buffer = vb->getVkBuffer();
 	const VkDeviceAddress vaddr = vkGetBufferDeviceAddressKHR(m_logicalDevice, &vdai) + vb->getVkBufferOffset();
 
+	// Get device address of index buffer.
 	VkBufferDeviceAddressInfo idai{ VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO };
-	idai.buffer = vb->getVkBuffer();
+	idai.buffer = ib->getVkBuffer();
 	const VkDeviceAddress iaddr = vkGetBufferDeviceAddressKHR(m_logicalDevice, &idai) + ib->getVkBufferOffset();
 
+	// Geometry triangles.
 	VkAccelerationStructureGeometryTrianglesDataKHR triangles{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR };
 	triangles.vertexFormat = piad.format;
 	triangles.vertexData.deviceAddress = vaddr;
@@ -741,24 +751,107 @@ Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const 
 	triangles.indexData.deviceAddress = iaddr;
 	triangles.maxVertex = vb->getVkBufferSize() / vertexLayoutVk->getVkVertexInputBindingDescription().stride;
 
+	// Geometry.
 	VkAccelerationStructureGeometryKHR geom{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR };
 	geom.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_KHR;
 	geom.flags = VK_GEOMETRY_OPAQUE_BIT_KHR;
 	geom.geometry.triangles = triangles;
 
+	// Build geometry.
+	VkAccelerationStructureBuildGeometryInfoKHR asbgi{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR };
+	asbgi.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
+	asbgi.flags = 0;
+	asbgi.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR;
+	asbgi.srcAccelerationStructure = VK_NULL_HANDLE;
+	asbgi.dstAccelerationStructure = VK_NULL_HANDLE;
+	asbgi.geometryCount = 1;
+	asbgi.pGeometries = &geom;
+	asbgi.ppGeometries = nullptr;
+	asbgi.scratchData = VkDeviceOrHostAddressKHR();
+	asbgi.scratchData.deviceAddress = 0;
+
+	// Query size of buffers required for AS.
+	VkAccelerationStructureBuildSizesInfoKHR asbsi{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR };
+	asbsi.accelerationStructureSize = 0;
+	asbsi.updateScratchSize = 0;
+	asbsi.buildScratchSize = 0;
+
+	const uint32_t primitiveCount = indexBuffer->getBufferSize() / ((indexType == IndexType::UInt32) ? 4 : 2);
+	AlignedVector< uint32_t > bottomLevelMaxPrimitiveCountList = { primitiveCount };
+
+	vkGetAccelerationStructureBuildSizesKHR(
+		m_logicalDevice,
+		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+		&asbgi,
+		bottomLevelMaxPrimitiveCountList.ptr(),
+		&asbsi
+	);
+
+	// Allocate buffer to hold AS data.
+	Ref< ApiBuffer > buffer = new ApiBuffer(m_context);
+	buffer->create(asbsi.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR, false, true);
+
+	// Create AS.
+	VkAccelerationStructureCreateInfoKHR asci{ VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR };
+	asci.createFlags = 0;
+	asci.buffer = *buffer;
+	asci.offset = 0;
+	asci.size = asbsi.accelerationStructureSize;
+	asci.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_KHR;
+	asci.deviceAddress = 0;
+
+	VkAccelerationStructureKHR as = VK_NULL_HANDLE;
+	result = vkCreateAccelerationStructureKHR(
+		m_logicalDevice,
+		&asci,
+		NULL,
+		&as
+	);
+	if (result != VK_SUCCESS)
+		return nullptr;
+
+	// Allocate scratch buffer.
+	ApiBuffer scratchBuffer(m_context);
+	if (!scratchBuffer.create(asbsi.buildScratchSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, false, true))
+	{
+		safeDestroy(buffer);
+		return nullptr;
+	}
+
+	// Build AS.
+	asbgi.dstAccelerationStructure = as;
+	asbgi.scratchData.deviceAddress = scratchBuffer.getDeviceAddress();
+
+	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR > buildRanges;
 	for (const auto& primitive : primitives)
 	{
 		if (primitive.type != PrimitiveType::Triangles)
 			continue;
 
-		VkAccelerationStructureBuildRangeInfoKHR offset;
+		VkAccelerationStructureBuildRangeInfoKHR& offset = buildRanges.push_back();
 		offset.firstVertex = primitive.offset;
 		offset.primitiveCount = primitive.count;
 		offset.primitiveOffset = 0;
 		offset.transformOffset = 0;
 	}
 
-	return new AccelerationStructureVk(m_context);
+	AlignedVector< VkAccelerationStructureBuildRangeInfoKHR* > buildRangePtrs;
+	for (auto& buildRange : buildRanges)
+		buildRangePtrs.push_back(&buildRange);
+
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	vkCmdBuildAccelerationStructuresKHR(
+		*commandBuffer,
+		1,
+		&asbgi,
+		buildRangePtrs.ptr()
+	);
+	commandBuffer->submitAndWait();
+
+	// Destroy scratch buffer.
+	scratchBuffer.destroy();
+
+	return new AccelerationStructureVk(m_context, buffer, as);
 }
 
 Ref< IProgram > RenderSystemVk::createProgram(const ProgramResource* programResource, const wchar_t* const tag)

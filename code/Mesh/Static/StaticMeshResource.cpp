@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,6 +14,7 @@
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Mesh/Static/StaticMesh.h"
 #include "Mesh/Static/StaticMeshResource.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
@@ -72,6 +73,27 @@ Ref< IMesh > StaticMeshResource::createMesh(
 		}
 
 		r.second = (uint32_t)staticMesh->m_parts.size();
+	}
+
+	const bool rayTracingEnable = true;
+	if (rayTracingEnable)
+	{
+		AlignedVector< render::Primitives > primitives;
+		for (const auto& part : renderMesh->getParts())
+			primitives.push_back(part.primitives);
+
+		staticMesh->m_accelerationStructure = renderSystem->createAccelerationStructure(
+			renderMesh->getVertexBuffer(),
+			renderMesh->getVertexLayout(),
+			renderMesh->getIndexBuffer(),
+			renderMesh->getIndexType(),
+			primitives
+		);
+		if (!staticMesh->m_accelerationStructure)
+		{
+			log::error << L"Static mesh create failed; unable to create RT acceleration structure." << Endl;
+			return nullptr;
+		}
 	}
 
 #if defined(_DEBUG)

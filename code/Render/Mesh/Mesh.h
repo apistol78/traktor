@@ -26,7 +26,6 @@ namespace traktor::render
 {
 
 class Buffer;
-class IAccelerationStructure;
 class IVertexLayout;
 
 /*! Render mesh.

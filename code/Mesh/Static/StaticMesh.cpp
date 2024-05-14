@@ -29,6 +29,13 @@ const StaticMesh::techniqueParts_t* StaticMesh::findTechniqueParts(render::handl
 	return it != m_techniqueParts.end() ? &it->second : nullptr;
 }
 
+void StaticMesh::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
+{
+	if (m_accelerationStructure)
+	{
+	}
+}
+
 void StaticMesh::build(
 	render::RenderContext* renderContext,
 	const world::IWorldRenderPass& worldRenderPass,

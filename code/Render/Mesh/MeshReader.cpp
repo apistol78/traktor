@@ -11,6 +11,7 @@
 #include "Core/Math/Half.h"
 #include "Core/Misc/Endian.h"
 #include "Render/Buffer.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
