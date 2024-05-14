@@ -392,7 +392,7 @@ void ClientPage::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 	if (event->getCommand() == L"Traktor.Flash.Load")
 	{
 		ui::FileDialog fileDialog;
-		fileDialog.create(this, type_name(this), L"Load capture...", L"All files;*.*", false);
+		fileDialog.create(this, type_name(this), L"Load capture...", L"All files;*.*", L"", false);
 
 		Path fileName;
 		if (fileDialog.showModal(fileName) == ui::DialogResult::Ok)

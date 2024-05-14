@@ -44,7 +44,7 @@ extern "C" void __module__Traktor_Core();
 
 #if defined(_WIN32)
 
-TCHAR* serviceName = TEXT("Traktor Avalanche Service");
+const wchar_t* serviceName = L"Traktor Avalanche Service";
 SERVICE_STATUS serviceStatus;
 SERVICE_STATUS_HANDLE serviceStatusHandle = 0;
 std::atomic< bool > serviceRunning = true;
@@ -321,7 +321,7 @@ int main(int argc, const char** argv)
 	{
 		SERVICE_TABLE_ENTRY serviceTable[] =
 		{
-			{ serviceName, serviceMain },
+			{ (LPWSTR)serviceName, serviceMain },
 			{ 0, 0 }
 		};
 		StartServiceCtrlDispatcher(serviceTable);

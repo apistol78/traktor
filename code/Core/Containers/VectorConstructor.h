@@ -63,7 +63,7 @@ struct VectorConstructorBase < ItemType, true >
 };
 
 template < typename ItemType >
-struct VectorConstructor : public VectorConstructorBase< ItemType, std::is_pod< ItemType >::value >
+struct VectorConstructor : public VectorConstructorBase< ItemType, std::is_trivial< ItemType >::value >
 {
 };
 

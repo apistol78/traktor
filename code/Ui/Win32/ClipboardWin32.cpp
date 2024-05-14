@@ -103,7 +103,10 @@ bool ClipboardWin32::setImage(const drawing::Image* image)
 		return false;
 
 	Ref< drawing::Image > dib = image->clone();
-	dib->apply(&drawing::MirrorFilter(false, true));
+	
+	drawing::MirrorFilter mirrorFilter(false, true);
+	dib->apply(&mirrorFilter);
+
 	dib->convert(drawing::PixelFormat::getA8R8G8B8());
 
 	EmptyClipboard();

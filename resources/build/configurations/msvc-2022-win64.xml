@@ -230,7 +230,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -284,7 +284,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -390,7 +390,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -492,7 +492,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -624,7 +624,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -702,7 +702,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -832,7 +832,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>
@@ -958,7 +958,7 @@
 						</item>
 						<item>
 							<name>LanguageStandard</name>
-							<value>stdcpp17</value>
+							<value>stdcpp20</value>
 						</item>
 					</options>
 				</item>

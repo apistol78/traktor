@@ -11,7 +11,7 @@ C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -D NDEBUG -O3 -g1
 C_FLAG_OUTPUT=-o 
 
 CC=ccache gcc
-CC_FLAGS_COMMON=-fno-common -std=c++17 -march=core2 -msse4.1 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden
+CC_FLAGS_COMMON=-fno-common -std=c++20 -march=core2 -msse4.1 -D _UNICODE -D UNICODE -D __LINUX__ -fPIC -fvisibility=hidden
 CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -D _DEBUG -O1 -g -fno-omit-frame-pointer
 CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -D NDEBUG -O3 -g1
 CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -D _DEBUG -O1 -g -fno-omit-frame-pointer

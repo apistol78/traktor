@@ -19,7 +19,7 @@ C_FLAGS_RELEASE_EXECUTABLE=$(C_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE
 C_FLAG_OUTPUT=-o 
 
 CC=$(TOOLCHAIN_BIN)/clang++
-CC_FLAGS_COMMON=-arch $(ARCH) -std=c++17 -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -D__MAC__ -fno-strict-aliasing -fno-common -isysroot $(SDK_SYSROOT)
+CC_FLAGS_COMMON=-arch $(ARCH) -std=c++20 -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -D__MAC__ -fno-strict-aliasing -fno-common -isysroot $(SDK_SYSROOT)
 CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE -fPIC
 CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE -fPIC
 CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
@@ -29,7 +29,7 @@ CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE
 CC_FLAG_OUTPUT=-o 
 
 MM=$(TOOLCHAIN_BIN)/clang++
-MM_FLAGS_COMMON=-arch $(ARCH) -std=c++17 -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -D__MAC__ -fobjc-arc -fno-strict-aliasing -fno-common -Wall -Wundef -Wno-ctor-dtor-privacy -isysroot $(SDK_SYSROOT)
+MM_FLAGS_COMMON=-arch $(ARCH) -std=c++20 -stdlib=libc++ -mmacosx-version-min=$(MAC_OS_MIN_VERSION) -D__MAC__ -fobjc-arc -fno-strict-aliasing -fno-common -Wall -Wundef -Wno-ctor-dtor-privacy -isysroot $(SDK_SYSROOT)
 MM_FLAGS_DEBUG_SHARED=$(MM_FLAGS_COMMON) -g -D _UNICODE -D UNICODE -fPIC
 MM_FLAGS_RELEASE_SHARED=$(MM_FLAGS_COMMON) -O3 -D _UNICODE -D UNICODE -fPIC
 MM_FLAGS_DEBUG_STATIC=$(MM_FLAGS_COMMON) -g -D _UNICODE -D UNICODE

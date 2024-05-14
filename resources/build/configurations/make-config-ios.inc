@@ -61,7 +61,7 @@ C_FLAG_OUTPUT=-o
 # C++
 CC=$(TOOLCHAIN_BIN)/clang
 
-CC_FLAGS_COMMON=-std=c++17 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fstrict-aliasing -fvisibility=hidden -fpascal-strings -miphoneos-version-min=$(IPHONE_OS_MIN_VERSION) -Wno-c++11-extensions
+CC_FLAGS_COMMON=-std=c++20 -fmessage-length=0 -fdiagnostics-show-note-include-stack -fmacro-backtrace-limit=0 -fstrict-aliasing -fvisibility=hidden -fpascal-strings -miphoneos-version-min=$(IPHONE_OS_MIN_VERSION) -Wno-c++11-extensions
 
 CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g -O0 -D_UNICODE -DUNICODE -D__IOS__ -DDEBUG=1 -DOBJC_OLD_DISPATCH_PROTOTYPES=0 
 CC_FLAGS_DEBUG_SHARED_armv7=-arch armv7 -isysroot $(SDK_SYSROOT) $(CC_FLAGS_DEBUG_SHARED)
