@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,10 +13,8 @@
 #include "Ui/PropertyList/CheckPropertyItem.h"
 #include "Ui/PropertyList/PropertyList.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CheckProperyItem", CheckPropertyItem, PropertyItem)
 
@@ -54,7 +52,8 @@ void CheckPropertyItem::paintValue(PropertyList* parent, Canvas& canvas, const R
 		ui::Point(rc.left + 2, rc.top + c),
 		ui::Point(0, 0),
 		image->getSize(parent),
-		image
+		image,
+		BlendMode::Alpha
 	);
 }
 
@@ -77,5 +76,4 @@ bool CheckPropertyItem::paste()
 	return true;
 }
 
-	}
 }
