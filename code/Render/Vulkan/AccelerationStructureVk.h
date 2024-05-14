@@ -8,11 +8,14 @@
  */
 #pragma once
 
+#include "Core/Ref.h"
 #include "Render/IAccelerationStructure.h"
+#include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
 {
 
+class ApiBuffer;
 class Context;
 
 class AccelerationStructureVk : public IAccelerationStructure
@@ -20,10 +23,14 @@ class AccelerationStructureVk : public IAccelerationStructure
 	T_RTTI_CLASS;
 
 public:
-	explicit AccelerationStructureVk(Context* context);
+	explicit AccelerationStructureVk(Context* context, ApiBuffer* buffer, VkAccelerationStructureKHR as);
+
+	virtual ~AccelerationStructureVk();
 
 protected:
 	Context* m_context = nullptr;
+	Ref< ApiBuffer > m_buffer;
+	VkAccelerationStructureKHR m_as;
 };
 
 }

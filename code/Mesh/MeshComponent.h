@@ -26,6 +26,7 @@ namespace traktor::world
 class IWorldRenderPass;
 class WorldBuildContext;
 class WorldRenderView;
+class WorldSetupContext;
 
 }
 
@@ -49,6 +50,8 @@ public:
 	virtual void setTransform(const Transform& transform) override;
 
 	virtual void update(const world::UpdateParams& update) override;
+
+	virtual void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView) = 0;
 
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) = 0;
 

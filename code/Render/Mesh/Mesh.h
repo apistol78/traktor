@@ -26,7 +26,6 @@ namespace traktor::render
 {
 
 class Buffer;
-class IAccelerationStructure;
 class IVertexLayout;
 
 /*! Render mesh.
@@ -63,10 +62,6 @@ public:
 
 	Buffer* getIndexBuffer() const { return m_indexBuffer; }
 
-	void setAccelerationStructure(IAccelerationStructure* accelerationStructure);
-
-	IAccelerationStructure* getAccelerationStructure() const { return m_accelerationStructure; }
-
 	void setParts(const AlignedVector< Part >& parts);
 
 	const AlignedVector< Part >& getParts() const { return m_parts; }
@@ -81,7 +76,6 @@ private:
 	Ref< Buffer > m_vertexBuffer;
 	IndexType m_indexType;
 	Ref< Buffer > m_indexBuffer;
-	Ref< IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	Aabb3 m_boundingBox;
 };
