@@ -38,11 +38,6 @@ void Mesh::setIndexBuffer(Buffer* indexBuffer)
 	m_indexBuffer = indexBuffer;
 }
 
-void Mesh::setAccelerationStructure(IAccelerationStructure* accelerationStructure)
-{
-	m_accelerationStructure = accelerationStructure;
-}
-
 void Mesh::setParts(const AlignedVector< Part >& parts)
 {
 	m_parts = parts;

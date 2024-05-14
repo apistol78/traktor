@@ -30,6 +30,7 @@ namespace traktor::render
 {
 
 class Buffer;
+class IAccelerationStructure;
 class IRenderSystem;
 class ProgramParameters;
 class Mesh;
@@ -93,6 +94,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
+	Ref< render::IAccelerationStructure > m_accelerationStructure;
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 
 	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
