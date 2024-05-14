@@ -43,6 +43,8 @@ public:
 
 	void unlock();
 
+	VkDeviceAddress getDeviceAddress();
+
 	operator VkBuffer () const { return m_buffer; }
 
 private:

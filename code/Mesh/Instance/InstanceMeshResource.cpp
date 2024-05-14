@@ -13,6 +13,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/SystemMeshFactory.h"
@@ -61,17 +62,38 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	instanceMesh->m_renderMesh = renderMesh;
 
-	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	for (const auto& part : m_parts)
 	{
-		render::handle_t worldTechnique = render::getParameterHandle(i->first);
+		render::handle_t worldTechnique = render::getParameterHandle(part.first);
 
-		instanceMesh->m_parts[worldTechnique].reserve(i->second.size());
-		for (parts_t::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		instanceMesh->m_parts[worldTechnique].reserve(part.second.size());
+		for (parts_t::const_iterator j = part.second.begin(); j != part.second.end(); ++j)
 		{
 			InstanceMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
 			instanceMesh->m_parts[worldTechnique].push_back(part);
+		}
+	}
+
+	const bool rayTracingEnable = true;
+	if (rayTracingEnable)
+	{
+		AlignedVector< render::Primitives > primitives;
+		for (const auto& part : renderMesh->getParts())
+			primitives.push_back(part.primitives);
+
+		instanceMesh->m_accelerationStructure = renderSystem->createAccelerationStructure(
+			renderMesh->getVertexBuffer(),
+			renderMesh->getVertexLayout(),
+			renderMesh->getIndexBuffer(),
+			renderMesh->getIndexType(),
+			primitives
+		);
+		if (!instanceMesh->m_accelerationStructure)
+		{
+			log::error << L"Instance mesh create failed; unable to create RT acceleration structure." << Endl;
+			return nullptr;
 		}
 	}
 

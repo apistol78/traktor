@@ -11,6 +11,7 @@
 #include "Core/Math/Half.h"
 #include "Core/Misc/Endian.h"
 #include "Render/Buffer.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
@@ -82,68 +83,6 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 			return nullptr;
 
 		reader.read(vertex, vertexBufferSize);
-
-#if !defined(T_LITTLE_ENDIAN)
-		uint32_t vertexSize = getVertexSize(vertexElements);
-		for (uint32_t i = 0; i < vertexBufferSize; i += vertexSize)
-		{
-			for (AlignedVector< VertexElement >::iterator j = vertexElements.begin(); j != vertexElements.end(); ++j)
-			{
-				uint8_t* vertexElm = &vertex[i + j->getOffset()];
-				switch (j->getDataType())
-				{
-				case DtFloat1:
-					swap8in32(*(float*)vertexElm);
-					break;
-
-				case DtFloat2:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					break;
-
-				case DtFloat3:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					swap8in32(*(float*)(vertexElm + 8));
-					break;
-
-				case DtFloat4:
-					swap8in32(*(float*)vertexElm);
-					swap8in32(*(float*)(vertexElm + 4));
-					swap8in32(*(float*)(vertexElm + 8));
-					swap8in32(*(float*)(vertexElm + 12));
-					break;
-
-				case DtShort2:
-				case DtShort2N:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					break;
-
-				case DtShort4:
-				case DtShort4N:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					swap8in32(*(uint16_t*)(vertexElm + 4));
-					swap8in32(*(uint16_t*)(vertexElm + 6));
-					break;
-
-				case DtHalf2:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					break;
-
-				case DtHalf4:
-					swap8in32(*(uint16_t*)vertexElm);
-					swap8in32(*(uint16_t*)(vertexElm + 2));
-					swap8in32(*(uint16_t*)(vertexElm + 4));
-					swap8in32(*(uint16_t*)(vertexElm + 6));
-					break;
-				}
-			}
-		}
-#endif
-
 		mesh->getVertexBuffer()->unlock();
 	}
 
@@ -154,22 +93,6 @@ Ref< Mesh > MeshReader::read(IStream* stream) const
 			return nullptr;
 
 		reader.read(index, indexBufferSize);
-
-#if !defined(T_LITTLE_ENDIAN)
-		switch (indexType)
-		{
-		case ItUInt16:
-			for (uint32_t i = 0; i < indexBufferSize; i += 2)
-				swap8in32(*(uint16_t*)(index + i));
-			break;
-
-		case ItUInt32:
-			for (uint32_t i = 0; i < indexBufferSize; i += 4)
-				swap8in32(*(uint32_t*)(index + i));
-			break;
-		}
-#endif
-
 		mesh->getIndexBuffer()->unlock();
 	}
 

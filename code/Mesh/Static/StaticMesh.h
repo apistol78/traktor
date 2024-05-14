@@ -28,6 +28,7 @@ namespace traktor::render
 
 class RenderContext;
 class Mesh;
+class IAccelerationStructure;
 class ITexture;
 
 }
@@ -36,6 +37,8 @@ namespace traktor::world
 {
 
 class IWorldRenderPass;
+class WorldRenderView;
+class WorldSetupContext;
 
 }
 
@@ -68,6 +71,8 @@ public:
 
 	const techniqueParts_t* findTechniqueParts(render::handle_t technique) const;
 
+	void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView);
+
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
@@ -83,6 +88,7 @@ private:
 
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::Mesh > m_renderMesh;
+	Ref< render::IAccelerationStructure > m_accelerationStructure;
 	AlignedVector< Part > m_parts;
 	SmallMap< render::handle_t, techniqueParts_t > m_techniqueParts;
 #if defined(_DEBUG)
