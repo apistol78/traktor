@@ -9,28 +9,44 @@
 #pragma once
 
 #include "Core/Ref.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/IAccelerationStructure.h"
+#include "Render/Types.h"
 #include "Render/Vulkan/Private/ApiHeader.h"
 
 namespace traktor::render
 {
 
 class ApiBuffer;
+class Buffer;
 class Context;
+class IVertexLayout;
 
 class AccelerationStructureVk : public IAccelerationStructure
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit AccelerationStructureVk(Context* context, ApiBuffer* buffer, VkAccelerationStructureKHR as);
-
 	virtual ~AccelerationStructureVk();
+
+	static Ref< AccelerationStructureVk > createTopLevel(Context* context, uint32_t numInstances);
+
+	static Ref< AccelerationStructureVk > createBottomLevel(Context* context, const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives);
+
+	void updateTopLevel();
 
 protected:
 	Context* m_context = nullptr;
-	Ref< ApiBuffer > m_buffer;
+	Ref< ApiBuffer > m_hierarchyBuffer;
+	Ref< ApiBuffer > m_instanceBuffer;
+	Ref< ApiBuffer > m_scratchBuffer;
 	VkAccelerationStructureKHR m_as;
+
+	// Top level constructor.
+	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* instanceBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
+
+	// Bottom level constructor.
+	explicit AccelerationStructureVk(Context* context, ApiBuffer* hierarchyBuffer, ApiBuffer* scratchBuffer, VkAccelerationStructureKHR as);
 };
 
 }
