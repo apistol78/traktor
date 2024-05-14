@@ -713,9 +713,168 @@ Ref< IRenderTargetSet > RenderSystemVk::createRenderTargetSet(const RenderTarget
 		return nullptr;
 }
 
-Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure()
+Ref< IAccelerationStructure > RenderSystemVk::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
-	return nullptr;
+	VkResult result;
+
+	Ref< ApiBuffer > instanceBuffer = new ApiBuffer(m_context);
+	instanceBuffer->create(
+		numInstances * sizeof(VkAccelerationStructureInstanceKHR),
+		VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT,
+		false,
+		true
+	);
+
+	void* ptr = instanceBuffer->lock();
+	if (!ptr)
+		return nullptr;
+
+	{
+		VkAccelerationStructureInstanceKHR instance = {};
+		//instance.transform.matrix =
+		//{
+		//	{1.0, 0.0, 0.0, 0.0},
+		//	{0.0, 1.0, 0.0, 0.0},
+		//	{0.0, 0.0, 1.0, 0.0}
+		//};
+		instance.instanceCustomIndex = 0;
+		instance.mask = 0xff;
+		instance.instanceShaderBindingTableRecordOffset = 0;
+		instance.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+		//instance.accelerationStructureReference = bottomLevelAccelerationStructureDeviceAddress;
+	}
+
+	instanceBuffer->unlock();
+
+
+
+	VkAccelerationStructureGeometryDataKHR topLevelAccelerationStructureGeometryData =
+	{
+		.instances =
+		{
+			.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_INSTANCES_DATA_KHR,
+			.pNext = NULL,
+			.arrayOfPointers = VK_FALSE,
+			.data =
+			{
+				.deviceAddress = instanceBuffer->getDeviceAddress()
+			}
+		}
+	};
+
+	VkAccelerationStructureGeometryKHR topLevelAccelerationStructureGeometry =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR,
+		.pNext = NULL,
+		.geometryType = VK_GEOMETRY_TYPE_INSTANCES_KHR,
+		.geometry = topLevelAccelerationStructureGeometryData,
+		.flags = VK_GEOMETRY_OPAQUE_BIT_KHR
+	};
+
+	VkAccelerationStructureBuildGeometryInfoKHR topLevelAccelerationStructureBuildGeometryInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR,
+		.pNext = NULL,
+		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+		.flags = 0,
+		.mode = VK_BUILD_ACCELERATION_STRUCTURE_MODE_BUILD_KHR,
+		.srcAccelerationStructure = VK_NULL_HANDLE,
+		.dstAccelerationStructure = VK_NULL_HANDLE,
+		.geometryCount = 1,
+		.pGeometries = &topLevelAccelerationStructureGeometry,
+		.ppGeometries = NULL,
+		.scratchData =
+		{
+			.deviceAddress = 0
+		}
+	};
+
+	VkAccelerationStructureBuildSizesInfoKHR topLevelAccelerationStructureBuildSizesInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR,
+		.pNext = NULL,
+		.accelerationStructureSize = 0,
+		.updateScratchSize = 0,
+		.buildScratchSize = 0
+	};
+
+
+	AlignedVector< uint32_t > topLevelMaxPrimitiveCountList = { 1 };
+
+	vkGetAccelerationStructureBuildSizesKHR(
+		m_logicalDevice,
+		VK_ACCELERATION_STRUCTURE_BUILD_TYPE_DEVICE_KHR,
+		&topLevelAccelerationStructureBuildGeometryInfo,
+		topLevelMaxPrimitiveCountList.ptr(),
+		&topLevelAccelerationStructureBuildSizesInfo
+	);
+
+
+	Ref< ApiBuffer > buffer = new ApiBuffer(m_context);
+	buffer->create(topLevelAccelerationStructureBuildSizesInfo.accelerationStructureSize, VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR, false, true);
+
+	VkAccelerationStructureCreateInfoKHR topLevelAccelerationStructureCreateInfo =
+	{
+		.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_CREATE_INFO_KHR,
+		.pNext = NULL,
+		.createFlags = 0,
+		.buffer = *buffer,
+		.offset = 0,
+		.size = topLevelAccelerationStructureBuildSizesInfo
+		.accelerationStructureSize,
+		.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_KHR,
+		.deviceAddress = 0
+	};
+
+	VkAccelerationStructureKHR topLevelAccelerationStructureHandle = VK_NULL_HANDLE;
+
+	result = vkCreateAccelerationStructureKHR(
+		m_logicalDevice,
+		&topLevelAccelerationStructureCreateInfo,
+		NULL,
+		&topLevelAccelerationStructureHandle
+	);
+	if (result != VK_SUCCESS)
+		return nullptr;
+
+	// Allocate scratch buffer.
+	ApiBuffer scratchBuffer(m_context);
+	if (!scratchBuffer.create(topLevelAccelerationStructureBuildSizesInfo.buildScratchSize, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT, false, true))
+	{
+		safeDestroy(buffer);
+		return nullptr;
+	}
+
+
+	topLevelAccelerationStructureBuildGeometryInfo.dstAccelerationStructure = topLevelAccelerationStructureHandle;
+	topLevelAccelerationStructureBuildGeometryInfo.scratchData =
+	{
+		.deviceAddress = scratchBuffer.getDeviceAddress()
+	};
+
+	VkAccelerationStructureBuildRangeInfoKHR topLevelAccelerationStructureBuildRangeInfo =
+	{
+		.primitiveCount = 1,
+		.primitiveOffset = 0,
+		.firstVertex = 0,
+		.transformOffset = 0
+	};
+
+	const VkAccelerationStructureBuildRangeInfoKHR* topLevelAccelerationStructureBuildRangeInfos = &topLevelAccelerationStructureBuildRangeInfo;
+
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	vkCmdBuildAccelerationStructuresKHR(
+		*commandBuffer,
+		1,
+		&topLevelAccelerationStructureBuildGeometryInfo,
+		&topLevelAccelerationStructureBuildRangeInfos
+	);
+	commandBuffer->submitAndWait();
+
+	// Destroy scratch buffer.
+	scratchBuffer.destroy();
+
+	return new AccelerationStructureVk(m_context, buffer, topLevelAccelerationStructureHandle);
 }
 
 Ref< IAccelerationStructure > RenderSystemVk::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)

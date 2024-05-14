@@ -75,7 +75,7 @@ public:
 
 	virtual Ref< IRenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc, IRenderTargetSet* sharedDepthStencil, const wchar_t* const tag) override final;
 
-	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure() override final;
+	virtual Ref< IAccelerationStructure > createTopLevelAccelerationStructure(uint32_t numInstances) override final;
 
 	virtual Ref< IAccelerationStructure > createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives) override final;
 

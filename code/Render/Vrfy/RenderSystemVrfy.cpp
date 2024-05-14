@@ -300,10 +300,10 @@ Ref< IRenderTargetSet > RenderSystemVrfy::createRenderTargetSet(const RenderTarg
 	return new RenderTargetSetVrfy(m_resourceTracker, desc, renderTargetSet);
 }
 
-Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure()
+Ref< IAccelerationStructure > RenderSystemVrfy::createTopLevelAccelerationStructure(uint32_t numInstances)
 {
 	T_CAPTURE_TRACE(L"createTopLevelAccelerationStructure");
-	return m_renderSystem->createTopLevelAccelerationStructure();
+	return m_renderSystem->createTopLevelAccelerationStructure(numInstances);
 }
 
 Ref< IAccelerationStructure > RenderSystemVrfy::createAccelerationStructure(const Buffer* vertexBuffer, const IVertexLayout* vertexLayout, const Buffer* indexBuffer, IndexType indexType, const AlignedVector< Primitives >& primitives)
