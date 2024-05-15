@@ -139,7 +139,7 @@ public:
 
 	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
 
-	void createFactories();
+	void createEditorFactories();
 
 	void setControllerEditor(IWorldComponentEditor* controllerEditor);
 

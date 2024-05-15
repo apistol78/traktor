@@ -43,10 +43,6 @@ class T_DLLCLASS EntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory() = default;
-
-	explicit EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
-
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;

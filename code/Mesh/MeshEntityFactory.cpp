@@ -20,12 +20,6 @@ namespace traktor::mesh
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityFactory", 0, MeshEntityFactory, world::AbstractEntityFactory)
 
-MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-{
-}
-
 bool MeshEntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

@@ -110,6 +110,11 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceDataKey", SequenceDataKey, Object)
 
+world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, const ObjectStore& objectStore)
+{
+	return entityFactory->initialize(objectStore) ? entityFactory : nullptr;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::IEditorPage)
@@ -136,10 +141,15 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 	m_resourceManager = new resource::ResourceManager(database, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(m_resourceManager);
+	objectStore.set(renderSystem);
+
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, renderSystem, true));
-	entityFactory->addFactory(new weather::WeatherFactory(m_resourceManager, renderSystem));
-	entityFactory->addFactory(new mesh::MeshEntityFactory(m_resourceManager, renderSystem));
+	entityFactory->addFactory(initializeFactory(new world::WorldEntityFactory(true), objectStore));
+	entityFactory->addFactory(initializeFactory(new weather::WeatherFactory(), objectStore));
+	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
 
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(renderSystem));
 	m_resourceManager->addFactory(new render::AliasTextureFactory());

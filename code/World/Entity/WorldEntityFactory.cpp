@@ -48,14 +48,8 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldEntityFactory", 0, WorldEntityFactory, AbstractEntityFactory)
 
-WorldEntityFactory::WorldEntityFactory(
-	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	bool editor
-)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_editor(editor)
+WorldEntityFactory::WorldEntityFactory(bool editor)
+:	m_editor(editor)
 {
 }
 

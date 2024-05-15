@@ -6,7 +6,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Io/FileSystem.h"
+#include "Database/Database.h"
+#include "Physics/PhysicsManager.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Shape/Editor/EntityFactory.h"
@@ -35,20 +39,21 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{F01DE7F1-64CE-4613-
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityFactory", EntityFactory, world::AbstractEntityFactory)
 
 EntityFactory::EntityFactory(
-	db::Database* database,
-	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	physics::PhysicsManager* physicsManager,
 	const std::wstring& assetPath,
 	const std::wstring& modelCachePath
 )
-:	m_database(database)
-,	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_physicsManager(physicsManager)
-,	m_assetPath(assetPath)
+:	m_assetPath(assetPath)
 ,	m_modelCachePath(modelCachePath)
 {
+}
+
+bool EntityFactory::initialize(const ObjectStore& objectStore)
+{
+	m_database = objectStore.get< db::Database >();
+	m_resourceManager = objectStore.get< resource::IResourceManager >();
+	m_renderSystem = objectStore.get< render::IRenderSystem >();
+	m_physicsManager = objectStore.get< physics::PhysicsManager >();
+	return true;
 }
 
 const TypeInfoSet EntityFactory::getEntityTypes() const

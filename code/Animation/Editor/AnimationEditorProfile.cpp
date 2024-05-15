@@ -56,10 +56,10 @@ void AnimationEditorProfile::createResourceFactories(
 
 void AnimationEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const world::IEntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new AnimationEntityFactory(context->getResourceManager(), context->getRenderSystem(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new AnimationEntityFactory());
 }
 
 void AnimationEditorProfile::createEntityRenderers(

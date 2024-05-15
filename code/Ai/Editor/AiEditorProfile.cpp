@@ -50,11 +50,11 @@ void AiEditorProfile::createResourceFactories(
 
 void AiEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const world::IEntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	bool build = context->getEditor()->getSettings()->getProperty< bool >(L"NavMeshPipeline.Build", true);
-	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager(), !build));
+	const bool build = context->getEditor()->getSettings()->getProperty< bool >(L"NavMeshPipeline.Build", true);
+	outEntityFactories.push_back(new NavMeshEntityFactory(!build));
 }
 
 void AiEditorProfile::createEntityRenderers(

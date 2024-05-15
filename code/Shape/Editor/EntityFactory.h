@@ -59,13 +59,11 @@ class T_DLLCLASS EntityFactory : public world::AbstractEntityFactory
 
 public:
 	explicit EntityFactory(
-		db::Database* database,
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		physics::PhysicsManager* physicsManager,
 		const std::wstring& assetPath,
 		const std::wstring& modelCachePath
 	);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityTypes() const override final;
 

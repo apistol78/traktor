@@ -33,15 +33,6 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityFactory", 0, EffectEntityFactory, world::AbstractEntityFactory)
 
-EffectEntityFactory::EffectEntityFactory(
-	resource::IResourceManager* resourceManager,
-	sound::ISoundPlayer* soundPlayer
-)
-:	m_resourceManager(resourceManager)
-,	m_soundPlayer(soundPlayer)
-{
-}
-
 bool EffectEntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

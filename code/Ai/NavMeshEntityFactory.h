@@ -38,7 +38,7 @@ class T_DLLCLASS NavMeshEntityFactory : public world::AbstractEntityFactory
 public:
 	NavMeshEntityFactory() = default;
 
-	explicit NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress);
+	explicit NavMeshEntityFactory(bool suppress);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 

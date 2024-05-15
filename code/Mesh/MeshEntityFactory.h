@@ -43,10 +43,6 @@ class T_DLLCLASS MeshEntityFactory : public world::AbstractEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	MeshEntityFactory() = default;
-
-	explicit MeshEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
-
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getEntityComponentTypes() const override final;

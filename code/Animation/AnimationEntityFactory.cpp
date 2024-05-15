@@ -34,13 +34,6 @@ namespace traktor::animation
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEntityFactory", 0, AnimationEntityFactory, world::AbstractEntityFactory)
 
-AnimationEntityFactory::AnimationEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-,	m_physicsManager(physicsManager)
-{
-}
-
 bool AnimationEntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

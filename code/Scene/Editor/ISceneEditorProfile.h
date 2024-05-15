@@ -124,7 +124,7 @@ public:
 	 */
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
-		RefArray< const world::IEntityFactory >& outEntityFactories
+		RefArray< world::IEntityFactory >& outEntityFactories
 	) const = 0;
 
 	/*! Create entity renderers.

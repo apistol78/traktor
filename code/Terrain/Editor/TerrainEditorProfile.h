@@ -48,7 +48,7 @@ public:
 
 	virtual void createEntityFactories(
 		scene::SceneEditorContext* context,
-		RefArray< const world::IEntityFactory >& outEntityFactories
+		RefArray< world::IEntityFactory >& outEntityFactories
 	) const override final;
 
 	virtual void createEntityRenderers(

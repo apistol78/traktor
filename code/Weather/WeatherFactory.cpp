@@ -20,12 +20,6 @@ namespace traktor::weather
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherFactory", 0, WeatherFactory, world::AbstractEntityFactory)
 
-WeatherFactory::WeatherFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-{
-}
-
 bool WeatherFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

@@ -24,15 +24,6 @@ namespace traktor::physics
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.EntityFactory", 0, EntityFactory, world::AbstractEntityFactory)
 
-EntityFactory::EntityFactory(
-	resource::IResourceManager* resourceManager,
-	PhysicsManager* physicsManager
-)
-:	m_resourceManager(resourceManager)
-,	m_physicsManager(physicsManager)
-{
-}
-
 bool EntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

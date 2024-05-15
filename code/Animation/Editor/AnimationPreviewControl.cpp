@@ -64,6 +64,11 @@ const float c_deltaMoveScale = 0.025f;
 const float c_deltaScaleHead = 0.015f;
 const float c_deltaScalePitch = 0.005f;
 
+world::IEntityFactory* initializeFactory(world::IEntityFactory* entityFactory, const ObjectStore& objectStore)
+{
+	return entityFactory->initialize(objectStore) ? entityFactory : nullptr;
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationPreviewControl", AnimationPreviewControl, ui::Widget)
@@ -91,10 +96,15 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 	m_resourceManager = new resource::ResourceManager(resourceDatabase, m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(m_resourceManager);
+	objectStore.set(m_renderSystem);
+
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
-	entityFactory->addFactory(new world::WorldEntityFactory(m_resourceManager, m_renderSystem, true));
-	entityFactory->addFactory(new weather::WeatherFactory(m_resourceManager, m_renderSystem));
-	entityFactory->addFactory(new mesh::MeshEntityFactory(m_resourceManager, m_renderSystem));
+	entityFactory->addFactory(initializeFactory(new world::WorldEntityFactory(true), objectStore));
+	entityFactory->addFactory(initializeFactory(new weather::WeatherFactory(), objectStore));
+	entityFactory->addFactory(initializeFactory(new mesh::MeshEntityFactory(), objectStore));
 
 	m_resourceManager->addFactory(new AnimationResourceFactory());
 	m_resourceManager->addFactory(new mesh::MeshResourceFactory(m_renderSystem));

@@ -264,16 +264,28 @@ bool SceneEditorPage::create(ui::Container* parent)
 	}
 
 	// Create entity and component editor factories.
-	m_context->createFactories();
+	m_context->createEditorFactories();
+
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(m_context->getSourceDatabase());
+	objectStore.set(m_context->getPhysicsManager());
+	objectStore.set(m_context->getRenderSystem());
+	objectStore.set(m_context->getResourceManager());
 
 	// Create scene instance resource factory, used by final render control etc.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 	for (auto editorProfile : m_context->getEditorProfiles())
 	{
-		RefArray< const world::IEntityFactory > entityFactories;
+		RefArray< world::IEntityFactory > entityFactories;
 		editorProfile->createEntityFactories(m_context, entityFactories);
 		for (auto factory : entityFactories)
-			entityFactory->addFactory(factory);
+		{
+			if (factory->initialize(objectStore))
+				entityFactory->addFactory(factory);
+			else
+				log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
+		}
 	}
 	m_context->getResourceManager()->addFactory(new SceneFactory(entityFactory));
 

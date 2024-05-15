@@ -52,7 +52,7 @@ void TheaterEditorProfile::createResourceFactories(
 
 void TheaterEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const world::IEntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(new TheaterEntityFactory());

@@ -45,11 +45,7 @@ class T_DLLCLASS WorldEntityFactory : public AbstractEntityFactory
 public:
 	WorldEntityFactory() = default;
 
-	explicit WorldEntityFactory(
-		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		bool editor
-	);
+	explicit WorldEntityFactory(bool editor);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 

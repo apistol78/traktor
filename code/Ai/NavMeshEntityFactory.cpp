@@ -18,9 +18,8 @@ namespace traktor::ai
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityFactory", 0, NavMeshEntityFactory, world::AbstractEntityFactory)
 
-NavMeshEntityFactory::NavMeshEntityFactory(resource::IResourceManager* resourceManager, bool suppress)
-:	m_resourceManager(resourceManager)
-,	m_suppress(suppress)
+NavMeshEntityFactory::NavMeshEntityFactory(bool suppress)
+:	m_suppress(suppress)
 {
 }
 

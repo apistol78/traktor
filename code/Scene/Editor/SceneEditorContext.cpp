@@ -10,12 +10,15 @@
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/ObjectStore.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Timer/Timer.h"
+#include "Database/Database.h"
 #include "Physics/Body.h"
 #include "Physics/PhysicsManager.h"
+#include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/Scene.h"
@@ -146,7 +149,7 @@ void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
 	m_editorPlugins.push_back(editorPlugin);
 }
 
-void SceneEditorContext::createFactories()
+void SceneEditorContext::createEditorFactories()
 {
 	m_entityEditorFactories.resize(0);
 	m_componentEditorFactories.resize(0);
@@ -440,14 +443,26 @@ void SceneEditorContext::buildEntities()
 
 	if (m_sceneAsset)
 	{
+		// Setup object store with relevant systems.
+		ObjectStore objectStore;
+		objectStore.set(getSourceDatabase());
+		objectStore.set(getPhysicsManager());
+		objectStore.set(getRenderSystem());
+		objectStore.set(getResourceManager());
+
 		// Create the entity factory.
 		Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 		for (auto editorProfile : m_editorProfiles)
 		{
-			RefArray< const world::IEntityFactory > entityFactories;
+			RefArray< world::IEntityFactory > entityFactories;
 			editorProfile->createEntityFactories(this, entityFactories);
 			for (auto factory : entityFactories)
-				entityFactory->addFactory(factory);
+			{
+				if (factory->initialize(objectStore))
+					entityFactory->addFactory(factory);
+				else
+					log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
+			}
 		}
 
 		Ref< world::World > world = new world::World();
@@ -518,14 +533,26 @@ void SceneEditorContext::buildController()
 {
 	T_FATAL_ASSERT(m_scene);
 
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(getSourceDatabase());
+	objectStore.set(getPhysicsManager());
+	objectStore.set(getRenderSystem());
+	objectStore.set(getResourceManager());
+
 	// Create the entity factory.
 	Ref< world::EntityFactory > entityFactory = new world::EntityFactory();
 	for (auto editorProfile : m_editorProfiles)
 	{
-		RefArray< const world::IEntityFactory > entityFactories;
+		RefArray< world::IEntityFactory > entityFactories;
 		editorProfile->createEntityFactories(this, entityFactories);
 		for (auto factory : entityFactories)
-			entityFactory->addFactory(factory);
+		{
+			if (factory->initialize(objectStore))
+				entityFactory->addFactory(factory);
+			else
+				log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
+		}
 	}
 
 	// Create all world components.

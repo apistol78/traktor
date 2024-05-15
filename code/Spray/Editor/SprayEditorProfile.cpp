@@ -53,10 +53,10 @@ void SprayEditorProfile::createResourceFactories(
 
 void SprayEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const world::IEntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new spray::EffectEntityFactory(context->getResourceManager(), nullptr));
+	outEntityFactories.push_back(new spray::EffectEntityFactory());
 }
 
 void SprayEditorProfile::createEntityRenderers(

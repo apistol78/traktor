@@ -28,12 +28,6 @@ namespace traktor::terrain
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.EntityFactory", 0, EntityFactory, world::AbstractEntityFactory)
 
-EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
-:	m_resourceManager(resourceManager)
-,	m_renderSystem(renderSystem)
-{
-}
-
 bool EntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();

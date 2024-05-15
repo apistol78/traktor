@@ -57,17 +57,13 @@ void EditorProfile::createResourceFactories(
 
 void EditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< const world::IEntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	const std::wstring assetPath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath");
 	const std::wstring modelCachePath = context->getEditor()->getSettings()->getProperty< std::wstring >(L"Pipeline.ModelCache.Path");
 
 	outEntityFactories.push_back(new EntityFactory(
-		context->getSourceDatabase(),
-		context->getResourceManager(),
-		context->getRenderSystem(),
-		context->getPhysicsManager(),
 		assetPath,
 		modelCachePath
 	));
