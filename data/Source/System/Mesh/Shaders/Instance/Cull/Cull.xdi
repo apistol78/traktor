@@ -5,8 +5,8 @@
 			<id>{4BAA3A0D-D779-C141-B519-197EEA8640D6}</id>
 			<comment/>
 			<position>
-				<first>-336</first>
-				<second>123</second>
+				<first>-398</first>
+				<second>135</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{B63DBBD3-72C0-C645-8A24-4893BBF22E30}</id>
 			<comment/>
 			<position>
-				<first>-107</first>
-				<second>132</second>
+				<first>-169</first>
+				<second>144</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -540,16 +540,6 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{13DDFE53-988C-FE40-B343-7FE23D25E253}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<id>{C2E0B588-DBCB-F04B-9978-8C1B6593F31A}</id>
 			</source>
@@ -596,16 +586,6 @@ else
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<id>{0FF6511C-0293-41A8-830E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -776,6 +756,26 @@ else
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{13DDFE53-988C-FE40-B343-7FE23D25E253}</id>
 			</destination>
 		</item>
 	</edges>

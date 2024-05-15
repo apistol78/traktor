@@ -24,7 +24,6 @@ namespace traktor::mesh
 	namespace
 	{
 
-const resource::Id< render::Shader > c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
 const resource::Id< render::Shader > c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
 
 	}
@@ -51,15 +50,11 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	resource::Proxy< render::Shader > shaderCull;
-	if (!resourceManager->bind(c_shaderInstanceMeshCull, shaderCull))
-		return nullptr;
-
 	resource::Proxy< render::Shader > shaderDraw;
 	if (!resourceManager->bind(c_shaderInstanceMeshDraw, shaderDraw))
 		return nullptr;
 
-	Ref< InstanceMesh > instanceMesh = new InstanceMesh(renderSystem, shaderCull, shaderDraw);
+	Ref< InstanceMesh > instanceMesh = new InstanceMesh(renderSystem, shaderDraw);
 
 	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
 		return nullptr;

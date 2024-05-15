@@ -5,8 +5,8 @@
 			<id>{AA20BF80-C68A-D649-9BF9-23BC5F6257F8}</id>
 			<comment/>
 			<position>
-				<first>156</first>
-				<second>344</second>
+				<first>-305</first>
+				<second>333</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{0C63324D-D49B-7C44-BE53-17ECD5DBE92E}</id>
 			<comment/>
 			<position>
-				<first>-87</first>
-				<second>356</second>
+				<first>-542</first>
+				<second>319</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{9772F569-3912-1B46-AB4B-157B8CC99284}</id>
 			<comment/>
 			<position>
-				<first>-4</first>
-				<second>282</second>
+				<first>-27</first>
+				<second>269</second>
 			</position>
 			<parameterName>InstanceMesh_Visibility</parameterName>
 			<elements>
@@ -38,8 +38,8 @@
 			<id>{B6ABD193-2075-0442-A1B6-92D4C05F99CB}</id>
 			<comment/>
 			<position>
-				<first>6</first>
-				<second>239</second>
+				<first>-17</first>
+				<second>226</second>
 			</position>
 			<parameterName>InstanceMesh_Draw</parameterName>
 			<elements>
@@ -121,8 +121,8 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{3491574B-839F-B74B-8747-0C4A10BECB57}</id>
 			<comment/>
 			<position>
-				<first>32</first>
-				<second>405</second>
+				<first>7</first>
+				<second>434</second>
 			</position>
 			<parameterName>InstanceMesh_IndexCount</parameterName>
 			<type>Scalar</type>
@@ -132,12 +132,31 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{89C29FEB-0F4E-714E-88DE-0BA91E135B7D}</id>
 			<comment/>
 			<position>
-				<first>56</first>
-				<second>442</second>
+				<first>31</first>
+				<second>471</second>
 			</position>
 			<parameterName>InstanceMesh_FirstIndex</parameterName>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{63F715EF-F327-F04D-8827-705805B04479}</id>
+			<comment/>
+			<position>
+				<first>-438</first>
+				<second>398</second>
+			</position>
+			<parameterName>InstanceMesh_InstanceOffset</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{EBB7D461-F10E-FD4E-B98F-27018D533692}</id>
+			<comment/>
+			<position>
+				<first>-137</first>
+				<second>341</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -149,16 +168,6 @@ $DrawBuffer[index].firstInstance = 0;
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -199,6 +208,36 @@ $DrawBuffer[index].firstInstance = 0;
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<id>{788C47C3-E973-CF48-9A12-5A2751107996}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
 			</destination>
 		</item>
 	</edges>

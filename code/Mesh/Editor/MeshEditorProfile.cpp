@@ -14,7 +14,6 @@
 #include "Mesh/MeshResourceFactory.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshEditorProfile.h"
-#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "Resource/Id.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
@@ -69,7 +68,6 @@ void MeshEditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(new mesh::MeshComponentRenderer());
-	outEntityRenderers.push_back(new mesh::InstanceMeshComponentRenderer());
 }
 
 void MeshEditorProfile::createControllerEditorFactories(

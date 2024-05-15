@@ -8,7 +8,9 @@
  */
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshComponent.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/World.h"
 #include "World/WorldBuildContext.h"
 #include "World/WorldRenderView.h"
 
@@ -20,7 +22,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshComponent", InstanceMeshCompon
 InstanceMeshComponent::InstanceMeshComponent(const resource::Proxy< InstanceMesh >& mesh)
 :	m_mesh(mesh)
 {
-	m_meshInstance = m_mesh->allocateInstance();
+	//m_cullingInstance = m_mesh->allocateInstance();
 	m_mesh.consume();
 }
 
@@ -33,14 +35,31 @@ InstanceMeshComponent::~InstanceMeshComponent()
 
 void InstanceMeshComponent::destroy()
 {
-	// Only release instance if resource hasn't been replaced.
-	if (!m_mesh.changed())
+	//// Only release instance if resource hasn't been replaced.
+	//if (!m_mesh.changed())
+	//{
+	//	if (m_mesh && m_meshInstance != nullptr)
+	//		m_mesh->releaseInstance(m_meshInstance);
+	//}
+
+	if (m_owner != nullptr && m_cullingInstance != nullptr)
 	{
-		if (m_mesh && m_meshInstance != nullptr)
-			m_mesh->releaseInstance(m_meshInstance);
+		world::CullingComponent* culling = m_owner->getWorld()->getComponent< world::CullingComponent >();
+		culling->releaseInstance(m_cullingInstance);
 	}
+
 	m_mesh.clear();
 	MeshComponent::destroy();
+}
+
+void InstanceMeshComponent::setWorld(world::World* world)
+{
+	T_FATAL_ASSERT(m_cullingInstance == nullptr);
+	if (world != nullptr)
+	{
+		world::CullingComponent* culling = world->getComponent< world::CullingComponent >();
+		m_cullingInstance = culling->allocateInstance(m_mesh);
+	}
 }
 
 void InstanceMeshComponent::setTransform(const Transform& transform)
@@ -48,13 +67,14 @@ void InstanceMeshComponent::setTransform(const Transform& transform)
 	MeshComponent::setTransform(transform);
 
 	// Re-allocate instance if mesh resource has been replaced.
-	if (m_mesh.changed())
-	{
-		m_meshInstance = m_mesh->allocateInstance();
-		m_mesh.consume();
-	}
+	//if (m_mesh.changed())
+	//{
+	//	m_meshInstance = m_mesh->allocateInstance();
+	//	m_mesh.consume();
+	//}
 
-	m_meshInstance->setTransform(transform);
+	if (m_cullingInstance)
+		m_cullingInstance->setTransform(transform);
 }
 
 Aabb3 InstanceMeshComponent::getBoundingBox() const
@@ -67,17 +87,17 @@ void InstanceMeshComponent::update(const world::UpdateParams& update)
 	MeshComponent::update(update);
 
 	// Re-allocate instance if mesh resource has been replaced.
-	if (m_mesh.changed())
-	{
-		m_meshInstance = m_mesh->allocateInstance();
-		m_meshInstance->setTransform(getTransform().get0());
-		m_mesh.consume();
-	}
+	//if (m_mesh.changed())
+	//{
+	//	m_meshInstance = m_mesh->allocateInstance();
+	//	m_meshInstance->setTransform(getTransform().get0());
+	//	m_mesh.consume();
+	//}
 }
 
 void InstanceMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
-	T_ASSERT_M(0, L"Forgot to register InstanceMeshComponentRenderer?");
+	//T_ASSERT_M(0, L"Forgot to register InstanceMeshComponentRenderer?");
 }
 
 }

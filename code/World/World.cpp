@@ -32,7 +32,7 @@ void World::destroy()
 
 	for (auto entity : m_entities)
 	{
-		entity->m_world = nullptr;
+		entity->setWorld(nullptr);
 		entity->destroy();
 	}
 	m_entities.clear();
@@ -68,17 +68,17 @@ IWorldComponent* World::getComponent(const TypeInfo& componentType) const
 
 void World::addEntity(Entity* entity)
 {
-	T_FATAL_ASSERT(entity->m_world == nullptr);
+	T_FATAL_ASSERT(entity->getWorld() == nullptr);
 	if (m_update)
 		m_deferredAdd.push_back(entity);
 	else
 		m_entities.push_back(entity);
-	entity->m_world = this;
+	entity->setWorld(this);
 }
 
 void World::removeEntity(Entity* entity)
 {
-	T_FATAL_ASSERT(entity->m_world == this);
+	T_FATAL_ASSERT(entity->getWorld() == this);
 	if (m_update)
 		m_deferredRemove.push_back(entity);
 	else
@@ -86,12 +86,12 @@ void World::removeEntity(Entity* entity)
 		const bool removed = m_entities.remove(entity);
 		T_FATAL_ASSERT(removed);
 	}
-	entity->m_world = nullptr;
+	entity->setWorld(nullptr);
 }
 
 bool World::haveEntity(const Entity* entity) const
 {
-	if (entity->m_world == this)
+	if (entity->getWorld() == this)
 		return std::find(m_entities.begin(), m_entities.end(), entity) != m_entities.end();
 	else
 		return false;
@@ -151,7 +151,7 @@ void World::update(const UpdateParams& update)
 	m_update = true;
 	for (auto entity : m_entities)
 	{
-		if (entity->m_world != nullptr)
+		if (entity->getWorld() != nullptr)
 			entity->update(update);
 	}
 	m_update = false;

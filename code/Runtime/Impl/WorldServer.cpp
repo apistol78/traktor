@@ -22,7 +22,6 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Mesh/MeshComponentRenderer.h"
-#include "Mesh/Instance/InstanceMeshComponentRenderer.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
@@ -37,6 +36,7 @@
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
+#include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
@@ -175,11 +175,11 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 		bool(m_oceanQuality >= world::Quality::High)
 	);
 
+	m_entityRenderers->add(new world::CullingRenderer());
 	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
 	m_entityRenderers->add(new world::VolumetricFogRenderer());
 	m_entityRenderers->add(new mesh::MeshComponentRenderer());
-	m_entityRenderers->add(new mesh::InstanceMeshComponentRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::AnimatedMeshComponentRenderer());
 	m_entityRenderers->add(new animation::ClothRenderer());

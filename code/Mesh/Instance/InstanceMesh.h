@@ -17,6 +17,7 @@
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
+#include "World/Entity/CullingComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,22 +30,22 @@
 namespace traktor::render
 {
 
-class Buffer;
+//class Buffer;
 class IRenderSystem;
 class ProgramParameters;
-class RenderContext;
+//class RenderContext;
 class Mesh;
 class Shader;
 
 }
 
-namespace traktor::world
-{
-
-class IWorldRenderPass;
-class WorldRenderView;
-
-}
+//namespace traktor::world
+//{
+//
+//class IWorldRenderPass;
+//class WorldRenderView;
+//
+//}
 
 namespace traktor::mesh
 {
@@ -56,13 +57,13 @@ namespace traktor::mesh
  * automatically by the GPU in any number of instances
  * using hardware instancing in a single draw call.
  */
-class T_DLLCLASS InstanceMesh : public IMesh
+class T_DLLCLASS InstanceMesh
+:	public IMesh
+,	public world::CullingComponent::ICullable
 {
 	T_RTTI_CLASS;
 
 public:
-	enum { MaxInstanceCount = 60 };
-
 	struct Part
 	{
 		render::handle_t shaderTechnique;
@@ -71,7 +72,6 @@ public:
 
 	explicit InstanceMesh(
 		render::IRenderSystem* renderSystem,
-		const resource::Proxy< render::Shader >& shaderCull,
 		const resource::Proxy< render::Shader >& shaderDraw
 	);
 
@@ -81,29 +81,19 @@ public:
 
 	void getTechniques(SmallSet< render::handle_t >& outHandles) const;
 
-	void build(
-		render::RenderContext* renderContext,
+	/* world::CullingComponent::ICullable */
+
+	virtual const Aabb3& cullableGetBoundingBox() const override final { return getBoundingBox(); }
+
+	virtual void cullableBuild(
+		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
-		render::ProgramParameters* extraParameters
-	);
-
-	//
-
-	struct Instance
-	{
-		InstanceMesh* mesh;
-		Transform transform;
-		Aabb3 boundingBox;
-
-		void setTransform(const Transform& transform);
-	};
-	
-	Instance* allocateInstance();
-
-	void releaseInstance(Instance*& instance);
-
-	//
+		render::Buffer* instanceBuffer,
+		render::Buffer* visibilityBuffer,
+		uint32_t start,
+		uint32_t count
+	) override final;
 
 private:
 	friend class InstanceMeshResource;
@@ -113,15 +103,10 @@ private:
 	SmallMap< render::handle_t, AlignedVector< Part > > m_parts;
 
 	//#todo All instances are bookkeep;ed in InstanceMesh which should be a resource.
-	Ref< render::IRenderSystem > m_renderSystem;
-	resource::Proxy< render::Shader > m_shaderCull;
+	Ref< render::IRenderSystem > m_renderSystem;	
 	resource::Proxy< render::Shader > m_shaderDraw;
-	AlignedVector< Instance* > m_instances;
-	Ref< render::Buffer > m_instanceBuffer;
-	RefArray< render::Buffer > m_visibilityBuffers;
 	RefArray< render::Buffer > m_drawBuffers;
-	uint32_t m_instanceAllocatedCount = 0;
-	bool m_instanceBufferDirty = false;
+	uint32_t m_allocatedCount = 0;
 };
 
 }

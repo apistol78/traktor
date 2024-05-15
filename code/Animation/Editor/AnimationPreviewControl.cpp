@@ -46,6 +46,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldResourceFactory.h"
+#include "World/Entity/CullingRenderer.h"
 #include "World/Entity/GroupComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeRenderer.h"
@@ -251,6 +252,7 @@ void AnimationPreviewControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	worldEntityRenderers->add(new mesh::MeshComponentRenderer());
 	worldEntityRenderers->add(new weather::SkyRenderer());
+	worldEntityRenderers->add(new world::CullingRenderer());
 	worldEntityRenderers->add(new world::VolumetricFogRenderer());
 	worldEntityRenderers->add(new world::ProbeRenderer(
 		m_resourceManager,

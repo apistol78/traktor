@@ -30,6 +30,7 @@
 #include "World/Editor/WorldEditorEntityFactory.h"
 
 // Entity renderers
+#include "World/Entity/CullingRenderer.h"
 #include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
 #include "World/Entity/VolumetricFogRenderer.h"
@@ -100,6 +101,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new world::CullingRenderer());
 	outEntityRenderers.push_back(new world::DecalRenderer(context->getRenderSystem()));
 	outEntityRenderers.push_back(new world::ProbeRenderer(context->getResourceManager(), context->getRenderSystem(), worldRendererType));
 	outEntityRenderers.push_back(new world::VolumetricFogRenderer());

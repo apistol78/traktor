@@ -21,6 +21,7 @@
 #include "World/Entity.h"
 #include "World/IEntityRenderer.h"
 #include "World/IrradianceGrid.h"
+#include "World/IWorldComponent.h"
 #include "World/Packer.h"
 #include "World/World.h"
 #include "World/WorldBuildContext.h"
@@ -220,6 +221,13 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
+
+	for (auto component : world->getComponents())
+	{
+		IEntityRenderer* entityRenderer = m_entityRenderers->find(type_of(component));
+		if (entityRenderer)
+			m_gatheredView.renderables.push_back({ entityRenderer, component, EntityState::All });
+	}
 
 	for (auto entity : world->getEntities())
 	{

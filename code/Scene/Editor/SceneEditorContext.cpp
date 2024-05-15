@@ -51,6 +51,7 @@
 #include "World/EntityEventManager.h"
 #include "World/EntityFactory.h"
 #include "World/World.h"
+#include "World/Entity/CullingComponent.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
@@ -467,6 +468,18 @@ void SceneEditorContext::buildEntities()
 
 		Ref< world::World > world = new world::World();
 
+		// #fixme How should we create this?
+		world->setComponent(new world::CullingComponent(m_resourceManager, m_renderSystem));
+
+		// Create world components.
+		for (auto worldComponentData : m_sceneAsset->getWorldComponents())
+		{
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
+			Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
+			if (worldComponent)
+				world->setComponent(worldComponent);
+		}
+
 		// Create entities from scene layers.
 		RefArray< world::EntityData > layers = m_sceneAsset->getLayers();
 		layers.erase(
@@ -489,15 +502,6 @@ void SceneEditorContext::buildEntities()
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntityData() == layerEntityData);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getEntity() == entity);
 			T_FATAL_ASSERT(m_layerEntityAdapters[i]->getParent() == nullptr);
-		}
-
-		// Create world components.
-		for (auto worldComponentData : m_sceneAsset->getWorldComponents())
-		{
-			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityFactory, world, nullptr);
-			Ref< world::IWorldComponent > worldComponent = entityAdapterBuilder->create(worldComponentData);
-			if (worldComponent)
-				world->setComponent(worldComponent);
 		}
 
 		// Create our scene.

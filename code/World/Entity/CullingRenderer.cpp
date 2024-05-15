@@ -1,25 +1,25 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "World/Entity/VolumetricFogComponent.h"
-#include "World/Entity/VolumetricFogRenderer.h"
+#include "World/Entity/CullingComponent.h"
+#include "World/Entity/CullingRenderer.h"
 
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogRenderer", VolumetricFogRenderer, IEntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CullingRenderer", CullingRenderer, IEntityRenderer)
 
-const TypeInfoSet VolumetricFogRenderer::getRenderableTypes() const
+const TypeInfoSet CullingRenderer::getRenderableTypes() const
 {
-	return makeTypeInfoSet< VolumetricFogComponent >();
+	return makeTypeInfoSet< CullingComponent >();
 }
 
-void VolumetricFogRenderer::setup(
+void CullingRenderer::setup(
 	const WorldSetupContext& context,
 	const WorldRenderView& worldRenderView,
 	Object* renderable
@@ -27,24 +27,24 @@ void VolumetricFogRenderer::setup(
 {
 }
 
-void VolumetricFogRenderer::setup(
+void CullingRenderer::setup(
 	const WorldSetupContext& context
 )
 {
 }
 
-void VolumetricFogRenderer::build(
+void CullingRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass,
 	Object* renderable
 )
 {
-	auto volumetricFogComponent = static_cast< VolumetricFogComponent* >(renderable);
-	volumetricFogComponent->build(context, worldRenderView, worldRenderPass);
+	auto cullingComponent = static_cast< CullingComponent* >(renderable);
+	cullingComponent->build(context, worldRenderView, worldRenderPass);
 }
 
-void VolumetricFogRenderer::build(
+void CullingRenderer::build(
 	const WorldBuildContext& context,
 	const WorldRenderView& worldRenderView,
 	const IWorldRenderPass& worldRenderPass

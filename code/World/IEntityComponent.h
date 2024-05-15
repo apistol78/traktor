@@ -24,6 +24,7 @@ namespace traktor::world
 {
 
 class Entity;
+class World;
 
 /*! Entity component.
  * \ingroup World
@@ -39,6 +40,11 @@ public:
 	 * \param owner New component owner.
 	 */
 	virtual void setOwner(Entity* owner) = 0;
+
+	/*! Called when entity's world is set.
+	 * \param world New world.
+	 */
+	virtual void setWorld(World* world) {}
 
 	/*! Called when entity's state is modified.
 	 * \param state Entity state.

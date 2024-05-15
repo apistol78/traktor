@@ -44,6 +44,13 @@ void Entity::destroy()
 	m_components.clear();
 }
 
+void Entity::setWorld(World* world)
+{
+	m_world = world;
+	for (auto component : m_components)
+		component->setWorld(world);
+}
+
 EntityState Entity::setState(const EntityState& state, const EntityState& mask)
 {
 	const EntityState current = m_state;

@@ -62,7 +62,10 @@ public:
 	 */
 	virtual void destroy();
 
-	/*! Get world entity is part of. */
+	/*! Set world by which entity is part of. */
+	void setWorld(World* world);
+
+	/*! Get world by which entity is part of. */
 	World* getWorld() const { return m_world; }
 
 	/*! Get entity id. */
@@ -154,8 +157,6 @@ public:
 	}
 
 private:
-	friend class World;
-
 	World* m_world = nullptr;
 	Guid m_id;
 	std::wstring m_name;
