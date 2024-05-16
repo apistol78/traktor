@@ -33,7 +33,6 @@ namespace traktor::mesh
 	namespace
 	{
 
-const Guid c_shaderInstanceMeshCull(L"{37998131-BDA1-DE45-B175-35B088FEE61C}");
 const Guid c_shaderInstanceMeshDraw(L"{A8FDE33C-D75B-4D4E-848F-7D7CF97F11D0}");
 
 	}
@@ -218,7 +217,6 @@ bool InstanceMeshConverter::convert(
 
 void InstanceMeshConverter::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
-	pipelineDepends->addDependency(c_shaderInstanceMeshCull, editor::PdfBuild);
 	pipelineDepends->addDependency(c_shaderInstanceMeshDraw, editor::PdfBuild);
 }
 
