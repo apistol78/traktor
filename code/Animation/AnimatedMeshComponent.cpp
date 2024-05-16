@@ -142,10 +142,6 @@ void AnimatedMeshComponent::update(const world::UpdateParams& update)
 	mesh::MeshComponent::update(update);
 }
 
-void AnimatedMeshComponent::setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView)
-{
-}
-
 void AnimatedMeshComponent::build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass)
 {
 	const Scalar interval(worldRenderView.getInterval());

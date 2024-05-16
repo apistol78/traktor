@@ -71,8 +71,6 @@ public:
 
 	const techniqueParts_t* findTechniqueParts(render::handle_t technique) const;
 
-	void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView);
-
 	void build(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
