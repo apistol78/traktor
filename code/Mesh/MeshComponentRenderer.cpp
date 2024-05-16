@@ -25,8 +25,6 @@ void MeshComponentRenderer::setup(
 	Object* renderable
 )
 {
-	auto meshComponent = static_cast< MeshComponent* >(renderable);
-	meshComponent->setup(context, worldRenderView);
 }
 
 void MeshComponentRenderer::setup(
