@@ -66,8 +66,6 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
-	virtual void setup(const world::WorldSetupContext& context, const world::WorldRenderView& worldRenderView) override final;
-
 	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
 
 	/*! Get skin transform of joint in delta space. */
