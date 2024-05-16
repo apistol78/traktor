@@ -210,12 +210,23 @@ void LogList::updateScrollBar()
 		m_scrollBarH->setVisible(true);
 	}
 	else
+	{
+		m_scrollBarH->setPosition(0);
 		m_scrollBarH->setVisible(false);
+	}
 	m_scrollBarH->update();
 
-	m_scrollBarV->setRange(logCount);
-	m_scrollBarV->setPage(pageCount);
-	m_scrollBarV->setVisible(logCount > pageCount);
+	if (logCount > pageCount)
+	{
+		m_scrollBarV->setRange(logCount);
+		m_scrollBarV->setPage(pageCount);
+		m_scrollBarV->setVisible(true);
+	}
+	else
+	{
+		m_scrollBarV->setPosition(0);
+		m_scrollBarV->setVisible(false);
+	}
 	m_scrollBarV->update();
 }
 
