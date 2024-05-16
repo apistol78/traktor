@@ -109,6 +109,9 @@ extern const render::Handle T_DLLCLASS s_handleFogVolumeMediumDensity;
 // Contact shadows.
 extern const render::Handle T_DLLCLASS s_handleContactLightDirection;
 
+// Occlusion culling.
+extern const render::Handle T_DLLCLASS s_handleCullingHiZ;
+
 // ImageGraph inputs.
 extern const render::Handle T_DLLCLASS s_handleInputColor;
 extern const render::Handle T_DLLCLASS s_handleInputColorLast;

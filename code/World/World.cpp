@@ -26,16 +26,16 @@ void World::destroy()
 	T_FATAL_ASSERT(m_deferredAdd.empty());
 	T_FATAL_ASSERT(m_deferredRemove.empty());
 
-	for (auto component : m_components)
-		component->destroy();
-	m_components.clear();
-
 	for (auto entity : m_entities)
 	{
 		entity->setWorld(nullptr);
 		entity->destroy();
 	}
 	m_entities.clear();
+
+	for (auto component : m_components)
+		component->destroy();
+	m_components.clear();
 }
 
 void World::setComponent(IWorldComponent* component)

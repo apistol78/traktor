@@ -64,7 +64,7 @@ void InstanceMesh::getTechniques(SmallSet< render::handle_t >& outHandles) const
 		outHandles.insert(part.first);
 }
 
-void InstanceMesh::cullableBuild(
+void InstanceMesh::build(
 	const world::WorldBuildContext& context,
 	const world::WorldRenderView& worldRenderView,
 	const world::IWorldRenderPass& worldRenderPass,
@@ -84,6 +84,7 @@ void InstanceMesh::cullableBuild(
 	const auto& meshParts = m_renderMesh->getParts();
 
 	// Lazy create the buffers.
+	const uint32_t bufferItemCount = (uint32_t)alignUp(count, 16);
 	if (count > m_allocatedCount)
 	{
 		m_drawBuffers.resize(0);
@@ -95,11 +96,13 @@ void InstanceMesh::cullableBuild(
 	for (uint32_t i = dbSize; i < (peakCascade + 1) * parts.size(); ++i)
 		m_drawBuffers.push_back(m_renderSystem->createBuffer(
 			render::BufferUsage::BuStructured | render::BufferUsage::BuIndirect,
-			count * sizeof(render::IndexedIndirectDraw),
+			bufferItemCount * sizeof(render::IndexedIndirectDraw),
 			false
 		));
 
 	// Create draw buffers from visibility buffer.
+	// Compute blocks are executed before render pass, so draws for shadow map rendering all cascades
+	// are dispatched at the same time.
 	for (uint32_t i = 0; i < parts.size(); ++i)
 	{
 		const auto& part = parts[i];

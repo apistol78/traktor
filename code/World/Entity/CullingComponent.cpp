@@ -47,8 +47,12 @@ void CullingComponent::destroy()
 	T_FATAL_ASSERT_M(m_instances.empty(), L"Culling instances not empty.");
 	safeDestroy(m_instanceBuffer);
 	for (auto visibilityBuffer : m_visibilityBuffers)
-		safeDestroy(visibilityBuffer);
+	{
+		if (visibilityBuffer)
+			visibilityBuffer->destroy();
+	}
 	m_visibilityBuffers.resize(0);
+	m_renderSystem = nullptr;
 }
 
 void CullingComponent::update(World* world, const UpdateParams& update)
@@ -76,6 +80,7 @@ void CullingComponent::build(
 		m_instanceBufferDirty = true;
 	}
 
+	// Ensure we have visibility buffers for all cascades.
 	const uint32_t peakCascade = worldRenderView.getCascade();
 	const uint32_t vbSize = (uint32_t)m_visibilityBuffers.size();
 	for (uint32_t i = vbSize; i < peakCascade + 1; ++i)
@@ -100,7 +105,7 @@ void CullingComponent::build(
 	render::Buffer* visibilityBuffer = m_visibilityBuffers[worldRenderView.getCascade()];
 
 	// Cull instances, output are visibility buffer.
-	// #todo Compute blocks are executed before render pass, so for shadow map rendering all cascades
+	// Compute blocks are executed before render pass, so for shadow map rendering all cascades
 	// are culled before being rendered.
 	{
 		Vector4 cullFrustum[12];
@@ -115,19 +120,19 @@ void CullingComponent::build(
 		const Vector2 viewSize = worldRenderView.getViewSize();
 
 		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(
-			str(L"Mesh cull %d", worldRenderView.getCascade())
+			str(L"Cull %d", worldRenderView.getCascade())
 		);
 
 		render::Shader::Permutation perm;
 		if (worldRenderPass.getTechnique() == s_techniqueDeferredGBufferWrite)
 		{
 			// Deferred g-buffer pass has access to HiZ texture.
-			m_shaderCull->setCombination(render::getParameterHandle(L"InstanceMesh_HiZ"), true, perm);
+			m_shaderCull->setCombination(s_handleCullingHiZ, true, perm);
 		}
 		else
 		{
 			// All other paths use simple frustum culling only.
-			m_shaderCull->setCombination(render::getParameterHandle(L"InstanceMesh_HiZ"), false, perm);
+			m_shaderCull->setCombination(s_handleCullingHiZ, false, perm);
 		}
 
 		renderBlock->program = m_shaderCull->getProgram(perm).program;
@@ -150,13 +155,13 @@ void CullingComponent::build(
 		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 	}
 
-	// Batch draw instances; assumes m_instances are sorted by "cullable".
+	// Batch draw instances; assumes m_instances are sorted by "ordinal" so we can scan for run length.
 	for (uint32_t i = 0; i < (uint32_t)m_instances.size(); )
 	{
 		uint32_t j = i + 1;
 		for (; j < (uint32_t)m_instances.size(); ++j)
 		{
-			if (m_instances[i]->cullable != m_instances[j]->cullable)
+			if (m_instances[i]->ordinal != m_instances[j]->ordinal)
 				break;
 		}
 
@@ -174,17 +179,18 @@ void CullingComponent::build(
 	}
 }
 
-CullingComponent::Instance* CullingComponent::allocateInstance(ICullable* cullable)
+CullingComponent::Instance* CullingComponent::allocateInstance(ICullable* cullable, intptr_t ordinal)
 {
 	Instance* instance = new Instance();
 	instance->owner = this;
 	instance->cullable = cullable;
+	instance->ordinal = ordinal;
 	instance->transform = Transform::identity();
 	instance->boundingBox = cullable->cullableGetBoundingBox();
 	
-	// Insert instance sorted by cullable so we can calculate run length when building.
+	// Insert instance sorted by ordinal so we can calculate run length when building.
 	auto it = std::upper_bound(m_instances.begin(), m_instances.end(), instance, [=](Instance* lh, Instance* rh) {
-		return lh->cullable < rh->cullable;
+		return lh->ordinal < rh->ordinal;
 	});
 	m_instances.insert(it, instance);
 	return instance;

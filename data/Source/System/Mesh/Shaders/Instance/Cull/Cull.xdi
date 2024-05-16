@@ -5,8 +5,8 @@
 			<id>{4BAA3A0D-D779-C141-B519-197EEA8640D6}</id>
 			<comment/>
 			<position>
-				<first>-398</first>
-				<second>135</second>
+				<first>-554</first>
+				<second>108</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{B63DBBD3-72C0-C645-8A24-4893BBF22E30}</id>
 			<comment/>
 			<position>
-				<first>-169</first>
-				<second>144</second>
+				<first>-325</first>
+				<second>117</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -178,13 +178,13 @@ $Buffer[index].visible = $Input;
 				<first>1212</first>
 				<second>579</second>
 			</position>
-			<parameterName>InstanceMesh_HiZ</parameterName>
+			<parameterName>World_CullingHiZ</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{6FAE432D-36E8-D046-96BA-65165BB9DCCC}</id>
 			<comment/>
 			<position>
-				<first>425</first>
+				<first>460</first>
 				<second>805</second>
 			</position>
 			<parameterName>World_HiZTexture</parameterName>
@@ -281,7 +281,7 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{7B83C271-F045-4343-9666-B5DC8E2A479D}</id>
 			<comment/>
 			<position>
-				<first>443</first>
+				<first>478</first>
 				<second>847</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -307,7 +307,7 @@ $Output = visible ? 1.0f : 0.0f;
 			<id>{2095B07F-6B63-D845-B825-6F4B49DCE4DA}</id>
 			<comment/>
 			<position>
-				<first>377</first>
+				<first>412</first>
 				<second>889</second>
 			</position>
 			<parameterName>InstanceMesh_TargetSize</parameterName>
@@ -469,7 +469,7 @@ else
 			<id>{099F295D-79C3-9847-A2B5-E3BE5904F79D}</id>
 			<comment/>
 			<position>
-				<first>359</first>
+				<first>412</first>
 				<second>1145</second>
 			</position>
 			<parameterName>InstanceMesh_TargetSize</parameterName>
@@ -480,7 +480,7 @@ else
 			<id>{68311C48-A517-3146-87E8-D82A66146355}</id>
 			<comment/>
 			<position>
-				<first>425</first>
+				<first>478</first>
 				<second>1103</second>
 			</position>
 			<minFilter>FtPoint</minFilter>
@@ -498,7 +498,7 @@ else
 			<id>{51312172-C4B7-D843-A00A-5C13B2736AC2}</id>
 			<comment/>
 			<position>
-				<first>407</first>
+				<first>460</first>
 				<second>1061</second>
 			</position>
 			<parameterName>World_HiZTexture</parameterName>
@@ -515,6 +515,25 @@ else
 			<parameterName>InstanceMesh_ViewProjection</parameterName>
 			<type>Matrix</type>
 			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{0E5A6909-38D1-494B-A702-B69D3892E0A1}</id>
+			<comment/>
+			<position>
+				<first>-487</first>
+				<second>194</second>
+			</position>
+			<parameterName>InstanceMesh_InstanceOffset</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{CE7F05B8-293A-4D41-B1EC-4682AEE6504A}</id>
+			<comment/>
+			<position>
+				<first>-186</first>
+				<second>137</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -760,8 +779,28 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
@@ -770,8 +809,8 @@ else
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>

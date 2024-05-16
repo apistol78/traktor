@@ -17,7 +17,6 @@
 #include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/CullingComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,22 +29,22 @@
 namespace traktor::render
 {
 
-//class Buffer;
+class Buffer;
 class IRenderSystem;
 class ProgramParameters;
-//class RenderContext;
 class Mesh;
 class Shader;
 
 }
 
-//namespace traktor::world
-//{
-//
-//class IWorldRenderPass;
-//class WorldRenderView;
-//
-//}
+namespace traktor::world
+{
+
+class IWorldRenderPass;
+class WorldBuildContext;
+class WorldRenderView;
+
+}
 
 namespace traktor::mesh
 {
@@ -57,9 +56,7 @@ namespace traktor::mesh
  * automatically by the GPU in any number of instances
  * using hardware instancing in a single draw call.
  */
-class T_DLLCLASS InstanceMesh
-:	public IMesh
-,	public world::CullingComponent::ICullable
+class T_DLLCLASS InstanceMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -81,11 +78,7 @@ public:
 
 	void getTechniques(SmallSet< render::handle_t >& outHandles) const;
 
-	/* world::CullingComponent::ICullable */
-
-	virtual const Aabb3& cullableGetBoundingBox() const override final { return getBoundingBox(); }
-
-	virtual void cullableBuild(
+	void build(
 		const world::WorldBuildContext& context,
 		const world::WorldRenderView& worldRenderView,
 		const world::IWorldRenderPass& worldRenderPass,
@@ -93,7 +86,7 @@ public:
 		render::Buffer* visibilityBuffer,
 		uint32_t start,
 		uint32_t count
-	) override final;
+	);
 
 private:
 	friend class InstanceMeshResource;

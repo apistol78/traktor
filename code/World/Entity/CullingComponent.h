@@ -65,7 +65,7 @@ public:
 
 	struct T_DLLCLASS ICullable
 	{
-		virtual const Aabb3& cullableGetBoundingBox() const = 0;
+		virtual Aabb3 cullableGetBoundingBox() const = 0;
 
 		virtual void cullableBuild(
 			const WorldBuildContext& context,
@@ -82,6 +82,7 @@ public:
 	{
 		CullingComponent* owner;
 		ICullable* cullable;
+		intptr_t ordinal;
 		Transform transform;
 		Aabb3 boundingBox;
 
@@ -100,7 +101,7 @@ public:
 		const IWorldRenderPass& worldRenderPass
 	);
 
-	Instance* allocateInstance(ICullable* cullable);
+	Instance* allocateInstance(ICullable* cullable, intptr_t ordinal);
 
 	void releaseInstance(Instance*& instance);
 

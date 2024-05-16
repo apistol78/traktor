@@ -5,8 +5,8 @@
 			<id>{AA20BF80-C68A-D649-9BF9-23BC5F6257F8}</id>
 			<comment/>
 			<position>
-				<first>-305</first>
-				<second>333</second>
+				<first>119</first>
+				<second>320</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -14,8 +14,8 @@
 			<id>{0C63324D-D49B-7C44-BE53-17ECD5DBE92E}</id>
 			<comment/>
 			<position>
-				<first>-542</first>
-				<second>319</second>
+				<first>-106</first>
+				<second>330</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -23,8 +23,8 @@
 			<id>{9772F569-3912-1B46-AB4B-157B8CC99284}</id>
 			<comment/>
 			<position>
-				<first>-27</first>
-				<second>269</second>
+				<first>-23</first>
+				<second>273</second>
 			</position>
 			<parameterName>InstanceMesh_Visibility</parameterName>
 			<elements>
@@ -38,7 +38,7 @@
 			<id>{B6ABD193-2075-0442-A1B6-92D4C05F99CB}</id>
 			<comment/>
 			<position>
-				<first>-17</first>
+				<first>-7</first>
 				<second>226</second>
 			</position>
 			<parameterName>InstanceMesh_Draw</parameterName>
@@ -69,8 +69,8 @@
 			<id>{EF3C22BB-6DAD-ED47-B381-BF0850063421}</id>
 			<comment/>
 			<position>
-				<first>355</first>
-				<second>250</second>
+				<first>358</first>
+				<second>270</second>
 			</position>
 			<name>WriteOut</name>
 			<technique>Default</technique>
@@ -101,19 +101,25 @@
 					<id>{618C459F-DE31-4E4D-A0ED-6D01AF8C87AF}</id>
 					<name>PrimFirstIndex</name>
 				</item>
+				<item>
+					<id>{7BC3CE94-B279-F442-A983-DD2FA6DFBDD4}</id>
+					<name>InstanceOffset</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<script>
 			<![CDATA[
 const int index = int($Index);
+const int offset = int($InstanceOffset);
 
-const bool visible = ($VisibilityBuffer[index].visible != 0.0f);
+const bool visible = ($VisibilityBuffer[index + offset].visible != 0.0f);
 
 $DrawBuffer[index].indexCount = int($PrimIndexCount);
 $DrawBuffer[index].instanceCount = visible ? 1 : 0;
 $DrawBuffer[index].firstIndex = int($PrimFirstIndex);
 $DrawBuffer[index].vertexOffset = 0;
 $DrawBuffer[index].firstInstance = 0;
+
 			]]>
 			</script>
 		</item>
@@ -121,8 +127,8 @@ $DrawBuffer[index].firstInstance = 0;
 			<id>{3491574B-839F-B74B-8747-0C4A10BECB57}</id>
 			<comment/>
 			<position>
-				<first>7</first>
-				<second>434</second>
+				<first>15</first>
+				<second>367</second>
 			</position>
 			<parameterName>InstanceMesh_IndexCount</parameterName>
 			<type>Scalar</type>
@@ -133,30 +139,22 @@ $DrawBuffer[index].firstInstance = 0;
 			<comment/>
 			<position>
 				<first>31</first>
-				<second>471</second>
+				<second>414</second>
 			</position>
 			<parameterName>InstanceMesh_FirstIndex</parameterName>
 			<type>Scalar</type>
 			<frequency>Frame</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
-			<id>{63F715EF-F327-F04D-8827-705805B04479}</id>
+			<id>{2FB4EA3D-40CC-3548-B4A5-D965E96D6C05}</id>
 			<comment/>
 			<position>
-				<first>-438</first>
-				<second>398</second>
+				<first>-1</first>
+				<second>461</second>
 			</position>
 			<parameterName>InstanceMesh_InstanceOffset</parameterName>
 			<type>Scalar</type>
 			<frequency>Draw</frequency>
-		</item>
-		<item type="traktor.render.Add" version="traktor.render.Node:1">
-			<id>{EBB7D461-F10E-FD4E-B98F-27018D533692}</id>
-			<comment/>
-			<position>
-				<first>-137</first>
-				<second>341</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -212,32 +210,22 @@ $DrawBuffer[index].firstInstance = 0;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<id>{89D6EAF6-DAAD-C647-B640-7F86B233A509}</id>
+				<id>{7BC3CE94-B279-F442-A983-DD2FA6DFBDD4}</id>
 			</destination>
 		</item>
 	</edges>

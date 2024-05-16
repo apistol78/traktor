@@ -59,8 +59,8 @@
 			<id>{BD8029D8-D20D-AE40-9895-EA83610D8339}</id>
 			<comment/>
 			<position>
-				<first>431</first>
-				<second>773</second>
+				<first>425</first>
+				<second>759</second>
 			</position>
 			<parameterName>InstanceWorld</parameterName>
 			<elements>
@@ -86,8 +86,8 @@
 			<id>{5193F279-0901-F345-97E6-238E9D406009}</id>
 			<comment/>
 			<position>
-				<first>415</first>
-				<second>846</second>
+				<first>409</first>
+				<second>832</second>
 			</position>
 			<parameterName>InstanceWorldLast</parameterName>
 			<elements>
@@ -173,8 +173,8 @@
 			<id>{8A459FBA-5749-254B-9853-127DB9AF95F8}</id>
 			<comment/>
 			<position>
-				<first>491</first>
-				<second>919</second>
+				<first>238</first>
+				<second>886</second>
 			</position>
 			<name>gl_DrawID</name>
 			<technique/>
@@ -231,6 +231,25 @@ $Output = gl_DrawID;
 				<second>796</second>
 			</position>
 			<name>BoundingBoxMax</name>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{24C3ACAD-6FB5-2143-9B61-CD34A943D39E}</id>
+			<comment/>
+			<position>
+				<first>453</first>
+				<second>905</second>
+			</position>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{ECE608D7-5F60-4A4F-A5D9-17256271FD77}</id>
+			<comment/>
+			<position>
+				<first>152</first>
+				<second>962</second>
+			</position>
+			<parameterName>InstanceMesh_InstanceOffset</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -356,26 +375,6 @@ $Output = gl_DrawID;
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[8]"/>
 				<id>{0FF6511C-0293-41A8-870E-81978BD01F7F}</id>
 			</source>
@@ -412,6 +411,46 @@ $Output = gl_DrawID;
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<id>{731844D4-AFDC-4EAA-8B41-C4BA2455898F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<id>{897E2C02-E5A3-A643-AAF8-1507B49AC1C3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{0FF6511C-0293-41A8-840E-81978BD01F7F}</id>
 			</destination>
 		</item>
 	</edges>

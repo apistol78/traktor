@@ -28,7 +28,9 @@ class InstanceMesh;
 /*! Instancing mesh component.
  * \ingroup Mesh
  */
-class T_DLLCLASS InstanceMeshComponent : public MeshComponent
+class T_DLLCLASS InstanceMeshComponent
+:	public MeshComponent
+,	public world::CullingComponent::ICullable
 {
 	T_RTTI_CLASS;
 
@@ -45,14 +47,31 @@ public:
 
 	virtual Aabb3 getBoundingBox() const override final;
 
-	virtual void update(const world::UpdateParams& update) override final;
-
-	virtual void build(const world::WorldBuildContext& context, const world::WorldRenderView& worldRenderView, const world::IWorldRenderPass& worldRenderPass) override final;
+	virtual void build(
+		const world::WorldBuildContext& context,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass
+	) override final;
 
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 
+	/* world::CullingComponent::ICullable */
+
+	virtual Aabb3 cullableGetBoundingBox() const override final { return getBoundingBox(); }
+
+	virtual void cullableBuild(
+		const world::WorldBuildContext& context,
+		const world::WorldRenderView& worldRenderView,
+		const world::IWorldRenderPass& worldRenderPass,
+		render::Buffer* instanceBuffer,
+		render::Buffer* visibilityBuffer,
+		uint32_t start,
+		uint32_t count
+	) override final;
+
 private:
 	resource::Proxy< InstanceMesh > m_mesh;
+	world::World* m_world = nullptr;
 	world::CullingComponent::Instance* m_cullingInstance = nullptr;
 };
 
