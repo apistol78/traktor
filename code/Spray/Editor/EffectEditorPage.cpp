@@ -156,7 +156,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::ImageGraphFactory(renderSystem));
 	m_resourceManager->addFactory(new render::ShaderFactory(renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(renderSystem, 0));
-	m_resourceManager->addFactory(new scene::SceneFactory(entityFactory));
+	m_resourceManager->addFactory(new scene::SceneFactory(renderSystem, entityFactory));
 	m_resourceManager->addFactory(new sound::AudioResourceFactory());
 	m_resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, nullptr));
 	m_resourceManager->addFactory(new EffectFactory(nullptr));

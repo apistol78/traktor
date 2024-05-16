@@ -8,7 +8,7 @@
  */
 #include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
-#include "World/EntityEventManager.h"
+#include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::spray
 {

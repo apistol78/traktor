@@ -56,7 +56,6 @@
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
-#include "World/EntityEventManager.h"
 
 namespace traktor::runtime
 {

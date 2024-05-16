@@ -52,7 +52,6 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
-#include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"

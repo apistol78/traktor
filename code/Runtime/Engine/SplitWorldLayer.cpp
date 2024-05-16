@@ -264,7 +264,7 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	//auto group = m_rootGroup->getComponent< world::GroupComponent >();
 	//group->removeAllEntities();
 
-	//world::EntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	//world::EventManagerComponent* eventManager = m_environment->getWorld()->getEntityEventManager();
 	//if (eventManager)
 	//	eventManager->gather([&](world::Entity* entity) { group->addEntity(entity); });
 

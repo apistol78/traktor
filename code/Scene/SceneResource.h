@@ -21,6 +21,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::world
 {
 
@@ -46,7 +60,7 @@ class T_DLLCLASS SceneResource : public ISerializable
 public:
 	SceneResource();
 
-	Ref< Scene > createScene(const world::IEntityFactory* entityFactory) const;
+	Ref< Scene > createScene(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 

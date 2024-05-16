@@ -32,7 +32,6 @@
 #include "Weather/Precipitation/PrecipitationRenderer.h"
 #include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityFactory.h"
-#include "World/EntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
@@ -123,7 +122,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 
-	resourceManager->addFactory(new scene::SceneFactory(m_entityFactory));
+	resourceManager->addFactory(new scene::SceneFactory(renderSystem, m_entityFactory));
 	resourceManager->addFactory(new world::WorldResourceFactory(renderSystem, m_entityFactory));
 }
 

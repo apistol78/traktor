@@ -29,7 +29,7 @@ SpawnEffectEvent::SpawnEffectEvent(
 {
 }
 
-Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
+Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
 	Ref< EffectComponent > effectComponent = new EffectComponent(m_effect);
 	return new SpawnEffectEventInstance(this, sender->getWorld(), sender, Toffset * m_transform, effectComponent);

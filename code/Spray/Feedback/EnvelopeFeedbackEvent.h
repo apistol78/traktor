@@ -22,7 +22,7 @@ class EnvelopeFeedbackEvent : public world::IEntityEvent
 public:
 	explicit EnvelopeFeedbackEvent(const EnvelopeFeedbackEventData* data);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
 
 private:
 	Ref< const EnvelopeFeedbackEventData > m_data;

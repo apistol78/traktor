@@ -287,7 +287,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 				log::error << L"Failed to initialize entity factory \"" << type_name(factory) << L"\"." << Endl;
 		}
 	}
-	m_context->getResourceManager()->addFactory(new SceneFactory(entityFactory));
+	m_context->getResourceManager()->addFactory(new SceneFactory(m_context->getRenderSystem(), entityFactory));
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();

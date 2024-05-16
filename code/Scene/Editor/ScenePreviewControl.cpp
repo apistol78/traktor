@@ -47,7 +47,6 @@
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/Splitter.h"
 #include "Ui/QuadSplitter.h"
-#include "World/EntityEventManager.h"
 
 namespace traktor::scene
 {

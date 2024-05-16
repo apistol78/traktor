@@ -18,8 +18,9 @@ namespace traktor::scene
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(const world::IEntityFactory* entityFactory)
-:	m_entityFactory(entityFactory)
+SceneFactory::SceneFactory(render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory)
+:	m_renderSystem(renderSystem)
+,	m_entityFactory(entityFactory)
 {
 }
 
@@ -47,7 +48,7 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 {
 	Ref< const SceneResource > sceneResource = instance->getObject< SceneResource >();
 	if (sceneResource)
-		return sceneResource->createScene(m_entityFactory);
+		return sceneResource->createScene(resourceManager, m_renderSystem, m_entityFactory);
 	else
 		return nullptr;
 }

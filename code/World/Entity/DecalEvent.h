@@ -30,7 +30,7 @@ class DecalEvent : public IEntityEvent
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IEntityEventInstance > createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const override final;
+	virtual Ref< IEntityEventInstance > createInstance(EventManagerComponent* eventManager, Entity* sender, const Transform& Toffset) const override final;
 
 	const Vector2& getSize() const { return m_size; }
 

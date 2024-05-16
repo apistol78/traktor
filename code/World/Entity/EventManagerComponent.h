@@ -32,12 +32,12 @@ class IEntityEventInstance;
 /*!
  * \ingroup World
  */
-class T_DLLCLASS EntityEventManager : public IWorldComponent
+class T_DLLCLASS EventManagerComponent : public IWorldComponent
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit EntityEventManager(uint32_t maxEventsInstances);
+	explicit EventManagerComponent(uint32_t maxEventsInstances);
 
 	virtual void destroy() override final;
 

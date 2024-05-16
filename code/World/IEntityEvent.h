@@ -31,7 +31,7 @@ namespace traktor::world
 
 class Entity;
 class IEntityEventInstance;
-class EntityEventManager;
+class EventManagerComponent;
 
 /*! Entity event.
  * \ingroup World
@@ -41,7 +41,7 @@ class T_DLLCLASS IEntityEvent : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IEntityEventInstance > createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const = 0;
+	virtual Ref< IEntityEventInstance > createInstance(EventManagerComponent* eventManager, Entity* sender, const Transform& Toffset) const = 0;
 };
 
 }

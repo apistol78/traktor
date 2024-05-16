@@ -19,7 +19,7 @@ OscillateFeedbackEvent::OscillateFeedbackEvent(const OscillateFeedbackEventData*
 {
 }
 
-Ref< world::IEntityEventInstance > OscillateFeedbackEvent::createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
+Ref< world::IEntityEventInstance > OscillateFeedbackEvent::createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
 	return new OscillateFeedbackEventInstance(m_data);
 }

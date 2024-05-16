@@ -7,18 +7,20 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/Entity.h"
-#include "World/EntityEventManager.h"
 #include "World/IWorldComponent.h"
 #include "World/World.h"
+#include "World/Entity/CullingComponent.h"
+#include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::world
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.World", World, Object)
 
-World::World()
+World::World(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
-	setComponent(new EntityEventManager(512));
+	setComponent(new CullingComponent(resourceManager, renderSystem));
+	setComponent(new EventManagerComponent(512));
 }
 
 void World::destroy()

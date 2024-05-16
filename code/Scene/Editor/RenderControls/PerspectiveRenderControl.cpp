@@ -48,7 +48,6 @@
 #include "Ui/AspectLayout.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
-#include "World/EntityEventManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"

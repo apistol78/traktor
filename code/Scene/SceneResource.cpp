@@ -28,9 +28,9 @@ SceneResource::SceneResource()
 {
 }
 
-Ref< Scene > SceneResource::createScene(const world::IEntityFactory* entityFactory) const
+Ref< Scene > SceneResource::createScene(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory) const
 {
-	Ref< world::World > world = new world::World();
+	Ref< world::World > world = new world::World(resourceManager, renderSystem);
 	Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder(entityFactory, world);
 
 	// Create world components.

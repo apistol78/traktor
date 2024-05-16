@@ -29,7 +29,7 @@ SoundEvent::SoundEvent(
 {
 }
 
-Ref< world::IEntityEventInstance > SoundEvent::createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
+Ref< world::IEntityEventInstance > SoundEvent::createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
 	if (m_soundPlayer)
 		return new SoundEventInstance(sender, Toffset, m_soundPlayer, m_sound, m_positional, m_follow, m_autoStopFar);

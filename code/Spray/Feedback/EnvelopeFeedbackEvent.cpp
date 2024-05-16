@@ -19,7 +19,7 @@ EnvelopeFeedbackEvent::EnvelopeFeedbackEvent(const EnvelopeFeedbackEventData* da
 {
 }
 
-Ref< world::IEntityEventInstance > EnvelopeFeedbackEvent::createInstance(world::EntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
+Ref< world::IEntityEventInstance > EnvelopeFeedbackEvent::createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
 	return new EnvelopeFeedbackEventInstance(m_data);
 }

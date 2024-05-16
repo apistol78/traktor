@@ -14,8 +14,8 @@
 #include "World/Entity.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
-#include "World/EntityEventManager.h"
 #include "World/World.h"
+#include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::spray
 {
@@ -95,7 +95,7 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 		context.owner->getWorld() != nullptr
 	)
 	{
-		auto eventManager = context.owner->getWorld()->getComponent< world::EntityEventManager >();
+		auto eventManager = context.owner->getWorld()->getComponent< world::EventManagerComponent >();
 		if (eventManager)
 		{
 			if (m_triggerInstance)

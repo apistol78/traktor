@@ -15,7 +15,7 @@ namespace traktor::world
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEvent", DecalEvent, IEntityEvent)
 
-Ref< IEntityEventInstance > DecalEvent::createInstance(EntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const
+Ref< IEntityEventInstance > DecalEvent::createInstance(EventManagerComponent* eventManager, Entity* sender, const Transform& Toffset) const
 {
 	const Transform T = sender->getTransform() * Toffset;
 	return new DecalEventInstance(this, sender->getWorld(), T);

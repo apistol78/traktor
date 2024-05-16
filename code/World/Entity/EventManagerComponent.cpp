@@ -7,27 +7,27 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Thread/Acquire.h"
-#include "World/EntityEventManager.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
+#include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, IWorldComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EventManagerComponent", EventManagerComponent, IWorldComponent)
 
-EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
+EventManagerComponent::EventManagerComponent(uint32_t maxEventInstances)
 :	m_maxEventInstances(maxEventInstances)
 {
 	m_eventInstances.reserve(maxEventInstances);
 }
 
-void EntityEventManager::destroy()
+void EventManagerComponent::destroy()
 {
 	cancelAll(Cancel::Immediate);
 }
 
-void EntityEventManager::update(World* world, const UpdateParams& update)
+void EventManagerComponent::update(World* world, const UpdateParams& update)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (auto it = m_eventInstances.begin(); it != m_eventInstances.end(); )
@@ -39,7 +39,7 @@ void EntityEventManager::update(World* world, const UpdateParams& update)
 	}
 }
 
-IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EventManagerComponent::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -53,7 +53,7 @@ IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entit
 	return eventInstance;
 }
 
-void EntityEventManager::cancelAll(Cancel when)
+void EventManagerComponent::cancelAll(Cancel when)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 

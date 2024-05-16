@@ -12,7 +12,7 @@
 #include "Physics/World/RigidBodyComponent.h"
 #include "World/Entity.h"
 #include "World/World.h"
-#include "World/EntityEventManager.h"
+#include "World/Entity/EventManagerComponent.h"
 
 namespace traktor::physics
 {
@@ -85,7 +85,7 @@ void RigidBodyComponent::collisionListener(const physics::CollisionInfo& collisi
 	if (m_owner->getWorld() == nullptr)
 		return;
 
-	world::EntityEventManager* eventManager = m_owner->getWorld()->getComponent< world::EntityEventManager >();
+	world::EventManagerComponent* eventManager = m_owner->getWorld()->getComponent< world::EventManagerComponent >();
 	if (!eventManager)
 		return;
 

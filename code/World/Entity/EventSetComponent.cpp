@@ -7,8 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "World/Entity.h"
-#include "World/EntityEventManager.h"
 #include "World/World.h"
+#include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/EventSetComponent.h"
 
 namespace traktor::world
@@ -40,7 +40,7 @@ void EventSetComponent::update(const UpdateParams& update)
 
 IEntityEventInstance* EventSetComponent::raise(const std::wstring& name, const Transform& offset)
 {
-	EntityEventManager* eventManager = m_owner->getWorld()->getComponent< EntityEventManager >();
+	EventManagerComponent* eventManager = m_owner->getWorld()->getComponent< EventManagerComponent >();
 	if (!eventManager)
 		return nullptr;
 

@@ -19,6 +19,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::world
 {
 
@@ -40,7 +47,7 @@ public:
 	SceneFactory() = default;
 
 	/*! Construct scene factory. */
-	explicit SceneFactory(const world::IEntityFactory* entityFactory);
+	explicit SceneFactory(render::IRenderSystem* renderSystem, const world::IEntityFactory* entityFactory);
 
 	virtual bool initialize(const ObjectStore& objectStore) override final;
 
@@ -53,6 +60,7 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const db::Database* database, const db::Instance* instance, const TypeInfo& productType, const Object* current) const override final;
 
 private:
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< const world::IEntityFactory > m_entityFactory;
 };
 

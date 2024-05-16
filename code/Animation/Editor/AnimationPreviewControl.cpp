@@ -113,7 +113,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 	m_resourceManager->addFactory(new render::ShaderFactory(m_renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(m_renderSystem, 0));
 	m_resourceManager->addFactory(new render::ImageGraphFactory(m_renderSystem));
-	m_resourceManager->addFactory(new scene::SceneFactory(entityFactory));
+	m_resourceManager->addFactory(new scene::SceneFactory(m_renderSystem, entityFactory));
 	m_resourceManager->addFactory(new world::WorldResourceFactory(m_renderSystem, nullptr));
 	
 	render::RenderViewEmbeddedDesc desc;

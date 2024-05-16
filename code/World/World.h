@@ -21,6 +21,20 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor::resource
+{
+
+class IResourceManager;
+
+}
+
+namespace traktor::render
+{
+
+class IRenderSystem;
+
+}
+
 namespace traktor::world
 {
 
@@ -39,7 +53,7 @@ class T_DLLCLASS World : public Object
 	T_RTTI_CLASS;
 
 public:
-	World();
+	explicit World(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	void destroy();
 

@@ -19,7 +19,6 @@
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventData.h"
 #include "World/IEntityEventInstance.h"
-#include "World/EntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/IWorldComponent.h"
@@ -30,6 +29,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/World.h"
+#include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/EventSetComponent.h"
 #include "World/Entity/EventSetComponentData.h"
 #include "World/Entity/FacadeComponent.h"
@@ -84,17 +84,17 @@ void IEntityEventInstance_cancelEnd(IEntityEventInstance* self)
 	self->cancel(Cancel::End);
 }
 
-IEntityEventInstance* EntityEventManager_raise_1(EntityEventManager* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EventManagerComponent_raise_1(EventManagerComponent* self, const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
 	return self->raise(event, sender, Toffset);
 }
 
-void EntityEventManager_cancelAllImmediate(EntityEventManager* self)
+void EventManagerComponent_cancelAllImmediate(EventManagerComponent* self)
 {
 	self->cancelAll(Cancel::Immediate);
 }
 
-void EntityEventManager_cancelAllEnd(EntityEventManager* self)
+void EventManagerComponent_cancelAllEnd(EventManagerComponent* self)
 {
 	self->cancelAll(Cancel::End);
 }
@@ -206,11 +206,11 @@ void WorldClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	auto classIEntityEvent = new AutoRuntimeClass< IEntityEvent >();
 	registrar->registerClass(classIEntityEvent);
 
-	auto classEntityEventManager = new AutoRuntimeClass< EntityEventManager >();
-	classEntityEventManager->addMethod("raise", &EntityEventManager_raise_1);
-	classEntityEventManager->addMethod("cancelAllImmediate", &EntityEventManager_cancelAllImmediate);
-	classEntityEventManager->addMethod("cancelAllEnd", &EntityEventManager_cancelAllEnd);
-	registrar->registerClass(classEntityEventManager);
+	auto classEventManagerComponent = new AutoRuntimeClass< EventManagerComponent >();
+	classEventManagerComponent->addMethod("raise", &EventManagerComponent_raise_1);
+	classEventManagerComponent->addMethod("cancelAllImmediate", &EventManagerComponent_cancelAllImmediate);
+	classEventManagerComponent->addMethod("cancelAllEnd", &EventManagerComponent_cancelAllEnd);
+	registrar->registerClass(classEventManagerComponent);
 
 	auto classIEntityFactory = new AutoRuntimeClass< IEntityFactory >();
 	registrar->registerClass(classIEntityFactory);

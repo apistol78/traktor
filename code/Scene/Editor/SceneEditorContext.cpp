@@ -48,10 +48,9 @@
 #include "World/Entity.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityData.h"
-#include "World/EntityEventManager.h"
 #include "World/EntityFactory.h"
 #include "World/World.h"
-#include "World/Entity/CullingComponent.h"
+#include "World/Entity/EventManagerComponent.h"
 #include "World/Entity/GroupComponent.h"
 
 namespace traktor::scene
@@ -437,7 +436,7 @@ void SceneEditorContext::buildEntities()
 	// Cancel all events.
 	if (m_scene)
 	{
-		auto eventManager = m_scene->getWorld()->getComponent< world::EntityEventManager >();
+		auto eventManager = m_scene->getWorld()->getComponent< world::EventManagerComponent >();
 		if (eventManager != nullptr)
 			eventManager->cancelAll(world::Cancel::Immediate);
 	}
@@ -466,10 +465,7 @@ void SceneEditorContext::buildEntities()
 			}
 		}
 
-		Ref< world::World > world = new world::World();
-
-		// #fixme How should we create this?
-		world->setComponent(new world::CullingComponent(m_resourceManager, m_renderSystem));
+		Ref< world::World > world = new world::World(getResourceManager(), getRenderSystem());
 
 		// Create world components.
 		for (auto worldComponentData : m_sceneAsset->getWorldComponents())
