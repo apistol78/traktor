@@ -10,6 +10,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -152,7 +153,7 @@ void StreamServer::threadServer()
 			switch (command)
 			{
 			case 0x01:	// Acquire stream.
-			case 0x81:	// Acquire stream (no preload).
+			case 0x81:	// Acquire stream (no pre-load).
 				{
 					net::recvBatch< uint32_t >(client.socket, client.streamId);
 
@@ -192,7 +193,10 @@ void StreamServer::threadServer()
 						}
 					}
 					else
+					{
+						log::warning << L"Unable to serve remote stream; no such stream " << client.streamId << L"." << Endl;
 						net::sendBatch< uint8_t, int64_t >(client.socket, 0, 0);
+					}
 				}
 				break;
 
@@ -316,6 +320,10 @@ void StreamServer::threadServer()
 					else
 						net::sendBatch< uint8_t >(client.socket, 0);
 				}
+				break;
+
+			default:
+				log::error << L"Unknown stream command " << str(L"0x%02x", command) << L" from client." << Endl;
 				break;
 			}
 		}
