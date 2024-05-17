@@ -11,6 +11,8 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/FormWin32.h"
 
+// https://github.com/grassator/win32-window-custom-titlebar/blob/main/main.c
+
 namespace traktor::ui
 {
 
@@ -61,6 +63,9 @@ bool FormWin32::create(IWidget* parent, const std::wstring& text, int width, int
 	//m_hWnd.registerMessageHandler(WM_ACTIVATE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventActivate));
 	m_hWnd.registerMessageHandler(L"TaskbarButtonCreated", new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventTaskBarButtonCreated));
 
+	if ((style & WsCaption) == 0)
+		m_hWnd.registerMessageHandler(WM_NCCALCSIZE, new MethodMessageHandler< FormWin32 >(this, &FormWin32::eventNonClientCalcSize));
+
 	m_ownCursor = true;
 	return true;
 }
@@ -93,13 +98,13 @@ void FormWin32::setIcon(ISystemBitmap* icon)
 void FormWin32::maximize()
 {
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
-	UpdateWindow(m_hWnd);
+	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void FormWin32::minimize()
 {
 	ShowWindow(m_hWnd, SW_MINIMIZE);
-	UpdateWindow(m_hWnd);
+	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW);
 }
 
 void FormWin32::restore()
@@ -163,6 +168,33 @@ LRESULT FormWin32::eventTaskBarButtonCreated(HWND hWnd, UINT message, WPARAM wPa
 		else
 			m_taskBarList.release();
 	}
+	return 0;
+}
+
+LRESULT FormWin32::eventNonClientCalcSize(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
+{
+	if (!wParam)
+	{
+		pass = true;
+		return 0;
+	}
+
+	const UINT dpi = GetDpiForWindow(hWnd);
+
+	const int frameX = GetSystemMetricsForDpi(SM_CXFRAME, dpi);
+	const int frameY = GetSystemMetricsForDpi(SM_CYFRAME, dpi);
+	const int padding = GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+
+	NCCALCSIZE_PARAMS* params = (NCCALCSIZE_PARAMS*)lParam;
+	RECT* requestedClientRect = params->rgrc;
+
+	requestedClientRect->right -= frameX + padding;
+	requestedClientRect->left += frameX + padding;
+	requestedClientRect->bottom -= frameY + padding;
+
+	if (isMaximized())
+		requestedClientRect->top += padding;
+
 	return 0;
 }
 

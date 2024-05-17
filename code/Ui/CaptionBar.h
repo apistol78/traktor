@@ -48,6 +48,8 @@ private:
 
 	void eventMouseButtonUp(MouseButtonUpEvent* event);
 
+	void eventMouseDoubleClick(MouseDoubleClickEvent* event);
+
 	void eventMouseMove(MouseMoveEvent* event);
 
 	void eventSize(SizeEvent* event);

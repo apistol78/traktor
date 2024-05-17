@@ -21,7 +21,7 @@
 		</rdf:RDF>
 	</metadata>
 	<g style="display:inline;opacity:1" inkscape:label="Dark" id="Dark" inkscape:groupmode="layer">
-		<rect style="display:inline;fill:none;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" id="rect1-5" width="19.820396" height="17.331022" x="6.0898018" y="7.3344889"/>
-		<path style="display:inline;fill:none;stroke:#ffffff;stroke-width:3.04527;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.0558557,10.123542 H 24.973691" id="path2-6"/>
+		<rect class="theme_stroke" style="display:inline;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1" id="rect1-5" width="19.820396" height="17.331022" x="6.0898018" y="7.3344889"/>
+		<path class="theme_stroke" style="display:inline;fill:none;stroke-width:3.04527;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 7.0558557,10.123542 H 24.973691" id="path2-6"/>
 	</g>
 </svg>

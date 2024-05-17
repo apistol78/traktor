@@ -30,6 +30,7 @@ class T_DLLCLASS MiniButton : public Widget
 
 public:
 	constexpr static uint32_t WsNoBorder = WsUser;
+	constexpr static uint32_t WsNoBackground = WsUser << 1;
 
 	bool create(Widget* parent, const std::wstring& text, uint32_t style = WsNone);
 
@@ -44,6 +45,7 @@ public:
 private:
 	Ref< IBitmap > m_image;
 	bool m_border;
+	bool m_background;
 	bool m_pushed;
 
 	void eventButtonDown(MouseButtonDownEvent* event);

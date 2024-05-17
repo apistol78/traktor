@@ -87,6 +87,7 @@
 #include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/CaptionBar.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
 #include "Ui/FloodLayout.h"
@@ -474,8 +475,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		c_title,
 		1280_ut,
 		900_ut,
-		ui::WsResizable | ui::Form::WsDefault | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)
+		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
+		new ui::TableLayout(L"100%", L"*,*,*,100%,*", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -488,6 +489,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &EditorForm::eventShortcut);
+
+	// Create caption bar.
+	Ref< ui::CaptionBar > captionBar = new ui::CaptionBar();
+	captionBar->create(this);
 
 	// Create menu bar.
 	m_menuBar = new ui::ToolBar();

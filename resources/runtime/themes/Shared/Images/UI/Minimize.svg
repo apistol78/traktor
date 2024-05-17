@@ -21,6 +21,6 @@
 		</rdf:RDF>
 	</metadata>
 	<g style="display:inline;opacity:1" inkscape:label="Dark" id="Dark" inkscape:groupmode="layer">
-		<path style="display:inline;fill:none;stroke:#ffffff;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 8,23.999998 H 24" id="path1-6-5" sodipodi:nodetypes="cc"/>
+		<path class="theme_stroke" style="display:inline;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" d="M 8,23.999998 H 24" id="path1-6-5" sodipodi:nodetypes="cc"/>
 	</g>
 </svg>

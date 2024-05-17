@@ -22,6 +22,7 @@ bool MiniButton::create(Widget* parent, const std::wstring& text, uint32_t style
 		return false;
 
 	m_border = ((style & WsNoBorder) == 0);
+	m_background = ((style & WsNoBackground) == 0);
 	m_pushed = false;
 	setText(text);
 
@@ -38,6 +39,7 @@ bool MiniButton::create(Widget* parent, IBitmap* image, int style)
 		return false;
 
 	m_border = ((style & WsNoBorder) == 0);
+	m_background = ((style & WsNoBackground) == 0);
 	m_pushed = false;
 	m_image  = image;
 
@@ -99,7 +101,10 @@ void MiniButton::eventPaint(PaintEvent* event)
 
 	if (isEnable(true))
 	{
-		canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
+		if (m_background)
+			canvas.setBackground(ss->getColor(this, m_pushed ? L"background-color-pushed" : L"background-color"));
+		else
+			canvas.setBackground(ss->getColor(getParent(), L"background-color"));
 		canvas.fillRect(rcInner);
 
 		if (m_border)
@@ -113,7 +118,10 @@ void MiniButton::eventPaint(PaintEvent* event)
 	}
 	else
 	{
-		canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
+		if (m_background)
+			canvas.setBackground(ss->getColor(this, L"background-color-disabled"));
+		else
+			canvas.setBackground(ss->getColor(getParent(), L"background-color"));
 		canvas.fillRect(rcInner);
 
 		if (m_border)

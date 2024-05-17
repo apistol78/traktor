@@ -30,19 +30,20 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 		return false;
 
 	m_buttonMinimize = new MiniButton();
-	m_buttonMinimize->create(this, new ui::StyleBitmap(L"UI.CaptionMinimize"), MiniButton::WsNoBorder);
+	m_buttonMinimize->create(this, new ui::StyleBitmap(L"UI.CaptionMinimize"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonMinimize->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
 
 	m_buttonMaximizeOrRestore = new MiniButton();
-	m_buttonMaximizeOrRestore->create(this, new ui::StyleBitmap(L"UI.CaptionMaximize"), MiniButton::WsNoBorder);
+	m_buttonMaximizeOrRestore->create(this, new ui::StyleBitmap(L"UI.CaptionMaximize"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonMaximizeOrRestore->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
 
 	m_buttonClose = new MiniButton();
-	m_buttonClose->create(this, new ui::StyleBitmap(L"UI.CaptionClose"), MiniButton::WsNoBorder);
+	m_buttonClose->create(this, new ui::StyleBitmap(L"UI.CaptionClose"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonClose->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
 
 	addEventHandler< MouseButtonDownEvent >(this, &CaptionBar::eventMouseButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &CaptionBar::eventMouseButtonUp);
+	addEventHandler< MouseDoubleClickEvent >(this, &CaptionBar::eventMouseDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &CaptionBar::eventMouseMove);
 	addEventHandler< SizeEvent >(this, &CaptionBar::eventSize);
 	addEventHandler< PaintEvent >(this, &CaptionBar::eventPaint);
@@ -95,6 +96,18 @@ void CaptionBar::eventMouseButtonUp(MouseButtonUpEvent* event)
 	releaseCapture();
 }
 
+void CaptionBar::eventMouseDoubleClick(MouseDoubleClickEvent* event)
+{
+	Form* parentForm = dynamic_type_cast< Form* >(getParent());
+	if (!parentForm)
+		return;
+
+	if (!parentForm->isMaximized())
+		parentForm->maximize();
+	else
+		parentForm->restore();
+}
+
 void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 {
 	if (!hasCapture())
@@ -108,7 +121,7 @@ void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 void CaptionBar::eventSize(SizeEvent* event)
 {
 	const Rect rc = getInnerRect();
-	const int32_t pad = pixel(4_ut);
+	const int32_t pad = pixel(10_ut);
 
 	int32_t r = rc.right - pad;
 	int32_t h = rc.getHeight();
@@ -153,6 +166,13 @@ void CaptionBar::eventPaint(PaintEvent* event)
 	rcText.left = pixel(8_ut);
 	rcText.right = rc.right;
 	canvas.drawText(rcText, text, AnLeft, AnCenter);
+
+#if defined(_WIN32)
+	// #hack When using Form without a system caption Windows doesn't draw top shadow line.
+	const Color4ub shadowColor = ss->getColor(this, L"background-color") * Color4ub(128, 128, 128, 255);
+	canvas.setForeground(shadowColor);
+	canvas.drawLine(rc.left, rc.top, rc.right, rc.top);
+#endif
 
 	event->consume();
 }
