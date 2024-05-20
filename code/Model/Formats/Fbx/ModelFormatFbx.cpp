@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 /*
  * TRAKTOR
  * Copyright (c) 2022-2024 Anders Pistol.
@@ -127,6 +125,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 	if (!scene)
 		return nullptr;
 
+#if defined(_DEBUG)
 	traverse(scene->root_node, L"", [](ufbx_node* node, int32_t depth) {
 		for (int32_t i = 0; i < depth; ++i)
 			log::info << L" ";
@@ -134,6 +133,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, const std::wstring& filt
 		) << Endl;
 		return true;
 	});
+#endif
 
 	const Matrix44 axisTransform = calculateAxisTransform(scene->settings.axes);
 

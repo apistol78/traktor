@@ -9,7 +9,6 @@
 #include <functional>
 #include "Core/Math/Triangle.h"
 #include "Drawing/Image.h"
-#include "Drawing/Filters/GammaFilter.h"
 #include "Model/Model.h"
 #include "Model/ModelRasterizer.h"
 
@@ -18,10 +17,21 @@ namespace traktor::model
 	namespace
 	{
 
+const Vector4 c_sunDirection = Vector4(0.0f, -0.5f, 1.0f).normalized();
+
 int32_t wrap(int32_t v, int32_t l)
 {
 	const int32_t c = v % l;
 	return (c < 0) ? c + l : c;
+}
+
+Color4f lighting(const Vector4& p, const Vector4& n, const Color4f& materialColor)
+{
+	const Vector4 viewDirection = p.xyz0().normalized();
+	const Vector4 halfWay = (c_sunDirection + viewDirection).normalized();
+	const Scalar diffuse = clamp(dot3(c_sunDirection, -n), 0.4_simd, 1.0_simd) + 0.1_simd;
+	const Scalar specular = power(clamp(dot3(halfWay, -n), 0.0_simd, 1.0_simd), 2.0_simd) * 0.25_simd;
+	return materialColor * diffuse + Color4f(1.0f, 1.0f, 1.0f, 0.0f) * specular;
 }
 
 	}
@@ -106,14 +116,19 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 			const int32_t tw = texture->getWidth();
 			const int32_t th = texture->getHeight();
 
+			const bool textureLinear = (texture->getImageInfo() != nullptr) ? (std::abs(texture->getImageInfo()->getGamma() - 1.0f) < 0.1f) : false;
+
 			triangle(sp[0], sp[1], sp[2], [&, tw, th](int32_t x, int32_t y, float alpha, float beta, float gamma) {
 				if (x < 0 || x >= outImage->getWidth() || y < 0 || y >= outImage->getHeight())
 					return;
 
 				const int32_t offset = x + y * outImage->getWidth();
+				const Scalar salpha(alpha);
+				const Scalar sbeta(beta);
+				const Scalar sgamma(gamma);
 
-				const float z = cp[0].z() * Scalar(alpha) + cp[1].z() * Scalar(beta) + cp[2].z() * Scalar(gamma);
-				if (z < zbuffer[offset])
+				const Vector4 p = cp[0] * salpha + cp[1] * sbeta + cp[2] * sgamma;
+				if (p.z() < zbuffer[offset])
 				{
 					Color4f color;
 					const Vector2 tc = uv[0] * alpha + uv[1] * beta + uv[2] * gamma;
@@ -121,11 +136,14 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					const int32_t tv = wrap((int32_t)(tc.y * th), th);
 					texture->getPixel(tu, tv, color);
 
-					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
-					const Scalar d = -n.z() * 0.5_simd + 0.5_simd;
+					if (!textureLinear)
+						color = color.linear();
 
-					outImage->setPixelUnsafe(x, y, (color * d * 2.0_simd).rgb1());
-					zbuffer[offset] = z;
+					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
+					const Color4f d = lighting(p, n, color);
+
+					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
+					zbuffer[offset] = p.z();
 				}
 			});
 		}
@@ -136,24 +154,24 @@ bool ModelRasterizer::generate(const Model* model, const Matrix44& modelView, dr
 					return;
 
 				const int32_t offset = x + y * outImage->getWidth();
+				const Scalar salpha(alpha);
+				const Scalar sbeta(beta);
+				const Scalar sgamma(gamma);
 
-				const float z = cp[0].z() * Scalar(alpha) + cp[1].z() * Scalar(beta) + cp[2].z() * Scalar(gamma);
-				if (z < zbuffer[offset])
+				const Vector4 p = cp[0] * salpha + cp[1] * sbeta + cp[2] * sgamma;
+				if (p.z() < zbuffer[offset])
 				{
-					const Color4f& color = polygonMaterial.getColor();
-					const Vector4 n = (nm[0] * Scalar(alpha) + nm[1] * Scalar(beta) + nm[2] * Scalar(gamma)).normalized();
-					const Scalar d = -n.z() * 0.5_simd + 0.5_simd;
+					const Color4f color = polygonMaterial.getColor().linear();
 
-					outImage->setPixelUnsafe(x, y, (color * d * 2.0_simd).rgb1());
-					zbuffer[offset] = z;
+					const Vector4 n = (nm[0] * salpha + nm[1] * sbeta + nm[2] * sgamma).normalized();
+					const Color4f d = lighting(p, n, color);
+
+					outImage->setPixelUnsafe(x, y, d.sRGB().rgb1());
+					zbuffer[offset] = p.z();
 				}
 			});
 		}
 	}
-
-	// Convert image from linear gamma to sRGB.
-	drawing::GammaFilter gammaFilter(1.0f, 2.2f);
-	outImage->apply(&gammaFilter);
 
 	return true;
 }

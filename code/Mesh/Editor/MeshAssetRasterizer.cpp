@@ -126,7 +126,7 @@ bool MeshAssetRasterizer::generate(const editor::IEditor* editor, const MeshAsse
 	const Aabb3 boundingBox = model->getBoundingBox();
 	const Scalar maxExtent = (boundingBox.getExtent() * Vector4(1.0f, 1.0f, 0.0f, 0.0f)).max();
 	const Scalar invMaxExtent = 1.0_simd / maxExtent;
-	const Matrix44 modelView = translate(0.0f, 0.0f, 2.25f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(asset->getPreviewAngle()) * translate(-boundingBox.getCenter());
+	const Matrix44 modelView = translate(0.0f, 0.0f, 2.5f) * scale(invMaxExtent, invMaxExtent, invMaxExtent) * rotateY(asset->getPreviewAngle()) * translate(-boundingBox.getCenter());
 	return model::ModelRasterizer().generate(model, modelView, outImage);
 }
 
