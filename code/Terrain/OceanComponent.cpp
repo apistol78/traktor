@@ -106,7 +106,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 			vertex->pos[0] = fx;
 			vertex->pos[1] = fz;
-			vertex->edge = f; // lerp(100.0f, 10000.0f, f);
+			vertex->edge = lerp(100.0f, 10000.0f, f);
 
 			vertex++;
 		}
@@ -225,7 +225,7 @@ void OceanComponent::build(
 	bool reflectionEnable
 )
 {
-	if (!m_owner)
+	if (!m_owner || worldRenderView.getSnapshot())
 		return;
 
 	bool haveTerrain = false;
