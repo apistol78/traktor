@@ -10,8 +10,8 @@
 			</position>
 			<technique>Default</technique>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>16</X>
+				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
 		</item>
@@ -77,7 +77,9 @@
 				<Y>1</Y>
 				<Z>1</Z>
 			</localSize>
-			<include/>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
 			<inputPins>
 				<item>
 					<id>{0251C710-E6D5-1745-9186-28E3773397DC}</id>
@@ -97,15 +99,10 @@
 			</outputPins>
 			<script>
 			<![CDATA[
-float v = 0.0f;
-for (int i = 0; i < 4; ++i)
-{
-	const float f = pow(2.0f, i);
-	const float a = sin($Position.x * 3.14f * f);
-	const float b = sin($Position.y * 3.14f * f);
-	v += (a * b) * sin($Time * (1.0f + i / 7.0f)) * 1.0f / (i + 1.0f);
-}
-$Output = 1.0f * v;
+$Output = CalculateDisplacement(
+	$Position.xy,
+	$Time
+);
 			]]>
 			</script>
 		</item>
@@ -154,7 +151,7 @@ $Output = 1.0f * v;
 				<first>-316</first>
 				<second>204</second>
 			</position>
-			<value>256</value>
+			<value>512</value>
 		</item>
 		<item type="traktor.render.Pow" version="traktor.render.Node:1">
 			<id>{843EAF52-6A4A-F142-A52C-E241E798E07C}</id>

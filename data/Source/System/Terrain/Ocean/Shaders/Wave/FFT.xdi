@@ -3,8 +3,24 @@
 	<text>
 	<![CDATA[
 // FFT ocean functions
+// https://github.com/GarrettGunnell/Water
+// https://github.com/gasgiant/FFT-Ocean
 
 #using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
+
+#define PI 3.14159265358979323846f
+#define TWO_PI (PI * 2.0f)
+
+struct Configuration
+{
+	uint N;
+	int seed;
+	float depth;
+	float gravity;
+	float lowCutoff;
+	float highCutoff;
+	vec4 lengthScales;
+};
 
 struct SpectrumParameters
 {
@@ -17,6 +33,140 @@ struct SpectrumParameters
 	float gamma;
 	float shortWavesFade;
 };
+
+vec2 UniformToGaussian(float u1, float u2)
+{
+	const float R = sqrt(-2.0f * log(u1));
+	const float theta = 2.0f * PI * u2;
+    return vec2(R * cos(theta), R * sin(theta));
+}
+
+// JONSWAP
+
+float TMACorrection(Configuration configuration, float omega)
+{
+	const float omegaH = omega * sqrt(configuration.depth / configuration.gravity);
+	if (omegaH <= 1.0f)
+		return 0.5f * omegaH * omegaH;
+	else if (omegaH < 2.0f)
+		return 1.0f - 0.5f * (2.0f - omegaH) * (2.0f - omegaH);
+	else
+		return 1.0f;
+}
+
+float JONSWAP(Configuration configuration, SpectrumParameters spectrum, float omega)
+{
+	const float sigma = (omega <= spectrum.peakOmega) ? 0.07f : 0.09f;
+	const float r = exp(-(omega - spectrum.peakOmega) * (omega - spectrum.peakOmega) / 2.0f / sigma / sigma / spectrum.peakOmega / spectrum.peakOmega);
+	const float oneOverOmega = 1.0f / omega;
+	const float peakOmegaOverOmega = spectrum.peakOmega / omega;
+	return
+		spectrum.scale * TMACorrection(configuration, omega) * spectrum.alpha * configuration.gravity * configuration.gravity *
+		oneOverOmega * oneOverOmega * oneOverOmega * oneOverOmega * oneOverOmega *
+		exp(-1.25f * peakOmegaOverOmega * peakOmegaOverOmega * peakOmegaOverOmega * peakOmegaOverOmega) *
+		pow(abs(spectrum.gamma), r);
+}
+
+// Spectrum (compute)
+
+float Dispersion(Configuration configuration, float kMag)
+{
+	return sqrt(configuration.gravity * kMag * tanh(min(kMag * configuration.depth, 20)));
+}
+
+float DispersionDerivative(Configuration configuration, float kMag)
+{
+	const float th = tanh(min(kMag * configuration.depth, 20));
+	const float ch = cosh(kMag * configuration.depth);
+	return configuration.gravity * (configuration.depth * kMag / ch / ch + th) / Dispersion(configuration, kMag) / 2.0f;
+}
+
+float SpreadPower(float omega, float peakOmega)
+{
+	if (omega > peakOmega)
+		return 9.77f * pow(abs(omega / peakOmega), -2.5f);
+	else
+		return 6.97f * pow(abs(omega / peakOmega), 5.0f);
+}
+
+float NormalizationFactor(float s)
+{
+	const float s2 = s * s;
+	const float s3 = s2 * s;
+	const float s4 = s3 * s;
+	if (s < 5)
+		return -0.000564f * s4 + 0.00776f * s3 - 0.044f * s2 + 0.192f * s + 0.163f;
+	else
+		return -4.80e-08f * s4 + 1.07e-05f * s3 - 9.53e-04f * s2 + 5.90e-02f * s + 3.93e-01f;
+}
+
+float Cosine2s(float theta, float s)
+{
+	return NormalizationFactor(s) * pow(abs(cos(0.5f * theta)), 2.0f * s);
+}
+
+float DirectionSpectrum(SpectrumParameters spectrum, float theta, float omega)
+{
+	const float s = SpreadPower(omega, spectrum.peakOmega) + 16 * tanh(min(omega / spectrum.peakOmega, 20)) * spectrum.swell * spectrum.swell;
+	return mix(2.0f / 3.1415f * cos(theta) * cos(theta), Cosine2s(theta - spectrum.angle, s), spectrum.spreadBlend);
+}
+
+float ShortWavesFade(SpectrumParameters spectrum, float kLength)
+{
+	return exp(-spectrum.shortWavesFade * spectrum.shortWavesFade * kLength * kLength);
+}
+
+vec4 CalculateSpectrum(Configuration configuration, SpectrumParameters spectrum, ivec3 id, uint tile)
+{
+	uint seed = id.x + configuration.N * id.y + configuration.N;
+	seed += configuration.seed;
+	seed += tile + uint(hash(seed)) * 10;
+	
+	const float lengthScale = configuration.lengthScales[tile];
+	
+	const float halfN = configuration.N / 2.0f;
+
+	const float deltaK = 2.0f * PI / lengthScale;
+	const vec2 K = (id.xy - halfN) * deltaK;
+	const float kLength = length(K);
+
+	const vec4 uniformRandSamples = vec4(hash(seed), hash(seed * 2), hash(seed * 3), hash(seed * 4));
+	const vec2 gauss1 = UniformToGaussian(uniformRandSamples.x, uniformRandSamples.y);
+	const vec2 gauss2 = UniformToGaussian(uniformRandSamples.z, uniformRandSamples.w);
+
+	if (configuration.lowCutoff <= kLength && kLength <= configuration.highCutoff)
+	{
+		const float kAngle = atan(K.y, K.x);
+		const float omega = Dispersion(configuration, kLength);
+		const float dOmegadk = DispersionDerivative(configuration, kLength);
+
+		const float fSpectrum = JONSWAP(configuration, spectrum, omega) * DirectionSpectrum(spectrum, kAngle, omega) * ShortWavesFade(spectrum, kLength);
+            
+		//if (_Spectrums[i * 2 + 1].scale > 0)
+		//	fSpectrum += JONSWAP(omega, _Spectrums[i * 2 + 1]) * DirectionSpectrum(kAngle, omega, _Spectrums[i * 2 + 1]) * ShortWavesFade(kLength, _Spectrums[i * 2 + 1]);
+            
+		return vec4(vec2(gauss2.x, gauss1.y) * sqrt(2 * fSpectrum * abs(dOmegadk) / kLength * deltaK * deltaK), 0.0f, 0.0f);
+	}
+	else
+	{
+		return vec4(0.0f);
+	}
+}
+
+// Displacement
+
+float CalculateDisplacement(vec2 position, float time)
+{
+	float v = 0.0f;
+	for (int i = 0; i < 4; ++i)
+	{
+		const float f = pow(2.0f, i);
+		const float a = sin(position.x * TWO_PI * f);
+		const float b = sin(position.y * TWO_PI * f);
+		v += (a * b) * sin(time * (1.0f + i / 7.0f)) * 1.0f / (i + 1.0f);
+	}
+	return v;
+}
 
 
 	]]>

@@ -4,6 +4,16 @@
 	<![CDATA[
 // Random hash functions
 
+float hash(uint n)
+{
+/*
+	n = (n << 13U) ^ n;
+	n = n * (n * n * 15731U + 0x789221U) + 0x1376312589U;
+	return float(n & uint(0x7fffffffU)) / float(0x7fffffff);
+*/
+	return 0.0f;
+}
+
 float hash12(vec2 p)
 {
     p = 50.0f * fract(p * 0.3183099f);
@@ -23,6 +33,7 @@ vec3 hash33(vec3 p3)
     p3 += dot(p3, p3.yxz + 19.19f);
     return fract((p3.xxy + p3.yxx) * p3.zyx);
 }
+
 	]]>
 	</text>
 </object>
