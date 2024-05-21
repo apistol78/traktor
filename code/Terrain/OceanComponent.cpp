@@ -59,8 +59,8 @@ struct OceanVertex
 };
 #pragma pack()
 
-const uint32_t c_gridSize = 1024;
-const uint32_t c_gridInfSize = 128;
+const uint32_t c_gridSize = 512;
+const uint32_t c_gridInfSize = c_gridSize / 8;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 	}
@@ -204,7 +204,7 @@ void OceanComponent::setup(
 	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
-		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(str(L"Ocean wave %d", i));
 			renderBlock->program = m_shaderWave->getProgram().program;
 			renderBlock->workSize[0] = 512;
