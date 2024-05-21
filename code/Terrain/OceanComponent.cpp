@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include <limits>
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
@@ -42,8 +43,12 @@ const render::Handle s_handleOcean_Eye(L"Ocean_Eye");
 const render::Handle s_handleOcean_ShallowTint(L"Ocean_ShallowTint");
 const render::Handle s_handleOcean_DeepColor(L"Ocean_DeepColor");
 const render::Handle s_handleOcean_Opacity(L"Ocean_Opacity");
-const render::Handle s_handleOcean_ReflectionTexture(L"Ocean_ReflectionTexture");
 const render::Handle s_handleOcean_WaveTexture(L"Ocean_WaveTexture");
+const render::Handle s_handleOcean_WaveTexture0(L"Ocean_WaveTexture0");
+const render::Handle s_handleOcean_WaveTexture1(L"Ocean_WaveTexture1");
+const render::Handle s_handleOcean_WaveTexture2(L"Ocean_WaveTexture2");
+const render::Handle s_handleOcean_WaveTexture3(L"Ocean_WaveTexture3");
+const render::Handle s_handleOcean_TileIndex(L"Ocean_TileIndex");
 const render::Handle s_handleWorld_Time(L"World_Time");
 
 #pragma pack(1)
@@ -75,9 +80,12 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	stcd.mipCount = 1;
 	stcd.format = render::TfR32F;
 	stcd.shaderStorage = true;
-	m_waveTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
-	if (!m_waveTexture)
-		return false;
+	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
+	{
+		m_waveTextures[i] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+		if (!m_waveTextures[i])
+			return false;
+	}
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
@@ -153,12 +161,6 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
-	if (data.m_reflectionTexture)
-	{
-		if (!resourceManager->bind(data.m_reflectionTexture, m_reflectionTexture))
-			return false;
-	}
-
 	m_shallowTint = data.m_shallowTint;
 	m_deepColor = data.m_deepColor;
 	m_opacity = data.m_opacity;
@@ -171,7 +173,8 @@ void OceanComponent::destroy()
 {
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
-	safeDestroy(m_waveTexture);
+	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
+		safeDestroy(m_waveTextures[i]);
 	m_shader.clear();
 }
 
@@ -198,24 +201,28 @@ void OceanComponent::setup(
 	const world::WorldRenderView& worldRenderView
 )
 {
-	Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
-	rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
-		auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean Wave");
-		renderBlock->program = m_shaderWave->getProgram().program;
-		renderBlock->workSize[0] = 512;
-		renderBlock->workSize[1] = 512;
-		renderBlock->workSize[2] = 1;
+	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
+		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(str(L"Ocean wave %d", i));
+			renderBlock->program = m_shaderWave->getProgram().program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
 
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
-		renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTexture, 0);
-		renderBlock->programParams->endParameters(renderContext);
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, i);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_waveTextures[i], 0);
+			renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->compute(renderBlock);
-		renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
-	});
-	context.getRenderGraph().addPass(rp);
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
 }
 
 void OceanComponent::build(
@@ -265,8 +272,10 @@ void OceanComponent::build(
 	renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
-	renderBlock->programParams->setTextureParameter(s_handleOcean_ReflectionTexture, m_reflectionTexture);
-	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture, m_waveTexture);
+	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_waveTextures[0]);
+	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_waveTextures[1]);
+	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_waveTextures[2]);
+	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture3, m_waveTextures[3]);
 
 	if (haveTerrain)
 	{

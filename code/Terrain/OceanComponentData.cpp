@@ -25,7 +25,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 	
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 3, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 4, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shaderWave(c_waveShader)
@@ -53,8 +53,8 @@ void OceanComponentData::serialize(ISerializer& s)
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
-	if (s.getVersion() >= 1)
-		s >> resource::Member< render::ITexture >(L"reflectionTexture", m_reflectionTexture);
+	if (s.getVersion() >= 1 && s.getVersion() < 4)
+		s >> resource::ObsoleteMember< render::ITexture >(L"reflectionTexture");
 
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
 

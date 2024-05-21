@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderModule">
+	<text>
+	<![CDATA[
+// FFT ocean functions
+
+#using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
+
+struct SpectrumParameters
+{
+	float scale;
+	float angle;
+	float spreadBlend;
+	float swell;
+	float alpha;
+	float peakOmega;
+	float gamma;
+	float shortWavesFade;
+};
+
+
+	]]>
+	</text>
+</object>
