@@ -62,4 +62,27 @@ private:
 	value_type& m_ref;
 };
 
+/*! Obsolete member.
+ * 
+ * Instead of declaring dummy variables in each serialize method
+ * use this wrapper instead.
+ */
+template < typename T >
+class ObsoleteMember : public Member< T >
+{
+public:
+	explicit ObsoleteMember(const wchar_t* const name)
+	:	Member< T >(name, m_dummy)
+	{
+	}
+
+	explicit ObsoleteMember(const wchar_t* const name, const Attribute& attributes)
+	:	Member< T >(name, m_dummy, attributes)
+	{
+	}
+
+private:
+	typename Member< T >::value_type m_dummy;
+};
+
 }
