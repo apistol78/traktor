@@ -120,9 +120,13 @@ void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 	if (!m_haveCapture)
 		return;
 
-	const Point position = getParent()->clientToScreen(event->getPosition());
+	Form* parentForm = dynamic_type_cast< Form* >(getAncestor());
+	if (!parentForm)
+		return;
+
+	const Point position = parentForm->clientToScreen(event->getPosition());
 	const Rect rc = m_parentRect.offset(position - m_mousePosition);
-	getParent()->setRect(rc);
+	parentForm->setRect(rc);
 
 	event->consume();
 }
@@ -142,8 +146,11 @@ void CaptionBar::eventSize(SizeEvent* event)
 	}
 
 	{
+		const Form* parentForm = dynamic_type_cast< const Form* >(getAncestor());
+		const bool maximized = (parentForm != nullptr) ? parentForm->isMaximized() : false;
 		const Size sz = m_buttonMaximizeOrRestore->getPreferredSize(Size(0, 0));
 		m_buttonMaximizeOrRestore->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
+		m_buttonMaximizeOrRestore->setImage(new ui::StyleBitmap(maximized ? L"UI.CaptionRestore" : L"UI.CaptionMaximize"));
 		r -= sz.cx + pad;
 	}
 

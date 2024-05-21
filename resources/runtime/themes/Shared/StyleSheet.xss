@@ -574,6 +574,10 @@
 			<second>$(Images.Path)/UI/Maximize.svg</second>
 		</item>
 		<item>
+			<first>UI.CaptionRestore</first>
+			<second>$(Images.Path)/UI/Restore.svg</second>
+		</item>
+		<item>
 			<first>UI.Checked</first>
 			<second>$(Images.Path)/UI/Checked.svg</second>
 		</item>
