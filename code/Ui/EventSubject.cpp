@@ -33,17 +33,14 @@ void EventSubject::raiseEvent(Event* event)
 		// Invoke event handlers reversed as the most prioritized are at the end and they should
 		// be able to "consume" the event so it wont reach other, less prioritized, handlers.
 		const auto& eventHandlers = i->second;
-		for (size_t j = 0; j < eventHandlers.handlers.size(); ++j)
+		for (Ref< IEventHandler > eventHandler : eventHandlers.handlers)
 		{
-			for (Ref< IEventHandler > eventHandler : eventHandlers.handlers[j])
-			{
-				if (!eventHandler)
-					continue;
+			if (!eventHandler)
+				continue;
 
-				eventHandler->notify(event);
-				if (event->consumed())
-					break;
-			}
+			eventHandler->notify(event);
+			if (event->consumed())
+				break;
 		}
 	}
 }
@@ -57,30 +54,13 @@ void EventSubject::removeAllEventHandlers()
 void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
 {
 	auto& eventHandlers = m_eventHandlers[&eventType];
-	int32_t depth = 0;
-
-	// Use class hierarchy depth as handler priority.
-	for (const TypeInfo* type = getTypeInfo().getSuper(); type; type = type->getSuper())
-		++depth;
-
-	// Skip both Object and EventSubject bases as they will only take up space in the event vectors.
-	depth -= 2;
-	T_ASSERT(depth >= 0);
-
-	// Ensure there are enough room in the event handlers vector.
-	if (depth >= (int32_t)eventHandlers.handlers.size())
-		eventHandlers.handlers.resize(depth + 1);
-
-	// Insert event handler first to ensure it's called before previously added handlers.
-	auto& handlers = eventHandlers.handlers[depth];
-	handlers.insert(handlers.begin(), eventHandler);
+	eventHandlers.handlers.push_front(eventHandler);
 }
 
 void EventSubject::removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
 {
 	auto& eventHandlers = m_eventHandlers[&eventType];
-	for (auto i = eventHandlers.handlers.begin(); i != eventHandlers.handlers.end(); ++i)
-		i->remove(eventHandler);
+	eventHandlers.handlers.remove(eventHandler);
 }
 
 bool EventSubject::hasEventHandler(const TypeInfo& eventType)

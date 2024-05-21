@@ -37,13 +37,14 @@ class StreamServer;
 namespace traktor::ui
 {
 
-class ShortcutTable;
+class CaptionBar;
 class Dock;
 class DockPane;
 class Menu;
 class MenuItem;
 class MultiSplitter;
 class ProgressBar;
+class ShortcutTable;
 class StatusBar;
 class Tab;
 class ToolBar;
@@ -192,7 +193,7 @@ private:
 	Ref< ui::DockPane > m_paneWest;
 	Ref< ui::DockPane > m_paneEast;
 	Ref< ui::DockPane > m_paneSouth;
-	Ref< ui::ToolBar > m_menuBar;
+	Ref< ui::CaptionBar > m_menuBar;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::MenuItem > m_menuItemRecent;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;

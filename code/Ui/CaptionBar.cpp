@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2023 Anders Pistol.
+ * Copyright (c) 2023-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,18 +15,12 @@
 
 namespace traktor::ui
 {
-	namespace
-	{
 
-const Unit c_preferedHeightMargin = 8_ut;
-
-	}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CaptionBar", CaptionBar, Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.CaptionBar", CaptionBar, ToolBar)
 
 bool CaptionBar::create(Widget* parent, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!ToolBar::create(parent, style))
 		return false;
 
 	m_buttonMinimize = new MiniButton();
@@ -46,14 +40,13 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	addEventHandler< MouseDoubleClickEvent >(this, &CaptionBar::eventMouseDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &CaptionBar::eventMouseMove);
 	addEventHandler< SizeEvent >(this, &CaptionBar::eventSize);
-	addEventHandler< PaintEvent >(this, &CaptionBar::eventPaint);
 
 	return true;
 }
 
 Size CaptionBar::getPreferredSize(const Size& hint) const
 {
-	Size preferedSize(0, getFontMetric().getHeight() + pixel(c_preferedHeightMargin) * 2);
+	Size preferedSize = ToolBar::getPreferredSize(hint);
 	if (getParent())
 		preferedSize.cx = getParent()->getInnerRect().getWidth();
 	return preferedSize;
@@ -85,20 +78,32 @@ void CaptionBar::eventButtonClick(ButtonClickEvent* event)
 
 void CaptionBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 {
+	// Check if user press on a toolbar item first; then don't move form,
+	ToolBarItem* item = getItem(event->getPosition());
+	if (item != nullptr)
+		return;
+
 	m_mousePosition = getParent()->clientToScreen(event->getPosition());
 	m_parentRect = getParent()->getRect();
-
+	m_haveCapture = true;
 	setCapture();
+
+	event->consume();
 }
 
 void CaptionBar::eventMouseButtonUp(MouseButtonUpEvent* event)
 {
-	releaseCapture();
+	if (m_haveCapture)
+	{
+		m_haveCapture = false;
+		releaseCapture();
+		event->consume();
+	}
 }
 
 void CaptionBar::eventMouseDoubleClick(MouseDoubleClickEvent* event)
 {
-	Form* parentForm = dynamic_type_cast< Form* >(getParent());
+	Form* parentForm = dynamic_type_cast< Form* >(getAncestor());
 	if (!parentForm)
 		return;
 
@@ -106,16 +111,20 @@ void CaptionBar::eventMouseDoubleClick(MouseDoubleClickEvent* event)
 		parentForm->maximize();
 	else
 		parentForm->restore();
+
+	event->consume();
 }
 
 void CaptionBar::eventMouseMove(MouseMoveEvent* event)
 {
-	if (!hasCapture())
+	if (!m_haveCapture)
 		return;
 
 	const Point position = getParent()->clientToScreen(event->getPosition());
 	const Rect rc = m_parentRect.offset(position - m_mousePosition);
 	getParent()->setRect(rc);
+
+	event->consume();
 }
 
 void CaptionBar::eventSize(SizeEvent* event)
@@ -143,38 +152,6 @@ void CaptionBar::eventSize(SizeEvent* event)
 		m_buttonMinimize->setRect({ Point(r - sz.cx, (h - sz.cy) / 2), Size(sz.cx, sz.cy) });
 		r -= sz.cx + pad;
 	}
-}
-
-void CaptionBar::eventPaint(PaintEvent* event)
-{
-	Canvas& canvas = event->getCanvas();
-	Rect rc = getInnerRect();
-	const StyleSheet* ss = getStyleSheet();
-
-	canvas.setBackground(ss->getColor(this, L"background-color"));
-	canvas.fillRect(rc);
-
-	const std::wstring text = getParent()->getText();
-	canvas.setForeground(ss->getColor(this, L"color"));
-
-	Font font = getFont();
-	font.setBold(true);
-	font.setSize(font.getSize() + 2_ut);
-	canvas.setFont(font);
-
-	Rect rcText = rc;
-	rcText.left = pixel(8_ut);
-	rcText.right = rc.right;
-	canvas.drawText(rcText, text, AnLeft, AnCenter);
-
-#if defined(_WIN32)
-	// #hack When using Form without a system caption Windows doesn't draw top shadow line.
-	const Color4ub shadowColor = ss->getColor(this, L"background-color") * Color4ub(128, 128, 128, 255);
-	canvas.setForeground(shadowColor);
-	canvas.drawLine(rc.left, rc.top, rc.right, rc.top);
-#endif
-
-	event->consume();
 }
 
 }

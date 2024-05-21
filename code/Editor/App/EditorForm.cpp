@@ -476,7 +476,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		1280_ut,
 		900_ut,
 		ui::WsResizable | ui::WsSystemBox | ui::WsMinimizeBox | ui::WsMaximizeBox | ui::WsNoCanvas,
-		new ui::TableLayout(L"100%", L"*,*,*,100%,*", 0_ut, 0_ut)
+		new ui::TableLayout(L"100%", L"*,*,100%,*", 0_ut, 0_ut)
 	))
 		return false;
 
@@ -490,12 +490,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->create();
 	m_shortcutTable->addEventHandler< ui::ShortcutEvent >(this, &EditorForm::eventShortcut);
 
-	// Create caption bar.
-	Ref< ui::CaptionBar > captionBar = new ui::CaptionBar();
-	captionBar->create(this);
-
-	// Create menu bar.
-	m_menuBar = new ui::ToolBar();
+	// Create caption menu bar.
+	m_menuBar = new ui::CaptionBar();
 	m_menuBar->create(this);
 	m_menuBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventMenuClick);
 
@@ -541,30 +537,30 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->addItem(menuBuild);
 
 	 // Create toolbar.
-	 m_toolBar = new ui::ToolBar();
-	 m_toolBar->create(this, ui::WsNone);
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"));
-	 m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"));
+	m_toolBar = new ui::ToolBar();
+	m_toolBar->create(this, ui::WsNone);
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Save"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Cut"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Copy"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Paste"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Undo"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Redo"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.Build"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Editor.ToolBar.CancelBuild"));
 
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
-	 m_toolBar->addItem(new ui::ToolBarSeparator());
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
-	 m_toolBar->addItem(new ui::ToolBarSeparator());
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
-	 m_toolBar->addItem(new ui::ToolBarSeparator());
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
-	 m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
-	 m_toolBar->addItem(new ui::ToolBarSeparator());
-	 m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 0, ui::Command(L"Editor.Save")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 1, ui::Command(L"Editor.Cut")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 2, ui::Command(L"Editor.Copy")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 3, ui::Command(L"Editor.Paste")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 4, ui::Command(L"Editor.Undo")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 5, ui::Command(L"Editor.Redo")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 6, ui::Command(L"Editor.Build")));
+	m_toolBar->addItem(new ui::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 7, ui::Command(L"Editor.CancelBuild")));
+	m_toolBar->addItem(new ui::ToolBarSeparator());
+	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventToolClicked);
 
 	updateTitle();
 	updateMRU();

@@ -13,7 +13,6 @@
 #include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Containers/StaticVector.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.
@@ -180,12 +179,10 @@ protected:
 	void removeAllEventHandlers();
 
 private:
-	typedef RefArray< IEventHandler > EventHandlers;
-
 	struct HandlerEntry
 	{
 		int32_t disableCounter = 0;
-		StaticVector< EventHandlers, 16 > handlers;
+		RefArray< IEventHandler > handlers;
 	};
 
 	SmallMap< const TypeInfo*, HandlerEntry > m_eventHandlers;
