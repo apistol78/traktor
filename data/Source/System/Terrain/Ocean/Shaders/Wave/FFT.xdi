@@ -153,7 +153,172 @@ vec4 CalculateSpectrum(Configuration configuration, SpectrumParameters spectrum,
 	}
 }
 
+// Evolve spectrum
+
+vec2 EulerFormula(float x)
+{
+	return vec2(cos(x), sin(x));
+}
+
+vec2 ComplexMult(vec2 a, vec2 b)
+{
+	return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
+}
+
+vec4 EvolveSpectrum(Configuration configuration, ivec3 id, uint tile, vec4 initialSignal, float time, float repeatTime)
+{
+    const float lengthScale = configuration.lengthScales[tile];
+
+	//vec4 initialSignal = _InitialSpectrumTextures[uint3(id.xy, i)];
+	vec2 h0 = initialSignal.xy;
+	vec2 h0conj = initialSignal.zw;
+
+	float halfN = configuration.N / 2.0f;
+	vec2 K = (id.xy - halfN) * 2.0f * PI / lengthScale;
+	float kMag = length(K);
+	float kMagRcp = 1.0f / kMag;
+
+	if (kMag < 0.0001f)
+		kMagRcp = 1.0f;
+
+	float w_0 = 2.0f * PI / repeatTime;
+	float dispersion = floor(sqrt(configuration.gravity * kMag) / w_0) * w_0 * time;
+
+	vec2 exponent = EulerFormula(dispersion);
+	
+	vec2 htilde = ComplexMult(h0, exponent) + ComplexMult(h0conj, vec2(exponent.x, -exponent.y));
+	vec2 ih = vec2(-htilde.y, htilde.x);
+	
+	vec2 displacementX = ih * K.x * kMagRcp;
+	vec2 displacementY = htilde;
+	vec2 displacementZ = ih * K.y * kMagRcp;
+	
+	vec2 displacementX_dx = -htilde * K.x * K.x * kMagRcp;
+	vec2 displacementY_dx = ih * K.x;
+	vec2 displacementZ_dx = -htilde * K.x * K.y * kMagRcp;
+
+	vec2 displacementY_dz = ih * K.y;
+	vec2 displacementZ_dz = -htilde * K.y * K.y * kMagRcp;
+
+	vec2 htildeDisplacementX = vec2(displacementX.x - displacementZ.y, displacementX.y + displacementZ.x);
+	vec2 htildeDisplacementZ = vec2(displacementY.x - displacementZ_dx.y, displacementY.y + displacementZ_dx.x);
+        
+	vec2 htildeSlopeX = vec2(displacementY_dx.x - displacementY_dz.y, displacementY_dx.y + displacementY_dz.x);
+	vec2 htildeSlopeZ = vec2(displacementX_dx.x - displacementZ_dz.y, displacementX_dx.y + displacementZ_dz.x);
+
+	//_SpectrumTextures[uint3(id.xy, i * 2)] = vec4(htildeDisplacementX, htildeDisplacementZ);
+	//_SpectrumTextures[uint3(id.xy, i * 2 + 1)] = vec4(htildeSlopeX, htildeSlopeZ);
+
+	return vec4(htildeDisplacementX, htildeDisplacementZ);
+}
+
+// FFT
+
+vec2 ComplexExp(vec2 a)
+{
+    return vec2(cos(a.y), sin(a.y) * exp(a.x));
+}
+
+vec4 ComputeTwiddleFactorAndInputIndices(Configuration configuration, uvec2 id)
+{
+    uint b = configuration.N >> (id.x + 1);
+    vec2 mult = 2 * PI * vec2(0.0f, 1.0f) / configuration.N;
+    uint i = (2 * b * (id.y / b) + id.y % b) % configuration.N;
+    vec2 twiddle = ComplexExp(-mult * ((id.y / b) * b));
+    return vec4(twiddle, i, i + b);
+}
+
+#define SIZE 512
+#define LOG_SIZE 9
+
+shared vec4 fftGroupBuffer[2][SIZE];
+
+void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
+{
+    const float twoPi = 6.28318530718;
+    uint b = SIZE >> (step + 1);
+    uint w = b * (index / b);
+    uint i = (w + index) % SIZE;
+
+    // sincos(-twoPi / SIZE * w, twiddle.y, twiddle.x);
+	twiddle.x = cos(-twoPi / SIZE * w);
+	twiddle.y = sin(-twoPi / SIZE * w);
+
+    // This is what makes it the inverse FFT
+    twiddle.y = -twiddle.y;
+    indices = uvec2(i, i + b);
+}
+
+vec4 FFT(Configuration configuration, uint threadIndex, vec4 inputData)
+{
+    fftGroupBuffer[0][threadIndex] = inputData;
+    
+	// GroupMemoryBarrierWithGroupSync();
+	groupMemoryBarrier();
+	barrier();
+
+    int flag = 0;
+
+    [[unroll]]
+    for (uint step = 0; step < LOG_SIZE; ++step)
+	{
+        uvec2 inputsIndices;
+        vec2 twiddle;
+        ButterflyValues(step, threadIndex, inputsIndices, twiddle);
+
+        vec4 v = fftGroupBuffer[flag][inputsIndices.y];
+        fftGroupBuffer[1 - flag][threadIndex] = fftGroupBuffer[flag][inputsIndices.x] + vec4(ComplexMult(twiddle, v.xy), ComplexMult(twiddle, v.zw));
+
+        flag = 1 - flag;
+
+        // GroupMemoryBarrierWithGroupSync();
+		groupMemoryBarrier();
+		barrier();
+    }
+
+    return fftGroupBuffer[flag][threadIndex];
+}
+
 // Displacement
+/*
+void GenerateDisplacement(Configuration configuration, ivec3 id, uint tile)
+{
+	const int i = 0;	// Tile
+
+    vec4 htildeDisplacement = Permute(_SpectrumTextures[uvec3(id.xy, i * 2)], id);
+    vec4 htildeSlope = Permute(_SpectrumTextures[uvec3(id.xy, i * 2 + 1)], id);
+
+        vec2 dxdz = htildeDisplacement.rg;
+        vec2 dydxz = htildeDisplacement.ba;
+        vec2 dyxdyz = htildeSlope.rg;
+        vec2 dxxdzz = htildeSlope.ba;
+        
+        float jacobian = (1.0f + _Lambda.x * dxxdzz.x) * (1.0f + _Lambda.y * dxxdzz.y) - _Lambda.x * _Lambda.y * dydxz.y * dydxz.y;
+
+        vec3 displacement = float3(_Lambda.x * dxdz.x, dydxz.x, _Lambda.y * dxdz.y);
+
+        vec2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * _Lambda));
+        float covariance = slopes.x * slopes.y;
+
+        float foam = _DisplacementTextures[uint3(id.xy, i)].a;
+        foam *= exp(-_FoamDecayRate);
+        foam = saturate(foam);
+
+        float biasedJacobian = max(0.0f, -(jacobian - _FoamBias));
+
+        if (biasedJacobian > _FoamThreshold)
+            foam += _FoamAdd * biasedJacobian;
+
+        _DisplacementTextures[uint3(id.xy, i)] = float4(displacement, foam);
+        _SlopeTextures[uint3(id.xy, i)] = float2(slopes);
+
+//        if (i == 0) {
+//            _BuoyancyData[id.xy] = displacement.y;
+//        }
+    }
+}
+*/
+// Old
 
 float CalculateDisplacement(vec2 position, float time)
 {
@@ -167,7 +332,6 @@ float CalculateDisplacement(vec2 position, float time)
 	}
 	return v;
 }
-
 
 	]]>
 	</text>

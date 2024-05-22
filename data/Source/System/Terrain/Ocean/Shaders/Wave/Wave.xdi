@@ -30,8 +30,8 @@
 			<id>{1FCEB2B2-BA09-234B-947F-E99C6B643718}</id>
 			<comment/>
 			<position>
-				<first>-531</first>
-				<second>95</second>
+				<first>-738</first>
+				<second>823</second>
 			</position>
 			<scope>Global</scope>
 		</item>
@@ -39,8 +39,8 @@
 			<id>{C0056A3C-0E63-4642-8376-09BE53451402}</id>
 			<comment/>
 			<position>
-				<first>-277</first>
-				<second>108</second>
+				<first>-490</first>
+				<second>900</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -73,8 +73,8 @@
 			<name>Waves</name>
 			<technique/>
 			<localSize>
-				<X>1</X>
-				<Y>1</Y>
+				<X>16</X>
+				<Y>16</Y>
 				<Z>1</Z>
 			</localSize>
 			<include>
@@ -177,6 +177,492 @@ $Output = CalculateDisplacement(
 				<first>-131</first>
 				<second>279</second>
 			</position>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{DED29228-A7B4-B94E-92BD-36A536C19837}</id>
+			<comment/>
+			<position>
+				<first>694</first>
+				<second>469</second>
+			</position>
+			<technique>Spectrum</technique>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A34B08DA-1CB4-8348-B635-78CE22751D09}</id>
+			<comment/>
+			<position>
+				<first>386</first>
+				<second>493</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{8AC97192-AF20-F74E-AC89-E8C504E23B4F}</id>
+			<comment/>
+			<position>
+				<first>31</first>
+				<second>578</second>
+			</position>
+			<name>Spectrum</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+SpectrumParameters spectrum;
+spectrum.scale = 1.0f;
+spectrum.angle = 0.0f;
+spectrum.spreadBlend = 0.5f;
+spectrum.swell = 0.5f;
+spectrum.alpha = 0.5f;
+spectrum.peakOmega = 1.0f;
+spectrum.gamma = 0.5f;
+spectrum.shortWavesFade = 0.5f;
+
+$Output = CalculateSpectrum(
+	configuration,
+	spectrum,
+	ivec3(position, 0),
+	0
+);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{80323036-2A9F-EB4D-85F0-AED26A8E87B3}</id>
+			<comment/>
+			<position>
+				<first>-357</first>
+				<second>700</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{1E55FCAC-B2CA-5646-992F-91F6EA2E3F5B}</id>
+			<comment/>
+			<position>
+				<first>688</first>
+				<second>659</second>
+			</position>
+			<technique>SpectrumPackConjugate</technique>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{2270E03A-1B79-8D4F-8171-C50166D59B7E}</id>
+			<comment/>
+			<position>
+				<first>-42</first>
+				<second>760</second>
+			</position>
+			<name>PackConjugate</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+					<name>SpectrumTexture</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+const vec2 h0 = imageLoad($SpectrumTexture, position).rg;
+const vec2 h0conj = imageLoad(
+	$SpectrumTexture,
+	ivec2(
+		configuration.N - position.x - 1,
+		configuration.N - position.y - 1
+	)
+).rg;
+
+$Output = vec4(h0, h0conj);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{AF0E6C97-792E-E34D-94A7-250B2AD0FFC2}</id>
+			<comment/>
+			<position>
+				<first>707</first>
+				<second>841</second>
+			</position>
+			<technique>SpectrumEvolve</technique>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{05EC9E4B-B5E0-9B47-AA1A-9E9E45995A89}</id>
+			<comment/>
+			<position>
+				<first>386</first>
+				<second>882</second>
+			</position>
+			<parameterName>Ocean_WaveTexture0</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{E164314D-F74E-B34F-8849-B4EDE073F8D3}</id>
+			<comment/>
+			<position>
+				<first>111</first>
+				<second>955</second>
+			</position>
+			<name>EvolveSpectrum</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{ACA340AC-5A14-6A49-BF86-2B02677A8A48}</id>
+					<name>SpectrumTexture</name>
+				</item>
+				<item>
+					<id>{9A6C987E-E172-9C4E-A745-89DAE97BC987}</id>
+					<name>Time</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+SpectrumParameters spectrum;
+spectrum.scale = 1.0f;
+spectrum.angle = 0.0f;
+spectrum.spreadBlend = 0.5f;
+spectrum.swell = 0.5f;
+spectrum.alpha = 0.5f;
+spectrum.peakOmega = 1.0f;
+spectrum.gamma = 0.5f;
+spectrum.shortWavesFade = 0.5f;
+
+vec4 initialSignal = imageLoad($SpectrumTexture, position);
+
+$Output = EvolveSpectrum(
+	configuration,
+	ivec3(position, 0),
+	0,
+	initialSignal,
+	$Time.x,
+	10.0f
+);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{975A118C-A191-E54E-B1DD-CC9C97D87067}</id>
+			<comment/>
+			<position>
+				<first>-282</first>
+				<second>1014</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{1E96A92E-E667-DA41-B576-A4EC4F26EB5C}</id>
+			<comment/>
+			<position>
+				<first>-122</first>
+				<second>1086</second>
+			</position>
+			<parameterName>World_Time</parameterName>
+			<type>Scalar</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{A880A2E3-6968-034C-B650-7C33CA1A1461}</id>
+			<comment/>
+			<position>
+				<first>90</first>
+				<second>1204</second>
+			</position>
+			<name>Inverse FFT</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+					<name>SpectrumTexture</name>
+				</item>
+				<item>
+					<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
+					<name>Index</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+const vec4 inputData = imageLoad($SpectrumTexture, position);
+
+$Output = FFT(configuration, $Index, inputData);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A1E17E8B-C37E-034A-9736-C38F804627EC}</id>
+			<comment/>
+			<position>
+				<first>-209</first>
+				<second>1294</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{A1979F81-5390-6045-8528-548A43AACA32}</id>
+			<comment/>
+			<position>
+				<first>683</first>
+				<second>1108</second>
+			</position>
+			<technique>InverseFFT_X</technique>
+			<localSize>
+				<X>512</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{83138D11-0CA2-AA49-8D4E-C68E9809EC9F}</id>
+			<comment/>
+			<position>
+				<first>362</first>
+				<second>1149</second>
+			</position>
+			<parameterName>Ocean_WaveTexture0</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2FCB98ED-A313-174F-A4A0-6B0AC1BFEA50}</id>
+			<comment/>
+			<position>
+				<first>288</first>
+				<second>1328</second>
+			</position>
+			<parameterName>Ocean_WaveTexture0</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{2AE91DBB-57CC-1F42-891A-5DACA4182954}</id>
+			<comment/>
+			<position>
+				<first>687</first>
+				<second>1243</second>
+			</position>
+			<technique>InverseFFT_Y</technique>
+			<localSize>
+				<X>512</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{EE408C1D-72BE-8B4B-97CC-87E0ACC5E211}</id>
+			<comment/>
+			<position>
+				<first>-242</first>
+				<second>1364</second>
+			</position>
+			<swizzle>yx</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{83090577-C7BC-464E-8FC8-B7CF8CDDBDE1}</id>
+			<comment/>
+			<position>
+				<first>-208</first>
+				<second>1228</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{F4ADB174-3EE5-5442-B261-8400E435EA74}</id>
+			<comment/>
+			<position>
+				<first>90</first>
+				<second>1402</second>
+			</position>
+			<name>Inverse FFT</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+					<name>SpectrumTexture</name>
+				</item>
+				<item>
+					<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
+					<name>Index</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+const vec4 inputData = imageLoad($SpectrumTexture, position);
+
+$Output = FFT(configuration, $Index, inputData);
+			]]>
+			</script>
 		</item>
 	</nodes>
 	<edges>
@@ -318,6 +804,296 @@ $Output = CalculateDisplacement(
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{0251C710-E6D5-1745-9186-28E3773397DC}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[19]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{ACA340AC-5A14-6A49-BF86-2B02677A8A48}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<id>{9A6C987E-E172-9C4E-A745-89DAE97BC987}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{A4DF10B1-6E76-6E48-B0A1-5FA0E5B5CBD3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{F69BE5F1-4CA5-7F4E-8E1B-0F2DA5479E48}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
 			</destination>
 		</item>
 	</edges>

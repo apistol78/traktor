@@ -87,6 +87,10 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 			return false;
 	}
 
+	stcd.format = render::TfR32G32B32A32F;
+	m_spectrumTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+	m_evolvedSpectrumTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(OceanVertex, edge)));
@@ -201,6 +205,139 @@ void OceanComponent::setup(
 	const world::WorldRenderView& worldRenderView
 )
 {
+
+	/* Do once begin */
+
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute spectrum");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean spectrum");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"Spectrum"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute spectrum pack conjugate");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean spectrum pack conjugate");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"SpectrumPackConjugate"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
+	/* Do once end */
+
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute spectrum evolve");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean spectrum evolve");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"SpectrumEvolve"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute inverse FFT X");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean inverse FFT X");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"InverseFFT_X"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute inverse FFT Y");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean inverse FFT Y");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"InverseFFT_Y"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
 	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
