@@ -42,8 +42,7 @@ void FloodLayout::update(Widget* widget)
 		return;
 
 	const Rect rc = widget->getInnerRect().inflate(-m_margin.cx, -m_margin.cy);
-	const WidgetRect wr = { child, rc };
-	child->setChildRects(&wr, 1, false);
+	child->setRect(rc);
 }
 
 Ref< Widget > FloodLayout::getFirstVisibleChild(Widget* widget)
