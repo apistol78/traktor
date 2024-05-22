@@ -118,7 +118,7 @@ void Dock::update(const Rect* rc, bool immediate)
 	const Rect innerRect = getInnerRect();
 	AlignedVector< WidgetRect > widgetRects;
 	m_pane->update(innerRect, widgetRects);
-	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), false);
+	setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
 
 	// Continue updating widget.
 	Widget::update(rc, immediate);
