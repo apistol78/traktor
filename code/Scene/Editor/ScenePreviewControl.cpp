@@ -166,7 +166,7 @@ void ScenePreviewControl::destroy()
 	m_context->getEditor()->commitGlobalSettings();
 
 	// Remove idle event handler.
-	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
+	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
 
 	// Destroy render controls.
 	for (auto renderControl : m_renderControls)

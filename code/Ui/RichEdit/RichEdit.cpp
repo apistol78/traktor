@@ -376,7 +376,7 @@ void RichEdit::insert(const std::wstring& text)
 
 	const std::wstring tmp = traktor::replaceAll(text, L"\r\n", L"\n");
 	for (auto ch : tmp)
-		insertCharacter(ch, false);
+		insertCharacter(ch, false, 0);
 
 	CaretEvent caretEvent(this);
 	raiseEvent(&caretEvent);
@@ -861,7 +861,7 @@ void RichEdit::deleteCharacters()
 	raiseEvent(&contentChangeEvent);
 }
 
-void RichEdit::insertCharacter(wchar_t ch, bool issueEvents)
+void RichEdit::insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState)
 {
 	if (ch == L'\n' || ch == L'\r')
 	{
@@ -886,18 +886,31 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents)
 			const int32_t indentFromLine = getLineFromOffset(m_selectionStart);
 			const int32_t indentToLine = getLineFromOffset(m_selectionStop - 1);
 
-			if (indentFromLine <= indentToLine)
+			if (indentFromLine < indentToLine)
 			{
-				for (int32_t i = indentFromLine; i <= indentToLine; ++i)
+				if ((keyState & KsShift) == 0)
 				{
-					const int32_t offset = getLineOffset(i);
-					insertAt(offset, L'\t');
+					for (int32_t i = indentFromLine; i <= indentToLine; ++i)
+					{
+						const int32_t offset = getLineOffset(i);
+						insertAt(offset, L'\t');
+					}
+					m_caret++;
+				}
+				else
+				{
+					for (int32_t i = indentFromLine; i <= indentToLine; ++i)
+					{
+						const int32_t offset = getLineOffset(i);
+						const Character& ch = *(m_text.begin() + offset);
+						if (ch.ch == '\t')
+							deleteAt(offset);
+					}
+					m_caret--;
 				}
 
 				m_selectionStart = getLineOffset(indentFromLine);
 				m_selectionStop = getLineOffset(indentToLine) + getLineLength(indentToLine);
-
-				m_caret++;
 
 				if (issueEvents)
 				{
@@ -937,6 +950,45 @@ void RichEdit::insertCharacter(wchar_t ch, bool issueEvents)
 			ContentChangeEvent contentChangeEvent(this);
 			raiseEvent(&contentChangeEvent);
 		}
+	}
+}
+
+void RichEdit::deleteAt(int32_t offset)
+{
+	auto it = m_text.begin() + offset;
+	m_text.erase(it);
+
+	for (uint32_t i = 0; i < m_lines.size(); )
+	{
+		Line& ln = m_lines[i];
+		if (offset >= ln.start && offset <= ln.stop)
+		{
+			if (offset == ln.stop)
+			{
+				if (i < m_lines.size() - 1)
+				{
+					Line& nx = m_lines[i + 1];
+					ln.stop = nx.stop - 1;
+					m_lines.erase(m_lines.begin() + i + 1);
+				}
+				++i;
+			}
+			else if (ln.start < ln.stop)
+			{
+				ln.stop--;
+				++i;
+			}
+			else
+				m_lines.erase(m_lines.begin() + i);
+		}
+		else if (offset <= ln.start)
+		{
+			ln.start--;
+			ln.stop--;
+			++i;
+		}
+		else
+			++i;
 	}
 }
 
@@ -1461,8 +1513,8 @@ void RichEdit::eventKeyDown(KeyDownEvent* event)
 
 void RichEdit::eventKey(KeyEvent* event)
 {
-	const int32_t ks = event->getKeyState();
-	const bool ctrl = ((ks & KsControl) != 0);
+	const int32_t keyState = event->getKeyState();
+	const bool ctrl = ((keyState & KsControl) != 0);
 
 	const wchar_t ch = event->getCharacter();
 	const wchar_t uch = std::toupper(ch);
@@ -1478,7 +1530,7 @@ void RichEdit::eventKey(KeyEvent* event)
 	else if (ctrl && uch == L'D')
 		unselect();
 	else if (ch != 8 && ch != 127)
-		insertCharacter(ch, true);
+		insertCharacter(ch, true, keyState);
 
 	updateScrollBars();
 	scrollToCaret();

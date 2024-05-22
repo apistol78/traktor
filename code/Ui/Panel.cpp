@@ -31,7 +31,7 @@ bool Panel::create(Widget* parent, const std::wstring& text, Layout* layout)
 
 void Panel::destroy()
 {
-	Application::getInstance()->removeEventHandler< FocusEvent >(m_focusEventHandler);
+	Application::getInstance()->removeEventHandler(m_focusEventHandler);
 	Widget::destroy();
 }
 

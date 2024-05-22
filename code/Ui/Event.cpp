@@ -26,7 +26,7 @@ EventSubject* Event::getSender() const
 	return m_sender;
 }
 
-int Event::getKeyState() const
+int32_t Event::getKeyState() const
 {
 	auto application = Application::getInstance();
 	if (application != nullptr && application->getEventLoop() != nullptr)

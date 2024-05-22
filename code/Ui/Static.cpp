@@ -27,17 +27,26 @@ bool Static::create(Widget* parent, const std::wstring& text)
 	return true;
 }
 
-Size Static::getPreferredSize(const Size& hint) const
+void Static::setText(const std::wstring& text)
 {
-	Size extent(0, 0);
 	const auto fontMetric = getFontMetric();
-	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
+
+	Widget::setText(text);
+
+	// Split text into lines and also calculate bounding extent.
+	m_extent = Size(0, 0);
+	for (auto s : StringSplit< std::wstring >(text, L"\n\r"))
 	{
 		const auto sz = fontMetric.getExtent(s);
-		extent.cx = std::max(sz.cx, extent.cx);
-		extent.cy += sz.cy;
+		m_lines.push_back({ m_extent.cy, s });
+		m_extent.cx = std::max(sz.cx, m_extent.cx);
+		m_extent.cy += sz.cy;
 	}
-	return extent + Size(pixel(1_ut), pixel(1_ut));
+}
+
+Size Static::getPreferredSize(const Size& hint) const
+{
+	return m_extent + Size(pixel(1_ut), pixel(1_ut));
 }
 
 Size Static::getMaximumSize() const
@@ -55,16 +64,8 @@ void Static::eventPaint(PaintEvent* event)
 	canvas.fillRect(rcInner);
 
 	canvas.setForeground(ss->getColor(this, isEnable(true) ? L"color" : L"color-disabled"));
-
-	Point pt(0, 0);
-
-	const auto fontMetric = getFontMetric();
-	for (auto s : StringSplit< std::wstring >(getText(), L"\n\r"))
-	{
-		const auto sz = fontMetric.getExtent(s);
-		canvas.drawText(pt, s);
-		pt.y += sz.cy;
-	}
+	for (const auto& line : m_lines)
+		canvas.drawText(Point(0, line.first), line.second);
 
 	event->consume();
 }

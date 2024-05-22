@@ -30,7 +30,7 @@ bool SearchControl::create(ui::Widget* parent)
 		return false;
 
 	m_editSearch = new ui::Edit();
-	m_editSearch->create(this, L"", ui::WsBorder | ui::WsWantAllInput);
+	m_editSearch->create(this, L"", ui::WsWantAllInput);
 	m_editSearch->addEventHandler< ui::KeyDownEvent >(this, &SearchControl::eventEditSearchKeyDown);
 	m_editSearch->addEventHandler< ui::ContentChangeEvent >(this, &SearchControl::eventEditChange);
 

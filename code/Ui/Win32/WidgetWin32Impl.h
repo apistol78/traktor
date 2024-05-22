@@ -315,6 +315,8 @@ public:
 
 	virtual void setChildRects(const IWidgetRect* childRects, uint32_t count, bool redraw) override
 	{
+		const UINT flags = SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE | SWP_NOCOPYBITS | SWP_NOSENDCHANGING | (redraw ? 0 : SWP_NOREDRAW);
+
 		HDWP hdwp = BeginDeferWindowPos((int)count);
 		if (hdwp)
 		{
@@ -328,7 +330,7 @@ public:
 					childRects[i].rect.top,
 					childRects[i].rect.getWidth(),
 					childRects[i].rect.getHeight(),
-					SWP_NOZORDER | SWP_NOACTIVATE | (redraw ? 0 : SWP_NOREDRAW)
+					flags
 				);
 				if (!hdwp)
 					break;
@@ -350,7 +352,7 @@ public:
 				childRects[i].rect.top,
 				childRects[i].rect.getWidth(),
 				childRects[i].rect.getHeight(),
-				SWP_NOZORDER | SWP_NOACTIVATE | (redraw ? 0 : SWP_NOREDRAW)
+				flags
 			);
 		}
 	}

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Containers/AlignedVector.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -31,11 +32,16 @@ class T_DLLCLASS Static : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text = L"");
 
+	virtual void setText(const std::wstring& text) override;
+
 	virtual Size getPreferredSize(const Size& hint) const override;
 
 	virtual Size getMaximumSize() const override;
 
 private:
+	AlignedVector< std::pair< int32_t, std::wstring > > m_lines;
+	Size m_extent = Size(0, 0);
+
 	void eventPaint(PaintEvent* event);
 };
 

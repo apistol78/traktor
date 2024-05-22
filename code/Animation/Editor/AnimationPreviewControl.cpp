@@ -156,7 +156,7 @@ bool AnimationPreviewControl::create(ui::Widget* parent)
 
 void AnimationPreviewControl::destroy()
 {
-	ui::Application::getInstance()->removeEventHandler< ui::IdleEvent >(m_idleEventHandler);
+	ui::Application::getInstance()->removeEventHandler(m_idleEventHandler);
 
 	m_sceneInstance.clear();
 	m_mesh.clear();

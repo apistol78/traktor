@@ -47,8 +47,8 @@ bool MenuShell::create(Widget* parent, int32_t maxItems)
 
 void MenuShell::destroy()
 {
-	Application::getInstance()->removeEventHandler< MouseButtonUpEvent >(m_eventHandlerButtonUp);
-	Application::getInstance()->removeEventHandler< MouseButtonDownEvent >(m_eventHandlerButtonDown);
+	Application::getInstance()->removeEventHandler(m_eventHandlerButtonUp);
+	Application::getInstance()->removeEventHandler(m_eventHandlerButtonDown);
 
 	Widget::destroy();
 }

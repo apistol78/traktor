@@ -143,13 +143,7 @@ public:
 		return eventHandler;
 	}
 
-	void removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler);
-
-	template < typename EventType >
-	void removeEventHandler(IEventHandler* eventHandler)
-	{
-		removeEventHandler(type_of< EventType >(), eventHandler);
-	}
+	void removeEventHandler(IEventHandler* eventHandler);
 
 	bool hasEventHandler(const TypeInfo& eventType);
 

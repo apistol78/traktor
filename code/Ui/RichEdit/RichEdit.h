@@ -277,7 +277,9 @@ private:
 
 	void deleteCharacters();
 
-	void insertCharacter(wchar_t ch, bool issueEvents);
+	void insertCharacter(wchar_t ch, bool issueEvents, int32_t keyState);
+
+	void deleteAt(int32_t offset);
 
 	void insertAt(int32_t offset, wchar_t ch);
 

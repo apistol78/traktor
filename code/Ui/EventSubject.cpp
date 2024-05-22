@@ -35,9 +35,6 @@ void EventSubject::raiseEvent(Event* event)
 		const auto& eventHandlers = i->second;
 		for (Ref< IEventHandler > eventHandler : eventHandlers.handlers)
 		{
-			if (!eventHandler)
-				continue;
-
 			eventHandler->notify(event);
 			if (event->consumed())
 				break;
@@ -57,10 +54,10 @@ void EventSubject::addEventHandler(const TypeInfo& eventType, IEventHandler* eve
 	eventHandlers.handlers.push_front(eventHandler);
 }
 
-void EventSubject::removeEventHandler(const TypeInfo& eventType, IEventHandler* eventHandler)
+void EventSubject::removeEventHandler(IEventHandler* eventHandler)
 {
-	auto& eventHandlers = m_eventHandlers[&eventType];
-	eventHandlers.handlers.remove(eventHandler);
+	for (auto& it : m_eventHandlers)
+		it.second.handlers.remove(eventHandler);
 }
 
 bool EventSubject::hasEventHandler(const TypeInfo& eventType)

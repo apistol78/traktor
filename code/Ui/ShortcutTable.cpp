@@ -34,7 +34,7 @@ bool ShortcutTable::create()
 
 void ShortcutTable::destroy()
 {
-	ui::Application::getInstance()->removeEventHandler< KeyDownEvent >(m_keyDownEventHandler);
+	ui::Application::getInstance()->removeEventHandler(m_keyDownEventHandler);
 	removeAllCommands();
 }
 
