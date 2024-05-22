@@ -228,7 +228,7 @@ void OceanComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 		});
 		context.getRenderGraph().addPass(rp);
 	}
@@ -253,7 +253,7 @@ void OceanComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 		});
 		context.getRenderGraph().addPass(rp);
 	}
@@ -281,7 +281,7 @@ void OceanComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 		});
 		context.getRenderGraph().addPass(rp);
 	}
@@ -307,7 +307,7 @@ void OceanComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 		});
 		context.getRenderGraph().addPass(rp);
 	}
@@ -333,11 +333,39 @@ void OceanComponent::setup(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Vertex, nullptr, 0);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
 		});
 		context.getRenderGraph().addPass(rp);
 	}
 
+	{
+		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute generate");
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean generate");
+
+			const render::Shader::Permutation perm(render::getParameterHandle(L"Generate"));
+
+			renderBlock->program = m_shaderWave->getProgram(perm).program;
+			renderBlock->workSize[0] = 512;
+			renderBlock->workSize[1] = 512;
+			renderBlock->workSize[2] = 1;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
+			renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
+			renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_evolvedSpectrumTexture, 0);
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->compute(renderBlock);
+			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, nullptr, 0);
+		});
+		context.getRenderGraph().addPass(rp);
+	}
+
+	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
+		m_waveTextures[i] = m_evolvedSpectrumTexture;
+/*
 	for (int32_t i = 0; i < sizeof_array(m_waveTextures); ++i)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute waves");
@@ -360,6 +388,7 @@ void OceanComponent::setup(
 		});
 		context.getRenderGraph().addPass(rp);
 	}
+	*/
 }
 
 void OceanComponent::build(

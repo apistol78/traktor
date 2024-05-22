@@ -241,8 +241,8 @@ void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
     uint i = (w + index) % SIZE;
 
     // sincos(-twoPi / SIZE * w, twiddle.y, twiddle.x);
-	twiddle.x = cos(-twoPi / SIZE * w);
 	twiddle.y = sin(-twoPi / SIZE * w);
+	twiddle.x = cos(-twoPi / SIZE * w);
 
     // This is what makes it the inverse FFT
     twiddle.y = -twiddle.y;
@@ -280,13 +280,23 @@ vec4 FFT(Configuration configuration, uint threadIndex, vec4 inputData)
 }
 
 // Displacement
-/*
-void GenerateDisplacement(Configuration configuration, ivec3 id, uint tile)
+
+vec4 Permutate(vec4 data, ivec3 id)
+{
+	return data * (1.0f - 2.0f * ((id.x + id.y) % 2));
+}
+
+vec4 GenerateDisplacement(Configuration configuration, ivec3 id, uint tile, vec4 htildeDisplacement, vec4 htildeSlope)
 {
 	const int i = 0;	// Tile
 
-    vec4 htildeDisplacement = Permute(_SpectrumTextures[uvec3(id.xy, i * 2)], id);
-    vec4 htildeSlope = Permute(_SpectrumTextures[uvec3(id.xy, i * 2 + 1)], id);
+    //vec4 htildeDisplacement = Permute(_SpectrumTextures[uvec3(id.xy, i * 2)], id);
+    //vec4 htildeSlope = Permute(_SpectrumTextures[uvec3(id.xy, i * 2 + 1)], id);
+
+	htildeDisplacement = Permutate(htildeDisplacement, id);
+	htildeSlope = Permutate(htildeSlope, id);
+
+	vec2 _Lambda = vec2(1.0f, 1.0f);
 
         vec2 dxdz = htildeDisplacement.rg;
         vec2 dydxz = htildeDisplacement.ba;
@@ -295,29 +305,31 @@ void GenerateDisplacement(Configuration configuration, ivec3 id, uint tile)
         
         float jacobian = (1.0f + _Lambda.x * dxxdzz.x) * (1.0f + _Lambda.y * dxxdzz.y) - _Lambda.x * _Lambda.y * dydxz.y * dydxz.y;
 
-        vec3 displacement = float3(_Lambda.x * dxdz.x, dydxz.x, _Lambda.y * dxdz.y);
+        vec3 displacement = vec3(_Lambda.x * dxdz.x, dydxz.x, _Lambda.y * dxdz.y);
 
-        vec2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * _Lambda));
-        float covariance = slopes.x * slopes.y;
+		return vec4(displacement, 0.0f);
 
-        float foam = _DisplacementTextures[uint3(id.xy, i)].a;
-        foam *= exp(-_FoamDecayRate);
-        foam = saturate(foam);
+//        vec2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * _Lambda));
+//        float covariance = slopes.x * slopes.y;
 
-        float biasedJacobian = max(0.0f, -(jacobian - _FoamBias));
+//        float foam = _DisplacementTextures[uint3(id.xy, i)].a;
+//        foam *= exp(-_FoamDecayRate);
+//        foam = saturate(foam);
 
-        if (biasedJacobian > _FoamThreshold)
-            foam += _FoamAdd * biasedJacobian;
+//        float biasedJacobian = max(0.0f, -(jacobian - _FoamBias));
 
-        _DisplacementTextures[uint3(id.xy, i)] = float4(displacement, foam);
-        _SlopeTextures[uint3(id.xy, i)] = float2(slopes);
+//        if (biasedJacobian > _FoamThreshold)
+//            foam += _FoamAdd * biasedJacobian;
+
+//        _DisplacementTextures[uint3(id.xy, i)] = float4(displacement, foam);
+//        _SlopeTextures[uint3(id.xy, i)] = float2(slopes);
 
 //        if (i == 0) {
 //            _BuoyancyData[id.xy] = displacement.y;
 //        }
-    }
+//    }
 }
-*/
+
 // Old
 
 float CalculateDisplacement(vec2 position, float time)

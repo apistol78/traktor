@@ -5,8 +5,8 @@
 			<id>{095A17AD-C3B2-4D45-BD20-E7FACDCC696F}</id>
 			<comment/>
 			<position>
-				<first>693</first>
-				<second>183</second>
+				<first>742</first>
+				<second>1777</second>
 			</position>
 			<technique>Default</technique>
 			<localSize>
@@ -19,8 +19,8 @@
 			<id>{3CDB2372-CEE8-FC46-ACD2-740B4FE1D4E1}</id>
 			<comment/>
 			<position>
-				<first>360</first>
-				<second>199</second>
+				<first>409</first>
+				<second>1793</second>
 			</position>
 			<parameterName>Ocean_WaveTexture</parameterName>
 			<type>Image2D</type>
@@ -244,17 +244,17 @@ configuration.depth = 20.0f;
 configuration.gravity = 9.81f;
 configuration.lowCutoff = 0.0001f;
 configuration.highCutoff = 9000.0f;
-configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+configuration.lengthScales = vec4(100.0f, 1.0f, 1.0f, 1.0f);
 
 SpectrumParameters spectrum;
-spectrum.scale = 1.0f;
+spectrum.scale = 0.02f;
 spectrum.angle = 0.0f;
 spectrum.spreadBlend = 0.5f;
 spectrum.swell = 0.5f;
 spectrum.alpha = 0.5f;
 spectrum.peakOmega = 1.0f;
 spectrum.gamma = 0.5f;
-spectrum.shortWavesFade = 0.5f;
+spectrum.shortWavesFade = 0.15f;
 
 $Output = CalculateSpectrum(
 	configuration,
@@ -262,6 +262,7 @@ $Output = CalculateSpectrum(
 	ivec3(position, 0),
 	0
 );
+
 			]]>
 			</script>
 		</item>
@@ -602,8 +603,8 @@ $Output = FFT(configuration, $Index, inputData);
 			<id>{83090577-C7BC-464E-8FC8-B7CF8CDDBDE1}</id>
 			<comment/>
 			<position>
-				<first>-208</first>
-				<second>1228</second>
+				<first>-157</first>
+				<second>1239</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -664,6 +665,102 @@ $Output = FFT(configuration, $Index, inputData);
 			]]>
 			</script>
 		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{4DFB091D-8730-4548-A500-22D99D929C05}</id>
+			<comment/>
+			<position>
+				<first>178</first>
+				<second>1639</second>
+			</position>
+			<name>Generate displacement</name>
+			<technique/>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+			<include>
+				<item>{E21A21CC-F70C-474E-87DD-9D7B89AAC05F}</item>
+			</include>
+			<inputPins>
+				<item>
+					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+					<name>Position</name>
+				</item>
+				<item>
+					<id>{A100C668-C7CE-47C8-8EAE-2AADAA14123B}</id>
+					<name>Texture</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+ivec2 position = $Position.xy;
+
+Configuration configuration;
+configuration.N = 512;
+configuration.seed = 0;
+configuration.depth = 20.0f;
+configuration.gravity = 9.81f;
+configuration.lowCutoff = 0.0001f;
+configuration.highCutoff = 9000.0f;
+configuration.lengthScales = vec4(256.0f, 1.0f, 1.0f, 1.0f);
+
+vec4 htildeDisplacement = imageLoad($Texture, position);
+vec4 htildeSlope = vec4(0.0f);
+
+$Output = GenerateDisplacement(
+	configuration,
+	ivec3(position, 0),
+	0,
+	htildeDisplacement,
+	htildeSlope
+);
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.ComputeOutput" version="2,traktor.render.Node:1">
+			<id>{AF4BAE1E-B542-42C0-9EAB-E4CB9B563AC6}</id>
+			<comment/>
+			<position>
+				<first>708</first>
+				<second>1564</second>
+			</position>
+			<technique>Generate</technique>
+			<localSize>
+				<X>16</X>
+				<Y>16</Y>
+				<Z>1</Z>
+			</localSize>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{8BC51D82-38FC-45A0-BDDA-629C402DCF7B}</id>
+			<comment/>
+			<position>
+				<first>421</first>
+				<second>1566</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{BAE9354B-059B-4513-B205-385F37871512}</id>
+			<comment/>
+			<position>
+				<first>-117</first>
+				<second>1630</second>
+			</position>
+			<parameterName>Ocean_WaveTexture</parameterName>
+			<type>Image2D</type>
+			<frequency>Once</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -714,16 +811,6 @@ $Output = FFT(configuration, $Index, inputData);
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -1093,6 +1180,66 @@ $Output = FFT(configuration, $Index, inputData);
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{60D25829-A948-4883-B26F-F2BE12B49891}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{A100C668-C7CE-47C8-8EAE-2AADAA14123B}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{0907D535-A1B6-409A-A70A-C250D3CDCD58}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
+				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{BEA4FC3C-DC18-F842-9721-2BF4E52B8C42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<id>{4356E929-19D3-45DD-8143-0168015DB701}</id>
 			</destination>
 		</item>

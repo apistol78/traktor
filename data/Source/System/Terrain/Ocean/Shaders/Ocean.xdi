@@ -16,8 +16,8 @@
 			<id>{28DF02C7-A4C6-FE49-A2AF-1C3067BDCC63}</id>
 			<comment/>
 			<position>
-				<first>655</first>
-				<second>-51</second>
+				<first>586</first>
+				<second>-33</second>
 			</position>
 			<parameterName>Ocean_Eye</parameterName>
 			<type>Vector</type>
@@ -27,8 +27,8 @@
 			<id>{5EB1A808-AB18-EE45-9E22-B94DF9FE5976}</id>
 			<comment/>
 			<position>
-				<first>825</first>
-				<second>-75</second>
+				<first>817</first>
+				<second>-47</second>
 			</position>
 			<swizzle>x0z</swizzle>
 		</item>
@@ -36,8 +36,8 @@
 			<id>{8AA18707-44AC-2644-8B41-ED4A2140AB74}</id>
 			<comment/>
 			<position>
-				<first>186</first>
-				<second>-139</second>
+				<first>118</first>
+				<second>-171</second>
 			</position>
 			<parameterName>World_World</parameterName>
 			<type>Matrix</type>
@@ -47,8 +47,8 @@
 			<id>{C8A35F03-174D-CD40-B5D7-753769D81BF5}</id>
 			<comment/>
 			<position>
-				<first>402</first>
-				<second>-169</second>
+				<first>342</first>
+				<second>-164</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
@@ -1478,7 +1478,7 @@ Detail normal
 				<first>-392</first>
 				<second>524</second>
 			</position>
-			<value>0.8</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{C71CF517-7DAB-AB47-A04C-BA343330BEEB}</id>
@@ -1487,7 +1487,7 @@ Detail normal
 				<first>-392</first>
 				<second>559</second>
 			</position>
-			<value>0.6</value>
+			<value>0</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{CD2AF069-3EE5-3A47-A4F9-E4FEB0F022D9}</id>
@@ -1496,7 +1496,7 @@ Detail normal
 				<first>-392</first>
 				<second>594</second>
 			</position>
-			<value>0.5</value>
+			<value>0</value>
 		</item>
 		<item type="traktor.render.Scalar" version="traktor.render.Node:1">
 			<id>{10BB71A4-62CD-D84D-90BB-A3EAA6273E2A}</id>
@@ -1505,7 +1505,7 @@ Detail normal
 				<first>-392</first>
 				<second>636</second>
 			</position>
-			<value>0.4</value>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1557,26 +1557,6 @@ Detail normal
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -2867,6 +2847,26 @@ Detail normal
 			<destination>
 				<node ref="/object/nodes/item[118]"/>
 				<id>{FE413452-19EB-4DC9-B724-2984FA17CC20}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{BD91C9E9-9950-4EC8-BAD2-60D2E8699107}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
 			</destination>
 		</item>
 	</edges>
