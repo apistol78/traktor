@@ -118,7 +118,7 @@ private:
 
 	Ref< ui::TreeViewItem > buildTreeItemSplit(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
-	void updateGridInstances();
+	void updateGridInstances(const db::Instance* highlightInstance);
 
 	void filterType(db::Instance* instance);
 

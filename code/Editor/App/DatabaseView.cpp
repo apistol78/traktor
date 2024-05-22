@@ -583,24 +583,44 @@ void DatabaseView::updateView()
 
 	m_treeDatabase->applyState(treeState);
 	if (viewMode == 1)
-		updateGridInstances();
+		updateGridInstances(nullptr);
 
 	m_splitter->update();
 }
 
 bool DatabaseView::highlight(const db::Instance* instance)
 {
+	const int32_t viewMode = m_toolViewMode->getSelected();
+
 	RefArray< ui::TreeViewItem > items;
 	m_treeDatabase->getItems(items, ui::TreeView::GfDescendants);
-	for (auto item : items)
+
+	if (viewMode == 0)
 	{
-		if (item->getData< db::Instance >(L"INSTANCE") == instance)
+		for (auto item : items)
 		{
-			item->show();
-			item->select();
-			return true;
+			if (item->getData< db::Instance >(L"INSTANCE") == instance)
+			{
+				item->show();
+				item->select();
+				return true;
+			}
 		}
 	}
+	else if (viewMode == 1)
+	{
+		for (auto item : items)
+		{
+			if (item->getData< db::Group >(L"GROUP") == instance->getParent())
+			{
+				item->show();
+				item->select();
+			}
+		}
+		updateGridInstances(instance);
+		return true;
+	}
+
 	return false;
 }
 
@@ -1212,7 +1232,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItemSplit(ui::TreeView* treeView,
 	return groupItem;
 }
 
-void DatabaseView::updateGridInstances()
+void DatabaseView::updateGridInstances(const db::Instance* highlightInstance)
 {
 	// Grid is only visible in "split" mode.
 	const int32_t viewMode = m_toolViewMode->getSelected();
@@ -1258,6 +1278,10 @@ void DatabaseView::updateGridInstances()
 		item->setSubText(getCategoryText(primaryType));
 		item->setData(L"GROUP", childInstance->getParent());
 		item->setData(L"INSTANCE", childInstance);
+
+		if (highlightInstance)
+			item->setSelected(highlightInstance == childInstance);
+
 		previewItems->add(item);
 
 		// Get thumbnail preview of instance.
@@ -1505,7 +1529,7 @@ void DatabaseView::eventInstanceSelect(ui::SelectionChangeEvent* event)
 	if (m_treeDatabase->getItems(items, ui::TreeView::GfDescendants | ui::TreeView::GfSelectedOnly) <= 0)
 		return;
 
-	updateGridInstances();
+	updateGridInstances(nullptr);
 }
 
 void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)

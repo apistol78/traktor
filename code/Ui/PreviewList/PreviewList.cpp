@@ -41,11 +41,7 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 
 void PreviewList::setItems(PreviewItems* items)
 {
-	if ((m_items = items) != nullptr)
-	{
-		for (int32_t i = 0; i < m_items->count(); ++i)
-			m_items->get(i)->setSelected(false);
-	}
+	m_items = items;
 	requestUpdate();
 }
 
