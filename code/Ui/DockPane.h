@@ -67,13 +67,11 @@ public:
 
 	void showTab(int32_t tab);
 
-
 	void showWidget(Widget* widget);
 
 	void hideWidget(Widget* widget);
 
 	bool isWidgetVisible(const Widget* widget) const;
-
 
 	DockPane* findWidgetPane(const Widget* widget);
 
@@ -103,6 +101,10 @@ public:
 
 	bool isStackable() const;
 
+	void setAlwaysVisible(bool alwaysVisible);
+
+	bool isAlwaysVisible() const;
+
 	bool isVisible() const;
 
 private:
@@ -129,6 +131,7 @@ private:
 	bool m_detachable = true;
 	bool m_stackable = false;
 	bool m_vertical = false;
+	bool m_alwaysVisible = false;
 
 	void synchronizeVisibility();
 

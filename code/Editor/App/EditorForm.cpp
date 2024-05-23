@@ -581,6 +581,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->setDetachable(false);
 
 	// Set pane styles.
+	m_paneEast->setAlwaysVisible(true);
 	m_paneSouth->setStackable(true);
 
 	// Create panes.

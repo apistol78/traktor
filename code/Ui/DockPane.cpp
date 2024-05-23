@@ -365,7 +365,6 @@ DockPane* DockPane::getPaneFromPosition(const Point& position)
 		}
 	}
 
-	//if (m_widget && m_widget->isVisible(false))
 	if (!m_widgets.empty())
 		return this;
 	else
@@ -387,7 +386,6 @@ DockPane* DockPane::getSplitterFromPosition(const Point& position)
 		}
 	}
 
-	//if (m_widget && m_widget->isVisible(false))
 	if (!m_widgets.empty())
 		return nullptr;
 	else
@@ -398,7 +396,7 @@ bool DockPane::hitGripper(const Point& position) const
 {
 	T_ASSERT(m_rect.inside(position));
 
-	if (isSplitter()) // || (m_widget && !m_widget->isVisible(false)))
+	if (isSplitter())
 		return false;
 
 	return position.y >= m_rect.top && position.y <= m_rect.top + m_owner->pixel(m_gripperDim);
@@ -491,8 +489,21 @@ bool DockPane::isStackable() const
 	return m_stackable;
 }
 
+void DockPane::setAlwaysVisible(bool alwaysVisible)
+{
+	m_alwaysVisible = alwaysVisible;
+}
+
+bool DockPane::isAlwaysVisible() const
+{
+	return m_alwaysVisible;
+}
+
 bool DockPane::isVisible() const
 {
+	if (m_alwaysVisible)
+		return true;
+
 	if (isSplitter())
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
