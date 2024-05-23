@@ -111,9 +111,9 @@ private:
 	resource::Proxy< render::Shader > m_shader;
 
 	Ref< render::ITexture > m_spectrumTexture;
-	Ref< render::ITexture > m_evolvedSpectrumTexture;
+	Ref< render::ITexture > m_evolvedSpectrumTextures[2];
+	Ref< render::ITexture > m_foamTexture;
 
-	Ref< render::ITexture > m_waveTextures[4];
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;

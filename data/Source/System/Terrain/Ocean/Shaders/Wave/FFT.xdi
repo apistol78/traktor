@@ -8,12 +8,21 @@
 
 #using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
 
+#define SIZE 1024
+#define LOG_SIZE 10
+
 #define PI 3.14159265358979323846f
 #define TWO_PI (PI * 2.0f)
 
+
+const vec2 _Lambda = vec2(1.0f, 1.0f);
+const float _FoamThreshold = 1.5f;
+const float _FoamAdd = 0.01f;
+const float _FoamBias = -1.0f;
+const float _FoamDecayRate = 0.05f;
+
 struct Configuration
 {
-	uint N;
 	int seed;
 	float depth;
 	float gravity;
@@ -34,11 +43,30 @@ struct SpectrumParameters
 	float shortWavesFade;
 };
 
-vec2 UniformToGaussian(float u1, float u2)
+Configuration getDefaultConfiguration()
 {
-	const float R = sqrt(-2.0f * log(u1));
-	const float theta = 2.0f * PI * u2;
-    return vec2(R * cos(theta), R * sin(theta));
+	Configuration configuration;
+	configuration.seed = 0;
+	configuration.depth = 100.0f;
+	configuration.gravity = 9.81f;
+	configuration.lowCutoff = 0.0001f;
+	configuration.highCutoff = 1000.0f;
+	configuration.lengthScales = vec4(64.0f, 1.0f, 1.0f, 1.0f);
+	return configuration;
+}
+
+SpectrumParameters getDefaultSpectrum()
+{
+	SpectrumParameters spectrum;
+	spectrum.scale = 0.075f;
+	spectrum.angle = -PI / 2;
+	spectrum.spreadBlend = 0.8f;
+	spectrum.swell = 0.35f;
+	spectrum.alpha = 0.1f;
+	spectrum.peakOmega = 1.0f;
+	spectrum.gamma = 0.5f;
+	spectrum.shortWavesFade = 0.08f;
+	return spectrum;
 }
 
 // JONSWAP
@@ -68,6 +96,13 @@ float JONSWAP(Configuration configuration, SpectrumParameters spectrum, float om
 }
 
 // Spectrum (compute)
+
+vec2 UniformToGaussian(float u1, float u2)
+{
+	const float R = sqrt(-2.0f * log(u1));
+	const float theta = 2.0f * PI * u2;
+    return vec2(R * cos(theta), R * sin(theta));
+}
 
 float Dispersion(Configuration configuration, float kMag)
 {
@@ -118,13 +153,13 @@ float ShortWavesFade(SpectrumParameters spectrum, float kLength)
 
 vec4 CalculateSpectrum(Configuration configuration, SpectrumParameters spectrum, ivec3 id, uint tile)
 {
-	uint seed = id.x + configuration.N * id.y + configuration.N;
+	uint seed = id.x + SIZE * id.y + SIZE;
 	seed += configuration.seed;
 	seed += tile + uint(hash(seed)) * 10;
 	
 	const float lengthScale = configuration.lengthScales[tile];
 	
-	const float halfN = configuration.N / 2.0f;
+	const float halfN = SIZE / 2.0f;
 
 	const float deltaK = 2.0f * PI / lengthScale;
 	const vec2 K = (id.xy - halfN) * deltaK;
@@ -165,15 +200,23 @@ vec2 ComplexMult(vec2 a, vec2 b)
 	return vec2(a.x * b.x - a.y * b.y, a.x * b.y + a.y * b.x);
 }
 
-vec4 EvolveSpectrum(Configuration configuration, ivec3 id, uint tile, vec4 initialSignal, float time, float repeatTime)
+void EvolveSpectrum(
+	Configuration configuration,
+	ivec3 id,
+	uint tile,
+	vec4 initialSignal,
+	float time,
+	float repeatTime,
+	out vec4 outDisplacement,
+	out vec4 outSlope
+)
 {
     const float lengthScale = configuration.lengthScales[tile];
 
-	//vec4 initialSignal = _InitialSpectrumTextures[uint3(id.xy, i)];
 	vec2 h0 = initialSignal.xy;
 	vec2 h0conj = initialSignal.zw;
 
-	float halfN = configuration.N / 2.0f;
+	float halfN = SIZE / 2.0f;
 	vec2 K = (id.xy - halfN) * 2.0f * PI / lengthScale;
 	float kMag = length(K);
 	float kMagRcp = 1.0f / kMag;
@@ -206,10 +249,8 @@ vec4 EvolveSpectrum(Configuration configuration, ivec3 id, uint tile, vec4 initi
 	vec2 htildeSlopeX = vec2(displacementY_dx.x - displacementY_dz.y, displacementY_dx.y + displacementY_dz.x);
 	vec2 htildeSlopeZ = vec2(displacementX_dx.x - displacementZ_dz.y, displacementX_dx.y + displacementZ_dz.x);
 
-	//_SpectrumTextures[uint3(id.xy, i * 2)] = vec4(htildeDisplacementX, htildeDisplacementZ);
-	//_SpectrumTextures[uint3(id.xy, i * 2 + 1)] = vec4(htildeSlopeX, htildeSlopeZ);
-
-	return vec4(htildeDisplacementX, htildeDisplacementZ);
+	outDisplacement = vec4(htildeDisplacementX, htildeDisplacementZ);
+	outSlope = vec4(htildeSlopeX, htildeSlopeZ);
 }
 
 // FFT
@@ -221,15 +262,12 @@ vec2 ComplexExp(vec2 a)
 
 vec4 ComputeTwiddleFactorAndInputIndices(Configuration configuration, uvec2 id)
 {
-    uint b = configuration.N >> (id.x + 1);
-    vec2 mult = 2 * PI * vec2(0.0f, 1.0f) / configuration.N;
-    uint i = (2 * b * (id.y / b) + id.y % b) % configuration.N;
+    uint b = SIZE >> (id.x + 1);
+    vec2 mult = 2 * PI * vec2(0.0f, 1.0f) / SIZE;
+    uint i = (2 * b * (id.y / b) + id.y % b) % SIZE;
     vec2 twiddle = ComplexExp(-mult * ((id.y / b) * b));
     return vec4(twiddle, i, i + b);
 }
-
-#define SIZE 512
-#define LOG_SIZE 9
 
 shared vec4 fftGroupBuffer[2][SIZE];
 
@@ -240,7 +278,6 @@ void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
     uint w = b * (index / b);
     uint i = (w + index) % SIZE;
 
-    // sincos(-twoPi / SIZE * w, twiddle.y, twiddle.x);
 	twiddle.y = sin(-twoPi / SIZE * w);
 	twiddle.x = cos(-twoPi / SIZE * w);
 
@@ -249,11 +286,10 @@ void ButterflyValues(uint step, uint index, out uvec2 indices, out vec2 twiddle)
     indices = uvec2(i, i + b);
 }
 
-vec4 FFT(Configuration configuration, uint threadIndex, vec4 inputData)
+vec4 FFT(uint threadIndex, vec4 inputData)
 {
     fftGroupBuffer[0][threadIndex] = inputData;
     
-	// GroupMemoryBarrierWithGroupSync();
 	groupMemoryBarrier();
 	barrier();
 
@@ -271,7 +307,6 @@ vec4 FFT(Configuration configuration, uint threadIndex, vec4 inputData)
 
         flag = 1 - flag;
 
-        // GroupMemoryBarrierWithGroupSync();
 		groupMemoryBarrier();
 		barrier();
     }
@@ -286,63 +321,40 @@ vec4 Permutate(vec4 data, ivec3 id)
 	return data * (1.0f - 2.0f * ((id.x + id.y) % 2));
 }
 
-vec4 GenerateDisplacement(Configuration configuration, ivec3 id, uint tile, vec4 htildeDisplacement, vec4 htildeSlope)
+void GenerateDisplacement(Configuration configuration, ivec3 id, uint tile, vec4 htildeDisplacement, vec4 htildeSlope, out vec4 outDisplacement, out vec4 outSlope, inout float inoutFoam)
 {
-	const int i = 0;	// Tile
-
-    //vec4 htildeDisplacement = Permute(_SpectrumTextures[uvec3(id.xy, i * 2)], id);
-    //vec4 htildeSlope = Permute(_SpectrumTextures[uvec3(id.xy, i * 2 + 1)], id);
-
 	htildeDisplacement = Permutate(htildeDisplacement, id);
 	htildeSlope = Permutate(htildeSlope, id);
 
-	vec2 _Lambda = vec2(1.0f, 1.0f);
-
-        vec2 dxdz = htildeDisplacement.rg;
-        vec2 dydxz = htildeDisplacement.ba;
-        vec2 dyxdyz = htildeSlope.rg;
-        vec2 dxxdzz = htildeSlope.ba;
+	vec2 dxdz = htildeDisplacement.rg;
+	vec2 dydxz = htildeDisplacement.ba;
+	vec2 dyxdyz = htildeSlope.rg;
+	vec2 dxxdzz = htildeSlope.ba;
         
-        float jacobian = (1.0f + _Lambda.x * dxxdzz.x) * (1.0f + _Lambda.y * dxxdzz.y) - _Lambda.x * _Lambda.y * dydxz.y * dydxz.y;
+	vec3 displacement = vec3(_Lambda.x * dxdz.x, dydxz.x, _Lambda.y * dxdz.y);
+	vec2 slopes = dyxdyz.xy / (1.0f + abs(dxxdzz * _Lambda));
 
-        vec3 displacement = vec3(_Lambda.x * dxdz.x, dydxz.x, _Lambda.y * dxdz.y);
+	float jacobian = (1.0f + _Lambda.x * dxxdzz.x) * (1.0f + _Lambda.y * dxxdzz.y) - _Lambda.x * _Lambda.y * dydxz.y * dydxz.y;
+	float biasedJacobian = max(0.0f, -(jacobian - _FoamBias));
 
-		return vec4(displacement, 0.0f);
+	if (biasedJacobian > _FoamThreshold)
+		inoutFoam += _FoamAdd * biasedJacobian;
+	inoutFoam *= exp(-_FoamDecayRate);
+	inoutFoam = clamp(inoutFoam, 0.0f, 1.0f);
 
-//        vec2 slopes = dyxdyz.xy / (1 + abs(dxxdzz * _Lambda));
+	outDisplacement = vec4(displacement, 0.0f);
+	outSlope = vec4(slopes, 0.0f, 0.0f);
+
 //        float covariance = slopes.x * slopes.y;
 
 //        float foam = _DisplacementTextures[uint3(id.xy, i)].a;
 //        foam *= exp(-_FoamDecayRate);
 //        foam = saturate(foam);
 
-//        float biasedJacobian = max(0.0f, -(jacobian - _FoamBias));
-
-//        if (biasedJacobian > _FoamThreshold)
-//            foam += _FoamAdd * biasedJacobian;
 
 //        _DisplacementTextures[uint3(id.xy, i)] = float4(displacement, foam);
 //        _SlopeTextures[uint3(id.xy, i)] = float2(slopes);
-
-//        if (i == 0) {
-//            _BuoyancyData[id.xy] = displacement.y;
-//        }
 //    }
-}
-
-// Old
-
-float CalculateDisplacement(vec2 position, float time)
-{
-	float v = 0.0f;
-	for (int i = 0; i < 4; ++i)
-	{
-		const float f = pow(2.0f, i);
-		const float a = sin(position.x * TWO_PI * f);
-		const float b = sin(position.y * TWO_PI * f);
-		v += (a * b) * sin(time * (1.0f + i / 7.0f)) * 1.0f / (i + 1.0f);
-	}
-	return v;
 }
 
 	]]>

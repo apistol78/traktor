@@ -52,8 +52,8 @@ GlslVariable* GlslShader::getInputVariable(const std::wstring& variableName)
 
 GlslVariable* GlslShader::createTemporaryVariable(const OutputPin* outputPin, GlslType type)
 {
-	int32_t index = (int32_t)m_temporaryVariableAlloc.alloc();
-	std::wstring name = str(L"v%d", index);
+	const int32_t index = (int32_t)m_temporaryVariableAlloc.alloc();
+	const std::wstring name = str(L"v%d", index);
 
 	auto& v = m_variables.push_back();
 	v.outputPin = outputPin;

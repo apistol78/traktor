@@ -80,6 +80,9 @@ void World::addEntity(Entity* entity)
 
 void World::removeEntity(Entity* entity)
 {
+	if (entity->getWorld() == nullptr)
+		return;
+
 	T_FATAL_ASSERT(entity->getWorld() == this);
 	if (m_update)
 		m_deferredRemove.push_back(entity);

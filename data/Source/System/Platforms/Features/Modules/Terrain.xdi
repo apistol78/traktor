@@ -695,6 +695,14 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>ShaderPipeline.IncludeOnlyTechniques</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Ocean_*</item>
+					</value>
+				</second>
+			</item>			
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">
