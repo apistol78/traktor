@@ -122,6 +122,8 @@ private:
 	Color4f m_deepColor;
 	float m_opacity = 0.5f;
 	float m_elevation = 0.0f;
+
+	bool m_spectrumDirty = true;
 };
 
 }
