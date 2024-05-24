@@ -25,17 +25,8 @@ namespace traktor::ui
 	namespace
 	{
 
-const Unit c_margin = 16_ut;
-
-struct Dim
-{
-	int32_t margin = 16;
-
-	Dim(const Widget* widget)
-	{
-		margin = widget->pixel(Unit(margin));
-	}
-};
+const Unit c_marginX = 24_ut;
+const Unit c_marginY = 16_ut;
 
 	}
 
@@ -106,12 +97,13 @@ void CommentNodeShape::paint(GraphControl* graph, const Node* node, GraphCanvas*
 
 UnitSize CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) const
 {
+	const FontMetric fontMetric = graph->getFontMetric();
+	const Unit lineHeight = graph->unit(fontMetric.getExtent(L"W").cy);
+	const UnitSize margin(c_marginX * 2_ut, c_marginY * 2_ut);
+
 	const std::wstring& comment = node->getComment();
 	if (comment.empty())
-		return UnitSize(200_ut, 200_ut);
-
-	const Dim dim(graph);
-	const Unit lineHeight = graph->unit(graph->getFontMetric().getExtent(L"W").cy);
+		return UnitSize(200_ut, lineHeight) + margin;
 
 	AlignedVector< std::wstring > lines;
 	Split< std::wstring >::any(replaceAll(comment, L"\n\r", L"\n"), L"\n", lines, true);
@@ -119,12 +111,12 @@ UnitSize CommentNodeShape::calculateSize(GraphControl* graph, const Node* node) 
 	UnitSize textSize(0_ut, 0_ut);
 	for (const auto& line : lines)
 	{
-		const UnitSize lineExtent = graph->unit(graph->getFontMetric().getExtent(line));
+		const UnitSize lineExtent = graph->unit(fontMetric.getExtent(line));
 		textSize.cx = std::max(textSize.cx, lineExtent.cx);
 		textSize.cy += lineHeight;
 	}
 
-	return textSize + UnitSize(c_margin * 2_ut, c_margin * 2_ut);
+	return textSize + UnitSize(c_marginX * 2_ut, c_marginY * 2_ut);
 }
 
 }

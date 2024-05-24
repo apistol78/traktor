@@ -415,6 +415,15 @@
 			</colors>
 		</item>
 		<item>
+			<typeName>traktor.ui.CommentNodeShape</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>110, 199, 47, 255</second>
+				</item>
+			</colors>
+		</item>
+		<item>
 			<typeName>traktor.ui.ListBox</typeName>
 			<colors>
 				<item>

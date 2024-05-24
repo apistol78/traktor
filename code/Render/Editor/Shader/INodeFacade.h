@@ -63,7 +63,7 @@ public:
 		Node* shaderNode
 	) = 0;
 
-	/*! Refresh editor represenation of shader node. */
+	/*! Refresh editor representation of shader node. */
 	virtual void refreshEditorNode(
 		editor::IEditor* editor,
 		ui::GraphControl* graphControl,
