@@ -95,7 +95,7 @@
 				<first>1289</first>
 				<second>319</second>
 			</position>
-			<value>0, 2, 0, 0</value>
+			<value>0, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{30BAC33D-653F-644C-A353-A862E8CBC398}</id>
