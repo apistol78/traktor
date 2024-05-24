@@ -80,7 +80,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	stcd.width = c_spectrumSize;
 	stcd.height = c_spectrumSize;
 	stcd.mipCount = 1;
-	stcd.format = render::TfR32G32B32A32F;
+	stcd.format = render::TfR16G16B16A16F;
 	stcd.shaderStorage = true;
 	m_spectrumTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 	m_evolvedSpectrumTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
