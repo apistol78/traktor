@@ -43,6 +43,8 @@ public:
 
 	virtual void setWorld(world::World* world) override final;
 
+	virtual void setState(const world::EntityState& state, const world::EntityState& mask) override final;
+
 	virtual void setTransform(const Transform& transform) override final;
 
 	virtual Aabb3 getBoundingBox() const override final;

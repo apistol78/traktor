@@ -200,9 +200,11 @@ void CullingComponent::releaseInstance(Instance*& instance)
 {
 	T_FATAL_ASSERT(instance->owner == this);
 	auto it = std::find(m_instances.begin(), m_instances.end(), instance);
+	T_FATAL_ASSERT(it != m_instances.end());
 	m_instances.erase(it);
 	delete instance;
 	instance = nullptr;
+	m_instanceBufferDirty = true;
 }
 
 void CullingComponent::Instance::setTransform(const Transform& transform)

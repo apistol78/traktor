@@ -42,9 +42,8 @@ void InstanceMeshComponent::destroy()
 void InstanceMeshComponent::setWorld(world::World* world)
 {
 	// Remove from last world.
-	if (m_world != nullptr)
+	if (m_world != nullptr && m_cullingInstance != nullptr)
 	{
-		T_FATAL_ASSERT(m_cullingInstance != nullptr);
 		world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
 		culling->releaseInstance(m_cullingInstance);
 	}
@@ -58,6 +57,28 @@ void InstanceMeshComponent::setWorld(world::World* world)
 	}
 
 	m_world = world;
+}
+
+void InstanceMeshComponent::setState(const world::EntityState& state, const world::EntityState& mask)
+{
+	const bool visible = (state.visible && mask.visible);
+	if (visible)
+	{
+		if (!m_cullingInstance)
+		{
+			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
+			m_cullingInstance = culling->allocateInstance(this, (intptr_t)m_mesh.getResource());
+			m_cullingInstance->setTransform(m_transform.get0());
+		}
+	}
+	else
+	{
+		if (m_cullingInstance)
+		{
+			world::CullingComponent* culling = m_world->getComponent< world::CullingComponent >();
+			culling->releaseInstance(m_cullingInstance);
+		}
+	}
 }
 
 void InstanceMeshComponent::setTransform(const Transform& transform)
