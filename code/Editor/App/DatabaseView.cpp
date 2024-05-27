@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Path.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
@@ -750,6 +751,31 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			}
 
 			instanceClone->setObject(object);
+
+			AlignedVector< std::wstring > dataNames;
+			instance->getDataNames(dataNames);
+			for (const std::wstring& dataName : dataNames)
+			{
+				Ref< IStream > stream = instance->readData(dataName);
+				if (!stream)
+				{
+					log::error << L"Unable to create clone instance; failed to read data." << Endl;
+					return false;
+				}
+
+				Ref< IStream > cloneStream = instanceClone->writeData(dataName);
+				if (!cloneStream)
+				{
+					log::error << L"Unable to create clone instance; failed to write data." << Endl;
+					return false;
+				}
+
+				if (!StreamCopy(cloneStream, stream).execute())
+				{
+					log::error << L"Unable to create clone instance; failed to copy data." << Endl;
+					return false;
+				}
+			}
 
 			if (!instanceClone->commit())
 			{
