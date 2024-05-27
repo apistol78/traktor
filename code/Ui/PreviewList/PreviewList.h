@@ -24,6 +24,7 @@
 namespace traktor::ui
 {
 
+class Edit;
 class PreviewItems;
 
 class T_DLLCLASS PreviewList : public ui::AutoWidget
@@ -47,13 +48,21 @@ public:
 
 	void getSelectedItems(RefArray< PreviewItem >& outItems) const;
 
+	void beginEdit(PreviewItem* item);
+
 private:
+	Ref< Edit > m_itemEditor;
 	Ref< PreviewItems > m_items;
 	bool m_single = true;
 	int32_t m_dragMode = 0;
 	Point m_dragOriginPosition;
+	Ref< PreviewItem > m_editItem;
 
 	virtual void layoutCells(const Rect& rc) override final;
+
+	void eventEditFocus(FocusEvent* event);
+
+	void eventEditKeyDownEvent(KeyDownEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
 

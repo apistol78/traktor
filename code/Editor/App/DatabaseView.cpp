@@ -51,6 +51,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/HierarchicalState.h"
 #include "Ui/Splitter.h"
+#include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
@@ -403,7 +404,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addEventHandler< ui::TreeViewItemActivateEvent >(this, &DatabaseView::eventInstanceActivate);
 	m_treeDatabase->addEventHandler< ui::SelectionChangeEvent >(this, &DatabaseView::eventInstanceSelect);
 	m_treeDatabase->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
-	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventInstanceRenamed);
+	m_treeDatabase->addEventHandler< ui::TreeViewContentChangeEvent >(this, &DatabaseView::eventTreeContentChange);
 	m_treeDatabase->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_treeDatabase->setEnable(false);
 
@@ -412,6 +413,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		return false;
 	m_listInstances->addEventHandler< ui::MouseButtonDownEvent >(this, &DatabaseView::eventInstanceButtonDown);
 	m_listInstances->addEventHandler< ui::MouseDoubleClickEvent >(this, &DatabaseView::eventInstancePreviewActivate);
+	m_listInstances->addEventHandler< ui::PreviewContentChangeEvent >(this, &DatabaseView::eventPreviewContentChange);
 	m_listInstances->addEventHandler< ui::DragEvent >(this, &DatabaseView::eventInstanceDrag);
 	m_listInstances->setVisible(false);
 
@@ -1637,7 +1639,7 @@ void DatabaseView::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 	event->consume();
 }
 
-void DatabaseView::eventInstanceRenamed(ui::TreeViewContentChangeEvent* event)
+void DatabaseView::eventTreeContentChange(ui::TreeViewContentChangeEvent* event)
 {
 	Ref< ui::TreeViewItem > treeItem = event->getItem();
 	if (!treeItem)
@@ -1658,6 +1660,32 @@ void DatabaseView::eventInstanceRenamed(ui::TreeViewContentChangeEvent* event)
 	}
 	else if (group)
 		result = group->rename(treeItem->getText());
+
+	if (result)
+		event->consume();
+}
+
+void DatabaseView::eventPreviewContentChange(ui::PreviewContentChangeEvent* event)
+{
+	Ref< ui::PreviewItem > previewItem = event->getItem();
+	if (!previewItem)
+		return;
+
+	Ref< db::Instance > instance = previewItem->getData< db::Instance >(L"INSTANCE");
+	Ref< db::Group > group = previewItem->getData< db::Group >(L"GROUP");
+
+	bool result = false;
+
+	if (instance && group)
+	{
+		if (instance->checkout())
+		{
+			result = instance->setName(previewItem->getText());
+			result &= instance->commit();
+		}
+	}
+	else if (group)
+		result = group->rename(previewItem->getText());
 
 	if (result)
 		event->consume();

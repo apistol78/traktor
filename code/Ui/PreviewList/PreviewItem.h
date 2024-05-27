@@ -49,14 +49,25 @@ public:
 
 	bool isSelected() const;
 
-	virtual void paint(Canvas& canvas, const Rect& rect) override;
+	const Rect& getTextRect() const { return m_textRect; }
+
+	virtual void mouseDown(MouseButtonDownEvent* event, const Point& position) override final;
+
+	virtual void mouseUp(MouseButtonUpEvent* event, const Point& position) override final;
+
+	virtual void mouseDoubleClick(MouseDoubleClickEvent* event, const Point& position) override final;
+
+	virtual void paint(Canvas& canvas, const Rect& rect) override final;
 
 private:
 	std::wstring m_text;
 	std::wstring m_subText;
 	Ref< ui::StyleBitmap > m_imageBackground;
 	Ref< ui::IBitmap > m_bitmapImage;
-	bool m_selected;
+	Rect m_textRect;
+	bool m_selected = false;
+	bool m_editable = true;
+	int32_t m_editMode = 0;
 };
 
 }

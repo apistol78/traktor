@@ -1,12 +1,14 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Ui/Application.h"
+#include "Ui/Edit.h"
+#include "Ui/PreviewList/PreviewContentChangeEvent.h"
 #include "Ui/PreviewList/PreviewItem.h"
 #include "Ui/PreviewList/PreviewItems.h"
 #include "Ui/PreviewList/PreviewList.h"
@@ -32,6 +34,12 @@ bool PreviewList::create(Widget* parent, uint32_t style)
 		return false;
 
 	m_single = bool((style & WsMultiple) == 0);
+
+	m_itemEditor = new Edit();
+	m_itemEditor->create(this, L"", WsBorder | WsWantAllInput);
+	m_itemEditor->hide();
+	m_itemEditor->addEventHandler< FocusEvent >(this, &PreviewList::eventEditFocus);
+	m_itemEditor->addEventHandler< KeyDownEvent >(this, &PreviewList::eventEditKeyDownEvent);
 
 	addEventHandler< MouseButtonDownEvent >(this, &PreviewList::eventButtonDown);
 	addEventHandler< MouseButtonUpEvent >(this, &PreviewList::eventButtonUp);
@@ -74,6 +82,19 @@ void PreviewList::getSelectedItems(RefArray< PreviewItem >& outItems) const
 		if (m_items->get(i)->isSelected())
 			outItems.push_back(m_items->get(i));
 	}
+}
+
+void PreviewList::beginEdit(PreviewItem* item)
+{
+	const Rect rcItem = item->getTextRect();
+
+	m_itemEditor->setRect(rcItem);
+	m_itemEditor->setText(item->getText());
+	m_itemEditor->selectAll();
+	m_itemEditor->show();
+	m_itemEditor->setFocus();
+
+	m_editItem = item;
 }
 
 void PreviewList::layoutCells(const Rect& rc)
@@ -127,6 +148,51 @@ void PreviewList::layoutCells(const Rect& rc)
 		);
 
 		placeCell(m_items->get(i), rcItem.inflate(-pad, -pad));
+	}
+}
+
+void PreviewList::eventEditFocus(FocusEvent* event)
+{
+	if (event->lostFocus() && m_itemEditor->isVisible(false))
+	{
+		const std::wstring originalText = m_editItem->getText();
+		const std::wstring newText = m_itemEditor->getText();
+
+		m_itemEditor->hide();
+
+		m_editItem->setText(newText);
+
+		PreviewContentChangeEvent changeEvent(this, m_editItem, originalText);
+		raiseEvent(&changeEvent);
+
+		if (!changeEvent.consumed())
+			m_editItem->setText(originalText);
+
+		event->consume();
+	}
+}
+
+
+void PreviewList::eventEditKeyDownEvent(KeyDownEvent* event)
+{
+	if (event->getVirtualKey() == ui::VkReturn)
+	{
+		const std::wstring originalText = m_editItem->getText();
+		const std::wstring newText = m_itemEditor->getText();
+
+		m_itemEditor->hide();
+
+		m_editItem->setText(newText);
+
+		PreviewContentChangeEvent changeEvent(this, m_editItem, originalText);
+		raiseEvent(&changeEvent);
+
+		if (!changeEvent.consumed())
+			m_editItem->setText(originalText);
+	}
+	else if (event->getVirtualKey() == ui::VkEscape)
+	{
+		m_itemEditor->hide();
 	}
 }
 

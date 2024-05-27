@@ -25,6 +25,7 @@ namespace traktor::ui
 class Edit;
 class HierarchicalState;
 class Menu;
+class PreviewContentChangeEvent;
 class PreviewList;
 class Splitter;
 class ToolBar;
@@ -140,7 +141,9 @@ private:
 
 	void eventInstanceButtonDown(ui::MouseButtonDownEvent* event);
 
-	void eventInstanceRenamed(ui::TreeViewContentChangeEvent* event);
+	void eventTreeContentChange(ui::TreeViewContentChangeEvent* event);
+
+	void eventPreviewContentChange(ui::PreviewContentChangeEvent* event);
 
 	void eventInstanceDrag(ui::DragEvent* event);
 
