@@ -12,7 +12,7 @@ CheckBox:setStyle("resource", "MC_CheckBox")
 CheckBox:setStyle("background", traktor.Color4f(0.8, 0.8, 0.8, 1.0))
 
 function CheckBox:new(parent)
-	local mc = Widget._createResource(parent, self:getStyle().resource)
+	local mc < const > = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc)
 end
 
@@ -71,7 +71,7 @@ function CheckBox:_initialize(parent, mc)
 end
 
 function CheckBox:_loadStyle()
-	local style = self:getStyle()
+	local style < const > = self:getStyle()
 	self:setColor(style.background)
 end
 

@@ -9,7 +9,7 @@
 Button = Button or class("Button", Widget)
 
 function Button:new(parent, imageUp, imageDown, imageHover)
-	local mc = Widget._createEmptyResource(parent)
+	local mc < const > = Widget._createEmptyResource(parent)
 	self:_initialize(parent, mc, imageUp, imageDown, imageHover)
 end
 
@@ -38,7 +38,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 	Widget._initialize(self, parent, mc)
 
 	if isa(imageUp, traktor.drawing.Image) then
-		local bm = self._mc.context:createBitmap(imageUp)
+		local bm < const > = self._mc.context:createBitmap(imageUp)
 		if bm == nil then return false end
 		self._imageUp_mc = Widget._createEmptyResource(self)
 		self._imageUp_mc:attachBitmap(bm, 0)
@@ -59,7 +59,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 
 	if imageDown ~= nil then
 		if isa(imageDown, traktor.drawing.Image) then
-			local bm = self._mc.context:createBitmap(imageDown)
+			local bm < const > = self._mc.context:createBitmap(imageDown)
 			if bm == nil then return false end
 			self._imageDown_mc = Widget._createEmptyResource(self)
 			self._imageDown_mc:attachBitmap(bm, 0)
@@ -83,7 +83,7 @@ function Button:_initialize(parent, mc, imageUp, imageDown, imageHover)
 
 	if imageHover ~= nil then
 		if isa(imageHover, traktor.drawing.Image) then
-			local bm = self._mc.context:createBitmap(imageHover)
+			local bm < const > = self._mc.context:createBitmap(imageHover)
 			if bm == nil then return false end
 			self._imageHover_mc = Widget._createEmptyResource(self)
 			self._imageHover_mc:attachBitmap(bm, 0)
@@ -173,6 +173,7 @@ function Button:_onMouseLeave()
 	self._isRolledOver = false
 	return true
 end
+
 	]]>
 	</text>
 </object>

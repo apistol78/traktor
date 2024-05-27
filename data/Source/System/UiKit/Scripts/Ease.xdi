@@ -49,7 +49,7 @@ end
 
 function Ease.inOutCubic(f)
 	if f < 0.5 then return 4 * f * f * f end
-	local p = 2 * f - 2
+	local p < const > = 2 * f - 2
 	return 0.5 * p * p * p + 1
 end
 
@@ -65,7 +65,7 @@ end
 
 function Ease.inOutQuart(f)
 	if f < 0.5 then return 8 * f * f * f * f end
-	local p = f - 1
+	local p < const > = f - 1
 	return -8 * p * p * p * p + 1
 end
 
@@ -159,6 +159,7 @@ end
 
 function Ease.inOutBounce(f)
 end
+
 	]]>
 	</text>
 </object>

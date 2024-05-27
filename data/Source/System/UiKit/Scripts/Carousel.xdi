@@ -70,8 +70,8 @@ end
 
 function Carousel:_layout()
 	local p < const > = self:getPlacement()
+	local children < const > = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	local x = 0
-	local children = self:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
 		child:place(x, 0, p.width, p.height)
 		x = x + p.width + self._pad
@@ -83,12 +83,13 @@ function Carousel:_show(index)
 	local sx < const > = -self._current * (p.width + self._pad)	
 	local ex < const > = -index * (p.width + self._pad)
 	Tween(0, 1, 1, function(value, last)
-		local f = Ease.outElastic(value)
+		local f < const > = Ease.outElastic(value)
 		local x < const > = sx * (1 - f) + ex * f
 		self._inner_mc.X = x
 	end)
 	self._current = index
 end
+
 	]]>
 	</text>
 </object>

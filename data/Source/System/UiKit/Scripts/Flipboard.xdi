@@ -10,7 +10,7 @@
 Flipboard = class("Flipboard", Container)
 
 function Flipboard:new(parent)
-	local mc = Widget._createEmptyResource(parent)
+	local mc < const > = Widget._createEmptyResource(parent)
 	self:_initialize(parent, mc, FloodLayout())
 end
 
@@ -36,13 +36,13 @@ function Flipboard:showPage(id, arg)
 			-- Fade in new child.
 			if child._mc ~= nil then
 				self:setExclusive()
-				local p = child:getPlacement()
+				local p < const > = child:getPlacement()
 				Tween(0, 1.5, r, function(value, last)
 					if child._mc ~= nil then
-						local f = value / 1.5
-						local s = 100 + (1 - f) * 100
-						local x = p.x - p.width / 2 * (1 - f)
-						local y = p.y - p.height / 2 * (1 - f)
+						local f < const > = value / 1.5
+						local s < const > = 100 + (1 - f) * 100
+						local x < const > = p.x - p.width / 2 * (1 - f)
+						local y < const > = p.y - p.height / 2 * (1 - f)
 						child._mc.position = Vector2(x, y)
 						child._mc.scale = Vector2(s, s)
 						child._mc.alpha = f
@@ -91,6 +91,7 @@ function Flipboard:_addChild(child)
 	child.__entered = false
 	child:setVisible(false)
 end
+
 	]]>
 	</text>
 </object>

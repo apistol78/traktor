@@ -15,13 +15,13 @@ Frame.ShowDebugCursor = false
 #endif
 
 function Frame:new(root_mc, vwidth, vheight, layout)
-	local depth = root_mc.displayList.nextHighestDepth
-	local mc = root_mc:createEmptyMovieClip("mc", depth)
+	local depth < const > = root_mc.displayList.nextHighestDepth
+	local mc < const > = root_mc:createEmptyMovieClip("mc", depth)
 	self:_initialize(mc, vwidth, vheight, layout)
 end
 
 function Frame:remove()
-	local cx = self._mc.context
+	local cx < const > = self._mc.context
 
 	self._mc.eventEnterFrame:removeAll()
 	self._mc.eventMouseDown:removeAll()
@@ -56,16 +56,16 @@ function Frame:getPreferredSize()
 end
 
 function Frame:update()
-	local cx = self._mc.context
+	local cx < const > = self._mc.context
 
-	local width = cx.stage.width
-	local height = cx.stage.height
+	local width < const > = cx.stage.width
+	local height < const > = cx.stage.height
 	assert (width > 0)
 	assert (height > 0)
 
 	if self._vscaleDynamic then
-		local xscale = width / self._vwidth
-		local yscale = height / self._vheight
+		local xscale < const > = width / self._vwidth
+		local yscale < const > = height / self._vheight
 		self._vscale = math.min(xscale, yscale)
 	end
 
@@ -81,7 +81,7 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 	Container._initialize(self, nil, mc, layout)
 
 	-- Disable stage scale and position, register listener of changes in stage size.
-	local stage = mc.context.stage
+	local stage < const > = mc.context.stage
 	self._stageListener = stage.eventResize:add(function() self:_eventStageResize() end)
 	stage.scaleMode = traktor.spark.Stage.NoScale
 	stage.align = "TL"
@@ -91,10 +91,10 @@ function Frame:_initialize(mc, vwidth, vheight, layout)
 
 	-- Calculate first virtual scale factor.
 	-- \\tbd This currently "freezes" output size based on inital size of screen...
-	local width = stage.width
-	local height = stage.height
-	local xscale = width / self._vwidth
-	local yscale = height / self._vheight
+	local width < const > = stage.width
+	local height < const > = stage.height
+	local xscale < const > = width / self._vwidth
+	local yscale < const > = height / self._vheight
 	self._vscale = math.min(xscale, yscale)
 
 	-- \\tbd Determine which mode...
@@ -131,17 +131,17 @@ function Frame:_eventEnterFrame()
 end
 
 function Frame:_eventMouseDown()
-	local pt = self:getMousePosition()
+	local pt < const > = self:getMousePosition()
 	self:_dispatchEvent(MouseDownEvent(pt.x, pt.y))
 end
 
 function Frame:_eventMouseUp()
-	local pt = self:getMousePosition()
+	local pt < const > = self:getMousePosition()
 	self:_dispatchEvent(MouseUpEvent(pt.x, pt.y))
 end
 
 function Frame:_eventMouseMove()
-	local pt = self:getMousePosition()
+	local pt < const > = self:getMousePosition()
 #if defined(_DEBUG)
 	if Frame.ShowDebugCursor then
 		self._mc_debug.position = Vector2(pt.x, pt.y)
@@ -152,7 +152,7 @@ function Frame:_eventMouseMove()
 end
 
 function Frame:_eventMouseWheel(delta)
-	local pt = self:getMousePosition()
+	local pt < const > = self:getMousePosition()
 	self:_dispatchEvent(MouseWheelEvent(pt.x, pt.y, delta))
 end
 
@@ -165,6 +165,7 @@ function Frame:_eventKeyUp()
 	local key < const > = self._mc.context.key
 	self:_dispatchEvent(KeyUpEvent(key.code))
 end
+
 	]]>
 	</text>
 </object>

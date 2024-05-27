@@ -17,7 +17,7 @@ Edit:setStyle("text", Color4f(0.0, 0.0, 0.0, 1.0))
 Edit:setStyle("textSize", 10)
 
 function Edit:new(parent, text, hint, validator)
-	local mc = Widget._createResource(parent, self:getStyle().resource)
+	local mc < const > = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, text, hint, validator)
 end
 
@@ -49,7 +49,7 @@ function Edit:getText()
 end
 
 function Edit:setTextSize(size)
-	local tf = self._text_tb:getTextFormat()
+	local tf < const > = self._text_tb:getTextFormat()
 	tf.size = size * 20
 	self._text_tb:setTextFormat(tf)
 	self._preferredSize.height = size + self._textSizeMargin
@@ -102,8 +102,8 @@ end
 function Edit:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
-	local p = self:getPlacement()
-	local mx = self._text_tb.X
+	local p < const > = self:getPlacement()
+	local mx < const > = self._text_tb.X
 	self._text_tb.width = p.width - mx * 2
 
 	self._background_mc.width = p.width
@@ -127,7 +127,7 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 		height = mc.height
 	}
 
-	local th = self._text_tb:getTextFormat().size / 20
+	local th < const > = self._text_tb:getTextFormat().size / 20
 	self._textSizeMargin = self._preferredSize.height - th
 
 	self._hint = hint
@@ -150,7 +150,7 @@ function Edit:_initialize(parent, mc, text, hint, validator)
 end
 
 function Edit:_loadStyle()
-	local style = self:getStyle()
+	local style < const > = self:getStyle()
 	self:setColor(style.background)
 	self:setTextColor(style.text)
 	self:setTextSize(style.textSize)
@@ -164,7 +164,7 @@ function Edit:_onSetFocus()
 	end
 
 	-- Register global key up/down events.
-	local cx = self._mc.context
+	local cx < const > = self._mc.context
 	self._keyDownListener = cx.key.eventKeyDown:add(function() self:_onKeyDown() end)
 	self._keyUpListener = cx.key.eventKeyUp:add(function() self:_onKeyUp() end)
 
@@ -186,7 +186,7 @@ function Edit:_onKillFocus()
 	end
 
 	-- Remove global key up/down events.
-	local cx = self._mc.context
+	local cx < const > = self._mc.context
 	cx.key.eventKeyDown:remove(self._keyDownListener)
 	cx.key.eventKeyUp:remove(self._keyUpListener)
 
@@ -197,7 +197,7 @@ end
 
 function Edit:_onChanged()
 	if self._validator ~= nil then
-		local text = self._text_tb.text
+		local text < const > = self._text_tb.text
 		if self._validator:check(text) then
 			self._text0 = text
 		else
@@ -210,7 +210,7 @@ function Edit:_onChanged()
 end
 
 function Edit:_onKeyDown()
-	local key = self._mc.context.key
+	local key < const > = self._mc.context.key
 	if key.code == spark.Key.AkEnter or key.code == 220 then
 		self._enterPressed = true
 	end
@@ -220,7 +220,7 @@ function Edit:_onKeyUp()
 	if self._enterPressed then
 		self._enterPressed = false
 
-		local key = self._mc.context.key
+		local key < const > = self._mc.context.key
 		if key.code == spark.Key.AkEnter or key.code == 220 then
 			if self._enterFn ~= nil then
 				self._enterFn(self)
@@ -228,6 +228,7 @@ function Edit:_onKeyUp()
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>

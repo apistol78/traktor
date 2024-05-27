@@ -12,10 +12,10 @@ function FloodLayout:new(marginX, marginY)
 end
 
 function FloodLayout:estimate(container)
-	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	local children < const > = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	local w, h = 0, 0
 	for _, child in ipairs(children) do
-		local ps = child:getPreferredSize()
+		local ps < const > = child:getPreferredSize()
 		w = math.max(w, ps.width)
 		h = math.max(h, ps.height)
 	end
@@ -23,11 +23,12 @@ function FloodLayout:estimate(container)
 end
 
 function FloodLayout:update(container, width, height)
-	local children = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
+	local children < const > = container:getChildren(function (c) return c.__layout ~= ILayout.FLOAT end)
 	for _, child in ipairs(children) do
 		child:place(self._marginX, self._marginY, width - self._marginX * 2, height - self._marginY * 2)
 	end
 end
+
 	]]>
 	</text>
 </object>

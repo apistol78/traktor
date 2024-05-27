@@ -21,7 +21,7 @@ DropDown:setStyle("textListSize", 17)
 DropDown:setStyle("fadeDuration", 0.1)
 
 function DropDown:new(parent, items)
-	local mc = Widget._createResource(parent, self:getStyle().resource)
+	local mc < const > = Widget._createResource(parent, self:getStyle().resource)
 	self:_initialize(parent, mc, items)
 end
 
@@ -45,7 +45,7 @@ end
 
 function DropDown:select(indexOrPredicate)
 	if type(indexOrPredicate) ~= "function" then
-		local index = indexOrPredicate
+		local index < const > = indexOrPredicate
 		if index > 0 and index <= #self._items then
 			self._caption_tb:parseText(self:_getTextOfItem(self._items[index]))	
 			self._selected = index
@@ -54,7 +54,7 @@ function DropDown:select(indexOrPredicate)
 			self._selected = 0
 		end
 	else
-		local fn = indexOrPredicate
+		local fn < const > = indexOrPredicate
 		local found = false
 		for index, item in ipairs(self._items) do
 			if fn(item) then
@@ -69,10 +69,10 @@ function DropDown:select(indexOrPredicate)
 		end
 	end
 
-	local p = self:getPlacement()
-	local sz = self._caption_tb.textSize
-	local mx = p.width - sz.x
-	local my = p.height - sz.y
+	local p < const > = self:getPlacement()
+	local sz < const > = self._caption_tb.textSize
+	local mx < const > = p.width - sz.x
+	local my < const > = p.height - sz.y
 	self._caption_tb.X = mx / 2
 	self._caption_tb.Y = my / 2
 
@@ -114,7 +114,7 @@ function DropDown:setTextColor(textColor)
 end
 
 function DropDown:setTextSize(size)
-	local tf = self._caption_tb:getTextFormat()
+	local tf < const > = self._caption_tb:getTextFormat()
 	tf.size = size * 20
 	self._caption_tb:setTextFormat(tf)
 	self._preferredSize.height = size + self._textSizeMargin
@@ -149,16 +149,16 @@ end
 function DropDown:place(x, y, width, height)
 	Widget.place(self, x, y, width, height)
 
-	local p = self:getPlacement()
+	local p < const > = self:getPlacement()
 	self._background_mc.width = p.width
 	self._background_mc.height = p.height
 
 	self._arrow_mc.X = p.width - self._arrow_mc.width
 	self._arrow_mc.Y = (p.height - self._arrow_mc.height) / 2
 
-	local sz = self._caption_tb.textSize
-	local mx = p.width - sz.x
-	local my = p.height - sz.y
+	local sz < const > = self._caption_tb.textSize
+	local mx < const > = p.width - sz.x
+	local my < const > = p.height - sz.y
 	self._caption_tb.X = mx / 2
 	self._caption_tb.Y = my / 2
 end
@@ -199,7 +199,7 @@ function DropDown:_initialize(parent, mc, items)
 end
 
 function DropDown:_loadStyle()
-	local style = self:getStyle()
+	local style < const > = self:getStyle()
 	self:setColor(style.background)
 	self:setListColor(style.list)
 	self:setTextColor(style.text)
@@ -238,7 +238,7 @@ function DropDown:_onMousePress()
 	self._background_mc:gotoAndStop("active")
 	self._arrow_mc:gotoAndStop("active")
 
-	local ancestor = self:getAncestor()
+	local ancestor < const > = self:getAncestor()
 
 	self._list = ListBox(ancestor, 4, 4, 20, self:getStyle().resourceListBox)
 	self._list.__layout = ILayout.FLOAT
@@ -252,14 +252,14 @@ function DropDown:_onMousePress()
 		self._list:add(self:_getTextOfItem(item))
 	end
 
-	local p = self:getPlacement()
-	local ps = self._list:getPreferredSize()
-	local itemHeight = self._textSize + 5
+	local p < const > = self:getPlacement()
+	local ps < const > = self._list:getPreferredSize()
+	local itemHeight < const > = self._textSize + 5
 
 	-- Transform local coordinate into ancestor frame as
 	-- list box is temporarily added as child to ancestor in
 	-- order to be top most.
-	local pp = self:localToGlobal({ x = 0, y = p.height})
+	local pp < const > = self:localToGlobal({ x = 0, y = p.height})
 
 	self._list:place(
 		pp.x,
@@ -273,7 +273,7 @@ function DropDown:_onMousePress()
 	self._list:setModal()
 
 	-- Fade in list.
-	local duration = self:getStyle().fadeDuration
+	local duration < const > = self:getStyle().fadeDuration
 	if duration > 0 then
 		self._tween = Tween(
 			0,
@@ -297,7 +297,7 @@ function DropDown:_onListClick(index)
 end
 
 function DropDown:_onListMouseDown(event)
-	local mp = self._list:getMousePosition()
+	local mp < const > = self._list:getMousePosition()
 	if self._list:hitTest(mp) == nil then
 		self:_removeList()
 		if self._cancelFn ~= nil then
@@ -306,6 +306,7 @@ function DropDown:_onListMouseDown(event)
 	end
 	return true
 end
+
 	]]>
 	</text>
 </object>

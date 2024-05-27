@@ -21,7 +21,7 @@ function Tween:new(startValue, endValue, duration, fn)
 end
 
 function Tween:continueTo(endValue, duration)
-	local k = self._time / self._duration
+	local k < const > = self._time / self._duration
 	self._startValue = self._startValue * (1 - k) + self._endValue * k
 	self._endValue = endValue
 	self._duration = duration
@@ -47,9 +47,9 @@ function Tween.update(dT)
 	local n = #Tween._instances
 	local i = 1
 	while i <= n do
-		local t = Tween._instances[i]
-		local k = t._time / t._duration
-		local value = t._startValue * (1 - k) + t._endValue * k
+		local t < const > = Tween._instances[i]
+		local k < const > = t._time / t._duration
+		local value < const > = t._startValue * (1 - k) + t._endValue * k
 		if t._fn ~= nil then
 			t._fn(value, false)
 		end
@@ -67,6 +67,7 @@ function Tween.update(dT)
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>
