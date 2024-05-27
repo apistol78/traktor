@@ -9,11 +9,10 @@
 #include "Render/Editor/Node.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Edit.h"
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 #include "Ui/Graph/CommentNodeShape.h"
-
-#include "Ui/Edit.h"
 
 namespace traktor::render
 {
@@ -105,6 +104,7 @@ void CommentNodeFacade::editShaderNode(
 	m_edit->setText(shaderNode->getComment());
 	m_edit->setRect(rcEdit);
 	m_edit->setVisible(true);
+	m_edit->selectAll();
 	m_edit->setFocus();
 }
 

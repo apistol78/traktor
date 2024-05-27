@@ -27,7 +27,7 @@ namespace traktor::ui
 const Unit c_marginWidth = 3_ut;	/*< Distance from image edge to "visual" edge. */
 const Unit c_textMargin = 16_ut;
 const Unit c_textHeight = 16_ut;
-const Unit c_minExtent = 40_ut;
+const Unit c_minExtent = 80_ut;
 const Unit c_pinHitWidth = 14_ut;	/*< Width of pin hit area from visual edge. */
 
 struct Dim
