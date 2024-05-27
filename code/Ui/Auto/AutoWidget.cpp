@@ -15,6 +15,13 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+const int32_t c_scrollBarDenom = 1;
+const int32_t c_scrollBarWheelSpeed = 24;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.AutoWidget", AutoWidget, Widget)
 
@@ -189,12 +196,12 @@ void AutoWidget::scrollTo(const Point& pnt)
 	m_scrollOffset = -(pnt - innerRect.getCenter());
 
 	if (m_scrollBarH->isVisible(false))
-		m_scrollBarH->setPosition(-m_scrollOffset.cx / 16);
+		m_scrollBarH->setPosition(-m_scrollOffset.cx / c_scrollBarDenom);
 	else
 		m_scrollOffset.cx = 0;
 
 	if (m_scrollBarV->isVisible(false))
-		m_scrollBarV->setPosition(-m_scrollOffset.cy / 16);
+		m_scrollBarV->setPosition(-m_scrollOffset.cy / c_scrollBarDenom);
 	else
 		m_scrollOffset.cy = 0;
 
@@ -249,10 +256,10 @@ void AutoWidget::updateLayout()
 	}
 
 	// Update scrollbar ranges.
-	const int32_t columnCount = (m_bounds.right + 15) / 16;
-	const int32_t columnPageCount = (innerRect.right + 15) / 16;
-	const int32_t rowCount = (m_bounds.bottom + 15) / 16;
-	const int32_t rowPageCount = (innerRect.bottom + 15) / 16;
+	const int32_t columnCount = (m_bounds.right + c_scrollBarDenom - 1) / c_scrollBarDenom;
+	const int32_t columnPageCount = (innerRect.right + c_scrollBarDenom - 1) / c_scrollBarDenom;
+	const int32_t rowCount = (m_bounds.bottom + c_scrollBarDenom - 1) / c_scrollBarDenom;
+	const int32_t rowPageCount = (innerRect.bottom + c_scrollBarDenom - 1) / c_scrollBarDenom;
 
 	m_scrollBarH->setRange(columnCount);
 	m_scrollBarH->setPage(columnPageCount);
@@ -429,11 +436,11 @@ void AutoWidget::eventMouseWheel(MouseWheelEvent* event)
 {
 	// Calculate new position.
 	int32_t position = m_scrollBarV->getPosition();
-	position -= event->getRotation() * 4;
+	position -= event->getRotation() * c_scrollBarWheelSpeed;
 
 	// Set scrollbar position.
 	m_scrollBarV->setPosition(position);
-	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
+	m_scrollOffset.cy = -m_scrollBarV->getPosition() * c_scrollBarDenom;
 
 	// Ensure scroll events are issued.
 	ScrollEvent scrollEvent(this, 0);
@@ -521,8 +528,8 @@ void AutoWidget::eventTimer(TimerEvent* event)
 
 void AutoWidget::eventScroll(ScrollEvent* event)
 {
-	m_scrollOffset.cx = -m_scrollBarH->getPosition() * 16;
-	m_scrollOffset.cy = -m_scrollBarV->getPosition() * 16;
+	m_scrollOffset.cx = -m_scrollBarH->getPosition() * c_scrollBarDenom;
+	m_scrollOffset.cy = -m_scrollBarV->getPosition() * c_scrollBarDenom;
 
 	ScrollEvent scrollEvent(this, 0);
 	raiseEvent(&scrollEvent);
