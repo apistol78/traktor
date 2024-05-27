@@ -16,9 +16,9 @@
 
 
 const vec2 _Lambda = vec2(1.0f, 1.0f);
-const float _FoamThreshold = 1.5f;
+const float _FoamThreshold = 0.5f;
 const float _FoamAdd = 0.01f;
-const float _FoamBias = -1.0f;
+const float _FoamBias = 0.5f;
 const float _FoamDecayRate = 0.05f;
 
 struct Configuration
@@ -47,10 +47,10 @@ Configuration getDefaultConfiguration()
 {
 	Configuration configuration;
 	configuration.seed = 0;
-	configuration.depth = 100.0f;
+	configuration.depth = 1000.0f;
 	configuration.gravity = 9.81f;
 	configuration.lowCutoff = 0.0001f;
-	configuration.highCutoff = 1000.0f;
+	configuration.highCutoff = 100.0f;
 	configuration.lengthScales = vec4(64.0f, 1.0f, 1.0f, 1.0f);
 	return configuration;
 }
@@ -62,7 +62,7 @@ SpectrumParameters getDefaultSpectrum()
 	spectrum.angle = -PI / 2;
 	spectrum.spreadBlend = 0.8f;
 	spectrum.swell = 0.35f;
-	spectrum.alpha = 0.1f;
+	spectrum.alpha = 0.2f;
 	spectrum.peakOmega = 1.0f;
 	spectrum.gamma = 0.5f;
 	spectrum.shortWavesFade = 0.08f;

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -109,11 +109,9 @@ private:
 	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< render::Shader > m_shaderWave;	//!< Compute shader to generate wave maps.
 	resource::Proxy< render::Shader > m_shader;
-
 	Ref< render::ITexture > m_spectrumTexture;
 	Ref< render::ITexture > m_evolvedSpectrumTextures[2];
 	Ref< render::ITexture > m_foamTexture;
-
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
@@ -122,7 +120,6 @@ private:
 	Color4f m_deepColor;
 	float m_opacity = 0.5f;
 	float m_elevation = 0.0f;
-
 	bool m_spectrumDirty = true;
 };
 
