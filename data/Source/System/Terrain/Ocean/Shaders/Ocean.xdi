@@ -1378,7 +1378,7 @@ Read current fragment
 			<script>
 			<![CDATA[
 const vec3 scatter = ComputeOceanScattering(
-	$HeightDisplacement.x,
+	$HeightDisplacement.x * 200.0f,
 	$ViewDirection.xyz,
 	$ViewNormal.xyz,
 	$ViewLightDirection.xyz,
@@ -1388,6 +1388,7 @@ const vec3 scatter = ComputeOceanScattering(
 	$SpecularCoeff.xyz
 );
 $Output = vec4(scatter, 0.0f);
+
 			]]>
 			</script>
 		</item>
@@ -1702,6 +1703,16 @@ $Output = vec4(scatter, 0.0f);
 			</position>
 			<value>0.5</value>
 		</item>
+		<item type="traktor.render.Clamp" version="traktor.render.Node:1">
+			<id>{084AE3F8-F9FA-4DD5-9519-9004E9F4B793}</id>
+			<comment/>
+			<position>
+				<first>-389</first>
+				<second>1503</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -1966,16 +1977,6 @@ $Output = vec4(scatter, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<id>{D833DB7F-13CB-42D8-8135-48F35EB1288B}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[37]"/>
 				<id>{D33F8931-C90C-4EBA-8A04-A31D3E08FAB7}</id>
 			</source>
@@ -1992,16 +1993,6 @@ $Output = vec4(scatter, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<id>{D2D716D6-C4A1-471F-894A-D718515F6281}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[41]"/>
-				<id>{9E839249-E9B9-4736-8BDD-A95A1C892B42}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
-				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3062,6 +3053,36 @@ $Output = vec4(scatter, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[147]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{2D90AB77-694C-4586-AA05-5CF062EFFFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[149]"/>
+				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[149]"/>
+				<id>{8F2140B5-F4E2-4E8F-8121-13C980250D3C}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<id>{9BA81525-6E53-498C-AA97-B31FB48F3A50}</id>
 			</destination>
 		</item>
 	</edges>
