@@ -2312,6 +2312,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 
 	// Get associated objects from closing tab page.
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+	Ref< IEditorPageSite > editorPageSite = tabPage->getData< EditorPageSite >(L"EDITORPAGESITE");
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 
 	// Ask user when trying to close an editor which contains unsaved data.
@@ -2350,6 +2351,7 @@ bool EditorForm::closeEditor(ui::TabPage* tabPage)
 	if (m_activeEditorPage == editorPage)
 	{
 		T_FATAL_ASSERT(document == m_activeDocument);
+		T_FATAL_ASSERT(editorPageSite == m_activeEditorPageSite);
 
 		safeDestroy(m_activeEditorPage);
 		safeClose(m_activeDocument);

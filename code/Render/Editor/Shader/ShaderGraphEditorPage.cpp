@@ -494,6 +494,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 void ShaderGraphEditorPage::destroy()
 {
+	T_FATAL_ASSERT(m_site != nullptr);
+
 	if (m_shaderViewer)
 	{
 		const bool viewerVisible = m_site->isAdditionalPanelVisible(m_shaderViewer);
