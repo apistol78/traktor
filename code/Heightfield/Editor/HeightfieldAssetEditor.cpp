@@ -140,8 +140,8 @@ bool HeightfieldAssetEditor::create(ui::Widget* parent, db::Instance* instance, 
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(m_container);
-	toolBar->addItem(new ui::ToolBarButton(L"Import...", ui::Command(L"HeightfieldAssetEditor.Import")));
-	toolBar->addItem(new ui::ToolBarButton(L"Export...", ui::Command(L"HeightfieldAssetEditor.Export")));
+	toolBar->addItem(new ui::ToolBarButton(L"Import raw...", ui::Command(L"HeightfieldAssetEditor.Import")));
+	toolBar->addItem(new ui::ToolBarButton(L"Export raw...", ui::Command(L"HeightfieldAssetEditor.Export")));
 	toolBar->addItem(new ui::ToolBarButton(L"Export as mesh...", ui::Command(L"HeightfieldAssetEditor.ExportAsMesh")));
 	toolBar->addItem(new ui::ToolBarSeparator());
 	toolBar->addItem(new ui::ToolBarButton(L"Clear...", ui::Command(L"HeightfieldAssetEditor.Clear")));
