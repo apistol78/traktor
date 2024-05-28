@@ -181,6 +181,7 @@ private:
 	bool m_edgeSelectable;
 	Ref< Pin > m_selectedPin;
 	std::vector< UnitRect > m_groupPositions;
+	std::vector< UnitPoint > m_groupAnchorPositions;
 	std::vector< UnitRect > m_nodePositions;
 	std::vector< bool > m_groupSelectionStates;
 	std::vector< bool > m_nodeSelectionStates;

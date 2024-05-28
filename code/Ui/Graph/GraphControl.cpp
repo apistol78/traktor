@@ -625,8 +625,13 @@ bool GraphControl::endSelectModification()
 void GraphControl::capturePositions()
 {
 	m_groupPositions.resize(m_groups.size());
+	m_groupAnchorPositions.resize(m_groups.size());
 	for (uint32_t i = 0; i < m_groups.size(); ++i)
+	{
 		m_groupPositions[i] = m_groups[i]->calculateRect();
+		if (m_groupAnchor >= 0)
+			m_groupAnchorPositions[i] = m_groups[i]->getAnchorPosition(m_groupAnchor);
+	}
 
 	m_nodePositions.resize(m_nodes.size());
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
@@ -988,34 +993,35 @@ void GraphControl::eventMouseMove(MouseMoveEvent* event)
 		const Size offset = event->getPosition() / m_scale - m_moveOrigin;
 
 		// Move selected groups.
-		for (auto group : m_groups)
+		for (size_t i = 0; i < m_groups.size(); ++i)
 		{
+			Group* group = m_groups[i];
 			if (!group->isSelected())
 				continue;
 
 			if (m_groupAnchor < 0)
 			{
-				const Point position = pixel(group->getPosition());
+				const Point position = pixel(m_groupPositions[i].getTopLeft());
 				group->setPosition(unit(position + offset));
 			}
 			else
 			{
-				const Point position = pixel(group->getAnchorPosition(m_groupAnchor));
+				const Point position = pixel(m_groupAnchorPositions[i]);
 				group->setAnchorPosition(m_groupAnchor, unit(position + offset));
 			}
 		}
 
 		// Move selected nodes.
-		for (auto node : m_nodes)
+		for (size_t i = 0; i < m_nodes.size(); ++i)
 		{
+			Node* node = m_nodes[i];
 			if (!node->isSelected())
 				continue;
 
-			const Point position = pixel(node->getPosition());
+			const Point position = pixel(m_nodePositions[i].getTopLeft());
 			node->setPosition(unit(position + offset));
 		}
 
-		m_moveOrigin = event->getPosition() / m_scale;
 		update();
 		event->consume();
 	}

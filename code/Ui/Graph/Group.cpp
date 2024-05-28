@@ -83,25 +83,28 @@ int32_t Group::hitAnchor(const UnitPoint& p) const
 
 void Group::setAnchorPosition(int32_t anchor, const UnitPoint& position)
 {
+	const UnitSize dp = position - getAnchorPosition(anchor);
 	switch (anchor)
 	{
 	case 0:
 		m_position = position;
+		m_size -= dp;
 		break;
 
 	case 1:
 		m_position.y = position.y;
-		m_size.cx = position.x - m_position.x;
+		m_size.cx += dp.cx;
+		m_size.cy -= dp.cy;
 		break;
 
 	case 2:
-		m_size.cx = position.x - m_position.x;
-		m_size.cy = position.y - m_position.y;
+		m_size += dp;
 		break;
 
 	case 3:
 		m_position.x = position.x;
-		m_size.cy = position.y - m_position.y;
+		m_size.cx -= dp.cx;
+		m_size.cy += dp.cy;
 		break;
 	}
 }
