@@ -110,7 +110,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderWave;	//!< Compute shader to generate wave maps.
 	resource::Proxy< render::Shader > m_shader;
 	Ref< render::ITexture > m_spectrumTexture;
-	Ref< render::ITexture > m_evolvedSpectrumTextures[2];
+	Ref< render::ITexture > m_evolvedSpectrumTextures[4];
 	Ref< render::ITexture > m_foamTexture;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_indexBuffer;

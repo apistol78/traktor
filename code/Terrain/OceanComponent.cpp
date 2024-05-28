@@ -27,6 +27,7 @@
 #include "Terrain/TerrainComponent.h"
 #include "World/Entity.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldSetupContext.h"
 
@@ -40,6 +41,7 @@ const render::Handle s_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
 const render::Handle s_handleOcean_HaveTerrain(L"Ocean_HaveTerrain");
 const render::Handle s_handleOcean_Eye(L"Ocean_Eye");
+const render::Handle s_handleOcean_LastEye(L"Ocean_LastEye");
 const render::Handle s_handleOcean_ShallowTint(L"Ocean_ShallowTint");
 const render::Handle s_handleOcean_DeepColor(L"Ocean_DeepColor");
 const render::Handle s_handleOcean_Opacity(L"Ocean_Opacity");
@@ -85,6 +87,8 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	m_spectrumTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 	m_evolvedSpectrumTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 	m_evolvedSpectrumTextures[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+	m_evolvedSpectrumTextures[2] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+	m_evolvedSpectrumTextures[3] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 	m_foamTexture = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
 	AlignedVector< render::VertexElement > vertexElements;
@@ -176,6 +180,8 @@ void OceanComponent::destroy()
 	safeDestroy(m_spectrumTexture);
 	safeDestroy(m_evolvedSpectrumTextures[0]);
 	safeDestroy(m_evolvedSpectrumTextures[1]);
+	safeDestroy(m_evolvedSpectrumTextures[2]);
+	safeDestroy(m_evolvedSpectrumTextures[3]);
 	safeDestroy(m_foamTexture);
 	m_shader.clear();
 }
@@ -264,6 +270,12 @@ void OceanComponent::setup(
 		}
 
 		m_spectrumDirty = false;
+	}
+
+	// Swap textures so we have last and current.
+	{
+		std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
+		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
 	}
 
 	// Evolve spectrum over time.
@@ -388,6 +400,7 @@ void OceanComponent::build(
 	if (!m_owner || worldRenderView.getSnapshot())
 		return;
 
+	const bool writeVelocity = (worldRenderPass.getTechnique() == world::s_techniqueVelocityWrite);
 	bool haveTerrain = false;
 
 	// Get terrain from owner.
@@ -399,9 +412,8 @@ void OceanComponent::build(
 	}
 
 	const Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
-	const Matrix44& view = worldRenderView.getView();
-	const Matrix44 viewInv = view.inverse();
-	const Vector4 eye = viewInv.translation().xyz1();
+	const Vector4 lastEye = worldRenderView.getLastView().inverse().translation().xyz1();
+	const Vector4 eye = worldRenderView.getView().inverse().translation().xyz1();
 
 	// Render ocean geometry.
 	auto perm = worldRenderPass.getPermutation(m_shader);
@@ -423,11 +435,23 @@ void OceanComponent::build(
 	renderBlock->programParams->beginParameters(renderContext);
 	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
+	renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
 	renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
-	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
-	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
-	renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_foamTexture);
+
+	if (!writeVelocity)
+	{
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_foamTexture);
+	}
+	else
+	{
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_evolvedSpectrumTextures[2]);
+		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture3, m_evolvedSpectrumTextures[3]);
+	}
 
 	if (haveTerrain)
 	{

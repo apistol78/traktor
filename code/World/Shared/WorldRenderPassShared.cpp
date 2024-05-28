@@ -87,6 +87,7 @@ void WorldRenderPassShared::setWorldProgramParameters(render::ProgramParameters*
 	{
 		const Matrix44 w0 = lastWorld.toMatrix44();
 		programParams->setMatrixParameter(s_handleLastWorld, w0);
+		programParams->setMatrixParameter(s_handleLastView, m_worldRenderView.getLastView());
 		programParams->setMatrixParameter(s_handleLastWorldView, m_worldRenderView.getLastView() * w0);
 	}
 }

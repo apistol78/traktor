@@ -48,6 +48,7 @@ extern const render::Handle T_DLLCLASS s_handleFogDistanceAndDensity;
 extern const render::Handle T_DLLCLASS s_handleGamma;
 extern const render::Handle T_DLLCLASS s_handleGammaInverse;
 extern const render::Handle T_DLLCLASS s_handleLastWorld;
+extern const render::Handle T_DLLCLASS s_handleLastView;
 extern const render::Handle T_DLLCLASS s_handleLastWorldView;
 extern const render::Handle T_DLLCLASS s_handleLightDiffuseMap;
 extern const render::Handle T_DLLCLASS s_handleLightIndexSBuffer;

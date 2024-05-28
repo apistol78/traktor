@@ -38,6 +38,7 @@ const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity
 const render::Handle s_handleGamma(L"World_Gamma");
 const render::Handle s_handleGammaInverse(L"World_GammaInverse");
 const render::Handle s_handleLastWorld(L"World_LastWorld");
+const render::Handle s_handleLastView(L"World_LastView");
 const render::Handle s_handleLastWorldView(L"World_LastWorldView");
 const render::Handle s_handleLightDiffuseMap(L"World_LightDiffuseMap");
 const render::Handle s_handleLightIndexSBuffer(L"World_LightIndexSBuffer");
