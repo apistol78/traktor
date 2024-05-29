@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 /*! Shortcut edit control.
  * \ingroup UI
@@ -31,8 +29,6 @@ class T_DLLCLASS ShortcutEdit : public Widget
 	T_RTTI_CLASS;
 
 public:
-	ShortcutEdit();
-
 	bool create(Widget* parent, int32_t keyState, VirtualKey virtualKey, uint32_t style = WsNone);
 
 	virtual std::wstring getText() const override;
@@ -46,8 +42,8 @@ public:
 	VirtualKey getVirtualKey() const;
 
 private:
-	int32_t m_keyState;
-	VirtualKey m_virtualKey;
+	int32_t m_keyState = 0;
+	VirtualKey m_virtualKey = VkNull;
 
 	void eventKeyDown(KeyDownEvent* event);
 
@@ -56,6 +52,4 @@ private:
 	void eventFocus(FocusEvent* event);
 };
 
-	}
 }
-

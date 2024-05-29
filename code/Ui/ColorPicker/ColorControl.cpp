@@ -26,7 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorControl", ColorControl, Widget)
 
 bool ColorControl::create(Widget* parent, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< SizeEvent >(this, &ColorControl::eventSize);

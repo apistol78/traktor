@@ -38,7 +38,7 @@ ListBox::ListBox()
 
 bool ListBox::create(Widget* parent, uint32_t style)
 {
-	if (!AutoWidget::create(parent, style | WsDoubleBuffer))
+	if (!AutoWidget::create(parent, style | WsFocus | WsDoubleBuffer))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &ListBox::eventButtonDown);

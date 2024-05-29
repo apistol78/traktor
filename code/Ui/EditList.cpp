@@ -24,7 +24,7 @@ EditList::EditList()
 
 bool EditList::create(Widget* parent, uint32_t style)
 {
-	if (!ListBox::create(parent, style))
+	if (!ListBox::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseDoubleClickEvent >(this, &EditList::eventDoubleClick);

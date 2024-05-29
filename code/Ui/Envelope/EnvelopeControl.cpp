@@ -31,7 +31,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.EnvelopeControl", EnvelopeControl, Widget)
 
 bool EnvelopeControl::create(Widget* parent, EnvelopeEvaluator* evaluator, float minValue, float maxValue, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &EnvelopeControl::eventButtonDown);

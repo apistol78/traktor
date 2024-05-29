@@ -115,7 +115,7 @@ bool EffectPreviewControl::create(
 	sound::AudioSystem* audioSystem
 )
 {
-	if (!Widget::create(parent, style | ui::WsNoCanvas))
+	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
 		return false;
 
 	ui::Rect innerRect = getInnerRect();

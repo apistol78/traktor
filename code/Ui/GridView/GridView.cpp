@@ -112,7 +112,7 @@ GridView::GridView()
 
 bool GridView::create(Widget* parent, uint32_t style)
 {
-	if (!AutoWidget::create(parent, style))
+	if (!AutoWidget::create(parent, style | WsFocus))
 		return false;
 
 	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);

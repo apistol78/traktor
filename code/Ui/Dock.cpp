@@ -150,12 +150,8 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 			pane->showTab(tabIndex);
 			update();
 		}
-
-		event->consume();
-		return;
 	}
-
-	if ((pane = m_pane->getSplitterFromPosition(position)) != nullptr)
+	else if ((pane = m_pane->getSplitterFromPosition(position)) != nullptr)
 	{
 		if (pane->hitSplitter(position))
 		{
@@ -163,8 +159,6 @@ void Dock::eventButtonDown(MouseButtonDownEvent* event)
 			setCursor(pane->m_vertical ? Cursor::SizeNS : Cursor::SizeWE);
 			setCapture();
 		}
-		event->consume();
-		return;
 	}
 
 	event->consume();

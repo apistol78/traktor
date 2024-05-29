@@ -63,6 +63,21 @@ bool Widget::create(Widget* parent, uint32_t style)
 		setFont(font);
 	}
 
+#if defined(_DEBUG)
+	// Highlight widget with focus.
+	addEventHandler< OverlayPaintEvent >([=, this](OverlayPaintEvent* event) {
+		Canvas& canvas = event->getCanvas();
+		if (hasFocus())
+		{
+			canvas.setForeground(Color4ub(0, 255, 0, 255));
+			canvas.drawRect(getInnerRect().inflate(-1, -1));
+		}
+	});
+	addEventHandler< FocusEvent >([=, this](FocusEvent* event) {
+		update();
+	});
+#endif
+
 	return true;
 }
 

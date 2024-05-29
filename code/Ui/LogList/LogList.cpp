@@ -29,7 +29,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.LogList", LogList, Widget)
 
 bool LogList::create(Widget* parent, uint32_t style, const ISymbolLookup* lookup)
 {
-	if (!Widget::create(parent, style | WsDoubleBuffer | WsAccelerated))
+	if (!Widget::create(parent, style | WsFocus | WsDoubleBuffer | WsAccelerated))
 		return false;
 
 	addEventHandler< PaintEvent >(this, &LogList::eventPaint);

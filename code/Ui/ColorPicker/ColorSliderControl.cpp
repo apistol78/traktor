@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorSliderControl", ColorSliderControl, Wid
 
 bool ColorSliderControl::create(Widget* parent, uint32_t style, IGradient* gradient)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &ColorSliderControl::eventButtonDown);

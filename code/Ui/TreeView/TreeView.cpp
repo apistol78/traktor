@@ -25,7 +25,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeView", TreeView, AutoWidget)
 
 bool TreeView::create(Widget* parent, uint32_t style)
 {
-	if (!AutoWidget::create(parent, style | WsWantAllInput))
+	if (!AutoWidget::create(parent, style | WsFocus | WsWantAllInput))
 		return false;
 
 	m_autoEdit = bool((style & WsAutoEdit) == WsAutoEdit);

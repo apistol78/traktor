@@ -121,7 +121,7 @@ PropertyList::PropertyList()
 
 bool PropertyList::create(Widget* parent, uint32_t style, IPropertyGuidResolver* guidResolver)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	m_scrollBar = new ScrollBar();

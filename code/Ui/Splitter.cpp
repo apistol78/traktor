@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Ui/StyleSheet.h"
 #include "Ui/Splitter.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
+	namespace
 	{
-		namespace
-		{
 
 Widget* findVisibleSibling(Widget* widget)
 {
@@ -26,7 +24,7 @@ Widget* findVisibleSibling(Widget* widget)
 	return widget;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Splitter", Splitter, Widget)
 
@@ -338,6 +336,8 @@ void Splitter::eventButtonDown(MouseButtonDownEvent* event)
 		setCapture();
 		m_drag = true;
 	}
+
+	event->consume();
 }
 
 void Splitter::eventButtonUp(MouseButtonUpEvent* event)
@@ -366,5 +366,4 @@ void Splitter::eventPaint(PaintEvent* event)
 	event->consume();
 }
 
-	}
 }

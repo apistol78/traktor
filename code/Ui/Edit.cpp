@@ -45,7 +45,7 @@ Edit::Edit()
 
 bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, const EditValidator* validator)
 {
-	if (!Widget::create(parent, style | WsDoubleBuffer))
+	if (!Widget::create(parent, style | WsFocus | WsDoubleBuffer))
 		return false;
 
 	if ((m_validator = validator) != nullptr)

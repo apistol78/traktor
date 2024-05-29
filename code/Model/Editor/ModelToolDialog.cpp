@@ -285,7 +285,7 @@ bool ModelToolDialog::create(ui::Widget* parent, const std::wstring& fileName, f
 	m_modelChildPopup->add(new ui::MenuItem(ui::Command(L"ModelTool.Remove"), i18n::Text(L"MODEL_TOOL_REMOVE")));
 
 	m_renderWidget = new ui::Widget();
-	m_renderWidget->create(splitter, ui::WsNoCanvas);
+	m_renderWidget->create(splitter, ui::WsFocus | ui::WsNoCanvas);
 	m_renderWidget->addEventHandler< ui::MouseButtonDownEvent >(this, &ModelToolDialog::eventMouseDown);
 	m_renderWidget->addEventHandler< ui::MouseButtonUpEvent >(this, &ModelToolDialog::eventMouseUp);
 	m_renderWidget->addEventHandler< ui::MouseMoveEvent >(this, &ModelToolDialog::eventMouseMove);

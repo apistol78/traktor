@@ -100,7 +100,7 @@ GraphControl::GraphControl()
 
 bool GraphControl::create(Widget* parent, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	m_paintSettings = PaintSettings(getFont());

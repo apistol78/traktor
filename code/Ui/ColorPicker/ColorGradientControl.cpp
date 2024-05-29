@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ColorGradientControl", ColorGradientControl,
 
 bool ColorGradientControl::create(Widget* parent, uint32_t style, const Color4ub& primaryColor)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &ColorGradientControl::eventButtonDown);

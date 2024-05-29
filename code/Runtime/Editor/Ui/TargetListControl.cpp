@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetListControl", TargetListControl, 
 
 bool TargetListControl::create(ui::Widget* parent)
 {
-	if (!ui::AutoWidget::create(parent, ui::WsDoubleBuffer))
+	if (!ui::AutoWidget::create(parent, ui::WsFocus | ui::WsDoubleBuffer))
 		return false;
 
 	addEventHandler< ui::MouseButtonDownEvent >(this, &TargetListControl::eventButtonDown);

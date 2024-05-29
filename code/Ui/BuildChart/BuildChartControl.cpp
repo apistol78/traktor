@@ -35,7 +35,7 @@ BuildChartControl::BuildChartControl()
 
 bool BuildChartControl::create(Widget* parent, uint32_t laneCount, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseButtonDownEvent >(this, &BuildChartControl::eventButtonDown);

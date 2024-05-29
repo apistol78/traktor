@@ -36,7 +36,8 @@ constexpr static uint32_t WsAcceptFileDrop	= 1 << 11;
 constexpr static uint32_t WsTabStop			= 1 << 12;
 constexpr static uint32_t WsWantAllInput	= 1 << 13;
 constexpr static uint32_t WsNoCanvas		= 1 << 14;	//!< Don't allocate a graphics canvas; useful for 3d rendering widgets etc.
-constexpr static uint32_t WsUser			= 1 << 15;
+constexpr static uint32_t WsFocus			= 1 << 15;	//!< Get focus when user press mouse on widget.
+constexpr static uint32_t WsUser			= 1 << 16;
 
 constexpr static uint32_t MbOk				= 1 << 0;
 constexpr static uint32_t MbCancel			= 1 << 1;

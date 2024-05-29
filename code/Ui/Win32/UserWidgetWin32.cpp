@@ -46,7 +46,8 @@ bool UserWidgetWin32::create(IWidget* parent, int style)
 	if (!WidgetWin32Impl::create(style))
 		return false;
 
-	m_hWnd.registerMessageHandler(WM_LBUTTONDOWN, new MethodMessageHandler< UserWidgetWin32 >(this, &UserWidgetWin32::eventButtonDown));
+	if (style & WsFocus)
+		m_hWnd.registerMessageHandler(WM_LBUTTONDOWN, new MethodMessageHandler< UserWidgetWin32 >(this, &UserWidgetWin32::eventButtonDown));
 
 	m_ownCursor = true;
 	return true;

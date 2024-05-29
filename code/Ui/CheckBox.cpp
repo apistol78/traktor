@@ -25,7 +25,7 @@ CheckBox::CheckBox()
 
 bool CheckBox::create(Widget* parent, const std::wstring& text, bool checked)
 {
-	if (!Widget::create(parent))
+	if (!Widget::create(parent, WsFocus))
 		return false;
 
 	setText(text);

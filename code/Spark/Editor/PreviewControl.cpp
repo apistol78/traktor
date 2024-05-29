@@ -106,7 +106,7 @@ bool PreviewControl::create(
 	sound::ISoundPlayer* soundPlayer
 )
 {
-	if (!Widget::create(parent, style | ui::WsNoCanvas))
+	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))
 		return false;
 
 	render::RenderViewEmbeddedDesc desc;

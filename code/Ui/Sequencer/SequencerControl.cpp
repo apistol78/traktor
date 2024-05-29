@@ -46,7 +46,7 @@ SequencerControl::SequencerControl()
 
 bool SequencerControl::create(Widget* parent, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	m_scrollBarV = new ScrollBar();

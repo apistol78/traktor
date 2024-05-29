@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2024 Anders Pistol.
+ * Copyright (c) 2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -27,12 +27,12 @@ class Canvas;
 /*! Paint event.
  * \ingroup UI
  */
-class T_DLLCLASS PaintEvent : public Event
+class T_DLLCLASS OverlayPaintEvent : public Event
 {
 	T_RTTI_CLASS;
 
 public:
-	explicit PaintEvent(EventSubject* sender, Canvas& canvas, const Rect& rc);
+	explicit OverlayPaintEvent(EventSubject* sender, Canvas& canvas, const Rect& rc);
 
 	Canvas& getCanvas() const;
 

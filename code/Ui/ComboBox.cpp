@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ComboBox", ComboBox, Widget)
 
 bool ComboBox::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	m_buttonArrow = new Button();

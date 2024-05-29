@@ -30,7 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.PreviewList", PreviewList, AutoWidget)
 
 bool PreviewList::create(Widget* parent, uint32_t style)
 {
-	if (!AutoWidget::create(parent, style))
+	if (!AutoWidget::create(parent, style | WsFocus))
 		return false;
 
 	m_single = bool((style & WsMultiple) == 0);

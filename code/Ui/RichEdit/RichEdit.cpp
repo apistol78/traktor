@@ -52,7 +52,7 @@ RichEdit::RichEdit()
 
 bool RichEdit::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
-	if (!Widget::create(parent, style | WsWantAllInput | WsDoubleBuffer))
+	if (!Widget::create(parent, style | WsFocus | WsWantAllInput | WsDoubleBuffer))
 		return false;
 
 	m_clipboard = bool((style & WsNoClipboard) == 0);

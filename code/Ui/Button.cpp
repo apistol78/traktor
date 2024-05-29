@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Button", Button, Widget)
 
 bool Button::create(Widget* parent, const std::wstring& text, uint32_t style)
 {
-	if (!Widget::create(parent, style))
+	if (!Widget::create(parent, style | WsFocus))
 		return false;
 
 	addEventHandler< MouseTrackEvent >(this, &Button::eventMouseTrack);
@@ -33,7 +33,7 @@ bool Button::create(Widget* parent, const std::wstring& text, uint32_t style)
 
 Size Button::getPreferredSize(const Size& hint) const
 {
-	// Calculate prefered size from new text.
+	// Calculate preferred size from new text.
 	const int32_t marginX = pixel(16_ut);
 	const int32_t marginY = pixel(4_ut);
 

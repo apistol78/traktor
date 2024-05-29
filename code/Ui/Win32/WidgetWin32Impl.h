@@ -781,12 +781,21 @@ protected:
 			if (m_canvasImpl != nullptr && m_canvasImpl->beginPaint(m_hWnd, m_font, m_doubleBuffer, NULL))
 			{
 				Canvas canvas(m_canvasImpl, reinterpret_cast< Widget* >(m_owner));
+
 				PaintEvent p(
 					m_owner,
 					canvas,
 					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
 				);
 				m_owner->raiseEvent(&p);
+
+				OverlayPaintEvent op(
+					m_owner,
+					canvas,
+					Rect(rcUpdate.left, rcUpdate.top, rcUpdate.right, rcUpdate.bottom)
+				);
+				m_owner->raiseEvent(&op);
+
 				m_canvasImpl->endPaint(m_hWnd);
 				outPass = !p.consumed();
 			}

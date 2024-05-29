@@ -90,7 +90,7 @@ PreviewControl::PreviewControl(editor::IEditor* editor, resource::IResourceManag
 
 bool PreviewControl::create(ui::Widget* parent)
 {
-	if (!ui::Widget::create(parent, ui::WsNoCanvas))
+	if (!ui::Widget::create(parent, ui::WsFocus | ui::WsNoCanvas))
 		return false;
 
 	// Create render view.
