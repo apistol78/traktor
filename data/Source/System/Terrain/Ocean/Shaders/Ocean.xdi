@@ -283,8 +283,8 @@
 			<id>{289F7E9C-D57D-714E-846B-46152985B1C7}</id>
 			<comment/>
 			<position>
-				<first>6237</first>
-				<second>1928</second>
+				<first>6818</first>
+				<second>1692</second>
 			</position>
 			<name>L_DepthFactor</name>
 		</item>
@@ -342,8 +342,8 @@
 			<id>{855A12DD-8079-8D40-82B2-DE224DF31807}</id>
 			<comment/>
 			<position>
-				<first>6610</first>
-				<second>1877</second>
+				<first>7005</first>
+				<second>1590</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -504,12 +504,12 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
-			<ignoreMips>false</ignoreMips>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.TargetSize" version="traktor.render.Node:1">
@@ -1957,6 +1957,84 @@ Read sun direction
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
+		<item type="traktor.render.Script" version="6,traktor.render.Node:1">
+			<id>{88111C5D-C57F-6146-A14F-5DCA4A8F5CB3}</id>
+			<comment/>
+			<position>
+				<first>6102</first>
+				<second>1830</second>
+			</position>
+			<name>Unnamed</name>
+			<technique/>
+			<localSize>
+				<X>1</X>
+				<Y>1</Y>
+				<Z>1</Z>
+			</localSize>
+			<include/>
+			<inputPins>
+				<item>
+					<id>{22B8EE58-2845-314E-BFDA-E792A95C09DA}</id>
+					<name>Incident</name>
+				</item>
+				<item>
+					<id>{D3B5F4D8-D054-F740-BB89-11CC0AB7F510}</id>
+					<name>Normal</name>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<id>{BC06BB80-ECA8-C241-86CF-1EB033FE5141}</id>
+					<name>Output</name>
+					<type>Vector</type>
+				</item>
+			</outputPins>
+			<script>
+			<![CDATA[
+
+vec3 r = refract($Incident.xyz, $Normal.xyz, 1.2f);
+
+$Output = vec4(r * -0.05f, 0.0f);
+
+
+			]]>
+			</script>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{69E7DEA1-4A45-7D42-A199-ECF571A8104B}</id>
+			<comment/>
+			<position>
+				<first>5901</first>
+				<second>1886</second>
+			</position>
+			<name>L_ViewNormal</name>
+		</item>
+		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
+			<id>{029C448C-ED9B-EB40-B406-CCFA2D4A2B63}</id>
+			<comment/>
+			<position>
+				<first>5891</first>
+				<second>1826</second>
+			</position>
+			<name>L_ViewDirection</name>
+		</item>
+		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
+			<id>{595CEF78-DEF4-F441-B2A7-141CC9F5F508}</id>
+			<comment/>
+			<position>
+				<first>6339</first>
+				<second>1834</second>
+			</position>
+			<swizzle>xy</swizzle>
+		</item>
+		<item type="traktor.render.Add" version="traktor.render.Node:1">
+			<id>{B1EE0094-6D31-8148-A6F5-B72FF609426D}</id>
+			<comment/>
+			<position>
+				<first>6484</first>
+				<second>1760</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -2247,16 +2325,6 @@ Read sun direction
 			<destination>
 				<node ref="/object/nodes/item[49]"/>
 				<id>{C9CC095B-00C6-4A84-88B5-2455115CAF9C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[49]"/>
-				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
-				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge" version="1">
@@ -3507,6 +3575,66 @@ Read sun direction
 			<destination>
 				<node ref="/object/nodes/item[165]"/>
 				<id>{1CD3B29D-693D-4635-B49F-EF53300CAA8A}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[168]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[167]"/>
+				<id>{D3B5F4D8-D054-F740-BB89-11CC0AB7F510}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[169]"/>
+				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[167]"/>
+				<id>{22B8EE58-2845-314E-BFDA-E792A95C09DA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[167]"/>
+				<id>{BC06BB80-ECA8-C241-86CF-1EB033FE5141}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[170]"/>
+				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[170]"/>
+				<id>{ADB4FC1D-3726-4CC5-B4D5-1E2468274325}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{9F45B2C3-B513-4646-B0C1-663748FD169C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[49]"/>
+				<id>{3B01355D-9153-4864-9B56-7D55F801BFF3}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{3DE04294-4DEA-4A13-A460-2274647357EA}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[171]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[47]"/>
+				<id>{6D5C5EFE-A35C-4748-B81E-B8EBACE433BC}</id>
 			</destination>
 		</item>
 	</edges>

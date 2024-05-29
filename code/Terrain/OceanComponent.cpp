@@ -272,11 +272,11 @@ void OceanComponent::setup(
 		m_spectrumDirty = false;
 	}
 
-	// Swap textures so we have last and current.
-	{
-		std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
-		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
-	}
+	//// Swap textures so we have last and current.
+	//{
+	//	std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
+	//	std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
+	//}
 
 	// Evolve spectrum over time.
 	{
@@ -474,6 +474,13 @@ void OceanComponent::build(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(sp.priority, renderBlock);
+
+	// Swap textures so we have last and current.
+	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::Last) != 0)
+	{
+		std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
+		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
+	}
 }
 
 }
