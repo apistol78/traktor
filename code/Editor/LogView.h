@@ -11,6 +11,14 @@
 #include "Ui/Container.h"
 #include "Ui/LogList/LogList.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
@@ -35,7 +43,7 @@ namespace traktor::editor
 
 class IEditor;
 
-class LogView
+class T_DLLCLASS LogView
 :	public ui::Container
 ,	public ui::LogList::ISymbolLookup
 {

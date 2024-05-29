@@ -26,8 +26,9 @@ namespace traktor::runtime
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetManager", TargetManager, Object)
 
-TargetManager::TargetManager(editor::IEditor *editor)
+TargetManager::TargetManager(editor::IEditor* editor, const fn_new_log_target_t& newLogTargetFn)
 :	m_editor(editor)
+,	m_newLogTargetFn(newLogTargetFn)
 ,	m_port(0)
 {
 }
@@ -143,7 +144,7 @@ bool TargetManager::update()
 					if (running > 0)
 						logName += L" (" + toString(running) + L")";
 
-					Ref< ILogTarget > targetLog = m_editor->createLogTarget(logName);
+					Ref< ILogTarget > targetLog = m_newLogTargetFn(logName);
 
 					// Create connection object and add to instance.
 					Ref< script::IScriptDebuggerSessions > debuggerSessions = m_editor->getObjectStore()->get< script::IScriptDebuggerSessions >();

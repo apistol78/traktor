@@ -32,6 +32,7 @@ namespace traktor::ui
 
 class Container;
 class Splitter;
+class Tab;
 class TimerEvent;
 class ToolBar;
 class ToolBarButtonClickEvent;
@@ -115,6 +116,8 @@ private:
 	Ref< ui::ToolBarDropMenu > m_toolTweaks;
 	Ref< ui::ToolBarDropDown > m_toolLanguage;
 	Ref< TargetListControl > m_targetList;
+	Ref< ui::Tab > m_tabOutput;
+	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	// \}
 
 	// \name Tool
@@ -145,6 +148,8 @@ private:
 	void updateTargetLists();
 
 	void updateTargetManagers();
+
+	Ref< ILogTarget > createLogTarget(const std::wstring& name);
 
 	Ref< PropertyGroup > getTweakSettings() const;
 

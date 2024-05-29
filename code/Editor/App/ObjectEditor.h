@@ -44,8 +44,6 @@ public:
 
 	virtual void revertWorkspaceSettings() override final;
 
-	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) override final;
-
 	virtual Ref< db::Database > getSourceDatabase() const override final;
 
 	virtual Ref< db::Database > getOutputDatabase() const override final;

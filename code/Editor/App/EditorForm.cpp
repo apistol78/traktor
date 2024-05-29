@@ -48,6 +48,7 @@
 #include "Editor/IObjectEditor.h"
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
+#include "Editor/LogView.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/PipelineDependencySet.h"
 #include "Editor/TypeBrowseFilter.h"
@@ -60,7 +61,6 @@
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
 #include "Editor/App/EditorPluginSite.h"
-#include "Editor/App/LogView.h"
 #include "Editor/App/MRU.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/App/NewWorkspaceDialog.h"
@@ -594,18 +594,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_paneSouth->dock(m_dataBaseView);
 
 	// Create output panel.
-	m_tabOutput = new ui::Tab();
-	m_tabOutput->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
-	m_tabOutput->setText(i18n::Text(L"TITLE_OUTPUT"));
-	if (!m_mergedSettings->getProperty< bool >(L"Editor.LogVisible"))
-		m_tabOutput->hide();
-
-	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
-	tabPageLog->create(m_tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
-
 	m_logView = new LogView(this);
-	m_logView->create(tabPageLog);
-	m_logView->setText(i18n::Text(L"TITLE_LOG"));
+	m_logView->create(m_dock);
+	m_logView->setText(i18n::Text(L"TITLE_OUTPUT"));
 
 	// Replay logs into log view.
 	infoLog->replay(m_logView->getLogTarget());
@@ -616,10 +607,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	log::warning.setGlobalTarget(new LogRedirectTarget(defaultWarningLog, m_logView->getLogTarget()));
 	log::error.setGlobalTarget(new LogRedirectTarget(defaultErrorLog, m_logView->getLogTarget()));
 
-	m_tabOutput->addPage(tabPageLog);
-	m_tabOutput->setActivePage(tabPageLog);
-
-	m_paneSouth->dock(m_tabOutput);
+	m_paneSouth->dock(m_logView);
 
 	// Create tab groups; only add one by default, user needs to add more groups manually.
 	m_tabGroupContainer = new ui::MultiSplitter();
@@ -911,33 +899,6 @@ void EditorForm::commitWorkspaceSettings()
 
 void EditorForm::revertWorkspaceSettings()
 {
-}
-
-Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
-{
-	if (m_logTargets[title] == nullptr)
-	{
-		Ref< ui::TabPage > tabPageLog = new ui::TabPage();
-		if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
-			return nullptr;
-
-		Ref< LogView > logView = new LogView(this);
-		logView->create(tabPageLog);
-		logView->setText(title);
-
-		Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
-		m_tabOutput->addPage(tabPageLog);
-
-		if (m_globalSettings->getProperty< bool >(L"Editor.ShowNewLogTargets"))
-			m_tabOutput->setActivePage(tabPageLog);
-		else
-			m_tabOutput->setActivePage(activePage);
-
-		m_tabOutput->update();
-
-		m_logTargets[title] = logView->getLogTarget();
-	}
-	return m_logTargets[title];
 }
 
 Ref< db::Database > EditorForm::getSourceDatabase() const
@@ -2739,7 +2700,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.ViewLog")
 	{
-		m_dock->showWidget(m_tabOutput);
+		m_dock->showWidget(m_logView);
 	}
 	else if (command == L"Editor.ViewOther")
 	{
@@ -2964,8 +2925,8 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", unit(m_paneEast->getPaneRect().getWidth()).get());
 
 	// Save panes visible.
-	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
-	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_tabOutput->isVisible(false));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dock->isWidgetVisible(m_dataBaseView));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_dock->isWidgetVisible(m_logView));
 
 	// Save form placement.
 	const ui::Rect rc = getNormalRect();

@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include <functional>
 #include "Core/RefArray.h"
 #include "Net/TcpSocket.h"
 
@@ -38,7 +39,9 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	explicit TargetManager(editor::IEditor *editor);
+	typedef std::function< Ref< ILogTarget >(const std::wstring& name) > fn_new_log_target_t;
+
+	explicit TargetManager(editor::IEditor* editor, const fn_new_log_target_t& newLogTargetFn);
 
 	bool create();
 
@@ -56,6 +59,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	fn_new_log_target_t m_newLogTargetFn;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
 	uint16_t m_port;

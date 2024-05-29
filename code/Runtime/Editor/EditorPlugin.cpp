@@ -29,6 +29,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageSite.h"
+#include "Editor/LogView.h"
 #include "I18N/Text.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Network.h"
@@ -62,8 +63,11 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Splitter.h"
+#include "Ui/Tab.h"
+#include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
@@ -199,8 +203,8 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 
 	// Performance panel
 	{
-		Ref< ui::Container > container = new ui::Container();
-		container->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0_ut, 0_ut));
+		m_tabOutput = new ui::Tab();
+		m_tabOutput->create(m_splitter, ui::Tab::WsLine | ui::Tab::WsBottom);
 	}
 
 	m_site->createAdditionalPanel(m_splitter, 200_ut, false);
@@ -352,7 +356,9 @@ void EditorPlugin::handleWorkspaceOpened()
 	updateTargetLists();
 
 	// Create target manager.
-	m_targetManager = new TargetManager(m_editor);
+	m_targetManager = new TargetManager(m_editor, [=, this](const std::wstring& name) -> Ref< ILogTarget > {
+		return createLogTarget(name);
+	});
 	if (!m_targetManager->create())
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
@@ -486,6 +492,28 @@ void EditorPlugin::updateTargetManagers()
 			m_connectionManager->setConnectionString(remoteId, databaseCs);
 		}
 	}
+}
+
+Ref< ILogTarget > EditorPlugin::createLogTarget(const std::wstring& name)
+{
+	if (m_logTargets[name] == nullptr)
+	{
+		Ref< ui::TabPage > tabPageLog = new ui::TabPage();
+		if (!tabPageLog->create(m_tabOutput, name, new ui::FloodLayout()))
+			return nullptr;
+
+		Ref< editor::LogView > logView = new editor::LogView(m_editor);
+		logView->create(tabPageLog);
+		logView->setText(name);
+
+		Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
+		m_tabOutput->addPage(tabPageLog);
+		m_tabOutput->setActivePage(tabPageLog);
+		m_tabOutput->update();
+
+		m_logTargets[name] = logView->getLogTarget();
+	}
+	return m_logTargets[name];
 }
 
 Ref< PropertyGroup > EditorPlugin::getTweakSettings() const

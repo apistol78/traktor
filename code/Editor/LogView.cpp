@@ -20,7 +20,7 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Editor/IEditor.h"
-#include "Editor/App/LogView.h"
+#include "Editor/LogView.h"
 #include "I18N/Text.h"
 #include "Ui/Edit.h"
 #include "Ui/Menu.h"

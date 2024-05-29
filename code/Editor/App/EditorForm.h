@@ -112,8 +112,6 @@ public:
 
 	virtual void revertWorkspaceSettings() override final;
 
-	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) override final;
-
 	virtual Ref< db::Database > getSourceDatabase() const override final;
 
 	virtual Ref< db::Database > getOutputDatabase() const override final;
@@ -205,8 +203,6 @@ private:
 	Ref< ui::Menu > m_menuTab;
 	Ref< ui::ToolBarMenu > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
-	Ref< ui::Tab > m_tabOutput;
-	std::map< std::wstring, Ref< ILogTarget > > m_logTargets;
 	Ref< LogView > m_logView;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
