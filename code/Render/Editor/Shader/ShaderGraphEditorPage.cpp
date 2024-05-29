@@ -49,6 +49,7 @@
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
+#include "Render/Editor/Shader/Facades/ScalarNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
@@ -477,6 +478,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade();
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade();
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
+	m_nodeFacades[&type_of< Scalar >()] = new ScalarNodeFacade();
 	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(this);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade();
 	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade();
