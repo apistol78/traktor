@@ -31,7 +31,6 @@ const render::Handle s_handleVolumetricFogEnable(L"World_VolumetricFogEnable");
 const render::Handle s_handleDecalParamsA(L"World_DecalParamsA");
 const render::Handle s_handleDecalParamsB(L"World_DecalParamsB");
 const render::Handle s_handleExposure(L"World_Exposure");
-const render::Handle s_handleFxRotate(L"World_FxRotate");
 const render::Handle s_handleExtent(L"World_Extent");
 const render::Handle s_handleFogColor(L"World_FogColor");
 const render::Handle s_handleFogDistanceAndDensity(L"World_FogDistanceAndDensity");

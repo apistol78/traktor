@@ -181,12 +181,6 @@ void PostProcessPass::setup(
 	view.deltaTime = (float)worldRenderView.getDeltaTime();
 	view.time = (float)worldRenderView.getTime();
 
-	// Calculate a "rotation" value based on view transform; useful
-	// for some post process effects.
-	const Vector4& axisX = view.view.axisX();
-	const Vector4& axisZ = view.view.axisZ();
-	const float fxRotate = axisX.z() + axisZ.y();
-
 	render::ImageGraphContext igctx;
 	igctx.associateTextureTargetSet(s_handleInputColor, visualTargetSetId.current, 0);
 	igctx.associateTextureTargetSet(s_handleInputColorLast, visualTargetSetId.previous, 0);
@@ -204,7 +198,6 @@ void PostProcessPass::setup(
 		params->setFloatParameter(s_handleGamma, m_gamma);
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);
 		params->setFloatParameter(s_handleExposure, std::pow(2.0f, m_settings.exposure));
-		params->setFloatParameter(s_handleFxRotate, fxRotate);
 		params->setVectorParameter(s_handleJitter, Vector4(rp.x, -rp.y, rc.x, -rc.y));	// Texture space.
 	};
 
