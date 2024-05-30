@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.TextureAsset" version="20">
-	<fileName>../../../traktor/data/Assets/System/Terrain/Ocean/Textures/Foam.jpg</fileName>
+	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Terrain/Ocean/Textures/Foam.jpg</fileName>
 	<textureFormat>TfInvalid</textureFormat>
 	<normalMap>false</normalMap>
 	<scaleDepth>0</scaleDepth>
