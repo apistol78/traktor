@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -48,31 +48,8 @@
 #include "Ui/ToolBar/ToolBarButton.h"
 #include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
-		namespace
-		{
-
-class FragmentReaderAdapter : public FragmentLinker::IFragmentReader
-{
-public:
-	FragmentReaderAdapter(db::Database* db)
-	:	m_db(db)
-	{
-	}
-
-	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) const
-	{
-		return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-	}
-
-private:
-	Ref< db::Database > m_db;
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderViewer", ShaderViewer, ui::Container)
 
@@ -299,17 +276,17 @@ void ShaderViewer::updateShaders()
 	m_shaderEditCompute->setText(L"");
 
 	// Find matching shader combination.
-	std::wstring techniqueName = m_dropTechniques->getSelectedItem();
-	std::map< std::wstring, TechniqueInfo >::const_iterator i = m_techniques.find(techniqueName);
-	if (i != m_techniques.end())
+	const std::wstring techniqueName = m_dropTechniques->getSelectedItem();
+	const auto it = m_techniques.find(techniqueName);
+	if (it != m_techniques.end())
 	{
-		for (std::vector< CombinationInfo >::const_iterator j = i->second.combinations.begin(); j != i->second.combinations.end(); ++j)
+		for (const auto& combination : it->second.combinations)
 		{
-			if ((j->mask & value) == j->value)
+			if ((combination.mask & value) == combination.value)
 			{
-				m_shaderEditVertex->setText(j->vertexShader);
-				m_shaderEditPixel->setText(j->pixelShader);
-				m_shaderEditCompute->setText(j->computeShader);
+				m_shaderEditVertex->setText(combination.vertexShader);
+				m_shaderEditPixel->setText(combination.pixelShader);
+				m_shaderEditCompute->setText(combination.computeShader);
 				break;
 			}
 		}
@@ -338,7 +315,7 @@ void ShaderViewer::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 
 		ui::FileDialog fileDialog;
 		fileDialog.create(this, type_name(this), L"Save shader as", L"Shader;*.*", L"", true);
-		bool cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
+		const bool cancelled = !(fileDialog.showModal(filePath) == ui::DialogResult::Ok);
 		fileDialog.destroy();
 
 		if (!cancelled)
@@ -412,7 +389,10 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 
 	// Link shader fragments.
-	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
+	const auto fragmentReader = [=, this](const Guid& fragmentGuid) -> Ref< const ShaderGraph >
+	{
+		return m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+	};
 	if ((shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true)) == 0)
 		return;
 
@@ -562,5 +542,4 @@ void ShaderViewer::jobReflect(Ref< ShaderGraph > shaderGraph, Ref< const IProgra
 	}
 }
 
-	}
 }
