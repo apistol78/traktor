@@ -272,15 +272,18 @@ void OceanComponent::setup(
 		m_spectrumDirty = false;
 	}
 
-	//// Swap textures so we have last and current.
-	//{
-	//	std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
-	//	std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
-	//}
+	// Swap textures so we have last and current.
+	{
+		std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
+		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
+	}
+
+	render::handle_t dependency = context.getRenderGraph().addDependency();
 
 	// Evolve spectrum over time.
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute spectrum evolve");
+		rp->setOutput(dependency);
 		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean spectrum evolve");
 
@@ -309,8 +312,13 @@ void OceanComponent::setup(
 	// Compute inverse FFT of spectrums to get time domain heights.
 	for (int32_t i = 0; i < 2; ++i)
 	{
+		render::handle_t d1 = context.getRenderGraph().addDependency();
+		render::handle_t d2 = context.getRenderGraph().addDependency();
+
 		{
 			Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute inverse FFT X");
+			rp->setOutput(d1);
+			rp->addInput(dependency);
 			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean inverse FFT X");
 
@@ -337,6 +345,8 @@ void OceanComponent::setup(
 
 		{
 			Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute inverse FFT Y");
+			rp->setOutput(d2);
+			rp->addInput(d1);
 			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean inverse FFT Y");
 
@@ -360,10 +370,16 @@ void OceanComponent::setup(
 			});
 			context.getRenderGraph().addPass(rp);
 		}
+
+		dependency = d2;
 	}
+
+	render::handle_t computeDependency = context.getRenderGraph().addDependency();
 
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Ocean compute generate");
+		rp->setOutput(computeDependency);
+		rp->addInput(dependency);
 		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Ocean generate");
 
@@ -388,6 +404,8 @@ void OceanComponent::setup(
 		});
 		context.getRenderGraph().addPass(rp);
 	}
+
+	context.getVisualAttachments().push_back(computeDependency);
 }
 
 void OceanComponent::build(
@@ -474,13 +492,6 @@ void OceanComponent::build(
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(sp.priority, renderBlock);
-
-	// Swap textures so we have last and current.
-	if ((worldRenderPass.getPassFlags() & world::IWorldRenderPass::Last) != 0)
-	{
-		std::swap(m_evolvedSpectrumTextures[0], m_evolvedSpectrumTextures[2]);
-		std::swap(m_evolvedSpectrumTextures[1], m_evolvedSpectrumTextures[3]);
-	}
 }
 
 }
