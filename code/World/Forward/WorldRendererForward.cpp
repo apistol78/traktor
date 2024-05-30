@@ -220,7 +220,7 @@ void WorldRendererForward::setupVisualPass(
 	Ref< render::Buffer > lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 
 	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,

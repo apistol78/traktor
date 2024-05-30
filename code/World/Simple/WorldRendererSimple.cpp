@@ -120,7 +120,7 @@ void WorldRendererSimple::setup(
 		rp->addInput(attachment);
 
 	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,

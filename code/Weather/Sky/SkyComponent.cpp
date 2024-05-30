@@ -234,7 +234,7 @@ void SkyComponent::setup(
 	if (m_dirty)
 	{
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds noise");
-		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 			{
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 2D");
 				renderBlock->program = m_shaderClouds2D->getProgram().program;
@@ -294,7 +294,7 @@ void SkyComponent::setup(
 		}
 
 		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds dome");
-		rp->addBuild([=](const render::RenderGraph&, render::RenderContext* renderContext) {
+		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
 			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
 			renderBlock->program = m_shaderCloudsDome->getProgram().program;
 			renderBlock->workSize[0] = 1024;

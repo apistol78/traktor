@@ -248,7 +248,7 @@ void WorldRendererDeferred::setupVisualPass(
 		Ref< render::Buffer > lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 
 		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				const WorldBuildContext wc(
 					m_entityRenderers,
@@ -394,7 +394,7 @@ void WorldRendererDeferred::setupVisualPass(
 		rp->setOutput(visualCopyTargetSetId, clear, render::TfNone, render::TfColor | render::TfDepth);
 
 		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				const auto visualWriteTargetSet = renderGraph.getTargetSet(visualWriteTargetSetId);
 
@@ -430,7 +430,7 @@ void WorldRendererDeferred::setupVisualPass(
 		Ref< render::Buffer > lightSBuffer = m_state[worldRenderView.getIndex()].lightSBuffer;
 
 		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				const WorldBuildContext wc(
 					m_entityRenderers,
