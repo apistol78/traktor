@@ -3,7 +3,7 @@
 	<text>
 	<![CDATA[
 const float _HeightModifier = 2.0f;
-const float _WavePeakScatterStrength = 1.0f;
+const float _WavePeakScatterStrength = 0.25f;
 const float _ScatterStrength = 1.0f;
 const float _ScatterShadowStrength = 0.5f;
 const float _BubbleDensity = 1.0f;
@@ -19,8 +19,8 @@ vec3 ComputeOceanScattering(float heightDisplacement, vec3 viewDirection, vec3 v
 
 	const float H = max(0.0f, heightDisplacement) * _HeightModifier;
 
-	const float k1 = _WavePeakScatterStrength * H * pow(DotClamped(-viewLightDirection, -viewDirection), 4.0f) * pow(0.5f - 0.5f * dot(-viewLightDirection, viewNormal), 3.0f);
-	const float k2 = _ScatterStrength * pow(DotClamped(viewDirection, viewNormal), 2.0f);
+	const float k1 = _WavePeakScatterStrength * H * pow(DotClamped(-viewLightDirection, -viewDirection), 4.0f) * pow(0.5f - 0.5f * dot(-viewLightDirection, viewNormal), 2.0f);
+	const float k2 = _ScatterStrength * pow(DotClamped(-viewDirection, viewNormal), 2.0f);
 	const float k3 = _ScatterShadowStrength * NdotL;
 	const float k4 = _BubbleDensity;
 
