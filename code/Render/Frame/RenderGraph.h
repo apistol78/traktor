@@ -197,6 +197,10 @@ public:
 	 */
 	handle_t addPersistentTexture(const wchar_t* const name, handle_t persistentHandle, const RenderGraphTextureDesc& textureDesc);
 
+	/*!
+	 */
+	handle_t addDependency();
+
 	/*! Get target set from resource handle.
 	 *
 	 * \param resource Opaque resource handle.

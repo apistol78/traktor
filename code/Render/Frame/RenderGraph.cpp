@@ -208,6 +208,11 @@ handle_t RenderGraph::addPersistentTexture(const wchar_t* const name, handle_t p
 	return resourceId;
 }
 
+handle_t RenderGraph::addDependency()
+{
+	return m_nextResourceId++;
+}
+
 IRenderTargetSet* RenderGraph::getTargetSet(handle_t resource) const
 {
 	auto it = m_targets.find(resource);
