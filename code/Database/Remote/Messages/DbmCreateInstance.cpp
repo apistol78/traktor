@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ namespace traktor::db
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCreateInstance", 0, DbmCreateInstance, IMessage)
 
-DbmCreateInstance::DbmCreateInstance(uint32_t handle, const std::wstring& name, const Guid& guid)
+DbmCreateInstance::DbmCreateInstance(uint32_t handle, const std::wstring_view& name, const Guid& guid)
 :	m_handle(handle)
 ,	m_name(name)
 ,	m_guid(guid)

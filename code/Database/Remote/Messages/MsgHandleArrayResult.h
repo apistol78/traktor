@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <vector>
+#include "Core/Containers/AlignedVector.h"
 #include "Database/Remote/IMessage.h"
 
 // import/export mechanism.
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Handle array result.
  * \ingroup Database
@@ -41,9 +39,7 @@ public:
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	std::vector< uint32_t > m_handles;
+	AlignedVector< uint32_t > m_handles;
 };
 
-	}
 }
-

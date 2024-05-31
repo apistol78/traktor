@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,14 +10,12 @@
 #include "Core/Serialization/Member.h"
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmReadObjectResult", 0, DbmReadObjectResult, IMessage)
 
-DbmReadObjectResult::DbmReadObjectResult(uint32_t streamId, const std::wstring& serializerTypeName)
+DbmReadObjectResult::DbmReadObjectResult(uint32_t streamId, const std::wstring_view& serializerTypeName)
 :	m_streamId(streamId)
 ,	m_serializerTypeName(serializerTypeName)
 {
@@ -29,5 +27,4 @@ void DbmReadObjectResult::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"serializerTypeName", m_serializerTypeName);
 }
 
-	}
 }

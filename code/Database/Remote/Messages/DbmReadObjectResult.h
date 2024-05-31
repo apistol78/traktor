@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Read object result.
  * \ingroup Database
@@ -31,7 +29,7 @@ class T_DLLCLASS DbmReadObjectResult : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmReadObjectResult(uint32_t streamId = 0, const std::wstring& serializerTypeName = L"");
+	explicit DbmReadObjectResult(uint32_t streamId = 0, const std::wstring_view& serializerTypeName = L"");
 
 	uint32_t getStreamId() const { return m_streamId; }
 
@@ -44,6 +42,4 @@ private:
 	std::wstring m_serializerTypeName;
 };
 
-	}
 }
-

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Database/Remote/IMessage.h"
 #include "Core/Guid.h"
+#include "Database/Remote/IMessage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Set instance guid.
  * \ingroup Database
@@ -32,7 +30,7 @@ class T_DLLCLASS DbmSetInstanceGuid : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmSetInstanceGuid(uint32_t handle = 0, const Guid& guid = Guid());
+	explicit DbmSetInstanceGuid(uint32_t handle = 0, const Guid& guid = Guid());
 
 	uint32_t getHandle() const { return m_handle; }
 
@@ -45,6 +43,4 @@ private:
 	Guid m_guid;
 };
 
-	}
 }
-

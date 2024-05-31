@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,10 +18,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::db
 {
-	namespace db
-	{
 
 /*! Integer value result.
  * \ingroup Database
@@ -31,7 +29,7 @@ class T_DLLCLASS MsgIntResult : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	MsgIntResult(int32_t value = 0);
+	explicit MsgIntResult(int32_t value = 0);
 
 	uint32_t get() const { return m_value; }
 
@@ -41,6 +39,4 @@ private:
 	uint32_t m_value;
 };
 
-	}
 }
-

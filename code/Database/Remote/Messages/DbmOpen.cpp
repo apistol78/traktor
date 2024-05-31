@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ namespace traktor::db
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmOpen", 0, DbmOpen, IMessage)
 
-DbmOpen::DbmOpen(const std::wstring& name)
+DbmOpen::DbmOpen(const std::wstring_view& name)
 :	m_name(name)
 {
 }
