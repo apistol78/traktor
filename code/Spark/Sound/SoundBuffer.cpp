@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,20 +10,17 @@
 #include "Spark/Sound.h"
 #include "Spark/Sound/SoundBuffer.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 struct SoundBufferCursor : public RefCountImpl< sound::IAudioBufferCursor >
 {
-	int32_t m_position;
 	AutoArrayPtr< float, AllocatorFree > m_samples[2];
+	int32_t m_position = 0;
 
 	SoundBufferCursor()
-	:	m_position(0)
 	{
 		m_samples[0].reset((float*)getAllocator()->alloc(4096 * sizeof(float), 16, T_FILE_LINE));
 		m_samples[1].reset((float*)getAllocator()->alloc(4096 * sizeof(float), 16, T_FILE_LINE));
@@ -43,7 +40,7 @@ struct SoundBufferCursor : public RefCountImpl< sound::IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SoundBuffer", SoundBuffer, sound::IAudioBuffer)
 
@@ -63,7 +60,7 @@ bool SoundBuffer::getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudi
 	T_ASSERT(fsbc);
 
 	// Have we reached the end?
-	int32_t position = fsbc->m_position;
+	const int32_t position = fsbc->m_position;
 	if (position >= int32_t(m_sound->getSampleCount()))
 		return false;
 
@@ -99,5 +96,4 @@ bool SoundBuffer::getBlock(sound::IAudioBufferCursor* cursor, const sound::IAudi
 	return true;
 }
 
-	}
 }

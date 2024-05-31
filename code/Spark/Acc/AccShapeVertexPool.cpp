@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,14 +9,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Align.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Spark/Acc/AccShapeVertexPool.h"
 #include "Render/Buffer.h"
 #include "Render/IRenderSystem.h"
+#include "Spark/Acc/AccShapeVertexPool.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.AccShapeVertexPool", AccShapeVertexPool, Object)
 
@@ -75,5 +73,4 @@ void AccShapeVertexPool::release(render::Buffer* vertexBuffer)
 		m_freeBuffers.push_back(vertexBuffer);
 }
 
-	}
 }

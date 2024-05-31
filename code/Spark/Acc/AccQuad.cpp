@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #include "Spark/ColorTransform.h"
 #include "Spark/Acc/AccQuad.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
 const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
@@ -47,7 +45,7 @@ const render::Handle s_handleCxFormAdd(L"Spark_CxFormAdd");
 const render::Handle s_handleTexture(L"Spark_Texture");
 const render::Handle s_handleTextureOffset(L"Spark_TextureOffset");
 
-		}
+	}
 
 bool AccQuad::create(
 	resource::IResourceManager* resourceManager,
@@ -204,5 +202,4 @@ void AccQuad::blit(
 	});
 }
 
-	}
 }

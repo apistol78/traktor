@@ -1,20 +1,18 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Sound.h"
 #include "Spark/Sound/SoundBuffer.h"
 #include "Spark/Sound/SoundRenderer.h"
-#include "Sound/Sound.h"
-#include "Sound/Player/ISoundPlayer.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SoundRenderer", SoundRenderer, ISoundRenderer)
 
@@ -28,7 +26,7 @@ bool SoundRenderer::create(
 
 void SoundRenderer::destroy()
 {
-	m_soundPlayer = 0;
+	m_soundPlayer = nullptr;
 }
 
 void SoundRenderer::play(const Sound* sound)
@@ -40,5 +38,4 @@ void SoundRenderer::play(const Sound* sound)
 	}
 }
 
-	}
 }

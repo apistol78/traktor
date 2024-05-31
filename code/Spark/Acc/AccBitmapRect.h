@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,15 @@
 
 #include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 class ITexture;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 /*!
  * \ingroup Spark
@@ -29,17 +27,11 @@ class AccBitmapRect : public RefCountImpl< IRefCount >
 {
 public:
 	resource::Proxy< render::ITexture > texture;
-	float rect[4];
+	float rect[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 
-	AccBitmapRect()
-	{
-		rect[0] =
-		rect[1] =
-		rect[2] =
-		rect[3] = 0.0f;
-	}
+	AccBitmapRect() = default;
 
-	AccBitmapRect(
+	explicit AccBitmapRect(
 		const resource::Proxy< render::ITexture >& texture_,
 		float left,
 		float top,
@@ -72,5 +64,4 @@ public:
 	}
 };
 
-	}
 }

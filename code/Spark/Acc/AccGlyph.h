@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,17 +12,15 @@
 #include "Core/Math/Matrix33.h"
 #include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::resource
 {
-	namespace resource
-	{
 
 class IResourceManager;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Buffer;
 class IRenderSystem;
@@ -31,10 +29,10 @@ class IVertexLayout;
 class RenderPass;
 class Shader;
 
-	}
+}
 
-	namespace spark
-	{
+namespace traktor::spark
+{
 
 class AccGlyph : public Object
 {
@@ -79,6 +77,4 @@ private:
 	uint32_t m_count = 0;
 };
 
-	}
 }
-

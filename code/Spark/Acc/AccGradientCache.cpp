@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,12 +15,10 @@
 #include "Spark/Acc/AccBitmapRect.h"
 #include "Spark/Acc/AccGradientCache.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_gradientsSize = 32;
 const uint32_t c_gradientsWidth = 1024;
@@ -53,7 +51,7 @@ Color4f interpolateGradient(const AlignedVector< FillStyle::ColorRecord >& color
 	return a.color * Scalar(1.0f - f) + b.color * Scalar(f);
 }
 
-		}
+	}
 
 AccGradientCache::AccGradientCache(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
@@ -103,7 +101,7 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		cs.feed(colorRecord);
 	cs.end();
 
-	uint64_t hash = cs.get();
+	const uint64_t hash = cs.get();
 	auto it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
@@ -127,8 +125,8 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 			int32_t x2 = int32_t(colorRecords[i].ratio * c_gradientsSize);
 			for (int32_t x = x1; x < x2; ++x)
 			{
-				float f = float(x - x1) / (x2 - x1);
-				Color4ub c = (colorRecords[i - 1].color * Scalar(1.0f - f) + colorRecords[i].color * Scalar(f)).toColor4ub();
+				const float f = float(x - x1) / (x2 - x1);
+				const Color4ub c = (colorRecords[i - 1].color * Scalar(1.0f - f) + colorRecords[i].color * Scalar(f)).toColor4ub();
 				gd[x * 4 + 0] = c.r;
 				gd[x * 4 + 1] = c.g;
 				gd[x * 4 + 2] = c.b;
@@ -177,11 +175,11 @@ Ref< AccBitmapRect > AccGradientCache::getGradientTexture(const FillStyle& style
 		{
 			for (int x = 0; x < c_gradientsSize; ++x)
 			{
-				float fx = x / s - 1.0f;
-				float fy = y / s - 1.0f;
-				float f = sqrtf(fx * fx + fy * fy);
+				const float fx = x / s - 1.0f;
+				const float fy = y / s - 1.0f;
+				const float f = sqrtf(fx * fx + fy * fy);
 
-				Color4ub c = interpolateGradient(colorRecords, f).toColor4ub();
+				const Color4ub c = interpolateGradient(colorRecords, f).toColor4ub();
 				gd[x * 4 + 0] = c.r;
 				gd[x * 4 + 1] = c.g;
 				gd[x * 4 + 2] = c.b;
@@ -226,5 +224,4 @@ void AccGradientCache::synchronize()
 	}
 }
 
-	}
 }

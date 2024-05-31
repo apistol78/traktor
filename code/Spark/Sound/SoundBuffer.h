@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,10 +10,8 @@
 
 #include "Sound/IAudioBuffer.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
-	{
 
 class Sound;
 
@@ -22,7 +20,7 @@ class SoundBuffer : public sound::IAudioBuffer
 	T_RTTI_CLASS;
 
 public:
-	SoundBuffer(const Sound* sound);
+	explicit SoundBuffer(const Sound* sound);
 
 	virtual Ref< sound::IAudioBufferCursor > createCursor() const override final;
 
@@ -32,6 +30,4 @@ private:
 	Ref< const Sound > m_sound;
 };
 
-	}
 }
-

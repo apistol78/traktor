@@ -193,7 +193,7 @@ bool AccShape::createFromTriangles(
 			for (int32_t it = 0; it < c_maxSubDivide; ++it)
 			{
 				int32_t nsub = 0;
-				int32_t size = clusters.size();
+				int32_t size = (int32_t)clusters.size();
 				for (int32_t i = 0; i < size; ++i)
 				{
 					if (clusters[i].lines.size() > c_maxLinesPerCluster)
@@ -204,14 +204,14 @@ bool AccShape::createFromTriangles(
 							for (int32_t ix = 0; ix < c_subSize; ++ix)
 							{
 								const Vector2 dxy(1.0f / float(c_subSize), 1.0f / float(c_subSize));
-								const Vector2 fxy = Vector2(ix, iy) * dxy;
+								const Vector2 fxy = Vector2(float(ix), float(iy)) * dxy;
 
 								Aabb2 cell;
 								cell.mn = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * fxy;
 								cell.mx = clusters[i].bounds.mn + (clusters[i].bounds.mx - clusters[i].bounds.mn) * (fxy + dxy);
 
 								bool foundLine = false;
-								for (int32_t j = 0; j < clusters[i].lines.size(); ++j)
+								for (int32_t j = 0; j < (int32_t)clusters[i].lines.size(); ++j)
 								{
 									const Line& line = lines[clusters[i].lines[j]];
 
@@ -275,7 +275,7 @@ bool AccShape::createFromTriangles(
 
 			// Generate line batches from clusters.
 			Ref< render::Buffer > vertexRange;
-			if (!m_lineVertexPool->acquire(clusters.size() * 2 * 3, vertexRange))
+			if (!m_lineVertexPool->acquire(int32_t(clusters.size() * 2 * 3), vertexRange))
 				return false;
 
 			LineVertex* vertex = static_cast< LineVertex* >(vertexRange->lock());
@@ -285,7 +285,7 @@ bool AccShape::createFromTriangles(
 			// Calculate size of buffer.
 			int32_t lineDataSize = 0;
 			for (auto c : clusters)
-				lineDataSize += c.lines.size();
+				lineDataSize += (int32_t)c.lines.size();
 
 			Ref< render::Buffer > lineBuffer = m_renderSystem->createBuffer(render::BufferUsage::BuStructured, lineDataSize * sizeof(LineData), false);
 			if (!lineBuffer)
@@ -297,7 +297,7 @@ bool AccShape::createFromTriangles(
 			m_lineRenderBatches.push_back();
 			m_lineRenderBatches.back().vertexRange = vertexRange;
 			m_lineRenderBatches.back().lineBuffer = lineBuffer;
-			m_lineRenderBatches.back().primitives.setNonIndexed(render::PrimitiveType::Triangles, 0, clusters.size() * 2);
+			m_lineRenderBatches.back().primitives.setNonIndexed(render::PrimitiveType::Triangles, 0, uint32_t(clusters.size() * 2));
 			m_lineRenderBatches.back().color = lineStyle.getLineColor();
 			m_lineRenderBatches.back().width = width - 0.5f;
 
@@ -352,7 +352,7 @@ bool AccShape::createFromTriangles(
 		Ref< AccBitmapRect > texture;
 		bool textureClamp = false;
 
-		if (!m_fillVertexPool->acquire(triangles.size() * 3, m_fillVertexRange))
+		if (!m_fillVertexPool->acquire(int32_t(triangles.size() * 3), m_fillVertexRange))
 			return false;
 
 		FillVertex* vertex = static_cast< FillVertex* >(m_fillVertexRange->lock());

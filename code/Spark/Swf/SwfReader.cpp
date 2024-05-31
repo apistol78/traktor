@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,16 +15,14 @@
 #include "Core/Misc/Endian.h"
 #include "Spark/Swf/SwfReader.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_allocSize = 256UL * 1024UL;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spark.SwfReader", SwfReader, Object)
 
@@ -984,5 +982,4 @@ BitReader& SwfReader::getBitReader()
 	return *m_bs;
 }
 
-	}
 }

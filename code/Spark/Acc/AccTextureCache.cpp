@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,21 +8,19 @@
  */
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Proxy.h"
 #include "Spark/BitmapImage.h"
 #include "Spark/BitmapResource.h"
 #include "Spark/BitmapTexture.h"
 #include "Spark/Acc/AccBitmapRect.h"
 #include "Spark/Acc/AccTextureCache.h"
-#include "Render/IRenderSystem.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Proxy.h"
 
-namespace traktor
+namespace traktor::spark
 {
-	namespace spark
+	namespace
 	{
-		namespace
-		{
 
 class AccCachedTexture : public render::ITexture
 {
@@ -72,7 +70,7 @@ private:
 	Ref< render::ITexture > m_texture;
 };
 
-		}
+	}
 
 AccTextureCache::AccTextureCache(
 	resource::IResourceManager* resourceManager,
@@ -120,8 +118,8 @@ Ref< AccBitmapRect > AccTextureCache::getBitmapTexture(const Bitmap& bitmap)
 			texture
 		);
 
-		float w = float(bitmapResource->getAtlasWidth());
-		float h = float(bitmapResource->getAtlasHeight());
+		const float w = float(bitmapResource->getAtlasWidth());
+		const float h = float(bitmapResource->getAtlasHeight());
 
 		Ref< AccBitmapRect > br = new AccBitmapRect(
 			texture,
@@ -225,5 +223,4 @@ void AccTextureCache::freeTexture(render::ITexture* texture)
 		texture->destroy();
 }
 
-	}
 }
