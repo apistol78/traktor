@@ -1,32 +1,30 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Target/TargetID.h"
-#include "Runtime/Target/TargetLog.h"
-#include "Runtime/Target/TargetManagerConnection.h"
 #include "Core/Log/Log.h"
 #include "Core/System/OS.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
+#include "Runtime/Target/TargetID.h"
+#include "Runtime/Target/TargetLog.h"
+#include "Runtime/Target/TargetManagerConnection.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 class LogRedirect : public ILogTarget
 {
 public:
-	LogRedirect(
+	explicit LogRedirect(
 		ILogTarget* originalTarget,
 		net::BidirectionalObjectTransport* transport
 	)
@@ -52,7 +50,7 @@ private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetManagerConnection", TargetManagerConnection, Object)
 
@@ -110,5 +108,4 @@ bool TargetManagerConnection::update()
 	return true;
 }
 
-	}
 }

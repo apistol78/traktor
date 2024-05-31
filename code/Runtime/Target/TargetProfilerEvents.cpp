@@ -1,21 +1,19 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Target/TargetProfilerEvents.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticVector.h"
+#include "Runtime/Target/TargetProfilerEvents.h"
 
-namespace traktor
+namespace traktor::runtime
 {
-	namespace runtime
+	namespace
 	{
-		namespace
-		{
 
 class MemberProfilerEvent : public MemberComplex
 {
@@ -39,7 +37,7 @@ private:
 	Profiler::Event& m_ref;
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.TargetProfilerEvents", 0, TargetProfilerEvents, ISerializable)
 
@@ -55,5 +53,4 @@ void TargetProfilerEvents::serialize(ISerializer& s)
 	s >> MemberStaticVector< Profiler::Event, Profiler::MaxQueuedEvents, MemberProfilerEvent >(L"events", m_events);
 }
 
-	}
 }
