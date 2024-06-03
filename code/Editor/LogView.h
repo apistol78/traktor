@@ -54,7 +54,9 @@ public:
 
 	bool create(ui::Widget* parent);
 
-	virtual void destroy() override final;
+	bool haveWarnings() const;
+
+	bool haveErrors() const;
 
 	ILogTarget* getLogTarget() const { return m_logTarget; }
 

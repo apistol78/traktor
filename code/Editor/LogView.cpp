@@ -130,9 +130,14 @@ bool LogView::create(ui::Widget* parent)
 	return true;
 }
 
-void LogView::destroy()
+bool LogView::haveWarnings() const
 {
-	ui::Container::destroy();
+	return m_log->countLog(ui::LogList::LvWarning) != 0;
+}
+
+bool LogView::haveErrors() const
+{
+	return m_log->countLog(ui::LogList::LvError) != 0;
 }
 
 void LogView::eventToolClick(ui::ToolBarButtonClickEvent* event)

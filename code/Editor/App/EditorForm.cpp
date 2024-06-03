@@ -1913,19 +1913,23 @@ void EditorForm::buildWaitUntilFinished()
 	if (!m_threadBuild)
 		return;
 
-	if (ThreadManager::getInstance().getCurrentThread() == ThreadManager::getInstance().getMainThread())
+	const bool running = m_threadBuild->wait(0);
+	if (!running)
 	{
-		// Show a dialog if processing seems to take more than N second(s).
-		ui::BackgroundWorkerDialog dialog;
-		dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
-		dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage, m_buildStepMessageLock));
-		dialog.destroy();
-	}
-	else
-	{
-		// Since we cannot show a dialog from other than main thread we just wait for the
-		// build thread to finish.
-		m_threadBuild->wait();
+		if (ThreadManager::getInstance().getCurrentThread() == ThreadManager::getInstance().getMainThread())
+		{
+			// Show a dialog if processing seems to take more than N second(s).
+			ui::BackgroundWorkerDialog dialog;
+			dialog.create(this, i18n::Text(L"EDITOR_WAIT_BUILDING_TITLE"), i18n::Text(L"EDITOR_WAIT_BUILDING_MESSAGE"), false);
+			dialog.execute(m_threadBuild, new BuildStatus(m_buildStep, m_buildStepMessage, m_buildStepMessageLock));
+			dialog.destroy();
+		}
+		else
+		{
+			// Since we cannot show a dialog from other than main thread we just wait for the
+			// build thread to finish.
+			m_threadBuild->wait();
+		}
 	}
 
 	// As build thread is no longer in use we can safely release it's resources.
@@ -3063,6 +3067,11 @@ void EditorForm::eventTimer(ui::TimerEvent* /*event*/)
 		m_statusBar->setText(2, i18n::Format(L"STATUS_STREAMS", (int32_t)m_streamServer->getStreamCount()));
 	else
 		m_statusBar->setText(2, L"");
+
+	if (m_logView->haveWarnings() || m_logView->haveErrors())
+		m_statusBar->setAlert(true);
+	else
+		m_statusBar->setAlert(false);
 
 	if (m_pipelineCache)
 	{

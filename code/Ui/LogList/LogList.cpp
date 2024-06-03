@@ -76,11 +76,11 @@ void LogList::add(uint32_t threadId, LogLevel level, const std::wstring& text)
 		size_t i = 0;
 		for (;;)
 		{
-			size_t j = e.text.find(L'{', i);
+			const size_t j = e.text.find(L'{', i);
 			if (j == std::wstring::npos)
 				break;
 
-			Guid id(e.text.substr(j));
+			const Guid id(e.text.substr(j));
 			if (id.isValid())
 			{
 				e.symbolId = id;
@@ -176,6 +176,23 @@ bool LogList::copyLog(uint8_t filter)
 			ss << log.text << Endl;
 	}
 	return Application::getInstance()->getClipboard()->setText(ss.str());
+}
+
+uint32_t LogList::countLog(uint8_t level) const
+{
+	switch (level)
+	{
+	case LvInfo:
+		return m_logCount[0];
+	case LvWarning:
+		return m_logCount[1];
+	case LvError:
+		return m_logCount[2];
+	case LvDebug:
+		return m_logCount[3];
+	default:
+		return 0;
+	}
 }
 
 void LogList::forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const

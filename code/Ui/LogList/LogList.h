@@ -66,6 +66,8 @@ public:
 
 	bool copyLog(uint8_t filter = ~0);
 
+	uint32_t countLog(uint8_t level) const;
+
 	void forEachLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
 
 	void forEachFilteredLine(const std::function< void(int32_t line, const std::wstring& text) >& fn) const;
