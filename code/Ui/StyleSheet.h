@@ -95,6 +95,8 @@ public:
 
 	AlignedVector< Entity >& getEntities() { return m_entities; }
 
+	const AlignedVector< Color4ub >& getPalette() const { return m_palette; }
+
 	const AlignedVector< Entity >& getEntities() const { return m_entities; }
 
 	const SmallMap< std::wstring, std::wstring >& getValues() const { return m_values; }

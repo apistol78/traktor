@@ -305,14 +305,7 @@ void ThemeForm::updatePalette()
 	if (!m_styleSheet)
 		return;
 
-	SmallSet< Color4ub > palette;
-	for (const auto& entity : m_styleSheet->getEntities())
-	{
-		for (auto it : entity.colors)
-			palette.insert(m_styleSheet->getColor(it.second));
-	}
-
-	for (const auto& color : palette)
+	for (const auto& color : m_styleSheet->getPalette())
 	{
 		Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
 		imageColor->clear(Color4f::fromColor4ub(color).rgb1());
