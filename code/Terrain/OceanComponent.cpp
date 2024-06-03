@@ -36,6 +36,17 @@ namespace traktor::terrain
 	namespace
 	{
 
+// Spectrum parameters
+const render::Handle s_handleOcean_SpectrumScale(L"Ocean_SpectrumScale");
+const render::Handle s_handleOcean_SpectrumAngle(L"Ocean_SpectrumAngle");
+const render::Handle s_handleOcean_SpectrumSpreadBlend(L"Ocean_SpectrumSpreadBlend");
+const render::Handle s_handleOcean_SpectrumSwell(L"Ocean_SpectrumSwell");
+const render::Handle s_handleOcean_SpectrumAlpha(L"Ocean_SpectrumAlpha");
+const render::Handle s_handleOcean_SpectrumPeakOmega(L"Ocean_SpectrumPeakOmega");
+const render::Handle s_handleOcean_SpectrumGamma(L"Ocean_SpectrumGamma");
+const render::Handle s_handleOcean_SpectrumShortWavesFade(L"Ocean_SpectrumShortWavesFade");
+
+// Ocean
 const render::Handle s_handleTerrain_Heightfield(L"Terrain_Heightfield");
 const render::Handle s_handleTerrain_WorldOrigin(L"Terrain_WorldOrigin");
 const render::Handle s_handleTerrain_WorldExtent(L"Terrain_WorldExtent");
@@ -66,6 +77,18 @@ const uint32_t c_gridInfSize = c_gridSize / 8;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 const uint32_t c_spectrumSize = 1024;
+
+void setSpectrumParameters(render::ProgramParameters* params)
+{
+	params->setFloatParameter(s_handleOcean_SpectrumScale, 0.075f);
+	params->setFloatParameter(s_handleOcean_SpectrumAngle, -PI / 2.0f);
+	params->setFloatParameter(s_handleOcean_SpectrumSpreadBlend, 0.8f);
+	params->setFloatParameter(s_handleOcean_SpectrumSwell, 0.35f);
+	params->setFloatParameter(s_handleOcean_SpectrumAlpha, 0.2f);
+	params->setFloatParameter(s_handleOcean_SpectrumPeakOmega, 1.0f);
+	params->setFloatParameter(s_handleOcean_SpectrumGamma, 0.5f);
+	params->setFloatParameter(s_handleOcean_SpectrumShortWavesFade, 0.08f);
+}
 
 	}
 
@@ -236,6 +259,9 @@ void OceanComponent::setup(
 				renderBlock->programParams->setFloatParameter(s_handleWorld_Time, worldRenderView.getTime());
 				renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
 				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
+
+				setSpectrumParameters(renderBlock->programParams);
+
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);

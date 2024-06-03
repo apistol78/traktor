@@ -23,8 +23,8 @@
 			<id>{DED29228-A7B4-B94E-92BD-36A536C19837}</id>
 			<comment/>
 			<position>
-				<first>736</first>
-				<second>469</second>
+				<first>986</first>
+				<second>41</second>
 			</position>
 			<technique>Ocean_Spectrum</technique>
 			<localSize>
@@ -37,8 +37,8 @@
 			<id>{A34B08DA-1CB4-8348-B635-78CE22751D09}</id>
 			<comment/>
 			<position>
-				<first>514</first>
-				<second>494</second>
+				<first>764</first>
+				<second>66</second>
 			</position>
 			<parameterName>Ocean_WaveTexture</parameterName>
 			<type>Image2D</type>
@@ -48,8 +48,8 @@
 			<id>{8AC97192-AF20-F74E-AC89-E8C504E23B4F}</id>
 			<comment/>
 			<position>
-				<first>228</first>
-				<second>578</second>
+				<first>429</first>
+				<second>200</second>
 			</position>
 			<name>Spectrum</name>
 			<technique/>
@@ -66,6 +66,38 @@
 					<id>{3528ECFC-7D5A-5B42-93F2-31E805AC690F}</id>
 					<name>Position</name>
 				</item>
+				<item>
+					<id>{6530A1E9-5A6B-2D4A-A24E-61082937E8B0}</id>
+					<name>SpectrumScale</name>
+				</item>
+				<item>
+					<id>{F6A28F66-3790-4F46-B5C5-CC530F64C619}</id>
+					<name>SpectrumAngle</name>
+				</item>
+				<item>
+					<id>{492EE650-270B-D34D-8EF5-C2202652DB32}</id>
+					<name>SpectrumSpreadBlend</name>
+				</item>
+				<item>
+					<id>{DFF75201-91F4-2F40-96C1-7EE408556172}</id>
+					<name>SpectrumSwell</name>
+				</item>
+				<item>
+					<id>{8A29ACC7-E00B-2348-94C9-096D39A83D34}</id>
+					<name>SpectrumAlpha</name>
+				</item>
+				<item>
+					<id>{12B8653A-6D27-794A-98E1-D13364676AC3}</id>
+					<name>SpectrumPeakOmega</name>
+				</item>
+				<item>
+					<id>{02C5042D-2F6D-3740-8037-0C5BB3771AA0}</id>
+					<name>SpectrumGamma</name>
+				</item>
+				<item>
+					<id>{5334BF6D-7D4B-C646-90D3-B3F8C1A79B1E}</id>
+					<name>SpectrumShortWavesFade</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -79,7 +111,16 @@
 const ivec2 position = $Position.xy;
 
 const Configuration configuration = getDefaultConfiguration();
-const SpectrumParameters spectrum = getDefaultSpectrum();
+
+SpectrumParameters spectrum;
+spectrum.scale = $SpectrumScale;
+spectrum.angle = $SpectrumAngle;
+spectrum.spreadBlend = $SpectrumSpreadBlend;
+spectrum.swell = $SpectrumSwell;
+spectrum.alpha = $SpectrumAlpha;
+spectrum.peakOmega = $SpectrumPeakOmega;
+spectrum.gamma = $SpectrumGamma;
+spectrum.shortWavesFade = $SpectrumShortWavesFade;
 
 $Output = CalculateSpectrum(
 	configuration,
@@ -87,6 +128,7 @@ $Output = CalculateSpectrum(
 	ivec3(position, 0),
 	0
 );
+
 			]]>
 			</script>
 		</item>
@@ -547,6 +589,94 @@ imageStore($FoamTexture, position, vec4(foam));
 			<type>Image2D</type>
 			<frequency>Once</frequency>
 		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{B09DAA56-FFE5-BA41-92B4-6FF7E0553EAA}</id>
+			<comment/>
+			<position>
+				<first>97</first>
+				<second>167</second>
+			</position>
+			<parameterName>Ocean_SpectrumScale</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{63EF89F2-D10D-3A44-877A-B927E38AE501}</id>
+			<comment/>
+			<position>
+				<first>97</first>
+				<second>203</second>
+			</position>
+			<parameterName>Ocean_SpectrumAngle</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{54C08262-6172-B042-8A30-5F93E895118F}</id>
+			<comment/>
+			<position>
+				<first>65</first>
+				<second>239</second>
+			</position>
+			<parameterName>Ocean_SpectrumSpreadBlend</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{0CDF5161-468E-8B41-BBD7-08E607F6DA08}</id>
+			<comment/>
+			<position>
+				<first>97</first>
+				<second>275</second>
+			</position>
+			<parameterName>Ocean_SpectrumSwell</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{C8984909-6F8B-E746-A81C-0691562980BD}</id>
+			<comment/>
+			<position>
+				<first>49</first>
+				<second>419</second>
+			</position>
+			<parameterName>Ocean_SpectrumShortWavesFade</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{EC55661C-7664-1745-996C-D7218B9A6EB2}</id>
+			<comment/>
+			<position>
+				<first>81</first>
+				<second>383</second>
+			</position>
+			<parameterName>Ocean_SpectrumGamma</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{E3FEED5B-4099-FD41-AB25-935D36894E6C}</id>
+			<comment/>
+			<position>
+				<first>65</first>
+				<second>347</second>
+			</position>
+			<parameterName>Ocean_SpectrumPeakOmega</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{2C85F222-9C0F-2E43-8278-1CBF71978645}</id>
+			<comment/>
+			<position>
+				<first>97</first>
+				<second>311</second>
+			</position>
+			<parameterName>Ocean_SpectrumAlpha</parameterName>
+			<type>Scalar</type>
+			<frequency>Draw</frequency>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge" version="1">
@@ -877,6 +1007,86 @@ imageStore($FoamTexture, position, vec4(foam));
 			<destination>
 				<node ref="/object/nodes/item[21]"/>
 				<id>{694740A1-F833-924B-A654-F126DF7FF6CD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{6530A1E9-5A6B-2D4A-A24E-61082937E8B0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{F6A28F66-3790-4F46-B5C5-CC530F64C619}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{492EE650-270B-D34D-8EF5-C2202652DB32}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{DFF75201-91F4-2F40-96C1-7EE408556172}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{8A29ACC7-E00B-2348-94C9-096D39A83D34}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{12B8653A-6D27-794A-98E1-D13364676AC3}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{02C5042D-2F6D-3740-8037-0C5BB3771AA0}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<id>{5334BF6D-7D4B-C646-90D3-B3F8C1A79B1E}</id>
 			</destination>
 		</item>
 	</edges>
