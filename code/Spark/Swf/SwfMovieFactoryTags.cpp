@@ -43,7 +43,7 @@ namespace traktor::spark
 
 bool TagSetBackgroundColor::read(SwfReader* swf, ReadContext& context)
 {
-	Color4f color = swf->readRgb();
+	const Color4f color = swf->readRgb();
 	context.frame->changeBackgroundColor(color);
 	return true;
 }
@@ -60,8 +60,8 @@ bool TagDefineShape::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t shapeId = bs.readUInt16();
-	Aabb2 shapeBounds = swf->readRect();
+	const uint16_t shapeId = bs.readUInt16();
+	const Aabb2 shapeBounds = swf->readRect();
 
 	if (m_shapeType == 4)
 	{
@@ -102,8 +102,8 @@ bool TagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t shapeId = swf->getBitReader().readUInt16();
-	Aabb2 startBounds = swf->readRect();
+	const uint16_t shapeId = swf->getBitReader().readUInt16();
+	const Aabb2 startBounds = swf->readRect();
 	/*Aabb2 endBounds = */swf->readRect();
 
 	if (m_shapeType == 2)
@@ -122,11 +122,11 @@ bool TagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 	if (!swf->readMorphStyles(startStyles, endStyles, m_shapeType))
 		return false;
 
-	SwfShape* startShape = swf->readShape(m_shapeType);
+	const SwfShape* startShape = swf->readShape(m_shapeType);
 	if (!startShape)
 		return false;
 
-	SwfShape* endShape = swf->readShape(m_shapeType);
+	const SwfShape* endShape = swf->readShape(m_shapeType);
 	if (!endShape)
 		return false;
 
@@ -293,8 +293,8 @@ bool TagDefineScalingGrid::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t characterId = bs.readUInt16();
-	Aabb2 splitter = swf->readRect();
+	const uint16_t characterId = bs.readUInt16();
+	const Aabb2 splitter = swf->readRect();
 
 	const SmallMap< uint16_t, Ref< Character > >& characters = context.movie->getCharacters();
 
@@ -322,12 +322,12 @@ bool TagDefineText::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t textId = bs.readUInt16();
-	Aabb2 textBounds = swf->readRect();
-	SwfMatrix textMatrix = swf->readMatrix();
+	const uint16_t textId = bs.readUInt16();
+	const Aabb2 textBounds = swf->readRect();
+	const SwfMatrix textMatrix = swf->readMatrix();
 
-	uint8_t numGlyphBits = bs.readUInt8();
-	uint8_t numAdvanceBits = bs.readUInt8();
+	const uint8_t numGlyphBits = bs.readUInt8();
+	const uint8_t numAdvanceBits = bs.readUInt8();
 
 	AlignedVector< SwfTextRecord* > textRecords;
 	for (;;)
@@ -357,20 +357,20 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t textId = bs.readUInt16();
-	Aabb2 textBounds = swf->readRect();
+	const uint16_t textId = bs.readUInt16();
+	const Aabb2 textBounds = swf->readRect();
 	Color4f textColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	bs.alignByte();
 
-	bool hasText = bs.readBit();
-	bool wordWrap = bs.readBit();
-	bool multiLine = bs.readBit();
-	bool password = bs.readBit();
-	bool readOnly = bs.readBit();
-	bool hasColor = bs.readBit();
-	bool hasMaxLength = bs.readBit();
-	bool hasFont = bs.readBit();
+	const bool hasText = bs.readBit();
+	const bool wordWrap = bs.readBit();
+	const bool multiLine = bs.readBit();
+	const bool password = bs.readBit();
+	const bool readOnly = bs.readBit();
+	const bool hasColor = bs.readBit();
+	const bool hasMaxLength = bs.readBit();
+	const bool hasFont = bs.readBit();
 	bool autoSize = false;
 	if (context.version >= 6)
 	{
@@ -379,7 +379,7 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	}
 	else
 		bs.skip(2);
-	bool hasLayout = bs.readBit();
+	const bool hasLayout = bs.readBit();
 
 	/*
 	bool noSelect = bs.readBit();
@@ -388,7 +388,7 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	bs.skip(2);
 
 	bs.skip(1);
-	bool html = bs.readBit();
+	const bool html = bs.readBit();
 
 	/*
 	bool useOutlines = bs.readBit();
@@ -421,7 +421,7 @@ bool TagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		leading = bs.readInt16();
 	}
 
-	std::wstring variableName = mbstows(swf->readString());
+	const std::wstring variableName = mbstows(swf->readString());
 	std::wstring initialText;
 	if (hasText)
 	{
@@ -464,7 +464,7 @@ bool TagDefineButton::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t buttonId = bs.readUInt16();
+	const uint16_t buttonId = bs.readUInt16();
 	Ref< Button > button = new Button();
 
 	if (m_buttonType == 1)
@@ -614,9 +614,9 @@ bool TagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t bitmapId = bs.readUInt16();
+	const uint16_t bitmapId = bs.readUInt16();
 
-	uint32_t tagSize = context.tagSize - sizeof(uint16_t) - sizeof(uint32_t);
+	const uint32_t tagSize = context.tagSize - sizeof(uint16_t) - sizeof(uint32_t);
 	uint32_t offsetToAlpha = tagSize;
 	if (m_bitsType == 3)
 		offsetToAlpha = bs.readUInt32();
@@ -666,7 +666,7 @@ bool TagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 
 		if (m_bitsType == 3 && offsetToAlpha < tagSize)
 		{
-			uint32_t inflateSize = image->getWidth() * image->getHeight();
+			const uint32_t inflateSize = image->getWidth() * image->getHeight();
 
 			bufferStream.seek(IStream::SeekSet, offsetToAlpha);
 			compress::InflateStreamZip inf(&bufferStream);
@@ -705,19 +705,19 @@ bool TagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t bitmapId = bs.readUInt16();
-	uint8_t format = bs.readUInt8();
-	uint16_t width = bs.readUInt16();
-	uint16_t height = bs.readUInt16();
+	const uint16_t bitmapId = bs.readUInt16();
+	const uint8_t format = bs.readUInt8();
+	const uint16_t width = bs.readUInt16();
+	const uint16_t height = bs.readUInt16();
 
 	if (format == 3)	// Palette
 	{
-		uint8_t colorCount = bs.readUInt8() + 1;
-		uint8_t colorSize = (m_bitsType == 1) ? 3 : 4;
-		uint32_t colorTableSize = colorSize * colorCount;
-		uint32_t imagePitch = (width + 3UL) & ~3UL;
+		const uint8_t colorCount = bs.readUInt8() + 1;
+		const uint8_t colorSize = (m_bitsType == 1) ? 3 : 4;
+		const uint32_t colorTableSize = colorSize * colorCount;
+		const uint32_t imagePitch = (width + 3UL) & ~3UL;
 
-		uint32_t bufferSize = colorTableSize + imagePitch * height;
+		const uint32_t bufferSize = colorTableSize + imagePitch * height;
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [bufferSize]);
 #if defined(_DEBUG)
 		std::memset(buffer.ptr(), 0, bufferSize);
@@ -765,7 +765,7 @@ bool TagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		uint32_t imagePitch = width * colorSize;
 		imagePitch = (imagePitch + 3UL) & ~3UL;
 
-		uint32_t bufferSize = imagePitch * height;
+		const uint32_t bufferSize = imagePitch * height;
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [bufferSize]);
 #if defined(_DEBUG)
 		std::memset(buffer.ptr(), 0, bufferSize);
@@ -825,8 +825,8 @@ bool TagDefineSprite::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t spriteId = bs.readUInt16();
-	uint16_t frameRate = bs.readUInt16();
+	const uint16_t spriteId = bs.readUInt16();
+	const uint16_t frameRate = bs.readUInt16();
 
 	Ref< Sprite > sprite = new Sprite(frameRate);
 
@@ -960,8 +960,8 @@ bool TagPlaceObject::read(SwfReader* swf, ReadContext& context)
 			placeObject.hasFlags |= bs.readBit() ? Frame::PfHasOpaqueBackground : 0;
 			placeObject.hasFlags |= bs.readBit() ? Frame::PfHasVisible : 0;
 
-			bool hasImage = bs.readBit();
-			bool hasClassName = bs.readBit();
+			const bool hasImage = bs.readBit();
+			const bool hasClassName = bs.readBit();
 
 			placeObject.hasFlags |= bs.readBit() ? Frame::PfHasBitmapCaching : 0;
 			placeObject.hasFlags |= bs.readBit() ? Frame::PfHasBlendMode : 0;
@@ -971,7 +971,7 @@ bool TagPlaceObject::read(SwfReader* swf, ReadContext& context)
 
 			if (hasClassName || (hasImage && placeObject.has(Frame::PfHasCharacterId)))
 			{
-				std::string className = swf->readString();
+				const std::string className = swf->readString();
 				log::warning << L"Unused class name " << mbstows(className) << L" in PlaceObject" << Endl;
 			}
 		}
@@ -1122,11 +1122,11 @@ bool TagExportAssets::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t exportCount = bs.readUInt16();
+	const uint16_t exportCount = bs.readUInt16();
 	for (int i = 0; i < exportCount; ++i)
 	{
-		uint16_t id = bs.readUInt16();
-		std::string symbol = swf->readString();
+		const uint16_t id = bs.readUInt16();
+		const std::string symbol = swf->readString();
 		context.movie->setExport(symbol, id);
 	}
 
@@ -1145,7 +1145,7 @@ bool TagImportAssets::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	std::string url = swf->readString();
+	const std::string url = swf->readString();
 
 	if (m_importType == 2)
 	{
@@ -1153,11 +1153,11 @@ bool TagImportAssets::read(SwfReader* swf, ReadContext& context)
 		/*uint8_t reserved = */bs.readUInt8();
 	}
 
-	uint16_t count = bs.readUInt16();
+	const uint16_t count = bs.readUInt16();
 	for (int i = 0; i < count; ++i)
 	{
-		uint16_t id = bs.readUInt16();
-		std::string symbol = swf->readString();
+		const uint16_t id = bs.readUInt16();
+		const std::string symbol = swf->readString();
 
 		log::info << L"Import symbol \"" << mbstows(symbol) << L"\" as " << id << L" from URL \"" << mbstows(url) << L"\"" << Endl;
 	}
@@ -1201,7 +1201,7 @@ bool TagProtect::read(SwfReader* swf, ReadContext& context)
 
 bool TagFrameLabel::read(SwfReader* swf, ReadContext& context)
 {
-	std::string label = swf->readString();
+	const std::string label = swf->readString();
 	if (context.frame)
 		context.frame->setLabel(label);
 	return true;
@@ -1232,22 +1232,22 @@ bool TagDefineSound::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t soundId = bs.readUInt16();
+	const uint16_t soundId = bs.readUInt16();
 
-	uint8_t soundFormat = bs.readUnsigned(4);
+	const uint8_t soundFormat = bs.readUnsigned(4);
 	if (soundFormat != 0 && soundFormat != 3)
 	{
 		log::error << L"Only uncompressed sounds are supported" << Endl;
 		return false;
 	}
 
-	uint8_t soundRate = bs.readUnsigned(2);
-	bool soundSize = bs.readBit();
-	bool soundType = bs.readBit();
-	uint32_t soundSampleCount = bs.readUInt32();
+	const uint8_t soundRate = bs.readUnsigned(2);
+	const bool soundSize = bs.readBit();
+	const bool soundType = bs.readBit();
+	const uint32_t soundSampleCount = bs.readUInt32();
 
-	uint8_t soundChannels = soundType ? 2 : 1;
-	uint8_t soundSampleSize = soundSize ? 2 : 1;
+	const uint8_t soundChannels = soundType ? 2 : 1;
+	const uint8_t soundSampleSize = soundSize ? 2 : 1;
 
 	AutoArrayPtr< uint8_t > soundData(new uint8_t [soundSampleCount * soundSampleSize * soundChannels]);
 	bs.getStream()->read(soundData.ptr(), soundSampleCount * soundSampleSize * soundChannels);
@@ -1328,7 +1328,7 @@ bool TagStartSound::read(SwfReader* swf, ReadContext& context)
 
 	if (m_startType == 1)
 	{
-		uint16_t soundId = bs.readUInt16();
+		const uint16_t soundId = bs.readUInt16();
 
 		SwfSoundInfo* soundInfo = swf->readSoundInfo();
 		if (!soundInfo)
@@ -1337,7 +1337,7 @@ bool TagStartSound::read(SwfReader* swf, ReadContext& context)
 		context.frame->startSound(soundId);
 	}
 	else
-		// \fixme
+		// #fixme
 		return false;
 
 	return true;
@@ -1350,20 +1350,20 @@ bool TagDefineSceneAndFrameLabelData::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint32_t sceneCount = swf->readEncodedU32();
+	const uint32_t sceneCount = swf->readEncodedU32();
 	for (uint32_t i = 0; i < sceneCount; ++i)
 	{
-		uint32_t offset = swf->readEncodedU32();
-		std::string name = swf->readString();
+		const uint32_t offset = swf->readEncodedU32();
+		const std::string name = swf->readString();
 
 		log::info << i << L". offset = " << offset << L", name = " << mbstows(name) << Endl;
 	}
 
-	uint32_t frameLabelCount = swf->readEncodedU32();
+	const uint32_t frameLabelCount = swf->readEncodedU32();
 	for (uint32_t i = 0; i < frameLabelCount; ++i)
 	{
-		uint32_t number = swf->readEncodedU32();
-		std::string label = swf->readString();
+		const uint32_t number = swf->readEncodedU32();
+		const std::string label = swf->readString();
 
 		log::info << i << L". number = " << number << L", label = " << mbstows(label) << Endl;
 	}
@@ -1378,11 +1378,11 @@ bool TagSymbolClass::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
 
-	uint16_t numSymbols = bs.readUInt16();
+	const uint16_t numSymbols = bs.readUInt16();
 	for (uint16_t i = 0; i < numSymbols; ++i)
 	{
-		uint16_t tag = bs.readUInt16();
-		std::string name = swf->readString();
+		const uint16_t tag = bs.readUInt16();
+		const std::string name = swf->readString();
 		context.movie->setExport(name, tag);
 	}
 
@@ -1394,7 +1394,7 @@ bool TagSymbolClass::read(SwfReader* swf, ReadContext& context)
 
 bool TagMetaData::read(SwfReader* swf, ReadContext& context)
 {
-	std::string meta = swf->readString();
+	const std::string meta = swf->readString();
 	log::info << mbstows(meta) << Endl;
 	return true;
 }
@@ -1407,12 +1407,12 @@ bool TagFileAttributes::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	bs.skip(1);
-	bool useDirectBlit = bs.readBit();
-	bool useGPU = bs.readBit();
-	bool hasMetadata = bs.readBit();
-	bool useAVM2 = bs.readBit();
+	const bool useDirectBlit = bs.readBit();
+	const bool useGPU = bs.readBit();
+	const bool hasMetadata = bs.readBit();
+	const bool useAVM2 = bs.readBit();
 	bs.skip(1);
-	bool useNetwork = bs.readBit();
+	const bool useNetwork = bs.readBit();
 	bs.skip(1);
 
 	return true;

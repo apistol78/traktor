@@ -271,7 +271,7 @@ Ref< Movie > Optimizer::merge(const Movie* movie) const
 {
 	const Sprite* movieClip = movie->getMovieClip();
 	if (!movieClip)
-		return 0;
+		return nullptr;
 
 	Ref< Frame > outputFrame = new Frame();
 
@@ -282,9 +282,8 @@ Ref< Movie > Optimizer::merge(const Movie* movie) const
 	outputMovie->defineCharacter(1, outputSprite);
 
 	// Copy bitmaps into output movie; is shared to reduce memory cost.
-	const SmallMap< uint16_t, Ref< Bitmap > >& bitmaps = movie->getBitmaps();
-	for (SmallMap< uint16_t, Ref< Bitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-		outputMovie->defineBitmap(i->first, i->second);
+	for (const auto& it : movie->getBitmaps())
+		outputMovie->defineBitmap(it.first, it.second);
 
 	MergeQueue queue(outputMovie, outputFrame);
 	traverse(queue, movie, movieClip, Matrix33::identity(), c_cxfIdentity, SbmDefault);
@@ -294,10 +293,9 @@ Ref< Movie > Optimizer::merge(const Movie* movie) const
 
 void Optimizer::triangulate(Movie* movie, bool discardPaths) const
 {
-	const SmallMap< uint16_t, Ref< Character > >& characters = movie->getCharacters();
-	for (SmallMap< uint16_t, Ref< Character > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
+	for (const auto& it : movie->getCharacters())
 	{
-		Shape* shape = dynamic_type_cast< Shape* >(i->second);
+		Shape* shape = dynamic_type_cast< Shape* >(it.second);
 		if (shape)
 		{
 			shape->triangulate(false);
@@ -306,15 +304,13 @@ void Optimizer::triangulate(Movie* movie, bool discardPaths) const
 		}
 	}
 
-	const SmallMap< uint16_t, Ref< Font > >& fonts = movie->getFonts();
-	for (SmallMap< uint16_t, Ref< Font > >::const_iterator i = fonts.begin(); i != fonts.end(); ++i)
+	for (const auto& it : movie->getFonts())
 	{
-		const RefArray< Shape >& glyphShapes = i->second->getShapes();
-		for (RefArray< Shape >::const_iterator j = glyphShapes.begin(); j != glyphShapes.end(); ++j)
+		for (auto shape : it.second->getShapes())
 		{
-			(*j)->triangulate(true);
+			shape->triangulate(true);
 			if (discardPaths)
-				(*j)->discardPaths();
+				shape->discardPaths();
 		}
 	}
 }
