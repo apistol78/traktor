@@ -282,8 +282,10 @@ void ThemeForm::updateTree()
 
 			for (const auto& it : entity.colors)
 			{
+				const Color4ub& color = m_styleSheet->getColor(it.second);
+
 				Ref< drawing::Image > imageColor = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 16, 16);
-				imageColor->clear(Color4f::fromColor4ub(it.second).rgb1());
+				imageColor->clear(Color4f::fromColor4ub(color).rgb1());
 
 				const int32_t imageIndex = m_treeTheme->addImage(new Bitmap(imageColor));
 
@@ -307,7 +309,7 @@ void ThemeForm::updatePalette()
 	for (const auto& entity : m_styleSheet->getEntities())
 	{
 		for (auto it : entity.colors)
-			palette.insert(it.second);
+			palette.insert(m_styleSheet->getColor(it.second));
 	}
 
 	for (const auto& color : palette)
@@ -676,7 +678,7 @@ void ThemeForm::eventTreeChange(TreeViewContentChangeEvent* event)
 
 		auto it = entity->colors.find(event->getOriginalText());
 		T_ASSERT(it != entity->colors.end());
-		Color4ub color = it->second;
+		Color4ub color = m_styleSheet->getColor(it->second);
 		entity->colors.erase(it);
 
 		if (!modifiedItem->getText().empty())

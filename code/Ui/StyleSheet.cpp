@@ -58,7 +58,7 @@ public:
 	virtual void serialize(ISerializer& s) const override final
 	{
 		s >> Member< std::wstring >(L"typeName", m_ref.typeName);
-		s >> MemberSmallMap< std::wstring, Color4ub >(L"colors", m_ref.colors);
+		s >> MemberSmallMap< std::wstring, int32_t >(L"colors", m_ref.colors);
 	}
 
 private:
@@ -67,7 +67,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 2, StyleSheet, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.StyleSheet", 3, StyleSheet, ISerializable)
 
 StyleSheet::Entity* StyleSheet::findEntity(const std::wstring& typeName)
 {
@@ -84,34 +84,57 @@ StyleSheet::Entity* StyleSheet::addEntity(const std::wstring& typeName)
 	return &entity;
 }
 
-void StyleSheet::setColor(const std::wstring& typeName, const std::wstring& element, const Color4ub& color)
+int32_t StyleSheet::findColor(const Color4ub& color) const
 {
-	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+	const auto it = std::find_if(m_palette.begin(), m_palette.end(), [&](const Color4ub& palette) {
+		return palette == color;
+	});
+	return it != m_palette.end() ? (int32_t)std::distance(m_palette.begin(), it) : -1;
+}
+
+int32_t StyleSheet::addColor(const Color4ub& color)
+{
+	m_palette.push_back(color);
+	return (int32_t)m_palette.size() - 1;
+}
+
+const Color4ub& StyleSheet::getColor(int32_t index) const
+{
+	return m_palette[index];
+}
+
+void StyleSheet::setColor(const std::wstring& typeName, const std::wstring_view& element, const Color4ub& color)
+{
+	int32_t index = findColor(color);
+	if (index < 0)
+		index = addColor(color);
+
+	const auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
 		return entity.typeName == typeName;
 	});
 	if (it != m_entities.end())
-		it->colors[element] = color;
+		it->colors[element] = index;
 	else
 	{
 		auto& entity = m_entities.push_back();
 		entity.typeName = typeName;
-		entity.colors[element] = color;
+		entity.colors[element] = index;
 	}
 }
 
 Color4ub StyleSheet::getColor(const std::wstring& typeName, const std::wstring_view& element) const
 {
-	auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
+	const auto it = std::find_if(m_entities.begin(), m_entities.end(), [&](const Entity& entity) {
 		return entity.typeName == typeName;
 	});
 	if (it == m_entities.end())
 		return Color4ub(255, 255, 255);
 
-	auto it2 = it->colors.find(element);
+	const auto it2 = it->colors.find(element);
 	if (it2 == it->colors.end())
 		return Color4ub(255, 255, 255);
 
-	return it2->second;
+	return m_palette[it2->second];
 }
 
 Color4ub StyleSheet::getColor(const Object* widget, const std::wstring_view& element) const
@@ -126,7 +149,7 @@ Color4ub StyleSheet::getColor(const Object* widget, const std::wstring_view& ele
 		{
 			auto it2 = it->colors.find(element);
 			if (it2 != it->colors.end())
-				return it2->second;
+				return m_palette[it2->second];
 		}
 		widgetType = widgetType->getSuper();
 	}
@@ -140,7 +163,7 @@ void StyleSheet::setValue(const std::wstring& name, const std::wstring_view& val
 
 std::wstring StyleSheet::getValueRaw(const std::wstring_view& name) const
 {
-	auto it = m_values.find(name);
+	const auto it = m_values.find(name);
 	return it != m_values.end() ? it->second : L"";
 }
 
@@ -181,12 +204,15 @@ Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
 	ss->m_entities = m_entities;
 	for (const auto& entity : right->m_entities)
 	{
-		for (auto it : entity.colors)
-			ss->setColor(entity.typeName, it.first, it.second);
+		for (const auto& it : entity.colors)
+		{
+			const Color4ub& rclr = right->m_palette[it.second];
+			ss->setColor(entity.typeName, it.first, rclr);
+		}
 	}
 
 	ss->m_values = m_values;
-	for (auto it : right->m_values)
+	for (const auto& it : right->m_values)
 		ss->setValue(it.first, it.second);
 
 	return ss;
@@ -194,9 +220,10 @@ Ref< StyleSheet > StyleSheet::merge(const StyleSheet* right) const
 
 void StyleSheet::serialize(ISerializer& s)
 {
-	T_FATAL_ASSERT(s.getVersion< StyleSheet >() >= 2);
+	T_FATAL_ASSERT(s.getVersion< StyleSheet >() >= 3);
 	s >> MemberAlignedVector< std::wstring >(L"include", m_include);
 	s >> MemberAlignedVector< Entity, MemberEntity >(L"entities", m_entities);
+	s >> MemberAlignedVector< Color4ub >(L"palette", m_palette);
 	s >> MemberSmallMap< std::wstring, std::wstring >(L"values", m_values);
 }
 

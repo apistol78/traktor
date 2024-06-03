@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
-<object type="traktor.ui.StyleSheet" version="2">
+<object type="traktor.ui.StyleSheet" version="3">
 	<include/>
 	<entities/>
+	<palette/>
 	<values>
 
 		<!-- Animation -->

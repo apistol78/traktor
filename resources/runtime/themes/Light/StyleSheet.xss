@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.ui.StyleSheet" version="2">
+<object type="traktor.ui.StyleSheet" version="3">
 	<include>
 		<item>$(TRAKTOR_HOME)/resources/runtime/themes/Shared/StyleSheet.xss</item>
 	</include>
@@ -9,35 +9,35 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>background-color-disabled</first>
-					<second>230, 230, 235, 255</second>
+					<second>1</second>
 				</item>
 				<item>
 					<first>background-color-hover</first>
-					<second>249, 249, 255, 255</second>
+					<second>2</second>
 				</item>
 				<item>
 					<first>border-color</first>
-					<second>160, 160, 160, 255</second>
+					<second>3</second>
 				</item>
 				<item>
 					<first>border-color-disabled</first>
-					<second>200, 200, 220, 255</second>
+					<second>4</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>53, 53, 53, 255</second>
+					<second>5</second>
 				</item>
 				<item>
 					<first>color-disabled</first>
-					<second>142, 140, 140, 255</second>
+					<second>6</second>
 				</item>
 				<item>
 					<first>theme-color</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 			</colors>
 		</item>
@@ -46,7 +46,7 @@
 			<colors>
 				<item>
 					<first>color-link</first>
-					<second>58, 85, 112, 255</second>
+					<second>8</second>
 				</item>
 			</colors>
 		</item>
@@ -55,23 +55,23 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 				<item>
 					<first>background-color-button</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>background-color-hover</first>
-					<second>249, 249, 255, 255</second>
+					<second>2</second>
 				</item>
 				<item>
 					<first>color-arrow</first>
-					<second>153, 153, 153, 255</second>
+					<second>10</second>
 				</item>
 				<item>
 					<first>color-hover</first>
-					<second>70, 70, 74, 255</second>
+					<second>11</second>
 				</item>
 			</colors>
 		</item>
@@ -80,19 +80,19 @@
 			<colors>
 				<item>
 					<first>item-background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>item-background-color-selected</first>
-					<second>190, 219, 255, 255</second>
+					<second>13</second>
 				</item>
 				<item>
 					<first>item-connection-background-color</first>
-					<second>220, 220, 220, 255</second>
+					<second>14</second>
 				</item>
 				<item>
 					<first>item-seperator-color</first>
-					<second>200, 200, 200, 255</second>
+					<second>15</second>
 				</item>
 			</colors>
 		</item>
@@ -101,7 +101,7 @@
 			<colors>
 				<item>
 					<first>background-color-layer</first>
-					<second>131, 206, 252, 255</second>
+					<second>16</second>
 				</item>
 			</colors>
 		</item>
@@ -110,7 +110,7 @@
 			<colors>
 				<item>
 					<first>background-debug-line</first>
-					<second>255, 255, 220, 255</second>
+					<second>17</second>
 				</item>
 			</colors>
 		</item>
@@ -119,7 +119,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>80, 80, 80, 255</second>
+					<second>18</second>
 				</item>
 			</colors>
 		</item>
@@ -128,7 +128,7 @@
 			<colors>
 				<item>
 					<first>border-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 			</colors>
 		</item>
@@ -137,267 +137,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>background-color-pushed</first>
-					<second>229, 229, 232, 255</second>
+					<second>20</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>30, 30, 30, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.Dock</typeName>
-			<colors>
-				<item>
-					<first>caption-background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>caption-color-focus</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>caption-color-no-focus</first>
-					<second>30, 30, 30, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.DockPane</typeName>
-			<colors>
-				<item>
-					<first>gripper-color</first>
-					<second>160, 160, 160, 255</second>
-				</item>
-				<item>
-					<first>splitter-color</first>
-					<second>204, 200, 219, 255</second>
-				</item>
-				<item>
-					<first>tab-background-color</first>
-					<second>239, 239, 242, 255</second>
-				</item>
-				<item>
-					<first>tab-selected-background-color</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>tab-color</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>tab-color-inactive</first>
-					<second>30, 30, 30, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.DropDown</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>230, 230, 235, 255</second>
-				</item>
-				<item>
-					<first>background-color-button</first>
-					<second>239, 239, 242, 255</second>
-				</item>
-				<item>
-					<first>background-color-hover</first>
-					<second>249, 249, 255, 255</second>
-				</item>
-				<item>
-					<first>color-arrow</first>
-					<second>153, 153, 153, 255</second>
-				</item>
-				<item>
-					<first>color-hover</first>
-					<second>70, 70, 74, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.Edge</typeName>
-			<colors>
-				<item>
-					<first>color</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>color-hover</first>
-					<second>0, 140, 255, 255</second>
-				</item>
-				<item>
-					<first>color-label</first>
-					<second>80, 80, 80, 255</second>
-				</item>
-				<item>
-					<first>color-selected</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.Edit</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>background-color-disabled</first>
-					<second>239, 239, 242, 255</second>
-				</item>
-				<item>
-					<first>background-color-hover</first>
-					<second>190, 219, 255, 255</second>
-				</item>
-				<item>
-					<first>background-color-selection</first>
-					<second>0, 127, 255, 255</second>
-				</item>
-				<item>
-					<first>border-color</first>
-					<second>180, 180, 180, 255</second>
-				</item>
-				<item>
-					<first>border-color-disabled</first>
-					<second>180, 180, 180, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.EnvelopeControl</typeName>
-			<colors>
-				<item>
-					<first>color</first>
-					<second>173, 173, 173, 255</second>
-				</item>
-				<item>
-					<first>color-cursor</first>
-					<second>128, 128, 128, 255</second>
-				</item>
-				<item>
-					<first>color-key</first>
-					<second>58, 85, 112, 255</second>
-				</item>
-				<item>
-					<first>color-line</first>
-					<second>96, 96, 96, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GraphControl</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>180, 180, 180, 255</second>
-				</item>
-				<item>
-					<first>color-arrow-hints</first>
-					<second>142, 140, 140, 255</second>
-				</item>
-				<item>
-					<first>color-edge-hint</first>
-					<second>96, 96, 96, 255</second>
-				</item>
-				<item>
-					<first>color-grid</first>
-					<second>173, 173, 173, 255</second>
-				</item>
-				<item>
-					<first>color-label</first>
-					<second>255, 255, 255, 110</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridHeader</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>239, 239, 242, 255</second>
-				</item>
-				<item>
-					<first>line-color</first>
-					<second>205, 205, 205, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridItem</typeName>
-			<colors>
-				<item>
-					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridRow</typeName>
-			<colors>
-				<item>
-					<first>background-color-1</first>
-					<second>232, 232, 232, 255</second>
-				</item>
-				<item>
-					<first>background-color-2</first>
-					<second>221, 221, 221, 255</second>
-				</item>
-				<item>
-					<first>background-color-3</first>
-					<second>204, 204, 204, 255</second>
-				</item>
-				<item>
-					<first>background-color-4</first>
-					<second>190, 190, 190, 255</second>
-				</item>
-				<item>
-					<first>background-color-hover</first>
-					<second>255, 255, 255, 255</second>
-				</item>
-				<item>
-					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
-				</item>
-				<item>
-					<first>line-color</first>
-					<second>230, 230, 235, 255</second>
-				</item>
-				<item>
-					<first>line-color-selected</first>
-					<second>66, 112, 161, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.GridView</typeName>
-			<colors>
-				<item>
-					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
-				</item>
-			</colors>
-		</item>
-		<item>
-			<typeName>traktor.ui.INodeShape</typeName>
-			<colors>
-				<item>
-					<first>color-comment</first>
-					<second>120, 120, 120, 255</second>
-				</item>
-				<item>
-					<first>color-hot</first>
-					<second>20, 20, 20, 255</second>
-				</item>
-				<item>
-					<first>color-info</first>
-					<second>66, 112, 161, 255</second>
+					<second>21</second>
 				</item>
 			</colors>
 		</item>
@@ -406,16 +154,268 @@
 			<colors>
 				<item>
 					<first>color</first>
-					<second>40, 73, 17, 255</second>
+					<second>38</second>
 				</item>
 			</colors>
-		</item>		
+		</item>
+		<item>
+			<typeName>traktor.ui.Dock</typeName>
+			<colors>
+				<item>
+					<first>caption-background-color</first>
+					<second>19</second>
+				</item>
+				<item>
+					<first>caption-color-focus</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>caption-color-no-focus</first>
+					<second>21</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DockPane</typeName>
+			<colors>
+				<item>
+					<first>gripper-color</first>
+					<second>3</second>
+				</item>
+				<item>
+					<first>splitter-color</first>
+					<second>22</second>
+				</item>
+				<item>
+					<first>tab-background-color</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>tab-color</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>tab-color-inactive</first>
+					<second>21</second>
+				</item>
+				<item>
+					<first>tab-selected-background-color</first>
+					<second>19</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.DropDown</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>background-color-button</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>2</second>
+				</item>
+				<item>
+					<first>color-arrow</first>
+					<second>10</second>
+				</item>
+				<item>
+					<first>color-hover</first>
+					<second>11</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Edge</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>color-hover</first>
+					<second>23</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>18</second>
+				</item>
+				<item>
+					<first>color-selected</first>
+					<second>19</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.Edit</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>background-color-disabled</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>13</second>
+				</item>
+				<item>
+					<first>background-color-selection</first>
+					<second>24</second>
+				</item>
+				<item>
+					<first>border-color</first>
+					<second>25</second>
+				</item>
+				<item>
+					<first>border-color-disabled</first>
+					<second>25</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.EnvelopeControl</typeName>
+			<colors>
+				<item>
+					<first>color</first>
+					<second>26</second>
+				</item>
+				<item>
+					<first>color-cursor</first>
+					<second>27</second>
+				</item>
+				<item>
+					<first>color-key</first>
+					<second>8</second>
+				</item>
+				<item>
+					<first>color-line</first>
+					<second>28</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GraphControl</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>25</second>
+				</item>
+				<item>
+					<first>color-arrow-hints</first>
+					<second>6</second>
+				</item>
+				<item>
+					<first>color-edge-hint</first>
+					<second>28</second>
+				</item>
+				<item>
+					<first>color-grid</first>
+					<second>26</second>
+				</item>
+				<item>
+					<first>color-label</first>
+					<second>29</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridHeader</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>30</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridItem</typeName>
+			<colors>
+				<item>
+					<first>color-selected</first>
+					<second>12</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridRow</typeName>
+			<colors>
+				<item>
+					<first>background-color-1</first>
+					<second>31</second>
+				</item>
+				<item>
+					<first>background-color-2</first>
+					<second>32</second>
+				</item>
+				<item>
+					<first>background-color-3</first>
+					<second>33</second>
+				</item>
+				<item>
+					<first>background-color-4</first>
+					<second>34</second>
+				</item>
+				<item>
+					<first>background-color-hover</first>
+					<second>12</second>
+				</item>
+				<item>
+					<first>background-color-selected</first>
+					<second>19</second>
+				</item>
+				<item>
+					<first>line-color</first>
+					<second>1</second>
+				</item>
+				<item>
+					<first>line-color-selected</first>
+					<second>35</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.GridView</typeName>
+			<colors>
+				<item>
+					<first>background-color</first>
+					<second>9</second>
+				</item>
+			</colors>
+		</item>
+		<item>
+			<typeName>traktor.ui.INodeShape</typeName>
+			<colors>
+				<item>
+					<first>color-comment</first>
+					<second>36</second>
+				</item>
+				<item>
+					<first>color-hot</first>
+					<second>37</second>
+				</item>
+				<item>
+					<first>color-info</first>
+					<second>35</second>
+				</item>
+			</colors>
+		</item>
 		<item>
 			<typeName>traktor.ui.ListBox</typeName>
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 			</colors>
 		</item>
@@ -424,11 +424,11 @@
 			<colors>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 			</colors>
 		</item>
@@ -437,39 +437,39 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-error</first>
-					<second>212, 0, 0, 255</second>
+					<second>39</second>
 				</item>
 				<item>
 					<first>background-color-info</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>background-color-warning</first>
-					<second>255, 187, 75, 255</second>
+					<second>41</second>
 				</item>
 				<item>
 					<first>color-error</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>color-info</first>
-					<second>64, 64, 64, 255</second>
+					<second>42</second>
 				</item>
 				<item>
 					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>color-warning</first>
-					<second>95, 48, 0, 255</second>
+					<second>43</second>
 				</item>
 			</colors>
 		</item>
@@ -478,15 +478,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>background-color-hover</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>30, 30, 30, 255</second>
+					<second>21</second>
 				</item>
 			</colors>
 		</item>
@@ -495,11 +495,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>border-color</first>
-					<second>160, 160, 160, 255</second>
+					<second>3</second>
 				</item>
 			</colors>
 		</item>
@@ -508,23 +508,23 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 				<item>
 					<first>bevel-color</first>
-					<second>140, 140, 140, 255</second>
+					<second>44</second>
 				</item>
 				<item>
 					<first>bevel-disabled-color</first>
-					<second>140, 140, 140, 255</second>
+					<second>44</second>
 				</item>
 				<item>
 					<first>bevel-highlight-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>bevel-shadow-color</first>
-					<second>64, 64, 64, 255</second>
+					<second>42</second>
 				</item>
 			</colors>
 		</item>
@@ -533,19 +533,19 @@
 			<colors>
 				<item>
 					<first>caption-background-color-focus</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>caption-background-color-no-focus</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>caption-color-focus</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>caption-color-no-focus</first>
-					<second>208, 208, 208, 255</second>
+					<second>45</second>
 				</item>
 			</colors>
 		</item>
@@ -554,15 +554,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>200, 200, 200, 255</second>
+					<second>15</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>color-subtext</first>
-					<second>120, 120, 120, 255</second>
+					<second>36</second>
 				</item>
 			</colors>
 		</item>
@@ -571,7 +571,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 			</colors>
 		</item>
@@ -580,11 +580,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>120, 120, 120, 255</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>grid-color</first>
-					<second>128, 128, 128, 255</second>
+					<second>27</second>
 				</item>
 			</colors>
 		</item>
@@ -593,15 +593,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>progress-color</first>
-					<second>0, 153, 0, 255</second>
+					<second>46</second>
 				</item>
 				<item>
 					<first>progress-color-disabled</first>
-					<second>230, 255, 220, 255</second>
+					<second>47</second>
 				</item>
 			</colors>
 		</item>
@@ -610,15 +610,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 			</colors>
 		</item>
@@ -627,15 +627,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 				<item>
 					<first>header-background-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 			</colors>
 		</item>
@@ -644,15 +644,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 197, 73, 255</second>
+					<second>48</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>255, 242, 107, 255</second>
+					<second>49</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>142, 105, 0, 255</second>
+					<second>50</second>
 				</item>
 			</colors>
 		</item>
@@ -661,35 +661,35 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-margin</first>
-					<second>200, 200, 200, 255</second>
+					<second>15</second>
 				</item>
 				<item>
 					<first>background-color-selection</first>
-					<second>51, 153, 255, 255</second>
+					<second>51</second>
 				</item>
 				<item>
 					<first>background-found-line</first>
-					<second>230, 255, 220, 255</second>
+					<second>47</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 				<item>
 					<first>color-caret</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 				<item>
 					<first>color-margin</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 				<item>
 					<first>color-selection</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 			</colors>
 		</item>
@@ -698,19 +698,19 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>219, 219, 222, 255</second>
+					<second>52</second>
 				</item>
 				<item>
 					<first>color-arrow</first>
-					<second>120, 120, 120, 255</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>color-slider</first>
-					<second>189, 189, 192, 255</second>
+					<second>53</second>
 				</item>
 				<item>
 					<first>color-slider-hover</first>
-					<second>243, 243, 246, 255</second>
+					<second>54</second>
 				</item>
 			</colors>
 		</item>
@@ -719,19 +719,19 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>205, 205, 205, 255</second>
+					<second>30</second>
 				</item>
 				<item>
 					<first>tick-color</first>
-					<second>208, 208, 208, 255</second>
+					<second>45</second>
 				</item>
 			</colors>
 		</item>
@@ -740,15 +740,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>191, 191, 191, 255</second>
+					<second>55</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>205, 205, 205, 255</second>
+					<second>30</second>
 				</item>
 				<item>
 					<first>line-color</first>
-					<second>208, 208, 208, 255</second>
+					<second>45</second>
 				</item>
 			</colors>
 		</item>
@@ -757,11 +757,11 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 				<item>
 					<first>control-background-color</first>
-					<second>189, 189, 192, 255</second>
+					<second>53</second>
 				</item>
 			</colors>
 		</item>
@@ -770,19 +770,19 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-focus</first>
-					<second>230, 230, 230, 255</second>
+					<second>56</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 				<item>
 					<first>color-focus</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 			</colors>
 		</item>
@@ -791,11 +791,11 @@
 			<colors>
 				<item>
 					<first>color</first>
-					<second>173, 173, 173, 255</second>
+					<second>26</second>
 				</item>
 				<item>
 					<first>knob-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 			</colors>
 		</item>
@@ -804,15 +804,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>background-color-alert</first>
-					<second>202, 81, 0, 255</second>
+					<second>57</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 			</colors>
 		</item>
@@ -821,91 +821,91 @@
 			<colors>
 				<item>
 					<first>background-color-comment</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-default</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-error</first>
-					<second>255, 0, 0, 255</second>
+					<second>58</second>
 				</item>
 				<item>
 					<first>background-color-function</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-keyword</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-number</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-preprocessor</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-self</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-special</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>background-color-string</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-type</first>
-					<second>255, 255, 255, 0</second>
+					<second>40</second>
 				</item>
 				<item>
 					<first>color-comment</first>
-					<second>40, 120, 40, 255</second>
+					<second>59</second>
 				</item>
 				<item>
 					<first>color-default</first>
-					<second>0, 0, 0, 255</second>
+					<second>7</second>
 				</item>
 				<item>
 					<first>color-error</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>color-function</first>
-					<second>120, 40, 40, 255</second>
+					<second>60</second>
 				</item>
 				<item>
 					<first>color-keyword</first>
-					<second>0, 0, 255, 255</second>
+					<second>61</second>
 				</item>
 				<item>
 					<first>color-number</first>
-					<second>0, 0, 120, 255</second>
+					<second>62</second>
 				</item>
 				<item>
 					<first>color-preprocessor</first>
-					<second>0, 140, 255, 255</second>
+					<second>23</second>
 				</item>
 				<item>
 					<first>color-self</first>
-					<second>210, 150, 90, 255</second>
+					<second>63</second>
 				</item>
 				<item>
 					<first>color-special</first>
-					<second>255, 140, 0, 255</second>
+					<second>64</second>
 				</item>
 				<item>
 					<first>color-string</first>
-					<second>120, 120, 120, 255</second>
+					<second>36</second>
 				</item>
 				<item>
 					<first>color-type</first>
-					<second>160, 40, 255, 255</second>
+					<second>65</second>
 				</item>
 			</colors>
 		</item>
@@ -914,27 +914,27 @@
 			<colors>
 				<item>
 					<first>tab-background-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>tab-background-color-hover</first>
-					<second>28, 151, 234, 255</second>
+					<second>66</second>
 				</item>
 				<item>
 					<first>tab-color-active</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>tab-color-disabled</first>
-					<second>91, 91, 91, 255</second>
+					<second>67</second>
 				</item>
 				<item>
 					<first>tab-color-inactive</first>
-					<second>30, 30, 30, 255</second>
+					<second>21</second>
 				</item>
 				<item>
 					<first>tab-line-color</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 			</colors>
 		</item>
@@ -943,15 +943,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>83, 216, 49, 255</second>
+					<second>68</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>104, 255, 137, 255</second>
+					<second>69</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>1, 102, 0, 255</second>
+					<second>70</second>
 				</item>
 			</colors>
 		</item>
@@ -960,39 +960,39 @@
 			<colors>
 				<item>
 					<first>item-background-color-dropdown</first>
-					<second>239, 239, 242, 255</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>item-background-color-dropdown-button</first>
-					<second>243, 243, 246, 255</second>
+					<second>54</second>
 				</item>
 				<item>
 					<first>item-background-color-dropdown-hover</first>
-					<second>254, 254, 254, 255</second>
+					<second>71</second>
 				</item>
 				<item>
 					<first>item-background-color-hover</first>
-					<second>254, 254, 254, 255</second>
+					<second>71</second>
 				</item>
 				<item>
 					<first>item-background-color-pushed</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>item-color-dropdown-arrow</first>
-					<second>20, 20, 20, 255</second>
+					<second>37</second>
 				</item>
 				<item>
 					<first>item-color-dropdown-hover</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>item-color-seperator</first>
-					<second>160, 160, 160, 255</second>
+					<second>3</second>
 				</item>
 				<item>
 					<first>item-color-toggled</first>
-					<second>51, 153, 255, 255</second>
+					<second>51</second>
 				</item>
 			</colors>
 		</item>
@@ -1001,15 +1001,15 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>255, 65, 65, 255</second>
+					<second>72</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>255, 151, 151, 255</second>
+					<second>73</second>
 				</item>
 				<item>
 					<first>color</first>
-					<second>146, 0, 0, 255</second>
+					<second>74</second>
 				</item>
 			</colors>
 		</item>
@@ -1018,7 +1018,7 @@
 			<colors>
 				<item>
 					<first>background-color</first>
-					<second>246, 246, 246, 255</second>
+					<second>9</second>
 				</item>
 			</colors>
 		</item>
@@ -1027,23 +1027,100 @@
 			<colors>
 				<item>
 					<first>background-color-hover</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>background-color-selected</first>
-					<second>0, 122, 204, 255</second>
+					<second>19</second>
 				</item>
 				<item>
 					<first>color-selected</first>
-					<second>255, 255, 255, 255</second>
+					<second>12</second>
 				</item>
 				<item>
 					<first>color-selected-disabled</first>
-					<second>142, 140, 140, 255</second>
+					<second>6</second>
 				</item>
 			</colors>
 		</item>
 	</entities>
+	<palette>
+		<item>239, 239, 242, 255</item>
+		<item>230, 230, 235, 255</item>
+		<item>249, 249, 255, 255</item>
+		<item>160, 160, 160, 255</item>
+		<item>200, 200, 220, 255</item>
+		<item>53, 53, 53, 255</item>
+		<item>142, 140, 140, 255</item>
+		<item>0, 0, 0, 255</item>
+		<item>58, 85, 112, 255</item>
+		<item>246, 246, 246, 255</item>
+		<item>153, 153, 153, 255</item>
+		<item>70, 70, 74, 255</item>
+		<item>255, 255, 255, 255</item>
+		<item>190, 219, 255, 255</item>
+		<item>220, 220, 220, 255</item>
+		<item>200, 200, 200, 255</item>
+		<item>131, 206, 252, 255</item>
+		<item>255, 255, 220, 255</item>
+		<item>80, 80, 80, 255</item>
+		<item>0, 122, 204, 255</item>
+		<item>229, 229, 232, 255</item>
+		<item>30, 30, 30, 255</item>
+		<item>204, 200, 219, 255</item>
+		<item>0, 140, 255, 255</item>
+		<item>0, 127, 255, 255</item>
+		<item>180, 180, 180, 255</item>
+		<item>173, 173, 173, 255</item>
+		<item>128, 128, 128, 255</item>
+		<item>96, 96, 96, 255</item>
+		<item>255, 255, 255, 110</item>
+		<item>205, 205, 205, 255</item>
+		<item>232, 232, 232, 255</item>
+		<item>221, 221, 221, 255</item>
+		<item>204, 204, 204, 255</item>
+		<item>190, 190, 190, 255</item>
+		<item>66, 112, 161, 255</item>
+		<item>120, 120, 120, 255</item>
+		<item>20, 20, 20, 255</item>
+		<item>40, 73, 17, 255</item>
+		<item>212, 0, 0, 255</item>
+		<item>255, 255, 255, 0</item>
+		<item>255, 187, 75, 255</item>
+		<item>64, 64, 64, 255</item>
+		<item>95, 48, 0, 255</item>
+		<item>140, 140, 140, 255</item>
+		<item>208, 208, 208, 255</item>
+		<item>0, 153, 0, 255</item>
+		<item>230, 255, 220, 255</item>
+		<item>255, 197, 73, 255</item>
+		<item>255, 242, 107, 255</item>
+		<item>142, 105, 0, 255</item>
+		<item>51, 153, 255, 255</item>
+		<item>219, 219, 222, 255</item>
+		<item>189, 189, 192, 255</item>
+		<item>243, 243, 246, 255</item>
+		<item>191, 191, 191, 255</item>
+		<item>230, 230, 230, 255</item>
+		<item>202, 81, 0, 255</item>
+		<item>255, 0, 0, 255</item>
+		<item>40, 120, 40, 255</item>
+		<item>120, 40, 40, 255</item>
+		<item>0, 0, 255, 255</item>
+		<item>0, 0, 120, 255</item>
+		<item>210, 150, 90, 255</item>
+		<item>255, 140, 0, 255</item>
+		<item>160, 40, 255, 255</item>
+		<item>28, 151, 234, 255</item>
+		<item>91, 91, 91, 255</item>
+		<item>83, 216, 49, 255</item>
+		<item>104, 255, 137, 255</item>
+		<item>1, 102, 0, 255</item>
+		<item>254, 254, 254, 255</item>
+		<item>255, 65, 65, 255</item>
+		<item>255, 151, 151, 255</item>
+		<item>146, 0, 0, 255</item>
+	</palette>
 	<values>
 		<item>
 			<first>Images.Path</first>
