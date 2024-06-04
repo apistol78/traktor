@@ -5568,7 +5568,7 @@
 			<items>
 				<item type="File" version="1">
 					<fileName>*.*</fileName>
-					<excludeFilter>alloc-override.c;page-queue.c;static.c;free.c</excludeFilter>
+					<excludeFilter>arena-abandon.c;alloc-override.c;page-queue.c;static.c;free.c</excludeFilter>
 					<items/>
 				</item>
 				<item type="Filter">
