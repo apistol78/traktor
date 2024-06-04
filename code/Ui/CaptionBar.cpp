@@ -83,6 +83,13 @@ void CaptionBar::eventMouseButtonDown(MouseButtonDownEvent* event)
 	if (item != nullptr)
 		return;
 
+	Form* parentForm = dynamic_type_cast< Form* >(getAncestor());
+	if (!parentForm)
+		return;
+
+	if (parentForm->isMaximized())
+		parentForm->restore();
+
 	m_mousePosition = getParent()->clientToScreen(event->getPosition());
 	m_parentRect = getParent()->getRect();
 	m_haveCapture = true;
