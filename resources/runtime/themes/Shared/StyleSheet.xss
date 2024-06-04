@@ -57,6 +57,10 @@
 			<second>$(Images.Path)/Editor/Icon.svg</second>
 		</item>
 		<item>
+			<first>Editor.IconSmall</first>
+			<second>$(Images.Path)/Editor/IconSmall.svg</second>
+		</item>
+		<item>
 			<first>Editor.Log.Error</first>
 			<second>$(Images.Path)/Editor/LogError.svg</second>
 		</item>

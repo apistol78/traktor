@@ -494,6 +494,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar = new ui::CaptionBar();
 	m_menuBar->create(this);
 	m_menuBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &EditorForm::eventMenuClick);
+	m_menuBar->addImage(new ui::StyleBitmap(L"Editor.IconSmall"));
+	m_menuBar->addItem(new ui::ToolBarButton(L"Traktor", 0, ui::Command()));
 
 	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
 
