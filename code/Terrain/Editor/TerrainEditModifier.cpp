@@ -484,9 +484,6 @@ void TerrainEditModifier::deactivate()
 	m_colorMap = nullptr;
 	m_normalMap = nullptr;
 	m_cutMap = nullptr;
-	m_brush = nullptr;
-	m_fallOff = nullptr;
-	m_fallOffImage = nullptr;
 }
 
 void TerrainEditModifier::selectionChanged()
@@ -943,9 +940,6 @@ void TerrainEditModifier::apply(const Vector4& center)
 		jobs.back()->wait();
 		jobs.pop_back();
 	}
-
-	for (auto terrainLayer : m_terrainLayers)
-		terrainLayer->updatePatches();
 
 	m_context->raiseRedraw(nullptr);
 	m_applied = true;	

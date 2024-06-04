@@ -12,7 +12,6 @@
 #include "Core/Math/Half.h"
 #include "Core/Math/Quasirandom.h"
 #include "Core/Math/RandomGeometry.h"
-#include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
 #include "Resource/IResourceManager.h"
 #include "Render/Buffer.h"
@@ -184,13 +183,6 @@ void UndergrowthComponent::build(
 	const world::IWorldRenderPass& worldRenderPass
 )
 {
-	// Do not render until update has finished.
-	if (m_jobUpdatePatches != nullptr)
-	{
-		if (m_jobUpdatePatches->wait(0))
-			m_jobUpdatePatches = nullptr;
-	}
-
 	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
 	if (!terrainComponent)
 		return;
@@ -305,97 +297,92 @@ void UndergrowthComponent::build(
 
 void UndergrowthComponent::updatePatches()
 {
-	if (m_jobUpdatePatches != nullptr)
+	m_clusters.resize(0);
+	m_plantsCount = 0;
+
+	auto terrainComponent = m_owner->getComponent< TerrainComponent >();
+	if (!terrainComponent)
 		return;
 
-	m_jobUpdatePatches = JobManager::getInstance().add([this](){
-		m_clusters.resize(0);
-		m_plantsCount = 0;
+	const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
+	const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
 
-		auto terrainComponent = m_owner->getComponent< TerrainComponent >();
-		if (!terrainComponent)
-			return;
+	// Get set of materials which have undergrowth.
+	StaticVector< uint8_t, 16 > um;
+	um.resize(16, 0);
 
-		const resource::Proxy< Terrain >& terrain = terrainComponent->getTerrain();
-		const resource::Proxy< hf::Heightfield >& heightfield = terrain->getHeightfield();
+	uint8_t maxMaterialIndex = 0;
+	for (const auto& plant : m_layerData.m_plants)
+		um[plant.attribute] = ++maxMaterialIndex;
 
-		// Get set of materials which have undergrowth.
-		StaticVector< uint8_t, 16 > um;
-		um.resize(16, 0);
+	const int32_t size = heightfield->getSize();
+	const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
 
-		uint8_t maxMaterialIndex = 0;
-		for (const auto& plant : m_layerData.m_plants)
-			um[plant.attribute] = ++maxMaterialIndex;
+	m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
 
-		const int32_t size = heightfield->getSize();
-		const Vector4 extentPerGrid = heightfield->getWorldExtent() / Scalar(float(size));
-
-		m_clusterSize = (16.0f / 2.0f) * max< float >(extentPerGrid.x(), extentPerGrid.z());
-
-		// Create clusters.
-		RandomGeometry random;
-		for (int32_t z = 0; z < size; z += 16)
+	// Create clusters.
+	RandomGeometry random;
+	for (int32_t z = 0; z < size; z += 16)
+	{
+		for (int32_t x = 0; x < size; x += 16)
 		{
-			for (int32_t x = 0; x < size; x += 16)
-			{
-				StaticVector< int32_t, 16 > cm;
-				cm.resize(16, 0);
+			StaticVector< int32_t, 16 > cm;
+			cm.resize(16, 0);
 
-				int32_t totalDensity = 0;
-				for (int32_t cz = 0; cz < 16; ++cz)
+			int32_t totalDensity = 0;
+			for (int32_t cz = 0; cz < 16; ++cz)
+			{
+				for (int32_t cx = 0; cx < 16; ++cx)
 				{
-					for (int32_t cx = 0; cx < 16; ++cx)
+					const uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
+					const uint8_t index = um[attribute];
+					if (index > 0)
 					{
-						const uint8_t attribute = heightfield->getGridAttribute(x + cx, z + cz);
-						const uint8_t index = um[attribute];
-						if (index > 0)
-						{
-							cm[index - 1]++;
-							totalDensity++;
-						}
+						cm[index - 1]++;
+						totalDensity++;
 					}
 				}
-				if (totalDensity <= 0)
+			}
+			if (totalDensity <= 0)
+				continue;
+
+			float wx, wz;
+			heightfield->gridToWorld(x + 8, z + 8, wx, wz);
+
+			const float wy = heightfield->getWorldHeight(wx, wz);
+
+			for (uint32_t i = 0; i < maxMaterialIndex; ++i)
+			{
+				if (cm[i] <= 0)
 					continue;
 
-				float wx, wz;
-				heightfield->gridToWorld(x + 8, z + 8, wx, wz);
-
-				const float wy = heightfield->getWorldHeight(wx, wz);
-
-				for (uint32_t i = 0; i < maxMaterialIndex; ++i)
+				for (const auto& plant : m_layerData.m_plants)
 				{
-					if (cm[i] <= 0)
-						continue;
-
-					for (const auto& plant : m_layerData.m_plants)
+					if (um[plant.attribute] == i + 1)
 					{
-						if (um[plant.attribute] == i + 1)
-						{
-							const int32_t densityFactor = cm[i];
+						const int32_t densityFactor = cm[i];
 
-							const int32_t density = (plant.density * densityFactor) / (16 * 16);
-							if (density <= 4)
-								continue;
+						const int32_t density = (plant.density * densityFactor) / (16 * 16);
+						if (density <= 4)
+							continue;
 
-							const int32_t from = m_plantsCount;
-							const int32_t to = from + density;
+						const int32_t from = m_plantsCount;
+						const int32_t to = from + density;
 
-							Cluster c;
-							c.center = Vector4(wx, wy, wz, 1.0f);
-							c.plant = plant.plant;
-							c.plantScale = plant.scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
-							c.from = from;
-							c.to = to;
-							m_clusters.push_back(c);
+						Cluster c;
+						c.center = Vector4(wx, wy, wz, 1.0f);
+						c.plant = plant.plant;
+						c.plantScale = plant.scale * (0.5f + 0.5f * densityFactor / (16.0f * 16.0f));
+						c.from = from;
+						c.to = to;
+						m_clusters.push_back(c);
 
-							m_plantsCount = to;
-						}
+						m_plantsCount = to;
 					}
 				}
 			}
 		}
-	});
+	}
 }
 
 }

@@ -40,7 +40,7 @@ uint32_t ElevateBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
-	m_strength = state.strength * 0.256 / m_heightfield->getWorldExtent().y();
+	m_strength = state.strength * 0.0256 / m_heightfield->getWorldExtent().y();
 	m_attribute = state.attribute;
 	return MdHeight;
 }

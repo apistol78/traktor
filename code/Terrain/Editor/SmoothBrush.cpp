@@ -58,7 +58,7 @@ void SmoothBrush::apply(float x, float y)
 
 			// Evaluate falloff function.
 			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
-			if (abs(a) <= FUZZY_EPSILON)
+			if (abs(a) <= 0.0f)
 				continue;
 
 			const float h = hm[gx + gy * size] / 65535.0f;
