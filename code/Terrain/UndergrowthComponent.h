@@ -14,6 +14,13 @@
 #include "Terrain/TerrainLayerComponent.h"
 #include "Terrain/UndergrowthComponentData.h"
 
+namespace traktor
+{
+
+class Job;
+
+}
+
 namespace traktor::render
 {
 
@@ -91,6 +98,8 @@ private:
 	SmallMap< int32_t, ViewState > m_viewState;
 	float m_clusterSize = 0.0f;
 	uint32_t m_plantsCount = 0;
+
+	Ref< Job > m_jobUpdatePatches;
 };
 
 }

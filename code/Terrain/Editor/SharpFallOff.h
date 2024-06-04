@@ -18,7 +18,7 @@ class SharpFallOff : public IFallOff
 	T_RTTI_CLASS;
 
 public:
-	virtual double evaluate(double x, double y) const override final;
+	virtual float evaluate(float x, float y) const override final;
 };
 
 }

@@ -18,7 +18,12 @@ class SmoothFallOff : public IFallOff
 	T_RTTI_CLASS;
 
 public:
-	virtual double evaluate(double x, double y) const override final;
+	SmoothFallOff();
+
+	virtual float evaluate(float x, float y) const override final;
+
+private:
+	float m_lut[100];
 };
 
 }

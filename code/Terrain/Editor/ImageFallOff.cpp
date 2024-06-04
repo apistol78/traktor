@@ -19,14 +19,14 @@ ImageFallOff::ImageFallOff(const drawing::Image* image)
 {
 }
 
-double ImageFallOff::evaluate(double x, double y) const
+float ImageFallOff::evaluate(float x, float y) const
 {
 	const int32_t ix = int32_t((x * 0.5f + 0.5f) * (m_image->getWidth() - 1));
 	const int32_t iy = int32_t((y * 0.5f + 0.5f) * (m_image->getHeight() - 1));
 
 	Color4f c;
 	if (!m_image->getPixel(ix, iy, c))
-		return 0.0;
+		return 0.0f;
 
 	return c.getRed();
 }

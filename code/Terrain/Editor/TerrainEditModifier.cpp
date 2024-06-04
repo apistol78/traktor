@@ -788,12 +788,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 			render::ITexture::Lock nl;
 			if (m_heightMap->lock(0, 0, nl))
 			{
+				hf::Heightfield* hf = m_heightfield;
 				float* ptr = (float*)nl.bits;
 				for (int32_t v = 0; v < size; ++v)
 				{
 					for (int32_t u = 0; u < size; ++u)
 					{
-						float height = m_heightfield->getGridHeightNearest(u, v); // * asset->m_scale;
+						const float height = hf->getGridHeightNearest(u, v);
 						*ptr++ = height;
 					}
 				}
@@ -855,11 +856,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 	if ((m_brushMode & IBrush::MdHeight) != 0)
 	{
 		jobs.push_back(JobManager::getInstance().add([&](){
+			hf::Heightfield* hf = m_heightfield;
+
 			for (int32_t v = mnz; v <= mxz; ++v)
 			{
 				for (int32_t u = mnx; u <= mxx; ++u)
 				{
-					const Vector4 normal = m_heightfield->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+					const Vector4 normal = hf->normalAt((float)u, (float)v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
 					const uint8_t nx = uint8_t(normal.x() * 255);
 					const uint8_t ny = uint8_t(normal.y() * 255);
 					const uint8_t nz = uint8_t(normal.z() * 255);
@@ -893,11 +896,13 @@ void TerrainEditModifier::apply(const Vector4& center)
 	if ((m_brushMode & IBrush::MdCut) != 0)
 	{
 		jobs.push_back(JobManager::getInstance().add([&](){
+			hf::Heightfield* hf = m_heightfield;
+
 			for (int32_t v = mnz; v <= mxz; ++v)
 			{
 				for (int32_t u = mnx; u <= mxx; ++u)
 				{
-					m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0x00 : 0xff;
+					m_cutData[u + v * size] = hf->getGridCut(u, v) ? 0x00 : 0xff;
 				}
 			}
 
@@ -922,11 +927,12 @@ void TerrainEditModifier::apply(const Vector4& center)
 	// Update material mask.
 	if ((m_brushMode & IBrush::MdAttribute) != 0)
 	{
+		hf::Heightfield* hf = m_heightfield;
 		for (int32_t v = mnz; v <= mxz; ++v)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
 			{
-				m_attributeData[u + v * size] = m_heightfield->getGridAttribute(u, v);
+				m_attributeData[u + v * size] = hf->getGridAttribute(u, v);
 			}
 		}
 	}

@@ -27,7 +27,7 @@ public:
 	 * \param y Brush Y coordinate, -1 to 1.
 	 * \return Falloff value, 0 no brush influence, 1 full brush influence.
 	 */
-	virtual double evaluate(double x, double y) const = 0;
+	virtual float evaluate(float x, float y) const = 0;
 };
 
 }

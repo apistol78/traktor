@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Terrain/Editor/IFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.SmoothBrush", SmoothBrush, IBrush)
 
@@ -37,29 +35,46 @@ uint32_t SmoothBrush::begin(float x, float y, const State& state)
 
 void SmoothBrush::apply(float x, float y)
 {
+	hf::Heightfield* hf = m_heightfield;
+
+	const hf::height_t* hm = hf->getHeights();
+	const int32_t size = hf->getSize();
+
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
+		const int32_t gy = iy + y;
+		if (gy < 1 || gy > size - 2)
+			continue;
+
+		const float fy = float(iy) / m_radius;
+
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
 		{
-			const float fx = float(ix) / m_radius;
-			const float fy = float(iy) / m_radius;
+			const int32_t gx = ix + x;
+			if (gx < 1 || gx > size - 2)
+				continue;
 
+			const float fx = float(ix) / m_radius;
+
+			// Evaluate falloff function.
 			const float a = m_fallOff->evaluate(fx, fy) * m_strength;
 			if (abs(a) <= FUZZY_EPSILON)
 				continue;
 
+			const float h = hm[gx + gy * size] / 65535.0f;
+
+			// Get the average height.
 			float height = 0.0f;
 			for (int32_t iiy = -1; iiy <= 1; ++iiy)
 			{
 				for (int32_t iix = -1; iix <= 1; ++iix)
 				{
-					height += m_heightfield->getGridHeightNearest(x + ix + iix, y + iy + iiy);
+					height += hm[(gx + iix) + (gy + iiy) * size] / 65535.0f;
 				}
 			}
 			height /= 9.0f;
 
-			const float h = m_heightfield->getGridHeightNearest(x + ix, y + iy);
-			m_heightfield->setGridHeight(x + ix, y + iy, lerp(h, height, a));
+			hf->setGridHeight(gx, gy, lerp(h, height, a));
 		}
 	}
 }
@@ -68,5 +83,4 @@ void SmoothBrush::end(float x, float y)
 {
 }
 
-	}
 }
