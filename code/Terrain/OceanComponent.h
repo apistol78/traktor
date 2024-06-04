@@ -12,6 +12,7 @@
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "Terrain/OceanComponentData.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
@@ -53,7 +54,6 @@ class WorldSetupContext;
 namespace traktor::terrain
 {
 
-class OceanComponentData;
 class Terrain;
 
 /*! Ocean component.
@@ -64,8 +64,6 @@ class T_DLLCLASS OceanComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	static constexpr int32_t MaxWaves = 32;
-
 	virtual ~OceanComponent();
 
 	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanComponentData& data);
@@ -116,6 +114,7 @@ private:
 	Ref< render::Buffer > m_indexBuffer;
 	Ref< render::Buffer > m_vertexBuffer;
 	render::Primitives m_primitives;
+	OceanComponentData::Spectrum m_spectrum;
 	Color4f m_shallowTint;
 	Color4f m_deepColor;
 	float m_opacity = 0.5f;

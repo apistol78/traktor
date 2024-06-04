@@ -22,7 +22,6 @@
 #include "Render/Frame/RenderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanComponent.h"
-#include "Terrain/OceanComponentData.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainComponent.h"
 #include "World/Entity.h"
@@ -78,16 +77,16 @@ const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
 const uint32_t c_spectrumSize = 1024;
 
-void setSpectrumParameters(render::ProgramParameters* params)
+void setSpectrumParameters(const OceanComponentData::Spectrum& spectrum, render::ProgramParameters* params)
 {
-	params->setFloatParameter(s_handleOcean_SpectrumScale, 0.075f);
-	params->setFloatParameter(s_handleOcean_SpectrumAngle, -PI / 2.0f);
-	params->setFloatParameter(s_handleOcean_SpectrumSpreadBlend, 0.8f);
-	params->setFloatParameter(s_handleOcean_SpectrumSwell, 0.35f);
-	params->setFloatParameter(s_handleOcean_SpectrumAlpha, 0.2f);
-	params->setFloatParameter(s_handleOcean_SpectrumPeakOmega, 1.0f);
-	params->setFloatParameter(s_handleOcean_SpectrumGamma, 0.5f);
-	params->setFloatParameter(s_handleOcean_SpectrumShortWavesFade, 0.08f);
+	params->setFloatParameter(s_handleOcean_SpectrumScale, spectrum.scale);
+	params->setFloatParameter(s_handleOcean_SpectrumAngle, spectrum.angle);
+	params->setFloatParameter(s_handleOcean_SpectrumSpreadBlend, spectrum.spreadBlend);
+	params->setFloatParameter(s_handleOcean_SpectrumSwell, spectrum.swell);
+	params->setFloatParameter(s_handleOcean_SpectrumAlpha, spectrum.alpha);
+	params->setFloatParameter(s_handleOcean_SpectrumPeakOmega, spectrum.peakOmega);
+	params->setFloatParameter(s_handleOcean_SpectrumGamma, spectrum.gamma);
+	params->setFloatParameter(s_handleOcean_SpectrumShortWavesFade, spectrum.shortWavesFade);
 }
 
 	}
@@ -188,6 +187,7 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
+	m_spectrum = data.m_spectrum;
 	m_shallowTint = data.m_shallowTint;
 	m_deepColor = data.m_deepColor;
 	m_opacity = data.m_opacity;
@@ -260,7 +260,7 @@ void OceanComponent::setup(
 				renderBlock->programParams->setFloatParameter(s_handleOcean_TileIndex, 0);
 				renderBlock->programParams->setImageViewParameter(s_handleOcean_WaveTexture, m_spectrumTexture, 0);
 
-				setSpectrumParameters(renderBlock->programParams);
+				setSpectrumParameters(m_spectrum, renderBlock->programParams);
 
 				renderBlock->programParams->endParameters(renderContext);
 

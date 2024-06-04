@@ -6,6 +6,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -25,7 +26,7 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{FB9B7138-B7B2-E341-
 	
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 4, OceanComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanComponentData", 5, OceanComponentData, world::IEntityComponentData)
 
 OceanComponentData::OceanComponentData()
 :	m_shaderWave(c_waveShader)
@@ -48,41 +49,30 @@ void OceanComponentData::setTransform(const world::EntityData* owner, const Tran
 
 void OceanComponentData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 2)
-		s >> resource::Member< render::Shader >(L"shaderWave", m_shaderWave);
+	T_FATAL_ASSERT(s.getVersion< OceanComponentData >() >= 4);
 
+	s >> resource::Member< render::Shader >(L"shaderWave", m_shaderWave);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
-	if (s.getVersion() >= 1 && s.getVersion() < 4)
-		s >> resource::ObsoleteMember< render::ITexture >(L"reflectionTexture");
-
 	s >> Member< Color4f >(L"shallowTint", m_shallowTint);
-
-	if (s.getVersion() < 3)
-	{
-		s >> ObsoleteMember< Color4f >(L"reflectionTint");
-		s >> ObsoleteMember< Color4f >(L"shadowTint");
-	}
-
 	s >> Member< Color4f >(L"deepColor", m_deepColor);
 	s >> Member< float >(L"opacity", m_opacity);
 	s >> Member< float >(L"elevation", m_elevation);
 
-	if (s.getVersion() < 3)
-	{
-		Wave waves[4];
-		s >> MemberStaticArray< Wave, 4, MemberComposite< Wave > >(L"waves", waves);
-	}
+	if (s.getVersion< OceanComponentData >() >= 5)
+		s >>  MemberComposite< Spectrum >(L"spectrum", m_spectrum);
 }
 
-void OceanComponentData::Wave::serialize(ISerializer& s)
+void OceanComponentData::Spectrum::serialize(ISerializer& s)
 {
-	s >> Member< float >(L"direction", direction);
-	s >> Member< float >(L"amplitude", amplitude);
-	s >> Member< float >(L"frequency", frequency);
-	s >> Member< float >(L"phase", phase);
-	s >> Member< float >(L"pinch", pinch);
-	s >> Member< float >(L"rate", rate);
+	s >> Member< float >(L"scale", scale, AttributeRange(0.0f));
+	s >> Member< float >(L"angle", angle);
+	s >> Member< float >(L"spreadBlend", spreadBlend, AttributeRange(0.0f, 1.0f));
+	s >> Member< float >(L"swell", swell);
+	s >> Member< float >(L"alpha", alpha, AttributeRange(0.0f));
+	s >> Member< float >(L"peakOmega", peakOmega);
+	s >> Member< float >(L"gamma", gamma);
+	s >> Member< float >(L"shortWavesFade", shortWavesFade);
 }
 
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -43,6 +43,20 @@ class T_DLLCLASS OceanComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
+	struct Spectrum
+	{
+		float scale = 0.075f;
+		float angle = -PI / 2.0f;
+		float spreadBlend = 0.8f;
+		float swell = 0.35f;
+		float alpha = 0.2f;
+		float peakOmega = 1.0f;
+		float gamma = 0.5f;
+		float shortWavesFade = 0.08f;
+
+		void serialize(ISerializer& s);
+	};
+
 	OceanComponentData();
 
 	virtual int32_t getOrdinal() const override final;
@@ -60,21 +74,10 @@ public:
 private:
 	friend class OceanComponent;
 
-	struct Wave
-	{
-		float direction = 0.0f;
-		float amplitude = 0.0f;
-		float frequency = 0.25f;
-		float phase = 0.0f;
-		float pinch = 3.0f;
-		float rate = 4.0f;
-
-		void serialize(ISerializer& s);
-	};
-
 	resource::Id< render::Shader > m_shaderWave;
 	resource::Id< render::Shader > m_shader;
 	resource::Id< Terrain > m_terrain;
+	Spectrum m_spectrum;
 	Color4f m_shallowTint;
 	Color4f m_deepColor;
 	float m_opacity;
