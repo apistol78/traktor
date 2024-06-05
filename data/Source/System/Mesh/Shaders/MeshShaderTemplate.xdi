@@ -193,8 +193,8 @@
 			<id>{F11CA175-4937-4444-85ED-E9EB1E255CDA}</id>
 			<comment/>
 			<position>
-				<first>-1190</first>
-				<second>508</second>
+				<first>-1350</first>
+				<second>493</second>
 			</position>
 			<name>VertexAttributes</name>
 		</item>
@@ -237,8 +237,8 @@
 			<id>{1A3164A8-185F-B544-91E4-A8626C4B1527}</id>
 			<comment/>
 			<position>
-				<first>-703</first>
-				<second>751</second>
+				<first>-876</first>
+				<second>665</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -836,8 +836,8 @@ Tag_LightmapTexCoord
 			<id>{AAEFF83B-0F62-7641-9E3B-3FF49B805AAA}</id>
 			<comment/>
 			<position>
-				<first>-999</first>
-				<second>511</second>
+				<first>-1159</first>
+				<second>496</second>
 			</position>
 			<names>
 				<item>Object</item>
@@ -913,8 +913,8 @@ Tag_LightmapTexCoord
 			<id>{26A79C6B-AF11-774E-986A-E1EFB149D356}</id>
 			<comment/>
 			<position>
-				<first>-1638</first>
-				<second>946</second>
+				<first>-1666</first>
+				<second>961</second>
 			</position>
 			<name>WorldPosition</name>
 		</item>
@@ -941,8 +941,8 @@ Tag_LightmapTexCoord
 			<id>{4C55638A-2428-8D4A-9D27-1ED0B88E49AC}</id>
 			<comment/>
 			<position>
-				<first>-1075</first>
-				<second>938</second>
+				<first>-1359</first>
+				<second>998</second>
 			</position>
 			<parameterName>World_View</parameterName>
 			<type>Matrix</type>
@@ -952,8 +952,8 @@ Tag_LightmapTexCoord
 			<id>{D9E207FD-969A-7E4C-863D-5F2CB205DDEA}</id>
 			<comment/>
 			<position>
-				<first>-866</first>
-				<second>878</second>
+				<first>-1149</first>
+				<second>928</second>
 			</position>
 		</item>
 		<item type="traktor.render.Variable" version="2,traktor.render.Node:1">
@@ -969,8 +969,8 @@ Tag_LightmapTexCoord
 			<id>{B571AC02-10D7-5944-B205-23825003057F}</id>
 			<comment/>
 			<position>
-				<first>-1670</first>
-				<second>799</second>
+				<first>-1698</first>
+				<second>888</second>
 			</position>
 			<name>WorldPositionOffset</name>
 		</item>
@@ -978,16 +978,16 @@ Tag_LightmapTexCoord
 			<id>{3B772365-3CB6-BC40-A74C-6E2E05EB985E}</id>
 			<comment/>
 			<position>
-				<first>-1108</first>
-				<second>838</second>
+				<first>-858</first>
+				<second>846</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{EF22483D-DC6F-0E4D-A275-3E04EE586A25}</id>
 			<comment/>
 			<position>
-				<first>-1473</first>
-				<second>854</second>
+				<first>-1488</first>
+				<second>919</second>
 			</position>
 		</item>
 		<item type="traktor.render.Interpolator" version="traktor.render.Node:1">
@@ -996,6 +996,18 @@ Tag_LightmapTexCoord
 			<position>
 				<first>956</first>
 				<second>1320</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment" version="traktor.render.Node:1">
+			<id>{98158568-810A-C845-A712-2E406566828C}</id>
+			<comment>
+			<![CDATA[
+In case WPO is used then we need to calculate ViewPosition from WorldPosition
+			]]>
+			</comment>
+			<position>
+				<first>-1597</first>
+				<second>801</second>
 			</position>
 		</item>
 	</nodes>
@@ -1782,16 +1794,6 @@ Tag_LightmapTexCoord
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[74]"/>
-				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[74]"/>
 				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
 			</source>
@@ -1822,36 +1824,6 @@ Tag_LightmapTexCoord
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[80]"/>
-				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[72]"/>
-				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
-				<node ref="/object/nodes/item[79]"/>
-				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[72]"/>
 				<id>{84BF3C26-64A7-4032-B775-1D369052B243}</id>
 			</source>
@@ -1872,16 +1844,6 @@ Tag_LightmapTexCoord
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[76]"/>
-				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[50]"/>
-				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<id>{D596E4E4-1A78-4D80-C16B-6DEEF934EDEC}</id>
 			</source>
@@ -1898,6 +1860,56 @@ Tag_LightmapTexCoord
 			<destination>
 				<node ref="/object/nodes/item[38]"/>
 				<id>{C458F1E6-5144-4289-ADF4-C07453D38038}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{32FD3DAA-16C1-44C8-8A1E-E9ECF97F31D2}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<id>{70C35B91-1C36-454C-98EC-7514AACF73C8}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{3F36532A-8A98-4EE7-85ED-2DA35230BC3C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[74]"/>
+				<id>{345BDBFA-3326-40BF-B9DE-8ECA78A3EEF4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{DBDA59DC-83A0-4619-BB51-792A017346DF}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[50]"/>
+				<id>{11585EBC-914D-4E6D-A10D-D01694FF9840}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<id>{D596E4E4-1A78-4D80-BD6B-6DEEF934EDEC}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{5539AA7E-F780-482E-82B8-1E817340D7C0}</id>
 			</destination>
 		</item>
 	</edges>
