@@ -35,8 +35,8 @@ class PortConnector : public Node
 public:
 	explicit PortConnector(const Guid& fromFragmentId)
 	:	m_fromFragmentId(fromFragmentId)
-	,	m_inputPin(this, Guid::null, L"Input", false)
-	,	m_outputPin(this, Guid::null, L"Output")
+	,	m_inputPin(this, Guid(L"{7efbd768-2381-11ef-a168-7fa583325338}"), L"Input", false)
+	,	m_outputPin(this, Guid(L"{8a3561bc-2381-11ef-9b5c-3f9b39355b23}"), L"Output")
 	{
 	}
 
@@ -288,6 +288,11 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, const
 		for (auto destinationPin : destinationPins)
 		{
 			T_FATAL_ASSERT(destinationPin->getNode() != sourcePin->getNode());
+
+			Edge* existingEdge = mutableShaderGraph->findEdge(destinationPin);
+			if (existingEdge)
+				mutableShaderGraph->removeEdge(existingEdge);
+
 			mutableShaderGraph->addEdge(new Edge(
 				sourcePin,
 				destinationPin
