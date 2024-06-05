@@ -642,14 +642,16 @@ void RenderViewVk::present()
 	VkResult result;
 
 	// Queue presentation of current primary target.
-    VkPresentInfoKHR pi = {};
-    pi.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-    pi.swapchainCount = 1;
-    pi.pSwapchains = &m_swapChain;
-    pi.pImageIndices = &m_currentImageIndex;
-    pi.waitSemaphoreCount = 1;
-    pi.pWaitSemaphores = &frame.renderFinishedSemaphore;
-    pi.pResults = nullptr;
+    const VkPresentInfoKHR pi =
+	{
+		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+		.waitSemaphoreCount = 1,
+		.pWaitSemaphores = &frame.renderFinishedSemaphore,
+		.swapchainCount = 1,
+		.pSwapchains = &m_swapChain,
+		.pImageIndices = &m_currentImageIndex,
+		.pResults = nullptr
+	};
 	if ((result = m_presentQueue->present(pi)) != VK_SUCCESS)
 	{
 		log::warning << L"Vulkan error reported, \"" << getHumanResult(result) << L"\"; need to reset renderer (3)." << Endl;
@@ -744,26 +746,31 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, const Clear* cle
 	}
 
 	// Begin render pass.
-	VkRenderPassBeginInfo rpbi = {};
-	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	rpbi.renderPass = m_targetRenderPass;
-	rpbi.framebuffer = m_targetFrameBuffer;
-	rpbi.renderArea.offset.x = 0;
-	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = m_targetSet->getWidth();
-	rpbi.renderArea.extent.height = m_targetSet->getHeight();
-	rpbi.clearValueCount = (uint32_t)clearValues.size();
-	rpbi.pClearValues = clearValues.c_ptr();
+	const VkRenderPassBeginInfo rpbi =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		.renderPass = m_targetRenderPass,
+		.framebuffer = m_targetFrameBuffer,
+		.renderArea =
+		{
+			.offset = { .x = 0, .y = 0 },
+			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
+		},
+		.clearValueCount = (uint32_t)clearValues.size(), 
+		.pClearValues = clearValues.c_ptr()
+	};
 	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
-	VkViewport vp = {};
-	vp.x = 0.0f;
-	vp.y = 0.0f;
-	vp.width = (float)m_targetSet->getWidth();
-	vp.height = (float)m_targetSet->getHeight();
-	vp.minDepth = 0.0f;
-	vp.maxDepth = 1.0f;
+	const VkViewport vp =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)m_targetSet->getWidth(),
+		.height = (float)m_targetSet->getHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	m_passCount++;
@@ -851,26 +858,31 @@ bool RenderViewVk::beginPass(IRenderTargetSet* renderTargetSet, int32_t renderTa
 	}
 
 	// Begin render pass.
-	VkRenderPassBeginInfo rpbi = {};
-	rpbi.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-	rpbi.renderPass = m_targetRenderPass;
-	rpbi.framebuffer = m_targetFrameBuffer;
-	rpbi.renderArea.offset.x = 0;
-	rpbi.renderArea.offset.y = 0;
-	rpbi.renderArea.extent.width = m_targetSet->getWidth();
-	rpbi.renderArea.extent.height = m_targetSet->getHeight();
-	rpbi.clearValueCount = (uint32_t)clearValues.size();
-	rpbi.pClearValues = clearValues.c_ptr();
+	const VkRenderPassBeginInfo rpbi =
+	{
+		.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+		.renderPass = m_targetRenderPass,
+		.framebuffer = m_targetFrameBuffer,
+		.renderArea =
+		{
+			.offset = { .x = 0, .y = 0 },
+			.extent = { .width = (uint32_t)m_targetSet->getWidth(), .height = (uint32_t)m_targetSet->getHeight() }
+		},
+		.clearValueCount = (uint32_t)clearValues.size(), 
+		.pClearValues = clearValues.c_ptr()
+	};
 	vkCmdBeginRenderPass(*frame.graphicsCommandBuffer, &rpbi,  VK_SUBPASS_CONTENTS_INLINE);
 
 	// Set viewport.
-	VkViewport vp = {};
-	vp.x = 0.0f;
-	vp.y = 0.0f;
-	vp.width = (float)m_targetSet->getWidth();
-	vp.height = (float)m_targetSet->getHeight();
-	vp.minDepth = 0.0f;
-	vp.maxDepth = 1.0f;
+	const VkViewport vp =
+	{
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = (float)m_targetSet->getWidth(),
+		.height = (float)m_targetSet->getHeight(),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
 	vkCmdSetViewport(*frame.graphicsCommandBuffer, 0, 1, &vp);
 
 	m_passCount++;
@@ -1065,7 +1077,7 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0, nullptr
 		);
 	}
-	else if (from == Stage::Compute && to == Stage::Compute/* && written == nullptr*/)
+	else if (from == Stage::Compute && to == Stage::Compute && written == nullptr)
 	{
 		VkMemoryBarrier mb = {};
 		mb.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
@@ -1083,35 +1095,35 @@ void RenderViewVk::barrier(Stage from, Stage to, ITexture* written, uint32_t wri
 			0, nullptr
 		);
 	}
-	//else if (from == Stage::Compute && to == Stage::Compute && written != nullptr)
-	//{
-	//	const Image* img = mandatory_non_null_type_cast< TextureVk* >(written)->getImage();
+	else if (from == Stage::Compute && to == Stage::Compute && written != nullptr)
+	{
+		const Image* img = mandatory_non_null_type_cast< TextureVk* >(written)->getImage();
 
-	//	VkImageMemoryBarrier imb = {};
-	//	imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-	//	imb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
-	//	imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-	//	imb.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
-	//	imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
-	//	imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//	imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-	//	imb.image = img->getVkImage();
-	//	imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-	//	imb.subresourceRange.baseMipLevel = writtenMip;
-	//	imb.subresourceRange.levelCount = 1;
-	//	imb.subresourceRange.baseArrayLayer = 0;
-	//	imb.subresourceRange.layerCount = 1;
+		VkImageMemoryBarrier imb = {};
+		imb.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		imb.srcAccessMask = VK_ACCESS_SHADER_WRITE_BIT;
+		imb.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		imb.oldLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imb.newLayout = VK_IMAGE_LAYOUT_GENERAL;
+		imb.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		imb.image = img->getVkImage();
+		imb.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		imb.subresourceRange.baseMipLevel = writtenMip;
+		imb.subresourceRange.levelCount = 1;
+		imb.subresourceRange.baseArrayLayer = 0;
+		imb.subresourceRange.layerCount = 1;
 
-	//	vkCmdPipelineBarrier(
-	//		*frame.graphicsCommandBuffer,
-	//		convertStage(from),
-	//		convertStage(to),
-	//		0,
-	//		0, nullptr,
-	//		0, nullptr,
-	//		1, &imb
-	//	);
-	//}
+		vkCmdPipelineBarrier(
+			*frame.graphicsCommandBuffer,
+			convertStage(from),
+			convertStage(to),
+			0,
+			0, nullptr,
+			0, nullptr,
+			1, &imb
+		);
+	}
 	else
 	{
 		// No memory access; only add an execution barrier.

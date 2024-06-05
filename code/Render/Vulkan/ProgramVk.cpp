@@ -143,8 +143,8 @@ bool ProgramVk::create(
 
 		stageFlags = VK_SHADER_STAGE_COMPUTE_BIT;
 	}
-    else
-        return false;
+	else
+		return false;
 
 	VkPhysicalDeviceProperties deviceProperties;
 	vkGetPhysicalDeviceProperties(m_context->getPhysicalDevice(), &deviceProperties);
@@ -157,17 +157,17 @@ bool ProgramVk::create(
 	AlignedVector< VkDescriptorSetLayoutBinding  > dslb;
 
 	// Each program has 3 uniform buffer bindings (Once, Frame and Draw).
-	for (int32_t i = 0; i < 3; ++i)
+	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (resource->m_uniformBufferSizes[i] == 0)
 			continue;
 
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = i + 2;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-		lb.descriptorCount = 1;
-		lb.stageFlags = stageFlags;
+		dslb.push_back({
+			.binding = i + 2,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+			.descriptorCount = 1,
+			.stageFlags = stageFlags
+		});
 	}
 
 	// Append sampler bindings.
@@ -176,12 +176,12 @@ bool ProgramVk::create(
 		if (sampler.binding < 0)
 			continue;
 
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = sampler.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(sampler.stages);
+		dslb.push_back({
+			.binding = (uint32_t)sampler.binding,
+			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER,
+			.descriptorCount = 1,
+			.stageFlags = getShaderStageFlags(sampler.stages)
+		});
 	}
 
 	// Append texture bindings.
@@ -190,27 +190,27 @@ bool ProgramVk::create(
 		if (texture.binding < 0)
 			continue;
 
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = texture.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(texture.stages);
+		dslb.push_back({
+			.binding = (uint32_t)texture.binding,
+			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+			.descriptorCount = 1,
+			.stageFlags = getShaderStageFlags(texture.stages)
+		});
 	}
 
 	// Append image bindings.
-	 for (const auto& image : resource->m_images)
-	 {
-		 if (image.binding < 0)
+	for (const auto& image : resource->m_images)
+	{
+		if (image.binding < 0)
 			 continue;
 
-	 	auto& lb = dslb.push_back();
-	 	lb = {};
-	 	lb.binding = image.binding;
-	 	lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-	 	lb.descriptorCount = 1;
-	 	lb.stageFlags = getShaderStageFlags(image.stages);		
-	 }
+		dslb.push_back({
+			.binding = (uint32_t)image.binding,
+			.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+			.descriptorCount = 1,
+			.stageFlags = getShaderStageFlags(image.stages)
+		});
+	}
 
 	// Append sbuffer bindings.
 	for (const auto& sbuffer : resource->m_sbuffers)
@@ -218,12 +218,12 @@ bool ProgramVk::create(
 		if (sbuffer.binding < 0)
 			continue;
 
-		auto& lb = dslb.push_back();
-		lb = {};
-		lb.binding = sbuffer.binding;
-		lb.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-		lb.descriptorCount = 1;
-		lb.stageFlags = getShaderStageFlags(sbuffer.stages);
+		dslb.push_back({
+			.binding = (uint32_t)sbuffer.binding,
+			.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+			.descriptorCount = 1,
+			.stageFlags = getShaderStageFlags(sbuffer.stages)
+		});
 	}
 
 	VkDescriptorSetLayoutCreateInfo dlci = {};
@@ -293,8 +293,8 @@ bool ProgramVk::create(
 	// Create images.
 	m_images.reserve(resource->m_images.size());
 	for (const auto& resourceImage : resource->m_images)
- 		m_images.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
- 	
+		m_images.push_back({ resourceImage.name + L" (" + getShaderStageNames(resourceImage.stages) + L")", resourceImage.binding });
+	
 	// Create sbuffers.
 	m_sbuffers.reserve(resource->m_sbuffers.size());
 	for (const auto& resourceSBuffer : resource->m_sbuffers)
@@ -336,7 +336,7 @@ bool ProgramVk::validate(
 		);
 	}
 
-	// Set resource indices.
+	// Set bindless resource indices.
 	for (auto it : m_parameterMap)
 	{
 		const ParameterMap& pm = it.second;
@@ -604,14 +604,17 @@ void ProgramVk::setStencilReference(uint32_t stencilReference)
 
 bool ProgramVk::validateDescriptorSet()
 {
-	// Create key from current bound resources.
 	DescriptorSetKey key;
+
+	// Add uniform buffers to key.
 	for (uint32_t i = 0; i < 3; ++i)
 	{
 		if (!m_uniformBuffers[i].size)
 			continue;
 		key.push_back((intptr_t)m_uniformBuffers[i].range.chain);
-	}	
+	}
+
+	// Add non-bindless textures to key.
 	for (const auto& texture : m_textures)
 	{
 		if (texture.binding < 0)
@@ -621,30 +624,31 @@ bool ProgramVk::validateDescriptorSet()
 		auto resolved = texture.texture->resolve();
 		if (!resolved)
 			return false;
-		T_FATAL_ASSERT(!key.full());
 		key.push_back((intptr_t)resolved);
 	}
-	 for (const auto& image : m_images)
-	 {
-		 if (image.binding < 0)
-			 continue;
-		 if (!image.texture)
-	 		return false;
-	 	auto resolved = image.texture->resolve();
-	 	if (!resolved)
-	 		return false;
-		T_FATAL_ASSERT(!key.full());
-	 	key.push_back((intptr_t)resolved);
-	 }
+
+	// Add non-bindless images to key.
+	for (const auto& image : m_images)
+	{
+		if (image.binding < 0)
+			continue;
+		if (!image.texture)
+			return false;
+		auto resolved = image.texture->resolve();
+		if (!resolved)
+			return false;
+		key.push_back((intptr_t)resolved);
+	}
+
+	// Add sbuffers to key.
 	for (const auto& sbuffer : m_sbuffers)
 	{
 		if (!sbuffer.bufferView)
 			return false;
-		T_FATAL_ASSERT(!key.full());
 		key.push_back((intptr_t)sbuffer.bufferView->getVkBuffer());
 	}
 
-	// Get already created descriptor set for bound resources.
+	// Get already created descriptor set for resources.
 	for (const auto& k : m_descriptorSets)
 	{
 		if (k.first.size() == key.size())
@@ -681,21 +685,20 @@ bool ProgramVk::validateDescriptorSet()
 		if (!m_uniformBuffers[i].size)
 			continue;
 
-		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = *m_uniformBuffers[i].range.chain->getBuffer();
-		bufferInfo.offset = 0;
-		bufferInfo.range = m_uniformBuffers[i].size;
+		auto& bufferInfo = bufferInfos.push_back({
+			.buffer = *m_uniformBuffers[i].range.chain->getBuffer(),
+			.range = m_uniformBuffers[i].size
+		});
 
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = i + 2;
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = i + 2,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+			.pBufferInfo = &bufferInfo
+		});
 	}
 
 	// Add sampler bindings.
@@ -704,24 +707,23 @@ bool ProgramVk::validateDescriptorSet()
 		if (sampler.binding < 0)
 			continue;
 
-		auto& imageInfo = imageInfos.push_back();
-		imageInfo.sampler = sampler.sampler;
-		imageInfo.imageView = 0;
-		imageInfo.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		auto& imageInfo = imageInfos.push_back({
+			.sampler = sampler.sampler,
+			.imageLayout = VK_IMAGE_LAYOUT_UNDEFINED
+		});
 
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sampler.binding;
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = (uint32_t)sampler.binding,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLER,
+			.pImageInfo = &imageInfo
+		});
 	}
 
-	// Add texture bindings.
+	// Add non-bindless texture bindings.
 	for (const auto& texture : m_textures)
 	{
 		if (texture.binding < 0)
@@ -750,38 +752,35 @@ bool ProgramVk::validateDescriptorSet()
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 		}
 
-		T_ASSERT(imageInfo.imageView != 0);
-
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
-		write.pImageInfo = &imageInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = texture.binding;
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = (uint32_t)texture.binding,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+			.pImageInfo = &imageInfo
+		});
 	}
 
-	// Add image bindings.
-	 for (const auto& image : m_images)
-	 {
-		 if (image.binding < 0)
-			 continue;
+	// Add non-bindless image bindings.
+	for (const auto& image : m_images)
+	{
+		if (image.binding < 0)
+			continue;
 
-	 	T_ASSERT(image.texture);
-	 	auto resolved = image.texture->resolve();
-	 	T_ASSERT(resolved);
+		T_ASSERT(image.texture);
+		auto resolved = image.texture->resolve();
+		T_ASSERT(resolved);
 
-	 	auto& imageInfo = imageInfos.push_back();
-	 	imageInfo.sampler = 0;
+		auto& imageInfo = imageInfos.push_back();
+		imageInfo.sampler = 0;
 
-	 	if (is_a< TextureVk >(resolved))
-	 	{
-	 		imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
-	 		imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-	 	}
+		if (is_a< TextureVk >(resolved))
+		{
+			imageInfo.imageView = static_cast< TextureVk* >(resolved)->getImage()->getStorageVkImageView(image.mip);
+			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+		}
 		else if (is_a< RenderTargetVk >(resolved))
 		{
 			imageInfo.imageView = static_cast< RenderTargetVk* >(resolved)->getImageResolved()->getStorageVkImageView(image.mip);
@@ -793,18 +792,15 @@ bool ProgramVk::validateDescriptorSet()
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 		}
 
-		T_FATAL_ASSERT(imageInfo.imageView != 0);
-
-	 	auto& write = writes.push_back();
-	 	write = {};
-	 	write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-	 	write.pNext = nullptr;
-	 	write.dstSet = m_descriptorSet;
-	 	write.descriptorCount = 1;
-	 	write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-	 	write.pImageInfo = &imageInfo;
-	 	write.dstArrayElement = 0;
-	 	write.dstBinding = image.binding;
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = (uint32_t)image.binding,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+			.pImageInfo = &imageInfo
+		});
 	 }
 
 	// Add sbuffer bindings.
@@ -813,24 +809,20 @@ bool ProgramVk::validateDescriptorSet()
 		if (sbuffer.binding < 0)
 			continue;
 
-		T_ASSERT(sbuffer.bufferView);
-		auto bvvk = sbuffer.bufferView;
+		auto& bufferInfo = bufferInfos.push_back({
+			.buffer = sbuffer.bufferView->getVkBuffer(),
+			.range = sbuffer.bufferView->getVkBufferRange()
+		});
 
-		auto& bufferInfo = bufferInfos.push_back();
-		bufferInfo.buffer = bvvk->getVkBuffer();
-		bufferInfo.offset = 0;
-		bufferInfo.range = bvvk->getVkBufferRange();
-
-		auto& write = writes.push_back();
-		write = {};
-		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-		write.pNext = nullptr;
-		write.dstSet = m_descriptorSet;
-		write.descriptorCount = 1;
-		write.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC;
-		write.pBufferInfo = &bufferInfo;
-		write.dstArrayElement = 0;
-		write.dstBinding = sbuffer.binding;
+		writes.push_back({
+			.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+			.pNext = nullptr,
+			.dstSet = m_descriptorSet,
+			.dstBinding = (uint32_t)sbuffer.binding,
+			.descriptorCount = 1,
+			.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+			.pBufferInfo = &bufferInfo
+		});
 	}
 
 	vkUpdateDescriptorSets(

@@ -381,10 +381,11 @@ public:
 	 *
 	 * \param item Item value.
 	 */
-	void push_back(const ItemType& item)
+	ItemType& push_back(const ItemType& item)
 	{
 		T_ASSERT(m_size < Capacity);
 		Constructor::construct(m_items[m_size++], item);
+		return m_items[m_size - 1];
 	}
 
 	/*! Pop value from vector. */
