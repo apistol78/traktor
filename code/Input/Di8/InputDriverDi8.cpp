@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -16,18 +16,16 @@
 #include "Input/Di8/KeyboardDeviceDi8.h"
 #include "Input/Di8/MouseDeviceDi8.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 #define SAFE_RELEASE(instance) \
 	if (instance) \
 	{ \
 		instance->Release(); \
-		instance = 0; \
+		instance = nullptr; \
 	}
 
 /*! Check if device is a XInput device.
@@ -198,7 +196,7 @@ HWND getMyProcessWindow()
 	return hWnd;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InputDriverDi8", 0, InputDriverDi8, IInputDriver)
 
@@ -209,9 +207,9 @@ InputDriverDi8::~InputDriverDi8()
 
 void InputDriverDi8::destroy()
 {
-	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+	for (auto device : m_devices)
 	{
-		if (KeyboardDeviceDi8* keyboardDevice = dynamic_type_cast< KeyboardDeviceDi8* >(*i))
+		if (KeyboardDeviceDi8* keyboardDevice = dynamic_type_cast< KeyboardDeviceDi8* >(device))
 			keyboardDevice->destroy();
 	}
 	m_devices.clear();
@@ -337,5 +335,4 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	return true;
 }
 
-	}
 }

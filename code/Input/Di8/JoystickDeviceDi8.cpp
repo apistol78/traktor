@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,12 +12,10 @@
 #include "Input/Di8/JoystickDeviceDi8.h"
 #include "Input/Di8/TypesDi8.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
+	namespace
 	{
-		namespace
-		{
 
 float adjustDeadZone(float value)
 {
@@ -41,7 +39,7 @@ T readStateValueByOffset(const DIJOYSTATE2& state, uint32_t offset)
 	return *(T*)(((uint8_t*)&state) + offset);
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.JoystickDeviceDi8", JoystickDeviceDi8, IInputDevice)
 
@@ -307,5 +305,4 @@ void JoystickDeviceDi8::collectControls(IDirectInputDevice8* device)
 	}
 }
 
-	}
 }

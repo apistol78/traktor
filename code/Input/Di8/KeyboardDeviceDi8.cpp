@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,16 +12,14 @@
 #include "Input/Di8/KeyboardDeviceDi8.h"
 #include "Input/Di8/TypesDi8.h"
 
-namespace traktor
+namespace traktor::input
 {
-	namespace input
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceDi8", KeyboardDeviceDi8, IInputDevice)
 
 KeyboardDeviceDi8::KeyboardDeviceDi8(HWND hWnd, const ComRef< IDirectInputDevice8 >& device, const DIDEVICEINSTANCE* deviceInstance)
 :	m_hWnd(hWnd)
-,	m_pWndProc(0)
+,	m_pWndProc(nullptr)
 ,	m_device(device)
 ,	m_connected(false)
 {
@@ -47,7 +45,7 @@ void KeyboardDeviceDi8::destroy()
 	if (m_pWndProc)
 	{
 		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_pWndProc);
-		m_pWndProc = 0;
+		m_pWndProc = nullptr;
 	}
 }
 
@@ -230,7 +228,7 @@ void KeyboardDeviceDi8::setRumble(const InputRumble& rumble)
 
 void KeyboardDeviceDi8::setExclusive(bool exclusive)
 {
-	// Ensure device is un-aquired, cannot change cooperative level if acquired.
+	// Ensure device is un-acquired, cannot change cooperative level if acquired.
 	m_device->Unacquire();
 	m_connected = false;
 }
@@ -252,7 +250,7 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	}
 	else if (uMsg == WM_KEYDOWN)
 	{
-		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		const uint32_t keyCode = translateFromVk(uint32_t(wParam));
 		if (keyCode != 0)
 		{
 			KeyEvent ke;
@@ -263,7 +261,7 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	}
 	else if (uMsg == WM_KEYUP)
 	{
-		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		const uint32_t keyCode = translateFromVk(uint32_t(wParam));
 		if (keyCode != 0)
 		{
 			KeyEvent ke;
@@ -276,5 +274,4 @@ LRESULT WINAPI KeyboardDeviceDi8::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 	return CallWindowProc(this_->m_pWndProc, hWnd, uMsg, wParam, lParam);
 }
 
-	}
 }
