@@ -151,6 +151,13 @@ public:
 			}
 			else	// Becoming hidden.
 			{
+				if (m_focus)
+				{
+					FocusEvent focusEvent(m_owner, false);
+					m_owner->raiseEvent(&focusEvent);
+					m_focus = false;
+				}
+
 				if (m_data.mapped)
 				{
 					XUnmapWindow(m_context->getDisplay(), m_data.window);
@@ -180,12 +187,15 @@ public:
 
 	virtual bool hasFocus() const override
 	{
-		return m_data.focus;
+		Window window;
+		int revert;
+		XGetInputFocus(m_context->getDisplay(), &window, &revert);
+		return window == m_data.window;
 	}
 
 	virtual void setFocus() override
 	{
-		m_context->setFocus(&m_data);
+		XSetInputFocus(m_context->getDisplay(), m_data.window, /*RevertToNone*/0, CurrentTime);
 	}
 
 	virtual bool hasCapture() const override
@@ -536,6 +546,7 @@ protected:
 	int32_t m_lastMousePress = 0;
 	int32_t m_lastMouseButton = 0;
 	bool m_pendingExposure = false;
+	bool m_focus = false;
 
 	bool create(IWidget* parent, int32_t style, Window window, const Rect& rect, bool visible, bool topLevel)
 	{
@@ -618,23 +629,31 @@ protected:
 		}
 
 		// Focus in.
-		m_context->bind(&m_data, FocusIn, [this](XEvent& xe) {
+		m_context->bind(&m_data, FocusIn, [=, this](XEvent& xe) {
 			if (m_xic != 0)
 				XSetICFocus(m_xic);
-			FocusEvent focusEvent(m_owner, true);
-			m_owner->raiseEvent(&focusEvent);
+			if (!m_focus)
+			{
+				FocusEvent focusEvent(m_owner, true);
+				m_owner->raiseEvent(&focusEvent);
+				m_focus = true;
+			}
 		});
 
 		// Focus out.
-		m_context->bind(&m_data, FocusOut, [this](XEvent& xe) {
+		m_context->bind(&m_data, FocusOut, [=, this](XEvent& xe) {
 			if (m_xic != 0)
 				XUnsetICFocus(m_xic);
-			FocusEvent focusEvent(m_owner, false);
-			m_owner->raiseEvent(&focusEvent);
+			if (m_focus)
+			{
+				FocusEvent focusEvent(m_owner, false);
+				m_owner->raiseEvent(&focusEvent);
+				m_focus = false;
+			}
 		});
 
 		// Key press.
-		m_context->bind(&m_data, KeyPress, [this](XEvent& xe) {
+		m_context->bind(&m_data, KeyPress, [=, this](XEvent& xe) {
 			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
@@ -671,7 +690,7 @@ protected:
 		});
 
 		// Key release.
-		m_context->bind(&m_data, KeyRelease, [this](XEvent& xe) {
+		m_context->bind(&m_data, KeyRelease, [=, this](XEvent& xe) {
 			T_FATAL_ASSERT (m_data.enable);
 
 			int nkeysyms;
@@ -698,7 +717,7 @@ protected:
 		});
 
 		// Motion
-		m_context->bind(&m_data, MotionNotify, [this](XEvent& xe){
+		m_context->bind(&m_data, MotionNotify, [=, this](XEvent& xe){
 			T_FATAL_ASSERT (m_data.enable);
 
 			int32_t button = 0;
@@ -718,19 +737,19 @@ protected:
 		});
 
 		// Enter
-		m_context->bind(&m_data, EnterNotify, [this](XEvent& xe){
+		m_context->bind(&m_data, EnterNotify, [=, this](XEvent& xe){
 			MouseTrackEvent mouseTrackEvent(m_owner, true);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
 
 		// Leave
-		m_context->bind(&m_data, LeaveNotify, [this](XEvent& xe){
+		m_context->bind(&m_data, LeaveNotify, [=, this](XEvent& xe){
 			MouseTrackEvent mouseTrackEvent(m_owner, false);
 			m_owner->raiseEvent(&mouseTrackEvent);
 		});
 
 		// Button press.
-		m_context->bind(&m_data, ButtonPress, [this](XEvent& xe){
+		m_context->bind(&m_data, ButtonPress, [=, this](XEvent& xe){
 			T_FATAL_ASSERT (m_data.enable);
 
 			if (xe.xbutton.button == 4 || xe.xbutton.button == 5)
@@ -763,7 +782,8 @@ protected:
 					return;
 				}
 
-				setFocus();
+				if ((style & WsFocus) != 0)
+					setFocus();
 
 				MouseButtonDownEvent mouseButtonDownEvent(
 					m_owner,
@@ -772,7 +792,7 @@ protected:
 				);
 				m_owner->raiseEvent(&mouseButtonDownEvent);
 
-				int32_t dbt = xe.xbutton.time - m_lastMousePress;
+				const int32_t dbt = xe.xbutton.time - m_lastMousePress;
 				if (dbt <= 200 && m_lastMouseButton == button)
 				{
 					MouseDoubleClickEvent mouseDoubleClickEvent(
@@ -868,6 +888,7 @@ protected:
 
 			CanvasX11 canvasImpl(m_cairo, m_context->getSystemDPI());
 			Canvas canvas(&canvasImpl, reinterpret_cast< Widget* >(m_owner));
+
 			PaintEvent paintEvent(
 				m_owner,
 				canvas,
@@ -875,6 +896,13 @@ protected:
 			);
 			m_owner->raiseEvent(&paintEvent);
 
+			OverlayPaintEvent overlayPaintEvent(
+				m_owner,
+				canvas,
+				rc != nullptr ? *rc : Rect(Point(0, 0), sz)
+			);
+			m_owner->raiseEvent(&overlayPaintEvent);
+			
 			cairo_pop_group_to_source(m_cairo);
 			cairo_paint(m_cairo);
 			cairo_surface_flush(m_surface);

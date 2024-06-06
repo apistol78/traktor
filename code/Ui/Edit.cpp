@@ -40,6 +40,7 @@ Edit::Edit()
 ,	m_acceptTab(false)
 ,	m_readOnly(false)
 ,	m_hover(false)
+,	m_modal(false)
 {
 }
 
@@ -76,9 +77,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, cons
 
 void Edit::destroy()
 {
-	// If control is destroyed while having focus then no event is issued
-	// for loosing focus, so we must also enable global event handlers here.
-	if (getIWidget() != nullptr && hasFocus())
+	if (m_modal)
 		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
 
 	Widget::destroy();
@@ -261,12 +260,14 @@ void Edit::eventFocus(FocusEvent* event)
 		// global hooks, such as ShortcutTable, to receive events.
 		Application::getInstance()->disableEventHandlers< KeyDownEvent >();
 		startTimer(500);
+		m_modal = true;
 	}
 	else
 	{
 		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
 		stopTimer();
 		deselect();
+		m_modal = false;
 	}
 	update();
 }

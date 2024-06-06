@@ -7,6 +7,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
+#include "Core/Log/Log.h"
 #include "Ui/Event.h"
 #include "Ui/EventSubject.h"
 

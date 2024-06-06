@@ -22,7 +22,6 @@ struct WidgetData
 	bool visible = false;
 	bool enable = true;
 	bool grabbed = false;
-	bool focus = false;
 };
 
 }

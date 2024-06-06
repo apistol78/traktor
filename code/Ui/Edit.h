@@ -79,6 +79,7 @@ private:
 	bool m_acceptTab;
 	bool m_readOnly;
 	bool m_hover;
+	bool m_modal;
 
 	void eventFocus(FocusEvent* event);
 

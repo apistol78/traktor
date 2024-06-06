@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -70,9 +70,6 @@ void Context::unbind(WidgetData* widget)
 
 	if (m_grabbed == widget)
 		m_grabbed = nullptr;
-
-	if (m_focused == widget)
-		m_focused = nullptr;
 }
 
 void Context::pushModal(WidgetData* widget)
@@ -131,71 +128,16 @@ void Context::ungrab(WidgetData* widget)
 	m_grabbed = nullptr;
 }
 
-void Context::setFocus(WidgetData* widget)
-{
-	if (m_focused != nullptr)
-	{
-		if (m_focused == widget)
-			return;
-
-		m_focused->focus = false;
-
-		XEvent xevent = {};
-		xevent.type = FocusOut;
-		dispatch(m_focused->window, FocusOut, true, xevent);
-
-		m_focused = nullptr;
-	}
-
-	if (widget != nullptr)
-	{
-		m_focused = widget;
-		m_focused->focus = true;
-
-		XSetInputFocus(m_display, m_focused->window, RevertToNone, CurrentTime);
-
-		XEvent xevent = {};
-		xevent.type = FocusIn;
-		dispatch(m_focused->window, FocusIn, true, xevent);
-	}
-}
-
 void Context::dispatch(XEvent& xe)
 {
 	switch (xe.type)
     {
     case FocusIn:
-		{
-			Window focusWindow; int revertTo;
-			XGetInputFocus(m_display, &focusWindow, &revertTo);
+        dispatch(xe.xfocus.window, FocusIn, true, xe);
+        break;
 
-			auto b = m_bindings.find(focusWindow);
-			if (b == m_bindings.end())
-				break;
-
-			if (m_focused != nullptr)
-			{
-				if (m_focused->window == focusWindow)
-					break;
-
-				m_focused->focus = false;
-
-				XEvent xevent = {};
-				xevent.type = FocusOut;
-				dispatch(m_focused->window, FocusOut, true, xevent);
-
-				m_focused = nullptr;
-			}
-
-			{
-				m_focused = b->second.widget;
-				m_focused->focus = true;
-
-				XEvent xevent = {};
-				xevent.type = FocusIn;
-				dispatch(focusWindow, FocusIn, true, xevent);
-			}
-		}
+    case FocusOut:
+        dispatch(xe.xfocus.window, FocusOut, true, xe);
         break;
 
     case KeyPress:

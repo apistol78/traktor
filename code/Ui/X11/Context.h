@@ -45,9 +45,6 @@ public:
 	//! Ungrab input.
 	void ungrab(WidgetData* widget);
 
-	//! Set focus.
-	void setFocus(WidgetData* widget);
-
 	//! Dispatch event to callbacks.
 	void dispatch(XEvent& xe);
 
@@ -85,7 +82,6 @@ private:
 	SmallMap< Window, Binding > m_bindings;
 	AlignedVector< WidgetData* > m_modal;
 	WidgetData* m_grabbed = nullptr;
-	WidgetData* m_focused = nullptr;
 
 	void dispatch(Window window, int32_t eventType, bool always, XEvent& xe);
 };
