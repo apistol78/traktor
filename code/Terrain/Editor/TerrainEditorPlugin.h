@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,17 +11,15 @@
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Ui/Events/AllEvents.h"
 
-namespace traktor
+namespace traktor::scene
 {
-	namespace scene
-	{
 
 class ModifierChangedEvent;
 
-	}
+}
 
-	namespace ui
-	{
+namespace traktor::ui
+{
 
 class ColorControl;
 class Slider;
@@ -31,10 +29,10 @@ class ToolBarDropDown;
 class ToolBarEmbed;
 class ToolBarItemGroup;
 
-	}
+}
 
-	namespace terrain
-	{
+namespace traktor::terrain
+{
 
 class TerrainEditModifier;
 
@@ -66,7 +64,6 @@ private:
 	Ref< ui::ToolBarButton > m_toolToggleFallOffSharp;
 	Ref< ui::ToolBarButton > m_toolToggleFallOffImage;
 	Ref< ui::Slider > m_sliderStrength;
-	Ref< ui::Static > m_staticStrength;
 	Ref< ui::ToolBarEmbed > m_toolStrength;
 	Ref< ui::ColorControl > m_colorControl;
 	Ref< ui::ToolBarEmbed > m_toolColor;
@@ -86,6 +83,4 @@ private:
 	void eventModifierChanged(scene::ModifierChangedEvent* event);
 };
 
-	}
 }
-

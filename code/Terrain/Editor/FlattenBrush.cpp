@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -12,10 +12,8 @@
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/IFallOff.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.FlattenBrush", FlattenBrush, IBrush)
 
@@ -33,7 +31,7 @@ uint32_t FlattenBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
-	m_strength = abs(state.strength) * 0.5f;
+	m_strength = abs(state.strength) * 0.05f;
 
 	if (!m_explicit)
 		m_height = m_heightfield->getGridHeightNearest(x, y);
@@ -73,5 +71,4 @@ void FlattenBrush::setHeight(float height)
 	m_height = m_heightfield->worldToUnit(height);
 }
 
-	}
 }

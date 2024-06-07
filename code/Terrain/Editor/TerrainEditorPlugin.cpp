@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -39,10 +39,8 @@
 #include "Ui/ToolBar/ToolBarItemGroup.h"
 #include "Ui/ToolBar/ToolBarSeparator.h"
 
-namespace traktor
+namespace traktor::terrain
 {
-	namespace terrain
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditorPlugin", TerrainEditorPlugin, scene::ISceneEditorPlugin)
 
@@ -73,19 +71,13 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::ToolBar* toolBar)
 	m_toolToggleFallOffSharp = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFallOffImage = new ui::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_IMAGE"), image + 15, ui::Command(L"Terrain.Editor.ImageFallOff"), ui::ToolBarButton::BsDefaultToggle);
 
-	Ref< ui::Container > containerStrength = new ui::Container();
-	containerStrength->create(toolBar, ui::WsNone, new ui::TableLayout(L"100,35", L"24", 2_ut, 2_ut));
-
 	m_sliderStrength = new ui::Slider();
-	m_sliderStrength->create(containerStrength);
-	m_sliderStrength->setRange(1, 10);
+	m_sliderStrength->create(toolBar);
+	m_sliderStrength->setRange(0, 10);
 	m_sliderStrength->setValue(5);
 	m_sliderStrength->addEventHandler< ui::ContentChangeEvent >(this, &TerrainEditorPlugin::eventSliderStrengthChange);
 
-	m_staticStrength = new ui::Static();
-	m_staticStrength->create(containerStrength, L"50%");
-
-	m_toolStrength = new ui::ToolBarEmbed(containerStrength, 135_ut);
+	m_toolStrength = new ui::ToolBarEmbed(m_sliderStrength, 100_ut);
 
 	m_colorControl = new ui::ColorControl();
 	m_colorControl->create(toolBar, ui::WsBorder);
@@ -301,15 +293,15 @@ void TerrainEditorPlugin::updateModifierState()
 	else if (m_toolToggleFallOffImage->isToggled())
 		m_terrainEditModifier->setFallOff(L"Terrain.Editor.ImageFallOff");
 
-	int32_t material = m_toolMaterial->getSelected();
+	const int32_t material = m_toolMaterial->getSelected();
 	if (material >= 0)
 		m_terrainEditModifier->setMaterial(material);
 
-	int32_t attribute = m_toolAttribute->getSelected();
+	const int32_t attribute = m_toolAttribute->getSelected();
 	if (attribute >= 0)
 		m_terrainEditModifier->setAttribute(attribute);
 
-	int32_t visualize = m_toolVisualize->getSelected();
+	const int32_t visualize = m_toolVisualize->getSelected();
 	if (visualize >= 0)
 		m_terrainEditModifier->setVisualizeMode((TerrainComponent::VisualizeMode)visualize);
 
@@ -319,7 +311,6 @@ void TerrainEditorPlugin::updateModifierState()
 void TerrainEditorPlugin::eventSliderStrengthChange(ui::ContentChangeEvent* event)
 {
 	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
-	m_staticStrength->setText(toString(int32_t(m_sliderStrength->getValue() * 10)) + L"%");
 }
 
 void TerrainEditorPlugin::eventColorClick(ui::MouseButtonUpEvent* event)
@@ -351,5 +342,4 @@ void TerrainEditorPlugin::eventModifierChanged(scene::ModifierChangedEvent* even
 	m_toolGroup->setEnable(m_context->getModifier() == m_terrainEditModifier);
 }
 
-	}
 }
