@@ -44,6 +44,11 @@ Edit::Edit()
 {
 }
 
+Edit::~Edit()
+{
+	T_FATAL_ASSERT(!m_modal);
+}
+
 bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, const EditValidator* validator)
 {
 	if (!Widget::create(parent, style | WsFocus | WsDoubleBuffer))
@@ -58,7 +63,6 @@ bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, cons
 	m_acceptTab = (bool)((style & WsWantAllInput) != 0);
 	m_readOnly = (bool)((style & WsReadOnly) != 0);
 
-	addEventHandler< FocusEvent >(this, &Edit::eventFocus);
 	addEventHandler< MouseTrackEvent >(this, &Edit::eventMouseTrack);
 	addEventHandler< MouseButtonDownEvent >(this, &Edit::eventButtonDown);
 	addEventHandler< MouseDoubleClickEvent >(this, &Edit::eventDoubleClick);
@@ -69,6 +73,8 @@ bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, cons
 	{
 		addEventHandler< KeyDownEvent >(this, &Edit::eventKeyDown);
 		addEventHandler< KeyEvent >(this, &Edit::eventKey);
+		addEventHandler< FocusEvent >(this, &Edit::eventFocus);
+		addEventHandler< ShowEvent >(this, &Edit::eventShow);
 	}
 
 	setText(text);
@@ -78,7 +84,10 @@ bool Edit::create(Widget* parent, const std::wstring& text, uint32_t style, cons
 void Edit::destroy()
 {
 	if (m_modal)
+	{
 		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+		m_modal = false;
+	}
 
 	Widget::destroy();
 }
@@ -249,27 +258,6 @@ Size Edit::getMaximumSize() const
 {
 	const int32_t height = getFontMetric().getHeight() + pixel(4_ut) * 2;
 	return Size(65535, height);
-}
-
-void Edit::eventFocus(FocusEvent* event)
-{
-	m_caretBlink = true;
-	if (event->gotFocus())
-	{
-		// Disable global KeyDown events while Edit got focus to prevent
-		// global hooks, such as ShortcutTable, to receive events.
-		Application::getInstance()->disableEventHandlers< KeyDownEvent >();
-		startTimer(500);
-		m_modal = true;
-	}
-	else
-	{
-		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
-		stopTimer();
-		deselect();
-		m_modal = false;
-	}
-	update();
 }
 
 void Edit::eventMouseTrack(MouseTrackEvent* event)
@@ -521,6 +509,36 @@ void Edit::eventKey(KeyEvent* event)
 			cut();
 		else if (event->getVirtualKey() == VkV)
 			paste();
+	}
+}
+
+void Edit::eventFocus(FocusEvent* event)
+{
+	m_caretBlink = true;
+	if (event->gotFocus())
+	{
+		// Disable global KeyDown events while Edit got focus to prevent
+		// global hooks, such as ShortcutTable, to receive events.
+		Application::getInstance()->disableEventHandlers< KeyDownEvent >();
+		startTimer(500);
+		m_modal = true;
+	}
+	else
+	{
+		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+		stopTimer();
+		deselect();
+		m_modal = false;
+	}
+	update();
+}
+
+void Edit::eventShow(ShowEvent* event)
+{
+	if (!event->isVisible() && m_modal)
+	{
+		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+		m_modal = false;
 	}
 }
 

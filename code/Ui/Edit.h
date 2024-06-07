@@ -35,6 +35,8 @@ public:
 
 	Edit();
 
+	virtual ~Edit();
+
 	bool create(Widget* parent, const std::wstring& text = L"", uint32_t style = WsNone, const EditValidator* validator = nullptr);
 
 	virtual void destroy() override;
@@ -81,8 +83,6 @@ private:
 	bool m_hover;
 	bool m_modal;
 
-	void eventFocus(FocusEvent* event);
-
 	void eventMouseTrack(MouseTrackEvent* event);
 
 	void eventButtonDown(MouseButtonDownEvent* event);
@@ -92,6 +92,10 @@ private:
 	void eventKeyDown(KeyDownEvent* event);
 
 	void eventKey(KeyEvent* event);
+
+	void eventFocus(FocusEvent* event);
+
+	void eventShow(ShowEvent* event);
 
 	void eventPaint(PaintEvent* event);
 
