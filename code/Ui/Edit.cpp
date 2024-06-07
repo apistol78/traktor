@@ -519,26 +519,35 @@ void Edit::eventFocus(FocusEvent* event)
 	{
 		// Disable global KeyDown events while Edit got focus to prevent
 		// global hooks, such as ShortcutTable, to receive events.
-		Application::getInstance()->disableEventHandlers< KeyDownEvent >();
+		if (!m_modal)
+		{
+			Application::getInstance()->disableEventHandlers< KeyDownEvent >();
+			m_modal = true;
+		}
 		startTimer(500);
-		m_modal = true;
 	}
 	else
 	{
-		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+		if (m_modal)
+		{
+			Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+			m_modal = false;
+		}
 		stopTimer();
 		deselect();
-		m_modal = false;
 	}
 	update();
 }
 
 void Edit::eventShow(ShowEvent* event)
 {
-	if (!event->isVisible() && m_modal)
+	if (!event->isVisible())
 	{
-		Application::getInstance()->enableEventHandlers< KeyDownEvent >();
-		m_modal = false;
+		if (m_modal)
+		{
+			Application::getInstance()->enableEventHandlers< KeyDownEvent >();
+			m_modal = false;
+		}
 	}
 }
 
