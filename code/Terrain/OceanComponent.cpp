@@ -61,17 +61,17 @@ const render::Handle s_handleOcean_WaveTexture1(L"Ocean_WaveTexture1");
 const render::Handle s_handleOcean_WaveTexture2(L"Ocean_WaveTexture2");
 const render::Handle s_handleOcean_WaveTexture3(L"Ocean_WaveTexture3");
 const render::Handle s_handleOcean_TileIndex(L"Ocean_TileIndex");
+const render::Handle s_handleOcean_Tile(L"Ocean_Tile");
 const render::Handle s_handleWorld_Time(L"World_Time");
 
 #pragma pack(1)
 struct OceanVertex
 {
 	float pos[2];
-	float edge;
 };
 #pragma pack()
 
-const uint32_t c_gridSize = 1024;
+const uint32_t c_gridSize = 512;
 const uint32_t c_gridInfSize = c_gridSize / 8;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
@@ -115,7 +115,6 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	AlignedVector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DataUsage::Position, render::DtFloat2, offsetof(OceanVertex, pos)));
-	vertexElements.push_back(render::VertexElement(render::DataUsage::Custom, render::DtFloat1, offsetof(OceanVertex, edge)));
 	m_vertexLayout = renderSystem->createVertexLayout(vertexElements);
 
 	m_vertexBuffer = renderSystem->createBuffer(render::BuVertex, c_gridSize * c_gridSize * sizeof(OceanVertex), false);
@@ -128,20 +127,11 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 	for (int32_t iz = 0; iz < c_gridSize; ++iz)
 	{
 		const float fz = float(iz) * 2.0f / c_gridSize - 1.0f;
-		const float ez0 = clamp(1.0f - float(iz) / c_gridInfSize, 0.0f, 1.0f);
-		const float ez1 = clamp(1.0f - float(c_gridSize - 1 - iz) / c_gridInfSize, 0.0f, 1.0f);
-
 		for (int32_t ix = 0; ix < c_gridSize; ++ix)
 		{
 			const float fx = float(ix) * 2.0f / c_gridSize - 1.0f;
-			const float ex0 = clamp(1.0f - float(ix) / c_gridInfSize, 0.0f, 1.0f);
-			const float ex1 = clamp(1.0f - float(c_gridSize - 1 - ix) / c_gridInfSize, 0.0f, 1.0f);
-			const float f = std::pow(max(max(ex0, ex1), max(ez0, ez1)), 8);
-
 			vertex->pos[0] = fx;
 			vertex->pos[1] = fz;
-			vertex->edge = lerp(100.0f, 10000.0f, f);
-
 			vertex++;
 		}
 	}
@@ -456,8 +446,8 @@ void OceanComponent::build(
 	}
 
 	const Transform transform = m_owner->getTransform() * Transform(Vector4(0.0f, m_elevation, 0.0f, 0.0f));
-	const Vector4 lastEye = worldRenderView.getLastView().inverse().translation().xyz1();
-	const Vector4 eye = worldRenderView.getView().inverse().translation().xyz1();
+	//const Vector4 lastEye = worldRenderView.getLastView().inverse().translation().xyz1();
+	//const Vector4 eye = worldRenderView.getView().inverse().translation().xyz1();
 
 	// Render ocean geometry.
 	auto perm = worldRenderPass.getPermutation(m_shader);
@@ -466,58 +456,65 @@ void OceanComponent::build(
 	if (!sp)
 		return;
 
-	auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Ocean");
-	renderBlock->distance = std::numeric_limits< float >::max();
-	renderBlock->program = sp.program;
-	renderBlock->indexBuffer = m_indexBuffer->getBufferView();
-	renderBlock->indexType = render::IndexType::UInt32;
-	renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
-	renderBlock->vertexLayout = m_vertexLayout;
-	renderBlock->primitives = m_primitives;
-
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->programParams->beginParameters(renderContext);
-	renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
-	renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
-
-	if (!writeVelocity)
+	for (int32_t iz = -2; iz <= 2; ++iz)
 	{
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_foamTexture);
+		for (int32_t ix = -2; ix <= 2; ++ix)
+		{
+			auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Ocean");
+			renderBlock->distance = std::numeric_limits< float >::max();
+			renderBlock->program = sp.program;
+			renderBlock->indexBuffer = m_indexBuffer->getBufferView();
+			renderBlock->indexType = render::IndexType::UInt32;
+			renderBlock->vertexBuffer = m_vertexBuffer->getBufferView();
+			renderBlock->vertexLayout = m_vertexLayout;
+			renderBlock->primitives = m_primitives;
+
+			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+			renderBlock->programParams->beginParameters(renderContext);
+			renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
+			//renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
+			//renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
+			renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
+			renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
+			renderBlock->programParams->setVectorParameter(s_handleOcean_Tile, Vector4(ix, 0.0f, iz, 0.0f));
+
+			if (!writeVelocity)
+			{
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_foamTexture);
+			}
+			else
+			{
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_evolvedSpectrumTextures[2]);
+				renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture3, m_evolvedSpectrumTextures[3]);
+			}
+
+			if (haveTerrain)
+			{
+				const auto& terrain = terrainComponent->getTerrain();
+
+				const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
+				const Vector4 worldOrigin = -worldExtent * 0.5_simd;
+
+				renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
+				renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
+				renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
+			}
+
+			worldRenderPass.setProgramParameters(
+				renderBlock->programParams,
+				transform,
+				transform
+			);
+
+			renderBlock->programParams->endParameters(renderContext);
+
+			renderContext->draw(sp.priority, renderBlock);
+		}
 	}
-	else
-	{
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture0, m_evolvedSpectrumTextures[0]);
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture1, m_evolvedSpectrumTextures[1]);
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture2, m_evolvedSpectrumTextures[2]);
-		renderBlock->programParams->setTextureParameter(s_handleOcean_WaveTexture3, m_evolvedSpectrumTextures[3]);
-	}
-
-	if (haveTerrain)
-	{
-		const auto& terrain = terrainComponent->getTerrain();
-
-		const Vector4& worldExtent = terrain->getHeightfield()->getWorldExtent();
-		const Vector4 worldOrigin = -worldExtent * 0.5_simd;
-
-		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldOrigin, worldOrigin);
-		renderBlock->programParams->setVectorParameter(s_handleTerrain_WorldExtent, worldExtent);
-		renderBlock->programParams->setTextureParameter(s_handleTerrain_Heightfield, terrain->getHeightMap());
-	}
-
-	worldRenderPass.setProgramParameters(
-		renderBlock->programParams,
-		transform,
-		transform
-	);
-
-	renderBlock->programParams->endParameters(renderContext);
-
-	renderContext->draw(sp.priority, renderBlock);
 }
 
 }
