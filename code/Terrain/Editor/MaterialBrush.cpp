@@ -45,7 +45,7 @@ uint32_t MaterialBrush::begin(float x, float y, const State& state)
 {
 	m_radius = state.radius;
 	m_fallOff = state.falloff;
-	m_strength = abs(state.strength) / 10.0f;
+	m_strength = abs(state.strength) / 50.0f;
 	m_material = state.material;
 	m_inverse = (bool)(state.strength < 0.0f);
 	return MdMaterial;
