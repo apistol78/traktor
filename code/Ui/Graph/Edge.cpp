@@ -227,7 +227,7 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	canvas->setBackground(color);
 
 	const Point s = graph->pixel(m_source->getPosition()) + offset;
-	const Point d = graph->pixel(m_destination->getPosition()) + offset;
+	const Point d = graph->pixel(m_destination->getPosition() - UnitSize(8_ut, 0_ut)) + offset;
 
 	// calculateLinearSpline(graph, s, d, m_spline);
 	// canvas->drawLines(m_spline, graph->pixel(hot ? 4_ut : m_thickness));

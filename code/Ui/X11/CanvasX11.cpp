@@ -18,6 +18,15 @@
 
 namespace traktor::ui
 {
+	namespace
+	{
+
+Vector2 pnt2vec(const Point& pt)
+{
+	return Vector2(pt.x, pt.y);
+}
+
+	}
 
 CanvasX11::CanvasX11(cairo_t* cr, int32_t dpi)
 :	m_cr(cr)
@@ -144,7 +153,30 @@ void CanvasX11::drawEllipticArc(int x, int y, int w, int h, float start, float e
 
 void CanvasX11::drawSpline(const Point* pnts, int npnts)
 {
-	log::info << L"CanvasX11::drawSpline NI" << Endl;
+	setSourceColor(m_foreground);
+
+	for (int32_t i = 0; i <= npnts - 4; ++i)
+	{
+		const Bezier3rd b = Bezier3rd::fromCatmullRom(
+			pnt2vec(pnts[i + 0]),
+			pnt2vec(pnts[i + 1]),
+			pnt2vec(pnts[i + 2]),
+			pnt2vec(pnts[i + 3]),
+			1.0f
+		);
+
+		if (i == 0)
+			cairo_move_to(m_cr, b.cp0.x, b.cp0.y);
+
+		cairo_curve_to(
+			m_cr,
+			b.cp1.x, b.cp1.y,
+			b.cp2.x, b.cp2.y,
+			b.cp3.x, b.cp3.y
+		);
+	}
+
+	cairo_stroke(m_cr);
 }
 
 void CanvasX11::fillRect(const Rect& rc)
