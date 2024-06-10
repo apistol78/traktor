@@ -18,7 +18,7 @@ vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underH
 	// Add sun
 	col += sunColor * pow(max(sundot - 0.1, 0), 8.0f);
     
-	col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * overHorizon;
+//	col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * underHorizon;
     return col;
 }
 
