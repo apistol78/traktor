@@ -229,23 +229,36 @@ void Edge::paint(GraphControl* graph, GraphCanvas* canvas, const Size& offset, I
 	const Point s = graph->pixel(m_source->getPosition()) + offset;
 	const Point d = graph->pixel(m_destination->getPosition()) + offset;
 
-	calculateLinearSpline(graph, s, d, m_spline);
+	// calculateLinearSpline(graph, s, d, m_spline);
+	// canvas->drawLines(m_spline, graph->pixel(hot ? 4_ut : m_thickness));
+
+	int32_t dx = (d.x - s.x) / 4;
+	int32_t dy = (d.y - s.y) / 8;
+
+	dx = std::max(dx, 30);
+
+	m_spline.resize(0);
+	m_spline.push_back(Point(s.x - 10, s.y));
+	m_spline.push_back(s);
+	m_spline.push_back(Point(s.x + dx, s.y + dy));
+	m_spline.push_back(Point(d.x - dx, d.y - dy));
+	m_spline.push_back(d);
+	m_spline.push_back(Point(d.x + 10, d.y));
+	canvas->drawSpline(m_spline, graph->pixel(m_thickness));
 
 #if defined(_DEBUG)
-	canvas->setBackground(Color4ub(255, 255, 255, 255));
+	canvas->setBackground(Color4ub(255, 255, 255, 180));
 	for (const auto& p : m_spline)
 	{
 		canvas->fillRect(
 			Rect(
-				Point(p.x - 1, p.y - 1),
-				Size(2, 2)
+				Point(p.x - 4, p.y - 4),
+				Size(8, 8)
 			)
 		);
 	}
 	canvas->setBackground(color);
 #endif
-
-	canvas->drawLines(m_spline, graph->pixel(hot ? 4_ut : m_thickness));
 
 	const Point at = graph->pixel(m_destination->getPosition()) + offset;
 	const Point arrow[] =

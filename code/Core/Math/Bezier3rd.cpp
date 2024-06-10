@@ -122,4 +122,13 @@ void Bezier3rd::approximate(float errorThreshold, int maxSubdivisions, AlignedVe
 	approximateSubdivide(*this, errorThreshold, maxSubdivisions, outQuadratic);
 }
 
+Bezier3rd Bezier3rd::fromCatmullRom(const Vector2& cp0, const Vector2& cp1, const Vector2& cp2, const Vector2& cp3, float tension)
+{
+	const Vector2 bcp0 = cp1;
+	const Vector2 bcp1 = cp1 + (cp2 - cp0) / (6.0f * tension);
+	const Vector2 bcp2 = cp2 - (cp3 - cp1) / (6.0f * tension);
+	const Vector2 bcp3 = cp2;
+	return Bezier3rd(bcp0, bcp1, bcp2, bcp3);
+}
+
 }

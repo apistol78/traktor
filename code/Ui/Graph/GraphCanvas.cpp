@@ -120,6 +120,19 @@ void GraphCanvas::drawCurve(const Point& start, const Point& control, const Poin
 	m_canvas->setPenThickness(1);
 }
 
+void GraphCanvas::drawSpline(const AlignedVector< Point >& pnts, int32_t thickness)
+{
+	std::vector< Point > tpnts;
+	tpnts.reserve(pnts.size());
+
+	for (const auto& pnt : pnts)
+		tpnts.push_back(pnt * m_scale);
+
+	m_canvas->setPenThickness((int32_t)std::ceil(thickness * m_scale));
+	m_canvas->drawSpline(tpnts);
+	m_canvas->setPenThickness(1);
+}
+
 void GraphCanvas::drawRect(const Rect& rc)
 {
 	m_canvas->drawRect(rc * m_scale);

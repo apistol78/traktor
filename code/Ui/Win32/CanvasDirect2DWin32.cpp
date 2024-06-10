@@ -10,6 +10,7 @@
 
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Math/Bezier3rd.h"
 #include "Core/Misc/String.h"
 #include "Core/Thread/Atomic.h"
 #include "Ui/Application.h"
@@ -28,6 +29,11 @@ namespace traktor::ui
 ComRef< ID2D1Factory > s_d2dFactory;
 ComRef< IDWriteFactory > s_dwFactory;
 int32_t s_instanceCount = 0;
+
+Vector2 pnt2vec(const Point& pt)
+{
+	return Vector2(pt.x, pt.y);
+}
 
 	}
 
@@ -506,6 +512,50 @@ void CanvasDirect2DWin32::drawEllipticArc(int x, int y, int w, int h, float star
 
 void CanvasDirect2DWin32::drawSpline(const Point* pnts, int npnts)
 {
+	HRESULT hr;
+
+	if (npnts < 4)
+		return;
+
+	ComRef< ID2D1PathGeometry > d2dPathGeometry;
+	s_d2dFactory->CreatePathGeometry(&d2dPathGeometry.getAssign());
+
+	ComRef< ID2D1GeometrySink > d2dGeometrySink;
+	hr = d2dPathGeometry->Open(&d2dGeometrySink.getAssign());
+	if (FAILED(hr))
+		return;
+
+	for (int32_t i = 0; i <= npnts - 4; ++i)
+	{
+		const Bezier3rd b = Bezier3rd::fromCatmullRom(
+			pnt2vec(pnts[i + 0]),
+			pnt2vec(pnts[i + 1]),
+			pnt2vec(pnts[i + 2]),
+			pnt2vec(pnts[i + 3]),
+			1.0f
+		);
+
+		if (i == 0)
+		{
+			d2dGeometrySink->BeginFigure(
+				D2D1::Point2F(b.cp0.x, b.cp0.y),
+				D2D1_FIGURE_BEGIN_HOLLOW
+			);
+		}
+
+		D2D1_BEZIER_SEGMENT bs;
+		bs.point1 = D2D1::Point2F(b.cp1.x, b.cp1.y);
+		bs.point2 = D2D1::Point2F(b.cp2.x, b.cp2.y);
+		bs.point3 = D2D1::Point2F(b.cp3.x, b.cp3.y);
+		d2dGeometrySink->AddBezier(&bs);
+	}
+
+	d2dGeometrySink->EndFigure(D2D1_FIGURE_END_OPEN);
+	d2dGeometrySink->Close();
+
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
+	m_d2dRenderTarget->DrawGeometry(d2dPathGeometry, m_d2dForegroundBrush, m_strokeWidth);
+	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 
 void CanvasDirect2DWin32::fillRect(const Rect& rc)
@@ -630,11 +680,7 @@ void CanvasDirect2DWin32::drawPolygon(const Point* pnts, int npnts)
 	d2dGeometrySink->Close();
 
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
-	m_d2dRenderTarget->DrawGeometry(
-		d2dPathGeometry,
-		m_d2dForegroundBrush,
-		m_strokeWidth
-	);
+	m_d2dRenderTarget->DrawGeometry(d2dPathGeometry, m_d2dForegroundBrush, m_strokeWidth);
 	m_d2dRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED);
 }
 

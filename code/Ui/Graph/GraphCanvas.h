@@ -47,6 +47,8 @@ public:
 
 	void drawCurve(const Point& start, const Point& control, const Point& end, int32_t thickness);
 
+	void drawSpline(const AlignedVector< Point >& pnts, int32_t thickness);
+
 	void drawRect(const Rect& rc);
 
 	void fillRect(const Rect& rc);

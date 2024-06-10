@@ -45,7 +45,7 @@ public:
 
 	float flatness() const;
 
-	/*! Check if curve is sufficently flat.
+	/*! Check if curve is sufficiently flat.
 	 *
 	 * \param tolerance Tolerance value as defined by PostScript.
 	 */
@@ -54,6 +54,8 @@ public:
 	void split(float t, Bezier3rd& outLeft, Bezier3rd& outRight) const;
 
 	void approximate(float errorThreshold, int maxSubdivisions, AlignedVector< Bezier2nd >& outQuadratic) const;
+
+	static Bezier3rd fromCatmullRom(const Vector2& cp0, const Vector2& cp1, const Vector2& cp2, const Vector2& cp3, float tension);
 };
 
 }
