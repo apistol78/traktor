@@ -61,7 +61,10 @@ public:
 	explicit SkyComponent(
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< render::ITexture >& texture,
-		float intensity
+		float intensity,
+		bool clouds,
+		const Color4f& overHorizon,
+		const Color4f& underHorizon
 	);
 
 	virtual ~SkyComponent();
@@ -104,6 +107,9 @@ private:
 	world::Entity* m_owner = nullptr;
 	Transform m_transform;
 	float m_intensity = 1.0f;
+	bool m_clouds = true;
+	Color4f m_overHorizon = Color4f(0.2f, 0.5f, 0.85f, 0.0f);
+	Color4f m_underHorizon = Color4f(0.1f, 0.1f, 0.12f, 0.0f);
 	int32_t m_count = 0;
 	int32_t m_cloudFrame = 0;
 	float m_cloudBlend = 0.0f;

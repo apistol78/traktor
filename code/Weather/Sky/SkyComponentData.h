@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,6 +8,7 @@
  */
 #pragma once
 
+#include "Core/Math/Color4f.h"
 #include "Resource/Id.h"
 #include "World/IEntityComponentData.h"
 
@@ -67,7 +68,10 @@ public:
 private:
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;
-	float m_intensity;
+	float m_intensity = 1.0f;
+	bool m_clouds = true;
+	Color4f m_overHorizon = Color4f(0.2f, 0.5f, 0.85f, 0.0f);
+	Color4f m_underHorizon = Color4f(0.1f, 0.1f, 0.12f, 0.0f);
 };
 
 }

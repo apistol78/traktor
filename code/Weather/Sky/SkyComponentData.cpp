@@ -29,11 +29,10 @@ const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 4, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 6, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
 :	m_shader(c_defaultShader)
-,	m_intensity(1.0f)
 {
 }
 
@@ -53,7 +52,10 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 	Ref< SkyComponent > skyComponent = new SkyComponent(
 		shader,
 		texture,
-		m_intensity
+		m_intensity,
+		m_clouds,
+		m_overHorizon,
+		m_underHorizon
 	);
 	skyComponent->create(resourceManager, renderSystem);
 	return skyComponent;
@@ -89,6 +91,15 @@ void SkyComponentData::serialize(ISerializer& s)
 
 	if (s.getVersion< SkyComponentData >() >= 4)
 		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+
+	if (s.getVersion< SkyComponentData >() >= 5)
+		s >> Member< bool >(L"clouds", m_clouds);
+
+	if (s.getVersion< SkyComponentData >() >= 6)
+	{
+		s >> Member< Color4f >(L"overHorizon", m_overHorizon);
+		s >> Member< Color4f >(L"underHorizon", m_underHorizon);
+	}
 }
 
 }

@@ -34,6 +34,8 @@ const resource::Id< render::Shader > c_shaderClouds2D(Guid(L"{9F52BE0A-0C1A-4928
 const resource::Id< render::Shader > c_shaderClouds3D(Guid(L"{EF88CE37-0917-4402-B2D1-6E3F2D3CCCCF}"));
 const resource::Id< render::Shader > c_shaderCloudsDome(Guid(L"{151F822B-B85F-6349-B536-7663C95C43B8}"));
 
+const render::Handle c_handleWeather_CloudsEnable(L"Weather_CloudsEnable");
+
 const render::Handle s_handleWeather_SkyRadius(L"Weather_SkyRadius");
 const render::Handle s_handleWeather_SkyRotation(L"Weather_SkyRotation");
 const render::Handle s_handleWeather_SkyTexture(L"Weather_SkyTexture");
@@ -43,6 +45,8 @@ const render::Handle s_handleWeather_SkyCloudBlend(L"Weather_SkyCloudBlend");
 const render::Handle s_handleWeather_SkyIntensity(L"Weather_SkyIntensity");
 const render::Handle s_handleWeather_SkySunDirection(L"Weather_SkySunDirection");
 const render::Handle s_handleWeather_SkySunColor(L"Weather_SkySunColor");
+const render::Handle s_handleWeather_SkyOverHorizon(L"Weather_SkyOverHorizon");
+const render::Handle s_handleWeather_SkyUnderHorizon(L"Weather_SkyUnderHorizon");
 const render::Handle s_handleWeather_SkyEyePosition(L"Weather_SkyEyePosition");
 const render::Handle s_handleWeather_SkyCloudTexture(L"Weather_SkyCloudTexture");
 const render::Handle s_handleWeather_SkyCloudTextureLast(L"Weather_SkyCloudTextureLast");
@@ -63,12 +67,18 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEn
 SkyComponent::SkyComponent(
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< render::ITexture >& texture,
-	float intensity
+	float intensity,
+	bool clouds,
+	const Color4f& overHorizon,
+	const Color4f& underHorizon
 )
 :	m_shader(shader)
 ,	m_texture(texture)
 ,	m_transform(Transform::identity())
 ,	m_intensity(intensity)
+,	m_clouds(clouds)
+,	m_overHorizon(overHorizon)
+,	m_underHorizon(underHorizon)
 {
 }
 
@@ -139,41 +149,44 @@ bool SkyComponent::create(resource::IResourceManager* resourceManager, render::I
 		c_vertexCount - 1
 	);
 
-	render::SimpleTextureCreateDesc stcd = {};
-	render::VolumeTextureCreateDesc vtcd = {};
+	if (m_clouds)
+	{
+		render::SimpleTextureCreateDesc stcd = {};
+		render::VolumeTextureCreateDesc vtcd = {};
 
-	stcd.width = 512;
-	stcd.height = 512;
-	stcd.mipCount = 1;
-	stcd.format = render::TfR32G32B32A32F;
-	stcd.shaderStorage = true;
-	m_cloudTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+		stcd.width = 512;
+		stcd.height = 512;
+		stcd.mipCount = 1;
+		stcd.format = render::TfR32G32B32A32F;
+		stcd.shaderStorage = true;
+		m_cloudTextures[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
-	vtcd.width = 64;
-	vtcd.height = 64;
-	vtcd.depth = 64;
-	vtcd.mipCount = 1;
-	vtcd.format = render::TfR32F;
-	vtcd.shaderStorage = true;
-	m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
+		vtcd.width = 64;
+		vtcd.height = 64;
+		vtcd.depth = 64;
+		vtcd.mipCount = 1;
+		vtcd.format = render::TfR32F;
+		vtcd.shaderStorage = true;
+		m_cloudTextures[1] = renderSystem->createVolumeTexture(vtcd, T_FILE_LINE_W);
 
-	stcd.width = 1024;
-	stcd.height = 256;
-	stcd.mipCount = 1;
-	stcd.format = render::TfR32G32B32A32F;
-	stcd.shaderStorage = true;
-	m_cloudDomeTexture[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
-	m_cloudDomeTexture[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+		stcd.width = 1024;
+		stcd.height = 256;
+		stcd.mipCount = 1;
+		stcd.format = render::TfR32G32B32A32F;
+		stcd.shaderStorage = true;
+		m_cloudDomeTexture[0] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
+		m_cloudDomeTexture[1] = renderSystem->createSimpleTexture(stcd, T_FILE_LINE_W);
 
-	if (!m_cloudTextures[0] || !m_cloudTextures[1] || !m_cloudDomeTexture[0] || !m_cloudDomeTexture[1])
-		return false;
+		if (!m_cloudTextures[0] || !m_cloudTextures[1] || !m_cloudDomeTexture[0] || !m_cloudDomeTexture[1])
+			return false;
 
-	if (!resourceManager->bind(c_shaderClouds2D, m_shaderClouds2D))
-		return false;
-	if (!resourceManager->bind(c_shaderClouds3D, m_shaderClouds3D))
-		return false;
-	if (!resourceManager->bind(c_shaderCloudsDome, m_shaderCloudsDome))
-		return false;
+		if (!resourceManager->bind(c_shaderClouds2D, m_shaderClouds2D))
+			return false;
+		if (!resourceManager->bind(c_shaderClouds3D, m_shaderClouds3D))
+			return false;
+		if (!resourceManager->bind(c_shaderCloudsDome, m_shaderCloudsDome))
+			return false;
+	}
 
 	return true;
 }
@@ -224,105 +237,108 @@ void SkyComponent::setup(
 {
 	render::RenderGraph& renderGraph = context.getRenderGraph();
 
-	if (m_shaderClouds2D.changed() || m_shaderClouds3D.changed())
+	if (m_clouds)
 	{
-		m_dirty = true;
-		m_shaderClouds2D.consume();
-		m_shaderClouds3D.consume();
-	}
+		if (m_shaderClouds2D.changed() || m_shaderClouds3D.changed())
+		{
+			m_dirty = true;
+			m_shaderClouds2D.consume();
+			m_shaderClouds3D.consume();
+		}
 
-	if (m_dirty)
-	{
-		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds noise");
-		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+		if (m_dirty)
+		{
+			Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds noise");
+			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+				{
+					auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 2D");
+					renderBlock->program = m_shaderClouds2D->getProgram().program;
+					renderBlock->workSize[0] = 512;
+					renderBlock->workSize[1] = 512;
+					renderBlock->workSize[2] = 1;
+
+					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+					renderBlock->programParams->beginParameters(renderContext);
+					renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[0], 0);
+					renderBlock->programParams->endParameters(renderContext);
+
+					renderContext->compute(renderBlock);
+					renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[0], 0);
+				}
+				{
+					auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
+					renderBlock->program = m_shaderClouds3D->getProgram().program;
+					renderBlock->workSize[0] = 64;
+					renderBlock->workSize[1] = 64;
+					renderBlock->workSize[2] = 64;
+
+					renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+					renderBlock->programParams->beginParameters(renderContext);
+					renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[1], 0);
+					renderBlock->programParams->endParameters(renderContext);
+
+					renderContext->compute(renderBlock);
+					renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[1], 0);
+				}
+			});
+			renderGraph.addPass(rp);
+
+			m_dirty = false;
+		}
+
+		const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 8.0f);
+		m_cloudBlend = (worldRenderView.getTime() * 8.0f) - cloudFrame;
+
+		// Generate dome projected cloud layer.
+		if (
+			worldRenderView.getSnapshot() ||
+			(worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
+		)
+		{
+			render::ITexture* input = m_cloudDomeTexture[m_count & 1];
+			render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
+
+			// Get sun from directional light in same entity as sky component.
+			Vector4 sunDirection = m_transform.axisY();
+			Vector4 sunColor = Vector4(1.0f, 0.9f, 0.85f) * 1.8_simd;
+			if (m_owner != nullptr)
 			{
-				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 2D");
-				renderBlock->program = m_shaderClouds2D->getProgram().program;
-				renderBlock->workSize[0] = 512;
-				renderBlock->workSize[1] = 512;
+				auto lightComponent = m_owner->getComponent< world::LightComponent >();
+				if (lightComponent)
+					sunColor = lightComponent->getColor();
+			}
+
+			Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds dome");
+			rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
+				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
+				renderBlock->program = m_shaderCloudsDome->getProgram().program;
+				renderBlock->workSize[0] = 1024;
+				renderBlock->workSize[1] = 256;
 				renderBlock->workSize[2] = 1;
 
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[0], 0);
+				renderBlock->programParams->setImageViewParameter(s_handleWeather_InputTexture, input, 0);
+				renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, output, 0);
+				renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
+				renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
+				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
+				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
+				renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
+				renderBlock->programParams->setFloatParameter(s_handleWeather_SkyTemporalBlend, (worldRenderView.getSnapshot() || m_cloudFrame == 0) ? 1.0f : 0.2f);
+				renderBlock->programParams->setFloatParameter(world::s_handleTime, worldRenderView.getTime());
 				renderBlock->programParams->endParameters(renderContext);
 
 				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[0], 0);
-			}
-			{
-				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds 3D");
-				renderBlock->program = m_shaderClouds3D->getProgram().program;
-				renderBlock->workSize[0] = 64;
-				renderBlock->workSize[1] = 64;
-				renderBlock->workSize[2] = 64;
+				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, output, 0);
+			});
+			renderGraph.addPass(rp);
 
-				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->programParams->beginParameters(renderContext);
-				renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, m_cloudTextures[1], 0);
-				renderBlock->programParams->endParameters(renderContext);
+			m_count++;
 
-				renderContext->compute(renderBlock);
-				renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Compute, m_cloudTextures[1], 0);
-			}
-		});
-		renderGraph.addPass(rp);
-
-		m_dirty = false;
-	}
-
-	const int32_t cloudFrame = int32_t(worldRenderView.getTime() * 8.0f);
-	m_cloudBlend = (worldRenderView.getTime() * 8.0f) - cloudFrame;
-
-	// Generate dome projected cloud layer.
-	if (
-		worldRenderView.getSnapshot() ||
-		(worldRenderView.getIndex() == 0 && cloudFrame != m_cloudFrame)
-	)
-	{
-		render::ITexture* input = m_cloudDomeTexture[m_count & 1];
-		render::ITexture* output = m_cloudDomeTexture[(m_count + 1) & 1];
-
-		// Get sun from directional light in same entity as sky component.
-		Vector4 sunDirection = m_transform.axisY();
-		Vector4 sunColor = Vector4(1.0f, 0.9f, 0.85f) * 1.8_simd;
-		if (m_owner != nullptr)
-		{
-			auto lightComponent = m_owner->getComponent< world::LightComponent >();
-			if (lightComponent)
-				sunColor = lightComponent->getColor();
+			if (!worldRenderView.getSnapshot())
+				m_cloudFrame = cloudFrame;
 		}
-
-		Ref< render::RenderPass > rp = new render::RenderPass(L"Sky compute clouds dome");
-		rp->addBuild([=, this](const render::RenderGraph&, render::RenderContext* renderContext) {
-			auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"Sky clouds dome");
-			renderBlock->program = m_shaderCloudsDome->getProgram().program;
-			renderBlock->workSize[0] = 1024;
-			renderBlock->workSize[1] = 256;
-			renderBlock->workSize[2] = 1;
-
-			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->programParams->beginParameters(renderContext);
-			renderBlock->programParams->setImageViewParameter(s_handleWeather_InputTexture, input, 0);
-			renderBlock->programParams->setImageViewParameter(s_handleWeather_OutputTexture, output, 0);
-			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
-			renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
-			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
-			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
-			renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
-			renderBlock->programParams->setFloatParameter(s_handleWeather_SkyTemporalBlend, (worldRenderView.getSnapshot() || m_cloudFrame == 0) ? 1.0f : 0.2f);
-			renderBlock->programParams->setFloatParameter(world::s_handleTime, worldRenderView.getTime());
-			renderBlock->programParams->endParameters(renderContext);
-
-			renderContext->compute(renderBlock);
-			renderContext->compute< render::BarrierRenderBlock >(render::Stage::Compute, render::Stage::Fragment, output, 0);
-		});
-		renderGraph.addPass(rp);
-
-		m_count++;
-
-		if (!worldRenderView.getSnapshot())
-			m_cloudFrame = cloudFrame;
 	}
 }
 
@@ -333,6 +349,7 @@ void SkyComponent::build(
 )
 {
 	auto perm = worldRenderPass.getPermutation(m_shader);
+	m_shader->setCombination(c_handleWeather_CloudsEnable, m_clouds, perm);
 	auto sp = m_shader->getProgram(perm);
 	if (!sp)
 		return;
@@ -370,15 +387,22 @@ void SkyComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRadius, worldRenderView.getViewFrustum().getFarZ() - 10.0f);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyRotation, rotation);
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_intensity);
-	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyCloudBlend, m_cloudBlend);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyOverHorizon, m_overHorizon);
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyUnderHorizon, m_underHorizon);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
-	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
-	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
-	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTexture, cloudDomeTexture);
-	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTextureLast, cloudDomeTextureLast);
+
+	if (m_clouds)
+	{
+		renderBlock->programParams->setFloatParameter(s_handleWeather_SkyCloudBlend, m_cloudBlend);
+		renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud2D, m_cloudTextures[0]);
+		renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloud3D, m_cloudTextures[1]);
+		renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTexture, cloudDomeTexture);
+		renderBlock->programParams->setTextureParameter(s_handleWeather_SkyCloudTextureLast, cloudDomeTextureLast);
+	}
+
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(sp.priority, renderBlock);

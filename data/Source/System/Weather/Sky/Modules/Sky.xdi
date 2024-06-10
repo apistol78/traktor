@@ -5,25 +5,20 @@
 // Sky and clouds from shadertoy.com/view/MdGfzh
 #using \{921BBC45-4C75-624A-AA78-9B5FEC80645B}
 
-vec3 getSkyColor(vec3 sunDirection, vec3 sunColor, vec3 rd)
+vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underHorizon, vec3 rd)
 {
     const float sundot = clamp(dot(rd, sunDirection), 0.0f, 1.0f);
 
 	// Over horizon
-	const vec3 OverHorizon = vec3(0.2f, 0.5f, 0.85f);
-	vec3 col = OverHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f;
+	vec3 col = overHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f;
 
 	// Under horizon
-	const vec3 UnderHorizon = vec3(0.1f, 0.1f, 0.12f);
-    col = mix(col, UnderHorizon, pow(1.0f - max(rd.y, 0.0f), 6.0f));
+    col = mix(col, underHorizon, pow(1.0f - max(rd.y, 0.0f), 6.0f));
 
 	// Add sun
-	col += 0.25f * sunColor * pow(sundot, 5.0f);
-	col += 0.20f * sunColor * pow(sundot, 512.0f);
-	col += 0.25f * sunColor * pow(sundot, 64.0f);
-	col += sunColor * pow(sundot, 8.0f);
+	col += sunColor * pow(max(sundot - 0.1, 0), 8.0f);
     
-	col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * vec3(0.0f, 0.1f, 0.2f);
+	col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * overHorizon;
     return col;
 }
 
@@ -320,6 +315,7 @@ float tilableFbm(vec3 p, const int octaves, float tile)
 
     return c / w;
 }
+
 	]]>
 	</text>
 </object>
