@@ -101,15 +101,18 @@
 								<rotation>-0.406247, 0.249812, 0.116489, 0.871199</rotation>
 							</transform>
 							<components>
-								<item type="traktor.weather.SkyComponentData" version="4">
+								<item type="traktor.weather.SkyComponentData" version="6">
 									<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
-									<texture>{6B82B195-D88E-7845-BDC3-AF813E924CE1}</texture>
+									<texture>{00000000-0000-0000-0000-000000000000}</texture>
 									<intensity>1</intensity>
+									<clouds>true</clouds>
+									<overHorizon>0.2, 0.5, 0.85, 0</overHorizon>
+									<underHorizon>0.07451, 0.2, 0.352941, 0</underHorizon>
 								</item>
 								<item type="traktor.world.LightComponentData" version="12">
 									<lightType>Directional</lightType>
 									<color>1, 1, 1, 0</color>
-									<intensity>1</intensity>
+									<intensity>4</intensity>
 									<castShadow>true</castShadow>
 									<nearRange>0</nearRange>
 									<farRange>20</farRange>
