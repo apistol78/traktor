@@ -152,7 +152,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	staticDummy->create(containerFile, L"");
 
 	Ref< ui::Container > containerOptions = new ui::Container();
-	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0_ut, 0_ut));
+	containerOptions->create(containerFile, ui::WsNone, new ui::TableLayout(L"50%,50%,*", L"*", 0_ut, 4_ut));
 
 	Ref< ui::Container > containerLeft = new ui::Container();
 	containerLeft->create(containerOptions, ui::WsNone, new ui::TableLayout(L"*", L"*", 0_ut, 4_ut));

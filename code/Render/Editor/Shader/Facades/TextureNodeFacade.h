@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,17 +10,15 @@
 
 #include "Render/Editor/Shader/INodeFacade.h"
 
-namespace traktor
+namespace traktor::ui
 {
-	namespace ui
-	{
 
 class INodeShape;
 
-	}
+}
 
-	namespace render
-	{
+namespace traktor::render
+{
 
 class Texture;
 
@@ -67,9 +65,7 @@ public:
 private:
 	Ref<ui::INodeShape > m_nodeShape;
 
-	void updateThumb(editor::IEditor* editor, ui::Node* editorNode, Texture* texture) const;
+	void updateThumb(editor::IEditor* editor, ui::GraphControl* graphControl, ui::Node* editorNode, Texture* texture) const;
 };
 
-	}
 }
-

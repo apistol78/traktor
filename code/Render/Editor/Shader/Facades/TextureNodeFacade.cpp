@@ -25,10 +25,8 @@
 #include "Ui/Graph/GraphControl.h"
 #include "Ui/Graph/Node.h"
 
-namespace traktor
+namespace traktor::render
 {
-	namespace render
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, INodeFacade)
 
@@ -86,7 +84,7 @@ Ref< ui::Node > TextureNodeFacade::createEditorNode(
 
 	editorNode->setComment(shaderNode->getComment());
 
-	updateThumb(editor, editorNode, texture);
+	updateThumb(editor, graphControl, editorNode, texture);
 
 	return editorNode;
 }
@@ -114,7 +112,7 @@ void TextureNodeFacade::refreshEditorNode(
 {
 	editorNode->setComment(shaderNode->getComment());
 	editorNode->setInfo(shaderNode->getInformation());
-	updateThumb(editor, editorNode, checked_type_cast< Texture*, false >(shaderNode));
+	updateThumb(editor, graphControl, editorNode, checked_type_cast< Texture*, false >(shaderNode));
 }
 
 void TextureNodeFacade::setValidationIndicator(
@@ -125,7 +123,7 @@ void TextureNodeFacade::setValidationIndicator(
 	editorNode->setState(validationSucceeded ? 0 : 1);
 }
 
-void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNode, Texture* texture) const
+void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::GraphControl* graphControl, ui::Node* editorNode, Texture* texture) const
 {
 	Guid textureGuid = texture ? texture->getExternal() : Guid();
 	if (textureGuid.isValid() && !textureGuid.isNull())
@@ -143,8 +141,8 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 				const bool linearGamma = textureAsset->m_output.m_assumeLinearGamma;
 				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(
 					fileName,
-					64,
-					64,
+					graphControl->pixel(64_ut),
+					graphControl->pixel(64_ut),
 					visibleAlpha ? editor::IThumbnailGenerator::Alpha::WithAlpha : editor::IThumbnailGenerator::Alpha::NoAlpha,
 					linearGamma ? editor::IThumbnailGenerator::Gamma::Linear : editor::IThumbnailGenerator::Gamma::SRGB
 				);
@@ -162,8 +160,7 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::Node* editorNod
 	}
 
 	// Failed to update thumb; or no texture bound yet.
-	editorNode->setImage(0);
+	editorNode->setImage(nullptr);
 }
 
-	}
 }
