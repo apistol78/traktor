@@ -66,12 +66,18 @@ public:
 	float getIntensity() const { return m_intensity; }
 
 private:
+	friend class SkyComponent;
+
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;
 	float m_intensity = 1.0f;
+
+	Color4f m_skyOverHorizon = Color4f(0.2f, 0.5f, 0.85f, 1.0f);
+	Color4f m_skyUnderHorizon = Color4f(0.1f, 0.1f, 0.12f, 1.0f);
+
 	bool m_clouds = true;
-	Color4f m_overHorizon = Color4f(0.2f, 0.5f, 0.85f, 0.0f);
-	Color4f m_underHorizon = Color4f(0.1f, 0.1f, 0.12f, 0.0f);
+	Color4f m_cloudAmbientTop = Color4f(0.99f, 0.98f, 1.18f, 1.0f);
+	Color4f m_cloudAmbientBottom = Color4f(0.23f, 0.39f, 0.51f, 1.0f);
 };
 
 }

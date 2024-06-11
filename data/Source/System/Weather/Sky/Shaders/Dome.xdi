@@ -111,8 +111,8 @@ $Output = vec4(direction, 0.0f);
 			<id>{C1C98A8B-6A33-2845-8453-2D29B42A8190}</id>
 			<comment/>
 			<position>
-				<first>-114</first>
-				<second>350</second>
+				<first>16</first>
+				<second>440</second>
 			</position>
 			<name>Clouds</name>
 		</item>
@@ -120,8 +120,8 @@ $Output = vec4(direction, 0.0f);
 			<id>{1853FE71-10CD-2743-B521-886CDCD1130D}</id>
 			<comment/>
 			<position>
-				<first>-412</first>
-				<second>311</second>
+				<first>-372</first>
+				<second>392</second>
 			</position>
 			<name>Clouds</name>
 			<technique/>
@@ -166,6 +166,14 @@ $Output = vec4(direction, 0.0f);
 					<id>{70605746-81B0-A64B-8596-3F4762DB8477}</id>
 					<name>EyePosition</name>
 				</item>
+				<item>
+					<id>{BBAD05A9-383C-E749-9AA8-7D5F71419A85}</id>
+					<name>CloudAmbientTop</name>
+				</item>
+				<item>
+					<id>{60A82300-B8BB-F74A-A1E6-9410C272E74C}</id>
+					<name>CloudAmbientBottom</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -181,11 +189,17 @@ $Output = vec4(direction, 0.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
+
+CloudConfig config = GetDefaultCloudConfig();
+config.ambientTop = $CloudAmbientTop.xyz;
+config.ambientBottom = $CloudAmbientBottom.xyz;
+
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
 
 float dist = 9000.0f;
-const vec4 clr = renderClouds(
+const vec4 clr = RenderClouds(
+	config,
 	ro,
 	rd,
 	$Time.x,
@@ -198,10 +212,9 @@ const vec4 clr = renderClouds(
 	dist
 );
 
-// 6
-
 $Output = clr;
 $Distance = dist;
+
 			]]>
 			</script>
 		</item>
@@ -255,7 +268,7 @@ $Distance = dist;
 			<id>{4E704F36-056A-A347-B55D-6BC9EF584AA9}</id>
 			<comment/>
 			<position>
-				<first>-638</first>
+				<first>-622</first>
 				<second>294</second>
 			</position>
 			<name>DomePosition</name>
@@ -264,7 +277,7 @@ $Distance = dist;
 			<id>{63663B1B-721E-A540-917A-070E4CD34188}</id>
 			<comment/>
 			<position>
-				<first>-686</first>
+				<first>-670</first>
 				<second>380</second>
 			</position>
 			<parameterName>Weather_SkyCloud3D</parameterName>
@@ -275,8 +288,8 @@ $Distance = dist;
 			<id>{A408F529-302C-7B45-BB77-47EC4FC49ED3}</id>
 			<comment/>
 			<position>
-				<first>-686</first>
-				<second>338</second>
+				<first>-670</first>
+				<second>337</second>
 			</position>
 			<parameterName>Weather_SkyCloud2D</parameterName>
 			<type>Texture2D</type>
@@ -286,8 +299,8 @@ $Distance = dist;
 			<id>{09314B7E-7E00-6E46-A4CD-F46F7C4082A1}</id>
 			<comment/>
 			<position>
-				<first>-636</first>
-				<second>422</second>
+				<first>-620</first>
+				<second>423</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -305,7 +318,7 @@ $Distance = dist;
 			<comment/>
 			<position>
 				<first>-622</first>
-				<second>464</second>
+				<second>466</second>
 			</position>
 			<parameterName>World_Time</parameterName>
 			<type>Scalar</type>
@@ -315,8 +328,8 @@ $Distance = dist;
 			<id>{5039CD4E-D8C8-3942-BE4E-201B92D2DDB4}</id>
 			<comment/>
 			<position>
-				<first>-702</first>
-				<second>506</second>
+				<first>-686</first>
+				<second>509</second>
 			</position>
 			<parameterName>Weather_SkySunDirection</parameterName>
 			<type>Vector</type>
@@ -326,8 +339,8 @@ $Distance = dist;
 			<id>{6EC4A53C-25B5-5C4C-8DB4-4E976EB2DBA5}</id>
 			<comment/>
 			<position>
-				<first>-686</first>
-				<second>548</second>
+				<first>-670</first>
+				<second>552</second>
 			</position>
 			<parameterName>Weather_SkySunColor</parameterName>
 			<type>Vector</type>
@@ -337,8 +350,8 @@ $Distance = dist;
 			<id>{B17ADA46-C381-B64E-BACC-0975857EE8A7}</id>
 			<comment/>
 			<position>
-				<first>-660</first>
-				<second>590</second>
+				<first>-644</first>
+				<second>595</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -472,6 +485,28 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			</position>
 			<parameterName>Weather_SkyTemporalBlend</parameterName>
 			<type>Scalar</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{0971A080-14C8-0244-A654-37299B4D65E8}</id>
+			<comment/>
+			<position>
+				<first>-718</first>
+				<second>638</second>
+			</position>
+			<parameterName>Weather_SkyCloudAmbientTop</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{9BAB07A1-09A4-734C-885B-8F7749B7AA46}</id>
+			<comment/>
+			<position>
+				<first>-734</first>
+				<second>681</second>
+			</position>
+			<parameterName>Weather_SkyCloudAmbientBottom</parameterName>
+			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
 	</nodes>
@@ -734,6 +769,26 @@ $Output = vec4(sz.x, sz.y, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
 				<id>{5A25771B-894F-4D92-8D1E-FBF8449850E8}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{BBAD05A9-383C-E749-9AA8-7D5F71419A85}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<id>{60A82300-B8BB-F74A-A1E6-9410C272E74C}</id>
 			</destination>
 		</item>
 	</edges>

@@ -11,6 +11,7 @@
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
+#include "Weather/Sky/SkyComponentData.h"
 #include "World/IEntityComponent.h"
 
 // import/export mechanism.
@@ -59,12 +60,9 @@ class T_DLLCLASS SkyComponent : public world::IEntityComponent
 
 public:
 	explicit SkyComponent(
+		const SkyComponentData& data,
 		const resource::Proxy< render::Shader >& shader,
-		const resource::Proxy< render::ITexture >& texture,
-		float intensity,
-		bool clouds,
-		const Color4f& overHorizon,
-		const Color4f& underHorizon
+		const resource::Proxy< render::ITexture >& texture
 	);
 
 	virtual ~SkyComponent();
@@ -93,6 +91,7 @@ public:
 	);
 
 private:
+	const SkyComponentData m_data;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
@@ -106,10 +105,6 @@ private:
 	Ref< render::ITexture > m_cloudDomeTexture[2];
 	world::Entity* m_owner = nullptr;
 	Transform m_transform;
-	float m_intensity = 1.0f;
-	bool m_clouds = true;
-	Color4f m_overHorizon = Color4f(0.2f, 0.5f, 0.85f, 0.0f);
-	Color4f m_underHorizon = Color4f(0.1f, 0.1f, 0.12f, 0.0f);
 	int32_t m_count = 0;
 	int32_t m_cloudFrame = 0;
 	float m_cloudBlend = 0.0f;

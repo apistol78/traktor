@@ -569,7 +569,6 @@ const vec3 clr = GetSkyColor(
 	rd
 );
 $Output = vec4(clr, 1.0f);
-
 			]]>
 			</script>
 		</item>
@@ -586,8 +585,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{8FB6549E-5322-4FD8-8912-FD35D323CFF6}</id>
 			<comment/>
 			<position>
-				<first>-754</first>
-				<second>779</second>
+				<first>-759</first>
+				<second>746</second>
 			</position>
 			<name>WorldPosition</name>
 		</item>
@@ -595,8 +594,8 @@ $Output = vec4(clr, 1.0f);
 			<id>{3D50C5B7-186C-4798-A7E6-79FB8597A7B9}</id>
 			<comment/>
 			<position>
-				<first>-431</first>
-				<second>801</second>
+				<first>-430</first>
+				<second>800</second>
 			</position>
 			<name>Clouds</name>
 			<technique/>
@@ -641,6 +640,14 @@ $Output = vec4(clr, 1.0f);
 					<id>{70605746-81B0-A64B-8596-3F4762DB8477}</id>
 					<name>EyePosition</name>
 				</item>
+				<item>
+					<id>{5A6AB96D-1E34-304F-84D6-0E87D23435B4}</id>
+					<name>CloudAmbientTop</name>
+				</item>
+				<item>
+					<id>{FA94D259-22C0-4243-9837-74F3B1664F1F}</id>
+					<name>CloudAmbientBottom</name>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -656,11 +663,17 @@ $Output = vec4(clr, 1.0f);
 			</outputPins>
 			<script>
 			<![CDATA[
+
+CloudConfig config = GetDefaultCloudConfig();
+config.ambientTop = $CloudAmbientTop.xyz;
+config.ambientBottom = $CloudAmbientBottom.xyz;
+
 const vec3 ro = vec3(0.0f);
 const vec3 rd = normalize($Input.xyz);
 
 float dist = 8000.0f;
-const vec4 clr = renderClouds(
+const vec4 clr = RenderClouds(
+	config,
 	ro,
 	rd,
 	$Time.x,
@@ -673,10 +686,9 @@ const vec4 clr = renderClouds(
 	dist
 );
 
-// 6
-
 $Output = clr;
 $Distance = dist;
+
 			]]>
 			</script>
 		</item>
@@ -684,8 +696,8 @@ $Distance = dist;
 			<id>{2BB29238-2675-42BB-9382-17C55B6C1380}</id>
 			<comment/>
 			<position>
-				<first>-752</first>
-				<second>896</second>
+				<first>-757</first>
+				<second>866</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -702,8 +714,8 @@ $Distance = dist;
 			<id>{1AD17D96-8F2E-457A-AAB5-8EBCE60711EA}</id>
 			<comment/>
 			<position>
-				<first>-802</first>
-				<second>818</second>
+				<first>-807</first>
+				<second>786</second>
 			</position>
 			<parameterName>Weather_SkyCloud2D</parameterName>
 			<type>Texture2D</type>
@@ -713,8 +725,8 @@ $Distance = dist;
 			<id>{20235D86-BCB0-485E-91F7-F7E2ADE78B21}</id>
 			<comment/>
 			<position>
-				<first>-802</first>
-				<second>857</second>
+				<first>-807</first>
+				<second>826</second>
 			</position>
 			<parameterName>Weather_SkyCloud3D</parameterName>
 			<type>Texture3D</type>
@@ -741,8 +753,8 @@ $Distance = dist;
 			<id>{21D1CC08-6848-49CB-BA67-E49974F893C6}</id>
 			<comment/>
 			<position>
-				<first>-754</first>
-				<second>935</second>
+				<first>-759</first>
+				<second>906</second>
 			</position>
 			<parameterName>World_Time</parameterName>
 			<type>Scalar</type>
@@ -752,8 +764,8 @@ $Distance = dist;
 			<id>{49BB686E-3893-4F3E-AFAC-FAC0AC817383}</id>
 			<comment/>
 			<position>
-				<first>-802</first>
-				<second>662</second>
+				<first>-807</first>
+				<second>626</second>
 			</position>
 			<parameterName>Weather_SkySunColor</parameterName>
 			<type>Vector</type>
@@ -763,8 +775,8 @@ $Distance = dist;
 			<id>{CFE120E4-0277-41B4-A10C-9C932F6764B0}</id>
 			<comment/>
 			<position>
-				<first>-818</first>
-				<second>623</second>
+				<first>-823</first>
+				<second>586</second>
 			</position>
 			<parameterName>Weather_SkySunDirection</parameterName>
 			<type>Vector</type>
@@ -808,8 +820,8 @@ $Distance = dist;
 			<id>{3CC2F2B4-36BD-B54E-8E1B-D12B69ADE23F}</id>
 			<comment/>
 			<position>
-				<first>-818</first>
-				<second>974</second>
+				<first>-807</first>
+				<second>946</second>
 			</position>
 			<parameterName>Weather_SkyEyePosition</parameterName>
 			<type>Vector</type>
@@ -875,8 +887,8 @@ $Distance = dist;
 			<id>{41365992-5B09-6A4D-B23B-AC507AE2A162}</id>
 			<comment/>
 			<position>
-				<first>-133</first>
-				<second>838</second>
+				<first>-31</first>
+				<second>840</second>
 			</position>
 			<name>Clouds1</name>
 		</item>
@@ -985,8 +997,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{E7530B7B-E7A2-3C4B-8072-C3B73EE99101}</id>
 			<comment/>
 			<position>
-				<first>-776</first>
-				<second>1013</second>
+				<first>-781</first>
+				<second>986</second>
 			</position>
 			<value>0, 0, 0, 0</value>
 		</item>
@@ -1143,8 +1155,8 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{0CF0ACDC-F017-5E45-8BA8-266248431786}</id>
 			<comment/>
 			<position>
-				<first>-818</first>
-				<second>701</second>
+				<first>-823</first>
+				<second>666</second>
 			</position>
 			<parameterName>Weather_SkyOverHorizon</parameterName>
 			<type>Vector</type>
@@ -1154,10 +1166,32 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<id>{3F5650EA-F241-BC47-B523-B8813F1C899C}</id>
 			<comment/>
 			<position>
-				<first>-834</first>
-				<second>740</second>
+				<first>-823</first>
+				<second>706</second>
 			</position>
 			<parameterName>Weather_SkyUnderHorizon</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A1A5F0FA-50D4-3A4A-B6E4-B5B132ECC274}</id>
+			<comment/>
+			<position>
+				<first>-871</first>
+				<second>1066</second>
+			</position>
+			<parameterName>Weather_SkyCloudAmbientBottom</parameterName>
+			<type>Vector</type>
+			<frequency>Frame</frequency>
+		</item>
+		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
+			<id>{A14A6472-9C96-BE4F-96A1-420BA685CC91}</id>
+			<comment/>
+			<position>
+				<first>-855</first>
+				<second>1026</second>
+			</position>
+			<parameterName>Weather_SkyCloudAmbientTop</parameterName>
 			<type>Vector</type>
 			<frequency>Frame</frequency>
 		</item>
@@ -1961,6 +1995,26 @@ $Output = vec4(texCoord, 0.0f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[30]"/>
 				<id>{AD277C19-9612-9141-AA5C-097F83F5B743}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[80]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{5A6AB96D-1E34-304F-84D6-0E87D23435B4}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[79]"/>
+				<id>{1E6639B6-8B58-4694-99E7-C058E3583522}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<id>{FA94D259-22C0-4243-9837-74F3B1664F1F}</id>
 			</destination>
 		</item>
 	</edges>

@@ -8,17 +8,9 @@
 vec3 GetSkyColor(vec3 sunDirection, vec3 sunColor, vec3 overHorizon, vec3 underHorizon, vec3 rd)
 {
     const float sundot = clamp(dot(rd, sunDirection), 0.0f, 1.0f);
-
-	// Over horizon
 	vec3 col = overHorizon - max(rd.y, 0.01f) * max(rd.y, 0.01f) * 0.5f;
-
-	// Under horizon
     col = mix(col, underHorizon, pow(1.0f - max(rd.y, 0.0f), 6.0f));
-
-	// Add sun
 	col += sunColor * pow(max(sundot - 0.1, 0), 8.0f);
-    
-//	col += clamp((0.1 - rd.y) * 10.0f, 0.0f, 1.0f) * underHorizon;
     return col;
 }
 
@@ -149,7 +141,21 @@ float volumetricShadow(vec3 from, vec3 offset, float sundotrd, float time, vec3 
     return shadow;
 }
 
-vec4 renderClouds(vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor, vec2 worldOffset, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler, inout float dist)
+struct CloudConfig
+{
+	vec3 ambientTop;
+	vec3 ambientBottom;
+};
+
+CloudConfig GetDefaultCloudConfig()
+{
+	CloudConfig c;
+	c.ambientTop = CLOUDS_AMBIENT_COLOR_TOP;
+	c.ambientBottom = CLOUDS_AMBIENT_COLOR_BOTTOM;
+	return c;
+}
+
+vec4 RenderClouds(const CloudConfig config, vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor, vec2 worldOffset, texture2D clouds2D, texture3D clouds3D, sampler cloudSampler, inout float dist)
 {
     if (rd.y < 0.0f)
         return vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -188,19 +194,20 @@ vec4 renderClouds(vec3 ro, vec3 rd, float time, vec3 sunDirection, vec3 sunColor
 
     for (int s = 0; s < CLOUD_MARCH_STEPS; s++)
 	{
-        vec3 p = ro + d * rd;
+		const vec3 p = ro + d * rd;
 
-        float norY = clamp((length(p) - (EARTH_RADIUS + CLOUDS_BOTTOM)) * (1.0f / (CLOUDS_TOP - CLOUDS_BOTTOM)), 0.0f, 1.0f);
-        float alpha = cloudMap( p, offset, rd, norY, time, clouds2D, clouds3D, cloudSampler );
+		const float norY = clamp((length(p) - (EARTH_RADIUS + CLOUDS_BOTTOM)) * (1.0f / (CLOUDS_TOP - CLOUDS_BOTTOM)), 0.0f, 1.0f);
+		const float alpha = cloudMap( p, offset, rd, norY, time, clouds2D, clouds3D, cloudSampler );
 
         if (alpha > 0.0f)
 		{
             dist = min( dist, d);
-            vec3 ambientLight = mix( CLOUDS_AMBIENT_COLOR_BOTTOM, CLOUDS_AMBIENT_COLOR_TOP, norY );
+            const vec3 ambientLight = mix(config.ambientBottom, config.ambientTop, norY);
 
-            vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D, cloudSampler))) * alpha;
-            float dTrans = exp(-alpha * dD);
-            vec3 Sint = (S - S * dTrans) * (1. / alpha);
+			const vec3 S = (ambientLight + sunColor * (scattering * volumetricShadow(p, offset, sundotrd, time, sunDirection, clouds2D, clouds3D, cloudSampler))) * alpha;
+			const float dTrans = exp(-alpha * dD);
+			const vec3 Sint = (S - S * dTrans) * (1. / alpha);
+
             scatteredLight += transmittance * Sint; 
             transmittance *= dTrans;
         }
