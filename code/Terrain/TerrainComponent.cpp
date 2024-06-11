@@ -647,6 +647,7 @@ bool TerrainComponent::createPatches()
 	safeDestroy(m_indexBuffer);
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_drawBuffer);
+	safeDestroy(m_culledDrawBuffer);
 	safeDestroy(m_dataBuffer);
 
 	const uint32_t heightfieldSize = m_heightfield->getSize();
@@ -844,7 +845,7 @@ bool TerrainComponent::createPatches()
 	const uint32_t alignedPatchCount = alignUp((uint32_t)m_patches.size(), 16);
 
 	m_drawBuffer = m_renderSystem->createBuffer(
-		render::BuIndirect,
+		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
 		true
 	);
@@ -852,7 +853,7 @@ bool TerrainComponent::createPatches()
 		return false;
 
 	m_culledDrawBuffer = m_renderSystem->createBuffer(
-		render::BuIndirect,
+		render::BuStructured | render::BuIndirect,
 		alignedPatchCount * sizeof(render::IndexedIndirectDraw),
 		false
 	);

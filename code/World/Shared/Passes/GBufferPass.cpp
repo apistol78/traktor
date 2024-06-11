@@ -56,7 +56,7 @@ render::handle_t GBufferPass::setup(
 	rgtd.targets[0].colorFormat = render::TfR16G16B16A16F;	// (GBufferA) Depth (R), Normal (GBA)
 	rgtd.targets[1].colorFormat = render::TfR8G8B8A8;		// (GBufferB) Albedo (RGB)
 	rgtd.targets[2].colorFormat = render::TfR8G8B8A8;		// (GBufferC) Roughness (R), Metalness (G), Specular (B), Decal Response (A)
-	rgtd.targets[3].colorFormat = render::TfR10G10B10A2;	// (GBufferD) Irradiance (RGB)
+	rgtd.targets[3].colorFormat = render::TfR8G8B8A8;	// (GBufferD) Irradiance (RGB)
 
 	auto gbufferTargetSetId = renderGraph.addTransientTargetSet(L"GBuffer", rgtd, outputTargetSetId, outputTargetSetId);
 
