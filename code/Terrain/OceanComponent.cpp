@@ -431,7 +431,7 @@ void OceanComponent::build(
 	bool reflectionEnable
 )
 {
-	if (!m_owner || worldRenderView.getSnapshot())
+	if (!m_owner)
 		return;
 
 	const bool writeVelocity = (worldRenderPass.getTechnique() == world::s_techniqueVelocityWrite);
