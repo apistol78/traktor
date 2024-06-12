@@ -43,7 +43,7 @@ bool LaunchBlenderTool::launch(ui::Widget* parent, editor::IEditor* runtime, con
 		commandLine,
 		L"",
 		nullptr,
-		OS::EfMute | OS::EfDetach) != nullptr;
+		OS::EfDetach) != nullptr;
 }
 
 }
