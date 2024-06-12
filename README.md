@@ -3,6 +3,8 @@ Traktor is an open-source 3d game engine written in C++, it has powered several 
 
 ![image info](resources/documentation/images/screenshot%20-%20editor%20-%2004.png)
 
+[YouTube - Editing a level](https://youtu.be/eoL9xyd9PKg)
+
 # Why?
 Traktor isn't just another game engine; it's a meticulously crafted toolkit designed for optimal performance and flexibility. Here's why it stands out:
 
