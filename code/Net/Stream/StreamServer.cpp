@@ -45,7 +45,7 @@ bool StreamServer::create()
 
 	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
-	m_serverThread = ThreadManager::getInstance().create([this](){ threadServer(); }, L"Stream server");
+	m_serverThread = ThreadManager::getInstance().create([=, this](){ threadServer(); }, L"Stream server");
 	if (!m_serverThread)
 		return false;
 

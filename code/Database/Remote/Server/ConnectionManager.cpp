@@ -48,7 +48,7 @@ bool ConnectionManager::create()
 	m_listenPort = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
 	m_serverThread = ThreadManager::getInstance().create(
-		[this](){ threadServer(); },
+		[=, this](){ threadServer(); },
 		L"Database server"
 	);
 	if (!m_serverThread)

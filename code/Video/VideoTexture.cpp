@@ -57,7 +57,7 @@ bool VideoTexture::create(render::IRenderSystem* renderSystem, IVideoDecoder* de
 
 	m_timer.reset();
 
-	if (!ThreadPool::getInstance().spawn([this](){ decodeThread(); }, m_thread))
+	if (!ThreadPool::getInstance().spawn([=, this](){ decodeThread(); }, m_thread))
 		return false;
 
 	return true;

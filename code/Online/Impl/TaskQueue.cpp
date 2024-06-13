@@ -21,7 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskQueue", TaskQueue, Object)
 
 bool TaskQueue::create()
 {
-	m_thread = ThreadManager::getInstance().create([this](){ threadQueue(); }, L"Online task queue");
+	m_thread = ThreadManager::getInstance().create([=, this](){ threadQueue(); }, L"Online task queue");
 	if (!m_thread || !m_thread->start())
 		return false;
 

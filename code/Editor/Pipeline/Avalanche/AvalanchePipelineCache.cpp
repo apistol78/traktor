@@ -132,7 +132,7 @@ void AvalanchePipelineCache::getInformation(OutputStream& os)
 
 	if (m_statsJob == nullptr)
 	{
-		m_statsJob = JobManager::getInstance().add([this](){
+		m_statsJob = JobManager::getInstance().add([=, this](){
 			m_client->stats(m_stats);
 		});
 	}

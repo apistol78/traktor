@@ -90,7 +90,7 @@ void ScalarNodeFacade::editShaderNode(
 		m_edit = new ui::Edit();
 		m_edit->create(graphControl, L"", ui::WsNone, new ui::NumericEditValidator(true));
 		m_edit->addEventHandler< ui::FocusEvent >(
-			[this](ui::FocusEvent* event)
+			[=, this](ui::FocusEvent* event)
 			{
 				if (m_edit->isVisible(false) && event->lostFocus())
 				{
@@ -101,7 +101,7 @@ void ScalarNodeFacade::editShaderNode(
 			}
 		);
 		m_edit->addEventHandler< ui::KeyDownEvent >(
-			[this](ui::KeyDownEvent* event)
+			[=, this](ui::KeyDownEvent* event)
 			{
 				if (event->getVirtualKey() == ui::VkReturn)
 				{

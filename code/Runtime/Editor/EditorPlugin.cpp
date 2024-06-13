@@ -210,10 +210,10 @@ bool EditorPlugin::create(editor::IEditor* editor, ui::Widget* parent, editor::I
 	m_site->createAdditionalPanel(m_splitter, 200_ut, false);
 
 	// Create threads.
-	m_threadHostEnumerator = ThreadManager::getInstance().create([this](){ threadHostEnumerator(); }, L"Host enumerator");
+	m_threadHostEnumerator = ThreadManager::getInstance().create([=, this](){ threadHostEnumerator(); }, L"Host enumerator");
 	m_threadHostEnumerator->start();
 
-	m_threadTargetActions = ThreadManager::getInstance().create([this](){ threadTargetActions(); }, L"Targets");
+	m_threadTargetActions = ThreadManager::getInstance().create([=, this](){ threadTargetActions(); }, L"Targets");
 	m_threadTargetActions->start();
 
 	return true;

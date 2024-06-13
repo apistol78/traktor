@@ -85,7 +85,7 @@ bool DiscoveryManager::create(uint32_t mode)
 		log::info << L"Discovery manager: receive address " << m_replyToAddress << L"." << Endl;
 
 	// Create communication thread.
-	m_threadMulticastListener = ThreadManager::getInstance().create([this](){ threadMulticastListener(); }, L"Discovery listener");
+	m_threadMulticastListener = ThreadManager::getInstance().create([=, this](){ threadMulticastListener(); }, L"Discovery listener");
 	if (!m_threadMulticastListener)
 	{
 		log::error << L"Discovery setup failed; unable to create listener thread." << Endl;

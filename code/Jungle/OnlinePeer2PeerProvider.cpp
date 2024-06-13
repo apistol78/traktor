@@ -42,7 +42,7 @@ OnlinePeer2PeerProvider::OnlinePeer2PeerProvider(online::ISessionManager* sessio
 	// Create transmission thread.
 	if (asyncTx || asyncRx)
 	{
-		if (!ThreadPool::getInstance().spawn([this](){ transmissionThread(); }, m_thread))
+		if (!ThreadPool::getInstance().spawn([=, this](){ transmissionThread(); }, m_thread))
 		{
 			m_thread = nullptr;
 			m_asyncTx =

@@ -1039,8 +1039,8 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 bool EditorForm::openEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::Cursor::Wait); },
-		[this](){ resetCursor(); }
+		[=, this](){ setCursor(ui::Cursor::Wait); },
+		[=, this](){ resetCursor(); }
 	);
 
 	T_ASSERT(instance);
@@ -1201,8 +1201,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 bool EditorForm::openDefaultEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::Cursor::Wait); },
-		[this](){ resetCursor(); }
+		[=, this](){ setCursor(ui::Cursor::Wait); },
+		[=, this](){ resetCursor(); }
 	);
 
 	T_ASSERT(instance);
@@ -1241,8 +1241,8 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 bool EditorForm::openInNewEditor(db::Instance* instance)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this]() { setCursor(ui::Cursor::Wait); },
-		[this]() { resetCursor(); }
+		[=, this]() { setCursor(ui::Cursor::Wait); },
+		[=, this]() { resetCursor(); }
 	);
 
 	T_ASSERT(instance);
@@ -1538,7 +1538,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	updateTitle();
 
 	// Create asset monitor thread.
-	m_threadAssetMonitor = ThreadManager::getInstance().create([this](){ threadAssetMonitor(); }, L"Asset monitor");
+	m_threadAssetMonitor = ThreadManager::getInstance().create([=, this](){ threadAssetMonitor(); }, L"Asset monitor");
 	m_threadAssetMonitor->start();
 
 	log::info << L"Workspace opened successfully." << Endl;
@@ -1860,8 +1860,8 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 void EditorForm::buildAssets(bool rebuild)
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::Cursor::Wait); },
-		[this](){ resetCursor(); }
+		[=, this](){ setCursor(ui::Cursor::Wait); },
+		[=, this](){ resetCursor(); }
 	);
 
 	if (!m_workspaceSettings)
@@ -2110,8 +2110,8 @@ void EditorForm::moveNewTabGroup()
 void EditorForm::saveCurrentDocument()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::Cursor::Wait); },
-		[this](){ resetCursor(); }
+		[=, this](){ setCursor(ui::Cursor::Wait); },
+		[=, this](){ resetCursor(); }
 	);
 
 	// First iterate all object editor dialogs to see if focus is in any of those,
@@ -2225,8 +2225,8 @@ void EditorForm::saveAsCurrentDocument()
 void EditorForm::saveAllDocuments()
 {
 	T_ANONYMOUS_VAR(EnterLeave)(
-		[this](){ setCursor(ui::Cursor::Wait); },
-		[this](){ resetCursor(); }
+		[=, this](){ setCursor(ui::Cursor::Wait); },
+		[=, this](){ resetCursor(); }
 	);
 
 	bool allSuccessfull = true;

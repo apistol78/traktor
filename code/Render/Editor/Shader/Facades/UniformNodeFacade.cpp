@@ -98,7 +98,7 @@ void UniformNodeFacade::editShaderNode(
 		m_edit = new ui::Edit();
 		m_edit->create(graphControl);
 		m_edit->addEventHandler< ui::FocusEvent >(
-			[this](ui::FocusEvent* event)
+			[=, this](ui::FocusEvent* event)
 			{
 				if (m_edit->isVisible(false) && event->lostFocus())
 				{
@@ -109,7 +109,7 @@ void UniformNodeFacade::editShaderNode(
 			}
 		);
 		m_edit->addEventHandler< ui::KeyDownEvent >(
-			[this](ui::KeyDownEvent* event)
+			[=, this](ui::KeyDownEvent* event)
 			{
 				if (event->getVirtualKey() == ui::VkReturn)
 				{

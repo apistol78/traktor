@@ -31,7 +31,7 @@ bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
 		m_workerThreads[i] = ThreadManager::getInstance().create(
-			[this]() { threadWorker(); },
+			[=, this]() { threadWorker(); },
 			L"Job queue, worker thread"
 		);
 		if (m_workerThreads[i])

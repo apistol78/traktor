@@ -303,7 +303,7 @@ bool Application::create(
 	if (settings->getProperty< bool >(L"Runtime.DatabaseThread", false))
 	{
 		T_DEBUG(L"Creating database monitoring thread...");
-		m_threadDatabase = ThreadManager::getInstance().create([this](){ threadDatabase(); }, L"Database events");
+		m_threadDatabase = ThreadManager::getInstance().create([=, this](){ threadDatabase(); }, L"Database events");
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
@@ -363,7 +363,7 @@ bool Application::create(
 		settings->getProperty< bool >(L"Runtime.RenderThread", true)
 	)
 	{
-		m_threadRender = ThreadManager::getInstance().create([this](){ threadRender(); }, L"Render");
+		m_threadRender = ThreadManager::getInstance().create([=, this](){ threadRender(); }, L"Render");
 		if (m_threadRender)
 		{
 #if defined(__IOS__)

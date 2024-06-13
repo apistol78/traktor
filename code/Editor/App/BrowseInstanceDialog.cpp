@@ -134,7 +134,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 
 	// Spawn preview generator thread.
 	ThreadPool::getInstance().spawn(
-		[this](){ threadGeneratePreview(); },
+		[=, this](){ threadGeneratePreview(); },
 		m_threadGeneratePreview
 	);
 

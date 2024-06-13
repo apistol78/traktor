@@ -84,7 +84,7 @@ bool AudioSystem::create(const AudioSystemCreateDesc& desc)
 		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
 	// Create mixer and submission threads.
-	m_threadMixer = ThreadManager::getInstance().create([this](){ threadMixer(); }, L"Sound mixer", 1);
+	m_threadMixer = ThreadManager::getInstance().create([=, this](){ threadMixer(); }, L"Sound mixer", 1);
 	if (!m_threadMixer)
 	{
 		m_driver->destroy();
@@ -209,7 +209,7 @@ void AudioSystem::resume()
 	// Create threads.
 	if (!m_threadMixer)
 	{
-		m_threadMixer = ThreadManager::getInstance().create([this](){ threadMixer(); }, L"Sound mixer", 1);
+		m_threadMixer = ThreadManager::getInstance().create([=, this](){ threadMixer(); }, L"Sound mixer", 1);
 		if (!m_threadMixer)
 			return;
 	}

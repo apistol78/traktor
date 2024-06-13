@@ -25,7 +25,7 @@ public:
 	,	m_hPipe(hPipe)
 	{
 		ThreadPool::getInstance().spawn(
-			[this]() { threadPipeReader(); },
+			[=, this]() { threadPipeReader(); },
 			m_thread
 		);
 	}
