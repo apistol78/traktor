@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include "Core/Containers/ThreadsafeFifo.h"
+#include "Core/RefArray.h"
 #include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
@@ -93,7 +93,7 @@ public:
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) override final;
 
 private:
-	ThreadsafeFifo< Ref< Job > > m_jobs;
+	RefArray< Job > m_jobs;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
@@ -102,6 +102,7 @@ private:
 	Ref< IPipelineInstanceCache > m_instanceCache;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;
+	Semaphore m_jobsLock;
 	Semaphore m_dependencySetLock;
 	mutable bool m_result;
 
