@@ -71,6 +71,10 @@ void TranslateModifier::selectionChanged()
 	}
 }
 
+void TranslateModifier::buttonDown()
+{
+}
+
 IModifier::CursorMovedResult TranslateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,

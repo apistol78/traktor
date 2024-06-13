@@ -123,6 +123,8 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 				worldRayDirection
 			);
 
+			modifier->buttonDown();
+
 			modifierHit = modifier->cursorMoved(
 				transformChain,
 				screenPosition,

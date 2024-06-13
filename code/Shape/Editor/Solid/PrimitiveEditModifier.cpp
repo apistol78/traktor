@@ -24,8 +24,8 @@
 
 namespace traktor
 {
-    namespace shape
-    {
+	namespace shape
+	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.PrimitiveEditModifier", PrimitiveEditModifier, scene::IModifier)
 
@@ -48,98 +48,102 @@ void PrimitiveEditModifier::selectionChanged()
 	m_entityAdapters = m_context->getEntities(scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild);
 }
 
+void PrimitiveEditModifier::buttonDown()
+{
+}
+
 scene::IModifier::CursorMovedResult PrimitiveEditModifier::cursorMoved(
-    const scene::TransformChain& transformChain,
-    const Vector2& cursorPosition,
-    const Vector4& worldRayOrigin,
-    const Vector4& worldRayDirection
+	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection
 )
 {
-    return { true, true };
+	return { true, true };
 }
 
 bool PrimitiveEditModifier::handleCommand(const ui::Command& command)
 {
-    if (command == L"Shape.Editor.BrowseMaterial")
-    {
-        Ref< db::Instance > materialInstance = m_context->getEditor()->browseInstance(type_of< model::Material >());
-        if (materialInstance)
-        {
-            for (auto entityAdapter : m_entityAdapters)
-            {
-                auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-                if (!primitiveEntity || primitiveEntity->getSelectedMaterial() == model::c_InvalidIndex)
-                    continue;
+	if (command == L"Shape.Editor.BrowseMaterial")
+	{
+		Ref< db::Instance > materialInstance = m_context->getEditor()->browseInstance(type_of< model::Material >());
+		if (materialInstance)
+		{
+			for (auto entityAdapter : m_entityAdapters)
+			{
+				auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+				if (!primitiveEntity || primitiveEntity->getSelectedMaterial() == model::c_InvalidIndex)
+					continue;
 
-                auto primitiveEntityData = mandatory_non_null_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
-                primitiveEntityData->setMaterial(
-                    primitiveEntity->getSelectedMaterial(),
-                    materialInstance->getGuid()
-                );
-            }
-        }
-        return true;
-    }
-    else
-        return false;
+				auto primitiveEntityData = mandatory_non_null_type_cast< PrimitiveEntityData* >(entityAdapter->getEntityData());
+				primitiveEntityData->setMaterial(
+					primitiveEntity->getSelectedMaterial(),
+					materialInstance->getGuid()
+				);
+			}
+		}
+		return true;
+	}
+	else
+		return false;
 }
 
 bool PrimitiveEditModifier::begin(
-    const scene::TransformChain& transformChain,
-    const Vector2& cursorPosition,
-    const Vector4& worldRayOrigin,
-    const Vector4& worldRayDirection,
-    int32_t mouseButton
+	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	int32_t mouseButton
 )
 {
-    for (auto entityAdapter : m_entityAdapters)
-    {
-        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-        if (!primitiveEntity)
-            continue;
+	for (auto entityAdapter : m_entityAdapters)
+	{
+		auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+		if (!primitiveEntity)
+			continue;
 
-        const model::Model* model = primitiveEntity->getModel();
-        if (!model)
-            continue;
+		const model::Model* model = primitiveEntity->getModel();
+		if (!model)
+			continue;
 
-        Transform transform = entityAdapter->getTransform();
+		Transform transform = entityAdapter->getTransform();
 
-        Scalar minK(std::numeric_limits< float >::max());
-        uint32_t minMaterial = model::c_InvalidIndex;
+		Scalar minK(std::numeric_limits< float >::max());
+		uint32_t minMaterial = model::c_InvalidIndex;
 
-        for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
-        {
-            const model::Polygon& polygon = model->getPolygon(i);
-            
-            Winding3 w;
-            for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-                w.push(transform * model->getVertexPosition(polygon.getVertex(j)));
+		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+		{
+			const model::Polygon& polygon = model->getPolygon(i);
+			
+			Winding3 w;
+			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+				w.push(transform * model->getVertexPosition(polygon.getVertex(j)));
 
-            Scalar k;
-            if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
-            {
-                if (k < minK)
-                {
-                    minMaterial = polygon.getMaterial();
-                    minK = k;
-                }
-            }
-        }
+			Scalar k;
+			if (w.rayIntersection(worldRayOrigin, worldRayDirection, k))
+			{
+				if (k < minK)
+				{
+					minMaterial = polygon.getMaterial();
+					minK = k;
+				}
+			}
+		}
 
-        primitiveEntity->setSelectedMaterial(minMaterial);
-    }
+		primitiveEntity->setSelectedMaterial(minMaterial);
+	}
 
-    return false;
+	return false;
 }
 
 void PrimitiveEditModifier::apply(
-    const scene::TransformChain& transformChain,
-    const Vector2& cursorPosition,
-    const Vector4& worldRayOrigin,
-    const Vector4& worldRayDirection,
-    const Vector4& screenDelta,
-    const Vector4& viewDelta,
-    bool snapOverrideEnable
+	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta,
+	bool snapOverrideEnable
 )
 {
 }
@@ -150,54 +154,54 @@ void PrimitiveEditModifier::end(const scene::TransformChain& transformChain)
 
 void PrimitiveEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 {
-    for (auto entityAdapter : m_entityAdapters)
-    {
-        auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
-        if (!primitiveEntity)
-            continue;
+	for (auto entityAdapter : m_entityAdapters)
+	{
+		auto primitiveEntity = dynamic_type_cast< PrimitiveEntity* >(entityAdapter->getEntity());
+		if (!primitiveEntity)
+			continue;
 
-        uint32_t selected = primitiveEntity->getSelectedMaterial();
-        if (selected == model::c_InvalidIndex)
-            continue;
+		uint32_t selected = primitiveEntity->getSelectedMaterial();
+		if (selected == model::c_InvalidIndex)
+			continue;
 
-        const model::Model* model = primitiveEntity->getModel();
-        if (!model)
-            continue;
+		const model::Model* model = primitiveEntity->getModel();
+		if (!model)
+			continue;
 
-        for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
-        {
-            const model::Polygon& polygon = model->getPolygon(i);
-            if (polygon.getMaterial() != selected)
-                continue;
+		for (uint32_t i = 0; i < model->getPolygonCount(); ++i)
+		{
+			const model::Polygon& polygon = model->getPolygon(i);
+			if (polygon.getMaterial() != selected)
+				continue;
 
-            Winding3 w;
-            for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
-                w.push(model->getVertexPosition(polygon.getVertex(j)));
+			Winding3 w;
+			for (uint32_t j = 0; j < polygon.getVertexCount(); ++j)
+				w.push(model->getVertexPosition(polygon.getVertex(j)));
 
-            Plane wp;
-            if (!w.getPlane(wp))
-                continue;
+			Plane wp;
+			if (!w.getPlane(wp))
+				continue;
 
-            primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+			primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
 
-            Triangulator().freeze(
-                w.get(),
-                wp.normal(),
-                Triangulator::Mode::Sequential,
-                [&](size_t i0, size_t i1, size_t i2) {
-                    primitiveRenderer->drawSolidTriangle(
-                        w[(uint32_t)i0],
-                        w[(uint32_t)i1],
-                        w[(uint32_t)i2],
-                        Color4ub(80, 120, 255, 120)
-                    );
-                }
-            );
+			Triangulator().freeze(
+				w.get(),
+				wp.normal(),
+				Triangulator::Mode::Sequential,
+				[&](size_t i0, size_t i1, size_t i2) {
+					primitiveRenderer->drawSolidTriangle(
+						w[(uint32_t)i0],
+						w[(uint32_t)i1],
+						w[(uint32_t)i2],
+						Color4ub(80, 120, 255, 120)
+					);
+				}
+			);
 
-            primitiveRenderer->popWorld();
-        }
-    }
+			primitiveRenderer->popWorld();
+		}
+	}
 }
 
-    }
+	}
 }

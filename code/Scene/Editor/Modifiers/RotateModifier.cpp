@@ -80,6 +80,10 @@ void RotateModifier::selectionChanged()
 	m_axisEnable = 0;
 }
 
+void RotateModifier::buttonDown()
+{
+}
+
 IModifier::CursorMovedResult RotateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,

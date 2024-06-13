@@ -490,6 +490,11 @@ void TerrainEditModifier::selectionChanged()
 {
 }
 
+void TerrainEditModifier::buttonDown()
+{
+	m_editBrushSize = false;
+}
+
 scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 	const scene::TransformChain& transformChain,
 	const Vector2& cursorPosition,
@@ -502,6 +507,7 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 
 	const Vector4 lastCenter = m_center;
 	bool hot = false;
+	bool redraw = false;
 
 	Scalar distance;
 	if (m_heightfield->queryRay(
@@ -510,18 +516,37 @@ scene::IModifier::CursorMovedResult TerrainEditModifier::cursorMoved(
 		distance
 	))
 	{
-		m_center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+		if (!m_editBrushSize)
+		{
+			m_center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+			redraw = m_center != lastCenter;
+		}
+		else
+		{
+			const Vector4 currentCenter = (worldRayOrigin + worldRayDirection * distance).xyz1();
+			const Scalar distance = (currentCenter - m_center).length();
+			m_radius = float(distance);
+			redraw = true;
+		}
 		hot = true;
 	}
 	else
+	{
 		m_center = Vector4::zero();
+		redraw = m_center != lastCenter;
+	}
 
-	return { hot, m_center != lastCenter };
+	return { hot, redraw };
 }
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
-	if (command == L"Terrain.Editor.FlattenUnderSpline")
+	if (command == L"Terrain.Editor.EditBrushSize")
+	{
+		m_editBrushSize = true;
+		return true;
+	}
+	else if (command == L"Terrain.Editor.FlattenUnderSpline")
 	{
 		flattenUnderSpline();
 		return true;
@@ -538,6 +563,9 @@ bool TerrainEditModifier::begin(
 	int32_t mouseButton
 )
 {
+	if (m_editBrushSize)
+		return false;
+
 	const bool inverted = (ui::Application::getInstance()->getEventLoop()->getAsyncKeyState() & ui::KsControl) != 0;
 	return begin(inverted);
 }
@@ -589,27 +617,25 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	if (!m_terrainComponent || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
 		return;
 
-	const float radius = m_context->getGuideSize();
-
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->pushDepthState(false, false, false);
 
-	float x0 = m_center.x() + cosf(0.0f) * radius;
-	float z0 = m_center.z() + sinf(0.0f) * radius;
+	float x0 = m_center.x() + cosf(0.0f) * m_radius;
+	float z0 = m_center.z() + sinf(0.0f) * m_radius;
 	float y0 = m_heightfield->getWorldHeight(x0, z0);
 
 	for (int32_t i = 1; i <= 32; ++i)
 	{
 		const float a = TWO_PI * i / 32.0f;
 
-		const float x1 = m_center.x() + cosf(a) * radius;
-		const float z1 = m_center.z() + sinf(a) * radius;
+		const float x1 = m_center.x() + cosf(a) * m_radius;
+		const float z1 = m_center.z() + sinf(a) * m_radius;
 		const float y1 = m_heightfield->getWorldHeight(x1, z1);
 
 		primitiveRenderer->drawLine(
 			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
 			Vector4(x1, y1 + FUZZY_EPSILON, z1, 1.0f),
-			1.0f,
+			2.0f,
 			Color4ub(255, 0, 0, 180)
 		);
 
@@ -691,8 +717,7 @@ bool TerrainEditModifier::begin(bool inverted)
 
 	m_context->setPlaying(false);
 
-	float worldRadius = m_context->getGuideSize();
-	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
+	const int32_t gridRadius = int32_t(m_heightfield->getSize() * m_radius / m_heightfield->getWorldExtent().x());
 
 	float gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
@@ -740,8 +765,7 @@ void TerrainEditModifier::apply(const Vector4& center)
 	const int32_t size = m_heightfield->getSize();
 
 	// Calculate region which needs to be updated.
-	const float worldRadius = m_context->getGuideSize();
-	const int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+	const int32_t gridRadius = int32_t(size * m_radius / m_heightfield->getWorldExtent().x());
 
 	int32_t mnx = (int32_t)min(std::floor(gx0) - gridRadius, std::floor(gx1) - gridRadius);
 	int32_t mxx = (int32_t)max(std::ceil(gx0) + gridRadius, std::ceil(gx1) + gridRadius);

@@ -68,6 +68,10 @@ void ScaleModifier::selectionChanged()
 	m_deltaScale = Vector4::zero();
 }
 
+void ScaleModifier::buttonDown()
+{
+}
+
 IModifier::CursorMovedResult ScaleModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,

@@ -74,6 +74,8 @@ public:
 
 	virtual void selectionChanged() override final;
 
+	virtual void buttonDown() override final;
+
 	virtual CursorMovedResult cursorMoved(
 		const scene::TransformChain& transformChain,
 		const Vector2& cursorPosition,
@@ -153,7 +155,9 @@ private:
 	TerrainComponent::VisualizeMode m_visualizeMode;
 	Vector4 m_center;
 	uint32_t m_updateRegion[4];
+	float m_radius = 4.0f;
 	bool m_applied;
+	bool m_editBrushSize = false;
 
 	bool begin(bool inverted);
 

@@ -60,6 +60,8 @@ public:
 
 	virtual void selectionChanged() = 0;
 
+	virtual void buttonDown() = 0;
+
 	virtual CursorMovedResult cursorMoved(
 		const TransformChain& transformChain,
 		const Vector2& cursorPosition,

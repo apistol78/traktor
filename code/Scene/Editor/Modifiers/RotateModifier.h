@@ -35,6 +35,8 @@ public:
 
 	virtual void selectionChanged() override final;
 
+	virtual void buttonDown() override final;
+
 	virtual CursorMovedResult cursorMoved(
 		const TransformChain& transformChain,
 		const Vector2& cursorPosition,

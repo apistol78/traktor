@@ -31,6 +31,7 @@ void TerrainEditorProfile::getCommands(
 ) const
 {
 	outCommands.push_back(ui::Command(L"Terrain.Editor.EditTerrain"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.EditBrushSize"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.AverageBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ColorBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.CutBrush"));
