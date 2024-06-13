@@ -40,6 +40,9 @@
 				<Directory Id="data" Name="data"/>
 				<Directory Id="resources" Name="resources"/>
 				<Directory Id="scripts" Name="scripts"/>
+				<Component Id="license" Guid="A7AFC39C-7F06-457B-B908-0561DD2111ED">
+					<File Id="license" KeyPath="yes" Source="$(env.TRAKTOR_HOME)/LICENSE.txt" />
+				</Component>
 			</Directory>
 		</Directory>
 
@@ -74,6 +77,8 @@
 		<ComponentGroupRef Id="cmp_resources_runtime" />
 		<ComponentGroupRef Id="cmp_scripts_runtime" />
 		<ComponentRef Id="ShortcutCmp_Traktor" />
+		<ComponentRef Id="license" />
+
 	</Feature>
 
 	<Property Id="WIXUI_INSTALLDIR" Value="INSTALLLOCATION" />
