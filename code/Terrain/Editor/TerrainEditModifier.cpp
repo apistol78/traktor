@@ -583,27 +583,53 @@ void TerrainEditModifier::apply(
 	if (!m_terrainComponent || m_center.w() <= FUZZY_EPSILON)
 		return;
 
-	// Find furthest intersection which allows for editing around hills etc.
-	Vector4 center = worldRayOrigin;
-	bool found = false;
-	for (;;)
-	{
-		center += worldRayDirection * 0.01_simd;
+	Vector4 center = Vector4::zero();
+	Scalar distance;
 
-		Scalar distance;
+	if (m_applied)
+	{
+		// Find furthest intersection which allows for editing around hills etc.
+		Scalar minD = Scalar(std::numeric_limits< float >::max());
+		Vector4 step = worldRayOrigin;
+		bool found = false;
+
+		for (;;)
+		{
+			step += worldRayDirection * 0.01_simd;
+
+			if (!m_heightfield->queryRay(
+				step,
+				worldRayDirection,
+				distance
+			))
+				break;
+
+			step = (step + worldRayDirection * distance).xyz1();
+
+			const Scalar d = (step - m_center).xyz0().length();
+			if (d < minD)
+			{
+				center = step;
+				minD = d;
+				found = true;
+			}
+		}
+
+		if (!found)
+			return;
+	}
+	else
+	{
 		if (!m_heightfield->queryRay(
-			center,
+			worldRayOrigin,
 			worldRayDirection,
 			distance
 		))
-			break;
-
-		center = (center + worldRayDirection * distance).xyz1();
-		found = true;
+			return;
+		
+		center = (worldRayOrigin + worldRayDirection * distance).xyz1();
 	}
-	if (!found)
-		return;
-
+	
 	apply(center);
 }
 

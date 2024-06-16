@@ -334,30 +334,35 @@ bool Heightfield::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRa
 	{
 		for (int32_t cx = 0; cx < m_size; cx += c_cellSize)
 		{
+			// Calculate bounding box of cell.
 			float cx1w, cz1w;
 			float cx2w, cz2w;
 
 			gridToWorld(float(cx), float(cz), cx1w, cz1w);
 			gridToWorld(float(cx + c_cellSize), float(cz + c_cellSize), cx2w, cz2w);
 
-			const float cyw[] =
-			{
-				unitToWorld(getGridHeightNearest(cx, cz)),
-				unitToWorld(getGridHeightNearest(cx + c_cellSize, cz)),
-				unitToWorld(getGridHeightNearest(cx, cz + c_cellSize)),
-				unitToWorld(getGridHeightNearest(cx + c_cellSize, cz + c_cellSize))
-			};
+			float cy1w = std::numeric_limits< float >::max();
+			float cy2w = -std::numeric_limits< float >::max();
 
-			const float cy1w = *std::min_element(cyw, cyw + sizeof_array(cyw));
-			const float cy2w = *std::max_element(cyw, cyw + sizeof_array(cyw));
+			for (int32_t iz = cz; iz <= cz + c_cellSize; iz += c_skip)
+			{
+				for (int32_t ix = cx; ix <= cx + c_cellSize; ix += c_skip)
+				{
+					const float wy = unitToWorld(getGridHeightNearest(ix, iz));
+					cy1w = std::min(cy1w, wy);
+					cy2w = std::max(cy2w, wy);
+				}
+			}
 
 			Aabb3 bb;
 			bb.mn = Vector4(cx1w, cy1w, cz1w, 1.0f);
 			bb.mx = Vector4(cx2w, cy2w, cz2w, 1.0f);
 
+			// Check if ray intersect bounding box; skip tracing triangles if not.
 			if (!bb.intersectRay(worldRayOrigin, worldRayDirection, kIn, kOut))
 				continue;
 
+			// Construct and trace triangles.
 			for (int32_t iz = cz; iz <= cz + c_cellSize; iz += c_skip)
 			{
 				for (int32_t ix = cx; ix <= cx + c_cellSize; ix += c_skip)
