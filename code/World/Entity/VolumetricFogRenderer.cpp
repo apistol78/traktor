@@ -12,7 +12,12 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.VolumetricFogRenderer", VolumetricFogRenderer, IEntityRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.VolumetricFogRenderer", 0, VolumetricFogRenderer, IEntityRenderer)
+
+bool VolumetricFogRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet VolumetricFogRenderer::getRenderableTypes() const
 {

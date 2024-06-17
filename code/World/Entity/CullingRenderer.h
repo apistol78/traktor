@@ -29,6 +29,8 @@ class T_DLLCLASS CullingRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void setup(

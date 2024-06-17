@@ -13,7 +13,12 @@
 namespace traktor::shape
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.shape.EntityRenderer", EntityRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.shape.EntityRenderer", 0, EntityRenderer, world::IEntityRenderer)
+
+bool EntityRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {

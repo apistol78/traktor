@@ -31,6 +31,8 @@ class T_DLLCLASS MeshComponentRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getRenderableTypes() const override;
 
 	virtual void setup(

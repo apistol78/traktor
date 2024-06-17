@@ -18,6 +18,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
+namespace traktor
+{
+
+class ObjectStore;
+
+}
+
 namespace traktor::world
 {
 
@@ -37,6 +44,8 @@ class T_DLLCLASS IEntityRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual bool initialize(const ObjectStore& objectStore) = 0;
+
 	virtual const TypeInfoSet getRenderableTypes() const = 0;
 
 	/*! Setup pass. */

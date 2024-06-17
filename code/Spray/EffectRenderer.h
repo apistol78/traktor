@@ -44,6 +44,8 @@ public:
 
 	void setLodDistances(float lod1Distance, float lod2Distance);
 
+	virtual bool initialize(const ObjectStore& objectStore) override final;
+
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
 	virtual void setup(

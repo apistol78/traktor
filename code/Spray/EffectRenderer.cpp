@@ -33,6 +33,11 @@ void EffectRenderer::setLodDistances(float lod1Distance, float lod2Distance)
 	m_pointRenderer->setLodDistances(lod1Distance, lod2Distance);
 }
 
+bool EffectRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 const TypeInfoSet EffectRenderer::getRenderableTypes() const
 {
 	return makeTypeInfoSet< EffectComponent >();

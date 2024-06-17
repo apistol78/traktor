@@ -51,6 +51,54 @@ struct Vertex
 };
 #pragma pack()
 
+void getCorners(int32_t side, Vector4 corners[4])
+{
+	switch (side)
+	{
+	case 0:
+		corners[0].set(1.0f, 1.0f, 1.0f, 0.0f);
+		corners[1].set(1.0f, 1.0f, -1.0f, 0.0f);
+		corners[2].set(1.0f, -1.0f, 1.0f, 0.0f);
+		corners[3].set(1.0f, -1.0f, -1.0f, 0.0f);
+		break;
+
+	case 1:
+		corners[0].set(-1.0f, 1.0f, -1.0f, 0.0f);
+		corners[1].set(-1.0f, 1.0f, 1.0f, 0.0f);
+		corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+		corners[3].set(-1.0f, -1.0f, 1.0f, 0.0f);
+		break;
+
+	case 2:
+		corners[0].set(-1.0f, 1.0f, -1.0f, 0.0f);
+		corners[1].set(1.0f, 1.0f, -1.0f, 0.0f);
+		corners[2].set(-1.0f, 1.0f, 1.0f, 0.0f);
+		corners[3].set(1.0f, 1.0f, 1.0f, 0.0f);
+		break;
+
+	case 3:
+		corners[0].set(-1.0f, -1.0f, 1.0f, 0.0f);
+		corners[1].set(1.0f, -1.0f, 1.0f, 0.0f);
+		corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
+		corners[3].set(1.0f, -1.0f, -1.0f, 0.0f);
+		break;
+
+	case 4:
+		corners[0].set(-1.0f, 1.0f, 1.0f, 0.0f);
+		corners[1].set(1.0f, 1.0f, 1.0f, 0.0f);
+		corners[2].set(-1.0f, -1.0f, 1.0f, 0.0f);
+		corners[3].set(1.0f, -1.0f, 1.0f, 0.0f);
+		break;
+
+	case 5:
+		corners[0].set(1.0f, 1.0f, -1.0f, 0.0f);
+		corners[1].set(-1.0f, 1.0f, -1.0f, 0.0f);
+		corners[2].set(1.0f, -1.0f, -1.0f, 0.0f);
+		corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
+		break;
+	}
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ProbeRenderer", ProbeRenderer, IEntityRenderer)
@@ -140,6 +188,11 @@ ProbeRenderer::~ProbeRenderer()
 	safeDestroy(m_screenRenderer);
 	m_captureQueue.clear();
 	m_capture = nullptr;
+}
+
+bool ProbeRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
 }
 
 const TypeInfoSet ProbeRenderer::getRenderableTypes() const
@@ -339,6 +392,9 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		const int32_t side = m_captureState - 6;
 		const int32_t mip = m_captureMip;
 
+		// Each mip represent one step rougher surface.
+		const float roughness = std::pow((float)mip / mipCount, 0.5f);
+
 		// Create intermediate target.
 		render::RenderGraphTargetSetDesc rgtsd;
 		rgtsd.count = 1;
@@ -350,61 +406,16 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 #else
 		rgtsd.targets[0].colorFormat = render::TfR8G8B8A8;
 #endif
-		auto filteredTargetSetId = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
+		auto filteredTargetSetId0 = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
+		auto filteredTargetSetId1 = renderGraph.addTransientTargetSet(L"Probe filter intermediate", rgtsd);
 
-		Ref< render::RenderPass > filterPass = new render::RenderPass(L"Probe filter");
-		filterPass->setOutput(filteredTargetSetId, render::TfNone, render::TfColor);
-		filterPass->addBuild(
+		Ref< render::RenderPass > filterPassX = new render::RenderPass(L"Probe filter X");
+		filterPassX->setOutput(filteredTargetSetId0, render::TfNone, render::TfColor);
+		filterPassX->addBuild(
 			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				// Each mip represent one step rougher surface.
-				const float roughness = std::pow((float)mip / mipCount, 0.5f);
-
 				Vector4 corners[4];
-				switch (side)
-				{
-				case 0:
-					corners[0].set( 1.0f,  1.0f,  1.0f, 0.0f);
-					corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
-					corners[2].set( 1.0f, -1.0f,  1.0f, 0.0f);
-					corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-					break;
-
-				case 1:
-					corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
-					corners[1].set(-1.0f,  1.0f,  1.0f, 0.0f);
-					corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
-					corners[3].set(-1.0f, -1.0f,  1.0f, 0.0f);
-					break;
-
-				case 2:
-					corners[0].set(-1.0f,  1.0f, -1.0f, 0.0f);
-					corners[1].set( 1.0f,  1.0f, -1.0f, 0.0f);
-					corners[2].set(-1.0f,  1.0f,  1.0f, 0.0f);
-					corners[3].set( 1.0f,  1.0f,  1.0f, 0.0f);
-					break;
-
-				case 3:
-					corners[0].set(-1.0f, -1.0f,  1.0f, 0.0f);
-					corners[1].set( 1.0f, -1.0f,  1.0f, 0.0f);
-					corners[2].set(-1.0f, -1.0f, -1.0f, 0.0f);
-					corners[3].set( 1.0f, -1.0f, -1.0f, 0.0f);
-					break;
-
-				case 4:
-					corners[0].set(-1.0f,  1.0f,  1.0f, 0.0f);
-					corners[1].set( 1.0f,  1.0f,  1.0f, 0.0f);
-					corners[2].set(-1.0f, -1.0f,  1.0f, 0.0f);
-					corners[3].set( 1.0f, -1.0f,  1.0f, 0.0f);
-					break;
-
-				case 5:
-					corners[0].set( 1.0f,  1.0f, -1.0f, 0.0f);
-					corners[1].set(-1.0f,  1.0f, -1.0f, 0.0f);
-					corners[2].set( 1.0f, -1.0f, -1.0f, 0.0f);
-					corners[3].set(-1.0f, -1.0f, -1.0f, 0.0f);
-					break;
-				}
+				getCorners(side, corners);
 
 				auto pp = renderContext->alloc< render::ProgramParameters >();
 				pp->beginParameters(renderContext);
@@ -416,15 +427,36 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 				m_screenRenderer->draw(renderContext, m_filterShader, pp);
 			}
 		);
-		renderGraph.addPass(filterPass);
+		renderGraph.addPass(filterPassX);
+
+		Ref< render::RenderPass > filterPassY = new render::RenderPass(L"Probe filter Y");
+		filterPassY->setOutput(filteredTargetSetId1, render::TfNone, render::TfColor);
+		filterPassY->addInput(filteredTargetSetId0);
+		filterPassY->addBuild(
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			{
+				Vector4 corners[4];
+				getCorners(side, corners);
+
+				auto pp = renderContext->alloc< render::ProgramParameters >();
+				pp->beginParameters(renderContext);
+				pp->setFloatParameter(s_handleProbeRoughness, roughness);
+				pp->setTextureParameter(s_handleProbeTexture, probeTexture);
+				pp->setVectorArrayParameter(s_handleProbeFilterCorners, corners, sizeof_array(corners));
+				pp->endParameters(renderContext);
+
+				m_screenRenderer->draw(renderContext, m_filterShader, pp);
+			}
+		);
+		renderGraph.addPass(filterPassY);
 
 		// Write back filtered targets into cube map mip level.
 		Ref< render::RenderPass > copyPass = new render::RenderPass(L"Probe copy filtered");
-		copyPass->addInput(filteredTargetSetId);
+		copyPass->addInput(filteredTargetSetId1);
 		copyPass->addBuild(
 			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
-				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId);
+				auto filteredTargetSet = renderGraph.getTargetSet(filteredTargetSetId1);
 				auto lrb = renderContext->allocNamed< render::LambdaRenderBlock >(L"Probe transfer filtered -> cube");
 				lrb->lambda = [=](render::IRenderView* renderView)
 				{

@@ -12,7 +12,12 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothRenderer", ClothRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.ClothRenderer", 0, ClothRenderer, world::IEntityRenderer)
+
+bool ClothRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet ClothRenderer::getRenderableTypes() const
 {

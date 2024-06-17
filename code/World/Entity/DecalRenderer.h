@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -41,7 +41,11 @@ class T_DLLCLASS DecalRenderer : public IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
+	DecalRenderer() = default;
+
 	explicit DecalRenderer(render::IRenderSystem* renderSystem);
+
+	virtual bool initialize(const ObjectStore& objectStore) override final;
 
 	virtual const TypeInfoSet getRenderableTypes() const override final;
 
@@ -73,6 +77,8 @@ private:
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;
 	RefArray< const DecalComponent > m_decalComponents;
+
+	bool initialize(render::IRenderSystem* renderSystem);
 };
 
 }

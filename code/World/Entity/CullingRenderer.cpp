@@ -12,7 +12,12 @@
 namespace traktor::world
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.CullingRenderer", CullingRenderer, IEntityRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.CullingRenderer", 0, CullingRenderer, IEntityRenderer)
+
+bool CullingRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet CullingRenderer::getRenderableTypes() const
 {

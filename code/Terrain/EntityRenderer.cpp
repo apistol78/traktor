@@ -47,6 +47,11 @@ void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
 	m_oceanReflectionEnable = oceanReflectionEnable;
 }
 
+bool EntityRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
+
 const TypeInfoSet EntityRenderer::getRenderableTypes() const
 {
 	TypeInfoSet typeSet;

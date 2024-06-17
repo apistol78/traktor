@@ -12,7 +12,7 @@
 namespace traktor::animation
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", AnimatedMeshComponentRenderer, mesh::MeshComponentRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshComponentRenderer", 0, AnimatedMeshComponentRenderer, mesh::MeshComponentRenderer)
 
 const TypeInfoSet AnimatedMeshComponentRenderer::getRenderableTypes() const
 {

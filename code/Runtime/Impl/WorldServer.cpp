@@ -12,7 +12,6 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
-#include "Animation/AnimatedMeshComponentRenderer.h"
 #include "Animation/Cloth/ClothRenderer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
@@ -21,7 +20,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Mesh/MeshComponentRenderer.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
@@ -29,16 +27,11 @@
 #include "Sound/Player/ISoundPlayer.h"
 #include "Spray/EffectRenderer.h"
 #include "Terrain/EntityRenderer.h"
-#include "Weather/Precipitation/PrecipitationRenderer.h"
-#include "Weather/Sky/SkyRenderer.h"
 #include "World/EntityFactory.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldResourceFactory.h"
-#include "World/Entity/CullingRenderer.h"
-#include "World/Entity/DecalRenderer.h"
 #include "World/Entity/ProbeRenderer.h"
-#include "World/Entity/VolumetricFogRenderer.h"
 
 namespace traktor::runtime
 {
@@ -174,17 +167,32 @@ void WorldServer::createEntityRenderers(IEnvironment* environment)
 		bool(m_oceanQuality >= world::Quality::High)
 	);
 
-	m_entityRenderers->add(new world::CullingRenderer());
-	m_entityRenderers->add(new world::DecalRenderer(renderSystem));
 	m_entityRenderers->add(new world::ProbeRenderer(resourceManager, renderSystem, *m_worldType));
-	m_entityRenderers->add(new world::VolumetricFogRenderer());
-	m_entityRenderers->add(new mesh::MeshComponentRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
-	m_entityRenderers->add(new animation::AnimatedMeshComponentRenderer());
-	m_entityRenderers->add(new animation::ClothRenderer());
-	m_entityRenderers->add(new weather::PrecipitationRenderer());
-	m_entityRenderers->add(new weather::SkyRenderer());
 	m_entityRenderers->add(m_terrainEntityRenderer);
+
+	// Setup object store with relevant systems.
+	ObjectStore objectStore;
+	objectStore.set(environment->getRender()->getRenderSystem());
+	objectStore.set(environment->getResource()->getResourceManager());
+
+	// Create instances of all entity renderers.
+	const TypeInfoSet entityRendererTypes = type_of< world::IEntityRenderer >().findAllOf(false);
+	for (const auto& entityRendererType : entityRendererTypes)
+	{
+		if (!entityRendererType->isInstantiable())
+			continue;
+
+		Ref< world::IEntityRenderer > entityRenderer = dynamic_type_cast< world::IEntityRenderer* >(entityRendererType->createInstance());
+		if (!entityRenderer)
+			continue;
+
+		if (!entityRenderer->initialize(objectStore))
+			continue;
+
+		m_entityRenderers->add(entityRenderer);
+		T_DEBUG(L"Entity renderer \"" << type_name(entityRenderer) << L"\" initialized.");
+	}
 }
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)

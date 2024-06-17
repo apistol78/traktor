@@ -12,7 +12,12 @@
 namespace traktor::mesh
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshComponentRenderer", MeshComponentRenderer, world::IEntityRenderer)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshComponentRenderer", 0, MeshComponentRenderer, world::IEntityRenderer)
+
+bool MeshComponentRenderer::initialize(const ObjectStore& objectStore)
+{
+	return true;
+}
 
 const TypeInfoSet MeshComponentRenderer::getRenderableTypes() const
 {
