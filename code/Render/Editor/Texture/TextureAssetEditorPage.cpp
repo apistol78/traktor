@@ -32,6 +32,7 @@
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
 #include "Ui/ToolBar/ToolBarButton.h"
+#include "Ui/ToolBar/ToolBarButtonClickEvent.h"
 
 namespace traktor::render
 {
@@ -60,10 +61,15 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 1));
 	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 2));
 	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 3));
-	toolBar->addItem(new ui::ToolBarButton(L"R", 0, ui::Command(L"Render.Texture.Editor.ToggleR"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"G", 1, ui::Command(L"Render.Texture.Editor.ToggleG"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"B", 2, ui::Command(L"Render.Texture.Editor.ToggleB"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"A", 3, ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled));
+	m_toolToggleR = new ui::ToolBarButton(L"R", 0, ui::Command(L"Render.Texture.Editor.ToggleR"), ui::ToolBarButton::BsDefaultToggled);
+	m_toolToggleG = new ui::ToolBarButton(L"G", 1, ui::Command(L"Render.Texture.Editor.ToggleG"), ui::ToolBarButton::BsDefaultToggled);
+	m_toolToggleB = new ui::ToolBarButton(L"B", 2, ui::Command(L"Render.Texture.Editor.ToggleB"), ui::ToolBarButton::BsDefaultToggled);
+	m_toolToggleA = new ui::ToolBarButton(L"A", 3, ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled);
+	toolBar->addItem(m_toolToggleR);
+	toolBar->addItem(m_toolToggleG);
+	toolBar->addItem(m_toolToggleB);
+	toolBar->addItem(m_toolToggleA);
+	toolBar->addEventHandler< ui::ToolBarButtonClickEvent >([=, this](ui::ToolBarButtonClickEvent* event) { updatePreview(); });
 
 	Ref< ui::Container > imageContainer = new ui::Container();
 	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
@@ -127,7 +133,13 @@ void TextureAssetEditorPage::updatePreview()
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
 	if (image)
 	{
-		m_textureControl->setImage(image, m_asset->m_output);
+		const uint32_t channels =
+			(m_toolToggleR->isToggled() ? 1 : 0) |
+			(m_toolToggleG->isToggled() ? 2 : 0) |
+			(m_toolToggleB->isToggled() ? 4 : 0) |
+			(m_toolToggleA->isToggled() ? 8 : 0);
+
+		m_textureControl->setImage(image, m_asset->m_output, channels);
 
 		StringOutputStream ss;
 		ss << image->getWidth() << L" * " << image->getHeight();
@@ -148,7 +160,7 @@ void TextureAssetEditorPage::updatePreview()
 	}
 	else
 	{
-		m_textureControl->setImage(nullptr, m_asset->m_output);
+		m_textureControl->setImage(nullptr, m_asset->m_output, ~0U);
 		m_statusBar->setText(0, L"");
 	}
 }

@@ -65,7 +65,7 @@ ui::Size TextureControl::getPreferredSize(const ui::Size& hint) const
 	return m_bitmapSource ? m_bitmapSource->getSize(this) : ui::Size(0, 0);
 }
 
-bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output)
+bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output, uint32_t channels)
 {
 	m_imageSource = nullptr;
 	m_imageOutput = nullptr;
@@ -86,6 +86,8 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 
 		// Create source image.
 		m_imageSource = image->clone();
+
+		// Adjust gamma.
 		if (!sRGB)
 		{
 			// Ensure image is in sRGB since that's what UI expects.
@@ -189,6 +191,28 @@ bool TextureControl::setImage(drawing::Image* image, const TextureOutput& output
 		{
 			const drawing::NormalizeFilter normalizeFilter(output.m_scaleNormalMap);
 			m_imageOutput->apply(&normalizeFilter);
+		}
+
+		// Filter channels.
+		if ((channels & (1 | 2 | 4 | 8)) != (1 | 2 | 4 | 8))
+		{
+			std::wstring swizzle = L"0001";
+
+			if (channels & 1)
+				swizzle[0] = L'R';
+			if (channels & 2)
+				swizzle[1] = L'G';
+			if (channels & 4)
+				swizzle[2] = L'B';
+			if (channels & 8)
+				swizzle[3] = L'A';
+
+			// Special case if only alpha is visible.
+			if (channels == 8)
+				swizzle = L"AAA1";
+
+			const drawing::SwizzleFilter swizzleFilter(swizzle);
+			m_imageOutput->apply(&swizzleFilter);
 		}
 
 		// Convert to sRGB last since that's what UI expect.

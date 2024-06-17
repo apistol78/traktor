@@ -45,7 +45,7 @@ public:
 
 	virtual ui::Size getPreferredSize(const ui::Size& hint) const override;
 
-	bool setImage(drawing::Image* image, const TextureOutput& output);
+	bool setImage(drawing::Image* image, const TextureOutput& output, uint32_t channels);
 
 	bool getPixel(const ui::Point& position, Color4f& outColor) const;
 

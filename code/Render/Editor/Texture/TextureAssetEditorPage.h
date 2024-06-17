@@ -33,6 +33,7 @@ namespace traktor::ui
 
 class ContentChangeEvent;
 class MouseMoveEvent;
+class ToolBarButton;
 class StatusBar;
 
 }
@@ -65,6 +66,10 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< TextureAsset > m_asset;
+	Ref< ui::ToolBarButton > m_toolToggleR;
+	Ref< ui::ToolBarButton > m_toolToggleG;
+	Ref< ui::ToolBarButton > m_toolToggleB;
+	Ref< ui::ToolBarButton > m_toolToggleA;
 	Ref< TextureControl > m_textureControl;
 	Ref< ui::StatusBar > m_statusBar;
 	Ref< editor::PropertiesView > m_propertiesView;
