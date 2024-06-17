@@ -196,6 +196,8 @@ void Dock::eventMouseMove(MouseMoveEvent* event)
 		AlignedVector< WidgetRect > widgetRects;
 		m_splittingPane->update(paneRect, widgetRects);
 		setChildRects(&widgetRects[0], (uint32_t)widgetRects.size(), true);
+
+		update();
 	}
 
 	setCursor(cursor);

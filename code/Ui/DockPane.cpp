@@ -563,7 +563,10 @@ void DockPane::update(const Rect& rect, AlignedVector< WidgetRect >& outWidgetRe
 		if (m_detachable)
 			widgetRect.top += m_owner->pixel(m_gripperDim);
 		for (const auto& w : m_widgets)
-			outWidgetRects.push_back(WidgetRect(w.widget, widgetRect));
+		{
+			if (w.visible)
+				outWidgetRects.push_back(WidgetRect(w.widget, widgetRect));
+		}
 	}
 	else
 	{
