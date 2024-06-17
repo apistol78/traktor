@@ -12,7 +12,6 @@
 #include "Runtime/Impl/RenderServer.h"
 #include "Runtime/Impl/ScriptServer.h"
 #include "Runtime/Impl/WorldServer.h"
-#include "Animation/Cloth/ClothRenderer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/ObjectStore.h"
 #include "Core/Settings/PropertyBoolean.h"
