@@ -27,6 +27,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/StyleBitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/StatusBar/StatusBar.h"
 #include "Ui/ToolBar/ToolBar.h"
@@ -55,10 +56,14 @@ bool TextureAssetEditorPage::create(ui::Container* parent)
 
 	Ref< ui::ToolBar > toolBar = new ui::ToolBar();
 	toolBar->create(container);
-	toolBar->addItem(new ui::ToolBarButton(L"R", ui::Command(L"Render.Texture.Editor.ToggleR"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"G", ui::Command(L"Render.Texture.Editor.ToggleG"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"B", ui::Command(L"Render.Texture.Editor.ToggleB"), ui::ToolBarButton::BsDefaultToggled));
-	toolBar->addItem(new ui::ToolBarButton(L"A", ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled));
+	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 0));
+	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 1));
+	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 2));
+	toolBar->addImage(new ui::StyleBitmap(L"Texture.RGBA", 3));
+	toolBar->addItem(new ui::ToolBarButton(L"R", 0, ui::Command(L"Render.Texture.Editor.ToggleR"), ui::ToolBarButton::BsDefaultToggled));
+	toolBar->addItem(new ui::ToolBarButton(L"G", 1, ui::Command(L"Render.Texture.Editor.ToggleG"), ui::ToolBarButton::BsDefaultToggled));
+	toolBar->addItem(new ui::ToolBarButton(L"B", 2, ui::Command(L"Render.Texture.Editor.ToggleB"), ui::ToolBarButton::BsDefaultToggled));
+	toolBar->addItem(new ui::ToolBarButton(L"A", 3, ui::Command(L"Render.Texture.Editor.ToggleA"), ui::ToolBarButton::BsDefaultToggled));
 
 	Ref< ui::Container > imageContainer = new ui::Container();
 	imageContainer->create(container, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0_ut, 0_ut));
