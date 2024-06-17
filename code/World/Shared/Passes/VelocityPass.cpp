@@ -121,7 +121,7 @@ render::handle_t VelocityPass::setup(
 	}
 
 	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,

@@ -490,7 +490,7 @@ void WorldRendererShared::setupLightPass(
 				shadowLightViews[slice] = shadowLightProjection * shadowLightView;
 
 				rp->addBuild(
-					[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+					[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 					{
 						WorldBuildContext wc(
 							m_entityRenderers,
@@ -634,7 +634,7 @@ void WorldRendererShared::setupLightPass(
 			).storeUnaligned(lsd->atlasTransform);	
 
 			rp->addBuild(
-				[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+				[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 				{
 					const WorldBuildContext wc(
 						m_entityRenderers,

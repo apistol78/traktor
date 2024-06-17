@@ -193,7 +193,7 @@ void PostProcessPass::setup(
 	const float time = (float)worldRenderView.getTime();
 	const Vector2 rc = jitter(frameCount) / worldRenderView.getViewSize();
 	const Vector2 rp = jitter(frameCount - 1) / worldRenderView.getViewSize();
-	auto setParameters = [=](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
+	auto setParameters = [=, this](const render::RenderGraph& renderGraph, render::ProgramParameters* params) {
 		params->setFloatParameter(s_handleTime, time);
 		params->setFloatParameter(s_handleGamma, m_gamma);
 		params->setFloatParameter(s_handleGammaInverse, 1.0f / m_gamma);

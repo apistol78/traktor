@@ -104,7 +104,7 @@ void HiZPass::setup(
 		T_FATAL_ASSERT(workHeight <= mipHeight);
 
 		rp->addBuild(
-			[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+			[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 			{
 				auto renderBlock = renderContext->allocNamed< render::ComputeRenderBlock >(L"HiZ");
 

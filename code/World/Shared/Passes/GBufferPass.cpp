@@ -75,7 +75,7 @@ render::handle_t GBufferPass::setup(
 	rp->setOutput(gbufferTargetSetId, clear, render::TfNone, render::TfAll);
 
 	rp->addBuild(
-		[=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
+		[=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext)
 		{
 			const WorldBuildContext wc(
 				m_entityRenderers,
