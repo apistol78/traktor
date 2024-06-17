@@ -9,15 +9,16 @@
 Stage = Stage or class("Stage", traktor.runtime.Stage)
 
 function Stage:new(params, environment)
-	local layers = self:getLayers()
+	local layers < const > = self:getLayers()
 	for i = 0, layers.size - 1 do
-		local layer = layers:get(i)
+		local layer < const > = layers:get(i)
 		if layer.name ~= "" then
-			assert (self[layer.name] == nil)
+			assert(self[layer.name] == nil)
 			self[layer.name] = layer
 		end
 	end
 end
+
 	]]>
 	</text>
 </object>
