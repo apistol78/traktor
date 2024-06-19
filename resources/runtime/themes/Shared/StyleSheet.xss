@@ -896,10 +896,5 @@
 			<first>traktor.script.Script</first>
 			<second>$(Images.Path)/Thumbnails/script_Script.svg</second>
 		</item>
-
-		<item>
-			<first>font-name</first>
-			<second>Noto Sans</second>
-		</item>
 	</values>
 </object>
