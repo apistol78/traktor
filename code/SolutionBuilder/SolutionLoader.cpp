@@ -32,7 +32,7 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 		return it->second;
 
 	// Open solution file and deserialize solution object.
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead | File::FmMapped);
 	if (!file)
 		return nullptr;
 

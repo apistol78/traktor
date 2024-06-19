@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Core/Guid.h"
+#include "Core/Ref.h"
 #include "Core/RefArray.h"
 #include "World/IWorldComponentData.h"
 

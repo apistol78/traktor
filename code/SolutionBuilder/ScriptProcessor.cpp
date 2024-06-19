@@ -75,6 +75,7 @@ bool ScriptProcessor::create(const CommandLine& cmdLine)
 
 void ScriptProcessor::destroy()
 {
+	safeDestroy(m_scriptContext);
 	safeDestroy(m_scriptManager);
 }
 
@@ -137,6 +138,7 @@ bool ScriptProcessor::prepare(const std::wstring& fileName)
 		return false;
 
 	// Create execution context.
+	safeDestroy(m_scriptContext);
 	m_scriptContext = m_scriptManager->createContext(true);
 	if (!m_scriptContext)
 		return false;
