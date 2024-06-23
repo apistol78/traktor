@@ -71,7 +71,7 @@ struct OceanVertex
 };
 #pragma pack()
 
-const uint32_t c_gridSize = 512;
+const uint32_t c_gridSize = 32;
 const uint32_t c_gridInfSize = c_gridSize / 8;
 const uint32_t c_gridCells = (c_gridSize - 1) * (c_gridSize - 1);
 
@@ -126,10 +126,10 @@ bool OceanComponent::create(resource::IResourceManager* resourceManager, render:
 
 	for (int32_t iz = 0; iz < c_gridSize; ++iz)
 	{
-		const float fz = float(iz) * 2.0f / c_gridSize - 1.0f;
+		const float fz = float(iz) * 2.0f / (c_gridSize - 1.0f) - 1.0f;
 		for (int32_t ix = 0; ix < c_gridSize; ++ix)
 		{
-			const float fx = float(ix) * 2.0f / c_gridSize - 1.0f;
+			const float fx = float(ix) * 2.0f / (c_gridSize - 1.0f) - 1.0f;
 			vertex->pos[0] = fx;
 			vertex->pos[1] = fz;
 			vertex++;
@@ -456,10 +456,18 @@ void OceanComponent::build(
 	if (!sp)
 		return;
 
-	for (int32_t iz = -2; iz <= 2; ++iz)
+	for (int32_t iz = -3; iz <= 3; ++iz)
 	{
-		for (int32_t ix = -2; ix <= 2; ++ix)
+		for (int32_t ix = -3; ix <= 3; ++ix)
 		{
+			Aabb3 boundingBox;
+			boundingBox.mn = Vector4(-100.0f + ix * 200.0f, -10.0f, -100.0f + iz * 200.0f);
+			boundingBox.mx = Vector4( 100.0f + ix * 200.0f,  10.0f,  100.0f + iz * 200.0f);
+
+			float distance;
+			if (!worldRenderView.isBoxVisible(boundingBox, transform, distance))
+				continue;
+
 			auto renderBlock = renderContext->allocNamed< render::SimpleRenderBlock >(L"Ocean");
 			renderBlock->distance = std::numeric_limits< float >::max();
 			renderBlock->program = sp.program;

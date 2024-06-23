@@ -1935,7 +1935,7 @@ $Output = vec4(r * -0.05f, 0.0f);
 				<first>265</first>
 				<second>-561</second>
 			</position>
-			<value>500</value>
+			<value>100</value>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{EEFF6D5B-70D2-AB46-B4E9-B42CD4385764}</id>
@@ -1963,7 +1963,7 @@ $Output = vec4(r * -0.05f, 0.0f);
 				<first>265</first>
 				<second>-453</second>
 			</position>
-			<value>500</value>
+			<value>200</value>
 		</item>
 		<item type="traktor.render.Add" version="traktor.render.Node:1">
 			<id>{3275587E-4619-E64E-8011-0536026EAD2D}</id>
