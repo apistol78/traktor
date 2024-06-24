@@ -14,7 +14,7 @@
 			<id>{4CE12A46-E76B-4843-BAE5-EECB0D08D035}</id>
 			<comment/>
 			<position>
-				<first>1197</first>
+				<first>1193</first>
 				<second>-357</second>
 			</position>
 		</item>
@@ -65,7 +65,7 @@
 			<id>{5C3EF533-0879-0E4A-9340-650049452C05}</id>
 			<comment/>
 			<position>
-				<first>-440</first>
+				<first>-405</first>
 				<second>-375</second>
 			</position>
 			<fragmentGuid>{6428F468-651A-EE45-AA5F-B87EAFDFDBFA}</fragmentGuid>
@@ -137,8 +137,8 @@
 			<id>{3EF8C6CC-A3A8-D64F-97A6-ABCFEDD56793}</id>
 			<comment/>
 			<position>
-				<first>1340</first>
-				<second>878</second>
+				<first>1372</first>
+				<second>894</second>
 			</position>
 			<technique/>
 			<precisionHint>Undefined</precisionHint>
@@ -163,16 +163,16 @@
 			<id>{DAE59771-41C6-664B-A266-B5D959C3533F}</id>
 			<comment/>
 			<position>
-				<first>415</first>
-				<second>806</second>
+				<first>300</first>
+				<second>801</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle" version="traktor.render.Node:1">
 			<id>{534B7B31-5DFB-0F46-8803-F96BF27D4166}</id>
 			<comment/>
 			<position>
-				<first>299</first>
-				<second>809</second>
+				<first>75</first>
+				<second>792</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
@@ -180,8 +180,8 @@
 			<id>{D63679F3-6CCB-3449-A506-B5210C875F5C}</id>
 			<comment/>
 			<position>
-				<first>136</first>
-				<second>859</second>
+				<first>21</first>
+				<second>854</second>
 			</position>
 			<name>Position</name>
 			<usage>Position</usage>
@@ -233,9 +233,9 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdWrap</addressU>
-			<addressV>AdWrap</addressV>
-			<addressW>AdWrap</addressW>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
 			<compare>CfNone</compare>
 			<mipBias>0</mipBias>
 			<ignoreMips>false</ignoreMips>
@@ -253,8 +253,8 @@
 			<id>{AA70876F-19AA-F147-AD94-8BA64698273D}</id>
 			<comment/>
 			<position>
-				<first>391</first>
-				<second>-232</second>
+				<first>315</first>
+				<second>-228</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -322,7 +322,7 @@
 			<id>{EEDB5DFA-CCD3-B343-9B68-AA588CF73375}</id>
 			<comment/>
 			<position>
-				<first>535</first>
+				<first>539</first>
 				<second>-88</second>
 			</position>
 			<value>0.5</value>
@@ -331,7 +331,7 @@
 			<id>{D287B8C8-E940-0E4A-83A9-3AE783CE64C2}</id>
 			<comment/>
 			<position>
-				<first>489</first>
+				<first>491</first>
 				<second>-144</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
@@ -369,8 +369,8 @@
 			<id>{11E6CF89-B3B1-9448-9A19-0ACB7810D554}</id>
 			<comment/>
 			<position>
-				<first>628</first>
-				<second>852</second>
+				<first>513</first>
+				<second>847</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
@@ -434,7 +434,7 @@
 			<id>{D4C60A27-1970-7642-96E9-3950DAFE0090}</id>
 			<comment/>
 			<position>
-				<first>211</first>
+				<first>215</first>
 				<second>389</second>
 			</position>
 			<name>TexCoord</name>
@@ -443,8 +443,8 @@
 			<id>{A34256B3-CDCF-774B-B119-3BF523532C15}</id>
 			<comment/>
 			<position>
-				<first>141</first>
-				<second>431</second>
+				<first>161</first>
+				<second>429</second>
 			</position>
 			<name>NormalMap</name>
 			<connectable>true</connectable>
@@ -456,8 +456,8 @@
 			<id>{8E8B2810-5BB2-2D48-96D7-BD7AA2049D8F}</id>
 			<comment/>
 			<position>
-				<first>505</first>
-				<second>386</second>
+				<first>455</first>
+				<second>375</second>
 			</position>
 			<fragmentGuid>{036D3453-15CB-164C-85AF-C08268AED664}</fragmentGuid>
 			<inputPins>
@@ -479,6 +479,11 @@
 				<item>
 					<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 					<name>Normal</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<id>{A74EF1AC-F7D9-461D-B42F-2CF285BA7384}</id>
+					<name>SamplerState</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -604,6 +609,24 @@
 				<second>-338</second>
 			</position>
 			<swizzle>y</swizzle>
+		</item>
+		<item type="traktor.render.TextureState" version="traktor.render.Node:1">
+			<id>{73B0D228-C2F0-4C8D-95D5-93260779A139}</id>
+			<comment/>
+			<position>
+				<first>201</first>
+				<second>469</second>
+			</position>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdClamp</addressU>
+			<addressV>AdClamp</addressV>
+			<addressW>AdClamp</addressW>
+			<compare>CfNone</compare>
+			<mipBias>0</mipBias>
+			<ignoreMips>false</ignoreMips>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 	</nodes>
 	<edges>
@@ -1175,6 +1198,16 @@
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
 				<id>{69997292-C813-490C-910C-620B9AD3A2BB}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<id>{82C966B2-7B19-48B2-8FE0-B85FF4E3C504}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<id>{A74EF1AC-F7D9-461D-B42F-2CF285BA7384}</id>
 			</destination>
 		</item>
 	</edges>

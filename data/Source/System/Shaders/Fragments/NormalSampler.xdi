@@ -5,8 +5,8 @@
 			<id>{B7A805D3-8C98-3947-91C3-EEDA4E8F04D8}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>200</second>
+				<first>305</first>
+				<second>75</second>
 			</position>
 			<name>Texture</name>
 			<connectable>true</connectable>
@@ -18,8 +18,8 @@
 			<id>{3B4670EB-F2F6-3149-A660-70780B6F5F88}</id>
 			<comment/>
 			<position>
-				<first>347</first>
-				<second>252</second>
+				<first>289</first>
+				<second>127</second>
 			</position>
 			<name>TexCoord</name>
 			<connectable>true</connectable>
@@ -31,8 +31,8 @@
 			<id>{798A79B3-87DC-244A-8893-F0079983A4B1}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>356</second>
+				<first>305</first>
+				<second>460</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -44,8 +44,8 @@
 			<id>{EA8728D2-5DD0-6C4F-A619-A00E15DAE507}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>304</second>
+				<first>289</first>
+				<second>408</second>
 			</position>
 			<name>Binormal</name>
 			<connectable>true</connectable>
@@ -57,8 +57,8 @@
 			<id>{E3FAEDAD-4391-1E40-9321-8E25D1D6E6DB}</id>
 			<comment/>
 			<position>
-				<first>367</first>
-				<second>408</second>
+				<first>305</first>
+				<second>512</second>
 			</position>
 			<name>Tangent</name>
 			<connectable>true</connectable>
@@ -188,6 +188,19 @@
 				<first>1594</first>
 				<second>276</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="2,traktor.render.Node:1">
+			<id>{A74EF1AC-F7D9-461D-B42F-2CF285BA7384}</id>
+			<comment/>
+			<position>
+				<first>273</first>
+				<second>270</second>
+			</position>
+			<name>SamplerState</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<haveDefaultValue>false</haveDefaultValue>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -329,6 +342,16 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<id>{23915FA8-1C9E-AD47-89D0-3B96028FC6BD}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<id>{9AE16BB1-EB68-45A0-A878-8D01C210082B}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<id>{10F0235A-9174-4DB8-978C-FC55A07C94A2}</id>
 			</destination>
 		</item>
 	</edges>
