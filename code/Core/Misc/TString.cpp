@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -15,7 +15,7 @@ namespace traktor
 
 std::wstring mbstows(const IEncoding& encoding, const std::string_view& s)
 {
-	AlignedVector< wchar_t > es;
+	std::wstring es;
 	wchar_t ec;
 	int32_t r;
 
@@ -32,7 +32,7 @@ std::wstring mbstows(const IEncoding& encoding, const std::string_view& s)
 		i += r;
 	}
 
-	return std::wstring(es.begin(), es.end());
+	return es;
 }
 
 std::string wstombs(const IEncoding& encoding, const std::wstring_view& s)
@@ -49,7 +49,7 @@ std::string wstombs(const IEncoding& encoding, const std::wstring_view& s)
 		if (nbuf <= 0)
 			continue;
 
-		out += std::string(buf, buf + nbuf);
+		out += std::string_view((const char*)buf, nbuf);
 	}
 
 	return out;
