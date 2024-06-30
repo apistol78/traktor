@@ -12,7 +12,7 @@
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "Weather/Sky/SkyComponentData.h"
-#include "World/IEntityComponent.h"
+#include "World/Entity/IIrradianceGridComponent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,19 +48,27 @@ class IResourceManager;
 
 }
 
+namespace traktor::world
+{
+
+class IrradianceGrid;
+
+}
+
 namespace traktor::weather
 {
 
 /*! Sky background component.
  * \ingroup Weather
  */
-class T_DLLCLASS SkyComponent : public world::IEntityComponent
+class T_DLLCLASS SkyComponent : public world::IIrradianceGridComponent
 {
 	T_RTTI_CLASS;
 
 public:
 	explicit SkyComponent(
 		const SkyComponentData& data,
+		const world::IrradianceGrid* irradianceGrid,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< render::ITexture >& texture
 	);
@@ -79,6 +87,8 @@ public:
 
 	virtual void update(const world::UpdateParams& update) override final;
 
+	virtual const world::IrradianceGrid* getIrradianceGrid() const override final { return m_irradianceGrid; }
+
 	void setup(
 		const world::WorldSetupContext& context,
 		const world::WorldRenderView& worldRenderView
@@ -92,6 +102,7 @@ public:
 
 private:
 	const SkyComponentData m_data;
+	Ref< const world::IrradianceGrid > m_irradianceGrid;
 	Ref< const render::IVertexLayout > m_vertexLayout;
 	Ref< render::Buffer > m_vertexBuffer;
 	Ref< render::Buffer > m_indexBuffer;

@@ -320,7 +320,7 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	rp->addInput(leftTargetSetId);
 	rp->addInput(rightTargetSetId);
 
-	rp->addBuild([=](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
+	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
 
 		auto leftTargetSet = renderGraph.getTargetSet(leftTargetSetId);
 		auto rightTargetSet = renderGraph.getTargetSet(rightTargetSetId);

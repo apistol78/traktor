@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -30,7 +30,6 @@ namespace traktor::world
 {
 
 class Entity;
-class IrradianceGrid;
 class World;
 class WorldEntityRenderers;
 
@@ -45,7 +44,6 @@ public:
 	explicit WorldSetupContext(
 		const World* world,
 		const WorldEntityRenderers* entityRenderers,
-		const IrradianceGrid* irradianceGrid,
 		render::RenderGraph& renderGraph,
 		AlignedVector< render::handle_t >& visualAttachments
 	);
@@ -54,8 +52,6 @@ public:
 
 	const WorldEntityRenderers* getEntityRenderers() const { return m_entityRenderers; }
 
-	const IrradianceGrid* getIrradianceGrid() const { return m_irradianceGrid; }
-
 	render::RenderGraph& getRenderGraph() const { return m_renderGraph; }
 
 	AlignedVector< render::handle_t >& getVisualAttachments() const { return m_visualAttachments; }
@@ -63,7 +59,6 @@ public:
 private:
 	const World* m_world;
 	const WorldEntityRenderers* m_entityRenderers;
-	const IrradianceGrid* m_irradianceGrid;
 	render::RenderGraph& m_renderGraph;
 	AlignedVector< render::handle_t >& m_visualAttachments;
 };

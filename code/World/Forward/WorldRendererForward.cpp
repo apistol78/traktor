@@ -115,7 +115,7 @@ void WorldRendererForward::setup(
 	// Add additional passes by entity renderers.
 	{
 		T_PROFILER_SCOPE(L"WorldRendererForward setup extra passes");
-		WorldSetupContext context(world, m_entityRenderers, m_irradianceGrid, renderGraph, m_visualAttachments);
+		WorldSetupContext context(world, m_entityRenderers, renderGraph, m_visualAttachments);
 
 		for (const auto& r : m_gatheredView.renderables)
 			r.renderer->setup(context, worldRenderView, r.renderable);
@@ -139,7 +139,7 @@ void WorldRendererForward::setup(
 
 	// Add passes to render graph.
 	m_lightClusterPass->setup(worldRenderView, m_gatheredView);
-	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, nullptr, s_techniqueForwardGBufferWrite, renderGraph, 0, outputTargetSetId);
+	auto gbufferTargetSetId = m_gbufferPass->setup(worldRenderView, m_gatheredView, s_techniqueForwardGBufferWrite, renderGraph, 0, outputTargetSetId);
 	auto dbufferTargetSetId = m_dbufferPass->setup(worldRenderView, m_gatheredView, renderGraph, gbufferTargetSetId, outputTargetSetId);
 	//m_hiZPass->setup(worldRenderView, renderGraph, gbufferTargetSetId);
 	auto velocityTargetSetId = m_velocityPass->setup(worldRenderView, m_gatheredView, count, renderGraph, gbufferTargetSetId, outputTargetSetId);
@@ -246,13 +246,13 @@ void WorldRendererForward::setupVisualPass(
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
-			if (m_irradianceGrid)
+			if (m_gatheredView.irradianceGrid)
 			{
-				const auto size = m_irradianceGrid->getSize();
+				const auto size = m_gatheredView.irradianceGrid->getSize();
 				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_irradianceGrid->getBoundingBox().mn);
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_irradianceGrid->getBoundingBox().mx);
-				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_irradianceGrid->getBuffer()->getBufferView());
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, m_gatheredView.irradianceGrid->getBoundingBox().mn);
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, m_gatheredView.irradianceGrid->getBoundingBox().mx);
+				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, m_gatheredView.irradianceGrid->getBuffer()->getBufferView());
 			}
 
 			sharedParams->setBufferViewParameter(s_handleTileSBuffer, m_lightClusterPass->getTileSBuffer()->getBufferView());
@@ -317,8 +317,8 @@ void WorldRendererForward::setupVisualPass(
 
 			sharedParams->endParameters(wc.getRenderContext());
 
-			const bool irradianceEnable = (bool)(m_irradianceGrid != nullptr);
-			const bool irradianceSingle = irradianceEnable && m_irradianceGrid->isSingle();
+			const bool irradianceEnable = (bool)(m_gatheredView.irradianceGrid != nullptr);
+			const bool irradianceSingle = irradianceEnable && m_gatheredView.irradianceGrid->isSingle();
 
 			const WorldRenderPassShared defaultPass(
 				s_techniqueForwardColor,

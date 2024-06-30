@@ -957,9 +957,10 @@ bool BakePipelineOperator::build(
 		));
 
 		// Modify scene with our generated irradiance grid resource.
-		inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
-			irradianceGridId
-		);
+		// inoutSceneAsset->getWorldRenderSettings()->irradianceGrid = resource::Id< world::IrradianceGrid >(
+		// 	irradianceGridId
+		// );
+		// #fixme Need to add world component to reference baked irradiance grid.
 	}
 
 	// Finally enqueue task to tracer processor.

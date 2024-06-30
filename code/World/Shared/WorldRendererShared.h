@@ -34,7 +34,6 @@ class DBufferPass;
 class GBufferPass;
 class HiZPass;
 class IEntityRenderer;
-class IrradianceGrid;
 class LightClusterPass;
 class LightComponent;
 class Packer;
@@ -104,7 +103,6 @@ protected:
 
 	resource::Proxy< render::Shader > m_clearDepthShader;
 
-	resource::Proxy< IrradianceGrid > m_irradianceGrid;
 	Ref< Packer > m_shadowAtlasPacker;
 
 	GatherView m_gatheredView;

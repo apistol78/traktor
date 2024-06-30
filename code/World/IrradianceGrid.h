@@ -25,6 +25,8 @@ namespace traktor::render
 {
 
 class Buffer;
+class IRenderSystem;
+class SHCoeffs;
 
 }
 
@@ -60,7 +62,7 @@ public:
 	typedef uint32_t gridSize_t [3];
 
 	explicit IrradianceGrid(
-		gridSize_t size,
+		const gridSize_t size,
 		const Aabb3& boundingBox,
 		render::Buffer* buffer
 	);
@@ -72,6 +74,8 @@ public:
 	render::Buffer* getBuffer() const { return m_buffer; }
 
 	bool isSingle() const { return m_size[0] == 1 && m_size[1] == 1 && m_size[2] == 1; }
+
+	static Ref< IrradianceGrid > createSingle(render::IRenderSystem* renderSystem, const render::SHCoeffs& shCoeffs);
 
 private:
 	gridSize_t m_size;

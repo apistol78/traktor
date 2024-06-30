@@ -8,6 +8,7 @@
  */
 #include <cmath>
 #include "Core/Math/Const.h"
+#include "Core/Math/Quasirandom.h"
 #include "Core/Serialization/AttributeHdr.h"
 #include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/AttributeRange.h"
@@ -17,9 +18,12 @@
 #include "Resource/IResourceManager.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
+#include "Render/SH/SHEngine.h"
+#include "Render/SH/SHFunction.h"
 #include "Resource/Member.h"
 #include "Weather/Sky/SkyComponent.h"
 #include "Weather/Sky/SkyComponentData.h"
+#include "World/IrradianceGrid.h"
 
 namespace traktor::weather
 {
@@ -27,6 +31,23 @@ namespace traktor::weather
 	{
 
 const resource::Id< render::Shader > c_defaultShader(Guid(L"{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}"));
+
+class WrappedSHFunction : public render::SHFunction
+{
+public:
+	explicit WrappedSHFunction(const std::function< Vector4 (const Vector4&) >& fn)
+	:	m_fn(fn)
+	{
+	}
+
+	virtual Vector4 evaluate(float phi, float theta, const Vector4& unit) const override final
+	{
+		return m_fn(unit);
+	}
+
+private:
+	std::function< Vector4 (const Vector4&) > m_fn;
+};
 
 	}
 
@@ -50,8 +71,43 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 			return nullptr;
 	}
 
+	// Create irradiance grid from sky.
+	const Scalar intensity(m_intensity);
+	const Scalar saturation(1.0f);
+
+	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
+		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
+
+		// Sample over hemisphere.
+		for (int32_t i = 0; i < 1000; ++i)
+		{
+			const Vector2 uv = Quasirandom::hammersley(i, 1000);
+			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
+			const Vector4 rd = unit;
+			
+			Vector4 col = m_skyOverHorizon - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+			col = lerp(col, m_skyUnderHorizon, power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
+
+			const Scalar w = dot3(direction, unit);
+			cl += Color4f(col * w);
+		}
+
+		return (cl * intensity * 2.0_simd) / 1000.0_simd;
+	});
+
+	render::SHCoeffs shCoeffs;
+
+	render::SHEngine shEngine(3);
+	shEngine.generateSamplePoints(10000);
+	shEngine.generateCoefficients(&shFunction, true, shCoeffs);
+
+	Ref< world::IrradianceGrid > irradianceGrid = world::IrradianceGrid::createSingle(renderSystem, shCoeffs);
+	if (!irradianceGrid)
+		return nullptr;
+
 	Ref< SkyComponent > skyComponent = new SkyComponent(
 		*this,
+		irradianceGrid,
 		shader,
 		texture
 	);

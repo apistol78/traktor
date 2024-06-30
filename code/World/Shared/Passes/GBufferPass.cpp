@@ -37,7 +37,6 @@ GBufferPass::GBufferPass(
 render::handle_t GBufferPass::setup(
 	const WorldRenderView& worldRenderView,
     const GatherView& gatheredView,
-	const IrradianceGrid* irradianceGrid,
 	render::handle_t gbufferWriteTechnique,
 	render::RenderGraph& renderGraph,
 	render::handle_t hiZTextureId,
@@ -89,13 +88,13 @@ render::handle_t GBufferPass::setup(
 			sharedParams->setMatrixParameter(s_handleView, worldRenderView.getView());
 			sharedParams->setMatrixParameter(s_handleViewInverse, worldRenderView.getView().inverse());
 
-			if (irradianceGrid)
+			if (gatheredView.irradianceGrid)
 			{
-				const auto size = irradianceGrid->getSize();
+				const auto size = gatheredView.irradianceGrid->getSize();
 				sharedParams->setVectorParameter(s_handleIrradianceGridSize, Vector4((float)size[0] + 0.5f, (float)size[1] + 0.5f, (float)size[2] + 0.5f, 0.0f));
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, irradianceGrid->getBoundingBox().mn);
-				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, irradianceGrid->getBoundingBox().mx);
-				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, irradianceGrid->getBuffer()->getBufferView());
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMin, gatheredView.irradianceGrid->getBoundingBox().mn);
+				sharedParams->setVectorParameter(s_handleIrradianceGridBoundsMax, gatheredView.irradianceGrid->getBoundingBox().mx);
+				sharedParams->setBufferViewParameter(s_handleIrradianceGridSBuffer, gatheredView.irradianceGrid->getBuffer()->getBufferView());
 			}
 
 			if (hiZTextureId != 0)
@@ -106,8 +105,8 @@ render::handle_t GBufferPass::setup(
 
 			sharedParams->endParameters(renderContext);
 
-			const bool irradianceEnable = (bool)(irradianceGrid != nullptr);
-			const bool irradianceSingle = irradianceEnable && irradianceGrid->isSingle();
+			const bool irradianceEnable = (bool)(gatheredView.irradianceGrid != nullptr);
+			const bool irradianceSingle = irradianceEnable && gatheredView.irradianceGrid->isSingle();
 
 			const WorldRenderPassShared gbufferPass(
 				gbufferWriteTechnique,

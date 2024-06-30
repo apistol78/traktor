@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -52,7 +52,7 @@ const wchar_t* c_ImageProcess_elementNames[] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 39, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 40, WorldRenderSettings, ISerializable)
 
 void WorldRenderSettings::serialize(ISerializer& s)
 {
@@ -165,13 +165,10 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion() >= 20 && s.getVersion() <= 30)
-	{
-		resource::Id< render::ITexture > reflectionMap;
-		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
-	}
+		s >> resource::ObsoleteMember< render::ITexture >(L"reflectionMap");
 
-	if (s.getVersion() >= 32)
-		s >> resource::Member< IrradianceGrid >(L"irradianceGrid", irradianceGrid);
+	if (s.getVersion() >= 32 && s.getVersion() < 40)
+		s >> resource::ObsoleteMember< IrradianceGrid >(L"irradianceGrid");
 
 	if (s.getVersion() >= 22)
 		s >> MemberStaticArray< resource::Id< render::ImageGraph >, sizeof_array(imageProcess), resource::Member< render::ImageGraph > >(L"imageProcess", imageProcess, c_ImageProcess_elementNames);

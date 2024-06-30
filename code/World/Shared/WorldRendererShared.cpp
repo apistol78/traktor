@@ -28,6 +28,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldHandles.h"
 #include "World/WorldRenderView.h"
+#include "World/Entity/IIrradianceGridComponent.h"
 #include "World/Entity/LightComponent.h"
 #include "World/Entity/ProbeComponent.h"
 #include "World/Entity/VolumetricFogComponent.h"
@@ -132,15 +133,6 @@ bool WorldRendererShared::create(
 		shadowSettings.resolution
 	);
 
-	// Create irradiance grid.
-	if (desc.irradianceGrid != nullptr)
-		m_irradianceGrid = resource::Proxy< IrradianceGrid >(const_cast< IrradianceGrid* >(desc.irradianceGrid));
-	else if (!m_settings.irradianceGrid.isNull())
-	{
-		if (!resourceManager->bind(m_settings.irradianceGrid, m_irradianceGrid))
-			return false;
-	}
-
 	// Create "clear depth" shader.
 	if (!resourceManager->bind(c_clearDepthShader, m_clearDepthShader))
 		return false;
@@ -208,8 +200,6 @@ void WorldRendererShared::destroy()
 	m_gbufferPass = nullptr;
 
 	safeDestroy(m_lightClusterPass);
-
-	m_irradianceGrid.clear();
 }
 
 void WorldRendererShared::gather(const World* world, const std::function< bool(const EntityState& state) >& filter)
@@ -221,6 +211,7 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 	m_gatheredView.lights.resize(0);
 	m_gatheredView.probes.resize(0);
 	m_gatheredView.fog = nullptr;
+	m_gatheredView.irradianceGrid = nullptr;
 
 	for (auto component : world->getComponents())
 	{
@@ -254,6 +245,8 @@ void WorldRendererShared::gather(const World* world, const std::function< bool(c
 				m_gatheredView.probes.push_back(probeComponent);
 			else if (auto volumetricFogComponent = dynamic_type_cast< const VolumetricFogComponent* >(component))
 				m_gatheredView.fog = volumetricFogComponent;
+			else if (auto irradianceGridComponent = dynamic_type_cast< const IIrradianceGridComponent* >(component))
+				m_gatheredView.irradianceGrid = irradianceGridComponent->getIrradianceGrid();
 		}
 	}
 

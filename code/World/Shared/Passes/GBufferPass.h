@@ -22,7 +22,6 @@ class RenderGraph;
 namespace traktor::world
 {
 
-class IrradianceGrid;
 class WorldEntityRenderers;
 class WorldRenderView;
 
@@ -41,7 +40,6 @@ public:
 	render::handle_t setup(
 		const WorldRenderView& worldRenderView,
 		const GatherView& gatheredView,
-		const IrradianceGrid* irradianceGrid,
 		render::handle_t gbufferWriteTechnique,
 		render::RenderGraph& renderGraph,
 		render::handle_t hiZTextureId,

@@ -64,14 +64,16 @@ const int32_t c_indexCount = c_triangleCount * 3;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IEntityComponent)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.SkyComponent", SkyComponent, world::IIrradianceGridComponent)
 
 SkyComponent::SkyComponent(
 	const SkyComponentData& data,
+	const world::IrradianceGrid* irradianceGrid,
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< render::ITexture >& texture
 )
 :	m_data(data)
+,	m_irradianceGrid(irradianceGrid)
 ,	m_shader(shader)
 ,	m_texture(texture)
 ,	m_transform(Transform::identity())

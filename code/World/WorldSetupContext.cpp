@@ -18,13 +18,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldSetupContext", WorldSetupContext, Ob
 WorldSetupContext::WorldSetupContext(
 	const World* world,
 	const WorldEntityRenderers* entityRenderers,
-	const IrradianceGrid* irradianceGrid,
 	render::RenderGraph& renderGraph,
 	AlignedVector< render::handle_t >& visualAttachments
 )
 :	m_world(world)
 ,	m_entityRenderers(entityRenderers)
-,	m_irradianceGrid(irradianceGrid)
 ,	m_renderGraph(renderGraph)
 ,	m_visualAttachments(visualAttachments)
 {

@@ -265,7 +265,7 @@ void ProbeRenderer::setup(const WorldSetupContext& context)
 		wcd.quality.imageProcess = world::Quality::Disabled;
 		wcd.multiSample = 0;
 		wcd.gamma = 1.0f;
-		wcd.irradianceGrid = context.getIrradianceGrid();
+		// wcd.irradianceGrid = context.getIrradianceGrid();
 
 		if (!m_worldRenderer->create(
 			m_resourceManager,

@@ -44,7 +44,6 @@ namespace traktor::world
 {
 
 class Entity;
-class IrradianceGrid;
 class World;
 class WorldEntityRenderers;
 class WorldRenderSettings;
@@ -74,7 +73,6 @@ struct WorldCreateDesc
 	QualitySettings quality;
 	uint32_t multiSample = 0;
 	float gamma = 2.2f;
-	const IrradianceGrid* irradianceGrid = nullptr;			/*!< Explicit irradiance grid, override settings. */
 };
 
 /*! World renderer.

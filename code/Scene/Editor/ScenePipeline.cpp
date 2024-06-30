@@ -150,8 +150,6 @@ bool ScenePipeline::buildDependencies(
 				pipelineDepends->addDependency(wrs->shadowSettings[i].maskProject, editor::PdfBuild);
 		}
 
-		pipelineDepends->addDependency(wrs->irradianceGrid, editor::PdfBuild | editor::PdfResource);
-
 		if (!m_suppressImageProcess)
 		{
 			for (int32_t i = 0; i < sizeof_array(wrs->imageProcess); ++i)

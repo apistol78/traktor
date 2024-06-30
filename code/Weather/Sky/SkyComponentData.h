@@ -36,6 +36,13 @@ class Shader;
 
 }
 
+namespace traktor::world
+{
+
+class IrradianceGrid;
+
+}
+
 namespace traktor::weather
 {
 
@@ -67,6 +74,7 @@ public:
 
 private:
 	friend class SkyComponent;
+	friend class WeatherPipeline;
 
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;

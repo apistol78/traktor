@@ -25,6 +25,7 @@ namespace traktor::world
 {
 
 class IEntityRenderer;
+class IrradianceGrid;
 class LightComponent;
 class ProbeComponent;
 class VolumetricFogComponent;
@@ -107,6 +108,7 @@ struct GatherView
 	AlignedVector< const LightComponent* > lights;
 	AlignedVector< const ProbeComponent* > probes;
 	const VolumetricFogComponent* fog;
+	const IrradianceGrid* irradianceGrid;
 };
 
 /*!
