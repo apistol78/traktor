@@ -28,7 +28,7 @@
 			<name>Tone mapping</name>
 			<clear>
 				<mask>
-					<Color>true</Color>
+					<Color>false</Color>
 					<Depth>false</Depth>
 					<Stencil>false</Stencil>
 				</mask>

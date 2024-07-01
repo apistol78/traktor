@@ -85,8 +85,8 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 			const Vector4 direction = Quasirandom::uniformHemiSphere(uv, unit);
 			const Vector4 rd = unit;
 			
-			Vector4 col = m_skyOverHorizon - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
-			col = lerp(col, m_skyUnderHorizon, power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
+			Vector4 col = m_skyOverHorizon.linear() - max(rd.y(), 0.01_simd) * max(rd.y(), 0.01_simd) * 0.5_simd;
+			col = lerp(col, m_skyUnderHorizon.linear(), power(1.0_simd - max(rd.y(), 0.0_simd), 6.0_simd));
 
 			const Scalar w = dot3(direction, unit);
 			cl += Color4f(col * w);
