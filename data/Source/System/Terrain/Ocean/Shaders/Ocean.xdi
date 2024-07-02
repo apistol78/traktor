@@ -382,8 +382,8 @@
 			<id>{2AE0A49E-87BC-B24E-8FCC-34F02B6271D1}</id>
 			<comment/>
 			<position>
-				<first>8267</first>
-				<second>1436</second>
+				<first>8239</first>
+				<second>1511</second>
 			</position>
 			<technique>World_DeferredColor</technique>
 			<priority>
@@ -804,7 +804,7 @@
 				<first>5384</first>
 				<second>1505</second>
 			</position>
-			<value>0.2</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Uniform" version="3,traktor.render.Node:1">
 			<id>{A1E20EC6-F0DC-B446-B119-A44D9207F866}</id>
@@ -1445,7 +1445,7 @@ $Output = vec4(scatter, 0.0f);
 				<first>5384</first>
 				<second>1558</second>
 			</position>
-			<value>0.8</value>
+			<value>0.6</value>
 		</item>
 		<item type="traktor.render.Lerp" version="traktor.render.Node:1">
 			<id>{1AF7A3BF-5BFA-E543-8895-0E44D4621E69}</id>
@@ -3414,16 +3414,6 @@ $Output = vec4(r * -0.05f, 0.0f);
 		</item>
 		<item type="traktor.render.Edge" version="1">
 			<source>
-				<node ref="/object/nodes/item[73]"/>
-				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge" version="1">
-			<source>
 				<node ref="/object/nodes/item[46]"/>
 				<id>{4F10C0E3-F820-457F-AB7D-CFDF2AA3C69A}</id>
 			</source>
@@ -3570,6 +3560,16 @@ $Output = vec4(r * -0.05f, 0.0f);
 			<destination>
 				<node ref="/object/nodes/item[158]"/>
 				<id>{F2E22CA6-DFF3-4B20-A70A-0D7A44EACD8C}</id>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge" version="1">
+			<source>
+				<node ref="/object/nodes/item[73]"/>
+				<id>{25E94043-C1B8-794D-8327-6864707AAFAB}</id>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[39]"/>
+				<id>{7174FE5A-D079-4452-AFEF-9FC2BCC2900F}</id>
 			</destination>
 		</item>
 	</edges>

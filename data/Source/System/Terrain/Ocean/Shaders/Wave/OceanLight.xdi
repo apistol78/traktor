@@ -24,6 +24,8 @@ vec3 ComputeOceanScattering(float heightDisplacement, vec3 viewDirection, vec3 v
 	const float k3 = _ScatterShadowStrength * NdotL;
 	const float k4 = _BubbleDensity;
 
+	specularCoeff *= vec3(0.25f);
+
 	vec3 scatter = (k1 + k2) * scatterColor * irradiance * specularCoeff; // * (1.0f / (1.0f + lightMask));
 	scatter += k3 * scatterColor * irradiance + k4 * bubbleColor * irradiance;
 

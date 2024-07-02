@@ -79,6 +79,7 @@ private:
 	resource::Id< render::Shader > m_shader;
 	resource::Id< render::ITexture > m_texture;
 	float m_intensity = 1.0f;
+	float m_saturation = 1.0f;
 
 	Color4f m_skyOverHorizon = Color4f(0.2f, 0.5f, 0.85f, 1.0f);
 	Color4f m_skyUnderHorizon = Color4f(0.1f, 0.1f, 0.12f, 1.0f);

@@ -389,10 +389,10 @@ void SkyComponent::build(
 	renderBlock->programParams->setFloatParameter(s_handleWeather_SkyIntensity, m_data.m_intensity);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunDirection, sunDirection);
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkySunColor, sunColor);
-	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyOverHorizon, m_data.m_skyOverHorizon);
-	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyUnderHorizon, m_data.m_skyUnderHorizon);
-	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop);
-	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom);
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyOverHorizon, m_data.m_skyOverHorizon.linear());
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyUnderHorizon, m_data.m_skyUnderHorizon.linear());
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientTop, m_data.m_cloudAmbientTop.linear());
+	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyCloudAmbientBottom, m_data.m_cloudAmbientBottom.linear());
 	renderBlock->programParams->setVectorParameter(s_handleWeather_SkyEyePosition, eyePosition);
 	renderBlock->programParams->setTextureParameter(s_handleWeather_SkyTexture, m_texture);
 

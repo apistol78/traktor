@@ -51,7 +51,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 7, SkyComponentData, world::IEntityComponentData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyComponentData", 8, SkyComponentData, world::IEntityComponentData)
 
 SkyComponentData::SkyComponentData()
 :	m_shader(c_defaultShader)
@@ -73,7 +73,7 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 
 	// Create irradiance grid from sky.
 	const Scalar intensity(m_intensity);
-	const Scalar saturation(1.0f);
+	const Scalar saturation(m_saturation);
 
 	WrappedSHFunction shFunction([&] (const Vector4& unit) -> Vector4 {
 		Color4f cl(0.0f, 0.0f, 0.0f, 0.0f);
@@ -91,6 +91,10 @@ Ref< SkyComponent > SkyComponentData::createComponent(resource::IResourceManager
 			const Scalar w = dot3(direction, unit);
 			cl += Color4f(col * w);
 		}
+
+		// Apply saturation.
+		const Scalar bw = dot3(cl, Vector4(1.0f, 1.0f, 1.0f)) / 3.0_simd;
+		cl = Color4f(lerp(Vector4(bw, bw, bw, 0.0f), cl, saturation));
 
 		return (cl * intensity * 2.0_simd) / 1000.0_simd;
 	});
@@ -145,6 +149,9 @@ void SkyComponentData::serialize(ISerializer& s)
 
 	if (s.getVersion< SkyComponentData >() >= 4)
 		s >> Member< float >(L"intensity", m_intensity, AttributeRange(0.0f) | AttributeUnit(UnitType::Percent));
+
+	if (s.getVersion< SkyComponentData >() >= 8)
+		s >> Member< float >(L"saturation", m_saturation, AttributeRange(0.0f, 1.0f) | AttributeUnit(UnitType::Percent));
 
 	if (s.getVersion< SkyComponentData >() >= 7)
 	{

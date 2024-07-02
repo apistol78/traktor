@@ -482,8 +482,8 @@ void OceanComponent::build(
 			renderBlock->programParams->setFloatParameter(s_handleOcean_Opacity, m_opacity);
 			//renderBlock->programParams->setVectorParameter(s_handleOcean_Eye, eye);
 			//renderBlock->programParams->setVectorParameter(s_handleOcean_LastEye, lastEye);
-			renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint);
-			renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor);
+			renderBlock->programParams->setVectorParameter(s_handleOcean_ShallowTint, m_shallowTint.linear());
+			renderBlock->programParams->setVectorParameter(s_handleOcean_DeepColor, m_deepColor.linear());
 			renderBlock->programParams->setVectorParameter(s_handleOcean_Tile, Vector4(ix, 0.0f, iz, 0.0f));
 
 			if (!writeVelocity)
