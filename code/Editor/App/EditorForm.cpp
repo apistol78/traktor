@@ -576,10 +576,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	const int32_t ww = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneWestWidth", 350);
 	const int32_t we = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneEastWidth", 350);
+	const int32_t hs = m_mergedSettings->getProperty< int32_t >(L"Editor.PaneSouthHeight", 250);
 
 	pane->split(false, ui::Unit(ww), m_paneWest, paneCenter);
 	paneCenter->split(false, -ui::Unit(we), paneCenter, m_paneEast);
-	paneCenter->split(true, -350_ut, paneCenter, m_paneSouth);
+	paneCenter->split(true, -ui::Unit(hs), paneCenter, m_paneSouth);
 	paneCenter->setDetachable(false);
 
 	// Set pane styles.
@@ -2929,6 +2930,7 @@ void EditorForm::eventClose(ui::CloseEvent* event)
 	// Save docking pane sizes.
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneWestWidth", unit(m_paneWest->getPaneRect().getWidth()).get());
 	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneEastWidth", unit(m_paneEast->getPaneRect().getWidth()).get());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PaneSouthHeight", unit(m_paneSouth->getPaneRect().getHeight()).get());
 
 	// Save panes visible.
 	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dock->isWidgetVisible(m_dataBaseView));
