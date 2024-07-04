@@ -34,7 +34,6 @@ InstanceMeshComponent::~InstanceMeshComponent()
 
 void InstanceMeshComponent::destroy()
 {
-	T_FATAL_ASSERT(m_cullingInstance == nullptr);
 	m_mesh.clear();
 	MeshComponent::destroy();
 }

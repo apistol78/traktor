@@ -14,6 +14,7 @@
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity.h"
+#include "World/EntityBuilder.h"
 #include "World/EntityData.h"
 #include "World/IEntityComponent.h"
 #include "World/IEntityFactory.h"
@@ -80,7 +81,10 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 	// Do not create adapters when we're inside an external entity.
 	if (is_a< world::ExternalEntityData >(m_currentEntityData))
-		return m_entityFactory->createEntity(this, *entityData);
+	{
+		const world::EntityBuilder entityBuilder(m_entityFactory, m_world);
+		return m_entityFactory->createEntity(&entityBuilder, *entityData);
+	}
 
 	// Get adapter; reuse adapters containing same type of entity.
 	Cache& cache = m_cache[entityData->getId()];
