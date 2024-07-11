@@ -41,6 +41,7 @@
 
 #if !defined(__ANDROID__) && !defined(__IOS__)
 #	define T_USE_QUERY
+#	define T_QUERY_SEGMENT_SIZE 2048
 #endif
 
 namespace traktor::render
@@ -594,11 +595,10 @@ bool RenderViewVk::beginFrame()
 
 #if defined(T_USE_QUERY)
 	// Reset time queries.
-	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
-	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
-	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 1024);
+	const int32_t queryFrom = ((m_counter - 1) % m_frames.size()) * 2 * T_QUERY_SEGMENT_SIZE;
+	vkCmdResetQueryPool(*frame.graphicsCommandBuffer, m_queryPool, queryFrom, 2 * T_QUERY_SEGMENT_SIZE);
 	m_nextQueryIndex = queryFrom;
-	m_lastQueryIndex = queryFrom + 1024;
+	m_lastQueryIndex = queryFrom + 2 * T_QUERY_SEGMENT_SIZE;
 #endif
 
 	// Reset misc counters.
@@ -1268,7 +1268,6 @@ int32_t RenderViewVk::beginTimeQuery()
 	const int32_t query = m_nextQueryIndex;
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, m_queryPool, query + 0);
 	m_nextQueryIndex += 2;
-
 	return query;
 #else
 	return 0;
@@ -1291,7 +1290,6 @@ bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, doub
 		flags |= VK_QUERY_RESULT_WAIT_BIT;
 
 	uint64_t stamps[2] = { 0, 0 };
-
 	VkResult result = vkGetQueryPoolResults(m_context->getLogicalDevice(), m_queryPool, query, 2, 2 * sizeof(uint64_t), stamps, sizeof(uint64_t), flags);
 	if (result != VK_SUCCESS)
 		return false;
@@ -1548,9 +1546,14 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
 	qpci.pNext = nullptr;
 	qpci.queryType = VK_QUERY_TYPE_TIMESTAMP;
-	qpci.queryCount = (imageCount + 1) * 2 * 1024;
+	qpci.queryCount = imageCount * 2 * T_QUERY_SEGMENT_SIZE;
 	if (vkCreateQueryPool(m_context->getLogicalDevice(), &qpci, nullptr, &m_queryPool) != VK_SUCCESS)
 		return false;
+
+	// Ensure all queries are reset to silence validation layer.
+	auto commandBuffer = m_context->getGraphicsQueue()->acquireCommandBuffer(T_FILE_LINE_W);
+	vkCmdResetQueryPool(*commandBuffer, m_queryPool, 0, imageCount * 2 * T_QUERY_SEGMENT_SIZE);
+	commandBuffer->submitAndWait();
 #endif
 
 	// Create primary depth target.
