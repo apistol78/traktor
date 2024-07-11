@@ -165,7 +165,7 @@ private:
 
 	// Swap chain.
 	VkSwapchainKHR m_swapChain = 0;
-	VkSemaphore m_imageAvailableSemaphore = 0;
+	VkSemaphore m_imageAvailableSemaphores[4] = { 0, 0, 0, 0 };
 	AlignedVector< Frame > m_frames;
 	uint32_t m_currentImageIndex = 0;
 	uint32_t m_multiSample = 0;

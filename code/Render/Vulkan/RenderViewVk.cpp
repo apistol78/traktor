@@ -39,6 +39,10 @@
 #	include "Render/Vulkan/iOS/Utilities.h"
 #endif
 
+#if !defined(__ANDROID__) && !defined(__IOS__)
+#	define T_USE_QUERY
+#endif
+
 namespace traktor::render
 {
 	namespace
@@ -303,7 +307,7 @@ void RenderViewVk::close()
 	// More pending cleanups since frames own render targets.
 	m_context->performCleanup();
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	if (m_queryPool != 0)
 	{
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
@@ -311,10 +315,13 @@ void RenderViewVk::close()
 	}
 #endif
 
-	if (m_imageAvailableSemaphore != 0)
+	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
 	{
-		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphore, nullptr);
-		m_imageAvailableSemaphore = 0;
+		if (imageAvailableSemaphore != 0)
+		{
+			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
+			imageAvailableSemaphore = 0;
+		}
 	}
 
 	// Destroy pipelines.
@@ -394,7 +401,7 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 	m_frames.clear();
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	if (m_queryPool != 0)
 	{
 		vkDestroyQueryPool(m_context->getLogicalDevice(), m_queryPool, nullptr);
@@ -402,10 +409,13 @@ bool RenderViewVk::reset(int32_t width, int32_t height)
 	}
 #endif
 
-	if (m_imageAvailableSemaphore != 0)
+	for (auto& imageAvailableSemaphore : m_imageAvailableSemaphores)
 	{
-		vkDestroySemaphore(m_context->getLogicalDevice(), m_imageAvailableSemaphore, nullptr);
-		m_imageAvailableSemaphore = 0;
+		if (imageAvailableSemaphore != 0)
+		{
+			vkDestroySemaphore(m_context->getLogicalDevice(), imageAvailableSemaphore, nullptr);
+			imageAvailableSemaphore = 0;
+		}
 	}
 
 	// Destroy pipelines.
@@ -538,16 +548,16 @@ bool RenderViewVk::beginFrame()
 
 	// Get next target from swap chain.
 	T_PROFILER_BEGIN(L"vkAcquireNextImageKHR");
-    vkAcquireNextImageKHR(
+    VkResult result = vkAcquireNextImageKHR(
 		m_context->getLogicalDevice(),
 		m_swapChain,
 		UINT64_MAX,
-		m_imageAvailableSemaphore,
+		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
 		VK_NULL_HANDLE,
 		&m_currentImageIndex
 	);
 	T_PROFILER_END();
-	if (m_currentImageIndex >= m_frames.size())
+	if (result != VK_SUCCESS || m_currentImageIndex >= m_frames.size())
 		return false;
 
 	auto& frame = m_frames[m_currentImageIndex];
@@ -582,7 +592,7 @@ bool RenderViewVk::beginFrame()
 	}
 	T_PROFILER_END();
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	// Reset time queries.
 	const int32_t querySegmentCount = (int32_t)(m_frames.size() * 2);
 	const int32_t queryFrom = (m_counter % querySegmentCount) * 1024;
@@ -613,7 +623,7 @@ void RenderViewVk::endFrame()
 	frame.primaryTarget->getColorTargetVk(0)->prepareForPresentation(frame.graphicsCommandBuffer);
 
 	frame.graphicsCommandBuffer->submit(
-		m_imageAvailableSemaphore,
+		m_imageAvailableSemaphores[m_counter % sizeof_array(m_imageAvailableSemaphores)],
 		VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
 		frame.renderFinishedSemaphore
 	);
@@ -1250,7 +1260,7 @@ bool RenderViewVk::copy(ITexture* destinationTexture, const Region& destinationR
 
 int32_t RenderViewVk::beginTimeQuery()
 {
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	if (m_nextQueryIndex >= m_lastQueryIndex)
 		return -1;
 
@@ -1267,7 +1277,7 @@ int32_t RenderViewVk::beginTimeQuery()
 
 void RenderViewVk::endTimeQuery(int32_t query)
 {
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	auto& frame = m_frames[m_currentImageIndex];
 	vkCmdWriteTimestamp(*frame.graphicsCommandBuffer, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, m_queryPool, query + 1);
 #endif
@@ -1275,7 +1285,7 @@ void RenderViewVk::endTimeQuery(int32_t query)
 
 bool RenderViewVk::getTimeQuery(int32_t query, bool wait, double& outStart, double& outEnd) const
 {
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	uint32_t flags = VK_QUERY_RESULT_64_BIT;
 	if (wait)
 		flags |= VK_QUERY_RESULT_WAIT_BIT;
@@ -1523,13 +1533,16 @@ bool RenderViewVk::create(uint32_t width, uint32_t height, uint32_t multiSample,
 
 	log::debug << L"Got " << imageCount << L" images in swap chain; requested " << desiredImageCount << L" image(s)." << Endl;
 
-	VkSemaphoreCreateInfo sci = {};
-	sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
-	if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphore) != VK_SUCCESS)
-		return false;
-	setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphore, VK_OBJECT_TYPE_SEMAPHORE);
+	for (int32_t i = 0; i < sizeof_array(m_imageAvailableSemaphores); ++i)
+	{
+		VkSemaphoreCreateInfo sci = {};
+		sci.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+		if (vkCreateSemaphore(m_context->getLogicalDevice(), &sci, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS)
+			return false;
+		setObjectDebugName(m_context->getLogicalDevice(), L"m_imageAvailableSemaphore", (uint64_t)m_imageAvailableSemaphores[i], VK_OBJECT_TYPE_SEMAPHORE);
+	}
 
-#if !defined(__ANDROID__) && !defined(__IOS__)
+#if defined(T_USE_QUERY)
 	// Create time query pool.
 	VkQueryPoolCreateInfo qpci = {};
 	qpci.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
