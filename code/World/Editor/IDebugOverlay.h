@@ -39,8 +39,14 @@ namespace traktor::world
 class IWorldRenderer;
 class WorldRenderView;
 
-/*!
+/*! Debug render overlay interface.
  * \ingroup World
+ *
+ * Debug overlays are used by the editor to visualize various
+ * internal buffers for debugging.
+ * 
+ * Specialized overlays exist for common buffers such as gbuffer channels,
+ * shadow maps, velocity buffer etc.
  */
 class T_DLLCLASS IDebugOverlay : public Object
 {
