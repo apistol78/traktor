@@ -230,7 +230,7 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 		if (!sceneInstance)
 			return false;
 
-		uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
+		const uint32_t hash = DeepHash(sceneInstance->getWorldRenderSettings()).get();
 		if (m_worldRendererHash == hash)
 			return false;
 
@@ -265,17 +265,17 @@ bool OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& o
 	const float c_viewFarOffset = 1.0f;
 	const ui::Rect innerRect = m_renderWidget->getInnerRect();
 
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 projectionInverse = projection.inverse();
+	const Matrix44 projection = getProjectionTransform();
+	const Matrix44 projectionInverse = projection.inverse();
 
-	Matrix44 view = getViewTransform();
-	Matrix44 viewInverse = view.inverse();
+	const Matrix44 view = getViewTransform();
+	const Matrix44 viewInverse = view.inverse();
 
-	Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
-	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
+	const Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
+	const Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
 
-	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
-	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
+	const Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
+	const Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
 	outWorldRayOrigin = viewInverse * viewPosition;
 	outWorldRayDirection = viewInverse.axisZ();
 
@@ -290,10 +290,10 @@ bool OrthogonalRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outW
 	calculateRay(rc.getBottomLeft(), origin[2], direction[2]);
 	calculateRay(rc.getBottomRight(), origin[3], direction[3]);
 
-	Scalar nz(-1e6f);
-	Scalar fz(1e6f);
+	const Scalar nz = -1e6_simd;
+	const Scalar fz = 1e6_simd;
 
-	Vector4 corners[8] =
+	const Vector4 corners[8] =
 	{
 		origin[0] + direction[0] * nz,
 		origin[1] + direction[1] * nz,
@@ -305,7 +305,7 @@ bool OrthogonalRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outW
 		origin[3] + direction[3] * fz,
 	};
 
-	Plane planes[6] =
+	const Plane planes[6] =
 	{
 		Plane(corners[1], corners[6], corners[5]),
 		Plane(corners[3], corners[4], corners[7]),
@@ -372,6 +372,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wcd.quality.antiAlias = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
 
+	// Prevent ultra AA quality since jitter cause orthogonal projection to be broken.
+	if (wcd.quality.antiAlias == world::Quality::Ultra)
+		wcd.quality.antiAlias = world::Quality::High;
+
 	if (!worldRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
@@ -400,8 +404,8 @@ Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 	{
 		const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
-		ui::Rect innerRect = m_renderWidget->getInnerRect();
-		float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
+		const ui::Rect innerRect = m_renderWidget->getInnerRect();
+		const float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
 
 		world::WorldRenderView worldRenderView;
 		worldRenderView.setOrthogonal(
@@ -455,9 +459,9 @@ void OrthogonalRenderControl::eventMouseMove(ui::MouseMoveEvent* event)
 
 void OrthogonalRenderControl::eventMouseWheel(ui::MouseWheelEvent* event)
 {
-	int rotation = event->getRotation();
+	const int rotation = event->getRotation();
 
-	float delta = m_magnification / 10.0f;
+	const float delta = m_magnification / 10.0f;
 
 	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
 		m_magnification -= rotation * delta;
@@ -494,7 +498,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	}
 
 	// Check if size has changed since last render; need to reset renderer if so.
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	const ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (lost || sz.cx != m_dirtySize.cx || sz.cy != m_dirtySize.cy)
 	{
 		if (!m_renderView->reset(sz.cx, sz.cy))
@@ -509,14 +513,6 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 	const float width = m_magnification;
 	const float height = m_magnification / ratio;
 	const Matrix44 view = getViewTransform();
-
-	//// Build a root entity by gathering entities from containers.
-	//Ref< world::GroupComponent > rootGroup = new world::GroupComponent();
-	//Ref< world::Entity > rootEntity = new world::Entity();
-	//rootEntity->setComponent(rootGroup);
-
-	//m_context->getEntityEventManager()->gather([&](world::Entity* entity) { rootGroup->addEntity(entity); });
-	//rootGroup->addEntity(sceneInstance->getRootEntity());
 
 	// Setup world render passes.
 	const world::WorldRenderSettings* worldRenderSettings = sceneInstance->getWorldRenderSettings();
@@ -544,14 +540,14 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		// Render grid.
 		if (m_gridEnable)
 		{
-			Vector4 cameraPosition = -(m_camera->getOrientation().inverse() * m_camera->getPosition().xyz1());
+			const Vector4 cameraPosition = -(m_camera->getOrientation().inverse() * m_camera->getPosition().xyz1());
 
-			float hx = width * 0.5f;
-			float hy = height * 0.5f;
+			const float hx = width * 0.5f;
+			const float hy = height * 0.5f;
 
-			Vector2 cp(cameraPosition.x(), cameraPosition.y());
-			Vector2 vtl(-hx, -hy), vbr(hx, hy);
-			Vector2 tl = vtl - cp, br = vbr - cp;
+			const Vector2 cp(cameraPosition.x(), cameraPosition.y());
+			const Vector2 vtl(-hx, -hy), vbr(hx, hy);
+			const Vector2 tl = vtl - cp, br = vbr - cp;
 
 			float lx = floorf(tl.x);
 			float rx = ceilf(br.x);
@@ -569,7 +565,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 			if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
 			{
-				float spacing = m_context->getSnapSpacing();
+				const float spacing = m_context->getSnapSpacing();
 				step = std::max(spacing, step);
 			}
 			else
@@ -582,8 +578,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 			for (float x = lx; x <= rx; x += step)
 			{
-				float fx = x + cameraPosition.x();
-
+				const float fx = x + cameraPosition.x();
 				m_primitiveRenderer->drawLine(
 					Vector4(fx, vtl.y, 0.0f, 1.0f),
 					Vector4(fx, vbr.y, 0.0f, 1.0f),
@@ -594,8 +589,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 			for (float y = ty; y <= by; y += step)
 			{
-				float fy = y + cameraPosition.y();
-
+				const float fy = y + cameraPosition.y();
 				m_primitiveRenderer->drawLine(
 					Vector4(vtl.x, fy, 1.0f),
 					Vector4(vbr.x, fy, 1.0f),
@@ -629,8 +623,8 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 
 			for (int32_t j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
 			{
-				int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
-				int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
+				const int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
+				const int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
 
 				const float* v1 = &c_cameraMeshVertices[i1 * 3];
 				const float* v2 = &c_cameraMeshVertices[i2 * 3];
@@ -667,7 +661,7 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		// Draw selection rectangle if non-empty.
 		if (m_selectionRectangle.area() > 0)
 		{
-			ui::Rect innerRect = m_renderWidget->getInnerRect();
+			const ui::Rect innerRect = m_renderWidget->getInnerRect();
 
 			m_primitiveRenderer->setProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
 
@@ -719,10 +713,6 @@ void OrthogonalRenderControl::eventPaint(ui::PaintEvent* event)
 		m_renderView->endFrame();
 		m_renderView->present();
 	}
-
-	// Need to clear all entities from our root group since when our root entity
-	// goes out of scope it's automatically destroyed.
-	//rootGroup->removeAllEntities();
 
 	event->consume();
 }
