@@ -21,8 +21,13 @@
 namespace traktor::world
 {
 
-/*!
+/*! Default entity pipeline.
  * \ingroup World
+ *
+ * This pipeline uses reflection to scan for child entities and dependencies,
+ * thus used for a majority of entities/components.
+ * 
+ * If special build are required then this class can be useful as a base class.
  */
 class T_DLLCLASS EntityPipeline : public editor::IPipeline
 {

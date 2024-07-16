@@ -55,8 +55,13 @@ class IEntityComponentData;
 namespace traktor::world
 {
 
-/*! Generate model from source entity or component data, such as mesh, terrain, spline, solid etc.
+/*! Generate model from source entity or component data.
  * \ingroup World
+ *
+ * Entity replicators are used by editor/pipeline to allow
+ * systems to generate a system agnostic 3d model of an entity/component data.
+ * 
+ * This is useful for example lightmap ray tracing, AI nav mesh generation etc.
  */
 class T_DLLCLASS IEntityReplicator : public Object
 {
