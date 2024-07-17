@@ -74,10 +74,6 @@ public:
 
 	float getEngineThrottle() const;
 
-	void setEngineBoost(float engineBoost);
-
-	float getEngineBoost() const;
-
 	float getEngineTorque() const;
 
 	void setBreaking(float breaking);
@@ -97,7 +93,6 @@ private:
 	float m_steerAngle;
 	float m_steerAngleTarget;
 	float m_engineThrottle;
-	float m_engineBoost;
 	float m_engineTorque;
 	float m_breaking;
 	bool m_airBorn;
