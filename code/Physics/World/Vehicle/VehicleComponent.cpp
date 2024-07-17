@@ -54,7 +54,6 @@ VehicleComponent::VehicleComponent(
 ,	m_steerAngle(0.0f)
 ,	m_steerAngleTarget(0.0f)
 ,	m_engineThrottle(0.0f)
-,	m_engineBoost(0.0f)
 ,	m_engineTorque(0.0f)
 ,	m_breaking(0.0f)
 ,	m_airBorn(true)
@@ -140,16 +139,6 @@ void VehicleComponent::setEngineThrottle(float engineThrottle)
 float VehicleComponent::getEngineThrottle() const
 {
 	return m_engineThrottle;
-}
-
-void VehicleComponent::setEngineBoost(float engineBoost)
-{
-	m_engineBoost = engineBoost;
-}
-
-float VehicleComponent::getEngineBoost() const
-{
-	return m_engineBoost;
 }
 
 float VehicleComponent::getEngineTorque() const
@@ -457,7 +446,7 @@ void VehicleComponent::updateEngine(Body* body, float /*dT*/)
 
 	const Scalar forwardVelocity = dot3(body->getLinearVelocity(), bodyT.axisZ());
 	const Scalar engineForce =
-		Scalar(m_engineThrottle * (m_engineBoost + 1.0f) * m_data->getEngineForce()) *
+		Scalar(m_engineThrottle * m_data->getEngineForce()) *
 		power((1.0_simd - clamp(abs(forwardVelocity) / Scalar(m_maxVelocity), 0.0_simd, 1.0_simd)), 0.25_simd);
 
 	const float differentialCoeff = 0.2f;
