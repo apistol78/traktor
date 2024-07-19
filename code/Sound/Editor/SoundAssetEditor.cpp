@@ -63,7 +63,9 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_toolBar = new ui::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(new ui::StyleBitmap(L"Sound.Play"));
+	m_toolBar->addImage(new ui::StyleBitmap(L"Sound.Stop"));
 	m_toolBar->addItem(new ui::ToolBarButton(L"Play", 0, ui::Command(L"Sound.Play")));
+	m_toolBar->addItem(new ui::ToolBarButton(L"Stop", 1, ui::Command(L"Sound.Stop")));
 	m_toolBar->addEventHandler< ui::ToolBarButtonClickEvent >(this, &SoundAssetEditor::eventToolBarClick);
 
 	m_propertyList = new ui::AutoPropertyList();
@@ -125,50 +127,61 @@ void SoundAssetEditor::eventToolBarClick(ui::ToolBarButtonClickEvent* event)
 		return;
 	}
 
-	const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
-	const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
-
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!file)
+	if (event->getCommand() == L"Sound.Play")
 	{
-		log::error << L"Failed to preview sound asset; unable to open file." << Endl;
-		return;
-	}
+		const std::wstring assetPath = m_editor->getSettings()->getProperty< std::wstring >(L"Pipeline.AssetPath", L"");
+		const Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, m_asset->getFileName());
 
-	Ref< IStreamDecoder > decoder;
-	if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)
-		decoder = new sound::WavStreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"flac") == 0)
-		decoder = new sound::FlacStreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"mp3") == 0)
-		decoder = new sound::Mp3StreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"ogg") == 0)
-		decoder = new sound::OggStreamDecoder();
-	else if (compareIgnoreCase(fileName.getExtension(), L"tss") == 0)
-		decoder = new sound::TssStreamDecoder();
-	else
+		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+		if (!file)
+		{
+			log::error << L"Failed to preview sound asset; unable to open file." << Endl;
+			return;
+		}
+
+		Ref< IStreamDecoder > decoder;
+		if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)
+			decoder = new sound::WavStreamDecoder();
+		else if (compareIgnoreCase(fileName.getExtension(), L"flac") == 0)
+			decoder = new sound::FlacStreamDecoder();
+		else if (compareIgnoreCase(fileName.getExtension(), L"mp3") == 0)
+			decoder = new sound::Mp3StreamDecoder();
+		else if (compareIgnoreCase(fileName.getExtension(), L"ogg") == 0)
+			decoder = new sound::OggStreamDecoder();
+		else if (compareIgnoreCase(fileName.getExtension(), L"tss") == 0)
+			decoder = new sound::TssStreamDecoder();
+		else
+		{
+			log::error << L"Failed to preview sound asset; unable to determine decoder from extension." << Endl;
+			return;
+		}
+
+		if (!decoder->create(file))
+		{
+			log::error << L"Failed to preview sound asset; unable to create decoder" << Endl;
+			return;
+		}
+
+		Ref< StreamAudioBuffer > buffer = new StreamAudioBuffer();
+		if (!buffer->create(decoder))
+		{
+			log::error << L"Failed to preview sound asset; unable to create stream buffer" << Endl;
+			return;
+		}
+
+		if (m_soundHandle)
+			m_soundHandle->stop();
+
+		m_soundHandle = m_soundPlayer->play(new Sound(buffer, 0, m_asset->getGain(), 0.0f), 0);
+	}
+	else if (event->getCommand() == L"Sound.Stop")
 	{
-		log::error << L"Failed to preview sound asset; unable to determine decoder from extension." << Endl;
-		return;
+		if (m_soundHandle)
+		{
+			m_soundHandle->stop();
+			m_soundHandle = nullptr;
+		}
 	}
-
-	if (!decoder->create(file))
-	{
-		log::error << L"Failed to preview sound asset; unable to create decoder" << Endl;
-		return;
-	}
-
-	Ref< StreamAudioBuffer > buffer = new StreamAudioBuffer();
-	if (!buffer->create(decoder))
-	{
-		log::error << L"Failed to preview sound asset; unable to create stream buffer" << Endl;
-		return;
-	}
-
-	if (m_soundHandle)
-		m_soundHandle->stop();
-
-	m_soundHandle = m_soundPlayer->play(new Sound(buffer, 0, m_asset->getGain(), 0.0f), 0);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::PropertyCommandEvent* event)
