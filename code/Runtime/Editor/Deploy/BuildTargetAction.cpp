@@ -1,16 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/Deploy/BuildTargetAction.h"
-#include "Runtime/Editor/Deploy/Feature.h"
-#include "Runtime/Editor/Deploy/Platform.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -31,6 +26,11 @@
 #include "Core/System/ResolveEnv.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
+#include "Runtime/Editor/Deploy/BuildTargetAction.h"
+#include "Runtime/Editor/Deploy/Feature.h"
+#include "Runtime/Editor/Deploy/Platform.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -53,12 +53,12 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return PropertyString::get(valueString);
 	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
 	{
-		auto ss = PropertyStringArray::get(valueStringArray);
+		const auto ss = PropertyStringArray::get(valueStringArray);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
 	{
-		auto ss = PropertyStringSet::get(valueStringSet);
+		const auto ss = PropertyStringSet::get(valueStringSet);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else
@@ -147,16 +147,16 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Merge pipeline cache configuration from global configuration.
-	bool inheritCache = m_globalSettings->getProperty< bool >(L"Runtime.InheritCache", true);
+	const bool inheritCache = m_globalSettings->getProperty< bool >(L"Runtime.InheritCache", true);
 	if (inheritCache)
 	{
-		bool avalancheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false);
+		const bool avalancheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache", false);
 		if (avalancheEnable)
 		{
-			std::wstring avalancheHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
-			int32_t avalanchePort = m_globalSettings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 0);
-			bool avalancheRead = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", false);
-			bool avalancheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", false);
+			const std::wstring avalancheHost = m_globalSettings->getProperty< std::wstring >(L"Pipeline.AvalancheCache.Host", L"");
+			const int32_t avalanchePort = m_globalSettings->getProperty< int32_t >(L"Pipeline.AvalancheCache.Port", 0);
+			const bool avalancheRead = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Read", false);
+			const bool avalancheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.AvalancheCache.Write", false);
 
 			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache", true);
 			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AvalancheCache.Host", avalancheHost);
@@ -165,15 +165,15 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.AvalancheCache.Write", avalancheWrite);
 		}
 
-		bool fileCacheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache", false);
+		const bool fileCacheEnable = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache", false);
 		if (fileCacheEnable)
 		{
 			std::wstring fileCachePath = m_globalSettings->getProperty< std::wstring >(L"Pipeline.FileCache.Path", L"");
 			fileCachePath = FileSystem::getInstance().getAbsolutePath(fileCachePath).getPathName();
 			if (!fileCachePath.empty())
 			{
-				bool fileCacheRead = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Read", false);
-				bool fileCacheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Write", false);
+				const bool fileCacheRead = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Read", false);
+				const bool fileCacheWrite = m_globalSettings->getProperty< bool >(L"Pipeline.FileCache.Write", false);
 
 				pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
 				pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.FileCache.Path", fileCachePath);
@@ -189,7 +189,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.InstanceCache.Path", instanceCachePath);
 
 	// Merge threaded build configuration from global configuration.
-	bool dependsThreads = m_globalSettings->getProperty< bool >(L"Pipeline.DependsThreads", true);
+	const bool dependsThreads = m_globalSettings->getProperty< bool >(L"Pipeline.DependsThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.DependsThreads", dependsThreads);
 
 	// Set database connection strings.
@@ -198,7 +198,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	if (sourceDatabaseCs.have(L"groupPath"))
 	{
-		Path groupPath = FileSystem::getInstance().getAbsolutePath(sourceDatabaseCs.get(L"groupPath"));
+		const Path groupPath = FileSystem::getInstance().getAbsolutePath(sourceDatabaseCs.get(L"groupPath"));
 		sourceDatabaseCs.set(L"groupPath", groupPath.getPathName());
 	}
 
@@ -251,7 +251,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Launch pipeline through deploy tool; set cwd to output directory.
-	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
+	const Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	Ref< Environment > env = OS::getInstance().getEnvironment();
 #if defined(_WIN32)
 	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathName());
@@ -271,9 +271,8 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidApiLevel", L""));
 
 	// Flatten feature deploy variables.
-	const auto& values = deploy->getValues();
-	for (auto i = values.begin(); i != values.end(); ++i)
-		env->set(i->first, implodePropertyValue(i->second));
+	for (auto it : deploy->getValues())
+		env->set(it.first, implodePropertyValue(it.second));
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
@@ -286,19 +285,19 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	StringOutputStream ss;
 	ss << deployTool.getExecutable() << L" build";
 
-	Guid root = m_targetConfiguration->getRoot();
+	const Guid root = m_targetConfiguration->getRoot();
 	if (root.isValid() && !root.isNull())
 		ss << L" " << root.format();
 
-	Guid startup = m_targetConfiguration->getStartup();
+	const Guid startup = m_targetConfiguration->getStartup();
 	if (startup.isValid() && !startup.isNull())
 		ss << L" " << startup.format();
 
-	Guid defaultInput = m_targetConfiguration->getDefaultInput();
+	const Guid defaultInput = m_targetConfiguration->getDefaultInput();
 	if (defaultInput.isValid() && !defaultInput.isNull())
 		ss << L" " << defaultInput.format();
 
-	Guid onlineConfig = m_targetConfiguration->getOnlineConfig();
+	const Guid onlineConfig = m_targetConfiguration->getOnlineConfig();
 	if (onlineConfig.isValid() && !onlineConfig.isNull())
 		ss << L" " << onlineConfig.format();
 
@@ -346,14 +345,14 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 				PipeReader::Result result;
 				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
 				{
-					std::wstring tmp = trim(str);
+					const std::wstring tmp = trim(str);
 					if (!tmp.empty() && tmp[0] == L':')
 					{
 						std::vector< std::wstring > out;
 						if (Split< std::wstring >::any(tmp, L":", out) == 2)
 						{
-							int32_t index = parseString< int32_t >(out[0]);
-							int32_t count = parseString< int32_t >(out[1]);
+							const int32_t index = parseString< int32_t >(out[0]);
+							const int32_t count = parseString< int32_t >(out[1]);
 							if (count > 0)
 							{
 								if (progressListener)
@@ -390,7 +389,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 			log::error << L"\t" << error << Endl;
 	}
 
-	int32_t exitCode = process->exitCode();
+	const int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
 		log::error << L"Process \"" << ss.str() << L"\" failed with exit code " << exitCode << L"." << Endl;
 

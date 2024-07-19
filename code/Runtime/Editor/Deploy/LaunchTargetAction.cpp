@@ -1,16 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/Deploy/Feature.h"
-#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
-#include "Runtime/Editor/Deploy/Platform.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -29,6 +24,11 @@
 #include "Core/System/PipeReader.h"
 #include "Core/System/ResolveEnv.h"
 #include "Database/Database.h"
+#include "Runtime/Editor/Deploy/Feature.h"
+#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
+#include "Runtime/Editor/Deploy/Platform.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 
 namespace traktor::runtime
 {
@@ -49,12 +49,12 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return PropertyString::get(valueString);
 	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
 	{
-		auto ss = PropertyStringArray::get(valueStringArray);
+		const auto ss = PropertyStringArray::get(valueStringArray);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
 	{
-		auto ss = PropertyStringSet::get(valueStringSet);
+		const auto ss = PropertyStringSet::get(valueStringSet);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else
@@ -136,7 +136,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Launch application through deploy tool.
-	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
+	const Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 
 	Path outputRelativePath;
 	FileSystem::getInstance().getRelativePath(m_outputPath, projectRoot, outputRelativePath);
@@ -165,9 +165,8 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 	env->set(L"DEPLOY_ANDROID_APILEVEL", m_globalSettings->getProperty< std::wstring >(L"Runtime.AndroidApiLevel", L""));
 
 	// Flatten feature deploy variables.
-	const auto& values = deploy->getValues();
-	for (auto i = values.begin(); i != values.end(); ++i)
-		env->set(i->first, implodePropertyValue(i->second));
+	for (auto it : deploy->getValues())
+		env->set(it.first, implodePropertyValue(it.second));
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();
@@ -184,7 +183,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 		const auto& values = settingsEnvironment->getValues();
 		for (auto i = values.begin(); i != values.end(); ++i)
 		{
-			PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
+			const PropertyString* value = dynamic_type_cast< PropertyString* >(i->second);
 			if (value)
 			{
 				env->set(
@@ -229,14 +228,14 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 				PipeReader::Result result;
 				while ((result = stdOutReader.readLine(str)) == PipeReader::RtOk)
 				{
-					std::wstring tmp = trim(str);
+					const std::wstring tmp = trim(str);
 					if (!tmp.empty() && tmp[0] == L':')
 					{
 						std::vector< std::wstring > out;
 						if (Split< std::wstring >::any(tmp, L":", out) == 2)
 						{
-							int32_t index = parseString< int32_t >(out[0]);
-							int32_t count = parseString< int32_t >(out[1]);
+							const int32_t index = parseString< int32_t >(out[0]);
+							const int32_t count = parseString< int32_t >(out[1]);
 							if (count > 0)
 							{
 								if (progressListener)
@@ -273,7 +272,7 @@ bool LaunchTargetAction::execute(IProgressListener* progressListener)
 			log::error << L"\t" << *i << Endl;
 	}
 
-	int32_t exitCode = process->exitCode();
+	const int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
 		log::error << L"Process \"" << deployTool.getExecutable() << L" launch\" failed with exit code " << exitCode << L"." << Endl;
 

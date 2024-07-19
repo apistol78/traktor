@@ -260,17 +260,6 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 		m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
 	}
 
-	// Build a root entity by gathering entities from containers.
-	//auto group = m_rootGroup->getComponent< world::GroupComponent >();
-	//group->removeAllEntities();
-
-	//world::EventManagerComponent* eventManager = m_environment->getWorld()->getEntityEventManager();
-	//if (eventManager)
-	//	eventManager->gather([&](world::Entity* entity) { group->addEntity(entity); });
-
-	//group->addEntity(m_scene->getRootEntity());
-	//group->addEntity(m_dynamicEntities);
-
 	// Get render view dimensions.
 	const int32_t width = m_environment->getRender()->getWidth();
 	const int32_t height = m_environment->getRender()->getHeight();
@@ -313,15 +302,10 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 	);
 
 	Ref< render::RenderPass > rp = new render::RenderPass(L"Split");
-
-	render::Clear cl;
-	rp->setOutput(0, cl, render::TfNone, render::TfColor);
-
+	rp->setOutput(0, render::TfNone, render::TfColor);
 	rp->addInput(leftTargetSetId);
 	rp->addInput(rightTargetSetId);
-
 	rp->addBuild([=, this](const render::RenderGraph& renderGraph, render::RenderContext* renderContext) {
-
 		auto leftTargetSet = renderGraph.getTargetSet(leftTargetSetId);
 		auto rightTargetSet = renderGraph.getTargetSet(rightTargetSetId);
 
@@ -332,7 +316,6 @@ void SplitWorldLayer::setup(const UpdateInfo& info, render::RenderGraph& renderG
 		programParams->endParameters(renderContext);
 
 		m_screenRenderer->draw(renderContext, m_shader, programParams);
-
 	});
 	renderGraph.addPass(rp);
 }

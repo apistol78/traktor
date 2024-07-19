@@ -1,17 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/Deploy/BuildTargetAction.h"
-#include "Runtime/Editor/Deploy/DeployTargetAction.h"
-#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
-#include "Runtime/Editor/Deploy/MigrateTargetAction.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -26,6 +20,12 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Local/LocalDatabase.h"
+#include "Runtime/Editor/Deploy/BuildTargetAction.h"
+#include "Runtime/Editor/Deploy/DeployTargetAction.h"
+#include "Runtime/Editor/Deploy/LaunchTargetAction.h"
+#include "Runtime/Editor/Deploy/MigrateTargetAction.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;

@@ -1,11 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
+#include "Core/Log/Log.h"
+#include "Net/BidirectionalObjectTransport.h"
 #include "Runtime/Editor/TargetConnection.h"
 #include "Runtime/Editor/TargetScriptDebugger.h"
 #include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
@@ -15,8 +17,6 @@
 #include "Runtime/Target/ScriptDebuggerStateChange.h"
 #include "Runtime/Target/ScriptDebuggerStackFrame.h"
 #include "Runtime/Target/ScriptDebuggerStatus.h"
-#include "Core/Log/Log.h"
-#include "Net/BidirectionalObjectTransport.h"
 
 namespace traktor::runtime
 {
@@ -48,7 +48,7 @@ void TargetScriptDebugger::update()
 
 bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
+	const ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
 	if (!m_transport->send(&bp))
 	{
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
@@ -59,7 +59,7 @@ bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumbe
 
 bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
+	const ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
 	if (!m_transport->send(&bp))
 	{
 		log::error << L"Target script debugger error; Unable to send while setting breakpoint." << Endl;
@@ -70,7 +70,7 @@ bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNu
 
 bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackFrame >& outStackFrame)
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureStack, depth);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureStack, depth);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while requesting stack frame." << Endl;
@@ -90,7 +90,7 @@ bool TargetScriptDebugger::captureStackFrame(uint32_t depth, Ref< script::StackF
 
 bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Variable >& outLocals)
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureLocals, depth);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureLocals, depth);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while requesting locals." << Endl;
@@ -110,7 +110,7 @@ bool TargetScriptDebugger::captureLocals(uint32_t depth, RefArray< script::Varia
 
 bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Variable >& outMembers)
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureObject, object);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureObject, object);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while requesting object capture." << Endl;
@@ -130,7 +130,7 @@ bool TargetScriptDebugger::captureObject(uint32_t object, RefArray< script::Vari
 
 bool TargetScriptDebugger::captureBreadcrumbs(AlignedVector< uint32_t >& outBreadcrumbs)
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureBreadcrumbs);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcCaptureBreadcrumbs);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while requesting breadcrumbs capture." << Endl;
@@ -155,7 +155,7 @@ bool TargetScriptDebugger::isRunning() const
 
 bool TargetScriptDebugger::actionBreak()
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while break target." << Endl;
@@ -166,7 +166,7 @@ bool TargetScriptDebugger::actionBreak()
 
 bool TargetScriptDebugger::actionContinue()
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while continue target." << Endl;
@@ -177,7 +177,7 @@ bool TargetScriptDebugger::actionContinue()
 
 bool TargetScriptDebugger::actionStepInto()
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while step-into target." << Endl;
@@ -188,7 +188,7 @@ bool TargetScriptDebugger::actionStepInto()
 
 bool TargetScriptDebugger::actionStepOver()
 {
-	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
+	const ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
 	if (!m_transport->send(&ctrl))
 	{
 		log::error << L"Target script debugger error; Unable to send while step-over target." << Endl;
