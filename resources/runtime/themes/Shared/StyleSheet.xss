@@ -435,6 +435,10 @@
 			<second>$(Images.Path)/Sound/Play.svg</second>
 		</item>
 		<item>
+			<first>Sound.Stop</first>
+			<second>$(Images.Path)/Sound/Stop.svg</second>
+		</item>
+		<item>
 			<first>Sound.PlusMinus</first>
 			<second>$(Images.Path)/Sound/PlusMinus.svg</second>
 		</item>
