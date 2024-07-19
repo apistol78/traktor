@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,7 +9,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
 #include "Core/Thread/Semaphore.h"
@@ -59,18 +58,16 @@ private:
 		std::wstring description;
 		std::wstring host;
 		AlignedVector< std::wstring > platforms;
-		bool local;
-
-		Host();
+		bool local = false;
 
 		bool operator < (const Host& h) const;
 	};
 
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	mutable Semaphore m_lock;
-	std::vector< Host > m_manual;
-	mutable std::vector< Host > m_hosts;
-	mutable std::vector< Host > m_pending;
+	AlignedVector< Host > m_manual;
+	mutable AlignedVector< Host > m_hosts;
+	mutable AlignedVector< Host > m_pending;
 };
 
 }

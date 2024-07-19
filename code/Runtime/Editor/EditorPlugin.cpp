@@ -103,7 +103,7 @@ const struct { const wchar_t* human; const wchar_t* code; } c_languageCodes[] =
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
 {
 public:
-	TargetInstanceProgressListener(TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
+	explicit TargetInstanceProgressListener(TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
 	:	m_targetListControl(targetListControl)
 	,	m_targetInstance(targetInstance)
 	,	m_targetState(targetState)

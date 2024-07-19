@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/TargetScriptProfiler.h"
 #include "Net/BidirectionalObjectTransport.h"
+#include "Runtime/Editor/TargetScriptProfiler.h"
 
 namespace traktor::runtime
 {

@@ -6,11 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/TargetEditor.h"
-#include "Runtime/Editor/Deploy/Feature.h"
-#include "Runtime/Editor/Deploy/Platform.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -24,6 +19,11 @@
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Editor/IEditor.h"
+#include "Runtime/Editor/TargetEditor.h"
+#include "Runtime/Editor/Deploy/Feature.h"
+#include "Runtime/Editor/Deploy/Platform.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Button.h"

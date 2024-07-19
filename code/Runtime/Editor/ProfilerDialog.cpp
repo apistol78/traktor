@@ -7,9 +7,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <cmath>
+#include "Core/Misc/String.h"
 #include "Runtime/Editor/ProfilerDialog.h"
 #include "Runtime/Editor/TargetConnection.h"
-#include "Core/Misc/String.h"
 #include "Ui/Application.h"
 #include "Ui/Splitter.h"
 #include "Ui/TableLayout.h"

@@ -1,16 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Editor/Deploy/DeployTargetAction.h"
-#include "Runtime/Editor/Deploy/Feature.h"
-#include "Runtime/Editor/Deploy/Platform.h"
-#include "Runtime/Editor/Deploy/Target.h"
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -29,6 +24,11 @@
 #include "Core/System/ResolveEnv.h"
 #include "Database/ConnectionString.h"
 #include "Database/Database.h"
+#include "Runtime/Editor/Deploy/DeployTargetAction.h"
+#include "Runtime/Editor/Deploy/Feature.h"
+#include "Runtime/Editor/Deploy/Platform.h"
+#include "Runtime/Editor/Deploy/Target.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Xml/XmlDeserializer.h"
 #include "Xml/XmlSerializer.h"
 
@@ -51,12 +51,12 @@ std::wstring implodePropertyValue(const IPropertyValue* value)
 		return PropertyString::get(valueString);
 	else if (const PropertyStringArray* valueStringArray = dynamic_type_cast< const PropertyStringArray* >(value))
 	{
-		auto ss = PropertyStringArray::get(valueStringArray);
+		const auto ss = PropertyStringArray::get(valueStringArray);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else if (const PropertyStringSet* valueStringSet = dynamic_type_cast< const PropertyStringSet* >(value))
 	{
-		auto ss = PropertyStringSet::get(valueStringSet);
+		const auto ss = PropertyStringSet::get(valueStringSet);
 		return implode(ss.begin(), ss.end(), L"\n");
 	}
 	else
@@ -201,10 +201,10 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Get list of used modules from application configuration.
-	auto runtimeModules = applicationConfiguration->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
+	const auto runtimeModules = applicationConfiguration->getProperty< SmallSet< std::wstring > >(L"Runtime.Modules");
 
 	// Launch deploy tool to ensure platform is ready for launch.
-	Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
+	const Path projectRoot = FileSystem::getInstance().getCurrentVolume()->getCurrentDirectory();
 	Ref< Environment > env = OS::getInstance().getEnvironment();
 #if defined(_WIN32)
 	env->set(L"DEPLOY_PROJECT_ROOT", projectRoot.getPathName());
@@ -246,7 +246,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	{
 		for (const auto pair : settingsEnvironment->getValues())
 		{
-			PropertyString* value = dynamic_type_cast< PropertyString* >(pair.second);
+			const PropertyString* value = dynamic_type_cast< PropertyString* >(pair.second);
 			if (value)
 			{
 				env->set(
@@ -301,7 +301,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 			break;
 	}
 
-	int32_t exitCode = process->exitCode();
+	const int32_t exitCode = process->exitCode();
 	if (exitCode != 0)
 		log::error << L"Process \"" << deployTool.getExecutable() << L" deploy\" failed with exit code " << exitCode << L"." << Endl;
 

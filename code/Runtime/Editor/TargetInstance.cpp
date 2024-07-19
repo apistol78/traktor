@@ -139,7 +139,7 @@ void TargetInstance::removeConnection(TargetConnection* connection)
 	m_connections.remove(connection);
 }
 
-RefArray< TargetConnection> TargetInstance::getConnections() const
+RefArray< TargetConnection > TargetInstance::getConnections() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
 	return m_connections;

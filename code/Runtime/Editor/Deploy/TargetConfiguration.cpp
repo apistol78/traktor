@@ -1,17 +1,17 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <algorithm>
-#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Runtime/Editor/Deploy/TargetConfiguration.h"
 
 namespace traktor::runtime
 {
@@ -55,9 +55,9 @@ void TargetConfiguration::addFeature(const Guid& feature)
 
 void TargetConfiguration::removeFeature(const Guid& feature)
 {
-	std::list< Guid >::iterator i = std::find(m_features.begin(), m_features.end(), feature);
-	if (i != m_features.end())
-		m_features.erase(i);
+	auto it = std::find(m_features.begin(), m_features.end(), feature);
+	if (it != m_features.end())
+		m_features.erase(it);
 }
 
 bool TargetConfiguration::haveFeature(const Guid& feature) const

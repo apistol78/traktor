@@ -7,15 +7,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/Misc/SafeDestroy.h"
-
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Frame/RenderGraph.h"
-
 #include "Runtime/IEnvironment.h"
 #include "Runtime/IRenderServer.h"
 #include "Runtime/IResourceServer.h"
-
 #include "Runtime/Engine/DebugLayer.h"
 #include "Runtime/Engine/Stage.h"
 #include "Runtime/Engine/WorldLayer.h"

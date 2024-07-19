@@ -49,7 +49,7 @@ bool TargetManager::create()
 		return false;
 	}
 
-	m_port = dynamic_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
+	m_port = mandatory_non_null_type_cast< net::SocketAddressIPv4* >(m_listenSocket->getLocalAddress())->getPort();
 
 	log::info << L"Target manager @" << m_port << L" created." << Endl;
 	return true;
@@ -94,8 +94,7 @@ bool TargetManager::update()
 	socketSet.add(m_listenSocket);
 	for (auto instance : m_instances)
 	{
-		RefArray< TargetConnection> connections = instance->getConnections();
-		for (auto connection : connections)
+		for (auto connection : instance->getConnections())
 		{
 			net::BidirectionalObjectTransport* transport = connection->getTransport();
 			T_ASSERT(transport);
