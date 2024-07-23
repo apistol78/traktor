@@ -36,7 +36,7 @@ struct VectorConstructorBase < ItemType, false >
 
 	static void move(ItemType& uninitialized, ItemType& source)
 	{
-		new (&uninitialized) ItemType(std::move(source));
+		new (&uninitialized) ItemType(source);
 	}
 };
 
