@@ -124,6 +124,7 @@ bool GraphEditor::create(ui::Container* parent)
 	for (int32_t i = 0; i < 6; ++i)
 		m_toolBarGraph->addImage(new ui::StyleBitmap(L"Input.Alignment", i));
 	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Sound.Play"));
+	m_toolBarGraph->addImage(new ui::StyleBitmap(L"Sound.Stop"));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_LEFT"), 0, ui::Command(L"Sound.Processor.Editor.AlignLeft")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_RIGHT"), 1, ui::Command(L"Sound.Processor.Editor.AlignRight")));
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_ALIGN_TOP"), 2, ui::Command(L"Sound.Processor.Editor.AlignTop")));
@@ -133,6 +134,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_EVEN_HORIZONTALLY"), 5, ui::Command(L"Sound.Processor.Editor.EventSpaceHorizontally")));
 	m_toolBarGraph->addItem(new ui::ToolBarSeparator());
 	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_PLAY"), 6, ui::Command(L"Sound.Processor.Editor.Play")));
+	m_toolBarGraph->addItem(new ui::ToolBarButton(i18n::Text(L"SOUND_PROCESSOR_EDITOR_STOP"), 7, ui::Command(L"Sound.Processor.Editor.Stop")));
 	m_toolBarGraph->addEventHandler< ui::ToolBarButtonClickEvent >(this, &GraphEditor::eventToolBarGraphClick);
 
 	m_graph = new ui::GraphControl();
@@ -295,6 +297,14 @@ bool GraphEditor::handleCommand(const ui::Command& command)
 	else if (command == L"Sound.Processor.Editor.Play")
 	{
 		play();
+	}
+	else if (command == L"Sound.Processor.Editor.Stop")
+	{
+		if (m_soundHandle)
+		{
+			m_soundHandle->stop();
+			m_soundHandle = nullptr;
+		}
 	}
 	else
 		return false;
