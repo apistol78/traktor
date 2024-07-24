@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
@@ -209,11 +210,11 @@ void InGesturePinch::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive);
-	s >> MemberRef< IInputNode >(L"sourceX1", m_sourceX1);
-	s >> MemberRef< IInputNode >(L"sourceY1", m_sourceY1);
-	s >> MemberRef< IInputNode >(L"sourceX2", m_sourceX2);
-	s >> MemberRef< IInputNode >(L"sourceY2", m_sourceY2);
+	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceX1", m_sourceX1, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceY1", m_sourceY1, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceX2", m_sourceX2, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceY2", m_sourceY2, AttributePrivate());
 
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< PinchDirection >(L"direction", m_direction, c_PinchDirection_Keys);

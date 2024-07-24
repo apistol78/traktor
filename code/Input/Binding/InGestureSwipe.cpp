@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,6 +9,7 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberRef.h"
@@ -163,9 +164,9 @@ void InGestureSwipe::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive);
-	s >> MemberRef< IInputNode >(L"sourceX", m_sourceX);
-	s >> MemberRef< IInputNode >(L"sourceY", m_sourceY);
+	s >> MemberRef< IInputNode >(L"sourceActive", m_sourceActive, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceX", m_sourceX, AttributePrivate());
+	s >> MemberRef< IInputNode >(L"sourceY", m_sourceY, AttributePrivate());
 	s >> MemberEnum< SwipeDirection >(L"direction", m_direction, c_SwipeDirection_Keys);
 }
 
