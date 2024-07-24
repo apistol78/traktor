@@ -1,12 +1,13 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Core/RefArray.h"
+#include "Core/Serialization/AttributePrivate.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -104,7 +105,7 @@ void InCombine::serialize(ISerializer& s)
 
 void InCombine::Entry::serialize(ISerializer& s)
 {
-	s >> MemberRef< IInputNode >(L"source", source);
+	s >> MemberRef< IInputNode >(L"source", source, AttributePrivate());
 	s >> Member< float >(L"mul", mul);
 	s >> Member< float >(L"add", add);
 }
