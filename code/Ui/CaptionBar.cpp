@@ -23,6 +23,7 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	if (!ToolBar::create(parent, style))
 		return false;
 
+#if !defined(__LINUX__)
 	m_buttonMinimize = new MiniButton();
 	m_buttonMinimize->create(this, new ui::StyleBitmap(L"UI.CaptionMinimize"), MiniButton::WsNoBorder | MiniButton::WsNoBackground);
 	m_buttonMinimize->addEventHandler< ButtonClickEvent >(this, &CaptionBar::eventButtonClick);
@@ -40,6 +41,7 @@ bool CaptionBar::create(Widget* parent, uint32_t style)
 	addEventHandler< MouseDoubleClickEvent >(this, &CaptionBar::eventMouseDoubleClick);
 	addEventHandler< MouseMoveEvent >(this, &CaptionBar::eventMouseMove);
 	addEventHandler< SizeEvent >(this, &CaptionBar::eventSize);
+#endif
 
 	return true;
 }
