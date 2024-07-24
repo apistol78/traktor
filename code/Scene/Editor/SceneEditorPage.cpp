@@ -1530,9 +1530,9 @@ void SceneEditorPage::eventInstanceButtonDown(ui::MouseButtonDownEvent* event)
 {
 	if (event->getButton() == ui::MbtRight)
 	{
-		const ui::MenuItem* selectedItem;
+		const ui::MenuItem* selectedItem = nullptr;
 
-		RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+		const RefArray< EntityAdapter > selectedEntities = m_context->getEntities(SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 		if (selectedEntities.size() == 1)
 		{
 			if (selectedEntities[0]->isExternal())
