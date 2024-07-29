@@ -1,21 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Net/Ftp/FtpClient.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketStream.h"
+#include "Net/Ftp/FtpClient.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 bool isError(uint32_t code)
 {
@@ -37,7 +36,7 @@ bool isIntermediate(uint32_t code)
 	return code >= 400 && code <= 499;
 }
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FtpClient", FtpClient, Object)
 
@@ -48,7 +47,6 @@ bool FtpClient::connect(const SocketAddressIPv4& socketAddress)
 		return false;
 
 	m_commandStream = new SocketStream(m_socket);
-
 	return true;
 }
 
@@ -59,22 +57,13 @@ bool FtpClient::connect(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	m_commandStream = new SocketStream(m_socket);
-
 	return true;
 }
 
 void FtpClient::disconnect()
 {
-	if (m_commandStream)
-	{
-		m_commandStream->close();
-		m_commandStream = 0;
-	}
-	if (m_socket)
-	{
-		m_socket->close();
-		m_socket = 0;
-	}
+	safeClose(m_commandStream);
+	safeClose(m_socket);
 }
 
 bool FtpClient::login(const std::wstring& user, const std::wstring& pwd)
@@ -102,8 +91,7 @@ bool FtpClient::getFileList(RefArray< File >& outFiles)
 
 Ref< IStream > FtpClient::open(const std::wstring& fileName)
 {
-	return 0;
+	return nullptr;
 }
 
-	}
 }

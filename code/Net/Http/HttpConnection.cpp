@@ -1,16 +1,11 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Net/Http/HttpConnection.h"
-#include "Net/Http/HttpResponse.h"
-#include "Net/Http/HttpChunkStream.h"
-#include "Net/SocketAddressIPv6.h"
-#include "Net/SocketStream.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/StringOutputStream.h"
@@ -18,11 +13,14 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Net/SocketAddressIPv6.h"
+#include "Net/SocketStream.h"
+#include "Net/Http/HttpConnection.h"
+#include "Net/Http/HttpResponse.h"
+#include "Net/Http/HttpChunkStream.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpConnection", HttpConnection, UrlConnection)
 
@@ -131,5 +129,4 @@ Ref< IStream > HttpConnection::getStream()
 	return m_stream;
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,8 +8,8 @@
  */
 #pragma once
 
-#include "Net/UrlConnection.h"
 #include "Net/TcpSocket.h"
+#include "Net/UrlConnection.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class T_DLLCLASS HttpConnection : public UrlConnection
 {
@@ -41,6 +39,4 @@ private:
 	Url m_url;
 };
 
-	}
 }
-
