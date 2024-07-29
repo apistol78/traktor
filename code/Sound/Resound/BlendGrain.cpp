@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -14,12 +14,10 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/BlendGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
@@ -68,7 +66,7 @@ struct BlendGrainCursor : public RefCountImpl< IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BlendGrain", BlendGrain, IGrain)
 
@@ -204,5 +202,4 @@ bool BlendGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer, 
 	return true;
 }
 
-	}
 }

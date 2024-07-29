@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,12 +18,10 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
-/*! \brief
+/*!
  * \ingroup Sound
  */
 class T_DLLCLASS BlendGrain : public IGrain
@@ -31,7 +29,7 @@ class T_DLLCLASS BlendGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	BlendGrain(handle_t id, float response, IGrain* grain1, IGrain* grain2);
+	explicit BlendGrain(handle_t id, float response, IGrain* grain1, IGrain* grain2);
 
 	virtual Ref< IAudioBufferCursor > createCursor() const override final;
 
@@ -49,6 +47,4 @@ private:
 	Ref< IGrain > m_grains[2];
 };
 
-	}
 }
-

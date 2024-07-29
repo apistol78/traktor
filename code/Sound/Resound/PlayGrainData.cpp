@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,19 +18,10 @@
 #include "Sound/Resound/PlayGrain.h"
 #include "Sound/Resound/PlayGrainData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrainData", 2, PlayGrainData, IGrainData)
-
-PlayGrainData::PlayGrainData()
-:	m_gain(0.0f, 0.0f)
-,	m_pitch(1.0f, 1.0f)
-,	m_repeat(false)
-{
-}
 
 Ref< IGrain > PlayGrainData::createInstance(IGrainFactory* grainFactory) const
 {
@@ -67,5 +58,4 @@ void PlayGrainData::serialize(ISerializer& s)
 		s >> Member< bool >(L"repeat", m_repeat);
 }
 
-	}
 }

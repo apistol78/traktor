@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,17 +13,10 @@
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/IGrainFactory.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BlendGrainData", 2, BlendGrainData, IGrainData)
-
-BlendGrainData::BlendGrainData()
-:	m_response(1.0f)
-{
-}
 
 Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 {
@@ -31,11 +24,11 @@ Ref< IGrain > BlendGrainData::createInstance(IGrainFactory* grainFactory) const
 
 	grains[0] = grainFactory->createInstance(m_grains[0]);
 	if (!grains[0])
-		return 0;
+		return nullptr;
 
 	grains[1] = grainFactory->createInstance(m_grains[1]);
 	if (!grains[1])
-		return 0;
+		return nullptr;
 
 	return new BlendGrain(
 		getParameterHandle(m_id),
@@ -56,5 +49,4 @@ void BlendGrainData::serialize(ISerializer& s)
 	s >> MemberStaticArray< Ref< IGrainData >, 2, MemberRef< IGrainData > >(L"grains", m_grains);
 }
 
-	}
 }
