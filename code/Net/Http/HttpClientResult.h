@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,12 +24,14 @@ namespace traktor
 class IStream;
 class Job;
 
-	namespace net
-	{
+}
+
+namespace traktor::net
+{
 
 class HttpResponse;
 
-/*! \brief
+/*!
  * \ingroup Net
  */
 class T_DLLCLASS HttpClientResult : public Result
@@ -51,5 +53,4 @@ private:
 	Ref< IStream > m_stream;
 };
 
-	}
 }

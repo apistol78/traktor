@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,17 +11,10 @@
 #include "Core/Misc/StringSplit.h"
 #include "Net/Http/HttpRequest.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpRequest", HttpRequest, Object)
-
-HttpRequest::HttpRequest()
-:	m_method(MtUnknown)
-{
-}
 
 HttpRequest::Method HttpRequest::getMethod() const
 {
@@ -45,9 +38,9 @@ void HttpRequest::setValue(const std::wstring& key, const std::wstring& value)
 
 std::wstring HttpRequest::getValue(const std::wstring& key) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(key);
-	if (i != m_values.end())
-		return i->second;
+	const auto it = m_values.find(key);
+	if (it != m_values.end())
+		return it->second;
 	else
 		return L"";
 }
@@ -60,7 +53,7 @@ Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 	StringSplit< std::wstring > split(request, L"\n\r");
 	for (StringSplit< std::wstring >::const_iterator i = split.begin(); i != split.end(); ++i)
 	{
-		std::wstring line = trim(*i);
+		const std::wstring line = trim(*i);
 		if (line.empty())
 			continue;
 
@@ -101,7 +94,7 @@ Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 		}
 		else
 		{
-			size_t p = line.find(L": ");
+			const size_t p = line.find(L": ");
 			if (p != std::wstring::npos)
 				hr->m_values[line.substr(0, p)] = line.substr(p + 2);
 		}
@@ -110,5 +103,4 @@ Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 	return haveMethod ? hr : nullptr;
 }
 
-	}
 }

@@ -1,29 +1,23 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Core/Log/Log.h"
-#include "Core/Misc/TString.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Net/Url.h"
 #include "Net/Http/HttpRequestContent.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpRequestContent", HttpRequestContent, IHttpRequestContent)
-
-HttpRequestContent::HttpRequestContent()
-{
-}
 
 HttpRequestContent::HttpRequestContent(const std::wstring& content)
 {
@@ -37,14 +31,14 @@ HttpRequestContent::HttpRequestContent(IStream* stream)
 
 void HttpRequestContent::set(const std::wstring& content)
 {
-	std::string cu8 = wstombs(
+	const std::string cu8 = wstombs(
 		Utf8Encoding(),
 		content
 	);
 
 	if (false /* url encoded */)
 	{
-		std::string ue = wstombs(
+		const std::string ue = wstombs(
 			Utf8Encoding(),
 			Url::encode((const uint8_t*)cu8.c_str(), cu8.size())
 		);
@@ -95,5 +89,4 @@ bool HttpRequestContent::encodeIntoStream(IStream* stream) const
 	return stream->write(m_content.c_ptr(), m_content.size()) == m_content.size();
 }
 
-	}
 }

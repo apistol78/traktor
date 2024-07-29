@@ -1,29 +1,26 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Net/Ftp/FtpConnection.h"
-#include "Net/Ftp/FtpClient.h"
+#include "Core/Io/IStream.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Net/Url.h"
 #include "Net/SocketAddressIPv6.h"
-#include "Core/Io/IStream.h"
+#include "Net/Ftp/FtpConnection.h"
+#include "Net/Ftp/FtpClient.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FtpConnection", FtpConnection, UrlConnection)
 
 FtpConnection::~FtpConnection()
 {
-	if (m_stream)
-		m_stream->close();
-
+	safeClose(m_stream);
 	if (m_client)
 		m_client->disconnect();
 }
@@ -41,14 +38,14 @@ UrlConnection::EstablishResult FtpConnection::establish(const Url& url, Url* out
 		return ErConnectFailed;
 
 	// Get user and password from URL user info.
-	std::wstring userInfo = url.getUserInfo();
+	const std::wstring userInfo = url.getUserInfo();
 	if (!userInfo.empty())
 	{
 		size_t i = userInfo.find(':');
 		if (i != userInfo.npos)
 		{
-			std::wstring user = userInfo.substr(0, i);
-			std::wstring password = userInfo.substr(i + 1);
+			const std::wstring user = userInfo.substr(0, i);
+			const std::wstring password = userInfo.substr(i + 1);
 			if (!m_client->login(user, password))
 				return ErLoginFailed;
 		}
@@ -83,5 +80,4 @@ Ref< IStream > FtpConnection::getStream()
 	return m_stream;
 }
 
-	}
 }

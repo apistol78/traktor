@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,10 +23,12 @@ namespace traktor
 
 class IStream;
 
-	namespace net
-	{
+}
 
-/*! \brief
+namespace traktor::net
+{
+
+/*!
  * \ingroup Net
  */
 class T_DLLCLASS HttpRequestContent : public IHttpRequestContent
@@ -34,7 +36,7 @@ class T_DLLCLASS HttpRequestContent : public IHttpRequestContent
 	T_RTTI_CLASS;
 
 public:
-	HttpRequestContent();
+	HttpRequestContent() = default;
 
 	explicit HttpRequestContent(const std::wstring& content);
 
@@ -55,6 +57,4 @@ private:
 	AlignedVector< uint8_t > m_content;
 };
 
-	}
 }
-

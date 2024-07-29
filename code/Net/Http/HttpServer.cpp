@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,15 +23,13 @@
 #include "Net/Http/HttpRequest.h"
 #include "Net/Http/HttpServer.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 class HttpServerImpl : public Object
 {
 public:
-	HttpServerImpl(HttpServer* server)
+	explicit HttpServerImpl(HttpServer* server)
 	:	m_server(server)
 	{
 	}
@@ -124,17 +122,17 @@ public:
 				// Extract session id from cookie.
 				if (request->hasValue(L"Cookie"))
 				{
-					std::wstring cookie = request->getValue(L"Cookie");
+					const std::wstring cookie = request->getValue(L"Cookie");
 
 					StringSplit< std::wstring > ss(cookie, L";");
 					for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 					{
 						const std::wstring& kv = *i;
 
-						size_t p = kv.find(L'=');
+						const size_t p = kv.find(L'=');
 						if (p != kv.npos)
 						{
-							std::wstring k = kv.substr(0, p);
+							const std::wstring k = kv.substr(0, p);
 							if (k == L"SESSIONID")
 							{
 								session = kv.substr(p + 1);
@@ -148,7 +146,7 @@ public:
 				{
 					if (request->getMethod() == HttpRequest::MtPost || request->getMethod() == HttpRequest::MtPut)
 					{
-						int32_t contentLength = parseString< int32_t >(request->getValue(L"Content-Length"));
+						const int32_t contentLength = parseString< int32_t >(request->getValue(L"Content-Length"));
 						if (contentLength > 0)
 						{
 							StreamStream payloadStream(&clientStream, clientStream.tell() + contentLength);
@@ -240,5 +238,4 @@ void HttpServer::update(int32_t duration)
 		m_impl->update(duration);
 }
 
-	}
 }

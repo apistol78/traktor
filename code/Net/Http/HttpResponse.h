@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -24,10 +24,12 @@ namespace traktor
 
 class IStream;
 
-	namespace net
-	{
+}
 
-/*! \brief
+namespace traktor::net
+{
+
+/*!
  * \ingroup Net
  */
 class T_DLLCLASS HttpResponse : public Object
@@ -35,8 +37,6 @@ class T_DLLCLASS HttpResponse : public Object
 	T_RTTI_CLASS;
 
 public:
-	HttpResponse();
-
 	bool parse(IStream* stream);
 
 	int32_t getStatusCode() const;
@@ -48,11 +48,9 @@ public:
 	std::wstring get(const std::wstring& name) const;
 
 private:
-	int32_t m_statusCode;
-	std::wstring m_statusMessage;
 	std::map< std::wstring, std::wstring > m_values;
+	std::wstring m_statusMessage;
+	int32_t m_statusCode = 0;
 };
 
-	}
 }
-

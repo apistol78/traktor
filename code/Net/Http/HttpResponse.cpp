@@ -1,27 +1,20 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include <string>
-#include "Net/Http/HttpResponse.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
+#include "Net/Http/HttpResponse.h"
 
-namespace traktor
+namespace traktor::net
 {
-	namespace net
-	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpResponse", HttpResponse, Object)
-
-HttpResponse::HttpResponse()
-:	m_statusCode(0)
-{
-}
 
 bool HttpResponse::parse(IStream* stream)
 {
@@ -29,7 +22,7 @@ bool HttpResponse::parse(IStream* stream)
 		return false;
 
 	std::wstring response;
-	for (int state = 0; state >= 0; )
+	for (int32_t state = 0; state >= 0; )
 	{
 		char ch;
 		if (stream->read(&ch, sizeof(ch)) != sizeof(ch))
@@ -42,8 +35,8 @@ bool HttpResponse::parse(IStream* stream)
 			{
 				// "HTTP/1.1 <Code> <Message";
 
-				size_t sp1 = response.find(' ');
-				size_t sp2 = response.find(' ', sp1 + 1);
+				const size_t sp1 = response.find(' ');
+				const size_t sp2 = response.find(' ', sp1 + 1);
 
 				m_statusCode = parseString< int >(response.substr(sp1 + 1, sp2 - sp1));
 				m_statusMessage = response.substr(sp2 + 1);
@@ -58,7 +51,7 @@ bool HttpResponse::parse(IStream* stream)
 		case 1:
 			if (ch == '\r')
 			{
-				size_t p = response.find(L": ");
+				const size_t p = response.find(L": ");
 				if (p != std::wstring::npos)
 				{
 					std::wstring key = response.substr(0, p);
@@ -124,9 +117,8 @@ void HttpResponse::set(const std::wstring& name, const std::wstring& value)
 
 std::wstring HttpResponse::get(const std::wstring& name) const
 {
-	std::map< std::wstring, std::wstring >::const_iterator i = m_values.find(name);
-	return i != m_values.end() ? i->second : L"";
+	const auto it = m_values.find(name);
+	return it != m_values.end() ? it->second : L"";
 }
 
-	}
 }
