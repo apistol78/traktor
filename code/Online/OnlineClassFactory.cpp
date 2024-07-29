@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -31,12 +31,10 @@
 #include "Online/ScoreArrayResult.h"
 #include "Sound/Player/SoundPlayer.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
+	namespace
 	{
-		namespace
-		{
 
 void LobbyFilter_addComparison(LobbyFilter* self, const std::wstring& key, const Any& value, int32_t comparison)
 {
@@ -123,7 +121,7 @@ Ref< LobbyResult > IMatchMaking_createLobby(IMatchMaking* self, uint32_t maxUser
 	else if (compareIgnoreCase(access, L"friends") == 0)
 		la = LaFriends;
 	else
-		return 0;
+		return nullptr;
 
 	return self->createLobby(maxUsers, la);
 }
@@ -408,5 +406,4 @@ void OnlineClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	registrar->registerClass(classIVoiceChat);
 }
 
-	}
 }

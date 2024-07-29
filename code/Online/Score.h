@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 class IUser;
 
@@ -31,7 +29,7 @@ class T_DLLCLASS Score : public Object
 	T_RTTI_CLASS;
 
 public:
-	Score(const IUser* user, int32_t score, uint32_t rank);
+	explicit Score(const IUser* user, int32_t score, uint32_t rank);
 
 	const IUser* getUser() const { return m_user; }
 
@@ -45,6 +43,4 @@ private:
 	uint32_t m_rank;
 };
 
-	}
 }
-
