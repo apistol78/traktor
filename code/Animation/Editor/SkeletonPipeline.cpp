@@ -109,7 +109,7 @@ bool SkeletonPipeline::buildOutput(
 	}
 
 	// Write information about skeleton.
-	for (int32_t i = 0; i < skeleton->getJointCount(); ++i)
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
 		const Joint* joint = skeleton->getJoint(i);
 		log::info << i << L". \"" << joint->getName() << L"\" (" <<
