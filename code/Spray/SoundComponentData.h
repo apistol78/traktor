@@ -30,8 +30,8 @@ class IResourceManager;
 namespace traktor::sound
 {
 
-class ISoundPlayer;
 class Sound;
+class SoundPlayer;
 
 }
 
@@ -52,7 +52,7 @@ public:
 
 	explicit SoundComponentData(const resource::Id< sound::Sound >& sound);
 
-	Ref< SoundComponent > createComponent(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
+	Ref< SoundComponent > createComponent(resource::IResourceManager* resourceManager, sound::SoundPlayer* soundPlayer) const;
 
 	virtual int32_t getOrdinal() const override final;
 

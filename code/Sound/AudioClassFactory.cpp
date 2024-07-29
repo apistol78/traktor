@@ -29,8 +29,8 @@
 #include "Sound/Filters/RingModulationFilter.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BlendGrain.h"
 #include "Sound/Resound/BlendGrainData.h"
@@ -162,20 +162,20 @@ void AudioClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classSurroundFilter->addMethod("setMaxDistance", &SurroundFilter::setMaxDistance);
 	registrar->registerClass(classSurroundFilter);
 
-	auto classISoundHandle = new AutoRuntimeClass< ISoundHandle >();
-	classISoundHandle->addMethod("stop", &ISoundHandle::stop);
-	classISoundHandle->addMethod("fadeOff", &ISoundHandle::fadeOff);
-	classISoundHandle->addMethod("isPlaying", &ISoundHandle::isPlaying);
-	classISoundHandle->addMethod("setVolume", &ISoundHandle::setVolume);
-	classISoundHandle->addMethod("setPitch", &ISoundHandle::setPitch);
-	classISoundHandle->addMethod("setPosition", &ISoundHandle::setPosition);
-	classISoundHandle->addMethod("setParameter", &ISoundHandle::setParameter);
-	registrar->registerClass(classISoundHandle);
+	auto classSoundHandle = new AutoRuntimeClass< SoundHandle >();
+	classSoundHandle->addMethod("stop", &SoundHandle::stop);
+	classSoundHandle->addMethod("fadeOff", &SoundHandle::fadeOff);
+	classSoundHandle->addMethod("isPlaying", &SoundHandle::isPlaying);
+	classSoundHandle->addMethod("setVolume", &SoundHandle::setVolume);
+	classSoundHandle->addMethod("setPitch", &SoundHandle::setPitch);
+	classSoundHandle->addMethod("setPosition", &SoundHandle::setPosition);
+	classSoundHandle->addMethod("setParameter", &SoundHandle::setParameter);
+	registrar->registerClass(classSoundHandle);
 
-	auto classISoundPlayer = new AutoRuntimeClass< ISoundPlayer >();
-	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, uint32_t >("play", &ISoundPlayer::play);
-	classISoundPlayer->addMethod< Ref< ISoundHandle >, const Sound*, const Vector4&, uint32_t, bool >("play", &ISoundPlayer::play);
-	registrar->registerClass(classISoundPlayer);
+	auto classSoundPlayer = new AutoRuntimeClass< SoundPlayer >();
+	classSoundPlayer->addMethod< Ref< SoundHandle >, const Sound*, uint32_t >("play", &SoundPlayer::play);
+	classSoundPlayer->addMethod< Ref< SoundHandle >, const Sound*, const Vector4&, uint32_t, bool >("play", &SoundPlayer::play);
+	registrar->registerClass(classSoundPlayer);
 
 	auto classBankBuffer = new AutoRuntimeClass< BankBuffer >();
 	classBankBuffer->addConstructor< const RefArray< IGrain >& >();

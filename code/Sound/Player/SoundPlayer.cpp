@@ -34,7 +34,7 @@ handle_t s_handleVelocity = 0;
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, ISoundPlayer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, Object)
 
 SoundPlayer::SoundPlayer()
 {
@@ -77,7 +77,7 @@ void SoundPlayer::destroy()
 	m_audioSystem = nullptr;
 }
 
-Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
+Ref< SoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 {
 	if (!sound)
 		return nullptr;
@@ -160,7 +160,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	return nullptr;
 }
 
-Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar)
+Ref< SoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar)
 {
 	if (!sound)
 		return nullptr;
@@ -308,21 +308,16 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, const Vector4& positio
 	return nullptr;
 }
 
-Ref< ISoundListener > SoundPlayer::createListener() const
-{
-	return new SoundListener();
-}
-
-void SoundPlayer::addListener(const ISoundListener* listener)
+void SoundPlayer::addListener(const SoundListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_listeners.push_back(static_cast< const SoundListener* >(listener));
+	m_listeners.push_back(listener);
 }
 
-void SoundPlayer::removeListener(const ISoundListener* listener)
+void SoundPlayer::removeListener(const SoundListener* listener)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_listeners.remove(static_cast< const SoundListener* >(listener));
+	m_listeners.remove(listener);
 }
 
 void SoundPlayer::update(float dT)

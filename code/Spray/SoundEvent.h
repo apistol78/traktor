@@ -14,8 +14,8 @@
 namespace traktor::sound
 {
 
-class ISoundPlayer;
 class Sound;
+class SoundPlayer;
 
 }
 
@@ -31,7 +31,7 @@ class SoundEvent : public world::IEntityEvent
 
 public:
 	explicit SoundEvent(
-		sound::ISoundPlayer* soundPlayer,
+		sound::SoundPlayer* soundPlayer,
 		const resource::Proxy< sound::Sound >& sound,
 		bool positional,
 		bool follow,
@@ -41,7 +41,7 @@ public:
 	virtual Ref< world::IEntityEventInstance > createInstance(world::EventManagerComponent* eventManager, world::Entity* sender, const Transform& Toffset) const override final;
 
 private:
-	sound::ISoundPlayer* m_soundPlayer;
+	sound::SoundPlayer* m_soundPlayer;
 	resource::Proxy< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;

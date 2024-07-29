@@ -7,8 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/SoundEventInstance.h"
 #include "World/Entity.h"
 
@@ -20,7 +20,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundEventInstance", SoundEventInstance, 
 SoundEventInstance::SoundEventInstance(
 	world::Entity* sender,
 	const Transform& Toffset,
-	sound::ISoundPlayer* soundPlayer,
+	sound::SoundPlayer* soundPlayer,
 	const resource::Proxy< sound::Sound >& sound,
 	bool positional,
 	bool follow,

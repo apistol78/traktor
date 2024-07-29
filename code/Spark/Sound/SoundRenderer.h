@@ -22,7 +22,7 @@
 namespace traktor::sound
 {
 
-class ISoundPlayer;
+class SoundPlayer;
 
 }
 
@@ -37,14 +37,14 @@ class T_DLLCLASS SoundRenderer : public ISoundRenderer
 	T_RTTI_CLASS;
 
 public:
-	bool create(sound::ISoundPlayer* soundPlayer);
+	bool create(sound::SoundPlayer* soundPlayer);
 
 	virtual void destroy() override final;
 
 	virtual void play(const Sound* sound) override final;
 
 private:
-	Ref< sound::ISoundPlayer > m_soundPlayer;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 };
 
 }

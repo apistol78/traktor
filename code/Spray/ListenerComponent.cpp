@@ -6,8 +6,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Sound/Player/ISoundListener.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundListener.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/ListenerComponent.h"
 
 namespace traktor::spray
@@ -15,12 +15,12 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ListenerComponent", ListenerComponent, world::IEntityComponent)
 
-ListenerComponent::ListenerComponent(sound::ISoundPlayer* soundPlayer)
+ListenerComponent::ListenerComponent(sound::SoundPlayer* soundPlayer)
 :	m_soundPlayer(soundPlayer)
 {
 	if (m_soundPlayer != nullptr)
 	{
-		m_soundListener = m_soundPlayer->createListener();
+		m_soundListener = new sound::SoundListener();
 		m_soundPlayer->addListener(m_soundListener);
 	}
 }
@@ -60,7 +60,7 @@ void ListenerComponent::setEnable(bool enable)
 
 	if (enable)
 	{
-		m_soundListener = m_soundPlayer->createListener();
+		m_soundListener = new sound::SoundListener();
 		m_soundPlayer->addListener(m_soundListener);
 	}
 	else

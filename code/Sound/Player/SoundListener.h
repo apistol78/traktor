@@ -8,7 +8,8 @@
  */
 #pragma once
 
-#include "Sound/Player/ISoundListener.h"
+#include "Core/Object.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,14 +22,14 @@
 namespace traktor::sound
 {
 
-class T_DLLCLASS SoundListener : public ISoundListener
+class T_DLLCLASS SoundListener : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void setTransform(const Transform& transform) override final;
+	void setTransform(const Transform& transform);
 
-	virtual Transform getTransform() const override final;
+	const Transform& getTransform() const;
 
 private:
 	Transform m_transform = Transform::identity();

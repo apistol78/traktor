@@ -59,8 +59,8 @@ namespace traktor::sound
 {
 
 class GraphAsset;
-class ISoundHandle;
-class ISoundPlayer;
+class SoundHandle;
+class SoundPlayer;
 
 class T_DLLCLASS GraphEditor : public editor::IEditorPage
 {
@@ -89,8 +89,8 @@ private:
 	Ref< editor::PropertiesView > m_propertiesView;
 	Ref< ui::Menu > m_menuPopup;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< ISoundPlayer > m_soundPlayer;
-	Ref< ISoundHandle > m_soundHandle;
+	Ref< SoundPlayer > m_soundPlayer;
+	Ref< SoundHandle > m_soundHandle;
 
 	void updateView();
 

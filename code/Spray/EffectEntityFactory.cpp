@@ -9,7 +9,7 @@
 #include "Core/Misc/ObjectStore.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectComponent.h"
 #include "Spray/EffectComponentData.h"
@@ -36,7 +36,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityFactory", 0, EffectEn
 bool EffectEntityFactory::initialize(const ObjectStore& objectStore)
 {
 	m_resourceManager = objectStore.get< resource::IResourceManager >();
-	m_soundPlayer = objectStore.get< sound::ISoundPlayer >();
+	m_soundPlayer = objectStore.get< sound::SoundPlayer >();
 	return true;
 }
 

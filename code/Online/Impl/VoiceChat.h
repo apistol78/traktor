@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,17 +13,15 @@
 #include "Online/IVoiceChat.h"
 #include "Online/Provider/IVoiceChatProvider.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
-class ISoundHandle;
+class SoundHandle;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class UserCache;
 
@@ -36,7 +34,7 @@ class VoiceChat
 public:
 	void destroy();
 
-	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) override final;
+	virtual void setSoundPlayer(sound::SoundPlayer* soundPlayer) override final;
 
 	virtual void setAudience(const RefArray< IUser >& audience) override final;
 
@@ -55,13 +53,13 @@ private:
 	{
 		Ref< IUser > user;
 		Ref< class VoiceSoundBuffer > soundBuffer;
-		Ref< sound::ISoundHandle > soundHandle;
+		Ref< sound::SoundHandle > soundHandle;
 	};
 
 	Semaphore m_lock;
 	Ref< IVoiceChatProvider > m_provider;
 	Ref< UserCache > m_userCache;
-	Ref< sound::ISoundPlayer > m_soundPlayer;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 	uint32_t m_category;
 	bool m_muted;
 	std::list< Transmission > m_transmissions;
@@ -73,6 +71,5 @@ private:
 	virtual void onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples, uint32_t samplesCount, uint32_t sampleRate) override final;
 };
 
-	}
 }
 

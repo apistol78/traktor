@@ -11,13 +11,6 @@
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Transform.h"
 
-namespace traktor::sound
-{
-
-class ISoundPlayer;
-
-}
-
 namespace traktor::world
 {
 

@@ -31,8 +31,8 @@
 #include "Sound/Editor/WaveformControl.h"
 #include "Sound/Editor/Processor/GraphAsset.h"
 #include "Sound/Editor/Processor/GraphEditor.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Sound/Processor/Edge.h"
 #include "Sound/Processor/Graph.h"
 #include "Sound/Processor/GraphBuffer.h"
@@ -171,7 +171,7 @@ bool GraphEditor::create(ui::Container* parent)
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SOUND_PROCESSOR_EDITOR_DELETE_NODE")));
 
 	// Get the sound player.
-	m_soundPlayer = m_editor->getObjectStore()->get< ISoundPlayer >();
+	m_soundPlayer = m_editor->getObjectStore()->get< SoundPlayer >();
 
 	// Get script manager and create context, used for custom nodes.
 	Ref< script::IScriptManager > scriptManager = m_editor->getObjectStore()->get< script::IScriptManager >();

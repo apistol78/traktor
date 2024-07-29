@@ -7,8 +7,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/SoundComponent.h"
 
 namespace traktor::spray
@@ -16,7 +16,7 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundComponent", SoundComponent, world::IEntityComponent)
 
-SoundComponent::SoundComponent(sound::ISoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound)
+SoundComponent::SoundComponent(sound::SoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound)
 :	m_soundPlayer(soundPlayer)
 ,	m_sound(sound)
 {

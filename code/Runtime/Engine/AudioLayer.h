@@ -24,8 +24,8 @@
 namespace traktor::sound
 {
 
-class ISoundHandle;
 class Sound;
+class SoundHandle;
 
 }
 
@@ -121,7 +121,7 @@ private:
 
 	IEnvironment* m_environment;
 	resource::Proxy< sound::Sound > m_sound;
-	Ref< sound::ISoundHandle > m_handle;
+	Ref< sound::SoundHandle > m_handle;
 	bool m_autoPlay;
 	bool m_repeat;
 	SmallMap< sound::handle_t, Tween > m_tweens;

@@ -37,8 +37,8 @@ class ToolBarButtonClickEvent;
 namespace traktor::sound
 {
 
-class ISoundHandle;
-class ISoundPlayer; 
+class SoundHandle;
+class SoundPlayer; 
 class SoundAsset;
 
 class SoundAssetEditor
@@ -68,8 +68,8 @@ private:
 	Ref< SoundAsset > m_asset;
 	Ref< ui::ToolBar > m_toolBar;
 	Ref< ui::AutoPropertyList > m_propertyList;
-	Ref< ISoundPlayer > m_soundPlayer;
-	Ref< ISoundHandle > m_soundHandle;
+	Ref< SoundPlayer > m_soundPlayer;
+	Ref< SoundHandle > m_soundHandle;
 
 	void eventToolBarClick(ui::ToolBarButtonClickEvent* event);
 

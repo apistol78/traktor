@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,10 +8,13 @@
  */
 #pragma once
 
+#include "Core/Object.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector4.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Timer/Timer.h"
-#include "Sound/Player/ISoundPlayer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,6 +30,7 @@ namespace traktor::sound
 class AudioChannel;
 class AudioSystem;
 class LowPassFilter;
+class Sound;
 class SoundHandle;
 class SoundListener;
 class SurroundEnvironment;
@@ -35,7 +39,7 @@ class SurroundFilter;
 /*! High-level sound player implementation.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundPlayer : public ISoundPlayer
+class T_DLLCLASS SoundPlayer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -44,19 +48,17 @@ public:
 
 	bool create(AudioSystem* audioSystem, SurroundEnvironment* surroundEnvironment);
 
-	virtual void destroy() override final;
+	void destroy();
 
-	virtual Ref< ISoundHandle > play(const Sound* sound, uint32_t priority) override final;
+	Ref< SoundHandle > play(const Sound* sound, uint32_t priority);
 
-	virtual Ref< ISoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar) override final;
+	Ref< SoundHandle > play(const Sound* sound, const Vector4& position, uint32_t priority, bool autoStopFar);
 
-	virtual Ref< ISoundListener > createListener() const override final;
+	void addListener(const SoundListener* listener);
 
-	virtual void addListener(const ISoundListener* listener) override final;
+	void removeListener(const SoundListener* listener);
 
-	virtual void removeListener(const ISoundListener* listener) override final;
-
-	virtual void update(float dT) override final;
+	void update(float dT);
 
 private:
 	struct Channel

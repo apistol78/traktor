@@ -51,9 +51,9 @@ class BankControlGrain;
 class IGrain;
 class IGrainData;
 class IGrainFacade;
-class ISoundHandle;
-class ISoundPlayer;
 class GrainProperties;
+class SoundHandle;
+class SoundPlayer;
 
 class BankAssetEditor : public editor::IObjectEditor
 {
@@ -91,8 +91,8 @@ private:
 	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
 	Ref< ui::Widget > m_currentGrainView;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< ISoundPlayer > m_soundPlayer;
-	Ref< ISoundHandle > m_soundHandle;
+	Ref< SoundPlayer > m_soundPlayer;
+	Ref< SoundHandle > m_soundHandle;
 	Ref< BankBuffer > m_bankBuffer;
 	std::map< const IGrainData*, const IGrain* > m_grainInstances;
 

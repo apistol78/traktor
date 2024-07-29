@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,17 +19,15 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
-class ISoundPlayer;
+class SoundPlayer;
 
-	}
+}
 
-	namespace online
-	{
+namespace traktor::online
+{
 
 class IUser;
 
@@ -38,7 +36,7 @@ class T_DLLCLASS IVoiceChat : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void setSoundPlayer(sound::ISoundPlayer* soundPlayer) = 0;
+	virtual void setSoundPlayer(sound::SoundPlayer* soundPlayer) = 0;
 
 	virtual void setAudience(const RefArray< IUser >& audience) = 0;
 
@@ -51,6 +49,4 @@ public:
 	virtual bool isTransmitting(IUser* user) = 0;
 };
 
-	}
 }
-

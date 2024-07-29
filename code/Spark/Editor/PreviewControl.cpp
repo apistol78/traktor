@@ -103,7 +103,7 @@ bool PreviewControl::create(
 	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	sound::ISoundPlayer* soundPlayer
+	sound::SoundPlayer* soundPlayer
 )
 {
 	if (!Widget::create(parent, style | ui::WsFocus | ui::WsNoCanvas))

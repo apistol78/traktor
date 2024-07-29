@@ -18,8 +18,8 @@
 #include "Resource/ResourceManager.h"
 #include "Sound/AudioResourceFactory.h"
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
@@ -189,7 +189,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< TriggerGrainData >()] = new TriggerGrainFacade();
 
 	// Get sound player for preview.
-	m_soundPlayer = m_editor->getObjectStore()->get< ISoundPlayer >();
+	m_soundPlayer = m_editor->getObjectStore()->get< SoundPlayer >();
 
 	m_resourceManager = new resource::ResourceManager(m_editor->getOutputDatabase(), m_editor->getSettings()->getProperty< bool >(L"Resource.Verbose", false));
 	m_resourceManager->addFactory(new AudioResourceFactory());

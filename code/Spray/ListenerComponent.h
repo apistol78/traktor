@@ -21,8 +21,8 @@
 namespace traktor::sound
 {
 
-class ISoundListener;
-class ISoundPlayer;
+class SoundListener;
+class SoundPlayer;
 
 }
 
@@ -37,7 +37,7 @@ class T_DLLCLASS ListenerComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit ListenerComponent(sound::ISoundPlayer* soundPlayer);
+	explicit ListenerComponent(sound::SoundPlayer* soundPlayer);
 
 	virtual void destroy() override final;
 
@@ -54,8 +54,8 @@ public:
 	bool isEnable() const;
 
 private:
-	Ref< sound::ISoundPlayer > m_soundPlayer;
-	Ref< sound::ISoundListener > m_soundListener;
+	Ref< sound::SoundPlayer > m_soundPlayer;
+	Ref< sound::SoundListener > m_soundListener;
 	Transform m_transform;
 };
 

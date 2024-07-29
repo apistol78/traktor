@@ -39,7 +39,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/StyleBitmap.h"
@@ -74,7 +74,7 @@ bool EditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	Ref< sound::ISoundPlayer > soundPlayer = m_editor->getObjectStore()->get< sound::ISoundPlayer >();
+	Ref< sound::SoundPlayer > soundPlayer = m_editor->getObjectStore()->get< sound::SoundPlayer >();
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	// Read movie from output database.
