@@ -28,7 +28,7 @@ class IResourceManager;
 namespace traktor::sound
 {
 
-class ISoundPlayer;
+class SoundPlayer;
 
 }
 
@@ -55,7 +55,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< sound::ISoundPlayer > m_soundPlayer;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 };
 
 }

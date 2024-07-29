@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -64,7 +64,7 @@ class Shader;
 	namespace sound
 	{
 
-class ISoundPlayer;
+class SoundPlayer;
 
 	}
 
@@ -90,7 +90,7 @@ public:
 		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		sound::ISoundPlayer* soundPlayer
+		sound::SoundPlayer* soundPlayer
 	);
 
 	virtual void destroy() override final;

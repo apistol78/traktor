@@ -29,7 +29,7 @@
 #include "Online/LobbyFilter.h"
 #include "Online/Score.h"
 #include "Online/ScoreArrayResult.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundPlayer.h"
 
 namespace traktor
 {

@@ -22,9 +22,9 @@
 namespace traktor::sound
 {
 
-class ISoundHandle;
-class ISoundPlayer;
 class Sound;
+class SoundHandle;
+class SoundPlayer;
 
 }
 
@@ -39,7 +39,7 @@ class T_DLLCLASS SoundComponent : public world::IEntityComponent
 	T_RTTI_CLASS;
 
 public:
-	explicit SoundComponent(sound::ISoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound);
+	explicit SoundComponent(sound::SoundPlayer* soundPlayer, const resource::Proxy< sound::Sound >& sound);
 
 	virtual void destroy() override final;
 
@@ -62,9 +62,9 @@ public:
 	void setParameter(const std::wstring& id, float parameter);
 
 private:
-	Ref< sound::ISoundPlayer > m_soundPlayer;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 	resource::Proxy< sound::Sound > m_sound;
-	Ref< sound::ISoundHandle > m_handle;
+	Ref< sound::SoundHandle > m_handle;
 	Transform m_transform;
 };
 

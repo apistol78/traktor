@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,13 +17,11 @@
 #include "Online/Provider/IVoiceChatProvider.h"
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 
-namespace traktor
+namespace traktor::online
 {
-	namespace online
-	{
 
 template < typename ValueType, int Capacity >
 class CircularBuffer
@@ -203,7 +201,7 @@ void VoiceChat::destroy()
 	m_soundPlayer = 0;
 }
 
-void VoiceChat::setSoundPlayer(sound::ISoundPlayer* soundPlayer)
+void VoiceChat::setSoundPlayer(sound::SoundPlayer* soundPlayer)
 {
 	m_soundPlayer = soundPlayer;
 }
@@ -323,5 +321,4 @@ void VoiceChat::onVoiceReceived(uint64_t fromUserHandle, const int16_t* samples,
 		m_transmissions.push_back(t);
 }
 
-	}
 }

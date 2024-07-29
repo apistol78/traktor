@@ -15,7 +15,7 @@ namespace traktor::spray
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundEvent", SoundEvent, world::IEntityEvent)
 
 SoundEvent::SoundEvent(
-	sound::ISoundPlayer* soundPlayer,
+	sound::SoundPlayer* soundPlayer,
 	const resource::Proxy< sound::Sound >& sound,
 	bool positional,
 	bool follow,

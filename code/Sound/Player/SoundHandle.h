@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022-2023 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -8,31 +8,43 @@
  */
 #pragma once
 
-#include "Sound/Player/ISoundHandle.h"
+#include "Core/Object.h"
+#include "Core/Math/Vector4.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor::sound
 {
 
-class SoundHandle : public ISoundHandle
+class AudioChannel;
+class IAudioBufferCursor;
+
+class T_DLLCLASS SoundHandle : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual void stop() override final;
+	void stop();
 
-	virtual void fadeOff() override final;
+	void fadeOff();
 
-	virtual bool isPlaying() override final;
+	bool isPlaying();
 
-	virtual void setVolume(float volume) override final;
+	void setVolume(float volume);
 
-	virtual void setPitch(float pitch) override final;
+	void setPitch(float pitch);
 
-	virtual void setPosition(const Vector4& position) override final;
+	void setPosition(const Vector4& position);
 
-	virtual void setParameter(int32_t id, float parameter) override final;
+	void setParameter(int32_t id, float parameter);
 
-	virtual IAudioBufferCursor* getCursor() override final;
+	IAudioBufferCursor* getCursor();
 
 private:
 	friend class SoundPlayer;

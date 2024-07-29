@@ -237,7 +237,7 @@ sound::AudioSystem* AudioServer::getAudioSystem()
 	return m_audioSystem;
 }
 
-sound::ISoundPlayer* AudioServer::getSoundPlayer()
+sound::SoundPlayer* AudioServer::getSoundPlayer()
 {
 	return m_soundPlayer;
 }

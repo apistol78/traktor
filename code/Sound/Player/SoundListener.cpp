@@ -11,14 +11,14 @@
 namespace traktor::sound
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundListener", SoundListener, ISoundListener)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundListener", SoundListener, Object)
 
 void SoundListener::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-Transform SoundListener::getTransform() const
+const Transform& SoundListener::getTransform() const
 {
 	return m_transform;
 }

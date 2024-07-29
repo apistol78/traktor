@@ -14,7 +14,7 @@ namespace traktor::spray
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.ListenerComponentData", 0, ListenerComponentData, world::IEntityComponentData)
 
-Ref< ListenerComponent > ListenerComponentData::createComponent(sound::ISoundPlayer* soundPlayer) const
+Ref< ListenerComponent > ListenerComponentData::createComponent(sound::SoundPlayer* soundPlayer) const
 {
 	return new ListenerComponent(soundPlayer);
 }

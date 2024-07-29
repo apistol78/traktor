@@ -23,7 +23,7 @@ SoundComponentData::SoundComponentData(const resource::Id< sound::Sound >& sound
 {
 }
 
-Ref< SoundComponent > SoundComponentData::createComponent(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const
+Ref< SoundComponent > SoundComponentData::createComponent(resource::IResourceManager* resourceManager, sound::SoundPlayer* soundPlayer) const
 {
 	resource::Proxy< sound::Sound > sound;
 	if (!resourceManager->bind(m_sound, sound))

@@ -21,7 +21,7 @@
 namespace traktor::sound
 {
 
-class ISoundPlayer;
+class SoundPlayer;
 
 }
 
@@ -38,7 +38,7 @@ class T_DLLCLASS ListenerComponentData : public world::IEntityComponentData
 	T_RTTI_CLASS;
 
 public:
-	Ref< ListenerComponent > createComponent(sound::ISoundPlayer* soundPlayer) const;
+	Ref< ListenerComponent > createComponent(sound::SoundPlayer* soundPlayer) const;
 
 	virtual int32_t getOrdinal() const override final;
 

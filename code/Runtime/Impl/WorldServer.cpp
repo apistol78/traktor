@@ -23,7 +23,7 @@
 #include "Render/IRenderSystem.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/SceneFactory.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/EffectRenderer.h"
 #include "Terrain/EntityRenderer.h"
 #include "World/EntityFactory.h"

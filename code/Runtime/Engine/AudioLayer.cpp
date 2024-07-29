@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,8 +13,8 @@
 #include "Core/Math/Float.h"
 #include "Core/Timer/Profiler.h"
 #include "Sound/Sound.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 
 namespace traktor::runtime
 {
@@ -59,7 +59,7 @@ void AudioLayer::play()
 	if (m_handle && m_handle->isPlaying())
 		return;
 
-	sound::ISoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
+	sound::SoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
 	if (soundPlayer)
 		m_handle = soundPlayer->play(m_sound, 0);
 	else
@@ -156,7 +156,7 @@ void AudioLayer::update(const UpdateInfo& info)
 		(!m_handle || !m_handle->isPlaying())
 	)
 	{
-		sound::ISoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
+		sound::SoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
 		if (soundPlayer)
 			m_handle = soundPlayer->play(m_sound, 0);
 

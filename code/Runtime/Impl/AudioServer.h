@@ -20,13 +20,6 @@ class PropertyGroup;
 
 }
 
-namespace traktor::sound
-{
-
-class SoundPlayer;
-
-}
-
 namespace traktor::runtime
 {
 
@@ -52,7 +45,7 @@ public:
 
 	virtual sound::AudioSystem* getAudioSystem() override final;
 
-	virtual sound::ISoundPlayer* getSoundPlayer() override final;
+	virtual sound::SoundPlayer* getSoundPlayer() override final;
 
 	virtual sound::SurroundEnvironment* getSurroundEnvironment() override final;
 

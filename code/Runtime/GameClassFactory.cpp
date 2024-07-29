@@ -48,7 +48,7 @@
 #include "Scene/Scene.h"
 #include "Sound/AudioSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
@@ -201,7 +201,7 @@ void GameClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 
 	auto classAudioServer = new AutoRuntimeClass< IAudioServer >();
 	classAudioServer->addProperty< sound::AudioSystem* >("audioSystem", 0, &IAudioServer::getAudioSystem);
-	classAudioServer->addProperty< sound::ISoundPlayer* >("soundPlayer", 0, &IAudioServer::getSoundPlayer);
+	classAudioServer->addProperty< sound::SoundPlayer* >("soundPlayer", 0, &IAudioServer::getSoundPlayer);
 	classAudioServer->addProperty< sound::SurroundEnvironment* >("surroundEnvironment", 0, &IAudioServer::getSurroundEnvironment);
 	registrar->registerClass(classAudioServer);
 

@@ -26,8 +26,8 @@
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
-#include "Sound/Player/ISoundHandle.h"
-#include "Sound/Player/ISoundPlayer.h"
+#include "Sound/Player/SoundHandle.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
@@ -77,7 +77,7 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_propertyList->bind(m_asset);
 
 	// Get audio player for preview.
-	m_soundPlayer = m_editor->getObjectStore()->get< ISoundPlayer >();
+	m_soundPlayer = m_editor->getObjectStore()->get< SoundPlayer >();
 
 	return true;
 }

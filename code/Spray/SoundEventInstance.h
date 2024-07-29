@@ -15,9 +15,9 @@
 namespace traktor::sound
 {
 
-class ISoundHandle;
-class ISoundPlayer;
 class Sound;
+class SoundHandle;
+class SoundPlayer;
 
 }
 
@@ -42,7 +42,7 @@ public:
 	explicit SoundEventInstance(
 		world::Entity* sender,
 		const Transform& Toffset,
-		sound::ISoundPlayer* soundPlayer,
+		sound::SoundPlayer* soundPlayer,
 		const resource::Proxy< sound::Sound >& sound,
 		bool positional,
 		bool follow,
@@ -56,12 +56,12 @@ public:
 private:
 	Ref< world::Entity > m_sender;
 	Transform m_Toffset;
-	sound::ISoundPlayer* m_soundPlayer;
+	sound::SoundPlayer* m_soundPlayer;
 	resource::Proxy< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;
 	bool m_autoStopFar;
-	Ref< sound::ISoundHandle > m_handle;
+	Ref< sound::SoundHandle > m_handle;
 };
 
 }
