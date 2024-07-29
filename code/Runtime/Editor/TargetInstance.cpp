@@ -41,6 +41,7 @@ TargetInstance::TargetInstance(const std::wstring& name, const Target* target, c
 ,	m_platform(platform)
 ,	m_deployHostId(-1)
 ,	m_state(TsIdle)
+,	m_buildProgress(0)
 {
 }
 

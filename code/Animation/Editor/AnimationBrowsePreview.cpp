@@ -68,7 +68,7 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 
 	// Transform all joints into screen space.
 	Aabb3 boundingBox;
-	for (int32_t i = 0; i < model->getJointCount(); ++i)
+	for (uint32_t i = 0; i < model->getJointCount(); ++i)
 	{
 		const Transform Tjoint = model->getJointGlobalTransform(i);
 		boundingBox.contain(Tjoint.translation().xyz1());
@@ -84,7 +84,7 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 	{
 		const model::Animation* anim = model->getAnimation(0);
 		const model::Pose* pose = anim->getKeyFramePose(0);
-		for (int32_t i = 0; i < model->getJointCount(); ++i)
+		for (uint32_t i = 0; i < model->getJointCount(); ++i)
 		{
 			const Transform Tjoint = pose->getJointGlobalTransform(model, i);
 			const Vector4 vp = modelView * Tjoint.translation().xyz1();
@@ -97,7 +97,7 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 	}
 	else
 	{
-		for (int32_t i = 0; i < model->getJointCount(); ++i)
+		for (uint32_t i = 0; i < model->getJointCount(); ++i)
 		{
 			const Transform Tjoint = model->getJointGlobalTransform(i);
 			const Vector4 vp = modelView * Tjoint.translation().xyz1();
@@ -111,7 +111,7 @@ Ref< ui::IBitmap > AnimationBrowsePreview::generate(editor::IEditor* editor, db:
 
 	// Draw joint edges.
 	raster.clear();
-	for (int32_t i = 0; i < model->getJointCount(); ++i)
+	for (uint32_t i = 0; i < model->getJointCount(); ++i)
 	{
 		const model::Joint& joint = model->getJoint(i);
 		if (joint.getParent() != model::c_InvalidIndex)
