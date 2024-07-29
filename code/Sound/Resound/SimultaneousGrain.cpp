@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,12 +13,10 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/SimultaneousGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 const uint32_t c_outputSamplesBlockCount = 8;
 
@@ -29,7 +27,7 @@ struct SimultaneousGrainCursor : public RefCountImpl< IAudioBufferCursor >
 
 	SimultaneousGrainCursor()
 	{
-		m_outputSamples[0] = 0;
+		m_outputSamples[0] = nullptr;
 	}
 
 	virtual ~SimultaneousGrainCursor()
@@ -39,24 +37,24 @@ struct SimultaneousGrainCursor : public RefCountImpl< IAudioBufferCursor >
 
 	virtual void setParameter(handle_t id, float parameter) override final
 	{
-		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
-			(*i)->setParameter(id, parameter);
+		for (auto grainCursor : m_grainCursors)
+			grainCursor->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat() override final
 	{
-		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
-			(*i)->disableRepeat();
+		for (auto grainCursor : m_grainCursors)
+			grainCursor->disableRepeat();
 	}
 
 	virtual void reset() override final
 	{
-		for (RefArray< IAudioBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
-			(*i)->reset();
+		for (auto grainCursor : m_grainCursors)
+			grainCursor->reset();
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SimultaneousGrain", SimultaneousGrain, IGrain)
 
@@ -68,14 +66,14 @@ SimultaneousGrain::SimultaneousGrain(const RefArray< IGrain >& grains)
 Ref< IAudioBufferCursor > SimultaneousGrain::createCursor() const
 {
 	if (m_grains.empty())
-		return 0;
+		return nullptr;
 
 	Ref< SimultaneousGrainCursor > cursor = new SimultaneousGrainCursor();
 	for (RefArray< IGrain >::const_iterator i = m_grains.begin(); i != m_grains.end(); ++i)
 	{
 		Ref< IAudioBufferCursor > childCursor = (*i)->createCursor();
 		if (!childCursor)
-			return 0;
+			return nullptr;
 
 		cursor->m_grainCursors.push_back(childCursor);
 	}
@@ -166,5 +164,4 @@ bool SimultaneousGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* 
 	return playing;
 }
 
-	}
 }

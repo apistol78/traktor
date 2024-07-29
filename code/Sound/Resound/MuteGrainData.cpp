@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -13,23 +13,16 @@
 #include "Sound/Resound/MuteGrain.h"
 #include "Sound/Resound/MuteGrainData.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 Random s_random;
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.MuteGrainData", 1, MuteGrainData, IGrainData)
-
-MuteGrainData::MuteGrainData()
-:	m_duration(0.0f, 0.0f)
-{
-}
 
 Ref< IGrain > MuteGrainData::createInstance(IGrainFactory* grainFactory) const
 {
@@ -48,5 +41,4 @@ void MuteGrainData::serialize(ISerializer& s)
 	}
 }
 
-	}
 }

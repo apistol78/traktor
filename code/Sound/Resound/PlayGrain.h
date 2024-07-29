@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -21,15 +21,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IAudioFilter;
 class Sound;
 
-/*! \brief
+/*!
  * \ingroup Sound
  */
 class T_DLLCLASS PlayGrain : public IGrain
@@ -37,7 +35,7 @@ class T_DLLCLASS PlayGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	PlayGrain(
+	explicit PlayGrain(
 		const resource::Proxy< Sound >& sound,
 		const RefArray< IAudioFilter >& filters,
 		const Range< float >& gain,
@@ -64,6 +62,4 @@ private:
 	mutable Random m_random;
 };
 
-	}
 }
-

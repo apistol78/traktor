@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,12 +11,10 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/TriggerGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct TriggerGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
@@ -32,10 +30,10 @@ struct TriggerGrainCursor : public RefCountImpl< IAudioBufferCursor >
 	{
 		if (id == m_id)
 		{
-			float dT = float(m_timer.getDeltaTime());
+			const float dT = float(m_timer.getDeltaTime());
 			if (m_parameter >= 0.0f)
 			{
-				float rate = (parameter - m_parameter) / dT;
+				const float rate = (parameter - m_parameter) / dT;
 
 				if (m_rate > FUZZY_EPSILON && rate > m_rate)
 					m_active = true;
@@ -71,7 +69,7 @@ struct TriggerGrainCursor : public RefCountImpl< IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.TriggerGrain", TriggerGrain, IGrain)
 
@@ -91,7 +89,7 @@ TriggerGrain::TriggerGrain(
 Ref< IAudioBufferCursor > TriggerGrain::createCursor() const
 {
 	if (!m_grain)
-		return 0;
+		return nullptr;
 
 	Ref< TriggerGrainCursor > cursor = new TriggerGrainCursor();
 	cursor->m_id = m_id;
@@ -145,12 +143,11 @@ bool TriggerGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer
 
 	if (!m_grain->getBlock(triggerCursor->m_cursor, mixer, outBlock))
 	{
-		triggerCursor->m_cursor = 0;
+		triggerCursor->m_cursor = nullptr;
 		triggerCursor->m_active = false;
 	}
 
 	return true;
 }
 
-	}
 }

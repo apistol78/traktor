@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -18,18 +18,14 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class T_DLLCLASS RepeatGrainData : public IGrainData
 {
 	T_RTTI_CLASS;
 
 public:
-	RepeatGrainData();
-
 	virtual Ref< IGrain > createInstance(IGrainFactory* grainFactory) const override final;
 
 	virtual void serialize(ISerializer& s) override final;
@@ -39,10 +35,8 @@ public:
 	IGrainData* getGrain() const { return m_grain; }
 
 private:
-	uint32_t m_count;
+	uint32_t m_count = 0;
 	Ref< IGrainData > m_grain;
 };
 
-	}
 }
-

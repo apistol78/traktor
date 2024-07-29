@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -19,10 +19,8 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 class IGrainData;
 
@@ -34,9 +32,9 @@ class T_DLLCLASS BankResource : public IAudioResource
 	T_RTTI_CLASS;
 
 public:
-	BankResource();
+	BankResource() = default;
 
-	BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float range);
+	explicit BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float range);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, const db::Instance* resourceInstance) const override final;
 
@@ -47,10 +45,8 @@ public:
 private:
 	RefArray< IGrainData > m_grains;
 	std::wstring m_category;
-	float m_gain;
-	float m_range;
+	float m_gain = 0.0f;
+	float m_range = 0.0f;
 };
 
-	}
 }
-

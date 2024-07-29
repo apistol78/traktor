@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -10,25 +10,17 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/IResourceManager.h"
+#include "Sound/Sound.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BankResource.h"
 #include "Sound/Resound/GrainFactory.h"
 #include "Sound/Resound/IGrain.h"
 #include "Sound/Resound/IGrainData.h"
-#include "Sound/Sound.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
-	{
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 7, BankResource, IAudioResource)
-
-BankResource::BankResource()
-:	m_gain(0.0f)
-,	m_range(0.0f)
-{
-}
 
 BankResource::BankResource(const RefArray< IGrainData >& grains, const std::wstring& category, float gain, float range)
 :	m_grains(grains)
@@ -68,5 +60,4 @@ void BankResource::serialize(ISerializer& s)
 	s >> Member< float >(L"range", m_range);
 }
 
-	}
 }

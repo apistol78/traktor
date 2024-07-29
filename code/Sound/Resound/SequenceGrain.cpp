@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,10 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/SequenceGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct SequenceGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
@@ -40,7 +38,7 @@ struct SequenceGrainCursor : public RefCountImpl< IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SequenceGrain", SequenceGrain, IGrain)
 
@@ -52,13 +50,13 @@ SequenceGrain::SequenceGrain(const RefArray< IGrain >& grains)
 Ref< IAudioBufferCursor > SequenceGrain::createCursor() const
 {
 	if (m_grains.empty())
-		return 0;
+		return nullptr;
 
 	Ref< SequenceGrainCursor > cursor = new SequenceGrainCursor();
 	cursor->m_grainIndex = 0;
 	cursor->m_grainCursor = m_grains[0]->createCursor();
 
-	return cursor->m_grainCursor ? cursor : 0;
+	return cursor->m_grainCursor ? cursor : nullptr;
 }
 
 void SequenceGrain::updateCursor(IAudioBufferCursor* cursor) const
@@ -115,5 +113,4 @@ bool SequenceGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixe
 	return true;
 }
 
-	}
 }

@@ -1,6 +1,6 @@
 /*
  * TRAKTOR
- * Copyright (c) 2022 Anders Pistol.
+ * Copyright (c) 2022-2024 Anders Pistol.
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -9,12 +9,10 @@
 #include "Sound/IAudioBuffer.h"
 #include "Sound/Resound/RepeatGrain.h"
 
-namespace traktor
+namespace traktor::sound
 {
-	namespace sound
+	namespace
 	{
-		namespace
-		{
 
 struct RepeatGrainCursor : public RefCountImpl< IAudioBufferCursor >
 {
@@ -41,7 +39,7 @@ struct RepeatGrainCursor : public RefCountImpl< IAudioBufferCursor >
 	}
 };
 
-		}
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RepeatGrain", RepeatGrain, IGrain)
 
@@ -57,7 +55,7 @@ RepeatGrain::RepeatGrain(
 Ref< IAudioBufferCursor > RepeatGrain::createCursor() const
 {
 	if (!m_grain)
-		return 0;
+		return nullptr;
 
 	Ref< RepeatGrainCursor > cursor = new RepeatGrainCursor();
 	cursor->m_cursor = m_grain->createCursor();
@@ -109,5 +107,4 @@ bool RepeatGrain::getBlock(IAudioBufferCursor* cursor, const IAudioMixer* mixer,
 	return true;
 }
 
-	}
 }
