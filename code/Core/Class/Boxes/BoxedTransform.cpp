@@ -72,6 +72,11 @@ Transform BoxedTransform::lookAt(const BoxedVector4* position, const BoxedVector
 	return Transform(traktor::lookAt(position->unbox(), target->unbox(), up->unbox()).inverse());
 }
 
+Transform BoxedTransform::fromEulerAngles(float head, float pitch, float bank)
+{
+	return Transform(Quaternion::fromEulerAngles(head, pitch, bank));
+}
+
 std::wstring BoxedTransform::toString() const
 {
 	return L"(transform)";

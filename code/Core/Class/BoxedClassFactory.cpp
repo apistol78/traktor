@@ -382,6 +382,7 @@ void BoxedClassFactory::createClasses(IRuntimeClassRegistrar* registrar) const
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
 	classBoxedTransform->addStaticMethod("lerp", &BoxedTransform::lerp);
 	classBoxedTransform->addStaticMethod("lookAt", &BoxedTransform::lookAt);
+	classBoxedTransform->addStaticMethod("fromEulerAngles", &BoxedTransform::fromEulerAngles);
 	classBoxedTransform->addOperator< Vector4, const BoxedVector4* >('*', &BoxedTransform::transform);
 	classBoxedTransform->addOperator< Transform, const BoxedTransform* >('*', &BoxedTransform::concat);
 	registrar->registerClass(classBoxedTransform);
