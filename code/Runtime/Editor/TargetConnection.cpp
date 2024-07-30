@@ -10,28 +10,28 @@
 #include "Core/Thread/Acquire.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Runtime/Editor/TargetConnection.h"
-#include "Runtime/Editor/TargetScriptDebugger.h"
-#include "Runtime/Editor/TargetScriptProfiler.h"
-#include "Runtime/Target/ScriptProfilerCallMeasured.h"
 #include "Runtime/Target/TargetLog.h"
 #include "Runtime/Target/TargetProfilerDictionary.h"
 #include "Runtime/Target/TargetProfilerEvents.h"
 #include "Script/Editor/IScriptDebuggerSessions.h"
+#include "Script/Remote/RemoteScriptDebugger.h"
+#include "Script/Remote/RemoteScriptProfiler.h"
+#include "Script/Remote/ScriptProfilerCallMeasured.h"
 
 namespace traktor::runtime
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.runtime.TargetConnection", TargetConnection, Object)
 
-TargetConnection::TargetConnection(const std::wstring &name, net::BidirectionalObjectTransport *transport, ILogTarget *targetLog, script::IScriptDebuggerSessions *targetDebuggerSessions)
+TargetConnection::TargetConnection(const std::wstring& name, net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, script::IScriptDebuggerSessions* targetDebuggerSessions)
 :	m_name(name)
 ,	m_transport(transport)
 ,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 ,	m_profilerEventsCallback(0)
 {
-	m_targetDebugger = new TargetScriptDebugger(m_transport);
-	m_targetProfiler = new TargetScriptProfiler(m_transport);
+	m_targetDebugger = new script::RemoteScriptDebugger(m_transport);
+	m_targetProfiler = new script::RemoteScriptProfiler(m_transport);
 	m_targetDebuggerSessions->beginSession(m_targetDebugger, m_targetProfiler);
 }
 
@@ -122,8 +122,8 @@ bool TargetConnection::update()
 	}
 
 	{
-		Ref< ScriptProfilerCallMeasured > measured;
-		while (m_transport->recv< ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::Result::Success)
+		Ref< script::ScriptProfilerCallMeasured > measured;
+		while (m_transport->recv< script::ScriptProfilerCallMeasured >(0, measured) == net::BidirectionalObjectTransport::Result::Success)
 		{
 			m_targetProfiler->notifyListeners(
 				measured->getScriptId(),

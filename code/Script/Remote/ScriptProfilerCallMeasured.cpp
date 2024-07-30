@@ -6,14 +6,14 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/Target/ScriptProfilerCallMeasured.h"
+#include "Script/Remote/ScriptProfilerCallMeasured.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptProfilerCallMeasured", 0, ScriptProfilerCallMeasured, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptProfilerCallMeasured", 0, ScriptProfilerCallMeasured, ISerializable)
 
 ScriptProfilerCallMeasured::ScriptProfilerCallMeasured(const Guid& scriptId, const std::wstring& function, uint32_t callCount, double inclusiveDuration, double exclusiveDuration)
 :	m_scriptId(scriptId)

@@ -9,12 +9,12 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Runtime/Target/ScriptDebuggerControl.h"
+#include "Script/Remote/ScriptDebuggerControl.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerControl", 0, ScriptDebuggerControl, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerControl", 0, ScriptDebuggerControl, ISerializable)
 
 ScriptDebuggerControl::ScriptDebuggerControl(Action action)
 :	m_action(action)

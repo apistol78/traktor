@@ -31,14 +31,13 @@ namespace traktor::script
 {
 
 class IScriptDebuggerSessions;
+class RemoteScriptDebugger;
+class RemoteScriptProfiler;
 
 }
 
 namespace traktor::runtime
 {
-
-class TargetScriptDebugger;
-class TargetScriptProfiler;
 
 /*!
  * \ingroup Runtime
@@ -89,9 +88,9 @@ private:
 	std::wstring m_name;
 	Ref< net::BidirectionalObjectTransport > m_transport;
 	Ref< ILogTarget > m_targetLog;
-	Ref<script::IScriptDebuggerSessions> m_targetDebuggerSessions;
-	Ref< TargetScriptDebugger > m_targetDebugger;
-	Ref< TargetScriptProfiler > m_targetProfiler;
+	Ref< script::IScriptDebuggerSessions > m_targetDebuggerSessions;
+	Ref< script::RemoteScriptDebugger > m_targetDebugger;
+	Ref< script::RemoteScriptProfiler > m_targetProfiler;
 	SmallMap< const TypeInfo*, Ref< TargetPerfSet > > m_performance;
 	SmallMap< uint16_t, std::wstring > m_dictionary;
 	IProfilerEventsCallback* m_profilerEventsCallback;

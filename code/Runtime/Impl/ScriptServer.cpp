@@ -6,16 +6,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
-#include "Runtime/IEnvironment.h"
-#include "Runtime/Impl/ScriptServer.h"
-#include "Runtime/Target/ScriptDebuggerBreadcrumbs.h"
-#include "Runtime/Target/ScriptDebuggerBreakpoint.h"
-#include "Runtime/Target/ScriptDebuggerControl.h"
-#include "Runtime/Target/ScriptDebuggerLocals.h"
-#include "Runtime/Target/ScriptDebuggerStackFrame.h"
-#include "Runtime/Target/ScriptDebuggerStateChange.h"
-#include "Runtime/Target/ScriptDebuggerStatus.h"
-#include "Runtime/Target/ScriptProfilerCallMeasured.h"
 #include "Core/Class/IRuntimeClassFactory.h"
 #include "Core/Class/OrderedClassRegistrar.h"
 #include "Core/Log/Log.h"
@@ -28,10 +18,20 @@
 #include "Input/InputSystem.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
+#include "Runtime/IEnvironment.h"
+#include "Runtime/Impl/ScriptServer.h"
 #include "Script/IScriptContext.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptFactory.h"
 #include "Script/StackFrame.h"
+#include "Script/Remote/ScriptDebuggerBreadcrumbs.h"
+#include "Script/Remote/ScriptDebuggerBreakpoint.h"
+#include "Script/Remote/ScriptDebuggerControl.h"
+#include "Script/Remote/ScriptDebuggerLocals.h"
+#include "Script/Remote/ScriptDebuggerStackFrame.h"
+#include "Script/Remote/ScriptDebuggerStateChange.h"
+#include "Script/Remote/ScriptDebuggerStatus.h"
+#include "Script/Remote/ScriptProfilerCallMeasured.h"
 
 namespace traktor::runtime
 {
@@ -184,9 +184,9 @@ void ScriptServer::threadDebugger()
 		if (m_scriptDebugger)
 		{
 			Ref< ISerializable > object;
-			if (m_transport->recv(makeTypeInfoSet< ScriptDebuggerBreakpoint, ScriptDebuggerControl >(), 500, object) == net::BidirectionalObjectTransport::Result::Success)
+			if (m_transport->recv(makeTypeInfoSet< script::ScriptDebuggerBreakpoint, script::ScriptDebuggerControl >(), 500, object) == net::BidirectionalObjectTransport::Result::Success)
 			{
-				if (ScriptDebuggerBreakpoint* breakpoint = dynamic_type_cast< ScriptDebuggerBreakpoint* >(object))
+				if (const script::ScriptDebuggerBreakpoint* breakpoint = dynamic_type_cast< script::ScriptDebuggerBreakpoint* >(object))
 				{
 					if (breakpoint->shouldAdd())
 					{
@@ -199,79 +199,79 @@ void ScriptServer::threadDebugger()
 						log::debug << L"Breakpoint " << breakpoint->getScriptId().format() << L":" << breakpoint->getLineNumber() << L" removed." << Endl;
 					}
 				}
-				else if (ScriptDebuggerControl* control = dynamic_type_cast< ScriptDebuggerControl* >(object))
+				else if (const script::ScriptDebuggerControl* control = dynamic_type_cast< script::ScriptDebuggerControl* >(object))
 				{
 					switch (control->getAction())
 					{
-					case ScriptDebuggerControl::AcStatus:
+					case script::ScriptDebuggerControl::AcStatus:
 						{
-							ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
+							const script::ScriptDebuggerStatus status(m_scriptDebugger->isRunning());
 							m_transport->send(&status);
 						}
 						break;
 
-					case ScriptDebuggerControl::AcBreak:
+					case script::ScriptDebuggerControl::AcBreak:
 						{
 							m_scriptDebugger->actionBreak();
 						}
 						break;
 
-					case ScriptDebuggerControl::AcContinue:
+					case script::ScriptDebuggerControl::AcContinue:
 						{
 							m_scriptDebugger->actionContinue();
 						}
 						break;
 
-					case ScriptDebuggerControl::AcStepInto:
+					case script::ScriptDebuggerControl::AcStepInto:
 						{
 							m_scriptDebugger->actionStepInto();
 						}
 						break;
 
-					case ScriptDebuggerControl::AcStepOver:
+					case script::ScriptDebuggerControl::AcStepOver:
 						{
 							m_scriptDebugger->actionStepOver();
 						}
 						break;
 
-					case ScriptDebuggerControl::AcCaptureStack:
+					case script::ScriptDebuggerControl::AcCaptureStack:
 						{
 							Ref< script::StackFrame > sf;
 							if (!m_scriptDebugger->captureStackFrame(control->getParam(), sf))
 								sf = nullptr;
-							ScriptDebuggerStackFrame capturedFrame(sf);
+							const script::ScriptDebuggerStackFrame capturedFrame(sf);
 							m_transport->send(&capturedFrame);
 						}
 						break;
 
-					case ScriptDebuggerControl::AcCaptureLocals:
+					case script::ScriptDebuggerControl::AcCaptureLocals:
 						{
 							RefArray< script::Variable > l;
 							if (m_scriptDebugger->captureLocals(control->getParam(), l))
 							{
-								ScriptDebuggerLocals capturedLocals(l);
+								const script::ScriptDebuggerLocals capturedLocals(l);
 								m_transport->send(&capturedLocals);
 							}
 						}
 						break;
 
-					case ScriptDebuggerControl::AcCaptureObject:
+					case script::ScriptDebuggerControl::AcCaptureObject:
 						{
 							RefArray< script::Variable > l;
 							if (m_scriptDebugger->captureObject(control->getParam(), l))
 							{
-								ScriptDebuggerLocals capturedLocals(l);
+								const script::ScriptDebuggerLocals capturedLocals(l);
 								m_transport->send(&capturedLocals);
 							}
 						}
 						break;
 
-					case ScriptDebuggerControl::AcCaptureBreadcrumbs:
+					case script::ScriptDebuggerControl::AcCaptureBreadcrumbs:
 						{
 							AlignedVector< uint32_t > breadcrumbs;
 							if (m_scriptDebugger->captureBreadcrumbs(breadcrumbs))
 							{
-								ScriptDebuggerBreadcrumbs capturedBreadcrumbs(breadcrumbs);
+								const script::ScriptDebuggerBreadcrumbs capturedBreadcrumbs(breadcrumbs);
 								m_transport->send(&capturedBreadcrumbs);
 							}
 						}
@@ -289,7 +289,7 @@ void ScriptServer::threadDebugger()
 			std::map< std::pair< Guid, std::wstring >, CallSample >& samples = m_callSamples[index];
 			for (std::map< std::pair< Guid, std::wstring >, CallSample >::const_iterator i = samples.begin(); i != samples.end(); ++i)
 			{
-				ScriptProfilerCallMeasured measured(i->first.first, i->first.second, i->second.callCount, i->second.inclusiveDuration, i->second.exclusiveDuration);
+				const script::ScriptProfilerCallMeasured measured(i->first.first, i->first.second, i->second.callCount, i->second.inclusiveDuration, i->second.exclusiveDuration);
 				m_transport->send(&measured);
 			}
 			samples.clear();
@@ -319,7 +319,7 @@ void ScriptServer::debugeeStateChange(script::IScriptDebugger* scriptDebugger)
 	}
 
 	// Notify target manager about state change.
-	ScriptDebuggerStateChange stateChange(m_scriptDebugger->isRunning());
+	const script::ScriptDebuggerStateChange stateChange(m_scriptDebugger->isRunning());
 	m_transport->send(&stateChange);
 }
 

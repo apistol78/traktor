@@ -13,7 +13,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RUNTIME_EXPORT)
+#if defined(T_SCRIPT_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -23,11 +23,6 @@ namespace traktor::script
 {
 
 class Variable;
-
-}
-
-namespace traktor::runtime
-{
 
 /*! Response from running target when breadcrumbs has been captured.
  * \ingroup Runtime

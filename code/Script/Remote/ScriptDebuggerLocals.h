@@ -8,12 +8,12 @@
  */
 #pragma once
 
-#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RUNTIME_EXPORT)
+#if defined(T_SCRIPT_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -22,31 +22,31 @@
 namespace traktor::script
 {
 
-class StackFrame;
+class Variable;
 
 }
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-/*! Response from running target when a stack frame has been captured.
+/*! Response from running target when locals has been captured.
  * \ingroup Runtime
  */
-class T_DLLCLASS ScriptDebuggerStackFrame : public ISerializable
+class T_DLLCLASS ScriptDebuggerLocals : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	ScriptDebuggerStackFrame() = default;
+	ScriptDebuggerLocals() = default;
 
-	explicit ScriptDebuggerStackFrame(script::StackFrame* frame);
+	explicit ScriptDebuggerLocals(const RefArray< script::Variable >& locals);
 
-	script::StackFrame* getFrame() const { return m_frame; }
+	const RefArray< script::Variable >& getLocals() const { return m_locals; }
 
 	virtual void serialize(ISerializer& s) override final;
 
 private:
-	Ref< script::StackFrame > m_frame;
+	RefArray< script::Variable > m_locals;
 };
 
 }

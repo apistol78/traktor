@@ -13,13 +13,13 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RUNTIME_EXPORT)
+#if defined(T_SCRIPT_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
 /*! Add or remove script breakpoint on running target.

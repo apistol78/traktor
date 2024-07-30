@@ -8,12 +8,12 @@
  */
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Runtime/Target/ScriptDebuggerStatus.h"
+#include "Script/Remote/ScriptDebuggerStatus.h"
 
-namespace traktor::runtime
+namespace traktor::script
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.runtime.ScriptDebuggerStatus", 0, ScriptDebuggerStatus, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptDebuggerStatus", 0, ScriptDebuggerStatus, ISerializable)
 
 ScriptDebuggerStatus::ScriptDebuggerStatus(bool running)
 :	m_running(running)
